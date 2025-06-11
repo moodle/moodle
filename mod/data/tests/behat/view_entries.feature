@@ -76,14 +76,14 @@ Feature: Users can view and search database entries
 
   @javascript
   Scenario: Check that searching by tags works as expected
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given the following "mod_data > entries" exist:
+      | database | user     | Test field name                 | Test field 2 name                 | Test field 3 name |
+      | data1    | student1 | Student original entry untagged | Student original entry untagged 2 |                   |
+    And I am on the "Test database name" "data activity" page logged in as student1
+    And I click on "Add entry" "button"
     # This is required for now to prevent the tag suggestion menu from overlapping over the Save & view button.
     And I change window size to "large"
-    And I add an entry to "Test database name" database with:
-      | Test field name   | Student original entry untagged   |
-      | Test field 2 name | Student original entry untagged 2 |
-    And I add an entry to "Test database name" database with:
+    And I set the following fields to these values:
       | Test field name   | Student original entry tagged   |
       | Test field 2 name | Student original entry tagged 2 |
     And I set the field with xpath "//div[@class='datatagcontrol']//input[@type='text']" to "Tag1"
@@ -98,7 +98,7 @@ Feature: Users can view and search database entries
     And I should see "Tag1" in the "div.tag_list" "css_element"
     And I click on "Advanced search" "checkbox"
     And I set the field with xpath "//div[@class='datatagcontrol']//input[@type='text']" to "Tag1"
-    And I click on "[data-value='Tag1']" "css_element"
+    And I click on "#page-content" "css_element"
     When I click on "Save settings" "button" in the "data_adv_form" "region"
     Then I should see "Student original entry tagged"
     And I should see "Student original entry tagged 2"
@@ -107,18 +107,10 @@ Feature: Users can view and search database entries
 
   @javascript
   Scenario: Check that searching by first and last name works as expected
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student entry 1 |
-    And I press "Save"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student entry 2 |
-    And I press "Save"
-    And I log out
+    Given the following "mod_data > entries" exist:
+      | database | user     | Test field name | Test field 2 name | Test field 3 name |
+      | data1    | student1 | Student entry 1 |                   |                   |
+      | data1    | student2 | Student entry 2 |                   |                   |
     When I am on the "Test database name" "data activity" page logged in as teacher1
     And I click on "Advanced search" "checkbox"
     And I set the field "First name" to "Bob"
@@ -173,3 +165,36 @@ Feature: Users can view and search database entries
     And I am on the "Test database name" "data activity" page logged in as teacher1
     Then I should not see "Select all"
     And I should not see "Delete selected"
+
+  Scenario Outline: Entries are linked based on autolink and open in new window settings
+    # Param1 refers to `Autolink`, param3 refers to `Open in new window`.
+    Given the following "mod_data > fields" exist:
+      | database | type | name              | param1   | param3   |
+      | data1    | url  | URL field name    | <param1> | <param3> |
+    And the following "mod_data > entries" exist:
+      | database | user     | Test field name  | Test field 2 name  | Test field 3 name   | URL field name |
+      | data1    | teacher1 | Test field entry | Test field 2 entry | http://example.com/ | www.moodle.org |
+    When I am on the "Test database name" "data activity" page logged in as teacher1
+    Then "www.moodle.org" "link" <autolink> exist
+    # Verify that the URL field is rendered as a link with the correct href attribute and target set to _blank.
+    And "a[target='_blank'][href='http://www.moodle.org']" "css_element" <autolink> exist
+
+    Examples:
+      | param1 | param3 | autolink   |
+      | 0      | 0      | should not |
+      | 1      | 1      | should     |
+
+  @javascript @accessibility
+  Scenario: Check the accessibility of the database entries page (zero state)
+    When I am on the "Test database name" "data activity" page logged in as "teacher1"
+    Then I should see "No entries yet"
+    And the page should meet accessibility standards
+
+  @javascript @accessibility
+  Scenario: Check the accessibility of the database entries page
+    Given the following "mod_data > entries" exist:
+      | database | user     | Test field name | Test field 2 name      | Test field 3 name |
+      | data1    | student1 | Student entry 1 | Some student content 1 | http://moodle.com |
+      | data1    | teacher1 | Teacher entry 2 | Some teacher content 2 | http://moodle.com |
+    When I am on the "Test database name" "data activity" page logged in as teacher1
+    Then the page should meet accessibility standards

@@ -75,4 +75,50 @@ class mod_kalvidassign_mod_form extends moodleform_mod {
 
         $this->add_action_buttons();
     }
+
+    /**
+     * Add any custom completion rules to the form.
+     *
+     * @return array Contains the names of the added form elements
+     */
+    public function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $suffix = $this->get_suffix();
+        $completionsubmitel = 'completionsubmit' . $suffix;
+        $mform->addElement('checkbox', $completionsubmitel, '', get_string('completionsubmit', 'kalvidassign'));
+        // Enable this completion rule by default.
+        $mform->setDefault($completionsubmitel, 1);
+        return [$completionsubmitel];
+    }
+
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        // Set up completion section even if checkbox is not ticked.
+        if (!empty($data->completionunlocked)) {
+            $suffix = $this->get_suffix();
+            if (empty($data->{'completionsubmit' . $suffix})) {
+                $data->{'completionsubmit' . $suffix} = 0;
+            }
+        }
+    }
+
+    /**
+     * Determines if completion is enabled for this module.
+     *
+     * @param array $data
+     * @return bool
+     */
+    public function completion_rule_enabled($data) {
+        $suffix = $this->get_suffix();
+        return !empty($data['completionsubmit' . $suffix]);
+    }
 }

@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+ @package   theme_snap
+ @copyright Copyright (c) 2017 Open LMS
+ @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+
+{{#currentcourselist}}
+    <div id="snap-pm-courses-current" class="tab-pane active" role="tabpanel" aria-label="snap-pm-tab-current">
+        {{#published}}
+            <div id="snap-pm-courses-current-cards" class="clearfix">
+                {{#courses}}
+                    {{> theme_snap/course_cards }}
+                {{/courses}}
+            </div>
+        {{/published}}
+
+        <!-- Hidden courses area -->
+        <div id="snap-pm-courses-hidden" class="clearfix {{#hidden.count}}state-visible{{/hidden.count}}">
+            <h2><br><a data-toggle="collapse" href="#snap-pm-courses-hidden-cards" aria-expanded="false" aria-controls="snap-pm-courses-hidden-cards">{{#str}}hiddencoursestoggle, theme_snap{{/str}}</a></h2>
+            <div class="collapse clearfix" id="snap-pm-courses-hidden-cards">
+            {{#hidden}}
+                {{#courses}}
+                    {{> theme_snap/course_cards }}
+                {{/courses}}
+            {{/hidden}}
+            </div>
+        </div>
+
+    </div>
+{{/currentcourselist}}
+
+{{!
+    Placeholder message for when the user has no current courses.
+}}
+
+{{^currentcourselist}}
+    <div id="snap-pm-courses-current" class="tab-pane clearfix active" role="tabpanel" aria-label="snap-pm-tab-current" tabindex="0">
+        <h2>{{#str}}courses{{/str}}</h2>
+        <p>{{#str}}coursefixydefaulttext, theme_snap{{/str}}</p>
+    </div>
+{{/currentcourselist}}

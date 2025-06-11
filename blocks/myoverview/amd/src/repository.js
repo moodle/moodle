@@ -22,7 +22,6 @@
  */
 
 import Ajax from 'core/ajax';
-import * as Notification from 'core/notification';
 
 /**
  * Retrieve a list of enrolled courses.
@@ -65,26 +64,33 @@ export const setFavouriteCourses = args => {
 };
 
 /**
- * Update the user preferences.
+ * These course fields are the only ones needed to be included in the results for the card and list views.
  *
- * @param {Object} args Arguments send to the webservice.
- *
- * Sample args:
- * {
- *     preferences: [
- *         {
- *             type: 'block_example_user_sort_preference'
- *             value: 'title'
- *         }
- *     ]
- * }
+ * @type {string[]}
  */
-export const updateUserPreferences = args => {
-    const request = {
-        methodname: 'core_user_update_user_preferences',
-        args: args
-    };
+export const CARDLIST_REQUIRED_FIELDS = [
+    'id',
+    'fullname',
+    'shortname',
+    'showcoursecategory',
+    'showshortname',
+    'visible',
+    'enddate',
+];
 
-    Ajax.call([request])[0]
-        .fail(Notification.exception);
-};
+/**
+ * These course fields are the only ones needed to be included in the results for the card and list views.
+ *
+ * @type {string[]}
+ */
+export const SUMMARY_REQUIRED_FIELDS = [
+    'id',
+    'fullname',
+    'shortname',
+    'showcoursecategory',
+    'showshortname',
+    'visible',
+    'enddate',
+    'summary',
+    'summaryformat',
+];

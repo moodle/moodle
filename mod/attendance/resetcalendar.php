@@ -49,7 +49,7 @@ echo $tabmenu;
 if (get_config('attendance', 'enablecalendar')) {
     // Check to see if all sessions that need them have calendar events.
     if ($action == 'create' && confirm_sesskey()) {
-        $sessions = $DB->get_recordset('attendance_sessions',  array('caleventid' => 0, 'calendarevent' => 1));
+        $sessions = $DB->get_recordset('attendance_sessions',  ['caleventid' => 0, 'calendarevent' => 1]);
         foreach ($sessions as $session) {
             attendance_create_calendar_event($session);
             if ($session->caleventid) {
@@ -59,9 +59,9 @@ if (get_config('attendance', 'enablecalendar')) {
         $sessions->close();
         echo $OUTPUT->notification(get_string('eventscreated', 'mod_attendance'), 'notifysuccess');
     } else {
-        if ($DB->record_exists('attendance_sessions', array('caleventid' => 0, 'calendarevent' => 1))) {
-            $createurl = new moodle_url('/mod/attendance/resetcalendar.php', array('action' => 'create'));
-            $returnurl = new moodle_url("/{$CFG->admin}/settings.php", array('section' => 'modsettingattendance'));
+        if ($DB->record_exists('attendance_sessions', ['caleventid' => 0, 'calendarevent' => 1])) {
+            $createurl = new moodle_url('/mod/attendance/resetcalendar.php', ['action' => 'create']);
+            $returnurl = new moodle_url("/{$CFG->admin}/settings.php", ['section' => 'modsettingattendance']);
 
             echo $OUTPUT->confirm(get_string('resetcaledarcreate', 'mod_attendance'), $createurl, $returnurl);
         } else {
@@ -76,8 +76,8 @@ if (get_config('attendance', 'enablecalendar')) {
     } else {
         // Check to see if there are any events that need to be deleted.
         if ($DB->record_exists_select('attendance_sessions', 'caleventid > 0')) {
-            $deleteurl = new moodle_url('/mod/attendance/resetcalendar.php', array('action' => 'delete'));
-            $returnurl = new moodle_url("/{$CFG->admin}/settings.php", array('section' => 'modsettingattendance'));
+            $deleteurl = new moodle_url('/mod/attendance/resetcalendar.php', ['action' => 'delete']);
+            $returnurl = new moodle_url("/{$CFG->admin}/settings.php", ['section' => 'modsettingattendance']);
 
             echo $OUTPUT->confirm(get_string('resetcaledardelete', 'mod_attendance'), $deleteurl, $returnurl);
         } else {

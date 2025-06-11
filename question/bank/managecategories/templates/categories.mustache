@@ -1,0 +1,79 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/categories
+
+    Template for displaying category view.
+
+    Context variables required for this template:
+    * contextid - Context id for js init.
+    * categoriesrendered - Array representing categories data rendered.
+    * items - Categories data.
+    * heading - Category's heading for each context (ie: Course or Quiz).
+    * ctxlvl - Context level for categories section - context.
+
+    Example context (json):
+    {
+        "contextid": "18",
+        "categoriesrendered": [{
+            "items": [{
+                "categoryid": "1",
+                "questionbankurl": "question/edit.php?cmid=123",
+                "categoryname": "Default for Miscellaneous",
+                "idnumber": "1",
+                "questioncount": " (1)",
+                "categorydesc": "The default category for questions shared in context Miscellaneous",
+                "editactionmenu": "<div class='action-menu moodle-actionmenu'>...</div>",
+                "handle": true,
+                "iconleft": "<i class=\"icon fa fa-arrow-left fa-fw \" title=\"Move to top level\" role=\"img\" aria-label=\"Move to top level\"></i>",
+                "iconright": "<i class=\"icon fa fa-arrow-right fa-fw \" title=\"Make child of 'category'\" role=\"img\" aria-label=\"Make child of 'category'\"></i>",
+                "children": ""
+            }],
+            "heading": "Question categories for 'Quiz: qz'",
+            "ctxlvl": "contextlevel70"
+        }]
+    }
+}}
+<div id="categoryroot"
+    class="editing col-11 col-md-12 mt-3 pl-0{{#showdescriptions}} showdescriptions{{/showdescriptions}}"
+    data-contextid="{{{contextid}}}">
+    {{#categoriesrendered}}
+        <h3 class="context-heading">{{heading}}</h3>
+        <div class="box py-3 boxwidthwide boxaligncenter generalbox questioncategories {{ctxlvl}}">
+            <ul class="qbank_managecategories-categorylist"
+                data-contextid="{{contextid}}" data-contextname="{{contextname}}" data-categoryid="{{categoryid}}">
+                {{#items}}
+                    {{> qbank_managecategories/category }}
+                {{/items}}
+            </ul>
+        </div>
+    {{/categoriesrendered}}
+</div>
+
+
+{{#js}}
+    require(['qbank_managecategories/categoryroot'], (categoryroot) => {
+        categoryroot.init('#categoryroot');
+    });
+    require(['qbank_managecategories/categorylist'], (categorylist) => {
+        // Initialise top-level lists.
+        const categoryLists = document.querySelectorAll('.qbank_managecategories-categorylist[data-contextid]');
+        categoryLists.forEach(element => {
+            categorylist.init(`.qbank_managecategories-categorylist[data-categoryid="${element.dataset.categoryid}"]`);
+        });
+    });
+{{/js}}

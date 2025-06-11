@@ -174,7 +174,7 @@ class tool_uploadcourse_processor {
     /**
      * Execute the process.
      *
-     * @param object $tracker the output tracker to use.
+     * @param tool_uploadcourse_tracker $tracker the output tracker to use.
      * @return void
      */
     public function execute($tracker = null) {
@@ -324,7 +324,7 @@ class tool_uploadcourse_processor {
      * This only returns passed data, along with the errors.
      *
      * @param integer $rows number of rows to preview.
-     * @param object $tracker the output tracker to use.
+     * @param tool_uploadcourse_tracker $tracker the output tracker to use.
      * @return array of preview data.
      */
     public function preview($rows = 10, $tracker = null) {

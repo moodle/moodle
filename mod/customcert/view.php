@@ -149,7 +149,7 @@ if (!$downloadown && !$downloadissue) {
     if ($canreceive) {
         $linkname = get_string('getcustomcert', 'customcert');
         $link = new moodle_url('/mod/customcert/view.php', ['id' => $cm->id, 'downloadown' => true]);
-        $downloadbutton = new single_button($link, $linkname, 'get', true);
+        $downloadbutton = new single_button($link, $linkname, 'get', single_button::BUTTON_PRIMARY);
         $downloadbutton->class .= ' m-b-1';  // Seems a bit hackish, ahem.
         $downloadbutton = $OUTPUT->render($downloadbutton);
     }
@@ -166,7 +166,7 @@ if (!$downloadown && !$downloadissue) {
                 'sesskey' => sesskey(),
             ]
         );
-        $downloadallbutton = new single_button($link, $linkname, 'get');
+        $downloadallbutton = new single_button($link, $linkname, 'get', single_button::BUTTON_SECONDARY);
         $downloadallbutton->class .= ' m-b-1';  // Seems a bit hackish, ahem.
         $downloadallbutton = $OUTPUT->render($downloadallbutton);
     }

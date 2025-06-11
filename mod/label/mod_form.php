@@ -37,6 +37,17 @@ class mod_label_mod_form extends moodleform_mod {
         $mform = $this->_form;
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
+
+        // Add element for name.
+        $mform->addElement('text', 'name', get_string('labelname', 'label'), ['size' => '64', 'maxlength' => 255]);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEANHTML);
+        }
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('name', 'labelname', 'label');
+
         $this->standard_intro_elements(get_string('labeltext', 'label'));
 
         // Label does not add "Show description" checkbox meaning that 'intro' is always shown on the course page.
@@ -49,6 +60,24 @@ class mod_label_mod_form extends moodleform_mod {
 // buttons
         $this->add_action_buttons(true, false, null);
 
+    }
+
+    /**
+     * Override validation in order to make name field non-required.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        // Name field should not be required.
+        if (array_key_exists('name', $errors)) {
+            if ($errors['name'] === get_string('required')) {
+                unset($errors['name']);
+            }
+        }
+        return $errors;
     }
 
 }

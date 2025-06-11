@@ -29,12 +29,11 @@ namespace local_o365\task;
 use auth_plugin_oidc;
 use core\task\scheduled_task;
 use core_text;
-use Exception;
 use local_o365\httpclient;
 use local_o365\oauth2\clientdata;
-use local_o365\rest\azuread;
 use local_o365\rest\unified;
 use local_o365\utils;
+use moodle_exception;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -52,7 +51,7 @@ class processmatchqueue extends scheduled_task {
      *
      * @return string
      */
-    public function get_name() : string {
+    public function get_name(): string {
         return get_string('task_processmatchqueue', 'local_o365');
     }
 
@@ -66,7 +65,7 @@ class processmatchqueue extends scheduled_task {
 
         $clientdata = clientdata::instance_from_oidc();
         $httpclient = new httpclient();
-        $token = utils::get_app_or_system_token($tokenresource, $clientdata, $httpclient, false, false);
+        $token = utils::get_application_token($tokenresource, $clientdata, $httpclient, false, false);
         if (empty($token)) {
             mtrace('No token available for system user. Please run local_o365 health check.');
             return false;
@@ -80,7 +79,7 @@ class processmatchqueue extends scheduled_task {
     /**
      * Do the job.
      */
-    public function execute() : bool {
+    public function execute(): bool {
         global $DB;
 
         if (utils::is_connected() !== true) {
@@ -98,9 +97,9 @@ class processmatchqueue extends scheduled_task {
                   FROM {local_o365_matchqueue} mq
              LEFT JOIN {user} u ON mq.musername = u.username
              LEFT JOIN {local_o365_connections} muserconn ON muserconn.muserid = u.id
-             LEFT JOIN {local_o365_connections} officeconn ON officeconn.aadupn = mq.o365username
+             LEFT JOIN {local_o365_connections} officeconn ON officeconn.entraidupn = mq.o365username
              LEFT JOIN {local_o365_objects} officeobj ON officeobj.moodleid = u.id AND officeobj.o365name = mq.o365username
-             LEFT JOIN {auth_oidc_token} oidctok ON oidctok.oidcusername = mq.o365username
+             LEFT JOIN {auth_oidc_token} oidctok ON oidctok.useridentifier = mq.o365username
                  WHERE mq.completed = ? AND mq.errormessage = ?
               ORDER BY mq.id ASC';
         $params = ['0', ''];
@@ -179,7 +178,7 @@ class processmatchqueue extends scheduled_task {
                 try {
                     $o365user = $apiclient->get_user_by_upn($matchrec->o365username);
                     $userfound = true;
-                } catch (Exception $e) {
+                } catch (moodle_exception $e) {
                     $o365user = [];
                     $userfound = false;
                 }
@@ -198,7 +197,7 @@ class processmatchqueue extends scheduled_task {
                     // Match validated.
                     $connectionrec = new stdClass;
                     $connectionrec->muserid = $matchrec->muserid;
-                    $connectionrec->aadupn = core_text::strtolower($o365user['userPrincipalName']);
+                    $connectionrec->entraidupn = core_text::strtolower($o365user['userPrincipalName']);
                     $connectionrec->uselogin = 0;
                     $DB->insert_record('local_o365_connections', $connectionrec);
                 } else {
@@ -239,7 +238,7 @@ class processmatchqueue extends scheduled_task {
                 mtrace('Match record created for userid #' . $matchrec->muserid . ' and o365 user ' .
                     core_text::strtolower($o365user['userPrincipalName']));
 
-            } catch (Exception $e) {
+            } catch (moodle_exception $e) {
                 $exceptionstring = $e->getMessage().': '.$e->debuginfo;
                 $updatedrec = new stdClass;
                 $updatedrec->id = $matchrec->id;

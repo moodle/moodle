@@ -1,5 +1,5 @@
 @report @javascript @report_lpmonitoring
-Feature: Display learning plan ratings details
+Feature: Display learning plan report course module details
   As a learning plan appreciator
   In order to rate competencies on learning plan
   I need to view course modules competencies ratings
@@ -36,13 +36,13 @@ Feature: Display learning plan ratings details
     And I click on "//div[contains(@class, 'checkbox')]/label[contains(., 'not qualified')]" "xpath_element"
     And I click on "//label[contains(., 'Rating in activity')]" "xpath_element"
     And I click on "//label[contains(., 'Sort in ascending order')]" "xpath_element"
-    And I set the field with xpath "(//input[contains(@id, 'form_autocomplete_input')])" to "e"
+    And I open the autocomplete suggestions list
     Then I should see "(3) rating" item in the autocomplete list
     And I should see "Pablo Menendez" item in the autocomplete list
     And I should see "(6) rating" item in the autocomplete list
     And I should see "Rebecca Armenta" item in the autocomplete list
     And I click on "//label[contains(., 'Sort in descending order')]" "xpath_element"
-    And I set the field with xpath "(//input[contains(@id, 'form_autocomplete_input')])" to "e"
+    And I open the autocomplete suggestions list
     And I should see "(6) rating" item in the autocomplete list
     And I should see "Rebecca Armenta" item in the autocomplete list
     And I should see "(3) rating" item in the autocomplete list
@@ -51,7 +51,7 @@ Feature: Display learning plan ratings details
     And I should see "Rebecca Armenta" in the ".currentplan" "css_element"
     And I should see "Pablo Menendez" in the ".nexplan" "css_element"
     And I click on "//label[contains(., 'Sort in ascending order')]" "xpath_element"
-    And I set the field with xpath "(//input[contains(@id, 'form_autocomplete_input')])" to "e"
+    And I open the autocomplete suggestions list
     And I press "Apply"
     And I should see "Pablo Menendez" in the ".currentplan" "css_element"
     And I should see "Rebecca Armenta" in the ".nexplan" "css_element"

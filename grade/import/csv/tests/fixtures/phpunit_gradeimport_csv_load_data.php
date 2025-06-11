@@ -27,10 +27,11 @@ class phpunit_gradeimport_csv_load_data extends gradeimport_csv_load_data {
      *
      * @param object $record
      * @param int $studentid
+     * @param grade_item $gradeitem
      */
-    public function test_insert_grade_record($record, $studentid) {
+    public function test_insert_grade_record($record, $studentid, grade_item $gradeitem) {
         $this->importcode = 00001;
-        $this->insert_grade_record($record, $studentid);
+        $this->insert_grade_record($record, $studentid, $gradeitem);
     }
 
     /**

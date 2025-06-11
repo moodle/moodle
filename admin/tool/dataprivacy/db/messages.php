@@ -45,6 +45,7 @@ $messageproviders = [
     // Notify Data Protection Officer about exceptions.
     'notifyexceptions' => [
         'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
         'capability'  => 'tool/dataprivacy:managedatarequests'

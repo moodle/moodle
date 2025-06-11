@@ -45,6 +45,11 @@ function tool_crawler_crawl($verbose = false) {
     $robot = new crawler();
     $url = new url();
     $config = $robot::get_config();
+
+    if ($config->debugging) {
+        $verbose = $config->debugging;
+    }
+
     $crawlstart = $config->crawlstart;
     $crawlend   = $config->crawlend;
 

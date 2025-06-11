@@ -65,16 +65,6 @@ class user_report_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $url = 'report/completion/user.php?id=' . $this->relateduserid . '&course=' . $this->courseid;
-        return array($this->courseid, 'course', 'report completion', $url, $this->courseid);
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url

@@ -102,7 +102,7 @@ class lsuxe_helpers {
             $wheres = '';
         }
 
-        // LSU UES Specific enrollemnt / unenrollment data.
+        // LSU WDS Specific enrollemnt / unenrollment data.
         $lsql = 'SELECT CONCAT(c.id, "_", g.id, "_", u.id, "_", stu.status) AS "xeid",
                 u.id AS "userid",
                 c.id AS "sourcecourseid",
@@ -131,16 +131,17 @@ class lsuxe_helpers {
             FROM {course} c
                 INNER JOIN {block_lsuxe_mappings} xemm ON xemm.courseid = c.id
                 INNER JOIN {block_lsuxe_moodles} xem ON xem.id = xemm.destmoodleid
-                INNER JOIN {enrol_ues_sections} sec ON sec.idnumber = c.idnumber
-                INNER JOIN {enrol_ues_courses} cou ON cou.id = sec.courseid
-                INNER JOIN {enrol_ues_students} stu ON stu.sectionid = sec.id
-                INNER JOIN {user} u ON u.id = stu.userid
+                INNER JOIN {enrol_wds_sections} sec ON sec.idnumber = c.idnumber
+                INNER JOIN {enrol_wds_courses} cou ON cou.course_listing_id = sec.course_listing_id
+                INNER JOIN {enrol_wds_student_enroll} stu ON stu.section_listing_id = sec.section_listing_id
+                INNER JOIN {enrol_wds_students} wdsu ON wdsu.universal_id = stu.universal_id
+                INNER JOIN {user} u ON u.id = wdsu.userid
                 INNER JOIN {enrol} e ON e.courseid = c.id
-                    AND e.enrol = "ues"
+                    AND e.enrol = "workdaystudent"
                 INNER JOIN {groups} g ON g.courseid = c.id
                     AND g.id = xemm.groupid
                     AND g.name = xemm.groupname
-                    AND g.name = CONCAT(cou.department, " ", cou.cou_number, " ", sec.sec_number)
+                    AND g.name = CONCAT(sec.course_subject_abbreviation, " ", cou.course_number, " ", sec.section_number)
                 LEFT JOIN {groups_members} gm ON gm.groupid = g.id AND u.id = gm.userid
             WHERE sec.idnumber IS NOT NULL
                 AND sec.idnumber <> ""
@@ -182,16 +183,17 @@ class lsuxe_helpers {
             FROM {course} c
                 INNER JOIN {block_lsuxe_mappings} xemm ON xemm.courseid = c.id
                 INNER JOIN {block_lsuxe_moodles} xem ON xem.id = xemm.destmoodleid
-                INNER JOIN {enrol_ues_sections} sec ON sec.idnumber = c.idnumber
-                INNER JOIN {enrol_ues_courses} cou ON cou.id = sec.courseid
-                INNER JOIN {enrol_ues_teachers} stu ON stu.sectionid = sec.id
-                INNER JOIN {user} u ON u.id = stu.userid
+                INNER JOIN {enrol_wds_sections} sec ON sec.idnumber = c.idnumber
+                INNER JOIN {enrol_wds_courses} cou ON cou.course_listing_id = sec.course_listing_id
+                INNER JOIN {enrol_wds_teacher_enroll} stu ON stu.section_listing_id = sec.section_listing_id
+                INNER JOIN {enrol_wds_teachers} wdsu ON wdsu.universal_id = stu.universal_id
+                INNER JOIN {user} u ON u.id = wdsu.userid
                 INNER JOIN {enrol} e ON e.courseid = c.id
-                    AND e.enrol = "ues"
+                    AND e.enrol = "workdaystudent"
                 INNER JOIN {groups} g ON g.courseid = c.id
                     AND g.id = xemm.groupid
                     AND g.name = xemm.groupname
-                    AND g.name = CONCAT(cou.department, " ", cou.cou_number, " ", sec.sec_number)
+                    AND g.name = CONCAT(sec.course_subject_abbreviation, " ", cou.course_number, " ", sec.section_number)
                 LEFT JOIN {groups_members} gm ON gm.groupid = g.id AND u.id = gm.userid
             WHERE sec.idnumber IS NOT NULL
                 AND sec.idnumber <> ""
@@ -253,10 +255,10 @@ class lsuxe_helpers {
                 ' . $interval . $wheres;
 
         // Check to see if we're forcing Moodle enrollment.
-        $ues = isset($CFG->xeforceenroll) == 0 ? true : false;
+        $wds = isset($CFG->xeforceenroll) == 0 ? true : false;
 
-        // Based on the config and if we're using ues, use the appropriate SQL.
-        $sql = $ues && self::is_ues() ? $lsql : $gsql;
+        // Based on the config and if we're using WDS, use the appropriate SQL.
+        $sql = $wds && self::is_wds() ? $lsql : $gsql;
 
         // Get the enrollment / unenrollment data.
         $enrolls = $DB->get_records_sql($sql);
@@ -266,31 +268,31 @@ class lsuxe_helpers {
     }
 
     /**
-     * Function to count records in the UES section table.
+     * Function to count records in the WDS section table.
      * This will determine if we're using LSU's enrollment method.
      *
      * @return @bool
      */
-    public static function is_ues() {
+    public static function is_wds() {
         global $DB;
 
         // Instantiate the DB manager.
         $dbman = $DB->get_manager();
 
-        // Set the UES table name.
-        $uestable = 'enrol_ues_sections';
+        // Set the WDS table name.
+        $wdstable = 'enrol_wds_sections';
 
-        // Check to see if UES is installed.
-        $uesinstalled = $dbman->table_exists($uestable);
+        // Check to see if WDS is installed.
+        $wdsinstalled = $dbman->table_exists($wdstable);
 
-        // Get a count of records in the UES sections table.
-        $uescount = $uesinstalled ? $DB->count_records($uestable) : 0;
+        // Get a count of records in the WDS sections table.
+        $wdscount = $wdsinstalled ? $DB->count_records($wdstable) : 0;
 
-        // Determines if we're using UES or not.
-        $isues = $uescount > 0 ? true : false;
+        // Determines if we're using WDS or not.
+        $iswds = $wdscount > 0 ? true : false;
 
         // Return the appropriate value.
-        return $isues;
+        return $iswds;
     }
 
     /**

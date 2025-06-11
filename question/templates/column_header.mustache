@@ -20,7 +20,7 @@
     Displays the <th> header cell for a column in the question bank.
 
     Context variables required for this template:
-        * extraclasses: CSS classes to add to the th. E.g. "questionstatus pr-3".
+        * extraclasses: CSS classes to add to the th. E.g. "questionstatus pe-3".
         * help: (optional, may be omitted) help icon. The structure here needs to be as from help_icon::export_for_template().
 
         Other fields vary, depending on whether the column is sortable.
@@ -33,7 +33,7 @@
 
         Sortable column, with a single type of sort (e.g. question type)
             * sortable: true
-            * sortlinks: HTML of the title, in a link to sort by this. E.g. "<a href=\"http:\/\/localhost\/moodle_head\/question\/edit.php?courseid=100000&amp;qbs1=-qbank_viewquestiontype%5Cquestion_type_column&amp;qbs2=qbank_viewquestionname%5Cquestion_name_idnumber_tags_column-name\" title=\"Sort by Question type descending\">\n    T<i class=\"icon fa fa-sort-asc fa-fw iconsort\"  title=\"Ascending\" role=\"img\" aria-label=\"Ascending\"><\/i>\n<\/a>"
+            * sortlinks: HTML of the title, in a link to sort by this. E.g. "<a href=\"http:\/\/localhost\/moodle_head\/question\/edit.php?courseid=100000&amp;qbs1=-qbank_viewquestiontype%5Cquestion_type_column&amp;qbs2=qbank_viewquestionname%5Cquestion_name_idnumber_tags_column-name\" title=\"Sort by Question type descending\">\n    T<i class=\"icon fa fa-sort-asc fa-fw\"  title=\"Ascending\" role=\"img\" aria-label=\"Ascending\"><\/i>\n<\/a>"
 
         Sortable column, with an overall title, and multiple sort types (e.g. question name/idnumber)
             * sortable: true
@@ -43,31 +43,42 @@
     Example context (json):
     {
         "sortable": false,
-        "extraclasses": "checkbox pr-3",
-        "tiptitle": "<input id=\"qbheadercheckbox\" name=\"qbheadercheckbox\" type=\"checkbox\"  value=\"1\"\n       data-action=\"toggle\"\n       data-toggle=\"master\"\n       data-togglegroup=\"qbank\"\n       data-toggle-selectall=\"Select all\"\n       data-toggle-deselectall=\"Deselect all\"\n       \n\/>\n    <label for=\"qbheadercheckbox\" class=\"accesshide\">Select all<\/label>",
+        "extraclasses": "checkbox pe-1",
+        "tiptitle": "<input id=\"qbheadercheckbox\" name=\"qbheadercheckbox\" type=\"checkbox\"  value=\"1\" data-action=\"toggle\" data-toggle=\"master\" data-togglegroup=\"qbank\" data-toggle-selectall=\"Select all\" data-toggle-deselectall=\"Deselect all\"><label for=\"qbheadercheckbox\" class=\"accesshide\">Select all<\/label>",
         "sorttip": true,
-        "tip": "Select questions for bulk actions"
+        "tip": "Select questions for bulk actions",
+        "class": "plugin_class",
+        "name": "plugin_name"
     }
 }}
-<th class="header {{extraclasses}}" scope="col">
-    {{#title}}
-        <div class="title">{{title}}</div>
-    {{/title}}
-    {{^sortable}}
-        {{^sorttip}}
-            {{tiptitle}}
-        {{/sorttip}}
-        {{#sorttip}}
-            <span title="{{tip}}">{{{tiptitle}}}</span>
-        {{/sorttip}}
-    {{/sortable}}
+<th class="header align-top {{extraclasses}}"
+    scope="col"
+    data-pluginname="{{class}}"
+    data-name="{{name}}"
+    data-columnid="{{columnid}}"
+    {{#width}}style="width: {{width}};"{{/width}}>
+    <div class="header-container">
+        <div class="header-text">
+        {{#title}}
+            <div class="title me-1">{{title}}</div>
+        {{/title}}
+        {{^sortable}}
+            {{^sorttip}}
+                <span class="me-1">{{tiptitle}}</span>
+            {{/sorttip}}
+            {{#sorttip}}
+                <span class="me-1" title="{{tip}}">{{{tiptitle}}}</span>
+            {{/sorttip}}
+        {{/sortable}}
+        {{#help}}
+            {{>core/help_icon}}
+        {{/help}}
+        {{#actionmenu}}{{>core/action_menu}}{{/actionmenu}}
+        </div>
+    </div>
     {{#sortable}}
         <div class="sorters">
             {{{sortlinks}}}
         </div>
     {{/sortable}}
-    {{#help}}
-        {{>core/help_icon}}
-    {{/help}}
 </th>
-

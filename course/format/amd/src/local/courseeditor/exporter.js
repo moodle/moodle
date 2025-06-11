@@ -14,6 +14,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A configuration to provide to the modal.
+ *
+ * @typedef {Object} courseItem
+ *
+ * @property {String} type The type of element (section, cm).
+ * @property {Number} id Element ID.
+ * @property {String} url Element URL.
+ */
+
+/**
  * Module to export parts of the state and transform them to be used in templates
  * and as draggable data.
  *
@@ -51,7 +61,7 @@ export default class {
             editmode: this.reactive.isEditing,
             highlighted: state.course.highlighted ?? '',
         };
-        const sectionlist = state.course.sectionlist ?? [];
+        const sectionlist = this.listedSectionIds(state);
         sectionlist.forEach(sectionid => {
             const sectioninfo = state.section.get(sectionid) ?? {};
             const section = this.section(state, sectioninfo);
@@ -60,6 +70,20 @@ export default class {
         data.hassections = (data.sections.length != 0);
 
         return data;
+    }
+
+    /**
+     * Get the IDs of the sections that are listed as regular sections.
+     * @param {Object} state the current state.
+     * @returns {Number[]} the list of section ids that are listed.
+     */
+    listedSectionIds(state) {
+        const fullSectionList = state.course.sectionlist ?? [];
+        return fullSectionList.filter(sectionid => {
+            const sectioninfo = state.section.get(sectionid) ?? {};
+            // Delegated sections (controlled by a component) are not listed in course.
+            return sectioninfo.component === null;
+        });
     }
 
     /**
@@ -97,7 +121,12 @@ export default class {
         const cm = {
             ...cminfo,
             isactive: false,
+            sectioninfo: false, // Init to false to prevent mustache recursion loops.
         };
+        if (cminfo.hasdelegatedsection) {
+            const sectioninfo = state.section.get(cminfo.delegatesectionid);
+            cm.sectioninfo = this.section(state, sectioninfo);
+        }
         return cm;
     }
 
@@ -130,6 +159,7 @@ export default class {
             id: cminfo.id,
             name: cminfo.name,
             sectionid: cminfo.sectionid,
+            hasdelegatedsection: cminfo.hasdelegatedsection,
             nextcmid,
         };
     }
@@ -158,7 +188,30 @@ export default class {
     }
 
     /**
-     * Generate a compoetion export data from the cm element.
+     * Generate a file draggable structure.
+     *
+     * This method is used when files are dragged on the browser.
+     *
+     * @param {*} state the state object
+     * @param {*} dataTransfer the current data tranfer data
+     * @returns {Object|null}
+     */
+    fileDraggableData(state, dataTransfer) {
+        const files = [];
+        // Browsers do not provide the file list until the drop event.
+        if (dataTransfer.files?.length > 0) {
+            dataTransfer.files.forEach(file => {
+                files.push(file);
+            });
+        }
+        return {
+            type: 'files',
+            files,
+        };
+    }
+
+    /**
+     * Generate a completion export data from the cm element.
      *
      * @param {Object} state the current state.
      * @param {Object} cminfo the course module state data.
@@ -172,7 +225,10 @@ export default class {
         if (cminfo.completionstate !== undefined) {
             data.state = cminfo.completionstate;
             data.hasstate = true;
-            const statename = this.COMPLETIONS[cminfo.completionstate] ?? 'NaN';
+            let statename = this.COMPLETIONS[cminfo.completionstate] ?? 'NaN';
+            if (cminfo.isoverallcomplete !== undefined && cminfo.isoverallcomplete === true) {
+                statename = 'complete';
+            }
             data[`is${statename}`] = true;
         }
         return data;
@@ -182,7 +238,7 @@ export default class {
      * Return a sorted list of all sections and cms items in the state.
      *
      * @param {Object} state the current state.
-     * @returns {Array} all sections and cms items in the state.
+     * @returns {courseItem[]} all sections and cms items in the state.
      */
     allItemsArray(state) {
         const items = [];
@@ -190,14 +246,72 @@ export default class {
         // Add sections.
         sectionlist.forEach(sectionid => {
             const sectioninfo = state.section.get(sectionid);
-            items.push({type: 'section', id: sectioninfo.id, url: sectioninfo.sectionurl});
+            // Skip delegated sections because components are responsible for them.
+            if (sectioninfo.component !== null) {
+                return;
+            }
+
+            items.push({
+                type: 'section',
+                id: sectioninfo.id,
+                url: sectioninfo.sectionurl
+            });
             // Add cms.
             const cmlist = sectioninfo.cmlist ?? [];
             cmlist.forEach(cmid => {
-                const cminfo = state.cm.get(cmid);
-                items.push({type: 'cm', id: cminfo.id, url: cminfo.url});
+                const cmInfo = state.cm.get(cmid);
+                items.push(...this.cmItemsArray(state, cmInfo));
             });
         });
         return items;
+    }
+
+    /**
+     * Return a list of all items associated with an activity.
+     *
+     * @private
+     * @param {Object} state the full current state.
+     * @param {Object} cmInfo the course module state data.
+     * @return {courseItem[]} the items array associated with that cm.
+     */
+    cmItemsArray(state, cmInfo) {
+        // Activities with delegated sections are exported as sections.
+        if (cmInfo.hasdelegatedsection) {
+            const items = [];
+            const delegatedsection = state.section.get(cmInfo.delegatesectionid);
+            items.push({
+                type: 'section',
+                id: delegatedsection.id,
+                url: delegatedsection.sectionurl
+            });
+            const delegatedCmlist = delegatedsection.cmlist ?? [];
+            delegatedCmlist.forEach(cmid => {
+                const cmInfo = state.cm.get(cmid);
+                items.push({
+                    type: 'cm',
+                    id: cmInfo.id,
+                    url: cmInfo.url
+                });
+            });
+            return items;
+        }
+
+        return [
+            {type: 'cm', id: cmInfo.id, url: cmInfo.url},
+        ];
+    }
+
+    /**
+     * Check is some activities of a list can be stealth.
+     *
+     * @param {Object} state the current state.
+     * @param {Number[]} cmIds the module ids to check
+     * @returns {Boolean} if any of the activities can be stealth.
+     */
+    canUseStealth(state, cmIds) {
+        return cmIds.some(cmId => {
+            const cminfo = state.cm.get(cmId);
+            return cminfo?.allowstealth ?? false;
+        });
     }
 }

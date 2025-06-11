@@ -1,0 +1,112 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_aiplacement/imagecontrol
+
+    Modal to manage AI generated image content within the Tiny Editor.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * elementid: The id of the element that will be used to create the modal.
+
+    Example context (json):
+    {
+        "elementid": "exampleId"
+    }
+}}
+<div class="tiny-aiplacement-image-options">
+    <div class="form-group">
+        <label for="{{elementid}}_tiny_aiplacement_imageprompt" class="font-weight-bold">
+            {{#str}} imageprompt_label, tiny_aiplacement {{/str}}
+        </label>
+        <textarea
+                class="form-control"
+                id="{{elementid}}_tiny_aiplacement_imageprompt"
+                rows="3"
+                placeholder="{{#str}} imageprompt_placeholder, tiny_aiplacement {{/str}}"
+        ></textarea>
+    </div>
+    <span class="font-weight-bold">
+        {{#str}} imagequality, tiny_aiplacement{{/str}}
+    </span>
+    <div class="tiny-aiplacement-toggle-container mt-1 mb-1">
+        <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+            <label class="btn btn-outline-secondary active">
+                <input
+                        type="radio"
+                        class="btn-check"
+                        name="quality"
+                        value="standard"
+                        checked
+                >
+                {{#str}} definitionstandard, tiny_aiplacement{{/str}}
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input
+                        type="radio"
+                        class="btn-check"
+                        name="quality"
+                        value="hd"
+                >
+                {{#str}} definitionhigh, tiny_aiplacement{{/str}}
+            </label>
+        </div>
+    </div>
+    <span class="font-weight-bold">
+        {{#str}} aspectratio, tiny_aiplacement{{/str}}
+    </span>
+    <div class="tiny-aiplacement-aspect-ratio-container mt-1 mb-1">
+        <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+            <label class="btn btn-outline-secondary active">
+                <input
+                        type="radio"
+                        class="btn-check"
+                        name="aspect-ratio"
+                        value="square"
+                        checked
+                >
+                <span class="d-block"><i class="fas fa-square"></i></span>
+                {{#str}} aspectsquare, tiny_aiplacement{{/str}}
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input
+                        type="radio"
+                        class="btn-check"
+                        name="aspect-ratio"
+                        value="landscape"
+                >
+                <span class="d-block"><i class="fas fa-mobile fa-rotate-90"></i></span>
+                {{#str}} aspectlandscape, tiny_aiplacement{{/str}}
+            </label>
+            <label class="btn btn-outline-secondary">
+                <input
+                        type="radio"
+                        class="btn-check"
+                        name="aspect-ratio"
+                        value="portrait"
+                >
+                <span class="d-block"><i class="fas fa-mobile"></i></span>
+                {{#str}} aspectportrait, tiny_aiplacement{{/str}}
+            </label>
+        </div>
+    </div>
+</div>

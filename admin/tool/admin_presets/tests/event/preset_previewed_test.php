@@ -25,12 +25,12 @@ namespace tool_admin_presets\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \tool_admin_presets\event\preset_previewed
  */
-class preset_previewed_test extends \advanced_testcase {
+final class preset_previewed_test extends \advanced_testcase {
 
     /**
      * Test preset_previewed event.
      */
-    public function test_preset_previewed_event() {
+    public function test_preset_previewed_event(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

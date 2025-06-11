@@ -40,7 +40,7 @@ abstract class webservice_test_client_base_form extends moodleform {
     /**
      * Definition of the parameters used by this WS function
      */
-    protected abstract function test_client_definition();
+    abstract protected function test_client_definition();
 
     /**
      * The form definition.

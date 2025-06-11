@@ -183,11 +183,11 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
         }
 
         $subfraction = '';
-        if ($options->marks >= question_display_options::MARK_AND_MAX && $subq->maxmark > 0
+        if ($options->marks >= question_display_options::MARK_AND_MAX && $subq->defaultmark > 0
                 && (!is_null($fraction) || $feedback)) {
             $a = new stdClass();
-            $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
-            $a->max = format_float($subq->maxmark, $options->markdp);
+            $a->mark = format_float($fraction * $subq->defaultmark, $options->markdp);
+            $a->max = format_float($subq->defaultmark, $options->markdp);
             $feedback[] = get_string('markoutofmax', 'question', $a);
         }
 
@@ -309,7 +309,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
             'value' => $response,
             'id' => $qa->get_qt_field_name($fieldname),
             'size' => $size,
-            'class' => 'form-control mb-1',
+            'class' => 'form-control d-inline mb-1',
         );
         if ($options->readonly) {
             $inputattributes['readonly'] = 'readonly';
@@ -332,7 +332,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
                         $qa, 'question', 'answerfeedback', $matchinganswer->id),
                 s($correctanswer->answer), $options);
 
-        $output = html_writer::start_tag('span', array('class' => 'subquestion form-inline d-inline'));
+        $output = html_writer::start_tag('span', ['class' => 'subquestion']);
 
         $output .= html_writer::tag('label', $this->get_answer_label(),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
@@ -486,10 +486,10 @@ class qtype_multianswer_multichoice_vertical_renderer extends qtype_multianswer_
 
         $feedback = array();
         if ($options->feedback && $options->marks >= question_display_options::MARK_AND_MAX &&
-                $subq->maxmark > 0) {
+                $subq->defaultmark > 0) {
             $a = new stdClass();
-            $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
-            $a->max = format_float($subq->maxmark, $options->markdp);
+            $a->mark = format_float($fraction * $subq->defaultmark, $options->markdp);
+            $a->max = format_float($subq->defaultmark, $options->markdp);
 
             $feedback[] = html_writer::tag('div', get_string('markoutofmax', 'question', $a));
         }
@@ -616,6 +616,7 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
         $inputattributes = array(
             'type' => 'checkbox',
             'value' => 1,
+            'class' => 'form-check-input',
         );
         if ($options->readonly) {
             $inputattributes['disabled'] = 'disabled';
@@ -648,7 +649,7 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
                 unset($inputattributes['checked']);
             }
 
-            $class = 'r' . ($value % 2);
+            $class = 'form-check text-wrap text-break';
             if ($options->correctness && $isselected) {
                 $thisfrac = ($ans->fraction > 0) ? $answerfraction : 0;
                 $feedbackimg = $this->feedback_image($thisfrac);
@@ -661,7 +662,7 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
             $result .= html_writer::empty_tag('input', $inputattributes);
             $result .= html_writer::tag('label', $subq->format_text($ans->answer,
                                                                     $ans->answerformat, $qa, 'question', 'answer', $ansid),
-                                        array('for' => $inputattributes['id']));
+                                        ['for' => $inputattributes['id'], 'class' => 'form-check-label text-body']);
             $result .= $feedbackimg;
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
@@ -678,10 +679,10 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
 
         $feedback = array();
         if ($options->feedback && $options->marks >= question_display_options::MARK_AND_MAX &&
-            $subq->maxmark > 0) {
+            $subq->defaultmark > 0) {
             $a = new stdClass();
-            $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
-            $a->max = format_float($subq->maxmark, $options->markdp);
+            $a->mark = format_float($fraction * $subq->defaultmark, $options->markdp);
+            $a->max = format_float($subq->defaultmark, $options->markdp);
 
             $feedback[] = html_writer::tag('div', get_string('markoutofmax', 'question', $a));
         }
@@ -741,7 +742,7 @@ class qtype_multianswer_multiresponse_horizontal_renderer
     extends qtype_multianswer_multiresponse_vertical_renderer {
 
     protected function choice_wrapper_start($class) {
-        return html_writer::start_tag('td', array('class' => $class));
+        return html_writer::start_tag('td', ['class' => $class . ' form-check-inline']);
     }
 
     protected function choice_wrapper_end() {

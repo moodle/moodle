@@ -24,6 +24,9 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'OpenID Connect';
 $string['auth_oidcdescription'] = 'OpenID Connectプラグインは、設定可能なアイデンティティプロバイダを使用してシングルサインオン機能を提供します。';
 $string['cfg_authendpoint_key'] = '認証エンドポイント';
@@ -125,3 +128,6 @@ $string['ucp_status_disabled'] = '無効';
 $string['ucp_disconnect_title'] = '{$a} 接続解除';
 $string['ucp_disconnect_details'] = 'Moodleアカウントを {$a} から接続解除します。Moodleにログインするには、ユーザ名とパスワードを作成する必要があります。';
 $string['ucp_title'] = '{$a} 管理';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

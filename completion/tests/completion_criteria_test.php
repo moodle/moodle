@@ -24,18 +24,20 @@ namespace core_completion;
  * @copyright 2021 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class completion_criteria_test extends \advanced_testcase {
+final class completion_criteria_test extends \advanced_testcase {
 
     /**
      * Test setup.
      */
     public function setUp(): void {
         global $CFG;
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_course.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_activity.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_duration.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_grade.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
+        parent::setUp();
 
         $this->setAdminUser();
         $this->resetAfterTest();
@@ -109,6 +111,41 @@ class completion_criteria_test extends \advanced_testcase {
         $task->execute();
 
         // The course for User is supposed to be marked as completed at $timestarted + $durationperiod.
+        $ccompletion = new \completion_completion(['userid' => $user->id, 'course' => $course->id]);
+        $this->assertEquals($timestarted + $durationperiod, $ccompletion->timecompleted);
+        $this->assertTrue($ccompletion->is_complete());
+
+        // Now we want to check the scenario where "now" sits in the middle of the timestart + duration
+        // and timecreated + duration window.
+        $nowtime = time();
+        $timestarted = $nowtime - $durationperiod + (2 * DAYSECS);
+        $timecreated = $nowtime - $durationperiod - (2 * DAYSECS);
+
+        // Using a new user for this.
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student', null, 'manual', $timestarted);
+
+        // We need to manually update the enrollment's time created.
+        $DB->set_field('user_enrolments', 'timecreated', $timecreated, ['userid' => $user->id]);
+
+        // Run the completion cron. See MDL-33320.
+        $task->execute();
+        sleep(1);
+        $task->execute();
+
+        // We do NOT expect the user to be complete currently.
+        $ccompletion = new \completion_completion(['userid' => $user->id, 'course' => $course->id]);
+        $this->assertFalse($ccompletion->is_complete());
+
+        // Now, finally, we will move the timestart to be in the past, but still after the timecreated.
+        $timestarted = $timecreated + DAYSECS;
+        $DB->set_field('user_enrolments', 'timestart', $timestarted, ['userid' => $user->id]);
+
+        // Run the completion cron. See MDL-33320.
+        $task->execute();
+        sleep(1);
+        $task->execute();
+
+        // Now they should be complete.
         $ccompletion = new \completion_completion(['userid' => $user->id, 'course' => $course->id]);
         $this->assertEquals($timestarted + $durationperiod, $ccompletion->timecompleted);
         $this->assertTrue($ccompletion->is_complete());

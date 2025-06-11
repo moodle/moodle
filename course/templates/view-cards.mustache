@@ -17,7 +17,7 @@
 {{!
     @template core_course/view-cards
 
-    This template renders the carousel for the recentlyaccessedcourses & starredcourses blocks.
+    This template renders the carousel for the starredcourses block.
 
     Example context (json):
     {
@@ -36,8 +36,8 @@
 
 
 {{< core_course/coursecards }}
-    {{$classes}}one-row{{/classes}}
-    {{$coursename}} {{fullname}} {{/coursename}}
+    {{$classes}}flex-nowrap overflow-auto{{/classes}}
+    {{$coursename}} {{{fullname}}} {{/coursename}}
     {{$coursecategory}}
         {{#showcoursecategory}}
             <span class="sr-only">
@@ -48,7 +48,7 @@
     {{/coursecategory}}
     {{$divider}}
         {{#showcoursecategory}}
-            <div class="pl-1 pr-1">|</div>
+            <div class="px-1">|</div>
         {{/showcoursecategory}}
     {{/divider}}
 {{/ core_course/coursecards }}

@@ -32,7 +32,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use mod_h5pactivity\local\manager;
-use external_api;
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 /**
@@ -42,7 +42,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_attempts_test extends externallib_advanced_testcase {
+final class get_attempts_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_attempts.
@@ -154,7 +154,7 @@ class get_attempts_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function execute_data(): array {
+    public static function execute_data(): array {
         return [
             // Teacher checking a user with attempts.
             'Manual grade, Teacher asking participant with attempts' => [
@@ -458,7 +458,7 @@ class get_attempts_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function execute_multipleusers_data(): array {
+    public static function execute_multipleusers_data(): array {
         return [
             // Teacher checks.
             'Teacher checking students with attempts' => [

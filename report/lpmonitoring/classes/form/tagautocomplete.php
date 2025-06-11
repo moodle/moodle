@@ -47,7 +47,7 @@ class tagautocomplete extends MoodleQuickForm_tags {
      * @param array $options Options to control the element's display
      * @param mixed $attributes Either a typical HTML attribute string or an associative array.
      */
-    public function __construct($elementname = null, $elementlabel = null, $options = array(), $attributes = null) {
+    public function __construct($elementname = null, $elementlabel = null, $options = [], $attributes = null) {
         // The id MUST be unique or the javascript won't work correctly.
         // The element won't be shown the second time a modal is rendered.
         $attributes['id'] = str_replace('.', '', 'tags' . microtime(true));
@@ -60,7 +60,7 @@ class tagautocomplete extends MoodleQuickForm_tags {
      */
     protected function load_standard_tags() {
         if (!$this->is_tagging_enabled()) {
-            return array();
+            return [];
         }
 
         // The array must contain the tag as keys AND as values.

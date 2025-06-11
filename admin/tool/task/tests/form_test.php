@@ -23,12 +23,12 @@ namespace tool_task;
  * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class form_test extends \advanced_testcase {
+final class form_test extends \advanced_testcase {
 
     /**
      * Test validations for minute field.
      */
-    public function test_validate_fields_minute() {
+    public function test_validate_fields_minute(): void {
         $checker = new \tool_task\scheduled_checker_task();
         $checker->set_minute('*');
         $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
@@ -74,7 +74,7 @@ class form_test extends \advanced_testcase {
     /**
      * Test validations for minute hour.
      */
-    public function test_validate_fields_hour() {
+    public function test_validate_fields_hour(): void {
         $checker = new \tool_task\scheduled_checker_task();
         $checker->set_hour('*');
         $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
@@ -124,7 +124,7 @@ class form_test extends \advanced_testcase {
     /**
      * Test validations for day field.
      */
-    public function test_validate_fields_day() {
+    public function test_validate_fields_day(): void {
         $checker = new \tool_task\scheduled_checker_task();
         $checker->set_day('*');
         $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
@@ -175,7 +175,7 @@ class form_test extends \advanced_testcase {
     /**
      * Test validations for month field.
      */
-    public function test_validate_fields_month() {
+    public function test_validate_fields_month(): void {
         $checker = new \tool_task\scheduled_checker_task();
         $checker->set_month('*');
         $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
@@ -225,7 +225,7 @@ class form_test extends \advanced_testcase {
     /**
      * Test validations for dayofweek field.
      */
-    public function test_validate_fields_dayofweek() {
+    public function test_validate_fields_dayofweek(): void {
         $checker = new \tool_task\scheduled_checker_task();
         $checker->set_day_of_week('*');
         $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
@@ -236,6 +236,8 @@ class form_test extends \advanced_testcase {
         $checker->set_day_of_week('6');
         $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('7');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('8');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('20');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
@@ -247,7 +249,7 @@ class form_test extends \advanced_testcase {
         $checker->set_day_of_week('*/6');
         $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('*/7');
-        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('*/13');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('*/35');
@@ -271,6 +273,8 @@ class form_test extends \advanced_testcase {
         $checker->set_day_of_week('65-2');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('3-7');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('3-8');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
     }
 }

@@ -25,8 +25,6 @@ namespace core\plugininfo;
 
 use admin_settingpage;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for availability plugins.
  *
@@ -35,6 +33,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class availability extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public static function get_enabled_plugins() {
         global $DB;
 
@@ -80,6 +83,36 @@ class availability extends base {
     }
 
     /**
+     * Update the display mode for a specific plugin based on `$displaymode` parameter.
+     *
+     * @param string $pluginname The plugin name.
+     * @param bool $displaymode whether the eye icon of display mode is enabled or disabled.
+     * @return bool Returns true if the configuration has been changed, false otherwise.
+     */
+    public static function update_display_mode(string $pluginname, bool $displaymode): bool {
+        $haschanged = false;
+
+        $plugin = 'availability_' . $pluginname;
+        $oldvalue = get_config($plugin, 'defaultdisplaymode');
+        $disabled = !$displaymode;
+        // Only set value if there is no config setting or if the value is different from the previous one.
+        if ($oldvalue == false && $disabled) {
+            set_config('defaultdisplaymode', $disabled, $plugin);
+            $haschanged = true;
+        } else if ($oldvalue != false && !$disabled) {
+            unset_config('defaultdisplaymode', $plugin);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            add_to_config_log('defaultdisplaymode', $oldvalue, $disabled, $plugin);
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
+    /**
      * Defines if there should be a way to uninstall the plugin via the administration UI.
      *
      * @return bool
@@ -106,6 +139,7 @@ class availability extends base {
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php
         $availability = $this; // Also to be used inside settings.php.

@@ -191,6 +191,9 @@ if (!$PAGE->has_secondary_navigation()) {
 }
 
 // It is possible that the following fields have been provided in the URL.
+$userids = array_filter($userids, static function(int $userid) use ($course, $cm): bool {
+    return $cm->effectivegroupmode != SEPARATEGROUPS || groups_user_groups_visible($course, $userid, $cm);
+});
 $form->set_data(['useridsselected' => $userids, 'discussionids' => $discussionids, 'from' => $from, 'to' => $to]);
 
 $form->display();

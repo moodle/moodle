@@ -1,5 +1,5 @@
 @report @javascript @report_lpmonitoring @report_lpmonitoring_for_user
-Feature: Display learning plan ratings details
+Feature: Display learning plan user report
   As a student
   In order to display competencies ratings on learning plan
   I need to display rating by scale value and final rating

@@ -46,7 +46,7 @@ Feature: Remove a submission
       | Test assignment name  | student1  | I'm the student submission  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     When I follow "Remove submission"
     And I click on "Continue" "button"
@@ -74,7 +74,7 @@ Feature: Remove a submission
       | Test assignment name  | student1  | I'm the student submission  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     When I follow "Remove submission"
     And I click on "Continue" "button"
@@ -106,7 +106,7 @@ Feature: Remove a submission
     And I log out
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
     Then I should not see "I'm the student submission"
     And "Student 1" row "Status" column of "generaltable" table should contain "No submission"
     And I log out
@@ -132,7 +132,7 @@ Feature: Remove a submission
       | gradingduedate_enabled              | 0                               |
     And I am on the "Test assignment with time limit" Activity page logged in as admin
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Time limit' to 5 seconds.
     And I set the field "timelimit[enabled]" to "1"
     And I set the field "timelimit[number]" to "5"
@@ -147,7 +147,7 @@ Feature: Remove a submission
     Then I should see "Are you sure you want to remove your submission? Please note that this will not reset your time limit."
     And I press "Cancel"
     And I am on the "Test assignment with time limit" Activity page logged in as admin
-    And I click on "View all submissions" "link"
+    And I navigate to "Submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     And I follow "Remove submission"
     And I should see "Are you sure you want to remove the submission for Student 1? Please note that this will not reset the student's time limit. You can give more time by adding a time limit user override."

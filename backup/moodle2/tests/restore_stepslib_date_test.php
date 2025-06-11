@@ -16,6 +16,9 @@
 
 namespace core_backup;
 
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,13 +33,13 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @copyright  2017 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_stepslib_date_test extends \restore_date_testcase {
+final class restore_stepslib_date_test extends \restore_date_testcase {
 
     /**
      * Restoring a manual grade item does not result in the timecreated or
      * timemodified dates being changed.
      */
-    public function test_grade_item_date_restore() {
+    public function test_grade_item_date_restore(): void {
 
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
 
@@ -95,7 +98,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * The course section timemodified date does not get rolled forward
      * when the course is restored.
      */
-    public function test_course_section_date_restore() {
+    public function test_course_section_date_restore(): void {
         global $DB;
         // Create a course.
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
@@ -114,7 +117,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Test that the timecreated and timemodified dates are not rolled forward when restoring
      * badge data.
      */
-    public function test_badge_date_restore() {
+    public function test_badge_date_restore(): void {
         global $DB, $USER;
         // Create a course.
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
@@ -141,7 +144,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         $fordb->status = BADGE_STATUS_INACTIVE;
         $fordb->nextcron = time();
 
-        $this->badgeid = $DB->insert_record('badge', $fordb, true);
+        $DB->insert_record('badge', $fordb, true);
         // Do a backup and restore.
         $newcourseid = $this->backup_and_restore($course);
         $newcourse = get_course($newcourseid);
@@ -161,7 +164,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Test that course calendar events timemodified field is not rolled forward
      * when restoring the course.
      */
-    public function test_calendarevents_date_restore() {
+    public function test_calendarevents_date_restore(): void {
         global $USER, $DB;
         // Create course.
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
@@ -197,7 +200,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Testing that the timeenrolled, timestarted, and timecompleted fields are not rolled forward / back
      * when doing a course restore.
      */
-    public function test_course_completion_date_restore() {
+    public function test_course_completion_date_restore(): void {
         global $DB;
 
         // Create course with course completion enabled.
@@ -233,7 +236,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Testing that the grade grade date information is not changed in the gradebook when a course
      * restore is performed.
      */
-    public function test_grade_grade_date_restore() {
+    public function test_grade_grade_date_restore(): void {
         global $USER, $DB;
         // Testing the restore of an overridden grade.
         list($course, $assign) = $this->create_course_and_module('assign', []);
@@ -284,7 +287,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Checking that the user completion of an activity relating to the timemodified field does not change
      * when doing a course restore.
      */
-    public function test_usercompletion_date_restore() {
+    public function test_usercompletion_date_restore(): void {
         global $USER, $DB;
         // More completion...
         $course = $this->getDataGenerator()->create_course(['startdate' => time(), 'enablecompletion' => 1]);
@@ -317,9 +320,10 @@ class restore_stepslib_date_test extends \restore_date_testcase {
     /**
      * Checking that the user completion of an activity relating to the view field does not change
      * when doing a course restore.
-     * @covers ::backup_and_restore
+     * @covers \backup_userscompletion_structure_step
+     * @covers \restore_userscompletion_structure_step
      */
-    public function test_usercompletion_view_restore() {
+    public function test_usercompletion_view_restore(): void {
         global $DB;
         // More completion...
         $course = $this->getDataGenerator()->create_course(['startdate' => time(), 'enablecompletion' => 1]);
@@ -353,7 +357,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Ensuring that the timemodified field of the question attempt steps table does not change when
      * a course restore is done.
      */
-    public function test_question_attempt_steps_date_restore() {
+    public function test_question_attempt_steps_date_restore(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
@@ -379,7 +383,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
 
-        $quizobj = \quiz::create($quiz->id, $user1->id);
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
 
         // Start the attempt.
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -393,7 +397,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Process some responses from the student.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
 
         $prefix1 = $quba->get_field_prefix(1);
         $prefix2 = $quba->get_field_prefix(2);
@@ -404,7 +408,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
 
         $questionattemptstepdates = [];
@@ -419,7 +423,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
 
         // Get the quiz for this new restored course.
         $quizdata = $DB->get_record('quiz', ['course' => $newcourseid]);
-        $quizobj = \quiz::create($quizdata->id, $user1->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quizdata->id, $user1->id);
 
         $questionusage = $DB->get_record('question_usages', [
                 'component' => 'mod_quiz',

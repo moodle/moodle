@@ -135,7 +135,7 @@ Feature: Course category breadcrumbs navigation
     And I navigate to "Courses > Manage courses and categories" in site administration
     And I follow "Cat 1"
     And I navigate to "Permissions" in current page administration
-    When I select "Assign roles" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Assign roles"
     Then I should see "Courses" in the ".breadcrumb" "css_element"
     And I should see "Cat 1" in the ".breadcrumb" "css_element"
     And I should see "Assign roles" in the ".breadcrumb" "css_element"
@@ -147,7 +147,7 @@ Feature: Course category breadcrumbs navigation
     And I navigate to "Courses > Manage courses and categories" in site administration
     And I follow "Cat 1"
     And I navigate to "Permissions" in current page administration
-    When I select "Check permissions" from the "jump" singleselect
+    When I set the field "Participants tertiary navigation" to "Check permissions"
     Then I should see "Courses" in the ".breadcrumb" "css_element"
     And I should see "Cat 1" in the ".breadcrumb" "css_element"
     And I should see "Check permissions" in the ".breadcrumb" "css_element"
@@ -216,21 +216,21 @@ Feature: Course category breadcrumbs navigation
     And I should see "Cat 1" in the ".breadcrumb" "css_element"
     And I should see "Restore course" in the ".breadcrumb" "css_element"
     And I should see "Cat 1" in the ".page-context-header" "css_element"
-    And I should see "Import a backup file" in the "region-main" "region"
+    And I should see "Upload a backup file" in the "region-main" "region"
     And I should see "Cat 1" in the ".block_navigation .active_tree_node" "css_element"
 
-  Scenario: Admin user navigates to category 'manage backup files' page
+  Scenario: Admin user navigates to category Manage course backups page
     Given I log in as "admin"
     And I navigate to "Courses > Manage courses and categories" in site administration
     And I follow "Cat 1"
     And I navigate to "Restore course" in current page administration
-    When I press "Manage backup files"
+    When I press "Manage course backups"
     Then I should see "Courses" in the ".breadcrumb" "css_element"
     And I should see "Cat 1" in the ".breadcrumb" "css_element"
     And I should see "Restore course" in the ".breadcrumb" "css_element"
-    And I should see "Manage backup files" in the ".breadcrumb" "css_element"
+    And I should see "Manage course backups" in the ".breadcrumb" "css_element"
     And I should see "Cat 1" in the ".page-context-header" "css_element"
-    And I should see "Manage backup files" in the "region-main" "region"
+    And I should see "Manage course backups" in the "region-main" "region"
     And I should see "Cat 1" in the ".block_navigation .active_tree_node" "css_element"
 
   Scenario: Admin user navigates to category 'content bank' page

@@ -34,16 +34,21 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
+
+        // Chat module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('chat', 1);
     }
 
     /*
      * The chat's event should not be shown to a user when the user cannot view the chat at all.
      */
-    public function test_chat_core_calendar_provide_event_action_in_hidden_section() {
+    public function test_chat_core_calendar_provide_event_action_in_hidden_section(): void {
         global $CFG;
 
         $this->setAdminUser();
@@ -81,7 +86,7 @@ class lib_test extends \advanced_testcase {
     /*
      * The chat's event should not be shown to a user who does not have permission to view the chat at all.
      */
-    public function test_chat_core_calendar_provide_event_action_for_non_user() {
+    public function test_chat_core_calendar_provide_event_action_for_non_user(): void {
         global $CFG;
 
         $this->setAdminUser();
@@ -110,7 +115,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_yesterday() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_yesterday(): void {
         $this->setAdminUser();
 
         // Create a course.
@@ -133,7 +138,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_yesterday_for_user() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_yesterday_for_user(): void {
         global $CFG;
 
         $this->setAdminUser();
@@ -165,7 +170,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_today() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_today(): void {
         $this->setAdminUser();
 
         // Create a course.
@@ -192,7 +197,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_today_for_user() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_today_for_user(): void {
         global $CFG;
 
         $this->setAdminUser();
@@ -228,7 +233,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_tonight() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tonight(): void {
         $this->setAdminUser();
 
         // Create a course.
@@ -255,7 +260,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_tonight_for_user() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tonight_for_user(): void {
         global $CFG;
 
         $this->setAdminUser();
@@ -291,7 +296,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_tomorrow() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tomorrow(): void {
         $this->setAdminUser();
 
         // Create a course.
@@ -318,7 +323,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_tomorrow_for_user() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_tomorrow_for_user(): void {
         global $CFG;
 
         $this->setAdminUser();
@@ -354,7 +359,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($actionevent->is_actionable());
     }
 
-    public function test_chat_core_calendar_provide_event_action_chattime_event_different_timezones() {
+    public function test_chat_core_calendar_provide_event_action_chattime_event_different_timezones(): void {
         global $CFG;
 
         $this->setAdminUser();
@@ -439,7 +444,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test for chat_get_sessions().
      */
-    public function test_chat_get_sessions() {
+    public function test_chat_get_sessions(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -511,7 +516,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test for chat_get_sessions with messages belonging to multiple sessions.
      */
-    public function test_chat_get_sessions_multiple() {
+    public function test_chat_get_sessions_multiple(): void {
         $messages = [];
         $gap = 5; // 5 secs.
 
@@ -636,7 +641,7 @@ class lib_test extends \advanced_testcase {
         }
     }
 
-    public function test_chat_core_calendar_provide_event_action_already_completed() {
+    public function test_chat_core_calendar_provide_event_action_already_completed(): void {
         set_config('enablecompletion', 1);
         $this->setAdminUser();
 
@@ -666,7 +671,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_chat_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_chat_core_calendar_provide_event_action_already_completed_for_user(): void {
         set_config('enablecompletion', 1);
         $this->setAdminUser();
 
@@ -723,7 +728,7 @@ class lib_test extends \advanced_testcase {
     /**
      * A user who does not have capabilities to add events to the calendar should be able to create an chat.
      */
-    public function test_creation_with_no_calendar_capabilities() {
+    public function test_creation_with_no_calendar_capabilities(): void {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);

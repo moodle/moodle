@@ -1,5 +1,14 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes changes in tool_mobile code.
 Information provided here is intended especially for developers.
+
+=== 4.2 ===
+
+* External function tool_mobile::get_config now returns the timezone and forcetimezone settings.
 
 === 4.1 ===
 

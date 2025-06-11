@@ -33,9 +33,9 @@ class quiz_grading_renderer extends plugin_renderer_base {
     /**
      * Render no question notification.
      *
-     * @param object $quiz The quiz settings.
-     * @param object $cm The course-module for this quiz.
-     * @param object $context The quiz context.
+     * @param stdClass $quiz The quiz settings.
+     * @param stdClass $cm The course-module for this quiz.
+     * @param stdClass $context The quiz context.
      * @return string The HTML for the no questions message.
      */
     public function render_quiz_no_question_notification($quiz, $cm, $context) {
@@ -48,7 +48,7 @@ class quiz_grading_renderer extends plugin_renderer_base {
      * @throws coding_exception
      */
     public function render_quiz_no_grade_question_notification() {
-        return $this->notification(get_string('nothingfound', 'quiz_grading'));
+        return $this->notification(get_string('nothingfound', 'quiz_grading'), 'info', false);
     }
 
     /**
@@ -97,19 +97,20 @@ class quiz_grading_renderer extends plugin_renderer_base {
     /**
      * Render grade link for question.
      *
-     * @param object $counts
+     * @param stdClass $counts
      * @param string $type Type of grade.
-     * @param string $gradestring Lang string.
+     * @param string $string Lang string.
+     * @param string $component Lang string component.
      * @param moodle_url $gradequestionurl Url to grade question.
      * @return string The HTML for the question grade link.
      * @throws coding_exception
      */
-    public function render_grade_link($counts, $type, $gradestring, $gradequestionurl) {
+    public function render_grade_link($counts, $type, $string, $component, $gradequestionurl) {
         $output = '';
         if ($counts->$type > 0) {
             $output .= ' ' . html_writer::link(
                             $gradequestionurl,
-                            get_string($gradestring, 'quiz_grading'),
+                            get_string($string, $component),
                             ['class' => 'gradetheselink']);
         }
         return $output;
@@ -118,11 +119,11 @@ class quiz_grading_renderer extends plugin_renderer_base {
     /**
      * Render grading page.
      *
-     * @param object $questioninfo Information of a question.
+     * @param stdClass $questioninfo Information of a question.
      * @param moodle_url $listquestionsurl Url of the page that list all questions.
      * @param quiz_grading_settings_form $filterform Question filter form.
-     * @param object $paginginfo Pagination information.
-     * @param object $pagingbar Pagination bar information.
+     * @param stdClass $paginginfo Pagination information.
+     * @param stdClass $pagingbar Pagination bar information.
      * @param moodle_url $formaction Form submit url.
      * @param array $hiddeninputs List of hidden input fields.
      * @param string $gradequestioncontent HTML string of question content.

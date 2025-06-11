@@ -37,7 +37,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
     /**
      * @return array The array of metadata.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection = new collection('testcomponent');
         $collection->add_database_table('testtable', ['testfield1', 'testfield2'], 'testsummary');
         return $collection;

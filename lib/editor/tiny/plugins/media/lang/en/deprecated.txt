@@ -1,0 +1,7 @@
+alignment,tiny_media
+alignment_bottom,tiny_media
+alignment_left,tiny_media
+alignment_middle,tiny_media
+alignment_right,tiny_media
+alignment_top,tiny_media
+helplinktext,tiny_media

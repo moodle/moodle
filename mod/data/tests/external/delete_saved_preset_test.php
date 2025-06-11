@@ -22,7 +22,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use externallib_advanced_testcase;
-use external_api;
+use core_external\external_api;
 use mod_data\manager;
 
 /**
@@ -35,14 +35,14 @@ use mod_data\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_data\external\delete_saved_preset
  */
-class delete_saved_preset_test extends externallib_advanced_testcase {
+final class delete_saved_preset_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of delete_saved_preset().
      *
      * @covers ::execute
      */
-    public function test_delete_saved_preset() {
+    public function test_delete_saved_preset(): void {
         $this->resetAfterTest();
 
         // Create course, database activity and users.

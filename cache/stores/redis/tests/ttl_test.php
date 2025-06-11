@@ -16,6 +16,8 @@
 
 namespace cachestore_redis;
 
+use core_cache\definition;
+
 /**
  * TTL support test for Redis cache.
  *
@@ -29,7 +31,7 @@ namespace cachestore_redis;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \cachestore_redis
  */
-class ttl_test extends \advanced_testcase {
+final class ttl_test extends \advanced_testcase {
     /** @var \cachestore_redis|null Cache store  */
     protected $store = null;
 
@@ -41,7 +43,7 @@ class ttl_test extends \advanced_testcase {
         }
 
         // Set up a Redis store with a fake definition that has TTL set to 10 seconds.
-        $definition = \cache_definition::load('core/wibble', [
+        $definition = definition::load('core/wibble', [
                 'mode' => 1,
                 'simplekeys' => true,
                 'simpledata' => true,
@@ -64,6 +66,15 @@ class ttl_test extends \advanced_testcase {
         if ($this->store instanceof \cachestore_redis) {
             $this->store->purge();
         }
+    }
+
+    /**
+     * Test calling set_many with an empty array
+     *
+     * Trivial test to ensure we don't trigger an ArgumentCountError when calling zAdd with invalid parameters
+     */
+    public function test_set_many_empty(): void {
+        $this->assertEquals(0, $this->store->set_many([]));
     }
 
     /**

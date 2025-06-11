@@ -106,7 +106,7 @@ abstract class base_block extends base {
      * @param \context|null $context Context to find blocks within
      * @return false|\moodle_recordset|null
      */
-    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+    public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         global $DB;
 
         // Get context restrictions.
@@ -287,7 +287,7 @@ abstract class base_block extends base {
      * @return array Array with SQL and parameters
      * @throws \coding_exception If called with invalid params
      */
-    protected function get_context_restriction_sql(\context $context = null, $blocktable = 'bi',
+    protected function get_context_restriction_sql(?\context $context = null, $blocktable = 'bi',
             $paramtype = SQL_PARAMS_QM) {
         global $DB;
 
@@ -405,7 +405,7 @@ abstract class base_block extends base {
      * @param \core_search\document $doc
      * @return \core_search\document_icon
      */
-    public function get_doc_icon(document $doc) : document_icon {
+    public function get_doc_icon(document $doc): document_icon {
         return new document_icon('e/anchor');
     }
 

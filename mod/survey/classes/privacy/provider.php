@@ -58,7 +58,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('survey_answers', [
             'userid' => 'privacy:metadata:answers:userid',
             'question' => 'privacy:metadata:answers:question',
@@ -81,7 +81,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : \core_privacy\local\request\contextlist {
+    public static function get_contexts_for_userid(int $userid): \core_privacy\local\request\contextlist {
         $contextlist = new \core_privacy\local\request\contextlist();
 
         // While we should not have an analysis without answers, it's safer to gather contexts by looking at both tables.

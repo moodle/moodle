@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class legend_text_not_empty_test
  */
-class legend_text_not_empty_test extends all_checks {
+final class legend_text_not_empty_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'legend_text_not_empty';
 
@@ -76,7 +76,7 @@ EOD;
     /**
      * Test for if legend is empty or only has white spaces.
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail1);
         $this->assertTrue($results[0]->element->tagName == 'legend');
 
@@ -87,7 +87,7 @@ EOD;
     /**
      * Test for if legend has text.
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
     }

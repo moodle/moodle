@@ -67,7 +67,7 @@ class lpmonitoring_user_competency_summary_in_course_exporter extends user_compe
             $this->related['course']->id);
 
         $context = context_course::instance($this->related['course']->id);
-        $exporter = new course_summary_exporter($this->related['course'], array('context' => $context));
+        $exporter = new course_summary_exporter($this->related['course'], ['context' => $context]);
         $result->course = $exporter->export($output);
 
         // This is the block different from the parent, to avoid some validations.
@@ -81,19 +81,19 @@ class lpmonitoring_user_competency_summary_in_course_exporter extends user_compe
         }
 
         $fastmodinfo = get_fast_modinfo($this->related['course']->id);
-        $exportedmodules = array();
+        $exportedmodules = [];
         foreach ($coursemodules as $cm) {
             $cminfo = $fastmodinfo->cms[$cm];
-            $cmexporter = new course_module_summary_exporter(null, array('cm' => $cminfo));
+            $cmexporter = new course_module_summary_exporter(null, ['cm' => $cminfo]);
             $exportedmodules[] = $cmexporter->export($output);
         }
         $result->coursemodules = $exportedmodules;
 
         // User learning plans.
         $plans = api::list_plans_with_competency($this->related['user']->id, $this->related['competency']);
-        $exportedplans = array();
+        $exportedplans = [];
         foreach ($plans as $plan) {
-            $planexporter = new plan_exporter($plan, array('template' => $plan->get_template()));
+            $planexporter = new plan_exporter($plan, ['template' => $plan->get_template()]);
             $exportedplans[] = $planexporter->export($output);
         }
         $result->plans = $exportedplans;

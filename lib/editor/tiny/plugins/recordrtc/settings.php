@@ -45,21 +45,34 @@ if ($ADMIN->fulltree) {
 
     // Types allowed.
     $options = [
-        'both' => new lang_string('audioandvideo', 'tiny_recordrtc'),
-        'audio' => new lang_string('onlyaudio', 'tiny_recordrtc'),
-        'video' => new lang_string('onlyvideo', 'tiny_recordrtc')
+        \tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_TYPE => new lang_string('onlyaudio', 'tiny_recordrtc'),
+        \tiny_recordrtc\constants::TINYRECORDRTC_VIDEO_TYPE => new lang_string('onlyvideo', 'tiny_recordrtc'),
+        \tiny_recordrtc\constants::TINYRECORDRTC_SCREEN_TYPE => new lang_string('onlyscreen', 'tiny_recordrtc'),
     ];
     $name = get_string('allowedtypes', 'tiny_recordrtc');
     $desc = get_string('allowedtypes_desc', 'tiny_recordrtc');
-    $default = 'both';
-    $setting = new admin_setting_configselect('tiny_recordrtc/allowedtypes', $name, $desc, $default, $options);
+    $default = [
+        \tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_TYPE => 1,
+        \tiny_recordrtc\constants::TINYRECORDRTC_VIDEO_TYPE => 1,
+    ];
+    $setting = new admin_setting_configmulticheckbox('tiny_recordrtc/allowedtypes', $name, $desc, $default, $options);
     $settings->add($setting);
 
     // Audio bitrate.
     $name = get_string('audiobitrate', 'tiny_recordrtc');
     $desc = get_string('audiobitrate_desc', 'tiny_recordrtc');
-    $default = '128000';
-    $setting = new admin_setting_configtext('tiny_recordrtc/audiobitrate', $name, $desc, $default, PARAM_INT, 8);
+    $options = [];
+    foreach (\tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_BITRATES as $rate) {
+        $kbrate = $rate / 1000;
+        $options[$rate] = get_string('kbrate', 'tiny_recordrtc', $kbrate);
+    }
+    $setting = new admin_setting_configselect(
+        name: 'tiny_recordrtc/audiobitrate',
+        visiblename: $name,
+        description: $desc,
+        defaultsetting: \tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_BITRATES[5],
+        choices: $options,
+    );
     $settings->add($setting);
 
     // Video bitrate.
@@ -67,6 +80,13 @@ if ($ADMIN->fulltree) {
     $desc = get_string('videobitrate_desc', 'tiny_recordrtc');
     $default = '2500000';
     $setting = new admin_setting_configtext('tiny_recordrtc/videobitrate', $name, $desc, $default, PARAM_INT, 8);
+    $settings->add($setting);
+
+    // Screen bitrate.
+    $name = get_string('screenbitrate', 'tiny_recordrtc');
+    $desc = get_string('screenbitrate_desc', 'tiny_recordrtc');
+    $default = '2500000';
+    $setting = new admin_setting_configtext('tiny_recordrtc/screenbitrate', $name, $desc, $default, PARAM_INT, 8);
     $settings->add($setting);
 
     // Audio recording time limit.
@@ -93,5 +113,40 @@ if ($ADMIN->fulltree) {
         }
         return '';
     });
+    $settings->add($setting);
+
+    // Screen recording time limit.
+    $name = get_string('screentimelimit', 'tiny_recordrtc');
+    $desc = get_string('screentimelimit_desc', 'tiny_recordrtc');
+    // Validate screentimelimit greater than 0.
+    $setting = new admin_setting_configduration('tiny_recordrtc/screentimelimit', $name, $desc, $defaulttimelimit);
+    $setting->set_validate_function(function(int $value): string {
+        if ($value <= 0) {
+            return get_string('timelimitwarning', 'tiny_recordrtc');
+        }
+        return '';
+    });
+    $settings->add($setting);
+
+    // Screen output settings.
+    // Number of items to display in a box.
+    $options = [
+        \tiny_recordrtc\constants::TINYRECORDRTC_SCREEN_HD => get_string('screenresolution_hd', 'tiny_recordrtc'),
+        \tiny_recordrtc\constants::TINYRECORDRTC_SCREEN_FHD => get_string('screenresolution_fhd', 'tiny_recordrtc'),
+    ];
+    $name = get_string('screensize', 'tiny_recordrtc');
+    $desc = get_string('screensize_desc', 'tiny_recordrtc');
+    $default = '1280,720';
+    $setting = new admin_setting_configselect('tiny_recordrtc/screensize', $name, $desc, $default, $options);
+    $settings->add($setting);
+
+    // Pausing allowed.
+    $options = [
+        '1' => new lang_string('yes'),
+        '0' => new lang_string('no'),
+    ];
+
+    $name = get_string('allowedpausing', 'tiny_recordrtc');
+    $setting = new admin_setting_configselect('tiny_recordrtc/allowedpausing', $name, '', 0, $options);
     $settings->add($setting);
 }

@@ -65,10 +65,10 @@ Feature: View activity completion information in the book activity
     Then the "View" completion condition of "Art history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the book activity as done but a teacher cannot
     Given I am on the "Music history" "book activity editing" page logged in as teacher1
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I press "Save and display"
     And I set the following fields to these values:
       | Chapter title | Drum theory             |

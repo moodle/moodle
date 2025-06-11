@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template media_vimeo/embed
+
+    This template will render the Vimeo embeded player
+    in a special format for the Moodle mobile app.
+
+    Variables required for this template:
+    * lang: The language of the user.
+    * width: The width of the video.
+    * height: The height of the video.
+    * style: The style info for iframe.
+    * embedurl: The URL to the video.
+
+    Example context (json):
+    {
+        "lang": "en",
+        "width": 640,
+        "height": 360,
+        "style": "position:absolute; top:0; left:0; width:100%; height:100%;",
+        "embedurl": "https://player.vimeo.com/video/226053498"
+    }
+
+}}
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+    <title>{{#str}} pluginname, media_vimeo {{/str}}</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+</head>
+<body style="margin:0; padding:0">
+<iframe {{#style}}style="{{style}}" {{/style}}
+        {{#width}}width="{{width}}" {{/width}}
+        {{#height}}height="{{height}}" {{/height}}
+        src="{{{embedurl}}}" allow="fullscreen" loading="lazy">
+</iframe>
+</body>
+</html>

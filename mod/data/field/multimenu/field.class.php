@@ -64,8 +64,8 @@ class data_field_multimenu extends data_field_base {
                 $content = array();
             }
         } else if ($recordid) {
-            $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
-            $content = explode('##', $content);
+            $contentfield = $DB->get_field('data_content', 'content', ['fieldid' => $this->field->id, 'recordid' => $recordid]);
+            $content = explode('##', $contentfield ?? '');
         } else {
             $content = array();
         }
@@ -74,7 +74,7 @@ class data_field_multimenu extends data_field_base {
         $str .= '<input name="field_' . $this->field->id . '[xxx]" type="hidden" value="xxx"/>'; // hidden field - needed for empty selection
 
         $str .= '<label for="field_' . $this->field->id . '">';
-        $str .= '<legend><span class="accesshide">' . $this->field->name;
+        $str .= '<legend><span class="accesshide">' . s($this->field->name);
 
         if ($this->field->required) {
             $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
@@ -119,7 +119,7 @@ class data_field_multimenu extends data_field_base {
 
         static $c = 0;
 
-        $str = '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>';
+        $str = '<label class="accesshide" for="f_' . $this->field->id . '">' . s($this->field->name) . '</label>';
         $str .= '<select id="f_'.$this->field->id.'" name="f_'.$this->field->id.'[]" multiple="multiple" class="form-control">';
 
         // display only used options
@@ -165,7 +165,7 @@ class data_field_multimenu extends data_field_base {
         $str .= '</select>';
 
         $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired,
-            get_string('selectedrequired', 'data'), array('class' => 'mr-1'));
+            get_string('selectedrequired', 'data'), array('class' => 'me-1'));
 
         return $str;
 

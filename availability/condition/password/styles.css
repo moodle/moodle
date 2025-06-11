@@ -1,5 +1,27 @@
+/* Password Popup: Whitespace and borders around intro text. */
 #availability_password_intro {
     border-bottom: 1px solid #e9ecef;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
+}
+
+/* Password Popup: Try to replicate the Moodle core modal look. */
+.availability_password_dialogue .moodle-dialogue-wrap {
+    border-radius: 0.6rem;
+}
+.availability_password_dialogue .moodle-dialogue-bd,
+.availability_password_dialogue .moodle-dialogue-ft {
+    padding: 1rem !important; /* stylelint-disable-line declaration-no-important */
+}
+.availability_password_dialogue .moodle-dialogue-hd h5 {
+    font-size: 1.171875rem !important; /* stylelint-disable-line declaration-no-important */
+    font-weight: 700 !important; /* stylelint-disable-line declaration-no-important */
+}
+.availability_password_dialogue .moodle-dialogue-ft {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1rem;
+}
+.availability_password_dialogue .moodle-dialogue-ft .yui3-button {
+    background-image: none !important; /* stylelint-disable-line declaration-no-important */
+    box-shadow: none !important; /* stylelint-disable-line declaration-no-important */
 }

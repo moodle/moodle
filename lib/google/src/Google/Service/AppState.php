@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_AppState extends Google_Service
 {
   /** View and manage your data for this application. */
@@ -129,6 +130,7 @@ class Google_Service_AppState extends Google_Service
  *   $states = $appstateService->states;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AppState_States_Resource extends Google_Service_Resource
 {
 
@@ -226,6 +228,7 @@ class Google_Service_AppState_States_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_AppState_GetResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -270,6 +273,7 @@ class Google_Service_AppState_GetResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AppState_ListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -307,6 +311,7 @@ class Google_Service_AppState_ListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AppState_UpdateRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -333,6 +338,7 @@ class Google_Service_AppState_UpdateRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AppState_WriteResult extends Google_Model
 {
   protected $internal_gapi_mappings = array(

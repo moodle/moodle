@@ -14,24 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Customfield category persistent class
- *
- * @package   core_customfield
- * @copyright 2018 Toni Barbera <toni@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_customfield;
 
 use core\persistent;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
- * Class category
+ * Customfield category persistent class
  *
- * @package core_customfield
+ * @package   core_customfield
  * @copyright 2018 Toni Barbera <toni@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +36,7 @@ class category extends persistent {
      *
      * @return array
      */
-    protected static function define_properties() : array {
+    protected static function define_properties(): array {
         return array(
                 'name' => [
                         'type' => PARAM_TEXT,
@@ -60,7 +50,8 @@ class category extends persistent {
                 'descriptionformat' => [
                         'type' => PARAM_INT,
                         'default' => FORMAT_MOODLE,
-                        'optional' => true
+                        'optional' => true,
+                        'null' => NULL_ALLOWED,
                 ],
                 'component' => [
                         'type' => PARAM_COMPONENT
@@ -80,7 +71,8 @@ class category extends persistent {
                 'sortorder' => [
                         'type' => PARAM_INT,
                         'optional' => true,
-                        'default' => -1
+                        'default' => -1,
+                        'null' => NULL_ALLOWED,
                 ],
         );
     }

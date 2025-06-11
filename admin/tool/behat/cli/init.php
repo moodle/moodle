@@ -53,6 +53,8 @@ list($options, $unrecognized) = cli_get_params(
         'disable-composer' => false,
         'composer-upgrade' => true,
         'composer-self-update' => true,
+        'scss-deprecations' => false,
+        'no-icon-deprecations' => false,
     ),
     array(
         'j' => 'parallel',
@@ -69,17 +71,20 @@ Behat utilities to initialise behat tests
 
 Usage:
   php init.php      [--parallel=value [--maxruns=value] [--fromrun=value --torun=value]]
-                    [--no-axe] [-o | --optimize-runs] [-a | --add-core-features-to-theme]
+                    [--no-axe] [--scss-deprecations] [--no-icon-deprecations] [-o | --optimize-runs]
+                    [-a | --add-core-features-to-theme]
                     [--no-composer-self-update] [--no-composer-upgrade]
                     [--disable-composer]
                     [--help]
 
 Options:
--j, --parallel      Number of parallel behat run to initialise
--m, --maxruns       Max parallel processes to be executed at one time
---fromrun           Execute run starting from (Used for parallel runs on different vms)
---torun             Execute run till (Used for parallel runs on different vms)
---no-axe            Disable axe accessibility tests.
+-j, --parallel         Number of parallel behat run to initialise
+-m, --maxruns          Max parallel processes to be executed at one time
+--fromrun              Execute run starting from (Used for parallel runs on different vms)
+--torun                Execute run till (Used for parallel runs on different vms)
+--no-axe               Disable axe accessibility tests.
+--scss-deprecations    Enable SCSS deprecation checks.
+--no-icon-deprecations Disable icon deprecation checks.
 
 -o, --optimize-runs
                     Split features with specified tags in all parallel runs.
@@ -131,6 +136,8 @@ if ($options['parallel'] && $options['parallel'] > 1) {
     $cmdoptionsforsinglerun = [
         'add-core-features-to-theme',
         'axe',
+        'scss-deprecations',
+        'no-icon-deprecations',
     ];
 
     foreach ($cmdoptionsforsinglerun as $option) {

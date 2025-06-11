@@ -142,7 +142,7 @@ class editor extends \texteditor {
      * @param array $options
      * @param null $fpoptions
      */
-    public function use_editor($elementid, array $options = null, $fpoptions = null) {
+    public function use_editor($elementid, ?array $options = null, $fpoptions = null) {
         global $PAGE;
 
         // Ensure that the default configuration is set.
@@ -170,11 +170,15 @@ class editor extends \texteditor {
             'context' => $context->id,
 
             // File picker options.
-            'filepicker' => $fpoptions,
+            'filepicker' => (object) $fpoptions,
+
+            // Default draft item ID.
+            'draftitemid' => 0,
 
             'currentLanguage' => current_language(),
 
             'branding' => property_exists($siteconfig, 'branding') ? !empty($siteconfig->branding) : true,
+            'extended_valid_elements' => $siteconfig->extended_valid_elements ?? 'script[*],p[*],i[*]',
 
             // Language options.
             'language' => [
@@ -194,9 +198,6 @@ class editor extends \texteditor {
 
             // Plugin configuration.
             'plugins' => $this->manager->get_plugin_configuration($context, $options, $fpoptions, $this),
-
-            // Nest menu inside parent DOM.
-            'nestedmenu' => true,
         ];
 
         if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
@@ -226,8 +227,8 @@ class editor extends \texteditor {
             M.util.js_pending('editor_tiny/editor');
             require(['editor_tiny/editor'], (Tiny) => {
                 Tiny.setupForElementId({
-                    elementId: "${elementid}",
-                    options: ${configoptions},
+                    elementId: "{$elementid}",
+                    options: {$configoptions},
                 });
                 M.util.js_complete('editor_tiny/editor');
             });

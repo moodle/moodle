@@ -1,0 +1,307 @@
+{
+    "access": {
+        "component": "core_access",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "admin": {
+        "component": "core_admin",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "adminpresets": {
+        "component": "core_adminpresets",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "aiactions": {
+        "component": "core_ai",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "analytics": {
+        "component": "core_analytics",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "attribute": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "availability": {
+        "component": "core_availability",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "backup": {
+        "component": "core_backup",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "badges": {
+        "component": "core_badges",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "cache": {
+        "component": "core_cache",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "calendar": {
+        "component": "core_calendar",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "check": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "comment": {
+        "component": "core_comment",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "competency": {
+        "component": "core_competency",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "completion": {
+        "component": "core_completion",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "context": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "core": {
+        "component": null,
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "customfield": {
+      "component": "core_customfield",
+      "allowedlevel2": true,
+      "allowedspread": true
+    },
+    "ddl": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "dml": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "enrol": {
+        "component": "core_enrol",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "event": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "exception": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "external": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "files": {
+        "component": "core_files",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "form": {
+        "component": "core_form",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "grade": {
+        "component": "core_grades",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "grading": {
+        "component": "core_grading",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "group": {
+        "component": "core_group",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "h5p": {
+        "component": "core_h5p",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "hook": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "lock": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "log": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "media": {
+        "component": "core_media",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "message": {
+        "component": "core_message",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "moodlenet": {
+        "component": "core",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "navigation": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "oauth2": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "output": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "page": {
+        "component": "core",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "payment": {
+        "component": "core_payment",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "plagiarism": {
+        "component": "core_plagiarism",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "portfolio": {
+        "component": "core_portfolio",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "preference": {
+        "component": "core",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "privacy": {
+        "component": "core_privacy",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "question": {
+        "component": "core_question",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "rating": {
+        "component": "core_rating",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "redactor": {
+        "component": "core_files",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "reportbuilder": {
+        "component": "core_reportbuilder",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "route": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "router": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "rss": {
+        "component": "core_rss",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "search": {
+        "component": "core_search",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "string": {
+        "component": "core",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "tag": {
+        "component": "core_tag",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "task": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "test": {
+        "component": "core",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "time": {
+        "component": "core",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "upgrade": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": false
+    },
+    "webservice": {
+        "component": "core_webservice",
+        "allowedlevel2": false,
+        "allowedspread": false
+    },
+    "xapi": {
+        "component": "core_xapi",
+        "allowedlevel2": true,
+        "allowedspread": true
+    }
+}

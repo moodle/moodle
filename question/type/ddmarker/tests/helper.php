@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddmarker_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('fox', 'maths', 'mkmap', 'zerodrag');
+        return ['fox', 'maths', 'mkmap', 'zerodrag', 'mathjax'];
     }
 
     /**
@@ -193,6 +193,51 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         $fromform->hintclearwrong = array(0, 1);
         $fromform->hintoptions = array(0, 1);
 
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+
+        return $fromform;
+    }
+
+    /**
+     * Return the test data needed by the question generator to create question tempplate.
+     *
+     * @return stdClass date to create a ddmarkers question.
+     */
+    public function get_ddmarker_question_form_data_mathjax() {
+        global $CFG, $USER;
+        $fromform = new stdClass();
+
+        $bgdraftitemid = 0;
+        file_prepare_draft_area($bgdraftitemid, null, null, null, null);
+        $fs = get_file_storage();
+        $filerecord = new stdClass();
+        $filerecord->contextid = context_user::instance($USER->id)->id;
+        $filerecord->component = 'user';
+        $filerecord->filearea = 'draft';
+        $filerecord->itemid = $bgdraftitemid;
+        $filerecord->filepath = '/';
+        $filerecord->filename = 'mkmap.png';
+        $fs->create_file_from_pathname($filerecord, $CFG->dirroot .
+            '/question/type/ddmarker/tests/fixtures/mkmap.png');
+
+        $fromform->name = 'Drag-and-drop into maker question with equation';
+        $fromform->questiontext = ['text' => 'Fill in the correct mathjax equation: y = 2, x =4', 'format' => FORMAT_HTML];
+
+        $fromform->defaultmark = 1;
+        $fromform->generalfeedback = ['text' => 'The right answer is: "y = x^2"', 'format' => FORMAT_HTML];
+        $fromform->showmisplaced = 1;
+        $fromform->bgimage = $bgdraftitemid;
+        $fromform->shuffleanswers = 0;
+        $fromform->drags = [
+            ['label' => '$$ y = x^2 $$', 'noofdrags' => '1'],
+            ['label' => '$$ y = x^5 $$', 'noofdrags' => '1'],
+        ];
+        $fromform->drops = [
+            ['shape' => 'circle', 'coords' => '322,213;10', 'choice' => 1],
+            ['shape' => 'circle', 'coords' => '144,84;10', 'choice' => 2],
+        ];
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->penalty = '0.3333333';
         $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;

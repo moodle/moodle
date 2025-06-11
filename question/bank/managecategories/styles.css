@@ -1,0 +1,98 @@
+/* Card-style border on category lists */
+.qbank_managecategories-categorylist {
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 1rem;
+}
+/* Category item layout */
+.qbank_managecategories-handlecontainer {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+.qbank_managecategories-item .container {
+    padding: 0.75rem;
+}
+/* Separators between each item become drop indicators */
+.qbank_managecategories-item {
+    width: 100%;
+    list-style: none;
+    border-top: 1px solid #dee2e6;
+}
+.qbank_managecategories-item:first-child {
+    border-top-color: transparent;
+}
+.qbank_managecategories-item:last-child {
+    border-bottom: 1px solid transparent;
+}
+.qbank_managecategories-item .qbank_managecategories-item:first-child {
+    border-top-color: #dee2e6;
+}
+.qbank_managecategories-details p:last-child {
+    margin-bottom: 0;
+}
+.qbank_managecategories-childlistcontainer:empty {
+    display: none;
+}
+/* Fade effect on drag handle */
+.qbank_managecategories-draghandle {
+    display: none;
+    opacity: 0.45;
+}
+.qbank_managecategories-item.draghandle .qbank_managecategories-draghandle {
+    display: inline;
+}
+/* Drag indicator */
+.qbank_managecategories-item.draghandle > .container {
+    border: 2px solid transparent;
+    border-radius: 1rem;
+}
+.qbank_managecategories-item.draghandle > .container:hover {
+    cursor: move;
+    border-color: #0f6cbf;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+/* No move/delete buttons on non-draggable items */
+.dropdown-item.show-when-movable {
+    display: none;
+}
+.qbank_managecategories-item.draghandle .dropdown-item.show-when-movable {
+    display: block;
+}
+/* Don't show card border on nested lists. */
+.qbank_managecategories-categorylist .qbank_managecategories-categorylist {
+    padding: 0 0 .5rem 0;
+    border: 0;
+    border-radius: 0;
+}
+/* Don't show hover indication on parent when a child is hovered */
+.editing .qbank_managecategories-item .container:hover:has(.container:hover) {
+    border-color: transparent;
+}
+/* New child drop target */
+.qbank_managecategories-newchild {
+    display: none;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    padding: 0.25rem 1rem;
+    color: #dee2e6;
+    font-weight: bold;
+}
+
+/* stylelint-disable max-line-length */
+.qbank_managecategories-newchild.qbank_managecategories-droptarget,
+/* Show the drop target if it's directly inside a highlighted category, but not if its inside a child of that category */
+.qbank_managecategories-droptarget-before > .container > .row > .qbank_managecategories-contentcontainer > :not(.qbank_managecategories-childlistcontainer) .qbank_managecategories-newchild {
+    display: unset;
+}
+/* stylelint-enable max-line-length */
+
+/* Hidden descriptions */
+.qbank_managecategories-description {
+    display: none;
+}
+.showdescriptions .qbank_managecategories-description {
+    display: unset;
+}

@@ -94,13 +94,13 @@ class sectionnavigation implements named_templatable, renderable {
         ];
 
         $back = $this->sectionno - 1;
-        while ($back > 0 and empty($data->previousurl)) {
+        while ($back >= 0 && empty($data->previousurl)) {
             if ($canviewhidden || $sections[$back]->uservisible) {
                 if (!$sections[$back]->visible) {
                     $data->previoushidden = true;
                 }
                 $data->previousname = get_section_name($course, $sections[$back]);
-                $data->previousurl = course_get_url($course, $back);
+                $data->previousurl = course_get_url($course, $back, ['navigation' => true]);
                 $data->hasprevious = true;
             }
             $back--;
@@ -114,7 +114,7 @@ class sectionnavigation implements named_templatable, renderable {
                     $data->nexthidden = true;
                 }
                 $data->nextname = get_section_name($course, $sections[$forward]);
-                $data->nexturl = course_get_url($course, $forward);
+                $data->nexturl = course_get_url($course, $forward, ['navigation' => true]);
                 $data->hasnext = true;
             }
             $forward++;

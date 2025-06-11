@@ -66,11 +66,11 @@
 
 <h3 class="mt-1">{{#str}}locatecompetency, tool_lp{{/str}}</h3>
 
-<form data-region="filtercompetencies" data-planid="{{plan.id}}" class="form-inline">
-    <div class="form-group">
+<form data-region="filtercompetencies" data-planid="{{plan.id}}" class="d-flex flex-wrap align-items-center">
+    <div class="mb-3 d-flex">
         <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
         <input type="text" class="form-control" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
-        <button class="btn btn-secondary">{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
+        <button class="btn btn-secondary ms-1">{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
     </div>
 </form>
 
@@ -84,7 +84,7 @@
     </li>
 </ul>
 
-<div data-region="link-buttons" class="mt-1 float-sm-right">
+<div data-region="link-buttons" class="mt-1 float-sm-end">
     <input type="button" class="btn btn-primary" data-action="add" value="{{#str}}add{{/str}}"/>
     <input type="button" class="btn btn-secondary" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
 </div>

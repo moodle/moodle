@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Oauth2 extends Google_Service
 {
   /** Know your basic profile info and list of people in your circles.. */
@@ -159,6 +160,7 @@ class Google_Service_Oauth2 extends Google_Service
  *   $userinfo = $oauth2Service->userinfo;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Oauth2_Userinfo_Resource extends Google_Service_Resource
 {
 
@@ -184,6 +186,7 @@ class Google_Service_Oauth2_Userinfo_Resource extends Google_Service_Resource
  *   $v2 = $oauth2Service->v2;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Oauth2_UserinfoV2_Resource extends Google_Service_Resource
 {
 }
@@ -196,6 +199,7 @@ class Google_Service_Oauth2_UserinfoV2_Resource extends Google_Service_Resource
  *   $me = $oauth2Service->me;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Oauth2_UserinfoV2Me_Resource extends Google_Service_Resource
 {
 
@@ -216,6 +220,7 @@ class Google_Service_Oauth2_UserinfoV2Me_Resource extends Google_Service_Resourc
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Oauth2_Jwk extends Google_Collection
 {
   protected $collection_key = 'keys';
@@ -235,6 +240,7 @@ class Google_Service_Oauth2_Jwk extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Oauth2_JwkKeys extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -297,6 +303,7 @@ class Google_Service_Oauth2_JwkKeys extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Oauth2_Tokeninfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -392,6 +399,7 @@ class Google_Service_Oauth2_Tokeninfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Oauth2_Userinfoplus extends Google_Model
 {
   protected $internal_gapi_mappings = array(

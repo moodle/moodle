@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/lightboxgallery/locallib.php');
  * @copyright  Copyright (c) 2021 Open LMS (https://www.openlms.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class mod_lightboxgallery_lib_testcase extends advanced_testcase {
+class mod_lightboxgallery_lib_test extends advanced_testcase {
     public function test_lightboxgallery_resize_text() {
         $this->assertEquals('test123', lightboxgallery_resize_text('test123', 10));
         $this->assertEquals('test123456...', lightboxgallery_resize_text('test1234567', 10));

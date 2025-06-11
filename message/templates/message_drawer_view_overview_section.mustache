@@ -41,32 +41,40 @@
 >
     <div id="{{$region}}{{/region}}-toggle" class="card-header rounded-0" data-region="toggle">
         <button
-            class="btn btn-link w-100 text-left p-1 p-sm-2 d-flex rounded-0 align-items-center overview-section-toggle {{^expanded}}collapsed{{/expanded}}"
+            class="btn btn-link w-100 text-start p-1 p-sm-2 d-flex rounded-0 align-items-center overview-section-toggle {{^expanded}}collapsed{{/expanded}}"
             data-toggle="collapse"
             data-target="#{{$region}}{{/region}}-target-{{uniqid}}"
             aria-expanded="{{#expanded}}true{{/expanded}}{{^expanded}}false{{/expanded}}"
             aria-controls="{{$region}}{{/region}}-target-{{uniqid}}"
         >
             <span class="collapsed-icon-container">
-                {{#pix}} t/collapsedcaret, core {{/pix}}
+                <span class="dir-rtl-hide">{{#pix}} t/collapsed, core {{/pix}}</span>
+                <span class="dir-ltr-hide">{{#pix}} t/collapsed_rtl, core {{/pix}}</span>
             </span>
             <span class="expanded-icon-container">
                 {{#pix}} t/expanded, core {{/pix}}
             </span>
-            <span class="font-weight-bold">{{$title}}{{/title}}</span>
-            <small class="hidden ml-1" data-region="section-total-count-container">
-                (<span aria-hidden="true" data-region="section-total-count">{{count.total}}</span>{{!
-                }}<span class="sr-only">{{#str}} totalconversations, core_message, {{count.total}} {{/str}}</span>)
+            <span class="font-weight-bold ms-1">{{$title}}{{/title}}</span>
+            <small
+                class="hidden ms-1"
+                data-region="section-total-count-container" aria-labelledby="{{$region}}{{/region}}-total-count-label"
+            >
+                (<span aria-hidden="true" data-region="section-total-count">{{count.total}}</span>)
+                <span class="sr-only" id="{{$region}}{{/region}}-total-count-label">
+                    {{#str}} totalconversations, core_message, {{count.total}} {{/str}}
+                </span>
             </small>
-            <span class="hidden ml-2" data-region="loading-icon-container">
+            <span class="hidden ms-2" data-region="loading-icon-container">
                 {{> core/loading }}
             </span>
             <span
-                class="{{^count.unread}}hidden{{/count.unread}} badge badge-pill badge-primary ml-auto bg-primary"
-                data-region="section-unread-count"
+                class="{{^count.unread}}hidden{{/count.unread}} badge rounded-pill bg-primary text-white ms-auto"
+                data-region="section-unread-count-container" aria-labelledby="{{$region}}{{/region}}-unread-count-label"
             >
-                <span aria-hidden="true">{{count.unread}}</span>
-                <span class="sr-only">{{#str}} unreadconversations, core_message, {{count.unread}} {{/str}}</span>
+                <span aria-hidden="true" data-region="section-unread-count">{{count.unread}}</span>
+                <span class="sr-only" id="{{$region}}{{/region}}-unread-count-label">
+                    {{#str}} unreadconversations, core_message, {{count.unread}} {{/str}}
+                </span>
             </span>
         </button>
     </div>

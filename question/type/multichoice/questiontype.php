@@ -37,6 +37,35 @@ require_once($CFG->libdir . '/questionlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multichoice extends question_type {
+    /**
+     * @var int a special value that can be set for {@see question_display_options::$feedback}.
+     *
+     * This is not used by the core question type, but is used by some variants of this question
+     * types in the plugins database, including qtype_oumultiresponse and qtype_answersselect.
+     *
+     * If ->feedback is set to this value, then the renderer will display the combined feebdack,
+     * but not the feedback for each specific choice.
+     */
+    const COMBINED_BUT_NOT_CHOICE_FEEDBACK = 0x100;
+
+    /**
+     * Helper to catch and update if a plugin is using the old version of the COMBINED_BUT_NOT_CHOICE_FEEDBACK thing.
+     *
+     * @param question_display_options $options to be updated before being used.
+     */
+    public static function support_legacy_review_options_hack(question_display_options $options): void {
+        if (empty($options->suppresschoicefeedback)) {
+            return; // Nothing to do.
+        }
+
+        debugging('$options->suppresschoicefeedback should no longer be used. To get a similar effect, ' .
+            'instead set $options->feedback = $options->feedback && qtype_multichoice::COMBINED_BUT_NOT_CHOICE_FEEDBACK.');
+        if ($options->feedback) {
+            $options->feedback = self::COMBINED_BUT_NOT_CHOICE_FEEDBACK;
+        }
+        unset($options->suppresschoicefeedback);
+    }
+
     public function get_question_options($question) {
         global $DB, $OUTPUT;
 

@@ -87,23 +87,4 @@ class unknown_service_api_called extends \core\event\base {
     public static function get_name() {
         return get_string('ltiunknownserviceapicall', 'mod_lti');
     }
-
-    /**
-     * Does this event replace a legacy event?
-     *
-     * @return null|string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'lti_unknown_service_api_call';
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return mixed
-     */
-    protected function get_legacy_eventdata() {
-        return $this->eventdata;
-    }
-
 }

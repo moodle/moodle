@@ -14,72 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Base class for unit tests for mod_assign.
- *
- * @package    mod_assign
- * @copyright  2018 Adrian Greeve <adrian@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_assign\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/assign/locallib.php');
-
-use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\approved_contextlist;
 use mod_assign\privacy\provider;
+use mod_assign\tests\provider_testcase;
 
 /**
  * Unit tests for mod/assign/classes/privacy/
  *
+ * @package    mod_assign
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_assign\privacy\provider
  */
-class provider_test extends provider_testcase {
-
-    /**
-     * Convenience method for creating a submission.
-     *
-     * @param  assign  $assign The assign object
-     * @param  stdClass  $user The user object
-     * @param  string  $submissiontext Submission text
-     * @param  integer $attemptnumber The attempt number
-     * @return object A submission object.
-     */
-    protected function create_submission($assign, $user, $submissiontext, $attemptnumber = 0) {
-        $submission = $assign->get_user_submission($user->id, true, $attemptnumber);
-        $submission->onlinetext_editor = ['text' => $submissiontext,
-                                         'format' => FORMAT_MOODLE];
-
-        $this->setUser($user);
-        $notices = [];
-        $assign->save_submission($submission, $notices);
-        return $submission;
-    }
-
-    /**
-     * Convenience function to create an instance of an assignment.
-     *
-     * @param array $params Array of parameters to pass to the generator
-     * @return assign The assign class.
-     */
-    protected function create_instance($params = array()) {
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $instance = $generator->create_instance($params);
-        $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $context = \context_module::instance($cm->id);
-        return new \assign($context, $cm, $params['course']);
-    }
-
+final class provider_test extends provider_testcase {
     /**
      * Test that getting the contexts for a user works.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -151,7 +105,7 @@ class provider_test extends provider_testcase {
     /**
      * Test returning a list of user IDs related to a context (assign).
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -240,7 +194,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that a student with multiple submissions and grades is returned with the correct data.
      */
-    public function test_export_user_data_student() {
+    public function test_export_user_data_student(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -299,6 +253,7 @@ class provider_test extends provider_testcase {
         // Give the submission a grade.
         $assign->save_grade($user->id, $data);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
@@ -334,7 +289,7 @@ class provider_test extends provider_testcase {
     /**
      * Tests the data returned for a teacher.
      */
-    public function test_export_user_data_teacher() {
+    public function test_export_user_data_teacher(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = \context_course::instance($course->id);
@@ -411,6 +366,7 @@ class provider_test extends provider_testcase {
         $flagdata->extensionduedate = $duedate;
         $assign->update_user_flags($flagdata);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
@@ -442,7 +398,7 @@ class provider_test extends provider_testcase {
     /**
      * A test for deleting all user data for a given context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -545,7 +501,7 @@ class provider_test extends provider_testcase {
     /**
      * A test for deleting all user data for one user.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -670,7 +626,7 @@ class provider_test extends provider_testcase {
     /**
      * A test for deleting all user data for a bunch of users.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();

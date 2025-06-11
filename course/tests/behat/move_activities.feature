@@ -8,9 +8,13 @@ Feature: Activities can be moved between sections
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format | coursedisplay | numsections |
-      | Course 1 | C1 | topics | 0 | 5 |
+    And the following "course" exists:
+      | fullname      | Course 1 |
+      | shortname     | C1       |
+      | format        | topics   |
+      | coursedisplay | 0        |
+      | numsections   | 5        |
+      | initsections  | 1        |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -23,8 +27,8 @@ Feature: Activities can be moved between sections
 
   Scenario: Move activities in a single page course with Javascript disabled
     When I move "Test forum name" activity to section "2"
-    Then I should see "Test forum name" in the "Topic 2" "section"
-    And I should not see "Test forum name" in the "Topic 1" "section"
+    Then I should see "Test forum name" in the "Section 2" "section"
+    And I should not see "Test forum name" in the "Section 1" "section"
 
   Scenario: Move activities in the course home with Javascript disabled using paged mode
     Given I navigate to "Settings" in current page administration
@@ -32,19 +36,19 @@ Feature: Activities can be moved between sections
       | Course layout | Show one section per page |
     And I press "Save and display"
     When I move "Test forum name" activity to section "2"
-    Then I should see "Test forum name" in the "Topic 2" "section"
-    And I should not see "Test forum name" in the "Topic 1" "section"
+    Then I should see "Test forum name" in the "Section 2" "section"
+    And I should not see "Test forum name" in the "Section 1" "section"
 
   Scenario: Move activities in a course section with Javascript disabled using paged mode
     Given I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
-    And I follow "Topic 1"
+    And I follow "Section 1"
     When I move "Second forum name" activity to section "1"
     Then "Second forum name" "link" should appear before "Test forum name" "link"
 
   @javascript
   Scenario: Move activity with javascript
     When I move "Test forum name" activity to section "3"
-    Then I should see "Test forum name" in the "Topic 3" "section"
+    Then I should see "Test forum name" in the "Section 3" "section"

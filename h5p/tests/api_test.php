@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_h5p\api
  */
-class api_test extends \advanced_testcase {
+final class api_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of delete_library().
@@ -98,7 +98,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function delete_library_provider(): array {
+    public static function delete_library_provider(): array {
         return [
             'Delete MainLibrary' => [
                 'MainLibrary',
@@ -192,7 +192,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_dependent_libraries_provider(): array {
+    public static function get_dependent_libraries_provider(): array {
         return [
             'Main library of a content' => [
                 'MainLibrary',
@@ -256,7 +256,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_library_provider(): array {
+    public static function get_library_provider(): array {
         return [
             'Main library of a content' => [
                 'MainLibrary',
@@ -287,7 +287,7 @@ class api_test extends \advanced_testcase {
 
         // Create the H5P data.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $fakefile = helper::create_fake_stored_file_from_path($path);
         $config = (object)[
             'frame' => 1,
@@ -350,7 +350,7 @@ class api_test extends \advanced_testcase {
 
         // Create the original file.
         $filename = 'greeting-card.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $originalfile = helper::create_fake_stored_file_from_path($path);
         $originalfilerecord = [
             'contextid' => $originalfile->get_contextid(),
@@ -492,7 +492,7 @@ class api_test extends \advanced_testcase {
 
         // Create the file.
         $filename = 'greeting-card.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         if ($filecomponent === 'contentbank') {
             $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
             $contents = $generator->generate_contentbank_data(
@@ -529,7 +529,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_edit_content_provider(): array {
+    public static function can_edit_content_provider(): array {
         return [
             // Component = user.
             'user: Admin user is author' => [
@@ -754,7 +754,7 @@ class api_test extends \advanced_testcase {
 
         // Create the H5P data.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $fakefile = helper::create_fake_stored_file_from_path($path);
         $config = (object)[
             'frame' => 1,
@@ -812,7 +812,7 @@ class api_test extends \advanced_testcase {
 
         // Create the H5P data.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/' . $filename;
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
         $fakefile = helper::create_fake_stored_file_from_path($path);
         $config = (object)[
             'frame' => 1,
@@ -963,7 +963,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function set_library_enabled_provider(): array {
+    public static function set_library_enabled_provider(): array {
         return [
             'Disable existing library' => [
                 'libraryname' => 'MainLibrary',
@@ -1068,7 +1068,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_library_enabled_provider(): array {
+    public static function is_library_enabled_provider(): array {
         return [
             'Library with 2 versions, one of them disabled' => [
                 'libraryname' => 'H5P.Lib1',
@@ -1194,7 +1194,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_valid_package_provider(): array {
+    public static function is_valid_package_provider(): array {
         return [
             'Valid H5P file (as admin)' => [
                 'filename' => '/fixtures/greeting-card.h5p',

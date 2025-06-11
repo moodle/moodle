@@ -33,14 +33,14 @@ require_once($CFG->dirroot . '/lib/grade/constants.php');
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class targets_test extends \advanced_testcase {
+final class targets_test extends \advanced_testcase {
 
     /**
      * Provides course params for the {@link self::test_core_target_course_completion_analysable()} method.
      *
      * @return array
      */
-    public function analysable_provider() {
+    public static function analysable_provider(): array {
 
         $now = new \DateTime("now", \core_date::get_server_timezone_object());
         $year = $now->format('Y');
@@ -153,7 +153,7 @@ class targets_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function sample_provider() {
+    public static function sample_provider(): array {
         $now = time();
         return [
             'enrolmentendbeforecourse' => [
@@ -204,7 +204,7 @@ class targets_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function active_during_analysis_time_provider() {
+    public static function active_during_analysis_time_provider(): array {
         $now = time();
 
         return [
@@ -338,7 +338,7 @@ class targets_test extends \advanced_testcase {
      * @param true|string $isvalid True when analysable is valid, string when it is not
      * @param boolean $fortraining True if the course is for training the model
      */
-    public function test_core_target_course_completion_analysable($courseparams, $isvalid, $fortraining = true) {
+    public function test_core_target_course_completion_analysable($courseparams, $isvalid, $fortraining = true): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -395,7 +395,7 @@ class targets_test extends \advanced_testcase {
      * @param boolean $isvalidforprediction True when sample is valid for prediction, false when it is not
      */
     public function test_core_target_course_completion_samples($coursestart, $courseend, $timestart, $timeend,
-            $isvalidfortraining, $isvalidforprediction) {
+            $isvalidfortraining, $isvalidforprediction): void {
 
         $this->resetAfterTest(true);
 
@@ -413,7 +413,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
@@ -434,7 +433,7 @@ class targets_test extends \advanced_testcase {
      * @param boolean $nullcalculation Whether the calculation should be null or not
      */
     public function test_core_target_course_completion_active_during_analysis_time($starttime, $endtime, $timestart, $timeend,
-            $nullcalculation) {
+            $nullcalculation): void {
 
         $this->resetAfterTest(true);
 
@@ -448,7 +447,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
@@ -456,7 +454,6 @@ class targets_test extends \advanced_testcase {
 
         $reftarget = new \ReflectionObject($target);
         $refmethod = $reftarget->getMethod('calculate_sample');
-        $refmethod->setAccessible(true);
 
         if ($nullcalculation) {
             $this->assertNull($refmethod->invoke($target, $sampleid, $analysable, $starttime, $endtime));
@@ -506,7 +503,7 @@ class targets_test extends \advanced_testcase {
      /**
       * Test the specific conditions of a valid analysable for the course_competencies target.
       */
-    public function test_core_target_course_competencies_analysable() {
+    public function test_core_target_course_competencies_analysable(): void {
 
         $data = $this->setup_competencies_environment();
 
@@ -522,7 +519,7 @@ class targets_test extends \advanced_testcase {
     /**
      * Test the target value calculation.
      */
-    public function test_core_target_course_competencies_calculate() {
+    public function test_core_target_course_competencies_calculate(): void {
 
         $data = $this->setup_competencies_environment();
 
@@ -532,7 +529,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
@@ -540,7 +536,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core_course\analytics\target\course_competencies');
         $method = $class->getMethod('calculate_sample');
-        $method->setAccessible(true);
 
         // Method calculate_sample() returns 1 when the user has not achieved all the competencies assigned to the course.
         $this->assertEquals(1, $method->invoke($target, $sampleid, $analysable));
@@ -557,7 +552,7 @@ class targets_test extends \advanced_testcase {
     /**
      * Test the specific conditions of a valid analysable for the course_gradetopass target.
      */
-    public function test_core_target_course_gradetopass_analysable() {
+    public function test_core_target_course_gradetopass_analysable(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -588,7 +583,7 @@ class targets_test extends \advanced_testcase {
     /**
      * Test the target value calculation of the course_gradetopass target.
      */
-    public function test_core_target_course_gradetopass_calculate() {
+    public function test_core_target_course_gradetopass_calculate(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -630,14 +625,12 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
 
         $class = new \ReflectionClass('\core_course\analytics\target\course_gradetopass');
         $method = $class->getMethod('calculate_sample');
-        $method->setAccessible(true);
 
         // Verify all the expectations are fulfilled.
         foreach ($sampleids as $sampleid => $key) {

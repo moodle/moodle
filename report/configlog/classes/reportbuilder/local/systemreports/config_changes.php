@@ -103,6 +103,7 @@ class config_changes extends system_report {
      */
     protected function add_filters(): void {
         $filters = [
+            'config_change:plugin',
             'config_change:setting',
             'config_change:value',
             'config_change:oldvalue',

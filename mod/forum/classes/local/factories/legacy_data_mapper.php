@@ -47,7 +47,7 @@ class legacy_data_mapper {
      *
      * @return forum_data_mapper
      */
-    public function get_forum_data_mapper() : forum_data_mapper {
+    public function get_forum_data_mapper(): forum_data_mapper {
         return new forum_data_mapper();
     }
 
@@ -56,7 +56,7 @@ class legacy_data_mapper {
      *
      * @return discussion_data_mapper
      */
-    public function get_discussion_data_mapper() : discussion_data_mapper {
+    public function get_discussion_data_mapper(): discussion_data_mapper {
         return new discussion_data_mapper();
     }
 
@@ -65,7 +65,7 @@ class legacy_data_mapper {
      *
      * @return post_data_mapper
      */
-    public function get_post_data_mapper() : post_data_mapper {
+    public function get_post_data_mapper(): post_data_mapper {
         return new post_data_mapper();
     }
 
@@ -74,7 +74,7 @@ class legacy_data_mapper {
      *
      * @return author_data_mapper
      */
-    public function get_author_data_mapper() : author_data_mapper {
+    public function get_author_data_mapper(): author_data_mapper {
         return new author_data_mapper();
     }
 

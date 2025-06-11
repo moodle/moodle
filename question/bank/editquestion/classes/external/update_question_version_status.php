@@ -18,13 +18,12 @@ namespace qbank_editquestion\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/question/engine/bank.php');
 
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use qbank_editquestion\editquestion_helper;
 use question_bank;
 
@@ -36,7 +35,7 @@ use question_bank;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class update_question_version_status extends \external_api {
+class update_question_version_status extends external_api {
 
     /**
      * Returns description of method parameters.
@@ -105,7 +104,7 @@ class update_question_version_status extends \external_api {
     /**
      * Returns description of method result value.
      */
-    public static function  execute_returns() {
+    public static function execute_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_BOOL, 'status: true if success'),
             'statusname' => new external_value(PARAM_RAW, 'statusname: name of the status'),

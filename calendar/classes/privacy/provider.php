@@ -54,7 +54,7 @@ class provider implements
      * @param  collection $collection A collection of meta data items to be added to.
      * @return  collection Returns the collection of metadata.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // The calendar 'event' table contains user data.
         $collection->add_database_table(
             'event',
@@ -94,7 +94,7 @@ class provider implements
      * @param   int $userid The user to search.
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
         // Calendar Events can exist at Site, Course Category, Course, Course Group, User, or Course Modules contexts.
@@ -118,9 +118,9 @@ class provider implements
                        (e.courseid = ctx.instanceid AND e.eventtype = 'course' AND ctx.contextlevel = :coursecontext) OR
                        (e.courseid = ctx.instanceid AND e.eventtype = 'group' AND ctx.contextlevel = :groupcontext) OR
                        (e.userid = ctx.instanceid AND e.eventtype = 'user' AND ctx.contextlevel = :usercontext)
-                 WHERE e.userid = :cuserid
-                 UNION
-                SELECT ctx.id
+                 WHERE e.userid = :cuserid";
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "SELECT ctx.id
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = :modulecontext
                   JOIN {modules} m ON m.id = cm.module
@@ -252,7 +252,7 @@ class provider implements
     /**
      * Delete all Calendar Event and Calendar Subscription data for all users in the specified context.
      *
-     * @param   context $context Transform the specific context to delete data for.
+     * @param \context $context Transform the specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         // Delete all Calendar Events in the specified context in batches.
@@ -575,7 +575,7 @@ class provider implements
      * Helper function to return the Calendar Events for a given user and context list.
      *
      * @param approved_contextlist $contextlist
-     * @return array
+     * @return \moodle_recordset
      * @throws \coding_exception
      * @throws \dml_exception
      */
@@ -642,7 +642,7 @@ class provider implements
      * Helper function to return the Calendar Subscriptions for a given user and context list.
      *
      * @param approved_contextlist $contextlist
-     * @return array
+     * @return \moodle_recordset
      * @throws \coding_exception
      * @throws \dml_exception
      */

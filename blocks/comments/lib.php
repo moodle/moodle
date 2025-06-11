@@ -59,7 +59,26 @@ function block_comments_comment_validate($comment_param) {
  * @return array
  */
 function block_comments_comment_permissions($args) {
-    return array('post'=>true, 'view'=>true);
+    global $DB, $USER;
+    // By default, anyone can post and view comments.
+    $canpost = $canview = true;
+    // Check if it's the user context and not the owner's profile.
+    if ($args->context->contextlevel == CONTEXT_USER && $USER->id != $args->context->instanceid) {
+        // Check whether the context owner has a comment block in the user's profile.
+        $sqlparam = [
+            'blockname' => 'comments',
+            'parentcontextid' => $args->context->id,
+            'pagetypepattern' => 'user-profile',
+        ];
+        // If the comment block is not present at the target user's profile,
+        // then the logged-in user cannot post or view comments.
+        $canpost = $canview = $DB->record_exists_select(
+            'block_instances',
+            'blockname = :blockname AND parentcontextid = :parentcontextid AND pagetypepattern = :pagetypepattern',
+            $sqlparam,
+        );
+    }
+    return ['post' => $canpost, 'view' => $canview];
 }
 
 /**

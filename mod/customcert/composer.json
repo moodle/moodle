@@ -8,6 +8,9 @@
     "extra": {
         "installer-name": "customcert"
     },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.8"
+    },
     "config": {
         "allow-plugins": {
             "composer/installers": true,

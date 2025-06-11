@@ -218,7 +218,7 @@ class local {
     /**
      * Get a web service token record.
      *
-     * @return stdClass
+     * @return \stdClass
      * @throws \dml_exception
      * @throws \webservice_access_exception
      */
@@ -239,6 +239,27 @@ class local {
             throw new \webservice_access_exception($msg);
         }
         $wstoken = reset($tokens);
+
+        $wstoken = self::add_token_to_wstoken($wstoken);
+        // If no token was found - as in PHPUnit tests - return an empty string.
+        if (!isset($wstoken->token)) {
+            $wstoken->token = "";
+        }
+        return $wstoken;
+    }
+
+    /**
+     * Helper method that adds the token property to the wstoken object if it is not present.
+     * Moodle 4.3 get_user_ws_tokens() no longer adds this property to the resulting object
+     * @param \stdClass $wstoken
+     * @return \stdClass
+     * @throws \dml_exception
+     */
+    public static function add_token_to_wstoken(\stdClass $wstoken): \stdClass {
+        if (empty($wstoken->token)) {
+            global $DB;
+            $wstoken->token = $DB->get_field('external_tokens', 'token', ['id' => $wstoken->id]);
+        }
         return $wstoken;
     }
 

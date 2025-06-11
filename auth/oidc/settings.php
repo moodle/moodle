@@ -42,6 +42,21 @@ if ($hassiteconfig) {
     $ADMIN->add('oidcfolder', new admin_externalpage('auth_oidc_application', get_string('settings_page_application', 'auth_oidc'),
         new moodle_url('/auth/oidc/manageapplication.php')));
 
+
+    $idptype = get_config('auth_oidc', 'idptype');
+    if ($idptype) {
+        // Binding username claim page.
+        $ADMIN->add('oidcfolder', new admin_externalpage('auth_oidc_binding_username_claim',
+            get_string('settings_page_binding_username_claim', 'auth_oidc'),
+            new moodle_url('/auth/oidc/binding_username_claim.php')));
+
+        // Change binding username claim tool page.
+        $ADMIN->add('oidcfolder', new admin_externalpage('auth_oidc_change_binding_username_claim_tool',
+            get_string('settings_page_change_binding_username_claim_tool', 'auth_oidc'),
+            new moodle_url('/auth/oidc/change_binding_username_claim_tool.php')));
+    }
+
+
     // Other settings page and its settings.
     $settings = new admin_settingpage($section, get_string('settings_page_other_settings', 'auth_oidc'));
 
@@ -66,6 +81,12 @@ if ($hassiteconfig) {
     // Force redirect.
     $settings->add(new admin_setting_configcheckbox('auth_oidc/forceredirect',
         get_string('cfg_forceredirect_key', 'auth_oidc'), get_string('cfg_forceredirect_desc', 'auth_oidc'), 0));
+
+    // Silent login mode.
+    $forceloginconfigurl = new moodle_url('/admin/settings.php', ['section' => 'sitepolicies']);
+    $settings->add(new admin_setting_configcheckbox('auth_oidc/silentloginmode',
+        get_string('cfg_silentloginmode_key', 'auth_oidc'),
+        get_string('cfg_silentloginmode_desc', 'auth_oidc', $forceloginconfigurl->out(false)), 0));
 
     // Auto-append.
     $settings->add(new admin_setting_configtext('auth_oidc/autoappend',
@@ -104,7 +125,7 @@ if ($hassiteconfig) {
     // IdP logout endpoint.
     $settings->add(new admin_setting_configtext('auth_oidc/logouturi',
         get_string('cfg_logoutendpoint_key', 'auth_oidc'), get_string('cfg_logoutendpoint_desc', 'auth_oidc'),
-        'https://login.microsoftonline.com/common/oauth2/logout', PARAM_URL));
+        'https://login.microsoftonline.com/organizations/oauth2/logout', PARAM_URL));
 
     // Front channel logout URL.
     $settings->add(new auth_oidc_admin_setting_redirecturi('auth_oidc/logoutendpoint',
@@ -205,7 +226,8 @@ if ($hassiteconfig) {
     $configkey = new lang_string('cfg_customicon_key', 'auth_oidc');
     $configdesc = new lang_string('cfg_customicon_desc', 'auth_oidc');
     $customiconsetting = new admin_setting_configstoredfile('auth_oidc/customicon',
-        get_string('cfg_customicon_key', 'auth_oidc'), get_string('cfg_customicon_desc', 'auth_oidc'), 'customicon');
+        get_string('cfg_customicon_key', 'auth_oidc'), get_string('cfg_customicon_desc', 'auth_oidc'), 'customicon', 0,
+        ['accepted_types' => ['.png', '.jpg', '.ico'], 'maxbytes' => get_max_upload_file_size()]);
     $customiconsetting->set_updatedcallback('auth_oidc_initialize_customicon');
     $settings->add($customiconsetting);
 

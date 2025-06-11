@@ -27,11 +27,16 @@ namespace auth_oidc\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\writer;
 
+/**
+ * Interface for handling user lists in the OIDC authentication plugin.
+ *
+ * @package auth_oidc
+ */
 interface auth_oidc_userlist extends \core_privacy\local\request\core_userlist_provider {
 };
 
@@ -49,7 +54,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $tables = [
             'auth_oidc_prevlogin' => [
@@ -62,6 +67,7 @@ class provider implements
                 'username',
                 'userid',
                 'oidcusername',
+                'useridentifier',
                 'scope',
                 'tokenresource',
                 'authcode',
@@ -93,7 +99,7 @@ class provider implements
      * @param   int         $userid     The user to search.
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new \core_privacy\local\request\contextlist();
 
         $sql = "SELECT ctx.id
@@ -127,7 +133,7 @@ class provider implements
 
         $params = [
             'contextuser' => CONTEXT_USER,
-            'contextid' => $context->id
+            'contextid' => $context->id,
         ];
 
         $sql = "SELECT ctx.instanceid as userid
@@ -162,7 +168,7 @@ class provider implements
             foreach ($records as $record) {
                 writer::with_context($context)->export_data([
                     get_string('privacy:metadata:auth_oidc', 'auth_oidc'),
-                    get_string('privacy:metadata:'.$table, 'auth_oidc')
+                    get_string('privacy:metadata:'.$table, 'auth_oidc'),
                 ], $record);
             }
         }
@@ -174,7 +180,7 @@ class provider implements
      * @param \stdClass $user The user to get the map for.
      * @return array The table user map.
      */
-    protected static function get_table_user_map(\stdClass $user) : array {
+    protected static function get_table_user_map(\stdClass $user): array {
         $tables = [
             'auth_oidc_prevlogin' => ['userid' => $user->id],
             'auth_oidc_token' => ['userid' => $user->id],

@@ -25,7 +25,7 @@ use ReflectionMethod;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participants_action_bar_test extends \advanced_testcase {
+final class participants_action_bar_test extends \advanced_testcase {
 
     /**
      * Test the get_content_for_select function
@@ -35,7 +35,7 @@ class participants_action_bar_test extends \advanced_testcase {
      * @param int    $expectedcount Expected number of 1st level tertiary items
      * @param array  $expecteditems Expected keys of the 1st level tertiary items.
      */
-    public function test_get_content_for_select($type, $expectedcount, $expecteditems) {
+    public function test_get_content_for_select($type, $expectedcount, $expecteditems): void {
         global $PAGE;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -57,7 +57,6 @@ class participants_action_bar_test extends \advanced_testcase {
         $PAGE->set_context($context);
         $output = new participants_action_bar($course, $PAGE, null);
         $method = new ReflectionMethod('\core\output\participants_action_bar', 'get_content_for_select');
-        $method->setAccessible(true);
         $renderer = $PAGE->get_renderer('core');
 
         $response = $method->invoke($output, $renderer);
@@ -69,7 +68,7 @@ class participants_action_bar_test extends \advanced_testcase {
      * Provider for test_get_content_for_select
      * @return array[]
      */
-    public function get_content_for_select_provider() {
+    public static function get_content_for_select_provider(): array {
         return [
             'Get dropdown content when in a course context' => [
                 'course', 3, ['Enrolments', 'Groups', 'Permissions']

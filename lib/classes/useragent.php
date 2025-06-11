@@ -87,12 +87,6 @@ class core_useragent {
     protected $devicetype = null;
 
     /**
-     * Custom device types entered into the admin interface.
-     * @var array
-     */
-    protected $devicetypecustoms = array();
-
-    /**
      * True if the user agent supports the display of svg images. False if not.
      * @var bool|null Null until initialised, then true or false.
      */
@@ -118,15 +112,6 @@ class core_useragent {
      * @param string|null $forceuseragent Optional a user agent to force.
      */
     protected function __construct($forceuseragent = null) {
-        global $CFG;
-        if (!empty($CFG->devicedetectregex)) {
-            $this->devicetypecustoms = json_decode($CFG->devicedetectregex, true);
-        }
-        if ($this->devicetypecustoms === null) {
-            // This shouldn't happen unless you're hardcoding the config value.
-            debugging('Config devicedetectregex is not valid JSON object');
-            $this->devicetypecustoms = array();
-        }
         if ($forceuseragent !== null) {
             $this->useragent = $forceuseragent;
         } else if (!empty($_SERVER['HTTP_USER_AGENT'])) {
@@ -176,17 +161,6 @@ class core_useragent {
      * @return string
      */
     protected function guess_device_type() {
-        global $CFG;
-        if (empty($CFG->enabledevicedetection)) {
-            $this->devicetype = self::DEVICETYPE_DEFAULT;
-            return $this->devicetype;
-        }
-        foreach ($this->devicetypecustoms as $value => $regex) {
-            if (preg_match($regex, $this->useragent)) {
-                $this->devicetype = $value;
-                return $this->devicetype;
-            }
-        }
         if ($this->is_useragent_mobile()) {
             $this->devicetype = self::DEVICETYPE_MOBILE;
         } else if ($this->is_useragent_tablet()) {
@@ -235,10 +209,18 @@ class core_useragent {
     /**
      * Gets a list of known device types.
      *
+     * @deprecated Moodle 4.3 MDL-78468 - No longer used. Please use core_useragent::devicetypes instead.
+     * @todo Final deprecation on Moodle 4.7 MDL-79052
      * @param bool $includecustomtypes If set to true we'll include types that have been added by the admin.
      * @return array
      */
     public static function get_device_type_list($includecustomtypes = true) {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with devicedetectregex theme setting are being removed.
+                Please use core_useragent::devicetypes instead',
+            DEBUG_DEVELOPER
+        );
         $types = self::$devicetypes;
         if ($includecustomtypes) {
             $instance = self::instance();
@@ -252,9 +234,15 @@ class core_useragent {
      *
      * This used to be get_selected_theme_for_device_type.
      * @param null|string $devicetype The device type to find out for. Defaults to the device the user is using,
+     * @deprecated since 4.3.
      * @return bool
      */
     public static function get_device_type_theme($devicetype = null) {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with device specific themes are being removed.',
+            DEBUG_DEVELOPER
+        );
         global $CFG;
         if ($devicetype === null) {
             $devicetype = self::get_device_type();
@@ -272,9 +260,15 @@ class core_useragent {
      * Used to be get_device_cfg_var_name.
      *
      * @param null|string $devicetype The device type to find out for. Defaults to the device the user is using,
+     * @deprecated since 4.3.
      * @return string
      */
     public static function get_device_type_cfg_var_name($devicetype = null) {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with device specific themes are being removed.',
+            DEBUG_DEVELOPER
+        );
         if ($devicetype == self::DEVICETYPE_DEFAULT || empty($devicetype)) {
             return 'theme';
         }
@@ -306,7 +300,7 @@ class core_useragent {
             unset_user_preference('switchdevice'.$devicetype);
             return true;
         } else {
-            $devicetypes = self::get_device_type_list();
+            $devicetypes = self::$devicetypes;
             if (in_array($newdevice, $devicetypes)) {
                 set_user_preference('switchdevice'.$devicetype, $newdevice);
                 return true;
@@ -964,26 +958,13 @@ class core_useragent {
      * @return bool
      */
     public static function supports_svg() {
-        // IE 5 - 8 don't support SVG at all.
         $instance = self::instance();
         if ($instance->supportssvg === null) {
-            if ($instance->useragent === false) {
-                // Can't be sure, just say no.
-                $instance->supportssvg = false;
-            } else if (self::check_ie_version('0') and !self::check_ie_version('9')) {
-                // IE < 9 doesn't support SVG. Say no.
-                $instance->supportssvg = false;
-            } else if (self::is_ie() and !self::check_ie_version('10') and self::check_ie_compatibility_view()) {
-                // IE 9 Compatibility View doesn't support SVG. Say no.
-                $instance->supportssvg = false;
-            } else if (preg_match('#Android +[0-2]\.#', $instance->useragent)) {
-                // Android < 3 doesn't support SVG. Say no.
-                $instance->supportssvg = false;
-            } else if (self::is_opera()) {
-                // Opera 12 still does not support SVG well enough. Say no.
+            if (preg_match('#Android +[0-2]\.#', $instance->useragent)) {
+                // Android < 3 doesn't support SVG.
                 $instance->supportssvg = false;
             } else {
-                // Presumed fine.
+                // With widespread SVG support in modern browsers, default to returning true (even when useragent is false).
                 $instance->supportssvg = true;
             }
         }
@@ -1202,7 +1183,7 @@ class core_useragent {
      * @param string $extension
      * @return bool
      */
-    public static function supports_media_source_extensions(string $extension) : bool {
+    public static function supports_media_source_extensions(string $extension): bool {
         // Not supported in IE below 11.0.
         if (self::is_ie() && !self::check_ie_version('11.0')) {
             return false;

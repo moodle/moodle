@@ -24,8 +24,8 @@
 
 namespace format_topics\output\courseformat\content\section;
 
-use context_course;
 use core_courseformat\output\local\content\section\controlmenu as controlmenu_base;
+use moodle_url;
 
 /**
  * Base class to render a course section menu.
@@ -36,10 +36,10 @@ use core_courseformat\output\local\content\section\controlmenu as controlmenu_ba
  */
 class controlmenu extends controlmenu_base {
 
-    /** @var course_format the course format class */
+    /** @var \core_courseformat\base the course format class */
     protected $format;
 
-    /** @var section_info the course section class */
+    /** @var \section_info the course section class */
     protected $section;
 
     /**
@@ -53,50 +53,18 @@ class controlmenu extends controlmenu_base {
 
         $format = $this->format;
         $section = $this->section;
-        $course = $format->get_course();
-        $sectionreturn = $format->get_section_number();
-
-        $coursecontext = context_course::instance($course->id);
-
-        if ($sectionreturn) {
-            $url = course_get_url($course, $section->section);
-        } else {
-            $url = course_get_url($course);
-        }
-        $url->param('sesskey', sesskey());
-
-        $controls = [];
-        if ($section->section && has_capability('moodle/course:setcurrentsection', $coursecontext)) {
-            if ($course->marker == $section->section) {  // Show the "light globe" on/off.
-                $url->param('marker', 0);
-                $highlightoff = get_string('highlightoff');
-                $controls['highlight'] = [
-                    'url' => $url,
-                    'icon' => 'i/marked',
-                    'name' => $highlightoff,
-                    'pixattr' => ['class' => ''],
-                    'attr' => [
-                        'class' => 'editing_highlight',
-                        'data-action' => 'removemarker'
-                    ],
-                ];
-            } else {
-                $url->param('marker', $section->section);
-                $highlight = get_string('highlight');
-                $controls['highlight'] = [
-                    'url' => $url,
-                    'icon' => 'i/marker',
-                    'name' => $highlight,
-                    'pixattr' => ['class' => ''],
-                    'attr' => [
-                        'class' => 'editing_highlight',
-                        'data-action' => 'setmarker'
-                    ],
-                ];
-            }
-        }
+        $coursecontext = $format->get_context();
 
         $parentcontrols = parent::section_control_items();
+
+        if ($section->is_orphan() || !$section->section) {
+            return $parentcontrols;
+        }
+
+        $controls = [];
+        if (has_capability('moodle/course:setcurrentsection', $coursecontext)) {
+            $controls['highlight'] = $this->get_highlight_control();
+        }
 
         // If the edit key exists, we are going to insert our controls after it.
         if (array_key_exists("edit", $parentcontrols)) {
@@ -115,5 +83,84 @@ class controlmenu extends controlmenu_base {
         } else {
             return array_merge($controls, $parentcontrols);
         }
+    }
+
+    /**
+     * Return the course url.
+     *
+     * @return moodle_url
+     */
+    protected function get_course_url(): moodle_url {
+        $format = $this->format;
+        $section = $this->section;
+        $course = $format->get_course();
+        $sectionreturn = $format->get_sectionnum();
+
+        if ($sectionreturn) {
+            $url = course_get_url($course, $section->section);
+        } else {
+            $url = course_get_url($course);
+        }
+        $url->param('sesskey', sesskey());
+        return $url;
+    }
+
+    /**
+     * Return the specific section highlight action.
+     *
+     * @return array the action element.
+     */
+    protected function get_highlight_control(): array {
+        $format = $this->format;
+        $section = $this->section;
+        $course = $format->get_course();
+        $sectionreturn = $format->get_sectionnum();
+        $url = $this->get_course_url();
+        if (!is_null($sectionreturn)) {
+            $url->param('sectionid', $format->get_sectionid());
+        }
+
+        $highlightoff = get_string('highlightoff');
+        $highlightofficon = 'i/marked';
+
+        $highlighton = get_string('highlight');
+        $highlightonicon = 'i/marker';
+
+        if ($course->marker == $section->section) {  // Show the "light globe" on/off.
+            $url->param('marker', 0);
+            $result = [
+                'url' => $url,
+                'icon' => $highlightofficon,
+                'name' => $highlightoff,
+                'pixattr' => ['class' => ''],
+                'attr' => [
+                    'class' => 'editing_highlight',
+                    'data-action' => 'sectionUnhighlight',
+                    'data-sectionreturn' => $sectionreturn,
+                    'data-id' => $section->id,
+                    'data-icon' => $highlightofficon,
+                    'data-swapname' => $highlighton,
+                    'data-swapicon' => $highlightonicon,
+                ],
+            ];
+        } else {
+            $url->param('marker', $section->section);
+            $result = [
+                'url' => $url,
+                'icon' => $highlightonicon,
+                'name' => $highlighton,
+                'pixattr' => ['class' => ''],
+                'attr' => [
+                    'class' => 'editing_highlight',
+                    'data-action' => 'sectionHighlight',
+                    'data-sectionreturn' => $sectionreturn,
+                    'data-id' => $section->id,
+                    'data-icon' => $highlightonicon,
+                    'data-swapname' => $highlightoff,
+                    'data-swapicon' => $highlightofficon,
+                ],
+            ];
+        }
+        return $result;
     }
 }

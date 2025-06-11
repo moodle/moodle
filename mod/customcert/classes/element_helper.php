@@ -702,6 +702,7 @@ class element_helper {
         $dateformats = [
             1 => userdate($date, '%B %d, %Y'),
             2 => userdate($date, '%B %d' . $suffix . ', %Y'),
+            5 => userdate($date, '%Y-%m-%d'),
         ];
 
         $strdateformats = [
@@ -758,6 +759,10 @@ class element_helper {
                     break;
                 case 4:
                     $certificatedate = userdate($date, '%B %Y');
+                    break;
+                case 5:
+                    // ISO 8601 date format (YYYY-MM-DD).
+                    $certificatedate = userdate($date, '%Y-%m-%d', 99, false, false);
                     break;
                 default:
                     $certificatedate = userdate($date, get_string('strftimedate', 'langconfig'));

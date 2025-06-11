@@ -23,7 +23,7 @@
 
 import Ajax from 'core/ajax';
 import {render as renderTemplate} from 'core/templates';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 /**
  * Load the list of users matching the query and render the selector labels for them.

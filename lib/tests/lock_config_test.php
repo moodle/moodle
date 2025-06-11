@@ -24,13 +24,13 @@ namespace core;
  * @copyright  2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lock_config_test extends \advanced_testcase {
+final class lock_config_test extends \advanced_testcase {
 
     /**
      * Tests the static parse charset method
      * @return void
      */
-    public function test_lock_config() {
+    public function test_lock_config(): void {
         global $CFG;
         $original = null;
         if (isset($CFG->lock_factory)) {

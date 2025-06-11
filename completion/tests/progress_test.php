@@ -25,14 +25,16 @@ use completion_completion;
  * @category test
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_completion\progress
  */
-class progress_test extends \advanced_testcase {
+final class progress_test extends \advanced_testcase {
 
     /**
      * Test setup.
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         $CFG->enablecompletion = true;
         $this->resetAfterTest();
@@ -41,7 +43,7 @@ class progress_test extends \advanced_testcase {
     /**
      * Tests that the course progress percentage is returned correctly when we have only activity completion.
      */
-    public function test_course_progress_percentage_with_just_activities() {
+    public function test_course_progress_percentage_with_just_activities(): void {
         global $DB;
 
         // Add a course that supports completion.
@@ -80,7 +82,7 @@ class progress_test extends \advanced_testcase {
     /**
      * Tests that the course progress percentage is returned correctly when we have a course and activity completion.
      */
-    public function test_course_progress_percentage_with_activities_and_course() {
+    public function test_course_progress_percentage_with_activities_and_course(): void {
         global $DB;
 
         // Add a course that supports completion.
@@ -122,10 +124,8 @@ class progress_test extends \advanced_testcase {
 
     /**
      * Tests that the course progress percentage is returned correctly for various grade to pass settings
-     *
-     * @covers \core_completion\progress::get_course_progress_percentage.
      */
-    public function test_course_progress_percentage_completion_state() {
+    public function test_course_progress_percentage_completion_state(): void {
         global $DB, $CFG;
 
         require_once("{$CFG->dirroot}/completion/criteria/completion_criteria_activity.php");
@@ -233,7 +233,7 @@ class progress_test extends \advanced_testcase {
     /**
      * Tests that the course progress returns null when the course does not support it.
      */
-    public function test_course_progress_course_not_using_completion() {
+    public function test_course_progress_course_not_using_completion(): void {
         // Create a course that does not use completion.
         $course = $this->getDataGenerator()->create_course();
 
@@ -244,7 +244,7 @@ class progress_test extends \advanced_testcase {
     /**
      * Tests that the course progress returns null when there are no activities that support it.
      */
-    public function test_course_progress_no_activities_using_completion() {
+    public function test_course_progress_no_activities_using_completion(): void {
         // Create a course that does support completion.
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
 
@@ -258,7 +258,7 @@ class progress_test extends \advanced_testcase {
     /**
      * Tests that the course progress returns null for a not tracked for completion user in a course.
      */
-    public function test_course_progress_not_tracked_user() {
+    public function test_course_progress_not_tracked_user(): void {
         global $DB;
 
         // Add a course that supports completion.

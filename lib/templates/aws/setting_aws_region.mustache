@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/aws/setting_aws_region
+
+    Admin aws region setting template.
+
+    Context variables required for this template:
+    * list - form list name
+    * name - form element name
+    * id - element id
+    * value - element value
+    * size - element size
+    * options - list of data list options: label, value.
+
+    Example context (json):
+    {
+        "list": "test",
+        "name": "test",
+        "id": "test0",
+        "value": "A tall, dark stranger will have more fun than you.",
+        "size": "21",
+        "options": [ { "label": "eu-north-1 - Europe (Stockholm)", "value": "eu-north-1" } ]
+    }
+}}
+{{!
+    Setting config aws region
+}}
+<div class="form-text defaultsnext">
+    <input type="text" list="{{list}}" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="form-control text-ltr" {{#readonly}}disabled{{/readonly}}>
+    <datalist id="{{list}}">
+        {{#options}}
+        <option value="{{value}}" label="{{label}}"></option>
+        {{/options}}
+    </datalist>
+</div>

@@ -25,12 +25,15 @@
 
 namespace local_o365\adminsetting;
 
-defined('MOODLE_INTERNAL') || die();
+use admin_setting;
+use html_writer;
+use moodle_url;
+use tabobject;
 
 /**
  * A tab in the plugin configuration page.
  */
-class tabs extends \admin_setting {
+class tabs extends admin_setting {
     /**
      * @var array[] tabs.
      */
@@ -47,20 +50,25 @@ class tabs extends \admin_setting {
      * @var bool whether to reload the configuration page.
      */
     protected $reload;
+    /**
+     * @var mixed the component.
+     */
+    protected $component;
+    /**
+     * @var string the theme.
+     */
+    protected $theme;
 
     /**
-     * Config fileupload constructor
+     * Config tab constructor.
      *
-     * @param string  $name    Unique ascii name, either 'mysetting' for settings that in
+     * @param string $name Unique ascii name, either 'mysetting' for settings that in
      *                         config, or 'myplugin/mysetting' for ones in config_plugins.
-     * @param string  $section Section name
-     * @param boolean $reload  Whether to reload
+     * @param string $section Section name
+     * @param boolean $reload Whether to reload
      */
     public function __construct($name, $section, $reload) {
         parent::__construct($name, '', '', '');
-
-        global $PAGE;
-        global $CFG;
 
         $this->section = $section;
         $this->reload = $reload;
@@ -71,7 +79,7 @@ class tabs extends \admin_setting {
         $this->selected = optional_param($this->get_full_name(), 0, PARAM_INT);
 
         if ($this->reload) {
-            $newtab = optional_param($this->get_full_name().'_new', -1, PARAM_INT);
+            $newtab = optional_param($this->get_full_name() . '_new', -1, PARAM_INT);
 
             if ($newtab != -1) {
                 $this->selected = $newtab;
@@ -112,31 +120,29 @@ class tabs extends \admin_setting {
                 $result = $this->export();
             }
         }
+
         return $result;
     }
 
     /**
      * Add a tab to the tab row
      *
-     * For now we only implement a single row.  Multiple rows could be added as an extension
-     * later.
+     * For now we only implement a single row.  Multiple rows could be added as an extension later.
      *
-     * @param int    $id   The tab id
+     * @param int $id The tab id
      * @param string $name The tab name
-     * @param \moodle_url|null $url An explicit URL to use instead of settings page section.
+     * @param moodle_url|null $url An explicit URL to use instead of settings page section.
      * @uses $CFG
      */
-    public function addtab($id, $name, \moodle_url $url = null) {
-        global $CFG;
-
+    public function addtab($id, $name, ?moodle_url $url = null) {
         if (empty($url)) {
             $urlparams = [
                 'section' => $this->section,
-                $this->get_full_name() => $id
+                $this->get_full_name() => $id,
             ];
-            $url = new \moodle_url('/admin/settings.php', $urlparams);
+            $url = new moodle_url('/admin/settings.php', $urlparams);
         }
-        $tab = new \tabobject($id, $url, $name);
+        $tab = new tabobject($id, $url, $name);
 
         $this->tabs[0][] = $tab;
     }
@@ -144,30 +150,28 @@ class tabs extends \admin_setting {
     /**
      * Returns an HTML string
      *
-     * @param mixed  $data  Array or string depending on setting
+     * @param mixed $data Array or string depending on setting
      * @param string $query Query
      * @return string Returns an HTML string
      */
-    public function output_html($data, $query='') {
-        global $CFG, $PAGE;
-
+    public function output_html($data, $query = '') {
         $this->component = $this->plugin;
         $this->theme = substr($this->component, 6);
 
-        $output  = print_tabs($this->tabs, $this->selected, null, null, true);
+        $output = print_tabs($this->tabs, $this->selected, null, null, true);
 
         $properties = [
-            'type'  => 'hidden',
-            'name'  => $this->get_full_name(),
-            'value' => $this->get_setting()
+            'type' => 'hidden',
+            'name' => $this->get_full_name(),
+            'value' => $this->get_setting(),
         ];
 
-        $output .= \html_writer::empty_tag('input', $properties);
+        $output .= html_writer::empty_tag('input', $properties);
 
         $properties['id'] = $this->get_id();
-        $properties['name'] = $this->get_full_name().'_new';
+        $properties['name'] = $this->get_full_name() . '_new';
 
-        $output .= \html_writer::empty_tag('input', $properties);
+        $output .= html_writer::empty_tag('input', $properties);
 
         return $output;
     }

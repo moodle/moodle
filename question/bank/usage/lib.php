@@ -48,7 +48,8 @@ function qbank_usage_output_fragment_question_usage(array $args): string {
     $transaction->allow_commit();
     $displaydata['question'] = $quba->render_question($slot, $options, '1');
 
-    $questionusagetable = new \qbank_usage\tables\question_usage_table('question_usage_table', $question);
+    $specificversion = clean_param($args['specificversion'] ?? false, PARAM_BOOL);
+    $questionusagetable = new \qbank_usage\tables\question_usage_table('question_usage_table', $question, $specificversion);
     $questionusagetable->baseurl = new moodle_url('');
     if (isset($args['querystring'])) {
         $querystring = preg_replace('/^\?/', '', $args['querystring']);

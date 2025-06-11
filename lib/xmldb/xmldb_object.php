@@ -34,10 +34,10 @@ class xmldb_object {
     /** @var string comment on object */
     protected $comment;
 
-    /** @var xmldb_object */
+    /** @var string */
     protected $previous;
 
-    /** @var xmldb_object */
+    /** @var string */
     protected $next;
 
     /** @var string hash of object */
@@ -101,7 +101,7 @@ class xmldb_object {
 
     /**
      * This function will return the name of the previous xmldb_object
-     * @return xmldb_object
+     * @return string
      */
     public function getPrevious() {
         return $this->previous;
@@ -109,7 +109,7 @@ class xmldb_object {
 
     /**
      * This function will return the name of the next xmldb_object
-     * @return xmldb_object
+     * @return string
      */
     public function getNext() {
         return $this->next;
@@ -141,7 +141,7 @@ class xmldb_object {
 
     /**
      * This function will set the previous of the xmldb_object
-     * @param xmldb_object $previous
+     * @param string $previous
      */
     public function setPrevious($previous) {
         $this->previous = $previous;
@@ -149,7 +149,7 @@ class xmldb_object {
 
     /**
      * This function will set the next of the xmldb_object
-     * @param xmldb_object $next
+     * @param string $next
      */
     public function setNext($next) {
         $this->next = $next;
@@ -192,7 +192,7 @@ class xmldb_object {
      * only lowercase a-z, 0-9 and _ are allowed
      * @return bool
      */
-    public function checkName () {
+    public function checkName() {
         $result = true;
 
         if ($this->name != preg_replace('/[^a-z0-9_ -]/i', '', $this->name)) {
@@ -416,7 +416,7 @@ class xmldb_object {
      * @param xmldb_table $xmldb_table optional when object is table
      * @return string null if ok, error message if problem found
      */
-    public function validateDefinition(xmldb_table $xmldb_table=null) {
+    public function validateDefinition(?xmldb_table $xmldb_table=null) {
         return null;
     }
 }

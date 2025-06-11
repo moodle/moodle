@@ -37,7 +37,6 @@ $header =  fullname($USER) . ": " . get_string('heading_mymedia', 'local_mymedia
 
 $PAGE->set_url('/local/mymedia/mymedia.php');
 $PAGE->set_pagetype('mymedia-index');
-$PAGE->set_pagelayout('standard');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
 
@@ -53,7 +52,7 @@ $attr = array(
     'width' => '100%',
     'allowfullscreen' => 'true',
     'src' => 'lti_launch.php',
-    'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;',
+    'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
 );
 echo html_writer::tag('iframe', '', $attr);
 

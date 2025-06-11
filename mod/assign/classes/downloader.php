@@ -64,7 +64,7 @@ class downloader {
      * Class constructor.
      *
      * @param assign $manager the instance manager
-     * @param array|null $userids the user ids to download.
+     * @param int[]|null $userids the user ids to download.
      */
     public function __construct(assign $manager, ?array $userids = null) {
         $this->manager = $manager;

@@ -49,7 +49,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('comments', [
                 'content' => 'privacy:metadata:comment:content',
                 'timecreated' => 'privacy:metadata:comment:timecreated',
@@ -125,8 +125,8 @@ class provider implements
      * @param  string $commentarea Comment area to delete.
      * @param  int $itemid The item ID for use with deletion.
      */
-    public static function delete_comments_for_all_users(\context $context, string $component, string $commentarea = null,
-            int $itemid = null) {
+    public static function delete_comments_for_all_users(\context $context, string $component, ?string $commentarea = null,
+            ?int $itemid = null) {
         global $DB;
         $params = [
             'contextid' => $context->id,
@@ -171,7 +171,7 @@ class provider implements
      * @param  int $itemid The item id to delete from.
      */
     public static function delete_comments_for_user(\core_privacy\local\request\approved_contextlist $contextlist,
-            string $component, string $commentarea = null, int $itemid = null) {
+            string $component, ?string $commentarea = null, ?int $itemid = null) {
         global $DB;
 
         $userid = $contextlist->get_user()->id;
@@ -207,7 +207,7 @@ class provider implements
      * @param  int $itemid The item id to delete from.
      */
     public static function delete_comments_for_users(\core_privacy\local\request\approved_userlist $userlist,
-            string $component, string $commentarea = null, int $itemid = null) {
+            string $component, ?string $commentarea = null, ?int $itemid = null) {
         global $DB;
 
         $context = $userlist->get_context();
@@ -244,7 +244,7 @@ class provider implements
      * @param   array       $params The params required for the insql.
      */
     public static function get_users_in_context_from_sql(
-                userlist $userlist, string $alias, string $component, string $area, int $contextid = null, string $insql = '',
+                userlist $userlist, string $alias, string $component, string $area, ?int $contextid = null, string $insql = '',
                 array $params = []) {
 
         if ($insql != '') {

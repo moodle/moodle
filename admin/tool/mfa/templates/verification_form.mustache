@@ -1,0 +1,98 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_mfa/verification_form
+
+    Template to display the MFA verification form and options.
+
+    Example context (json):
+    {
+    "logintitle": "We've just sent a 6-digit code to your email",
+    "logindesc": "Use the Google Authenticator app to generate a code.",
+    "factoricon": "fa-envelope",
+    "form": "<form id=\"mfa-verify-form\" method=\"POST\" action=\"https:\/\/webserver\/admin\/tool\/mfa\/auth.php\"></form>",
+    "hasadditionalfactors": true,
+    "additionalfactors": [
+        {
+        "name": "webauthn",
+        "icon": "fa-hand-pointer",
+        "loginoption": "Use authenticator token"
+        }
+    ],
+    "authurl": "https:\/\/webserver\/admin\/tool\/mfa\/auth.php",
+    "supportlink": "<a href=\"https:\/\/webserver\/user\/contactsitesupport.php\">Contact site support<\/a>",
+    "disablefactor": false
+    }
+}}
+
+<div>
+    <div class="row">
+        <div class="col-12">
+            <h2>{{#str}} verification, tool_mfa {{/str}}</h2>
+            <p>{{#str}} verification_desc, tool_mfa {{/str}}</p>
+        </div>
+    </div>
+    <div class="mb-4 border-bottom"></div>
+    <div class="d-flex align-items-start pb-2 {{#disablefactor}}text-muted{{/disablefactor}}">
+        <div class="pt-1" style="flex: 0 0 auto;">
+            <i class="fa {{factoricon}} fa-fw fa-2x" title="{{logintitle}}" role="img" aria-label="{{logintitle}}"></i>
+        </div>
+        <div style="flex: 1 1 auto; padding-left: 15px;" class="text-wrap">
+            <strong>{{logintitle}}</strong><br>
+            {{logindesc}}
+        </div>
+    </div>
+</div>
+<div class="mfa-verify-form">
+    {{{form}}}
+</div>
+{{#hasadditionalfactors}}
+    <div class="mb-6 mt-4 border-bottom"></div>
+    <p class="font-weight-bold mb-1">{{#str}} verifyalt, tool_mfa {{/str}}</p>
+{{/hasadditionalfactors}}
+{{#additionalfactors}}
+    <form id="{{uniqid}}-nextfactor" method="POST" action="{{{authurl}}}">
+        <input type="hidden" id="{{uniqid}}-factorname" name="factorname" value="{{name}}">
+        <button class="btn-link text-decoration-none tool-mfa-factor-choose d-flex align-items-center p-1 mb-2 {{#disable}}disabled{{/disable}}"
+                type="submit">
+            <span class="icon-no-margin icon-size-3 d-flex p-1 me-2">
+                <i class="fa {{icon}} fa-fw fa-2x"
+                   title="{{logintitle}}"
+                   role="img"
+                   aria-label="{{logintitle}}"></i>
+            </span>
+            <span class="tool-mfa-factor-choose-text mfa-login-option">{{loginoption}}</span>
+        </button>
+    </form>
+{{/additionalfactors}}
+<div class="form-container text-center mt-3">
+    <div class="d-flex justify-content-center">
+        <form id="cancelmfa" method="POST" action="{{{authurl}}}">
+            <input type="hidden" id="{{uniqid}}-logout" name="logout" value="true">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <input type="submit" class="btn btn-secondary"
+                   name="cancelmfa" id="cancelmfa_button"
+                   value="{{#str}} cancellogin, tool_mfa {{/str}}">
+        </form>
+    </div>
+    {{#supportlink}}
+    <div class="tool-mfa-site-support mt-4">
+        {{#str}} needhelp, tool_mfa {{/str}} {{{supportlink}}}
+    </div>
+    {{/supportlink}}
+</div>
+

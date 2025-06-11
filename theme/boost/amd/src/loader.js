@@ -73,6 +73,12 @@ const enablePopovers = () => {
         if (e.key === 'Escape' && e.target.closest('[data-toggle="popover"]')) {
             $(e.target).popover('hide');
         }
+        if (e.key === 'Enter' && e.target.closest('[data-toggle="popover"]')) {
+            $(e.target).popover('show');
+        }
+    });
+    document.addEventListener('click', e => {
+        $(e.target).closest('[data-toggle="popover"]').popover('show');
     });
 };
 

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_quiz\quiz_settings;
+
 /**
  * Version information
  *
@@ -22,7 +24,7 @@
  * @author     Andrew Hancox <andrewdchancox@googlemail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_mergeusers_quiz_testcase extends advanced_testcase {
+class quiz_test extends advanced_testcase {
     /**
      * Configure the test.
      * Create two courses with a quiz in each.
@@ -140,7 +142,7 @@ class tool_mergeusers_quiz_testcase extends advanced_testcase {
      */
     private function submit_quiz_attempt($quiz, $user, $answers) {
         // Create a quiz attempt for the user.
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
 
         // Set up and start an attempt.
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -149,7 +151,7 @@ class tool_mergeusers_quiz_testcase extends advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \mod_quiz\quiz_attempt::create($attempt->id);
         $attemptobj->process_submitted_actions($timenow, false, $answers);
 
         $timefinish = time();

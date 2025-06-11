@@ -1,0 +1,4 @@
+shortname,fullname,category_idnumber,enrolment_1,enrolment_1_metacoursename
+C3,Course 3,CAT1,meta,Not exist
+C4,Course 4,CAT2,meta,C1
+C1,Course 1,CAT1,meta,C1

@@ -85,20 +85,33 @@
     }
 }}
 <div class="dropdown select-menu" id="{{baseid}}">
-    {{#label}}
+    {{#label}}{{^inlinelabel}}
         <label id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</label>
-    {{/label}}
+    {{/inlinelabel}}{{/label}}
     <div
-        class="btn dropdown-toggle"
+        class="btn dropdown-toggle{{#inlinelabel}} d-flex text-left align-items-center p-0{{/inlinelabel}}"
         role="combobox"
         data-toggle="dropdown"
         {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}
         aria-haspopup="listbox"
         aria-expanded="false"
         aria-controls="{{baseid}}-listbox"
+        data-input-element="{{baseid}}-input"
         tabindex="0"
     >
-        {{selectedoption}}
+        {{#inlinelabel}}
+            <div class="pr-3 text-truncate">
+                {{#label}}
+                    <label class="d-block m-0 small" id="{{baseid}}-label"{{#labelattributes}} {{name}}="{{value}}"{{/labelattributes}}>{{label}}</label>
+                {{/label}}
+                <span class="font-weight-bold" data-selected-option>
+                    {{selectedoption}}
+                </span>
+            </div>
+        {{/inlinelabel}}
+        {{^inlinelabel}}
+            {{selectedoption}}
+        {{/inlinelabel}}
     </div>
     <ul class="dropdown-menu" role="listbox" id="{{baseid}}-listbox" {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}>
         {{#options}}
@@ -107,21 +120,31 @@
                     <ul role="group" aria-labelledby="{{id}}">
                         <li role="presentation" id="{{id}}">{{name}}</li>
                         {{#options}}
-                            <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
-                                {{name}}
-                            </li>
+                            {{#isdivider}}
+                                <li role="separator" class="dropdown-divider"></li>
+                            {{/isdivider}}
+                            {{^isdivider}}
+                                <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                                    {{name}}
+                                </li>
+                            {{/isdivider}}
                         {{/options}}
                     </ul>
                 </li>
             {{/isgroup}}
             {{^isgroup}}
-                <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
-                    {{name}}
-                </li>
+                {{#isdivider}}
+                    <li role="separator" class="dropdown-divider"></li>
+                {{/isdivider}}
+                {{^isdivider}}
+                    <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                        {{name}}
+                    </li>
+                {{/isdivider}}
             {{/isgroup}}
         {{/options}}
     </ul>
-    <input type="hidden" name="{{name}}" value="{{value}}" />
+    <input type="hidden" name="{{name}}" value="{{value}}" id="{{baseid}}-input">
 </div>
 {{#js}}
     var label = document.getElementById('{{baseid}}-label');

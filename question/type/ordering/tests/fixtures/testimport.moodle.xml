@@ -1,0 +1,70 @@
+<question type="ordering">
+    <name>
+      <text>Moodle</text>
+    </name>
+    <questiontext format="html">
+      <text>Put these words in order.</text>
+    </questiontext>
+    <questiontext format="html">
+        <text><![CDATA[Put these words in order.]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+        <text><![CDATA[The correct answer is "Modular Object Oriented Dynamic Learning Environment".]]></text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>myid</idnumber>
+    <numberingstyle>none</numberingstyle>
+    <correctfeedback format="html">
+        <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+        <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+        <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <answer fraction="1.0000000" format="html">
+        <text>Modular</text>
+        <feedback format="html">
+            <text><![CDATA[Modular is correct.]]></text>
+        </feedback>
+    </answer>
+    <answer fraction="2.0000000" format="html">
+        <text>Object</text>
+        <feedback format="html">
+            <text><![CDATA[Object is correct.]]></text>
+        </feedback>
+    </answer>
+    <answer fraction="3.0000000" format="html">
+        <text>Oriented</text>
+        <feedback format="html">
+            <text><![CDATA[Oriented is correct.]]></text>
+        </feedback>
+    </answer>
+    <answer fraction="4.0000000" format="html">
+        <text>Dynamic</text>
+        <feedback format="html">
+            <text><![CDATA[Dynamic is correct.]]></text>
+        </feedback>
+    </answer>
+    <answer fraction="5.0000000" format="html">
+        <text>Learning</text>
+        <feedback format="html">
+            <text><![CDATA[Learning is correct.]]></text>
+        </feedback>
+    </answer>
+    <answer fraction="6.0000000" format="html">
+        <text>Environment</text>
+        <feedback format="html">
+            <text><![CDATA[Environment is correct.]]></text>
+        </feedback>
+    </answer>
+    <hint format="html">
+        <text>Hint 1</text>
+    </hint>
+    <hint format="html">
+        <text>Hint 2</text>
+    </hint>
+</question>

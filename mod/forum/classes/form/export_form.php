@@ -53,6 +53,7 @@ class export_form extends \moodleform {
             'ajax' => 'mod_forum/form-user-selector',
             'multiple' => true,
             'noselectionstring' => get_string('allusers', 'mod_forum'),
+            'data-contextid' => $forum->get_context()->id,
             'courseid' => $forum->get_course_id(),
                 'valuehtmlcallback' => function($value) {
                     global $OUTPUT;
@@ -69,7 +70,6 @@ class export_form extends \moodleform {
         ];
         $mform->addElement('autocomplete', 'useridsselected', get_string('users'), [], $options);
 
-        // Get the discussions on this forum.
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $discussionvault = $vaultfactory->get_discussion_vault();
         $discussions = array_map(function($discussion) {

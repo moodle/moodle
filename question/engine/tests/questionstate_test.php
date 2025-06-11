@@ -31,9 +31,10 @@ require_once($CFG->libdir . '/questionlib.php');
  * @category   test
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \question_state
  */
-class questionstate_test extends \advanced_testcase {
-    public function test_is_active() {
+final class questionstate_test extends \advanced_testcase {
+    public function test_is_active(): void {
         $this->assertFalse(question_state::$notstarted->is_active());
         $this->assertFalse(question_state::$unprocessed->is_active());
         $this->assertTrue(question_state::$todo->is_active());
@@ -52,7 +53,7 @@ class questionstate_test extends \advanced_testcase {
         $this->assertFalse(question_state::$mangrright->is_active());
     }
 
-    public function test_is_finished() {
+    public function test_is_finished(): void {
         $this->assertFalse(question_state::$notstarted->is_finished());
         $this->assertFalse(question_state::$unprocessed->is_finished());
         $this->assertFalse(question_state::$todo->is_finished());
@@ -71,7 +72,7 @@ class questionstate_test extends \advanced_testcase {
         $this->assertTrue(question_state::$mangrright->is_finished());
     }
 
-    public function test_is_graded() {
+    public function test_is_graded(): void {
         $this->assertFalse(question_state::$notstarted->is_graded());
         $this->assertFalse(question_state::$unprocessed->is_graded());
         $this->assertFalse(question_state::$todo->is_graded());
@@ -90,7 +91,7 @@ class questionstate_test extends \advanced_testcase {
         $this->assertTrue(question_state::$mangrright->is_graded());
     }
 
-    public function test_is_commented() {
+    public function test_is_commented(): void {
         $this->assertFalse(question_state::$notstarted->is_commented());
         $this->assertFalse(question_state::$unprocessed->is_commented());
         $this->assertFalse(question_state::$todo->is_commented());
@@ -109,7 +110,7 @@ class questionstate_test extends \advanced_testcase {
         $this->assertTrue(question_state::$mangrright->is_commented());
     }
 
-    public function test_graded_state_for_fraction() {
+    public function test_graded_state_for_fraction(): void {
         $this->assertEquals(question_state::$gradedwrong, question_state::graded_state_for_fraction(-1));
         $this->assertEquals(question_state::$gradedwrong, question_state::graded_state_for_fraction(0));
         $this->assertEquals(question_state::$gradedpartial, question_state::graded_state_for_fraction(0.000001));
@@ -117,7 +118,7 @@ class questionstate_test extends \advanced_testcase {
         $this->assertEquals(question_state::$gradedright, question_state::graded_state_for_fraction(1));
     }
 
-    public function test_manually_graded_state_for_other_state() {
+    public function test_manually_graded_state_for_other_state(): void {
         $this->assertEquals(question_state::$manfinished,
                 question_state::$finished->corresponding_commented_state(null));
         $this->assertEquals(question_state::$mangaveup,
@@ -153,5 +154,15 @@ class questionstate_test extends \advanced_testcase {
 
         $this->assertEquals(question_state::$mangrright,
                 question_state::$gradedpartial->corresponding_commented_state(1));
+    }
+
+    public function test_get(): void {
+        $this->assertEquals(question_state::$todo, question_state::get('todo'));
+    }
+
+    public function test_get_bad_data(): void {
+        question_state::get('');
+        $this->assertDebuggingCalled('Attempt to create a state from an empty string. ' .
+                'This is probably a sign of bad data in your database. See MDL-80127.');
     }
 }

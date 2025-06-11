@@ -46,8 +46,8 @@ class filter_form extends \moodleform {
 
         $mform->addElement('header', 'filterheader', get_string('filter'));
         $opts = ['optional' => true];
-        $mform->addElement('date_selector', 'filterstartdate', get_string('from'), $opts);
-        $mform->addElement('date_selector', 'filterenddate', get_string('to'), $opts);
+        $mform->addElement('date_selector', 'filterstartdate', get_string('fromdate'), $opts);
+        $mform->addElement('date_selector', 'filterenddate', get_string('todate'), $opts);
 
         $mform->setExpanded('filterheader', false);
 

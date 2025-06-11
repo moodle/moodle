@@ -70,7 +70,7 @@ class reportattempts implements renderable, templatable {
      * @param string|null $title title to display on the scored attempt (null if none attempt is the scored one)
      * @param attempt|null $scored the scored attempt (null if none)
      */
-    public function __construct(array $attempts, stdClass $user, int $courseid, string $title = null, attempt $scored = null) {
+    public function __construct(array $attempts, stdClass $user, int $courseid, ?string $title = null, ?attempt $scored = null) {
         $this->attempts = $attempts;
         $this->user = $user;
         $this->courseid = $courseid;

@@ -23,29 +23,31 @@
  * @copyright (C) 2016 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_o365;
+
+use advanced_testcase;
 
 /**
  * Tests event observers.
  *
  * @group local_o365
  * @group office365
- * @codeCoverageIgnore
  */
-class local_o365_observers_testcase extends \advanced_testcase {
+final class observers_test extends advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
-    protected function setUp() : void {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
 
     /**
      * Test users disconnect method.
+     *
+     * @covers \local_o365\observers::handle_oidc_user_disconnected
      */
-    public function test_user_disconnected() {
-        global $DB;
+    public function test_user_disconnected(): void {
         $user = $this->getDataGenerator()->create_user(['auth' => 'oidc']);
         $this->create_member_entities($user->id);
         $this->assertTrue($this->has_member_entities($user->id));
@@ -57,9 +59,10 @@ class local_o365_observers_testcase extends \advanced_testcase {
 
     /**
      * Test users deleted method.
+     *
+     * @covers \local_o365\observers::handle_user_deleted
      */
-    public function test_user_deleted() {
-        global $DB;
+    public function test_user_deleted(): void {
         $user = $this->getDataGenerator()->create_user(['auth' => 'oidc']);
         $this->create_member_entities($user->id);
         $this->assertTrue($this->has_member_entities($user->id));
@@ -74,7 +77,7 @@ class local_o365_observers_testcase extends \advanced_testcase {
      */
     public function create_member_entities($userid) {
         global $DB;
-        $token = (object)[
+        $token = (object) [
             'user_id' => $userid,
             'scope' => 'scope',
             'tokenresource' => 'resource',
@@ -83,7 +86,7 @@ class local_o365_observers_testcase extends \advanced_testcase {
             'refreshtoken' => time() + 100000,
         ];
         $DB->insert_record('local_o365_token', $token);
-        $aaduserdata = (object)[
+        $entraiduserdata = (object) [
             'type' => 'user',
             'subtype' => '',
             'objectid' => '',
@@ -92,9 +95,9 @@ class local_o365_observers_testcase extends \advanced_testcase {
             'timecreated' => time(),
             'timemodified' => time(),
         ];
-        $DB->insert_record('local_o365_objects', $aaduserdata);
+        $DB->insert_record('local_o365_objects', $entraiduserdata);
         $DB->insert_record('local_o365_connections', ['muserid' => $userid]);
-        $object = (object)[
+        $object = (object) [
             'muserid' => $userid,
             'assigned' => 1,
             'photoid' => 'abc',
@@ -114,6 +117,7 @@ class local_o365_observers_testcase extends \advanced_testcase {
         $result = $DB->count_records('local_o365_token', ['user_id' => $userid]);
         $result = $result || $DB->count_records('local_o365_objects', ['type' => 'user', 'moodleid' => $userid]);
         $result = $result || $DB->count_records('local_o365_connections', ['muserid' => $userid]);
+
         return $result || $DB->count_records('local_o365_appassign', ['muserid' => $userid]);
     }
 }

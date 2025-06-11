@@ -22,46 +22,35 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\form\edit_override_form;
+use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
-require_once($CFG->dirroot.'/mod/quiz/override_form.php');
 
 $overrideid = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
-if (! $override = $DB->get_record('quiz_overrides', array('id' => $overrideid))) {
-    throw new \moodle_exception('invalidoverrideid', 'quiz');
-}
-if (! $quiz = $DB->get_record('quiz', array('id' => $override->quiz))) {
-    throw new \moodle_exception('invalidcoursemodule');
-}
-if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
-    throw new \moodle_exception('invalidcoursemodule');
-}
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-
-$context = context_module::instance($cm->id);
+$override = $DB->get_record('quiz_overrides', ['id' => $overrideid], '*', MUST_EXIST);
+$quizobj = quiz_settings::create($override->quiz);
+$quiz = $quizobj->get_quiz();
+$cm = $quizobj->get_cm();
+$course = $quizobj->get_course();
+$context = $quizobj->get_context();
+$manager = $quizobj->get_override_manager();
 
 require_login($course, false, $cm);
 
 // Check the user has the required capabilities to modify an override.
-require_capability('mod/quiz:manageoverrides', $context);
-
-if ($override->groupid) {
-    if (!groups_group_visible($override->groupid, $course, $cm)) {
-        throw new \moodle_exception('invalidoverrideid', 'quiz');
-    }
-} else {
-    if (!groups_user_groups_visible($course, $override->userid, $cm)) {
-        throw new \moodle_exception('invalidoverrideid', 'quiz');
-    }
+$manager->require_manage_capability();
+if (!$manager->can_view_override($override, $course, $cm)) {
+    throw new \moodle_exception('invalidoverrideid', 'quiz');
 }
 
-$url = new moodle_url('/mod/quiz/overridedelete.php', array('id'=>$override->id));
-$confirmurl = new moodle_url($url, array('id'=>$override->id, 'confirm'=>1));
-$cancelurl = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
+$url = new moodle_url('/mod/quiz/overridedelete.php', ['id' => $override->id]);
+$confirmurl = new moodle_url($url, ['id' => $override->id, 'confirm' => 1]);
+$cancelurl = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
 
 if (!empty($override->userid)) {
     $cancelurl->param('mode', 'user');
@@ -70,11 +59,7 @@ if (!empty($override->userid)) {
 // If confirm is set (PARAM_BOOL) then we have confirmation of intention to delete.
 if ($confirm) {
     require_sesskey();
-
-    // Set the course module id before calling quiz_delete_override().
-    $quiz->cmid = $cm->id;
-    quiz_delete_override($quiz, $override->id);
-
+    $manager->delete_overrides(overrides: [$override]);
     redirect($cancelurl);
 }
 
@@ -103,7 +88,7 @@ if ($override->groupid) {
     profile_load_custom_fields($user);
 
     $confirmstr = get_string('overridedeleteusersure', 'quiz',
-            quiz_override_form::display_user_name($user,
+            edit_override_form::display_user_name($user,
                     \core_user\fields::get_identity_fields($context)));
 }
 

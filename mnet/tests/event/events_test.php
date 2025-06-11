@@ -31,7 +31,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/mnet/lib.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var stdClass the mnet host we are using to test */
     protected $mnethost;
@@ -43,6 +43,7 @@ class events_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->resetAfterTest();
 
@@ -56,7 +57,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the mnet access control created event.
      */
-    public function test_mnet_access_control_created() {
+    public function test_mnet_access_control_created(): void {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         mnet_update_sso_access_control('username', $this->mnethost->id, 'enabled');
@@ -66,9 +67,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\mnet_access_control_created', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
-            'SSO ACL: enabled user \'username\' from ' . $this->mnethost->name);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/admin/mnet/access_control.php');
         $this->assertEquals($url, $event->get_url());
@@ -77,7 +75,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the mnet access control updated event.
      */
-    public function test_mnet_access_control_updated() {
+    public function test_mnet_access_control_updated(): void {
         global $DB;
 
         // Create a mnet access control.
@@ -96,9 +94,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\mnet_access_control_updated', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
-            'SSO ACL: enabled user \'username\' from ' . $this->mnethost->name);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/admin/mnet/access_control.php');
         $this->assertEquals($url, $event->get_url());

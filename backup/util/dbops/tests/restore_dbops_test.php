@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_dbops_test extends \advanced_testcase {
+final class restore_dbops_test extends \advanced_testcase {
 
     /**
      * Verify the xxx_ids_cached (in-memory backup_ids cache) stuff works as expected.
@@ -39,7 +39,7 @@ class restore_dbops_test extends \advanced_testcase {
      * Note that those private implementations are tested here by using the public
      * backup_ids API and later performing low-level tests.
      */
-    public function test_backup_ids_cached() {
+    public function test_backup_ids_cached(): void {
         global $DB;
         $dbman = $DB->get_manager(); // We are going to use database_manager services.
 
@@ -124,8 +124,7 @@ class restore_dbops_test extends \advanced_testcase {
     /**
      * Data provider for {@link test_precheck_user()}
      */
-    public function precheck_user_provider() {
-
+    public static function precheck_user_provider(): array {
         $emailmultiplier = [
             'shortmail' => 'normalusername@example.com',
             'longmail' => str_repeat('a', 100)  // It's not validated, hence any string is ok.
@@ -135,7 +134,7 @@ class restore_dbops_test extends \advanced_testcase {
 
         foreach ($emailmultiplier as $emailk => $email) {
             // Get the related cases.
-            $cases = $this->precheck_user_cases($email);
+            $cases = self::precheck_user_cases($email);
             // Rename them (keys).
             foreach ($cases as $key => $case) {
                 $providercases[$key . ' - ' . $emailk] = $case;
@@ -150,7 +149,7 @@ class restore_dbops_test extends \advanced_testcase {
      *
      * @param string $email
      */
-    private function precheck_user_cases($email) {
+    private static function precheck_user_cases($email) {
         global $CFG;
 
         $baseuserarr = [
@@ -309,7 +308,7 @@ class restore_dbops_test extends \advanced_testcase {
      * @param bool $samesite
      * @param mixed $outcome
      **/
-    public function test_precheck_user($dbuser, $backupuser, $samesite, $outcome) {
+    public function test_precheck_user($dbuser, $backupuser, $samesite, $outcome): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -351,7 +350,6 @@ class restore_dbops_test extends \advanced_testcase {
         $dbuser = $DB->get_record('user', ['id' => $dbuser->id]);
 
         $method = (new \ReflectionClass('restore_dbops'))->getMethod('precheck_user');
-        $method->setAccessible(true);
         $result = $method->invoke(null, $backupuser, $samesite, $siteid);
 
         if (is_bool($result)) {

@@ -48,10 +48,10 @@ $string['confirmsubscriptiondelete'] = 'Are you sure you want to delete the "{$a
 $string['copycalendarurl'] = 'Copy calendar URL';
 $string['copyurl'] = 'Copy URL';
 $string['course'] = 'Course';
+$string['coursecalendarlink'] = 'Course calendar';
 $string['courseevent'] = 'Course event';
 $string['courseevents'] = 'Course events';
 $string['categoryevents'] = 'Category events';
-$string['coursecalendar'] = '{$a} calendar';
 $string['courses'] = 'Courses';
 $string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
 $string['daily'] = 'Daily';
@@ -66,7 +66,7 @@ $string['dayviewtitle'] = 'Day view: {$a}';
 $string['daywithnoevents'] = 'There are no events this day.';
 $string['default'] = 'Default';
 $string['deleteevent'] = 'Delete event';
-$string['deleteevents'] = 'Delete events';
+$string['deleteevents'] = 'Events';
 $string['deleteoneevent'] = 'Delete this event';
 $string['deleteallevents'] = 'Delete all events';
 $string['detailedmonthviewfor'] = 'Detailed month view for:';
@@ -168,7 +168,6 @@ $string['eventtypeuser'] = 'user';
 $string['hideeventtype'] = 'Hide {$a} events';
 $string['showeventtype'] = 'Show {$a} events';
 $string['hourly'] = 'Hourly';
-$string['importcalendarexternal'] = 'Import an external calendar?';
 $string['importcalendar'] = 'Import calendar';
 $string['importcalendarheading'] = 'Import calendar...';
 $string['importcalendarfrom'] = 'Import from';
@@ -192,9 +191,10 @@ $string['moreevents'] = '{$a} more';
 $string['namewithsource'] = '{$a->name} ({$a->source})';
 $string['never'] = 'Never';
 $string['newevent'] = 'New event';
+$string['newmonthannouncement'] = 'Calendar is now set to {$a}.';
+$string['nocalendarsubscriptionsimportexternal'] = 'No calendar subscriptions yet. <a href="{$a}">Import an external calendar</a>';
 $string['notitle'] = 'no title';
 $string['noupcomingevents'] = 'There are no upcoming events';
-$string['nocalendarsubscriptions'] = 'No calendar subscriptions yet. Do you want to {$a}';
 $string['oneevent'] = '1 event';
 $string['pollinterval'] = 'Update interval';
 $string['pollinterval_help'] = 'How often you would like the calendar to update with new events.';
@@ -284,7 +284,9 @@ $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
 $string['yoursubscriptions'] = 'Imported calendars';
 
-// Deprecated since Moodle 4.0.
-$string['calendarurl'] = 'Calendar URL: {$a}';
-$string['importfrominstructions'] = 'Please provide either a URL to a remote calendar, or upload a file.';
-$string['monthlyview'] = 'Monthly view';
+// Deprecated since Moodle 4.4.
+$string['coursecalendar'] = '{$a} calendar';
+
+// Deprecated since Moodle 4.5.
+$string['importcalendarexternal'] = 'Import an external calendar?';
+$string['nocalendarsubscriptions'] = 'No calendar subscriptions yet. Do you want to {$a}';

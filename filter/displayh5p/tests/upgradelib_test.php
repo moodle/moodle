@@ -30,12 +30,12 @@ require_once("$CFG->libdir/filterlib.php");
  * @copyright 2019 Carlos Escobedo <carlos@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgradelib_test extends \advanced_testcase {
+final class upgradelib_test extends \advanced_testcase {
 
     /**
      * test_filter_displayh5p_reorder
      */
-    public function test_filter_displayh5p_reorder() {
+    public function test_filter_displayh5p_reorder(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 

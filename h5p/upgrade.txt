@@ -1,5 +1,19 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
+
+=== 4.4 ===
+* Added new methods, 'generate_custom_styles' and 'get_custom_styles' to 'core_h5p\file_storage' to generate then
+provide a CSS file to be used by the 'core_h5p\output\renderer\h5p_alter_styles' method, reference:
+(https://h5p.org/documentation/for-developers/visual-changes) when there is custom CSS in the 'core_h5p\h5pcustomcss'
+setting.  This will then apply to the H5P content.
+
+=== 4.3 ===
+* The `\core_h5p\file_storage::EDITOR_FILEAREA` constant has been removed, as all editor files are stored in user draft
 
 === 4.0 ===
 * Added new methods to api: get_original_content_from_pluginfile_url and can_edit_content.

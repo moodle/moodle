@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class table_summary_does_not_duplicate_caption_test
  */
-class table_summary_does_not_duplicate_caption_test extends all_checks {
+final class table_summary_does_not_duplicate_caption_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'table_summary_does_not_duplicate_caption';
 
@@ -67,7 +67,7 @@ EOD;
     /**
      * Test that caption and summary are equal
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'table');
     }
@@ -75,7 +75,7 @@ EOD;
     /**
      * Test that caption and summary are not equal
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
     }

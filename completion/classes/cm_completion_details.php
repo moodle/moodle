@@ -152,17 +152,6 @@ class cm_completion_details {
 
                 $details = $this->sort_completion_details($details);
             }
-        } else {
-            if (function_exists($this->cminfo->modname . '_get_completion_state')) {
-                // If the plugin does not have the custom completion implementation but implements the get_completion_state() callback,
-                // fallback to displaying the overall completion state of the activity.
-                $details = [
-                    'plugincompletionstate' => (object)[
-                        'status' => $this->get_overall_completion(),
-                        'description' => get_string('completeactivity', 'completion')
-                    ]
-                ];
-            }
         }
 
         return $details;
@@ -205,6 +194,35 @@ class cm_completion_details {
     }
 
     /**
+     * Returns whether the overall completion state of this course module should be marked as complete or not.
+     * This is based on the completion settings of the course module, so when the course module requires a passing grade,
+     * it will only be marked as complete when the user has passed the course module. Otherwise, it will be marked as complete
+     * even when the user has failed the course module.
+     *
+     * @return bool True when the module can be marked as completed.
+     */
+    public function is_overall_complete(): bool {
+        $completionstates = [];
+        if ($this->is_manual()) {
+            $completionstates = [COMPLETION_COMPLETE];
+        } else if ($this->is_automatic()) {
+            // Successfull completion states depend on the completion settings.
+            if (property_exists($this->completiondata, 'customcompletion') && !empty($this->completiondata->customcompletion)) {
+                // If the module has any failed custom completion rule the state could be COMPLETION_COMPLETE_FAIL.
+                $completionstates = [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS];
+            } else if (isset($this->completiondata->passgrade)) {
+                // Passing grade is required. Don't mark it as complete when state is COMPLETION_COMPLETE_FAIL.
+                $completionstates = [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS];
+            } else {
+                // Any grade is required. Mark it as complete even when state is COMPLETION_COMPLETE_FAIL.
+                $completionstates = [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL];
+            }
+        }
+
+        return in_array($this->get_overall_completion(), $completionstates);
+    }
+
+    /**
      * Whether this activity module has completion enabled.
      *
      * @return bool
@@ -220,6 +238,15 @@ class cm_completion_details {
      */
     public function is_automatic(): bool {
         return $this->cminfo->completion == COMPLETION_TRACKING_AUTOMATIC;
+    }
+
+    /**
+     * Whether this activity module instance tracks completion manually.
+     *
+     * @return bool
+     */
+    public function is_manual(): bool {
+        return $this->cminfo->completion == COMPLETION_TRACKING_MANUAL;
     }
 
     /**
@@ -247,6 +274,10 @@ class cm_completion_details {
      */
     public function show_manual_completion(): bool {
         global $PAGE;
+
+        if (!$this->is_manual()) {
+            return false;
+        }
 
         if ($PAGE->context->contextlevel == CONTEXT_MODULE) {
             // Manual completion should always be shown on the activity page.

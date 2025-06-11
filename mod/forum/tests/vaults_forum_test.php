@@ -30,7 +30,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_forum\local\vaults\forum
  */
-class vaults_forum_test extends \advanced_testcase {
+final class vaults_forum_test extends \advanced_testcase {
     // Make use of the test generator trait.
     use mod_forum_tests_generator_trait;
 
@@ -39,7 +39,7 @@ class vaults_forum_test extends \advanced_testcase {
      *
      * @covers ::get_from_id
      */
-    public function test_get_from_id() {
+    public function test_get_from_id(): void {
         $this->resetAfterTest();
 
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
@@ -59,7 +59,7 @@ class vaults_forum_test extends \advanced_testcase {
      *
      * @covers ::get_from_course_module_id
      */
-    public function test_get_from_course_module_id() {
+    public function test_get_from_course_module_id(): void {
         $this->resetAfterTest();
 
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
@@ -85,7 +85,7 @@ class vaults_forum_test extends \advanced_testcase {
      *
      * @covers ::get_from_course_module_ids
      */
-    public function test_get_from_course_module_ids() {
+    public function test_get_from_course_module_ids(): void {
         $this->resetAfterTest();
 
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
@@ -123,7 +123,7 @@ class vaults_forum_test extends \advanced_testcase {
      *
      * @covers ::get_from_post_id
      */
-    public function test_get_from_post_id() {
+    public function test_get_from_post_id(): void {
         $this->resetAfterTest();
 
         $vaultfactory = \mod_forum\local\container::get_vault_factory();

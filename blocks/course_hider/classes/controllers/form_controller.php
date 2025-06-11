@@ -42,9 +42,9 @@ class form_controller {
             ? ''
             : ' c.visible = ' . $params->hiddenonly . ' AND ';
             
-        $showlocked = (isset($params->lockedonly) && $params->lockedonly == 2)
-            ? ''
-            : ' ctx.locked = ' . $params->lockedonly . ' AND ';
+        // $showlocked = (isset($params->lockedonly) && $params->lockedonly == 2)
+        //     ? ''
+        //     : ' ctx.locked = ' . $params->lockedonly . ' AND ';
 
         // Check raw input field and use if there's stuff.
         if ($params->raw_input != "") {
@@ -55,41 +55,62 @@ class form_controller {
 
             // Store the partial for later use.
             $this->partial = $stripped;
-            $snippet = "SELECT c.*, ctx.locked
+            // $snippet = "SELECT c.*, ctx.locked
+            $snippet = "SELECT c.*
                 FROM {course} c
                 INNER JOIN {context} ctx ON c.id = ctx.instanceid 
-                    AND" . $showlocked . $showhidden. " ctx.contextlevel = '50'
+                    AND" . $showhidden. " ctx.contextlevel = '50'
                 WHERE c.shortname LIKE '%" . $stripped . "%'
                 OR c.fullname LIKE '%" . $stripped . "%'";
 
         } else {
-
+            
             $years = \course_hider_helpers::getYears()[$params->ch_years] . " ";
             $semester = \course_hider_helpers::getSemester()[$params->ch_semester];
-            $semtype = "";
-            $section = "";
-            
-            if ($params->ch_semester_type != "0") {
-                $semtype = \course_hider_helpers::getSemesterType()[$params->ch_semester_type];
-                $semtype .= " ";
-            }
-            if ($params->ch_semester_section != "0") {
-                $section = " AND c.shortname LIKE '%" . \course_hider_helpers::getSemesterSection()[$params->ch_semester_section] . "%'";
-            } else {
-                $section = "";
-            }
+            $sis = \course_hider_helpers::getSIS();
+            $snippet = '';
+            // sis var is for Workday.
+            if ($sis) {
+                
+                // Workday Query.
+                $this->partial = "$years $semester";
+                $snippet = "SELECT c.*
+                    FROM {course} c
+                    INNER JOIN {enrol_wds_sections} sec ON sec.idnumber = c.idnumber
+                        AND sec.moodle_status = c.id
+                    INNER JOIN {enrol_wds_periods} per ON sec.academic_period_id = per.academic_period_id
+                    WHERE per.period_type = '$semester'
+                        AND per.period_year = '$years'
+                        AND c.shortname LIKE '%" . $this->partial . " %'";
 
-            // Store the partial for later use.
-            $this->partial = $years.$semtype.$semester;
-            $snippet = "SELECT c.*, ctx.locked
-                FROM {course} c
-                INNER JOIN {context} ctx ON c.id = ctx.instanceid 
-                    AND" . $showlocked . $showhidden. " ctx.contextlevel = '50'
-                WHERE shortname LIKE '" . $this->partial . " %'".$section;
+            } else {
+                // Generic Course Query.
+                $semtype = "";
+                $section = "";
+                
+                if ($params->ch_semester_type != "0") {
+                    $semtype = \course_hider_helpers::getSemesterType()[$params->ch_semester_type];
+                    $semtype .= " ";
+                }
+                if ($params->ch_semester_section != "0") {
+                    $section = " AND c.shortname LIKE '%" . \course_hider_helpers::getSemesterSection()[$params->ch_semester_section] . "%'";
+                } else {
+                    $section = "";
+                }
+
+                // Store the partial for later use.
+                $this->partial = $years.$semtype.$semester;
+                $snippet = "SELECT c.*, ctx.locked
+                    FROM {course} c
+                    INNER JOIN {context} ctx ON c.id = ctx.instanceid 
+                        AND" . $showlocked . $showhidden. " ctx.contextlevel = '50'
+                    WHERE shortname LIKE '" . $this->partial . " %'".$section;
+            }
         }
 
+
         $courses = $DB->get_records_sql($snippet);
-        $courses["lockme"] = $params->lockcourses;
+        // $courses["lockme"] = $params->lockcourses;
         $courses["hideme"] = $params->hidecourses;
 
         return $courses;
@@ -115,8 +136,8 @@ class form_controller {
         // 2 - leave
         // 0 - unlock
         // 1 - lock
-        
-        $lockme = $fdata->lock;
+        // $lockme = $fdata->lock;
+
         $hideme = $fdata->hide;
         echo('<div class="block_course_hider_container">');
         $courses = explode(",", $fdata->courses);
@@ -133,7 +154,7 @@ class form_controller {
             } else {
                 $hidetask = '';
             }
-
+            /*
             if (isset($lockme) && $lockme < 2) {
                 $sql =  'UPDATE {context} 
                         SET locked = '.$lockme.'
@@ -144,12 +165,14 @@ class form_controller {
             } else {
                 $locktask = '';
             }
-
-            if ((isset($hideme) && $hideme < 2) || (isset($lockme) && $lockme < 2)) {
+            */
+            // if ((isset($hideme) && $hideme < 2) || (isset($lockme) && $lockme < 2)) {
+            if ((isset($hideme) && $hideme < 2)) {
                 $updatecount++;
                 mtrace("Course (" . $course . "):
                     <a href='" . $CFG->wwwroot . "/course/view.php?id=" . $course . "' target='_blank'>" . $dis_one->shortname . "</a>
-                    was updated " . $hidetask . $locktask . ".<br>");
+                    was updated " . $hidetask . ".<br>");
+                    // was updated " . $hidetask . $locktask . ".<br>");
             } else {
                 mtrace("Course (" . $course . "):
                     <a href='" . $CFG->wwwroot . "/course/view.php?id=" . $course . "' target='_blank'>" . $dis_one->shortname . "</a>

@@ -1627,7 +1627,7 @@ function workshop_extend_navigation(navigation_node $navref, stdclass $course, s
  * @param settings_navigation $settingsnav {@link settings_navigation}
  * @param navigation_node $workshopnode {@link navigation_node}
  */
-function workshop_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $workshopnode=null) {
+function workshop_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $workshopnode=null) {
     if (has_capability('mod/workshop:editdimensions', $settingsnav->get_page()->cm->context)) {
         $url = new moodle_url('/mod/workshop/editform.php', array('cmid' => $settingsnav->get_page()->cm->id));
         $workshopnode->add(get_string('assessmentform', 'workshop'), $url,
@@ -1820,7 +1820,7 @@ function mod_workshop_core_calendar_provide_event_action(calendar_event $event,
  * @param stdClass $workshop The module instance to get the range from
  * @return array Returns an array with min and max date.
  */
-function mod_workshop_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $workshop) : array {
+function mod_workshop_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $workshop): array {
     $mindate = null;
     $maxdate = null;
 
@@ -1897,7 +1897,7 @@ function mod_workshop_core_calendar_get_valid_event_timestart_range(\calendar_ev
  * @param \calendar_event $event
  * @param stdClass $workshop The module instance to get the range from
  */
-function mod_workshop_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $workshop) : void {
+function mod_workshop_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $workshop): void {
     global $DB;
 
     $courseid = $event->courseid;
@@ -1985,15 +1985,17 @@ function workshop_reset_course_form_definition($mform) {
 
     $mform->addElement('header', 'workshopheader', get_string('modulenameplural', 'mod_workshop'));
 
+    $mform->addElement('advcheckbox', 'reset_workshop_phase', get_string('resetphase', 'mod_workshop'));
+    $mform->addHelpButton('reset_workshop_phase', 'resetphase', 'mod_workshop');
+
+    $mform->addElement('static', 'workshopdelete', get_string('delete'));
+
     $mform->addElement('advcheckbox', 'reset_workshop_submissions', get_string('resetsubmissions', 'mod_workshop'));
     $mform->addHelpButton('reset_workshop_submissions', 'resetsubmissions', 'mod_workshop');
 
     $mform->addElement('advcheckbox', 'reset_workshop_assessments', get_string('resetassessments', 'mod_workshop'));
     $mform->addHelpButton('reset_workshop_assessments', 'resetassessments', 'mod_workshop');
-    $mform->disabledIf('reset_workshop_assessments', 'reset_workshop_submissions', 'checked');
-
-    $mform->addElement('advcheckbox', 'reset_workshop_phase', get_string('resetphase', 'mod_workshop'));
-    $mform->addHelpButton('reset_workshop_phase', 'resetphase', 'mod_workshop');
+    $mform->hideIf('reset_workshop_assessments', 'reset_workshop_submissions', 'checked');
 }
 
 /**
@@ -2023,11 +2025,16 @@ function workshop_reset_userdata(stdClass $data) {
 
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
-    shift_course_mod_dates('workshop', array('submissionstart', 'submissionend', 'assessmentstart', 'assessmentend'),
-        $data->timeshift, $data->courseid);
-    $status = array();
-    $status[] = array('component' => get_string('modulenameplural', 'workshop'), 'item' => get_string('datechanged'),
-        'error' => false);
+    shift_course_mod_dates(
+        'workshop',
+        ['submissionstart', 'submissionend', 'assessmentstart', 'assessmentend'],
+        $data->timeshift, $data->courseid,
+    );
+    $status[] = [
+        'component' => get_string('modulenameplural', 'workshop'),
+        'item' => get_string('date'),
+        'error' => false,
+    ];
 
     if (empty($data->reset_workshop_submissions)
             and empty($data->reset_workshop_assessments)
@@ -2036,16 +2043,16 @@ function workshop_reset_userdata(stdClass $data) {
         return $status;
     }
 
-    $workshoprecords = $DB->get_records('workshop', array('course' => $data->courseid));
+    $workshoprecords = $DB->get_records('workshop', ['course' => $data->courseid]);
 
     if (empty($workshoprecords)) {
-        // What a boring course - no workshops here!
+        // What a boring course - no workshops here.
         return $status;
     }
 
     require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 
-    $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $data->courseid], '*', MUST_EXIST);
 
     foreach ($workshoprecords as $workshoprecord) {
         $cm = get_coursemodule_from_instance('workshop', $workshoprecord->id, $course->id, false, MUST_EXIST);
@@ -2061,10 +2068,10 @@ function workshop_reset_userdata(stdClass $data) {
  */
 function mod_workshop_get_fontawesome_icon_map() {
     return [
-        'mod_workshop:userplan/task-info' => 'fa-info text-info',
-        'mod_workshop:userplan/task-todo' => 'fa-square-o',
-        'mod_workshop:userplan/task-done' => 'fa-check text-success',
-        'mod_workshop:userplan/task-fail' => 'fa-remove text-danger',
+        'mod_workshop:userplan/task-done' => 'fa-clipboard-check text-success',
+        'mod_workshop:userplan/task-fail' => 'fa-xmark text-danger',
+        'mod_workshop:userplan/task-info' => 'fa-circle-info text-info',
+        'mod_workshop:userplan/task-todo' => 'fa-regular fa-clipboard',
     ];
 }
 
@@ -2187,7 +2194,7 @@ function workshop_check_updates_since(cm_info $cm, $from, $filter = array()) {
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array|null The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_workshop_get_path_from_pluginfile(string $filearea, array $args) : ?array {
+function mod_workshop_get_path_from_pluginfile(string $filearea, array $args): ?array {
     if ($filearea !== 'instructauthors' && $filearea !== 'instructreviewers' && $filearea !== 'conclusion') {
         return null;
     }
@@ -2250,6 +2257,38 @@ function workshop_get_coursemodule_info($coursemodule) {
     }
 
     return $result;
+}
+
+/**
+ * Get the current user preferences that are available
+ *
+ * @return array[]
+ */
+function mod_workshop_user_preferences(): array {
+    $preferencedefinition = [
+        'type' => PARAM_BOOL,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => false,
+        'permissioncallback' => [core_user::class, 'is_current_user'],
+    ];
+
+    return [
+        'workshop-viewlet-allexamples-collapsed' => $preferencedefinition,
+        'workshop-viewlet-allsubmissions-collapsed' => $preferencedefinition,
+        'workshop-viewlet-assessmentform-collapsed' => $preferencedefinition,
+        'workshop-viewlet-assignedassessments-collapsed' => $preferencedefinition,
+        'workshop-viewlet-cleargrades-collapsed' => $preferencedefinition,
+        'workshop-viewlet-conclusion-collapsed' => $preferencedefinition,
+        'workshop-viewlet-examples-collapsed' => $preferencedefinition,
+        'workshop-viewlet-examplesfail-collapsed' => $preferencedefinition,
+        'workshop-viewlet-gradereport-collapsed' => $preferencedefinition,
+        'workshop-viewlet-instructauthors-collapsed' => $preferencedefinition,
+        'workshop-viewlet-instructreviewers-collapsed' => $preferencedefinition,
+        'workshop-viewlet-intro-collapsed' => $preferencedefinition,
+        'workshop-viewlet-ownsubmission-collapsed' => $preferencedefinition,
+        'workshop-viewlet-publicsubmissions-collapsed' => $preferencedefinition,
+        'workshop-viewlet-yourgrades-collapsed' => $preferencedefinition,
+    ];
 }
 
 /**

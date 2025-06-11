@@ -24,8 +24,11 @@
     }
 }}
 <div id="quiz-timer-wrapper" class="mb-2">
-    <div id="quiz-timer" class="quiz-timer-inner py-1 px-2 ml-auto" role="timer" aria-atomic="true" aria-relevant="text">
+    <div id="quiz-timer" class="quiz-timer-inner py-1 px-2 ms-auto" role="timer" aria-atomic="true" aria-relevant="text">
         {{#str}} timeleft, quiz {{/str}}
         <span id="quiz-time-left"></span>
     </div>
+    <button type="button" class="btn btn-secondary btn-small ms-1" id="toggle-timer" aria-controls="quiz-timer" aria-describedby="quiz-timer">
+        {{#str}} hide, core {{/str}}
+    </button>
 </div>

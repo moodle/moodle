@@ -116,7 +116,7 @@ class cc_resource implements cc_i_resource {
      * @param string $fname
      * @param string $location
      */
-    public function add_resource ($fname, $location ='') {
+    public function add_resource($fname, $location ='') {
         $this->process_resource($fname, $location, null);
     }
 

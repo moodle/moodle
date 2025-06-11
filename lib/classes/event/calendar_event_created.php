@@ -85,15 +85,6 @@ class calendar_event_created extends base {
     }
 
     /**
-     * Replace legacy add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id=' . $this->objectid , $this->other['name']);
-    }
-
-    /**
      * Custom validation.
      *
      * Throw \coding_exception notice in case of any problems.

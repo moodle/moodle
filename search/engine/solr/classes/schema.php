@@ -64,7 +64,7 @@ class schema {
      * @throws \moodle_exception
      * @return void
      */
-    public function __construct(engine $engine = null) {
+    public function __construct(?engine $engine = null) {
         if (!$this->config = get_config('search_solr')) {
             throw new \moodle_exception('missingconfig', 'search_solr');
         }

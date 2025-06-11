@@ -24,6 +24,9 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'OpenID Connect';
 $string['auth_oidcdescription'] = 'Plugin OpenID Connect poskytuje funkci jednotného přihlašování pomocí konfigurovatelných poskytovatelů identity.';
 $string['cfg_authendpoint_key'] = 'Koncový bod autorizace';
@@ -125,3 +128,6 @@ $string['ucp_status_disabled'] = 'Zakázáno';
 $string['ucp_disconnect_title'] = 'Odpojení {$a}';
 $string['ucp_disconnect_details'] = 'Váš účet Moodle bude odpojen od {$a}. Budete si muset vytvořit uživatelské jméno a heslo pro přihlašování do Moodlu.';
 $string['ucp_title'] = 'Správa {$a}';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

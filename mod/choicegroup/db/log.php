@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,19 +17,18 @@
 /**
  * Definition of log events
  *
- * @package    mod
- * @subpackage choicegroup
+ * @package    mod_choicegroup
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$logs = array(
-    array('module'=>'choicegroup', 'action'=>'view', 'mtable'=>'choicegroup', 'field'=>'name'),
-    array('module'=>'choicegroup', 'action'=>'update', 'mtable'=>'choicegroup', 'field'=>'name'),
-    array('module'=>'choicegroup', 'action'=>'add', 'mtable'=>'choicegroup', 'field'=>'name'),
-    array('module'=>'choicegroup', 'action'=>'report', 'mtable'=>'choicegroup', 'field'=>'name'),
-    array('module'=>'choicegroup', 'action'=>'choose', 'mtable'=>'choicegroup', 'field'=>'name'),
-    array('module'=>'choicegroup', 'action'=>'choose again', 'mtable'=>'choicegroup', 'field'=>'name'),
-);
+$logs = [
+    ['module' => 'choicegroup', 'action' => 'view', 'mtable' => 'choicegroup', 'field' => 'name'],
+    ['module' => 'choicegroup', 'action' => 'update', 'mtable' => 'choicegroup', 'field' => 'name'],
+    ['module' => 'choicegroup', 'action' => 'add', 'mtable' => 'choicegroup', 'field' => 'name'],
+    ['module' => 'choicegroup', 'action' => 'report', 'mtable' => 'choicegroup', 'field' => 'name'],
+    ['module' => 'choicegroup', 'action' => 'choose', 'mtable' => 'choicegroup', 'field' => 'name'],
+    ['module' => 'choicegroup', 'action' => 'choose again', 'mtable' => 'choicegroup', 'field' => 'name'],
+];

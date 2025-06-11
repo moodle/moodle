@@ -41,13 +41,20 @@ class user_merged_success extends user_merged {
         return get_string('eventusermergedsuccess', 'tool_mergeusers');
     }
 
-    public static function get_legacy_eventname() {
-        return 'merging_success';
-    }
-
     public function get_description() {
         return "The user {$this->userid} merged all user-related data
             from '{$this->other['usersinvolved']['fromid']}' into '{$this->other['usersinvolved']['toid']}'";
     }
 
+    public function get_log_id(): int {
+        return $this->other['logid'] ?? 0;
+    }
+
+    public function get_new_user_id(): int {
+        return $this->other['usersinvolved']['toid'] ?? 0;
+    }
+
+    public function get_old_user_id(): int {
+        return $this->other['usersinvolved']['fromid'] ?? 0;
+    }
 }

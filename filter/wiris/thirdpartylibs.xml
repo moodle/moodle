@@ -3,14 +3,14 @@
     <library>
         <location>integration</location>
         <name>MathType Web Integration PHP library</name>
-        <version>8.6.3</version>
+        <version>8.13.1</version>
         <license>GPL</license>
         <licenseversion>3.0+</licenseversion>
     </library>
     <library>
         <location>render</location>
         <name>MathType Web Integration JavaScript SDK</name>
-        <version>8.10.0</version>
+        <version>8.12.0</version>
         <license>GPL</license>
         <licenseversion>3.0+</licenseversion>
     </library>

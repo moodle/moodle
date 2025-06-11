@@ -39,7 +39,7 @@ use advanced_testcase;
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element_helper_test extends advanced_testcase {
+final class element_helper_test extends advanced_testcase {
 
     /**
      * Test set up.
@@ -53,7 +53,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_courseid
      */
-    public function test_get_courseid_element_in_course_certificate() {
+    public function test_get_courseid_element_in_course_certificate(): void {
         global $DB;
 
         // Create a course.
@@ -87,7 +87,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_courseid
      */
-    public function test_get_courseid_element_in_site_template() {
+    public function test_get_courseid_element_in_site_template(): void {
         global $DB, $SITE;
 
         // Add a template to the site.
@@ -114,7 +114,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_context
      */
-    public function test_get_context_element_in_course_certificate() {
+    public function test_get_context_element_in_course_certificate(): void {
         global $DB;
 
         // Create a course.
@@ -149,7 +149,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_context
      */
-    public function test_get_context_element_in_site_template() {
+    public function test_get_context_element_in_site_template(): void {
         global $DB;
 
         // Add a template to the site.
@@ -176,7 +176,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_grade_items
      */
-    public function test_get_grade_items() {
+    public function test_get_grade_items(): void {
         global $DB;
 
         // Create a course.
@@ -219,7 +219,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_mod_grade_info
      */
-    public function test_get_mod_grade_info() {
+    public function test_get_mod_grade_info(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -290,7 +290,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_course_grade_info
      */
-    public function test_get_course_grade_info() {
+    public function test_get_course_grade_info(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -352,7 +352,7 @@ class element_helper_test extends advanced_testcase {
      *
      * @covers \element_helper::get_grade_item_info
      */
-    public function test_get_grade_item_info() {
+    public function test_get_grade_item_info(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 

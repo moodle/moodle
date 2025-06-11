@@ -1,5 +1,5 @@
 @report @javascript @report_lpmonitoring
-Feature: Display learning plan summary
+Feature: Display learning plan summary course module
   As a learning plan appreciator
   I need to view course and activity competencies ratings by scale values
 

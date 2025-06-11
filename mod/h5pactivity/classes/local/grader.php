@@ -187,7 +187,7 @@ class grader {
      *                                                   dategraded,
      *                                                   datesubmitted
      */
-    private function get_user_grades_for_deletion (int $userid = 0): array {
+    private function get_user_grades_for_deletion(int $userid = 0): array {
         $grades = [];
 
         if ($userid) {

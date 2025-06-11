@@ -65,10 +65,11 @@ class h5p_clean_orphaned_records_task extends scheduled_task {
                     $file->delete();
                 }
             }
+            $filerecords->close();
 
             $DB->delete_records('h5p', ['id' => $orphanedrecord->id]);
             $DB->delete_records('h5p_contents_libraries', ['h5pid' => $orphanedrecord->id]);
         }
-
+        $orphanedrecords->close();
     }
 }

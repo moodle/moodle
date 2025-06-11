@@ -48,6 +48,6 @@ function atto_collapse_params_for_js($elementid, $options, $fpoptions) {
  */
 function atto_collapse_get_fontawesome_icon_map() {
     return [
-        'atto_collapse:icon' => 'fa-level-down'
+        'atto_collapse:icon' => 'fa-chevron-down',
     ];
 }

@@ -61,7 +61,7 @@ class text extends base {
      *
      * @return array of comparison operators
      */
-    private function get_operators() : array {
+    private function get_operators(): array {
         $operators = [
             self::ANY_VALUE => get_string('filterisanyvalue', 'core_reportbuilder'),
             self::CONTAINS => get_string('filtercontains', 'core_reportbuilder'),
@@ -92,9 +92,10 @@ class text extends base {
         $elements['value'] = $mform->createElement('text', $this->name . '_value',
             get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()));
 
-        $mform->addElement('group', $this->name . '_group', '', $elements, '', false);
+        $mform->addGroup($elements, $this->name . '_group', $this->get_header(), '', false)
+            ->setHiddenLabel(true);
 
-        $mform->setType($this->name . '_value', PARAM_RAW);
+        $mform->setType($this->name . '_value', PARAM_RAW_TRIMMED);
         $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::ANY_VALUE);
         $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::IS_EMPTY);
         $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::IS_NOT_EMPTY);
@@ -103,19 +104,15 @@ class text extends base {
     /**
      * Return filter SQL
      *
-     * @param array|null $values
+     * @param array $values
      * @return array array of two elements - SQL query and named parameters
      */
-    public function get_sql_filter(?array $values) : array {
+    public function get_sql_filter(array $values): array {
         global $DB;
         $name = database::generate_param_name();
 
-        if (!$values) {
-            return ['', []];
-        }
-
         $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
-        $value = $values["{$this->name}_value"] ?? '';
+        $value = trim($values["{$this->name}_value"] ?? '');
 
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();

@@ -44,10 +44,6 @@ class mod_assign_testable_assign extends assign {
         return parent::apply_grade_to_user($formdata, $userid, $attemptnumber);
     }
 
-    public function testable_format_submission_for_log(stdClass $submission) {
-        return parent::format_submission_for_log($submission);
-    }
-
     public function testable_get_grading_userid_list() {
         return parent::get_grading_userid_list();
     }
@@ -121,43 +117,15 @@ class mod_assign_testable_assign extends assign {
     public function testable_view_batch_set_workflow_state($selectedusers) {
         global $PAGE;
         $PAGE->set_url('/mod/assign/view.php');
-        $mform = $this->testable_grading_batch_operations_form('setmarkingworkflowstate', $selectedusers);
-        return parent::view_batch_set_workflow_state($mform);
+        $_POST['selectedusers'] = $selectedusers;
+        return parent::view_batch_set_workflow_state();
     }
 
     public function testable_view_batch_markingallocation($selectedusers) {
         global $PAGE;
         $PAGE->set_url('/mod/assign/view.php');
-        $mform = $this->testable_grading_batch_operations_form('setmarkingallocation', $selectedusers);
-        return parent::view_batch_markingallocation($mform);
-    }
-
-    public function testable_grading_batch_operations_form($operation, $selectedusers) {
-        global $CFG;
-
-        require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
-
-        // Mock submit the grading operations form.
-        $data = array();
-        $data['id'] = $this->get_course_module()->id;
-        $data['selectedusers'] = $selectedusers;
-        $data['returnaction'] = 'grading';
-        $data['operation'] = $operation;
-        mod_assign_grading_batch_operations_form::mock_submit($data);
-
-        // Set required variables in the form.
-        $formparams = array();
-        $formparams['submissiondrafts'] = 1;
-        $formparams['duedate'] = 1;
-        $formparams['attemptreopenmethod'] = ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL;
-        $formparams['feedbackplugins'] = array();
-        $formparams['markingworkflow'] = 1;
-        $formparams['markingallocation'] = 1;
-        $formparams['cm'] = $this->get_course_module()->id;
-        $formparams['context'] = $this->get_context();
-        $mform = new mod_assign_grading_batch_operations_form(null, $formparams);
-
-        return $mform;
+        $_POST['selectedusers'] = $selectedusers;
+        return parent::view_batch_markingallocation();
     }
 
     public function testable_update_activity_completion_records($teamsubmission,

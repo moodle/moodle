@@ -118,7 +118,8 @@ body.path-course li.activity.modtype_resource span.ally-actions {
 
 .ally-wysiwyg-feedback-tinymce .ally-score-meter-container-toolbar {
     /* Place ally toolbar (feedback indicator) outside and above the tiny mce editor */
-    margin-top: -36px;
+    /* ALLY-11 - fix css bugs as part of Moodle 4.3 upgrade */
+    overflow-y: visible;
 }
 
 .filter-ally-wrapper.ally-anchor-wrapper {
@@ -128,3 +129,44 @@ body.path-course li.activity.modtype_resource span.ally-actions {
 .filter-ally-wrapper.ally-anchor-wrapper .ally-actions {
     display: inline-flex;
 }
+
+/* =====================================================*/
+/* ALLY-11 - fix css bugs as part of Moodle 4.3 upgrade */
+
+/*
+ * Fixes the top buttons appearing behind the accessibility header when
+viewing the full-screen information.
+ * This seems to be caused by the Moodle message appearing at the
+bottom of the editor when a draft is restored.
+ */
+.ally-wysiwyg-feedback-atto-fullscreen {
+    overflow-y: hidden !important;
+}
+
+/* End ALLY-11 fixes */
+/* =====================================================*/
+
+
+/* =====================================================*/
+/* ALLY-14 - fix css bugs as part of Moodle 4.4 upgrade */
+body .form-group.row.fitem .ally-score-meter-container-toolbar .ally-score-meter-container-toolbar {
+    position: relative;
+    padding: 0;
+}
+
+.ally-score-meter-container-toolbar > button.ally-score-meter-container {
+    top: 0 !important;
+    padding: 0!important;
+    margin-bottom: -2px !important;
+}
+
+.tox.tox-tinymce.ally-wysiwyg-feedback-tinymce .ally-score-meter-container-toolbar {
+    margin-top: -11px;
+    top: -8px
+}
+.tox.tox-tinymce.ally-wysiwyg-feedback-tinymce {
+    /* Required to restore the space destroyed by negative margin and top in previous selector code */
+    margin-top: 16px;
+}
+/* End ALLY-14 fixes */
+/* =====================================================*/

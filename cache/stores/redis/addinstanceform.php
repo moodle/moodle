@@ -15,18 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Redis Cache Store - Add instance form
- *
- * @package   cachestore_redis
- * @copyright 2013 Adam Durana
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot.'/cache/forms.php');
-
-/**
  * Form for adding instance of Redis Cache Store.
  *
  * @copyright   2013 Adam Durana
@@ -39,10 +27,23 @@ class cachestore_redis_addinstance_form extends cachestore_addinstance_form {
     protected function configuration_definition() {
         $form = $this->_form;
 
-        $form->addElement('text', 'server', get_string('server', 'cachestore_redis'), array('size' => 24));
+        $form->addElement('advcheckbox', 'clustermode', get_string('clustermode', 'cachestore_redis'), '',
+            cache_helper::is_cluster_available() ? '' : 'disabled');
+        $form->addHelpButton('clustermode', 'clustermode', 'cachestore_redis');
+        $form->setType('clustermode', PARAM_BOOL);
+
+        $form->addElement('textarea', 'server', get_string('server', 'cachestore_redis'), ['cols' => 6, 'rows' => 10]);
         $form->setType('server', PARAM_TEXT);
         $form->addHelpButton('server', 'server', 'cachestore_redis');
         $form->addRule('server', get_string('required'), 'required');
+
+        $form->addElement('advcheckbox', 'encryption', get_string('encrypt_connection', 'cachestore_redis'));
+        $form->setType('encryption', PARAM_BOOL);
+        $form->addHelpButton('encryption', 'encrypt_connection', 'cachestore_redis');
+
+        $form->addElement('text', 'cafile', get_string('ca_file', 'cachestore_redis'));
+        $form->setType('cafile', PARAM_TEXT);
+        $form->addHelpButton('cafile', 'ca_file', 'cachestore_redis');
 
         $form->addElement('passwordunmask', 'password', get_string('password', 'cachestore_redis'));
         $form->setType('password', PARAM_RAW);
@@ -64,5 +65,10 @@ class cachestore_redis_addinstance_form extends cachestore_addinstance_form {
         $form->addHelpButton('compressor', 'usecompressor', 'cachestore_redis');
         $form->setDefault('compressor', cachestore_redis::COMPRESSOR_NONE);
         $form->setType('compressor', PARAM_INT);
+
+        $form->addElement('text', 'connectiontimeout', get_string('connectiontimeout', 'cachestore_redis'));
+        $form->addHelpButton('connectiontimeout', 'connectiontimeout', 'cachestore_redis');
+        $form->setDefault('connectiontimeout', cachestore_redis::CONNECTION_TIMEOUT);
+        $form->setType('connectiontimeout', PARAM_INT);
     }
 }

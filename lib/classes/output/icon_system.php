@@ -14,21 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class \core\output\icon_system
- *
- * @package    core
- * @category   output
- * @copyright  2016 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
-
-use renderer_base;
-use pix_icon;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class allowing different systems for mapping and rendering icons.
@@ -45,11 +31,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class icon_system {
     /**
-     * @const STANDARD Default icon system.
+     * @var string Default icon system.
      */
     const STANDARD = '\\core\\output\\icon_system_standard';
     /**
-     * @const FONTAWESOME Default icon system.
+     * @var string Default icon system.
      */
     const FONTAWESOME = '\\core\\output\\icon_system_fontawesome';
 
@@ -75,7 +61,7 @@ abstract class icon_system {
      * @param string $type Either a specific type, or null to get the default type.
      * @return \core\output\icon_system
      */
-    public final static function instance($type = null) {
+    final public static function instance($type = null) {
         global $PAGE;
 
         if (empty(self::$instance)) {
@@ -107,7 +93,7 @@ abstract class icon_system {
      * @param string $system
      * @return boolean
      */
-    public final static function is_valid_system($system) {
+    final public static function is_valid_system($system) {
         return class_exists($system) && is_a($system, static::class, true);
     }
 
@@ -116,7 +102,7 @@ abstract class icon_system {
      *
      * @return string
      */
-    public abstract function get_amd_name();
+    abstract public function get_amd_name();
 
     /**
      * Render the pix icon according to the icon system.
@@ -125,7 +111,7 @@ abstract class icon_system {
      * @param pix_icon $icon
      * @return string
      */
-    public abstract function render_pix_icon(renderer_base $output, pix_icon $icon);
+    abstract public function render_pix_icon(renderer_base $output, pix_icon $icon);
 
     /**
      * Overridable function to get a mapping of all icons.
@@ -139,7 +125,7 @@ abstract class icon_system {
      * Overridable function to map the icon name to something else.
      * Default is to do no mapping. Map is cached in the singleton.
      */
-    public final function remap_icon_name($iconname, $component) {
+    final public function remap_icon_name($iconname, $component) {
         if ($this->map === null) {
             $this->map = $this->get_icon_name_map();
         }
@@ -160,5 +146,27 @@ abstract class icon_system {
      */
     public static function reset_caches() {
         self::$instance = null;
+    }
+
+    /**
+     * Overridable function to get the list of deprecated icons.
+     *
+     * @return array with the deprecated key icons (for instance, core:a/download_all).
+     */
+    public function get_deprecated_icons(): array {
+        $deprecated = [];
+        // Include deprecated icons in plugins too.
+        $callback = 'get_deprecated_icons';
+
+        if ($pluginsfunction = get_plugins_with_function($callback)) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $plugindeprecated = $pluginfunction();
+                    $deprecated += $plugindeprecated;
+                }
+            }
+        }
+
+        return $deprecated;
     }
 }

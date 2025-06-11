@@ -24,15 +24,11 @@
  */
 namespace report_lpmonitoring;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/externallib.php");
-
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use context;
 use context_user;
 use core_user;
@@ -41,16 +37,14 @@ use core_competency\url;
 use core_competency\external as core_competency_external;
 use core_competency\api as core_competency_api;
 use core_user\external\user_summary_exporter;
-use core_competency\course_competency;
 use core_competency\user_competency;
 use core_competency\external\competency_exporter;
-use core_competency\external\plan_exporter;
 use core_competency\external\template_exporter;
 use core_competency\external\user_competency_exporter;
-use core_competency\external\user_competency_course_exporter;
 use core_competency\external\user_competency_plan_exporter;
 use core_comment\external\comment_area_exporter;
 use core_tag_tag;
+use report_lpmonitoring\api;
 use report_lpmonitoring\external\list_plan_competency_report_exporter;
 use report_lpmonitoring\external\scale_competency_summary_exporter;
 use report_lpmonitoring\external\lpmonitoring_competency_detail_exporter;
@@ -121,15 +115,15 @@ class external extends external_api {
             false
         );
 
-        $params = array(
+        $params = [
             'templateid' => $templateid,
             'query' => $query,
             'scalevalues' => $scalevalues,
             'scalefilterin' => $scalefilterin,
             'scalesortorder' => $scalesortorder,
             'withcomments' => $withcomments,
-            'withplans' => $withplans
-        );
+            'withplans' => $withplans,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -144,20 +138,20 @@ class external extends external_api {
      * @param boolean $withcomments Only plans with comments.
      * @param boolean $withplans Only with at least 2 plans.
      *
-     * @return boolean
+     * @return array
      */
     public static function search_users_by_templateid($templateid, $query, $scalevalues, $scalefilterin, $scalesortorder,
             $withcomments, $withplans) {
         global $PAGE;
-        $params = self::validate_parameters(self::search_users_by_templateid_parameters(), array(
+        $params = self::validate_parameters(self::search_users_by_templateid_parameters(), [
             'templateid' => $templateid,
             'query' => $query,
             'scalevalues' => $scalevalues,
             'scalefilterin' => $scalefilterin,
             'scalesortorder' => $scalesortorder,
             'withcomments' => $withcomments,
-            'withplans' => $withplans
-        ));
+            'withplans' => $withplans,
+        ]);
 
         $context = context_system::instance();
         self::validate_context($context);
@@ -178,11 +172,11 @@ class external extends external_api {
     /**
      * Returns description of search_users_by_templateid() result value.
      *
-     * @return \external_description
+     * @return external_multiple_structure
      */
     public static function search_users_by_templateid_returns() {
         return new external_multiple_structure(
-            new external_single_structure(array(
+            new external_single_structure([
                 'fullname' => new external_value(PARAM_TEXT, 'The fullname of the user'),
                 'profileimagesmall' => new external_value(PARAM_TEXT, 'The profile image small size'),
                 'userid' => new external_value(PARAM_INT, 'The user id value'),
@@ -195,8 +189,8 @@ class external extends external_api {
                 'phone1' => new external_value(PARAM_TEXT, 'The phone1 of the user', VALUE_OPTIONAL),
                 'phone2' => new external_value(PARAM_TEXT, 'The phone2 of the user', VALUE_OPTIONAL),
                 'department' => new external_value(PARAM_TEXT, 'The department of the user', VALUE_OPTIONAL),
-                'institution' => new external_value(PARAM_TEXT, 'The institution of the user', VALUE_OPTIONAL)
-            ))
+                'institution' => new external_value(PARAM_TEXT, 'The institution of the user', VALUE_OPTIONAL),
+            ])
         );
     }
 
@@ -242,14 +236,14 @@ class external extends external_api {
             true
         );
 
-        $params = array(
+        $params = [
             'contextid' => $contextid,
             'query' => $query,
             'skip' => $skip,
             'limit' => $limit,
             'includes' => $includes,
-            'onlyvisible' => $onlyvisible
-        );
+            'onlyvisible' => $onlyvisible,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -270,14 +264,14 @@ class external extends external_api {
      */
     public static function search_templates($contextid, $query, $skip, $limit, $includes, $onlyvisible ) {
         global $PAGE;
-        $params = self::validate_parameters(self::search_templates_parameters(), array(
+        $params = self::validate_parameters(self::search_templates_parameters(), [
             'contextid' => $contextid,
             'query' => $query,
             'skip' => $skip,
             'limit' => $limit,
             'includes' => $includes,
-            'onlyvisible' => $onlyvisible
-        ));
+            'onlyvisible' => $onlyvisible,
+        ]);
 
         $context = self::get_context_from_params($params);
         self::validate_context($context);
@@ -290,7 +284,7 @@ class external extends external_api {
                 $params['includes'],
                 $params['onlyvisible']);
 
-        $records = array();
+        $records = [];
         foreach ($results as $result) {
             $exporter = new template_exporter($result);
             $record = $exporter->export($output);
@@ -320,9 +314,9 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
-            'templateid' => $templateid
-        );
+        $params = [
+            'templateid' => $templateid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -334,15 +328,15 @@ class external extends external_api {
      * @return boolean
      */
     public static function get_scales_from_template($templateid) {
-        $params = self::validate_parameters(self::get_scales_from_template_parameters(), array(
-            'templateid' => $templateid
-        ));
+        $params = self::validate_parameters(self::get_scales_from_template_parameters(), [
+            'templateid' => $templateid,
+        ]);
 
         $context = context_system::instance();
         self::validate_context($context);
 
         $results = api::get_scales_from_templateid($params['templateid']);
-        $records = array();
+        $records = [];
         foreach ($results as $key => $value) {
             $scale = self::read_report_competency_config($value['frameworkid'], $key);
             $scale->name = $value['scalename'];
@@ -358,18 +352,22 @@ class external extends external_api {
      */
     public static function get_scales_from_template_returns() {
         return new external_multiple_structure(
-            new external_single_structure(array(
+            new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'The option value'),
                 'name' => new external_value(PARAM_TEXT, 'The scale name'),
                 'competencyframeworkid' => new external_value(PARAM_INT, 'The option value'),
                 'scaleid' => new external_value(PARAM_INT, 'The option value'),
                 'scaleconfiguration' => new external_multiple_structure(
-                    new external_single_structure(array ('id' => new external_value(PARAM_INT, 'The option value'),
-                        'name' => new external_value(PARAM_TEXT, 'The option value'),
-                        'color' => new external_value(PARAM_TEXT, 'The option value'),
-                        'proficient' => new external_value(PARAM_BOOL, 'The proficient indicator'))
-                    ))
-            ))
+                    new external_single_structure(
+                        [
+                            'id' => new external_value(PARAM_INT, 'The option value'),
+                            'name' => new external_value(PARAM_TEXT, 'The option value'),
+                            'color' => new external_value(PARAM_TEXT, 'The option value'),
+                            'proficient' => new external_value(PARAM_BOOL, 'The proficient indicator'),
+                        ]
+                    )
+                ),
+            ])
         );
     }
 
@@ -385,9 +383,9 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
-            'competencyframeworkid' => $competencyframeworkid
-        );
+        $params = [
+            'competencyframeworkid' => $competencyframeworkid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -400,9 +398,9 @@ class external extends external_api {
      */
     public static function get_scales_from_framework($competencyframeworkid) {
 
-        $params = self::validate_parameters(self::get_scales_from_framework_parameters(), array(
+        $params = self::validate_parameters(self::get_scales_from_framework_parameters(), [
             'competencyframeworkid' => $competencyframeworkid,
-        ));
+        ]);
 
         return api::get_scales_from_framework($params['competencyframeworkid']);
     }
@@ -414,10 +412,10 @@ class external extends external_api {
      */
     public static function get_scales_from_framework_returns() {
         return new external_multiple_structure(
-                    new external_single_structure(array(
+                    new external_single_structure([
                         'id' => new external_value(PARAM_INT, 'The option value'),
                         'name' => new external_value(PARAM_TEXT, 'The name of the scale'),
-                    ))
+                    ])
             );
     }
 
@@ -437,10 +435,10 @@ class external extends external_api {
             'The scale id',
             VALUE_REQUIRED
         );
-        $params = array(
+        $params = [
             'competencyframeworkid' => $competencyframeworkid,
-            'scaleid' => $scaleid
-        );
+            'scaleid' => $scaleid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -453,10 +451,10 @@ class external extends external_api {
      */
     public static function read_report_competency_config($competencyframeworkid, $scaleid) {
 
-        $params = self::validate_parameters(self::read_report_competency_config_parameters(), array(
+        $params = self::validate_parameters(self::read_report_competency_config_parameters(), [
             'competencyframeworkid' => $competencyframeworkid,
-            'scaleid' => $scaleid
-        ));
+            'scaleid' => $scaleid,
+        ]);
 
         $reportcompetencyconfig = api::read_report_competency_config($params['competencyframeworkid'], $params['scaleid']);
         $scaleotherinfo = api::get_scale_configuration_other_info($params['competencyframeworkid'], $params['scaleid']);
@@ -465,7 +463,7 @@ class external extends external_api {
         $record->id = $reportcompetencyconfig->get('id');
         $record->competencyframeworkid = $reportcompetencyconfig->get('competencyframeworkid');
         $record->scaleid = $reportcompetencyconfig->get('scaleid');
-        $record->scaleconfiguration = array();
+        $record->scaleconfiguration = [];
         $config = json_decode($reportcompetencyconfig->get('scaleconfiguration'));
 
         foreach ($config as $key => $valuescale) {
@@ -483,17 +481,21 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_report_competency_config_returns() {
-        return new external_single_structure(array(
+        return new external_single_structure([
             'id' => new external_value(PARAM_INT, 'The option value'),
             'competencyframeworkid' => new external_value(PARAM_INT, 'The option value'),
             'scaleid' => new external_value(PARAM_INT, 'The option value'),
             'scaleconfiguration' => new external_multiple_structure(
-                new external_single_structure(array ('id' => new external_value(PARAM_INT, 'The option value'),
-                    'name' => new external_value(PARAM_TEXT, 'The option value'),
-                    'color' => new external_value(PARAM_TEXT, 'The option value'),
-                    'proficient' => new external_value(PARAM_BOOL, 'The proficient indicator'))
-                ))
-            ));
+                new external_single_structure(
+                    [
+                        'id' => new external_value(PARAM_INT, 'The option value'),
+                        'name' => new external_value(PARAM_TEXT, 'The option value'),
+                        'color' => new external_value(PARAM_TEXT, 'The option value'),
+                        'proficient' => new external_value(PARAM_BOOL, 'The proficient indicator'),
+                    ]
+                )
+            ),
+        ]);
     }
 
     /**
@@ -518,11 +520,11 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'competencyframeworkid' => $competencyframeworkid,
             'scaleid' => $scaleid,
-            'scaleconfiguration' => $scaleconfiguration
-        );
+            'scaleconfiguration' => $scaleconfiguration,
+        ];
 
         return new external_function_parameters($params);
     }
@@ -538,11 +540,11 @@ class external extends external_api {
     public static function create_report_competency_config($competencyframeworkid, $scaleid, $scaleconfiguration) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::create_report_competency_config_parameters(), array(
+        $params = self::validate_parameters(self::create_report_competency_config_parameters(), [
             'competencyframeworkid' => $competencyframeworkid,
             'scaleid' => $scaleid,
-            'scaleconfiguration' => $scaleconfiguration
-        ));
+            'scaleconfiguration' => $scaleconfiguration,
+        ]);
 
         $params = (object) $params;
         $result = api::create_report_competency_config($params);
@@ -550,7 +552,7 @@ class external extends external_api {
         $record->id = $result->get('id');
         $record->competencyframeworkid = $result->get('competencyframeworkid');
         $record->scaleid = $result->get('scaleid');
-        $record->scaleconfiguration = array();
+        $record->scaleconfiguration = [];
 
         $scaleotherinfo = api::get_scale_configuration_other_info($params->competencyframeworkid, $params->scaleid);
         $config = json_decode($result->get('scaleconfiguration'));
@@ -569,17 +571,21 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_report_competency_config_returns() {
-        return new external_single_structure(array(
+        return new external_single_structure([
             'id' => new external_value(PARAM_INT, 'The option value'),
             'competencyframeworkid' => new external_value(PARAM_INT, 'The option value'),
             'scaleid' => new external_value(PARAM_INT, 'The option value'),
             'scaleconfiguration' => new external_multiple_structure(
-                new external_single_structure(array ('id' => new external_value(PARAM_INT, 'The option value'),
-                    'name' => new external_value(PARAM_TEXT, 'The option value'),
-                    'color' => new external_value(PARAM_TEXT, 'The option value'),
-                    'proficient' => new external_value(PARAM_BOOL, 'The proficient indicator'))
-                ))
-            ));
+                new external_single_structure(
+                    [
+                        'id' => new external_value(PARAM_INT, 'The option value'),
+                        'name' => new external_value(PARAM_TEXT, 'The option value'),
+                        'color' => new external_value(PARAM_TEXT, 'The option value'),
+                        'proficient' => new external_value(PARAM_BOOL, 'The proficient indicator'),
+                    ]
+                )
+            ),
+        ]);
     }
 
     /**
@@ -604,11 +610,11 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'competencyframeworkid' => $competencyframeworkid,
             'scaleid' => $scaleid,
-            'scaleconfiguration' => $scaleconfiguration
-        );
+            'scaleconfiguration' => $scaleconfiguration,
+        ];
 
         return new external_function_parameters($params);
     }
@@ -623,11 +629,11 @@ class external extends external_api {
      */
     public static function update_report_competency_config($competencyframeworkid, $scaleid, $scaleconfiguration) {
 
-        $params = self::validate_parameters(self::update_report_competency_config_parameters(), array(
+        $params = self::validate_parameters(self::update_report_competency_config_parameters(), [
             'competencyframeworkid' => $competencyframeworkid,
             'scaleid' => $scaleid,
-            'scaleconfiguration' => $scaleconfiguration
-        ));
+            'scaleconfiguration' => $scaleconfiguration,
+        ]);
 
         $params = (object) $params;
 
@@ -649,7 +655,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function read_plan_parameters() {
-        return new external_function_parameters(array(
+        return new external_function_parameters([
             'planid' => new external_value(PARAM_INT, 'The plan ID'),
             'templateid' => new external_value(PARAM_INT, 'The template ID'),
             'scalevalues' => new external_value(PARAM_TEXT, 'The scale values filter'),
@@ -657,8 +663,8 @@ class external extends external_api {
             'scalesortorder' => new external_value(PARAM_TEXT, 'Scale sort order', VALUE_DEFAULT, 'ASC'),
             'tagid' => new external_value(PARAM_INT, 'The tag ID'),
             'withcomments' => new external_value(PARAM_BOOL, 'Only plans with comments'),
-            'withplans' => new external_value(PARAM_BOOL, 'Only students with at leats two plans')
-        ));
+            'withplans' => new external_value(PARAM_BOOL, 'Only students with at leats two plans'),
+        ]);
     }
 
     /**
@@ -681,7 +687,7 @@ class external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $params = self::validate_parameters(self::read_plan_parameters(), array(
+        $params = self::validate_parameters(self::read_plan_parameters(), [
                     'planid' => $planid,
                     'templateid' => $templateid,
                     'scalevalues' => $scalevalues,
@@ -689,8 +695,8 @@ class external extends external_api {
                     'scalesortorder' => $scalesortorder,
                     'tagid' => $tagid,
                     'withcomments' => $withcomments,
-                    'withplans' => $withplans
-                ));
+                    'withplans' => $withplans,
+                ]);
 
         $plans = api::read_plan($params['planid'], $params['templateid'],
                 json_decode($params['scalevalues'], true), $params['scalefilterin'],
@@ -733,10 +739,10 @@ class external extends external_api {
             $hasnavigation = true;
         }
 
-        $result = array(
+        $result = [
             'plan' => $planexport,
-            'hasnavigation' => $hasnavigation
-        );
+            'hasnavigation' => $hasnavigation,
+        ];
 
         foreach ($plans->fullnavigation as $key => $plan) {
             $plan = (object) $plan;
@@ -775,7 +781,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_plan_returns() {
-        $plan = new external_single_structure(array(
+        $plan = new external_single_structure([
             'id'   => new external_value(PARAM_INT, 'The plan ID'),
             'name' => new external_value(PARAM_TEXT, 'The plan name'),
             'user' => user_summary_exporter::get_read_structure(),
@@ -792,20 +798,20 @@ class external extends external_api {
             'isinreview' => new external_value(PARAM_BOOL, 'Is plan completed'),
             'statusname' => new external_value(PARAM_TEXT, 'The plan status name'),
             'url' => new external_value(PARAM_TEXT, 'The plan url'),
-            'stats' => stats_plan_exporter::get_read_structure()
-        ), 'The plan information');
+            'stats' => stats_plan_exporter::get_read_structure(),
+        ], 'The plan information');
 
-        $usernav = new external_single_structure(array(
+        $usernav = new external_single_structure([
             'fullname' => new external_value(PARAM_TEXT, 'The fullname of the user'),
             'profileimage' => new external_value(PARAM_TEXT, 'The profile image small size'),
             'profileimagesmall' => new external_value(PARAM_TEXT, 'The profile image small size'),
             'userid' => new external_value(PARAM_INT, 'The user ID value'),
             'planid' => new external_value(PARAM_INT, 'The plan ID value'),
-            'tagid' => new external_value(PARAM_INT, 'The tag ID value', VALUE_OPTIONAL)
-        ), 'The user and plan ID navigation information', VALUE_OPTIONAL);
+            'tagid' => new external_value(PARAM_INT, 'The tag ID value', VALUE_OPTIONAL),
+        ], 'The user and plan ID navigation information', VALUE_OPTIONAL);
 
         $fullnavigation = new external_multiple_structure(
-            new external_single_structure(array(
+            new external_single_structure([
                 'fullname' => new external_value(PARAM_TEXT, 'The fullname of the user'),
                 'planname' => new external_value(PARAM_TEXT, 'The plan name'),
                 'email' => new external_value(PARAM_TEXT, 'The email of the user', VALUE_OPTIONAL),
@@ -817,17 +823,17 @@ class external extends external_api {
                 'nbcomments' => new external_value(PARAM_INT, 'The number of comments', VALUE_OPTIONAL),
                 'nbplans' => new external_value(PARAM_INT, 'The number of study plans', VALUE_OPTIONAL),
                 'current' => new external_value(PARAM_BOOL, 'Is current user'),
-                'tagid' => new external_value(PARAM_INT, 'The tag ID value', VALUE_OPTIONAL)
-            ), 'Full navigation list', VALUE_OPTIONAL)
+                'tagid' => new external_value(PARAM_INT, 'The tag ID value', VALUE_OPTIONAL),
+            ], 'Full navigation list', VALUE_OPTIONAL)
         );
 
-        return new external_single_structure(array(
+        return new external_single_structure([
             'plan' => $plan,
             'hasnavigation' => new external_value(PARAM_BOOL, 'Has navigation returned for previous and/or next plans'),
             'navprev' => $usernav,
             'navnext' => $usernav,
-            'fullnavigation' => $fullnavigation
-        ));
+            'fullnavigation' => $fullnavigation,
+        ]);
     }
 
     /**
@@ -854,11 +860,11 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'userid' => $userid,
             'competencyid' => $competencyid,
-            'planid' => $planid
-        );
+            'planid' => $planid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -874,11 +880,11 @@ class external extends external_api {
     public static function get_competency_detail($userid, $competencyid, $planid) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::get_competency_detail_parameters(), array(
+        $params = self::validate_parameters(self::get_competency_detail_parameters(), [
             'userid' => $userid,
             'competencyid' => $competencyid,
-            'planid' => $planid
-        ));
+            'planid' => $planid,
+        ]);
         $context = context_system::instance();
         self::validate_context($context);
 
@@ -907,9 +913,9 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_plan_competencies_parameters() {
-        return new external_function_parameters(array(
-            'id' => new external_value(PARAM_INT, 'The plan ID.')
-        ));
+        return new external_function_parameters([
+            'id' => new external_value(PARAM_INT, 'The plan ID.'),
+        ]);
     }
 
     /**
@@ -949,7 +955,7 @@ class external extends external_api {
                 // If there is a parent.
                 if ($firstlevelparent) {
                     $context = $helper->get_context_from_competency($firstlevelparent);
-                    $exporter = new \core_competency\external\competency_exporter($firstlevelparent, array('context' => $context));
+                    $exporter = new \core_competency\external\competency_exporter($firstlevelparent, ['context' => $context]);
                     $parent = $exporter->export($output);
                     $r->competency->firstlevelparentid = $parent->id;
 
@@ -1025,14 +1031,14 @@ class external extends external_api {
         $ucp->required = VALUE_OPTIONAL;
 
         return new external_multiple_structure(
-            new external_single_structure(array(
+            new external_single_structure([
                 'competency' => competency_exporter::get_read_structure(),
                 'usercompetency' => $uc,
                 'usercompetencyplan' => $ucp,
                 'isproficient' => new external_value(PARAM_BOOL, 'True if the competency is proficient'),
                 'isnotproficient' => new external_value(PARAM_BOOL, 'False if the competency is proficient'),
                 'isnotrated' => new external_value(PARAM_BOOL, 'True if the competency is not rated'),
-            ))
+            ])
         );
     }
 
@@ -1055,10 +1061,10 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'competencyid' => $competencyid,
-            'templateid' => $templateid
-        );
+            'templateid' => $templateid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -1072,10 +1078,10 @@ class external extends external_api {
     public static function get_competency_statistics($competencyid, $templateid) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::get_competency_statistics_parameters(), array(
+        $params = self::validate_parameters(self::get_competency_statistics_parameters(), [
             'competencyid' => $competencyid,
-            'templateid' => $templateid
-        ));
+            'templateid' => $templateid,
+        ]);
         $context = context_system::instance();
         self::validate_context($context);
 
@@ -1116,10 +1122,10 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'competencyid' => $competencyid,
-            'templateid' => $templateid
-        );
+            'templateid' => $templateid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -1133,10 +1139,10 @@ class external extends external_api {
     public static function get_competency_statistics_incourse($competencyid, $templateid) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::get_competency_statistics_incourse_parameters(), array(
+        $params = self::validate_parameters(self::get_competency_statistics_incourse_parameters(), [
             'competencyid' => $competencyid,
-            'templateid' => $templateid
-        ));
+            'templateid' => $templateid,
+        ]);
         $context = context_system::instance();
         self::validate_context($context);
 
@@ -1177,10 +1183,10 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'competencyid' => $competencyid,
-            'templateid' => $templateid
-        );
+            'templateid' => $templateid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -1194,10 +1200,10 @@ class external extends external_api {
     public static function get_competency_statistics_incoursemodules($competencyid, $templateid) {
         global $PAGE;
 
-        $params = self::validate_parameters(self::get_competency_statistics_incoursemodules_parameters(), array(
+        $params = self::validate_parameters(self::get_competency_statistics_incoursemodules_parameters(), [
             'competencyid' => $competencyid,
-            'templateid' => $templateid
-        ));
+            'templateid' => $templateid,
+        ]);
         $context = context_system::instance();
         self::validate_context($context);
 
@@ -1225,10 +1231,10 @@ class external extends external_api {
      */
     public static function submit_manage_tags_form_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'contextid' => new external_value(PARAM_INT, 'The context id'),
-                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the manage tags form, encoded as a json array')
-            )
+                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the manage tags form, encoded as a json array'),
+            ]
         );
     }
 
@@ -1249,11 +1255,11 @@ class external extends external_api {
 
         $serialiseddata = json_decode($params['jsonformdata']);
 
-        $data = array();
+        $data = [];
         parse_str($serialiseddata, $data);
 
         // The last param is the ajax submitted data.
-        $mform = new \report_lpmonitoring\form\tags(null, array('planid' => $data['planid']), 'post', '', null, true, $data);
+        $mform = new \report_lpmonitoring\form\tags(null, ['planid' => $data['planid']], 'post', '', null, true, $data);
 
         $validateddata = $mform->get_data();
 
@@ -1284,10 +1290,10 @@ class external extends external_api {
      */
     public static function search_plans_with_tag_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'tagid' => new external_value(PARAM_INT, 'The tag ID'),
-                'withcomments' => new external_value(PARAM_BOOL, 'Only plans with comments')
-            )
+                'withcomments' => new external_value(PARAM_BOOL, 'Only plans with comments'),
+            ]
         );
     }
 
@@ -1320,14 +1326,14 @@ class external extends external_api {
      */
     public static function search_plans_with_tag_returns() {
         return new external_multiple_structure(
-            new external_single_structure(array(
+            new external_single_structure([
                 'fullname' => new external_value(PARAM_TEXT, 'The fullname of the user'),
                 'profileimage' => new external_value(PARAM_TEXT, 'The profile image small size'),
                 'profileimagesmall' => new external_value(PARAM_TEXT, 'The profile image small size'),
                 'userid' => new external_value(PARAM_INT, 'The user id value'),
                 'planid' => new external_value(PARAM_INT, 'The plan id value'),
-                'planname' => new external_value(PARAM_TEXT, 'The name of the learning plan template')
-            ))
+                'planname' => new external_value(PARAM_TEXT, 'The name of the learning plan template'),
+            ])
         );
     }
 
@@ -1336,7 +1342,7 @@ class external extends external_api {
      * @return external_function_parameters
      */
     public static function search_tags_for_accessible_plans_parameters() {
-        return new external_function_parameters(array());
+        return new external_function_parameters([]);
     }
 
     /**
@@ -1346,9 +1352,9 @@ class external extends external_api {
      */
     public static function search_tags_for_accessible_plans() {
         $tags = api::search_tags_for_accessible_plans();
-        $return = array();
+        $return = [];
         foreach ($tags as $tagid => $tag) {
-            $return[] = array('id' => $tagid, 'tag' => $tag);
+            $return[] = ['id' => $tagid, 'tag' => $tag];
         }
         return $return;
     }
@@ -1360,10 +1366,10 @@ class external extends external_api {
      */
     public static function search_tags_for_accessible_plans_returns() {
         return new external_multiple_structure(
-            new external_single_structure(array(
+            new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'The tag ID'),
-                'tag' => new external_value(PARAM_TEXT, 'The tag')
-            ))
+                'tag' => new external_value(PARAM_TEXT, 'The tag'),
+            ])
         );
     }
 
@@ -1378,7 +1384,7 @@ class external extends external_api {
             'The plan id',
             VALUE_REQUIRED
         );
-        $params = array('planid' => $planid);
+        $params = ['planid' => $planid];
         return new external_function_parameters($params);
     }
 
@@ -1390,9 +1396,9 @@ class external extends external_api {
      */
     public static function get_comment_area_for_plan($planid) {
         global $PAGE;
-        $params = self::validate_parameters(self::get_comment_area_for_plan_parameters(), array(
-            'planid' => $planid
-        ));
+        $params = self::validate_parameters(self::get_comment_area_for_plan_parameters(), [
+            'planid' => $planid,
+        ]);
 
         $plan = new plan($params['planid']);
         self::validate_context($plan->get_context());
@@ -1417,9 +1423,9 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_plan_competencies_report_parameters() {
-        return new external_function_parameters(array(
-            'id' => new external_value(PARAM_INT, 'The plan ID.')
-        ));
+        return new external_function_parameters([
+            'id' => new external_value(PARAM_INT, 'The plan ID.'),
+        ]);
     }
 
     /**
@@ -1455,9 +1461,9 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_plan_competencies_summary_parameters() {
-        return new external_function_parameters(array(
-            'id' => new external_value(PARAM_INT, 'The plan ID.')
-        ));
+        return new external_function_parameters([
+            'id' => new external_value(PARAM_INT, 'The plan ID.'),
+        ]);
     }
 
     /**
@@ -1509,11 +1515,11 @@ class external extends external_api {
             VALUE_DEFAULT,
             false
         );
-        $params = array(
+        $params = [
             'templateid' => $templateid,
             'defaultscalesvalues' => $defaultscalesvalues,
-            'forcerating' => $forcerating
-        );
+            'forcerating' => $forcerating,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -1528,11 +1534,11 @@ class external extends external_api {
     public static function add_rating_task($templateid, $defaultscalesvalues, $forcerating) {
         $params = self::validate_parameters(
             self::add_rating_task_parameters(),
-            array(
+            [
                 'templateid' => $templateid,
                 'defaultscalesvalues' => $defaultscalesvalues,
-                'forcerating' => $forcerating
-            )
+                'forcerating' => $forcerating,
+            ]
         );
         api::add_rating_task($params['templateid'], $params['forcerating'], json_decode($params['defaultscalesvalues']));
         return true;
@@ -1569,11 +1575,11 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'planid' => $planid,
             'note' => $note,
             'competencyid' => $competencyid,
-        );
+        ];
         return new external_function_parameters($params);
     }
 
@@ -1586,11 +1592,11 @@ class external extends external_api {
      * @return bool
      */
     public static function reset_grading($planid, $note, $competencyid) {
-        $params = self::validate_parameters(self::reset_grading_parameters(), array(
+        $params = self::validate_parameters(self::reset_grading_parameters(), [
             'planid' => $planid,
             'note' => $note,
-            'competencyid' => $competencyid
-        ));
+            'competencyid' => $competencyid,
+        ]);
 
         api::reset_grading($params['planid'], $params['note'], $params['competencyid']);
 
@@ -1627,11 +1633,11 @@ class external extends external_api {
             'The course id',
             VALUE_REQUIRED
         );
-        $params = array(
+        $params = [
             'competencyid' => $competencyid,
             'userid' => $userid,
-            'courseid' => $courseid
-        );
+            'courseid' => $courseid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -1644,11 +1650,11 @@ class external extends external_api {
      * @return boolean
      */
     public static function user_competency_viewed_in_course($competencyid, $userid, $courseid) {
-        $params = self::validate_parameters(self::user_competency_viewed_in_course_parameters(), array(
+        $params = self::validate_parameters(self::user_competency_viewed_in_course_parameters(), [
             'competencyid' => $competencyid,
             'userid' => $userid,
-            'courseid' => $courseid
-        ));
+            'courseid' => $courseid,
+        ]);
         $ucc = core_competency_api::get_user_competency_in_course($params['courseid'], $params['userid'], $params['competencyid']);
         $result = api::user_competency_viewed_in_course($ucc);
 
@@ -1686,11 +1692,11 @@ class external extends external_api {
             VALUE_REQUIRED
         );
 
-        $params = array(
+        $params = [
             'userid' => $userid,
             'competencyid' => $competencyid,
             'courseid' => $courseid,
-        );
+        ];
         return new external_function_parameters($params);
     }
 
@@ -1704,11 +1710,11 @@ class external extends external_api {
      */
     public static function data_for_user_competency_summary_in_course($userid, $competencyid, $courseid) {
         global $PAGE;
-        $params = self::validate_parameters(self::data_for_user_competency_summary_in_course_parameters(), array(
+        $params = self::validate_parameters(self::data_for_user_competency_summary_in_course_parameters(), [
             'userid' => $userid,
             'competencyid' => $competencyid,
-            'courseid' => $courseid
-        ));
+            'courseid' => $courseid,
+        ]);
         $context = context_user::instance($params['userid']);
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
@@ -1733,10 +1739,10 @@ class external extends external_api {
      */
     public static function get_user_pdfs_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'users' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'user' => new external_value(PARAM_RAW, 'User identifier. Currently configured to use ' .
                                     \get_config('report_lpmonitoring', 'studentidmapping') . ' (the config variable used is ' .
                                     'report_lpmonitoring | studentidmapping). Speak to your Moodle administrator for more ' .
@@ -1745,10 +1751,10 @@ class external extends external_api {
                             'cohort' => new external_value(PARAM_RAW, 'idnumber of cohort (optional). If set, will only include ' .
                                     'plans in the PDF that are associated with the given cohort (in the ' .
                                     'competency_templatecohort table).', VALUE_OPTIONAL),
-                        )
+                        ]
                     )
-                )
-            )
+                ),
+            ]
         );
     }
 
@@ -1758,9 +1764,9 @@ class external extends external_api {
      */
     public static function get_user_pdf_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'params' => new external_single_structure(
-                    array(
+                    [
                         'user' => new external_value(PARAM_RAW, 'User identifier. Currently configured to use ' .
                                 \get_config('report_lpmonitoring', 'studentidmapping') . ' (the config variable used is ' .
                                 'report_lpmonitoring | studentidmapping). Speak to your Moodle administrator for more ' .
@@ -1769,9 +1775,9 @@ class external extends external_api {
                         'cohort' => new external_value(PARAM_RAW, 'idnumber of cohort (optional). If set, will only include ' .
                                 'plans in the PDF that are associated with the given cohort (in the ' .
                                 'competency_templatecohort table).', VALUE_OPTIONAL),
-                    )
-                )
-            )
+                    ]
+                ),
+            ]
         );
     }
 
@@ -1782,7 +1788,7 @@ class external extends external_api {
     public static function get_user_pdfs_returns() {
         return new external_multiple_structure(
             new external_single_structure(
-                array(
+                [
                     'user' => new external_value(PARAM_RAW, 'User identifier. Currently configured to use ' .
                             \get_config('report_lpmonitoring', 'studentidmapping') . ' (the config variable used is ' .
                             'report_lpmonitoring | studentidmapping). Speak to your Moodle administrator for more details.'),
@@ -1794,7 +1800,7 @@ class external extends external_api {
                     'cohort' => new external_value(PARAM_RAW, 'idnumber of cohort (optional). If set, will only include plans ' .
                             'in the PDF that are associated with the given cohort (in the competency_templatecohort table).',
                             VALUE_OPTIONAL),
-                )
+                ]
             )
         );
     }
@@ -1805,7 +1811,7 @@ class external extends external_api {
      */
     public static function get_user_pdf_returns() {
         return new external_single_structure(
-            array(
+            [
                 'user' => new external_value(PARAM_RAW, 'User identifier. Currently configured to use ' .
                         \get_config('report_lpmonitoring', 'studentidmapping') . ' (the config variable used is ' .
                         'report_lpmonitoring | studentidmapping). Speak to your Moodle administrator for more details.'),
@@ -1817,7 +1823,7 @@ class external extends external_api {
                 'cohort' => new external_value(PARAM_RAW, 'idnumber of cohort (optional). If set, will only include plans ' .
                         'in the PDF that are associated with the given cohort (in the competency_templatecohort table).',
                         VALUE_OPTIONAL),
-            )
+            ]
         );
     }
 
@@ -1830,7 +1836,7 @@ class external extends external_api {
         global $CFG, $DB;
         require_once($CFG->libdir . '/pdflib.php');
 
-        $params = self::validate_parameters(self::get_user_pdfs_parameters(), array('users' => $users));
+        $params = self::validate_parameters(self::get_user_pdfs_parameters(), ['users' => $users]);
 
         $studentidfield = \get_config('report_lpmonitoring', 'studentidmapping');
 
@@ -1838,7 +1844,7 @@ class external extends external_api {
             $shortname = explode("profile_field_", $studentidfield)[1];
         }
 
-        $users = array();
+        $users = [];
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('moodle/competency:planview', $context);
@@ -1884,7 +1890,7 @@ class external extends external_api {
         global $CFG, $DB;
         require_once($CFG->libdir . '/pdflib.php');
 
-        $params = self::validate_parameters(self::get_user_pdf_parameters(), array('params' => $params));
+        $params = self::validate_parameters(self::get_user_pdf_parameters(), ['params' => $params]);
 
         $studentidfield = \get_config('report_lpmonitoring', 'studentidmapping');
 

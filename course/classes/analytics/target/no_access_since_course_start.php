@@ -52,7 +52,7 @@ class no_access_since_course_start extends no_recent_accesses {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('target:noaccesssincecoursestart', 'course');
     }
 

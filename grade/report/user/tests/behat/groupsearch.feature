@@ -28,35 +28,86 @@ Feature: Group searching functionality within the user report.
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
 
   Scenario: A teacher can see the 'group' search widget only when group mode is enabled in the course
-    Given ".search-widget[data-searchtype='group']" "css_element" should exist
-    And I am on the "Course 1" "course editing" page
+    Given ".groupsearchwidget" "css_element" should exist
+    And I am on "Course 1" course homepage
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_groupmode | No groups |
     And I press "Save and display"
     When I navigate to "View > User report" in the course gradebook
-    Then ".search-widget[data-searchtype='group']" "css_element" should not exist
+    Then ".groupsearchwidget" "css_element" should not exist
 
   Scenario: A teacher can search for and find a group to find a user in
-    Given I click on ".search-widget[data-searchtype='group']" "css_element"
-    And I confirm "Tutor group" in "group" search within the gradebook widget exists
-    And I confirm "Marker group" in "group" search within the gradebook widget exists
+    Given I confirm "Tutor group" exists in the "Search groups" search combo box
+    And I confirm "Marker group" exists in the "Search groups" search combo box
     When I set the field "Search groups" to "tutor"
     And I wait "1" seconds
-    Then I confirm "Tutor group" in "group" search within the gradebook widget exists
-    And I confirm "Marker group" in "group" search within the gradebook widget does not exist
+    Then I confirm "Tutor group" exists in the "Search groups" search combo box
+    And I confirm "Marker group" does not exist in the "Search groups" search combo box
+    And I click on "Tutor group" in the "Search groups" search combo box
+    # The search input remains in the field on reload this is in keeping with other search implementations.
+    And I click on ".groupsearchwidget" "css_element"
+    And the field "Search groups" matches value "tutor"
+    Then I set the field "Search groups" to "Turtle"
+    And I should see "No results for \"Turtle\""
 
   Scenario: A teacher can only see the group members in the 'user' search widget after selecting a group option
     # Confirm that all users are initially displayed in the 'user' search widget.
-    Given I confirm "Student 1" in "user" search within the gradebook widget exists
-    And I confirm "Student 2" in "user" search within the gradebook widget exists
+    Given I set the field "Search users" to "Student"
+    And I confirm "Student 1" exists in the "Search users" search combo box
+    And I confirm "Student 2" exists in the "Search users" search combo box
     # Select a particular group from the 'group' search widget.
-    When I click on "Default group" in the "group" search widget
+    When I click on "Default group" in the "Search groups" search combo box
     # Confirm that only users which are members of the selected group are displayed in the 'user' search widget.
-    And I confirm "Student 1" in "user" search within the gradebook widget exists
-    And I confirm "Student 2" in "user" search within the gradebook widget does not exist
-    And I click on "Tutor group" in the "group" search widget
-    And I confirm "Student 1" in "user" search within the gradebook widget does not exist
-    And I confirm "Student 2" in "user" search within the gradebook widget does not exist
-    And I click on "All participants" in the "group" search widget
-    And I confirm "Student 1" in "user" search within the gradebook widget exists
-    And I confirm "Student 2" in "user" search within the gradebook widget exists
+    And I set the field "Search users" to "Student"
+    Then I confirm "Student 1" exists in the "Search users" search combo box
+    And I confirm "Student 2" does not exist in the "Search users" search combo box
+    And I click on "Tutor group" in the "Search groups" search combo box
+    And I set the field "Search users" to "Student"
+    And I confirm "Student 1" does not exist in the "Search users" search combo box
+    And I confirm "Student 2" does not exist in the "Search users" search combo box
+    And I click on "All participants" in the "Search groups" search combo box
+    And I set the field "Search users" to "Student"
+    And I confirm "Student 1" exists in the "Search users" search combo box
+    And I confirm "Student 2" exists in the "Search users" search combo box
+
+  @accessibility
+  Scenario: A teacher can set focus and search using the input with a keyboard
+    # Basic tests for the page.
+    Given I click on ".groupsearchwidget" "css_element"
+    And the page should meet accessibility standards
+    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
+    And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
+    # Move onto general keyboard navigation testing.
+    And I click on "Search groups" "field"
+    And I wait until "Default group" "option_role" exists
+    And I press the down key
+    And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "All participants" "option_role"
+    And I press the up key
+    And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "Tutor group" "option_role"
+    And I press the down key
+    And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "All participants" "option_role"
+    Then I set the field "Search groups" to "Goodmeme"
+    And I wait until "Tutor group" "option_role" does not exist
+    And I press the down key
+    And the focused element is "Search groups" "field"
+
+    And I navigate to "View > User report" in the course gradebook
+    And I click on ".groupsearchwidget" "css_element"
+    And I set the field "Search groups" to "Tutor"
+    And I wait until "All participants" "option_role" does not exist
+    And I press the down key
+    And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "Tutor group" "option_role"
+
+    # Lets check the tabbing order.
+    And I set the field "Search groups" to "Marker"
+    And I wait until "Marker group" "option_role" exists
+    And I press the tab key
+    And the focused element is "Clear search input" "button"
+    And I press the enter key
+    And I wait until the page is ready
+    And ".groupsearchwidget" "css_element" should exist

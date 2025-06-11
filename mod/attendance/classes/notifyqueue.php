@@ -81,7 +81,7 @@ class mod_attendance_notifyqueue {
         global $SESSION;
 
         if (!isset($SESSION->mod_attendance_notifyqueue)) {
-            $SESSION->mod_attendance_notifyqueue = array();
+            $SESSION->mod_attendance_notifyqueue = [];
         }
         $m = new stdclass();
         $m->type = $messagetype;

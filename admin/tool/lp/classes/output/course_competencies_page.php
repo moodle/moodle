@@ -75,6 +75,18 @@ class course_competencies_page implements renderable, templatable {
     /** @var string $manageurl manage url. */
     protected $manageurl = null;
 
+    /** @var bool */
+    protected bool $canconfigurecoursecompetencies = false;
+
+    /** @var bool */
+    protected bool $cangradecompetencies = false;
+
+    /** @var \core\persistent|null */
+    protected $coursecompetencysettings = null;
+
+    /** @var \tool_lp\course_competency_statistics|null */
+    protected $coursecompetencystatistics = null;
+
     /**
      * Construct this renderable.
      * @param int $courseid The course record for this page.

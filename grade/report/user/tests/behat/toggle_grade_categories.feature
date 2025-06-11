@@ -28,7 +28,7 @@ Feature: User can toggle the visibility of the grade categories within the user 
 
   Scenario: A teacher can search for and find a user to view
     Given I am on the "Course" "grades > User report > View" page logged in as "teacher1"
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And I should see "Test assignment one" in the "user-grade" "table"
     And I should see "Test assignment two" in the "user-grade" "table"
     And I should see "Category 1 total" in the "user-grade" "table"

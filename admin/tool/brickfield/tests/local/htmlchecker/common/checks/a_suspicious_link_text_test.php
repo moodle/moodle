@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class a_suspicious_link_text
  */
-class a_suspicious_link_text_test extends all_checks {
+final class a_suspicious_link_text_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'a_suspicious_link_text';
 
@@ -90,7 +90,7 @@ EOD;
     /**
      * Test for anchor tags not containing susplicious link text
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
 

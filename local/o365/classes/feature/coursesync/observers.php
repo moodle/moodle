@@ -27,6 +27,7 @@
 namespace local_o365\feature\coursesync;
 
 use core\event\course_reset_started;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,7 +46,7 @@ class observers {
      * @param course_reset_started $event
      * @return bool
      */
-    public static function handle_course_reset_started(course_reset_started $event) : bool {
+    public static function handle_course_reset_started(course_reset_started $event): bool {
         global $CFG, $DB;
 
         if (!\local_o365\utils::is_connected()) {
@@ -85,8 +86,9 @@ class observers {
                     if ($teamresponse) {
                         $connectedtoteam = true;
                     }
-                } catch (Exception $e) {
+                } catch (moodle_exception $e) {
                     // Do nothing.
+                    $connectedtoteam = false;
                 }
             }
         } else {

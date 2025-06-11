@@ -50,7 +50,7 @@ class admins extends base {
         global $CFG, $DB;
 
         $siteadmins = array_map('intval', explode(',', $CFG->siteadmins));
-        [$select, $params] = $DB->get_in_or_equal($siteadmins, SQL_PARAMS_NAMED, database::generate_param_name() . '_');
+        [$select, $params] = $DB->get_in_or_equal($siteadmins, SQL_PARAMS_NAMED, database::generate_param_name('_'));
 
         return ['', "{$usertablealias}.id {$select}", $params];
     }

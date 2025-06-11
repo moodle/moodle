@@ -22,7 +22,9 @@ use advanced_testcase;
 use context_system;
 use core_reportbuilder_generator;
 use core_reportbuilder\reportbuilder\audience\manual;
+use core_reportbuilder\local\models\audience as audience_model;
 use core_user\reportbuilder\datasource\users;
+use invalid_parameter_exception;
 
 /**
  * Unit tests for audience helper
@@ -32,8 +34,7 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class audience_test extends advanced_testcase {
-
+final class audience_test extends advanced_testcase {
      /**
       * Test reports list is empty for a normal user without any audience records configured
       */
@@ -155,6 +156,15 @@ class audience_test extends advanced_testcase {
         // User2 can access report1 and report2.
         $reports = audience::get_allowed_reports((int) $user2->id);
         $this->assertEqualsCanonicalizing([$report1->get('id'), $report2->get('id')], $reports);
+
+        // Purge cache, to ensure allowed reports are re-calculated.
+        audience::purge_caches();
+
+        // Now delete one of our users, ensure they no longer have any allowed reports.
+        delete_user($user2);
+
+        $reports = audience::get_allowed_reports((int) $user2->id);
+        $this->assertEmpty($reports);
     }
 
     /**
@@ -258,16 +268,6 @@ class audience_test extends advanced_testcase {
         $this->setUser($usertwo);
         $usertworeport = $generator->create_report(['name' => 'User two report', 'source' => users::class]);
 
-        // Admin user sees all reports.
-        $this->setAdminUser();
-        [$where, $params] = audience::user_reports_list_access_sql('r');
-        $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
-        $this->assertEqualsCanonicalizing([
-            $useradminreport->get('id'),
-            $useronereport->get('id'),
-            $usertworeport->get('id'),
-        ], $reports);
-
         // User one sees only the report they created.
         [$where, $params] = audience::user_reports_list_access_sql('r', (int) $userone->id);
         $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
@@ -287,5 +287,127 @@ class audience_test extends advanced_testcase {
         [$where, $params] = audience::user_reports_list_access_sql('r', (int) $userfour->id);
         $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
         $this->assertEmpty($reports);
+    }
+
+    /**
+     * Data provider for {@see test_user_reports_list_access_sql_with_capability}
+     *
+     * @return array[]
+     */
+    public static function user_reports_list_access_sql_with_capability_provider(): array {
+        return [
+            ['moodle/reportbuilder:editall'],
+            ['moodle/reportbuilder:viewall'],
+        ];
+    }
+
+    /**
+     * Test retrieving list of reports that user can access observes capability to view all reports
+     *
+     * @param string $capability
+     *
+     * @dataProvider user_reports_list_access_sql_with_capability_provider
+     */
+    public function test_user_reports_list_access_sql_with_capability(string $capability): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Admin creates a report, no audience.
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Admin report', 'source' => users::class]);
+
+        // Switch to new user, assign capability.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
+        assign_capability($capability, CAP_ALLOW, $userrole, context_system::instance());
+
+        [$where, $params] = audience::user_reports_list_access_sql('r');
+        $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
+        $this->assertEquals([$report->get('id')], $reports);
+    }
+
+    /**
+     * Test getting list of audiences in use within schedules for a report
+     */
+    public function test_get_audiences_for_report_schedules(): void {
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        $audienceone = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+        $audiencetwo = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+        $audiencethree = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+
+        // The first schedule contains audience one and two.
+        $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'Schedule one', 'audiences' =>
+            json_encode([$audienceone->get_persistent()->get('id'), $audiencetwo->get_persistent()->get('id')])
+        ]);
+
+        // Second schedule contains only audience one.
+        $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'Schedule two', 'audiences' =>
+            json_encode([$audienceone->get_persistent()->get('id')])
+        ]);
+
+        // The first two audiences should be returned, the third omitted.
+        $audiences = audience::get_audiences_for_report_schedules($report->get('id'));
+        $this->assertEqualsCanonicalizing([
+            $audienceone->get_persistent()->get('id'),
+            $audiencetwo->get_persistent()->get('id'),
+        ], $audiences);
+    }
+
+    /**
+     * Testing deleting report audience
+     */
+    public function test_delete_report_audience(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
+        $audienceone = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+        $audiencetwo = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+
+        $audiences = audience_model::get_records(['reportid' => $report->get('id')]);
+        $this->assertCount(2, $audiences);
+
+        // Delete the first audience.
+        $result = audience::delete_report_audience($report->get('id'), $audienceone->get_persistent()->get('id'));
+        $this->assertTrue($result);
+
+        // We should be left with only the second audience.
+        $audiences = audience_model::get_records(['reportid' => $report->get('id')]);
+        $this->assertCount(1, $audiences);
+        $this->assertEquals($audiencetwo->get_persistent()->get('id'), reset($audiences)->get('id'));
+    }
+
+    /**
+     * Testing deleting invalid report audience
+     */
+    public function test_delete_report_audience_invalid(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $reportone = $generator->create_report(['name' => 'Report one', 'source' => users::class, 'default' => false]);
+        $audienceone = $generator->create_audience(['reportid' => $reportone->get('id'), 'configdata' => []]);
+
+        $reporttwo = $generator->create_report(['name' => 'Report two', 'source' => users::class, 'default' => false]);
+
+        $this->expectException(invalid_parameter_exception::class);
+        $this->expectExceptionMessage('Invalid audience');
+        audience::delete_report_audience($reporttwo->get('id'), $audienceone->get_persistent()->get('id'));
     }
 }

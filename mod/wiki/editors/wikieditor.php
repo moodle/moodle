@@ -37,6 +37,9 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
 
     private $files;
 
+    /** @var string */
+    protected $wikiformat;
+
     /**
      * Constructor
      *

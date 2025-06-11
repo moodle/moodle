@@ -34,7 +34,7 @@ use IMSGlobal\LTI\ToolProvider\User;
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class data_connector_test extends \advanced_testcase {
+final class data_connector_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -42,6 +42,7 @@ class data_connector_test extends \advanced_testcase {
      * This is executed before running any test in this file.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         // Set this user as the admin.
@@ -51,7 +52,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadToolConsumer().
      */
-    public function test_load_consumer() {
+    public function test_load_consumer(): void {
         $consumer = new ToolConsumer();
         $dc = new data_connector();
 
@@ -114,7 +115,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::saveToolConsumer().
      */
-    public function test_save_consumer() {
+    public function test_save_consumer(): void {
         $dc = new data_connector();
 
         $time = time();
@@ -211,7 +212,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::deleteToolConsumer().
      */
-    public function test_delete_tool_consumer() {
+    public function test_delete_tool_consumer(): void {
         $dc = new data_connector();
         $data = [
             'name' => 'TestName',
@@ -290,7 +291,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::getToolConsumers().
      */
-    public function test_get_tool_consumers() {
+    public function test_get_tool_consumers(): void {
         $dc = new data_connector();
 
         $consumers = $dc->getToolConsumers();
@@ -331,7 +332,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadToolProxy().
      */
-    public function test_get_tool_proxy() {
+    public function test_get_tool_proxy(): void {
         $dc = new data_connector();
         $toolproxy = new ToolProxy($dc);
         $this->assertFalse($dc->loadToolProxy($toolproxy));
@@ -340,7 +341,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::saveToolProxy().
      */
-    public function test_save_tool_proxy() {
+    public function test_save_tool_proxy(): void {
         $dc = new data_connector();
         $toolproxy = new ToolProxy($dc);
         $this->assertFalse($dc->saveToolProxy($toolproxy));
@@ -349,7 +350,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::deleteToolProxy().
      */
-    public function test_delete_tool_proxy() {
+    public function test_delete_tool_proxy(): void {
         $dc = new data_connector();
         $toolproxy = new ToolProxy($dc);
         $this->assertFalse($dc->deleteToolProxy($toolproxy));
@@ -358,7 +359,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadContext().
      */
-    public function test_load_context() {
+    public function test_load_context(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'testconsumername';
@@ -394,7 +395,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::saveContext().
      */
-    public function test_save_context() {
+    public function test_save_context(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'testconsumername';
@@ -446,7 +447,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::deleteContext().
      */
-    public function test_delete_context() {
+    public function test_delete_context(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'testconsumername';
@@ -523,7 +524,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadResourceLink().
      */
-    public function test_load_resource_link() {
+    public function test_load_resource_link(): void {
         $dc = new data_connector();
 
         // Consumer for the resource link.
@@ -582,7 +583,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::saveResourceLink().
      */
-    public function test_save_resource_link() {
+    public function test_save_resource_link(): void {
         $dc = new data_connector();
 
         // Consumer for the resource link.
@@ -648,7 +649,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::deleteResourceLink().
      */
-    public function test_delete_resource_link() {
+    public function test_delete_resource_link(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'testconsumername';
@@ -707,7 +708,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::getUserResultSourcedIDsResourceLink().
      */
-    public function test_get_user_result_sourced_ids_resource_link() {
+    public function test_get_user_result_sourced_ids_resource_link(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'testconsumername';
@@ -764,7 +765,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::getSharesResourceLink().
      */
-    public function test_get_shares_resource_link() {
+    public function test_get_shares_resource_link(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'testconsumername';
@@ -814,7 +815,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadConsumerNonce().
      */
-    public function test_load_consumer_nonce() {
+    public function test_load_consumer_nonce(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -835,7 +836,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadConsumerNonce() for a nonce that has expired.
      */
-    public function test_load_consumer_nonce_expired() {
+    public function test_load_consumer_nonce_expired(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -855,7 +856,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::saveConsumerNonce().
      */
-    public function test_save_consumer_nonce() {
+    public function test_save_consumer_nonce(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -873,7 +874,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadResourceLinkShareKey().
      */
-    public function test_load_resource_link_share_key() {
+    public function test_load_resource_link_share_key(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -903,7 +904,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadResourceLinkShareKey() with an expired share key.
      */
-    public function test_load_resource_link_share_key_expired() {
+    public function test_load_resource_link_share_key_expired(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -927,7 +928,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::saveResourceLinkShareKey().
      */
-    public function test_save_resource_link_share_key() {
+    public function test_save_resource_link_share_key(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -956,7 +957,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::deleteResourceLinkShareKey().
      */
-    public function test_delete_resource_link_share_key() {
+    public function test_delete_resource_link_share_key(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -984,7 +985,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::loadUser().
      */
-    public function test_load_user() {
+    public function test_load_user(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'TestName';
@@ -1019,7 +1020,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::saveUser().
      */
-    public function test_save_user() {
+    public function test_save_user(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'TestName';
@@ -1058,7 +1059,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::deleteUser().
      */
-    public function test_delete_user() {
+    public function test_delete_user(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'TestName';
@@ -1100,7 +1101,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::get_contexts_from_consumer().
      */
-    public function test_get_contexts_from_consumer() {
+    public function test_get_contexts_from_consumer(): void {
         $dc = new data_connector();
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = 'testconsumername';
@@ -1133,7 +1134,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::get_consumers_mapped_to_tool().
      */
-    public function test_get_consumers_mapped_to_tool() {
+    public function test_get_consumers_mapped_to_tool(): void {
         $generator = $this->getDataGenerator();
         // Create two tools belonging to the same course.
         $course1 = $generator->create_course();
@@ -1173,7 +1174,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::get_resourcelink_from_consumer()
      */
-    public function test_get_resourcelink_from_consumer() {
+    public function test_get_resourcelink_from_consumer(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);
@@ -1197,7 +1198,7 @@ class data_connector_test extends \advanced_testcase {
     /**
      * Test for data_connector::get_resourcelink_from_context()
      */
-    public function test_get_resourcelink_from_context() {
+    public function test_get_resourcelink_from_context(): void {
         $dc = new data_connector();
 
         $consumer = new ToolConsumer(null, $dc);

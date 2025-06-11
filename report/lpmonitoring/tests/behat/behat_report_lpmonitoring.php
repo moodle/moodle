@@ -60,7 +60,7 @@ class behat_report_lpmonitoring extends behat_base {
                 . "ancestor-or-self::div[contains(., '$competencyname')]]/"
                 . "tbody/tr[$rownumber]/td[contains(., '$scalevalue')]/following-sibling::td[1]";
         $this->execute("behat_general::assert_element_contains_text",
-            array($numberrating, $xpath, "xpath_element")
+            [$numberrating, $xpath, "xpath_element"]
         );
     }
 
@@ -101,7 +101,7 @@ class behat_report_lpmonitoring extends behat_base {
         }
 
         $this->execute("behat_general::assert_element_contains_text",
-            array($texttoverify, $xpath, "xpath_element")
+            [$texttoverify, $xpath, "xpath_element"]
         );
     }
 
@@ -127,7 +127,7 @@ class behat_report_lpmonitoring extends behat_base {
                 break;
         }
 
-        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
+        $this->execute("behat_general::i_click_on", [$xpath, "xpath_element"]);
     }
 
     /**
@@ -148,7 +148,7 @@ class behat_report_lpmonitoring extends behat_base {
         $xpath = "//table[contains(@class, 'tile_info') and contains(@data-type, '$type') and "
                 . "ancestor-or-self::div[contains(., '$competencyname')]]/tbody/"
                 . "tr[$rownumber]/td[contains(., '$scalevalue')]/following-sibling::td[1]/a[contains(., '$numberrating')]";
-        $this->execute('behat_general::i_click_on', array($xpath, "xpath_element"));
+        $this->execute('behat_general::i_click_on', [$xpath, "xpath_element"]);
     }
 
     /**
@@ -163,7 +163,7 @@ class behat_report_lpmonitoring extends behat_base {
 
         // Building xpath.
         $xpath = "//a[contains(@class, 'collapse-link') and ancestor-or-self::div/h4/a[contains(., '$competency')]]";
-        $this->execute('behat_general::i_click_on', array($xpath, "xpath_element"));
+        $this->execute('behat_general::i_click_on', [$xpath, "xpath_element"]);
     }
 
     /**
@@ -355,7 +355,7 @@ class behat_report_lpmonitoring extends behat_base {
     public function i_on_category_lpmonitoring_page($category) {
 
         $categoryid = $this->get_category_id($category);
-        $categorycontext = context_coursecat::instance($categoryid);
+        $categorycontext = \context_coursecat::instance($categoryid);
         if (!$categoryid) {
             throw new Exception('The specified category with idnumber "' . $category . '" does not exist');
         }

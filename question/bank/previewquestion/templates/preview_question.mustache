@@ -41,7 +41,9 @@
         "question": "<div>question html</div>",
         "questionicon": "<i class='icon fa fa-search-plus fa-fw' title='Preview question' aria-label='Preview question'></i>",
         "questiontitle": "Question title",
-        "versiontitle": "Version 3 (latest)",
+        "versiontitle": {
+            "versioninfo": "Version 3 (latest)"
+        },
         "questionidumber": "qidnumber1",
         "restartdisabled": "disabled='disabled'",
         "finishdisabled": "disabled='disabled'",
@@ -56,9 +58,11 @@
 <form id="responseform" method="post" action="{{{actionurl}}}" enctype="multipart/form-data" autocomplete="off">
     <div class="d-flex">
         <h2 class="mt-2">{{{questionicon}}}</h2>
-        <h2 class="ml-2 mt-2"> {{questiontitle}}</h2>
-        <h3 class="px-2 py-1 ml-2 mt-2">
-            <span class="badge bg-primary text-light">{{versiontitle}}</span>
+        <h2 class="ms-2 mt-2"> {{questiontitle}}</h2>
+        <h3 class="px-2 py-1 ms-2 mt-2">
+            {{#versiontitle}}
+                {{>core_question/question_version_info}}
+            {{/versiontitle}}
         </h3>
     </div>
     {{#newerversion}}
@@ -67,7 +71,7 @@
     </div>
     {{/newerversion}}
     <div class="d-flex">
-        <div class="badge-primary h-50 px-2 mt-n2">
+        <div class="bg-primary text-white h-50 px-2 mt-n2">
             <span class="accesshide">ID number</span>
             {{questionidumber}}
         </div>
@@ -80,15 +84,15 @@
     </div>
     {{{question}}}
     <div id="previewcontrols" class="controls input-group">
-        <input type="submit" name="restart" value="{{#str}} restart, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_restart_question_preview" {{{restartdisabled}}}>
-        <input type="submit" name="save" value="{{#str}} save, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_save_question_preview" {{{finishdisabled}}}>
-        <input type="submit" name="fill" value="{{#str}} fillincorrect, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{filldisabled}}}>
-        <input type="submit" name="finish" value="{{#str}} submitandfinish, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_finish_question_preview" {{{finishdisabled}}}>
+        <input type="submit" name="restart" value="{{#str}} restart, question{{/str}}" class="btn btn-secondary me-1 mb-1" id="id_restart_question_preview" {{{restartdisabled}}}>
+        <input type="submit" name="save" value="{{#str}} save, question{{/str}}" class="btn btn-secondary me-1 mb-1" id="id_save_question_preview" {{{finishdisabled}}}>
+        <input type="submit" name="fill" value="{{#str}} fillincorrect, question{{/str}}" class="btn btn-secondary me-1 mb-1" {{{filldisabled}}}>
+        <input type="submit" name="finish" value="{{#str}} submitandfinish, question{{/str}}" class="btn btn-secondary me-1 mb-1" id="id_finish_question_preview" {{{finishdisabled}}}>
         {{^redirect}}
-            <input type="button" name="close" value="{{#str}} closepreview, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="close-previewquestion-page">
+            <input type="button" name="close" value="{{#str}} closepreview, question{{/str}}" class="btn btn-secondary me-1 mb-1" id="close-previewquestion-page">
         {{/redirect}}
         {{#redirect}}
-            <a href="{{{redirecturl}}}" class="btn btn-secondary mr-1 mb-1" role="button">{{#str}} closepreview, question{{/str}}</a>
+            <a href="{{{redirecturl}}}" class="btn btn-secondary me-1 mb-1" role="button">{{#str}} closepreview, question{{/str}}</a>
         {{/redirect}}
     </div>
 </form>

@@ -29,9 +29,9 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
+final class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
 
-    public function test_truefalse_deferredfeedback_history620() {
+    public function test_truefalse_deferredfeedback_history620(): void {
         $quiz = (object) array(
             'id' => '203',
             'course' => '2359',
@@ -220,7 +220,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_truefalse_deferredfeedback_history20() {
+    public function test_truefalse_deferredfeedback_history20(): void {
         $quiz = (object) array(
             'id' => '551',
             'course' => '2828',
@@ -398,7 +398,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_truefalse_deferredfeedback_history90() {
+    public function test_truefalse_deferredfeedback_history90(): void {
         $quiz = (object) array(
             'id' => '3',
             'course' => '1095',
@@ -574,7 +574,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_truefalse_adaptive_qsession119() {
+    public function test_truefalse_adaptive_qsession119(): void {
         $quiz = (object) array(
             'id' => '6',
             'course' => '3',
@@ -764,7 +764,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_truefalse_adaptive_qsession120() {
+    public function test_truefalse_adaptive_qsession120(): void {
         $quiz = (object) array(
             'id' => '6',
             'course' => '3',
@@ -953,7 +953,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_truefalse_adaptive_qsession3() {
+    public function test_truefalse_adaptive_qsession3(): void {
         $quiz = (object) array(
             'id' => '1',
             'course' => '2',

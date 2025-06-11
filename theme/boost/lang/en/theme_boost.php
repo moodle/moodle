@@ -39,7 +39,7 @@ $string['loginbackgroundimage_desc'] = 'The image to display as a background for
 $string['nobootswatch'] = 'None';
 $string['pluginname'] = 'Boost';
 $string['presetfiles'] = 'Additional theme preset files';
-$string['presetfiles_desc'] = 'Preset files can be used to dramatically alter the appearance of the theme. See <a href="https://docs.moodle.org/dev/Boost_Presets">Boost presets</a> for information on creating and sharing your own preset files, and see the <a href="https://archive.moodle.net/boost">Presets repository</a> for presets that others have shared.';
+$string['presetfiles_desc'] = 'Preset files can be used to dramatically alter the appearance of the theme. See <a href="https://docs.moodle.org/dev/Boost_Presets">Boost presets</a> for information on creating and sharing your own preset files, and see the <a href="https://moodle.net/search?q=boost+presets">Presets repository</a> for presets that others have shared.';
 $string['preset'] = 'Theme preset';
 $string['preset_desc'] = 'Pick a preset to broadly change the look of the theme.';
 $string['privacy:metadata'] = 'The Boost theme does not store any personal data about any user.';
@@ -58,11 +58,3 @@ $string['privacy:drawerindexclosed'] = 'The current preference for the index dra
 $string['privacy:drawerindexopen'] = 'The current preference for the index drawer is open.';
 $string['privacy:drawerblockclosed'] = 'The current preference for the block drawer is closed.';
 $string['privacy:drawerblockopen'] = 'The current preference for the block drawer is open.';
-
-// Deprecated since Moodle 4.0.
-$string['totop'] = 'Go to top';
-
-// Deprecated since Moodle 4.1.
-$string['currentinparentheses'] = '(current)';
-$string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
-$string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';

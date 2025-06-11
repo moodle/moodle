@@ -70,13 +70,10 @@ if ($consumerkey === false) {
 }
 
 // TODO MDL-46023 Replace this code with a call to the new library.
-$origentity = lti_libxml_disable_entity_loader(true);
 $xml = simplexml_load_string($rawbody);
 if (!$xml) {
-    lti_libxml_disable_entity_loader($origentity);
     throw new Exception('Invalid XML content');
 }
-lti_libxml_disable_entity_loader($origentity);
 
 $body = $xml->imsx_POXBody;
 foreach ($body->children() as $child) {

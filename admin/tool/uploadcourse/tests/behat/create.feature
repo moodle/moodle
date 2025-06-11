@@ -130,3 +130,54 @@ Feature: An admin can create courses using a CSV file
     And I should see "Role notallowed not allowed in this context."
     And I am on site homepage
     And I should see "coursez"
+
+  @javascript
+  Scenario: Unsupported enrol methods are not created
+    Given the following config values are set as admin:
+      | enrol_plugins_enabled | manual,guest,lti |
+    And I set the field "Upload mode" to "Create new courses, or update existing ones"
+    And I set the field "Update mode" to "Update with CSV data only"
+    And I upload "admin/tool/uploadcourse/tests/fixtures/unsupported_enrol_method.csv" file to "File" filemanager
+    And I click on "Preview" "button"
+    When I click on "Upload courses" "button"
+    Then I should see "Course created"
+    And I should see "Enrolment method 'enrol_lti_plugin' is not supported in csv upload"
+    And I am on the "C2" "enrolment methods" page
+    And I should see "manualtest"
+    And I should not see "ltitest"
+
+  @javascript
+  Scenario: Manager can use upload course tool in course category
+    Given the following "users" exist:
+      | username | firstname | lastname | email             |
+      | user1    | User      | 1        | user1@example.com |
+    And the following "categories" exist:
+      | name  | category | idnumber |
+      | Cat 1 | 0        | CAT1     |
+      | Cat 2 | 0        | CAT2     |
+      | Cat 3 | CAT1     | CAT3     |
+    And the following "role assigns" exist:
+      | user  | role    | contextlevel | reference |
+      | user1 | manager | Category     | CAT1      |
+    When I log in as "user1"
+    And I am on course index
+    And I follow "Cat 1"
+    And I navigate to "Upload courses" in current page administration
+    And I upload "admin/tool/uploadcourse/tests/fixtures/courses_manager1.csv" file to "File" filemanager
+    And I click on "Preview" "button"
+    Then I should see "The course exists and update is not allowed" in the "C1" "table_row"
+    And I should see "No permission to upload courses in category: Cat 2" in the "C2" "table_row"
+    And I set the field "Course category" to "Cat 1 / Cat 3"
+    And I click on "Upload courses" "button"
+    And I should see "Course created"
+    And I should see "Courses total: 5"
+    And I should see "Courses created: 3"
+    And I should see "Courses errors: 2"
+    And I am on course index
+    And I follow "Cat 1"
+    And I should see "Course 4"
+    And I follow "Cat 3"
+    And I should see "Course 5"
+    # Course 3 did not have category specified in CSV file and it was uploaded to the current category.
+    And I should see "Course 3"
+    And I log out

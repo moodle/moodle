@@ -20,12 +20,9 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | course   | C1               |
       | activity | lesson           |
       | name     | Test lesson name |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
     And the following "user private files" exist:
-      | user     | filepath                                  | filename        |
-      | teacher1 | mod/lesson/tests/fixtures/moodle_logo.jpg | moodle_logo.jpg |
+      | user     | filepath                                  |
+      | teacher1 | mod/lesson/tests/fixtures/moodle_logo.jpg |
     And I log in as "teacher1"
     When I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a question page"
@@ -47,12 +44,12 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | id_jumpto_2 | This page |
       | id_score_2 | 0 |
     And I click on "Image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_answer_editor_2']]" "xpath_element"
-    And I click on "Browse repositories..." "button"
+    And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
-    And I click on "Save image" "button"
+    And I set the field "How would you describe this image to someone who can't see it?" to "It's the logo"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save page"
     And I set the field "qtype" to "Add a question page"
     And I set the field "Select a question type" to "True/false"
@@ -67,12 +64,12 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I click on "Image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_response_editor_0']]" "xpath_element"
-    And I click on "Browse repositories..." "button"
+    And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
-    And I click on "Save image" "button"
+    And I set the field "How would you describe this image to someone who can't see it?" to "It's the logo"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save page"
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "What animal is an amphibian?"

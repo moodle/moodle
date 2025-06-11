@@ -25,9 +25,14 @@ use lang_string;
 use moodle_url;
 use stdClass;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\{date, text};
-use core_reportbuilder\local\helpers\format;
+use core_reportbuilder\local\filters\{boolean_select, date, select, text};
+use core_reportbuilder\local\helpers\{custom_fields, format};
 use core_reportbuilder\local\report\{column, filter};
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->libdir}/grouplib.php");
 
 /**
  * Group entity
@@ -39,14 +44,14 @@ use core_reportbuilder\local\report\{column, filter};
 class group extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'context' => 'gctx',
-            'groups' => 'g',
+            'context',
+            'groups',
         ];
     }
 
@@ -65,13 +70,23 @@ class group extends base {
      * @return base
      */
     public function initialise(): base {
-        $columns = $this->get_all_columns();
+        $groupsalias = $this->get_table_alias('groups');
+
+        $customfields = (new custom_fields(
+            "{$groupsalias}.id",
+            $this->get_entity_name(),
+            'core_group',
+            'group',
+        ))
+            ->add_joins($this->get_joins());
+
+        $columns = array_merge($this->get_all_columns(), $customfields->get_columns());
         foreach ($columns as $column) {
             $this->add_column($column);
         }
 
         // All the filters defined by the entity can also be used as conditions.
-        $filters = $this->get_all_filters();
+        $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
         foreach ($filters as $filter) {
             $this
                 ->add_filter($filter)
@@ -170,6 +185,42 @@ class group extends base {
             ->add_fields("{$groupsalias}.enrolmentkey")
             ->set_is_sortable(true);
 
+        // Visibility column.
+        $columns[] = (new column(
+            'visibility',
+            new lang_string('visibilityshort', 'core_group'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->add_fields("{$groupsalias}.visibility")
+            ->set_is_sortable(true)
+            ->set_callback(static function(?string $visibility): string {
+                if ($visibility === null) {
+                    return '';
+                }
+
+                $options = [
+                    GROUPS_VISIBILITY_ALL => new lang_string('visibilityall', 'core_group'),
+                    GROUPS_VISIBILITY_MEMBERS => new lang_string('visibilitymembers', 'core_group'),
+                    GROUPS_VISIBILITY_OWN => new lang_string('visibilityown', 'core_group'),
+                    GROUPS_VISIBILITY_NONE => new lang_string('visibilitynone', 'core_group'),
+                ];
+
+                return (string) ($options[(int) $visibility] ?? $visibility);
+            });
+
+        // Participation column.
+        $columns[] = (new column(
+            'participation',
+            new lang_string('participationshort', 'core_group'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_BOOLEAN)
+            ->add_fields("{$groupsalias}.participation")
+            ->set_is_sortable(true)
+            ->set_callback([format::class, 'boolean_as_text']);
+
         // Picture column.
         $columns[] = (new column(
             'picture',
@@ -177,12 +228,9 @@ class group extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$groupsalias}.picture, {$groupsalias}.id, {$contextalias}.id AS contextid")
             ->set_is_sortable(false)
-            // It doesn't make sense to offer integer aggregation methods for this column.
-            ->set_disabled_aggregation(['avg', 'max', 'min', 'sum'])
-            ->set_callback(static function ($picture, stdClass $group): string {
+            ->set_callback(static function($value, stdClass $group): string {
                 if (empty($group->picture)) {
                     return '';
                 }
@@ -245,6 +293,32 @@ class group extends base {
             new lang_string('idnumber'),
             $this->get_entity_name(),
             "{$groupsalias}.idnumber"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Visibility filter.
+        $filters[] = (new filter(
+            select::class,
+            'visibility',
+            new lang_string('visibilityshort', 'core_group'),
+            $this->get_entity_name(),
+            "{$groupsalias}.visibility"
+        ))
+            ->add_joins($this->get_joins())
+            ->set_options([
+                GROUPS_VISIBILITY_ALL => new lang_string('visibilityall', 'core_group'),
+                GROUPS_VISIBILITY_MEMBERS => new lang_string('visibilitymembers', 'core_group'),
+                GROUPS_VISIBILITY_OWN => new lang_string('visibilityown', 'core_group'),
+                GROUPS_VISIBILITY_NONE => new lang_string('visibilitynone', 'core_group'),
+            ]);
+
+        // Participation filter.
+        $filters[] = (new filter(
+            boolean_select::class,
+            'participation',
+            new lang_string('participationshort', 'core_group'),
+            $this->get_entity_name(),
+            "{$groupsalias}.participation"
         ))
             ->add_joins($this->get_joins());
 

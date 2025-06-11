@@ -24,6 +24,7 @@ if (!class_exists('Google_Client')) {
  *
  * This logger writes to a PHP stream resource.
  */
+#[AllowDynamicProperties]
 class Google_Logger_File extends Google_Logger_Abstract
 {
   /**

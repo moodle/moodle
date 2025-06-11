@@ -39,7 +39,7 @@ class upcoming_fortnight extends \core_analytics\local\time_splitting\upcoming_p
      * The time splitting method name.
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('timesplitting:upcomingfortnight');
     }
 

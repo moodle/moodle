@@ -31,7 +31,16 @@
  */
 function xmldb_block_microsoft_upgrade($oldversion) {
     if ($oldversion < 2015111912) {
+        $existingshowoutlooksyncsetting = get_config('block_microsoft', 'settings_showoutlooksync');
+        if ($existingshowoutlooksyncsetting != 0    ) {
+            add_to_config_log('settings_showoutlooksync', $existingshowoutlooksyncsetting, 0, 'block_microsoft');
+        }
         set_config('settings_showoutlooksync', 0, 'block_microsoft');
+
+        $existingshowmanageo365connectionsetting = get_config('block_microsoft', 'settings_showmanageo365conection');
+        if ($existingshowmanageo365connectionsetting != 0) {
+            add_to_config_log('settings_showmanageo365conection', $existingshowmanageo365connectionsetting, 0, 'block_microsoft');
+        }
         set_config('settings_showmanageo365conection', 0, 'block_microsoft');
         upgrade_block_savepoint(true, 2015111912, 'microsoft');
     }

@@ -37,7 +37,7 @@ class frontend extends \core_availability\frontend {
     /**
      * @var array Cached init parameters
      */
-    protected $cacheparams = [];
+    protected $cacheinitparams = [];
 
     /**
      * @var string IDs of course, cm, and section for cache (if any)
@@ -49,8 +49,8 @@ class frontend extends \core_availability\frontend {
                         'label_cm', 'label_completion'];
     }
 
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function get_javascript_init_params($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         // Use cached result if available. The cache is just because we call it
         // twice (once from allow_add) so it's nice to avoid doing all the
         // print_string calls twice.
@@ -86,8 +86,8 @@ class frontend extends \core_availability\frontend {
         return $this->cacheinitparams;
     }
 
-    protected function allow_add($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function allow_add($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
         global $CFG;
 
         // Check if completion is enabled for the course.

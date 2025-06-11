@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Renderer.
- *
- * @package    core_h5p
- * @copyright  2020 Victor Deniz {victor@moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_h5p\output;
-
-defined('MOODLE_INTERNAL') || die();
 
 use plugin_renderer_base;
 
@@ -41,11 +31,22 @@ class renderer extends plugin_renderer_base {
      * Alter which stylesheets are loaded for H5P.
      * This is useful for adding custom styles or replacing existing ones.
      *
-     * @param array|object $scripts List of stylesheets that will be loaded
+     * This method can be overridden by other themes if the styles must be loaded from
+     * a different place than the "Raw initial SCSS" and "Raw SCSS" theme settings.
+     *
+     * @param \stdClass[] $styles List of stylesheets that will be loaded
      * @param array $libraries Array of libraries indexed by the library's machineName
      * @param string $embedtype Possible values: div, iframe, external, editor
      */
-    public function h5p_alter_styles(&$scripts, array $libraries, string $embedtype) {
+    public function h5p_alter_styles(&$styles, array $libraries, string $embedtype) {
+        $customcss = \core_h5p\file_storage::get_custom_styles();
+        if (!empty($customcss)) {
+            // Add the CSS file to the styles array, to load it from the H5P player.
+            $styles[] = (object) [
+                'path' => $customcss['cssurl']->out(),
+                'version' => '?ver='.$customcss['cssversion'],
+            ];
+        }
     }
 
     /**

@@ -203,4 +203,16 @@ class participants extends table_sql implements report {
         }
         return '';
     }
+
+    /**
+     * Print headers
+     *
+     * Note: as per MDL-80754, we have to modify the header dynamically to display the total
+     * attempts in the column header.
+     */
+    public function print_headers(): void {
+        $totalcount = array_sum($this->count);
+        $this->headers[$this->columns['attempts']] = get_string('attempts_report_header_label', 'mod_h5pactivity', $totalcount);
+        parent::print_headers();
+    }
 }

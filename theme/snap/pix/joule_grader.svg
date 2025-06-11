@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_2" viewBox="0 0 100 100">
+  <style>
+    .st0{fill:#FFFFFF;stroke:#999999;stroke-width:3;stroke-miterlimit:10;} .st1{fill:#FFFFFF;stroke:#999999;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} .st2{fill:none;stroke:#999999;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} .st3{fill:none;stroke:#8BC34A;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+  </style>
+  <path d="M80.3 98.5H19.7c-10.1 0-18.3-8.2-18.3-18.3V19.7c.1-10 8.3-18.2 18.3-18.2h60.5c10.1 0 18.3 8.2 18.3 18.3v60.5c0 10-8.2 18.2-18.2 18.2z" class="st0"/>
+  <path d="M22.3 35h25.1M22.3 50.2h25.1M22.3 65.5h25.1" class="st1"/>
+  <g id="Layer_3_1_">
+    <path d="M65.5 49l6.5 6.3m-.1 0l8.9-11.5" class="st2"/>
+    <ellipse cx="73.1" cy="49.9" transform="rotate(-45 73.132 49.87)" class="st3" rx="16.4" ry="16.4"/>
+  </g>
+</svg>

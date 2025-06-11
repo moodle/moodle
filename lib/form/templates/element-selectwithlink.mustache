@@ -8,6 +8,9 @@
             {{#error}}
                 autofocus aria-describedby="{{element.iderror}}"
             {{/error}}
+            {{#required}}
+                aria-required="true"
+            {{/required}}
             {{{element.attributes}}} >
             {{#element.options}}
             <option value="{{value}}" {{#selected}}selected{{/selected}} {{#disabled}}disabled{{/disabled}} {{{optionattributes}}}>{{{text}}}</option>

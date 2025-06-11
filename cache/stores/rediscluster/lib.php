@@ -130,7 +130,7 @@ class cachestore_rediscluster extends cache_store implements cache_is_key_aware,
      * @param array $configuration
      * @return int
      */
-    public static function get_supported_features(array $configuration = array()) {
+    public static function get_supported_features(array $configuration = []) {
         return self::SUPPORTS_DATA_GUARANTEE + self::DEREFERENCES_OBJECTS + self::IS_SEARCHABLE;
     }
 
@@ -140,7 +140,7 @@ class cachestore_rediscluster extends cache_store implements cache_is_key_aware,
      * @param array $configuration
      * @return int
      */
-    public static function get_supported_modes(array $configuration = array()) {
+    public static function get_supported_modes(array $configuration = []) {
         return self::MODE_APPLICATION + self::MODE_SESSION;
     }
 
@@ -150,7 +150,7 @@ class cachestore_rediscluster extends cache_store implements cache_is_key_aware,
      * @param string $name
      * @param array $configuration
      */
-    public function __construct($name, array $configuration = array()) {
+    public function __construct($name, array $configuration = []) {
         global $CFG;
         $this->name = $name;
 
@@ -447,7 +447,7 @@ class cachestore_rediscluster extends cache_store implements cache_is_key_aware,
         foreach ($hashes as $hash) {
             $this->iterators[$hash] = null;
             while ($this->iterators[$hash] !== 0) {
-                $keys = array_merge($keys, array_keys($this->command('hscan', $hash, "${prefix}*")));
+                $keys = array_merge($keys, array_keys($this->command('hscan', $hash, "{$prefix}*")));
             }
         }
         return $keys;
@@ -711,7 +711,7 @@ class cachestore_rediscluster extends cache_store implements cache_is_key_aware,
                     ') - did somebody forget to call release_lock()?', DEBUG_DEVELOPER);
             $this->release_lock($key, $ownerid);
         }
-     }
+    }
 
     /**
      * Checks a lock with a given name and owner information.

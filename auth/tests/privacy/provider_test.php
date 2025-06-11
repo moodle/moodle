@@ -42,13 +42,14 @@ use core_auth\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -94,11 +95,11 @@ class provider_test extends provider_testcase {
         $prefs = writer::with_context($sysctx)->get_user_preferences('core_auth');
         $this->assertEquals(transform::yesno(false), $prefs->auth_forcepasswordchange->value);
         $this->assertEquals(transform::yesno(false), $prefs->create_password->value);
-        $this->assertObjectNotHasAttribute('login_failed_count', $prefs);
-        $this->assertObjectNotHasAttribute('login_failed_count_since_success', $prefs);
-        $this->assertObjectNotHasAttribute('login_failed_last', $prefs);
-        $this->assertObjectNotHasAttribute('login_lockout', $prefs);
+        $this->assertObjectNotHasProperty('login_failed_count', $prefs);
+        $this->assertObjectNotHasProperty('login_failed_count_since_success', $prefs);
+        $this->assertObjectNotHasProperty('login_failed_last', $prefs);
+        $this->assertObjectNotHasProperty('login_lockout', $prefs);
         $this->assertEquals(transform::yesno(true), $prefs->login_lockout_ignored->value);
-        $this->assertObjectNotHasAttribute('login_lockout_secret', $prefs);
+        $this->assertObjectNotHasProperty('login_lockout_secret', $prefs);
     }
 }

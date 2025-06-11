@@ -55,12 +55,12 @@
 
         /* Display a centered eye slash on top of unlisted content icons. */
         .cb-unlisted::after {
+            @extend .fa-regular;
+            content: fa-content($fa-var-eye-slash);
             position: absolute;
             top: 20px;
             left: 0;
             width: 100%;
-            content: $fa-var-eye-slash;
-            font-family: FontAwesome;
             font-size: 26px;
             text-align: center;
             opacity: 0.9;

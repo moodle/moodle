@@ -50,14 +50,15 @@ require_once($CFG->dirroot . '/admin/tool/log/store/standard/tests/fixtures/even
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $admin = \core_user::get_user(2);
         $u1 = $this->getDataGenerator()->create_user();
         $c1 = $this->getDataGenerator()->create_course();
@@ -73,7 +74,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals($c1ctx->id, provider::get_contexts_for_userid($u1->id)->get_contextids()[0]);
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -107,7 +108,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(1, $DB->count_records('logstore_standard_log', ['userid' => $u2->id]));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -141,7 +142,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(0, $DB->count_records('logstore_standard_log', ['userid' => $u2->id]));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         $admin = \core_user::get_user(2);
         $u1 = $this->getDataGenerator()->create_user();
         $c1 = $this->getDataGenerator()->create_course();

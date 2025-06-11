@@ -15,6 +15,7 @@ Feature: Course content collapsed user preferences
       | category         | 0        |
       | enablecompletion | 1        |
       | numsections      | 5        |
+      | initsections     | 1        |
     And the following "activities" exist:
       | activity | name              | intro                       | course | idnumber | section |
       | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       |
@@ -30,42 +31,42 @@ Feature: Course content collapsed user preferences
   @javascript
   Scenario: Course content preferences
     Given I am on the "C1" "Course" page logged in as "teacher1"
-    And I should see "Topic 1" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
     And I should see "Activity sample 1" in the "region-main" "region"
-    And I should see "Topic 2" in the "region-main" "region"
+    And I should see "Section 2" in the "region-main" "region"
     And I should see "Activity sample 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
     And I should see "Activity sample 3" in the "region-main" "region"
-    And I click on "#collapssesection1" "css_element"
+    And I click on "Collapse" "link" in the "Section 1" "section"
     When I reload the page
-    Then I should see "Topic 1" in the "region-main" "region"
+    Then I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
-    And I should see "Topic 2" in the "region-main" "region"
+    And I should see "Section 2" in the "region-main" "region"
     And I should see "Activity sample 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
     And I should see "Activity sample 3" in the "region-main" "region"
-    And I click on "#collapssesection2" "css_element"
+    And I click on "Collapse" "link" in the "Section 2" "section"
     And I reload the page
-    And I should see "Topic 1" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
-    And I should see "Topic 2" in the "region-main" "region"
+    And I should see "Section 2" in the "region-main" "region"
     And I should not see "Activity sample 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
     And I should see "Activity sample 3" in the "region-main" "region"
-    And I click on "#collapssesection3" "css_element"
+    And I click on "Collapse" "link" in the "Section 3" "section"
     And I reload the page
-    And I should see "Topic 1" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
-    And I should see "Topic 2" in the "region-main" "region"
+    And I should see "Section 2" in the "region-main" "region"
     And I should not see "Activity sample 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
     And I should not see "Activity sample 3" in the "region-main" "region"
-    And I click on "#collapssesection2" "css_element"
-    And I click on "#collapssesection3" "css_element"
+    And I click on "Expand" "link" in the "Section 2" "section"
+    And I click on "Expand" "link" in the "Section 3" "section"
     And I reload the page
-    And I should see "Topic 1" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
     And I should not see "Activity sample 1" in the "region-main" "region"
-    And I click on "#collapssesection4" "css_element"
+    And I click on "Collapse" "link" in the "Section 4" "section"
     And I turn editing mode on
     And I delete section "1"
     And I click on "Delete" "button" in the ".modal" "css_element"

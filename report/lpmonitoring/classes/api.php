@@ -45,7 +45,6 @@ use core_tag_area;
 use core_tag_tag;
 use report_lpmonitoring\report_competency_config;
 use report_lpmonitoring\event\user_competency_resetted;
-use report_lpmonitoring\external;
 use stdClass;
 use Exception;
 use required_capability_exception;
@@ -60,11 +59,8 @@ use moodle_exception;
  */
 class api {
 
-    /** @var boolean iscmcompetencygradingenabled  **/
-    static protected $iscmcompetencygradingenabled = false;
-
-    /** @var boolean isdisplayratingenabled  **/
-    static protected $isdisplayratingenabled = false;
+    /** @var bool iscmcompetencygradingenabled  **/
+    static protected $iscmcompetencygradingenabled;
 
     /**
      * Get scales from frameworkid.
@@ -77,11 +73,11 @@ class api {
         global $DB;
         // Read the framework.
         $framework = core_competency_api::read_framework($frameworkid);
-        $scales = array();
+        $scales = [];
 
         // Get the scale of the framework.
         $frameworkscale = $framework->get_scale();
-        $scales[$frameworkscale->id] = array('id' => $frameworkscale->id, 'name' => $frameworkscale->name);
+        $scales[$frameworkscale->id] = ['id' => $frameworkscale->id, 'name' => $frameworkscale->name];
 
         $sql = "SELECT s.id, s.name
                   FROM {scale} s
@@ -91,9 +87,9 @@ class api {
               ORDER BY s.name ASC";
 
         // Extracting the results.
-        $records = $DB->get_recordset_sql($sql, array('frameworkid' => $frameworkid));
+        $records = $DB->get_recordset_sql($sql, ['frameworkid' => $frameworkid]);
         foreach ($records as $record) {
-            $scales[$record->id] = array('id' => $record->id, 'name' => $record->name);
+            $scales[$record->id] = ['id' => $record->id, 'name' => $record->name];
         }
         $records->close();
 
@@ -110,7 +106,7 @@ class api {
     public static function get_scales_from_templateid($templateid) {
         // Read the template.
         $competencies = core_competency_api::list_competencies_in_template($templateid);
-        $scales = array();
+        $scales = [];
         foreach ($competencies as $competency) {
             $framework = $competency->get_framework();
             $scale = $competency->get_scale();
@@ -122,7 +118,7 @@ class api {
                 $scalename = $framework->get_scale()->name;
             }
 
-            $scales[$scaleid] = array('frameworkid' => $framework->get('id'), 'scalename' => $scalename);
+            $scales[$scaleid] = ['frameworkid' => $framework->get('id'), 'scalename' => $scalename];
         }
 
         return $scales;
@@ -173,7 +169,7 @@ class api {
         }
 
         if ($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $record->competencyframeworkid, 'scaleid' => $record->scaleid))) {
+                ['competencyframeworkid' => $record->competencyframeworkid, 'scaleid' => $record->scaleid])) {
             throw new exception('Can not create: configuration already exist');
         }
 
@@ -203,7 +199,7 @@ class api {
 
         // Check for existing record.
         $recordconfig = $DB->get_record(report_competency_config::TABLE,
-                array('competencyframeworkid' => $record->competencyframeworkid, 'scaleid' => $record->scaleid));
+                ['competencyframeworkid' => $record->competencyframeworkid, 'scaleid' => $record->scaleid]);
 
         if (!$recordconfig) {
             throw new Exception('Can not update: configuration does not exist');
@@ -230,7 +226,7 @@ class api {
         global $DB;
 
         // Check the permissions before accessing configuration.
-        if ($DB->record_exists(competency_framework::TABLE, array('id' => $competencyframeworkid))) {
+        if ($DB->record_exists(competency_framework::TABLE, ['id' => $competencyframeworkid])) {
             $framework = new competency_framework($competencyframeworkid);
             if (!$framework->can_manage()) {
                 throw new required_capability_exception($framework->get_context(), 'moodle/competency:competencymanage',
@@ -238,7 +234,7 @@ class api {
             }
         }
 
-        $params = array('competencyframeworkid' => $competencyframeworkid);
+        $params = ['competencyframeworkid' => $competencyframeworkid];
         if ($scaleid != null) {
             $params['scaleid'] = $scaleid;
         }
@@ -268,10 +264,10 @@ class api {
      *                      )
      *              )
      */
-    public static function search_users_by_templateid($templateid, $query, $scalesvalues = array(), $scalefilterin = '',
+    public static function search_users_by_templateid($templateid, $query, $scalesvalues = [], $scalefilterin = '',
             $scalesortorder = "ASC", $withcomments = false, $withplans = false) {
         global $CFG, $DB;
-        if (!in_array(strtolower($scalesortorder), array('asc', 'desc'))) {
+        if (!in_array(strtolower($scalesortorder), ['asc', 'desc'])) {
             throw new \coding_exception('Sort order must be ASC or DESC');
         }
 
@@ -286,18 +282,18 @@ class api {
         $fields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $extrasearchfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
-        list($wheresql, $whereparams) = users_search_sql($query, 'u', true, $extrasearchfields);
+        list($wheresql, $whereparams) = users_search_sql($query, 'u', USER_SEARCH_STARTS_WITH, $extrasearchfields);
         list($sortsql, $sortparams) = users_order_by_sql('u', $query, $context);
 
         // Group scales values by scaleid.
-        $scalefilter = array();
+        $scalefilter = [];
         if (!empty($scalesvalues)) {
             foreach ($scalesvalues as $scale) {
                 $scalefilter[$scale['scaleid']][] = $scale['scalevalue'];
             }
         }
         $i = 1;
-        $paramsfilter = array();
+        $paramsfilter = [];
         $sqlfilterin = '';
         $sqlfilterinforplan = '';
         $sqlscalefilter = '';
@@ -313,7 +309,7 @@ class api {
             $sqlfilterin .= $or . "(cf.scaleid = :$querykeyname1 AND ucc.grade $insqlframework AND c.scaleid IS NULL)
                             OR (c.scaleid = :$querykeyname2 AND ucc.grade $insqlcompetency)";
 
-            $queryparams = array($querykeyname1 => $scaleid) + array($querykeyname2 => $scaleid);
+            $queryparams = [$querykeyname1 => $scaleid] + [$querykeyname2 => $scaleid];
             $paramsfilter = $paramsfilter + $params1 + $params2 + $queryparams;
 
             // If scale values in plan, we should build the "IN" SQL for both usercomp and usercompplan.
@@ -328,7 +324,7 @@ class api {
                 $sqlfilterinforplan .= $or . "(cf.scaleid = :$querykeyname3 AND ucp.grade $insqlframework AND c.scaleid IS NULL)
                             OR (c.scaleid = :$querykeyname4 AND ucp.grade $insqlcompetency)";
 
-                $queryparams = array($querykeyname3 => $scaleid) + array($querykeyname4 => $scaleid);
+                $queryparams = [$querykeyname3 => $scaleid] + [$querykeyname4 => $scaleid];
                 $paramsfilter = $paramsfilter + $params1 + $params2 + $queryparams;
             }
             $i++;
@@ -366,8 +362,8 @@ class api {
                                           GROUP BY useridentifier)
                                         ) usergrade";
 
-                $paramsfilter += array('active' => ENROL_USER_ACTIVE);
-                $paramsfilter += array('enabled' => ENROL_INSTANCE_ENABLED);
+                $paramsfilter += ['active' => ENROL_USER_ACTIVE];
+                $paramsfilter += ['enabled' => ENROL_INSTANCE_ENABLED];
             } else if ($scalefilterin == 'coursemodule') {
                 // We have to check if users are enroled in course and competency is linked to the course module.
                 $sqlscalefilter = "SELECT useridentifier,
@@ -400,8 +396,8 @@ class api {
                                           GROUP BY useridentifier)
                                         ) usergrade";
 
-                $paramsfilter += array('active' => ENROL_USER_ACTIVE);
-                $paramsfilter += array('enabled' => ENROL_INSTANCE_ENABLED);
+                $paramsfilter += ['active' => ENROL_USER_ACTIVE];
+                $paramsfilter += ['enabled' => ENROL_INSTANCE_ENABLED];
             } else {
                 // SQL for usercomp and completed plans.
                 $sqlscalefilter = "SELECT useridentifier,
@@ -460,10 +456,10 @@ class api {
         }
 
         $params = $paramsfilter + $whereparams + $sortparams;
-        $params += array('templateid' => $template->get('id')) + array('templateid2' => $template->get('id'));
+        $params += ['templateid' => $template->get('id')] + ['templateid2' => $template->get('id')];
         $result = $DB->get_recordset_sql($sql, $params);
 
-        $users = array();
+        $users = [];
         foreach ($result as $key => $user) {
             // Make sure the ratings from user_competency table are not returned
             // if the plan is completed.
@@ -498,7 +494,7 @@ class api {
             }
 
             // Add user picture.
-            $userplan = array();
+            $userplan = [];
             $userplan['profileimage'] = new \user_picture($user);
             $userplan['fullname'] = fullname($user);
             $userplan['userid'] = $user->id;
@@ -531,7 +527,7 @@ class api {
     public static function get_scale_configuration_other_info($frameworkid, $scaleid) {
         global $DB;
 
-        $scaleotherinfo = array();
+        $scaleotherinfo = [];
         $scaleconfigurations = '';
 
         // Get scale configuration from competency first or framework second.
@@ -541,7 +537,7 @@ class api {
                    AND c.scaleid = :scaleid";
 
         // Extracting the results.
-        $records = $DB->get_recordset_sql($sql, array('frameworkid' => $frameworkid, 'scaleid' => $scaleid));
+        $records = $DB->get_recordset_sql($sql, ['frameworkid' => $frameworkid, 'scaleid' => $scaleid]);
         foreach ($records as $record) {
             $scaleconfigurations = $record->scaleconfiguration;
         }
@@ -558,7 +554,7 @@ class api {
         }
 
         // Get scale items.
-        $scale = \grade_scale::fetch(array('id' => $scaleid));
+        $scale = \grade_scale::fetch(['id' => $scaleid]);
         $scale->load_items();
         $scaleitems = $scale->scale_items;
 
@@ -598,7 +594,7 @@ class api {
      *                            'next' => \stdClass
      *                        ))
      */
-    public static function read_plan($planid = null, $templateid = null, $scalesvalues = array(), $scalefilterin = '',
+    public static function read_plan($planid = null, $templateid = null, $scalesvalues = [], $scalefilterin = '',
             $sortorder = 'ASC', $tagid = null, $withcomments = false, $withplans = false) {
 
         if (empty($planid) && empty($templateid) && empty($tagid)) {
@@ -660,12 +656,12 @@ class api {
             $currentplan = core_competency_api::read_plan($currentplanid);
         }
 
-        return (object) array(
+        return (object) [
             'current' => $currentplan,
             'previous' => $prevplan,
             'next' => $nextplan,
-            'fullnavigation' => $userplans
-        );
+            'fullnavigation' => $userplans,
+        ];
     }
 
     /**
@@ -709,9 +705,9 @@ class api {
         $competencydetails->scaleconfig = $scaleconfig;
 
         // Find the scale infos.
-        $scale = \grade_scale::fetch(array('id' => $scaleid));
+        $scale = \grade_scale::fetch(['id' => $scaleid]);
         $scale = $scale->load_items();
-        $newscale = array();
+        $newscale = [];
         foreach ($scale as $key => $value) {
             $newscale[$key + 1] = $value;
         }
@@ -730,18 +726,18 @@ class api {
         $competencydetails->usercompetencyplan = $plancompetency->usercompetencyplan;
 
         // Find the prior learning evidence linked to the competency.
-        $competencydetails->userevidences = array();
+        $competencydetails->userevidences = [];
         $evidences = core_competency_api::list_evidence($userid, $competencyid);
         $sql = "SELECT ue.*
                   FROM {competency_userevidence} ue
                   JOIN {competency_userevidencecomp} uec ON (ue.id = uec.userevidenceid)
                   WHERE ue.userid = ?
                   AND uec.competencyid = ?";
-        $competencydetails->userevidences = $DB->get_records_sql($sql, array($userid, $competencyid));
+        $competencydetails->userevidences = $DB->get_records_sql($sql, [$userid, $competencyid]);
 
         $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
 
-        $competencydetails->courses = array();
+        $competencydetails->courses = [];
         $coursesids = [];
         foreach ($courses as $course) {
             $courseinfo = new \stdClass();
@@ -759,13 +755,13 @@ class api {
 
             // Find litteral note.
             $gradeitem = \grade_item::fetch_course_item($course->id);
-            $gradegrade = new \grade_grade(array('itemid' => $gradeitem->id, 'userid' => $userid));
+            $gradegrade = new \grade_grade(['itemid' => $gradeitem->id, 'userid' => $userid]);
             $courseinfo->gradetxt = grade_format_gradevalue($gradegrade->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_LETTER);
 
             // Find modules evaluations.
             if (self::is_cm_comptency_grading_enabled()) {
                 $modules = course_module_competency::list_course_modules($competencyid, $course->id);
-                $courseinfo->modules = array();
+                $courseinfo->modules = [];
                 foreach ($modules as $cmid) {
                     $courseinfo->modules[] = \tool_cmcompetency\api::get_user_competency_in_coursemodule($cmid,
                         $userid, $competencyid);
@@ -775,7 +771,7 @@ class api {
             $coursesids[] = $course->id;
         }
 
-        $competencydetails->cms = array();
+        $competencydetails->cms = [];
         if (self::is_cm_comptency_grading_enabled()) {
             $cms = \tool_cmcompetency\api::list_coursesmodules_using_competency($competencyid);
 
@@ -800,11 +796,15 @@ class api {
 
                 // Calculate grade if exist.
                 $cminfo->cm = $cm;
-                $gradeitems = \grade_item::fetch_all(array('itemtype' => 'mod', 'itemmodule' => $cm->modname,
-                        'iteminstance' => $cm->instance, 'courseid' => $cm->course));
+                $gradeitems = \grade_item::fetch_all([
+                    'itemtype' => 'mod',
+                    'itemmodule' => $cm->modname,
+                    'iteminstance' => $cm->instance,
+                    'courseid' => $cm->course,
+                ]);
                 if (!empty($gradeitems)) {
                     $gradeitem = reset($gradeitems);
-                    $gradegrade = new \grade_grade(array('itemid' => $gradeitem->id, 'userid' => $userid));
+                    $gradegrade = new \grade_grade(['itemid' => $gradeitem->id, 'userid' => $userid]);
                     $cminfo->grade = grade_format_gradevalue($gradegrade->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_LETTER);
                 } else {
                     $cminfo->grade = '-';
@@ -832,7 +832,7 @@ class api {
         $userplans = plan::get_records_for_template($templateid);
 
         // Find rate for each user in the plan for the the competency.
-        $competencystatistics->listusers = array();
+        $competencystatistics->listusers = [];
         foreach ($userplans as $userplan) {
             $user = new stdClass();
             $user->userinfo = core_user::get_user($userplan->get('userid'), '*', \MUST_EXIST);
@@ -870,7 +870,7 @@ class api {
         $userplans = plan::get_records_for_template($templateid);
 
         // Find rate for each user in the plan for the the competency.
-        $competencystatistics->listratings = array();
+        $competencystatistics->listratings = [];
         foreach ($userplans as $plan) {
             $userid = $plan->get('userid');
             $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
@@ -904,7 +904,7 @@ class api {
         $userplans = plan::get_records_for_template($templateid);
 
         // Find rate for each user in the plan for the the competency.
-        $competencystatistics->listratings = array();
+        $competencystatistics->listratings = [];
         foreach ($userplans as $plan) {
             $userid = $plan->get('userid');
             $courses = course_competency::get_courses_with_competency_and_user($competencyid, $userid);
@@ -958,9 +958,9 @@ class api {
         $competencystatistics->scaleconfig = $scaleconfig;
 
         // Find the scale infos.
-        $scale = \grade_scale::fetch(array('id' => $scaleid));
+        $scale = \grade_scale::fetch(['id' => $scaleid]);
         $scale = $scale->load_items();
-        $newscale = array();
+        $newscale = [];
         foreach ($scale as $key => $value) {
             $newscale[$key + 1] = $value;
         }
@@ -996,7 +996,7 @@ class api {
 
         // Get all the relevant contexts.
         $contexts = core_competency_api::get_related_contexts($context, $includes,
-            array('moodle/competency:templateview', 'moodle/competency:templatemanage'));
+            ['moodle/competency:templateview', 'moodle/competency:templatemanage']);
 
         // First we do a permissions check.
         if (empty($contexts)) {
@@ -1033,17 +1033,17 @@ class api {
      */
     protected static function get_template_query_search($search, $tablealias = '') {
         global $DB;
-        $params = array();
+        $params = [];
         if (empty($search)) {
             // This function should not be called if there is no search string, just in case return dummy query.
-            return array('1=1', $params);
+            return ['1=1', $params];
         }
         if ($tablealias && substr($tablealias, -1) !== '.') {
             $tablealias .= '.';
         }
         $searchparam = '%' . $DB->sql_like_escape($search) . '%';
-        $conditions = array();
-        $fields = array('shortname', 'description');
+        $conditions = [];
+        $fields = ['shortname', 'description'];
         $cnt = 0;
         foreach ($fields as $field) {
             $conditions[] = $DB->sql_like($tablealias . $field, ':csearch' . $cnt, false);
@@ -1051,7 +1051,7 @@ class api {
             $cnt++;
         }
         $sql = '(' . implode(' OR ', $conditions) . ')';
-        return array($sql, $params);
+        return [$sql, $params];
     }
 
     /**
@@ -1069,7 +1069,7 @@ class api {
                     ON c.id = ucp.competencyid
                  WHERE ucp.planid = ?
                    AND ucp.competencyid = ?";
-        return $DB->record_exists_sql($sql, array($planid, $competencyid));
+        return $DB->record_exists_sql($sql, [$planid, $competencyid]);
     }
 
     /**
@@ -1083,15 +1083,15 @@ class api {
         // Get all tags in the collection for competency plans.
         $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
         $collid = core_tag_area::get_collection('report_lpmonitoring', 'competency_plan');
-        $recordstags = $DB->get_records('tag', array('tagcollid' => $collid), $namefield, 'id,' . $namefield . ' AS name ');
+        $recordstags = $DB->get_records('tag', ['tagcollid' => $collid], $namefield, 'id,' . $namefield . ' AS name ');
 
         // Loop through all tag instances to check if the user can manage the associated plans.
-        $tagstoreturn = array();
+        $tagstoreturn = [];
         foreach ($recordstags as $tag) {
-            $conditions = array('component' => 'report_lpmonitoring',
+            $conditions = ['component' => 'report_lpmonitoring',
                             'itemtype' => 'competency_plan',
-                            'tagid' => $tag->id
-                        );
+                            'tagid' => $tag->id,
+                        ];
             $recordstaginstances = $DB->get_records('tag_instance', $conditions, '', 'itemid');
             foreach ($recordstaginstances as $taginstance) {
                 // If the user can manage at least a plan with this tag, add it to the list of tags to return.
@@ -1123,7 +1123,7 @@ class api {
      */
     public static function search_plans_with_tag($tagid, $withcomments) {
         $tag = core_tag_tag::get($tagid);
-        $records = array();
+        $records = [];
         // Important to check if tag exists and not have just been removed.
         if ($tag) {
             $plans = $tag->get_tagged_items('report_lpmonitoring', 'competency_plan');
@@ -1142,12 +1142,12 @@ class api {
                         $nbcomments = 0;
                     }
 
-                    $users = user_get_users_by_id( array($planinfos->userid) );
+                    $users = user_get_users_by_id( [$planinfos->userid] );
                     $user = array_shift($users);
 
                     $profileimage = new \user_picture($user);
 
-                    $record = array();
+                    $record = [];
                     $record['profileimage'] = $profileimage;
                     $record['profileimagesmall'] = $record['profileimage'];
                     $record['fullname'] = fullname($user);
@@ -1168,14 +1168,23 @@ class api {
      * Check if course module competency grading is enabled.
      */
     public static function is_cm_comptency_grading_enabled() {
-        return self::$iscmcompetencygradingenabled;
+        if (defined('PHPUNIT_TEST') &&
+            PHPUNIT_TEST &&
+            isset(self::$iscmcompetencygradingenabled) &&
+            self::$iscmcompetencygradingenabled !== null) {
+            return self::$iscmcompetencygradingenabled;
+        }
+        if (\core_component::get_component_directory('tool_cmcompetency')) {
+            return true;
+        }
+        return false;
     }
 
     /**
      * Check if display rating is enabled.
      */
     public static function is_display_rating_enabled() {
-        return self::$isdisplayratingenabled;
+        return method_exists(\tool_lp\api::class, 'has_to_display_rating');
     }
 
     /**
@@ -1199,7 +1208,7 @@ class api {
         // Throws exception if competency not in plan.
         $competency = $uc->get_competency();
         $competencycontext = $competency->get_context();
-        if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
+        if (!has_any_capability(['moodle/competency:competencyview', 'moodle/competency:competencymanage'],
                 $competencycontext)) {
             throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
@@ -1293,9 +1302,9 @@ class api {
         $customdata['scalevalues'] = $scalesvalues;
 
         $task = new \report_lpmonitoring\task\rate_users_in_templates();
-        $task->set_custom_data(array(
+        $task->set_custom_data([
             'cms' => $customdata,
-        ));
+        ]);
         $task->set_userid($USER->id);
 
         // Queue the task for the next run.
@@ -1362,7 +1371,7 @@ class api {
      * @return Boolean If we have to display or not the rating for plan
      */
     public static function has_to_display_rating_for_plan($planorid) {
-        if (self::$isdisplayratingenabled) {
+        if (method_exists(\tool_lp\api::class, 'has_to_display_rating_for_plan')) {
             return \tool_lp\api::has_to_display_rating_for_plan($planorid);
         }
         return true;
@@ -1375,7 +1384,7 @@ class api {
      * @return Boolean If we have a display rating set for plan
      */
     public static function can_reset_display_rating_for_plan($planorid) {
-        if (self::$isdisplayratingenabled) {
+        if (method_exists(\tool_lp\api::class, 'can_reset_display_rating_for_plan')) {
             return \tool_lp\api::can_reset_display_rating_for_plan($planorid);
         }
         return false;
@@ -1388,7 +1397,7 @@ class api {
      * @return Boolean If we have to display or not the rating for plan
      */
     public static function has_to_display_rating($planorid) {
-        if (self::$isdisplayratingenabled) {
+        if (method_exists(\tool_lp\api::class, 'has_to_display_rating')) {
             return \tool_lp\api::has_to_display_rating($planorid);
         }
         return true;

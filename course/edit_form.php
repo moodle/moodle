@@ -1,9 +1,13 @@
 <?php
 
+use core\di;
+use core\hook;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir . '/pdflib.php');
 
 /**
  * The form for handling editing a course.
@@ -144,14 +148,28 @@ class course_edit_form extends moodleform {
             }
         }
 
+        // Get the task to change automatically the course visibility when the current day matches the course start date.
+        $task = \core\task\manager::get_scheduled_task('\core\task\show_started_courses_task');
+        $startdatestring = 'startdate';
+        if (!empty($task) && !$task->get_disabled()) {
+            // When the task is enabled, display a different help message.
+            $startdatestring = 'startdatewithtaskenabled';
+        }
         $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
-        $mform->addHelpButton('startdate', 'startdate');
+        $mform->addHelpButton('startdate', $startdatestring);
         $date = (new DateTime())->setTimestamp(usergetmidnight(time()));
         $date->modify('+1 day');
         $mform->setDefault('startdate', $date->getTimestamp());
 
+        // Get the task to change automatically the course visibility when the current day matches the course end date.
+        $task = \core\task\manager::get_scheduled_task('\core\task\hide_ended_courses_task');
+        $enddatestring = 'enddate';
+        if (!empty($task) && !$task->get_disabled()) {
+            // When the task is enabled, display a different help message.
+            $enddatestring = 'enddatewithtaskenabled';
+        }
         $mform->addElement('date_time_selector', 'enddate', get_string('enddate'), array('optional' => true));
-        $mform->addHelpButton('enddate', 'enddate');
+        $mform->addHelpButton('enddate', $enddatestring);
 
         if (!empty($CFG->enablecourserelativedates)) {
             $attributes = [
@@ -206,23 +224,40 @@ class course_edit_form extends moodleform {
         $mform->addElement('header', 'courseformathdr', get_string('type_format', 'plugin'));
 
         $courseformats = get_sorted_course_formats(true);
-        $formcourseformats = array();
+        $formcourseformats = new core\output\choicelist();
+        $formcourseformats->set_allow_empty(false);
         foreach ($courseformats as $courseformat) {
-            $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
+            $definition = [];
+            $component = "format_$courseformat";
+            if (get_string_manager()->string_exists('plugin_description', $component)) {
+                $definition['description'] = get_string('plugin_description', $component);
+            }
+            $formcourseformats->add_option(
+                $courseformat,
+                get_string('pluginname', "format_$courseformat"),
+                [
+                    'description' => $definition,
+                ],
+            );
         }
         if (isset($course->format)) {
-            $course->format = course_get_format($course)->get_format(); // replace with default if not found
+            $course->format = course_get_format($course)->get_format(); // Replace with default if not found.
             if (!in_array($course->format, $courseformats)) {
-                // this format is disabled. Still display it in the dropdown
-                $formcourseformats[$course->format] = get_string('withdisablednote', 'moodle',
-                        get_string('pluginname', 'format_'.$course->format));
+                // This format is disabled. Still display it in the dropdown.
+                $formcourseformats->add_option(
+                    $course->format,
+                    get_string('withdisablednote', 'moodle', get_string('pluginname', 'format_'.$course->format)),
+                );
             }
         }
 
-        $mform->addElement('select', 'format', get_string('format'), $formcourseformats, [
-            'data-formatchooser-field' => 'selector',
-        ]);
-        $mform->addHelpButton('format', 'format');
+        $mform->addElement(
+            'choicedropdown',
+            'format',
+            get_string('format'),
+            $formcourseformats,
+            ['data-formatchooser-field' => 'selector'],
+        );
         $mform->setDefault('format', $courseconfig->format);
 
         // Button to update format-specific options on format change (will be hidden by JavaScript).
@@ -320,6 +355,22 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('maxbytes', 'maximumupload');
         $mform->setDefault('maxbytes', $courseconfig->maxbytes);
 
+        // PDF font.
+        if (!empty($CFG->enablepdfexportfont)) {
+            $pdf = new \pdf;
+            $fontlist = $pdf->get_export_fontlist();
+            // Show the option if the font is defined more than one.
+            if (count($fontlist) > 1) {
+                $defaultfont = $courseconfig->pdfexportfont ?? 'freesans';
+                if (empty($fontlist[$defaultfont])) {
+                    $defaultfont = current($fontlist);
+                }
+                $mform->addElement('select', 'pdfexportfont', get_string('pdfexportfont', 'course'), $fontlist);
+                $mform->addHelpButton('pdfexportfont', 'pdfexportfont', 'course');
+                $mform->setDefault('pdfexportfont', $defaultfont);
+            }
+        }
+
         // Completion tracking.
         if (completion_info::is_enabled_for_site()) {
             $mform->addElement('header', 'completionhdr', get_string('completion', 'completion'));
@@ -359,22 +410,6 @@ class course_edit_form extends moodleform {
         $options[0] = get_string('none');
         $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
 
-        if ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:renameroles', $categorycontext))
-                || (!empty($course->id) && has_capability('moodle/course:renameroles', $coursecontext))) {
-            // Customizable role names in this course.
-            $mform->addElement('header', 'rolerenaming', get_string('rolerenaming'));
-            $mform->addHelpButton('rolerenaming', 'rolerenaming');
-
-            if ($roles = get_all_roles()) {
-                $roles = role_fix_names($roles, null, ROLENAME_ORIGINAL);
-                $assignableroles = get_roles_for_contextlevels(CONTEXT_COURSE);
-                foreach ($roles as $role) {
-                    $mform->addElement('text', 'role_' . $role->id, get_string('yourwordforx', '', $role->localname));
-                    $mform->setType('role_' . $role->id, PARAM_TEXT);
-                }
-            }
-        }
-
         if (core_tag_tag::is_enabled('core', 'course') &&
                 ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:tag', $categorycontext))
                 || (!empty($course->id) && has_capability('moodle/course:tag', $coursecontext)))) {
@@ -387,6 +422,9 @@ class course_edit_form extends moodleform {
         $handler = core_course\customfield\course_handler::create();
         $handler->set_parent_context($categorycontext); // For course handler only.
         $handler->instance_form_definition($mform, empty($course->id) ? 0 : $course->id);
+
+        $hook = new \core_course\hook\after_form_definition($this, $mform);
+        di::get(hook\manager::class)->dispatch($hook);
 
         // When two elements we need a group.
         $buttonarray = array();
@@ -401,6 +439,16 @@ class course_edit_form extends moodleform {
 
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
+
+        // Communication api call to set the communication data in the form for handling actions for group feature changes.
+        // We only need to set the data for courses already created.
+        if (!empty($course->id)) {
+            $communication = core_communication\helper::load_by_course(
+                courseid: $course->id,
+                context: $coursecontext,
+            );
+            $communication->set_data($course);
+        }
 
         // Prepare custom fields data.
         $handler->instance_form_before_set_data($course);
@@ -457,6 +505,9 @@ class course_edit_form extends moodleform {
         // Tweak the form with values provided by custom fields in use.
         $handler  = core_course\customfield\course_handler::create();
         $handler->instance_form_definition_after_data($mform, empty($courseid) ? 0 : $courseid);
+
+        $hook = new \core_course\hook\after_form_definition_after_data($this, $mform);
+        di::get(hook\manager::class)->dispatch($hook);
     }
 
     /**
@@ -503,6 +554,31 @@ class course_edit_form extends moodleform {
         $handler = core_course\customfield\course_handler::create();
         $errors  = array_merge($errors, $handler->instance_form_validation($data, $files));
 
+        $hook = new \core_course\hook\after_form_validation($this, $data, $files);
+        di::get(hook\manager::class)->dispatch($hook);
+        $pluginerrors = $hook->get_errors();
+        if (!empty($pluginerrors)) {
+            $errors = array_merge($errors, $pluginerrors);
+        }
+
         return $errors;
+    }
+
+    /**
+     * Returns course object.
+     *
+     * @return \stdClass
+     */
+    public function get_course(): stdClass {
+        return $this->course;
+    }
+
+    /**
+     * Returns context.
+     *
+     * @return \core\context
+     */
+    public function get_context(): \core\context {
+        return $this->context;
     }
 }

@@ -76,6 +76,19 @@ class availability extends section_avalability {
     }
 
     /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return stdClass|null data context for a mustache template
+     */
+    public function export_for_template(\renderer_base $output): ?stdClass {
+        if (!$this->format->show_activity_editor_options($this->mod)) {
+            return null;
+        }
+        return parent::export_for_template($output);
+    }
+
+    /**
      * Get the availability data to be used as the context for a mustache template.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
@@ -86,11 +99,16 @@ class availability extends section_avalability {
             // Nothing to be displayed to the user.
             return [];
         }
+
         if (!$this->mod->uservisible) {
-            return $this->user_availability_info($output);
+            return ['info' => $this->user_availability_info($output)];
         }
 
-        return $this->conditional_availability_info($output);
+        $editurl = new \moodle_url(
+            '/course/modedit.php',
+            ['update' => $this->mod->id, 'showonly' => 'availabilityconditionsheader']
+        );
+        return ['editurl' => $editurl->out(false), 'info' => $this->conditional_availability_info($output)];
     }
 
     /**
@@ -108,11 +126,7 @@ class availability extends section_avalability {
         }
 
         $info = [];
-        $formattedinfo = \core_availability\info::format_info(
-            $this->mod->availableinfo,
-            $this->mod->get_course()
-        );
-        $info[] = $this->availability_info($formattedinfo, 'isrestricted');
+        $info[] = $this->get_availability_data($output, $this->mod->availableinfo, 'isrestricted');
         return $info;
     }
 
@@ -151,11 +165,7 @@ class availability extends section_avalability {
         if (!$mod->visible) {
             $hidinfoclass .= ' hide';
         }
-        $formattedinfo = info::format_info(
-            $fullinfo,
-            $mod->get_course()
-        );
-        $info[] = $this->availability_info($formattedinfo, $hidinfoclass);
+        $info[] = $this->get_availability_data($output, $fullinfo, $hidinfoclass);
 
         return $info;
     }

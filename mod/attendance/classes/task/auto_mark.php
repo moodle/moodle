@@ -52,9 +52,9 @@ class auto_mark extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
         // Create some cache vars - might be nice to restructure this and make a smaller number of sql calls.
-        $cachecm = array();
-        $cacheatt = array();
-        $cachecourse = array();
+        $cachecm = [];
+        $cacheatt = [];
+        $cachecourse = [];
         $sql = "SELECT se.*, ss.id as setunmarked
                   FROM {attendance_sessions} se
              LEFT JOIN {attendance_statuses} ss ON ss.attendanceid = se.attendanceid
@@ -65,7 +65,7 @@ class auto_mark extends \core\task\scheduled_task {
 
         foreach ($sessions as $session) {
             if (empty($cacheatt[$session->attendanceid])) {
-                $cacheatt[$session->attendanceid] = $DB->get_record('attendance', array('id' => $session->attendanceid));
+                $cacheatt[$session->attendanceid] = $DB->get_record('attendance', ['id' => $session->attendanceid]);
             }
             if (empty($cachecm[$session->attendanceid])) {
                 $cachecm[$session->attendanceid] = get_coursemodule_from_instance('attendance',
@@ -73,7 +73,7 @@ class auto_mark extends \core\task\scheduled_task {
             }
             $courseid = $cacheatt[$session->attendanceid]->course;
             if (empty($cachecourse[$courseid])) {
-                $cachecourse[$courseid] = $DB->get_record('course', array('id' => $courseid));
+                $cachecourse[$courseid] = $DB->get_record('course', ['id' => $courseid]);
             }
             \mod_attendance\local\automark::session($session, $cachecourse[$courseid], $cachecm[$session->attendanceid],
                                                     $cacheatt[$session->attendanceid]);

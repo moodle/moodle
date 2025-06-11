@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides {@link core_user_table_participants_search_test} class.
- *
- * @package   core_user
- * @category  test
- * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 declare(strict_types=1);
 
 namespace core_user\table;
@@ -41,10 +32,14 @@ use stdClass;
 /**
  * Tests for the implementation of {@link core_user_table_participants_search} class.
  *
+ * @package   core_user
+ * @category  test
  * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \core_user\table\participants_search
  */
-class participants_search_test extends advanced_testcase {
+final class participants_search_test extends advanced_testcase {
 
     /**
      * Helper to convert a moodle_recordset to an array of records.
@@ -176,9 +171,11 @@ class participants_search_test extends advanced_testcase {
         $rs = $search->get_participants();
         $this->assertInstanceOf(moodle_recordset::class, $rs);
         $records = $this->convert_recordset_to_array($rs);
+        $resetrecords = reset($records);
+        $totalparticipants = $resetrecords->fullcount ?? 0;
 
         $this->assertCount($count, $records);
-        $this->assertEquals($count, $search->get_total_participants_count());
+        $this->assertEquals($count, $totalparticipants);
 
         foreach ($expectedusers as $expecteduser) {
             $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -190,7 +187,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function role_provider(): array {
+    public static function role_provider(): array {
         $tests = [
             // Users who only have one role each.
             'Users in each role' => (object) [
@@ -693,16 +690,15 @@ class participants_search_test extends advanced_testcase {
                     'NONE: Filter on student, teacher' => (object) [
                         'roles' => ['student', 'teacher'],
                         'jointype' => filter::JOINTYPE_NONE,
-                        'count' => 5,
+                        'count' => 4,
                         'expectedusers' => [
                             'c',
                             'd',
-                            'e',
                             'g',
                             'h',
                         ],
                     ],
-                    'NONE: Filter on student, teacher' => (object) [
+                    'NONE: Filter on teacher, editingteacher' => (object) [
                         'roles' => ['teacher', 'editingteacher'],
                         'jointype' => filter::JOINTYPE_NONE,
                         'count' => 3,
@@ -787,9 +783,10 @@ class participants_search_test extends advanced_testcase {
 
         // Run the search, assert count matches the number of expected users.
         $search = new participants_search($course, context_course::instance($course->id), $filterset);
-        $this->assertEquals(count($expectedusers), $search->get_total_participants_count());
-
         $rs = $search->get_participants();
+        $totalparticipants = $rs->current()->fullcount ?? 0;
+        $this->assertEquals(count($expectedusers), $totalparticipants);
+
         $this->assertInstanceOf(moodle_recordset::class, $rs);
 
         // Assert that each expected user is within the participant records.
@@ -804,7 +801,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function country_provider(): array {
+    public static function country_provider(): array {
         $tests = [
             'users' => [
                 'user1' => 'DE',
@@ -985,9 +982,11 @@ class participants_search_test extends advanced_testcase {
         $rs = $search->get_participants();
         $this->assertInstanceOf(moodle_recordset::class, $rs);
         $records = $this->convert_recordset_to_array($rs);
+        $resetrecords = reset($records);
+        $totalparticipants = $resetrecords->fullcount ?? 0;
 
         $this->assertCount($count, $records);
-        $this->assertEquals($count, $search->get_total_participants_count());
+        $this->assertEquals($count, $totalparticipants);
 
         foreach ($expectedusers as $expecteduser) {
             $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -999,7 +998,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function keywords_provider(): array {
+    public static function keywords_provider(): array {
         $tests = [
             // Users where the keyword matches basic user fields such as names and email.
             'Users with basic names' => (object) [
@@ -1531,9 +1530,11 @@ class participants_search_test extends advanced_testcase {
         $rs = $search->get_participants();
         $this->assertInstanceOf(moodle_recordset::class, $rs);
         $records = $this->convert_recordset_to_array($rs);
+        $resetrecords = reset($records);
+        $totalparticipants = $resetrecords->fullcount ?? 0;
 
         $this->assertCount($count, $records);
-        $this->assertEquals($count, $search->get_total_participants_count());
+        $this->assertEquals($count, $totalparticipants);
 
         foreach ($expectedusers as $expecteduser) {
             $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -1545,7 +1546,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function status_provider(): array {
+    public static function status_provider(): array {
         $tests = [
             // Users with different statuses and enrolment methods (so multiple statuses are possible for the same user).
             'Users with different enrolment statuses' => (object) [
@@ -1786,9 +1787,11 @@ class participants_search_test extends advanced_testcase {
         $rs = $search->get_participants();
         $this->assertInstanceOf(moodle_recordset::class, $rs);
         $records = $this->convert_recordset_to_array($rs);
+        $resetrecords = reset($records);
+        $totalparticipants = $resetrecords->fullcount ?? 0;
 
         $this->assertCount($count, $records);
-        $this->assertEquals($count, $search->get_total_participants_count());
+        $this->assertEquals($count, $totalparticipants);
 
         foreach ($expectedusers as $expecteduser) {
             $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -1800,7 +1803,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function enrolments_provider(): array {
+    public static function enrolments_provider(): array {
         $tests = [
             // Users with different enrolment methods.
             'Users with different enrolment methods' => (object) [
@@ -2010,9 +2013,11 @@ class participants_search_test extends advanced_testcase {
         $rs = $search->get_participants();
         $this->assertInstanceOf(moodle_recordset::class, $rs);
         $records = $this->convert_recordset_to_array($rs);
+        $resetrecords = reset($records);
+        $totalparticipants = $resetrecords->fullcount ?? 0;
 
         $this->assertCount($count, $records);
-        $this->assertEquals($count, $search->get_total_participants_count());
+        $this->assertEquals($count, $totalparticipants);
 
         foreach ($expectedusers as $expecteduser) {
             $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -2024,7 +2029,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function groups_provider(): array {
+    public static function groups_provider(): array {
         $tests = [
             'Users in different groups' => (object) [
                 'groupsavailable' => [
@@ -2348,9 +2353,11 @@ class participants_search_test extends advanced_testcase {
             $rs = $search->get_participants();
             $this->assertInstanceOf(moodle_recordset::class, $rs);
             $records = $this->convert_recordset_to_array($rs);
+            $resetrecords = reset($records);
+            $totalparticipants = $resetrecords->fullcount ?? 0;
 
             $this->assertCount($count, $records);
-            $this->assertEquals($count, $search->get_total_participants_count());
+            $this->assertEquals($count, $totalparticipants);
 
             foreach ($expectedusers as $expecteduser) {
                 $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -2363,7 +2370,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function groups_separate_provider(): array {
+    public static function groups_separate_provider(): array {
         $tests = [
             'Users in different groups with separate groups mode enabled' => (object) [
                 'groupsavailable' => [
@@ -2709,9 +2716,11 @@ class participants_search_test extends advanced_testcase {
         $rs = $search->get_participants();
         $this->assertInstanceOf(moodle_recordset::class, $rs);
         $records = $this->convert_recordset_to_array($rs);
+        $resetrecords = reset($records);
+        $totalparticipants = $resetrecords->fullcount ?? 0;
 
         $this->assertCount($count, $records);
-        $this->assertEquals($count, $search->get_total_participants_count());
+        $this->assertEquals($count, $totalparticipants);
 
         foreach ($expectedusers as $expecteduser) {
             $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -2723,7 +2732,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function accesssince_provider(): array {
+    public static function accesssince_provider(): array {
         $tests = [
             // Users with different last access times.
             'Users in different groups' => (object) [
@@ -3114,9 +3123,11 @@ class participants_search_test extends advanced_testcase {
         $rs = $search->get_participants();
         $this->assertInstanceOf(moodle_recordset::class, $rs);
         $records = $this->convert_recordset_to_array($rs);
+        $resetrecords = reset($records);
+        $totalparticipants = $resetrecords->fullcount ?? 0;
 
         $this->assertCount($count, $records);
-        $this->assertEquals($count, $search->get_total_participants_count());
+        $this->assertEquals($count, $totalparticipants);
 
         foreach ($expectedusers as $expecteduser) {
             $this->assertArrayHasKey($users[$expecteduser]->id, $records);
@@ -3128,7 +3139,7 @@ class participants_search_test extends advanced_testcase {
      *
      * @return array
      */
-    public function filterset_joins_provider(): array {
+    public static function filterset_joins_provider(): array {
         $tests = [
             // Users with different configurations.
             'Users with different configurations' => (object) [
@@ -3498,5 +3509,45 @@ class participants_search_test extends advanced_testcase {
         }
 
         return $finaltests;
+    }
+
+    /**
+     * Tests sorting of participants in a course.
+     *
+     * This test runs a search for participants twice, first with an "ORDER BY" clause and second without.
+     * The test asserts the correct ordering of participants based on the sorting condition.
+     */
+    public function test_sort_participants(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // Generate users with their role.
+        $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create the basic filter.
+        $filterset = new participants_filterset();
+        $filterset->add_filter(new integer_filter('courseid', null, [(int) $course->id]));
+
+        // Run the search with using ORDER BY.
+        $search = new participants_search($course, $coursecontext, $filterset);
+        $rs = $search->get_participants(
+            sort: 'ORDER     BY id', // Adding spaces between "ORDER" and "BY" is intentional.
+        );
+        $records = $this->convert_recordset_to_array($rs);
+        $userids = array_keys($records);
+        $this->assertGreaterThan($userids[0], $userids[1]);
+
+        // Run the search without using ORDER BY.
+        $rs = $search->get_participants(
+            sort: 'id DESC',
+        );
+        $records = $this->convert_recordset_to_array($rs);
+        $userids = array_keys($records);
+        $this->assertGreaterThan($userids[1], $userids[0]);
+
+        $rs->close();
     }
 }

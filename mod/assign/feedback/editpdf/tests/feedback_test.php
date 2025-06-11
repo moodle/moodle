@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @copyright  2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class feedback_test extends \advanced_testcase {
+final class feedback_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -50,8 +50,8 @@ class feedback_test extends \advanced_testcase {
     /**
      * Helper method to add a file to a submission.
      *
-     * @param stdClass $student Student submitting.
-     * @param assign   $assign Assignment being submitted.
+     * @param \stdClass $student Student submitting.
+     * @param \assign   $assign Assignment being submitted.
      * @param bool     $textfile Use textfile fixture instead of pdf.
      */
     protected function add_file_submission($student, $assign, $textfile = false) {
@@ -79,7 +79,7 @@ class feedback_test extends \advanced_testcase {
         $plugin->save($submission, $data);
     }
 
-    public function test_comments_quick_list() {
+    public function test_comments_quick_list(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -103,7 +103,7 @@ class feedback_test extends \advanced_testcase {
         $this->assertEmpty($comments);
     }
 
-    public function test_page_editor() {
+    public function test_page_editor(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -202,7 +202,7 @@ class feedback_test extends \advanced_testcase {
         $this->assertFalse($notempty);
     }
 
-    public function test_document_services() {
+    public function test_document_services(): void {
         $this->require_ghostscript();
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -341,10 +341,10 @@ class feedback_test extends \advanced_testcase {
      *
      * @covers \assignfeedback_editpdf\task\convert_submission
      */
-    public function test_conversion_task() {
+    public function test_conversion_task(): void {
         $this->require_ghostscript();
         $this->resetAfterTest();
-        cron_setup_user();
+        \core\cron::setup_user();
 
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -395,7 +395,8 @@ class feedback_test extends \advanced_testcase {
      * Test that modifying the annotated pdf form return true when modified
      * and false when not modified.
      */
-    public function test_is_feedback_modified() {
+    public function test_is_feedback_modified(): void {
+        $this->require_ghostscript();
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -528,7 +529,7 @@ class feedback_test extends \advanced_testcase {
      *
      * @covers \core_files\conversion::get_conversions_for_file
      */
-    public function test_submission_file_overridden() {
+    public function test_submission_file_overridden(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -584,10 +585,10 @@ class feedback_test extends \advanced_testcase {
      *
      * @covers \assignfeedback_editpdf\event\observer
      */
-    public function test_submission_not_enabled() {
+    public function test_submission_not_enabled(): void {
         $this->require_ghostscript();
         $this->resetAfterTest();
-        cron_setup_user();
+        \core\cron::setup_user();
 
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');

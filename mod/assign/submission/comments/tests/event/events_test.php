@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -50,7 +50,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_created event.
      */
-    public function test_comment_created() {
+    public function test_comment_created(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -92,7 +92,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_deleted event.
      */
-    public function test_comment_deleted() {
+    public function test_comment_deleted(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');

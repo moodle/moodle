@@ -33,12 +33,12 @@ namespace core;
  * @copyright   2020 Michael Hawkins <michaelh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content_test extends \advanced_testcase {
+final class content_test extends \advanced_testcase {
 
     /**
      * A test to confirm only valid cases allow exporting of course content.
      */
-    public function test_can_export_context_course() {
+    public function test_can_export_context_course(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -101,7 +101,7 @@ class content_test extends \advanced_testcase {
     /**
      * A test to confirm unsupported contexts will return false when checking whether content can be exported.
      */
-    public function test_can_export_context_unsupported_context() {
+    public function test_can_export_context_unsupported_context(): void {
         $this->resetAfterTest();
 
         $course1 = $this->getDataGenerator()->create_course();

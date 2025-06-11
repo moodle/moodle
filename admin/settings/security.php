@@ -126,7 +126,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add($adminsetting);
     $temp->add(new admin_setting_configcheckbox('passwordchangelogout',
         new lang_string('passwordchangelogout', 'admin'),
-        new lang_string('passwordchangelogout_desc', 'admin'), 0));
+        new lang_string('passwordchangelogout_desc', 'admin'), 1));
 
     $temp->add(new admin_setting_configcheckbox('passwordchangetokendeletion',
         new lang_string('passwordchangetokendeletion', 'admin'),
@@ -152,7 +152,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $sensiblesettingsdefault .= 'server_password@@search_solr, ssl_keypassword@@search_solr, ';
     $sensiblesettingsdefault .= 'alternateserver_password@@search_solr, alternatessl_keypassword@@search_solr, ';
     $sensiblesettingsdefault .= 'test_password@@cachestore_redis, password@@mlbackend_python, ';
-    $sensiblesettingsdefault .= 'badges_badgesalt@@none, calendar_exportsalt@@none';
+    $sensiblesettingsdefault .= 'badges_badgesalt@@none, calendar_exportsalt@@none, ';
+    $sensiblesettingsdefault .= 'bigbluebuttonbn_shared_secret@@none, apikey@@tiny_premium, ';
+    $sensiblesettingsdefault .= 'matrixaccesstoken@@communication_matrix, api_secret@@factor_sms';
     $temp->add(new admin_setting_configtextarea('adminpresets/sensiblesettings',
             get_string('sensiblesettings', 'core_adminpresets'),
             get_string('sensiblesettingstext', 'core_adminpresets'),
@@ -164,15 +166,15 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp = new admin_settingpage('httpsecurity', new lang_string('httpsecurity', 'admin'));
 
     $temp->add(new admin_setting_configcheckbox('cookiesecure', new lang_string('cookiesecure', 'admin'), new lang_string('configcookiesecure', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('cookiehttponly', new lang_string('cookiehttponly', 'admin'), new lang_string('configcookiehttponly', 'admin'), 0));
     // BEGIN LSU Samesite Cookie Setting.
     $temp->add(new admin_setting_configcheckbox('force_samesite_none', new lang_string('forcesamesite', 'admin'), new lang_string('forcesamesitehelp', 'admin'), 0));
     // END LSU Samesite Cookie Setting.
+
     $temp->add(new admin_setting_configcheckbox('allowframembedding', new lang_string('allowframembedding', 'admin'), new lang_string('allowframembedding_help', 'admin'), 0));
 
     // Settings elements used by the \core\files\curl_security_helper class.
     $blockedhostsdefault = [
-        '127.0.0.1',
+        '127.0.0.0/8',
         '192.168.0.0/16',
         '10.0.0.0/8',
         '172.16.0.0/12',

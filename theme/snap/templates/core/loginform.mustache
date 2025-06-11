@@ -1,0 +1,243 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/loginform
+
+    Moodle template for the login page.
+
+    Context variables required for this template:
+    * autofocusform: Auto focus on form ?,
+    * canloginasguest - Is guest login allowed?,
+    * canloginbyemail - Is login by email allowed?,
+    * cansignup - Signup allowed?,
+    * cookieshelpicon - cookies help icon details
+    * error - Any errors in the form?,
+    * forgotpasswordurl - Forgot password url,
+    * hasidentityproviders - Flag, set to true to hide identity providers,
+    * hasinstructions - Flag, set to true to show instructions,
+    * identityproviders - List of identiy providers,
+    * instructions - Instructions,
+    * instructionsformat - Format of instructions,
+    * loginurl - Login url,
+    * rememberusername - Remeber username?,
+    * signupurl - Signup url,
+    * cookieshelpiconformatted - Formatted html of cookies help icon,
+    * errorformatted - Formatted error,
+    * logourl - Flag, logo url,
+    * sitename - Name of site.
+    * logintoken - Random token to protect login request.
+
+    Example context (json):
+    {
+        "autofocusform": true,
+        "canloginasguest": "1",
+        "canloginbyemail": false,
+        "cansignup": true,
+        "cookieshelpicon": {
+            "heading": "Cookies must be enabled in your browser",
+            "text": "<div class=\"no-overflow\">Two cookies are used on this site. Both died..</div>",
+            "icon": {
+                "attributes": [
+                    {
+                        "name": "class",
+                        "value": "iconhelp"
+                    },
+                    {
+                        "name": "alt",
+                        "value": "Help with Cookies must be enabled in your browser"
+                    },
+                    {
+                        "name": "title",
+                        "value": "Help with Cookies must be enabled in your browser"
+                    },
+                    {
+                        "name": "src",
+                        "value": "http://localhost/stable_master/theme/image.php?theme=boost&component=core&image=help"
+                    }
+                ]
+            },
+            "linktext": null,
+            "title": "Help with Cookies must be enabled in your browser",
+            "url": "http://localhost/stable_master/help.php?component=core&identifier=cookiesenabled&lang=en",
+            "ltr": true
+        },
+        "error": "",
+        "forgotpasswordurl": "http://localhost/stable_master/login/forgot_password.php",
+        "hasidentityproviders": false,
+        "hasinstructions": true,
+        "identityproviders": [],
+        "instructions": "For full access to this site, you first need to create an account.",
+        "instructionsformat": "1",
+        "loginurl": "http://localhost/stable_master/login/index.php",
+        "rememberusername": true,
+        "signupurl": "http://localhost/stable_master/login/signup.php",
+        "cookieshelpiconformatted": "",
+        "errorformatted": "",
+        "logourl": false,
+        "sitename": "Beer & Chips"
+        "logintoken": "randomstring"
+    }
+}}
+<div class="m-y-3 hidden-sm-down"></div>
+<div class="row snap-login-row"  id="logins">
+    <div class="snap-login snap-login-option snap-login-cell" id="base-login">
+        {{#logourl}}
+        <h1 class="text-center"><img class="d-block mx-auto" alt="{{sitename}}" src="{{logourl}}"></h1>
+        {{/logourl}}
+        {{^logourl}}
+        <h1 id="site_name_snap" class="text-center">{{sitename}}</h1>
+        {{/logourl}}
+        {{#error}}
+            <div class="loginerrors">
+                <div class="alert alert-danger" role="alert">{{error}}</div>
+            </div>
+        {{/error}}
+        <form action="{{loginurl}}" method="post" id="login" class="snap-custom-form">
+            <hr id="login_hr_first" style="display: none;">
+            <input type="hidden" name="logintoken" value="{{logintoken}}">
+            <input id="anchor" type="hidden" name="anchor" value="">
+            <script>document.getElementById('anchor').value = location.hash;</script>
+            <p class="snap-indication">{{#str}} loginrequiredmessage, theme_snap {{/str}}</p>
+            <div class="floating-label">
+                <input  type="text" name="username" id="username" autocomplete="username" required
+                        class="form-control"
+                        value="{{username}}"
+                        placeholder="{{^canloginbyemail}}{{#cleanstr}}username{{/cleanstr}}{{/canloginbyemail}}{{#canloginbyemail}}{{#cleanstr}}usernameemail{{/cleanstr}}{{/canloginbyemail}}*">
+                <label for="username">
+                    {{^canloginbyemail}}
+                        {{#str}} username {{/str}}*
+                    {{/canloginbyemail}}
+                    {{#canloginbyemail}}
+                        {{#str}} usernameemail {{/str}}*
+                    {{/canloginbyemail}}
+                </label>
+            </div>
+            <div class="floating-label">
+                <input type="password" name="password" id="password" autocomplete="current-password" value="" required
+                       class="form-control"
+                       placeholder="{{#cleanstr}}password{{/cleanstr}}*">
+                <label for="password" class="sr-only">{{#str}} password {{/str}}*</label>
+            </div>
+            <a class="small btn btn-link btn-block" href="{{forgotpasswordurl}}">{{#str}}forgotten{{/str}}</a>
+            <button type="submit" class="btn btn-primary btn-block" id="loginbtn">{{#str}}login{{/str}}</button>
+        </form>
+        {{!Alternative login options}}
+        {{#hasidentityproviders}}
+            <div id="snap-alt-login">
+                <hr id="snap_alt_login_hr_first">
+                <h2>{{#str}} potentialidps, auth {{/str}}</h2>
+                <div class="potentialidplist">
+                    {{#identityproviders}}
+                    <div class="potentialidp">
+                        <a class="btn btn-secondary btn-block" role="button" href="{{url}}" title={{#quote}}{{name}}{{/quote}}>
+                            {{#iconurl}}
+                                <img class="auth-icon" src="{{iconurl}}" onerror="this.style.display='none'"/>
+                            {{/iconurl}}
+                            {{^iconurl}}
+                                {{#pix}} /i/permissions, core {{/pix}}
+                            {{/iconurl}}
+                            {{name}}
+                        </a>
+                    </div>
+                    {{/identityproviders}}
+                </div>
+            </div>
+        {{/hasidentityproviders}}
+
+        {{!Login as a guest}}
+        {{#canloginasguest}}
+            <hr>
+            <div class="snap-login snap-login-option snap-login-box" id="snap-guest-login">
+                <h2>{{#str}}someallowguest{{/str}}</h2>
+                <form action="{{loginurl}}" method="post" id="guestlogin">
+                    <input type="hidden" name="logintoken" value="{{logintoken}}">
+                    <input type="hidden" name="username" value="guest" />
+                    <input type="hidden" name="password" value="guest" />
+                    <button class="btn btn-secondary btn-block" id="guestloginbtn" type="submit">{{#str}}loginguest{{/str}}</button>
+                </form>
+            </div>
+        {{/canloginasguest}}
+
+        {{!Create new account}}
+        {{#cansignup}}
+            <div class="snap-login snap-login-option snap-login-box" id="snap-signup">
+                <hr>
+                <h2>{{#str}}firsttime{{/str}}</h2>
+                <p><a class="btn btn-primary btn-block" id="signupbtn" role="button" href="{{signupurl}}">{{#str}}startsignup{{/str}}</a></p>
+            </div>
+        {{/cansignup}}
+    </div>
+</div>
+
+{{#hasinstructions}}
+    <div class="js-only snap-login snap-login-option snap-login-box" id="snap-login-help">
+        <div class="snap-login-instructions">
+            <a class="btn btn-primary btn-block iconhelp" href="#" data-toggle="modal" data-target="#login-help-modal">
+                {{#str}}helpwithlogin, theme_snap{{/str}} {{#pix}}help, theme_snap, {{#str}}helpwithlogin, theme_snap{{/str}} {{/pix}}
+            </a>
+            <!-- Modal -->
+            <div class="modal fade" id="login-help-modal" tabindex="-1" role="dialog" aria-labelledby="login-help-modal-title" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{#str}}closebuttontitle{{/str}}">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title" id="login-help-modal-title">{{#str}}helpwithlogin, theme_snap{{/str}}</h5>
+                  </div>
+                  <div class="modal-body summary">
+                      <br>
+                      {{{instructions}}}
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+{{/hasinstructions}}
+
+<span class="snap-log-in-more snap-log-in-loading-spinner"></span>
+
+{{#js}}
+    {{#error}}
+        const errorLog = document.getElementById('loginerrormessage');
+        if (errorLog) {
+            errorLog.focus();
+        }
+    {{/error}}
+    {{^error}}
+        {{#autofocusform}}
+            require(['core_form/events'], function(FormEvent) {
+                function autoFocus() {
+                    const userNameField = document.getElementById('username');
+                    if (userNameField.value.length == 0) {
+                        userNameField.focus();
+                    } else {
+                        document.getElementById('password').focus();
+                    }
+                }
+                autoFocus();
+                window.addEventListener(FormEvent.eventTypes.fieldStructureChanged, autoFocus);
+            });
+        {{/autofocusform}}
+    {{/error}}
+    {{#togglepassword}}
+        require(['core/togglesensitive'], function(ToggleSensitive) {
+            ToggleSensitive.init("password", {{smallscreensonly}});
+        });
+    {{/togglepassword}}
+{{/js}}

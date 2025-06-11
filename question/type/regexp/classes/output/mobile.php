@@ -18,7 +18,7 @@
  * Mobile output class for question type regexp.
  *
  * @package qtype_regexp
- * @copyright 2018 Joseph Rézeau
+ * @copyright 2018 Joseph Rï¿½zeau
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,7 +26,7 @@ namespace qtype_regexp\output;
 
 /**
  * Mobile output class for question type regexp.
- * @copyright 2018 Joseph Rézeau
+ * @copyright 2018 Joseph Rï¿½zeau
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mobile {
@@ -40,7 +40,7 @@ class mobile {
         global $CFG;
 
         $args = (object) $args;
-        $versionname = $args->appversioncode >= 3950 ? 'latest' : 'ionic3';
+        $versionname = $args->appversioncode >= 44000 ? 'latest' : 'ionic5';
 
         return [
             'templates' => [[

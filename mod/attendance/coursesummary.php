@@ -43,18 +43,18 @@ if (empty($fromcourse)) {
 
 if (empty($category)) {
     $context = context_system::instance();
-    $courses = array(); // Show all courses.
+    $courses = []; // Show all courses.
 } else {
     $context = context_coursecat::instance($category);
     $coursecat = core_course_category::get($category);
-    $courses = $coursecat->get_courses(array('recursive' => true, 'idonly' => true));
+    $courses = $coursecat->get_courses(['recursive' => true, 'idonly' => true]);
 }
 // Check permissions.
 require_capability('mod/attendance:viewsummaryreports', $context);
 
 $exportfilename = 'attendancecoursesummary.csv';
 
-$PAGE->set_url('/mod/attendance/coursesummary.php', array('category' => $category));
+$PAGE->set_url('/mod/attendance/coursesummary.php', ['category' => $category]);
 
 $PAGE->set_heading($SITE->fullname);
 
@@ -73,7 +73,7 @@ if (!$table->is_downloading($download, $exportfilename)) {
         $tabmenu = attendance_print_settings_tabs('coursesummary');
         echo $tabmenu;
     }
-    $url = new moodle_url('/mod/attendance/coursesummary.php', array('category' => $category, 'fromcourse' => $fromcourse));
+    $url = new moodle_url('/mod/attendance/coursesummary.php', ['category' => $category, 'fromcourse' => $fromcourse]);
 
     if ($admin) {
         $options = core_course_category::make_categories_list('mod/attendance:viewsummaryreports');
@@ -82,14 +82,14 @@ if (!$table->is_downloading($download, $exportfilename)) {
 
 }
 
-$table->define_columns(array('course', 'percentage'));
-$table->define_headers(array(get_string('course'),
-    get_string('averageattendance', 'attendance')));
+$table->define_columns(['course', 'percentage']);
+$table->define_headers([get_string('course'),
+    get_string('averageattendance', 'attendance')]);
 $table->sortable(true);
 $table->no_sorting('course');
 $table->set_attribute('cellspacing', '0');
 $table->set_attribute('class', 'generaltable generalbox');
-$table->show_download_buttons_at(array(TABLE_P_BOTTOM));
+$table->show_download_buttons_at([TABLE_P_BOTTOM]);
 $table->setup();
 
 // Work out direction of sort required.
@@ -115,12 +115,12 @@ if (!empty($sort)) {
 $records = attendance_course_users_points($courses, $orderby);
 foreach ($records as $record) {
     if (!$table->is_downloading($download, $exportfilename)) {
-        $url = new moodle_url('/mod/attendance/index.php', array('id' => $record->courseid));
+        $url = new moodle_url('/mod/attendance/index.php', ['id' => $record->courseid]);
         $name = html_writer::link($url, $record->coursename);
     } else {
         $name = $record->coursename;
     }
-    $table->add_data(array($name, round($record->percentage * 100)."%"));
+    $table->add_data([$name, round($record->percentage * 100)."%"]);
 }
 $table->finish_output();
 

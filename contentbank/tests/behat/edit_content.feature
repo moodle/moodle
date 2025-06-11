@@ -5,10 +5,7 @@ Feature: Content bank use editor feature
   I need to be able to access the edition options
 
   Background:
-    Given the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
-    And I log in as "admin"
+    Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     And the following config values are set as admin:
@@ -25,10 +22,9 @@ Feature: Content bank use editor feature
     Then the "[data-action=Add-content]" "css_element" should be disabled
 
   Scenario: Users can see the Add button if there is content type available for creation
-    Given I follow "Dashboard"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    Given the following "user private file" exists:
+      | user     | admin                                |
+      | filepath | h5p/tests/fixtures/filltheblanks.h5p |
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "Upload" "link"
@@ -44,10 +40,9 @@ Feature: Content bank use editor feature
     And I should see "Fill in the Blanks"
 
   Scenario: Users can edit content if they have the required permission
-    Given I follow "Dashboard"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
+    Given the following "user private file" exists:
+      | user     | admin                                |
+      | filepath | h5p/tests/fixtures/filltheblanks.h5p |
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "Upload" "link"
@@ -61,8 +56,9 @@ Feature: Content bank use editor feature
     Then I click on "Edit" "link"
     And I switch to "h5p-editor-iframe" class iframe
     And I switch to the main frame
+    And I change viewport size to "800x1400"
     And I click on "Cancel" "button"
-    And I should see "filltheblanks.h5p" in the "h2" "css_element"
+    And "filltheblanks.h5p" "heading" should exist
 
   Scenario: Users can create new content if they have the required permission
     Given I navigate to "H5P > Manage H5P content types" in site administration
@@ -116,7 +112,7 @@ Feature: Content bank use editor feature
     And I set the field "Title" to "New title"
     And I switch to the main frame
     When I click on "Save" "button"
-    And I should see "filltheblanks.h5p" in the "h2" "css_element"
+    And "filltheblanks.h5p" "heading" should exist
     And I click on "Edit" "link"
     And I switch to "h5p-editor-iframe" class iframe
     Then the field "Title" matches value "New title"

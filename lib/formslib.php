@@ -134,7 +134,7 @@ abstract class moodleform {
     /** @var MoodleQuickForm quickform object definition */
     protected $_form;
 
-    /** @var array globals workaround */
+    /** @var mixed globals workaround */
     protected $_customdata;
 
     /** @var array submitted form data when using mforms with ajax */
@@ -145,6 +145,9 @@ abstract class moodleform {
 
     /** @var bool|null stores the validation result of this form or null if not yet validated */
     protected $_validated = null;
+
+    /** @var int Unique identifier to be used for action buttons. */
+    static protected $uniqueid = 0;
 
     /**
      * The constructor function calls the abstract function definition() and it will then
@@ -486,6 +489,24 @@ abstract class moodleform {
     }
 
     /**
+     * Use this method to indicate that the fieldsets should be shown as expanded
+     * and all other fieldsets should be hidden.
+     * The method is applicable to header elements only.
+     *
+     * @param array $shownonly array of header element names
+     * @return void
+     */
+    public function filter_shown_headers(array $shownonly): void {
+        $toshow = [];
+        foreach ($shownonly as $show) {
+            if ($this->_form->elementExists($show) && $this->_form->getElementType($show) == 'header') {
+                $toshow[] = $show;
+            }
+        }
+        $this->_form->filter_shown_headers($toshow);
+    }
+
+    /**
      * Check that form was submitted. Does not check validity of submitted data.
      *
      * @return bool true if form properly submitted
@@ -691,7 +712,7 @@ abstract class moodleform {
      *
      * note: $slashed param removed
      *
-     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     * @return stdClass|null submitted data; NULL if not valid or not submitted or cancelled
      */
     function get_data() {
         $mform =& $this->_form;
@@ -714,7 +735,7 @@ abstract class moodleform {
      * Return submitted data without validation or NULL if there is no submitted data.
      * note: $slashed param removed
      *
-     * @return object submitted data; NULL if not submitted
+     * @return stdClass|null submitted data; NULL if not submitted
      */
     function get_submitted_data() {
         $mform =& $this->_form;
@@ -1046,7 +1067,7 @@ abstract class moodleform {
     /**
      * Form definition. Abstract method - always override!
      */
-    protected abstract function definition();
+    abstract protected function definition();
 
     /**
      * After definition hook.
@@ -1340,22 +1361,51 @@ abstract class moodleform {
      * @param bool $cancel whether to show cancel button, default true
      * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
      */
-    function add_action_buttons($cancel = true, $submitlabel=null){
-        if (is_null($submitlabel)){
+    public function add_action_buttons($cancel = true, $submitlabel = null) {
+        if (is_null($submitlabel)) {
             $submitlabel = get_string('savechanges');
         }
-        $mform =& $this->_form;
-        if ($cancel){
-            //when two elements we need a group
-            $buttonarray=array();
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
-            $buttonarray[] = &$mform->createElement('cancel');
-            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform = $this->_form;
+        // Only use uniqueid if the form defines it needs to be used.
+        $forceuniqueid = false;
+        if (is_array($this->_customdata)) {
+            $forceuniqueid = $this->_customdata['forceuniqueid'] ?? false;
+        }
+        // Keep the first action button as submitbutton (without uniqueid) because single forms pages expect this to happen.
+        $submitbuttonname = $forceuniqueid && $this::$uniqueid > 0 ? 'submitbutton_' . $this::$uniqueid : 'submitbutton';
+        if ($cancel) {
+            // When two elements we need a group.
+            $buttonarray = [
+                $mform->createElement('submit', $submitbuttonname, $submitlabel),
+                $mform->createElement('cancel'),
+            ];
+            $buttonarname = $forceuniqueid && $this::$uniqueid > 0 ? 'buttonar_' . $this::$uniqueid : 'buttonar';
+            $mform->addGroup($buttonarray, $buttonarname, '', [' '], false);
             $mform->closeHeaderBefore('buttonar');
         } else {
-            //no group needed
-            $mform->addElement('submit', 'submitbutton', $submitlabel);
+            // No group needed.
+            $mform->addElement('submit', $submitbuttonname, $submitlabel);
             $mform->closeHeaderBefore('submitbutton');
+        }
+
+        // Increase the uniqueid so that we can have multiple forms with different ids for the action buttons on the same page.
+        if ($forceuniqueid) {
+            $this::$uniqueid++;
+        }
+    }
+
+    /**
+     * Use this method to make a sticky submit/cancel button at the end of your form.
+     *
+     * @param bool $cancel whether to show cancel button, default true
+     * @param string|null $submitlabel label for submit button, defaults to get_string('savechanges')
+     */
+    public function add_sticky_action_buttons(bool $cancel = true, ?string $submitlabel = null): void {
+        $this->add_action_buttons($cancel, $submitlabel);
+        if ($cancel) {
+            $this->_form->set_sticky_footer('buttonar');
+        } else {
+            $this->_form->set_sticky_footer('submitbutton');
         }
     }
 
@@ -1378,7 +1428,7 @@ abstract class moodleform {
      * @param array $strings strings for javascript
      * @deprecated since Moodle 3.3 MDL-57471
      */
-    function init_javascript_enhancement($element, $enhancement, array $options=array(), array $strings=null) {
+    function init_javascript_enhancement($element, $enhancement, array $options=array(), ?array $strings=null) {
         debugging('$mform->init_javascript_enhancement() is deprecated and no longer does anything. '.
             'smartselect uses should be converted to the searchableselector form element.', DEBUG_DEVELOPER);
     }
@@ -1469,7 +1519,7 @@ abstract class moodleform {
      * @param array  $simulatedsubmitteddata       An associative array of form values (same format as $_POST).
      * @param array  $simulatedsubmittedfiles      An associative array of files uploaded (same format as $_FILES). Can be omitted.
      * @param string $method                       'post' or 'get', defaults to 'post'.
-     * @param null   $formidentifier               the default is to use the class name for this class but you may need to provide
+     * @param ?string $formidentifier               the default is to use the class name for this class but you may need to provide
      *                                              a different value here for some forms that are used more than once on the
      *                                              same page.
      */
@@ -1600,6 +1650,12 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_advancedElements = array();
 
     /**
+     * The form element to render in the sticky footer, if any.
+     * @var string|null $_stickyfooterelement
+     */
+    protected $_stickyfooterelement = null;
+
+    /**
      * Array whose keys are element names and values are the desired collapsible state.
      * True for collapsed, False for expanded. If not present, set to default in
      * {@link self::accept()}.
@@ -1614,6 +1670,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @var boolean
      */
     var $_disableShortforms = false;
+
+    /**
+     * Array whose keys are the only elements to be shown.
+     * Rest of the elements that are not in this array will be hidden.
+     *
+     * @var array
+     */
+    protected $_shownonlyelements = [];
 
     /** @var bool whether to automatically initialise the form change detector this form. */
     protected $_use_form_change_checker = true;
@@ -1660,6 +1724,12 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * Is this a 'hideIf' dependency?
      */
     const DEP_HIDE = 1;
+
+    /** @var string request class HTML. */
+    protected $_reqHTML;
+
+    /** @var string advanced class HTML. */
+    protected $_advancedHTML;
 
     /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
@@ -1738,6 +1808,18 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
+     * Use this method to indicate an element to display as a sticky footer.
+     *
+     * Only one page element can be displayed in the sticky footer. To render
+     * more than one element use addGroup to create a named group.
+     *
+     * @param string|null $elementname group or element name (not the element name of something inside a group).
+     */
+    public function set_sticky_footer(?string $elementname): void {
+        $this->_stickyfooterelement = $elementname;
+    }
+
+    /**
      * Checks if a parameter was passed in the previous form submission
      *
      * @param string $name the name of the page parameter we want
@@ -1792,6 +1874,45 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
+     * Use this method to indicate that the fieldsets should be shown and expanded
+     * and all other fieldsets should be hidden.
+     * The method is applicable to header elements only.
+     *
+     * @param array $shownonly array of header element names
+     * @return void
+     */
+    public function filter_shown_headers(array $shownonly): void {
+        $this->_shownonlyelements = [];
+        if (empty($shownonly)) {
+            return;
+        }
+        foreach ($shownonly as $headername) {
+            $element = $this->getElement($headername);
+            if ($element->getType() == 'header') {
+                $this->_shownonlyelements[] = $headername;
+                $this->setExpanded($headername);
+            }
+        }
+    }
+
+    /**
+     * Use this method to check if the fieldsets could be shown.
+     * The method is applicable to header elements only.
+     *
+     * @param string $headername header element name to check in the shown only elements array.
+     * @return void
+     */
+    public function is_shown(string $headername): bool {
+        if (empty($headername)) {
+            return true;
+        }
+        if (empty($this->_shownonlyelements)) {
+            return true;
+        }
+        return in_array($headername, $this->_shownonlyelements);
+    }
+
+    /**
      * Use this method to add show more/less status element required for passing
      * over the advanced elements visibility status on the form submission.
      *
@@ -1842,7 +1963,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      *
      * @param boolean $disable default true, controls if the shortforms are disabled.
      */
-    function setDisableShortforms ($disable = true) {
+    function setDisableShortforms($disable = true) {
         $this->_disableShortforms = $disable;
     }
 
@@ -1973,15 +2094,22 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 }
 
                 if ($element->getType() == 'header') {
+                    if (!$this->is_shown($headername)) {
+                        $this->setExpanded($headername, false);
+                        continue;
+                    }
                     if ($headercounter === 1 && !isset($this->_collapsibleElements[$headername])) {
                         // By default the first section is always expanded, except if a state has already been set.
                         $this->setExpanded($headername, true);
-                    } else if (($headercounter === 2 && $headerscount === 2) && !isset($this->_collapsibleElements[$headername])) {
+                    } else if (
+                        ($headercounter === 2 && $headerscount === 2)
+                        && !isset($this->_collapsibleElements[$headername])
+                    ) {
                         // The second section is always expanded if the form only contains 2 sections),
                         // except if a state has already been set.
                         $this->setExpanded($headername, true);
                     }
-                } else if ($anyrequiredorerror) {
+                } else if ($anyrequiredorerror && (empty($headername) || $this->is_shown($headername))) {
                     // If any error or required field are present within the header, we need to expand it.
                     $this->setExpanded($headername, true, true);
                 } else if (!isset($this->_collapsibleElements[$headername])) {
@@ -1993,7 +2121,36 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             // Pass the array to renderer object.
             $renderer->setCollapsibleElements($this->_collapsibleElements);
         }
+
+        $this->accept_set_nonvisible_elements($renderer);
+
+        if (method_exists($renderer, 'set_sticky_footer') && !empty($this->_stickyfooterelement)) {
+            $renderer->set_sticky_footer($this->_stickyfooterelement);
+        }
         parent::accept($renderer);
+    }
+
+    /**
+     * Checking non-visible elements to set when accepting a renderer.
+     * @param HTML_QuickForm_Renderer $renderer
+     */
+    private function accept_set_nonvisible_elements($renderer) {
+        if (!method_exists($renderer, 'set_nonvisible_elements') || $this->_disableShortforms) {
+            return;
+        }
+        $nonvisibles = [];
+        foreach (array_keys($this->_elements) as $index) {
+            $element =& $this->_elements[$index];
+            if ($element->getType() != 'header') {
+                continue;
+            }
+            $headername = $element->getName();
+            if (!$this->is_shown($headername)) {
+                $nonvisibles[] = $headername;
+            }
+        }
+        // Pass the array to renderer object.
+        $renderer->set_nonvisible_elements($nonvisibles);
     }
 
     /**
@@ -2026,7 +2183,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * clean their own data.
      *
      * @param string $elementname
-     * @param int $paramtype defines type of data contained in element. Use the constants PARAM_*.
+     * @param string $paramtype defines type of data contained in element. Use the constants PARAM_*.
      *        {@link lib/moodlelib.php} for defined parameter types
      */
     function setType($elementname, $paramtype) {
@@ -2214,12 +2371,21 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @param string $component component name to look the help string in
      * @param string $linktext optional text to display next to the icon
      * @param bool $suppresscheck set to true if the element may not exist
+     * @param string|object|array|int $a An object, string or number that can be used
+     *      within translation strings
      */
-    function addHelpButton($elementname, $identifier, $component = 'moodle', $linktext = '', $suppresscheck = false) {
+    public function addHelpButton(
+        $elementname,
+        $identifier,
+        $component = 'moodle',
+        $linktext = '',
+        $suppresscheck = false,
+        $a = null
+    ) {
         global $OUTPUT;
         if (array_key_exists($elementname, $this->_elementIndex)) {
             $element = $this->_elements[$this->_elementIndex[$elementname]];
-            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext);
+            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext, $a);
         } else if (!$suppresscheck) {
             debugging(get_string('nonexistentformelements', 'form', $elementname));
         }
@@ -2318,9 +2484,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * use addGroupRule instead of addRule.
      *
      * @param string $element Form element name
-     * @param string $message Message to display for invalid data
+     * @param string|null $message Message to display for invalid data
      * @param string $type Rule type, use getRegisteredRules() to get types
-     * @param string $format (optional)Required for extra rule data
+     * @param mixed $format (optional)Required for extra rule data
      * @param string $validation (optional)Where to perform validation: "server", "client"
      * @param bool $reset Client-side validation: reset the form element to its original value if there is an error?
      * @param bool $force Force the rule to be applied, even if the target form element does not exist
@@ -2576,18 +2742,14 @@ require([
       }
     }
 
-    document.getElementById(\'' . $elem->_attributes['id'] . '\').addEventListener(\'blur\', function(ev) {
-        ' . $valFunc . '
-    });
     document.getElementById(\'' . $elem->_attributes['id'] . '\').addEventListener(\'change\', function(ev) {
         ' . $valFunc . '
     });
 ';
-                }
-            }
-            // This handles both randomised (MDL-65217) and non-randomised IDs.
-            $errorid = preg_replace('/^id_/', 'id_error_', $elem->_attributes['id']);
-            $validateJS .= '
+
+                    // This handles both randomised (MDL-65217) and non-randomised IDs.
+                    $errorid = preg_replace('/^id_/', 'id_error_', $elem->_attributes['id']);
+                    $validateJS .= '
       ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
       if (!ret && !first_focus) {
         first_focus = true;
@@ -2599,6 +2761,8 @@ require([
       }
 ';
 
+                }
+            }
             // Fix for bug displaying errors for elements in a group
             //unset($element);
             //$element =& $this->getElement($elementName);
@@ -3051,6 +3215,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     var $_advancedElements = array();
 
     /**
+     * The form element to render in the sticky footer, if any.
+     * @var string|null $_stickyfooterelement
+     */
+    protected $_stickyfooterelement = null;
+
+    /**
      * Array whose keys are element names and the the boolean values reflect the current state. If the key exists this is a collapsible element.
      *
      * @var array
@@ -3061,6 +3231,20 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @var string Contains the collapsible buttons to add to the form.
      */
     var $_collapseButtons = '';
+
+    /** @var string request class HTML. */
+    protected $_reqHTML;
+
+    /** @var string advanced class HTML. */
+    protected $_advancedHTML;
+
+    /**
+     * Array whose keys are element names should be hidden.
+     * If the key exists this is an invisible element.
+     *
+     * @var array
+     */
+    protected $_nonvisibleelements = [];
 
     /**
      * Constructor
@@ -3104,12 +3288,30 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     }
 
     /**
+     * Set the sticky footer element if any.
+     *
+     * @param string|null $elementname the form element name.
+     */
+    public function set_sticky_footer(?string $elementname): void {
+        $this->_stickyfooterelement = $elementname;
+    }
+
+    /**
      * Setting collapsible elements
      *
      * @param array $elements
      */
     function setCollapsibleElements($elements) {
         $this->_collapsibleElements = $elements;
+    }
+
+    /**
+     * Setting non visible elements
+     *
+     * @param array $elements
+     */
+    public function set_nonvisible_elements($elements) {
+        $this->_nonvisibleelements = $elements;
     }
 
     /**
@@ -3166,7 +3368,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $groupid = 'fgroup_' . $group->getAttribute('id');
 
         // Update the ID.
-        $group->updateAttributes(array('id' => $groupid));
+        $attributes = $group->getAttributes();
+        $attributes['id'] = $groupid;
+        $group->updateAttributes($attributes);
         $advanced = isset($this->_advancedElements[$group->getName()]);
 
         $html = $OUTPUT->mform_element($group, $required, $advanced, $error, false);
@@ -3203,6 +3407,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{emptylabel}', $emptylabel, $html);
         }
         $this->_templates[$group->getName()] = $html;
+        // Check if the element should be displayed in the sticky footer.
+        if ($group->getName() && ($this->_stickyfooterelement == $group->getName())) {
+            $stickyfooter = new core\output\sticky_footer($html);
+            $html = $OUTPUT->render($stickyfooter);
+        }
+
         // Fix for bug in tableless quickforms that didn't allow you to stop a
         // fieldset before a group of elements.
         // if the element name indicates the end of a fieldset, close the fieldset
@@ -3283,6 +3493,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_templates[$element->getName()] = $html;
         }
 
+        // Check if the element should be displayed in the sticky footer.
+        if ($element->getName() && ($this->_stickyfooterelement == $element->getName())) {
+            $stickyfooter = new core\output\sticky_footer($html);
+            $html = $OUTPUT->render($stickyfooter);
+        }
+
         if (!$fromtemplate) {
             parent::renderElement($element, $required, $error);
         } else {
@@ -3299,7 +3515,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * Adds required note, form attributes, validation javascript and form content.
      *
      * @global moodle_page $PAGE
-     * @param moodleform $form Passed by reference
+     * @param MoodleQuickForm $form Passed by reference
      */
     function finishForm(&$form){
         global $PAGE;
@@ -3360,6 +3576,11 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             if ($this->_collapsibleElements[$header->getName()]) {
                 $fieldsetclasses[] = 'collapsed';
             }
+        }
+
+        // Hide fieldsets not included in the shown only elements.
+        if (in_array($header->getName(), $this->_nonvisibleelements)) {
+            $fieldsetclasses[] = 'd-none';
         }
 
         if (isset($this->_advancedElements[$name])){
@@ -3460,6 +3681,7 @@ MoodleQuickForm::registerElementType('course', "$CFG->libdir/form/course.php", '
 MoodleQuickForm::registerElementType('cohort', "$CFG->libdir/form/cohort.php", 'MoodleQuickForm_cohort');
 MoodleQuickForm::registerElementType('searchableselector', "$CFG->libdir/form/searchableselector.php", 'MoodleQuickForm_searchableselector');
 MoodleQuickForm::registerElementType('checkbox', "$CFG->libdir/form/checkbox.php", 'MoodleQuickForm_checkbox');
+MoodleQuickForm::registerElementType('choicedropdown', "$CFG->libdir/form/choicedropdown.php", 'MoodleQuickForm_choicedropdown');
 MoodleQuickForm::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'MoodleQuickForm_date_selector');
 MoodleQuickForm::registerElementType('date_time_selector', "$CFG->libdir/form/datetimeselector.php", 'MoodleQuickForm_date_time_selector');
 MoodleQuickForm::registerElementType('duration', "$CFG->libdir/form/duration.php", 'MoodleQuickForm_duration');

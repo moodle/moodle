@@ -32,9 +32,9 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2015 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_log_rule_test extends \basic_testcase {
+final class restore_log_rule_test extends \basic_testcase {
 
-    function test_process_keeps_log_unmodified() {
+    function test_process_keeps_log_unmodified(): void {
 
         // Prepare a tiny log entry.
         $originallog = new \stdClass();
@@ -54,7 +54,7 @@ class restore_log_rule_test extends \basic_testcase {
         $this->assertEquals($originallog, $log);
     }
 
-    public function test_build_regexp() {
+    public function test_build_regexp(): void {
         $original = 'Any (string) with [placeholders] like {this} and {this}. [end].';
         $expectation = '~Any \(string\) with (.*) like (.*) and (.*)\. (.*)\.~';
 
@@ -62,11 +62,9 @@ class restore_log_rule_test extends \basic_testcase {
         $class = new \ReflectionClass('restore_log_rule');
 
         $method = $class->getMethod('extract_tokens');
-        $method->setAccessible(true);
         $tokens = $method->invoke($lr, $original);
 
         $method = $class->getMethod('build_regexp');
-        $method->setAccessible(true);
         $this->assertSame($expectation, $method->invoke($lr, $original, $tokens));
     }
 }

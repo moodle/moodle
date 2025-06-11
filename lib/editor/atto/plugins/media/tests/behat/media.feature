@@ -1,20 +1,17 @@
-@editor @editor_atto @atto @atto_media @_file_upload
+@editor @editor_atto @atto @atto_media
 Feature: Add media to Atto
   To write rich text - I need to add media.
 
   Background:
-    Given the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
+    Given the following "user private files" exist:
+      | user  | filepath                                          |
+      | admin | lib/editor/atto/tests/fixtures/moodle-logo.webm   |
+      | admin | lib/editor/atto/tests/fixtures/moodle-logo.mp4    |
+      | admin | lib/editor/atto/tests/fixtures/moodle-logo.png    |
+      | admin | lib/editor/atto/tests/fixtures/pretty-good-en.vtt |
+      | admin | lib/editor/atto/tests/fixtures/pretty-good-sv.vtt |
     And I log in as "admin"
     And I change window size to "large"
-    And I follow "Manage private files..."
-    And I upload "lib/editor/atto/tests/fixtures/moodle-logo.webm" file to "Files" filemanager
-    And I upload "lib/editor/atto/tests/fixtures/moodle-logo.mp4" file to "Files" filemanager
-    And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
-    And I upload "lib/editor/atto/tests/fixtures/pretty-good-en.vtt" file to "Files" filemanager
-    And I upload "lib/editor/atto/tests/fixtures/pretty-good-sv.vtt" file to "Files" filemanager
-    And I click on "Save changes" "button"
     And I follow "Profile" in the user menu
     And I follow "Blog entries"
     And I follow "Add a new entry"
@@ -25,7 +22,10 @@ Feature: Add media to Atto
 
   @javascript
   Scenario: Insert some media as a link
-    Given I click on "Browse repositories..." "button" in the "#id_summary_editor_link .atto_media_source.atto_media_link_source" "css_element"
+    # We need to disable the media plugin filter to be able to insert a link to a video file.
+    # Otherwise, the media plugin filter will try to render the video player instead of the link.
+    Given the "mediaplugin" filter is "off"
+    And I click on "Browse repositories..." "button" in the "#id_summary_editor_link .atto_media_source.atto_media_link_source" "css_element"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.webm" "link"
     And I click on "Select this file" "button"

@@ -27,7 +27,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_courseformat\stateupdates
  */
-class stateupdates_test extends \advanced_testcase {
+final class stateupdates_test extends \advanced_testcase {
 
     /**
      * Test for add_course_put.
@@ -81,7 +81,7 @@ class stateupdates_test extends \advanced_testcase {
      *
      * @return array testing scenarios
      */
-    public function add_course_put_provider() {
+    public static function add_course_put_provider(): array {
         return [
             'Admin role' => [
                 'admin',
@@ -199,11 +199,11 @@ class stateupdates_test extends \advanced_testcase {
      *
      * @return array testing scenarios
      */
-    public function add_section_provider(): array {
+    public static function add_section_provider(): array {
         return array_merge(
-            $this->add_section_provider_helper('put'),
-            $this->add_section_provider_helper('create'),
-            $this->add_section_provider_helper('remove'),
+            self::add_section_provider_helper('put'),
+            self::add_section_provider_helper('create'),
+            self::add_section_provider_helper('remove'),
         );
     }
 
@@ -213,7 +213,7 @@ class stateupdates_test extends \advanced_testcase {
      * @param string $action the action to perform
      * @return array testing scenarios
      */
-    private function add_section_provider_helper(string $action): array {
+    private static function add_section_provider_helper(string $action): array {
         // Delete does not depends on user permissions.
         if ($action == 'remove') {
             $studentsections = [0, 1, 2];
@@ -343,11 +343,11 @@ class stateupdates_test extends \advanced_testcase {
      *
      * @return array testing scenarios
      */
-    public function add_cm_provider(): array {
+    public static function add_cm_provider(): array {
         return array_merge(
-            $this->add_cm_provider_helper('put'),
-            $this->add_cm_provider_helper('create'),
-            $this->add_cm_provider_helper('remove'),
+            self::add_cm_provider_helper('put'),
+            self::add_cm_provider_helper('create'),
+            self::add_cm_provider_helper('remove'),
         );
     }
 
@@ -357,7 +357,7 @@ class stateupdates_test extends \advanced_testcase {
      * @param string $action the action to perform
      * @return array testing scenarios
      */
-    private function add_cm_provider_helper(string $action): array {
+    private static function add_cm_provider_helper(string $action): array {
         // Delete does not depends on user permissions.
         if ($action == 'remove') {
             $studentcms = [0, 1, 2, 3];
@@ -382,5 +382,44 @@ class stateupdates_test extends \advanced_testcase {
                 'expected' => $studentcms,
             ],
         ];
+    }
+
+    /**
+     * Test components can add data to delegated section state updates.
+     * @covers ::add_section_put
+     */
+    public function test_put_section_state_extra_updates(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id]
+        );
+
+        // The test component section delegate will add the activity cm info into the state.
+        $section = formatactions::section($course)->create_delegated('test_component', $activity->cmid);
+
+        $format = course_get_format($course);
+        $updates = new \core_courseformat\stateupdates($format);
+
+        $updates->add_section_put($section->id);
+
+        $data = $updates->jsonSerialize();
+
+        $this->assertCount(2, $data);
+
+        $sectiondata = $data[0];
+        $this->assertEquals('section', $sectiondata->name);
+        $this->assertEquals('put', $sectiondata->action);
+        $this->assertEquals($section->id, $sectiondata->fields->id);
+
+        $cmdata = $data[1];
+        $this->assertEquals('cm', $cmdata->name);
+        $this->assertEquals('put', $cmdata->action);
+        $this->assertEquals($activity->cmid, $cmdata->fields->id);
     }
 }

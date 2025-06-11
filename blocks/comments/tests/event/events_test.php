@@ -33,7 +33,7 @@ namespace block_comments\event;
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
     /** @var stdClass Keeps course object */
     private $course;
 
@@ -44,6 +44,7 @@ class events_test extends \advanced_testcase {
      * Setup test data.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -55,7 +56,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_created event.
      */
-    public function test_comment_created() {
+    public function test_comment_created(): void {
         global $CFG;
 
         require_once($CFG->dirroot . '/comment/lib.php');
@@ -119,7 +120,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_deleted event.
      */
-    public function test_comment_deleted() {
+    public function test_comment_deleted(): void {
         global $CFG;
 
         require_once($CFG->dirroot . '/comment/lib.php');

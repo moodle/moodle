@@ -1,0 +1,42 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_group/comboboxsearch/resultitem
+
+    Template for the individual result item.
+
+    Context variables required for this template:
+    * id - Group system ID.
+    * name - Groups' name.
+    * groupimageurl - The link of the groups picture.
+
+    Example context (json):
+    {
+        "id": 2,
+        "name": "Foo bar",
+        "groupimageurl": "http://foo.bar/grade/report/grader/index.php?id=42&userid=2"
+    }
+}}
+{{<core/local/comboboxsearch/resultitem }}
+    {{$content}}
+        <div class="pe-2 ps-1 w-25">
+            <img class="rounded-circle mx-auto img-fluid" src="{{groupimageurl}}" alt=""/>
+        </div>
+        <div class="pe-3 w-75">
+            <span class="d-block w-100 p-0 text-truncate">
+                {{name}}
+            </span>
+        </div>
+    {{/content}}
+{{/core/local/comboboxsearch/resultitem}}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 100 100">
+  <style>
+    .st0{fill:none;stroke:#565656;stroke-width:2;stroke-miterlimit:10;} .st1{fill:#FFFFFF;stroke:#565656;stroke-width:2;stroke-miterlimit:10;} .st2{fill:none;stroke:#565656;stroke-width:6;stroke-miterlimit:10;} .st3{fill:none;stroke:#565656;stroke-width:6;stroke-linecap:round;stroke-miterlimit:10;}
+  </style>
+  <path d="M8.5 46.8l22-15.5 12.7 22.9 12.9-26.4L69 50.5l17.4-28" class="st0"/>
+  <ellipse cx="8.5" cy="46.8" transform="rotate(-75.718 8.504 46.76)" class="st1" rx="3.4" ry="3.4"/>
+  <ellipse cx="30.5" cy="31.3" transform="rotate(-75.718 30.47 31.305)" class="st1" rx="3.4" ry="3.4"/>
+  <ellipse cx="56.1" cy="27.8" transform="rotate(-75.718 56.134 27.758)" class="st1" rx="3.4" ry="3.4"/>
+  <ellipse cx="69" cy="50.4" transform="rotate(-75.718 69.012 50.428)" class="st1" rx="3.4" ry="3.4"/>
+  <ellipse cx="86.3" cy="22.4" transform="rotate(-75.718 86.33 22.397)" class="st1" rx="3.4" ry="3.4"/>
+  <ellipse cx="43.2" cy="54.2" transform="rotate(-75.718 43.164 54.173)" class="st1" rx="3.4" ry="3.4"/>
+  <ellipse cx="69" cy="50.4" transform="rotate(-75.718 69.012 50.428)" class="st2" rx="13.5" ry="13.5"/>
+  <path d="M77.7 61.4L94.9 81" class="st3"/>
+</svg>

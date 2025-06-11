@@ -24,12 +24,12 @@ namespace core_user;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core_user\fields
  */
-class fields_test extends \advanced_testcase {
+final class fields_test extends \advanced_testcase {
 
     /**
      * Tests getting the user picture fields.
      */
-    public function test_get_picture_fields() {
+    public function test_get_picture_fields(): void {
         $this->assertEquals(['id', 'picture', 'firstname', 'lastname', 'firstnamephonetic',
                 'lastnamephonetic', 'middlename', 'alternatename', 'imagealt', 'email'],
                 fields::get_picture_fields());
@@ -38,7 +38,7 @@ class fields_test extends \advanced_testcase {
     /**
      * Tests getting the user name fields.
      */
-    public function test_get_name_fields() {
+    public function test_get_name_fields(): void {
         $this->assertEquals(['firstnamephonetic', 'lastnamephonetic', 'middlename', 'alternatename',
                 'firstname', 'lastname'],
                 fields::get_name_fields());
@@ -51,7 +51,7 @@ class fields_test extends \advanced_testcase {
     /**
      * Tests getting the identity fields.
      */
-    public function test_get_identity_fields() {
+    public function test_get_identity_fields(): void {
         global $DB, $CFG, $COURSE;
 
         $this->resetAfterTest();
@@ -182,7 +182,7 @@ class fields_test extends \advanced_testcase {
      * to test the details of the identity permissions as that was already covered. Just how they
      * are included/combined.
      */
-    public function test_get_required_fields() {
+    public function test_get_required_fields(): void {
         $this->resetAfterTest();
 
         // Set up some profile fields.
@@ -232,7 +232,7 @@ class fields_test extends \advanced_testcase {
     /**
      * Tests the get_required_fields function when you use the $limitpurposes parameter.
      */
-    public function test_get_required_fields_limitpurposes() {
+    public function test_get_required_fields_limitpurposes(): void {
         $this->resetAfterTest();
 
         // Set up some profile fields.
@@ -264,7 +264,7 @@ class fields_test extends \advanced_testcase {
     /**
      * There should be an exception if you try to 'limit' purposes to one that wasn't even included.
      */
-    public function test_get_required_fields_limitpurposes_not_in_constructor() {
+    public function test_get_required_fields_limitpurposes_not_in_constructor(): void {
         $fields = fields::for_identity(null);
         $this->expectExceptionMessage('$limitpurposes can only include purposes defined in object');
         $fields->get_required_fields([fields::PURPOSE_USERPIC]);
@@ -296,7 +296,7 @@ class fields_test extends \advanced_testcase {
     /**
      * Tests getting SQL (and actually using it).
      */
-    public function test_get_sql_variations() {
+    public function test_get_sql_variations(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -391,12 +391,12 @@ class fields_test extends \advanced_testcase {
         $this->assertCount(2, $records);
 
         // User id was renamed.
-        $this->assertObjectNotHasAttribute('id', $records['XXX1']);
-        $this->assertObjectHasAttribute('userid', $records['XXX1']);
+        $this->assertObjectNotHasProperty('id', $records['XXX1']);
+        $this->assertObjectHasProperty('userid', $records['XXX1']);
 
         // Other fields are normal (just try a couple).
-        $this->assertObjectHasAttribute('firstname', $records['XXX1']);
-        $this->assertObjectHasAttribute('imagealt', $records['XXX1']);
+        $this->assertObjectHasProperty('firstname', $records['XXX1']);
+        $this->assertObjectHasProperty('imagealt', $records['XXX1']);
 
         // Check the user id is actually right.
         $this->assertEquals('XXX1',
@@ -415,13 +415,13 @@ class fields_test extends \advanced_testcase {
         $this->assertCount(2, $records);
 
         // User id was renamed.
-        $this->assertObjectNotHasAttribute('id', $records['XXX1']);
-        $this->assertObjectNotHasAttribute('u_id', $records['XXX1']);
-        $this->assertObjectHasAttribute('userid', $records['XXX1']);
+        $this->assertObjectNotHasProperty('id', $records['XXX1']);
+        $this->assertObjectNotHasProperty('u_id', $records['XXX1']);
+        $this->assertObjectHasProperty('userid', $records['XXX1']);
 
         // Other fields are prefixed (just try a couple).
-        $this->assertObjectHasAttribute('u_firstname', $records['XXX1']);
-        $this->assertObjectHasAttribute('u_imagealt', $records['XXX1']);
+        $this->assertObjectHasProperty('u_firstname', $records['XXX1']);
+        $this->assertObjectHasProperty('u_imagealt', $records['XXX1']);
 
         // Without a leading comma.
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] =
@@ -437,8 +437,8 @@ class fields_test extends \advanced_testcase {
             // ID should be the first field used by get_records_sql.
             $this->assertEquals($key, $record->id);
             // Check 2 other sample properties.
-            $this->assertObjectHasAttribute('firstname', $record);
-            $this->assertObjectHasAttribute('imagealt', $record);
+            $this->assertObjectHasProperty('firstname', $record);
+            $this->assertObjectHasProperty('imagealt', $record);
         }
     }
 
@@ -446,7 +446,7 @@ class fields_test extends \advanced_testcase {
      * Tests what happens if you use the SQL multiple times in a query (i.e. that it correctly
      * creates the different identifiers).
      */
-    public function test_get_sql_multiple() {
+    public function test_get_sql_multiple(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -486,7 +486,7 @@ class fields_test extends \advanced_testcase {
     /**
      * Tests the get_sql function when there are no fields to retrieve.
      */
-    public function test_get_sql_nothing() {
+    public function test_get_sql_nothing(): void {
         $fields = fields::empty();
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] = (array)$fields->get_sql();
         $this->assertEquals('', $selects);
@@ -498,7 +498,7 @@ class fields_test extends \advanced_testcase {
      * Tests get_sql when there are no custom fields; in this scenario, the joins and joinparams
      * are always blank.
      */
-    public function test_get_sql_no_custom_fields() {
+    public function test_get_sql_no_custom_fields(): void {
         $fields = fields::empty()->including('city', 'country');
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams, 'mappings' => $mappings] =
                 (array)$fields->get_sql('u');
@@ -512,7 +512,7 @@ class fields_test extends \advanced_testcase {
      * Tests the format of the $selects string, which is important particularly for backward
      * compatibility.
      */
-    public function test_get_sql_selects_format() {
+    public function test_get_sql_selects_format(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -549,7 +549,7 @@ class fields_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_fullname_provider(): array {
+    public static function get_sql_fullname_provider(): array {
         return [
             ['firstname lastname', 'FN LN'],
             ['lastname, firstname', 'LN, FN'],

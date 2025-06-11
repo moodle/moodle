@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Spectrum extends Google_Service
 {
 
@@ -94,6 +95,7 @@ class Google_Service_Spectrum extends Google_Service
  *   $paws = $spectrumService->paws;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_Paws_Resource extends Google_Service_Resource
 {
 
@@ -196,6 +198,7 @@ class Google_Service_Spectrum_Paws_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_AntennaCharacteristics extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -231,6 +234,7 @@ class Google_Service_Spectrum_AntennaCharacteristics extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_DatabaseSpec extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -257,6 +261,7 @@ class Google_Service_Spectrum_DatabaseSpec extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_DbUpdateSpec extends Google_Collection
 {
   protected $collection_key = 'databases';
@@ -276,6 +281,7 @@ class Google_Service_Spectrum_DbUpdateSpec extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_DeviceCapabilities extends Google_Collection
 {
   protected $collection_key = 'frequencyRanges';
@@ -295,6 +301,7 @@ class Google_Service_Spectrum_DeviceCapabilities extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_DeviceDescriptor extends Google_Collection
 {
   protected $collection_key = 'rulesetIds';
@@ -394,6 +401,7 @@ class Google_Service_Spectrum_DeviceDescriptor extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_DeviceOwner extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -422,6 +430,7 @@ class Google_Service_Spectrum_DeviceOwner extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_DeviceValidity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -458,6 +467,7 @@ class Google_Service_Spectrum_DeviceValidity extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_EventTime extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -484,6 +494,7 @@ class Google_Service_Spectrum_EventTime extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_FrequencyRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -528,6 +539,7 @@ class Google_Service_Spectrum_FrequencyRange extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_GeoLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -565,6 +577,7 @@ class Google_Service_Spectrum_GeoLocation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_GeoLocationEllipse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -610,6 +623,7 @@ class Google_Service_Spectrum_GeoLocationEllipse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_GeoLocationPoint extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -636,6 +650,7 @@ class Google_Service_Spectrum_GeoLocationPoint extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_GeoLocationPolygon extends Google_Collection
 {
   protected $collection_key = 'exterior';
@@ -655,6 +670,7 @@ class Google_Service_Spectrum_GeoLocationPolygon extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_GeoSpectrumSchedule extends Google_Collection
 {
   protected $collection_key = 'spectrumSchedules';
@@ -684,6 +700,7 @@ class Google_Service_Spectrum_GeoSpectrumSchedule extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsGetSpectrumBatchRequest extends Google_Collection
 {
   protected $collection_key = 'locations';
@@ -780,6 +797,7 @@ class Google_Service_Spectrum_PawsGetSpectrumBatchRequest extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsGetSpectrumBatchResponse extends Google_Collection
 {
   protected $collection_key = 'geoSpectrumSchedules';
@@ -892,6 +910,7 @@ class Google_Service_Spectrum_PawsGetSpectrumBatchResponse extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsGetSpectrumRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -987,6 +1006,7 @@ class Google_Service_Spectrum_PawsGetSpectrumRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsGetSpectrumResponse extends Google_Collection
 {
   protected $collection_key = 'spectrumSchedules';
@@ -1099,6 +1119,7 @@ class Google_Service_Spectrum_PawsGetSpectrumResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsInitRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1145,6 +1166,7 @@ class Google_Service_Spectrum_PawsInitRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsInitResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1200,6 +1222,7 @@ class Google_Service_Spectrum_PawsInitResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsNotifySpectrumUseRequest extends Google_Collection
 {
   protected $collection_key = 'spectra';
@@ -1257,6 +1280,7 @@ class Google_Service_Spectrum_PawsNotifySpectrumUseRequest extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsNotifySpectrumUseResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1292,6 +1316,7 @@ class Google_Service_Spectrum_PawsNotifySpectrumUseResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsRegisterRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1358,6 +1383,7 @@ class Google_Service_Spectrum_PawsRegisterRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsRegisterResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1403,6 +1429,7 @@ class Google_Service_Spectrum_PawsRegisterResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsVerifyDeviceRequest extends Google_Collection
 {
   protected $collection_key = 'deviceDescs';
@@ -1440,6 +1467,7 @@ class Google_Service_Spectrum_PawsVerifyDeviceRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_PawsVerifyDeviceResponse extends Google_Collection
 {
   protected $collection_key = 'deviceValidities';
@@ -1496,6 +1524,7 @@ class Google_Service_Spectrum_PawsVerifyDeviceResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_RulesetInfo extends Google_Collection
 {
   protected $collection_key = 'rulesetIds';
@@ -1541,6 +1570,7 @@ class Google_Service_Spectrum_RulesetInfo extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_SpectrumMessage extends Google_Collection
 {
   protected $collection_key = 'frequencyRanges';
@@ -1569,6 +1599,7 @@ class Google_Service_Spectrum_SpectrumMessage extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_SpectrumSchedule extends Google_Collection
 {
   protected $collection_key = 'spectra';
@@ -1598,6 +1629,7 @@ class Google_Service_Spectrum_SpectrumSchedule extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_Vcard extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1655,6 +1687,7 @@ class Google_Service_Spectrum_Vcard extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_VcardAddress extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1717,6 +1750,7 @@ class Google_Service_Spectrum_VcardAddress extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_VcardTelephone extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1734,6 +1768,7 @@ class Google_Service_Spectrum_VcardTelephone extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Spectrum_VcardTypedText extends Google_Model
 {
   protected $internal_gapi_mappings = array(

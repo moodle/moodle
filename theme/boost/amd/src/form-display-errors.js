@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core_form/events'], function($, FormEvent) {
+    let focusedAlready = false;
     return {
         /**
          * Enhance the supplied element to handle form field errors.
@@ -42,7 +43,7 @@ define(['jquery', 'core_form/events'], function($, FormEvent) {
                 const msg = e.detail.message;
                 e.preventDefault();
 
-                var parent = $(element).closest('.form-group');
+                var parent = $(element).closest('.fitem');
                 var feedback = parent.find('.form-control-feedback');
                 const feedbackId = feedback.attr('id');
 
@@ -59,10 +60,18 @@ define(['jquery', 'core_form/events'], function($, FormEvent) {
                 // Find the the feedback container in the aria-describedby attribute.
                 const feedbackIndex = describedByIds.indexOf(feedbackId);
 
-                // Sometimes (atto) we have a hidden textarea backed by a real contenteditable div.
-                if (($(element).prop("tagName") == 'TEXTAREA') && parent.find('[contenteditable]').length > 0) {
-                    element = parent.find('[contenteditable]');
+                if (element.tagName === 'TEXTAREA') {
+                    // Check if the textarea is backed by a contenteditable div.
+                    const contentEditable = parent.find('[contenteditable]');
+                    if (contentEditable.length > 0) {
+                        // Use the contenteditable div as the target element.
+                        element = contentEditable[0];
+                    } else {
+                        // Use the TinyMCE iframe as the target element if it exists.
+                        element = document.getElementById(`${element.id}_ifr`) || element;
+                    }
                 }
+
                 if (msg !== '') {
                     parent.addClass('has-danger');
                     parent.data('client-validation-error', true);
@@ -73,14 +82,20 @@ define(['jquery', 'core_form/events'], function($, FormEvent) {
                         $(element).attr('aria-describedby', describedByIds.join(" "));
                     }
                     $(element).attr('aria-invalid', true);
-                    feedback.attr('tabindex', 0);
                     feedback.html(msg);
+                    feedback.show();
 
-                    // Only display and focus when the error was not already visible.
-                    // This is so that, when tabbing around the form, you don't get stuck.
-                    if (!feedback.is(':visible')) {
-                        feedback.show();
-                        feedback.focus();
+                    // If we haven't focused anything yet, focus this one.
+                    if (!focusedAlready) {
+                        element.scrollIntoView({behavior: "smooth", block: "center"});
+                        focusedAlready = true;
+                        setTimeout(()=> {
+                            // Actual focus happens later in case we need to do this in response to
+                            // a change event which happens in the middle of changing focus.
+                            element.focus({preventScroll: true});
+                            // Let it focus again next time they submit the form.
+                            focusedAlready = false;
+                        }, 0);
                     }
 
                 } else {

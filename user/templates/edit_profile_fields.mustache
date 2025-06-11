@@ -53,7 +53,7 @@
 
 <div class="row profileeditor">
     <div class="col align-self-end">
-        <a tabindex="0" role="button" class="btn btn-secondary float-right" data-action="editcategory">{{#str}}profilecreatecategory, admin{{/str}}</a>
+        <a tabindex="0" role="button" class="btn btn-secondary float-end" data-action="editcategory">{{#str}}profilecreatecategory, admin{{/str}}</a>
     </div>
 </div>
 
@@ -81,7 +81,7 @@
                 {{/islast}}
             </h3>
         </div>
-        <div class="col-auto text-right">
+        <div class="col-auto text-end">
             {{#addfieldmenu}}{{> core/action_menu}}{{/addfieldmenu}}
         </div>
     </div>
@@ -91,7 +91,7 @@
             <thead>
                 <tr>
                     <th scope="col" class="col-8">{{#str}}profilefield, admin{{/str}}</th>
-                    <th scope="col" class="col-3 text-right">{{#str}}edit{{/str}}</th>
+                    <th scope="col" class="col-3 text-end">{{#str}}edit{{/str}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -100,7 +100,7 @@
                         <td class="col-8">
                             {{{name}}}
                         </td>
-                        <td class="col-3 text-right">
+                        <td class="col-3 text-end">
                             <a href="#" data-action="editfield" data-id="{{id}}" data-name="{{name}}">
                                 {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
                             <a href="{{baseurl}}?action=deletefield&id={{id}}&sesskey={{sesskey}}">

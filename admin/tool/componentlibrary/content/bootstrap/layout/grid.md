@@ -651,20 +651,20 @@ In addition to column clearing at responsive breakpoints, you may need to reset 
 
 #### Margin utilities
 
-With the move to flexbox in v4, you can use margin utilities like `.mr-auto` to force sibling columns away from one another.
+With the move to flexbox in v4, you can use margin utilities like `.me-auto` to force sibling columns away from one another.
 
 {{< example class="bd-example-row" >}}
 <div class="container">
   <div class="row">
     <div class="col-md-4">.col-md-4</div>
-    <div class="col-md-4 ml-auto">.col-md-4 .ml-auto</div>
+    <div class="col-md-4 ms-auto">.col-md-4 .ms-auto</div>
   </div>
   <div class="row">
-    <div class="col-md-3 ml-md-auto">.col-md-3 .ml-md-auto</div>
-    <div class="col-md-3 ml-md-auto">.col-md-3 .ml-md-auto</div>
+    <div class="col-md-3 ms-md-auto">.col-md-3 .ms-md-auto</div>
+    <div class="col-md-3 ms-md-auto">.col-md-3 .ms-md-auto</div>
   </div>
   <div class="row">
-    <div class="col-auto mr-auto">.col-auto .mr-auto</div>
+    <div class="col-auto me-auto">.col-auto .me-auto</div>
     <div class="col-auto">.col-auto</div>
   </div>
 </div>

@@ -4,19 +4,31 @@ All notable changes to this project will be documented in this file.
 
 Note - All hash comments refer to the issue number. Eg. #169 refers to https://github.com/mdjnelson/moodle-mod_customcert/issues/169.
 
-## [4.1.7] - 2024-10-12
+## [4.4.4] - 2025-02-23
+
+### Fixed
+
+- A SQL error in the issue certificate task on MSSQL and Oracle (#646).
+- Issuing a certificate when there are no issues yet (#659).
+- Issue in rearrange JS with Modal not closing (#648).
+
+### Added
+
+- ISO 8601 date format (#638).
+
+## [4.4.3] - 2024-10-12
 
 ### Fixed
 
 - A SQL error in the issue certificate task on Oracle (#646).
-- Verification error when expiry date element is presnet (#647).
+- Verification error when expiry date element is present (#647).
 
 ### Added
 
-- Only fetch teachers during the email process when necessary, reducing the number of SQL queries if they are not included (#531).
+- Only fetch teachers during the email process when necessary, reducing the number of SQL queries if they are not included (#531). 
 - Filter users before process to speed up certificate task (#634).
 
-## [4.1.6] - 2024-09-28
+## [4.4.2] - 2024-09-28
 
 ### Fixed
 
@@ -32,26 +44,28 @@ Note - All hash comments refer to the issue number. Eg. #169 refers to https://g
 
 - Optimise email certificate task by reducing database reads/writes and introducing
   configurable settings for task efficiency (#531).
-- New element `expiry` which when used will display the expiry date on the list of issued certificates
+- New element `expiry` which when used will display the expiry date on the list of issued certificates 
   and the verification pages.<br />
   Any Custom Certificates that are using the `date` element and selected the expiry dates will
   automatically be upgraded to use this new element (#499).
 
-## [4.1.5] - 2024-05-28
+## [4.4.1] - 2024-05-28
 
 ### Fixed
 
-- Non-editing teachers being able to see the download certificate link for a user which took them to a blank page (#620).
 - Major issue with the pop-up window not working in the reposition element page (#483).
+- Non-editing teachers being able to see the download certificate link for a user which took them to a blank page (#620).
+
+## [4.4.0] - 2024-05-28
 
 ### Added
 
 - Added 'Save and Continue' option when editing image elements (#613).
   This means you can add an image to the filemanager, click 'Save and Continue'
   and then select it in the drop-down avoiding renavigating to the edit element page.
-- Added monologo images (#568).
+- Added monologo image (#568).
 
-## [4.1.4] - 2024-04-23
+## [4.2.5] - 2024-04-23
 
 ### Fixed
 
@@ -67,17 +81,18 @@ Note - All hash comments refer to the issue number. Eg. #169 refers to https://g
 
 - Added ability to download all certificates in the report as a teacher and bulk download all site certificates as an administrator (#205).
 
-## [4.1.3] - 2024-02-08
+## [4.2.4] - 2024-02-08
 
 ### Fixed
 
 - Do not make index unique (#601).
 
-## [4.1.2] - 2024-01-31
+## [4.2.3] - 2024-01-31
 
 ### Fixed
 
 - Stopped PHP notice caused by the email certificate task (#443).
+- Fixed undefined external_format_error in the mobile app (#565).
 - Fixed being unable to reposition the course field element if it is empty (#579).
 - Fixed incorrect name of mustache variable in email_certificate_html.mustache (#574).
 - Fixed passing incorrect course module id value to \mod_customcert\output\email_certificate (#574).
@@ -95,7 +110,7 @@ Note - All hash comments refer to the issue number. Eg. #169 refers to https://g
 - Added the unique index 'userid-customcertid' to the 'customcert_issues' table (#537).
 - Added events on the reposition element page (#599).
 
-## [4.1.1] - 2023-06-08
+## [4.2.2] - 2023-06-08
 
 ### Fixed
 
@@ -115,12 +130,15 @@ Note - All hash comments refer to the issue number. Eg. #169 refers to https://g
   - An event for when a template is updated.
   - An event for when a template is deleted.
 
-## [4.0.4] - 2023-05-30
+## [4.2.1] - 2023-05-30
 
 ### Fixed
 
 - Fix course settings error on single activity format (#544).
 - Remove debugging message caused by the user field element listing the Skype field (#478).
+- Fix deprecated usage of rendering primary buttons (#555).
+- Fix usage of deprecated `cron_setup_user` function (#547).
+- Fix broken webservice functions used by the mobile app.
 
 ## [4.0.3] - 2023-02-07
 

@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template aiplacement_courseassist/response
+
+    Template to display reponse content for AI placement.
+
+    Context variables required for this template:
+    * content - Content to display
+
+    Example context (json):
+    {
+        "content": "<p>Content to display</p>"
+    }
+}}
+<section class="card mb-3">
+    <div class="card-body p-3">
+        <h3 id="instance-9-header" class="h5 card-title d-inline">
+            {{#str}} aisummary, aiplacement_courseassist {{/str}}
+        </h3>
+        <div class="card-text content mt-3">
+            <div id="course-summarise-response" class="mb-3">
+                {{{content}}}
+            </div>
+            <div class="course-summarise-response-watermark">
+                <small class="text-muted">
+                    {{#pix}} sparkles, aiplacement_courseassist {{/pix}}
+                    {{#str}} contentwatermark, core_ai {{/str}}
+                </small>
+            </div>
+            <div class="course-summarise-response-controls d-block pt-3">
+                <button class="btn btn-sm btn-outline-secondary" data-action="course-summarise-regenerate">
+                    {{#pix}} a/refresh, core {{/pix}}
+                    {{#str}} regenerate, aiplacement_courseassist {{/str}}
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-action="copytoclipboard" data-clipboard-target="#course-summarise-response">
+                    {{#pix}} e/copy, core {{/pix}}
+                    {{#str}} copy, aiplacement_courseassist {{/str}}
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

@@ -204,7 +204,7 @@ abstract class handler {
      *
      * @return string
      */
-    protected abstract function get_description();
+    abstract protected function get_description();
 
     /**
      * Return a name for the current handler.
@@ -212,7 +212,7 @@ abstract class handler {
      *
      * @return string
      */
-    protected abstract function get_name();
+    abstract protected function get_name();
 
     /**
      * Process the message against the current handler.
@@ -220,7 +220,7 @@ abstract class handler {
      * @param \stdClass $record The Inbound Message Handler record
      * @param \stdClass $messagedata The message data
      */
-    public abstract function process_message(\stdClass $record, \stdClass $messagedata);
+    abstract public function process_message(\stdClass $record, \stdClass $messagedata);
 
     /**
      * Return the content of any success notification to be sent.

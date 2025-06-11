@@ -24,24 +24,47 @@
  */
 
 require_once(dirname(__FILE__) . '/../../../../../config.php');
-require_once(dirname(__FILE__) . '/lib/panopto_lti_utility.php');
+require_once($CFG->dirroot . '/blocks/panopto/lib/lti/panoptoblock_lti_utility.php');
+require_once($CFG->dirroot . '/mod/lti/lib.php');
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
+$courseid           = required_param('course', PARAM_INT);
+$id                 = required_param('id', PARAM_INT);
+$callback           = required_param('callback', PARAM_ALPHANUMEXT);
 
-$courseid = required_param('course', PARAM_INT);
-$callback = required_param('callback', PARAM_ALPHANUMEXT);
-$contentitemsraw = required_param('content_items', PARAM_RAW_TRIMMED);
+$jwt                = optional_param('JWT', '', PARAM_RAW);
 
 require_login($courseid);
 
 $context = context_course::instance($courseid);
 
 // Students will access this tool for the student submission workflow. Assume student can submit an assignment?
-if (!\panopto_lti_utility::panoptoltibutton_is_active_user_enrolled($context)) {
+if (!\panoptoblock_lti_utility::is_active_user_enrolled($context)) {
     require_capability('moodle/course:manageactivities', $context);
     require_capability('mod/lti:addcoursetool', $context);
 }
 
-$contentitems = json_decode($contentitemsraw);
+$config = lti_get_type_type_config($id);
+$islti1p3 = $config->lti_ltiversion === LTI_VERSION_1P3;
+
+if (!empty($jwt)) {
+    $params = lti_convert_from_jwt($id, $jwt);
+    $consumerkey = $params['oauth_consumer_key'] ?? '';
+    $messagetype = $params['lti_message_type'] ?? '';
+    $items = $params['content_items'] ?? '';
+    $version = $params['lti_version'] ?? '';
+    $errormsg = $params['lti_errormsg'] ?? '';
+    $msg = $params['lti_msg'] ?? '';
+} else {
+    $consumerkey = required_param('oauth_consumer_key', PARAM_RAW);
+    $messagetype = required_param('lti_message_type', PARAM_TEXT);
+    $version = required_param('lti_version', PARAM_TEXT);
+    $items = optional_param('content_items', '', PARAM_RAW_TRIMMED);
+    $errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
+    $msg = optional_param('lti_msg', '', PARAM_TEXT);
+}
+
+$contentitems = json_decode($items);
 
 $errors = [];
 
@@ -49,6 +72,21 @@ $errors = [];
 if (!is_object($contentitems) && !is_array($contentitems)) {
     $errors[] = 'invalidjson';
 }
+
+if ($islti1p3) {
+    // Update content items data if this is lti 1.3 and not embed.
+    $doctarget = $contentitems->{'@graph'}[0]->placementAdvice->presentationDocumentTarget
+                    ? $contentitems->{'@graph'}[0]->placementAdvice->presentationDocumentTarget
+                    : ($contentitems->{'@graph'}[0]->iframe ? "iframe" : "frame");
+    $thumbnail = $contentitems->{'@graph'}[0]->thumbnail;
+    if ($doctarget == 'iframe' && !empty($thumbnail)) {
+        $contentitems->{'@graph'}[0]->placementAdvice->presentationDocumentTarget = 'frame';
+        $contentitems->{'@graph'}[0]->placementAdvice->windowTarget = '_blank';
+        $contentitems->{'@graph'}[0]->{'@type'} = 'ContentItem';
+        $contentitems->{'@graph'}[0]->mediaType = 'text/html';
+    }
+}
+
 ?>
 
 <script type="text/javascript">

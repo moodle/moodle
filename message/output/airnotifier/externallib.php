@@ -14,19 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External functions
- *
- * @package    message_airnotifier
- * @category   external
- * @copyright  2012 Jerome Mouneyrac <jerome@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.7
- */
-
-defined('MOODLE_INTERNAL') || die;
-
-require_once("$CFG->libdir/externallib.php");
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 
 /**
  * External API for airnotifier web services

@@ -23,7 +23,7 @@
 define([
     'jquery',
     'core/str',
-    'core/modal_factory',
+    'core/modal_save_cancel',
     'core/modal_events',
     'core/notification',
     'core/fragment',
@@ -32,7 +32,7 @@ define([
 ], function(
     $,
     Str,
-    ModalFactory,
+    ModalSaveCancel,
     ModalEvents,
     Notification,
     Fragment,
@@ -153,11 +153,10 @@ define([
                     saveText = strings[5];
                 }
                 // Create the modal.
-                return ModalFactory.create({
-                    type: ModalFactory.types.SAVE_CANCEL,
+                return ModalSaveCancel.create({
                     title: title,
                     body: ''
-                }).done(function(modal) {
+                }).then(function(modal) {
                     this.modal = modal;
                     this.setupFormModal(formData, saveText);
                 }.bind(this));

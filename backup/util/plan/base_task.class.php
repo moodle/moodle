@@ -29,12 +29,17 @@
  */
 abstract class base_task implements checksumable, executable, loggable {
 
+    /** @var string */
     protected $name;      // One simple name for identification purposes
+    /** @var backup_plan|restore_plan */
     protected $plan;      // Plan this is part of
+    /** @var base_setting[] */
     protected $settings;  // One array of base_setting elements to define this task
+    /** @var base_step[] */
     protected $steps;     // One array of base_step elements
-
+    /** @var bool */
     protected $built;     // Flag to know if one task has been built
+    /** @var bool */
     protected $executed;  // Flag to know if one task has been executed
 
     /**
@@ -98,7 +103,20 @@ abstract class base_task implements checksumable, executable, loggable {
         }
     }
 
+    /**
+     * Check if a setting with the given name exists.
+     *
+     * This method find first in the current settings and then in the plan settings.
+     *
+     * @param string $name Setting name
+     * @return bool
+     */
     public function setting_exists($name) {
+        foreach ($this->settings as $setting) {
+            if ($setting->get_name() == $name) {
+                return true;
+            }
+        }
         return $this->plan->setting_exists($name);
     }
 
@@ -157,7 +175,7 @@ abstract class base_task implements checksumable, executable, loggable {
      * Function responsible for building the steps of any task
      * (must set the $built property to true)
      */
-    public abstract function build();
+    abstract public function build();
 
     /**
      * Function responsible for executing the steps of any task
@@ -259,7 +277,7 @@ abstract class base_task implements checksumable, executable, loggable {
      * that are associated with one task. The function will, directly, inject the settings
      * in the task.
      */
-    protected abstract function define_settings();
+    abstract protected function define_settings();
 
     protected function add_setting($setting) {
         if (! $setting instanceof base_setting) {

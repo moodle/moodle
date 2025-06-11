@@ -45,6 +45,7 @@ class auth_plugin_oidc extends \auth_plugin_base {
      * Constructor.
      *
      * @param null $forceloginflow
+     * @throws moodle_exception
      */
     public function __construct($forceloginflow = null) {
         global $SESSION;
@@ -67,9 +68,18 @@ class auth_plugin_oidc extends \auth_plugin_base {
         if (class_exists($loginflowclass)) {
             $this->loginflow = new $loginflowclass($this->config);
         } else {
-            throw new \coding_exception(get_string('errorbadloginflow', 'auth_oidc'));
+            throw new moodle_exception('errorbadloginflow', 'auth_oidc');
         }
         $this->config = $this->loginflow->config;
+    }
+
+    /**
+     * Returns true if plugin can be manually set.
+     *
+     * @return bool
+     */
+    public function can_be_manually_set() {
+        return true;
     }
 
     /**
@@ -109,10 +119,10 @@ class auth_plugin_oidc extends \auth_plugin_base {
      * Determines if we will redirect to the redirecturi.
      *
      * @return bool If this returns true then redirect
-     * @throws \coding_exception
      */
     public function should_login_redirect() {
-        global $SESSION;
+        global $CFG, $SESSION;
+
         $oidc = optional_param('oidc', null, PARAM_BOOL);
         // Also support noredirect param - used by other auth plugins.
         $noredirect = optional_param('noredirect', 0, PARAM_BOOL);
@@ -128,13 +138,20 @@ class auth_plugin_oidc extends \auth_plugin_base {
         }
 
         // Check whether we've skipped the login page already.
-        // This is here because loginpage_hook is called again during form
-        // submission (all of login.php is processed) and ?oidc=off is not
-        // preserved forcing us to the IdP.
+        // This is here because loginpage_hook is called again during form submission (all of login.php is processed) and
+        // ?oidc=off is not preserved forcing us to the IdP.
         //
-        // This isn't needed when duallogin is on because $oidc will default to 0
-        // and duallogin is not part of the request.
+        // This isn't needed when duallogin is on because $oidc will default to 0 and duallogin is not part of the request.
         if ((isset($SESSION->oidc) && $SESSION->oidc == 0)) {
+            return false;
+        }
+
+        // If the user is redirectred to the login page immediately after logging out, don't redirect.
+        $silentloginmodesetting = get_config('auth_oidc', 'silentloginmode');
+        $forceredirectsetting = get_config('auth_oidc', 'forceredirect');
+        $forceloginsetting = get_config('core', 'forcelogin');
+        if ($silentloginmodesetting && $forceredirectsetting && $forceloginsetting && isset($_SERVER['HTTP_REFERER']) &&
+            strpos($_SERVER['HTTP_REFERER'], $CFG->wwwroot) !== false) {
             return false;
         }
 
@@ -147,6 +164,7 @@ class auth_plugin_oidc extends \auth_plugin_base {
         if (isset($SESSION->oidc)) {
             unset($SESSION->oidc);
         }
+
         return true;
     }
 
@@ -179,8 +197,8 @@ class auth_plugin_oidc extends \auth_plugin_base {
      * @param null $userid
      * @return mixed
      */
-    public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
-                               \moodle_url $selfurl = null, $userid = null) {
+    public function disconnect($justremovetokens = false, $donotremovetokens = false, ?\moodle_url $redirect = null,
+            ?\moodle_url $selfurl = null, $userid = null) {
         return $this->loginflow->disconnect($justremovetokens, $donotremovetokens, $redirect, $selfurl, $userid);
     }
 
@@ -302,7 +320,7 @@ class auth_plugin_oidc extends \auth_plugin_base {
             if ($redirect) {
                 $logouturl = get_config('auth_oidc', 'logouturi');
                 if (!$logouturl) {
-                    $logouturl = 'https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=' .
+                    $logouturl = 'https://login.microsoftonline.com/organizations/oauth2/logout?post_logout_redirect_uri=' .
                         urlencode($CFG->wwwroot);
                 } else {
                     if (preg_match("/^https:\/\/login.microsoftonline.com\//", $logouturl) &&

@@ -38,3 +38,24 @@ Feature: See running scheduled tasks
     And I should see "2 days" in the "core\task\asynchronous_restore_task" "table_row"
     And I should see "c69335460f7f" in the "core\task\asynchronous_restore_task" "table_row"
     And I should see "1916" in the "core\task\asynchronous_restore_task" "table_row"
+
+  @javascript
+  Scenario: If a task with a stored progress bar is running, I should be able to observe the progress.
+    Given the following config values are set as admin:
+      | progresspollinterval | 1 |
+    And the following "tool_task > scheduled tasks" exist:
+      | classname                                | seconds | hostname     | pid  |
+      | \core\task\delete_unconfirmed_users_task | 120     | c69335460f7f | 1917 |
+    And the following "stored progress bars" exist:
+      | idnumber                                | percent |
+      | core_task_delete_unconfirmed_users_task | 50.00   |
+    And I navigate to "Server > Tasks > Tasks running now" in site administration
+    And I should see "2 mins" in the "Delete unconfirmed users" "table_row"
+    And I should see "c69335460f7f" in the "Delete unconfirmed users" "table_row"
+    And I should see "1917" in the "Delete unconfirmed users" "table_row"
+    And I should see "50.0%" in the "Delete unconfirmed users" "table_row"
+    When I set the stored progress bar "core_task_delete_unconfirmed_users_task" to "75.00"
+    # Wait for the progress polling.
+    And I wait "1" seconds
+    Then I should not see "50.0%" in the "Delete unconfirmed users" "table_row"
+    And I should see "75.0%" in the "Delete unconfirmed users" "table_row"

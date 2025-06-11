@@ -23,6 +23,7 @@
  * @copyright (C) 2018 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:ignore moodle.Files.RequireLogin.Missing -- This file is called from Microsoft Teams tab.
 require_once(__DIR__ . '/../../config.php');
 
 // Force theme.
@@ -56,12 +57,12 @@ $ssologinurl = new moodle_url('/local/o365/sso_login.php');
 
 // Output login pages.
 echo html_writer::start_div('local_o365_manual_login');
-// Azure AD login box.
+// Microsoft Entra ID login box.
 echo html_writer::tag('button', get_string('sso_login', 'local_o365'),
-    array('onclick' => 'login()', 'class' => 'local_o365_manual_login_button'));
+    ['onclick' => 'login()', 'class' => 'local_o365_manual_login_button']);
 // Manual login link.
 echo html_writer::tag('button', get_string('other_login', 'local_o365'),
-    array('onclick' => 'otherLogin()', 'class' => 'local_o365_manual_login_button'));
+    ['onclick' => 'otherLogin()', 'class' => 'local_o365_manual_login_button']);
 echo html_writer::end_div();
 
 $SESSION->wantsurl = $coursepageurl;
@@ -70,7 +71,7 @@ if ($USER->id) {
     redirect($coursepageurl);
 }
 
-$tenantid = get_config('local_o365', 'aadtenantid');
+$tenantid = get_config('local_o365', 'entratenantid');
 if (!$tenantid) {
     $tenantid = 'common';
 }

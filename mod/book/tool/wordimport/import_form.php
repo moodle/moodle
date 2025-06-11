@@ -57,7 +57,7 @@ class booktool_wordimport_form extends moodleform {
 
         // User can select 1 and only 1 Word file which must have a .docx suffix (not .docm or .doc).
         $mform->addElement('filepicker', 'importfile', get_string('wordfile', 'booktool_wordimport'), null,
-                           array('subdirs' => 0, 'accepted_types' => array('.docx')));
+                           ['subdirs' => 0, 'accepted_types' => ['.docx']]);
         $mform->addHelpButton('importfile', 'wordfile', 'booktool_wordimport');
         $mform->addRule('importfile', null, 'required');
 

@@ -40,13 +40,14 @@ use \core_privacy\local\request\writer;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\writer
  */
-class writer_test extends advanced_testcase {
+final class writer_test extends advanced_testcase {
     /**
      * Ensure that the writer is cleared away as appropriate after each
      * test.
      */
     public function tearDown(): void {
         writer::reset();
+        parent::tearDown();
     }
 
     /**
@@ -54,7 +55,7 @@ class writer_test extends advanced_testcase {
      *
      * @covers ::with_context
      */
-    public function test_with_context() {
+    public function test_with_context(): void {
         $writer = writer::with_context(\context_system::instance());
 
         $this->assertSame($writer, writer::with_context(\context_system::instance()));
@@ -65,7 +66,7 @@ class writer_test extends advanced_testcase {
      *
      * @covers ::with_context
      */
-    public function test_with_context_different_context_same_instance() {
+    public function test_with_context_different_context_same_instance(): void {
         $writer = writer::with_context(\context_system::instance());
 
         $this->assertSame($writer, writer::with_context(\context_user::instance(\core_user::get_user_by_username('admin')->id)));
@@ -76,7 +77,7 @@ class writer_test extends advanced_testcase {
      *
      * @covers ::reset
      */
-    public function test_reset() {
+    public function test_reset(): void {
         $writer = writer::with_context(\context_system::instance());
         writer::reset();
 
@@ -88,7 +89,7 @@ class writer_test extends advanced_testcase {
      *
      * @covers ::export_user_preference
      */
-    public function test_export_user_preference_sets_system_context() {
+    public function test_export_user_preference_sets_system_context(): void {
         $writer = writer::with_context(\context_user::instance(\core_user::get_user_by_username('admin')->id));
 
         writer::export_user_preference('core_test', 'key', 'value', 'description');

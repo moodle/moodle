@@ -82,6 +82,7 @@ $string['privacy:metadata:customfield_data:timecreated'] = 'Time when data was c
 $string['privacy:metadata:customfield_data:timemodified'] = 'Time when data was last modified';
 $string['privacy:metadata:customfield_data:value'] = 'Data value, when it is a text';
 $string['privacy:metadata:customfield_data:valueformat'] = 'The format of the value, when it is a text';
+$string['privacy:metadata:customfield_data:valuetrust'] = 'The trust flag of the value, when it is text';
 $string['privacy:metadata:customfieldpluginsummary'] = 'Fields for various components';
 $string['privacy:metadata:filepurpose'] = 'File attached to the custom field data';
 $string['shortname'] = 'Short name';

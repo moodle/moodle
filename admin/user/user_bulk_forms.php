@@ -35,14 +35,40 @@ require_once($CFG->libdir.'/datalib.php');
  */
 class user_bulk_action_form extends moodleform {
 
+    /** @var bool */
+    protected $hasbulkactions = false;
+
+    /** @var array|null */
+    protected $actions = null;
+
     /**
      * Returns an array of action_link's of all bulk actions available for this user.
      *
+     * @param bool $flatlist whether to return a flat list (for easier searching) or a list with
+     *     option groups that can be used to build a select element
      * @return array of action_link objects
      */
-    public function get_actions(): array {
+    public function get_actions(bool $flatlist = true): array {
+        if ($this->actions === null) {
+            $this->actions = $this->build_actions();
+            $this->hasbulkactions = !empty($this->actions);
+        }
+        if ($flatlist) {
+            return array_reduce($this->actions, fn($carry, $item) => $carry + $item, []);
+        }
+        return $this->actions;
+    }
+
+    /**
+     * Builds the list of bulk user actions available for this user.
+     *
+     * @return array
+     */
+    protected function build_actions(): array {
 
         global $CFG;
+
+        $canaccessbulkactions = has_any_capability(['moodle/user:update', 'moodle/user:delete'], context_system::instance());
 
         $syscontext = context_system::instance();
         $actions = [];
@@ -51,7 +77,7 @@ class user_bulk_action_form extends moodleform {
                 new moodle_url('/admin/user/user_bulk_confirm.php'),
                 get_string('confirm'));
         }
-        if (has_capability('moodle/site:readallmessages', $syscontext) && !empty($CFG->messaging)) {
+        if ($canaccessbulkactions && has_capability('moodle/site:readallmessages', $syscontext) && !empty($CFG->messaging)) {
             $actions['message'] = new action_link(
                 new moodle_url('/admin/user/user_bulk_message.php'),
                 get_string('messageselectadd'));
@@ -61,9 +87,11 @@ class user_bulk_action_form extends moodleform {
                 new moodle_url('/admin/user/user_bulk_delete.php'),
                 get_string('delete'));
         }
-        $actions['displayonpage'] = new action_link(
+        if ($canaccessbulkactions) {
+            $actions['displayonpage'] = new action_link(
                 new moodle_url('/admin/user/user_bulk_display.php'),
                 get_string('displayonpage'));
+        }
 
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions['download'] = new action_link(
@@ -76,44 +104,87 @@ class user_bulk_action_form extends moodleform {
                 new moodle_url('/admin/user/user_bulk_forcepasswordchange.php'),
                 get_string('forcepasswordchange'));
         }
-        if (has_capability('moodle/cohort:assign', $syscontext)) {
+        if ($canaccessbulkactions && has_capability('moodle/cohort:assign', $syscontext)) {
             $actions['addtocohort'] = new action_link(
                 new moodle_url('/admin/user/user_bulk_cohortadd.php'),
                 get_string('bulkadd', 'core_cohort'));
         }
 
-        // Any plugin can append actions to this list by implementing a callback
-        // <component>_bulk_user_actions() which returns an array of action_link.
-        // Each new action's key should have a frankenstyle prefix to avoid clashes.
-        // See MDL-38511 for more details.
-        $moreactions = get_plugins_with_function('bulk_user_actions', 'lib.php');
+        // Collect all bulk user actions.
+        $hook = new \core_user\hook\extend_bulk_user_actions();
+
+        // Add actions from core.
+        foreach ($actions as $identifier => $action) {
+            $hook->add_action($identifier, $action);
+        }
+
+        // Add actions from the legacy callback 'bulk_user_actions'.
+        $moreactions = get_plugins_with_function('bulk_user_actions', 'lib.php', true, true);
         foreach ($moreactions as $plugintype => $plugins) {
             foreach ($plugins as $pluginfunction) {
-                $actions += $pluginfunction();
+                $pluginactions = $pluginfunction();
+                foreach ($pluginactions as $identifier => $action) {
+                    $hook->add_action($identifier, $action);
+                }
             }
         }
 
-        return $actions;
+        // Any plugin can append user bulk actions to this list by implementing a hook callback.
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
+        // This method may be called from 'Bulk actions' and 'Browse user list' pages. Some actions
+        // may be irrelevant in one of the contexts and they can be excluded by specifying the
+        // 'excludeactions' customdata.
+        $excludeactions = $this->_customdata['excludeactions'] ?? [];
+        foreach ($excludeactions as $excludeaction) {
+            $hook->add_action($excludeaction, null);
+        }
+        return $hook->get_actions();
     }
 
     /**
      * Form definition
      */
     public function definition() {
-        global $CFG;
-
         $mform =& $this->_form;
 
-        $actions = [0 => get_string('choose') . '...'];
-        $bulkactions = $this->get_actions();
-        foreach ($bulkactions as $key => $action) {
-            $actions[$key] = $action->text;
+        // Most bulk actions perform a redirect on selection, so we shouldn't trigger formchange warnings (specifically because
+        // the user must have _already_ changed the current form by selecting users to perform the action on).
+        $mform->disable_form_change_checker();
+
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
+        // When 'passuserids' is specified in the customdata, the user ids are expected in the form
+        // data rather than in the $SESSION->bulk_users .
+        $passuserids = !empty($this->_customdata['passuserids']);
+        $mform->addElement('hidden', 'passuserids', $passuserids);
+        $mform->setType('passuserids', PARAM_BOOL);
+
+        $mform->addElement('hidden', 'userids');
+        $mform->setType('userids', PARAM_SEQUENCE);
+
+        $actions = ['' => [0 => get_string('choose') . '...']];
+        $bulkactions = $this->get_actions(false);
+        foreach ($bulkactions as $category => $categoryactions) {
+            $actions[$category] = array_map(fn($action) => $action->text, $categoryactions);
         }
         $objs = array();
-        $objs[] =& $mform->createElement('select', 'action', null, $actions);
-        $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));
+        $objs[] = $selectel = $mform->createElement('selectgroups', 'action', get_string('userbulk', 'admin'), $actions);
+        $selectel->setHiddenLabel(true);
+        if (empty($this->_customdata['hidesubmit'])) {
+            $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));
+        }
         $mform->addElement('group', 'actionsgrp', get_string('withselectedusers'), $objs, ' ', false);
+    }
+
+    /**
+     * Is there at least one available bulk action in this form
+     *
+     * @return bool
+     */
+    public function has_bulk_actions(): bool {
+        return $this->hasbulkactions;
     }
 }
 

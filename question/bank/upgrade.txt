@@ -1,14 +1,32 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes core qbank plugin changes in /question/bank/*,
 information provided here is intended especially for developers.
 
-=== 4.1.4 ===
+=== 4.4 ===
 
-* There is a new more effecient way to display statistics in the question bank, you should now override
+* Question bank actions (anything that subclasses question_action_base) should implement the
+  method get_menu_position() to control what position in the action menu it appears it.
+  See the comment on the base class method for more details. If you don't do this, you will
+  get a debugging warning.
+
+=== 4.3 ===
+
+* The helper class in qbank_statistics has had several of its methods deprecated.
+  If you want to display statistics in the question bank, you should now override
   the get_required_statistics_fields() method in your column class, and then
   the values you need will be available from $this->qbank->get_aggregate_statistic(...).
   If you are not in a question_bank_column class, you can directly access efficient
   statistics-loading from the core_question\local\statistics\statistics_bulk_loader class.
-  The old method will be deprecated in 4.2.
+
+* Question actions are now implemented as a standalone qbank plugin feature. Instead of passing the actions
+  through get_question_columns(), plugins implementing actions will now have to use get_question_actions(). Action classes are
+  implemented by extending the new question_action_base class, which replaces the deprecated action_column_base class,
+  menu_action_column_base class and menuable_action interface. The shared functionality between actions and columns has now
+  been moved to the shared view_component base class.
 
 === 4.1 ===
 

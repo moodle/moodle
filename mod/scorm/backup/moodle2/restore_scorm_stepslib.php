@@ -173,17 +173,19 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
     }
 
     protected function process_scorm_sco_track($data) {
-        global $DB;
-
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/mod/scorm/locallib.php');
         $data = (object)$data;
-        $oldid = $data->id;
-        $data->scormid = $this->get_new_parentid('scorm');
+        $attemptobject = scorm_get_attempt($this->get_mappingid('user', $data->userid),
+                                           $this->get_new_parentid('scorm'),
+                                           $data->attempt);
         $data->scoid = $this->get_new_parentid('scorm_sco');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->attemptid = $attemptobject->id;
+        $data->elementid = scorm_get_elementid($data->element);
 
-        $newitemid = $DB->insert_record('scorm_scoes_track', $data);
-        // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder)
+        $DB->insert_record('scorm_scoes_value', $data);
+        // No need to save this mapping as far as nothing depend on it.
     }
 
     protected function after_execute() {

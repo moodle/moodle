@@ -23,11 +23,12 @@
  * @copyright (C) 2014 onwards Microsoft Open Technologies, Inc. (http://msopentech.com/)
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_o365;
 
-global $CFG;
-
-require_once($CFG->dirroot.'/lib/externallib.php');
+use advanced_testcase;
+use core_external\external_single_structure;
+use lang_string;
+use local_o365\webservices\utils;
 
 /**
  * Tests \local_o365\webservices\utils
@@ -35,12 +36,12 @@ require_once($CFG->dirroot.'/lib/externallib.php');
  * @group local_o365
  * @group office365
  */
-class local_o365_webservices_utils_testcase extends \advanced_testcase {
+final class webservices_utils_test extends advanced_testcase {
 
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
-    protected function setUp() : void {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
@@ -87,7 +88,7 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
      *
      * @return array Array of test parameters.
      */
-    public function dataprovider_assignment_info() {
+    public static function dataprovider_assignment_info(): array {
         // Notes:
         // [[coursemoduleid]] is replaced with the id of the *last* course_module record inserted.
         // [[courseid]] is replaced with the generated course ID.
@@ -271,12 +272,14 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
      * @param int $coursemoduleid The course module id to pass to the test method.
      * @param int $courseid The course id to pass to the test method.
      * @param array $expectedreturn The expected return of the test method.
+     *
+     * @covers \local_o365\webservices\utils::get_assignment_info
      */
     public function test_get_assignment_info($createcourse, $modulerecords, $expectedexception, $coursemoduleid, $courseid,
-        $expectedreturn) {
+        $expectedreturn): void {
         global $DB;
 
-        list($course, $modulerecord) = $this->create_assignment_info_testdata($createcourse, $modulerecords);
+        [$course, $modulerecord] = $this->create_assignment_info_testdata($createcourse, $modulerecords);
 
         if (!empty($expectedexception)) {
             if (isset($expectedexception[1])) {
@@ -290,7 +293,7 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
         $courseid = ($courseid === '[[courseid]]') ? $course->id : $courseid;
         $coursemoduleid = ($coursemoduleid === '[[coursemoduleid]]') ? $modulerecord['id'] : $coursemoduleid;
 
-        $actualreturn = \local_o365\webservices\utils::get_assignment_info($coursemoduleid, $courseid);
+        $actualreturn = utils::get_assignment_info($coursemoduleid, $courseid);
 
         if ($expectedreturn[0] === '[[course]]') {
             $expectedreturn[0] = $DB->get_record('course', ['id' => $course->id]);
@@ -313,8 +316,8 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
      *
      * @return array Array of test parameters.
      */
-    public function dataprovider_verify_assignment() {
-        $assignmentinfotests = $this->dataprovider_assignment_info();
+    public static function dataprovider_verify_assignment(): array {
+        $assignmentinfotests = static::dataprovider_assignment_info();
 
         $testcases = [];
         foreach ($assignmentinfotests as $testkey => $testparams) {
@@ -366,12 +369,14 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
      * @param array $expectedreturn The expected return of the test method.
      * @param bool $grantcapability Whether to grant the test user the capability to work with the assignment.
      * @param bool $addonenotesubmission Whether to add the OneNote submission record to this assignment.
+     *
+     * @covers \local_o365\webservices\utils::verify_assignment
      */
     public function test_verify_assignment($createcourse, $modulerecords, $expectedexception, $coursemoduleid, $courseid,
-        $expectedreturn, $grantcapability, $addonenotesubmission) {
+        $expectedreturn, $grantcapability, $addonenotesubmission): void {
         global $DB;
 
-        list($course, $modulerecord) = $this->create_assignment_info_testdata($createcourse, $modulerecords);
+        [$course, $modulerecord] = $this->create_assignment_info_testdata($createcourse, $modulerecords);
 
         if (!empty($expectedexception)) {
             if (isset($expectedexception[1])) {
@@ -402,7 +407,7 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
             $DB->insert_record('assign_plugin_config', $pluginconfigparams);
         }
 
-        $actualreturn = \local_o365\webservices\utils::verify_assignment($coursemoduleid, $courseid);
+        $actualreturn = utils::verify_assignment($coursemoduleid, $courseid);
 
         if ($expectedreturn[0] === '[[course]]') {
             $expectedreturn[0] = $DB->get_record('course', ['id' => $course->id]);
@@ -419,10 +424,12 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
 
     /**
      * Test get_assignment_return_info_schema method.
+     *
+     * @covers \local_o365\webservices\utils::get_assignment_return_info_schema
      */
-    public function test_get_assignment_return_info_schema() {
-        $schema = \local_o365\webservices\utils::get_assignment_return_info_schema();
-        $this->assertTrue($schema instanceof \external_single_structure);
+    public function test_get_assignment_return_info_schema(): void {
+        $schema = utils::get_assignment_return_info_schema();
+        $this->assertTrue($schema instanceof external_single_structure);
         $this->assertArrayHasKey('data', $schema->keys);
     }
 
@@ -431,8 +438,8 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
      *
      * @return array Array of test parameters.
      */
-    public function dataprovider_get_assignment_return_info() {
-        $assignmentinfotests = $this->dataprovider_assignment_info();
+    public static function dataprovider_get_assignment_return_info(): array {
+        $assignmentinfotests = static::dataprovider_assignment_info();
 
         $testcases = [];
         foreach ($assignmentinfotests as $testkey => $testparams) {
@@ -451,6 +458,7 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
                 ];
             }
         }
+
         return $testcases;
     }
 
@@ -466,10 +474,12 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
      * @param int $coursemoduleid The course module id to pass to the test method.
      * @param int $courseid The course id to pass to the test method.
      * @param array $expectedreturn The expected return of the test method.
+     *
+     * @covers \local_o365\webservices\utils::get_assignment_return_info
      */
     public function test_get_assignment_return_info($createcourse, $modulerecords, $expectedexception, $coursemoduleid, $courseid,
-        $expectedreturn) {
-        list($course, $modulerecord) = $this->create_assignment_info_testdata($createcourse, $modulerecords);
+        $expectedreturn): void {
+        [$course, $modulerecord] = $this->create_assignment_info_testdata($createcourse, $modulerecords);
 
         if (!empty($expectedexception)) {
             if (isset($expectedexception[1])) {
@@ -483,16 +493,16 @@ class local_o365_webservices_utils_testcase extends \advanced_testcase {
         $courseid = ($courseid === '[[courseid]]') ? $course->id : $courseid;
         $coursemoduleid = ($coursemoduleid === '[[coursemoduleid]]') ? $modulerecord['id'] : $coursemoduleid;
 
-        $actualreturn = \local_o365\webservices\utils::get_assignment_return_info($coursemoduleid, $courseid);
+        $actualreturn = utils::get_assignment_return_info($coursemoduleid, $courseid);
 
         if ($expectedreturn['course'] === '[[courseid]]') {
             $expectedreturn['course'] = $course->id;
         }
         if ($expectedreturn['coursemodule'] === '[[coursemoduleid]]') {
-            $expectedreturn['coursemodule'] = (string)$modulerecord['id'];
+            $expectedreturn['coursemodule'] = (string) $modulerecord['id'];
         }
         if ($expectedreturn['instance'] === '[[assignid]]') {
-            $expectedreturn['instance'] = (string)$modulerecord['instance'];
+            $expectedreturn['instance'] = (string) $modulerecord['instance'];
         }
 
         $this->assertEquals($expectedreturn, $actualreturn);

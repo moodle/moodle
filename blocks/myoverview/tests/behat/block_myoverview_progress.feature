@@ -30,7 +30,7 @@ Feature: Course overview block show users their progress on courses
     Given I am on the "Test choice 1" "choice activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
+      | Add requirements         | 1                  |
       | id_completionview   | 1                                                 |
     And I press "Save and return to course"
     And I log out

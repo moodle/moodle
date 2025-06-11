@@ -31,7 +31,7 @@ namespace mod_customcert;
  * @copyright 2023 Leon Stringer <leon.stringer@ntlworld.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class page_test extends \advanced_testcase {
+final class page_test extends \advanced_testcase {
 
     /**
      * Set the test up.

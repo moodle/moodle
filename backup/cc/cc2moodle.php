@@ -102,7 +102,7 @@ class cc2moodle {
                                       'xsi'      => 'http://www.w3.org/2001/XMLSchema-instance',
                                       'cc'       => 'http://www.imsglobal.org/xsd/imsccauth_v1p0');
 
-    function __construct ($path_to_manifest) {
+    function __construct($path_to_manifest) {
 
         static::$manifest = new DOMDocument();
         static::$manifest->validateOnParse = false;
@@ -117,7 +117,7 @@ class cc2moodle {
         }
     }
 
-    public function is_auth () {
+    public function is_auth() {
 
         $xpath = static::newx_path(static::$manifest, static::$namespaces);
 
@@ -132,7 +132,7 @@ class cc2moodle {
         return $response;
     }
 
-    protected function get_metadata ($section, $key) {
+    protected function get_metadata($section, $key) {
 
         $xpath = static::newx_path(static::$manifest, static::$namespaces);
 
@@ -142,7 +142,7 @@ class cc2moodle {
         return $value;
     }
 
-    public function generate_moodle_xml () {
+    public function generate_moodle_xml() {
 
         global $CFG, $OUTPUT;
 
@@ -206,7 +206,7 @@ class cc2moodle {
         if (array_key_exists("index", self::$instances)) {
 
             if (!file_put_contents(static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'moodle.xml', $result_xml)) {
-                static::log_action('Cannot save the moodle manifest file: ' . static::$path_to_tmp_folder . DIRECTORY_SEPARATOR . 'moodle.xml', true);
+                static::log_action('Cannot save the moodle manifest file: ' . static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'moodle.xml', true);
             } else {
                 $status = true;
             }
@@ -221,7 +221,7 @@ class cc2moodle {
 
     }
 
-    protected function get_sections_numbers ($instances) {
+    protected function get_sections_numbers($instances) {
 
         $count = 0;
 
@@ -236,7 +236,7 @@ class cc2moodle {
         return $count;
     }
 
-    protected function create_node_course_header () {
+    protected function create_node_course_header() {
 
         $node_course_header = '';
         $sheet_course_header = static::loadsheet(SHEET_COURSE_HEADER);
@@ -273,7 +273,7 @@ class cc2moodle {
         return $node_course_header;
     }
 
-    protected function create_node_question_categories () {
+    protected function create_node_question_categories() {
 
         $quiz = new cc_quiz();
 
@@ -284,7 +284,7 @@ class cc2moodle {
         return $node_course_question_categories;
     }
 
-    protected function create_node_course_modules_mod () {
+    protected function create_node_course_modules_mod() {
 
         $labels = new cc_label();
         $resources = new cc_resource();
@@ -311,7 +311,7 @@ class cc2moodle {
     }
 
 
-    protected function create_node_course_sections_section () {
+    protected function create_node_course_sections_section() {
 
         static::log_action('Creating node: COURSE/SECTIONS/SECTION');
 
@@ -363,7 +363,7 @@ class cc2moodle {
         return $node_course_sections_section;
     }
 
-    protected function create_node_course_blocks_block () {
+    protected function create_node_course_blocks_block() {
 
         global $CFG;
 
@@ -455,7 +455,7 @@ class cc2moodle {
         return $mod_visible;
     }
 
-    protected function create_node_course_sections_section_mods_mod ($root_parent) {
+    protected function create_node_course_sections_section_mods_mod($root_parent) {
 
         $sheet_course_sections_section_mods_mod = static::loadsheet(SHEET_COURSE_SECTIONS_SECTION_MODS_MOD);
         $childs = $this->get_nodes_by_criteria('root_parent', $root_parent);
@@ -512,7 +512,7 @@ class cc2moodle {
 
     }
 
-    public function get_nodes_by_criteria ($key, $value) {
+    public function get_nodes_by_criteria($key, $value) {
 
         $response = array();
 
@@ -528,7 +528,7 @@ class cc2moodle {
     }
 
     //Modified here
-    protected function create_code_info_details_mod () {
+    protected function create_code_info_details_mod() {
 
         static::log_action('Creating node: INFO/DETAILS/MOD');
 
@@ -568,7 +568,7 @@ class cc2moodle {
 
     }
 
-    protected function create_mod_info_details_mod ($mod_type, $node_info_details_mod_instances_instance) {
+    protected function create_mod_info_details_mod($mod_type, $node_info_details_mod_instances_instance) {
 
         $sheet_info_details_mod = static::loadsheet(SHEET_INFO_DETAILS_MOD);
 
@@ -578,7 +578,7 @@ class cc2moodle {
         return str_replace($find_tags, $replace_values, $sheet_info_details_mod);
     }
 
-    protected function create_mod_info_details_mod_instances_instance ($sheet, $instances_quantity, $instances) {
+    protected function create_mod_info_details_mod_instances_instance($sheet, $instances_quantity, $instances) {
 
         $instance = '';
 
@@ -606,7 +606,7 @@ class cc2moodle {
 
     }
 
-    protected function create_instances ($items, $level = 0, &$array_index = 0, $index_root = 0) {
+    protected function create_instances($items, $level = 0, &$array_index = 0, $index_root = 0) {
 
         $level++;
         $i = 1;
@@ -681,7 +681,7 @@ class cc2moodle {
         }
     }
 
-    public function count_instances ($type) {
+    public function count_instances($type) {
 
         $quantity = 0;
 
@@ -702,7 +702,7 @@ class cc2moodle {
         return $quantity;
     }
 
-    public function convert_to_moodle_type ($cc_type) {
+    public function convert_to_moodle_type($cc_type) {
         $type = TYPE_UNKNOWN;
 
         if ($cc_type == static::CC_TYPE_FORUM) {
@@ -736,7 +736,7 @@ class cc2moodle {
         return $type;
     }
 
-    public function get_item_cc_type ($identifier) {
+    public function get_item_cc_type($identifier) {
 
         $xpath = static::newx_path(static::$manifest, static::$namespaces);
 
@@ -749,7 +749,7 @@ class cc2moodle {
         }
     }
 
-    public static function newx_path (DOMDocument $manifest, $namespaces = '') {
+    public static function newx_path(DOMDocument $manifest, $namespaces = '') {
 
         $xpath = new DOMXPath($manifest);
 
@@ -764,7 +764,7 @@ class cc2moodle {
         return $xpath;
     }
 
-    public static function loadsheet ($file) {
+    public static function loadsheet($file) {
 
         $content = (is_readable($file) && ($content = file_get_contents($file))) ? $content : false;
 
@@ -783,7 +783,7 @@ class cc2moodle {
         return static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'cc2moodle.log';
     }
 
-    public static function log_action ($text, $critical_error = false) {
+    public static function log_action($text, $critical_error = false) {
 
         $full_message = strtoupper(date("j/n/Y g:i:s a")) . " - " . $text . "\r";
 
@@ -794,7 +794,7 @@ class cc2moodle {
         }
     }
 
-    protected static function critical_error ($text) {
+    protected static function critical_error($text) {
 
         $path_to_log = static::log_file();
 
@@ -819,7 +819,7 @@ class cc2moodle {
         die();
     }
 
-    protected function create_course_code ($title) {
+    protected function create_course_code($title) {
         //Making sure that text of the short name does not go over the DB limit.
         //and leaving the space to add additional characters by the platform
         $code = substr(strtoupper(str_replace(' ', '', trim($title))),0,94);

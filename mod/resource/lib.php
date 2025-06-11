@@ -227,6 +227,8 @@ function resource_get_coursemodule_info($coursemodule) {
     if (count($files) >= 1) {
         $mainfile = reset($files);
         $resource->mainfile = $mainfile->get_filename();
+        $info->icon = file_file_icon($mainfile);
+        $info->customdata['filtericon'] = true;
     }
 
     $display = resource_get_final_display_type($resource);
@@ -269,12 +271,13 @@ function resource_get_coursemodule_info($coursemodule) {
 function resource_cm_info_view(cm_info $cm) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/resource/locallib.php');
-
-    $resource = (object) ['displayoptions' => $cm->customdata['displayoptions']];
-    $details = resource_get_optional_details($resource, $cm);
-    if ($details) {
-        $cm->set_after_link(' ' . html_writer::tag('span', $details,
-                array('class' => 'resourcelinkdetails')));
+    $customdata = $cm->customdata;
+    if (is_array($customdata) && isset($customdata['displayoptions'])) {
+        $resource = (object) ['displayoptions' => $customdata['displayoptions']];
+        $details = resource_get_optional_details($resource, $cm, false);
+        if ($details) {
+            $cm->set_after_link(' ' . html_writer::tag('span', $details, ['class' => 'resourcelinkdetails']));
+        }
     }
 }
 
@@ -299,7 +302,7 @@ function resource_get_file_areas($course, $cm, $context) {
  *
  * @package  mod_resource
  * @category files
- * @param stdClass $browser file browser instance
+ * @param file_browser $browser file browser instance
  * @param stdClass $areas file areas
  * @param stdClass $course course object
  * @param stdClass $cm course module object
@@ -593,7 +596,7 @@ function mod_resource_core_calendar_provide_event_action(calendar_event $event,
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_resource_get_path_from_pluginfile(string $filearea, array $args) : array {
+function mod_resource_get_path_from_pluginfile(string $filearea, array $args): array {
     // Resource never has an itemid (the number represents the revision but it's not stored in database).
     array_shift($args);
 

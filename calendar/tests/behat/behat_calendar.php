@@ -48,6 +48,19 @@ class behat_calendar extends behat_base {
             new behat_component_named_selector('mini calendar block', [".//*[@data-block='calendar_month']"]),
             new behat_component_named_selector('full calendar page', [".//*[@id='page-calendar-view']"]),
             new behat_component_named_selector('calendar day', [".//*[@data-region='day'][@data-day=%locator%]"]),
+            new behat_component_named_selector(
+                'calendar day detail',
+                [".//*[@data-region='day'][@data-day=%locator%]//a[@data-action='view-day-link']"]
+            ),
+            new behat_component_named_selector(
+                'responsive calendar day',
+                [".//*[@data-region='day'][@data-day=%locator%]/div[contains(@class, 'hidden-desktop')]"]
+            ),
+            new behat_component_named_selector(
+                'responsive calendar day detail',
+                [".//*[@data-region='day'][@data-day=%locator%]" .
+                    "/div[contains(@class, 'hidden-desktop')]//a[@data-action='view-day-link']"]
+            ),
         ];
     }
 
@@ -93,43 +106,100 @@ class behat_calendar extends behat_base {
     /**
      * Hover over a specific day in the mini-calendar.
      *
-     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the mini-calendar block$/
+     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the mini-calendar block(?P<responsive> responsive view|)$/
      * @param int $day The day of the current month
+     * @param string $responsive If not null, find the responsive version of the link.
      */
-    public function i_hover_over_day_of_this_month_in_mini_calendar_block(int $day): void {
-        $this->execute("behat_general::i_hover_in_the",
-            [$day, 'core_calendar > calendar day', '', 'core_calendar > mini calendar block']);
+    public function i_hover_over_day_of_this_month_in_mini_calendar_block(int $day, string $responsive = ''): void {
+        $this->execute(
+            "behat_general::i_hover_in_the",
+            [
+                $day,
+                empty($responsive) ? 'core_calendar > calendar day' : 'core_calendar > responsive calendar day',
+                '',
+                'core_calendar > mini calendar block',
+            ],
+        );
     }
 
     /**
      * Hover over a specific day in the full calendar page.
      *
-     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the full calendar page$/
+     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the full calendar page(?P<responsive> responsive view|)$/
      * @param int $day The day of the current month
+     * @param string $responsive If not empty, use the repsonsive view.
      */
-    public function i_hover_over_day_of_this_month_in_full_calendar_page(int $day): void {
-        $this->execute("behat_general::i_hover_in_the",
-            [$day, 'core_calendar > calendar day', '', 'core_calendar > full calendar page']);
+    public function i_hover_over_day_of_this_month_in_full_calendar_page(int $day, string $responsive = ''): void {
+        $this->execute(
+            "behat_general::i_hover_in_the",
+            [
+                $day,
+                empty($responsive) ? 'core_calendar > calendar day' : 'core_calendar > responsive calendar day',
+                '',
+                'core_calendar > full calendar page',
+            ],
+        );
+    }
+
+    /**
+     * Click on a specific day in the mini-calendar.
+     *
+     * @Given /^I click on day "(?P<dayofmonth>\d+)" of this month in the mini-calendar block(?P<responsive> responsive view|)$/
+     *
+     * @param int $day The day of the current month.
+     * @param string $responsive If not null, find the responsive version of the link.
+     * @param string $detail If not null, find the detail version of the link.
+     */
+    public function i_click_on_day_of_this_month_in_mini_calendar_block(
+        int $day,
+        string $responsive = '',
+        string $detail = '',
+    ): void {
+        $selectortype = 'core_calendar >';
+        if (!empty($responsive)) {
+            $selectortype .= ' responsive';
+        }
+        $selectortype .= ' calendar day';
+        if (!empty($detail)) {
+            $selectortype .= ' detail';
+        }
+        $this->execute(
+            contextapi: "behat_general::i_click_on_in_the",
+            params: [
+                $day,
+                $selectortype,
+                '',
+                'core_calendar > mini calendar block',
+            ],
+        );
     }
 
     /**
      * Hover over today in the mini-calendar.
      *
-     * @Given /^I hover over today in the mini-calendar block$/
+     * @Given /^I hover over today in the mini-calendar block( responsive view|)$/
+     *
+     * @param string $responsive If not empty, use the responsive calendar link.
      */
-    public function i_hover_over_today_in_mini_calendar_block(): void {
+    public function i_hover_over_today_in_mini_calendar_block(string $responsive = ''): void {
         $todaysday = date('j');
-        $this->i_hover_over_day_of_this_month_in_mini_calendar_block($todaysday);
+        $this->i_hover_over_day_of_this_month_in_mini_calendar_block($todaysday, $responsive);
     }
 
     /**
-     * Hover over today in the calendar.
+     * Click on today in the mini-calendar.
      *
-     * @Given /^I hover over today in the calendar$/
+     * @Given /^I click on today in the mini-calendar block( responsive view|)( to view the detail|)$/
+     *
+     * @param string $responsive If not empty, use the responsive calendar link.
+     * @param string $detail If not empty, use the detail view calendar link.
      */
-    public function i_hover_over_today_in_the_calendar() {
-        $todaysday = date('j');
-        return $this->i_hover_over_day_of_this_month_in_calendar($todaysday);
+    public function i_click_on_today_in_mini_calendar_block(string $responsive = '', string $detail = ''): void {
+        $this->i_click_on_day_of_this_month_in_mini_calendar_block(
+            day: date('j'),
+            responsive: $responsive,
+            detail: $detail,
+        );
     }
 
     /**
@@ -176,7 +246,23 @@ class behat_calendar extends behat_base {
      * @return void
      */
     public function i_am_viewing_site_calendar() {
-        $url = new moodle_url('/calendar/view.php', ['view' => 'month']);
+        $this->i_am_viewing_calendar_in_view('month');
+    }
+
+    /**
+     * Navigate to a specific view in the calendar.
+     *
+     * @Given /^I am viewing calendar in "([^"]+)" view$/
+     * @param string $view The calendar view ('month', 'day' and 'upcoming') to navigate to.
+     * @return void
+     */
+    public function i_am_viewing_calendar_in_view(string $view): void {
+
+        if (!in_array($view, ['month', 'day', 'upcoming'])) {
+            throw new Exception("Invalid calendar view. Allowed values are: 'month', 'day' and 'upcoming'");
+        }
+
+        $url = new moodle_url('/calendar/view.php', ['view' => $view]);
         $this->execute('behat_general::i_visit', [$url]);
     }
 }

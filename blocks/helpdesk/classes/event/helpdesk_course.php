@@ -59,7 +59,7 @@ class helpdesk_course extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/blocks/helpdesk/index.php', array('mode' => 'course'));
     }
-
+    /* legacy calls no longer defined.
     public static function get_legacy_eventname() {
         // Override ONLY if you are migrating events_trigger() call.
         return 'helpdesk_course';
@@ -75,4 +75,5 @@ class helpdesk_course extends \core\event\base {
         unset($cloneddata['other']);
         return $cloneddata;
     }
+    */
 }

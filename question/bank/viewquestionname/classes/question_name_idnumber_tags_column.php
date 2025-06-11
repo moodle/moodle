@@ -50,14 +50,14 @@ class question_name_idnumber_tags_column extends viewquestionname_column_helper 
         // The non-breaking space '&nbsp;' is used in html to fix MDL-75051 (browser issues caused by chrome and Edge).
         if ($question->idnumber !== null && $question->idnumber !== '') {
             echo ' ' . \html_writer::span(
-                            \html_writer::span(get_string('idnumber', 'question'), 'accesshide')
-                            . '&nbsp;' . \html_writer::span(s($question->idnumber), 'badge badge-primary'), 'ml-1');
+                            \html_writer::span(get_string('idnumber', 'question') . '&nbsp;', 'accesshide')
+                            . \html_writer::span(s($question->idnumber), 'badge bg-primary text-white'), 'ms-1');
         }
 
         // Question tags.
         if (!empty($question->tags)) {
             $tags = \core_tag_tag::get_item_tags('core_question', 'question', $question->id);
-            echo $OUTPUT->tag_list($tags, null, 'd-inline flex-shrink-1 text-truncate ml-1', 0, null, true);
+            echo $OUTPUT->tag_list($tags, null, 'd-inline flex-shrink-1 text-truncate ms-1', 0, null, true);
         }
 
         echo \html_writer::end_tag('div');
@@ -82,7 +82,7 @@ class question_name_idnumber_tags_column extends viewquestionname_column_helper 
     }
 
     public function get_extra_classes(): array {
-        return ['pr-3'];
+        return ['pe-3'];
     }
 
 }

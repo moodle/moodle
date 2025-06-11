@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/quickmail/db" VERSION="20170914" COMMENT="XMLDB file for block blocks/quickmail"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_quickmail_signatures" COMMENT="Stores signatures for users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="125" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="signature" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="default_flag" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_config" COMMENT="Stores config info for teachers, per instance basis.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="coursesid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="125" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_messages" COMMENT="All message batches including saved drafts and sent messages">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course id that this message was sent from"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user id that composed this message"/>
+        <FIELD NAME="message_type" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" COMMENT="The selected message type of this message."/>
+        <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional notification id for which created this message"/>
+        <FIELD NAME="alternate_email_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional alternate email id that this message was sent from"/>
+        <FIELD NAME="signature_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional signature id that will be appended to this message"/>
+        <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject line"/>
+        <FIELD NAME="body" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The body of the message"/>
+        <FIELD NAME="editor_format" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The editor format id"/>
+        <FIELD NAME="sent_at" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp for when this message was sent"/>
+        <FIELD NAME="to_send_at" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp for when this message is scheduled to be sent"/>
+        <FIELD NAME="is_draft" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this is a message draft"/>
+        <FIELD NAME="send_receipt" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message sender should receive a receipt message."/>
+        <FIELD NAME="send_to_mentors" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message should be sent to any mentors of recipients."/>
+        <FIELD NAME="is_sending" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message is being sent at the moment."/>
+        <FIELD NAME="no_reply" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message is to be sent as no reply."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="deleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was marked as deleted in sent messages."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="notification_id" TYPE="foreign" FIELDS="notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="alternate_email_id" TYPE="foreign" FIELDS="alternate_email_id" REFTABLE="block_quickmail_alt_emails" REFFIELDS="id"/>
+        <KEY NAME="signature_id" TYPE="foreign" FIELDS="signature_id" REFTABLE="block_quickmail_signatures" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_msg_course" COMMENT="The course to send a message to all users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="message_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent message id"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The recipient user id"/>
+        <FIELD NAME="sent_at" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which this message was sent to the recipient user"/>
+        <FIELD NAME="moodle_message_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The mdl_message id that was sent to this recipient user"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="message_id" TYPE="foreign" FIELDS="message_id" REFTABLE="block_quickmail_messages" REFFIELDS="id"/>
+        <KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="msgrec" UNIQUE="false" FIELDS="sent_at"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_quickmail_msg_recips" COMMENT="The recipient users of a specific message">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="message_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent message id"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The recipient user id"/>
+        <FIELD NAME="sent_at" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which this message was sent to the recipient user"/>
+        <FIELD NAME="moodle_message_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The mdl_message id that was sent to this recipient user"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="message_id" TYPE="foreign" FIELDS="message_id" REFTABLE="block_quickmail_messages" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="msgrec" UNIQUE="false" FIELDS="sent_at"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_quickmail_draft_recips" COMMENT="The recipient entity keys of a specific message">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="message_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent message id"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="7" NOTNULL="true" SEQUENCE="false" COMMENT="The inclusion type. exclude or include"/>
+        <FIELD NAME="recipient_type" TYPE="char" LENGTH="6" NOTNULL="true" SEQUENCE="false" COMMENT="The type of recipient entity. role, group, user, or filter."/>
+        <FIELD NAME="recipient_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The recipient entity id."/>
+        <FIELD NAME="recipient_filter" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The user_filtering serialized data for user selection."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="message_id" TYPE="foreign" FIELDS="message_id" REFTABLE="block_quickmail_messages" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_msg_ad_email" COMMENT="Additional emails that a specific message was sent to">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="message_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent message id of this additional email"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The additional email address to be sent to"/>
+        <FIELD NAME="sent_at" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the message was sent to the additional email"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="message_id" TYPE="foreign" FIELDS="message_id" REFTABLE="block_quickmail_messages" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_msg_attach" COMMENT="The files that are attached to a parent message">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="message_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent message id in which these files are attached to"/>
+        <FIELD NAME="path" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The path of the attached file"/>
+        <FIELD NAME="filename" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the attached file"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="message_id" TYPE="foreign" FIELDS="message_id" REFTABLE="block_quickmail_messages" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_alt_emails" COMMENT="Alternate email addresses that a user or course may send from if validated">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="setup_user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user id who created this alternate email"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The course id that may use this alternate email address to send from"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user id that may use this alternate email address to send from"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The alternate email address"/>
+        <FIELD NAME="firstname" TYPE="char" LENGTH="125" NOTNULL="true" SEQUENCE="false" COMMENT="The first name of the alternate email address sender."/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="125" NOTNULL="true" SEQUENCE="false" COMMENT="The last name of the alternate email address sender."/>
+        <FIELD NAME="allowed_role_ids" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The role ids that may use this alternate email address to send from."/>
+        <FIELD NAME="is_validated" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this alternate email has been validated by the user who created it"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="setup_user_id" TYPE="foreign" FIELDS="setup_user_id" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="block_quickmail_notifs" COMMENT="Parent notifications of sub class notification types.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="User defined name of this notification instance."/>
+        <FIELD NAME="type" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the sub class notication type."/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course id that this notification was created for."/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user id that created this notifications."/>
+        <FIELD NAME="is_enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this notification is enabled."/>
+        <FIELD NAME="conditions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="String representing the specific notification type conditions for this notification."/>
+        <FIELD NAME="message_type" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" COMMENT="The selected message type of this notification message."/>
+        <FIELD NAME="alternate_email_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional alternate email id that this notification message was sent from"/>
+        <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The notification message subject line"/>
+        <FIELD NAME="signature_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional signature id that will be appended to this message"/>
+        <FIELD NAME="body" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The body of the notification message"/>
+        <FIELD NAME="editor_format" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The editor format id for the body"/>
+        <FIELD NAME="send_receipt" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the notification sender should receive a receipt message."/>
+        <FIELD NAME="send_to_mentors" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the notification message should be sent to any mentors of recipients."/>
+        <FIELD NAME="no_reply" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the notification message is to be sent as no reply."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="alternate_email_id" TYPE="foreign" FIELDS="alternate_email_id" REFTABLE="block_quickmail_alt_emails" REFFIELDS="id"/>
+        <KEY NAME="signature_id" TYPE="foreign" FIELDS="signature_id" REFTABLE="block_quickmail_signatures" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_event_notifs" COMMENT="Event based notification type instances extending a parent notification record.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this event notification."/>
+        <FIELD NAME="model" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the event notification model."/>
+        <FIELD NAME="time_delay_amount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that this event notification will be delayed once triggered to send."/>
+        <FIELD NAME="time_delay_unit" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Unit of time that this event notification will be delayed once triggered to send."/>
+        <FIELD NAME="mute_time_amount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that must elapse since last trigger before triggering again."/>
+        <FIELD NAME="mute_time_unit" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Unit of time that must elapse since last trigger before triggering again."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="notification_id" TYPE="foreign" FIELDS="notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_schedules" COMMENT="Schedule records for schedulable persistents.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="unit" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The unit of time for which this scheduled is based."/>
+        <FIELD NAME="amount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The amount of time of the unit of time for which this schedule is based."/>
+        <FIELD NAME="begin_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp for which this schedule will begin."/>
+        <FIELD NAME="end_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this schedule will end."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_rem_notifs" COMMENT="Reminder based notification type instances extending a parent notification record.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this reminder notification."/>
+        <FIELD NAME="model" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the reminder notification model."/>
+        <FIELD NAME="object_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The id of the specific object that this reminder notification was created for."/>
+        <FIELD NAME="max_per_interval" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of reminder notifications to be sent to a specific user within a single interval."/>
+        <FIELD NAME="schedule_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The id of the schedule for this reminder notification."/>
+        <FIELD NAME="last_run_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this reminder notification was last run."/>
+        <FIELD NAME="next_run_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this reminder notification will run next."/>
+        <FIELD NAME="is_running" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this reminder notification is being run at the moment."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="notification_id" TYPE="foreign" FIELDS="notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="schedule_id" TYPE="foreign" FIELDS="schedule_id" REFTABLE="block_quickmail_schedules" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_quickmail_event_recips" COMMENT="The recipient users of a specific event notification">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="event_notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The event notification id"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The recipient user id"/>
+        <FIELD NAME="notified_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="event_notification_id" TYPE="foreign" FIELDS="event_notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

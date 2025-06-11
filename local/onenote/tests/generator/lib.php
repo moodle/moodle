@@ -23,8 +23,6 @@
  * @copyright  Microsoft, Inc.
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class repository_onenote_generator
  */

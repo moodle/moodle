@@ -14,7 +14,7 @@ Below is an example of a single media object. Only two classes are required—th
 
 {{< example >}}
 <div class="media">
-  {{< placeholder width="64" height="64" class="mr-3" >}}
+  {{< placeholder width="64" height="64" class="me-3" >}}
   <div class="media-body">
     <h5 class="mt-0">Media heading</h5>
     <p>Will you do the same for me? It's time to face the music I'm no longer your muse. Heard it's beautiful, be the judge and my girls gonna take a vote. I can feel a phoenix inside of me. Heaven is jealous of our love, angels are crying from up above. Yeah, you take me to utopia.</p>
@@ -36,13 +36,13 @@ Media objects can be infinitely nested, though we suggest you stop at some point
 
 {{< example >}}
 <div class="media">
-  {{< placeholder width="64" height="64" class="mr-3" >}}
+  {{< placeholder width="64" height="64" class="me-3" >}}
   <div class="media-body">
     <h5 class="mt-0">Media heading</h5>
     <p>Standing on the frontline when the bombs start to fall. Heaven is jealous of our love, angels are crying from up above. Can't replace you with a million rings. Boy, when you're with me I'll give you a taste. There’s no going back. Before you met me I was alright but things were kinda heavy. Heavy is the head that wears the crown.</p>
 
     <div class="media mt-3">
-      <a class="mr-3" href="#">
+      <a class="me-3" href="#">
         {{< placeholder width="64" height="64" >}}
       </a>
       <div class="media-body">
@@ -60,7 +60,7 @@ Media in a media object can be aligned with flexbox utilities to the top (defaul
 
 {{< example >}}
 <div class="media">
-  {{< placeholder width="64" height="64" class="align-self-start mr-3" >}}
+  {{< placeholder width="64" height="64" class="align-self-start me-3" >}}
   <div class="media-body">
     <h5 class="mt-0">Top-aligned media</h5>
     <p>I’m gon’ put her in a coma. You give a hundred reasons why, and you say you're really gonna try. So I sat quietly, agreed politely. Suiting up for my crowning battle. And on my 18th Birthday we got matching tattoos. So très chic, yeah, she's a classic. I am ready for the road less traveled.</p>
@@ -71,7 +71,7 @@ Media in a media object can be aligned with flexbox utilities to the top (defaul
 
 {{< example >}}
 <div class="media">
-  {{< placeholder width="64" height="64" class="align-self-center mr-3" >}}
+  {{< placeholder width="64" height="64" class="align-self-center me-3" >}}
   <div class="media-body">
     <h5 class="mt-0">Center-aligned media</h5>
     <p>She'll turn cold as a freezer. At the eh-end of it all. Stinging like a bee I earned my stripes. Bikinis, zucchinis, Martinis, no weenies. I hope you got a healthy appetite. We can dance, until we die, you and I, will be young forever. We're living the life. We're doing it right. Word on the street, you got somethin' to show me, me.</p>
@@ -82,7 +82,7 @@ Media in a media object can be aligned with flexbox utilities to the top (defaul
 
 {{< example >}}
 <div class="media">
-  {{< placeholder width="64" height="64" class="align-self-end mr-3" >}}
+  {{< placeholder width="64" height="64" class="align-self-end me-3" >}}
   <div class="media-body">
     <h5 class="mt-0">Bottom-aligned media</h5>
     <p>Come on, let your colours burst. I can feel this light that's inside of me. All night they're playing, your song. From Tokyo to Mexico, to Rio. There’s no going back. But down to earth. Magical, colorful, Mr. Mystery, ee. Different DNA, they don't understand you.</p>
@@ -101,7 +101,7 @@ Change the order of content in media objects by modifying the HTML itself, or by
     <h5 class="mt-0 mb-1">Media object</h5>
     <p>I know there will be sacrifice but that's the price. Are you brave enough to let me see your peacock? Be your teenage dream tonight. Uh-huh, I see you. There’s no going back. Yeah, we maxed our credit cards and got kicked out of the bar. So let me get you in your birthday suit. You may fall in love when you meet her. Had the world in the palm of your hands. Don't let the greatness get you down, oh, oh yeah. Now we talking astrology, getting our nails did, all Japanese-y. Make me your Aphrodite.</p>
   </div>
-  {{< placeholder width="64" height="64" class="ml-3" >}}
+  {{< placeholder width="64" height="64" class="ms-3" >}}
 </div>
 {{< /example >}}
 
@@ -112,21 +112,21 @@ Because the media object has so few structural requirements, you can also use th
 {{< example >}}
 <ul class="list-unstyled">
   <li class="media">
-    {{< placeholder width="64" height="64" class="mr-3" >}}
+    {{< placeholder width="64" height="64" class="me-3" >}}
     <div class="media-body">
       <h5 class="mt-0 mb-1">List-based media object</h5>
       <p>All my girls vintage Chanel baby. So you can have your cake. Tonight, tonight, tonight, I'm walking on air. Slowly swallowing down my fear, yeah yeah. Growing fast into a bolt of lightning. So hot and heavy, 'Til dawn. That fairy tale ending with a knight in shining armor. Heavy is the head that wears the crown.</p>
     </div>
   </li>
   <li class="media my-4">
-    {{< placeholder width="64" height="64" class="mr-3" >}}
+    {{< placeholder width="64" height="64" class="me-3" >}}
     <div class="media-body">
       <h5 class="mt-0 mb-1">List-based media object</h5>
       <p>Maybe a reason why all the doors are closed. Cause once you’re mine, once you’re mine. Be your teenage dream tonight. Heavy is the head that wears the crown. It's not even a holiday, nothing to celebrate. A perfect storm, perfect storm.</p>
     </div>
   </li>
   <li class="media">
-    {{< placeholder width="64" height="64" class="mr-3" >}}
+    {{< placeholder width="64" height="64" class="me-3" >}}
     <div class="media-body">
       <h5 class="mt-0 mb-1">List-based media object</h5>
       <p>Are you brave enough to let me see your peacock? There’s no going back. This is the last time you say, after the last line you break. At the eh-end of it all.</p>

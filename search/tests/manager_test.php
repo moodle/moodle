@@ -29,7 +29,7 @@ require_once(__DIR__ . '/fixtures/mock_search_area.php');
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
 
     /**
      * Forum area id.
@@ -47,6 +47,7 @@ class manager_test extends \advanced_testcase {
     protected $coursesareaid = null;
 
     public function setUp(): void {
+        parent::setUp();
         $this->forumpostareaid = \core_search\manager::generate_areaid('mod_forum', 'post');
         $this->coursesareaid = \core_search\manager::generate_areaid('core_course', 'course');
     }
@@ -57,7 +58,7 @@ class manager_test extends \advanced_testcase {
         parent::tearDown();
     }
 
-    public function test_search_enabled() {
+    public function test_search_enabled(): void {
 
         $this->resetAfterTest();
 
@@ -80,7 +81,7 @@ class manager_test extends \advanced_testcase {
      * @param string $expected The expected course search url.
      * @dataProvider data_course_search_url
      */
-    public function test_course_search_url(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, string $expected) {
+    public function test_course_search_url(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, string $expected): void {
         $this->resetAfterTest();
 
         if (!is_null($gsenabled)) {
@@ -106,7 +107,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function data_course_search_url(): array {
+    public static function data_course_search_url(): array {
         return [
             'defaults' => [null, null, null, '/course/search.php'],
             'enabled' => [true, true, true, '/search/index.php'],
@@ -129,7 +130,7 @@ class manager_test extends \advanced_testcase {
      * @param bool $expected The expected result.
      * @dataProvider data_can_replace_course_search
      */
-    public function test_can_replace_course_search(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, bool $expected) {
+    public function test_can_replace_course_search(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, bool $expected): void {
         $this->resetAfterTest();
 
         if (!is_null($gsenabled)) {
@@ -155,7 +156,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function data_can_replace_course_search(): array {
+    public static function data_can_replace_course_search(): array {
         return [
             'defaults' => [null, null, null, false],
             'enabled' => [true, true, true, true],
@@ -169,7 +170,7 @@ class manager_test extends \advanced_testcase {
         ];
     }
 
-    public function test_search_areas() {
+    public function test_search_areas(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -205,7 +206,7 @@ class manager_test extends \advanced_testcase {
         $this->assertArrayHasKey($this->forumpostareaid, \core_search\manager::get_search_areas_list(true));
     }
 
-    public function test_search_config() {
+    public function test_search_config(): void {
 
         $this->resetAfterTest();
 
@@ -265,7 +266,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests the get_last_indexing_duration method in the base area class.
      */
-    public function test_get_last_indexing_duration() {
+    public function test_get_last_indexing_duration(): void {
         $this->resetAfterTest();
 
         $search = \testable_core_search::instance();
@@ -289,7 +290,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests that partial indexing works correctly.
      */
-    public function test_partial_indexing() {
+    public function test_partial_indexing(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -389,7 +390,7 @@ class manager_test extends \advanced_testcase {
      * This tests the different logic about displaying progress for slow/fast and
      * complete/incomplete processing.
      */
-    public function test_index_progress() {
+    public function test_index_progress(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 
@@ -472,7 +473,7 @@ class manager_test extends \advanced_testcase {
      * a problem by preventing it from indexing other documents modified between now and the future
      * date).
      */
-    public function test_future_documents() {
+    public function test_future_documents(): void {
         $this->resetAfterTest();
 
         // Create a course and a forum.
@@ -522,7 +523,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests that indexing a specified context works correctly.
      */
-    public function test_context_indexing() {
+    public function test_context_indexing(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -623,7 +624,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_search_user_accesses() {
+    public function test_search_user_accesses(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -772,7 +773,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_search_user_accesses_blocks() {
+    public function test_search_user_accesses_blocks(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -890,7 +891,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests retrieval of users search areas when limiting to a course the user is not enrolled in
      */
-    public function test_search_users_accesses_limit_non_enrolled_course() {
+    public function test_search_users_accesses_limit_non_enrolled_course(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -929,7 +930,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_search_user_accesses_allavailable() {
+    public function test_search_user_accesses_allavailable(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -1010,7 +1011,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests group-related aspects of the get_areas_user_accesses function.
      */
-    public function test_search_user_accesses_groups() {
+    public function test_search_user_accesses_groups(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1110,7 +1111,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_is_search_area() {
+    public function test_is_search_area(): void {
 
         $this->assertFalse(\testable_core_search::is_search_area('\asd\asd'));
         $this->assertFalse(\testable_core_search::is_search_area('\mod_forum\search\posta'));
@@ -1125,7 +1126,7 @@ class manager_test extends \advanced_testcase {
      * adding things to the request list, it doesn't test that they are actually indexed by the
      * scheduled task.
      */
-    public function test_request_index() {
+    public function test_request_index(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1234,7 +1235,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests the process_index_requests function.
      */
-    public function test_process_index_requests() {
+    public function test_process_index_requests(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1371,7 +1372,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test search area categories.
      */
-    public function test_get_search_area_categories() {
+    public function test_get_search_area_categories(): void {
         $categories = \core_search\manager::get_search_area_categories();
 
         $this->assertTrue(is_array($categories));
@@ -1389,7 +1390,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that we can find out if search area categories functionality is enabled.
      */
-    public function test_is_search_area_categories_enabled() {
+    public function test_is_search_area_categories_enabled(): void {
         $this->resetAfterTest();
 
         $this->assertFalse(\core_search\manager::is_search_area_categories_enabled());
@@ -1402,7 +1403,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that we can find out if hiding all results category is enabled.
      */
-    public function test_should_hide_all_results_category() {
+    public function test_should_hide_all_results_category(): void {
         $this->resetAfterTest();
 
         $this->assertEquals(0, \core_search\manager::should_hide_all_results_category());
@@ -1415,7 +1416,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that we can get default search category name.
      */
-    public function test_get_default_area_category_name() {
+    public function test_get_default_area_category_name(): void {
         $this->resetAfterTest();
 
         $expected = 'core-all';
@@ -1433,7 +1434,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that we can get correct search area category by its name.
      */
-    public function test_get_search_area_category_by_name() {
+    public function test_get_search_area_category_by_name(): void {
         $this->resetAfterTest();
 
         $testcategory = \core_search\manager::get_search_area_category_by_name('test_random_name');
@@ -1450,7 +1451,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that we can check that "Include all visible courses" feature is enabled.
      */
-    public function test_include_all_courses_enabled() {
+    public function test_include_all_courses_enabled(): void {
         $this->resetAfterTest();
         $this->assertFalse(\core_search\manager::include_all_courses());
         set_config('searchincludeallcourses', 1);
@@ -1460,7 +1461,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test that we can correctly build a list of courses for a course filter for the search results.
      */
-    public function test_build_limitcourseids() {
+    public function test_build_limitcourseids(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -1503,7 +1504,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function parse_search_area_id_data_provider() {
+    public static function parse_search_area_id_data_provider(): array {
         return [
             ['mod_book-chapter', ['mod_book', 'search_chapter']],
             ['mod_customcert-activity', ['mod_customcert', 'search_activity']],
@@ -1518,14 +1519,14 @@ class manager_test extends \advanced_testcase {
      * @param string $areaid Area id to parse.
      * @param array $expected Expected result of parsing.
      */
-    public function test_parse_search_area_id($areaid, $expected) {
+    public function test_parse_search_area_id($areaid, $expected): void {
         $this->assertEquals($expected, \core_search\manager::parse_areaid($areaid));
     }
 
     /**
      * Test that manager class will throw an exception when parsing an invalid area id.
      */
-    public function test_parse_invalid_search_area_id() {
+    public function test_parse_invalid_search_area_id(): void {
         $this->expectException('coding_exception');
         $this->expectExceptionMessage('Trying to parse invalid search area id invalid_area');
         \core_search\manager::parse_areaid('invalid_area');
@@ -1534,7 +1535,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test getting a coding exception when trying to lean up existing search area.
      */
-    public function test_cleaning_up_existing_search_area() {
+    public function test_cleaning_up_existing_search_area(): void {
         $expectedmessage = "Area mod_assign-activity exists. Please use appropriate search area class to manipulate the data.";
 
         $this->expectException('coding_exception');
@@ -1546,7 +1547,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test clean up of non existing search area.
      */
-    public function test_clean_up_non_existing_search_area() {
+    public function test_clean_up_non_existing_search_area(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1579,7 +1580,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests the context_deleted, course_deleting_start, and course_deleting_finish methods.
      */
-    public function test_context_deletion() {
+    public function test_context_deletion(): void {
         $this->resetAfterTest();
 
         // Create one course with 4 activities, and another with one.
@@ -1623,5 +1624,73 @@ class manager_test extends \advanced_testcase {
             ['context', $context5->id]
         ];
         $this->assertEquals($expected, $search->get_engine()->get_and_clear_deletes());
+    }
+
+    /**
+     * Tests the indexing delay (used to avoid race conditions) in {@see manager::index()}.
+     *
+     * @covers \core_search\manager::index
+     */
+    public function test_indexing_delay(): void {
+        global $USER, $CFG;
+
+        $this->resetAfterTest();
+
+        // Normally the indexing delay is turned off for test scripts because we don't want to have
+        // to wait 5 seconds after creating anything to index it and it's not like there will be a
+        // race condition (indexing doesn't run at same time as adding). This turns it on.
+        $CFG->searchindexingdelayfortestscript = true;
+
+        $this->setAdminUser();
+
+        // Create a course and a forum.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+
+        // Skip ahead 5 seconds so everything gets indexed.
+        $now = time();
+        $now += manager::INDEXING_DELAY;
+        $search = \testable_core_search::instance();
+        $search->fake_current_time($now);
+        $search->index();
+        $search->get_engine()->get_and_clear_added_documents();
+
+        // Basic discussion data.
+        $basicdata = [
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'userid' => $USER->id,
+        ];
+        // Discussion so old it's prior to indexing delay (not realistic).
+        $generator->get_plugin_generator('mod_forum')->create_discussion(array_merge($basicdata,
+            ['timemodified' => $now - manager::INDEXING_DELAY, 'name' => 'Frog']));
+        // Discussion just within indexing delay (simulates if it took a while to add to database).
+        $generator->get_plugin_generator('mod_forum')->create_discussion(array_merge($basicdata,
+            ['timemodified' => $now - (manager::INDEXING_DELAY - 1), 'name' => 'Toad']));
+        // Move time along a bit.
+        $now += 100;
+        $search->fake_current_time($now);
+        // Discussion that happened 5 seconds before the new now.
+        $generator->get_plugin_generator('mod_forum')->create_discussion(array_merge($basicdata,
+            ['timemodified' => $now - (manager::INDEXING_DELAY), 'name' => 'Zombie']));
+        // This one only happened 4 seconds before so it shouldn't be indexed yet.
+        $generator->get_plugin_generator('mod_forum')->create_discussion(array_merge($basicdata,
+            ['timemodified' => $now - (manager::INDEXING_DELAY - 1), 'name' => 'Werewolf']));
+
+        // Reindex and check that it added the middle two discussions.
+        $search->index();
+        $added = $search->get_engine()->get_and_clear_added_documents();
+        $this->assertCount(2, $added);
+        $this->assertEquals('Toad', $added[0]->get('title'));
+        $this->assertEquals('Zombie', $added[1]->get('title'));
+
+        // Move time forwards a couple of seconds and now the last one will get indexed.
+        $now += 2;
+        $search->fake_current_time($now);
+        $search->index();
+        $added = $search->get_engine()->get_and_clear_added_documents();
+        $this->assertCount(1, $added);
+        $this->assertEquals('Werewolf', $added[0]->get('title'));
     }
 }

@@ -205,7 +205,7 @@ abstract class gradingform_controller {
      * @param moodle_url $returnurl optional URL of a page where the user should be sent once they are finished with editing
      * @return moodle_url
      */
-    public function get_editor_url(moodle_url $returnurl = null) {
+    public function get_editor_url(?moodle_url $returnurl = null) {
 
         $params = array('areaid' => $this->areaid);
 
@@ -226,7 +226,7 @@ abstract class gradingform_controller {
      * @param settings_navigation $settingsnav {@link settings_navigation}
      * @param navigation_node $node {@link navigation_node}
      */
-    public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $node=null) {
+    public function extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $node=null) {
         // do not extend by default
     }
 
@@ -239,7 +239,7 @@ abstract class gradingform_controller {
      * @param global_navigation $navigation {@link global_navigation}
      * @param navigation_node $node {@link navigation_node}
      */
-    public function extend_navigation(global_navigation $navigation, navigation_node $node=null) {
+    public function extend_navigation(global_navigation $navigation, ?navigation_node $node=null) {
         // do not extend by default
     }
 
@@ -695,13 +695,13 @@ abstract class gradingform_controller {
      * to the nearest int. Positive $gradingtype means that range 0..$gradingtype
      * is used for the grades and in this case grade does not have to be rounded.
      *
-     * Sometimes modules always expect grade to be rounded (like mod_assignment does).
+     * Sometimes modules always expect grade to be rounded (like mod_assign does).
      *
      * @param array $graderange array where first _key_ is the minimum grade and the
      *     last key is the maximum grade.
      * @param bool $allowgradedecimals if decimal values are allowed as grades.
      */
-    public final function set_grade_range(array $graderange, $allowgradedecimals = false) {
+    final public function set_grade_range(array $graderange, $allowgradedecimals = false) {
         $this->graderange = $graderange;
         $this->allowgradedecimals = $allowgradedecimals;
     }
@@ -711,7 +711,7 @@ abstract class gradingform_controller {
      *
      * @return array
      */
-    public final function get_grade_range() {
+    final public function get_grade_range() {
         if (empty($this->graderange)) {
             return array();
         }
@@ -723,7 +723,7 @@ abstract class gradingform_controller {
      *
      * @return bool
      */
-    public final function get_allow_grade_decimals() {
+    final public function get_allow_grade_decimals() {
         return $this->allowgradedecimals;
     }
 

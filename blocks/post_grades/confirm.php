@@ -39,7 +39,7 @@ $s = ues::gen_str('block_post_grades');
 $periods = post_grades::active_periods($course);
 
 if (empty($periods) or !isset($periods[$periodid])) {
-    print_error('notactive', 'block_post_grades');
+    moodle_exception('notactive', 'block_post_grades');
 }
 
 $period = $periods[$periodid];
@@ -47,7 +47,7 @@ $period = $periods[$periodid];
 $validgroups = post_grades::valid_groups($course);
 
 if (!isset($validgroups[$groupid])) {
-    print_error('notvalidgroup', 'block_post_grades', '', $group->name);
+    moodle_exception('notvalidgroup', 'block_post_grades', '', $group->name);
 }
 
 $blockname = $s('pluginname');

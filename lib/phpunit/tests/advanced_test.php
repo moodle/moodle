@@ -25,13 +25,14 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \advanced_testcase
  */
-class advanced_test extends \advanced_testcase {
+final class advanced_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once(__DIR__ . '/fixtures/adhoc_test_task.php');
+        parent::setUpBeforeClass();
     }
 
-    public function test_debugging() {
+    public function test_debugging(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -76,7 +77,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertDebuggingCalled('pokus', DEBUG_MINIMAL);
     }
 
-    public function test_set_user() {
+    public function test_set_user(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();
@@ -120,10 +121,10 @@ class advanced_test extends \advanced_testcase {
         // Ensure session is reset after setUser, as it may contain extra info.
         $SESSION->sometestvalue = true;
         $this->setUser($user);
-        $this->assertObjectNotHasAttribute('sometestvalue', $SESSION);
+        $this->assertObjectNotHasProperty('sometestvalue', $SESSION);
     }
 
-    public function test_set_admin_user() {
+    public function test_set_admin_user(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -133,7 +134,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertTrue(is_siteadmin());
     }
 
-    public function test_set_guest_user() {
+    public function test_set_guest_user(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -143,7 +144,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertTrue(isguestuser());
     }
 
-    public function test_database_reset() {
+    public function test_database_reset(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -206,7 +207,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertEquals(2, $DB->count_records('user'));
     }
 
-    public function test_change_detection() {
+    public function test_change_detection(): void {
         global $DB, $CFG, $COURSE, $SITE, $USER;
 
         $this->preventResetByRollback();
@@ -287,12 +288,36 @@ class advanced_test extends \advanced_testcase {
         }
     }
 
-    public function test_getDataGenerator() {
+    public function test_getDataGenerator(): void {
         $generator = $this->getDataGenerator();
         $this->assertInstanceOf('testing_data_generator', $generator);
     }
 
-    public function test_database_mock1() {
+    /**
+     * Some basic tests for the getExternalTestFileUrl() method.
+     */
+    public function test_external_file_url(): void {
+        $url = self::getExternalTestFileUrl('testfile.txt');
+        // There should only be a // after the protocol.
+        $this->assertCount(2, explode('//', $url));
+
+        if (defined('TEST_EXTERNAL_FILES_HTTP_URL')) {
+            $this->assertStringContainsString(TEST_EXTERNAL_FILES_HTTP_URL, $url);
+        } else {
+            $this->assertStringContainsString('http://download.moodle.org/unittest', $url);
+        }
+
+        $url = self::getExternalTestFileUrl('testfile.txt', true);
+        $this->assertCount(2, explode('//', $url));
+
+        if (defined('TEST_EXTERNAL_FILES_HTTPS_URL')) {
+            $this->assertStringContainsString(TEST_EXTERNAL_FILES_HTTPS_URL, $url);
+        } else {
+            $this->assertStringContainsString('https://download.moodle.org/unittest', $url);
+        }
+    }
+
+    public function test_database_mock1(): void {
         global $DB;
 
         try {
@@ -306,86 +331,14 @@ class advanced_test extends \advanced_testcase {
         // Rest continues after reset.
     }
 
-    public function test_database_mock2() {
+    public function test_database_mock2(): void {
         global $DB;
 
         // Now the database should be back to normal.
         $this->assertFalse($DB->get_record('user', array('id'=>9999)));
     }
 
-    public function test_load_data_dataset_xml() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        $this->assertFalse($DB->record_exists('user', array('id' => 5)));
-        $this->assertFalse($DB->record_exists('user', array('id' => 7)));
-        $dataset = $this->createXMLDataSet(__DIR__.'/fixtures/sample_dataset.xml');
-        $this->assertDebuggingCalled('createXMLDataSet() is deprecated. Please use dataset_from_files() instead.');
-        $this->loadDataSet($dataset);
-        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
-        $this->assertTrue($DB->record_exists('user', array('id' => 5)));
-        $this->assertTrue($DB->record_exists('user', array('id' => 7)));
-        $user5 = $DB->get_record('user', array('id' => 5));
-        $user7 = $DB->get_record('user', array('id' => 7));
-        $this->assertSame('bozka.novakova', $user5->username);
-        $this->assertSame('pepa.novak', $user7->username);
-
-    }
-
-    public function test_load_dataset_csv() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        $this->assertFalse($DB->record_exists('user', array('id' => 8)));
-        $this->assertFalse($DB->record_exists('user', array('id' => 9)));
-        $dataset = $this->createCsvDataSet(array('user' => __DIR__.'/fixtures/sample_dataset.csv'));
-        $this->assertDebuggingCalled('createCsvDataSet() is deprecated. Please use dataset_from_files() instead.');
-        $this->loadDataSet($dataset);
-        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
-        $this->assertEquals(5, $DB->get_field('user', 'id', array('username' => 'bozka.novakova')));
-        $this->assertEquals(7, $DB->get_field('user', 'id', array('username' => 'pepa.novak')));
-
-    }
-
-    public function test_load_dataset_array() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        $data = array(
-            'user' => array(
-                array('username', 'email'),
-                array('top.secret', 'top@example.com'),
-                array('low.secret', 'low@example.com'),
-            ),
-        );
-
-        $this->assertFalse($DB->record_exists('user', array('email' => 'top@example.com')));
-        $this->assertFalse($DB->record_exists('user', array('email' => 'low@example.com')));
-        $dataset = $this->createArrayDataSet($data);
-        $this->assertDebuggingCalled('createArrayDataSet() is deprecated. Please use dataset_from_array() instead.');
-        $this->loadDataSet($dataset);
-        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
-        $this->assertTrue($DB->record_exists('user', array('email' => 'top@example.com')));
-        $this->assertTrue($DB->record_exists('user', array('email' => 'low@example.com')));
-
-        $data = array(
-            'user' => array(
-                array('username' => 'noidea', 'email' => 'noidea@example.com'),
-                array('username' => 'onemore', 'email' => 'onemore@example.com'),
-            ),
-        );
-        $dataset = $this->createArrayDataSet($data);
-        $this->assertDebuggingCalled('createArrayDataSet() is deprecated. Please use dataset_from_array() instead.');
-        $this->loadDataSet($dataset);
-        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
-        $this->assertTrue($DB->record_exists('user', array('username' => 'noidea')));
-        $this->assertTrue($DB->record_exists('user', array('username' => 'onemore')));
-    }
-
-    public function test_assert_time_current() {
+    public function test_assert_time_current(): void {
         $this->assertTimeCurrent(time());
 
         $this->setCurrentTimeStart();
@@ -411,7 +364,63 @@ class advanced_test extends \advanced_testcase {
         }
     }
 
-    public function test_message_processors_reset() {
+    /**
+     * Test the assertEventContextNotUsed() assertion.
+     *
+     * Verify that events using the event context in some of their
+     * methods are detected properly (will throw a warning if they are).
+     *
+     * To do so, we'll be using some fixture events (context_used_in_event_xxxx),
+     * that, on purpose, use the event context (incorrectly) in their methods.
+     *
+     * Note that because we are using imported fixture classes, and because we
+     * are testing for warnings, better we run the tests in a separate process.
+     *
+     * @param string $fixture The fixture class to use.
+     * @param bool $phpwarn Whether a PHP warning is expected.
+     *
+     * @runInSeparateProcess
+     * @dataProvider assert_event_context_not_used_provider
+     * @covers ::assertEventContextNotUsed
+     */
+    public function test_assert_event_context_not_used($fixture, $phpwarn): void {
+        require(__DIR__ . '/fixtures/event_fixtures.php');
+        // Create an event that uses the event context in its get_url() and get_description() methods.
+        $event = $fixture::create([
+            'other' => [
+                'sample' => 1,
+                'xx' => 10,
+            ],
+        ]);
+
+        if ($phpwarn) {
+            // Let's convert the warnings into an assert-able exception.
+            set_error_handler(
+                static function ($errno, $errstr) {
+                    restore_error_handler();
+                    throw new \Exception($errstr, $errno);
+                },
+                E_WARNING // Or any other specific E_ that we want to assert.
+            );
+            $this->expectException(\Exception::class);
+        }
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Data provider for test_assert_event_context_not_used().
+     *
+     * @return array
+     */
+    public static function assert_event_context_not_used_provider(): array {
+        return [
+            'correct' => ['\core\event\context_used_in_event_correct', false],
+            'wrong_get_url' => ['\core\event\context_used_in_event_get_url', true],
+            'wrong_get_description' => ['\core\event\context_used_in_event_get_description', true],
+        ];
+    }
+
+    public function test_message_processors_reset(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -438,7 +447,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertEquals(count($processors1) + 1, count($processors3));
     }
 
-    public function test_message_redirection() {
+    public function test_message_redirection(): \phpunit_message_sink {
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest(false);
 
@@ -560,7 +569,7 @@ class advanced_test extends \advanced_testcase {
     /**
      * @depends test_message_redirection
      */
-    public function test_message_redirection_noreset($sink) {
+    public function test_message_redirection_noreset(\phpunit_message_sink $sink): void {
         if ($this->isInIsolation()) {
             $this->markTestSkipped('State cannot be carried over between tests in isolated tests');
         }
@@ -591,11 +600,11 @@ class advanced_test extends \advanced_testcase {
     /**
      * @depends test_message_redirection_noreset
      */
-    public function test_message_redirection_reset() {
+    public function test_message_redirection_reset(): void {
         $this->assertFalse(\phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
     }
 
-    public function test_set_timezone() {
+    public function test_set_timezone(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -638,7 +647,7 @@ class advanced_test extends \advanced_testcase {
 
     }
 
-    public function test_locale_reset() {
+    public function test_locale_reset(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -687,7 +696,7 @@ class advanced_test extends \advanced_testcase {
     /**
      * This test sets a user agent and makes sure that it is cleared when the test is reset.
      */
-    public function test_it_resets_useragent_after_test() {
+    public function test_it_resets_useragent_after_test(): void {
         $this->resetAfterTest();
         $fakeagent = 'New user agent set.';
 
@@ -750,5 +759,70 @@ class advanced_test extends \advanced_testcase {
         \core\task\manager::queue_adhoc_task($task);
         $this->runAdhocTasks();
         $this->expectOutputRegex("/Task was run as {$user->id}/");
+    }
+
+    /**
+     * Test the incrementing mock clock.
+     *
+     * @covers ::mock_clock_with_incrementing
+     * @covers \incrementing_clock
+     */
+    public function test_mock_clock_with_incrementing(): void {
+        $standard = \core\di::get(\core\clock::class);
+        $this->assertInstanceOf(\Psr\Clock\ClockInterface::class, $standard);
+        $this->assertInstanceOf(\core\clock::class, $standard);
+
+        $newclock = $this->mock_clock_with_incrementing(0);
+        $mockedclock = \core\di::get(\core\clock::class);
+        $this->assertInstanceOf(\incrementing_clock::class, $newclock);
+        $this->assertSame($newclock, $mockedclock);
+
+        // Test the functionality.
+        $this->assertEquals(0, $mockedclock->now()->getTimestamp());
+        $this->assertEquals(1, $newclock->now()->getTimestamp());
+        $this->assertEquals(2, $mockedclock->now()->getTimestamp());
+
+        // Specify a specific start time.
+        $newclock = $this->mock_clock_with_incrementing(12345);
+        $mockedclock = \core\di::get(\core\clock::class);
+        $this->assertSame($newclock, $mockedclock);
+
+        $this->assertEquals(12345, $mockedclock->now()->getTimestamp());
+        $this->assertEquals(12346, $newclock->now()->getTimestamp());
+        $this->assertEquals(12347, $mockedclock->now()->getTimestamp());
+
+        $this->assertEquals($newclock->time, $mockedclock->now()->getTimestamp());
+    }
+
+    /**
+     * Test the incrementing mock clock.
+     *
+     * @covers ::mock_clock_with_frozen
+     * @covers \frozen_clock
+     */
+    public function test_mock_clock_with_frozen(): void {
+        $standard = \core\di::get(\core\clock::class);
+        $this->assertInstanceOf(\Psr\Clock\ClockInterface::class, $standard);
+        $this->assertInstanceOf(\core\clock::class, $standard);
+
+        $newclock = $this->mock_clock_with_frozen(0);
+        $mockedclock = \core\di::get(\core\clock::class);
+        $this->assertInstanceOf(\frozen_clock::class, $newclock);
+        $this->assertSame($newclock, $mockedclock);
+
+        // Test the functionality.
+        $initialtime = $mockedclock->now()->getTimestamp();
+        $this->assertEquals($initialtime, $newclock->now()->getTimestamp());
+        $this->assertEquals($initialtime, $mockedclock->now()->getTimestamp());
+
+        // Specify a specific start time.
+        $newclock = $this->mock_clock_with_frozen(12345);
+        $mockedclock = \core\di::get(\core\clock::class);
+        $this->assertSame($newclock, $mockedclock);
+
+        $initialtime = $mockedclock->now();
+        $this->assertEquals($initialtime, $mockedclock->now());
+        $this->assertEquals($initialtime, $newclock->now());
+        $this->assertEquals($initialtime, $mockedclock->now());
     }
 }

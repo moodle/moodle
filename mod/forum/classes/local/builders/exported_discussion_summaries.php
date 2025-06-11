@@ -112,7 +112,7 @@ class exported_discussion_summaries {
         stdClass $user,
         forum_entity $forum,
         array $discussions
-    ) : array {
+    ): array {
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $canseeanyprivatereply = $capabilitymanager->can_view_any_private_reply($user);
 
@@ -200,7 +200,7 @@ class exported_discussion_summaries {
      * @param stdClass $user The user we are getting favourites for
      * @return int[] A list of favourited itemids
      */
-    private function get_favourites(stdClass $user) : array {
+    private function get_favourites(stdClass $user): array {
         $ids = [];
 
         if (isloggedin()) {
@@ -237,7 +237,7 @@ class exported_discussion_summaries {
      * @param forum_entity $forum The forum entity
      * @return stdClass[]
      */
-    private function get_groups_available_in_forum($forum) : array {
+    private function get_groups_available_in_forum($forum): array {
         $course = $forum->get_course_record();
         $coursemodule = $forum->get_course_module_record();
 
@@ -251,7 +251,7 @@ class exported_discussion_summaries {
      * @param forum_entity $forum The forum entity
      * @return array Author groups indexed by author id
      */
-    private function get_author_groups_from_posts(array $posts, $forum) : array {
+    private function get_author_groups_from_posts(array $posts, $forum): array {
         $course = $forum->get_course_record();
         $coursemodule = $forum->get_course_module_record();
         $authorids = array_reduce($posts, function($carry, $post) {
@@ -292,7 +292,7 @@ class exported_discussion_summaries {
      * @param int[] $authorids The list of author ids to fetch context ids for.
      * @return int[] Context ids indexed by author id
      */
-    private function get_author_context_ids(array $authorids) : array {
+    private function get_author_context_ids(array $authorids): array {
         $authorvault = $this->vaultfactory->get_author_vault();
         return $authorvault->get_context_ids_for_author_ids($authorids);
     }

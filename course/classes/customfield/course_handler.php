@@ -61,7 +61,7 @@ class course_handler extends \core_customfield\handler {
      * @param int $itemid
      * @return \core_course\customfield\course_handler
      */
-    public static function create(int $itemid = 0) : \core_customfield\handler {
+    public static function create(int $itemid = 0): \core_customfield\handler {
         if (static::$singleton === null) {
             self::$singleton = new static(0);
         }
@@ -84,7 +84,7 @@ class course_handler extends \core_customfield\handler {
      *
      * @return bool true if the current can configure custom fields, false otherwise
      */
-    public function can_configure() : bool {
+    public function can_configure(): bool {
         return has_capability('moodle/course:configurecustomfields', $this->get_configuration_context());
     }
 
@@ -95,7 +95,7 @@ class course_handler extends \core_customfield\handler {
      * @param int $instanceid id of the course to test edit permission
      * @return bool true if the current can edit custom fields, false otherwise
      */
-    public function can_edit(field_controller $field, int $instanceid = 0) : bool {
+    public function can_edit(field_controller $field, int $instanceid = 0): bool {
         if ($instanceid) {
             $context = $this->get_instance_context($instanceid);
             return (!$field->get_configdata_property('locked') ||
@@ -119,7 +119,7 @@ class course_handler extends \core_customfield\handler {
      * @param int $instanceid id of the course to test edit permission
      * @return bool true if the current can edit custom fields, false otherwise
      */
-    public function can_view(field_controller $field, int $instanceid) : bool {
+    public function can_view(field_controller $field, int $instanceid): bool {
         $visibility = $field->get_configdata_property('visibility');
         if ($visibility == self::NOTVISIBLE) {
             return false;
@@ -146,7 +146,7 @@ class course_handler extends \core_customfield\handler {
      *
      * @return \context
      */
-    protected function get_parent_context() : \context {
+    protected function get_parent_context(): \context {
         global $PAGE;
         if ($this->parentcontext) {
             return $this->parentcontext;
@@ -161,7 +161,7 @@ class course_handler extends \core_customfield\handler {
      *
      * @return \context the context for configuration
      */
-    public function get_configuration_context() : \context {
+    public function get_configuration_context(): \context {
         return \context_system::instance();
     }
 
@@ -170,7 +170,7 @@ class course_handler extends \core_customfield\handler {
      *
      * @return \moodle_url The URL to configure custom fields for this component
      */
-    public function get_configuration_url() : \moodle_url {
+    public function get_configuration_url(): \moodle_url {
         return new \moodle_url('/course/customfield.php');
     }
 
@@ -180,7 +180,7 @@ class course_handler extends \core_customfield\handler {
      * @param int $instanceid id of the record to get the context for
      * @return \context the context for the given record
      */
-    public function get_instance_context(int $instanceid = 0) : \context {
+    public function get_instance_context(int $instanceid = 0): \context {
         if ($instanceid > 0) {
             return \context_course::instance($instanceid);
         } else {
@@ -215,6 +215,8 @@ class course_handler extends \core_customfield\handler {
      *
      * @param \restore_task $task
      * @param array $data
+     *
+     * @return int|void Conditionally returns the ID of the created or updated record.
      */
     public function restore_instance_data_from_backup(\restore_task $task, array $data) {
         $courseid = $task->get_courseid();
@@ -231,10 +233,11 @@ class course_handler extends \core_customfield\handler {
                     $d->set($d->datafield(), $data['value']);
                     $d->set('value', $data['value']);
                     $d->set('valueformat', $data['valueformat']);
+                    $d->set('valuetrust', !empty($data['valuetrust']));
                     $d->set('contextid', $context->id);
                     $d->save();
                 }
-                return;
+                return $d->get('id');
             }
         }
     }

@@ -30,11 +30,12 @@ require_once($CFG->dirroot . '/blog/lib.php');
  * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class eventobservers_test extends \advanced_testcase {
+final class eventobservers_test extends \advanced_testcase {
     /**
      * Set up method.
      */
     public function setUp(): void {
+        parent::setUp();
         // Enable monitor.
         set_config('enablemonitor', 1, 'tool_monitor');
     }
@@ -42,7 +43,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test observer for course delete event.
      */
-    public function test_course_deleted() {
+    public function test_course_deleted(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -117,7 +118,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * This tests if writing of the events to the table tool_monitor_events is working fine.
      */
-    public function test_flush() {
+    public function test_flush(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -215,7 +216,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test the notification sending features.
      */
-    public function test_process_event() {
+    public function test_process_event(): void {
 
         global $DB, $USER;
 
@@ -352,7 +353,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test that same events are not used twice to calculate conditions for a single subscription.
      */
-    public function test_multiple_notification_not_sent() {
+    public function test_multiple_notification_not_sent(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -440,7 +441,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Tests for replace_placeholders method.
      */
-    public function test_replace_placeholders() {
+    public function test_replace_placeholders(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -448,13 +449,14 @@ class eventobservers_test extends \advanced_testcase {
         $msgsink = $this->redirectMessages();
 
         // Generate data.
-        $course = $this->getDataGenerator()->create_course();
+        $course = $this->getDataGenerator()->create_course(['fullname' => 'Observed course', 'shortname' => 'obscourse']);
         $toolgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $context = \context_user::instance($USER->id, IGNORE_MISSING);
 
         // Creating book.
         $cm = new \stdClass();
         $cm->course = $course->id;
+        $cm->name = 'Observed book';
         $book = $this->getDataGenerator()->create_module('book', $cm);
 
         // Creating rule.
@@ -468,7 +470,10 @@ class eventobservers_test extends \advanced_testcase {
 * {modulelink}
 * __{rulename}__
 * {description}
-* {eventname}';
+* {eventname}
+* {modulename}
+* {coursefullname}
+* {courseshortname}';
         $rulerecord->templateformat = FORMAT_MARKDOWN;
 
         $rule = $toolgenerator->create_rule($rulerecord);
@@ -500,6 +505,9 @@ class eventobservers_test extends \advanced_testcase {
         $this->assertStringContainsString('<li><strong>'.$rule->get_name($context).'</strong></li>', $msg->fullmessagehtml);
         $this->assertStringContainsString('<li>'.$rule->get_description($context).'</li>', $msg->fullmessagehtml);
         $this->assertStringContainsString('<li>'.$rule->get_event_name().'</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>' . $cm->name . '</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>' . $course->fullname . '</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>' . $course->shortname . '</li>', $msg->fullmessagehtml);
 
         $this->assertEquals(FORMAT_PLAIN, $msg->fullmessageformat);
         $this->assertStringNotContainsString('<h2>', $msg->fullmessage);
@@ -509,12 +517,16 @@ class eventobservers_test extends \advanced_testcase {
         $this->assertStringContainsString('* '.strtoupper($rule->get_name($context)), $msg->fullmessage);
         $this->assertStringContainsString('* '.$rule->get_description($context), $msg->fullmessage);
         $this->assertStringContainsString('* '.$rule->get_event_name(), $msg->fullmessage);
+        $this->assertStringContainsString('* ' . $cm->name, $msg->fullmessage);
+        $this->assertStringContainsString('* ' . $course->fullname, $msg->fullmessage);
+        $this->assertStringContainsString('* ' . $course->shortname, $msg->fullmessage);
+
     }
 
     /**
      * Test observer for user delete event.
      */
-    public function test_user_deleted() {
+    public function test_user_deleted(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -569,7 +581,7 @@ class eventobservers_test extends \advanced_testcase {
     /**
      * Test observer for course module delete event.
      */
-    public function test_course_module_deleted() {
+    public function test_course_module_deleted(): void {
         global $DB;
 
         $this->setAdminUser();

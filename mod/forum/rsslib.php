@@ -314,8 +314,6 @@ function forum_rss_get_group_sql($cm, $groupmode, $currentgroup, $modcontext=nul
 function forum_rss_feed_contents($forum, $sql, $params, $context) {
     global $CFG, $DB, $USER;
 
-    $status = true;
-
     $recs = $DB->get_recordset_sql($sql, $params, 0, $forum->rssarticles);
 
     //set a flag. Are we displaying discussions or posts?
@@ -328,7 +326,6 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
         throw new \moodle_exception('invalidcoursemodule');
     }
 
-    $formatoptions = new stdClass();
     $items = array();
     foreach ($recs as $rec) {
             $item = new stdClass();
@@ -360,8 +357,8 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
                     $item->author = get_string('forumauthorhidden', 'forum');
                 } else {
                     // This is a post which has been deleted.
-                    $item->title = get_string('privacy:request:delete:post:subject', 'mod_forum');
-                    $message = get_string('privacy:request:delete:post:subject', 'mod_forum');
+                    $item->title = get_string('forumsubjectdeleted', 'mod_forum');
+                    $message = get_string('forumbodydeleted', 'mod_forum');
                     $item->author = get_string('forumauthorhidden', 'forum');
                 }
             } else {
@@ -377,7 +374,6 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
                 $item->author = fullname($rec);
                 $message = file_rewrite_pluginfile_urls($rec->postmessage, 'pluginfile.php', $context->id,
                         'mod_forum', 'post', $rec->postid);
-                $formatoptions->trusted = $rec->posttrust;
             }
 
             if ($isdiscussion) {
@@ -386,8 +382,10 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
             }
 
-            $formatoptions->trusted = $rec->posttrust;
-            $item->description = format_text($message, $rec->postformat, $formatoptions, $forum->course);
+            $item->description = format_text($message, $rec->postformat, [
+                'context' => $context,
+                'trusted' => $rec->posttrust,
+            ]);
 
             //TODO: MDL-31129 implement post attachment handling
             /*if (!$isdiscussion) {

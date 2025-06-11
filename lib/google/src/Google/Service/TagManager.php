@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager extends Google_Service
 {
   /** Delete your Google Tag Manager containers. */
@@ -944,6 +945,7 @@ class Google_Service_TagManager extends Google_Service
  *   $accounts = $tagmanagerService->accounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -1001,6 +1003,7 @@ class Google_Service_TagManager_Accounts_Resource extends Google_Service_Resourc
  *   $containers = $tagmanagerService->containers;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainers_Resource extends Google_Service_Resource
 {
 
@@ -1091,6 +1094,7 @@ class Google_Service_TagManager_AccountsContainers_Resource extends Google_Servi
  *   $folders = $tagmanagerService->folders;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainersFolders_Resource extends Google_Service_Resource
 {
 
@@ -1185,6 +1189,7 @@ class Google_Service_TagManager_AccountsContainersFolders_Resource extends Googl
  *   $entities = $tagmanagerService->entities;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainersFoldersEntities_Resource extends Google_Service_Resource
 {
 
@@ -1213,6 +1218,7 @@ class Google_Service_TagManager_AccountsContainersFoldersEntities_Resource exten
  *   $move_folders = $tagmanagerService->move_folders;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainersMoveFolders_Resource extends Google_Service_Resource
 {
 
@@ -1243,6 +1249,7 @@ class Google_Service_TagManager_AccountsContainersMoveFolders_Resource extends G
  *   $tags = $tagmanagerService->tags;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainersTags_Resource extends Google_Service_Resource
 {
 
@@ -1336,6 +1343,7 @@ class Google_Service_TagManager_AccountsContainersTags_Resource extends Google_S
  *   $triggers = $tagmanagerService->triggers;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainersTriggers_Resource extends Google_Service_Resource
 {
 
@@ -1430,6 +1438,7 @@ class Google_Service_TagManager_AccountsContainersTriggers_Resource extends Goog
  *   $variables = $tagmanagerService->variables;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainersVariables_Resource extends Google_Service_Resource
 {
 
@@ -1524,6 +1533,7 @@ class Google_Service_TagManager_AccountsContainersVariables_Resource extends Goo
  *   $versions = $tagmanagerService->versions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsContainersVersions_Resource extends Google_Service_Resource
 {
 
@@ -1675,6 +1685,7 @@ class Google_Service_TagManager_AccountsContainersVersions_Resource extends Goog
  *   $permissions = $tagmanagerService->permissions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountsPermissions_Resource extends Google_Service_Resource
 {
 
@@ -1760,6 +1771,7 @@ class Google_Service_TagManager_AccountsPermissions_Resource extends Google_Serv
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Account extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1804,6 +1816,7 @@ class Google_Service_TagManager_Account extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_AccountAccess extends Google_Collection
 {
   protected $collection_key = 'permission';
@@ -1822,6 +1835,7 @@ class Google_Service_TagManager_AccountAccess extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Condition extends Google_Collection
 {
   protected $collection_key = 'parameter';
@@ -1850,6 +1864,7 @@ class Google_Service_TagManager_Condition extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Container extends Google_Collection
 {
   protected $collection_key = 'usageContext';
@@ -1958,6 +1973,7 @@ class Google_Service_TagManager_Container extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ContainerAccess extends Google_Collection
 {
   protected $collection_key = 'permission';
@@ -1985,6 +2001,7 @@ class Google_Service_TagManager_ContainerAccess extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ContainerVersion extends Google_Collection
 {
   protected $collection_key = 'variable';
@@ -2127,6 +2144,7 @@ class Google_Service_TagManager_ContainerVersion extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ContainerVersionHeader extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2225,6 +2243,7 @@ class Google_Service_TagManager_ContainerVersionHeader extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_CreateContainerVersionRequestVersionOptions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2260,6 +2279,7 @@ class Google_Service_TagManager_CreateContainerVersionRequestVersionOptions exte
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_CreateContainerVersionResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2287,6 +2307,7 @@ class Google_Service_TagManager_CreateContainerVersionResponse extends Google_Mo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Folder extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2340,6 +2361,7 @@ class Google_Service_TagManager_Folder extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_FolderEntities extends Google_Collection
 {
   protected $collection_key = 'variable';
@@ -2379,6 +2401,7 @@ class Google_Service_TagManager_FolderEntities extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListAccountUsersResponse extends Google_Collection
 {
   protected $collection_key = 'userAccess';
@@ -2398,6 +2421,7 @@ class Google_Service_TagManager_ListAccountUsersResponse extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListAccountsResponse extends Google_Collection
 {
   protected $collection_key = 'accounts';
@@ -2417,6 +2441,7 @@ class Google_Service_TagManager_ListAccountsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListContainerVersionsResponse extends Google_Collection
 {
   protected $collection_key = 'containerVersionHeader';
@@ -2446,6 +2471,7 @@ class Google_Service_TagManager_ListContainerVersionsResponse extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListContainersResponse extends Google_Collection
 {
   protected $collection_key = 'containers';
@@ -2465,6 +2491,7 @@ class Google_Service_TagManager_ListContainersResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListFoldersResponse extends Google_Collection
 {
   protected $collection_key = 'folders';
@@ -2484,6 +2511,7 @@ class Google_Service_TagManager_ListFoldersResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListTagsResponse extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -2503,6 +2531,7 @@ class Google_Service_TagManager_ListTagsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListTriggersResponse extends Google_Collection
 {
   protected $collection_key = 'triggers';
@@ -2522,6 +2551,7 @@ class Google_Service_TagManager_ListTriggersResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_ListVariablesResponse extends Google_Collection
 {
   protected $collection_key = 'variables';
@@ -2541,6 +2571,7 @@ class Google_Service_TagManager_ListVariablesResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Macro extends Google_Collection
 {
   protected $collection_key = 'parameter';
@@ -2668,6 +2699,7 @@ class Google_Service_TagManager_Macro extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Parameter extends Google_Collection
 {
   protected $collection_key = 'map';
@@ -2724,6 +2756,7 @@ class Google_Service_TagManager_Parameter extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_PublishContainerVersionResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2751,6 +2784,7 @@ class Google_Service_TagManager_PublishContainerVersionResponse extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Rule extends Google_Collection
 {
   protected $collection_key = 'condition';
@@ -2824,6 +2858,7 @@ class Google_Service_TagManager_Rule extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_SetupTag extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2850,6 +2885,7 @@ class Google_Service_TagManager_SetupTag extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Tag extends Google_Collection
 {
   protected $collection_key = 'teardownTag';
@@ -3043,6 +3079,7 @@ class Google_Service_TagManager_Tag extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_TeardownTag extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3069,6 +3106,7 @@ class Google_Service_TagManager_TeardownTag extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Trigger extends Google_Collection
 {
   protected $collection_key = 'filter';
@@ -3261,6 +3299,7 @@ class Google_Service_TagManager_Trigger extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_UserAccess extends Google_Collection
 {
   protected $collection_key = 'containerAccess';
@@ -3317,6 +3356,7 @@ class Google_Service_TagManager_UserAccess extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_TagManager_Variable extends Google_Collection
 {
   protected $collection_key = 'parameter';

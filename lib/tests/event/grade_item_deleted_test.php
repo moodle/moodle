@@ -34,14 +34,14 @@ namespace core\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\event\grade_item_deleted
  */
-class grade_item_deleted_test extends \advanced_testcase {
+final class grade_item_deleted_test extends \advanced_testcase {
 
     /**
      * Test the grade item deleted event.
      *
      * @covers ::create_from_grade_item
      */
-    public function test_grade_item_deleted() {
+    public function test_grade_item_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();

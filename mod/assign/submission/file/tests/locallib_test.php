@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for mod/assign/submission/file/locallib.php
- *
- * @package   assignsubmission_file
- * @copyright 2016 Cameron Ball
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace assignsubmission_file;
 
 use mod_assign_test_generator;
@@ -33,10 +26,11 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 /**
  * Unit tests for mod/assign/submission/file/locallib.php
  *
+ * @package    assignsubmission_file
  * @copyright  2016 Cameron Ball
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -48,7 +42,7 @@ class locallib_test extends \advanced_testcase {
      * @param string $data The file submission data
      * @param bool $expected The expected return value
      */
-    public function test_submission_is_empty($data, $expected) {
+    public function test_submission_is_empty($data, $expected): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -78,7 +72,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test that an empty directory is is not detected as a valid submission by submission_is_empty.
      */
-    public function test_submission_is_empty_directory_only() {
+    public function test_submission_is_empty_directory_only(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -110,7 +104,7 @@ class locallib_test extends \advanced_testcase {
      * @param string $data The file submission data
      * @param bool $expected The expected return value
      */
-    public function test_new_submission_empty($data, $expected) {
+    public function test_new_submission_empty($data, $expected): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -139,7 +133,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test that an empty directory is is not detected as a valid submission by new_submission_is_empty.
      */
-    public function test_new_submission_empty_directory_only() {
+    public function test_new_submission_empty_directory_only(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -169,7 +163,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array of testcases
      */
-    public function submission_is_empty_testcases() {
+    public static function submission_is_empty_testcases(): array {
         return [
             'With file' => [
                 [
@@ -191,5 +185,46 @@ class locallib_test extends \advanced_testcase {
             ],
             'Without file' => [null, true]
         ];
+    }
+
+    /**
+     * Test getting files from plugin submission
+     */
+    public function test_get_files(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course, [
+            'assignsubmission_file_enabled' => 1,
+            'assignsubmission_file_maxfiles' => 2,
+            'assignsubmission_file_maxsizebytes' => 512,
+        ]);
+
+        // Switch to student, create some dummy files, and submit data to plugin.
+        $this->setUser($student);
+        $submission = $assign->get_user_submission($student->id, true);
+
+        $filerecord = [
+            'contextid' => $assign->get_context()->id,
+            'component' => 'assignsubmission_file',
+            'filearea' => ASSIGNSUBMISSION_FILE_FILEAREA,
+            'itemid' => $submission->id,
+            'filepath' => '/',
+        ];
+
+        get_file_storage()->create_file_from_string($filerecord + ['filename' => 'File 1.txt'], 'File One');
+        get_file_storage()->create_file_from_string($filerecord + ['filename' => 'File 2.txt'], 'File Two');
+
+        /** @var \assign_submission_file $plugin */
+        $plugin = $assign->get_submission_plugin_by_type('file');
+        $plugin->save($submission, (object) []);
+
+        // Ensure we retrieve back list of file submissions, deterministically ordered.
+        $files = $plugin->get_files($submission, $student);
+        $this->assertSame([
+            '/File 1.txt' => 'File 1.txt',
+            '/File 2.txt' => 'File 2.txt',
+        ], array_map(fn(\stored_file $f) => $f->get_filename(), $files));
     }
 }

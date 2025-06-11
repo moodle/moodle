@@ -109,7 +109,7 @@ Feature: Upload users
     And I navigate to "Security > Site security settings" in site administration
     And I click on "Password policy" "checkbox"
     And I click on "Save changes" "button"
-    And I navigate to "Appearance > Themes > Theme settings" in site administration
+    And I navigate to "Appearance > Advanced theme settings" in site administration
     And I click on "Allow user themes" "checkbox"
     And I click on "Save changes" "button"
     # Upload the users.
@@ -240,7 +240,7 @@ Feature: Upload users
     And I am on site homepage
     And I navigate to "Courses > Manage courses and categories" in site administration
     And I click on "permissions" action for "MGMT" in management category listing
-    And I select "Assign roles" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Assign roles"
     And I should see "Manager"
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
@@ -249,7 +249,7 @@ Feature: Upload users
     And I am on site homepage
     And I navigate to "Courses > Manage courses and categories" in site administration
     And I click on "permissions" action for "Film" in management category listing
-    And I select "Assign roles" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Assign roles"
     And I should see "Course creator"
     And I should see "Federico Fellini"
 
@@ -296,3 +296,25 @@ Feature: Upload users
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I should see "Bilbo Baggins"
     And I should not see "Frodo Baggins"
+
+  @javascript
+  Scenario: Create a new user when matching them on email where where the username already exists
+    Given the following "users" exist:
+      | username | firstname | lastname | email               |
+      | bilbob   | Samwise   | Gamgee   | samwise@example.com |
+      | frodob   | Frodeo    | Baspins  | frodo@example.com   |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_email_matching.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I set the following fields to these values:
+      | Upload type            | Add new and update existing users |
+      | Existing user details  | Override with file                |
+      | Match on email address | Yes                               |
+    And I press "Upload users"
+    And I should see "User not added - username already exists under a different email"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Samwise Gamgee"
+    And I should see "Frodo Baggins"

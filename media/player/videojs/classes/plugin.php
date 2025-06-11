@@ -285,7 +285,7 @@ class media_videojs_plugin extends core_media_player_native {
             $url = reset($urls);
 
             // Check against regex.
-            if (preg_match($this->get_regex_youtube(), $url->out(false), $this->matches)) {
+            if (preg_match($this->get_regex_youtube(), $url->out(false), $matches)) {
                 $this->youtube = true;
                 return array($url);
             }
@@ -309,7 +309,9 @@ class media_videojs_plugin extends core_media_player_native {
             // Ogv.JS Tech.
             $this->ogvtech = false;
             if (in_array($ext, $this->ogvsupportedextensions) &&
-                (core_useragent::is_safari() || core_useragent::is_ios())) {
+                (core_useragent::is_safari() || core_useragent::is_ios() || core_useragent::is_chrome())) {
+                // Chrome has stopped supporting OGV in the latest version. Refer: https://caniuse.com/ogv.
+                // We need to enable Ogv.JS Tech plugin for Safari, iOS and Chrome.
                 $this->ogvtech = true;
                 $result[] = $url;
                 continue;

@@ -41,24 +41,25 @@ class backup_attendance_activity_structure_step extends backup_activity_structur
         $userinfo = $this->get_setting_value('userinfo');
 
         // XML nodes declaration - non-user data.
-        $attendance = new backup_nested_element('attendance', array('id'), array(
-            'name', 'intro', 'introformat', 'grade', 'showextrauserdetails', 'showsessiondetails', 'sessiondetailspos', 'subnet'));
+        $attendance = new backup_nested_element('attendance', ['id'], [
+            'name', 'intro', 'introformat', 'grade', 'showextrauserdetails', 'showsessiondetails', 'sessiondetailspos', 'subnet']);
 
         $statuses = new backup_nested_element('statuses');
-        $status  = new backup_nested_element('status', array('id'), array(
-            'acronym', 'description', 'grade', 'studentavailability', 'availablebeforesession', 'setunmarked', 'visible', 'deleted', 'setnumber'));
+        $status  = new backup_nested_element('status', ['id'], [
+            'acronym', 'description', 'grade', 'studentavailability', 'availablebeforesession', 'setunmarked', 'visible', 'deleted',
+            'setnumber']);
 
         $warnings = new backup_nested_element('warnings');
-        $warning  = new backup_nested_element('warning', array('id'), array('warningpercent', 'warnafter',
-            'maxwarn', 'emailuser', 'emailsubject', 'emailcontent', 'emailcontentformat', 'thirdpartyemails'));
+        $warning  = new backup_nested_element('warning', ['id'], ['warningpercent', 'warnafter',
+            'maxwarn', 'emailuser', 'emailsubject', 'emailcontent', 'emailcontentformat', 'thirdpartyemails']);
 
         $sessions = new backup_nested_element('sessions');
-        $session  = new backup_nested_element('session', array('id'), array(
+        $session  = new backup_nested_element('session', ['id'], [
             'groupid', 'sessdate', 'duration', 'lasttaken', 'lasttakenby', 'timemodified',
             'description', 'descriptionformat', 'studentscanmark', 'allowupdatestatus', 'studentpassword', 'autoassignstatus',
             'subnet', 'automark', 'automarkcompleted', 'statusset', 'absenteereport', 'preventsharedip',
             'preventsharediptime', 'caleventid', 'calendarevent', 'includeqrcode', 'automarkcmid',
-            'studentsearlyopentime'));
+            'studentsearlyopentime']);
 
         $customfields = new backup_nested_element('customfields');
         $customfield = new backup_nested_element('customfield', ['id'], [
@@ -66,8 +67,8 @@ class backup_attendance_activity_structure_step extends backup_activity_structur
 
         // XML nodes declaration - user data.
         $logs = new backup_nested_element('logs');
-        $log  = new backup_nested_element('log', array('id'), array(
-            'sessionid', 'studentid', 'statusid', 'statusset', 'timetaken', 'takenby', 'remarks'));
+        $log  = new backup_nested_element('log', ['id'], [
+            'sessionid', 'studentid', 'statusid', 'statusset', 'timetaken', 'takenby', 'remarks']);
 
         // Build the tree in the order needed for restore.
         $attendance->add_child($statuses);
@@ -87,14 +88,14 @@ class backup_attendance_activity_structure_step extends backup_activity_structur
 
         // Data sources - non-user data.
 
-        $attendance->set_source_table('attendance', array('id' => backup::VAR_ACTIVITYID));
+        $attendance->set_source_table('attendance', ['id' => backup::VAR_ACTIVITYID]);
 
-        $status->set_source_table('attendance_statuses', array('attendanceid' => backup::VAR_PARENTID));
+        $status->set_source_table('attendance_statuses', ['attendanceid' => backup::VAR_PARENTID]);
 
         $warning->set_source_table('attendance_warning',
-            array('idnumber' => backup::VAR_PARENTID));
+            ['idnumber' => backup::VAR_PARENTID]);
 
-        $session->set_source_table('attendance_sessions', array('attendanceid' => backup::VAR_PARENTID));
+        $session->set_source_table('attendance_sessions', ['attendanceid' => backup::VAR_PARENTID]);
 
         $handler = mod_attendance\customfield\session_handler::create();
         $fieldsforbackup = $handler->get_instance_data_for_backup_by_activity($this->task->get_activityid());
@@ -102,7 +103,7 @@ class backup_attendance_activity_structure_step extends backup_activity_structur
 
         // Data sources - user related data.
         if ($userinfo) {
-            $log->set_source_table('attendance_log', array('sessionid' => backup::VAR_PARENTID));
+            $log->set_source_table('attendance_log', ['sessionid' => backup::VAR_PARENTID]);
         }
 
         // Id annotations.

@@ -45,7 +45,7 @@ class tempmerge extends \moodleform {
         $namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $students = get_enrolled_users($context, 'mod/attendance:canbelisted', 0, 'u.id,'.$namefields.',u.email',
                                        'u.lastname, u.firstname', 0, 0, true);
-        $partarray = array();
+        $partarray = [];
         foreach ($students as $student) {
             $partarray[$student->id] = fullname($student).' ('.$student->email.')';
         }

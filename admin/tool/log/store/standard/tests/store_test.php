@@ -28,7 +28,7 @@ require_once(__DIR__ . '/fixtures/restore_hack.php');
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends \advanced_testcase {
+final class store_test extends \advanced_testcase {
     /**
      * @var bool Determine if we disabled the GC, so it can be re-enabled in tearDown.
      */
@@ -40,7 +40,7 @@ class store_test extends \advanced_testcase {
      * @param bool $jsonformat True to test with JSON format
      * @dataProvider log_writing_provider
      */
-    public function test_log_writing(bool $jsonformat) {
+    public function test_log_writing(bool $jsonformat): void {
         global $DB;
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
@@ -238,7 +238,7 @@ class store_test extends \advanced_testcase {
     /**
      * Test logmanager::get_supported_reports returns all reports that require this store.
      */
-    public function test_get_supported_reports() {
+    public function test_get_supported_reports(): void {
         $logmanager = get_log_manager();
         $allreports = \core_component::get_plugin_list('report');
 
@@ -261,7 +261,7 @@ class store_test extends \advanced_testcase {
     /**
      * Verify that gc disabling works
      */
-    public function test_gc_enabled_as_expected() {
+    public function test_gc_enabled_as_expected(): void {
         if (!gc_enabled()) {
             $this->markTestSkipped('Garbage collector (gc) is globally disabled.');
         }
@@ -275,7 +275,7 @@ class store_test extends \advanced_testcase {
      * Test sql_reader::get_events_select_iterator.
      * @return void
      */
-    public function test_events_traversable() {
+    public function test_events_traversable(): void {
         global $DB;
 
         $this->disable_gc();
@@ -332,7 +332,7 @@ class store_test extends \advanced_testcase {
     /**
      * Test that the standard log cleanup works correctly.
      */
-    public function test_cleanup_task() {
+    public function test_cleanup_task(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -372,12 +372,12 @@ class store_test extends \advanced_testcase {
      * @param mixed $value Value to encode and decode
      * @dataProvider decode_other_provider
      */
-    public function test_decode_other($value) {
+    public function test_decode_other($value): void {
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(serialize($value)));
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(json_encode($value)));
     }
 
-    public function test_decode_other_with_wrongly_encoded_contents() {
+    public function test_decode_other_with_wrongly_encoded_contents(): void {
         $this->assertSame(null, \logstore_standard\log\store::decode_other(null));
     }
 
@@ -389,7 +389,7 @@ class store_test extends \advanced_testcase {
      *
      * @return array Array of parameters
      */
-    public function decode_other_provider(): array {
+    public static function decode_other_provider(): array {
         return [
             [['info' => 'd2819896', 'logurl' => 'discuss.php?d=2819896']],
             [null],
@@ -404,7 +404,7 @@ class store_test extends \advanced_testcase {
      * @param bool $jsonformat True to test with JSON format
      * @dataProvider log_writing_provider
      */
-    public function test_backup_restore(bool $jsonformat) {
+    public function test_backup_restore(bool $jsonformat): void {
         global $DB;
         $this->resetAfterTest();
         $this->preventResetByRollback();
@@ -547,5 +547,6 @@ class store_test extends \advanced_testcase {
             gc_enable();
         }
         $this->wedisabledgc = false;
+        parent::tearDown();
     }
 }

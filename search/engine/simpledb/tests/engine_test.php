@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright   2016 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class engine_test extends \advanced_testcase {
+final class engine_test extends \advanced_testcase {
 
     /**
      * @var \core_search::manager
@@ -43,7 +43,7 @@ class engine_test extends \advanced_testcase {
     protected $engine = null;
 
     /**
-     * @var core_search_generator
+     * @var \core_search_generator
      */
     protected $generator = null;
 
@@ -53,6 +53,7 @@ class engine_test extends \advanced_testcase {
      * @return void
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         if ($this->requires_manual_index_update()) {
@@ -86,6 +87,7 @@ class engine_test extends \advanced_testcase {
             $this->generator->teardown();
             $this->generator = null;
         }
+        parent::tearDown();
     }
 
     /**
@@ -93,7 +95,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_index() {
+    public function test_index(): void {
         global $DB;
 
         $this->add_mock_search_area();
@@ -120,7 +122,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_search() {
+    public function test_search(): void {
         global $USER, $DB;
 
         $this->add_mock_search_area();
@@ -207,7 +209,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_delete() {
+    public function test_delete(): void {
 
         $this->add_mock_search_area();
 
@@ -232,7 +234,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_alloweduserid() {
+    public function test_alloweduserid(): void {
 
         $this->add_mock_search_area();
 
@@ -306,7 +308,7 @@ class engine_test extends \advanced_testcase {
         $this->assertEquals($originalid, $results[0]->get('id'));
     }
 
-    public function test_delete_by_id() {
+    public function test_delete_by_id(): void {
 
         $this->add_mock_search_area();
 
@@ -337,10 +339,8 @@ class engine_test extends \advanced_testcase {
 
     /**
      * Tries out deleting data for a context or a course.
-     *
-     * @throws moodle_exception
      */
-    public function test_deleted_contexts_and_courses() {
+    public function test_deleted_contexts_and_courses(): void {
         // Create some courses and activities.
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['fullname' => 'C1', 'summary' => 'xyzzy']);
@@ -375,7 +375,6 @@ class engine_test extends \advanced_testcase {
      *
      * @param string $searchword Word to match within the content field
      * @param string[] $expected Array of expected result titles, in alphabetical order
-     * @throws dml_exception
      */
     protected function assert_raw_index_contents(string $searchword, array $expected) {
         global $DB;

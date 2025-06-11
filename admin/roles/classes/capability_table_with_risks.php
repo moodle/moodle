@@ -84,7 +84,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
         }
     }
 
-    protected abstract function load_parent_permissions();
+    abstract protected function load_parent_permissions();
 
     /**
      * Update $this->permissions based on submitted data, while making a list of
@@ -156,7 +156,7 @@ abstract class core_role_capability_table_with_risks extends core_role_capabilit
         return $rowclasses;
     }
 
-    protected abstract function add_permission_cells($capability);
+    abstract protected function add_permission_cells($capability);
 
     protected function add_row_cells($capability) {
         $cells = $this->add_permission_cells($capability);

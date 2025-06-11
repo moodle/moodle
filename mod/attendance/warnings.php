@@ -48,8 +48,8 @@ if (empty($id)) {
 } else {
     // This is an attendance level config.
     $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-    $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $att            = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+    $course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $att            = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $context = context_module::instance($cm->id);
@@ -66,7 +66,7 @@ if (empty($id)) {
     echo $output->header();
 }
 
-$mform = new mod_attendance\form\addwarning($url, array('notid' => $notid, 'id' => $id));
+$mform = new mod_attendance\form\addwarning($url, ['notid' => $notid, 'id' => $id]);
 
 if ($data = $mform->get_data()) {
     if (empty($data->notid)) {
@@ -89,9 +89,9 @@ if ($data = $mform->get_data()) {
         if (!empty($data->thirdpartyemails)) {
             $notify->thirdpartyemails = implode(',', $data->thirdpartyemails);
         }
-        $existingrecord = $DB->record_exists('attendance_warning', array('idnumber' => $notify->idnumber,
+        $existingrecord = $DB->record_exists('attendance_warning', ['idnumber' => $notify->idnumber,
                                                                          'warningpercent' => $notify->warningpercent,
-                                                                              'warnafter' => $notify->warnafter));
+                                                                              'warnafter' => $notify->warnafter]);
         if (empty($existingrecord)) {
             $DB->insert_record('attendance_warning', $notify);
             echo $OUTPUT->notification(get_string('warningupdated', 'mod_attendance'), 'success');
@@ -100,7 +100,7 @@ if ($data = $mform->get_data()) {
         }
 
     } else {
-        $notify = $DB->get_record('attendance_warning', array('id' => $data->notid));
+        $notify = $DB->get_record('attendance_warning', ['id' => $data->notid]);
         if (!empty($id) && $data->idnumber != $att->id) {
             // Someone is trying to update a record for a different attendance.
             throw new moodle_exception('invalidcoursemodule');
@@ -119,8 +119,8 @@ if ($data = $mform->get_data()) {
             if (!empty($data->thirdpartyemails)) {
                 $notify->thirdpartyemails = implode(',', $data->thirdpartyemails);
             }
-            $existingrecord = $DB->get_record('attendance_warning', array('idnumber' => $notify->idnumber,
-                'warningpercent' => $notify->warningpercent, 'warnafter' => $notify->warnafter));
+            $existingrecord = $DB->get_record('attendance_warning', ['idnumber' => $notify->idnumber,
+                'warningpercent' => $notify->warningpercent, 'warnafter' => $notify->warnafter]);
             if (empty($existingrecord) || $existingrecord->id == $notify->id) {
                 $DB->update_record('attendance_warning', $notify);
                 echo $OUTPUT->notification(get_string('warningupdated', 'mod_attendance'), 'success');
@@ -133,13 +133,13 @@ if ($data = $mform->get_data()) {
 if ($action == 'delete' && !empty($notid)) {
     if (!optional_param('confirm', false, PARAM_BOOL)) {
         $cancelurl = $url;
-        $url->params(array('action' => 'delete', 'notid' => $notid, 'sesskey' => sesskey(), 'confirm' => true, 'id' => $id));
+        $url->params(['action' => 'delete', 'notid' => $notid, 'sesskey' => sesskey(), 'confirm' => true, 'id' => $id]);
         echo $OUTPUT->confirm(get_string('deletewarningconfirm', 'mod_attendance'), $url, $cancelurl);
         echo $OUTPUT->footer();
         exit;
     } else {
         require_sesskey();
-        $params = array('id' => $notid);
+        $params = ['id' => $notid];
         if (!empty($att)) {
             // Add id/level to array.
             $params['idnumber'] = $att->id;
@@ -149,9 +149,9 @@ if ($action == 'delete' && !empty($notid)) {
     }
 }
 if ($action == 'update' && !empty($notid)) {
-    $existing = $DB->get_record('attendance_warning', array('id' => $notid));
+    $existing = $DB->get_record('attendance_warning', ['id' => $notid]);
     $content = $existing->emailcontent;
-    $existing->emailcontent = array();
+    $existing->emailcontent = [];
     $existing->emailcontent['text'] = $content;
     $existing->emailcontent['format'] = $existing->emailcontentformat;
     $existing->notid = $existing->id;
@@ -170,28 +170,28 @@ if ($action == 'update' && !empty($notid)) {
     }
     echo $OUTPUT->box($warningdesc, 'generalbox attendancedesc', 'notice');
     $existingnotifications = $DB->get_records('attendance_warning',
-        array('idnumber' => $idnumber),
+        ['idnumber' => $idnumber],
         'warningpercent');
 
     if (!empty($existingnotifications)) {
         $table = new html_table();
-        $table->head = array(get_string('warningthreshold', 'mod_attendance'),
+        $table->head = [get_string('warningthreshold', 'mod_attendance'),
             get_string('numsessions', 'mod_attendance'),
             get_string('emailsubject', 'mod_attendance'),
-            '');
+            '', ];
         foreach ($existingnotifications as $notification) {
-            $url->params(array('action' => 'delete', 'notid' => $notification->id, 'id' => $id));
+            $url->params(['action' => 'delete', 'notid' => $notification->id, 'id' => $id]);
             $actionbuttons = $OUTPUT->action_icon($url, new pix_icon('t/delete',
                 get_string('delete', 'attendance')), null, null);
-            $url->params(array('action' => 'update', 'notid' => $notification->id, 'id' => $id));
+            $url->params(['action' => 'update', 'notid' => $notification->id, 'id' => $id]);
             $actionbuttons .= $OUTPUT->action_icon($url, new pix_icon('t/edit',
                 get_string('update', 'attendance')), null, null);
-            $table->data[] = array($notification->warningpercent, $notification->warnafter,
-                                   $notification->emailsubject, $actionbuttons);
+            $table->data[] = [$notification->warningpercent, $notification->warnafter,
+                                   $notification->emailsubject, $actionbuttons, ];
         }
         echo html_writer::table($table);
     }
-    $addurl = new moodle_url('/mod/attendance/warnings.php', array('action' => 'add', 'id' => $id));
+    $addurl = new moodle_url('/mod/attendance/warnings.php', ['action' => 'add', 'id' => $id]);
     echo $OUTPUT->single_button($addurl, get_string('addwarning', 'mod_attendance'));
 
 }

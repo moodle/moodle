@@ -25,12 +25,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_test extends \advanced_testcase {
+final class report_test extends \advanced_testcase {
 
     /**
      * Create some grades.
      */
-    public function test_query_db() {
+    public function test_query_db(): void {
         $this->resetAfterTest();
 
         // Making the setup.
@@ -194,7 +194,7 @@ class report_test extends \advanced_testcase {
     /**
      * Test the get users helper method.
      */
-    public function test_get_users() {
+    public function test_get_users(): void {
         $this->resetAfterTest();
 
         // Making the setup.
@@ -251,7 +251,7 @@ class report_test extends \advanced_testcase {
      *
      * @return array List of data sets (test cases)
      */
-    public function get_users_with_profile_fields_provider(): array {
+    public static function get_users_with_profile_fields_provider(): array {
         return [
             // User identity check boxes, 'email', 'profile_field_lang' and 'profile_field_height' are checked.
                 'show email,lang and height;search for all users' =>
@@ -264,24 +264,18 @@ class report_test extends \advanced_testcase {
                         ['email,profile_field_lang,profile_field_height', '.uk', ['u3']],
                 'show email,lang and height,search for Spanish speakers' =>
                         ['email,profile_field_lang,profile_field_height', 'spanish', ['u1', 'u4']],
-                'show email,lang and height,search for Spanish speakers' =>
+                'show email,lang and height,search for Spanish speakers (using spa)' =>
                         ['email,profile_field_lang,profile_field_height', 'spa', ['u1', 'u4']],
                 'show email,lang and height,search for German speakers' =>
                         ['email,profile_field_lang,profile_field_height', 'german', ['u2']],
-                'show email,lang and height,search for German speakers' =>
+                'show email,lang and height,search for German speakers (using ger)' =>
                         ['email,profile_field_lang,profile_field_height', 'ger', ['u2']],
                 'show email,lang and height,search for English speakers' =>
                         ['email,profile_field_lang,profile_field_height', 'english', ['u3']],
-                'show email,lang and height,search for English speakers' =>
+                'show email,lang and height,search for English speakers (using eng)' =>
                         ['email,profile_field_lang,profile_field_height', 'eng', ['u3']],
-                'show email,lang and height,search for English speakers' =>
-                        ['email,profile_field_lang,profile_field_height', 'ish', ['u3']],
-                'show email,lang and height,search for users with height 180cm' =>
-                        ['email,profile_field_lang,profile_field_height', '180cm', ['u2', 'u3', 'u4']],
                 'show email,lang and height,search for users with height 180cm' =>
                         ['email,profile_field_lang,profile_field_height', '180', ['u2', 'u3', 'u4']],
-                'show email,lang and height,search for users with height 170cm' =>
-                        ['email,profile_field_lang,profile_field_height', '170cm', ['u1']],
                 'show email,lang and height,search for users with height 170cm' =>
                         ['email,profile_field_lang,profile_field_height', '170', ['u1']],
 
@@ -292,25 +286,15 @@ class report_test extends \advanced_testcase {
                         ['email,profile_field_height', '.com', []],
                 'show email and height;search for users on .co' =>
                         ['email,profile_field_height', '.co', ['u3']],
-                'show email and height,search for Spanish/German/English speakers' =>
+                'show email and height,search for Spanish speakers' =>
                         ['email,profile_field_height', 'spanish', []],
-                'show email and height,search for Spanish/German/English speakers' =>
+                'show email and height,search for German speakers' =>
                         ['email,profile_field_height', 'german', []],
-                'show email and height,search for Spanish/German/English speakers' =>
-                        ['email,profile_field_height', 'english', []],
-                'show email,lang and height,search for English speakers' =>
-                        ['email,profile_field_height', 'english', []],
                 'show email and height,search for English speakers' =>
-                        ['email,profile_field_height', 'eng', []],
-                'show email and height,search for English speakers' =>
-                        ['email,profile_field_height', 'ish', []],
+                        ['email,profile_field_height', 'english', []],
                 'show email and height,search for users with height 180cm' =>
-                        ['email,profile_field_height', '180cm', ['u2', 'u3', 'u4']],
-                'show email,lang and height,search for users with height 180cm' =>
                         ['email,profile_field_height', '180', ['u2', 'u3', 'u4']],
-                'show email,lang and height,search for users with height 170cm' =>
-                        ['email,profile_field_height', '170cm', ['u1']],
-                'show email,lang and height,search for users with height 170cm' =>
+                'show email and height,search for users with height 170cm' =>
                         ['email,profile_field_height', '170', ['u1']],
 
             // User identity check boxes, only 'email' is checked.
@@ -322,9 +306,7 @@ class report_test extends \advanced_testcase {
                 'show email only;search for Spanish speakers' => ['email', 'spanish', []],
                 'show email only;search for German speakers' => ['email', 'german', []],
                 'show email only;search for English speakers' => ['email', 'english', []],
-                'show email only;search for users with height 180cm' => ['email', '180cm', []],
                 'show email only;search for users with height 180cm' => ['email', '180', []],
-                'show email only;search for users with height 170cm' => ['email', '170cm', []],
                 'show email only;search for users with height 170cm' => ['email', '170', []],
         ];
     }
@@ -401,7 +383,7 @@ class report_test extends \advanced_testcase {
     /**
      * Data provider method for \gradereport_history_report_testcase::test_get_users_with_groups()
      */
-    public function get_users_provider() {
+    public static function get_users_provider(): array {
         return [
             'Visible groups, non-editing teacher, not in any group' => [
                 VISIBLEGROUPS, 'teacher', ['g1', 'g2'], ['s1', 's2', 's3', 's4', 's5']
@@ -436,7 +418,7 @@ class report_test extends \advanced_testcase {
      * @param $teachergroups
      * @param $expectedusers
      */
-    public function test_get_users_with_groups($groupmode, $teacherrole, $teachergroups, $expectedusers) {
+    public function test_get_users_with_groups($groupmode, $teacherrole, $teachergroups, $expectedusers): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -513,7 +495,7 @@ class report_test extends \advanced_testcase {
     /**
      * Test the get graders helper method.
      */
-    public function test_graders() {
+    public function test_graders(): void {
         $this->resetAfterTest();
 
         // Making the setup.

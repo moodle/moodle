@@ -88,12 +88,13 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      * @param     bool      $appendName     (optional)whether to change elements' names to
      *                                      the form $groupName[$elementName] or leave
      *                                      them as is.
+     * @param     mixed     $attributes     Either a typical HTML attribute string or an associative array
      * @since     1.0
      * @access    public
      * @return    void
      */
-    public function __construct($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
-        parent::__construct($elementName, $elementLabel);
+    public function __construct($elementName = null, $elementLabel = null, $elements = null, $separator = null, $appendName = true, $attributes = null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
         $this->_type = 'group';
         if (isset($elements) && is_array($elements)) {
             $this->setElements($elements);
@@ -104,6 +105,9 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
         if (isset($appendName)) {
             $this->_appendName = $appendName;
         }
+        if (isset($attributes)) {
+            $this->_attributes = $attributes;
+        }
     } //end constructor
 
     /**
@@ -111,7 +115,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      *
      * @deprecated since Moodle 3.1
      */
-    public function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
+    public function HTML_QuickForm_group($elementName = null, $elementLabel = null, $elements = null, $separator = null, $appendName = true, $attributes = null) {
         debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
         self::__construct($elementName, $elementLabel, $elements, $separator, $appendName);
     }
@@ -388,7 +392,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      * @param     object    $caller calling object
      * @since     1.0
      * @access    public
-     * @return    void
+     * @return    ?bool
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {

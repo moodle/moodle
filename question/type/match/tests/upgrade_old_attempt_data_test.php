@@ -29,9 +29,9 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
+final class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
 
-    public function test_match_deferredfeedback_history6220() {
+    public function test_match_deferredfeedback_history6220(): void {
         $quiz = (object) array(
             'id' => '72',
             'course' => '1181',
@@ -287,7 +287,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_match_deferredfeedback_history60() {
+    public function test_match_deferredfeedback_history60(): void {
         $quiz = (object) array(
             'id' => '60',
             'course' => '2304',
@@ -497,7 +497,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_match_deferredfeedback_history622220() {
+    public function test_match_deferredfeedback_history622220(): void {
         $quiz = (object) array(
             'id' => '719',
             'course' => '3541',

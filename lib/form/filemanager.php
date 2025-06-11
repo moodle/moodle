@@ -63,7 +63,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
      * @param string $elementLabel (optional) filemanager label
      * @param array $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
-     * @param array $options set of options to initalize filemanager
+     * @param array|stdClass $options set of options to initalize filemanager
      */
     public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
@@ -453,7 +453,6 @@ class form_filemanager implements renderable {
 
         $this->options->userprefs = array();
         $this->options->userprefs['recentviewmode'] = get_user_preferences('filemanager_recentviewmode', '');
-        user_preference_allow_ajax_update('filemanager_recentviewmode', PARAM_INT);
 
         // building file picker options
         $params = new stdClass();

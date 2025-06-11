@@ -1,16 +1,13 @@
-@editor @editor_atto @atto @atto_image @_file_upload
+@editor @editor_atto @atto @atto_image
 Feature: Add images to Atto
   To write rich text - I need to add images.
 
   @javascript
   Scenario: Insert an image
-    Given the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
+    Given the following "user private file" exists:
+      | user     | admin                                          |
+      | filepath | lib/editor/atto/tests/fixtures/moodle-logo.png |
     And I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
-    And I click on "Save changes" "button"
     And I open my profile in edit mode
     When I set the field "Description" to "<p>Image test</p>"
     And I select the text in the "Description" Atto editor

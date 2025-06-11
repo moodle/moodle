@@ -145,7 +145,7 @@ class logmanager {
      *
      * @return  bool
      */
-    protected static function should_log() : bool {
+    protected static function should_log(): bool {
         global $CFG;
 
         // Respect the config setting.
@@ -166,7 +166,7 @@ class logmanager {
      *
      * @return  string
      */
-    public static function get_logger_classname() : string {
+    public static function get_logger_classname(): string {
         global $CFG;
 
         if (!empty($CFG->task_log_class)) {
@@ -183,7 +183,7 @@ class logmanager {
      *
      * @return  bool
      */
-    public static function has_log_report() : bool {
+    public static function has_log_report(): bool {
         $loggerclass = self::get_logger_classname();
 
         return $loggerclass::has_log_report();
@@ -192,7 +192,7 @@ class logmanager {
     /**
      * Whether to use the standard settings form.
      */
-    public static function uses_standard_settings() : bool {
+    public static function uses_standard_settings(): bool {
         $classname = self::get_logger_classname();
         if (!class_exists($classname)) {
             return false;
@@ -211,7 +211,7 @@ class logmanager {
      * @param   string      $classname The task class to fetch for
      * @return  \moodle_url
      */
-    public static function get_url_for_task_class(string $classname) : \moodle_url {
+    public static function get_url_for_task_class(string $classname): \moodle_url {
         $loggerclass = self::get_logger_classname();
 
         return $loggerclass::get_url_for_task_class($classname);
@@ -222,7 +222,7 @@ class logmanager {
      *
      * @return  bool
      */
-    protected static function is_current_output_buffer() : bool {
+    protected static function is_current_output_buffer(): bool {
         if (empty(self::$taskloginfo)) {
             return false;
         }
@@ -239,7 +239,7 @@ class logmanager {
      *
      * @return  bool
      */
-    protected static function is_capturing() : bool {
+    protected static function is_capturing(): bool {
         $buffers = ob_get_status(true);
         foreach ($buffers as $ob) {
             if ('core\\task\\logmanager::add_line' == $ob['name']) {
@@ -301,7 +301,7 @@ class logmanager {
                 self::$logpath,
                 $failed,
                 $DB->perf_get_reads() - self::$taskloginfo->dbread,
-                $DB->perf_get_writes() - self::$taskloginfo->dbwrite - $PERF->logwrites,
+                $DB->perf_get_writes() - self::$taskloginfo->dbwrite,
                 self::$taskloginfo->timestart,
                 microtime(true)
             );
@@ -330,7 +330,7 @@ class logmanager {
      * @param   string  $log
      * @return  string
      */
-    public static function add_line(string $log) : string {
+    public static function add_line(string $log): string {
         if (empty(self::$taskloginfo)) {
             return $log;
         }

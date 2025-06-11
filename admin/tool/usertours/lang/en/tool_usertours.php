@@ -36,6 +36,9 @@ $string['description_help'] = 'The description of a tour may be added as plain t
 Alternatively, a language string ID may be entered in the format identifier,component (with no brackets or space after the comma).';
 $string['displaystepnumbers'] = 'Display step numbers';
 $string['displaystepnumbers_help'] = 'Whether to display a step number count e.g. 1/4, 2/4 etc. to indicate the length of the user tour.';
+$string['showtourwhen'] = 'Show tour';
+$string['showtoureachtime'] = 'each time a filter matches it';
+$string['showtouruntilcomplete'] = 'until it has been closed';
 $string['confirmstepremovalquestion'] = 'Are you sure that you wish to remove this step?';
 $string['confirmstepremovaltitle'] = 'Confirm step removal';
 $string['confirmtourremovalquestion'] = 'Are you sure that you wish to remove this tour?';
@@ -289,8 +292,14 @@ $string['tour_navigation_mycourses_title'] = 'Courses and categories';
 $string['tour_navigation_mycourses_tour_des'] = 'Course management options on the My courses page';
 $string['tour_navigation_mycourses_tour_name'] = 'Course management';
 
+// 4.2 New gradebook tour.
+$string['tour_gradebook_action_content'] = '<div class="text-center">@@PIXICON::tour/tour_grader_report_action_menu::tool_usertours@@</div>Sort columns and choose which ones to display. In Edit mode, use this shortcut to access frequent tasks related to viewing and editing grade items.';
+$string['tour_gradebook_action_title'] = 'Quick links to actions';
+$string['tour_gradebook_filter_content'] = '<div class="text-center">@@PIXICON::tour/tour_grader_report_initials::tool_usertours@@</div>Filter students by the initials of their first or last name.';
+$string['tour_gradebook_filter_title'] = 'Filter by name';
+$string['tour_gradebook_search_content'] = '<div class="text-center">@@PIXICON::tour/tour_grader_report_search::tool_usertours@@</div>Use the search box to quickly find specific students.';
+$string['tour_gradebook_search_title'] = 'Find students easily';
+$string['tour_gradebook_tour_description'] = 'Search and navigation features in Gradebook grader report';
+$string['tour_gradebook_tour_name'] = 'Gradebook Grader Report';
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
-
-// Deprecated since Moodle 4.0.
-$string['previousstep'] = 'Previous';

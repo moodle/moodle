@@ -70,7 +70,16 @@ class ADODB_oci8po extends ADODB_oci8 {
 		return ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
 	}
 
-	// emulate handling of parameters ? ?, replacing with :bind0 :bind1
+	/**
+	 * Execute a query.
+	 *
+	 * Emulate handling of parameters ? ?, replacing with :bind0 :bind1
+	 *
+	 * @param string|array $sql        Query to execute.
+	 * @param array        $inputarr   An optional array of parameters.
+	 *
+	 * @return mixed|bool Query identifier or true if execution successful, false if failed.
+	 */
 	function _query($sql,$inputarr=false)
 	{
 		if (is_array($inputarr)) {
@@ -85,21 +94,21 @@ class ADODB_oci8po extends ADODB_oci8 {
 		}
 		return ADODB_oci8::_query($sql,$inputarr);
 	}
-	
+
 	/**
 	* Replaces compatibility bind markers with oracle ones and returns a
 	* valid sql statement
 	*
 	* This replaces a regexp based section of code that has been subject
 	* to numerous tweaks, as more extreme test cases have appeared. This
-	* is now done this like this to help maintainability and avoid the 
+	* is now done this like this to help maintainability and avoid the
 	* need to rely on regexp experienced maintainers
 	*
 	* @param	string		$sql		The sql statement
 	* @param	string[]	$inputarr	The bind array
 	*
 	* @return	string	The modified statement
-	*/	
+	*/
 	private function extractBinds($sql,$inputarr)
 	{
 		$inString  = false;
@@ -107,14 +116,13 @@ class ADODB_oci8po extends ADODB_oci8 {
 		$sqlLength = strlen($sql) - 1;
 		$newSql    = '';
 		$bindCount = 0;
-		
+
 		/*
 		* inputarr is the passed in bind list, which is associative, but
 		* we only want the keys here
 		*/
 		$inputKeys = array_keys($inputarr);
-		
-		
+
 		for ($i=0;$i<=$sqlLength;$i++)
 		{
 			/*
@@ -137,7 +145,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 				* We found the end of the string
 				*/
 				$inString = false;
-			
+
 			if ($escaped == 2)
 				$escaped = 0;
 
@@ -151,7 +159,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 				* Add the current character the pile
 				*/
 				$newSql .= $c;
-			
+
 			if ($escaped == 1)
 				/*
 				* We have just found an escape character, make sure we ignore the
@@ -159,9 +167,9 @@ class ADODB_oci8po extends ADODB_oci8 {
 				*/
 				$escaped = 2;
 		}
-		
+
 		return $newSql;
-			
+
 	}
 }
 
@@ -192,14 +200,14 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	{
 		$fld = new ADOFieldObject;
 		$fieldOffset += 1;
-		$fld->name = OCIcolumnname($this->_queryID, $fieldOffset);
+		$fld->name = oci_field_name($this->_queryID, $fieldOffset);
 		if (ADODB_ASSOC_CASE == ADODB_ASSOC_CASE_LOWER) {
 			$fld->name = strtolower($fld->name);
 		}
-		$fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
-		$fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
+		$fld->type = oci_field_type($this->_queryID, $fieldOffset);
+		$fld->max_length = oci_field_size($this->_queryID, $fieldOffset);
 		if ($fld->type == 'NUMBER') {
-			$sc = OCIColumnScale($this->_queryID, $fieldOffset);
+			$sc = oci_field_scale($this->_queryID, $fieldOffset);
 			if ($sc == 0) {
 				$fld->type = 'INT';
 			}
@@ -231,7 +239,6 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 		return false;
 	}
 
-	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
 	function GetArrayLimit($nrows,$offset=-1)
 	{
 		if ($offset <= 0) {
@@ -239,7 +246,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 			return $arr;
 		}
 		for ($i=1; $i < $offset; $i++)
-			if (!@OCIFetch($this->_queryID)) {
+			if (!@oci_fetch($this->_queryID)) {
 				$arr = array();
 				return $arr;
 			}

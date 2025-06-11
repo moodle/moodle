@@ -30,12 +30,12 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2019 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class send_email_test extends \advanced_testcase {
+final class send_email_test extends \advanced_testcase {
 
     /**
      * Test sending email task.
      */
-    public function test_sending_email_task() {
+    public function test_sending_email_task(): void {
         global $DB, $SITE;
 
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.

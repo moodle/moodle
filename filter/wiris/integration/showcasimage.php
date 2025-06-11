@@ -3,7 +3,13 @@
 require_once ('pluginbuilder.php');
 
 $provider = $pluginBuilder->getCustomParamsProvider();
-$formula = $provider->getRequiredParameter('formula');
+
+try {
+    $formula = $provider->getRequiredParameter('formula');
+} catch (Exception $e) {
+    exit("Error: Required parameter 'formula' not found.");
+}
+
 $cas = $pluginBuilder->newCas();
 
 // Adding - if necessary - CORS headers

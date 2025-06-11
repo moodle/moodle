@@ -27,21 +27,22 @@ namespace auth_oidc\adminsetting;
 
 use admin_setting;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Display a static text.
  */
 class auth_oidc_admin_setting_label extends admin_setting {
+    /**
+     * @var string $label The label for display purposes.
+     */
     private $label;
 
     /**
      * Constructor.
      *
-     * @param $name
-     * @param $label
-     * @param $visiblename
-     * @param $description
+     * @param string $name The setting name.
+     * @param string $label The label to display.
+     * @param string $visiblename The visible name for the setting.
+     * @param string $description A description of the setting.
      */
     public function __construct($name, $label, $visiblename, $description) {
         parent::__construct($name, $visiblename, $description, '');

@@ -29,9 +29,9 @@ Feature: Preview a Regexp question with hints
     # Set behaviour options to adaptive mode in order to view the hints
     And I set the following fields to these values:
       | behaviour | adaptive |
-    And I press "Start again with these options"
+    And I press "saverestart"
+    And I wait "5" seconds
     And I wait until "Buy next letter" "button" exists
-    #Then "Buy next letter" "button" should be visible
     And I set the field with xpath "//div[@class='answer']//input[contains(@id, '1_answer')]" to "it's"
     And I press "Check"
     Then I should see "Incorrect"

@@ -23,10 +23,9 @@
  */
 
 import Fragment from 'core/fragment';
-import * as Str from 'core/str';
+import {get_string as getString} from 'core/str';
 import ModalEvents from 'core/modal_events';
-import ModalFactory from 'core/modal_factory';
-import Notification from 'core/notification';
+import SaveCancelModal from 'core/modal_save_cancel';
 
 /**
  * Event listeners for the module.
@@ -36,77 +35,66 @@ import Notification from 'core/notification';
  * @param {Number} courseID
  * @param {Number} contextId
  */
-const commentEvent = (questionId, courseID, contextId) => {
-    let args = {
+const commentEvent = async(questionId, courseID, contextId) => {
+    const args = {
         questionid: questionId,
         courseid: courseID
     };
-    ModalFactory.create({
-        type: ModalFactory.types.SAVE_CANCEL,
-        title: Str.get_string('commentheader', 'qbank_comment'),
+    const modal = await SaveCancelModal.create({
+        title: getString('commentheader', 'qbank_comment'),
         body: Fragment.loadFragment('qbank_comment', 'question_comment', contextId, args),
         large: true,
-    }).then((modal) => {
-        let root = modal.getRoot();
+        show: true,
+        buttons: {
+            save: getString('addcomment', 'qbank_comment'),
+            cancel: getString('close', 'qbank_comment'),
+        },
+        removeOnClose: true,
+    });
+    const root = modal.getRoot();
 
-        // Don't display the default add comment link in the modal.
-        root.on(ModalEvents.bodyRendered, function() {
-            const submitlink = document.querySelectorAll("div.comment-area a")[0];
-            submitlink.style.display = 'none';
-        });
+    // Don't display the default add comment link in the modal.
+    root.on(ModalEvents.bodyRendered, function() {
+        const submitlink = document.querySelectorAll("div.comment-area a")[0];
+        submitlink.style.display = 'none';
+    });
 
-        // Version selection event.
-        root.on('change', '#question_comment_version_dropdown', function(e) {
-            args.questionid = e.target.value;
-            modal.setBody(Fragment.loadFragment('qbank_comment', 'question_comment', contextId, args));
-        });
+    // Version selection event.
+    root.on('change', '#question_comment_version_dropdown', (e) =>{
+        args.questionid = e.target.value;
+        modal.setBody(Fragment.loadFragment('qbank_comment', 'question_comment', contextId, args));
+    });
 
-        // Get the required strings and updated the modal button text labels.
-        Str.get_strings([
-            {key: 'addcomment', component: 'qbank_comment'},
-            {key: 'close', component: 'qbank_comment'},
-        ]).then((strings) => {
-            modal.setButtonText('save', strings[0]);
-            modal.setButtonText('cancel', strings[1]);
-            return;
-        }).fail(Notification.exception);
+    // Reload the page when the modal is closed.
+    root.on(ModalEvents.hidden, () => location.reload());
 
-        root.on(ModalEvents.cancel, function() {
-            location.reload();
-            modal.hide();
-        });
+    // Handle adding the comment when the button in the modal is clicked.
+    root.on(ModalEvents.save, function(e) {
+        e.preventDefault();
+        const submitlink = document.querySelectorAll("div.comment-area a")[0];
+        const textarea = document.querySelectorAll("div.comment-area textarea")[0];
 
-        // Handle adding the comment when the button in the modal is clicked.
-        root.on(ModalEvents.save, function(e) {
-            e.preventDefault();
-            const submitlink = document.querySelectorAll("div.comment-area a")[0];
-            const textarea = document.querySelectorAll("div.comment-area textarea")[0];
+        // Check there is a valid comment to add, and trigger adding if there is.
+        if (textarea.value != textarea.getAttribute('aria-label') && textarea.value != '') {
+            submitlink.click();
+        }
 
-            // Check there is a valid comment to add, and trigger adding if there is.
-            if (textarea.value != textarea.getAttribute('aria-label') && textarea.value != '') {
-                submitlink.click();
-            }
-
-        });
-        root.on('click', 'button[data-action="hide"]', () => {
-            location.reload();
-            modal.hide();
-        });
-        modal.show();
-        return modal;
-    }).fail(Notification.exception);
+    });
 };
 
 /**
  * Entrypoint of the js.
  *
  * @method init
- * @param {string} questionSelector the question comment identifier.
  */
-export const init = (questionSelector) => {
-    const target = document.querySelector(questionSelector);
-    target.addEventListener('click', () => {
-        // Call for the event listener to listed for clicks in any comment count row.
-        commentEvent(target.dataset.questionid, target.dataset.courseid, target.dataset.contextid);
-    });
+export const init = () => {
+    const target = document.querySelector('#categoryquestions');
+    if (target !== null) {
+        target.addEventListener('click', (e) => {
+            if (e.target.dataset.target && e.target.dataset.target.includes('questioncommentpreview')) {
+                // Call for the event listener to listed for clicks in any comment count row.
+                commentEvent(e.target.dataset.questionid, e.target.dataset.courseid, e.target.dataset.contextid);
+            }
+        });
+    }
 };

@@ -70,7 +70,7 @@ abstract class base_ui_stage {
      * @param base_ui $ui
      * @param array $params
      */
-    public function __construct(base_ui $ui, array $params = null) {
+    public function __construct(base_ui $ui, ?array $params = null) {
         $this->ui = $ui;
         $this->params = $params;
     }
@@ -154,7 +154,7 @@ abstract class base_ui_stage {
      * @abstract
      * @param base_moodleform $form
      */
-    abstract public function process(base_moodleform $form = null);
+    abstract public function process(?base_moodleform $form = null);
 
     /**
      * Creates an instance of the correct moodleform properly populated and all

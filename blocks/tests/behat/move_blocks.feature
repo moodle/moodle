@@ -15,9 +15,9 @@ Feature: Block region moving
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | course | name             | template |
-      | survey   | C1     | Test survey name | 4        |
-      | book     | C1     | Test book name   |          |
+      | activity | course | name             |
+      | assign   | C1     | Test assign name |
+      | book     | C1     | Test book name   |
     And the following "mod_book > chapter" exists:
       | book    | Test book name         |
       | title   | Book title             |

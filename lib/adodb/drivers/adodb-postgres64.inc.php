@@ -84,6 +84,9 @@ class ADODB_postgres64 extends ADOConnection{
 	/** @var int $_pnum Number of the last assigned query parameter {@see param()} */
 	var $_pnum = 0;
 
+	var $version;
+	var $_nestedSQL = false;
+
 	// The last (fmtTimeStamp is not entirely correct:
 	// PostgreSQL also has support for time zones,
 	// and writes these time in this format: "2001-03-01 18:59:26+02".
@@ -255,7 +258,9 @@ class ADODB_postgres64 extends ADOConnection{
 		if ($this->_connectionID) {
 			return "'" . pg_escape_string($this->_connectionID, $s) . "'";
 		} else {
-			return "'" . pg_escape_string($s) . "'";
+			// Fall back to emulated escaping when there is no database connection.
+			// Avoids errors when using setSessionVariables() in the load balancer.
+			return parent::qStr( $s );
 		}
 	}
 
@@ -656,14 +661,16 @@ class ADODB_postgres64 extends ADOConnection{
 			return $false;
 		}
 
+		// Get column names indexed by attnum so we can lookup the index key
 		$col_names = $this->MetaColumnNames($table,true,true);
-		// 3rd param is use attnum,
-		// see https://sourceforge.net/p/adodb/bugs/45/
 		$indexes = array();
 		while ($row = $rs->FetchRow()) {
 			$columns = array();
 			foreach (explode(' ', $row[2]) as $col) {
-				$columns[] = $col_names[$col];
+				// When index attribute (pg_index.indkey) is an expression, $col == 0
+				// @see https://www.postgresql.org/docs/current/catalog-pg-index.html
+				// so there is no matching column name - set it to null (see #940).
+				$columns[] = $col_names[$col] ?? null;
 			}
 
 			$indexes[$row[0]] = array(
@@ -752,8 +759,7 @@ class ADODB_postgres64 extends ADOConnection{
 		# PHP does not handle 'hex' properly ('x74657374' is returned as 't657374')
 		# https://bugs.php.net/bug.php?id=59831 states this is in fact not a bug,
 		# so we manually set bytea_output
-		if (!empty($this->connection->noBlobs)
-			&& version_compare($info['version'], '9.0', '>=')
+		if (version_compare($info['version'], '9.0', '>=')
 			&& version_compare($info['client'], '9.2', '<')
 		) {
 			$this->Execute('set bytea_output=escape');
@@ -778,7 +784,6 @@ class ADODB_postgres64 extends ADOConnection{
 	}
 
 
-	// returns queryID or false
 	function _query($sql,$inputarr=false)
 	{
 		$this->_pnum = 0;
@@ -1075,7 +1080,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 
 	function _close()
 	{
-		if ($this->_queryID === false) {
+		if ($this->_queryID === false || $this->_queryID == self::DUMMY_QUERY_ID) {
 			return true;
 		}
 		return pg_free_result($this->_queryID);

@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class img_with_map_has_use_map_test
  */
-class img_with_map_has_use_map_test extends all_checks {
+final class img_with_map_has_use_map_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'img_with_map_has_use_map';
 
@@ -66,7 +66,7 @@ EOD;
     /**
      * Test for usemap attribute.
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'img');
     }
@@ -74,7 +74,7 @@ EOD;
     /**
      * Test for ismap attribute.
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertEmpty($results);
     }

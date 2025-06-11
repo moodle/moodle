@@ -74,7 +74,7 @@ Y.extend(LTITINYMCEPANEL, Y.Base, {
                 this.contextid = Y.one('#lti_launch_context_id').get('value');
             }
 
-            var content = '<iframe id="lti_view_element" height="'+iframeheight+'px" width="100%" src="'+url+'&amp;contextid='+this.contextid+'" allow="autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;"></iframe>';
+            var content = '<iframe id="lti_view_element" height="'+iframeheight+'px" width="100%" src="'+url+'&amp;contextid='+this.contextid+'" allow="autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;"></iframe>';
             Y.one('#'+iframeid).setContent(content);
         },
 

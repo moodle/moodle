@@ -28,7 +28,6 @@ define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../../../config.php');
 require_once("{$CFG->libdir}/clilib.php");
-require_once("{$CFG->libdir}/cronlib.php");
 
 list($options, $unrecognized) = cli_get_params(
     [
@@ -138,7 +137,7 @@ core_php_time_limit::raise();
 raise_memory_limit(MEMORY_EXTRA);
 
 // Emulate normal session - we use admin account by default.
-cron_setup_user();
+\core\cron::setup_user();
 
 $humantimenow = date('r', time());
 

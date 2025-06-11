@@ -300,8 +300,16 @@ class restore_root_task extends restore_task {
         $competencies->set_ui(new backup_setting_ui_checkbox($competencies, get_string('rootsettingcompetencies', 'backup')));
         $this->add_setting($competencies);
 
-        $customfields = new restore_customfield_setting('customfields', base_setting::IS_BOOLEAN, $defaultvalue);
+        // Custom fields.
+        $defaultvalue = false;
+        $changeable = false;
+        if (isset($rootsettings['customfield']) && $rootsettings['customfield']) { // Only enabled when available.
+            $defaultvalue = true;
+            $changeable = true;
+        }
+        $customfields = new restore_customfield_setting('customfield', base_setting::IS_BOOLEAN, $defaultvalue);
         $customfields->set_ui(new backup_setting_ui_checkbox($customfields, get_string('rootsettingcustomfield', 'backup')));
+        $customfields->get_ui()->set_changeable($changeable);
         $this->add_setting($customfields);
 
         // Define Content bank content.
@@ -315,6 +323,18 @@ class restore_root_task extends restore_task {
         $contents->set_ui(new backup_setting_ui_checkbox($contents, get_string('rootsettingcontentbankcontent', 'backup')));
         $contents->get_ui()->set_changeable($changeable);
         $this->add_setting($contents);
+
+        // Define xAPI states.
+        $defaultvalue = false;
+        $changeable = false;
+        if (isset($rootsettings['xapistate']) && $rootsettings['xapistate']) { // Only enabled when available.
+            $defaultvalue = true;
+            $changeable = true;
+        }
+        $xapistate = new restore_xapistate_setting('xapistate', base_setting::IS_BOOLEAN, $defaultvalue);
+        $xapistate->set_ui(new backup_setting_ui_checkbox($xapistate, get_string('rootsettingxapistate', 'backup')));
+        $xapistate->get_ui()->set_changeable($changeable);
+        $this->add_setting($xapistate);
 
         // Include legacy files.
         $defaultvalue = true;

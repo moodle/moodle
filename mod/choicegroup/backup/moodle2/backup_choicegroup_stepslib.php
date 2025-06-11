@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,56 +15,57 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Backup steps.
+ *
+ * @package    mod_choicegroup
+ * @copyright  2013 Université de Lausanne
+ * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Define all the backup steps that will be used by the backup_choicegroup_activity_task
+ * Define the complete url structure for backup, with file and id annotations
  */
-
-/**
- * Define the complete choicegroup structure for backup, with file and id annotations
- */
-
-defined('MOODLE_INTERNAL') || die();
-
 class backup_choicegroup_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Defines structure of activity backup
+     *
+     * @return backup_nested_element
+     * @throws base_element_struct_exception
+     */
     protected function define_structure() {
 
-        // Define each element separated
-        $choicegroup = new backup_nested_element('choicegroup', array('id'), array(
+        // Define each element separated.
+        $choicegroup = new backup_nested_element('choicegroup', ['id'], [
             'name', 'intro', 'introformat', 'publish',
             'multipleenrollmentspossible',
             'showresults', 'display', 'allowupdate', 'showunanswered',
             'limitanswers', 'timeopen', 'timeclose', 'timemodified',
-            'completionsubmit', 'sortgroupsby', 'onlyactive'));
+            'completionsubmit', 'sortgroupsby', 'onlyactive', ]);
 
         $options = new backup_nested_element('options');
 
-        $option = new backup_nested_element('option', array('id'), array(
-            'groupid', 'maxanswers', 'timemodified'));
+        $option = new backup_nested_element('option', ['id'], [
+            'groupid', 'maxanswers', 'timemodified', ]);
 
-        // Build the tree
+        // Build the tree.
         $choicegroup->add_child($options);
         $options->add_child($option);
 
-        // Define sources
-        $choicegroup->set_source_table('choicegroup', array('id' => backup::VAR_ACTIVITYID));
+        // Define sources.
+        $choicegroup->set_source_table('choicegroup', ['id' => backup::VAR_ACTIVITYID]);
 
         $option->set_source_sql('
             SELECT *
               FROM {choicegroup_options}
              WHERE choicegroupid = ?',
-            array(backup::VAR_PARENTID));
+            [backup::VAR_PARENTID]);
 
-        // Define file annotations
-        $choicegroup->annotate_files('mod_choicegroup', 'intro', null); // This file area hasn't itemid
+        // Define file annotations.
+        $choicegroup->annotate_files('mod_choicegroup', 'intro', null); // This file area hasn't itemid.
 
-        // Return the root element (choicegroup), wrapped into standard activity structure
+        // Return the root element (choicegroup), wrapped into standard activity structure.
         return $this->prepare_activity_structure($choicegroup);
     }
 }

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_usertours\output;
+
+use tool_usertours\tour as toursource;
+
 /**
  * Tour renderable.
  *
@@ -21,21 +25,7 @@
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_usertours\output;
-
-defined('MOODLE_INTERNAL') || die();
-
-use tool_usertours\tour as toursource;
-
-/**
- * Tour renderable.
- *
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class tour implements \renderable {
-
     /**
      * @var The tour instance.
      */
@@ -46,7 +36,7 @@ class tour implements \renderable {
      *
      * @param   toursource      $tour       The tour being output.
      */
-    public function __construct (toursource $tour) {
+    public function __construct(toursource $tour) {
         $this->tour = $tour;
     }
 

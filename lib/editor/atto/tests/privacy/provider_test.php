@@ -37,11 +37,11 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * One test to check fetch and export of all drafts.
      */
-    public function test_fetch_and_exports_drafts() {
+    public function test_fetch_and_exports_drafts(): void {
         global $USER;
         $this->resetAfterTest();
 
@@ -118,6 +118,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Export the data for the system context.
         // There should be two.
         $this->export_context_data_for_user($user->id, $systemcontext, 'editor_atto');
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = \core_privacy\local\request\writer::with_context($systemcontext);
         $this->assertTrue($writer->has_any_data());
 
@@ -143,7 +144,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test delete_for_all_users_in_context.
      */
-    public function test_delete_for_all_users_in_context() {
+    public function test_delete_for_all_users_in_context(): void {
         global $USER, $DB;
         $this->resetAfterTest();
 
@@ -229,7 +230,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test delete_for_all_users_in_context.
      */
-    public function test_delete_for_user_in_contexts() {
+    public function test_delete_for_user_in_contexts(): void {
         global $USER, $DB;
         $this->resetAfterTest();
 
@@ -331,7 +332,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that user data with different contexts is fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'editor_atto';
@@ -392,7 +393,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'editor_atto';
@@ -512,7 +513,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Test fetch and delete when another user has editted a draft in your
      * user context. Edge case.
      */
-    public function test_another_user_edits_you() {
+    public function test_another_user_edits_you(): void {
         global $USER, $DB;
         $this->resetAfterTest();
 
@@ -535,6 +536,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Should have the data.
         $this->export_context_data_for_user($user->id, $usercontext, 'editor_atto');
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = \core_privacy\local\request\writer::with_context($usercontext);
         $this->assertTrue($writer->has_any_data());
 
@@ -564,7 +566,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test fetch and delete when you have edited another user's context.
      */
-    public function test_another_you_edit_different_user() {
+    public function test_another_you_edit_different_user(): void {
         global $USER, $DB;
         $this->resetAfterTest();
 
@@ -587,6 +589,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Should have the data.
         $this->export_context_data_for_user($user->id, $otherusercontext, 'editor_atto');
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = \core_privacy\local\request\writer::with_context($otherusercontext);
         $this->assertTrue($writer->has_any_data());
 

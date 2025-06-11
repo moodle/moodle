@@ -1,0 +1,118 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_quiz/add_random_question_form
+
+    From to add random questions.
+
+    Example context (json):
+    {
+        "returnurl": "http://example.com",
+        "randomoptions": [
+            {"name": "1", "value": "1"},
+            {"name": "2", "value": "2"}
+        ],
+        "questioncategoryoptions": {
+            "label": "Category 1",
+            "options": [
+                {"name": "Category 2", "value": "1"},
+                {"name": "Category 3", "value": "2"}
+            ]
+        },
+        "questioncategoryhelp": {
+            "title": "Help with something",
+            "text": "Help with something",
+            "url": "http://example.org/help",
+            "linktext": "",
+            "icon": {
+                "extraclasses": "",
+                "attributes": [
+                    {"name": "src", "value": "../../../pix/help.svg"},
+                    {"name": "alt", "value": "Help icon"}
+                ]
+            }
+        },
+        "questionbank": "<pre>Question bank HTML goes here</pre>"
+    }
+}}
+<div class="mt-2 position-relative" data-region="add_random_question_form-container">
+    <form action="{{returnurl}}" method="POST" id="add_random_question_form" class="mform">
+        <fieldset id="id_existingcategoryheader">
+            <legend>{{#str}} randomfromexistingcategory, mod_quiz {{/str}}</legend>
+            <!-- Question bank -->
+            {{{questionbank}}}
+
+            <!-- Select number of random question -->
+            <label>
+                {{#str}}randomnumber, mod_quiz{{/str}}
+                <select id="menurandomcount" name="randomcount" class="form-control custom-select">
+                    {{#randomoptions}}
+                        <option value="{{value}}">{{name}}</option>
+                    {{/randomoptions}}
+                </select>
+            </label>
+
+            <!-- Buttons -->
+            <div class="modal-footer mt-1" data-region="footer">
+                <input type="hidden" name="message" value="">
+                <input type="submit" class="btn btn-primary" name="addrandom" value="{{#str}} addrandomquestion, mod_quiz {{/str}}">
+                <input type="submit" class="btn btn-secondary" name="cancel" value="{{#str}} cancel {{/str}}">
+            </div>
+
+        </fieldset>
+
+        <fieldset id="id_newcategoryheader">
+            <legend>{{#str}} randomquestionusinganewcategory, mod_quiz {{/str}}</legend>
+            <!-- New categoryname -->
+            <div class="mb-3 row fitem">
+                <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
+                    <label class="me-md-2 mb-md-0" for="categoryname">{{#str}} name {{/str}} </label>
+                </div>
+                <div class="col-md-9 d-flex flex-wrap align-items-start felement" data-fieldtype="text">
+                    <input type="text" class="form-control" id="categoryname" name="categoryname" maxlength="254" size="50">
+                </div>
+            </div>
+
+            <!-- Select parent of new category -->
+            <div class="mb-3 row fitem">
+                <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
+                    <label class="me-md-2 mb-md-0" for="parentcategory">{{#str}} parentcategory, question {{/str}} </label>
+                    {{#questioncategoryhelp}}
+                        {{>core/help_icon}}
+                    {{/questioncategoryhelp}}
+                </div>
+                <div class="col-md-9 d-flex flex-wrap align-items-start felement" data-fieldtype="select">
+                    <select id="parentcategory" name="parentcategory" class="form-control">
+                        {{#questioncategoryoptions}}
+                            <optgroup label="{{label}}">
+                                {{#options}}
+                                    <option value="{{value}}">{{{name}}}</option>
+                                {{/options}}
+                            </optgroup>
+                        {{/questioncategoryoptions}}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="modal-footer mt-1" data-region="footer">
+                <input type="submit" class="btn btn-primary" name="newcategory" value="{{#str}} createcategoryandaddrandomquestion, mod_quiz {{/str}}">
+                <input type="submit" class="btn btn-secondary" name="cancel" value="{{#str}} cancel {{/str}}">
+            </div>
+        </fieldset>
+    </form>
+</div>

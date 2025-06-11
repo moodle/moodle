@@ -51,7 +51,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
     {{! dropdown-menu-right style to fix RTL placement }}
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-actions">
         {{#options}}
-            <a class="dropdown-item" {{#attributes}}{{name}}="{{value}}"{{/attributes}} href="{{url}}">{{label}}</a>
+            <a class="dropdown-item {{extraclasses}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}} href="{{url}}">{{label}}</a>
         {{/options}}
     </div>
 </div>

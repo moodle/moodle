@@ -30,12 +30,12 @@ $id = required_param('id', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 
 $cm = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
-$tempuser = $DB->get_record('attendance_tempusers', array('id' => $userid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
+$tempuser = $DB->get_record('attendance_tempusers', ['id' => $userid], '*', MUST_EXIST);
 
 $att = new mod_attendance_structure($att, $cm, $course);
-$params = array('userid' => $tempuser->id);
+$params = ['userid' => $tempuser->id];
 $PAGE->set_url($att->url_tempmerge($params));
 
 require_login($course, true, $cm);
@@ -45,14 +45,14 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_cacheable(true);
 $PAGE->navbar->add(get_string('tempusermerge', 'attendance'));
 
-$formdata = (object)array(
+$formdata = (object)[
     'id' => $cm->id,
     'userid' => $tempuser->id,
-);
+];
 
-$custom = array(
+$custom = [
     'description' => format_string($tempuser->fullname).' ('.format_string($tempuser->email).')',
-);
+];
 $mform = new mod_attendance\form\tempmerge(null, $custom);
 $mform->set_data($formdata);
 
@@ -67,25 +67,25 @@ if ($mform->is_cancelled()) {
               LEFT JOIN {attendance_log} lt ON lt.sessionid = s.id AND lt.studentid = :tempuserid
              WHERE s.attendanceid = :attendanceid AND lt.id IS NOT NULL
              ORDER BY s.id";
-    $params = array(
+    $params = [
         'realuserid' => $data->participant,
         'tempuserid' => $tempuser->studentid,
         'attendanceid' => $att->id,
-    );
+    ];
     $logs = $DB->get_recordset_sql($sql, $params);
 
     foreach ($logs as $log) {
         if (!is_null($log->reallogid)) {
             // Remove the existing attendance for the real user for this session.
-            $DB->delete_records('attendance_log', array('id' => $log->reallogid));
+            $DB->delete_records('attendance_log', ['id' => $log->reallogid]);
         }
         // Adjust the 'temp user' attendance record to point at the real user.
-        $DB->set_field('attendance_log', 'studentid', $data->participant, array('id' => $log->templogid));
+        $DB->set_field('attendance_log', 'studentid', $data->participant, ['id' => $log->templogid]);
     }
 
     // Delete the temp user.
-    $DB->delete_records('attendance_tempusers', array('id' => $tempuser->id));
-    $att->update_users_grade(array($data->participant)); // Update the gradebook after the merge.
+    $DB->delete_records('attendance_tempusers', ['id' => $tempuser->id]);
+    $att->update_users_grade([$data->participant]); // Update the gradebook after the merge.
 
     redirect($att->url_managetemp());
 }

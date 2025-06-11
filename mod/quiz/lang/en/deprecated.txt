@@ -1,6 +1,7 @@
-completionpass,mod_quiz
-completionpassdesc,mod_quiz
-completionpass_help,mod_quiz
-completiondetail:passgrade,mod_quiz
-gradetopassnotset,mod_quiz
-basicideasofquiz,mod_quiz
+completionminattemptsgroup,mod_quiz
+grade,mod_quiz
+timetaken,mod_quiz
+attemptsdeleted,mod_quiz
+gradesdeleted,mod_quiz
+useroverridesdeleted,mod_quiz
+groupoverridesdeleted,mod_quiz

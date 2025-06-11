@@ -61,7 +61,7 @@ Feature: Self conversation
     Given I log in as "student1"
     When I follow "Profile" in the user menu
     Then I should see "Message"
-    And I click on "Message" "icon"
+    And I press "Message"
     And I send "Hi!" message in the message area
     And I should see "Hi!" in the "Student 1" "core_message > Message conversation"
     And I should see "##today##%d %B##" in the "Student 1" "core_message > Message conversation"

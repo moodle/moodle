@@ -73,17 +73,6 @@ class category_updated extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    public function get_legacy_logdata() {
-        return array($this->courseid, 'glossary', 'edit category',
-            "editcategories.php?id={$this->contextinstanceid}",
-            $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

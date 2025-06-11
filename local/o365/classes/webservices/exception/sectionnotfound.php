@@ -25,12 +25,12 @@
 
 namespace local_o365\webservices\exception;
 
-defined('MOODLE_INTERNAL') || die();
+use moodle_exception;
 
 /**
  * Exception thrown when a course section that does not exist is used to update an assignment.
  */
-class sectionnotfound extends \moodle_exception {
+class sectionnotfound extends moodle_exception {
     /**
      * Constructor.
      *

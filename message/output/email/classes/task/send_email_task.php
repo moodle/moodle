@@ -73,7 +73,7 @@ class send_email_task extends scheduled_task {
         // Keep track of which emails failed to send.
         $users = $this->get_unique_users();
         foreach ($users as $user) {
-            cron_setup_user($user);
+            \core\cron::setup_user($user);
 
             $hascontent = false;
             $renderable = new \message_email\output\email_digest($user);
@@ -99,7 +99,7 @@ class send_email_task extends scheduled_task {
                 }
             }
         }
-        cron_setup_user();
+        \core\cron::setup_user();
         $users->close();
     }
 
@@ -108,7 +108,7 @@ class send_email_task extends scheduled_task {
      *
      * @return moodle_recordset A moodle_recordset instance.
      */
-    private function get_unique_users() : moodle_recordset {
+    private function get_unique_users(): moodle_recordset {
         global $DB;
 
         $subsql = 'SELECT DISTINCT(useridto) as id
@@ -128,7 +128,7 @@ class send_email_task extends scheduled_task {
      * @param int $userid The ID of the user we are sending a digest to.
      * @return moodle_recordset A moodle_recordset instance.
      */
-    private function get_conversations_for_user(int $userid) : moodle_recordset {
+    private function get_conversations_for_user(int $userid): moodle_recordset {
         global $DB;
 
         // We shouldn't be joining directly on the group table as group
@@ -158,7 +158,7 @@ class send_email_task extends scheduled_task {
      * @param int $userid
      * @return moodle_recordset A moodle_recordset instance.
      */
-    protected function get_users_messages_for_conversation(int $conversationid, int $userid) : moodle_recordset {
+    protected function get_users_messages_for_conversation(int $conversationid, int $userid): moodle_recordset {
         global $DB;
 
         $userfieldsapi = \core_user\fields::for_userpic();

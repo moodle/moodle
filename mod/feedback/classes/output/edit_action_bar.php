@@ -17,9 +17,9 @@
 namespace mod_feedback\output;
 
 use moodle_url;
-use action_link;
-use single_select;
-use url_select;
+use action_menu;
+use action_menu_link;
+use pix_icon;
 
 /**
  * Class actionbar - Display the action bar
@@ -53,44 +53,83 @@ class edit_action_bar extends base_action_bar {
      * @return array
      */
     public function get_items(): array {
-        $url = new moodle_url('/mod/feedback/view.php', ['id' => $this->cmid]);
-        $items['left'][]['actionlink'] = new action_link($url, get_string('back'), null, ['class' => 'btn btn-secondary']);
+        if (!has_capability('mod/feedback:edititems', $this->context)) {
+            return [];
+        }
+        return [
+            'addselect' => $this->get_add_question_menu(),
+            'actionsselect' => $this->get_edit_actions_menu(),
+        ];
+    }
 
-        if (has_capability('mod/feedback:edititems', $this->context)) {
-            $editurl = new moodle_url('/mod/feedback/edit.php', $this->urlparams);
-            $templateurl = new moodle_url('/mod/feedback/manage_templates.php', $this->urlparams);
-            $importurl = new moodle_url('/mod/feedback/import.php', $this->urlparams);
-
-            $options = [
-                $editurl->out(false) => get_string('add_item', 'feedback'),
-                $templateurl->out(false) => get_string('using_templates', 'feedback'),
-                $importurl->out(false) => get_string('import_questions', 'feedback')
-            ];
-
-            $selected = $this->currenturl;
-            // Template pages can have sub pages, so match these.
-            if ($this->currenturl->compare(new moodle_url('/mod/feedback/use_templ.php'), URL_MATCH_BASE)) {
-                $selected = $templateurl;
-            }
-
-            $items['left'][]['urlselect'] = new url_select($options, $selected->out(false), null);
-
-            $viewquestions = $editurl->compare($this->currenturl);
-            if ($viewquestions) {
-                $select = new single_select(new moodle_url('/mod/feedback/edit_item.php',
-                    ['cmid' => $this->cmid, 'position' => $this->lastposition, 'sesskey' => sesskey()]),
-                    'typ', feedback_load_feedback_items_options());
-                $items['left'][]['singleselect'] = $select;
-
-                $exporturl = new moodle_url('/mod/feedback/export.php', $this->urlparams + ['action' => 'exportfile']);
-                $items['export'] = new action_link(
-                    $exporturl,
-                    get_string('export_questions', 'feedback'),
-                    null,
-                    ['class' => 'btn btn-secondary']);
-            }
+    /**
+     * Return the add question menu
+     *
+     * @return action_menu
+     */
+    private function get_add_question_menu(): action_menu {
+        $addselect = new action_menu();
+        $addselect->set_menu_trigger(get_string('add_item', 'mod_feedback'), 'btn btn-primary');
+        $addselect->set_menu_left();
+        $addselectparams = ['cmid' => $this->cmid, 'position' => $this->lastposition, 'sesskey' => sesskey()];
+        foreach (feedback_load_feedback_items_options() as $key => $value) {
+            $addselect->add(new action_menu_link(
+                new moodle_url('/mod/feedback/edit_item.php', $addselectparams + ['typ' => $key]),
+                null,
+                $value,
+                false,
+            ));
         }
 
-        return $items;
+        return $addselect;
+    }
+
+    /**
+     * Return the edit actions menu
+     *
+     * @return action_menu
+     */
+    private function get_edit_actions_menu(): action_menu {
+        global $DB, $PAGE;
+
+        $actionsselect = new action_menu();
+        $actionsselect->set_menu_trigger(get_string('actions'), 'btn btn-outline-primary');
+
+        // Export.
+        if ($DB->record_exists('feedback_item', ['feedback' => $this->feedback->id])) {
+            $exporturl = new moodle_url('/mod/feedback/export.php', $this->urlparams + ['action' => 'exportfile']);
+            $actionsselect->add(new action_menu_link(
+                $exporturl,
+                new pix_icon('i/file_export', get_string('export_questions', 'feedback')),
+                get_string('export_questions', 'feedback'),
+                false,
+            ));
+        }
+
+        // Import.
+        $importurl = new moodle_url('/mod/feedback/import.php', $this->urlparams);
+        $actionsselect->add(new action_menu_link(
+            $importurl,
+            new pix_icon('i/file_import', get_string('import_questions', 'feedback')),
+            get_string('import_questions', 'feedback'),
+            false,
+        ));
+
+        // Save as template.
+        $cancreatetemplates = has_any_capability([
+            'mod/feedback:createprivatetemplate',
+            'mod/feedback:createpublictemplate'], \context_module::instance($this->cmid));
+        if ($cancreatetemplates) {
+            $PAGE->requires->js_call_amd('mod_feedback/createtemplate', 'init');
+            $actionsselect->add(new action_menu_link(
+                new moodle_url('#'),
+                new pix_icon('i/file_plus', get_string('save_as_new_template', 'feedback')),
+                get_string('save_as_new_template', 'feedback'),
+                false,
+                ['data-action' => 'createtemplate', 'data-dataid' => $this->cmid],
+            ));
+        }
+
+        return $actionsselect;
     }
 }

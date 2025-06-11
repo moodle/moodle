@@ -41,9 +41,9 @@ function report_lpmonitoring_extend_navigation_category_settings($navigation, $c
 
     // Set navigation for monitoring of learning plans report.
     if ($canreadtemplate) {
-        $url = new moodle_url('/report/lpmonitoring/index.php', array('pagecontextid' => $categorycontext->id));
-        $urlstats = new moodle_url('/report/lpmonitoring/stats.php', array('pagecontextid' => $categorycontext->id));
-        $urlbulkrating = new moodle_url('/report/lpmonitoring/bulkrating.php', array('pagecontextid' => $categorycontext->id));
+        $url = new moodle_url('/report/lpmonitoring/index.php', ['pagecontextid' => $categorycontext->id]);
+        $urlstats = new moodle_url('/report/lpmonitoring/stats.php', ['pagecontextid' => $categorycontext->id]);
+        $urlbulkrating = new moodle_url('/report/lpmonitoring/bulkrating.php', ['pagecontextid' => $categorycontext->id]);
         $name = get_string('pluginname', 'report_lpmonitoring');
         $namestats = get_string('statslearningplan', 'report_lpmonitoring');
         $namebulkratingnode = get_string('bulkdefaultrating', 'report_lpmonitoring');
@@ -87,7 +87,7 @@ function report_lpmonitoring_extend_navigation_category_settings($navigation, $c
     // Set navigation for scales colors setting page.
     if ($canmanagecompetency) {
         $url = new moodle_url('/report/lpmonitoring/scalecolorconfiguration.php',
-                array('pagecontextid' => $categorycontext->id));
+                ['pagecontextid' => $categorycontext->id]);
         $name = get_string('colorconfiguration', 'report_lpmonitoring');
         $settingsnode = navigation_node::create($name,
                                                 $url,
@@ -118,7 +118,7 @@ function report_lpmonitoring_myprofile_navigation(core_user\output\myprofile\tre
         return false;
     }
 
-    $url = new moodle_url('/report/lpmonitoring/userreport.php', array('userid' => $user->id));
+    $url = new moodle_url('/report/lpmonitoring/userreport.php', ['userid' => $user->id]);
     $node = new core_user\output\myprofile\node('reports', 'lpmonitoringreport',
             get_string('pluginname', 'report_lpmonitoring'), null, $url);
     $tree->add_node($node);
@@ -145,9 +145,9 @@ function report_lpmonitoring_output_fragment_tags($args) {
     $cangrade = \core_competency\user_competency::can_grade_user($plan->get('userid'));
     if ($cangrade) {
 
-        $mform = new \report_lpmonitoring\form\tags(null, array('planid' => $planid));
+        $mform = new \report_lpmonitoring\form\tags(null, ['planid' => $planid]);
         // Used to set the planid.
-        $data = $DB->get_record('competency_plan', array('id' => $planid));
+        $data = $DB->get_record('competency_plan', ['id' => $planid]);
         $data->tags = core_tag_tag::get_item_tags_array('report_lpmonitoring', 'competency_plan', $planid);
         $mform->set_data($data);
 

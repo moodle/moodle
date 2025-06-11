@@ -135,6 +135,17 @@ class comments_table extends table_sql {
     }
 
     /**
+     * Format each row of returned data.
+     *
+     * @param array|object $row row of data from db used to make one row of the table.
+     * @return array one row for the table with sanitised content.
+     */
+    public function format_row($row): array {
+        $row->content = clean_param($row->content, PARAM_TEXT);
+        return parent::format_row($row);
+    }
+
+    /**
      * Displays the table.
      */
     public function display() {

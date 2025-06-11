@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_h5p;
+
+use core_h5p\local\library\autoloader;
+
+use invalid_response_exception;
+
 /**
  * Testing the H5P core methods.
  *
@@ -21,24 +27,14 @@
  * @category   test
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace core_h5p;
-
-use core_h5p\local\library\autoloader;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Test class covering the H5PFileStorage interface implementation.
- *
- * @package    core_h5p
- * @copyright  2019 Victor Deniz <victor@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \core_h5p\core
  *
  * @runTestsInSeparateProcesses
  */
-class h5p_core_test extends \advanced_testcase {
+final class h5p_core_test extends \advanced_testcase {
+
+    /** @var core */
+    protected $core;
 
     protected function setUp(): void {
         global $CFG;
@@ -67,10 +63,14 @@ class h5p_core_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         // Get info of latest content types versions.
-        $contenttypes = $this->core->get_latest_content_types()->contentTypes;
+        $response = $this->core->get_latest_content_types();
+        if (!empty($response->error)) {
+            throw new invalid_response_exception($response->error);
+        }
+
         // We are installing the first content type with tutorial and example fields (or the first one if none has them).
-        $librarydata = $contenttypes[0];
-        foreach ($contenttypes as $contentype) {
+        $librarydata = $response->contentTypes[0];
+        foreach ($response->contentTypes as $contenttype) {
             if (isset($contenttype->tutorial) && isset($contenttype->example)) {
                 $librarydata = $contenttype;
                 break;
@@ -193,7 +193,7 @@ class h5p_core_test extends \advanced_testcase {
     /**
      * Test if no handler has been defined.
      */
-    public function test_get_default_handler() {
+    public function test_get_default_handler(): void {
         global $CFG;
 
         $this->resetAfterTest(true);

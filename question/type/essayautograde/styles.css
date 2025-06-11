@@ -1,0 +1,216 @@
+/***************************************************************************
+    Because the "essayautograde" question type extends the "essay" renderer,
+    the classes of the inner display elements use the original "essay" CSS
+    class names.
+***************************************************************************/
+
+.que.essayautograde .hidesample,
+.que.essayautograde .showsample {
+    font-size: 0.85em;
+    font-weight: bold;
+}
+.que.essayautograde .hidesample::before,
+.que.essayautograde .showsample::before {
+  content: " (";
+}
+.que.essayautograde .hidesample::after,
+.que.essayautograde .showsample::after {
+  content: ")";
+}
+.que.essayautograde .hidesample {
+    color: purple;
+}
+.que.essayautograde .showsample {
+    color: red;
+}
+
+.que.essayautograde textarea.qtype_essay_response {
+    width: 100%;
+}
+
+.que.essayautograde textarea.qtype_essay_response.qtype_essayautograde_plain {
+    white-space: pre-wrap;
+    font: inherit;
+}
+
+.que.essayautograde textarea.qtype_essay_response.qtype_essayautograde_monospaced {
+    white-space: pre;
+    font-family: Andale Mono, Monaco, Courier New, DejaVu Sans Mono, monospace;
+}
+
+.que.essayautograde .qtype_essay_response {
+    min-height: 3em;
+}
+
+.que.essayautograde .qtype_essay_response.readonly {
+    background-color: white;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+.que.essayautograde div.qtype_essay_response textarea {
+    width: 100%;
+}
+
+.que.essayautograde div.qtype_essay_response select {
+    margin-bottom: 0px;
+}
+
+.que.essayautograde p.itemcount {
+    margin-top: 6px;
+}
+
+.que.essayautograde dl.gradebands {
+    overflow:     auto;
+}
+.que.essayautograde dl.gradebands dt {
+    float:        left;
+    clear:        left;
+    margin-right:  8px;
+}
+.que.essayautograde dl.gradebands dd {
+    float:        left;
+    margin-bottom: 0px;
+    margin-top:    2px;
+}
+
+.que.essayautograde .fp-restrictions span:first-of-type {
+    display: none;
+}
+
+table.essayautograde.review {
+    border-collapse: separate;
+    border-spacing:         0;
+    color:            #7f4614;
+}
+table.essayautograde.review.stats {
+    max-width:          360px;
+}
+table.essayautograde.review.feedback .c0 {
+    max-width:          200px;
+}
+
+table.essayautograde.review tr,
+table.essayautograde.review th,
+table.essayautograde.review td {
+    border: none;
+}
+
+table.essayautograde.review tr:first-child th,
+table.essayautograde.review tr:first-child td {
+    border-top: solid 1px #a65b1a;
+}
+table.essayautograde.review tr th:first-child,
+table.essayautograde.review tr td:first-child {
+    border-left: solid 1px #a65b1a;
+}
+table.essayautograde.review tr th:last-child,
+table.essayautograde.review tr td:last-child {
+    border-right: solid 1px #a65b1a;
+}
+table.essayautograde.review tr:last-child th,
+table.essayautograde.review tr:last-child td {
+    border-bottom: solid 1px #a65b1a;
+}
+
+table.essayautograde.review tr:first-child th:first-child,
+table.essayautograde.review tr:first-child td:first-child {
+    border-top-left-radius: 4px;
+}
+
+table.essayautograde.review tr:first-child th:last-child,
+table.essayautograde.review tr:first-child td:last-child {
+    border-top-right-radius: 4px;
+}
+
+table.essayautograde.review tr:last-child th:first-child,
+table.essayautograde.review tr:last-child td:first-child {
+    border-bottom-left-radius: 4px;
+}
+
+table.essayautograde.review tr:last-child th:last-child,
+table.essayautograde.review tr:last-child td:last-child {
+    border-bottom-right-radius: 4px;
+}
+
+table.essayautograde.review tbody tr:nth-of-type(odd) {
+    background-color:       #fafafa;
+}
+
+table.essayautograde.review tbody tr:nth-of-type(even) {
+    background-color:       #f0e5cc;
+}
+
+table.essayautograde.review ol,
+table.essayautograde.review ul {
+    margin:        0px 0px 0px 16px;
+    padding:                    0px;
+}
+
+table.essayautograde.review .error,
+table.essayautograde.review .missing,
+table.essayautograde.review .partial,
+table.essayautograde.review .present {
+    border-width:               2px;
+    border-style:             solid;
+    border-radius:              4px;
+    display:           inline-block;
+    padding:                2px 6px;
+    min-width:   calc(16px + 4.5em);
+    white-space:             nowrap;
+}
+
+table.essayautograde.review .error,
+table.essayautograde.review .missing {
+    background-color:  #ffdddd; /* light red */
+    border-color:      #ff7373; /* gentle red */
+    color:             #990000; /* dark red */
+}
+table.essayautograde.review .partial {
+    background-color : #ffebcc; /* light orange */
+    border-color     : #ff9900; /* gentle orange */
+    color:             #cc6600; /* dark orange */
+}
+table.essayautograde.review .present {
+    background-color:  #dff4d8; /* light green */
+    border-color:      #99ff66; /* gentle green */
+    color:             #009900; /* dark green */
+}
+
+/**
+ * Add zebra stripes fo the target phrases
+ * (do not add BG to frst and last elements)
+ */
+#id_targetphrases .fitem:nth-of-type(4n),
+#id_targetphrases .fitem:nth-of-type(4n+1) {
+    background-color: #f8f8f8;
+}
+
+#id_targetphrases .fitem:nth-of-type(4n+2),
+#id_targetphrases .fitem:nth-of-type(4n+3) {
+    background-color: #f0f0f0;
+}
+#id_targetphrases .fitem:first-child,
+#id_targetphrases .fitem:last-child {
+    background-color: initial;
+}
+
+/**
+ * Adjust margins and padding between
+ * targetphrase and phrasebehavior groups.
+ */
+#id_targetphrases .fitem:nth-of-type(2n) {
+    margin-bottom: 0px !important;
+}
+#id_targetphrases .fitem:nth-of-type(2n+1) {
+    padding-top: 3px !important;
+}
+
+@media (min-width: 768px) {
+    /** Moodle <= 3.6 **/
+    [id^=fgroup_id_phrasebehavior_] label,
+    /** Moodle >= 3.7 **/
+    [id^=fgroup_id_phrasebehavior_] [id$=_label] {
+        visibility: hidden;
+    }
+}

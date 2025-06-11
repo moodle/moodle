@@ -32,10 +32,10 @@ Feature: Basic use of the Statistics report
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 1 | C1     | quiz1    |
     And quiz "Quiz 1" contains the following questions:
-      | question   | page |
-      | Question A | 1    |
-      | Question B | 1    |
-      | Question C | 2    |
+      | question   | page | displaynumber |
+      | Question A | 1    |               |
+      | Question B | 1    |               |
+      | Question C | 2    | 3c            |
 
   @javascript
   Scenario: Report works when there are no attempts
@@ -64,6 +64,7 @@ Feature: Basic use of the Statistics report
     And "Show chart data" "link" should exist
 
     # Question A statistics breakdown.
+    And "1" row "Q#" column of "questionstatistics" table should contain "1"
     And "1" row "Question name" column of "questionstatistics" table should contain "Question A"
     And "1" row "Attempts" column of "questionstatistics" table should contain "3"
     And "1" row "Facility index" column of "questionstatistics" table should contain "66.67%"
@@ -74,6 +75,7 @@ Feature: Basic use of the Statistics report
     And "1" row "Discrimination index" column of "questionstatistics" table should contain "50.00%"
 
     # Question B statistics breakdown.
+    And "2" row "Q#" column of "questionstatistics" table should contain "2"
     And "2" row "Question name" column of "questionstatistics" table should contain "Question B"
     And "2" row "Attempts" column of "questionstatistics" table should contain "3"
     And "2" row "Facility index" column of "questionstatistics" table should contain "33.33%"
@@ -84,6 +86,7 @@ Feature: Basic use of the Statistics report
     And "2" row "Discrimination index" column of "questionstatistics" table should contain "86.60%"
 
     # Question C statistics breakdown.
+    And "3" row "Q#" column of "questionstatistics" table should contain "3c"
     And "3" row "Question name" column of "questionstatistics" table should contain "Question C"
     And "3" row "Attempts" column of "questionstatistics" table should contain "3"
     And "3" row "Facility index" column of "questionstatistics" table should contain "33.33%"

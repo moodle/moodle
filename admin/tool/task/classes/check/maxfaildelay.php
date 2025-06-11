@@ -52,7 +52,7 @@ class maxfaildelay extends check {
      * Return result
      * @return result
      */
-    public function get_result() : result {
+    public function get_result(): result {
         global $CFG;
 
         $status = result::OK;

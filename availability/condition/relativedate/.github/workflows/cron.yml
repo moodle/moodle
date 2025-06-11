@@ -13,12 +13,12 @@ jobs:
       fail-fast: false
       matrix:
         moodle-branch: ['main']
-        php: ['8.1']
+        php: ['8.2']
         database: ['mysqli']
 
     steps:
       - name: checkout plugin
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: this-plugin
 
@@ -28,14 +28,6 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: max_input_vars=5000
           coverage: pcov
-
-      - name: npm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
-          restore-keys: |
-            node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
 
       - name: composer
         run: |
@@ -54,10 +46,6 @@ jobs:
       - name: phplint
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi phplint
-
-      - name: phpcpd
-        if: ${{ always() }}
-        run: moodle-plugin-ci --ansi phpcpd
 
       - name: phpmd
         if: ${{ always() }}
@@ -90,7 +78,7 @@ jobs:
       - name: phpunit
         continue-on-error: true
         if: ${{ always() }}
-        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
+        run: moodle-plugin-ci --ansi phpunit --testdox --coverage-text --coverage-clover
 
       - name: behat
         if: ${{ always() }}

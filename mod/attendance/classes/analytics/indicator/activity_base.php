@@ -41,6 +41,6 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
      * @return string[]
      */
     protected function feedback_viewed_events() {
-        return array('\mod_attendance\event\session_report_viewed');
+        return ['\mod_attendance\event\session_report_viewed'];
     }
 }

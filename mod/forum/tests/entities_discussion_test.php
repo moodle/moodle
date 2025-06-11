@@ -26,11 +26,11 @@ use mod_forum\local\entities\post as post_entity;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entities_discussion_test extends \advanced_testcase {
+final class entities_discussion_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */
-    public function test_entity() {
+    public function test_entity(): void {
         $this->resetAfterTest();
 
         // In the past to ensure the time started is true.
@@ -124,7 +124,7 @@ class entities_discussion_test extends \advanced_testcase {
      * @param bool $isvisible Expected result from the is_timed_discussion_visible function
      */
     public function test_display_period_settings($testdescription, $startoffset, $endoffset,
-                                                 $timestartresult, $timeendresult, $isvisible) {
+                                                 $timestartresult, $timeendresult, $isvisible): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -159,7 +159,7 @@ class entities_discussion_test extends \advanced_testcase {
      *
      * @return array start/end time offsets and the expected results.
      */
-    public function diplay_period_options_provider() {
+    public static function diplay_period_options_provider(): array {
         return array(
             ["No dates set", 0, 0, true, false, true],
             ["Only started date in the future", 100, 0, false, false, false],

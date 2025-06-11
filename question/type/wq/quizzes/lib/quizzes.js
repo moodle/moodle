@@ -2831,7 +2831,7 @@ com.wiris.quizzes.impl.QuizzesImpl.prototype = $extend(com.wiris.quizzes.api.Qui
 		var r = this.newGradeRequest(instance);
 		var qr = r;
 		var qi = instance;
-		qr.question = this.cloneQuestion(qr.question);
+		qr.question = this.shallowCopyQuestion(qr.question);
 		com.wiris.quizzes.impl.QuizzesImpl.setVariables(html,qr.question,qi,qr);
 		return r;
 	}
@@ -2865,16 +2865,12 @@ com.wiris.quizzes.impl.QuizzesImpl.prototype = $extend(com.wiris.quizzes.api.Qui
 		if(html != null) sb.b += Std.string(html);
 		return this.newVariablesRequest(sb.b,instance);
 	}
-	,sanitizeForQuizzesService: function(question) {
-		var slots = question.getSlots();
-		var _g = 0;
-		while(_g < slots.length) {
-			var slot = slots[_g];
-			++_g;
-			if(slot.getSyntax().getName() == com.wiris.quizzes.api.assertion.SyntaxName.MATH_MULTISTEP) slot.setSyntax(com.wiris.quizzes.api.assertion.SyntaxName.MATH);
-		}
+	,shallowCopyQuestion: function(question) {
+		var copy = new com.wiris.quizzes.impl.QuestionImpl();
+		copy.importQuestion(question.getImpl());
+		return copy;
 	}
-	,cloneQuestion: function(question) {
+	,deepCopyQuestion: function(question) {
 		var serialized = question.serialize();
 		return this.readQuestion(serialized);
 	}
@@ -2883,12 +2879,11 @@ com.wiris.quizzes.impl.QuizzesImpl.prototype = $extend(com.wiris.quizzes.api.Qui
 		var qi = instance;
 		var question = qi.question;
 		if(question == null) throw "The question must be specified, either as a parameter" + " of this function or as a field of the question instance";
-		question = this.cloneQuestion(question);
+		question = this.shallowCopyQuestion(question);
 		var qr = new com.wiris.quizzes.impl.QuestionRequestImpl();
 		qr.question = question;
 		qr.userData = qi.userData;
 		com.wiris.quizzes.impl.QuizzesImpl.setVariables(html,question,qi,qr);
-		this.sanitizeForQuizzesService(question);
 		return qr;
 	}
 	,readQuestionInstance: function(xml,q) {
@@ -4059,13 +4054,18 @@ com.wiris.quizzes.api.QuestionRequest = $hxClasses["com.wiris.quizzes.api.Questi
 com.wiris.quizzes.api.QuestionRequest.__name__ = ["com","wiris","quizzes","api","QuestionRequest"];
 com.wiris.quizzes.api.QuestionRequest.__interfaces__ = [com.wiris.quizzes.api.Serializable];
 com.wiris.quizzes.api.QuestionRequest.prototype = {
-	isEmpty: null
+	prefixVariables: null
+	,isEmpty: null
 	,addMetaProperty: null
 	,__class__: com.wiris.quizzes.api.QuestionRequest
 }
 com.wiris.quizzes.api.QuestionResponse = $hxClasses["com.wiris.quizzes.api.QuestionResponse"] = function() { }
 com.wiris.quizzes.api.QuestionResponse.__name__ = ["com","wiris","quizzes","api","QuestionResponse"];
 com.wiris.quizzes.api.QuestionResponse.__interfaces__ = [com.wiris.quizzes.api.Serializable];
+com.wiris.quizzes.api.QuestionResponse.prototype = {
+	removePrefix: null
+	,__class__: com.wiris.quizzes.api.QuestionResponse
+}
 com.wiris.quizzes.api.QuizzesConstants = $hxClasses["com.wiris.quizzes.api.QuizzesConstants"] = function() {
 };
 com.wiris.quizzes.api.QuizzesConstants.__name__ = ["com","wiris","quizzes","api","QuizzesConstants"];
@@ -9556,6 +9556,7 @@ com.wiris.quizzes.impl.QuestionImpl.getDefaultOptions = function() {
 	dopt.set(com.wiris.quizzes.api.QuizzesConstants.OPTION_DIGIT_GROUP_SEPARATOR,"");
 	dopt.set(com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER,"false");
 	dopt.set(com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER_NAME,"answer");
+	dopt.set(com.wiris.quizzes.api.QuizzesConstants.OPTION_ITEM_SEPARATOR,",");
 	return dopt;
 }
 com.wiris.quizzes.impl.QuestionImpl.setLocalDataToArray = function(name,value,ld) {
@@ -11919,6 +11920,27 @@ com.wiris.quizzes.impl.QuestionRequestImpl.prototype = $extend(com.wiris.util.xm
 	isEmpty: function() {
 		return this.processes == null || this.processes.length == 0;
 	}
+	,prefixVariables: function(prefix,variablesToPrefix) {
+		var _g = 0, _g1 = this.processes;
+		while(_g < _g1.length) {
+			var p = _g1[_g];
+			++_g;
+			if(js.Boot.__instanceof(p,com.wiris.quizzes.impl.ProcessGetVariables)) {
+				var pp = p;
+				var variables = pp.names.split(",");
+				var sb = new StringBuf();
+				var _g3 = 0, _g2 = variables.length;
+				while(_g3 < _g2) {
+					var i = _g3++;
+					var v = variables[i];
+					if(i > 0) sb.b += Std.string(",");
+					if(com.wiris.util.type.Arrays.containsArray(variablesToPrefix,v)) sb.b += Std.string(prefix);
+					sb.b += Std.string(v);
+				}
+				pp.names = sb.b;
+			}
+		}
+	}
 	,addMetaProperty: function(name,value) {
 		if(this.meta == null) this.meta = new Array();
 		var p = new com.wiris.quizzes.impl.Property();
@@ -11972,7 +11994,25 @@ com.wiris.quizzes.impl.QuestionResponseImpl.__name__ = ["com","wiris","quizzes",
 com.wiris.quizzes.impl.QuestionResponseImpl.__interfaces__ = [com.wiris.quizzes.api.QuestionResponse];
 com.wiris.quizzes.impl.QuestionResponseImpl.__super__ = com.wiris.util.xml.SerializableImpl;
 com.wiris.quizzes.impl.QuestionResponseImpl.prototype = $extend(com.wiris.util.xml.SerializableImpl.prototype,{
-	newInstance: function() {
+	removePrefix: function(prefix,variablesWithPrefix) {
+		var prefixLen = prefix.length;
+		var _g = 0, _g1 = this.results;
+		while(_g < _g1.length) {
+			var r = _g1[_g];
+			++_g;
+			if(js.Boot.__instanceof(r,com.wiris.quizzes.impl.ResultGetVariables)) {
+				var rr = r;
+				var variables = rr.variables;
+				var _g2 = 0;
+				while(_g2 < variables.length) {
+					var v = variables[_g2];
+					++_g2;
+					if(StringTools.startsWith(v.name,prefix) && com.wiris.util.type.Arrays.containsArray(variablesWithPrefix,HxOverrides.substr(v.name,prefixLen,null))) v.name = HxOverrides.substr(v.name,prefixLen,null);
+				}
+			}
+		}
+	}
+	,newInstance: function() {
 		return new com.wiris.quizzes.impl.QuestionResponseImpl();
 	}
 	,onSerialize: function(s) {
@@ -46512,7 +46552,7 @@ com.wiris.quizzes.api.ConfigurationKeys.TELEMETRY_TOKEN = "quizzes.telemetry.tok
 com.wiris.quizzes.api.ConfigurationKeys.QUIZZES_LOGGING_LEVEL = "quizzes.logging.level";
 com.wiris.quizzes.api.ConfigurationKeys.QUIZZES_TRACKING_ENABLED = "quizzes.tracking.enabled";
 com.wiris.quizzes.api.ConfigurationKeys.GRAPH_TRACK_INSTANCES = "quizzes.graph.trackinstances";
-com.wiris.quizzes.api.Question.__meta__ = { fields : { setOption : { Deprecated : null}, addAssertion : { Deprecated : null}, getCorrectAnswersLength : { Deprecated : null}, getCorrectAnswer : { Deprecated : null}, setCorrectAnswer : { Deprecated : null}, addNewSlotFromModel : { Deprecated : null}}};
+com.wiris.quizzes.api.Question.__meta__ = { fields : { addAssertion : { Deprecated : null}, getCorrectAnswersLength : { Deprecated : null}, getCorrectAnswer : { Deprecated : null}, setCorrectAnswer : { Deprecated : null}, addNewSlotFromModel : { Deprecated : null}}};
 com.wiris.quizzes.api.QuestionInstance.__meta__ = { fields : { getAssertionChecks : { Deprecated : null}, getStudentAnswersLength : { Deprecated : null}, getStudentAnswer : { Deprecated : null}, setStudentAnswer : { Deprecated : null}, setAuxiliarText : { Deprecated : null}, getCompoundAnswerGrade : { Deprecated : null}, getAnswerGrade : { Deprecated : null}, isAnswerCorrect : { Deprecated : null}}};
 com.wiris.quizzes.api.QuizzesConstants.__meta__ = { statics : { PROPERTY_AUXILIAR_TEXT : { Deprecated : null}}};
 com.wiris.quizzes.api.QuizzesConstants.OPTION_RELATIVE_TOLERANCE = "relative_tolerance";
@@ -46527,6 +46567,7 @@ com.wiris.quizzes.api.QuizzesConstants.OPTION_IMPLICIT_TIMES_OPERATOR = "implici
 com.wiris.quizzes.api.QuizzesConstants.OPTION_FLOAT_FORMAT = "float_format";
 com.wiris.quizzes.api.QuizzesConstants.OPTION_DECIMAL_SEPARATOR = "decimal_separator";
 com.wiris.quizzes.api.QuizzesConstants.OPTION_DIGIT_GROUP_SEPARATOR = "digit_group_separator";
+com.wiris.quizzes.api.QuizzesConstants.OPTION_ITEM_SEPARATOR = "item_separator";
 com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER = "answer_parameter";
 com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER_NAME = "answer_parameter_name";
 com.wiris.quizzes.api.QuizzesConstants.PROPERTY_ANSWER_FIELD_TYPE = "inputField";
@@ -46672,7 +46713,7 @@ com.wiris.quizzes.impl.AssertionParam.TAGNAME = "param";
 com.wiris.quizzes.impl.AuthorAnswerImpl.TAGNAME = "authorAnswer";
 com.wiris.quizzes.impl.AuthorAnswerImpl.VALIDATIONS_TAGNAME = "validationAssertions";
 com.wiris.quizzes.impl.AuthorAnswerImpl.ATTRIBUTE_ID = "id";
-com.wiris.quizzes.impl.CalcDocumentTools.options = [com.wiris.quizzes.api.QuizzesConstants.OPTION_PRECISION,com.wiris.quizzes.api.QuizzesConstants.OPTION_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMAGINARY_UNIT,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMPLICIT_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_FLOAT_FORMAT,com.wiris.quizzes.api.QuizzesConstants.OPTION_DECIMAL_SEPARATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_DIGIT_GROUP_SEPARATOR];
+com.wiris.quizzes.impl.CalcDocumentTools.options = [com.wiris.quizzes.api.QuizzesConstants.OPTION_PRECISION,com.wiris.quizzes.api.QuizzesConstants.OPTION_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMAGINARY_UNIT,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMPLICIT_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_FLOAT_FORMAT,com.wiris.quizzes.api.QuizzesConstants.OPTION_DECIMAL_SEPARATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_DIGIT_GROUP_SEPARATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_ITEM_SEPARATOR];
 com.wiris.quizzes.impl.CalcDocumentTools.QUIZZES_QUESTION_OPTIONS = "quizzes_question_options";
 com.wiris.quizzes.impl.ComparisonAssertion.TAGNAME = "comparisonAssertion";
 com.wiris.quizzes.impl.ComparisonAssertion.DEFAULT_COMPARISON_MATH = com.wiris.quizzes.api.assertion.ComparisonName.MATHEMATICALLY_EQUAL;
@@ -46828,7 +46869,7 @@ com.wiris.quizzes.impl.QuizzesServiceImpl.USE_CACHE = true;
 com.wiris.quizzes.impl.QuizzesServiceImpl.PROTOCOL_REST = 0;
 com.wiris.quizzes.impl.QuizzesServiceImpl.deploymentId = null;
 com.wiris.quizzes.impl.QuizzesServiceImpl.licenseId = null;
-com.wiris.quizzes.impl.Option.options = [com.wiris.quizzes.api.QuizzesConstants.OPTION_RELATIVE_TOLERANCE,com.wiris.quizzes.api.QuizzesConstants.OPTION_TOLERANCE,com.wiris.quizzes.api.QuizzesConstants.OPTION_PRECISION,com.wiris.quizzes.api.QuizzesConstants.OPTION_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMAGINARY_UNIT,com.wiris.quizzes.api.QuizzesConstants.OPTION_EXPONENTIAL_E,com.wiris.quizzes.api.QuizzesConstants.OPTION_NUMBER_PI,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMPLICIT_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_FLOAT_FORMAT,com.wiris.quizzes.api.QuizzesConstants.OPTION_DECIMAL_SEPARATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_DIGIT_GROUP_SEPARATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER,com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER_NAME,com.wiris.quizzes.api.QuizzesConstants.OPTION_TOLERANCE_DIGITS];
+com.wiris.quizzes.impl.Option.options = [com.wiris.quizzes.api.QuizzesConstants.OPTION_RELATIVE_TOLERANCE,com.wiris.quizzes.api.QuizzesConstants.OPTION_TOLERANCE,com.wiris.quizzes.api.QuizzesConstants.OPTION_PRECISION,com.wiris.quizzes.api.QuizzesConstants.OPTION_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMAGINARY_UNIT,com.wiris.quizzes.api.QuizzesConstants.OPTION_EXPONENTIAL_E,com.wiris.quizzes.api.QuizzesConstants.OPTION_NUMBER_PI,com.wiris.quizzes.api.QuizzesConstants.OPTION_IMPLICIT_TIMES_OPERATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_FLOAT_FORMAT,com.wiris.quizzes.api.QuizzesConstants.OPTION_DECIMAL_SEPARATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_DIGIT_GROUP_SEPARATOR,com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER,com.wiris.quizzes.api.QuizzesConstants.OPTION_STUDENT_ANSWER_PARAMETER_NAME,com.wiris.quizzes.api.QuizzesConstants.OPTION_TOLERANCE_DIGITS,com.wiris.quizzes.api.QuizzesConstants.OPTION_ITEM_SEPARATOR];
 com.wiris.quizzes.impl.Parameter.tagName = "parameter";
 com.wiris.quizzes.impl.ProcessGetCheckAssertions.tagName = "getCheckAssertions";
 com.wiris.quizzes.impl.ProcessGetFeaturedAssertions.TAGNAME = "getFeaturedAssertions";

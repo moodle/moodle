@@ -383,7 +383,7 @@ At times, you maybe need to use margin or padding utilities to create that perfe
     </div>
   </div>
   <fieldset class="form-group row">
-    <legend class="col-form-label col-sm-2 float-sm-left pt-0">Radios</legend>
+    <legend class="col-form-label col-sm-2 float-sm-start pt-0">Radios</legend>
     <div class="col-sm-10">
       <div class="form-check">
         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
@@ -544,8 +544,8 @@ And of course [custom form controls](#custom-forms) are supported.
 <form>
   <div class="form-row align-items-center">
     <div class="col-auto my-1">
-      <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
-      <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+      <label class="me-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+      <select class="custom-select me-sm-2" id="inlineFormCustomSelect">
         <option selected>Choose...</option>
         <option value="1">One</option>
         <option value="2">Two</option>
@@ -553,7 +553,7 @@ And of course [custom form controls](#custom-forms) are supported.
       </select>
     </div>
     <div class="col-auto my-1">
-      <div class="custom-control custom-checkbox mr-sm-2">
+      <div class="custom-control custom-checkbox me-sm-2">
         <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
         <label class="custom-control-label" for="customControlAutosizing">Remember my preference</label>
       </div>
@@ -578,17 +578,17 @@ You may need to manually address the width and alignment of individual form cont
 {{< example >}}
 <form class="form-inline">
   <label class="sr-only" for="inlineFormInputName2">Name</label>
-  <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Jane Doe">
+  <input type="text" class="form-control mb-2 me-sm-2" id="inlineFormInputName2" placeholder="Jane Doe">
 
   <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
-  <div class="input-group mb-2 mr-sm-2">
+  <div class="input-group mb-2 me-sm-2">
     <div class="input-group-prepend">
       <div class="input-group-text">@</div>
     </div>
     <input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Username">
   </div>
 
-  <div class="form-check mb-2 mr-sm-2">
+  <div class="form-check mb-2 me-sm-2">
     <input class="form-check-input" type="checkbox" id="inlineFormCheck">
     <label class="form-check-label" for="inlineFormCheck">
       Remember me
@@ -603,15 +603,15 @@ Custom form controls and selects are also supported.
 
 {{< example >}}
 <form class="form-inline">
-  <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Preference</label>
-  <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+  <label class="my-1 me-2" for="inlineFormCustomSelectPref">Preference</label>
+  <select class="custom-select my-1 me-sm-2" id="inlineFormCustomSelectPref">
     <option selected>Choose...</option>
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
   </select>
 
-  <div class="custom-control custom-checkbox my-1 mr-sm-2">
+  <div class="custom-control custom-checkbox my-1 me-sm-2">
     <input type="checkbox" class="custom-control-input" id="customControlInline">
     <label class="custom-control-label" for="customControlInline">Remember my preference</label>
   </div>

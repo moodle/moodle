@@ -432,7 +432,7 @@ abstract class base {
      * @param  string|null $query Context name filter.
      * @return int[]
      */
-    public static function potential_context_restrictions(string $query = null) {
+    public static function potential_context_restrictions(?string $query = null) {
         return \core_analytics\manager::get_potential_context_restrictions(static::context_restriction_support(), $query);
     }
 

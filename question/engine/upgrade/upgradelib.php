@@ -45,6 +45,8 @@ class question_engine_attempt_upgrader {
     protected $questionloader;
     /** @var question_engine_assumption_logger */
     protected $logger;
+    /** @var stdClass */
+    protected $qsession;
 
     public function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
         global $OUTPUT;
@@ -280,6 +282,9 @@ class question_engine_upgrade_question_loader {
     protected $cache = array();
     protected $datasetcache = array();
 
+    /** @var base_logger */
+    protected $logger;
+
     public function __construct($logger) {
         $this->logger = $logger;
     }
@@ -412,12 +417,12 @@ abstract class question_qtype_attempt_updater {
         return $state->answer == '';
     }
 
-    public abstract function right_answer();
-    public abstract function response_summary($state);
-    public abstract function was_answered($state);
-    public abstract function set_first_step_data_elements($state, &$data);
-    public abstract function set_data_elements_for_step($state, &$data);
-    public abstract function supply_missing_first_step_data(&$data);
+    abstract public function right_answer();
+    abstract public function response_summary($state);
+    abstract public function was_answered($state);
+    abstract public function set_first_step_data_elements($state, &$data);
+    abstract public function set_data_elements_for_step($state, &$data);
+    abstract public function supply_missing_first_step_data(&$data);
 }
 
 

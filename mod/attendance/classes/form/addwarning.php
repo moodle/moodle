@@ -45,7 +45,7 @@ class addwarning extends moodleform {
         // Load global defaults.
         $config = get_config('attendance');
 
-        $options = array();
+        $options = [];
         for ($i = 1; $i <= 100; $i++) {
             $options[$i] = "$i%";
         }
@@ -54,7 +54,7 @@ class addwarning extends moodleform {
         $mform->setType('warningpercent', PARAM_INT);
         $mform->setDefault('warningpercent', $config->warningpercent);
 
-        $options = array();
+        $options = [];
         for ($i = 1; $i <= ATTENDANCE_MAXWARNAFTER; $i++) {
             $options[$i] = "$i";
         }
@@ -72,19 +72,19 @@ class addwarning extends moodleform {
         $mform->addHelpButton('emailuser', 'emailuser', 'mod_attendance');
         $mform->setDefault('emailuser', $config->emailuser);
 
-        $mform->addElement('text', 'emailsubject', get_string('emailsubject', 'mod_attendance'), array('size' => '64'));
+        $mform->addElement('text', 'emailsubject', get_string('emailsubject', 'mod_attendance'), ['size' => '64']);
         $mform->setType('emailsubject', PARAM_TEXT);
         $mform->addRule('emailsubject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('emailsubject', 'emailsubject', 'mod_attendance');
         $mform->setDefault('emailsubject', $config->emailsubject);
 
         $mform->addElement('editor', 'emailcontent', get_string('emailcontent', 'mod_attendance'), null, null);
-        $mform->setDefault('emailcontent', array('text' => format_text($config->emailcontent)));
+        $mform->setDefault('emailcontent', ['text' => format_text($config->emailcontent)]);
         $mform->setType('emailcontent', PARAM_RAW);
         $mform->addHelpButton('emailcontent', 'emailcontent', 'mod_attendance');
 
         $users = get_users_by_capability(context_course::instance($COURSE->id), 'mod/attendance:warningemails');
-        $options = array();
+        $options = [];
         foreach ($users as $user) {
             $options[$user->id] = fullname($user);
         }

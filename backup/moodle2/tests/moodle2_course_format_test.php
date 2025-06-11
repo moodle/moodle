@@ -37,13 +37,13 @@ require_once($CFG->dirroot . '/backup/moodle2/tests/fixtures/format_test_cs_opti
  * @copyright 2014 Russell Smith
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle2_course_format_test extends \advanced_testcase {
+final class moodle2_course_format_test extends \advanced_testcase {
 
     /**
      * Tests a backup and restore adds the required section option data
      * when the same course format is used.
      */
-    public function test_course_format_options_restore() {
+    public function test_course_format_options_restore(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -76,7 +76,7 @@ class moodle2_course_format_test extends \advanced_testcase {
      * Tests an import into the same subject successfully
      * restores the options without error.
      */
-    public function test_course_format_options_import_myself() {
+    public function test_course_format_options_import_myself(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -114,7 +114,7 @@ class moodle2_course_format_test extends \advanced_testcase {
      * 1. Only the relevant options.
      * 2. Only the data associated with relevant options.
      */
-    public function test_course_format_options_restore_new_format() {
+    public function test_course_format_options_restore_new_format(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);

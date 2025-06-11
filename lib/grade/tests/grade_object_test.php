@@ -28,9 +28,9 @@ require_once(__DIR__ . '/fixtures/lib.php');
  * @copyright  2014 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grade_object_test extends \grade_base_testcase {
+final class grade_object_test extends \grade_base_testcase {
 
-    public function test_fetch_all_helper() {
+    public function test_fetch_all_helper(): void {
         // Simple ID lookup.
         $params = array('id' => $this->grade_items[0]->id);
         $items = \grade_object::fetch_all_helper('grade_items', 'grade_item', $params);

@@ -63,13 +63,14 @@ class data_field_radiobutton extends data_field_base {
                 $content = '';
             }
         } else if ($recordid) {
-            $content = trim($DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid)));
+            $contentfield = $DB->get_field('data_content', 'content', ['fieldid' => $this->field->id, 'recordid' => $recordid]);
+            $content = trim($contentfield ?? '');
         } else {
             $content = '';
         }
 
         $str = '<div title="' . s($this->field->description) . '">';
-        $str .= '<fieldset><legend><span class="accesshide">' . $this->field->name;
+        $str .= '<fieldset><legend><span class="accesshide">' . s($this->field->name);
 
         if ($this->field->required) {
             $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
@@ -88,7 +89,7 @@ class data_field_radiobutton extends data_field_base {
                 continue; // skip empty lines
             }
             $str .= '<input type="radio" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '" ';
-            $str .= 'value="' . s($radio) . '" class="mod-data-input mr-1" ';
+            $str .= 'value="' . s($radio) . '" class="mod-data-input me-1" ';
 
             if ($content == $radio) {
                 // Selected by user.

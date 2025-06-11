@@ -34,7 +34,7 @@ require_login();
 if (!\core_competency\competency_framework::can_manage_context($context)) {
     throw new required_capability_exception($context, 'moodle/competency:competencymanage', 'nopermissions', '');
 }
-$urlparams = array('pagecontextid' => $pagecontextid);
+$urlparams = ['pagecontextid' => $pagecontextid];
 
 $url = new moodle_url('/report/lpmonitoring/scalecolorconfiguration.php', $urlparams);
 $title = get_string('colorconfiguration', 'report_lpmonitoring');
@@ -48,7 +48,6 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 }
 
 // Set the cess.
-$PAGE->requires->css('/report/lpmonitoring/style/bootstrap-colorpicker.min.css');
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_title($title);

@@ -23,8 +23,6 @@
  * @copyright  Microsoft, Inc. (based on files by NetSpot {@link http://www.netspot.com.au})
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Serves assignment feedback and other files.
  *
@@ -57,7 +55,7 @@ function assignfeedback_onenote_pluginfile($course, $cm, context $context, $file
     }
 
     // Check is users feedback or has grading permission.
-    if ($USER->id != $userid and !has_capability('mod/assign:grade', $context)) {
+    if ($USER->id != $userid && !has_capability('mod/assign:grade', $context)) {
         return false;
     }
 
@@ -66,7 +64,8 @@ function assignfeedback_onenote_pluginfile($course, $cm, context $context, $file
     $fullpath = "/{$context->id}/assignfeedback_onenote/$filearea/$itemid/$relativepath";
 
     $fs = get_file_storage();
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    $file = $fs->get_file_by_hash(sha1($fullpath));
+    if (!$file || $file->is_directory()) {
         return false;
     }
     // Download MUST be forced - security!

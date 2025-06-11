@@ -43,7 +43,7 @@ $parms = array(
 );
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('nocourseid');
+    moodle_exception('nocourseid');
 }
 
 require_login($course);

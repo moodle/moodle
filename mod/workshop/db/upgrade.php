@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Performs upgrade of the database structure and data
  *
@@ -35,30 +33,19 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool result
  */
 function xmldb_workshop_upgrade($oldversion) {
-    global $DB;
-
-    $dbman = $DB->get_manager();
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2021052501) {
-
-        // Changing nullability of field grade on table workshop_grades to null.
-        $table = new xmldb_table('workshop_grades');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'dimensionid');
-
-        // Launch change of nullability for field grade.
-        $dbman->change_field_notnull($table, $field);
-
-        // Workshop savepoint reached.
-        upgrade_mod_savepoint(true, 2021052501, 'workshop');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

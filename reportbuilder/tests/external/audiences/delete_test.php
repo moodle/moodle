@@ -21,9 +21,9 @@ namespace core_reportbuilder\external\audiences;
 use context_system;
 use core_reportbuilder\local\models\audience;
 use core_reportbuilder_generator;
-use external_api;
+use core_external\external_api;
 use externallib_advanced_testcase;
-use core_reportbuilder\report_access_exception;
+use core_reportbuilder\exception\report_access_exception;
 use core_user\reportbuilder\datasource\users;
 
 defined('MOODLE_INTERNAL') || die();
@@ -39,7 +39,7 @@ require_once("{$CFG->dirroot}/webservice/tests/helpers.php");
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class delete_test extends externallib_advanced_testcase {
+final class delete_test extends externallib_advanced_testcase {
 
     /**
      * Text execute method

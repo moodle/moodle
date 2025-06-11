@@ -32,4 +32,13 @@ $definitions = [
         'simpledata' => true,
         'staticacceleration' => true
     ],
+    'forum_count_discussions' => [
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'invalidationevents' => [
+            'changesinforumdiscussions',
+        ],
+    ],
 ];

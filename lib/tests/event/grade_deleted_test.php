@@ -26,12 +26,12 @@ namespace core\event;
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grade_deleted_test extends \advanced_testcase {
+final class grade_deleted_test extends \advanced_testcase {
 
     /**
      * Tests the event details.
      */
-    public function test_event() {
+    public function test_event(): void {
         global $CFG;
         require_once("$CFG->libdir/gradelib.php");
 

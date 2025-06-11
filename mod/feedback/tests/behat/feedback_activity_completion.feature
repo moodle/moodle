@@ -26,7 +26,7 @@ Feature: View activity completion in the feedback activity
       | completionview   | 1             |
       | completionsubmit | 1             |
     And I am on the "Music history" "feedback activity" page logged in as teacher1
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
         | Question               | What is your favourite instrument |
         | Label                  | instrument1                       |
@@ -34,12 +34,12 @@ Feature: View activity completion in the feedback activity
         | Multiple choice values | drums\guitar\hurdygurdy           |
     And I log out
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: Feedback module displays completion conditions to teachers
     When I am on the "Music history" "feedback activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Submit feedback" completion condition
 
-  Scenario: View automatic completion items as a student
+  Scenario: Student can complete a feedback activity when all conditions are met
     Given I am on the "Music history" "feedback activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "todo"
     And the "Submit feedback" completion condition of "Music history" is displayed as "todo"
@@ -52,10 +52,10 @@ Feature: View activity completion in the feedback activity
     And the "Submit feedback" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the feedback activity as done but a teacher cannot
     Given I am on the "Music history" "feedback activity editing" page logged in as teacher1
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled

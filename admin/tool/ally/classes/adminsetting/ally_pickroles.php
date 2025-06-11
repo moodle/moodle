@@ -45,7 +45,7 @@ class ally_pickroles extends \admin_setting_pickroles {
             return true;
         }
         if ($roles = get_all_roles()) {
-            $roles = array_filter($roles, 'self::filter_student_archetype');
+            $roles = array_filter($roles, [ally_pickroles::class, 'filter_student_archetype']);
             $this->choices = role_fix_names($roles, null, ROLENAME_ORIGINAL, true);
             return true;
         } else {

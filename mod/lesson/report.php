@@ -314,7 +314,7 @@ if ($action === 'delete') {
             $table->data[] = array(get_string("timetaken", "lesson").":", format_time($userstats->timetotake));
             $table->data[] = array(get_string("completed", "lesson").":", userdate($userstats->completed));
             $table->data[] = array(get_string('rawgrade', 'lesson').':', $userstats->gradeinfo->earned.'/'.$userstats->gradeinfo->total);
-            $table->data[] = array(get_string("grade", "lesson").":", $userstats->grade."%");
+            $table->data[] = array(get_string("gradenoun").":", $userstats->grade."%");
         }
         echo html_writer::table($table);
 

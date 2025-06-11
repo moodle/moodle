@@ -116,7 +116,7 @@ abstract class backup_structure_dbops extends backup_dbops {
      * @param \core\progress\base $progress
      */
     public static function annotate_files($backupid, $contextid, $component, $filearea, $itemid,
-            \core\progress\base $progress = null) {
+            ?\core\progress\base $progress = null) {
         global $DB;
         $sql = 'SELECT id
                   FROM {files}

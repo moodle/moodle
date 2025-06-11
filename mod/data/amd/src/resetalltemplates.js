@@ -23,7 +23,7 @@
 
 import Notification from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 const selectors = {
     resetAllTemplatesAction: '[data-action="resetalltemplates"]',
@@ -63,7 +63,7 @@ const registerEventListeners = () => {
  */
 const resetAllTemplatesConfirm = async(actionLink) => {
     try {
-        await Notification.saveCancelPromise(
+        await Notification.deleteCancelPromise(
             getString('resetalltemplatesconfirmtitle', 'mod_data'),
             getString('resetalltemplatesconfirm', 'mod_data'),
             getString('reset', 'core'),

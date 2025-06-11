@@ -53,21 +53,47 @@ class course_delete_modules extends \core\task\adhoc_task {
         // Set the proper user.
         if ($this->get_custom_data()->userid !== $this->get_custom_data()->realuserid) {
             $realuser = \core_user::get_user($this->get_custom_data()->realuserid, '*', MUST_EXIST);
-            cron_setup_user($realuser);
+            \core\cron::setup_user($realuser);
             \core\session\manager::loginas($this->get_custom_data()->userid, \context_system::instance(), false);
         } else {
             $user = \core_user::get_user($this->get_custom_data()->userid, '*', MUST_EXIST);
-            cron_setup_user($user);
+            \core\cron::setup_user($user);
         }
 
         $cms = $this->get_custom_data()->cms;
-        foreach ($cms as $cm) {
+        $exceptions = [];
+        $cmsfailed = [];
+        foreach ($cms as $key => $cm) {
             try {
                 course_delete_module($cm->id);
             } catch (\Exception $e) {
-                throw new \coding_exception("The course module {$cm->id} could not be deleted. "
-                    . "{$e->getMessage()}: {$e->getFile()}({$e->getLine()}) {$e->getTraceAsString()}");
+                // Keep the information instead of throw an exception and continue with next cms.
+                $exceptions[] = ("The course module {$cm->id} could not be deleted. "
+                   . "{$e->getMessage()}: {$e->getFile()}({$e->getLine()}) {$e->getTraceAsString()}");
+                // Save the cms that has failed to set the data only with this values.
+                $cmsfailed[$key] = $cm;
+                continue;
             }
         }
+
+        // Throw the existing exceptions if there is any.
+        if (!empty($exceptions)) {
+            // Save the failed CMS.
+            $customdata = $this->get_custom_data();
+            $customdata->cms = $cmsfailed;
+            $this->set_custom_data($customdata);
+
+            throw new \coding_exception("The following course modules could not be deleted:\n " .
+            implode('\n', $exceptions));
+        }
+    }
+
+    /**
+     * Sets attemptsavailable to false.
+     *
+     * @return boolean
+     */
+    public function retry_until_success(): bool {
+        return false;
     }
 }

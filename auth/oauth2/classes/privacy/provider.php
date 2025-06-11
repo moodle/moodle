@@ -50,7 +50,7 @@ class provider implements
      * @param  collection $collection An object for storing metadata.
      * @return collection The metadata.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $authfields = [
             'timecreated' => 'privacy:metadata:auth_oauth2:timecreated',
             'timemodified' => 'privacy:metadata:auth_oauth2:timemodified',
@@ -89,7 +89,7 @@ class provider implements
      * @param  int $userid The user ID.
      * @return contextlist The list of context IDs.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "SELECT ctx.id
                   FROM {auth_oauth2_linked_login} ao
                   JOIN {context} ctx ON ctx.instanceid = ao.userid AND ctx.contextlevel = :contextlevel

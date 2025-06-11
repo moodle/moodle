@@ -83,7 +83,7 @@ $dashboardlinks = array(
     ),
     array(
         // Tokens.
-        'url' => $CFG->wwwroot . '/admin/settings.php?section=webservicetokens',
+        'url' => $CFG->wwwroot . '/admin/webservice/tokens.php',
         'icon' => 'key',
         'lang' => get_string('manage_tokens', 'block_lsuxe')
     ),

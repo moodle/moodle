@@ -37,6 +37,10 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class infectedfiles_table extends \table_sql implements \renderable {
+
+    /** @var int current page. */
+    protected $page;
+
     /**
      * Table constructor
      *
@@ -101,7 +105,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
      * @param bool $count When true, return the count SQL.
      * @return array containing sql to use and an array of params.
      */
-    protected function get_sql_and_params($count = false) : array {
+    protected function get_sql_and_params($count = false): array {
         if ($count) {
             $select = "COUNT(1)";
         } else {
@@ -148,7 +152,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
      * @param \stdClass $row the row from sql.
      * @return string the authors name.
      */
-    protected function col_author($row) : string {
+    protected function col_author($row): string {
         // Get user fullname from ID.
         $user = \core_user::get_user($row->userid);
         $url = new \moodle_url('/user/profile.php', ['id' => $row->userid]);
@@ -173,7 +177,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    protected function col_actions($row) : string {
+    protected function col_actions($row): string {
         global $OUTPUT;
         $filename = $row->quarantinedfile;
         $fileid = $row->id;
@@ -215,7 +219,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
      * @param \stdClass $row an incident record.
      * @return string time created in user-friendly format.
      */
-    protected function col_timecreated($row) : string {
+    protected function col_timecreated($row): string {
         return userdate($row->timecreated);
     }
 
@@ -243,7 +247,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
         // Delete All.
         $deleteallparams = ['action' => 'deleteall', 'sesskey' => sesskey()];
         $deleteallurl = new \moodle_url($managefilepage, $deleteallparams);
-        $deletebutton = new \single_button($deleteallurl, get_string('deleteall'), 'post', true);
+        $deletebutton = new \single_button($deleteallurl, get_string('deleteall'), 'post', \single_button::BUTTON_PRIMARY);
         $deletebutton->add_confirm_action(get_string('confirmdeleteall', 'report_infectedfiles'));
         echo $OUTPUT->render($deletebutton);
 
@@ -252,7 +256,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
         // Download All.
         $downloadallparams = ['action' => 'downloadall', 'sesskey' => sesskey()];
         $downloadallurl = new \moodle_url($managefilepage, $downloadallparams);
-        $downloadbutton = new \single_button($downloadallurl, get_string('downloadall'), 'post', true);
+        $downloadbutton = new \single_button($downloadallurl, get_string('downloadall'), 'post', \single_button::BUTTON_PRIMARY);
         $downloadbutton->add_confirm_action(get_string('confirmdownloadall', 'report_infectedfiles'));
         echo $OUTPUT->render($downloadbutton);
     }

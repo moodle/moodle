@@ -25,14 +25,22 @@
 
 namespace local_o365\privacy;
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
+use context;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\core_userlist_provider;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\writer;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-interface local_o365_userlist extends \core_privacy\local\request\core_userlist_provider {
+/**
+ * Local userlist provider for local_o365.
+ */
+interface local_o365_userlist extends core_userlist_provider {
 };
 
 /**
@@ -44,12 +52,12 @@ class provider implements
     local_o365_userlist {
 
     /**
-     * Returns meta data about this system.
+     * Returns metadata about this system.
      *
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $tables = [
             'local_o365_calidmap' => [
@@ -69,7 +77,7 @@ class provider implements
             ],
             'local_o365_connections' => [
                 'muserid',
-                'aadupn',
+                'entraidupn',
                 'uselogin',
             ],
             'local_o365_token' => [
@@ -132,8 +140,8 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
-        $contextlist = new \core_privacy\local\request\contextlist();
+    public static function get_contexts_for_userid(int $userid): contextlist {
+        $contextlist = new contextlist();
         if (self::user_has_o365_data($userid)) {
             $contextlist->add_user_context($userid);
         }
@@ -143,10 +151,9 @@ class provider implements
     /**
      * Get the list of users who have data within a context.
      *
-     * @param \core_privacy\local\request\userlist $userlist The userlist containing the list of users who have data in this
-     *                                                       context/plugin combination.
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
      */
-    public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
+    public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
         if (!$context instanceof \context_user) {
             return;
@@ -173,7 +180,7 @@ class provider implements
             foreach ($records as $record) {
                 writer::with_context($context)->export_data([
                     get_string('privacy:metadata:local_o365', 'local_o365'),
-                    get_string('privacy:metadata:'.$table, 'local_o365')
+                    get_string('privacy:metadata:'.$table, 'local_o365'),
                 ], $record);
             }
         }
@@ -184,7 +191,7 @@ class provider implements
      *
      * @param context $context The specific context to delete data for.
      */
-    public static function delete_data_for_all_users_in_context(\context $context) {
+    public static function delete_data_for_all_users_in_context(context $context) {
         if ($context->contextlevel == CONTEXT_USER) {
             self::delete_user_data($context->instanceid);
         }
@@ -209,10 +216,9 @@ class provider implements
     /**
      * Delete multiple users within a single context.
      *
-     * @param \core_privacy\local\request\approved_userlist $userlist The approved context and user information to delete
-     *                                                                information for.
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
      */
-    public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
+    public static function delete_data_for_users(approved_userlist $userlist) {
         $context = $userlist->get_context();
         if ($context instanceof \context_user) {
             self::delete_user_data($context->instanceid);
@@ -228,7 +234,7 @@ class provider implements
     private static function user_has_o365_data(int $userid) {
         global $DB;
 
-        $userdata = new \stdClass;
+        $userdata = new stdClass;
         $userdata->id = $userid;
         $user = $DB->get_record('user', ['id' => $userid]);
         if (!empty($user)) {
@@ -252,7 +258,7 @@ class provider implements
     private static function delete_user_data(int $userid) {
         global $DB;
 
-        $userdata = new \stdClass;
+        $userdata = new stdClass;
         $userdata->id = $userid;
         $user = $DB->get_record('user', ['id' => $userid]);
         if (!empty($user)) {
@@ -267,10 +273,10 @@ class provider implements
     /**
      * Get a map of database tables that contain user data, and the filters to get records for a user.
      *
-     * @param \stdClass $user The user to get the map for.
+     * @param stdClass $user The user to get the map for.
      * @return array The table user map.
      */
-    protected static function get_table_user_map(\stdClass $user) : array {
+    protected static function get_table_user_map(stdClass $user): array {
         $tables = [
             'local_o365_calidmap' => ['userid' => $user->id],
             'local_o365_calsub' => ['user_id' => $user->id],

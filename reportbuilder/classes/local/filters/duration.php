@@ -25,7 +25,7 @@ use core_reportbuilder\local\helpers\database;
 /**
  * Duration report filter
  *
- * This filter accepts a number of seconds to perform filtering on
+ * This filter accepts a number of seconds to perform filtering on (note that the value will be cast to float prior to comparison)
  *
  * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
@@ -77,17 +77,18 @@ class duration extends base {
         $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
 
         $elements[] = $mform->createElement('text', "{$this->name}_value", $valuelabel, ['size' => 3]);
-        $mform->setType("{$this->name}_value", PARAM_FLOAT);
+        $mform->setType("{$this->name}_value", PARAM_LOCALISEDFLOAT);
         $mform->setDefault("{$this->name}_value", 0);
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DURATION_ANY);
 
         // Unit.
-        $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
+        $unitlabel = get_string('filterfieldunit', 'core_reportbuilder', $this->get_header());
         $units = [
             1 => get_string('filterdateseconds', 'core_reportbuilder'),
             MINSECS => get_string('filterdateminutes', 'core_reportbuilder'),
             HOURSECS => get_string('filterdatehours', 'core_reportbuilder'),
             DAYSECS => get_string('filterdatedays', 'core_reportbuilder'),
+            WEEKSECS => get_string('filterdateweeks', 'core_reportbuilder'),
         ];
 
         $elements[] = $mform->createElement('select', "{$this->name}_unit", $unitlabel, $units);
@@ -95,7 +96,8 @@ class duration extends base {
         $mform->setDefault("{$this->name}_unit", 1);
         $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DURATION_ANY);
 
-        $mform->addGroup($elements, "{$this->name}_group", '', '', false);
+        $mform->addGroup($elements, "{$this->name}_group", $this->get_header(), '', false)
+            ->setHiddenLabel(true);
     }
 
     /**
@@ -105,27 +107,25 @@ class duration extends base {
      * @return array
      */
     public function get_sql_filter(array $values): array {
+        global $DB;
+
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();
+
+        $operator = (int) ($values["{$this->name}_operator"] ?? self::DURATION_ANY);
 
         $durationvalue = unformat_float($values["{$this->name}_value"] ?? 0);
         $durationunit = (int) ($values["{$this->name}_unit"] ?? 0);
 
-        $operator = $values["{$this->name}_operator"] ?? self::DURATION_ANY;
+        $paramduration = database::generate_param_name();
+        $params[$paramduration] = $durationvalue * $durationunit;
+
         switch ($operator) {
             case self::DURATION_MAXIMUM:
-                $paramduration = database::generate_param_name();
-
-                $sql = "{$fieldsql} <= :{$paramduration}";
-                $params[$paramduration] = $durationvalue * $durationunit;
-
+                $sql = $DB->sql_cast_char2real("({$fieldsql})") . " <= :{$paramduration}";
                 break;
             case self::DURATION_MINIMUM:
-                $paramduration = database::generate_param_name();
-
-                $sql = "{$fieldsql} >= :{$paramduration}";
-                $params[$paramduration] = $durationvalue * $durationunit;
-
+                $sql = $DB->sql_cast_char2real("({$fieldsql})") . " >= :{$paramduration}";
                 break;
             default:
                 // Invalid or inactive filter.

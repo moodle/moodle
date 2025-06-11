@@ -44,7 +44,7 @@ function atto_panoptoltibutton_strings_for_js() {
  * @return array of additional params to pass to javascript init function for this module.
  */
 function atto_panoptoltibutton_params_for_js($elementid, $options, $fpoptions) {
-    global $PAGE, $DB, $CFG;
+    global $PAGE, $DB, $CFG, $COURSE;
 
     if (empty($CFG)) {
         require_once(dirname(__FILE__) . '/../../../../../config.php');
@@ -52,10 +52,18 @@ function atto_panoptoltibutton_params_for_js($elementid, $options, $fpoptions) {
     require_once($CFG->dirroot . '/mod/lti/lib.php');
     require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
-    $ltitooltypes = $DB->get_records('lti_types', null, 'name');
+    $coursecontext = context_course::instance($COURSE->id);
+    $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', ['moodleid' => $PAGE->course->id]);
 
-    $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', array('moodleid' => $PAGE->course->id));
-    
+    // If the course is not provisioned with the Panopto block, retrieve the default Panopto server FQDN.
+    if (empty($targetservername)) {
+        $targetservername = get_config('block_panopto', 'automatic_operation_target_server');
+    }
+
+    $ltitooltypes = !empty($targetservername)
+        ? $DB->get_records('lti_types', ['tooldomain' => $targetservername], 'name')
+        : atto_get_filtered_lti_tool_types();
+
     $tooltypes = [];
     foreach ($ltitooltypes as $type) {
         $type->config = lti_get_config(
@@ -64,18 +72,63 @@ function atto_panoptoltibutton_params_for_js($elementid, $options, $fpoptions) {
             ]
         );
 
-        if (!empty($targetservername) && strpos($type->config['toolurl'], $targetservername) !== false) {
+        // Match the tool, make sure it is in configured state and course visible.
+        if (!empty($targetservername) && strpos($type->config['toolurl'], $targetservername) !== false
+                && $type->state == LTI_TOOL_STATE_CONFIGURED
+                && $type->coursevisible != LTI_COURSEVISIBLE_NO) {
+
             $tooltypes[] = $type;
         }
     }
 
+    // If they don't have permission don't show it.
+    $disabled = false;
+    if (!has_capability('atto/panoptoltibutton:visible', $coursecontext)) {
+        $disabled = true;
+    }
+
+    $isresponsive = false;
+    if (get_config('atto_panoptoltibutton', 'is_responsive')) {
+        $isresponsive = true;
+    }
 
     return [
         'toolTypes' => $tooltypes,
         'course' => $PAGE->course,
+        'disabled' => $disabled,
         'resourcebase' => sha1(
             $PAGE->url->__toString() . '&' . $PAGE->course->sortorder
                 . '&' . $PAGE->course->timecreated
         ),
+        'isResponsive' => $isresponsive,
     ];
 }
+
+/**
+ * Return filtered lti tool types
+ * @return mixed
+ */
+function atto_get_filtered_lti_tool_types() {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+    $sql = "
+        SELECT *
+        FROM {lti_types} lt
+        WHERE lt.state = :state
+        AND (
+            lt.baseurl LIKE :panopto_com_pattern
+            OR lt.baseurl LIKE :panopto_eu_pattern
+        )";
+
+    // Since we don't have targeted server, let's use baseurl for filtering.
+    $params = [
+        'state' => LTI_TOOL_STATE_CONFIGURED,
+        'panopto_com_pattern' => '%.panopto.com%',
+        'panopto_eu_pattern' => '%.panopto.eu%',
+    ];
+
+    $tooltypes = $DB->get_records_sql($sql, $params);
+
+    return $tooltypes;
+};

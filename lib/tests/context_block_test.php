@@ -26,7 +26,7 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \context_block
  */
-class context_block_test extends \advanced_testcase {
+final class context_block_test extends \advanced_testcase {
 
     /**
      * Test setup.
@@ -34,6 +34,7 @@ class context_block_test extends \advanced_testcase {
     public function setUp(): void {
         global $CFG;
         require_once("{$CFG->libdir}/accesslib.php");
+        parent::setUp();
     }
 
     /**

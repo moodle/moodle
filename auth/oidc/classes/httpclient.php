@@ -85,7 +85,7 @@ class httpclient extends \curl implements \auth_oidc\httpclientinterface {
      * @param array $options
      * @return bool
      */
-    protected function request($url, $options = array()) {
+    protected function request($url, $options = []) {
         $this->setHeader($this->get_clienttag_headers());
         $result = parent::request($url, $options);
         $this->resetHeader();
@@ -100,7 +100,7 @@ class httpclient extends \curl implements \auth_oidc\httpclientinterface {
      * @param array $options
      * @return bool
      */
-    public function post($url, $params = '', $options = array()) {
+    public function post($url, $params = '', $options = []) {
         // Encode data to disable uploading files when values are prefixed @.
         if (is_array($params)) {
             $params = http_build_query($params, '', '&');

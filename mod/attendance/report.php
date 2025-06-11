@@ -37,8 +37,8 @@ $pageparams->page       = optional_param('page', 1, PARAM_INT);
 $pageparams->perpage    = get_config('attendance', 'resultsperpage');
 
 $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$attrecord = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$attrecord = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 
@@ -77,11 +77,11 @@ $filtercontrols = new mod_attendance\output\filter_controls($att, true);
 $reportdata = new mod_attendance\output\report_data($att);
 
 // Trigger a report viewed event.
-$event = \mod_attendance\event\report_viewed::create(array(
+$event = \mod_attendance\event\report_viewed::create([
     'objectid' => $att->id,
     'context' => $PAGE->context,
-    'other' => array()
-));
+    'other' => [],
+]);
 $event->add_record_snapshot('course_modules', $cm);
 $event->add_record_snapshot('attendance', $attrecord);
 $event->trigger();

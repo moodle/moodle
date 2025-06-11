@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/appear.js</location>
+    <name>Jquery appear plugin</name>
+    <license>MIT</license>
+    <version>0.3.6</version>
+  </library>
+  <library>
+    <location>amd/src/headroom.js</location>
+    <name>Headroom.js (https://github.com/WickyNilliams/headroom.js)</name>
+    <license>MIT</license>
+    <version>0.7.0</version>
+  </library>
+  <library>
+    <location>amd/src/progressbar.js</location>
+    <name>Progress bar https://kimmobrunfeldt.github.io/progressbar.js</name>
+    <license>MIT</license>
+    <version>1.0.1</version>
+  </library>
+  <library>
+    <location>amd/src/cropper.js</location>
+    <name>Cropper https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.js</name>
+    <license>MIT</license>
+    <version>1.6.2</version>
+  </library>
+  <library>
+    <location>scss/cropper.scss</location>
+    <name>Cropper CSS</name>
+    <version>1.6.2</version>
+    <license>MIT</license>
+  </library>
+</libraries>

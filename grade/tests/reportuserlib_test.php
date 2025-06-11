@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/grade/report/user/lib.php');
  * @copyright 2012 Andrew Davis
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class reportuserlib_test extends \advanced_testcase {
+final class reportuserlib_test extends \advanced_testcase {
 
     /**
      * Tests grade_report_user::inject_rowspans()
@@ -41,7 +41,7 @@ class reportuserlib_test extends \advanced_testcase {
      * inject_rowspans() returns the count of the number of elements, sets maxdepth on the
      *  report object and sets the rowspan property on any element that has children.
      */
-    public function test_inject_rowspans() {
+    public function test_inject_rowspans(): void {
         global $CFG, $USER, $DB;
 
         parent::setUp();

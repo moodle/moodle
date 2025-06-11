@@ -24,7 +24,7 @@
 import $ from "jquery";
 import {get_strings as getStrings, get_string as getString} from "core/str";
 import Ajax from "core/ajax";
-import ModalFactory from "core/modal_factory";
+import ModalSaveCancel from "core/modal_save_cancel";
 import ModalEvents from "core/modal_events";
 import Notification from "core/notification";
 import "mod_board/jquery.editable.amd";
@@ -1543,8 +1543,7 @@ export default function(settings) {
             title = strings.modal_title_new.replace('{column}', columnIdentifier);
         }
 
-        ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
+        ModalSaveCancel.create({
             title: title,
             body: getBody(noteId, columnId, ownerId),
             large: true,
@@ -1635,11 +1634,6 @@ export default function(settings) {
                                 });
                             }
                             stopNoteEdit();
-
-                            // Clear the form changed checker.
-                            Y.use('moodle-core-formchangechecker', function() {
-                                M.core_formchangechecker.reset_form_dirty_state();
-                            });
 
                             modal.destroy();
                         } else {
@@ -1739,8 +1733,7 @@ export default function(settings) {
         modalBody.append(commentArea);
         Comments.fetchFor(ident, commentArea);
 
-        ModalFactory.create({
-            type: ModalFactory.types.CANCEL,
+        ModalSaveCancel.create({
             title: heading,
             body: modalBody,
         }).then(function(modal) {

@@ -84,6 +84,7 @@ Feature: Enable the course_list block on the frontpage and view it's contents
     And I add the "Courses" block
     And I log out
     When I log in as "guest"
+    And I am on site homepage
     Then I should see "Category 1" in the "Course categories" "block"
     And I should see "Category A" in the "Course categories" "block"
     And I should see "Category B" in the "Course categories" "block"

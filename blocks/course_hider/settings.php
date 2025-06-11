@@ -83,6 +83,33 @@ if ($ADMIN->fulltree) {
             '(B),(C)' // Default.
         )
     );
+
+    // Semesters Section.
+    $settings->add(
+        new admin_setting_configtext(
+            'block_course_hider_form_semester_section',
+            get_string('semestersection', 'block_course_hider'),
+            get_string('semestersectiondesc', 'block_course_hider'),
+            '(B),(C)' // Default.
+        )
+    );
+
+    $settings->add(
+        new admin_setting_heading(
+            'block_course_hider_sisoptionsheader',
+            get_string('sisoptionsheader', 'block_course_hider'),
+            ''
+        )
+    );
+    // Are we using Workday or other?
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'block_course_hider_form_sis_system',
+            get_string('sis_system_wds', 'block_course_hider'),
+            get_string('sis_system_wds_desc', 'block_course_hider'),
+            0
+        )
+    );
 }
 
 

@@ -46,7 +46,7 @@ class field_controller extends \core_customfield\field_controller {
      * @param array $files
      * @return array associative array of error messages
      */
-    public function config_form_validation(array $data, $files = array()) : array {
+    public function config_form_validation(array $data, $files = array()): array {
         $errors = array();
 
         // Make sure the start year is not greater than the end year.

@@ -23,6 +23,8 @@ use core_reportbuilder\local\helpers\database;
 /**
  * Number report filter
  *
+ * This filter accepts a number value to perform filtering on (note that the value will be cast to float prior to comparison)
+ *
  * @package     core_reportbuilder
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -91,18 +93,19 @@ class number extends base {
 
         $objs['text'] = $mform->createElement('text', $this->name . '_value1',
             get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()), ['size' => 3]);
-        $mform->setType($this->name . '_value1', PARAM_INT);
+        $mform->setType($this->name . '_value1', PARAM_LOCALISEDFLOAT);
         $mform->setDefault($this->name . '_value1', 0);
-
-        $objs['text2'] = $mform->createElement('text', $this->name . '_value2', get_string('to'), ['size' => 3]);
-        $mform->setType($this->name . '_value2', PARAM_INT);
-        $mform->setDefault($this->name . '_value2', 0);
-
-        $mform->addElement('group', $this->name . '_grp', '', $objs, '', false);
-
         $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'in',
             [self::ANY_VALUE,  self::IS_NOT_EMPTY,  self::IS_EMPTY]);
+
+        $objs['text2'] = $mform->createElement('text', $this->name . '_value2',
+            get_string('filterfieldto', 'core_reportbuilder', $this->get_header()), ['size' => 3]);
+        $mform->setType($this->name . '_value2', PARAM_LOCALISEDFLOAT);
+        $mform->setDefault($this->name . '_value2', 0);
         $mform->hideIf($this->name . '_value2', $this->name . '_operator', 'noteq', self::RANGE);
+
+        $mform->addGroup($objs, $this->name . '_grp', $this->get_header(), '', false)
+            ->setHiddenLabel(true);
     }
 
     /**
@@ -111,11 +114,18 @@ class number extends base {
      * @param array $values
      * @return array array of two elements - SQL query and named parameters
      */
-    public function get_sql_filter(array $values) : array {
+    public function get_sql_filter(array $values): array {
+        global $DB;
+
         $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
 
-        $value1 = $values["{$this->name}_value1"] ?? null;
-        $value2 = $values["{$this->name}_value2"] ?? null;
+        $value1 = $value2 = null;
+        if (array_key_exists("{$this->name}_value1", $values)) {
+            $value1 = unformat_float($values["{$this->name}_value1"]);
+        }
+        if (array_key_exists("{$this->name}_value2", $values)) {
+            $value2 = unformat_float($values["{$this->name}_value2"]);
+        }
 
         // Validate filter form values.
         if (!$this->validate_filter_values($operator, $value1, $value2)) {
@@ -138,27 +148,27 @@ class number extends base {
                 $res = "COALESCE({$fieldsql}, 0) = 0";
                 break;
             case self::LESS_THAN:
-                $res = "{$fieldsql} < :{$param}";
+                $res = $DB->sql_cast_char2real("({$fieldsql})") . " < :{$param}";
                 $params[$param] = $value1;
                 break;
             case self::GREATER_THAN:
-                $res = "{$fieldsql} > :{$param}";
+                $res = $DB->sql_cast_char2real("({$fieldsql})") . " > :{$param}";
                 $params[$param] = $value1;
                 break;
             case self::EQUAL_TO:
-                $res = "{$fieldsql} = :{$param}";
+                $res = $DB->sql_cast_char2real("({$fieldsql})") . " = :{$param}";
                 $params[$param] = $value1;
                 break;
             case self::EQUAL_OR_LESS_THAN:
-                $res = "{$fieldsql} <= :{$param}";
+                $res = $DB->sql_cast_char2real("({$fieldsql})") . " <= :{$param}";
                 $params[$param] = $value1;
                 break;
             case self::EQUAL_OR_GREATER_THAN:
-                $res = "{$fieldsql} >= :{$param}";
+                $res = $DB->sql_cast_char2real("({$fieldsql})") . " >= :{$param}";
                 $params[$param] = $value1;
                 break;
             case self::RANGE:
-                $res = "{$fieldsql} BETWEEN :{$param} AND :{$param2}";
+                $res = $DB->sql_cast_char2real("({$fieldsql})") . " BETWEEN :{$param} AND :{$param2}";
                 $params[$param] = $value1;
                 $params[$param2] = $value2;
                 break;
@@ -173,11 +183,11 @@ class number extends base {
      * Validate filter form values
      *
      * @param int $operator
-     * @param int|null $value1
-     * @param int|null $value2
+     * @param float|null $value1
+     * @param float|null $value2
      * @return bool
      */
-    private function validate_filter_values(int $operator, ?int $value1, ?int $value2): bool {
+    private function validate_filter_values(int $operator, ?float $value1, ?float $value2): bool {
         // Check that for any of these operators value1 can not be null.
         $requirescomparisonvalue = [
             self::LESS_THAN,

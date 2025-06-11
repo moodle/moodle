@@ -13,6 +13,8 @@ Feature: Test all the basic functionality of this question type
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   @javascript
   Scenario: Create, edit then preview a gapselect question.
@@ -50,7 +52,7 @@ Feature: Test all the basic functionality of this question type
       | Marks                | Show mark and max               |
       | Specific feedback    | Shown                           |
       | Right answer         | Shown                           |
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
 
     # Answer question correctly
     And I set space "1" to "cat" in the select missing words question
@@ -86,7 +88,7 @@ Feature: Test all the basic functionality of this question type
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
 
     # Answer question correctly
     And I press "Check"

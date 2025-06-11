@@ -36,7 +36,7 @@ use question_engine;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \question_engine
  */
-class question_engine_test extends advanced_testcase {
+final class question_engine_test extends advanced_testcase {
 
     /**
      * Load required libraries.
@@ -45,6 +45,7 @@ class question_engine_test extends advanced_testcase {
         global $CFG;
 
         require_once("{$CFG->dirroot}/question/engine/lib.php");
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -88,7 +89,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_behaviour_unused_display_options_provider(): array {
+    public static function get_behaviour_unused_display_options_provider(): array {
         return [
             'interactive' => [
                 'interactive',
@@ -126,7 +127,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function can_questions_finish_during_the_attempt_provider(): array {
+    public static function can_questions_finish_during_the_attempt_provider(): array {
         return [
             ['deferredfeedback', false],
             ['interactive', true],
@@ -150,7 +151,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function sort_behaviours_provider(): array {
+    public static function sort_behaviours_provider(): array {
         $in = [
             'b1' => 'Behave 1',
             'b2' => 'Behave 2',
@@ -221,7 +222,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function is_manual_grade_in_range_provider(): array {
+    public static function is_manual_grade_in_range_provider(): array {
         return [
             'In range' => [
                 'post' => [
@@ -299,7 +300,6 @@ class question_engine_test extends advanced_testcase {
         $renderer = new \core_question_renderer($PAGE, 'core_question');
         $rc = new \ReflectionClass($renderer);
         $rcm = $rc->getMethod('number');
-        $rcm->setAccessible(true);
 
         $this->assertEquals($expected, $rcm->invoke($renderer, $value));
     }
@@ -309,7 +309,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function render_question_number_provider(): array {
+    public static function render_question_number_provider(): array {
         return [
             'Test with number is i character' => [
                 'i',

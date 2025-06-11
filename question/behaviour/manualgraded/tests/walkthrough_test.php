@@ -33,8 +33,8 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_manual_graded_essay() {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+    public function test_manual_graded_essay(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -107,7 +107,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(1);
     }
 
-    public function test_manual_graded_essay_not_answered() {
+    public function test_manual_graded_essay_not_answered(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -155,7 +155,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(0.1);
     }
 
-    public function test_manual_graded_truefalse() {
+    public function test_manual_graded_truefalse(): void {
 
         // Create a true-false question with correct answer true.
         $tf = \test_question_maker::make_question('truefalse', 'true');
@@ -199,7 +199,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
     }
 
-    public function test_manual_grade_ungraded_question() {
+    public function test_manual_grade_ungraded_question(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -256,7 +256,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
     }
 
-    public function test_manual_graded_ignore_repeat_sumbission() {
+    public function test_manual_graded_ignore_repeat_sumbission(): void {
         // Create an essay question.
         $essay = \test_question_maker::make_an_essay_question();
         $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
@@ -330,7 +330,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $qa->summarise_action($qa->get_last_step()));
     }
 
-    public function test_manual_graded_ignore_repeat_sumbission_commas() {
+    public function test_manual_graded_ignore_repeat_sumbission_commas(): void {
         // Create an essay question.
         $essay = \test_question_maker::make_an_essay_question();
         $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
@@ -378,7 +378,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(9);
     }
 
-    public function test_manual_graded_essay_can_grade_0() {
+    public function test_manual_graded_essay_can_grade_0(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -428,7 +428,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(0);
     }
 
-    public function test_manual_graded_change_comment_format() {
+    public function test_manual_graded_change_comment_format(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -457,7 +457,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_comment('example', FORMAT_MARKDOWN);
     }
 
-    public function test_manual_graded_respects_display_options() {
+    public function test_manual_graded_respects_display_options(): void {
         // This test is for MDL-43874. Manual comments were not respecting the
         // Display options for feedback.
         global $PAGE;
@@ -514,7 +514,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_output_contains('This should only appear if the displya options allow it');
     }
 
-    public function test_manual_graded_invalid_value_throws_exception() {
+    public function test_manual_graded_invalid_value_throws_exception(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -561,7 +561,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->manual_grade('Comment', 'frog', FORMAT_HTML);
     }
 
-    public function test_manual_graded_out_of_range_throws_exception() {
+    public function test_manual_graded_out_of_range_throws_exception(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -608,7 +608,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->manual_grade('Comment', '10.1', FORMAT_HTML);
     }
 
-    public function test_manual_graded_displays_proper_comment_format () {
+    public function test_manual_graded_displays_proper_comment_format(): void {
 
         global $PAGE;
 
@@ -647,7 +647,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         );
     }
 
-    public function test_manual_grading_reshows_exactly_the_mark_input() {
+    public function test_manual_grading_reshows_exactly_the_mark_input(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -683,7 +683,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_output_contains_text_input('-mark', '0.3333333');
     }
 
-    public function test_manual_grading_history_display() {
+    public function test_manual_grading_history_display(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.

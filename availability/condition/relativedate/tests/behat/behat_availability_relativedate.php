@@ -18,7 +18,7 @@
  * Step definitions to add enrolment.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,22 +32,21 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
  * Step definitions to add enrolment.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_availability_relativedate extends behat_base {
-
     /**
      * See a relative date
      * @Then /^I should see relativedate "([^"]*)"$/
      * @param string $date
      */
     public function i_should_see_relativedate($date) {
-        global $USER;
+        $user = self::get_session_user();
         $times = array_filter(explode('##', $date));
         $time = reset($times);
-        $stime = userdate($time, get_string('strftimedate', 'langconfig'), $USER->timezone);
+        $stime = userdate($time, get_string('strftimedate', 'langconfig'), $user->timezone);
         $this->execute("behat_general::assert_element_contains_text", [$stime, '.course-content', 'css_element']);
     }
 
@@ -98,7 +97,7 @@ class behat_availability_relativedate extends behat_base {
      */
     private function config_self_enrolment($course, $start, $end) {
         global $CFG, $DB;
-        require_once($CFG->dirroot.'/enrol/self/lib.php');
+        require_once($CFG->dirroot . '/enrol/self/lib.php');
         $courseid = $this->get_course_id($course);
         $selfplugin = enrol_get_plugin('self');
         $instance = $DB->get_record('enrol', ['courseid' => $courseid, 'enrol' => 'self'], '*', MUST_EXIST);

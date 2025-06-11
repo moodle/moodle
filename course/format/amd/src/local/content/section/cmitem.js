@@ -36,11 +36,17 @@ export default class extends DndCmItem {
         this.name = 'content_section_cmitem';
         // Default query selectors.
         this.selectors = {
+            BULKSELECT: `[data-for='cmBulkSelect']`,
+            BULKCHECKBOX: `[data-bulkcheckbox]`,
+            CARD: `[data-region='activity-card']`,
             DRAGICON: `.editing_move`,
+            INPLACEEDITABLE: `[data-itemtype="activityname"] > [data-inplaceeditablelink]`,
         };
         // Most classes will be loaded later by DndCmItem.
         this.classes = {
             LOCKED: 'editinprogress',
+            HIDE: 'd-none',
+            SELECTED: 'selected',
         };
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
@@ -48,10 +54,12 @@ export default class extends DndCmItem {
 
     /**
      * Initial state ready method.
+     * @param {Object} state the state data
      */
-    stateReady() {
+    stateReady(state) {
         this.configDragDrop(this.id);
         this.getElement(this.selectors.DRAGICON)?.classList.add(this.classes.DRAGICON);
+        this._refreshBulk({state});
     }
 
     /**
@@ -63,7 +71,19 @@ export default class extends DndCmItem {
         return [
             {watch: `cm[${this.id}]:deleted`, handler: this.unregister},
             {watch: `cm[${this.id}]:updated`, handler: this._refreshCm},
+            {watch: `bulk:updated`, handler: this._refreshBulk},
         ];
+    }
+
+    /**
+     * Return the custom activity card drag shadow image.
+     *
+     * The element returned will be used when the user drags the card.
+     *
+     * @returns {HTMLElement}
+     */
+    setDragImage() {
+        return this.getElement(this.selectors.CARD);
     }
 
     /**
@@ -77,5 +97,88 @@ export default class extends DndCmItem {
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.locked = element.locked;
+    }
+
+    /**
+     * Update the bulk editing interface.
+     *
+     * @param {object} param
+     * @param {Object} param.state the state data
+     */
+    _refreshBulk({state}) {
+        const bulk = state.bulk;
+        // For now, dragging elements in bulk is not possible.
+        this.setDraggable(!bulk.enabled);
+        // Convert the card into an active element in bulk mode.
+        if (bulk.enabled) {
+            this.element.dataset.action = 'toggleSelectionCm';
+            this.element.dataset.preventDefault = 1;
+        } else {
+            this.element.removeAttribute('data-action');
+            this.element.removeAttribute('data-preventDefault');
+        }
+
+        this.getElement(this.selectors.BULKSELECT)?.classList.toggle(this.classes.HIDE, !bulk.enabled);
+
+        const disabled = !this._isCmBulkEnabled(bulk);
+        const selected = this._isSelected(bulk);
+        this._refreshActivityCard(bulk, selected);
+        this._setCheckboxValue(selected, disabled);
+    }
+
+    /**
+     * Update the activity card depending on the bulk selection.
+     *
+     * @param {Object} bulk the current bulk state data
+     * @param {Boolean} selected if the activity is selected.
+     */
+    _refreshActivityCard(bulk, selected) {
+        this.getElement(this.selectors.INPLACEEDITABLE)?.classList.toggle(this.classes.HIDE, bulk.enabled);
+        this.getElement(this.selectors.CARD)?.classList.toggle(this.classes.SELECTED, selected);
+        this.element.classList.toggle(this.classes.SELECTED, selected);
+    }
+
+    /**
+     * Modify the checkbox element.
+     * @param {Boolean} checked the new checked value
+     * @param {Boolean} disabled the new disabled value
+     */
+    _setCheckboxValue(checked, disabled) {
+        const checkbox = this.getElement(this.selectors.BULKCHECKBOX);
+        if (!checkbox) {
+            return;
+        }
+        checkbox.checked = checked;
+        checkbox.disabled = disabled;
+        // Is selectable is used to easily scan the page for bulk checkboxes.
+        if (disabled) {
+            checkbox.removeAttribute('data-is-selectable');
+        } else {
+            checkbox.dataset.isSelectable = 1;
+        }
+    }
+
+    /**
+     * Check if cm bulk selection is available.
+     * @param {Object} bulk the current state bulk attribute
+     * @returns {Boolean}
+     */
+    _isCmBulkEnabled(bulk) {
+        if (!bulk.enabled) {
+            return false;
+        }
+        return (bulk.selectedType === '' || bulk.selectedType === 'cm');
+    }
+
+    /**
+     * Check if the cm id is part of the current bulk selection.
+     * @param {Object} bulk the current state bulk attribute
+     * @returns {Boolean}
+     */
+    _isSelected(bulk) {
+        if (bulk.selectedType !== 'cm') {
+            return false;
+        }
+        return bulk.selection.includes(this.id);
     }
 }

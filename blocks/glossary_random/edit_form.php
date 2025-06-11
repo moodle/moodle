@@ -40,7 +40,8 @@ class block_glossary_random_edit_form extends block_edit_form {
         $mform->setType('config_title', PARAM_TEXT);
 
         // Select glossaries to put in dropdown box ...
-        $glossaries = $DB->get_records_select_menu('glossary', 'course = ? OR globalglossary = ?', array($this->block->course->id, 1), 'name', 'id,name');
+        $glossaries = $DB->get_records_select_menu('glossary', 'course = ? OR globalglossary = ?',
+            [$this->get_course_id(), 1], 'name', 'id,name');
         foreach($glossaries as $key => $value) {
             $glossaries[$key] = strip_tags(format_string($value, true));
         }
@@ -75,5 +76,29 @@ class block_glossary_random_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_invisible', get_string('askinvisible', 'block_glossary_random'));
         $mform->setDefault('config_invisible', get_string('invisible', 'block_glossary_random'));
         $mform->setType('config_invisible', PARAM_NOTAGS);
+    }
+
+    /**
+     * Returns id of the course where this block is located (or siteid for the dashboard or non-course page)
+     *
+     * @return int
+     */
+    protected function get_course_id(): int {
+        if ($this->block->instance->id) {
+            return $this->block->course->id;
+        } else if ($parentcontext = $this->block->context->get_course_context(false)) {
+            return $parentcontext->instanceid;
+        } else {
+            return get_site()->id;
+        }
+    }
+
+    /**
+     * Display the configuration form when block is being added to the page
+     *
+     * @return bool
+     */
+    public static function display_form_when_adding(): bool {
+        return true;
     }
 }

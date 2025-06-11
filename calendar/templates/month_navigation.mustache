@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template calendar/month_navigation
+    @template core_calendar/month_navigation
 
     Calendar month navigation.
 
@@ -41,7 +41,7 @@
             }} data-month="{{previousperiod.mon}}"{{!
             }} data-drop-zone="nav-link" {{!
         }}>
-            <span class="arrow">{{{larrow}}}</span>
+            <span class="arrow" aria-hidden="true">{{{larrow}}}</span>
             &nbsp;
             <span class="arrow_text">{{previousperiodname}}</span>
         </a>
@@ -63,7 +63,7 @@
         }}>
             <span class="arrow_text">{{nextperiodname}}</span>
             &nbsp;
-            <span class="arrow">{{{rarrow}}}</span>
+            <span class="arrow" aria-hidden="true">{{{rarrow}}}</span>
         </a>
     </div>
 </div>

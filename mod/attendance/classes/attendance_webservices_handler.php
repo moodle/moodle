@@ -45,14 +45,14 @@ class attendance_handler {
         $usercourses = enrol_get_users_courses($userid);
         $attendanceinstance = get_all_instances_in_courses('attendance', $usercourses);
 
-        $coursessessions = array();
+        $coursessessions = [];
 
         foreach ($attendanceinstance as $attendance) {
             $context = context_course::instance($attendance->course);
             if (has_capability('mod/attendance:takeattendances', $context, $userid)) {
                 $course = $usercourses[$attendance->course];
                 if (!isset($course->attendance_instance)) {
-                    $course->attendance_instance = array();
+                    $course->attendance_instance = [];
                 }
 
                 $att = new stdClass();
@@ -68,7 +68,7 @@ class attendance_handler {
                 $todaysessions = $att->get_today_sessions();
 
                 if (!empty($todaysessions)) {
-                    $course->attendance_instance[$att->id] = array();
+                    $course->attendance_instance[$att->id] = [];
                     $course->attendance_instance[$att->id]['name'] = $att->name;
                     $course->attendance_instance[$att->id]['today_sessions'] = $todaysessions;
                     $coursessessions[$course->id] = $course;
@@ -86,7 +86,7 @@ class attendance_handler {
      * @return array
      */
     private static function prepare_data($coursessessions) {
-        $courses = array();
+        $courses = [];
 
         foreach ($coursessessions as $c) {
             $courses[$c->id] = new stdClass();
@@ -107,15 +107,15 @@ class attendance_handler {
     public static function get_session($sessionid) {
         global $DB;
 
-        $session = $DB->get_record('attendance_sessions', array('id' => $sessionid));
-        $session->courseid = $DB->get_field('attendance', 'course', array('id' => $session->attendanceid));
+        $session = $DB->get_record('attendance_sessions', ['id' => $sessionid]);
+        $session->courseid = $DB->get_field('attendance', 'course', ['id' => $session->attendanceid]);
         $session->statuses = attendance_get_statuses($session->attendanceid, true, $session->statusset);
         $coursecontext = context_course::instance($session->courseid);
         $session->users = get_enrolled_users($coursecontext, 'mod/attendance:canbelisted',
                                              $session->groupid, 'u.id, u.firstname, u.lastname');
-        $session->attendance_log = array();
+        $session->attendance_log = [];
 
-        if ($attendancelog = $DB->get_records('attendance_log', array('sessionid' => $sessionid),
+        if ($attendancelog = $DB->get_records('attendance_log', ['sessionid' => $sessionid],
                                               '', 'studentid, statusid, remarks, id')) {
             $session->attendance_log = $attendancelog;
         }
@@ -143,14 +143,14 @@ class attendance_handler {
         $record->statusid = $statusid;
         $record->studentid = $studentid;
 
-        if ($attendancelog = $DB->get_record('attendance_log', array('sessionid' => $sessionid, 'studentid' => $studentid))) {
+        if ($attendancelog = $DB->get_record('attendance_log', ['sessionid' => $sessionid, 'studentid' => $studentid])) {
             $record->id = $attendancelog->id;
             $DB->update_record('attendance_log', $record);
         } else {
             $DB->insert_record('attendance_log', $record);
         }
 
-        if ($attendancesession = $DB->get_record('attendance_sessions', array('id' => $sessionid))) {
+        if ($attendancesession = $DB->get_record('attendance_sessions', ['id' => $sessionid])) {
             $attendancesession->lasttaken = time();
             $attendancesession->lasttakenby = $takenbyid;
             $attendancesession->timemodified = time();
@@ -168,9 +168,9 @@ class attendance_handler {
     public static function get_sessions($attendanceid) {
         global $DB;
 
-        $sessions = $DB->get_records('attendance_sessions', array('attendanceid' => $attendanceid), 'id ASC');
+        $sessions = $DB->get_records('attendance_sessions', ['attendanceid' => $attendanceid], 'id ASC');
 
-        $sessionsinfo = array();
+        $sessionsinfo = [];
 
         foreach ($sessions as $session) {
             $sessionsinfo[$session->id] = self::get_session($session->id);

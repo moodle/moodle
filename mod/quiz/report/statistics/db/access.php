@@ -24,15 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'quiz/statistics:view' => array(
+$capabilities = [
+    'quiz/statistics:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        ),
+        ],
         'clonepermissionsfrom' =>  'mod/quiz:viewreports'
-    )
-);
+    ]
+];

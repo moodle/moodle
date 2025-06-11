@@ -1,0 +1,514 @@
+.yui3-button,
+.yui-button  button {
+    box-shadow: none;
+    &:hover {
+        // Remove YUI gradient.
+        background-image: none;
+    }
+}
+
+// Specific fix for odd HTML.
+.ft .yui-button.yui-push-button,
+.yui-button.yui-push-button,
+.yui-button.yui-push-button.default,
+.yui-dialog .ft .yui-button.yui-push-button.default,
+.yui-button.yui-menu-button,
+.yui-button.yui-link-button,
+.yui-button.yui-radio-button,
+.yui-button.yui-submit-button {
+    transition: all 0s;
+    background-image: none;
+    border: none;
+
+    .first-child {
+        border: none;
+        a,
+        button {
+            padding-left: 16px;
+            padding-right: 16px;
+            color: inherit;
+            transition: all 0s;
+
+            &:focus,
+            &:active,
+            &:hover {
+                color: #fff;
+            }
+        }
+    }
+}
+
+// copied from theme/boost/scss/bootstrap/_nav.scss to avoid @inline explosion.
+%fake-nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+%fake-nav-tabs {
+    border-bottom: $nav-tabs-border-width solid $nav-tabs-border-color;
+    @include clearfix();
+}
+
+
+.yui-skin-sam,
+.yui-bootstrapped {
+    .yuimenu {
+        a.yuimenuitemlabel {
+            &:hover,
+            &:focus {
+                background-color: $dropdown-link-hover-bg;
+            }
+        }
+    }
+    .mask {
+        background-color: $modal-backdrop-bg;
+        opacity: $modal-backdrop-opacity;
+    }
+    .yui-dt > table {
+        @extend .table;
+        @extend .table-striped;
+        th.yui-dt-sortable {
+            &.yui-dt-asc a.yui-dt-sortable:after {
+                content: "\00a0▲";
+            }
+            &.yui-dt-desc a.yui-dt-sortable:after {
+                content: "\00a0▼";
+            }
+        }
+    }
+    .yui-navset {
+        .yui-nav {
+            @extend %fake-nav;
+            @extend %fake-nav-tabs;
+            .selected > a {
+                em {
+                    border: none;
+                    padding: 0;
+                }
+                &,
+                &:hover,
+                &:focus {
+                    color: $nav-tabs-link-active-color;
+                    background-color: $nav-tabs-link-active-bg;
+                    border: 1px solid $nav-tabs-link-active-border-color;
+                    border-bottom-color: transparent;
+                    cursor: default;
+                    background-image: none;
+                }
+            }
+            li > a {
+                em {
+                    border: none;
+                    padding: 0;
+                }
+                background-color: $body-bg;
+                color: $link-color;
+                border-bottom: 1px solid $nav-tabs-border-color;
+                background-image: none;
+                &:hover,
+                &:focus {
+                    background-image: none;
+                    background-color: $nav-tabs-link-active-bg;
+                    color: $link-hover-color;
+                }
+            }
+        }
+        .yui-content {
+            padding-top: 0.5em;
+            border: none;
+            background-color: $body-bg;
+        }
+    }
+    .yui3-tabview-list {
+        @extend %fake-nav;
+        @extend %fake-nav-tabs;
+        .yui3-tab-selected > a {
+            &,
+            &:hover,
+            &:focus {
+                color: $nav-tabs-link-active-color;
+                background-color: $nav-tabs-link-active-bg;
+                border: 1px solid $nav-tabs-border-color;
+                border-bottom-color: transparent;
+                cursor: default;
+                background-image: none;
+            }
+        }
+        .yui3-tab-label {
+            color: $brand-primary;
+            background-image: none;
+            background-color: $body-bg;
+            border: 1px solid transparent;
+            border-bottom-color: $nav-tabs-border-color;
+            padding: $nav-link-padding-y $nav-link-padding-x;
+            &:hover,
+            &:focus {
+                color: $link-hover-color;
+                background-color: $nav-tabs-link-active-bg;
+            }
+        }
+    }
+    .yui3-tabview-content {
+        padding-top: 0.5em;
+        .yui3-tabview-panel {
+            padding-top: 0.5em;
+        }
+    }
+    .yui-panel-container {
+        &.shadow .underlay {
+            display: none;
+        }
+        margin-top: 60px;
+        .yui-panel {
+            @extend .modal-content;
+            & > .container-close {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                width: 27px;
+                height: 27px;
+                background-image: url([[pix:theme|close_x]]);
+                background-repeat: no-repeat;
+                background-position: 0 0;
+                cursor: pointer;
+                opacity: 0.4;
+                &:hover {
+                    opacity: 0.8;
+                }
+            }
+            .hd {
+                border: none;
+                margin: 0;
+                background-image: none;
+                font-size: $h4-font-size;
+                font-weight: $headings-font-weight;
+                color: $headings-color;
+                line-height: $line-height-base;
+                font-family: $headings-font-family;
+                @extend .modal-header;
+
+            }
+            .bd {
+                margin: 0;
+                border: none;
+                background-color: $modal-content-bg;
+                @extend .modal-body;
+            }
+            .ft {
+                margin: 0;
+                border: none;
+                background-color: $modal-content-bg;
+                @extend .modal-footer;
+            }
+        }
+        &#loading_c .yui-panel {
+            box-shadow: none;
+        }
+    }
+    .yui3-panel {
+        .yui3-panel-content {
+            @extend .modal-content;
+            .yui3-widget-hd {
+                font-size: $h4-font-size;
+                font-weight: $headings-font-weight;
+                color: $headings-color;
+                line-height: $line-height-base;
+                font-family: $headings-font-family;
+                background: none;
+                background-color: $modal-content-bg;
+                text-align: left;
+                @extend .modal-header;
+                min-height: $modal-title-padding * 4;
+                .yui3-widget-buttons {
+                    margin-top: 15px;
+                    margin-right: 15px;
+                    padding: 0;
+                    background-image: none;
+                    button.yui3-button {
+                        width: 27px;
+                        height: 27px;
+                        float: right;
+                        vertical-align: middle;
+                        display: inline-block;
+                        cursor: pointer;
+                        padding: 0;
+                        background-image: url([[pix:theme|close_x]]);
+                        font-size: 0;
+                        background-repeat: no-repeat;
+                        border-style: none;
+                        box-shadow: none;
+                        background-color: $modal-content-bg;
+                        opacity: 0.4;
+                        &:hover {
+                            opacity: 1;
+                        }
+                    }
+                }
+                .yui3-button-close:before {
+                    content: "";
+                }
+            }
+            .yui3-widget-bd {
+                @extend .modal-body;
+            }
+            .yui3-widget-ft,
+            .ft {
+                @extend .modal-footer;
+            }
+        }
+    }
+    .yuimenu {
+        // Extracted from less/bootstrap3/dropdown.scss
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0; // override default ul
+        list-style: none;
+        font-size: $font-size-base;
+        background-color: $dropdown-bg;
+        border: 1px solid $dropdown-border-color;
+        border-radius: $border-radius;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+        a.yuimenuitemlabel {
+            display: block;
+            padding: 3px 20px;
+            clear: both;
+            font-weight: normal;
+            line-height: $line-height-base;
+            color: $dropdown-link-color;
+            white-space: nowrap; // prevent links from randomly breaking onto new lines
+            &:hover,
+            &:focus {
+                text-decoration: none;
+                color: $dropdown-link-hover-color;
+                background-color: $dropdown-link-hover-bg;
+                outline: 3px solid $nav-color;
+            }
+        }
+        a.yuimenuitemlabel.yuimenuitemlabel-disabled {
+            color: $text-muted;
+            &:hover,
+            &:focus {
+                text-decoration: none;
+                color: $text-muted;
+                background-color: $dropdown-bg;
+            }
+        }
+        &.show-scrollbars {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        // Special case this for now but need to find
+        // general rule for when to show and hide
+        // scrollbars.
+        &#row,
+        &#column_item,
+        &#column_total,
+        &#pld_gear {
+            overflow: hidden;
+        }
+    }
+    #dateselector-calendar-panel {
+        background: none;
+        border: none;
+        .yui3-widget-stdmod {
+            overflow: auto;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+        }
+    }
+    #dateselector-calendar-content {
+        border: none;
+        margin: 0;
+    }
+    .yui-calcontainer {
+        background-color: $modal-backdrop-bg;
+        border: 1px solid red;
+        padding: 10px;
+        .yui-calendar {
+            font-family: $font-family-sans-serif;
+            font-size: 100%;
+            font-weight: $headings-font-weight;
+            .calheader {
+                padding: 0;
+                margin-bottom: 0.6em;
+            }
+            .calnavleft,
+            .calnavright {
+                width: 25px;
+                height: 15px;
+                top: 5px;
+                cursor: pointer;
+            }
+            .calnavleft {
+                background: url(/theme/yui_image.php?file=2.9.0/sprite.png) no-repeat 0 -450px;
+                left: -10px;
+                margin-left: .4em;
+            }
+            .calnavright {
+                background: url(/theme/yui_image.php?file=2.9.0/sprite.png) no-repeat 0 -500px;
+                right: -10px;
+                margin-right: .4em;
+            }
+            td.calcell {
+                border: 1px solid #eee;
+                padding: 1px;
+                height: 1.6em;
+                line-height: 1.6em;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;
+                a {
+                    color: $brand-primary;
+                    background-color: $modal-content-bg;
+                    display: block;
+                    text-decoration: none;
+                }
+                &.oom {
+                    background-color: $table-bg-accent;
+                    color: $text-muted;
+                    cursor:default
+                    a {
+                        color: $text-muted;
+                    }
+                }
+                &.selected {
+                    background-color: $brand-primary;
+                }
+                &.today {
+                    a {
+                        color: $body-color;
+                    }
+                }
+                &.calcellhover,
+                &.calcellhover a {
+                    color: #fff;
+                    background: $brand-primary;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+    .yui-dt-paginator {
+        @include clearfix;
+        margin-left: 1px;
+        .yui-pg-first {
+            @include border-left-radius($border-radius);
+        }
+        .yui-pg-last {
+            @include border-right-radius($border-radius);
+        }
+        .yui-pg-previous,
+        .yui-pg-first,
+        .yui-pg-next,
+        .yui-pg-last,
+        .yui-pg-page {
+            position: relative;
+            float: left; // Collapse white-space
+            padding: $pagination-padding-y $pagination-padding-x;
+            line-height: $line-height-base;
+            text-decoration: none;
+            margin-left: -1px;
+            border: 1px solid $pagination-border-color;
+        }
+        a {
+            &.yui-pg-previous,
+            &.yui-pg-first,
+            &.yui-pg-next,
+            &.yui-pg-last,
+            &.yui-pg-page {
+                color: $pagination-color;
+                background-color: $pagination-bg;
+                &:hover,
+                &:focus {
+                    color: $pagination-hover-color;
+                    background-color: $pagination-hover-bg;
+                    border-color: $pagination-hover-border;
+                }
+            }
+        }
+        span,
+        span:hover,
+        span:focus {
+            &.yui-pg-previous,
+            &.yui-pg-first,
+            &.yui-pg-next,
+            &.yui-pg-last,
+            &.yui-pg-page:not(.yui-pg-current-page) {
+                color: $pagination-disabled-color;
+                background-color: $pagination-disabled-bg;
+                border-color: $pagination-disabled-border-color;
+                cursor: not-allowed;
+            }
+        }
+        span.yui-pg-current-page {
+            &,
+            &:hover,
+            &:focus {
+                color: $pagination-active-color;
+                background-color: $pagination-active-bg;
+                border-color: $pagination-active-border;
+                cursor: default;
+            }
+        }
+        .yui-pg-rpp-options {
+            margin: $btn-padding-y $btn-padding-x;
+            float: left;
+        }
+    }
+    &.path-local-pld input[type="button"],
+    &.path-local-pld input[type="submit"] {
+        padding: $btn-padding-y $btn-padding-x;
+    }
+    &#page-local-joulegrader-view .yui3-panel {
+        // Make the buuttons at the bottom look like they're in the footer,
+        // hide the actual, empty footer
+        #fgroup_id_grading_buttonar {
+            @extend .modal-footer;
+            padding-bottom: 0;
+        }
+        .yui3-widget-ft:empty {
+            display: none;
+        }
+    }
+}
+
+#page-blocks-reports-view {
+    #fgroup_id_duedate_range_grp,
+    #fgroup_id_filter_time_grp,
+    #fgroup_id_date_range_grp {
+        .fgroup span {
+            display: block;
+        }
+    }
+}
+#page-blocks-conduit-view {
+    #fgroup_id_timestarted_grp,
+    #fgroup_id_timemodified_grp,
+    #fgroup_id_timecreated_grp {
+        .fgroup span {
+            display: block;
+        }
+    }
+}
+#page-blocks-campusvue-view {
+    #fgroup_id_date_grp,
+    #fgroup_id_datesubmitted_grp {
+        .fgroup span {
+            display: block;
+        }
+    }
+}
+
+// JS error messages
+.yui3-skin-sam .yui3-widget-mask,
+.moodle-dialogue-base .moodle-dialogue-lightbox {
+    background-color: $modal-backdrop-bg;
+    opacity: $modal-backdrop-opacity;
+}
+
+.moodle-dialogue-content .yui3-widget-hd h1 {
+    @extend .modal-title;
+    font-size: $h4-font-size;
+    margin: 0;
+}
+

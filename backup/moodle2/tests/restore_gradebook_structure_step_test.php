@@ -30,19 +30,20 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_gradebook_structure_step_test extends \advanced_testcase {
+final class restore_gradebook_structure_step_test extends \advanced_testcase {
 
     /**
      * Provide tests for rewrite_step_backup_file_for_legacy_freeze based upon fixtures.
      *
      * @return array
      */
-    public function rewrite_step_backup_file_for_legacy_freeze_provider() {
+    public static function rewrite_step_backup_file_for_legacy_freeze_provider(): array {
         $fixturesdir = realpath(__DIR__ . '/fixtures/rewrite_step_backup_file_for_legacy_freeze/');
         $tests = [];
         $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($fixturesdir),
-                \RecursiveIteratorIterator::LEAVES_ONLY);
+            new \RecursiveDirectoryIterator($fixturesdir),
+            \RecursiveIteratorIterator::LEAVES_ONLY,
+        );
 
         foreach ($iterator as $sourcefile) {
             $pattern = '/\.test$/';
@@ -63,7 +64,7 @@ class restore_gradebook_structure_step_test extends \advanced_testcase {
      * @param   string  $source     The source file to test
      * @param   string  $expected   The expected result of the transformation
      */
-    public function test_rewrite_step_backup_file_for_legacy_freeze($source, $expected) {
+    public function test_rewrite_step_backup_file_for_legacy_freeze($source, $expected): void {
         $restore = $this->getMockBuilder('\restore_gradebook_structure_step')
             ->onlyMethods([])
             ->disableOriginalConstructor()
@@ -77,7 +78,6 @@ class restore_gradebook_structure_step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass('\restore_gradebook_structure_step');
         $rcm = $rc->getMethod('rewrite_step_backup_file_for_legacy_freeze');
-        $rcm->setAccessible(true);
         $rcm->invoke($restore, $filepath);
 
         // Check the result.

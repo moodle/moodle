@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_message/message_drawer_view_conversation_heeader_content
+    @template core_message/message_drawer_view_conversation_header_content_type_public
 
     This template will render the header content of the conversation page in
     the message message drawer.
@@ -39,7 +39,7 @@
     <div class="d-flex align-items-center">
         {{#showrouteback}}
             <div class="align-self-stretch" >
-                <a class="h-100 mr-2 d-flex align-items-center" href="#" data-route-back role="button">
+                <a class="h-100 me-2 d-flex align-items-center" href="#" data-route-back role="button">
                     {{> core_message/message_drawer_icon_back }}
                 </a>
             </div>
@@ -55,17 +55,17 @@
                         style="height: 38px"
                     >
                 {{/imageurl}}
-                <div class="w-100 text-truncate ml-2">
+                <div class="w-100 text-truncate ms-2">
                     <div class="d-flex">
                         <strong class="m-0 text-truncate">{{name}}</strong>
                         <span
-                            class="{{^isfavourite}}hidden{{/isfavourite}} ml-1 text-primary"
+                            class="{{^isfavourite}}hidden{{/isfavourite}} ms-1 text-primary"
                             data-region="favourite-icon-container"
                         >
                             {{#pix}} i/star-rating, core, {{#str}} favourites, core {{/str}} {{/pix}}
                         </span>
                         <span
-                            class="{{^ismuted}}hidden{{/ismuted}} ml-1 text-primary"
+                            class="{{^ismuted}}hidden{{/ismuted}} ms-1 text-primary"
                             data-region="muted-icon-container"
                         >
                             {{#pix}} i/muted, core, {{#str}} mutedconversation, core_message {{/str}} {{/pix}}
@@ -75,13 +75,13 @@
                 </div>
             </a>
         </div>
-        <div class="ml-auto dropdown">
+        <div class="ms-auto dropdown">
             <button id="conversation-actions-menu-button" class="btn btn-link btn-icon icon-size-3" type="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             aria-label="{{#str}} conversationactions, core_message {{/str}}" aria-controls="conversation-actions-menu">
                 {{#pix}} i/moremenu, core {{/pix}}
             </button>
-            <div id="conversation-actions-menu" class="dropdown-menu float-right" role="menu"
+            <div id="conversation-actions-menu" class="dropdown-menu float-end" role="menu"
             aria-labelledby="conversation-actions-menu-button">
                 <a class="dropdown-item" href="#" data-action="view-group-info" role="menuitem">
                     {{#str}} groupinfo, core_message {{/str}}
@@ -108,11 +108,11 @@
     <div class="d-flex">
         <!-- These are just placeholder elements to align the text below correctly with the name text above -->
         {{#showrouteback}}
-            <div class="mr-2 icon" aria-hidden="true"></div>
+            <div class="me-2 icon" aria-hidden="true"></div>
         {{/showrouteback}}
         {{#imageurl}}<div style="width: 38px" aria-hidden="true"></div>{{/imageurl}}
         <!-- End placeholders -->
-        <a class="text-decoration-none line-height-3 ml-2" href="#" data-action="view-group-info" role="button">
+        <a class="text-decoration-none line-height-3 ms-2" href="#" data-action="view-group-info" role="button">
             <small class="m-0 text-muted text-truncate">
                 {{#str}} numparticipants, core_message, {{totalmembercount}} {{/str}}
             </small>

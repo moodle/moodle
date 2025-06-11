@@ -22,115 +22,94 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * upgrade this assignment instance - this function could be skipped but it will be needed later
  * @param int $oldversion The old version of the assign module
  * @return bool
  */
 function xmldb_assign_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $DB;
 
-    $dbman = $DB->get_manager();
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2021110901) {
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
+
+    if ($oldversion < 2023103000) {
         // Define field activity to be added to assign.
         $table = new xmldb_table('assign');
-        $field = new xmldb_field('activity', XMLDB_TYPE_TEXT, null, null, null, null, null, 'alwaysshowdescription');
-
+        $field = new xmldb_field(
+            'markinganonymous',
+            XMLDB_TYPE_INTEGER,
+            '2',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'markingallocation'
+        );
         // Conditionally launch add field activity.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new xmldb_field('activityformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'activity');
-
-        // Conditionally launch add field activityformat.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('timelimit', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'cutoffdate');
-
-        // Conditionally launch add field timelimit.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('submissionattachments', XMLDB_TYPE_INTEGER, '2',
-            null, XMLDB_NOTNULL, null, '0', 'activityformat');
-
-        // Conditionally launch add field submissionattachments.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $table = new xmldb_table('assign_submission');
-        $field = new xmldb_field('timestarted', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timemodified');
-
-        // Conditionally launch add field timestarted.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field timelimit to be added to assign_overrides.
-        $table = new xmldb_table('assign_overrides');
-        $field = new xmldb_field('timelimit', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'cutoffdate');
-
-        // Conditionally launch add field timelimit.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
         // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2021110901, 'assign');
+        upgrade_mod_savepoint(true, 2023103000, 'assign');
     }
 
-    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2022071300) {
-        // The most recent assign submission should always have latest = 1, we want to find all records where this is not the case.
-        // Find the records with the maximum timecreated for each assign and user combination where latest is also 0.
-        $sqluser = "SELECT s.id
-                      FROM {assign_submission} s
-                     WHERE s.timecreated = (
-                          SELECT  MAX(timecreated) timecreated
-                            FROM {assign_submission} sm
-                           WHERE s.assignment = sm.assignment
-                                 AND s.userid = sm.userid
-                                 AND sm.groupid = 0)
-                           AND s.groupid = 0
-                           AND s.latest = 0";
-        $idstofixuser = $DB->get_records_sql($sqluser, null);
+    if ($oldversion < 2024042201) {
+        // The 'Never' ('none') option for the additional attempts (attemptreopenmethod) setting is no longer supported
+        // and needs to be updated in all relevant instances.
 
-        $sqlgroup = "SELECT s.id
-                       FROM {assign_submission} s
-                      WHERE s.timecreated = (
-                          SELECT  MAX(timecreated) timecreated
-                            FROM {assign_submission} sm
-                           WHERE s.assignment = sm.assignment
-                                 AND s.groupid = sm.groupid
-                                 AND sm.groupid <> 0)
-                            AND s.groupid <> 0
-                            AND s.latest = 0";
-        $idstofixgroup = $DB->get_records_sql($sqlgroup, null);
+        // The default value for the 'attemptreopenmethod' field in the 'assign' database table is currently set to 'none',
+        // This needs to be updated to 'untilpass' to ensure the system functions correctly. Additionally, the default
+        // value for the 'maxattempts' field needs to be changed to '1' to prevent multiple attempts and maintain the
+        // original behavior.
+        $table = new xmldb_table('assign');
+        $attemptreopenmethodfield = new xmldb_field('attemptreopenmethod', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL,
+            null, 'untilpass');
+        $maxattemptsfield = new xmldb_field('maxattempts', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL,
+            null, '1');
+        $dbman->change_field_default($table, $attemptreopenmethodfield);
+        $dbman->change_field_default($table, $maxattemptsfield);
 
-        $idstofix = array_merge(array_keys($idstofixuser), array_keys($idstofixgroup));
-
-        if (count($idstofix)) {
-            [$insql, $inparams] = $DB->get_in_or_equal($idstofix);
-            $DB->set_field_select('assign_submission', 'latest', 1, "id $insql", $inparams);
+        // If the current value for the 'attemptreopenmethod' global configuration in the assignment is set to 'none'.
+        if (get_config('assign', 'attemptreopenmethod') == 'none') {
+            // Reset the value to 'untilpass'.
+            set_config('attemptreopenmethod', 'untilpass', 'assign');
+            // Also, setting the value for the 'maxattempts' global config in the assignment to '1' ensures that the
+            // original behaviour is preserved by disallowing any additional attempts by default.
+            set_config('maxattempts', 1, 'assign');
         }
 
-        // Assignment savepoint reached.
-        upgrade_mod_savepoint(true, 2022071300, 'assign');
+        // Update all the current assignment instances that have their 'attemptreopenmethod' set to 'none'.
+        // By setting 'maxattempts' to 1, additional attempts are disallowed, preserving the original behavior.
+        $DB->execute(
+            'UPDATE {assign}
+                    SET attemptreopenmethod = :newattemptreopenmethod,
+                        maxattempts = :maxattempts
+                  WHERE attemptreopenmethod = :oldattemptreopenmethod',
+            [
+                'newattemptreopenmethod' => 'untilpass',
+                'maxattempts' => 1,
+                'oldattemptreopenmethod' => 'none',
+            ]
+        );
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2024042201, 'assign');
     }
-    // Automatically generated Moodle v4.1.0 release upgrade line.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

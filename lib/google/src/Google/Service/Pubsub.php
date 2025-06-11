@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Pubsub extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -196,6 +197,7 @@ class Google_Service_Pubsub extends Google_Service
  *   $subscriptions = $pubsubService->subscriptions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_Subscriptions_Resource extends Google_Service_Resource
 {
 
@@ -359,6 +361,7 @@ class Google_Service_Pubsub_Subscriptions_Resource extends Google_Service_Resour
  *   $topics = $pubsubService->topics;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_Topics_Resource extends Google_Service_Resource
 {
 
@@ -459,6 +462,7 @@ class Google_Service_Pubsub_Topics_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_AcknowledgeRequest extends Google_Collection
 {
   protected $collection_key = 'ackId';
@@ -486,6 +490,7 @@ class Google_Service_Pubsub_AcknowledgeRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_Label extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -521,6 +526,7 @@ class Google_Service_Pubsub_Label extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_ListSubscriptionsResponse extends Google_Collection
 {
   protected $collection_key = 'subscription';
@@ -549,6 +555,7 @@ class Google_Service_Pubsub_ListSubscriptionsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_ListTopicsResponse extends Google_Collection
 {
   protected $collection_key = 'topic';
@@ -577,6 +584,7 @@ class Google_Service_Pubsub_ListTopicsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_ModifyAckDeadlineRequest extends Google_Collection
 {
   protected $collection_key = 'ackIds';
@@ -622,6 +630,7 @@ class Google_Service_Pubsub_ModifyAckDeadlineRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_ModifyPushConfigRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -649,6 +658,7 @@ class Google_Service_Pubsub_ModifyPushConfigRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PublishBatchRequest extends Google_Collection
 {
   protected $collection_key = 'messages';
@@ -677,6 +687,7 @@ class Google_Service_Pubsub_PublishBatchRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PublishBatchResponse extends Google_Collection
 {
   protected $collection_key = 'messageIds';
@@ -695,6 +706,7 @@ class Google_Service_Pubsub_PublishBatchResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PublishRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -722,6 +734,7 @@ class Google_Service_Pubsub_PublishRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PubsubEvent extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -767,6 +780,7 @@ class Google_Service_Pubsub_PubsubEvent extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PubsubMessage extends Google_Collection
 {
   protected $collection_key = 'label';
@@ -804,6 +818,7 @@ class Google_Service_Pubsub_PubsubMessage extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PullBatchRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -839,6 +854,7 @@ class Google_Service_Pubsub_PullBatchRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PullBatchResponse extends Google_Collection
 {
   protected $collection_key = 'pullResponses';
@@ -858,6 +874,7 @@ class Google_Service_Pubsub_PullBatchResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PullRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -884,6 +901,7 @@ class Google_Service_Pubsub_PullRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PullResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -911,6 +929,7 @@ class Google_Service_Pubsub_PullResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_PushConfig extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -928,6 +947,7 @@ class Google_Service_Pubsub_PushConfig extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_Subscription extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -973,6 +993,7 @@ class Google_Service_Pubsub_Subscription extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pubsub_Topic extends Google_Model
 {
   protected $internal_gapi_mappings = array(

@@ -1,0 +1,28 @@
+/* stylelint-disable declaration-no-important*/
+.behat-site {
+
+    // We need to be able to see the navigation block in Snap or we can't fo things like follow the participants link and
+    // log in as another user.
+    #moodle-blocks {
+        visibility: visible;
+        height: inherit;
+    }
+
+    // Stop header from overlapping links and causing intermittent behat failures.
+    #mr-nav {
+        position: absolute;
+    }
+
+    // Nuke ALL animations when testing in behat.
+    * {
+        transition: none !important;
+        animation-name: none !important;
+    }
+
+    // Prevent the pop-up from covering other content, and causing Behat test failures in certain browsers.
+    #snap-footer-alert {
+        position: relative;
+        transition-property: none !important;
+    }
+
+}

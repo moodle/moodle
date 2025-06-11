@@ -1,0 +1,63 @@
+<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="mod/panoptosubmission/db" VERSION="20220921" COMMENT="XMLDB file for Moodle Panopto Student Submission module"
+xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="panoptosubmission" COMMENT="Panopto Student Submission instance storage">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course id"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Course name"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Course intro"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Text format of intro field"/>
+        <FIELD NAME="timeavailable" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment is available for student submission"/>
+        <FIELD NAME="timedue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the assignment submissions are due by"/>
+        <FIELD NAME="preventlate" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Prevent late submissions"/>
+        <FIELD NAME="resubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allow for resubmissions"/>
+        <FIELD NAME="sendnotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows the disabling of email notifications."/>
+        <FIELD NAME="sendlatenotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows separate enabling of notifications for late student submissions."/>
+        <FIELD NAME="sendstudentnotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default for send student notifications checkbox when grading."/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2" COMMENT="Maximum grade the assignment is worth"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment was created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the assignment settings were modified"/>
+        <FIELD NAME="cutofftime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the assignment submissions are cut off"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="panopto_course_idx" UNIQUE="false" FIELDS="course" COMMENT="index on course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="panoptosubmission_submission" COMMENT="Panopto Student Submission submissions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="panactivityid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key to the panoptosubmission table"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Moodle user id"/>
+        <FIELD NAME="title" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The title of the session"/>
+        <FIELD NAME="source" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The LTI link that opens the submitted content"/>
+        <FIELD NAME="customdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The custom data the LTI link uses to open the session correctly"/>
+        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Iframe width."/>
+        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Iframe height."/>
+        <FIELD NAME="thumbnailsource" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The source of the thumbnail preview image"/>
+        <FIELD NAME="thumbnailwidth" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Thumbnail width."/>
+        <FIELD NAME="thumbnailheight" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Thumbnail height."/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2" COMMENT="Grade score for the submission"/>
+        <FIELD NAME="submissioncomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Submission teacher comment"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="teacher" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Moodle userId of the teacher who marked the submission"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the assignment submission notification has been emailed to the teacher."/>
+        <FIELD NAME="timemarked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment submission was marked"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the submission record was created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment submission was modified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="panopto_activity_idx" UNIQUE="false" FIELDS="panactivityid" COMMENT="Index on the Panopto Student Submission activity id"/>
+        <INDEX NAME="panopto_userid_idx" UNIQUE="false" FIELDS="userid" COMMENT="Index on the Moodle userid"/>
+        <INDEX NAME="panopto_marked_idx" UNIQUE="false" FIELDS="timemarked" COMMENT="Index on the submission marked field"/>
+        <INDEX NAME="panopto_mailed_idx" UNIQUE="false" FIELDS="mailed" COMMENT="Index on the mailed field"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

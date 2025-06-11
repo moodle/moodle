@@ -69,7 +69,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         // Tables not related to users aside from the editing information.
         $collection->add_database_table('competency', [
@@ -215,7 +215,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         global $DB;
         $contextlist = new \core_privacy\local\request\contextlist();
 
@@ -223,16 +223,28 @@ class provider implements
         $sql = "
              SELECT DISTINCT ctx.id
                FROM {context} ctx
-               JOIN {" . competency_framework::TABLE . "} cf
-                 ON cf.contextid = ctx.id
-          LEFT JOIN {" . competency::TABLE . "} c
-                 ON c.competencyframeworkid = cf.id
-          LEFT JOIN {" . related_competency::TABLE . "} cr
-                 ON cr.competencyid = c.id
-              WHERE cf.usermodified = :userid1
-                 OR c.usermodified = :userid2
-                 OR cr.usermodified = :userid3";
-        $params = ['userid1' => $userid, 'userid2' => $userid, 'userid3' => $userid];
+               JOIN {" . competency_framework::TABLE . "} cf ON cf.contextid = ctx.id
+              WHERE cf.usermodified = :userid1";
+        $params = ['userid1' => $userid];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . competency_framework::TABLE . "} cf ON cf.contextid = ctx.id
+               JOIN {" . competency::TABLE . "} c ON c.competencyframeworkid = cf.id
+              WHERE c.usermodified = :userid2";
+        $params = ['userid2' => $userid];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . competency_framework::TABLE . "} cf ON cf.contextid = ctx.id
+               JOIN {" . competency::TABLE . "} c ON c.competencyframeworkid = cf.id
+               JOIN {" . related_competency::TABLE . "} cr ON cr.competencyid = c.id
+              WHERE cr.usermodified = :userid3";
+        $params = ['userid3' => $userid];
         $contextlist->add_from_sql($sql, $params);
 
         // Find the contexts of the templates, and related data, modified by the user.
@@ -241,16 +253,30 @@ class provider implements
                FROM {context} ctx
                JOIN {" . template::TABLE . "} tpl
                  ON tpl.contextid = ctx.id
-          LEFT JOIN {" . template_cohort::TABLE . "} tch
+              WHERE tpl.usermodified = :userid1";
+        $params = ['userid1' => $userid];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . template::TABLE . "} tpl
+                 ON tpl.contextid = ctx.id
+               JOIN {" . template_cohort::TABLE . "} tch
                  ON tch.templateid = tpl.id
-                AND tch.usermodified = :userid2
-          LEFT JOIN {" . template_competency::TABLE . "} tc
+                AND tch.usermodified = :userid2";
+        $params = ['userid2' => $userid];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . template::TABLE . "} tpl
+                 ON tpl.contextid = ctx.id
+               JOIN {" . template_competency::TABLE . "} tc
                  ON tc.templateid = tpl.id
-                AND tc.usermodified = :userid3
-              WHERE tpl.usermodified = :userid1
-                 OR tch.id IS NOT NULL
-                 OR tc.id IS NOT NULL";
-        $params = ['userid1' => $userid, 'userid2' => $userid, 'userid3' => $userid];
+                AND tc.usermodified = :userid3";
+        $params = ['userid3' => $userid];
         $contextlist->add_from_sql($sql, $params);
 
         // Find the possible course contexts.
@@ -302,21 +328,52 @@ class provider implements
                JOIN {context} ctx
                  ON ctx.instanceid = p.userid
                 AND ctx.contextlevel = :userlevel
-          LEFT JOIN {" . plan_competency::TABLE . "} pc
-                 ON pc.planid = p.id
-                AND pc.usermodified = :userid3
-          LEFT JOIN {" . user_competency_plan::TABLE . "} upc
-                 ON upc.planid = p.id
-                AND upc.usermodified = :userid4
-              WHERE p.usermodified = :userid1
-                 OR p.reviewerid = :userid2
-                 OR pc.id IS NOT NULL
-                 OR upc.id IS NOT NULL";
+              WHERE p.usermodified = :userid1";
         $params = [
             'userlevel' => CONTEXT_USER,
             'userid1' => $userid,
+        ];
+
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {" . plan::TABLE . "} p
+               JOIN {context} ctx
+                 ON ctx.instanceid = p.userid
+                AND ctx.contextlevel = :userlevel
+              WHERE p.reviewerid = :userid2";
+        $params = [
+            'userlevel' => CONTEXT_USER,
             'userid2' => $userid,
+        ];
+
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {" . plan::TABLE . "} p
+               JOIN {context} ctx
+                 ON ctx.instanceid = p.userid
+                AND ctx.contextlevel = :userlevel
+               JOIN {" . plan_competency::TABLE . "} pc
+                 ON pc.planid = p.id
+                AND pc.usermodified = :userid3";
+        $params = [
+            'userlevel' => CONTEXT_USER,
             'userid3' => $userid,
+        ];
+
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {" . plan::TABLE . "} p
+               JOIN {context} ctx
+                 ON ctx.instanceid = p.userid
+                AND ctx.contextlevel = :userlevel
+               JOIN {" . user_competency_plan::TABLE . "} upc
+                 ON upc.planid = p.id
+                AND upc.usermodified = :userid4";
+        $params = [
+            'userlevel' => CONTEXT_USER,
             'userid4' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);
@@ -325,32 +382,78 @@ class provider implements
         $sql = "
              SELECT DISTINCT ctx.id
                FROM {context} ctx
-          LEFT JOIN {" . user_competency::TABLE . "} uc
+               JOIN {" . user_competency::TABLE . "} uc
                  ON uc.userid = ctx.instanceid
                 AND ctx.contextlevel = :userlevel1
-          LEFT JOIN {" . evidence::TABLE . "} e
-                 ON e.usercompetencyid = uc.id
-                AND (e.usermodified = :userid3 OR e.actionuserid = :userid4)
-          LEFT JOIN {" . user_evidence::TABLE . "} ue
-                 ON ue.userid = ctx.instanceid
-                AND ctx.contextlevel = :userlevel2
-                AND ue.usermodified = :userid5
-          LEFT JOIN {" . user_evidence_competency::TABLE . "} uec
-                 ON uec.userevidenceid = ue.id
-                AND uec.usermodified = :userid6
-              WHERE uc.usermodified = :userid1
-                 OR uc.reviewerid = :userid2
-                 OR e.id IS NOT NULL
-                 OR ue.id IS NOT NULL
-                 OR uec.id IS NOT NULL";
+              WHERE uc.usermodified = :userid1";
         $params = [
             'userlevel1' => CONTEXT_USER,
-            'userlevel2' => CONTEXT_USER,
             'userid1' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_competency::TABLE . "} uc
+                 ON uc.userid = ctx.instanceid
+                AND ctx.contextlevel = :userlevel1
+              WHERE uc.reviewerid = :userid2";
+        $params = [
+            'userlevel1' => CONTEXT_USER,
             'userid2' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_competency::TABLE . "} uc
+                 ON uc.userid = ctx.instanceid
+                AND ctx.contextlevel = :userlevel1
+               JOIN {" . evidence::TABLE . "} e
+                 ON e.usercompetencyid = uc.id
+                AND e.usermodified = :userid3";
+        $params = [
+            'userlevel1' => CONTEXT_USER,
             'userid3' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_competency::TABLE . "} uc
+                 ON uc.userid = ctx.instanceid
+                AND ctx.contextlevel = :userlevel1
+               JOIN {" . evidence::TABLE . "} e
+                 ON e.usercompetencyid = uc.id
+                AND e.actionuserid = :userid4";
+        $params = [
+            'userlevel1' => CONTEXT_USER,
             'userid4' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_evidence::TABLE . "} ue
+                 ON ue.userid = ctx.instanceid
+                AND ctx.contextlevel = :userlevel2
+                AND ue.usermodified = :userid5";
+        $params = [
+            'userlevel2' => CONTEXT_USER,
             'userid5' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_evidence::TABLE . "} ue
+                 ON ue.userid = ctx.instanceid
+                AND ctx.contextlevel = :userlevel2
+               JOIN {" . user_evidence_competency::TABLE . "} uec
+                 ON uec.userevidenceid = ue.id
+                AND uec.usermodified = :userid6";
+        $params = [
+            'userlevel2' => CONTEXT_USER,
             'userid6' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);
@@ -360,33 +463,48 @@ class provider implements
         $sql = "
              SELECT DISTINCT ctx.id
                FROM {context} ctx
-          LEFT JOIN {" . plan::TABLE . "} p
+               JOIN {" . plan::TABLE . "} p
                  ON p.userid = ctx.instanceid
                 AND ctx.contextlevel = :userlevel1
-          LEFT JOIN {" . user_competency::TABLE . "} uc
-                 ON uc.userid = ctx.instanceid
-                AND ctx.contextlevel = :userlevel2
-                AND uc.userid = :userid2
-          LEFT JOIN {" . user_evidence::TABLE . "} ue
-                 ON ue.userid = ctx.instanceid
-                AND ctx.contextlevel = :userlevel3
-                AND ue.userid = :userid3
-          LEFT JOIN {" . user_competency_course::TABLE . "} ucc
-                 ON ucc.courseid = ctx.instanceid
-                AND ctx.contextlevel = :courselevel
-                AND ucc.userid = :userid4
-              WHERE p.userid = :userid1
-                 OR uc.id IS NOT NULL
-                 OR ue.id IS NOT NULL
-                 OR ucc.id IS NOT NULL";
+              WHERE p.userid = :userid1";
         $params = [
             'userlevel1' => CONTEXT_USER,
-            'userlevel2' => CONTEXT_USER,
-            'userlevel3' => CONTEXT_USER,
-            'courselevel' => CONTEXT_COURSE,
             'userid1' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_competency::TABLE . "} uc
+                 ON uc.userid = ctx.instanceid
+                AND ctx.contextlevel = :userlevel2
+                AND uc.userid = :userid2";
+        $params = [
+            'userlevel2' => CONTEXT_USER,
             'userid2' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_evidence::TABLE . "} ue
+                 ON ue.userid = ctx.instanceid
+                AND ctx.contextlevel = :userlevel3
+                AND ue.userid = :userid3";
+        $params = [
+            'userlevel3' => CONTEXT_USER,
             'userid3' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+             SELECT DISTINCT ctx.id
+               FROM {context} ctx
+               JOIN {" . user_competency_course::TABLE . "} ucc
+                 ON ucc.courseid = ctx.instanceid
+                AND ctx.contextlevel = :courselevel
+                AND ucc.userid = :userid4";
+        $params = [
+            'courselevel' => CONTEXT_COURSE,
             'userid4' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);

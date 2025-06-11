@@ -1,0 +1,6262 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Snap core swatch.
+ *
+ * @package   theme_snap
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+// overwrite some global CSS from a turnitin mod
+// see https://github.com/jmcgettrick/MoodleDirectV2/issues/50
+
+/* stylelint-disable declaration-no-important*/
+
+html {
+    -webkit-font-smoothing: auto !important;
+    font-size: 18px;
+}
+
+#moodle-page {
+    font-size: 1.1rem;
+}
+
+// Snap Layout yo...
+// -------------------------
+// SHAME -  all that fun moodle reset css
+// -------------------------
+// hide that classic 1px & some other fun moodle stuff
+
+img.spacer,
+.noavailable,
+.clearfloat,
+.noicon {
+    display: none;
+}
+
+#notice,
+.section.img-text,
+.boxwidthwide,
+.boxwidthnormal,
+.course-content ul.topics li.section .content,
+.course-content ul.topics li.section .summary,
+.site-topic ul.section,
+.course-content ul.section,
+.path-mod-choice .horizontal,
+.path-mod-choice .vertical,
+.path-mod-choice .anonymous,
+.path-mod-choice .names,
+.path-mod-choice .results.anonymous .graph.horizontal,
+.block_course_overview .content,
+.block .header .title h2,
+.block .content,
+.coursebox .content .coursecat,
+.coursebox .content .summary,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile,
+.coursebox .content .teachers,
+.coursebox.remotecoursebox .remotecourseinfo,
+.section .activity .availabilityinfo,
+.section .activity .contentafterlink,
+.course-content ul.topics li.section .content,
+.course-content ul.weeks li.section .content,
+#page-course-index-category .generalbox.info,
+.loginbox.onecolumn,
+.loginbox,
+#page-report-outline-user .section,
+.path-admin #assignrole {
+    max-width: 100%;
+    min-width: 0;
+    width: auto;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.section.img-text {
+    @include clearfix;
+}
+
+// Override the above for tables.
+table.boxwidthnormal,
+table.boxwidthwide {
+    width: 100%;
+}
+
+// Undo .well styles
+.loginbox,
+.loginbox.twocolumns .loginpanel,
+.loginbox.onecolumn {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+// -------------------------
+// Login & sign up page
+// -------------------------
+
+#page-login-index,
+#page-login-signup {
+    #region-main {
+        max-width: 100%;
+        padding: 0 4% 2em;
+    }
+    #moodle-footer {
+        margin-top: 0;
+    }
+    // The login box.
+    .snap-login {
+        padding: 1em 4%;
+        max-width: 25rem;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.9);
+        #password {
+            margin-top: 1em;
+        }
+        .potentialidp {
+            margin-bottom: .5em;
+        }
+    }
+    .snap-login-option {
+        background-color: #fff;
+        border-radius: 5px;
+    }
+    .snap-login-box {
+        margin: 2em auto;
+    }
+    .snap-login-row {
+        justify-content: center;
+    }
+
+    /**
+      floating labels in login form
+    */
+    .floating-label {
+        position: relative;
+    }
+
+    .floating-label input {
+        position: relative;
+        z-index: 2;
+    }
+
+    .floating-label input:focus ~ label {
+        left: 5px;
+        top: -14px;
+        opacity: 1;
+        height: auto;
+        width: auto;
+        clip: auto;
+        z-index: 2;
+        padding: 0 5px 0 5px;
+        background-color: #ffffff;
+        border-radius: 5px;
+    }
+
+    input:focus::placeholder {
+        color: transparent;
+    }
+
+    .floating-label label {
+        position: absolute;
+        left: 5px;
+        top: 10px;
+        z-index: 1;
+        font-size: 0.7em;
+        font-weight: bold;
+        transition: top .2s ease-in-out;
+    }
+    /**
+      end floating labels in login form
+    */
+
+    // The site name.
+    .snap-logo-sitename {
+        text-indent: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        background-position: center center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        padding: 0.5em 0;
+        margin-bottom: 0.5em;
+    }
+    .loginerror-restoredaccount {
+        background-color: white;
+        padding: 1em;
+    }
+    .loginerrors .alert-danger {
+        border-radius: 5px;
+        font-size: 0.8em;
+        padding: 0.65rem 1.25rem;
+    }
+    #base-login form#login {
+        input#username,
+        input#password {
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+        a.btn-link {
+            padding-left: 0;
+            text-align: left;
+        }
+        button#loginbtn {
+            width: auto;
+            font-size: 0.8em;
+        }
+        .snap-indication {
+            font-size: 0.8em;
+        }
+        .toggle-sensitive-wrapper {
+            margin-bottom: 0 !important;
+            label[for="password"] {
+                margin-top: 1em;
+            }
+            &.input-group:not(.small-screens-only) input#password {
+                border-end-end-radius: 0;
+                border-start-end-radius: 0;
+            }
+            &.input-group.small-screens-only input#password {
+                @media (max-width: 576px) {
+                    border-end-end-radius: 0;
+                    border-start-end-radius: 0;
+                }
+            }
+            .input-group-append {
+                height: 2em;
+                margin-top: 0.8em;
+                @media (max-width: 767px) {
+                    height: 2.1em;
+                }
+                .toggle-sensitive-btn {
+                    border-end-end-radius: 5px;
+                    border-start-end-radius: 5px;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+            }
+        }
+    }
+    #snap-alt-login {
+        h2 {
+            font-size: 1.1rem;
+        }
+        .potentialidplist {
+            img[title$="Mahara"] {
+                padding: .375rem .75rem !important;
+            }
+        }
+    }
+    #snap-guest-login,
+    #snap-signup {
+        padding: 0;
+        h2 {
+            font-size: 1.1rem;
+        }
+        button#guestloginbtn,
+        a#signupbtn {
+            width: auto;
+            font-size: 0.8em;
+        }
+    }
+
+    #snap-signup a#signupbtn {
+        width: 60%;
+    }
+
+    #base-login,
+    #snap-login-help {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+    }
+
+    // Page background when login Stylish template is selected.
+    .page-stylish-background {
+        background-repeat: no-repeat;
+        background-size: cover !important;
+        background-position: center !important;
+        background-color: #ffffff !important;
+
+        @media (max-width: 750px) {
+            background-position: center top !important;
+            background-size: cover !important;
+        }
+    }
+    #notice {
+        background-color: #fff;
+        Font-size: 1em;
+        color: $body-color;
+        padding-top: 5em !important;
+    }
+}
+#page-login-signup {
+    #page-header {
+        padding-top: 3em;
+    }
+    .snap-login {
+        padding: 0;
+        width: 100%;
+        max-width: inherit;
+        h2 {
+            text-align: inherit !important;
+        }
+        form.mform {
+            padding-top: 1em;
+            .collapsible-actions,
+            fieldset.collapsible legend.ftoggler {
+                display: none;
+            }
+            fieldset#id_createuserandpass,
+            fieldset#id_supplyinfo {
+                margin-left: 0;
+                float: left;
+                width: 50%;
+            }
+            > div.form-group.fitem > div.form-inline.felement {
+                display: block;
+            }
+            .form-inline .form-control,
+            .form-inline .custom-select {
+                width: 100%;
+                max-width: inherit;
+            }
+            #id_cancel {
+                border: 1px solid $brand-primary;
+            }
+        }
+    }
+    @media (max-width: 425px) {
+        .snap-login form.mform {
+            fieldset#id_createuserandpass,
+            fieldset#id_supplyinfo {
+                width: 100%;
+            }
+            .btn-cancel {
+                margin: 0;
+            }
+        }
+    }
+}
+// Additional div when login Stylish template is selected.
+#page-login-index .page-stylish-login {
+    background: white;
+    width: 50%;
+
+    @media (max-width: 750px) {
+        background: transparent;
+        width: 100%;
+    }
+
+    // When a user is already logged and try to login from another window.
+    #notice.snap-continue-cancel {
+        position: relative;
+    }
+
+}
+// Information notice in the sign up and forgot password pages.
+#page-login-forgot_password,
+#page-login-signup {
+    #notice {
+        background-color: #fff;
+        Font-size: 1em;
+        color: $body-color;
+    }
+}
+#page-login-signup #notice {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+    border-radius: 0.5rem;
+    width: 40%;
+    padding-top: 2em    !important;
+}
+
+// Styles for page-login-forgot_password page.
+#page-login-forgot_password {
+    #region-main {
+        max-width: 800px;
+        border-radius: 0.5rem;
+        background-color: #fff;
+        padding: 1em 3em;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+        .mform .fcontainer > .fitem {
+            padding-left: 0;
+        }
+    }
+    #page {
+        padding-bottom: 2em;
+    }
+    #moodle-footer {
+        margin-top: 0;
+    }
+    #id_searchbyemail,
+    #id_searchbyusername {
+        > legend {
+            display: none;
+        }
+        input#id_username,
+        input#id_email {
+            border-radius: 5px;
+            font-size: .8em;
+        }
+    }
+    #id_searchbyusername {
+        > div > div:nth-child(2) {
+            display: none;
+        }
+    }
+    #id_searchbyusernamecontainer,
+    #id_searchbyemailcontainer {
+        & > div:nth-child(1) {
+            display: flex;
+            & > div:nth-child(1) {
+                display: inline-block;
+                flex: 0 0 25%;
+                max-width: 25%;
+            }
+            & > div.form-inline.felement {
+                display: flex;
+                flex-flow: row wrap;
+                align-items: flex-start;
+                flex: 0 0 75%;
+                max-width: 75%;
+            }
+        }
+    }
+}
+@media (max-width: 767px) {
+    #region-main {
+        margin: 0 4% !important;
+    }
+    #id_searchbyusernamecontainer,
+    #id_searchbyemailcontainer {
+        & > div:nth-child(1) {
+            display: block !important;
+        }
+    }
+}
+
+// -------------------------
+// Mixins me up
+// -------------------------
+
+@mixin alakazam {
+    transition: all 0.4s ease-in-out;
+}
+
+@mixin bg-cover {
+    background-position: center top;
+    background-size: cover;
+}
+// Hide elements which require js to be loaded.
+.js-only {
+    @include alakazam;
+}
+
+body:not(.snap-js-loaded) .js-only {
+    pointer-events: none;
+    cursor: default;
+    filter: grayscale(100%);
+    opacity: 0.5;
+}
+
+// 100% of the screen.
+.full-width {
+    width: 100vw;
+    max-width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+// 100% with standard snap 4% gutter.
+.full-width-pad {
+    @extend .full-width;
+    padding: 0 4%;
+}
+
+// Animations.
+@keyframes snap-drop {
+    0% {
+        transform: matrix(1, 0, 0, 1, 0, -600);
+    }
+
+    100% {
+        transform: matrix(1, 0, 0, 1, 0, 0);
+    }
+}
+
+@keyframes snap-rise {
+    0% {
+        transform: matrix(1, 0, 0, 1, 0, 0);
+    }
+
+    100% {
+        transform: matrix(1, 0, 0, 1, 0, -600);
+    }
+}
+
+// -------------------------
+// Baseline boilerplate for snap
+// -------------------------
+body {
+    font-weight: 400;
+}
+
+a {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+::-moz-selection {
+    background: #fe57a1;
+    color: #fff;
+    text-shadow: none;
+}
+
+::selection {
+    background: #fe57a1;
+    color: #fff;
+    text-shadow: none;
+}
+
+// scrollbars in ie
+body.ie {
+    -ms-overflow-style: scrollbar;
+}
+
+label {
+    font-weight: 500;
+}
+
+select {
+    background-color: #fff;
+    max-width: 100%;
+}
+
+select:disabled,
+input:disabled,
+input:disabled + label {
+    opacity: 0.5;
+}
+
+:disabled {
+    cursor: not-allowed;
+}
+
+textarea {
+    max-width: 100%;
+}
+
+small,
+.small {
+    font-size: $font-size-sm !important;
+}
+
+// GT Mod - 2015-07-09 - add .floater .cell to accommodate fixed col and header in gradebook
+table,
+.floater .cell {
+    width: 100%;
+    font-family: $font-family-system;
+    font-size: $font-size-base;
+}
+
+.blockquote {
+    border-left: .25rem solid #eceeef;
+    border-left-color: $brand-primary;
+    padding: .5rem 1rem;
+}
+
+.blockquote-reverse {
+    border-right: .25rem solid #eceeef;
+    border-right-color: $brand-primary;
+    padding: .5rem 1rem;
+}
+
+blockquote {
+    font-size: 1rem;
+    @extend .blockquote;
+}
+
+// Although this is kinda general, we need to leave like it is,
+// because Snap is using these width and heights for some designs.
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+// Stop images shrinking to nothing on Chrome
+table img:not(.activityicon) {
+    min-width: 12px;
+}
+
+table.results td.graph > img {
+    min-width: 0;
+}
+
+img[style*="float:left"],
+img[style*="float: left"],
+img[style*="float: right"],
+img[style*="float:right"] {
+    margin: 2%;
+}
+
+@include media-breakpoint-down(md) {
+
+    // unfloat images for small screen
+    img[style*="float:left"],
+    img[style*="float: left"],
+    img[style*="float: right"],
+    img[style*="float:right"] {
+        float: none !important;
+        display: table-cell;
+        clear: both;
+    }
+}
+
+img.icon {
+    padding: 0;
+    margin-right: 6px;
+}
+
+img.iconlarge {
+    height: 38px;
+    width: 38px;
+}
+
+/* mdl hide stuff icon - hide in bs has different meaning*/
+img.icon.hide {
+    display: inline-block !important;
+}
+
+@mixin svg-icon {
+    width: 2rem;
+    height: 2rem;
+    margin: 0 0.3rem;
+    vertical-align: middle;
+}
+
+.svg-icon {
+    @include svg-icon;
+}
+
+// Font awesome icons.
+i.icon,
+p.tree_item:before {
+    color: #999;
+}
+p.tree_item.hasicon i.nav-missing-icon:before {
+    content: '■'; // Where settings nav icon is missing use this.
+}
+
+// Adjust Page resource activity display.
+li.modtype_page {
+    div.summary-text p {
+        padding-top: 1em !important; // Override summary-text core inherit property.
+    }
+
+    // Adjust Page resource content when it is a table.
+    div.pagemod-content {
+        overflow: auto;
+
+        // Hide scrollbar but keep functionality.
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        -ms-overflow-style: none;  // IE and Edge.
+        scrollbar-width: none;  // Firefox.
+
+        .row {
+            margin: 0;
+        }
+        tr {
+            .mediaplugin_videojs {
+                width: 30em;
+                padding: 0 0.3em;
+            }
+        }
+        div.d-block {
+            padding-top: 1em;
+            padding-left: 0.2em;
+            padding-right: 0.2em;
+            width: 100%;
+        }
+
+        #pagemod-content-container,
+        .d-block {
+            float: left;
+            width: 100%;
+        }
+        #pagemod-content-container {
+            background-color: #f8f9fa;
+            border-radius: 0.5em;
+            padding: 1em;
+        }
+    }
+}
+
+// Adjust the mod resource view for In frame display option.
+body#page-mod-resource-view.path-mod-resource.pagelayout-frametop {
+
+    header#mr-nav,
+    .snap-custom-menu-spacer,
+    #page-mast,
+    footer#moodle-footer,
+    #page-header,
+    .activity-header{
+        display:none;
+    }
+
+    section#region-main {
+        padding-top: 0;
+        max-width: none;
+    }
+    .snap-page-heading-button {
+        display: none;
+    }
+    #region-main-box {
+        margin-top: 0.8rem;
+    }
+    .activity-navigation {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        .row .col-md-4 {
+            min-height: 3rem;
+        }
+    }
+    height: 80%;
+}
+
+.mediaplugin_videojs > div {
+    max-width: none !important;
+}
+
+.media-responsive {
+    width: 100%;
+    display: block;
+    position: relative;
+    > *:not(video):first-child {
+        position: absolute !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        height: 100% !important;
+        width: 100% !important;
+    }
+}
+
+.media-responsive-pad {
+    display: block;
+}
+
+// Responsive video for HTML5 only.
+video {
+    width: 100% !important;
+    height: auto !important;
+}
+
+li {
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+hr {
+    height: 1px;
+    margin: 2em 2%;
+    border: 0;
+}
+
+.block .content hr {
+    margin: .3em;
+    height: 1px;
+}
+
+#page-header h1 {
+    margin-top: 0;
+    line-height: 1.2;
+}
+
+// Roboto robot voice for system text
+label,
+.label,
+.form-label,
+.form-defaultinfo,
+.form-description,
+.form-filemanager,
+.ffilepicker,
+.ffilemanager,
+.fdescription,
+.fstatic,
+.collapsible-actions,
+input,
+button,
+select,
+.pagination,
+.initialbar,
+.paging,
+.alert,
+.nav-pills,
+.nav-tabs,
+.course-report-dashboard,
+.yui3-tabview-list,
+.yuimenu,
+#course-category-listings,
+.progress .bar,
+.progress-bar,
+.yui-dt-paginator {
+    font-family: $font-family-sans-serif;
+}
+
+@include media-breakpoint-up(md) {
+    .nav.nav-justified > li > a {
+        padding-left: 0;
+        padding-right: 0;
+        white-space: nowrap;
+    }
+}
+
+.path-grade ul.nav.nav-tabs + ul.nav.nav-tabs {
+
+    // Fix for tabs that should be active but are marked
+    // as disabled instead.
+
+    li.disabled > a {
+        &,
+        &:hover,
+        &:focus {
+            color: $nav-tabs-link-active-color;
+            background-color: $nav-tabs-link-active-bg;
+            border: 1px solid $nav-tabs-link-active-border-color;
+            border-bottom-color: transparent;
+            cursor: default;
+        }
+    }
+    margin-bottom: 1em;
+}
+
+// -------------------------
+// Buttons, faux buttons styling & resets
+// -------------------------
+
+select,
+input,
+textarea {
+    max-width: 100%;
+}
+
+.button-group > button,
+input.form-submit,
+.atto_form button,
+.gradingform_checklist.editor .addgroup input,
+.gradingform_checklist.editor .additem input,
+.gradingform_rubric.editor .addlevel input,
+.gradingform_rubric.editor .addcriterion input,
+.paging.paging-morelink a,
+a.yui3-button,
+.yui-button button,
+#page-site-index .section-modchooser-link .section-modchooser-text {
+
+    // Imitate btn.btn-secondary CSS for buttons without proper
+    // Bootstrap classes applied to them.
+    transition: all 0.4s ease-in-out;
+    background: transparent;
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    // Em's used to allow for small and large buttons.
+    padding: .5em 1em;
+
+    &:hover:not(:disabled),
+    &:focus:not(:disabled),
+    &:active:not(:disabled),
+    &.active:not(:disabled) {
+
+        text-decoration: none;
+        color: #fff;
+    }
+
+    &:disabled {
+        opacity: 0.65;
+    }
+}
+
+.btn.btn-solid {
+    &,
+    &:active,
+    &:focus {
+        background: #fff;
+    }
+}
+
+.button-group > button + button {
+    margin-left: 1em;
+}
+
+.path-grade-report,
+.path-mod-lightboxgallery {
+    .snap-page-heading-button {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+    }
+}
+
+.path-grade-report-grader .gradeparent table.gradereport-grader-table {
+    height: auto;
+}
+
+.path-grade-report-grader #region-main div[role="main"] {
+    overflow: auto;
+}
+
+.path-grade-report-grader #region-main div[role="main"].snap-grade-reporter {
+    overflow: unset;
+
+    .user-grade td.evend2,
+    .user-grade th.evend2,
+    .user-grade td.oddd1,
+    .user-grade th.oddd1,
+    table#user-grades td.controls,
+    .path-grade-report-grader table tr.avg .cell,
+    .path-grade-report-grader table tr.range .cell,
+    table#user-grades tr.avg td.cell,
+    .user-grade td.oddd2,
+    .user-grade th.oddd2,
+    .user-grade td.oddd3,
+    .user-grade th.oddd3,
+    .user-grade td.evend3,
+    .user-grade th.evend3,
+    .user-grade td.oddd3,
+    .user-grade th.oddd3 {
+        background-color: #fff;
+    }
+}
+
+.path-grade-report-grader .tertiary-navigation .initials-selector {
+    z-index: 5;
+}
+
+#page-grade-report-overview-index #page-mast {
+    .page-header-headings {
+        margin-right: 1em;
+    }
+    .btn-group.header-button-group a {
+        border-radius: 0.5em;
+    }
+}
+
+#page-site-index .section-modchooser-link {
+    display: flex !important;
+    flex-direction: column;
+    text-align: center;
+    padding: 1em 9em !important;
+
+    @media (max-width: 576px) {
+        padding: 1em 2em !important;
+    }
+
+    .activity-add-text {
+        color: $brand-primary;
+    }
+}
+
+#page-site-index .section-modchooser-link::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0.5em;
+    background: transparent url("[[pix:theme|move_here]]") no-repeat center center;
+    background-size: contain;
+}
+
+// Styles for #page-report-competency-index.
+#page-report-competency-index .header-button-group {
+    padding-top: 10px;
+    padding-left: 5px;
+}
+
+#page-report-competency-index .table-bordered {
+    td.alert.alert-info,
+    td.alert.alert-success,
+    td.alert.alert-danger,
+    td.alert.alert-warning, {
+        border-left: none;
+        padding-left: 4em;
+    }
+    td.alert.alert-info::before,
+    td.alert.alert-success::before,
+    td.alert.alert-danger::before,
+    td.alert.alert-warning::before, {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border-left: 3em solid;
+        padding-left: 4em;
+    }
+}
+
+#page-badges-award .recipienttable tr td.actions .actionbutton {
+    font-family: $font-family-system;
+    transition: all 0.4s ease-in-out;
+    color: $brand-primary;
+    border-color: $brand-primary;
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    padding: .5em 1em;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+        background-color: $brand-primary;
+        color: #fff;
+        border-color: $brand-primary;
+        text-decoration: none;
+    }
+}
+
+// -------------------------
+// Snap theme helper classes
+// -------------------------
+
+.published-status {
+    opacity: 0.75;
+    font-size: $font-size-sm;
+}
+
+.userpicture,
+.message_stream_user_picture_icon {
+    border-radius: 50%;
+}
+
+.userpicture.defaultuserpic {
+    border: 1px solid #e5e5e5;
+}
+
+// -------------------------
+// Icons inserted as pseudo elements.
+// -------------------------
+
+.snap-icon-close:before {
+    content: '';
+    background: transparent url("[[pix:theme|close_x]]") no-repeat 50% 50%;
+    display: block;
+    height: 1em;
+    width: 1em;
+    margin: 0.1em auto;
+}
+
+.snap-icon-close:focus {
+    text-decoration: underline !important;
+}
+
+// White close icon.
+#snap-footer-alert,
+#snap-pm {
+    .snap-icon-close:before {
+        background-image: url("[[pix:theme|close_x_white]]");
+    }
+}
+
+.icon-arrow-left:before,
+.icon-arrow-right:before {
+    content: '';
+    background: transparent url("[[pix:theme|right-arrow]]") no-repeat 50% 50%;
+    display: block;
+    height: 1em;
+    width: 1em;
+    margin: 0.1em auto;
+}
+
+.icon-arrow-left:before {
+    background-image: url("[[pix:theme|left-arrow]]");
+}
+
+// -----------------------------------
+// Snap theme elements and components.
+// -----------------------------------
+
+#page-header,
+#page-login-index #page {
+    @include bg-cover;
+}
+
+.snap-media-object {
+    @include clearfix;
+    font-weight: 500;
+    padding: 0.5em 0;
+    // Block display for keyboard user focus.
+    > a:focus {
+        display: block;
+    }
+
+    // media o media
+    > a > img,
+    > img {
+        float: left;
+        display: block;
+        width: 36px;
+        margin: .3em 1em 0 .3em;
+        height: auto;
+        vertical-align: baseline;
+    }
+
+    // media o content
+    .snap-media-body {
+        overflow: hidden;
+
+        // for personal menu updates - need to re-visit when we re-use more widley
+        // in the messaging system we ellipse text.
+        p,
+        small {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+        }
+
+        .text_to_html {
+            line-height: 1.3em;
+        }
+
+        a {
+            &:hover,
+            &:focus {
+                text-decoration: underline;
+            }
+        }
+
+        // Shrink label size to support iPads
+        .label {
+            font-size: small;
+        }
+    }
+
+    // media o heading
+    h3 {
+        color: inherit;
+        font-size: 1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    // any meta-data that is part of the title
+    h3 small {
+        color: inherit;
+        opacity: 0.9;
+    }
+
+    // standard media o meta - status, date
+    .snap-media-meta {
+        display: block;
+        font-size: $font-size-sm;
+        color: $gray-light;
+    }
+
+    // unread tag
+    .snap-unread-marker {
+        color: $brand-warning;
+    }
+
+}
+
+// -------------------------
+// Layout of moodle/snap DOM structure
+// -------------------------
+/***************
+THE DOM LOOKS LIKE THIS :
+
+body
+nav #mr-nav
+#page (for mdl js)
+	#page-content (for mdl js)
+		div #moodle-page
+		header #page-header
+		section #region-main
+footer #moodle-footer
+
+ ****************************/
+#page-header,
+#region-main,
+#moodle-footer,
+#moodle-blocks {
+    margin: 0 auto;
+    padding: 0 4%;
+    font-size: 1em;
+}
+
+@media (max-width: 375px) {
+    #mr-nav,
+    #page-header,
+    #region-main,
+    #moodle-footer,
+    #moodle-blocks {
+        padding-right: 15px;
+    }
+}
+
+// -------------------------
+// Mr.nav - he's there, fixed to the top of your page
+// -------------------------
+
+#mr-nav {
+    #snap-header {
+        padding: .5em 4%;
+        padding-bottom: 0;
+        .pull-right.js-only, .float-end.js-only {
+            .nav-link {
+                padding: .5rem .5rem;
+            }
+
+            .hidden-md-down a[aria-label="Search"] {
+                padding-left: 5px;
+                padding-right: 2px;
+            }
+
+            a:focus, div[tabindex]:focus {
+                border-radius: .5rem !important; // !important to override a possible .rounded-0 like in the search btn.
+                outline-style: solid;
+                box-shadow: none;
+            }
+        }
+        .divider {
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
+    }
+    position: fixed;
+    width: 100vw;
+
+    @media (max-width: 991px) {
+        width: 100%;
+        .float-end.js-only.row {
+            margin-right: 0.2rem;
+        }
+    }
+
+    z-index: 23;
+    background-color: $nav-bg;
+    top: 0;
+
+    //headroom js http://wicky.nillia.ms/headroom.js/
+    &.headroom--unpinned {
+        will-change: transform;
+        animation-name: snap-rise;
+        animation-timing-function: ease-in-out;
+        animation-duration: 0.4s;
+        animation-fill-mode: forwards;
+    }
+
+    &.headroom--pinned {
+
+        // firefox no like this animation :(
+        /*
+        animation-name: snap-drop;
+        animation-timing-function: cubic-bezier(.694, .0482, .335, 1);
+        animation-duration: 0.33s;
+        */
+    }
+
+    .popover-region-notifications > div > .icon {
+        color: $nav-color;
+
+        &:hover {
+            color: $nav-color-hover;
+        }
+    }
+
+    a {
+        color: $nav-color;
+
+        &:hover,
+        &:focus {
+            color: $nav-color-hover;
+        }
+    }
+
+    .popover-region-container a {
+        color: $brand-primary;
+
+        &:hover {
+            color: darken($brand-primary, 8%);
+        }
+        &:focus {
+            color: darken($brand-primary, 30%);
+            text-decoration: underline;
+        }
+    }
+
+    .snap-login-button {
+        color: $nav-login-color;
+        background-color: $nav-login-bg;
+        border-color: $nav-login-bg;
+        margin: 0 1rem;
+        height: max-content;
+
+        &:hover,
+        &:focus {
+            color: darken($nav-login-color, 8%);
+            background-color: darken($nav-login-bg, 8%);
+            border-color: darken($nav-login-bg, 8%);
+        }
+    }
+}
+
+#mr-nav #snap-my-courses-trigger {
+    display: inline;
+    border: none;
+    position: relative; // Position to support message badge.
+    padding-left: 1em; // Padding to support message badge.
+    padding-right: 0.5em;
+    padding-top: 0.15em;
+    margin-right: 0.5em;
+    color: $nav-button-color;
+    background-color: $nav-button-bg;
+    &.snap-my-courses-link {
+        padding-right: 0.5em;
+        padding-left: 0.5em;
+        border-radius: 0.5em;
+    }
+
+    .userpicture, .userinitials.size-40 {
+        width: 40px;
+        height: 40px;
+        @include alakazam;
+    }
+    &:hover,
+    &:focus {
+        .userpicture {
+            transform: scale(1.1);
+        }
+        color: darken($nav-button-color, 8%);
+    }
+}
+// Styles when user is logged in as another user.
+.userloggedinas {
+    #snap-header .usermenu .avatars {
+        .avatar.current {
+            width: 25px;
+            height: 25px;
+            .userpicture,
+            .userinitials {
+                width: 25px;
+                height: 25px;
+            }
+        }
+        .avatar.realuser {
+            width: 40px;
+            height: 40px;
+            .userpicture,
+            .userinitials {
+                width: 40px;
+                height: 40px;
+                transform: unset;
+            }
+        }
+    }
+}
+// Styles for Snap user menu.
+#snap-header {
+
+    .pull-right.js-only.row, .float-end.js-only.row {
+        margin-top: 1em;
+
+        @media (max-width: 768px) {
+            margin-top: 0.6em;
+        }
+
+        @include media-breakpoint-down(xs) {
+            gap: 0.3em;
+        }
+    }
+
+    #snap-home:not(.logo) {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        @include media-breakpoint-down(md) {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+
+    .snap-my-courses-link {
+        padding-bottom: 0.5rem;
+        align-content: center;
+        font-weight: bold;
+        span {
+            position: relative;
+            top: 2px;
+        }
+    }
+
+    #user-action-menu a[href*="my/courses.php"] {
+        display: none;
+    }
+
+    @include media-breakpoint-down(xs) {
+        .snap-my-courses-link span {
+            display: none;
+        }
+
+        #user-action-menu a[href*="my/courses.php"] {
+            display: block;
+        }
+    }
+
+    .usermenu {
+        #user-menu-toggle {
+            padding-top: 0.15em;
+            @include media-breakpoint-down(md) {
+                padding: 0;
+            }
+        }
+
+        .userpicture,
+        .userinitials {
+            width: 40px;
+            height: 40px;
+        }
+
+        &:hover {
+            .userpicture,
+            .userinitials {
+                @include alakazam;
+                transform: scale(1.1);
+            }
+        }
+
+        #user-action-menu {
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+            min-width: 13rem;
+            border-radius: 5px;
+            .carousel-item {
+                min-width: 13rem;
+                .header {
+                    padding: 0.25rem 0.75rem;
+                    .dir-rtl-hide {
+                        pointer-events: none;
+                    }
+                }
+            }
+        }
+
+        .dropdown-item.carousel-navigation-link::after {
+            @extend .fa-solid;
+            content: fa-content($fa-var-caret-right);
+            font-size: 1rem;
+            right: 0.75rem;
+            position: absolute;
+        }
+    }
+}
+
+#mr-nav #snap-my-courses-trigger:hover {
+    text-decoration: none;
+    .hidden-xs-down {
+        text-decoration: underline;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .js-snap-my-courses-trigger.snap-my-courses-menu {
+        margin-bottom: 0.5em;
+    }
+}
+
+// -------------------------
+// Snap header logo & mobile view.
+// -------------------------
+// Logo and title.
+#snap-home {
+    display: inline-block;
+    padding: .5em 0;
+    width: 19em;
+    max-width: 20%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // If logo image.
+    &.logo {
+        display: inline-block;
+        height: 76px;
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: left center;
+
+        @include media-breakpoint-down(md) {
+            height: 45px;
+        }
+    }
+}
+
+// Right icons Snap header.
+// Not likely to have a device with this resolution, but we need to cover it.
+@media (max-width: 330px) {
+    #snap-header {
+        padding-left: 1% !important;
+    }
+}
+
+@media (max-width: 375px) {
+    #mr-nav {
+        padding-right: 0;
+        #snap-header {
+            #snap-my-courses-trigger {
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+// sm: 576px.
+@include media-breakpoint-down(sm) {
+    #snap-header {
+        #snap-my-courses-trigger {
+            margin-right: 0;
+            padding-right: 0;
+            margin-bottom: 0;
+        }
+        #admin-menu-trigger {
+            margin-left: .2em;
+        }
+        .float-end.js-only.row .hidden-md-down a[aria-label="Search"] i.fa-search {
+            font-size: 1.6rem;
+        }
+    }
+}
+
+// md: 768px.
+@include media-breakpoint-down(md) {
+    #snap-header {
+        .pull-right.js-only.row, .float-end.js-only.row {
+            padding-top: 0;
+            margin-top: 0;
+            #snap-my-courses-trigger.js-snap-my-courses-trigger {
+                span.hidden-xs-down {
+                    display: none;
+                }
+                &:after {
+                    content: "\25BC";
+                }
+            }
+            .hidden-md-down {
+                a[aria-label="Search"] {
+                    padding-left: 0;
+                    padding-right: 0;
+                    i.fa-search {
+                        &:hover {
+                            @extend .fa-beat;
+                        }
+                    }
+                }
+            }
+            .genius_dashboard_link {
+                color: transparent;
+                white-space: nowrap;
+                width: 2em;
+                img.icon {
+                    font-size: 1.3rem;
+                }
+                &:after {
+                    content: "";
+                }
+            }
+        }
+    }
+}
+
+// Admin menu trigger.
+#snap-admin-icon {
+    @include alakazam;
+    .snap-gear-icon {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 5;
+        stroke-miterlimit: 10;
+    }
+    // Animate and change colour.
+    &:hover,
+    &:focus {
+        transform: rotate(90deg);
+        .snap-gear-icon {
+            fill: currentColor;
+        }
+    }
+}
+
+#page {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: 0;
+    transition: all 0.4s 0s ease;
+    // When admin block is open
+    &.offcanvas {
+        left: -200px;
+    }
+    &.show-drawer-right {
+        left: -315px;
+    }
+}
+
+// Styles when the custom menu is enabled.
+body.contains-snap-custom_menu-spacer {
+    .breadcrumb-nav {
+        @include media-breakpoint-up(md) {
+            margin-top: -.75em;
+        }
+    }
+}
+
+// We target only google Chrome
+#page-site-index.editing.chrome #moodle-blocks,
+#page-my-index.editing.chrome #moodle-blocks,
+.format-topics.path-course-view.editing.chrome #moodle-blocks,
+.editing.chrome #moodle-blocks {
+    overflow-y: auto;
+}
+
+#moodle-blocks {
+    max-width: 60.5em;
+    clear: both;
+    position: relative;
+    float: none;
+}
+
+#region-main {
+    max-width: 60.5em;
+    padding-top: 1em;
+    float: none;
+    border: none;
+}
+
+#page-backup-restorefile #region-main {
+    max-width: 100%;
+}
+
+#page-course-reset #region-main {
+    max-width: 100%;
+}
+
+#page-course-view-topics #region-main, #page-course-view-weeks #region-main {
+    padding: 1em 0;
+}
+
+// Pages that need as much width as they can get as they
+// aren't designed (yet) for small screens.
+
+#page-admin-search,
+#page-mod-quiz-edit,
+#page-course-management,
+#page-local-joulegrader-view,
+#page-mod-quiz-report {
+    #region-main {
+        max-width: 100%;
+    }
+}
+
+#page-mod-assign-view .flexible th {
+    white-space: normal;
+}
+
+// moodle span
+#maincontent {
+    height: 0;
+}
+
+// -------------------------
+//  Header - a head for your moodle
+// -------------------------
+/***************
+THE HEADER DOM LOOKS LIKE THIS :
+
+header#page-header
+	nav#breadcrumb-nav
+		ol#breadcrumb
+	div#page-mast
+		h1 - a hopefully useful name for this page
+
+ ****************************/
+// page-header - a big box with possibly useful stuff in it
+// -------------------------
+
+#page-header {
+    padding-top: 4em;
+    padding-bottom: 0.5em;
+    @media (max-width: 1001px) {
+        padding-top: 7em;
+    }
+    @media (max-width: 465px) {
+        padding-top: 7.5rem;
+    }
+}
+
+// Breadcrumb - not really a breadcrumb like on the web, but something moodley
+// -------------------------
+
+.breadcrumb-nav {
+    float: none;
+    margin-top: 1.75em;
+    background-color: white;
+    width: fit-content;
+    padding: 0 1em;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    @include media-breakpoint-up(md) {
+        margin-top: 1.75em;
+    }
+    @media (max-width: 768px) {
+        .breadcrumb:not(:empty) {
+            border: none;
+        }
+    }
+}
+
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    font-size: $font-size-sm;
+    display: block;
+    li.breadcrumb-item {
+        display: inline-block;
+    }
+}
+
+// SHAME - what is this?
+// -------------------------
+
+.breadcrumb-button {
+    margin-top: 0;
+}
+
+// -------------------------
+// Header in course layout (we have extra stuff)
+// -------------------------
+/***************
+	div#page-mast
+		nav#course-toc
+				ol #chapters
+				search stuff SHAME
+
+ ****************************/
+
+// If the page has an image - courses & categories.
+.mast-image {
+    #page-mast {
+        h1,
+        h1 a,
+        h1 a:hover {
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+    }
+    // Add a bg colur to the toc in page header.
+    #course-toc {
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+}
+
+[id*="page-grade"].theme-snap.path-grade #page-header.mast-image #page-mast .page-context-header .page-header-headings > {
+    h1,
+    h1 a,
+    h1 a:hover {
+        color: white;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
+    }
+}
+
+.path-course-view .mast-image {
+    min-height: 250px;
+}
+
+// a lovely pin showing the searched for item
+#searchpin {
+    background: transparent url("[[pix:theme|searchpin]]") no-repeat 50% 50%;
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    margin: 0.1em;
+}
+
+/* SHAME - button to toggle actions, e.g. close */
+.snap-action-icon {
+    padding: 0.5em;
+    font-size: 1.5em;
+    line-height: 1;
+    text-decoration: none !important;
+    display: block;
+    text-align: center;
+
+    small {
+        display: block;
+        text-align: center;
+        line-height: 1;
+        font-size: 1rem;
+        text-transform: uppercase;
+        font-weight: lighter;
+    }
+}
+
+// Admin block link.
+#admin-menu-trigger {
+    width: 30px;
+    padding-top: .3em;
+}
+
+#page-report-outline-user .section {
+    border: 0;
+}
+
+.path-mod-feedback .generalbox div table tbody img {
+    height: auto;
+    width: auto;
+}
+
+.forumpost .content .posting,
+.no-overflow {
+    overflow: visible;
+    padding: 0;
+}
+
+
+.course-content,
+.settingsform,
+#page-mod-page-view #region-main,
+#snap-course-footer-about {
+    max-width: $user-content-max-width;
+    margin: 0 auto;
+}
+
+// Override the above for a table that is also a form
+.block_conduit_setting_mappings > .mform,
+.quickgradingform > .mform {
+    max-width: none;
+}
+
+
+.forumpost {
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* hide show description option */
+#page-mod-page-mod {
+    #fitem_id_showdescription {
+        display: none;
+    }
+}
+
+/* FRONT PAGE ELEMENTS */
+#page-site-index {
+    #region-main {
+        max-width: 100%;
+        padding: 1em 0 0 0;
+        margin: 0 auto;
+    }
+
+    #page-header,
+    .carousel-slide {
+        // background-color: $brand-primary; customisable
+        min-height: 405px;
+        position: relative;
+        padding: 0;
+        margin: 0;
+    }
+
+    #snap-coverimagecontrol {
+        position: absolute;
+        bottom: 1em;
+        right: 4%;
+    }
+
+    #page-mast {
+        background-color: rgba(255, 255, 255, 0.9);
+        display: inline-block;
+        padding: 1em 2%;
+        margin: 10em 4% 1em;
+        word-break: break-word;
+    }
+
+    #moodle-page {
+        /* GT Mod - I've removed this because I don't like it - the cover image ends up appearing half way under
+        the fixed menu and it looks very poor IMO.
+         */
+        /*padding-top: 2em;*/
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    #page-site-index {
+        #page-header,
+        .carousel-slide {
+            min-height: 600px;
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    #page-site-index #page-mast {
+        width: 50%;
+        margin: 20vh 4%;
+    }
+}
+
+#page-mast .snap-login-button {
+    display: inline-block;
+    margin-top: 1em;
+}
+
+// -------------------------
+// Front page carousel component.
+// -------------------------
+#snap-site-carousel {
+    padding-bottom: 1.15em;
+    background-color: white;
+    .carousel-slide {
+        background-position: center center;
+        background-size: cover;
+        background-color: white;
+    }
+
+    .carousel-caption {
+        // Reset bootstrap styles.
+        display: inline-block;
+        word-break: break-word;
+        color: #666;
+        position: unset;
+        text-align: justify;
+        // Add snap cover styles.
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 1em 2%;
+        margin: 10em 6% 1em;
+        @include media-breakpoint-up(md) {
+            width: 50%;
+            margin: 20vh 4%;
+        }
+        @include media-breakpoint-down(md) {
+            margin-bottom: 5em;
+        }
+    }
+
+    .carousel-indicators {
+        margin: 0 auto;
+        bottom: -10px;
+        z-index: auto;
+        position: absolute;
+        bottom: 2em;
+        button {
+            background-color: $brand-primary;
+            width: 35px;
+            height: 5px;
+            margin-right: 0.5em;
+            border: none;
+            opacity: 65%;
+            border: 1px solid $brand-primary;
+        }
+        .active {
+            opacity: 100%;
+            border: none;
+        }
+    }
+
+    .carousel-controls {
+        a[class^="carousel-control"] {
+            width: 6%;
+            bottom: inherit;
+            top: 25vh;
+            padding: 1em 2%;
+            margin-top: 2em;
+        }
+    }
+
+    #carousel-play-resume-buttons,
+    .anim-play-resume-buttons {
+        margin-left: 100px;
+        position: absolute;
+        bottom: 3em;
+        z-index: 1;
+        #play-button,
+        #pause-button,
+        .anim-play-button,
+        .anim-pause-button {
+            border-color: $brand-primary;
+            background-color: white;
+            color: $brand-primary;
+            &:active,
+            &:focus,
+            &:hover {
+                background-color: $brand-primary;
+                color: white;
+            }
+            span.icon {
+                margin: 0 auto;
+            }
+        }
+    }
+
+    .carouselhidecontrols {
+        display: none;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        opacity: 1;
+    }
+
+    .carousel-control-prev-icon {
+        background-image: none;
+    }
+
+    .carousel-control-next-icon {
+        background-image: none;
+    }
+}
+
+#page-site-index .content-slide {
+    display: none;
+}
+
+// Front page core elements.
+#page-site-index {
+    // Front page course search box.
+    #coursesearch .input-group {
+        max-width: 300px;
+    }
+    // Front page edit summary - hide cog icon.
+    .sitetopic .fa-cog {
+        display: none;
+    }
+    // Front page add resource - hide + icon.
+    .section-modchooser-link .fa-plus {
+        display: none;
+    }
+}
+
+#frontpage-course-list {
+    padding: 1em 4%;
+    .paging {
+        padding: 1em;
+    }
+}
+
+#page-site-index .sitetopic,
+#frontpage-category-names,
+#frontpage-category-combo {
+    max-width: 50.5em;
+    margin: 2em auto;
+    clear: both;
+}
+
+#page-site-index .sitetopic {
+    @include clearfix;
+    padding: 0 4%;
+}
+#page-site-index .singlebutton {
+    display: inline-block;
+    text-align: center;
+    padding: 0 6%;
+}
+#page-site-index .buttons {
+    display: block;
+    max-width: 50.5em;
+    margin: 2em auto;
+}
+
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
+    padding: 0.5em 0;
+    text-align: center;
+    font-size: $h1-font-size;
+}
+
+/* FRONT PAGE SITE NEWS */
+#page-site-index #site-news-forum {
+    margin: 0 auto;
+    padding: 0 4% 4em;
+    background-color: #eef0f6;
+    @include clearfix;
+    .text-center {
+        .btn-secondary {
+            margin-right: 1rem;
+        }
+    }
+}
+
+#news-articles {
+    margin: 0 auto;
+}
+
+.news-article {
+    background-color: #fff;
+    margin-bottom: 0.5em;
+}
+
+.news-article-inner {
+    background-color: #fff;
+}
+
+.news-article-content {
+    padding: 0 4%;
+    min-height: 150px;
+}
+
+.news-article-content h3 {
+    font-size: $h2-font-size;
+}
+
+.news-article-image {
+    cursor: pointer;
+}
+
+.news-article-image,
+.news-article-preview {
+    color: #fff;
+    min-height: 150px;
+
+    //	background-color: $brand-primary; customisable
+    padding: 2em 4%;
+    @include bg-cover;
+}
+
+.news-article-preview {
+    height: auto;
+}
+
+.news-article-date {
+    font-size: 0.75em;
+}
+
+.news-article-message {
+    display: none;
+    padding: 2em 4%;
+}
+
+.state-expanded {
+    .news-article-preview,
+    .news-article-image {
+        display: none;
+    }
+
+    .news-article-message {
+        display: none;
+    }
+}
+
+.news-article-message:focus {
+    outline: 0;
+}
+
+@include media-breakpoint-down(xl) {
+    .news-article:not(.state-expanded) {
+        .news-article-image {
+            width: 100%;
+            object-fit: cover;
+            object-position: top;
+            padding: 0;
+            height: 150px;
+        }
+        .snap-animated-image {
+            width: 100%;
+            img {
+                border-radius: 0;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .news-article {
+        margin-bottom: 0;
+        display: flex;
+    }
+
+    .news-article-content {
+        max-width: 100%;
+    }
+
+    .news-article-preview,
+    .news-article-image,
+    .news-article-inner {
+        width: 50%;
+        min-height: 300px;
+        flex: 1 1 auto;
+
+        p {
+            margin: 1em 0;
+            display: block;
+        }
+    }
+
+    .news-article-image {
+        padding: 0;
+    }
+
+    .state-expanded {
+        .news-article-inner {
+            width: 33%;
+            order: 1 !important;
+        }
+
+        .news-article-message {
+            width: 67%;
+        }
+    }
+
+    .ie9 {
+        #news-articles div:nth-child(even) {
+            .news-article-preview,
+            .news-article-image,
+            .news-article-inner {
+                float: left;
+            }
+        }
+
+        #news-articles div:nth-child(odd) {
+            .news-article-preview,
+            .news-article-image,
+            .news-article-inner {
+                float: right;
+            }
+        }
+    }
+    .news-article:not(.state-expanded) {
+        height: 300px;
+        .news-article-image {
+            height: 100%;
+            width: 50%;
+            object-fit: cover;
+            object-position: top;
+        }
+        .snap-animated-image {
+            width: 50%;
+            img {
+                border-radius: 0;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .news-article {
+        min-height: 33vh;
+    }
+}
+
+/* Calandar */
+span.calendar_event_global,
+li.calendar_event_global:before,
+td.calendar_event_global > a {
+    background-color: $brand-success;
+    color: #fff !important;
+}
+
+span.calendar_event_course,
+li.calendar_event_course:before,
+td.calendar_event_course > a {
+
+    //salmon
+    background-color: salmon;
+    color: #fff !important;
+}
+
+span.calendar_event_group,
+li.calendar_event_group:before,
+td.calendar_event_group > a {
+
+    // yellow
+    background-color: #fdd652;
+    color: #fff !important;
+}
+
+span.calendar_event_user,
+li.calendar_event_user:before,
+td.calendar_event_user > a {
+    background-color: $brand-info;
+    color: #fff !important;
+}
+
+td.calendar_event_global,
+td.calendar_event_course,
+td.calendar_event_group,
+td.calendar_event_user {
+    background-color: transparent;
+}
+
+li.calendar_event_global:before,
+li.calendar_event_course:before,
+li.calendar_event_group:before,
+li.calendar_event_user:before {
+    content: " ";
+    width: 1em;
+    height: 1em;
+    border-radius: 100%;
+    display: inline-block;
+    margin: -0.1em 4%;
+}
+
+/* Block cals */
+.block .minicalendar {
+    max-width: 500px;
+
+    th {
+        height: auto;
+        font-weight: $headings-font-weight;
+    }
+
+    td {
+        height: 3.2em;
+        width: 3.2em;
+        vertical-align: middle;
+        font-size: 0.9rem;
+
+        > a {
+            border-radius: 100%;
+            height: 2.5em;
+            width: 2.5em;
+            padding: 0.5em;
+            display: block;
+            margin: auto;
+        }
+
+        &.hasevent > a {
+            color: #fff;
+        }
+
+        &.today > a {
+            border: 1px solid $gray-lighter;
+        }
+    }
+}
+
+// Minical hover box
+.calendar-event-panel {
+    border: 0 !important;
+    background-color: #fff;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+
+    .yui3-overlay-content {
+        border-color: $gray-lighter;
+    }
+}
+
+.calendar_filters {
+    .smallicon {
+        display: none;
+    }
+
+    .calendar_event span[class*="_event_"] {
+        border-radius: 100%;
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        margin: -0.1em 2%;
+    }
+}
+
+.path-calendar {
+    .maincalendar .calendarmonth td,
+    .maincalendar .calendarmonth th {
+        border-color: #fff;
+        height: 1em;
+    }
+}
+
+.maincalendar .day .day {
+    border-radius: 100%;
+    width: 3em;
+    height: 3em;
+    padding: 0.4em;
+    border: 1px solid #fff;
+    margin: 0 auto;
+}
+
+// Today
+.maincalendar .today .day {
+    border-color: $gray-lighter;
+}
+
+// A day with events
+.maincalendar .day .day a {
+    border-radius: 100%;
+    display: block;
+    height: 4em;
+    width: 4em;
+    padding: 1.2em;
+    margin: -1.2em;
+}
+
+.maincalendar .day.today .day a {
+    background-color: transparent;
+    display: inline;
+    text-align: center;
+}
+
+ul.events-new,
+ul.events-underway {
+    padding-top: 0.5em;
+}
+
+ul.events-new + ul.events-underway {
+    padding-top: 0;
+}
+
+.path-calendar .maincalendar .eventlist .event {
+    border: 0;
+}
+
+.maincalendar ul {
+    text-align: left;
+
+    li {
+        background-color: transparent;
+    }
+}
+
+#dateselector-calendar-panel {
+    #dateselector-calendar-content {
+        padding: 10px;
+    }
+
+    .yui3-calendar-header {
+        display: block;
+        padding-bottom: 10px;
+    }
+
+    .yui3-calendarbase {
+        width: 350px !important;
+    }
+
+    .yui3-calendar-header-label,
+    .yui3-calendar-day,
+    .yui3-calendar-prevmonth-day,
+    .yui3-calendar-nextmonth-day,
+    .yui3-calendar-weekday {
+        font-family: $font-family-sans-serif;
+        color: $body-color;
+        border-color: $modal-content-bg;
+        text-align: center;
+        font-weight: normal;
+    }
+
+    .yui3-calendar-prevmonth-day,
+    .yui3-calendar-nextmonth-day {
+        color: $text-muted;
+    }
+
+    .yui3-calendar-content {
+        background: $body-bg;
+    }
+
+    .yui3-calendarnav-nextmonth,
+    .yui3-calendarnav-prevmonth {
+        border: 0;
+        margin: 0;
+        height: 30px;
+        width: 30px;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: absolute;
+    }
+
+    .yui3-calendarnav-nextmonth {
+        background-image: url("[[pix:theme|right-arrow]]");
+        right: 0;
+    }
+
+    .yui3-calendarnav-prevmonth {
+        background-image: url("[[pix:theme|left-arrow]]");
+        left: 0;
+    }
+
+    .yui3-calendar-day,
+    .yui3-calendar-prevmonth-day,
+    .yui3-calendar-nextmonth-day {
+        width: 14%;
+        border: 0;
+        height: 47px;
+    }
+
+    .yui3-calendar-day:hover,
+    .yui3-calendar-prevmonth-day,
+    .yui3-calendar-nextmonth-day {
+        background-color: $modal-content-bg;
+    }
+
+    .yui3-calendar-day-selected,
+    .yui3-calendar-day:hover {
+        @include alakazam;
+        color: #fff;
+
+        // background-color: $link-color; in user swatch
+        border-radius: 100%;
+    }
+}
+
+@include media-breakpoint-up(md) {
+
+    #dateselector-calendar-panel {
+        .yui3-calendar-base {
+            width: 100%;
+        }
+
+        .yui3-calendar-header-label {
+            font-weight: 100;
+            font-size: $h4-font-size;
+        }
+
+        .yui3-calendarnav-nextmonth,
+        .yui3-calendarnav-prevmonth {
+            height: 55px;
+        }
+    }
+}
+
+/* USER PROFILE PAGE */
+.userprofile .userprofilebox {
+    .profilepicture {
+        @include make-col(3);
+    }
+
+    .descriptionbox {
+        @include make-col(9);
+    }
+}
+
+/* MESSAGING PAGE */
+#message_user_pictures {
+    .box.user {
+        @include make-col(5);
+    }
+    .box.between {
+        @include make-col(2);
+    }
+    .box {
+        text-align: center;
+    }
+}
+/* Message contaacts list */
+.message-contacts {
+    list-style: none;
+    padding: 0;
+    .pix,
+    .link,
+    .contact {
+        display: inline;
+    }
+    .pix {
+        margin-right: 0.5em;
+    }
+    .link {
+        float: right;
+    }
+}
+
+// -------------------------
+//  Moodle mods
+// -------------------------
+// -------------------------
+// Choice
+// -------------------------
+
+.path-mod-choice .results.names .user {
+    clear: both;
+}
+
+// -------------------------
+// Comments - this could be a block, but is in mods too?
+// -------------------------
+
+.comment-ctrl,
+.comment-list {
+    font-size: 1em;
+}
+
+.comment-area {
+    max-width: 100%;
+}
+
+// -------------------------
+// Workshop
+// -------------------------
+
+.path-mod-workshop .userplan {
+    width: 100%;
+}
+
+.path-mod-workshop .collapsibleregioncaption {
+    font-size: $h3-font-size;
+    font-weight: 400;
+}
+
+// -------------------------
+// Chat
+// -------------------------
+
+#chat-input-area,
+#chat-input-area table.generaltable,
+#chat-input-area table.generaltable td.cell,
+#chat-userlist {
+    background-color: transparent !important;
+}
+
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable,
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell {
+    padding: 0;
+}
+
+#page-mod-chat-gui_basic-index {
+    #mr-nav,
+    #moodle-footer,
+    #page-header {
+        display: none;
+    }
+}
+
+// -------------------------
+// Lesson
+// -------------------------
+// Space on buttons
+
+.branchbuttoncontainer {
+    margin: 2em 0;
+    .singlebutton {
+        margin-bottom: 10px;
+    }
+}
+
+// -------------------------
+// Quiz
+// -------------------------
+
+#quiz-timer {
+    bottom: 0;
+    left: 1%;
+    background-color: #000;
+    color: #eee;
+    padding: 0.1em 1%;
+    z-index: $zindex-navbar-fixed;
+}
+
+#page-mod-quiz-review .arrow_link {
+    @extend %fake-btn;
+    @extend .btn-secondary;
+}
+
+.path-mod-quiz #mod_quiz_navblock .qnbutton {
+    overflow: hidden;
+}
+
+// Centers Quiz navigation buttons on the attempt and review page.
+#page-mod-quiz-attempt.theme-snap,
+#page-mod-quiz-review.theme-snap {
+    #mod_quiz_navblock,
+    div.qn_buttons.clearfix.allquestionsononepage,
+    div.qn_buttons.clearfix.multipages {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    @media (max-width: 767px) {
+        div.qn_buttons.clearfix.allquestionsononepage,
+        div.qn_buttons.clearfix.multipages {
+            display: inline-block !important;
+        }
+    }
+}
+
+#page-mod-quiz-edit .section .activity .actions {
+    display: flex;
+}
+
+#page-mod-quiz-review {
+    .formulation {
+        select {
+            .custom-select {
+                padding-right: 5em;
+            }
+            &:disabled {
+                color: #818a91 !important;
+                cursor: not-allowed;
+                background-color: #eceeef !important;
+                padding-right: 5em;
+            }
+            width: auto !important;
+        }
+
+        input[type="text"] {
+            width: auto !important;
+        }
+
+        input.form-control[readonly] {
+            background-color: #eceeef !important;
+            opacity: 1;
+        }
+    }
+
+    .feedback {
+        word-break: break-word;
+    }
+}
+
+// Quiz setup form.
+#page-mod-quiz-mod {
+    #id_reviewoptionshdr {
+        .review_option_item. {
+            height: 1.3em;
+        }
+        .form-group {
+            width: auto;
+            float: unset;
+        }
+        .form-check {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .btn-link {
+            float: right;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 0;
+        }
+        a[aria-controls="id_reviewoptionshdr"] {
+            display: inline;
+        }
+    }
+    #id_overallfeedbackhdr {
+        .btn-link {
+            float: right;
+        }
+        a[aria-controls="id_overallfeedbackhdr"] {
+            display: inline;
+        }
+    }
+}
+
+#page-mod-quiz-edit div.question div.qnum {
+    color: inherit;
+    width: 5%;
+}
+
+#page-mod-quiz-edit div.editq div.question div.content {
+    border-radius: 0;
+    width: 95%;
+}
+
+#page-mod-quiz-edit div.question div.content {
+    div.points,
+    div.questioncontrols {
+        position: relative;
+        float: right;
+        width: 30%;
+        right: auto;
+
+        &:empty {
+            display: none; // not working as there is some eroneous space in the div
+        }
+    }
+
+    div.questioncontrols {
+        width: 55px;
+    }
+}
+
+.questioncontentcontainer {
+    width: 68%;
+}
+
+.questioncontainer.random .questioncontentcontainer {
+    width: 100%;
+}
+
+#page-question-import .mform .form-inline br + label {
+    width: 95%;
+}
+
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist {
+    clear: both;
+    background-color: transparent;
+    width: 100%;
+}
+
+#page-mod-quiz-edit div.question div.content .questionname,
+#page-mod-quiz-edit div.question div.content .questiontext {
+    max-width: 95%;
+}
+
+@include media-breakpoint-down(lg) {
+    .questioncontentcontainer {
+        width: 100%;
+        clear: both;
+    }
+
+    #page-mod-quiz-edit div.question div.content div.questioncontrols,
+    #page-mod-quiz-edit div.question div.content div.points {
+        position: relative;
+        float: left;
+        width: 50%;
+        max-width: 50%;
+        text-align: left;
+        right: auto;
+    }
+}
+
+// start of code for when adding from a question bank
+#page-mod-quiz-edit div.quizcontents,
+.questionbankwindow.block {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+// very long button text
+#page-mod-quiz-edit div.reorder .reordercontrols {
+    .moveselectedonpage,
+    .addnewpagesafterselected {
+        padding-right: 0;
+
+        input {
+            white-space: normal;
+        }
+    }
+}
+
+#page-mod-quiz-edit div.reorder {
+    div.question div.content {
+        width: calc("100% - 4.3em");
+    }
+}
+
+// Push text onto a single line in quiz edit action menus
+#page-mod-quiz-edit .menu-action-text,
+#page-mod-quiz-edit .toggle-display.textmenu {
+    white-space: nowrap;
+}
+
+@include media-breakpoint-up(lg) {
+    #page-mod-quiz-edit div.quizcontents,
+    .questionbankwindow.block {
+        width: 50%;
+    }
+
+    #page-mod-quiz-edit div.container div.generalbox {
+        padding-left: 8%;
+        padding-right: 0;
+    }
+}
+
+#page-mod-quiz-edit div.quizwhenbankcollapsed,
+#page-mod-quiz-edit .modulespecificbuttonscontainer {
+    width: 100%;
+}
+
+#page-mod-quiz-edit .categoryinfo {
+    display: none;
+}
+
+#categoryquestions .checkbox {
+
+    // overwite bootstrap checkbox class
+    display: table-cell;
+}
+
+#categoryquestions .iconcol {
+    width: 22px;
+}
+
+#categoryquestions label,
+#page-mod-quiz-edit #categoryquestions .questiontext,
+.questioncontentcontainer label,
+#page-mod-quiz-edit div.question div.content .questiontext {
+    font-weight: 400;
+}
+
+#page-mod-quiz-edit .instancemaxmarkcontainer input[name='maxmark'] {
+    height: 1.5em !important;
+}
+
+// Quiz itself //
+
+// For quiz, we don't want two coluns.
+.path-mod-quiz #moodle-blocks > aside {
+    column-count: 1 !important;
+}
+
+.path-mod-quiz .block__fake {
+    text-align: center;
+    .qnbutton {
+        display: inline-block;
+        float: none;
+    }
+}
+
+.que {
+    border-bottom: 1px solid $gray;
+    padding: 1.5em 0;
+    margin: 1em 0;
+}
+
+.que .info,
+.que .content {
+    background-color: transparent;
+    border: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    float: none;
+}
+
+.que h3.no {
+    margin-top: 1em;
+}
+
+.que h3.no,
+.que span.qno {
+    font-size: $h2-font-size;
+    font-weight: 400;
+}
+
+.que .info > div {
+    display: inline-block;
+    font-size: $font-size-sm;
+    color: $gray-light;
+    padding-right: 2%;
+}
+
+.que .qtext {
+    font-size: 1.3em;
+}
+
+// Add styles for questions preview.
+.path-question-bank-previewquestion {
+    #page-content {
+        padding: 15px;
+    }
+    .fcontainer {
+        padding-left: 2.5rem;
+    }
+    .que {
+        padding: unset;
+        h3.no {
+            margin: unset;
+        }
+    }
+    #techinfo_caption a {
+        margin: 3px;
+    }
+}
+
+// Add margin to quiz submit/check button.
+.que .im-controls {
+    margin: 0.5em 0;
+}
+
+.que.multichoice .answer .specificfeedback {
+    display: block;
+}
+
+#page-mod-quiz-edit .editq div.question {
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #ccc;
+}
+
+#categoryquestions td,
+#categoryquestions th {
+    padding: 4px 0.2em;
+}
+
+.singlequestion .questioneditbutton img {
+    @include sr-only;
+}
+
+.questioncontainer {
+    @include clearfix;
+}
+
+#page-mod-quiz-edit .editq div.question div.content .singlequestion .questioneditbutton .questionname,
+#page-mod-quiz-edit .editq div.question div.content .singlequestion .questioneditbutton .questiontext {
+    float: none;
+    display: block;
+    font-weight: normal;
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+}
+
+#page-mod-quiz-edit .questioncontentcontainer div.singlequestion a {
+    text-decoration: none;
+}
+
+#page-mod-quiz-edit .paging,
+#page-mod-quiz-edit div.question div.content .singlequestion .questionpreview,
+#page-mod-quiz-edit div.question div.content .questionpreview a {
+    background-color: transparent;
+}
+
+#page-mod-quiz-edit div.question div.content .questiontype {
+    float: left;
+    font-style: normal;
+    font-size: small;
+}
+
+#page-mod-quiz-edit div.editq div.question div.content {
+    border: 0;
+}
+
+#page-mod-quiz-edit div.quizpage span.pagetitle,
+#page-mod-quiz-edit div.quizpage .pagecontent {
+    float: none;
+}
+
+#page-mod-quiz-edit .questionbankwindow.block div.header {
+    background-color: transparent;
+    font-weight: normal;
+}
+
+#page-mod-quiz-edit div.quizpage span.pagetitle,
+#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2,
+#page-mod-quiz-edit .questionbankwindow a#showbankcmd,
+#page-mod-quiz-edit .questionbankwindow a#hidebankcmd,
+#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory {
+    color: inherit;
+}
+
+#page-mod-quiz-edit div.quizpage .pagecontent {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+}
+
+#page-mod-quiz-edit div.quizpage .pagecontent,
+#page-mod-quiz-edit div.question div.questioncontainer {
+    background-color: transparent;
+}
+
+#page-mod-quiz-edit .invisiblefieldset br {
+    display: none;
+}
+
+#page-mod-quiz-edit .modulespecificbuttonscontainer br {
+    display: block;
+}
+
+#page-mod-quiz-edit div.question div.content div.points input {
+    width: auto;
+}
+
+// -------------------------
+// Forum
+// -------------------------
+
+#page-mod-forum-discuss {
+    .discussioncontrol.exporttoportfolio,
+    .discussioncontrol.displaymode,
+    .discussioncontrol.movediscussion {
+        margin: auto;
+        width: 100%;
+        padding-bottom: 10px;
+    }
+
+    div {
+        .no-overflow {
+            overflow: hidden;
+        }
+
+        .grouppictures {
+            margin-top: 0.5em;
+        }
+    }
+}
+
+#page-mod-forum-post {
+    div {
+        .no-overflow {
+            overflow: hidden;
+        }
+
+        .grouppictures {
+            margin-top: 0.5em;
+        }
+    }
+}
+
+// -------------------------
+// Forum responsive table
+// -------------------------
+// Should the forum responsive stuff be moved to modules.scss?
+
+@include media-breakpoint-down(md) {
+    .path-mod-forum .forumheaderlist {
+        tbody td.topic {
+            width: 100%;
+        }
+
+        .picture a {
+            display: inline;
+        }
+    }
+
+    .forumheaderlist {
+        thead {
+            display: none;
+        }
+
+        tbody {
+            width: 100%;
+            display: block;
+        }
+
+        tbody tr.discussion {
+            display: block;
+            padding: 1em 0;
+            border-bottom: 3px solid #ccc;
+            width: 100%;
+        }
+
+        tbody tr td,
+        td.picture.group {
+            display: block;
+            clear: both;
+            text-align: left !important;
+            background-color: transparent !important;
+            width: 100%;
+        }
+
+        td.topic {
+            font-size: 1.3em;
+        }
+
+        td:before {
+            font-size: 0.9em;
+            color: #999;
+            font-weight: bold;
+        }
+
+        td.topic:before {
+            content: attr(data-cellname);
+        }
+
+        td.picture:before {
+            content: attr(data-cellname);
+        }
+
+        td.replies:before {
+            content: attr(data-cellname);
+        }
+
+        td.lastpost:before {
+            content: attr(data-cellname);
+        }
+
+        td:before {
+            display: inline-block;
+            margin-right: 4%;
+        }
+
+        td.author,
+        td.picture {
+            clear: none;
+        }
+
+        td.picture {
+            width: 32%;
+            display: inline;
+            margin-right: 2%;
+        }
+
+        td.author {
+            width: 68%;
+            display: inline;
+        }
+    }
+}
+
+// -------------------------
+// Joule mods
+// -------------------------
+// Reports
+// SHAME - stop overlap with footer
+
+.path-blocks-reports #report-content {
+    min-height: 750px; // magic number
+}
+
+// Make Joule Reports a little more responsive
+.path-blocks-reports .course-report-dashboard {
+    display: block;
+    width: auto;
+    overflow: visible;
+}
+
+.mr_html_tabs {
+    margin-bottom: 1em;
+}
+
+.path-grade-report-user .user-grade {
+    border: 0;
+}
+
+.user-grade td.b1l,
+.user-grade td.b2l,
+.user-grade th.b1l,
+.user-grade th.b2l,
+.user-grade td.b1b,
+.user-grade td.b2b,
+.user-grade th.b1b,
+.user-grade th.b2b,
+.user-grade thead {
+    border-color: #ccc;
+    border-left: 0 !important;
+    border-right: 0 !important;
+}
+
+.user-grade td.evend2,
+.user-grade th.evend2,
+.user-grade td.oddd1,
+.user-grade th.oddd1,
+table#user-grades td.controls,
+.path-grade-report-grader table tr.avg .cell,
+.path-grade-report-grader table tr.range .cell,
+table#user-grades tr.avg td.cell,
+.user-grade td.oddd2,
+.user-grade th.oddd2,
+.user-grade td.oddd3,
+.user-grade th.oddd3,
+.user-grade td.evend3,
+.user-grade th.evend3,
+.user-grade td.oddd3,
+.user-grade th.oddd3 {
+    background-color: transparent;
+}
+
+table#user-grades tr.avg td.cell {
+    color: #66666f;
+}
+
+#page-blocks-reports-view .mr_html_filter,
+#block-reports-filterbutton,
+.blocks_reports_useractions,
+.blocks_reports_jouleadmin {
+    border: none;
+    background: none;
+}
+
+#page-blocks-reports-view {
+    #report-schema-browser-table-box {
+        position: absolute;
+    }
+    #report-schema-browser-column-box {
+        float: right;
+    }
+}
+
+.report-category-overlay .yui3-widget {
+    width: inherit !important;
+    min-width: 220px;
+}
+
+.report-course-overlay .yui3-widget {
+    width: inherit !important;
+    min-width: 300px;
+}
+
+.gradingform_checklist.editor .addgroup input,
+.gradingform_checklist.editor .additem input,
+.gradingform_rubric.editor .addlevel input,
+.gradingform_rubric.editor .addcriterion input {
+    @extend %fake-btn;
+    @extend .btn-secondary;
+    height: auto;
+}
+
+.gradingform_rubric.editor .criterion .levels .level .delete {
+    position: relative;
+}
+
+.path-blocks-reports {
+    .report-category-overlay,
+    .report-course-overlay {
+        .yui3-widget {
+            z-index: 1 !important;
+        }
+    }
+
+    #course-search-left,
+    #course-search-right {
+        display: none;
+    }
+
+    #course-search-box {
+        background-image: none;
+        min-height: 60px;
+    }
+
+    #course-search-text {
+        padding-top: 0;
+        margin: 0.5em 5%;
+        width: calc("84% - 13px");
+    }
+
+    #course-search-button {
+        padding-top: 3px;
+        margin: 0.5em 1% 0.5em 0;
+    }
+
+    #course-search-input {
+
+        // copied from less/bootstrap3/forms.scss .form-control
+        color: $input-color;
+        background-color: $input-bg;
+        // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+        background-image: none;
+        border: 1px solid $input-border-color;
+        border-radius: $input-border-radius;
+        @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+        @include transition("border-color ease-in-out .4s, box-shadow ease-in-out .4s");
+        width: 100%;
+    }
+
+    .yui3-widget-stdmod,
+    .yui3-aclist-content {
+
+        // copied from less/bootstrap3/dropdowns.scss .dropdown-menu
+        z-index: $zindex-dropdown;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0; // override default ul
+        list-style: none;
+        font-size: $font-size-base;
+        background-color: $dropdown-bg;
+        border: 1px solid $dropdown-border-color;
+        border-radius: $border-radius;
+        @include box-shadow(0 6px 12px rgba(0,0,0,.175));
+        background-clip: padding-box;
+
+        .report-overlay-bd {
+            padding: 0;
+        }
+
+        div.report-nav-item {
+            border-bottom: none;
+            width: 100%;
+
+            a.nav-item {
+                display: block;
+                padding: 3px 20px;
+                font-weight: normal;
+                line-height: $line-height-base;
+                color: $dropdown-link-color;
+                white-space: nowrap; // prevent links from randomly breaking onto new lines
+                width: 100%;
+
+                &:hover,
+                &:focus {
+                    text-decoration: none;
+                    color: $dropdown-link-hover-color;
+                    background-color: $dropdown-link-hover-bg;
+                }
+            }
+        }
+
+        div.report-nav-item-left,
+        div.report-nav-item-right {
+            a.nav-paginate {
+                display: block;
+                padding: 3px 20px;
+                font-weight: normal;
+                line-height: $line-height-base;
+                color: $dropdown-link-color;
+                white-space: nowrap; // prevent links from randomly breaking onto new lines
+
+                &:hover,
+                &:focus {
+                    text-decoration: none;
+                    color: $dropdown-link-hover-color;
+                    background-color: $dropdown-link-hover-bg;
+                }
+            }
+        }
+
+        #report-overlay-course div.report-nav-item a.nav-item {
+
+            // Allow long course title search results to wrap
+            white-space: normal;
+        }
+    }
+}
+
+.grade_report_edit_button {
+    display:none;
+}
+
+// TODO short term fix for Snap disappearing header interfering with scrolling Gradebook
+#page-grade-report-grader-index {
+    header#mr-nav {
+        animation-name: none;
+    }
+    section#region-main {
+        display: grid;
+    }
+    .gradeparent {
+        th.header.user,
+        #studentheader {
+            left: 0;
+        }
+    }
+    &.path-grade-report-grader .grade_report_edit_button {
+        display: block;
+        margin-bottom: 1.5rem;
+    }
+}
+
+// Fix editing button in grade report single view.
+#page-grade-report-singleview-index.path-grade-report-singleview {
+    .grade_report_edit_button {
+        display: block;
+    }
+    .grade_report_edit_button.hidden {
+        display: none;
+    }
+    .search-widget .user-info.d-block {
+        padding: 6px;
+    }
+    .dropdown-menu.show {
+        z-index: 1;
+    }
+    .table-responsive {
+        white-space: break-spaces; // Needed for dropdowns to take up space without scrolling.
+        tr {
+            white-space: normal;
+        }
+    }
+}
+#page-local-joulegrader-view {
+    #local-joulegrader-navigation {
+        border-bottom: thin solid #e5e5e5;
+        background-color: transparent;
+
+        .helptooltip {
+            display: none;
+        }
+
+        .action-icon img.smallicon {
+            vertical-align: middle;
+        }
+    }
+
+    fieldset.fieldset {
+        border-color: #e5e5e5;
+
+        legend {
+            width: auto;
+            border: none;
+            padding: 0 0.5em;
+        }
+    }
+}
+
+#page-admin-outcome-admin {
+    .yui3-moodle-core_outcome-editoutcome-outcome {
+        background-position: left .35em;
+    }
+}
+
+.yui3-moodle-core_outcome-editoutcome-panel {
+    #outcome_edit_panel .fitem {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+}
+
+// Stop aclist-content from being rediculously big in  page-admin-report-outcome-index.
+.yui3-aclist-content {
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.path-blocks-reports .report-title {
+    font-weight: normal;
+    font-family: $font-family-system;
+}
+
+// Whitelist - pages need to be full width.
+.path-mod-assign,
+.path-mod-hvp,
+.path-grade,
+.path-admin-report,
+.pagelayout-admin,
+#page-backup-import,
+#page-course-editsection {
+    #region-main {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .snap-form-required fieldset {
+        max-width: 43.5em;
+        margin: 1em 0;
+    }
+}
+
+#page-course-editsection {
+    .snap-form-required #id_generalhdr legend {
+        display: none !important;
+    }
+}
+
+// whitelist - scroll bars for large data-tables //
+// - note they are already on .gradeparent
+// Edit categories and items: Full view
+// Mod assignment grading table
+
+.gradetreebox,
+.gradingtable .no-overflow,
+#page-mod-quiz-report.pagelayout-report .no-overflow,
+.path-admin-roles div[role="main"] > form {
+    overflow: auto;
+}
+
+.path-grade-report-customgrader,
+.path-grade-report-grader {
+    .gradeparent {
+        .right_scroller table#user-grades {
+            th {
+                font-size: 10px;
+            }
+        }
+
+        table#user-grades {
+            border: none;
+            font-size: $font-size-base;
+
+            th {
+                font-size: 13px;
+
+                &.header.userfield[scope="col"],
+                &.header#studentheader[scope="col"] {
+                    vertical-align: bottom;
+                    border-top: none;
+                }
+            }
+
+            th,
+            td {
+                border-color: $table-border-color #f5f5f5;
+            }
+
+            tr.odd td.cell,
+            tr.even td.cell {
+                background-color: $table-bg-accent;
+
+                &.overridden,
+                &.ajaxoverridden {
+                    background-color: #efd9a4;
+                }
+            }
+
+            .topleft {
+                border: none;
+            }
+        }
+    }
+}
+
+// -------------------------
+// Moodle notice/alerts etc
+// -------------------------
+// bootstrap alerts
+
+.alert {
+    &.alert-info,
+    &.alert-success,
+    &.alert-danger,
+    &.alert-warning {
+        clear: both;
+        border: 0;
+        border-left: 3em solid;
+    };
+    &.alert-info {
+        color: $brand-info;
+        background-color: mix($brand-info, white, 10%);
+        border-color: $brand-info;
+    };
+    &.alert-success {
+        color: $brand-success;
+        background-color: mix($brand-success, white, 5%);
+        border-color: $brand-success;
+    };
+    &.alert-danger {
+        color: $brand-danger;
+        background-color: mix($brand-danger, white, 5%);
+        border-color: $brand-danger;
+    };
+    &.alert-warning {
+        color: $brand-warning;
+        background-color: mix($brand-warning, white, 5%);
+        border-color: $brand-warning;
+    };
+}
+
+#notice {
+    background-color: #eee;
+    font-size: 2em;
+    width: 100%;
+    padding: 1em 4%;
+    padding-bottom: 4rem !important; // Needed to overule .p-y-1 class.
+
+    // pull buttons up into the #notice when they are placed
+    // after it, rather than inside it.
+
+    & + .continuebutton {
+        margin-top: -3em;
+    }
+
+    .buttons {
+        text-align: center;
+        border-top: none;
+    }
+}
+
+#page-course-loginas #notice {
+    margin-top: 3em;
+}
+
+#page-course-loginas.theme-snap #user-notifications {
+    padding-top: 7rem;
+    display: block;
+    overflow: hidden;
+}
+
+// bootstrap labels
+.label {
+    font-weight: normal;
+}
+
+// when we display a continue cancel notice, we need the page contents to be the same height.
+// this is currently limitted to the front page.
+
+body.hascontinuecancel.path-site #page {
+    max-height: 750px;
+    height: 750px;
+    overflow: hidden;
+}
+
+// hard code some specific uses here till MDL-45655 fixes them
+// and allows us to add the snap-continue-cancel class
+// the hardcodeded ones here have the button inside the div
+
+#page-admin-purgecaches #notice,
+#notice.snap-continue-cancel {
+    font-size: 1em;
+    border-radius: 0.5rem;
+    padding: 10% 4%;
+    top: 1.5em;
+    left: 0;
+    z-index: 13;
+}
+
+#notice.snap-continue-cancel {
+    margin-top: 1em;
+}
+#page-admin-purgecaches #notice {
+    margin-top: 1em;
+}
+
+// Override for odd little notice when deleting questions.
+#page-user-policy #notice,
+#page-blocks-conduit-view #notice.snap-continue-cancel,
+#page-mod-quiz-edit div.container #notice.snap-continue-cancel {
+    color: $body-color;
+    background-color: $body-bg;
+    font-size: $font-size-base;
+    left: 0;
+}
+
+#page-user-policy #notice,
+#page-blocks-conduit-view #notice.snap-continue-cancel {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+}
+
+// the hardcodeded ones here have the button outside the div
+// remember to add any further additions to the user swatch
+// to ensure they pick up the brand color.
+
+#page-course-loginas,
+#page-mod-survey-save {
+    #region-main {
+
+        //	background-color: $brand-primary; customisable
+        max-width: inherit;
+        min-height: 750px;
+    }
+
+    #moodle-footer {
+        margin-top: 0;
+    }
+
+    #page-header {
+        display: none;
+    }
+}
+
+// next / previous nav
+.section_footer {
+    margin-top: 2em;
+    padding: 1em 0;
+    border-top: 1px solid #eee;
+}
+
+.section_footer a {
+    font-style: normal;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    margin-top: 1em;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.next_section {
+    text-align: right;
+    float: right;
+}
+
+.previous_section {
+    float: left;
+}
+
+@include media-breakpoint-up(md) {
+    .section_footer {
+        .previous_section,
+        .next_section {
+            width: 50%;
+        }
+    }
+}
+
+.nav_guide {
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-style: normal;
+}
+
+.nav_icon {
+    padding: 0.3em;
+    text-align: center;
+    font-size: 2em;
+}
+
+.next_section .nav_icon {
+    float: right;
+    margin-left: 0.3em;
+    border-left: 1px solid $gray-lighter;
+    width: 50px;
+}
+
+.previous_section .nav_icon {
+    float: left;
+    margin-right: 0.3em;
+    border-right: 1px solid $gray-lighter;
+}
+
+/*rtl:raw:
+.previous_section .nav_icon,
+.next_section .nav_icon {
+        transform: rotate(180deg);
+        border: none;
+}
+*/
+
+// -------------------------
+// Moodle dialogues.
+// -------------------------
+/* standard size */
+.moodle-dialogue-base .moodle-dialogue {
+    min-width: 32%;
+    padding: 0;
+
+    &.chooserdialogue {
+        min-width: 90%;
+        height: max-content; // Changing this to a unit value causes a flickering effect on resize.
+        &.moodle-dialogue-fullscreen {
+            height: auto;
+        }
+    }
+
+    video#player {
+        max-height: 50vh;
+    }
+}
+
+.moodle-dialogue-base .filepicker .alert-warning {
+    margin: 0 1px 18px;
+}
+
+/* Prevent modal dialog to be seen behind the text and tool card content right fit */
+#page-admin-mod-lti-toolconfigure {
+    .moodle-dialogue-base.moodle-dialogue-confirm div.yui3-widget.yui3-panel {
+        z-index: 100 !important;
+    }
+    .tool-card-content {
+        .tool-card-body {
+            height: 5.5em;
+        }
+        .tool-card-footer {
+            padding-top: 0;
+        }
+    }
+}
+
+body:not(.pagelayout-course) #moodle-footer {
+    margin-top: 2em;
+}
+
+#moodle-footer {
+    padding-top: 3em;
+    padding-bottom: 1em;
+    clear: both;
+    color: $gray-lighter;
+    background-color: $snap-footer-bg-color;
+    a {
+        font-weight: bold;
+    }
+    #snap-site-footer {
+        color: $snap-footer-txt-color;
+        a:not(.btn) {
+            color: $snap-footer-txt-color !important;
+        }
+    }
+}
+
+#snap-footer-content,
+#snap-socialmedia-links {
+    padding: 1em 0;
+}
+
+#moodle-footer {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: $gray-lighter;
+    }
+
+    .helplink img.poweredbylogo {
+        max-width: inherit;
+        max-height: inherit;
+        height: inherit;
+        width: inherit;
+        vertical-align: middle;
+    }
+
+    a:not(.btn),
+    a:not(.btn):hover {
+        color: #fff;
+    }
+
+    .langmenu {
+        color: #666;
+    }
+}
+
+// Custom menu lists.
+@include media-breakpoint-up(sm) {
+    #moodle-custom-menu .list-unstyled {
+        column-count: 2;
+    }
+}
+
+#site-news-forum + br {
+    display: none;
+}
+
+.nav-justified + .nav-justified {
+    margin-top: 1em;
+}
+
+@keyframes slideInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-2000px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.slideInDown {
+    animation-name: slideInDown;
+}
+
+/**
+spinner, from
+http://css-spinners.com/css/spinner/three-quarters.css
+**/
+@keyframes spinner-three-quarters {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Styles for old versions of IE */
+.spinner-three-quarters {
+    font-family: sans-serif;
+    font-weight: 100;
+}
+
+/* :not(:required) hides this rule from IE9 and below */
+.spinner-three-quarters:not(:required) {
+    animation: spinner-three-quarters 1250ms infinite linear;
+
+    // Start GT Mod - force gpu accelleration.
+    transform: translateZ(0);
+
+    // End GT Mod.
+    border: 6px solid #fff;
+    border-right-color: transparent;
+    border-radius: 16px;
+    box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    text-indent: -9999px;
+    width: 32px;
+    height: 32px;
+}
+
+/** fix feedback field sizes on mobile devices **/
+@include media-breakpoint-down(sm) {
+    .mform {
+        .fselect > select,
+        .fselectyesno > select,
+        .ftext > input[type="text"],
+        textarea {
+            width: 100%;
+        }
+
+        input[type="text"] {
+            max-width: 100%;
+        }
+    }
+
+    .path-user .userlist .singleselect {
+        width: 100%;
+    }
+}
+
+#footer-error-cont {
+    margin-top: 1em;
+    border: 3px solid red;
+    background-color: #fff;
+    color: #000;
+    padding: 2em;
+
+    h3 {
+        color: #000;
+    }
+
+    hr {
+        margin-top: 3em;
+    }
+}
+
+// yui-bs overrides (note SNAP specific)
+.yui-bootstrapped:not(.ie11) {
+
+    // stop yui menu from being completely unusable on mobile device
+    // note: it still isn't that great and a select box would be way better
+
+    #pld_tokenselector.yuimenu {
+        top: 100px !important;
+        position: fixed !important;
+        max-height: 70%;
+        overflow-y: auto;
+
+        @media (max-width: 767px) {
+            left: 10% !important;
+            width: 80% !important;
+        }
+
+        .yui-menu-body-scrolled {
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.yui-bootstrapped.ie11 #pld_tokenselector.yuimenu {
+    top: 100px !important;
+
+    & > div {
+        height: auto !important;
+    }
+}
+
+// nicer positioning of fatal errors
+div[data-rel=fatalerror] {
+    margin: 1em;
+}
+
+.iconhelp {
+    & > img {
+        background-color: $icons-color;
+        height: 16px;
+        width: 16px;
+        border: 4px solid $icons-color;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin-bottom: 3px;
+        margin-left: 0.5em;
+    }
+
+    &:focus {
+        outline: 0;
+    }
+
+    &:focus > img,
+    & > img:hover {
+        // Reduce border to make the icon expand.
+        border-width: 0;
+        height: 24px;
+        width: 24px;
+    }
+}
+
+
+// Manage help icon for Custom elements.
+.theme-snap {
+    .openlms-custom-elements {
+        .iconhelp {
+            & > svg {
+                vertical-align: sub;
+                color: #6c757d;
+                height: 24px;
+                width: 24px;
+
+                &:hover,
+                &:focus,
+                &:active,
+                &.active {
+                    color: $brand-primary;
+                }
+            }
+        }
+        a.help-icon-btn.notifications:focus .iconhelp svg {
+            color: $brand-primary;
+        }
+        a.btn-link.help-icon-btn.notifications {
+            padding: 0.375rem 0.375rem;
+        }
+        .popover {
+            .popover-body {
+                a:focus {
+                    outline: 3px solid #EF2A00;
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+}
+
+table th img.iconhelp {
+    height: 24px;
+    width: 24px;
+    border-width: 0;
+}
+
+#moodle-footer .helplink a img.iconhelp,
+#moodle-footer .helplink a:hover img.iconhelp {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background-color: #999;
+}
+
+.helplink {
+    img.moodlefooterlogo,
+    img.poweredbylogo {
+        width: inherit;
+        height: inherit;
+        margin-right: 0.5em;
+        margin-left: 0.5em;
+    }
+
+    img.moodlefooterlogo {
+        vertical-align: top;
+        margin-top: -2px;
+        margin-right: 0;
+    }
+
+    img.poweredbylogo {
+        vertical-align: bottom;
+        margin-bottom: -2px;
+    }
+
+    .footerlinkdivider {
+        margin: 0 0.5em;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #page-enrol-users .enrol_user_buttons {
+        float: none;
+
+        .singlebutton.enrolusersbutton {
+            display: block;
+        }
+    }
+}
+
+// -------------------------
+// Reduce font sizes on small screen
+// -------------------------
+@include media-breakpoint-down(sm) {
+    html,
+    #region-main {
+        font-size: 14.4px;
+    }
+
+    h1,
+    .h1 {
+        font-size: 1.5em;
+    }
+
+    h2,
+    .h2 {
+        font-size: 1.4em;
+    }
+
+    h3,
+    .h3,
+    .sectionname {
+        font-size: 1.3em;
+    }
+
+    h4,
+    .h4 {
+        font-size: 1.2em;
+    }
+
+    h5,
+    .h5 {
+        font-size: 1.1em;
+    }
+
+    h6,
+    .h6 {
+        font-size: 1em;
+    }
+}
+
+// Workaround for .labels inserted by some mechanism that is also fond of font tags
+.label:not(.activity) font {
+    color: $body-color;
+    font-weight: 300;
+}
+
+.label:not(.activity) b font {
+    font-weight: 500;
+}
+
+// moodle thing that tells you you have a new message
+#newmessageoverlay {
+    left: 0;
+    padding: 1em;
+}
+
+.path-backup .wibbler {
+    border: none;
+    .wibble {
+        display: none;
+    }
+}
+
+#page-message-index div.singleselect {
+    max-width: 100%;
+}
+
+/* Feature spots. */
+#snap-feature-spots {
+    padding: 2em 4%;
+    text-align: center;
+    .snap-feature {
+        background-color: $feature-spot-background-color;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        @media screen and (max-width: 576px) {
+            margin-top: 1em;
+        }
+    }
+    .snap-feature-text {
+        color: $feature-spot-description-color;
+    }
+    .snap-feature-spots-heading {
+        padding-top: 0;
+        margin-top: 0;
+    }
+    @media screen and (max-width: 768px) {
+        [id^="snap-feature-"] {
+            margin-top: 1em;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    .snap-feature-image {
+        object-fit: contain;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 10px;
+    }
+
+    a.snap-feature-link {
+        display: block;
+        color: $feature-spot-title-color;
+        margin: 1rem 0 1rem 0;
+        line-height: 40px;
+    }
+
+    div.snap-feature-image-wrap {
+        display: flex;
+        height: 7.5em;
+        margin: 0 auto;
+    }
+    h2.snap-feature-spots-heading {
+        margin-bottom: 1.5em;
+        color: $brand-primary;
+    }
+    .snap-feature {
+        border-radius: 10px;
+        padding: 1em;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+    }
+    h3.snap-feature-title {
+        margin: 1rem 0 1rem 0;
+        line-height: 40px;
+        color: $feature-spot-title-color;
+    }
+    #admin-feature_spot_title_color,
+    #admin-feature_spot_background_color,
+    #admin-feature_spot_description_color {
+        max-width: 50%;
+        margin: 0;
+        display: inline-block;
+    }
+}
+
+/* Featured categories and courses section. */
+@media screen and (max-width: 768px) {
+    #snap-featured-categories .row div.col-sm-3 ,
+    #snap-featured-courses .row div.col-sm-3,
+    .frontpage-course-list-all div.col-sm-3,
+    .frontpage-course-list-enrolled div.col-sm-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Featured categories and courses container. */
+#snap-featured-categories,
+#snap-featured-courses,
+#frontpage-course-list {
+    width: 100%;
+    padding: 1em 4%;
+    background-color: $snap-featured-cards-bg;
+    margin-bottom: 1em;
+}
+.snap-featured-categories-heading,
+.snap-featured-courses-heading {
+    padding: 1em 0;
+}
+#snap-featured-categories a.snap-featured-category,
+#snap-featured-courses a.snap-featured-course,
+.frontpage-course-list-all a.snap-home-course,
+.frontpage-course-list-enrolled a.snap-home-course {
+    border-radius: 0.5rem;
+}
+#snap-featured-categories .snap-featured-category-title,
+#snap-featured-courses .snap-featured-course-title,
+.frontpage-course-list-all .snap-home-course-title,
+.frontpage-course-list-enrolled .snap-home-course-title {
+    border-radius: 0 0 4px 4px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 2.3em;
+    min-height: unset;
+}
+
+#snap-featured-categories .row.text-center,
+#snap-featured-courses .row.text-center,
+.frontpage-course-list-all,
+.frontpage-course-list-enrolled {
+    justify-content: space-evenly;
+}
+
+.frontpage-course-list-enrolled,
+.frontpage-course-list-all {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+    text-align: center;
+    .coursebox {
+        padding-right: 15.3px;
+        padding-left: 15.3px;
+        border-bottom: unset;
+    }
+}
+
+.snap-home-course {
+    &:hover {
+        z-index: 1;
+        margin-bottom: 3em;
+    }
+}
+
+/* Featured category and course link. */
+.snap-featured-category,
+.snap-featured-course,
+.snap-home-course {
+    display: block;
+    height: 220px;
+    position: relative;
+    margin-bottom: 1em;
+    @include alakazam;
+    border-radius: .5rem;
+
+    @media screen and (max-width: 768px) {
+        height: 210px;
+    }
+
+    &:hover {
+        background: white;
+        transform: scale(1.03);
+        box-shadow:
+            0 2px 2px 0 rgba(0, 0, 0, 0.14),
+            0 3px 1px -2px rgba(0, 0, 0, 0.2),
+            0 1px 5px 0 rgba(0, 0, 0, 0.12);
+
+        .snap-featured-category-title,
+        .snap-featured-course-title,
+        .snap-home-course-title {
+            text-decoration: underline;
+        }
+        .card-header {
+            .snap-home-course-title {
+                margin-left: 2%;
+                text-align: left;
+                overflow: hidden;
+                background: transparent;
+                transition: transform 1s ease;
+                transform: translateX(-2%);
+            }
+            @keyframes snap-info-blink {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+
+            .more-info {
+                padding: 0;
+                display: block;
+                font-size: larger;
+                color: $brand-primary;
+                animation: snap-info-blink 0.5s ease-in-out;
+                opacity: .8;
+                &::before {
+                    pointer-events: all;
+                }
+                &:hover {
+                    opacity: 1;
+                }
+            }
+            .additional-options {
+                margin-top: .5em;
+            }
+            .additional-options,
+            .coursestudents {
+                width: 100%;
+                span {
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                    overflow: hidden;
+                    text-align: left;
+                    font-size: medium;
+                }
+                @media screen and (max-width: 768px) {
+                    margin-left: -2%;
+                }
+            }
+        }
+        .favouriteicon .fa-regular {
+            display: inline;
+            -webkit-text-stroke: 1px $brand-primary;
+        }
+    }
+    &:not(:hover) {
+        .card-header {
+            .snap-home-course-title {
+                flex: unset;
+            }
+        }
+    }
+    .card-header {
+        min-height: 25%;
+        background-color: #fff;
+        bottom: 0;
+        padding: .5em 4%;
+        width: 100%;
+        margin-left: 0;
+        border-bottom-left-radius: .5rem;
+        border-bottom-right-radius: .5rem;
+        .snap-home-course-title {
+            padding: 0;
+            -webkit-line-clamp: 1;
+            max-height: 1.4em;
+            min-height: unset;
+            max-width: unset;
+        }
+        .more-info {
+            display: none;
+        }
+        .additional-options,
+        .coursestudents {
+            width: 100%;
+            span {
+                display: none;
+            }
+        }
+    }
+    .set-favourite,
+    .unset-favourite {
+        padding: 0;
+    }
+    .favouriteicon {
+        position: absolute;
+        width: 100%;
+        text-align: end;
+        padding-right: 20px;
+        padding-top: 0.1em;
+        margin-top: 0.5em;
+        margin-right: 5%;
+        z-index: 1;
+        @media screen and (max-width: 768px) {
+            font-size: larger;
+        }
+    }
+    .favouriteicon .fa-solid {
+        text-shadow: 1px 1px 3px black;
+        -webkit-text-stroke: 1px white;
+        color: $brand-primary;
+    }
+    .favouriteicon .fa-regular {
+        display: none;
+    }
+    .hiddenbadge {
+        position: relative;
+        z-index: 1;
+        float: left;
+        margin-top: 7.5em;
+        margin-left: 5%;
+        padding: 0.25em 0.1em;
+        font-size: 90%;
+        @media screen and (max-width: 1080px) {
+            margin-top: 10em;
+            margin-left: 2%;
+            font-size: 65%;
+        }
+        @media screen and (max-width: 768px) {
+            margin-top: 9.5em;
+            font-size: 90%;
+            margin-left: 5%;
+        }
+    }
+}
+.snap-home-course-card {
+    .modal-content {
+        border-radius: .5em;
+    }
+    .modal-body {
+        .hiddeninfo {
+            text-align: left;
+            margin-left: 2em;
+        }
+        .hiddenbadge {
+            margin-top: 1em;
+        }
+        padding: 0;
+        .close {
+            margin-right: 1em;
+            margin-top: 1rem;
+            background-color: $brand-primary;
+            color: white;
+            padding: .2em .4em .2em .4em;
+            opacity: 1;
+            border-radius: 1em;
+        }
+        .snap-home-courses-image {
+            border-top-left-radius: .5em;
+            border-top-right-radius: .5em;
+            height: 15em;
+            position: relative;
+            .bottom-image-options {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                text-align: left;
+                background-color: rgba(0, 0, 0, 0.5);
+                height: 60px;
+                padding-top: .5rem;
+            }
+            .courselink {
+                margin-left: 2em;
+            }
+            .studentsinfo {
+                color: white;
+                margin-left: 1.5em;
+                font-size: medium;
+            }
+        }
+        .card-title {
+            font-weight: bold;
+            display: block;
+            text-align: start;
+            padding: 1em 2em 0 2em;
+            color: $brand-primary;
+        }
+        .coursecategory {
+            display: block;
+            text-align: start;
+            padding: 0 2em 1em 2em;
+        }
+        .course-info {
+            padding: 1em 2em 1em 2em;
+            font-size: $h6-font-size;
+            max-height: 400px;
+            overflow-y: auto;
+            .summary-info {
+                text-align: justify;
+            }
+            .additional-info {
+                text-align: justify;
+                .teachers {
+                    padding: 0;
+                    li {
+                        margin-bottom: .5em;
+                    }
+                }
+                .customfield {
+                    .customfieldname {
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}
+/* Featured category and course cover image. */
+.snap-featured-category-image,
+.snap-featured-course-image,
+.snap-home-courses-image {
+    background-color: $brand-primary;
+    @include bg-cover;
+    background-position: center;
+    margin: unset;
+    padding: unset;
+    min-width: 100%;
+    min-height: 75%;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    &.hiddencourse {
+        opacity: 0.4;
+    }
+}
+
+/* Featured category and course title. */
+.snap-featured-category-title,
+.snap-featured-course-title,
+.snap-home-course-title {
+    display: block;
+    min-height: 25%;
+    width: 100%;
+    background-color: white;
+    bottom: 0;
+    padding: 0.5em 4%;
+    max-height: 15.2em;
+    overflow-y: hidden;
+    &:hover {
+        overflow-y: auto;
+    }
+    @media (max-width: 768px) {
+        font-size: larger;
+    }
+}
+
+// Scrolling gradebook fixes
+.path-grade-report-grader .gradeparent .heading.floating {
+    border-top: 1px solid #ddd;
+}
+
+.path-grade-report-grader .gradeparent table#user-grades {
+    border: none;
+    font-size: 16px;
+}
+
+.path-grade-report-grader .gradeparent table#user-grades tr.heading th {
+    border-top: 1px solid #ddd !important;
+}
+
+.path-grade-report-grader .gradeparent table#user-grades tr:nth-child(1) th {
+
+    // This stops what looks like a double top border two cells in on the grade column.
+    border-bottom-width: 0;
+}
+
+.path-grade-report-grader .gradeparent .floating {
+
+    // This makes the floating header have the same top border as when its not floated.
+    border-top-width: 0;
+}
+
+.path-grade-report-grader .gradeparent *,
+.path-grade-report-grader .gradeparent *:before,
+.path-grade-report-grader .gradeparent *:after {
+
+    // Without this, IE totally screws up the header and column cell sizes.
+    box-sizing: content-box !important;
+}
+
+.path-grade-report-grader .gradeparent .dropdown-item {
+    // Fix dropdown elements focus.
+    box-sizing: border-box !important;
+}
+
+// Adjust Collapsed columns
+.path-grade-report-grader .collapsecolumndropdown {
+    font-size: 0.9rem;
+    &.show {
+        width: 320px;
+    }
+    .path-grade-report-grader .collapsecolumndropdown .flex-row.ml-auto {
+        display: flex;
+        .btn {
+            font-size: 0.9rem;
+            padding: .3rem .6rem;
+        }
+    }
+}
+
+.path-grade-report-grader .gradeparent .heading .cell,
+.path-grade-report-grader .gradeparent .avg .cell,
+.path-grade-report-grader .gradeparent .cell.user {
+
+    // Having the font sizes match is really important - if not the floating left header can end up
+    // too large!
+    font-size: 13px; // SHAME - No variable for this;
+}
+
+// End Scrolling gradebook fixes
+
+td.mceIframeContainer > iframe {
+    max-width: 100%;
+}
+
+// The gecko class is to determine the usage of Firefox browser.
+body.gecko .snap-form-required > fieldset,
+body.gecko .snap-form-advanced > fieldset {
+    display: block;
+    max-width: 100%;
+}
+
+body.ie .snap-form-required > fieldset,
+body.ie .snap-form-advanced > fieldset {
+    table-layout: fixed;
+    max-width: 100%;
+}
+
+.felement.feditor,
+table.mceLayout,
+table.mceLayout tr,
+td.mceIframeContainer,
+td.mceStatusbar {
+    display: block;
+    max-width: 100%;
+}
+
+table.mceLayout {
+    // We have to use important to set the height as auto, otherwise clicking on the editors path selector causes
+    // the table element to have an inline height style property which is not big enough to house its contents.
+    // It isn't obvious what the inline height is required for and it does not affect the drag handle for resizing.
+    // To observe the inline style, go to a page with a tiny mce editor and click (p) in the path selector.
+    // You will notice that the bottom of the editor will now be much closer to the element underneath it.
+    // In some cases it will even overlap elements on the page (quiz multichoice questions are a good example).
+    height: auto !important;
+}
+
+table.mceLayout tbody {
+    display: block;
+}
+
+td.mceToolbar {
+    width: 100% !important;
+    position: relative;
+    display: inline-block;
+    margin: 0 !important;
+}
+
+#page-mod-quiz-edit .activityinstance {
+    overflow: hidden;
+    max-width: 81%;
+    span.instancename {
+        height: 1.5em !important; // Not elegant but we need to override core.
+    }
+}
+
+// General toggle icons.
+button.snap-icon-toggle {
+    &,
+    &:hover,
+    &:link,
+    &:active,
+    &:focus {
+        background: none;
+        border: none;
+        box-shadow: none;
+        outline: none;
+    }
+}
+
+// Cover image control.
+#snap-coverimagecontrol {
+    float: right;
+    margin-left: 1em;
+    display: inline-block;
+    opacity: 0;
+    @include alakazam;
+
+    .btn {
+        border-color: transparent;
+        margin-left: 1em;
+    }
+}
+
+#snap-changecoverimageconfirmation {
+    position: relative;
+    display: inline-block;
+}
+
+#snap-coverfiles {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+label[for="snap-coverfiles"],
+#snap-changecoverimageconfirmation button {
+    position: relative;
+    display: none;
+}
+
+body:not(.pagelayout-coursecategory) {
+    label[for="snap-coverfiles"],
+    #snap-changecoverimageconfirmation button {
+        top: -2.5em;
+    }
+}
+
+#page-course-view-topics #page-header.mast-image .alert-warning {
+    margin-bottom: 2em;
+}
+
+label.state-visible[for="snap-coverfiles"],
+#snap-changecoverimageconfirmation.state-visible button {
+    display: inline-block;
+    cursor: pointer;
+}
+
+label.state-visible[for="snap-coverfiles"] {
+    span {
+        padding: 1em;
+    }
+    &:before {
+        content: '';
+        background: transparent url("[[pix:theme|camera]]") no-repeat;
+        display: inline-block;
+        margin: -0.5em 0;
+        height: 1.5em;
+        width: 1.5em;
+    }
+    &.ajaxing:before {
+        @include ajaxing(inline-block, relative, 16px, 4px);
+        margin: 0 0 -3px 0.5em;
+        background: none;
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    label.state-visible[for="snap-coverfiles"] {
+        span {
+            display: none;
+        }
+    }
+}
+
+#snap-coverfiles {
+    cursor: pointer;
+}
+
+#snap-changecoverimageconfirmation.disabled .ok {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+        color: #fff;
+        border-color: #fff;
+    }
+}
+
+.cover-image-change #page-header {
+    background-image: none !important;
+    background-color: $gray-lighter;
+}
+
+#page-header.mast-image .alert-warning {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+#snap-coverimagecontrol.snap-js-enabled {
+    opacity: 1;
+}
+
+.snap-alert-cover-image {
+    background-color: white;
+    width: auto;
+    text-align: left;
+    margin: 1em 0;
+}
+
+#snap-changecoverimageconfirmation .ok.ajaxing:after {
+    @include ajaxingwhite(inline-block, relative, 16px, 4px);
+    margin: 0 0 -3px 0.5em;
+}
+
+body.pagelayout-frontpage {
+    .snap-alert-cover-image {
+        margin: 1em 4%;
+    }
+}
+
+#page-badges-criteria {
+    .statusbox,
+    ul.nav-tabs {
+        margin: 1em 0;
+    }
+}
+
+// Make sr-only item visible to non screen reader users.
+@mixin reset-sr-only {
+    position: relative;
+    width: auto;
+    height: auto;
+    margin: initial;
+    overflow: visible;
+    clip: auto;
+    border: initial;
+}
+
+// Hides 'Blocks editing on' button in all the plagiarism settings pages.
+.path-admin-plagiarism .singlebutton {
+    display: none;
+}
+
+// Hide 'Blocks editing on' button in Payment management pages.
+#page-admin-payment-accounts,
+#page-admin-payment-manage_account {
+    .snap-page-heading-button {
+        display: none;
+    }
+}
+
+// Adjust the size of the message containers.
+#page-message-index .messaging-area-container .messaging-area .contacts-area .contacts .contact {
+    height: 23%;
+
+    .information .name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+// Auth icon align fix.
+#page-login-index .auth-icon,
+#page-site-index .auth-icon {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+}
+
+// Genius dashboard link.
+#snap-header {
+    #genius_link_wrapper {
+        display: flex;
+        align-items: center;
+        .genius_dashboard_link {
+            img.icon {
+                height: 1.5em;
+                width: auto;
+                margin-right: 0.25em;
+                font-size: inherit;
+                margin-bottom: 0.1em;
+                @include alakazam;
+            }
+            &:hover,
+            &:focus {
+                img.icon {
+                    transform: scale(1.2);
+                }
+                color: darken($nav-button-color, 8%);
+            }
+        }
+    }
+}
+
+/* Fix for news visualization in Snap front page. */
+#page-site-index .news-article-content h3 {
+    margin-top: 1em;
+}
+
+#page-site-index #news-articles a.btn.btn-secondary.toggle {
+    border: 1px solid white;
+    margin: 1em 0;
+    color: white;
+
+    &:focus {
+        outline: 3px white;
+    }
+}
+
+// Center prev and next links for activities.
+section#region-main {
+    div.m-t-2.m-b-1 {
+        display: inline-flex;
+        width: 100%;
+
+        .row {
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .col-md-4 {
+            min-height: 8em;
+            text-align: justify;
+
+            .mdl-align {
+                padding: 0 0.5em;
+            }
+        }
+    }
+}
+
+.nav.nav-tabs {
+    .nav-item {
+        margin-left: 0.2em;
+    }
+}
+
+.modal-lg {
+    max-width: 900px;
+}
+
+#id_error_newpassword {
+    color: #d9534f;
+}
+
+.activity-navigation {
+    .pull-right,
+    .pull-left,
+    .float-end,
+    .float-start {
+        a {
+            white-space: inherit;
+        }
+    }
+}
+
+#page-admin-tool-task-schedule_task section#region-main {
+    max-width: 100% !important;
+}
+
+// Readjust restriction block position when adding a new activity.
+.snap-form-advanced.col-md-4 {
+    .availability-field.fcontainer {
+        overflow: scroll;
+    }
+    .availability-field img {
+        min-width: 16px;
+        min-height: 16px;
+    }
+    .availability-inner .availability-group.form-group {
+        display: inline-grid;
+    }
+    .availability-inner .availability-item.d-sm-flex.align-items-center {
+        .availability-eye.col-form-label {
+            display: contents;
+            position: absolute;
+        }
+        .d-inline-block.col-form-label.availability-delete.p-x-1 {
+            display: contents !important;
+        }
+        .form-inline.availability_completion.availability-plugincontrols,
+        .availability_date.availability-plugincontrols,
+        .d-inline-block.form-inline.availability_grade.availability-plugincontrols,
+        .form-inline.availability_group.availability-plugincontrols,
+        .form-inline.availability_profile.availability-plugincontrols,
+        .availability_releasecode.availability-plugincontrols {
+            margin-right: 0.5em;
+        }
+        span.label.label-warning {
+            margin-left: 0.5em;
+        }
+    }
+    .form-inline label {
+        display: inline-flex;
+    }
+}
+
+// Fix to break-word on title site description.
+.snap-site-description {
+    overflow-wrap: break-word;
+}
+
+// Fixes for course cards in the user dashboard.
+#page-my-index {
+
+    // Hide the Customize this page button because we already have the edition toggle here.
+    &:not(.editing) .snap-page-heading-button .singlebutton:nth-of-type(1) {
+        display: none;
+    }
+    &.editing .snap-page-heading-button .singlebutton:nth-of-type(2) {
+        display: none;
+    }
+
+    #moodle-blocks {
+        padding: 0;
+        .block_myoverview .block-cards {
+            [data-region="filter"] {
+                flex-wrap: wrap;
+            }
+        }
+    }
+
+    .snap-page-heading-button {
+        display: flex;
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 1200px) {
+        #region-main,
+        #moodle-blocks {
+            padding: 0 4%;
+            section.block.card {
+                border-right: 1px solid rgba(0, 0, 0, .125);
+                border-left: 1px solid rgba(0, 0, 0, .125);
+            }
+        }
+    }
+}
+
+// Invalid feedback shown when saving some empty required form elements.
+.invalid-feedback {
+    color: $brand-danger;
+    font-family: $font-family-system;
+}
+
+// Fix width for tables when adding a new member to a group in a course.
+#page-group-members div#addmembersform form#assignform table {
+    table-layout: fixed;
+    optgroup {
+        overflow-x: scroll;
+        padding-bottom: 1em;
+    }
+
+    tr td:nth-child(4) {
+        width: 40%;
+        p {
+            word-break: break-word;
+        }
+    }
+
+    #existingcell {
+        input#removeselect_clearbutton {
+            margin-top: 0.5em;
+        }
+        #userselector_options.collapsibleregion {
+            overflow: visible;
+        }
+    }
+
+    #potentialcell {
+        input#addselect_clearbutton {
+            margin-top: 0.5em;
+        }
+    }
+
+}
+
+#page-admin-roles-check #userselector_options.collapsibleregion {
+    overflow: visible;
+}
+
+#page-local-pld-view #actionEmailEditor form .form-group {
+    margin: auto;
+}
+
+#page-local-pld-view #txtActionEmailBodyBtn {
+    float: right !important;
+}
+
+#page-local-pld-view .ft {
+    justify-content: normal !important;
+}
+.button-group button:nth-child(2) {
+    margin-left: 0.313em;
+}
+
+#page-local-pld-view .mform .form-inline .form-control,
+.mform .form-inline .custom-select #id_config_text {
+    width: 56em !important;
+}
+
+#page-local-pld-view #id_config_texteditable {
+    height: 15em !important;
+    width: 100% !important;
+}
+
+#page-local-pld-view #id_config_text {
+    height: 15em !important;
+}
+
+// -------------------------
+// Snap custom menu.
+// -------------------------
+
+header#mr-nav {
+    #snap-custom-menu-header nav.navbar {
+        width: 100%;
+        padding: 0 1rem;
+        ul.snap-navbar-content {
+            margin: 0;
+            padding: 0;
+            li.nav-item {
+                list-style: none;
+                max-width: 20em;
+                &:hover {
+                    outline: 0;
+                }
+                div.dropdown-menu {
+                    border: 0;
+                    margin-top: 0 !important; // This margin needs to be override to remove the margin of 2px that it has by default.
+                }
+                a {
+                    display: block;
+                    text-decoration: none;
+                    font-weight: bold;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    max-width: 20em;
+                }
+                a.nav-link {
+                    height: 50px;
+                    vertical-align: middle;
+                    padding-right: 1.53em;
+                }
+                .dropdown-toggle {
+                    &::after {
+                        position: absolute;
+                        right: 0.9em;
+                        top: 38%;
+                    }
+                }
+                // Animation and rotation of caret dropdown for custom menu.
+                .dropdown-toggle[aria-expanded="true"]:after {
+                    transform: rotate(180deg);
+                }
+                .dropdown-toggle:after {
+                    transition: 0.5s;
+                }
+            }
+        }
+    }
+}
+
+// Snap custom menu fix for IE11.
+.ie11 header#mr-nav #snap-custom-menu-header nav.navbar {
+    max-height: 100%;
+    padding-bottom: 0;
+    padding-top: 0;
+    ul.snap-navbar-content li.nav-item a.nav-link {
+        max-height: 100%;
+    }
+}
+
+@media (min-width: 992px) {
+    header#mr-nav div#snap-custom-menu-header {
+        display: block;
+    }
+    footer#moodle-footer div#snap-custom-menu-footer {
+        display: none;
+    }
+    // Spacer to be shown conditionally when custom menu has items to show.
+    .snap-custom-menu-spacer {
+        padding-top: 5.25em;
+    }
+}
+
+@media (max-width: 992px) {
+    header#mr-nav div#snap-custom-menu-header {
+        display: none;
+    }
+    footer#moodle-footer div#snap-custom-menu-footer {
+        display: block;
+        nav.navbar {
+            max-height: 100%;
+            ul.snap-navbar-content {
+                display: grid !important; // Need to override this to display the custom menu in the footer as a vertical list.
+                li.nav-item {
+                    list-style-type: none;
+                    a.nav-link,
+                    a.dropdown-item {
+                        &:hover,
+                        &:active {
+                            outline: 0;
+                        }
+                        &:focus,
+                        &:hover,
+                        &:active {
+                            background-color: transparent;
+                        }
+                    }
+                    a.dropdown-item {
+                        max-width: 11em;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
+                    a.nav-link {
+                        white-space: nowrap;
+                    }
+                }
+                li.nav-item.dropdown.show {
+                    div.dropdown-menu.show {
+                        margin-left: 1rem !important;
+                        margin-top: 0 !important; // These margins needs to be override as well to modify the position of the dropdown items.
+                        display: block;
+                        position: static;
+                        background-color: transparent;
+                        border: none;
+                    }
+                }
+                // Animation and rotation of caret dropdown for custom menu.
+                .dropdown-toggle[aria-expanded="true"]:after {
+                    transform: rotate(180deg);
+                }
+                .dropdown-toggle:after {
+                    transition: 0.5s;
+                }
+            }
+        }
+    }
+}
+
+// Change font size for header Folder activity with inline content.
+li.snap-activity.modtype_folder div[id^="folder_tree"] {
+    td[id^="ygtvcontentel"] > div,
+    > ul > li > div {
+        > h3 {
+            font-size: 1em;
+        }
+    }
+}
+
+// Modify table layout for definition field for Glossary activities when a video is inserted.
+// Table was not respecting the max-width for the definition field.
+#page-mod-glossary-view .glossarydisplay .entrybox table.glossarypost {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#page-mod-glossary-view div[role="main"] div.singlebutton {
+    margin-bottom: 1em;
+}
+
+// Need to override the max-width of the submit buttons on the form when creating an activity to modify its position for mobile mode.
+@media (max-width: 767px) {
+    div[role=main] .mform .snap-form-advanced input {
+        max-width: fit-content !important;
+    }
+    div[role=main] .mform div.snap-form-advanced > div:nth-of-type(3) > div.form-inline.felement {
+        display: block;
+    }
+}
+
+#page-mod-forum-view {
+    .snap-page-heading-button {
+        float: right;
+        display: grid;
+        grid-gap: 0.5rem;
+    }
+
+    .snap-page-heading-button div {
+        float: right;
+    }
+    .discussion-list {
+        .hasunread .lead a {
+            color: #fff;
+        }
+    }
+}
+
+
+
+.theme-snap [data-region=right-hand-drawer].drawer:not([data-origin^="message-drawer-toggle-"]) {
+    z-index: 12;
+    position: fixed;
+    right: 0;
+    height: 100%;
+    width: 22.3em;
+    -webkit-box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+    padding: 0;
+    visibility: visible;
+    opacity: 1;
+    &.hidden {
+        visibility: hidden;
+    }
+}
+
+#page-mod-forum-view.theme-snap [data-region=right-hand-drawer].drawer {
+    position: absolute;
+    z-index: 0;
+}
+
+.theme-snap .snap-drawer-headroom {
+    top: 6em;
+    @media (max-width: 992px) {
+        top: 3.5em;
+    }
+    @media (max-width: 792px) {
+        top: 5.5em;
+    }
+    @media (max-width: 767px) {
+        top: 4em;
+    }
+    @media (max-width: 666px) {
+        top: 6.5em;
+    }
+}
+
+.theme-snap .snap-drawer-no-headroom {
+    top: 0;
+}
+
+.theme-snap.layout-secure .container-langmenu {
+    margin-right: .5rem;
+    margin-top: .5rem;
+    text-align: right;
+}
+// -------------------------
+// Content bank page.
+// -------------------------
+#page-contentbank.theme-snap {
+    // Fix for H5P in Snap to see all the contents type in the Add dropdown content bank. Mimic Boost behavior for these type of dropdowns.
+    .content-bank-container .cb-toolbar-container .dropdown-menu.dropdown-scrollable {
+        overflow-y: auto;
+        max-height: 210px;
+    }
+
+    // Grid view.
+    .content-bank-container.view-grid {
+        .cb-content-wrapper {
+            padding: .5rem;
+            min-height: 140px;
+            max-height: 500px;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+        .cb-heading,
+        .cb-uses,
+        .cb-date,
+        .cb-size,
+        .cb-type,
+        .cb-author {
+            display: none;
+        }
+        .cb-listitem {
+            max-width: 120px;
+            min-width: 120px;
+            margin-bottom: .5rem;
+
+            .cb-file.cb-column.position-relative {
+                padding: .5rem;
+
+                .cb-thumbnail {
+                    width: 64px;
+                    height: 64px;
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-bottom: .5rem;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: cover;
+                }
+
+                span.cb-name {
+                    word-break: break-word;
+                    text-align: center;
+                    font-size: .9375rem;
+                }
+            }
+        }
+    }
+
+    // List view.
+    .content-bank-container.view-list {
+
+        .cb-column {
+            border-right: 1px solid #dee2e6;
+        }
+
+        .cb-content-wrapper {
+            padding: 0 0.5rem;
+            flex-direction: column;
+            flex-wrap: nowrap;
+        }
+
+        .cb-heading {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+
+            .cb-btnsort.dir-none .default,
+            .cb-btnsort.dir-asc .asc,
+            .cb-btnsort.dir-desc .desc {
+                display: block;
+            }
+            .cb-btnsort span {
+                display: none;
+            }
+            .cb-btnsort .title {
+                display: inline;
+            }
+        }
+
+        .cb-heading,
+        .cb-listitem {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            border-bottom: 1px solid #dee2e6;
+            .cb-column {
+                display: flex;
+                padding: .25rem;
+            }
+        }
+
+        // Content bank table responsive.
+        @media (max-width: 767.98px) {
+            .cb-column {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+
+        @media (min-width: 576px) {
+            .cb-file {
+                flex: 0 0 40%;
+                max-width: 40%;
+            }
+            .cb-uses,
+            .cb-date,
+            .cb-size,
+            .cb-type,
+            .cb-author {
+                flex: 0 0 12%;
+                max-width: 12%;
+            }
+            .cb-column.last {
+                border-right: 0;
+            }
+        }
+
+        .cb-listitem {
+            .cb-thumbnail {
+                width: 24px;
+                height: 24px;
+                background-repeat: no-repeat;
+                background-position: center;
+                -webkit-background-size: cover;
+                background-size: cover;
+                margin-right: .5rem;
+            }
+            span.cb-name {
+                word-break: break-all;
+                font-size: .9375rem;
+            }
+        }
+    }
+
+    // Fix for the cog menu to rename and delete options for a h5p file in the content bank.
+    #page-mast {
+        header#page-header.row {
+            padding: 0;
+            display: inline-block;
+            width: 10%;
+            vertical-align: middle;
+            background-image: none;
+
+            .col-12.pt-3.pb-3,
+            .card-body.p-2 {
+                padding: 0 !important;
+            }
+
+            .d-sm-flex.align-items-center {
+                float: right;
+            }
+        }
+
+        h1:not([class]) {
+            display: inline-block;
+            width: 90%;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            padding-right: 0.5em;
+        }
+
+        .dropdown-toggle > i[title="Actions menu"] {
+
+        }
+    }
+}
+
+// Activity chooser wrapper button - Maintain old and new style for it.
+div[id^=snap-create-activity-] .section-modchooser-link {
+    width: 100%;
+}
+
+#goto-top-link i.icon {
+    color: #696969;
+}
+
+// Fix for snap links with unnecessary box shadow and white background while focus.
+.theme-snap a:not([class]):focus {
+    box-shadow: none;
+    background-color: transparent;
+}
+
+// We are hiding the save and cancel buttons from the content bank edit new or existing content from the top of the form.
+// To avoid problems with UX/UI with duplicated submit buttons in the page.
+#page-contentbank-edit {
+    #coolh5peditor > div:nth-child(2) {
+        display: none;
+    }
+    #coolh5peditor > div:nth-child(5) {
+        padding-top: 1.5em;
+        margin-left: 0;
+    }
+    #coolh5peditor #id_cancel {
+        margin-left: 0;
+        border: 1px solid !important;
+
+        &:focus,
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
+
+// Fix for Quiz submit buttons position and spacing.
+#page-mod-quiz-summary {
+    .confirmation-buttons {
+        justify-content: flex-end !important; // Need to override core justify-content-around.
+    }
+    .confirmation-buttons > input[type="button"] {
+        margin: .25rem;
+    }
+}
+
+// Course categories should be displayed greyed out when they are hidden.
+#page-course-index-category.theme-snap #moodle-page #region-main .dimmed_category .info .categoryname.aabtn a {
+    color: var(--gray); // Gray Bootstrap from theme/boost/style/moodle.css.
+}
+
+// Fix for Scorm exit button to be clickable.
+#page-mod-scorm-player .snap-page-heading-button {
+    z-index: 10;
+    position: relative;
+}
+// Fix for tags' color in hsuforums
+#page-mod-hsuforum-discuss .tag_list .badge-info {
+    color: white;
+}
+
+// Do not limit the width of the image for Drag and drop onto image quizzes type, for editing, preview and attempt.
+#page-question-type-ddimageortext #id_previewareaheader .ddarea.que.ddimageortext img.dropbackground,
+#page-question-type-ddimageortext #id_previewareaheader .ddarea.que.ddimageortext img.droppreview,
+#page-question-preview .droparea .dropzones img.draghome,
+#page-mod-quiz-attempt .droparea .dropzones img.draghome,
+#page-mod-quiz-review .droparea .dropzones img.draghome,
+#page-question-bank-previewquestion-preview .droparea .dropzones img.draghome {
+    max-width: none;
+}
+
+// Change color contrast for quiz timer in a quiz attempt.
+#page-mod-quiz-attempt.theme-snap #quiz-timer-wrapper #quiz-timer {
+    color: $gray-900;
+}
+
+// Modify icon design for help button in the header for CCM in Snap.
+#page-local-ccm-view.theme-snap {
+    div#ccm-header-information {
+        padding-left: 0.5em;
+    }
+    a#ccm-help-button-header-popover {
+        &:focus {
+            text-decoration: none;
+        }
+    }
+    i#ccm-help-button-header-icon {
+        color: #ddd !important;
+        background-color: white;
+        &:hover {
+            background-color: white;
+            color: $brand-primary !important;
+        }
+    }
+}
+
+// Fix icons position for user profile fields page in Snap.
+#page-admin-user-profile-index .categorieslist div[id^="category-"] {
+    td.col-3 .icon {
+        margin-right: 0;
+    }
+    tr:first-child td.col-3 a:nth-child(2),
+    tbody tr:last-child td.col-3 a:nth-child(3) {
+        margin-right: 0.4em;
+    }
+}
+
+// Change custom switch control labels background color for notification and message settings page.
+// Taking care of any possible properties that can affect the color.
+.theme-snap#page-message-notificationpreferences,
+.theme-snap#page-message-index {
+    .custom-control-input:focus ~ .custom-control-label::before {
+        border-color: $brand-primary !important;
+        box-shadow: 0 0 0 0.2rem rgba($brand-primary, 0.25) !important;
+    }
+
+    .custom-control-input:checked ~ .custom-control-label::before {
+        border-color: $brand-primary !important;
+        background-color: $brand-primary !important;
+    }
+
+    .custom-control-input:active ~ .custom-control-label::before {
+        background-color: $brand-primary !important;
+        border-color: $brand-primary !important;
+    }
+
+    .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+        border-color: $brand-primary !important;
+    }
+
+    .custom-control-input-green:not(:disabled):active ~ .custom-control-label::before {
+        background-color: $brand-primary !important;
+        border-color: $brand-primary !important;
+    }
+}
+
+// Upgrade settings form design for Snap.
+// Blue core color. Not adding this with the $brand-primary variable, since
+// when new settings are added from Moodle upgrade, new checkboxes can be added and
+// changing those could be problematic.
+#page-admin-upgradesettings {
+    .form-submit.btn-primary {
+        color: #fff;
+        background-color: $blue;
+        border-color: $blue;
+
+        &:hover,
+        &:focus {
+            color: #fff;
+            background-color: #0069d9;
+            border-color: #0069d9;
+            text-decoration: none;
+            outline: none;
+            box-shadow: none;
+        }
+    }
+}
+
+#page-admin-index {
+    table#plugins-check,
+    table#serverstatus,
+    table#otherserverstatus {
+        td,
+        th {
+            border: none;
+        }
+    }
+}
+
+#page-admin-index,
+#page-admin-upgradesettings {
+    #page-footer {
+        background-color: $body-color;
+        color: $gray-300; // Footer text color.
+        padding: 1em 4%;
+        margin-top: 2em;
+    }
+}
+// -------------------------
+// Go to top button
+// -------------------------
+
+$gototop-bottom-position: 50px !default;
+
+#goto-top-link {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .7s ease 0s, visibility .1s ease .8s;
+    display: block;
+    position: absolute;
+    bottom: $gototop-bottom-position;
+    right: 0;
+    a {
+        position: absolute;
+        right: 0;
+        transform: translateY(-100%);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #goto-top-link {
+        bottom: 0;
+    }
+}
+
+body.scrolled #goto-top-link {
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s ease 0s, opacity .7s ease .1s, margin 0.2s ease;
+}
+
+body[id^="page-mod-"][id$="-view"] #region-main .tertiary-navigation .row .navitem {
+    display: inline-flex;
+    margin-right: 1.5em;
+}
+
+// Remove margin so element is clickable.
+#page-mod-book-view #region-main #mod_book-chaptersnavigation .tertiary-navigation .row .navitem {
+    margin-right: unset;
+}
+
+#page-mod-assign-view #region-main .tertiary-navigation .row {
+    margin-bottom: 0.5em;
+}
+
+body[id^="page-grade-"] #region-main .container-fluid.tertiary-navigation {
+    width: 100%;
+    border-bottom: 1px solid $gray-300;
+    border-top: 1px solid $gray-300;
+    margin-bottom: 1.3em;
+    padding-top: 1em;
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        column-gap: 1.5em;
+
+        .navitem {
+            display: flex;
+            margin-bottom: 1em;
+
+            .btn.dropdown-toggle {
+                padding: 0;
+                font-size: 1.1rem;
+                font-weight: 700;
+            }
+        }
+    }
+}
+
+#page-admin-tool-usertours-configure {
+    #id_description,
+    #id_title {
+        width: inherit;
+    }
+}
+
+// Fix header position in grader view.
+#page-mod-assign-grader.theme-snap {
+    [data-region="grading-navigation-panel"] {
+        @media (min-width: 767px) {
+            height: 7rem;
+            top: 1rem;
+        }
+    }
+
+    [data-region="review-panel"],
+    [data-region="grade-panel"] {
+        @media (min-width: 767px) {
+            top: 8rem;
+        }
+    }
+}
+
+.path-course-view.theme-snap .popover {
+    border-radius: 0.6rem;
+    .popover-header {
+        border-top-left-radius: calc(0.6rem - 1px);
+        border-top-right-radius: calc(0.6rem - 1px);
+        font-weight: bold;
+    }
+}
+
+// Improve visualization of the tabs in the report builder edit mode.
+#page-admin-reportbuilder-edit {
+    .dynamictabs {
+        margin-top: 3em;
+        ul.nav {
+            position: fixed;
+            z-index: 1030;
+            width: calc(100%);
+            padding-top: 1.25rem;
+            background-color: #fff;
+            li a.nav-link {
+                border-top-left-radius: 0.5rem;
+                border-top-right-radius: 0.5rem;
+            }
+        }
+        #dynamictabs-content {
+            padding-top: 5.5rem;
+            .reportbuilder-editor-table-container {
+                overflow-x: auto;
+            }
+            #reportbuilder-sidebar-search {
+                border-top-left-radius: 0.5rem !important;
+                border-bottom-left-radius: 0.5rem !important;
+            }
+            .input-group-append .input-group-text {
+                border-top-right-radius: 0.5rem !important;
+                border-bottom-right-radius: 0.5rem !important;
+            }
+            .reportbuilder-sidebar-settings .list-group-item:first-child {
+                border-top-left-radius: 0.5rem !important;
+                border-top-right-radius: 0.5rem !important;
+            }
+            .reportbuilder-sidebar-settings .list-group-item:last-child {
+                border-bottom-left-radius: 0.5rem !important;
+                border-bottom-right-radius: 0.5rem !important;
+            }
+            .card.reportbuilder-toggle-card,
+            .reportbuilder-report-container .border,
+            .reportbuilder-sidebar-settings .custom-select {
+                border-radius: 0.5rem;
+            }
+            .reportbuilder-report .reportbuilder-wrapper {
+                .reportbuilder-sidebar-menu {
+                    position: fixed;
+                    width: 250px;
+                    flex-shrink: 0;
+                    .reportbuilder-sidebar-menu-cards {
+                        overflow-y: auto;
+                        max-height: calc(100vh - 163px - 52px);
+                    }
+                }
+                .reportbuilder-report-container {
+                    max-height: calc(100vh - 163px);
+                    overflow-y: auto;
+                    margin-left: calc(250px + 1rem);
+                    margin-right: calc(350px + 1rem);
+                    min-width: 0;
+                    flex: 1 1 auto;
+                }
+                .reportbuilder-sidebar-settings {
+                    position: fixed;
+                    right: 30px;
+                    max-height: calc(100vh - 163px);
+                    width: 350px;
+                    flex-shrink: 0;
+                    overflow-y: auto;
+                }
+            }
+            .card-header {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    .reportbuilder-conditions-list .condition .fdate_selector {
+        flex-flow: wrap;
+
+        .fitem {
+            // Make it wrap so it looks less messy.
+            &:nth-child(3), &:nth-child(4) {
+                flex-basis: 95%;
+            }
+        }
+    }
+}
+
+// Fix for screen reader focusable element that skip to main content position.
+.sr-only-focusable[href="#maincontent"]:focus {
+    z-index: 1031;
+    position: fixed;
+    background: #fff;
+    padding: 7px;
+    left: 0;
+    top: 0;
+}
+
+// -------------------------
+// Animated images.
+// -------------------------
+.snap-animated-image {
+    display: flex;
+    position: relative;
+    width: fit-content;
+    padding: 0;
+    background-color: $brand-primary;
+    border-radius: 0.6em;
+
+    img {
+        margin: 0;
+        border-radius: 0.5em;
+    }
+
+    .anim-play-resume-buttons {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        z-index: 1;
+
+        .anim-play-button,
+        .anim-pause-button {
+            border-color: $brand-primary;
+            background-color: white;
+            color: $brand-primary;
+            width: 30px;
+            height: 30px;
+            font-size: 0.86rem;
+            border: 1.5px solid;
+            padding: 0;
+
+            &:active,
+            &:focus,
+            &:hover {
+                background-color: $brand-primary;
+                color: white;
+            }
+
+            span.icon {
+                margin: 0 auto;
+            }
+        }
+    }
+}
+
+// Styles for course index page with Snap header.
+#page-course-index-category{
+    #page {
+        margin-top: 6em;
+        @include media-breakpoint-down(md) {
+            margin-top: 0;
+        }
+    }
+    #page-content .block_settings .block_tree.list {
+        margin-top: 5rem;
+        @include media-breakpoint-down(md) {
+            margin-top: 1rem;
+        }
+    }
+
+    #region-main {
+        padding-inline: 4%;
+    }
+
+    .breadcrumb-nav {
+        @include media-breakpoint-up(md) {
+            margin-top: -.75em;
+        }
+    }
+    #moodle-blocks {
+        visibility: visible;
+        height: auto;
+        overflow: visible;
+        margin-top: 5em;
+        padding: 0;
+        max-width: 65em;
+        section.block {
+            border-radius: .5rem;
+        }
+    }
+}
+
+// Styles for My courses page in Snap.
+#page-my-index.page-mycourses {
+    .snap-page-my-courses-options  {
+        float: right;
+    }
+    .block_myoverview {
+        border: 0 !important;
+    }
+    .my_courses_page_content {
+
+        #region-main {
+            max-width: unset;
+            margin: 0;
+        }
+
+        .snap-page-my-courses-options {
+            margin-top: 1rem;
+        }
+
+        .block_myoverview_column {
+            margin-right: 3rem;
+            &.single_column {
+                @include media-breakpoint-up(lg) {
+                    padding-left: 5em;
+                    padding-right: 5em;
+                }
+            }
+            .snap-page-my-courses-options  {
+                float: right;
+            }
+            .block_myoverview {
+                border: 0 !important;
+
+                input[name="search"]{
+                    border-color: $brand-primary;
+                    border-radius: 0.25rem !important;
+
+                    &::placeholder {
+                        color: $brand-primary;
+                    }
+                }
+
+                .card-title {
+                    font-weight: bold;
+                }
+
+                .page-item {
+                    .icon.fa-fw {
+                        color: $brand-primary;
+                    }
+                    &.disabled .icon.fa-fw{
+                        color: gray;
+                    }
+                    &:last-child .page-link {
+                        border-top-right-radius: 0.5rem;
+                        border-bottom-right-radius: 0.5rem;
+                    }
+                    &:first-child .page-link {
+                        border-top-left-radius: 0.5rem;
+                        border-bottom-left-radius: 0.5rem;
+                    }
+                }
+            }
+        }
+    }
+
+    #page-header #page-mast {
+        h1 {
+            float: left;
+        }
+    }
+
+    // My courses - Mobile view.
+    @media screen and (max-width: 576px) {
+        #page-header {
+            #page-mast {
+                margin-left: -10px;
+                margin-right: -10px;
+            }
+        }
+
+        #region-main {
+            padding: 0 1.1rem 0 0;
+            margin: 0 !important;
+
+            .block_myoverview {
+                width: 100%;
+
+                .card-body.p-3 {
+                    padding: 0.5rem !important;
+                }
+            }
+
+            .block_myoverview_column {
+                padding-right: 0;
+                margin: 0;
+
+                .snap-page-my-courses-options {
+                    position: absolute;
+                    z-index: 1;
+                    right: 12px;
+                    top: -8px;
+                }
+            }
+        }
+    }
+}
+
+// Styles for global search bar.
+.simplesearchform #searchform-navbar.show {
+    height: 93px;
+}
+
+.row-gap-1 {
+    row-gap: 1rem;
+}
+
+.singleselect {
+    border-radius: 0.25rem;
+}
+
+.input-group {
+    input {
+        // !important because we need to be sure that the border radius is set.
+        border-bottom-left-radius: 0.25rem !important;
+        border-top-left-radius: 0.25rem !important;
+    }
+}
+
+.reportbuilder-wrapper .filters-dropdown {
+    padding-bottom: 5rem !important; // !important to override the boost padding-bottom.
+}
+
+// Override Bootstrap .text-dark class.
+.badge.bg-secondary.text-dark {
+    color: #fff !important;
+}
+
+// Keyboard header icon animations (Tab key).
+#mr-nav #snap-header {
+    // User menu icon.
+    .usermenu a#user-menu-toggle:focus-visible {
+        .userpicture,
+        .userinitials {
+            @include alakazam;
+            transform: scale(1.1);
+        }
+    }
+
+    // Intellicart icon.
+    #nav-intellicart-popover-container .popover-region-toggle.nav-link.icon-no-margin:focus-visible {
+        @extend .fa-beat;
+        --fa-animation-duration: 0.5s;
+        --fa-animation-iteration-count: 1;
+    }
+
+    // Notifications icon.
+    #nav-notification-popover-container .popover-region-toggle.nav-link.icon-no-margin:focus-visible {
+        @extend .fa-shake;
+        --fa-animation-duration: 1.5s;
+        --fa-animation-iteration-count: 1;
+        .icon.fa-bell-o {
+            font-weight: bolder;
+        }
+    }
+
+    // Search icon.
+    .hidden-md-down .btn.btn-open.rounded-0.nav-link:focus-visible {
+        @extend .fa-beat;
+        --fa-animation-duration: 0.5s;
+        --fa-animation-iteration-count: 1;
+        .icon.fa-search {
+            -webkit-text-stroke-width: 1px;
+        }
+    }
+}
+
+.blocks-drawer-button {
+    &:hover, &:focus-visible {
+        @extend .fa-bounce;
+        --fa-animation-duration: 1s;
+        --fa-animation-iteration-count: 1;
+        svg .hover-visible {
+            opacity: 1;
+        }
+    }
+}
+
+[id^="message-drawer-toggle-"] {
+    &:focus-visible,
+    &:hover {
+        @extend .fa-beat;
+        --fa-animation-duration: 0.5s;
+        --fa-animation-iteration-count: 1;
+        font-weight: bolder;
+        .icon.fa-comment-o {
+            font-weight: bolder;
+        }
+    }
+}
+
+// Paginator space in category view
+.category-browse .pagination {
+    margin-top: 3rem;
+}

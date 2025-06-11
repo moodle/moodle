@@ -57,7 +57,11 @@ class block_section_links_renderer extends plugin_renderer_base {
             if ($section->highlight) {
                 $sectiontext = html_writer::tag('strong', $sectiontext);
             }
-            $html .= html_writer::link(course_get_url($course, $section->section), $sectiontext, $attributes);
+            $html .= html_writer::link(
+                course_get_url($course, $section->section, ['navigation' => true]),
+                $sectiontext,
+                $attributes
+            );
             $html .= html_writer::end_tag('li').' ';
         }
         $html .= html_writer::end_tag('ol');
@@ -73,7 +77,7 @@ class block_section_links_renderer extends plugin_renderer_base {
             if (!$sections[$jumptosection]->visible) {
                 $attributes['class'] = 'dimmed';
             }
-            $html .= html_writer::link(course_get_url($course, $jumptosection), $linktext, $attributes);
+            $html .= html_writer::link(course_get_url($course, $jumptosection, ['navigation' => true]), $linktext, $attributes);
         }
 
         return $html;

@@ -152,7 +152,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param single_button $button
      * @return string
      */
-    public function message($message, single_button $button = null) {
+    public function message($message, ?single_button $button = null) {
         $output  = $this->output->box_start('generalbox boxaligncenter');
         $output .= $message;
         if ($button !== null) {
@@ -617,7 +617,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         if ($data->reviewlesson !== false) {
             $output .= html_writer::link($data->reviewlesson, get_string('reviewlesson', 'lesson'),
-                array('class' => 'centerpadded lessonbutton standardbutton pr-3'));
+                array('class' => 'centerpadded lessonbutton standardbutton pe-3'));
         }
         if ($data->modattemptsnoteacher !== false) {
             $output .= $this->paragraph(get_string("modattemptsnoteacher", "lesson"), 'centerpadded');
@@ -629,13 +629,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         $url = new moodle_url('/course/view.php', array('id' => $course->id));
         $output .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)),
-                array('class' => 'centerpadded lessonbutton standardbutton pr-3'));
+                array('class' => 'centerpadded lessonbutton standardbutton pe-3'));
 
         if (has_capability('gradereport/user:view', context_course::instance($course->id))
                 && $course->showgrades && $lesson->grade != 0 && !$lesson->practice) {
             $url = new moodle_url('/grade/index.php', array('id' => $course->id));
             $output .= html_writer::link($url, get_string('viewgrades', 'lesson'),
-                array('class' => 'centerpadded lessonbutton standardbutton pr-3'));
+                array('class' => 'centerpadded lessonbutton standardbutton pe-3'));
         }
         return $output;
     }

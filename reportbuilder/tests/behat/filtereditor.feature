@@ -92,7 +92,7 @@ Feature: Manage custom report filters
     And I should see "There are no filters selected" in the "[data-region='active-filters']" "css_element"
     And I should not see "Email address" in the "[data-region='active-filters']" "css_element"
 
-  Scenario: Reset filters in report
+  Scenario: Reset filters in custom report
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   |
       | My report | core_user\reportbuilder\datasource\users |
@@ -102,12 +102,16 @@ Feature: Manage custom report filters
       | Full name operator | Contains |
       | Full name value    | Lionel   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Nothing to display"
     And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I should not see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
+    And I should see "Filters" in the "#dropdownFiltersButton" "css_element"
+    And "[data-region='report-filters']" "css_element" should be visible
     Then I should see "Filters reset"
     And the following fields in the "Full name" "core_reportbuilder > Filter" match these values:
       | Full name operator | Is any value |
-    And I should see "Admin User" in the "reportbuilder-table" "table"
+    And I should see "Admin User" in the "Users" "table"
 
   Scenario: Use report filters when previewing report
     Given the following "users" exist:

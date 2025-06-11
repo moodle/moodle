@@ -1,0 +1,32 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_question/question_bank_controls
+
+    Flex container for displaying plugin controls at the top of the question bank table.
+
+    Context variables required for this template:
+    * controls - Rendered HTML for controls.
+
+    Example context (json):
+    {
+        "controls": "<div><button class=\"btn btn-secondary\">Control 1</button><button class=\"btn btn-secondary\">Control 2</button></div>"
+    }
+}}
+<div class="d-grid gap-2 d-md-flex justify-content-start mb-2">
+    {{{controls}}}
+</div>

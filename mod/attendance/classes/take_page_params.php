@@ -101,7 +101,7 @@ class mod_attendance_take_page_params {
      * @return array
      */
     public function get_significant_params() {
-        $params = array();
+        $params = [];
 
         $params['sessionid'] = $this->sessionid;
         $params['grouptype'] = $this->grouptype;

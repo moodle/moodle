@@ -24,11 +24,11 @@ namespace core;
  * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class util_test extends \advanced_testcase {
+final class util_test extends \advanced_testcase {
     /**
      * @dataProvider set_table_modified_by_sql_provider
      */
-    public function test_set_table_modified_by_sql($sql, $expectations) {
+    public function test_set_table_modified_by_sql($sql, $expectations): void {
         \phpunit_util::reset_updated_table_list();
         \phpunit_util::set_table_modified_by_sql($sql);
         foreach ($expectations as $table => $present) {
@@ -36,7 +36,7 @@ class util_test extends \advanced_testcase {
         }
     }
 
-    public function set_table_modified_by_sql_provider() {
+    public static function set_table_modified_by_sql_provider(): array {
         global $DB;
         $prefix = $DB->get_prefix();
 

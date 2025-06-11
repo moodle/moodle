@@ -25,7 +25,6 @@
 
 namespace local_o365\feature\sds;
 
-use Exception;
 use local_o365\httpclient;
 use local_o365\oauth2\clientdata;
 use local_o365\rest\unified;
@@ -44,12 +43,12 @@ class utils {
      *
      * @return unified|null The SDS API client.
      */
-    public static function get_apiclient() : ?unified {
+    public static function get_apiclient(): ?unified {
         $httpclient = new httpclient();
         try {
             $clientdata = clientdata::instance_from_oidc();
             $unifiedresource = unified::get_tokenresource();
-            $unifiedtoken = \local_o365\utils::get_app_or_system_token($unifiedresource, $clientdata, $httpclient, false, false);
+            $unifiedtoken = \local_o365\utils::get_application_token($unifiedresource, $clientdata, $httpclient, false, false);
 
             if (!empty($unifiedtoken)) {
                 $apiclient = new unified($unifiedtoken, $httpclient);
@@ -70,7 +69,7 @@ class utils {
      * @param unified|null $apiclient
      * @return array
      */
-    public static function get_profile_sync_status_with_id_name(unified $apiclient = null) : array {
+    public static function get_profile_sync_status_with_id_name(?unified $apiclient = null): array {
         $profilesyncenabled = false;
         $schoolid = '';
         $schoolname = '';
@@ -84,20 +83,7 @@ class utils {
 
             if ($apiclient) {
                 try {
-                    $schoolresults = $apiclient->get_schools();
-                    $schools = $schoolresults['value'];
-                    while (!empty($schoolresults['@odata.nextLink'])) {
-                        $nextlink = parse_url($schoolresults['@odata.nextLink']);
-                        $schoolresults = [];
-                        if (isset($nextlink['query'])) {
-                            $query = [];
-                            parse_str($nextlink['query'], $query);
-                            if (isset($query['$skiptoken'])) {
-                                $schoolresults = $apiclient->get_schools($query['$skiptoken']);
-                                $schools = array_merge($schools, $schoolresults['value']);
-                            }
-                        }
-                    }
+                    $schools = $apiclient->get_schools();
 
                     foreach ($schools as $school) {
                         if ($school['id'] == $sdsprofilesyncconfig) {
@@ -107,8 +93,12 @@ class utils {
                             break;
                         }
                     }
-                } catch (Exception $e) {
+                } catch (moodle_exception $e) {
                     // School invalid, reset settings.
+                    $existingsdsprofilesyncsetting = get_config('local_o365', 'sdsprofilesync');
+                    if ($existingsdsprofilesyncsetting) {
+                        add_to_config_log('sdsprofilesync', $existingsdsprofilesyncsetting, '', 'local_o365');
+                    }
                     set_config('sdsprofilesync', '', 'local_o365');
                 }
             }
@@ -122,7 +112,7 @@ class utils {
      *
      * @return array[]
      */
-    public static function get_sds_profile_sync_api_requirements() : array {
+    public static function get_sds_profile_sync_api_requirements(): array {
         $idandnamemappings = [];
         $additionalprofilemappings = [];
 

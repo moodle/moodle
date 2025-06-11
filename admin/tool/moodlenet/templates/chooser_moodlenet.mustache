@@ -24,7 +24,7 @@
     }
 }}
 <div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container">
-    <div class="content text-left mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
+    <div class="content text-start mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
         <div data-region="moodle-net">
             <div class="overlay-icon-container z-index-1 d-none" data-region="spinner"></div>
             <img class="w-25 mb-4" aria-hidden="true" src="{{{img}}}">
@@ -39,13 +39,13 @@
             <div id="mnet-instance-form-{{uniqid}}" data-region="mnet-form">
                 <input type="hidden" name="sesskey" value="{{sesskey}}">
                 <div class="w-75 mx-auto my-3">
-                    <p class="text-left">{{#str}}inputhelp, tool_moodlenet{{/str}}</p>
+                    <p class="text-start">{{#str}}inputhelp, tool_moodlenet{{/str}}</p>
                     <div class="input-group">
                         <input type="text"
                                class="form-control"
                                data-var="mnet-link"
                                data-courseid="{{courseID}}"
-                               data-sectionid="{{sectionID}}"
+                               data-sectionnum="{{sectionnum}}"
                                placeholder="{{#str}} instanceplaceholder, tool_moodlenet {{/str}}"
                                aria-label="{{#str}} aria:enterprofile, tool_moodlenet {{/str}}"
                                autocomplete="off"
@@ -58,8 +58,8 @@
                             </button>
                         </div>
                     </div>
-                    <p class="text-left" aria-live="assertive" data-region="validation-area"></p>
-                    <p class="text-left">{{#str}} forminfo, tool_moodlenet {{/str}}</p>
+                    <p class="text-start" aria-live="assertive" data-region="validation-area"></p>
+                    <p class="text-start">{{#str}} forminfo, tool_moodlenet {{/str}}</p>
                 </div>
             </div>
         </div>

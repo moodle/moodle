@@ -57,6 +57,22 @@ Feature: Deleting users
     And the "Available" select box should not contain "User Three"
     And the "Available" select box should contain "User One"
 
+  @javascript
+  Scenario: Deleting users from bulk actions in the user list
+    When I log in as "admin"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on "User Four" "checkbox"
+    And I click on "User Three" "checkbox"
+    And I set the field "Bulk user actions" to "Delete"
+    And I should see "Are you absolutely sure you want to completely delete the user User Four, User Three, including their enrolments, activity and other user data?"
+    And I press "Yes"
+    And I should see "Changes saved"
+    And I press "Continue"
+    And I should see "Browse list of users"
+    And I should not see "User Four"
+    And I should not see "User Three"
+    And I should see "User One"
+
   @javascript @core_message
   Scenario: Deleting users who have unread messages sent or received
     When I log in as "user1"
@@ -100,10 +116,7 @@ Feature: Deleting users
     And I press "Add to selection"
     Then I should see "User One"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I set the following fields to these values:
-      | username | user1 |
-    And I press "Add filter"
-    And I click on "Delete" "link"
-    And I press "Delete"
+    And I press "Delete" action in the "User One" report row
+    And I click on "Delete" "button" in the "Delete user" "dialogue"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     Then I should not see "User One"

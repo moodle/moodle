@@ -131,7 +131,7 @@ class format_site extends course_format {
      *
      * @return int
      */
-    public function get_section_number(): int {
+    public function get_sectionnum(): int {
         return 1;
     }
 }
@@ -144,7 +144,7 @@ class format_site extends course_format {
  * @param array $option The definition structure of the option.
  * @param string $optionname The name of the option, as provided in the definition.
  */
-function contract_value(array &$dest, array $source, array $option, string $optionname) : void {
+function contract_value(array &$dest, array $source, array $option, string $optionname): void {
     if (substr($optionname, -7) == '_editor') { // Suffix '_editor' indicates that the element is an editor.
         $name = substr($optionname, 0, -7);
         if (isset($source[$name])) {
@@ -184,7 +184,7 @@ function clean_param_if_not_null($param, string $type = PARAM_RAW) {
  * @param array $option The definition structure of the option.
  * @param string $optionname The name of the option, as provided in the definition.
  */
-function expand_value(array &$dest, array $source, array $option, string $optionname) : void {
+function expand_value(array &$dest, array $source, array $option, string $optionname): void {
     if (substr($optionname, -7) == '_editor') { // Suffix '_editor' indicates that the element is an editor.
         $name = substr($optionname, 0, -7);
         if (is_string($source[$optionname])) {
@@ -198,4 +198,64 @@ function expand_value(array &$dest, array $source, array $option, string $option
     } else {
         $dest[$optionname] = clean_param($source[$optionname], $option['type'] ?? PARAM_RAW);
     }
+}
+
+/**
+ * Course-module fragment renderer method.
+ *
+ * The fragment arguments are id and sr (section return).
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered cm item.
+ *
+ * @throws require_login_exception
+ */
+function core_courseformat_output_fragment_cmitem($args): string {
+    global $PAGE;
+
+    [$course, $cm] = get_course_and_cm_from_cmid($args['id']);
+    if (!can_access_course($course, null, '', true) || !$cm->uservisible) {
+        throw new require_login_exception('Activity is not available');
+    }
+
+    $format = course_get_format($course);
+    if (!is_null($args['sr'])) {
+        $format->set_sectionnum($args['sr']);
+    }
+    $renderer = $format->get_renderer($PAGE);
+    $section = $cm->get_section_info();
+    return $renderer->course_section_updated_cm_item($format, $section, $cm);
+}
+
+/**
+ * Section fragment renderer method.
+ *
+ * The fragment arguments are courseid, section id and sr (section return).
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered section.
+ *
+ * @throws require_login_exception
+ */
+function core_courseformat_output_fragment_section($args): string {
+    global $PAGE;
+
+    $course = get_course($args['courseid']);
+    if (!can_access_course($course, null, '', true)) {
+        throw new require_login_exception('Course is not available');
+    }
+
+    $format = course_get_format($course);
+    if (!is_null($args['sr'])) {
+        $format->set_sectionnum($args['sr']);
+    }
+
+    $modinfo = $format->get_modinfo();
+    $section = $modinfo->get_section_info_by_id($args['id'], MUST_EXIST);
+    if (!$section->uservisible) {
+        throw new require_login_exception('Section is not available');
+    }
+
+    $renderer = $format->get_renderer($PAGE);
+    return $renderer->course_section_updated($format, $section);
 }

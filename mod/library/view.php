@@ -32,28 +32,28 @@ global $OUTPUT;
 if ($id) {
     $PAGE->set_url('/mod/library/index.php', array('id' => $id));
     if (! $cm = get_coursemodule_from_id('library', $id)) {
-        print_error('invalidcoursemodule');
+        moodle_exception('invalidcoursemodule');
     }
 
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error('coursemisconf');
+        moodle_exception('coursemisconf');
     }
 
     if (! $library = $DB->get_record("library", array("id" => $cm->instance))) {
-        print_error('invalidcoursemodule');
+        moodle_exception('invalidcoursemodule');
     }
 } else {
     echo 'asdfasdf';
     echo $OUTPUT->box_start('generalbox', 'gradeinfobox');
     $PAGE->set_url('/mod/library/index.php', array('l' => $l));
     if (! $library = $DB->get_record("library", array("id" => $l))) {
-        print_error('invalidcoursemodule');
+        moodle_exception('invalidcoursemodule');
     }
     if (! $course = $DB->get_record("course", array("id" => $library->course)) ) {
-        print_error('coursemisconf');
+        moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance("library", $library->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        moodle_exception('invalidcoursemodule');
     }
 }
 

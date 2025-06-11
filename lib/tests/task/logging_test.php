@@ -36,7 +36,7 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class logging_test extends \advanced_testcase {
+final class logging_test extends \advanced_testcase {
 
     /**
      * @var \moodle_database The original database prior to mocking
@@ -56,12 +56,13 @@ class logging_test extends \advanced_testcase {
             $DB = $this->DB;
             $this->DB = null;
         }
+        parent::tearDown();
     }
 
     /**
      * When the logmode is set to none, logging should not start.
      */
-    public function test_logmode_none() {
+    public function test_logmode_none(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -79,7 +80,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to all that log capture is started.
      */
-    public function test_start_logmode_all() {
+    public function test_start_logmode_all(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -100,7 +101,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail that log capture is started.
      */
-    public function test_start_logmode_fail() {
+    public function test_start_logmode_fail(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -121,7 +122,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, passing adhoc tests should not be logged.
      */
-    public function test_logmode_fail_with_passing_adhoc_task() {
+    public function test_logmode_fail_with_passing_adhoc_task(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -142,7 +143,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, passing scheduled tests should not be logged.
      */
-    public function test_logmode_fail_with_passing_scheduled_task() {
+    public function test_logmode_fail_with_passing_scheduled_task(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -163,7 +164,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, failing adhoc tests should be logged.
      */
-    public function test_logmode_fail_with_failing_adhoc_task() {
+    public function test_logmode_fail_with_failing_adhoc_task(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -188,7 +189,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, failing scheduled tests should be logged.
      */
-    public function test_logmode_fail_with_failing_scheduled_task() {
+    public function test_logmode_fail_with_failing_scheduled_task(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -213,7 +214,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, failing adhoc tests should be logged.
      */
-    public function test_logmode_any_with_failing_adhoc_task() {
+    public function test_logmode_any_with_failing_adhoc_task(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -238,7 +239,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, failing scheduled tests should be logged.
      */
-    public function test_logmode_any_with_failing_scheduled_task() {
+    public function test_logmode_any_with_failing_scheduled_task(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -263,7 +264,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, passing adhoc tests should be logged.
      */
-    public function test_logmode_any_with_passing_adhoc_task() {
+    public function test_logmode_any_with_passing_adhoc_task(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -287,7 +288,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When the logmode is set to fail, passing scheduled tests should be logged.
      */
-    public function test_logmode_any_with_passing_scheduled_task() {
+    public function test_logmode_any_with_passing_scheduled_task(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -311,7 +312,7 @@ class logging_test extends \advanced_testcase {
     /**
      * Ensure that start_logging cannot be called in a nested fashion.
      */
-    public function test_prevent_nested_logging() {
+    public function test_prevent_nested_logging(): void {
         $this->resetAfterTest();
 
         $task = $this->get_test_adhoc_task();
@@ -324,7 +325,7 @@ class logging_test extends \advanced_testcase {
     /**
      * Ensure that logging can be called after a previous log has finished.
      */
-    public function test_repeated_usages() {
+    public function test_repeated_usages(): void {
         $this->resetAfterTest();
 
         $logger = $this->get_mocked_logger();
@@ -346,7 +347,7 @@ class logging_test extends \advanced_testcase {
     /**
      * Enusre that when finalise_log is called when logging is not active, nothing happens.
      */
-    public function test_finalise_log_no_logging() {
+    public function test_finalise_log_no_logging(): void {
         $initialbufferstate = ob_get_status();
 
         logmanager::finalise_log();
@@ -358,7 +359,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When log capture is enabled, calls to the flush function should cause log output to be both returned and captured.
      */
-    public function test_flush_on_own_buffer() {
+    public function test_flush_on_own_buffer(): void {
         $this->resetAfterTest();
 
         $logger = $this->get_mocked_logger();
@@ -383,7 +384,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When log capture is enabled, calls to the flush function should not affect any subsequent ob_start.
      */
-    public function test_flush_does_not_flush_inner_buffers() {
+    public function test_flush_does_not_flush_inner_buffers(): void {
         $this->resetAfterTest();
 
         $logger = $this->get_mocked_logger();
@@ -411,7 +412,7 @@ class logging_test extends \advanced_testcase {
     /**
      * When log capture is enabled, calls to the flush function should not affect any subsequent ob_start.
      */
-    public function test_inner_flushed_buffers_are_logged() {
+    public function test_inner_flushed_buffers_are_logged(): void {
         $this->resetAfterTest();
 
         $logger = $this->get_mocked_logger();
@@ -442,7 +443,7 @@ class logging_test extends \advanced_testcase {
      *
      * @return  adhoc_task
      */
-    protected function get_test_adhoc_task() : adhoc_task {
+    protected function get_test_adhoc_task(): adhoc_task {
         $task = $this->getMockForAbstractClass(adhoc_task::class);
         $task->set_component('core');
 
@@ -460,7 +461,7 @@ class logging_test extends \advanced_testcase {
      *
      * @return  scheduled_task
      */
-    protected function get_test_scheduled_task() : scheduled_task {
+    protected function get_test_scheduled_task(): scheduled_task {
         $task = $this->getMockForAbstractClass(scheduled_task::class);
 
         // Mock a lock on the task.
@@ -475,7 +476,7 @@ class logging_test extends \advanced_testcase {
     /**
      * Create and configure a mocked task logger.
      *
-     * @return  task_logger
+     * @return  logging_test_mocked_logger
      */
     protected function get_mocked_logger() {
         global $CFG;
@@ -485,7 +486,7 @@ class logging_test extends \advanced_testcase {
 
         // Note PHPUnit does not support mocking static functions.
         $CFG->task_log_class = logging_test_mocked_logger::class;
-        logging_test_mocked_logger::test_reset();
+        logging_test_mocked_logger::reset_test();
 
         return $CFG->task_log_class;
     }
@@ -533,7 +534,7 @@ class logging_test_mocked_logger implements task_logger {
     /**
      * Reset the test class.
      */
-    public static function test_reset() {
+    public static function reset_test() {
         self::$isconfigured = true;
         self::$storelogfortask = [];
         self::$haslogreport = true;
@@ -544,7 +545,7 @@ class logging_test_mocked_logger implements task_logger {
      *
      * @return  bool
      */
-    public static function is_configured() : bool {
+    public static function is_configured(): bool {
         return self::$isconfigured;
     }
 
@@ -569,7 +570,7 @@ class logging_test_mocked_logger implements task_logger {
      *
      * @return  bool
      */
-    public static function has_log_report() : bool {
+    public static function has_log_report(): bool {
         return self::$haslogreport;
     }
 
@@ -579,7 +580,7 @@ class logging_test_mocked_logger implements task_logger {
      * @param   string      $classname The task class to fetch for
      * @return  \moodle_url
      */
-    public static function get_url_for_task_class(string $classname) : \moodle_url {
+    public static function get_url_for_task_class(string $classname): \moodle_url {
         return new \moodle_url('');
     }
 

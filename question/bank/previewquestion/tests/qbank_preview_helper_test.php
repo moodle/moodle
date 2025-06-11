@@ -32,7 +32,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_previewquestion\helper
  */
-class qbank_preview_helper_test extends \advanced_testcase {
+final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * @var bool|\context|\context_course $context
@@ -66,6 +66,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $USER;
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator();
@@ -91,7 +92,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      *
      * @covers ::question_preview_action_url
      */
-    public function test_question_preview_action_url() {
+    public function test_question_preview_action_url(): void {
         $actionurl = helper::question_preview_action_url($this->questiondata->id, $this->quba->get_id(), $this->options,
                 $this->context, $this->returnurl, question_preview_options::ALWAYS_LATEST);
         $params = [
@@ -111,7 +112,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      *
      * @covers ::question_preview_action_url
      */
-    public function test_question_preview_action_url_no_restartversion() {
+    public function test_question_preview_action_url_no_restartversion(): void {
         $actionurl = helper::question_preview_action_url($this->questiondata->id, $this->quba->get_id(), $this->options,
                 $this->context, $this->returnurl);
         $params = [
@@ -130,7 +131,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      *
      * @covers ::question_preview_form_url
      */
-    public function test_question_preview_form_url() {
+    public function test_question_preview_form_url(): void {
         $formurl = helper::question_preview_form_url(
                 $this->questiondata->id, $this->context, $this->quba->get_id(), $this->returnurl);
         $params = [
@@ -148,7 +149,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      *
      * @covers ::question_preview_url
      */
-    public function test_question_preview_url() {
+    public function test_question_preview_url(): void {
         $previewurl = helper::question_preview_url($this->questiondata->id, $this->options->behaviour, $this->options->maxmark,
                 $this->options, $this->options->variant, $this->context, null, question_preview_options::ALWAYS_LATEST);
         $params = [
@@ -176,7 +177,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      *
      * @covers ::question_preview_url
      */
-    public function test_question_preview_url_no_restartversion() {
+    public function test_question_preview_url_no_restartversion(): void {
         $previewurl = helper::question_preview_url($this->questiondata->id, $this->options->behaviour, $this->options->maxmark,
                 $this->options, $this->options->variant, $this->context, null);
         $params = [
@@ -202,7 +203,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      *
      * @covers ::get_preview_extra_elements
      */
-    public function test_get_preview_extra_elements() {
+    public function test_get_preview_extra_elements(): void {
         global $PAGE;
         $PAGE->set_url('/');
 
@@ -220,7 +221,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
      *
      * @covers ::load_versions
      */
-    public function test_load_versions() {
+    public function test_load_versions(): void {
         $this->resetAfterTest();
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');

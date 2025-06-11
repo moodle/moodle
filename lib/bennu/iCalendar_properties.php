@@ -25,6 +25,12 @@ class iCalendar_property {
     var $val_multi        = false;
     var $val_default      = NULL;
 
+    /** @var int|null RFC2445_TYPE value. */
+    protected $val_type;
+
+    /** @var string property name. */
+    protected $name;
+
     function __construct() {
         $this->parameters = array();
     }

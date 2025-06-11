@@ -120,7 +120,10 @@ class user_editadvanced_form extends moodleform {
         }
 
         $purpose = user_edit_map_field_purpose($userid, 'password');
-        $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"' . $purpose);
+        $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'),
+            'maxlength="'.MAX_PASSWORD_CHARACTERS.'" size="20"' . $purpose);
+        $mform->addRule('newpassword', get_string('maximumchars', '', MAX_PASSWORD_CHARACTERS),
+            'maxlength', MAX_PASSWORD_CHARACTERS, 'client');
         $mform->addHelpButton('newpassword', 'newpassword');
         $mform->setType('newpassword', core_user::get_property_type('password'));
         $mform->disabledIf('newpassword', 'createpassword', 'checked');
@@ -235,6 +238,14 @@ class user_editadvanced_form extends moodleform {
 
             if ($user && $mform->elementExists('deletepicture') && !$hasuploadedpicture) {
                 $mform->removeElement('deletepicture');
+            }
+        }
+
+        // User changing their preferred theme will delete the cache for this theme.
+        if ($mform->elementExists('theme') && $mform->isSubmitted()) {
+            $theme = $mform->getSubmitValue('theme');
+            if (!empty($user) && ($theme != $user->theme)) {
+                theme_delete_used_in_context_cache($theme, $user->theme);
             }
         }
 

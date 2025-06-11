@@ -28,18 +28,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require('../../../config.php');
 
-require_once($CFG->libdir.'/cronlib.php');
-
-/**
- * Function used to handle mtrace by outputting the text to normal browser window.
- *
- * @param string $message Message to output
- * @param string $eol End of line character
- */
-function tool_task_mtrace_wrapper($message, $eol) {
-    echo s($message . $eol);
-}
-
 // Allow execution of single task. This requires login and has different rules.
 $taskname = required_param('task', PARAM_RAW_TRIMMED);
 
@@ -95,13 +83,17 @@ require_sesskey();
 
 \core\session\manager::write_close();
 
+// Prepare for streamed output.
+echo $OUTPUT->footer();
+echo $OUTPUT->select_element_for_append();
+
 // Prepare to handle output via mtrace.
-echo html_writer::start_tag('pre');
+require_once("{$CFG->dirroot}/{$CFG->admin}/tool/task/lib.php");
+echo html_writer::start_tag('pre', ['class' => 'task-output', 'style' => 'min-height: 24lh']);
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified task (this will output an error if it doesn't exist).
 \core\task\manager::run_from_cli($task);
-
 echo html_writer::end_tag('pre');
 
 $output = $PAGE->get_renderer('tool_task');
@@ -112,4 +104,3 @@ echo $OUTPUT->single_button(new moodle_url('/admin/tool/task/schedule_task.php',
         get_string('runagain', 'tool_task'));
 echo $output->link_back(get_class($task));
 
-echo $OUTPUT->footer();

@@ -837,7 +837,7 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
             if ($subanswertext != '') { // Only import non empty subanswers.
                 $subquestion = '';
 
-                $fiber = array_keys ($mappings, $choiceid);
+                $fiber = moodle_array_keys_filter($mappings, $choiceid);
                 foreach ($fiber as $correctanswerid) {
                     // We have found a correspondance for this subanswer so we need to take the associated subquestion.
                     foreach ($quest->RESPONSE_BLOCK->subquestions as $qid => $subq) {

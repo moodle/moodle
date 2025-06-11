@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Panopto LTI Atto button language file.
+ *
  * @package    atto_panoptoltibutton
  * @copyright  2020 Panopto
  * @author     Panopto
@@ -24,4 +26,11 @@
 $string['erroroccurred'] = 'An error occurred adding this content';
 $string['lti'] = 'lti';
 $string['pluginname'] = 'Panopto LTI';
+$string['settings'] = 'Panopto LTI';
+$string['visible'] = 'Visible';
+$string['invalid_content_host'] = "The host for the target content must match one of the Panopto servers configured in the Panopto block for Moodle.";
+$string['is_responsive'] = 'Responsive videos';
+$string['is_responsive_desc'] = 'If this setting is enabled, Panopto videos embedded on this page will be responsive. Note this will only affect videos embedded after this setting has been enabled, and will not affect previously embedded content.';
 $string['privacy:metadata'] = 'The atto_panoptoltibutton plugin does not store any personal data';
+$string['panoptoltibutton:view'] = 'Allows enrolled users to view Panopto LTI Button for Atto content embedded in courses';
+$string['panoptoltibutton:visible'] = 'Visible';

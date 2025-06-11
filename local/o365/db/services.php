@@ -82,13 +82,6 @@ $functions = [
         'description' => 'Update a grade.',
         'type' => 'write',
     ],
-    'local_o365_get_bot_message' => [
-        'classname' => '\local_o365\webservices\read_bot_message',
-        'methodname' => 'bot_message_read',
-        'classpath' => 'local/o365/classes/webservices/read_bot_message.php',
-        'description' => 'Get bot message.',
-        'type' => 'read',
-    ]
 ];
 
 // Pre-built service.
@@ -102,7 +95,6 @@ $services = [
             'local_o365_get_teachercourses',
             'local_o365_get_course_users',
             'local_o365_get_assignments',
-            'local_o365_get_bot_message',
             'local_o365_update_grade',
             'mod_assign_get_assignments',
             'mod_assign_get_grades',
@@ -111,5 +103,5 @@ $services = [
         'restrictedusers' => 0,
         'enabled' => 0,
         'shortname' => 'o365_webservices',
-    ]
+    ],
 ];

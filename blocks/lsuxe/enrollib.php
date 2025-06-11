@@ -46,8 +46,8 @@ class lsuxe {
 
         $starttime = microtime(true);
 
-        if (lsuxe_helpers::is_ues()) {
-            mtrace("Using LSU UES");
+        if (lsuxe_helpers::is_wds()) {
+            mtrace("Using LSU WDS");
         } else {
             mtrace("Normal Moodle Enrollment");
         }
@@ -104,8 +104,8 @@ class lsuxe {
     public function run_lsuxe_courses() {
         $starttime = microtime(true);
 
-        if (lsuxe_helpers::is_ues()) {
-            mtrace("Using LSU UES");
+        if (lsuxe_helpers::is_wds()) {
+            mtrace("Using LSU WDS");
         } else {
             mtrace("Normal Moodle Enrollment");
         }
@@ -126,8 +126,8 @@ class lsuxe {
     public function run_lsuxe_users() {
         $starttime = microtime(true);
 
-        if (lsuxe_helpers::is_ues()) {
-            mtrace("Using LSU UES");
+        if (lsuxe_helpers::is_wds()) {
+            mtrace("Using LSU WDS");
         } else {
             mtrace("Normal Moodle Enrollment");
         }
@@ -167,8 +167,8 @@ class lsuxe {
     public function run_lsuxe_groups() {
         $starttime = microtime(true);
 
-        if (lsuxe_helpers::is_ues()) {
-            mtrace("Using LSU UES");
+        if (lsuxe_helpers::is_wds()) {
+            mtrace("Using LSU WDS");
         } else {
             mtrace("Normal Moodle Enrollment");
         }
@@ -190,8 +190,8 @@ class lsuxe {
 
         $starttime = microtime(true);
 
-        if (lsuxe_helpers::is_ues()) {
-            mtrace("Using LSU UES");
+        if (lsuxe_helpers::is_wds()) {
+            mtrace("Using LSU WDS");
         } else {
             mtrace("Normal Moodle Enrollment");
         }

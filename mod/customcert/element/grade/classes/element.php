@@ -197,7 +197,7 @@ class element extends \mod_customcert\element {
 
         $isgradeitem = false;
         $oldid = $gradeinfo->gradeitem;
-        if (strpos($gradeinfo->gradeitem, 'gradeitem:') === 0) {
+        if (str_starts_with($gradeinfo->gradeitem, 'gradeitem:')) {
             $isgradeitem = true;
             $oldid = str_replace('gradeitem:', '', $gradeinfo->gradeitem);
         }

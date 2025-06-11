@@ -37,7 +37,7 @@ $wizardnow = optional_param('wizardnow', '', PARAM_ALPHA);
 $originalreturnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
-$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
+$mdlscrollto = optional_param('mdlscrollto', 0, PARAM_INT);
 
 \core_question\local\bank\helper::require_plugin_enabled('qbank_editquestion');
 
@@ -72,8 +72,8 @@ if ($appendqnumstring !== '') {
 if ($inpopup !== 0) {
     $url->param('inpopup', $inpopup);
 }
-if ($scrollpos) {
-    $url->param('scrollpos', $scrollpos);
+if ($mdlscrollto) {
+    $url->param('mdlscrollto', $mdlscrollto);
 }
 $PAGE->set_url($url);
 
@@ -92,8 +92,8 @@ if ($originalreturnurl) {
 } else {
     $returnurl = $questionbankurl;
 }
-if ($scrollpos) {
-    $returnurl->param('scrollpos', $scrollpos);
+if ($mdlscrollto) {
+    $returnurl->param('mdlscrollto', $mdlscrollto);
 }
 
 if ($cmid) {
@@ -204,7 +204,7 @@ if ($wizardnow !== '') {
 }
 $toform = fullclone($question); // Send the question object and a few more parameters to the form.
 $toform->category = "{$category->id},{$category->contextid}";
-$toform->scrollpos = $scrollpos;
+$toform->mdlscrollto = $mdlscrollto;
 if ($formeditable && $id) {
     $toform->categorymoveto = $toform->category;
 }
@@ -287,8 +287,8 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    // If this is a new question, save defaults for user in user_preferences table.
-    if (empty($question->id)) {
+    // If this is a new question and question defaults save is enabled, save defaults for user in user_preferences table.
+    if (empty($question->id) && !empty($CFG->questiondefaultssave)) {
         $qtypeobj->save_defaults_for_new_questions($fromform);
     }
     $question = $qtypeobj->save_question($question, $fromform);
@@ -328,14 +328,23 @@ if ($mform->is_cancelled()) {
                 $returnurl->param('sesskey', sesskey());
                 $returnurl->param('cmid', $cmid);
             }
+            // Update the filter param to the updated category if the return have any.
+            if (!empty($returnurl->param('filter'))) {
+                $filter = json_decode($returnurl->param('filter'), true);
+                if (isset($filter['category']['values'])) {
+                    $filter['category']['values'][0] = $question->category;
+                    $returnurl->param('filter', json_encode($filter));
+                }
+            }
             redirect($returnurl);
         }
 
     } else {
-        $nexturlparams = array(
+        $nexturlparams = [
                 'returnurl' => $originalreturnurl,
                 'appendqnumstring' => $appendqnumstring,
-                'scrollpos' => $scrollpos);
+                'mdlscrollto' => $mdlscrollto,
+        ];
         if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)) {
             // Useful for passing data to the next page which is not saved in the database.
             $nexturlparams += $fromform->nextpageparam;
@@ -347,6 +356,14 @@ if ($mform->is_cancelled()) {
             $nexturl->param('cmid', $cmid);
         } else {
             $nexturl->param('courseid', $COURSE->id);
+        }
+        // Update the filter param to the updated category if the return url have any.
+        if (!empty($nexturl->param('filter'))) {
+            $filter = json_decode($nexturl->param('filter'), true);
+            if (isset($filter['category']['values'])) {
+                $filter['category']['values'][0] = $question->category;
+                $nexturl->param('filter', json_encode($filter));
+            }
         }
         redirect($nexturl);
     }

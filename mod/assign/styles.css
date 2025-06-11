@@ -43,10 +43,6 @@
     font-weight: 900;
 }
 
-.path-mod-assign.jsenabled .gradingoptionsform [type=submit] {
-    display: none;
-}
-
 .path-mod-assign.jsenabled .gradingtable .c1 select {
     display: none;
 }
@@ -123,6 +119,10 @@
     background-color: #efcfcf;
 }
 
+.path-mod-assign div.dropdown.extrafilters .dropdown-menu {
+    width: 300px;
+}
+
 .path-mod-assign .gradingtable .c0 {
     display: none;
 }
@@ -131,12 +131,13 @@
     display: table-cell;
 }
 
-.path-mod-assign .gradingbatchoperationsform {
-    display: none;
+.path-mod-assign .gradingtable table {
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
-.path-mod-assign.jsenabled .gradingbatchoperationsform {
-    display: block;
+.path-mod-assign .gradingtable thead th {
+    background-color: white;
 }
 
 .path-mod-assign .gradingtable tr.selectedrow td {
@@ -227,9 +228,11 @@
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link {
+    background: none 2px 4px / 16px 16px no-repeat;
     display: block;
     cursor: pointer;
     margin-bottom: 7px;
+    padding-left: 20px;
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link h4 {
@@ -246,13 +249,11 @@
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link-open {
-    padding: 0 5px 0 20px;
-    background: url([[pix:t/expanded]]) 2px center no-repeat;
+    background-image: url([[pix:t/expanded]]);
 }
 
 .path-mod-assign.jsenabled .mod-assign-history-link-closed {
-    padding: 0 5px 0 20px;
-    background: url([[pix:t/collapsed]]) 2px center no-repeat;
+    background-image: url([[pix:t/collapsed]]);
 }
 
 /*rtl:raw:
@@ -282,6 +283,10 @@
 }
 
 .path-mod-assign .gradingtable .moodle-actionmenu {
+    white-space: nowrap;
+}
+
+.path-mod-assign .gradingtable .username .d-inline-block {
     white-space: nowrap;
 }
 
@@ -1141,6 +1146,11 @@
         float: none;
         margin: 0 auto 10px;
     }
+
+    /* Bug fix for TinyMCE menu when in fullscreen mode (small screens). */
+    body.tox-fullscreen.path-mod-assign [data-region="grading-navigation"] {
+        display: none;
+    }
 }
 
 /** Start of CSS to make forms vertical in the grading panel (taken from theme/bootstrapbase/less/moodle/forms.less). */
@@ -1215,4 +1225,22 @@ div[id*='mod_assign-timer-'] {
     display: block;
     font-weight: 600;
     font-size: 1.4em;
+}
+
+/* Bug fix for TinyMCE menu when in fullscreen mode. */
+body.tox-fullscreen.path-mod-assign [data-region="grade-panel"] {
+    position: unset;
+}
+
+/* Bug fix for TinyMCE menu when in fullscreen mode and when editor is nested in a popout.*/
+body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement[data-fieldtype="editor"] {
+    overflow: unset;
+}
+
+.path-mod-assign .initialsdropdown {
+    width: 460px;
+}
+
+.path-mod-assign .initialsdropdown::after {
+    content: '';
 }

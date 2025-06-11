@@ -19,7 +19,7 @@ Feature: Test importing regexp questions
   Scenario: import regexp question.
     When I am on the "Course 1" "core_question > course question import" page logged in as teacher
     And I set the field "id_format_xml" to "1"
-    And I upload "question\type\regexp\tests\fixtures\testquestion-moodle.xml" file to "Import" filemanager
+    And I upload "question/type/regexp/tests/fixtures/regexp_examples.xml" file to "Import" filemanager
     And I press "id_submitbutton"
     Then I should see "Parsing questions from import file."
     And I should see "Importing 1 questions from file"

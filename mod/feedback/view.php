@@ -27,8 +27,6 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
 $id = required_param('id', PARAM_INT);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
-$current_tab = 'view';
-
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 require_course_login($course, true, $cm);
 $feedback = $PAGE->activityrecord;

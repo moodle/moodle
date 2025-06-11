@@ -75,7 +75,8 @@ class xemixed {
         }
 
         $tokenresult = $DB->get_record_sql(
-            'SELECT token from mdl_block_lsuxe_moodles where url=?',
+            'SELECT token from mdl_block_lsuxe_moodles 
+            where url=? AND userdeleted IS NULL',
             array($url)
         );
 

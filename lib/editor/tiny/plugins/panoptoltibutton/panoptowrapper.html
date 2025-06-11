@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="js/jquery-3.7.0.min.js"></script>
+    <script src="js/handlebars.min-v4.7.7.js"></script>
+    <script src="js/panopto_tinymce_panoptoltibutton.js"></script>
+
+    <script>
+        // Got code to grab hash from url from the following StackOverflow post.
+        // http://stackoverflow.com/questions/11920697/how-to-get-hash-value-in-a-url-in-js
+        function getHashValue(key) {
+            var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
+            return matches ? matches[1] : null;
+        }
+
+        function createResourceLinkIdPanoptoTinymceLTI(base) {
+            return base + '_' + (new Date()).getTime();
+        };
+
+            // Get the courseId and toolid that was set by TinyMCE popup call.
+        var courseid = getHashValue('courseid'),
+            tool = JSON.parse(decodeURIComponent(getHashValue('tool'))),
+            resourceLinkId = createResourceLinkIdPanoptoTinymceLTI(getHashValue('resourcebase')),
+            unprovisionederror = decodeURIComponent(getHashValue('unprovisionerror')),
+            wwwroot = decodeURIComponent(getHashValue('wwwroot')),
+            contentitempath = decodeURIComponent(getHashValue('contentitempath'));
+
+        $(document).ready(function () {
+            document.CALLBACKS = {
+                handleError: function (errors) {
+                    alert(errorMessage);
+                    for (var i = 0; i < errors.length; i++) {
+                        console.error(errors[i]);
+                    }
+                }
+            };
+
+            document.CALLBACKS['f' + resourceLinkId] = function (contentItemData) {
+                if (!contentItemData) {
+                    return;
+                }
+
+                for (var i = 0; i < contentItemData['@graph'].length; i++) {
+                    var item = contentItemData['@graph'][i];
+                    var strategyFactory = new panopto_tinymce_panoptoltibutton.PlacementStrategyFactory();
+                    var strategy = strategyFactory.strategyFor(item, courseid, resourceLinkId, tool, wwwroot);
+                    var render = strategy.toHtml;
+                    window.parent.tinyMCE.activeEditor.execCommand('mceInsertContent', 0, render(item));
+                }
+
+                window.parent.closeModal();
+            };
+
+            if (!courseid || !tool) {
+                // Add the panopto error text to the error container. Also hide the iframe so the user does not try to access a broken iframe.
+                $('#errorcontainer').css("display", "block");
+                $('#pageframe').css("display", "none");
+                $('#errorcontainer').html(unprovisionederror);
+            } else {
+                $('#pageframe').attr('src', wwwroot + contentitempath +
+                    '?course=' + courseid +
+                    '&id=' + tool.id +
+                    '&callback=f' + resourceLinkId);
+            }
+        });
+    </script>
+
+    <meta charset="utf-8" />
+    <title>Add Panopto Video</title>
+</head>
+<body>
+    <div id='pagediv'>
+        <iframe id="pageframe" width="990" height="680"></iframe>
+    </div>
+    <div id='errorcontainer' style="display:none;font-size: 20px; color: red;margin-top:75px;"></div>
+</body>
+</html>

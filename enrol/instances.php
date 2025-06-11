@@ -93,6 +93,7 @@ if ($canconfig and $action and confirm_sesskey()) {
             redirect($PAGE->url);
 
         } else if ($action === 'delete') {
+
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
 
@@ -144,6 +145,7 @@ if ($canconfig and $action and confirm_sesskey()) {
             }
 
         } else if ($action === 'disable') {
+
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
             if ($plugin->can_hide_show_instance($instance)) {
@@ -172,6 +174,7 @@ if ($canconfig and $action and confirm_sesskey()) {
             }
 
         } else if ($action === 'enable') {
+
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
             if ($plugin->can_hide_show_instance($instance)) {
@@ -187,7 +190,6 @@ if ($canconfig and $action and confirm_sesskey()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_participants_tertiary_nav($course);
-echo $OUTPUT->heading(get_string('enrolmentinstances', 'enrol'));
 
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 

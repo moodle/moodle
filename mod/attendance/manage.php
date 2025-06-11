@@ -34,19 +34,19 @@ $pageparams->curdate        = optional_param('curdate', null, PARAM_INT);
 $pageparams->perpage        = get_config('attendance', 'resultsperpage');
 
 $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att            = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att            = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
-$capabilities = array(
+$capabilities = [
     'mod/attendance:manageattendances',
     'mod/attendance:takeattendances',
-    'mod/attendance:changeattendances'
-);
+    'mod/attendance:changeattendances',
+];
 if (!has_any_capability($capabilities, $context)) {
-    $url = new moodle_url('/mod/attendance/view.php', array('id' => $cm->id));
+    $url = new moodle_url('/mod/attendance/view.php', ['id' => $cm->id]);
     redirect($url);
 }
 
@@ -62,7 +62,7 @@ if ($from === 'block') {
         $nottaken = !$sess->lasttaken && has_capability('mod/attendance:takeattendances', $context);
         $canchange = $sess->lasttaken && has_capability('mod/attendance:changeattendances', $context);
         if ($nottaken || $canchange) {
-            redirect($att->url_take(array('sessionid' => $sess->id, 'grouptype' => $sess->groupid)));
+            redirect($att->url_take(['sessionid' => $sess->id, 'grouptype' => $sess->groupid]));
         }
     } else if ($size > 1) {
         $att->curdate = $today;
@@ -76,7 +76,6 @@ $PAGE->set_title($course->shortname. ": ".$att->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_cacheable(true);
 $PAGE->force_settings_menu(true);
-$PAGE->navbar->add($att->name);
 
 $output = $PAGE->get_renderer('mod_attendance');
 $filtercontrols = new mod_attendance\output\filter_controls($att);

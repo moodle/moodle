@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the custom file types.
- *
- * @package tool_filetypes
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
 use tool_filetypes\utils;
 
 /**
@@ -32,12 +22,15 @@ use tool_filetypes\utils;
  * @package tool_filetypes
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \tool_filetypes\utils
  */
-class tool_filetypes_test extends advanced_testcase {
+final class tool_filetypes_test extends advanced_testcase {
     /**
      * Tests is_extension_invalid() function.
+     *
+     * @covers ::is_extension_invalid
      */
-    public function test_is_extension_invalid() {
+    public function test_is_extension_invalid(): void {
         // The pdf file extension already exists in default moodle minetypes.
         $this->assertTrue(utils::is_extension_invalid('pdf'));
 
@@ -56,8 +49,10 @@ class tool_filetypes_test extends advanced_testcase {
 
     /**
      * Tests is_defaulticon_allowed() function.
+     *
+     * @covers ::is_defaulticon_allowed
      */
-    public function test_is_defaulticon_allowed() {
+    public function test_is_defaulticon_allowed(): void {
         // You ARE allowed to set a default icon for a MIME type that hasn't
         // been used yet.
         $this->assertTrue(utils::is_defaulticon_allowed('application/x-frog'));
@@ -73,8 +68,10 @@ class tool_filetypes_test extends advanced_testcase {
 
     /**
      * Tests get_icons_from_path() function.
+     *
+     * @covers ::get_icons_from_path
      */
-    public function test_get_icons_from_path() {
+    public function test_get_icons_from_path(): void {
         // Get icons from the fixtures folder.
         $icons = utils::get_icons_from_path(__DIR__ . '/fixtures');
 
@@ -82,5 +79,27 @@ class tool_filetypes_test extends advanced_testcase {
         // For the icon with numbers after the name, only the base name is
         // returned and only one of it.
         $this->assertEquals(array('frog' => 'frog', 'zombie' => 'zombie'), $icons);
+    }
+
+    /**
+     * Test get_file_icons() function to confirm no file icons are removed by mistake.
+     *
+     * @covers ::get_file_icons
+     */
+    public function test_get_file_icons(): void {
+        $icons = utils::get_file_icons();
+        $filetypes = core_filetypes::get_types();
+
+        $requiredicons = array_column($filetypes, 'icon');
+        $requireduniqueicons = array_unique($requiredicons);
+
+        // The 'folder' icon is not a file, however the test validates no
+        // file icons are removed by mistake from the directory pix/f.
+        // Adding the folder icon manually completes the scope of this test.
+        $requireduniqueicons[] = 'folder';
+
+        foreach ($requireduniqueicons as $requiredicon) {
+            $this->assertArrayHasKey($requiredicon, $icons, "Icon '$requiredicon' is missing.");
+        }
     }
 }

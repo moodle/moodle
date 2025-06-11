@@ -47,7 +47,7 @@ class linked_cm_exporter extends \core\external\exporter {
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
     protected static function define_related() {
-        return array('relatedinfo' => '\\stdClass');
+        return ['relatedinfo' => '\\stdClass'];
     }
 
     /**
@@ -56,23 +56,23 @@ class linked_cm_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'url' => array(
-                'type' => PARAM_RAW
-            ),
-            'rated' => array(
-                'type' => PARAM_BOOL
-            ),
-            'cmname' => array(
-                'type' => PARAM_RAW
-            ),
-            'cmicon' => array(
-                'type' => PARAM_RAW
-            ),
-            'coursename' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'url' => [
+                'type' => PARAM_RAW,
+            ],
+            'rated' => [
+                'type' => PARAM_BOOL,
+            ],
+            'cmname' => [
+                'type' => PARAM_RAW,
+            ],
+            'cmicon' => [
+                'type' => PARAM_RAW,
+            ],
+            'coursename' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -85,7 +85,7 @@ class linked_cm_exporter extends \core\external\exporter {
         $cmdata = $this->data;
         $result = new \stdClass();
 
-        $urlparams = array('user' => $this->related['relatedinfo']->userid, 'id' => $cmdata->cmid);
+        $urlparams = ['user' => $this->related['relatedinfo']->userid, 'id' => $cmdata->cmid];
         $url = (new \moodle_url('/report/cmcompetency/index.php', $urlparams))->out();
 
         $cm = get_coursemodule_from_id('', $cmdata->cmid, 0, true);

@@ -39,7 +39,7 @@ class stats {
      *
      * @return int
      */
-    public static function enabled_models() : int {
+    public static function enabled_models(): int {
         return count(manager::get_all_models(true));
     }
 
@@ -48,7 +48,7 @@ class stats {
      *
      * @return int
      */
-    public static function predictions() : int {
+    public static function predictions(): int {
         global $DB;
 
         return $DB->count_records('analytics_predictions');
@@ -59,7 +59,7 @@ class stats {
      *
      * @return int
      */
-    public static function actions() : int {
+    public static function actions(): int {
         global $DB;
 
         return $DB->count_records('analytics_prediction_actions');
@@ -70,7 +70,7 @@ class stats {
      *
      * @return int
      */
-    public static function actions_not_useful() : int {
+    public static function actions_not_useful(): int {
         global $DB;
 
         // Simple version using core's TYPE_NEGATIVE actions.

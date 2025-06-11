@@ -142,12 +142,12 @@ abstract class core_role_capability_table_base {
     /**
      * For subclasses to override, output header cells, after the initial capability one.
      */
-    protected abstract function add_header_cells();
+    abstract protected function add_header_cells();
 
     /**
      * For subclasses to override, return the number of cells that add_header_cells/add_row_cells output.
      */
-    protected abstract function num_extra_columns();
+    abstract protected function num_extra_columns();
 
     /**
      * For subclasses to override. Allows certain capabilties
@@ -191,5 +191,5 @@ abstract class core_role_capability_table_base {
      * @param stdClass $capability the capability this row relates to.
      * @return string html of row cells
      */
-    protected abstract function add_row_cells($capability);
+    abstract protected function add_row_cells($capability);
 }

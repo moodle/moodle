@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/auth/manual/auth.php');
  * @copyright  2014 Gilles-Philippe Leblanc <gilles-philippe.leblanc@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manual_test extends \advanced_testcase {
+final class manual_test extends \advanced_testcase {
 
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
@@ -40,6 +40,7 @@ class manual_test extends \advanced_testcase {
      * Setup test data.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_manual();
         set_config('expiration', '1', 'auth_manual');
@@ -51,7 +52,7 @@ class manual_test extends \advanced_testcase {
     /**
      * Test user_update_password method.
      */
-    public function test_user_update_password() {
+    public function test_user_update_password(): void {
         $user = $this->getDataGenerator()->create_user();
         $expectedtime = time();
         $passwordisupdated = $this->authplugin->user_update_password($user, 'MyNewPassword*');
@@ -66,7 +67,7 @@ class manual_test extends \advanced_testcase {
     /**
      * Test test_password_expire method.
      */
-    public function test_password_expire() {
+    public function test_password_expire(): void {
         $userrecord = array();
         $expirationtime = 31 * DAYSECS;
         $userrecord['timecreated'] = time() - $expirationtime;

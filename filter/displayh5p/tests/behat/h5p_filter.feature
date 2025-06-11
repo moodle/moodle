@@ -14,9 +14,6 @@ Feature: Render H5P content using filters
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
     And the "displayh5p" filter is "on"
     And the following config values are set as admin:
       | allowedsources | https://moodle.h5p.com/content/[id]/embed | filter_displayh5p |

@@ -1,0 +1,27 @@
+@import "mixins";
+@import "joule";
+@import "yui";
+@import "blocks";
+@import "core";
+@import "course";
+@import "coursefooter";
+@import "courselistings";
+@import "toc";
+@import "personalmenu";
+@import "forms";
+@import "filemanager";
+@import "plugins";
+@import "userprofile";
+@import "message";
+@import "coursemanagement";
+@import "themesettings";
+@import "brandcolor";
+@import "typefaces";
+@import "behat";
+@import "custom";
+@import "print";
+@import "cropper";
+@import "sidebarmenu";
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+@import "../../boost/scss/moodle/reportbuilder";

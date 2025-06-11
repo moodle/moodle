@@ -44,20 +44,20 @@ class attendance extends base {
     private $acronyms = [];
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'user' => 'attu',
-            'context' => 'attctx',
-            'course' => 'attc',
-            'attendance' => 'att',
-            'attendance_sessions' => 'attsess',
-            'attendance_log' => 'attlog',
-            'attendance_statuses' => 'attstat',
-            'session_data' => 'sessdata',
+            'user',
+            'context',
+            'course',
+            'attendance',
+            'attendance_sessions',
+            'attendance_log',
+            'attendance_statuses',
+            'session_data',
         ];
     }
 

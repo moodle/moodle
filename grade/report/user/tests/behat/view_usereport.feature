@@ -10,7 +10,6 @@ Feature: We can use the user report
 
   Scenario: Verify we can view a user grade report with no users enrolled.
     When I am on the "Course 1" "grades > User report > View" page logged in as "admin"
-    And I click on "All users (0)" in the "user" search widget
     Then I should see "There are no students enrolled in this course."
 
   Scenario: Teacher sees his last viewed user report when navigating back to the gradebook user report.
@@ -25,14 +24,14 @@ Feature: We can use the user report
       | teacher2 | C1     | editingteacher |
       | student1 | C1     | student        |
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
-    And I should see "Select a user above to view their report" in the "region-main" "region"
-    And I click on "Student 1" in the "user" search widget
+    And I should see "Search for a user to view their report" in the "region-main" "region"
+    And I click on "Student 1" in the "Search users" search combo box
     And I should see "Student 1" in the "region-main" "region"
     When I am on the "Course 1" "grades > User report > View" page
-    Then I should not see "Select a user above to view their report" in the "region-main" "region"
+    Then I should not see "Search for a user to view their report" in the "region-main" "region"
     And I should see "Student 1" in the "region-main" "region"
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher2"
-    And I should see "Select a user above to view their report" in the "region-main" "region"
+    And I should see "Search for a user to view their report" in the "region-main" "region"
 
   Scenario: Teacher sees his last viewed user report if the user is a part of the the current group.
     Given the following "groups" exist:
@@ -52,12 +51,12 @@ Feature: We can use the user report
       | user     | group |
       | student2 | G1    |
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
-    And I click on "Student 2" in the "user" search widget
+    And I click on "Student 2" in the "Search users" search combo box
     And I navigate to "View > Grader report" in the course gradebook
-    And I select "Group 1" from the "group" singleselect
+    And I click on "Group 1" in the "Search groups" search combo box
     When I navigate to "View > User report" in the course gradebook
     Then I should see "Student 2" in the "region-main" "region"
-    And I should not see "Select a user above to view their report" in the "region-main" "region"
+    And I should not see "Search for a user to view their report" in the "region-main" "region"
 
   Scenario: Teacher does not see the last viewed user if the user is not a part of the the current group.
     Given the following "groups" exist:
@@ -77,11 +76,11 @@ Feature: We can use the user report
       | user     | group |
       | student2 | G1    |
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And I navigate to "View > Grader report" in the course gradebook
-    And I select "Group 1" from the "group" singleselect
+    And I click on "Group 1" in the "Search groups" search combo box
     When I navigate to "View > User report" in the course gradebook
-    Then I should see "Select a user above to view their report" in the "region-main" "region"
+    Then I should see "Search for a user to view their report" in the "region-main" "region"
     And I should not see "Student 1" in the "region-main" "region"
 
   Scenario: Teacher does not see his last viewed user report if the user is no longer enrolled in the course.
@@ -96,12 +95,12 @@ Feature: We can use the user report
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     And I should see "Student 1" in the "region-main" "region"
     And I navigate to course participants
     And I click on "Unenrol" "icon" in the "Student 1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I am on "Course 1" course homepage
     When I navigate to "View > User report" in the course gradebook
-    Then I should see "Select a user above to view their report" in the "region-main" "region"
+    Then I should see "Search for a user to view their report" in the "region-main" "region"
     And I should not see "Student 1" in the "region-main" "region"

@@ -38,7 +38,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection = new collection('testcomponent3');
         $collection->add_database_table('testtable', ['testfield1', 'testfield2'], 'testsummary');
         return $collection;

@@ -78,6 +78,9 @@ class mod_feedback_responses_table extends table_sql {
     /** @var array the data structure containing the table data for the external function */
     protected $dataforexternal = [];
 
+    /** @var bool true if elements per page > 0, otherwise false. */
+    protected $pageable;
+
     /**
      * Constructor
      *
@@ -429,7 +432,7 @@ class mod_feedback_responses_table extends table_sql {
         groups_print_activity_menu($this->feedbackstructure->get_cm(), $this->baseurl->out());
         $grandtotal = $this->get_total_responses_count();
         if (!$grandtotal) {
-            echo $OUTPUT->box(get_string('nothingtodisplay'), 'generalbox nothingtodisplay');
+            echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
             return;
         }
 

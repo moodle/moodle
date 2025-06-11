@@ -282,7 +282,7 @@ function toolbook_importhtml_get_chapter_files($package, $type) {
 
         } else {
             $mime = mimeinfo('icon', $file->pathname);
-            if ($mime !== 'html') {
+            if ($mime !== 'markup') {
                 continue;
             }
             $level = substr_count($file->pathname, '/');

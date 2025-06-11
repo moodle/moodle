@@ -18,18 +18,13 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\number;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
-use lang_string;
-use stdClass;
+use core\lang_string;
 use core_customfield\data_controller;
 use core_customfield\field_controller;
 use core_customfield\handler;
+use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
+use core_reportbuilder\local\report\{column, filter};
+use stdClass;
 
 /**
  * Helper class for course custom fields.
@@ -40,64 +35,64 @@ use core_customfield\handler;
  */
 class custom_fields {
 
-    /** @var string $entityname Name of the entity */
-    private $entityname;
+    use join_trait;
 
     /** @var handler $handler The handler for the customfields */
-    private $handler;
-
-    /** @var int $tablefieldalias The table alias and the field name (table.field) that matches the customfield instanceid. */
-    private $tablefieldalias;
-
-    /** @var array additional joins */
-    private $joins = [];
+    private handler $handler;
 
     /**
-     * Class customfields constructor.
+     * Constructor
      *
-     * @param string $tablefieldalias table alias and the field name (table.field) that matches the customfield instanceid.
-     * @param string $entityname name of the entity in the report where we add custom fields.
+     * @param string $tablefieldalias The table/field alias to match the instance ID when adding columns and filters.
+     * @param string $entityname The entity name used when adding columns and filters.
      * @param string $component component name of full frankenstyle plugin name.
      * @param string $area name of the area (each component/plugin may define handlers for multiple areas).
      * @param int $itemid item id if the area uses them (usually not used).
      */
-    public function __construct(string $tablefieldalias, string $entityname, string $component, string $area, int $itemid = 0) {
-        $this->tablefieldalias = $tablefieldalias;
-        $this->entityname = $entityname;
+    public function __construct(
+        /** @var string The table/field alias to match the instance ID when adding columns and filters */
+        private readonly string $tablefieldalias,
+        /** @var string The entity name used when adding columns and filters */
+        private readonly string $entityname,
+        string $component,
+        string $area,
+        int $itemid = 0,
+    ) {
         $this->handler = handler::get_handler($component, $area, $itemid);
     }
 
     /**
-     * Additional join that is needed.
+     * Get table alias for given custom field
      *
-     * @param string $join
-     * @return self
+     * The entity name is used to ensure the alias differs when the entity is used multiple times within the same report, each
+     * having their own table alias/join
+     *
+     * @param field_controller $field
+     * @return string
      */
-    public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
+    private function get_table_alias(field_controller $field): string {
+        static $aliases = [];
 
-    /**
-     * Additional joins that are needed.
-     *
-     * @param array $joins
-     * @return self
-     */
-    public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
+        $aliaskey = "{$this->entityname}_{$field->get('id')}";
+        if (!array_key_exists($aliaskey, $aliases)) {
+            $aliases[$aliaskey] = database::generate_alias();
         }
-        return $this;
+
+        return $aliases[$aliaskey];
     }
 
     /**
-     * Return joins
+     * Get table join for given custom field
      *
-     * @return string[]
+     * @param field_controller $field
+     * @return string
      */
-    private function get_joins(): array {
-        return array_values($this->joins);
+    private function get_table_join(field_controller $field): string {
+        $customdatatablealias = $this->get_table_alias($field);
+
+        return "LEFT JOIN {customfield_data} {$customdatatablealias}
+                       ON {$customdatatablealias}.fieldid = {$field->get('id')}
+                      AND {$customdatatablealias}.instanceid = {$this->tablefieldalias}";
     }
 
     /**
@@ -116,40 +111,53 @@ class custom_fields {
         foreach ($categorieswithfields as $fieldcategory) {
             $categoryfields = $fieldcategory->get_fields();
             foreach ($categoryfields as $field) {
-                $customdatatablealias = database::generate_alias();
-
                 $datacontroller = data_controller::create(0, null, $field);
-
                 $datafield = $datacontroller->datafield();
-                $datafieldsql = "{$customdatatablealias}.{$datafield}";
 
-                // Long text fields should be cast for Oracle, for aggregation support.
+                $customdatatablealias = $this->get_table_alias($field);
+                $customdatasql = "{$customdatatablealias}.{$datafield}";
+
+                // Numeric column (non-text) should coalesce with default, as should text fields for Oracle, for aggregation.
                 $columntype = $this->get_column_type($field, $datafield);
-                if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
-                    $datafieldsql = $DB->sql_order_by_text($datafieldsql, 1024);
+                if (!in_array($columntype, [column::TYPE_TEXT, column::TYPE_LONGTEXT])) {
+
+                    // See MDL-78783 regarding no bound parameters, and Oracle limitations of GROUP BY.
+                    $customdatasql = "
+                        CASE WHEN {$this->tablefieldalias} IS NOT NULL
+                             THEN COALESCE({$customdatasql}, " . (float) $datacontroller->get_default_value() . ")
+                             ELSE NULL
+                        END";
+                } else if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
+                    $customdatasql = $DB->sql_order_by_text($customdatasql, 1024);
                 }
 
                 // Select enough fields to re-create and format each custom field instance value.
-                $selectfields = "{$customdatatablealias}.id, {$customdatatablealias}.contextid";
+                $customdatasqlextra = "{$customdatatablealias}.id, {$customdatatablealias}.contextid";
                 if ($datafield === 'value') {
                     // We will take the format into account when displaying the individual values.
-                    $selectfields .= ", {$customdatatablealias}.valueformat";
+                    $customdatasqlextra .= ", {$customdatatablealias}.valueformat, {$customdatatablealias}.valuetrust";
                 }
 
                 $columns[] = (new column(
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name(false)),
                     $this->entityname
                 ))
                     ->add_joins($this->get_joins())
-                    ->add_join("LEFT JOIN {customfield_data} {$customdatatablealias} " .
-                        "ON {$customdatatablealias}.fieldid = " . $field->get('id') . " " .
-                        "AND {$customdatatablealias}.instanceid = {$this->tablefieldalias}")
-                    ->add_field($datafieldsql, $datafield)
-                    ->add_fields($selectfields)
+                    ->add_join($this->get_table_join($field))
+                    ->add_field($customdatasql, $datafield)
+                    ->add_fields($customdatasqlextra)
+                    ->add_field($this->tablefieldalias, 'tablefieldalias')
                     ->set_type($columntype)
                     ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
-                    ->add_callback(static function($value, stdClass $row, field_controller $field): string {
+                    ->add_callback(static function($value, stdClass $row, field_controller $field, ?string $aggregation): string {
+                        if ($row->tablefieldalias === null && $value === null) {
+                            return '';
+                        }
+                        // If aggregating numeric column, populate row ID to ensure the controller is created correctly.
+                        if (in_array((string) $aggregation, ['avg', 'max', 'min', 'sum'])) {
+                            $row->id ??= -1;
+                        }
                         return (string) data_controller::create(0, $row, $field)->export_value();
                     }, $field)
                     // Important. If the handler implements can_view() function, it will be called with parameter $instanceid=0.
@@ -174,6 +182,10 @@ class custom_fields {
 
         if ($field->get('type') === 'date') {
             return column::TYPE_TIMESTAMP;
+        }
+
+        if ($field->get('type') === 'select') {
+            return column::TYPE_TEXT;
         }
 
         if ($datafield === 'intvalue') {
@@ -207,39 +219,50 @@ class custom_fields {
         foreach ($categorieswithfields as $fieldcategory) {
             $categoryfields = $fieldcategory->get_fields();
             foreach ($categoryfields as $field) {
-                $customdatatablealias = database::generate_alias();
-
                 $datacontroller = data_controller::create(0, null, $field);
-
                 $datafield = $datacontroller->datafield();
-                $datafieldsql = "{$customdatatablealias}.{$datafield}";
+
+                $customdatatablealias = $this->get_table_alias($field);
+                $customdatasql = "{$customdatatablealias}.{$datafield}";
+                $customdataparams = [];
+
                 if ($datafield === 'value') {
-                    $datafieldsql = $DB->sql_cast_to_char($datafieldsql);
+                    $customdatasql = $DB->sql_cast_to_char($customdatasql);
                 }
 
-                $typeclass = $this->get_filter_class_type($datacontroller);
+                // Account for field default value, when joined to the instance table related to the custom fields.
+                if (($fielddefault = $datacontroller->get_default_value()) !== null) {
+                    $paramdefault = database::generate_param_name();
+
+                    // Oracle be crazy.
+                    $paramdefaultsql = ":{$paramdefault}";
+                    if ($DB->get_dbfamily() === 'oracle' && in_array($datafield, ['intvalue', 'decvalue'])) {
+                        $paramdefaultsql = $DB->sql_cast_char2int($paramdefaultsql);
+                    }
+
+                    $customdatasql = "
+                        CASE WHEN {$this->tablefieldalias} IS NOT NULL
+                             THEN COALESCE({$customdatasql}, {$paramdefaultsql})
+                             ELSE NULL
+                        END";
+                    $customdataparams[$paramdefault] = $fielddefault;
+                }
+
                 $filter = (new filter(
-                    $typeclass,
+                    $this->get_filter_class_type($datacontroller),
                     'customfield_' . $field->get('shortname'),
-                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name()),
+                    new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name(false)),
                     $this->entityname,
-                    $datafieldsql
+                    $customdatasql,
+                    $customdataparams,
                 ))
                     ->add_joins($this->get_joins())
-                    ->add_join("LEFT JOIN {customfield_data} {$customdatatablealias} " .
-                        "ON {$customdatatablealias}.fieldid = " . $field->get('id') . " " .
-                        "AND {$customdatatablealias}.instanceid = {$this->tablefieldalias}");
+                    ->add_join($this->get_table_join($field))
+                    ->set_is_available($this->handler->can_view($field, 0));
 
-                // Options are stored inside configdata json string and we need to convert it to array.
-                if ($field->get('type') === 'select') {
-                    $filter->set_options_callback(static function() use ($field): array {
-                        $options = explode("\r\n", $field->get_configdata_property('options'));
-                        // Method set_options starts using array at index 1. we shift one position on this array.
-                        // In course settings this menu has an empty option and we need to respect that.
-                        array_unshift($options, " ");
-                        unset($options[0]);
-                        return $options;
-                    });
+                // If using a select filter, then populate the options.
+                if ($filter->get_filter_class() === select::class) {
+                    $filter->set_options_callback(fn(): array => $field->get_options());
                 }
 
                 $filters[] = $filter;

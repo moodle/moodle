@@ -23,37 +23,38 @@
  */
 
 /**
- * Obtains the automatic completion state for this module based on any conditions
- * in assign settings.
- *
  * @deprecated since Moodle 3.11
- * @todo MDL-71196 Final deprecation in Moodle 4.3
- * @see \mod_assign\completion\custom_completion
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not, $type if conditions not set.
  */
-function assign_get_completion_state($course, $cm, $userid, $type) {
-    global $CFG;
+function assign_get_completion_state() {
+    $completionclass = \mod_assign\completion\custom_completion::class;
+    throw new coding_exception(__FUNCTION__ . "() has been removed, please use the '{$completionclass}' class instead");
+}
 
-    // No need to call debugging here. Deprecation debugging notice already being called in \completion_info::internal_get_state().
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function assign_print_overview() {
+    throw new coding_exception('assign_print_overview() can not be used any more and is obsolete.');
+}
 
-    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function assign_get_mysubmission_details_for_print_overview() {
+    throw new coding_exception('assign_get_mysubmission_details_for_print_overview() can not be used any more and is obsolete.');
+}
 
-    $assign = new assign(null, $cm, $course);
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function assign_get_grade_details_for_print_overview() {
+    throw new coding_exception('assign_get_grade_details_for_print_overview() can not be used any more and is obsolete.');
+}
 
-    // If completion option is enabled, evaluate it and return true/false.
-    if ($assign->get_instance()->completionsubmit) {
-        if ($assign->get_instance()->teamsubmission) {
-            $submission = $assign->get_group_submission($userid, 0, false);
-        } else {
-            $submission = $assign->get_user_submission($userid, false);
-        }
-        return $submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-    } else {
-        // Completion option is not enabled so just return $type.
-        return $type;
-    }
+/**
+ * @deprecated since Moodle 3.8
+ */
+function assign_scale_used() {
+    throw new coding_exception('assign_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }

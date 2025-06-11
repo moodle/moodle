@@ -28,19 +28,20 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calendar_cron_task_test extends \advanced_testcase {
+final class calendar_cron_task_test extends \advanced_testcase {
 
     /**
      * Tests set up
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
     /**
      * Test calendar cron task with a working subscription URL.
      */
-    public function test_cron_working_url() {
+    public function test_cron_working_url(): void {
         // ICal URL from external test repo.
         $subscriptionurl = $this->getExternalTestFileUrl('/ical.ics');
 
@@ -64,7 +65,7 @@ class calendar_cron_task_test extends \advanced_testcase {
     /**
      * Test calendar cron task with a broken subscription URL.
      */
-    public function test_cron_broken_url() {
+    public function test_cron_broken_url(): void {
         $subscription = new \stdClass();
         $subscription->eventtype = 'site';
         $subscription->name = 'test';

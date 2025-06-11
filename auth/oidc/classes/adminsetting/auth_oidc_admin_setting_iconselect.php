@@ -25,8 +25,6 @@
 
 namespace auth_oidc\adminsetting;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Choose an icon for the identity provider entry on the login page.
  */
@@ -93,8 +91,8 @@ class auth_oidc_admin_setting_iconselect extends \admin_setting {
      */
     public function output_html($data, $query = '') {
         global $CFG, $OUTPUT;
-        $attrs = array('type' => 'text/css', 'rel' => 'stylesheet',
-            'href' => new \moodle_url('/auth/oidc/classes/adminsetting/iconselect.css'));
+        $attrs = ['type' => 'text/css', 'rel' => 'stylesheet',
+                'href' => new \moodle_url('/auth/oidc/classes/adminsetting/iconselect.css')];
         $html = \html_writer::empty_tag('link', $attrs);
         $html .= \html_writer::start_tag('div', ['style' => 'max-width: 390px']);
         $selected = (!empty($data)) ? $data : $this->defaultsetting;
@@ -114,7 +112,7 @@ class auth_oidc_admin_setting_iconselect extends \admin_setting {
             }
             $html .= \html_writer::empty_tag('input', $inputattrs);
             $labelattrs = [
-                'class' => 'iconselect'
+                'class' => 'iconselect',
             ];
             $html .= \html_writer::label($iconhtml, $id, true, $labelattrs);
         }

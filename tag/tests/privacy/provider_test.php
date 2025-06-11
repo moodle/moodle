@@ -40,12 +40,12 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Check the exporting of tags for a user id in a context.
      */
-    public function test_export_tags() {
+    public function test_export_tags(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -77,6 +77,7 @@ class provider_test extends provider_testcase {
         // Retrieve tags only for this user.
         provider::export_item_tags($user->id, $context, $subcontext, 'core_course', 'course', $course->id, true);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
 
@@ -92,7 +93,7 @@ class provider_test extends provider_testcase {
     /**
      * Test method delete_item_tags().
      */
-    public function test_delete_item_tags() {
+    public function test_delete_item_tags(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -126,7 +127,7 @@ class provider_test extends provider_testcase {
     /**
      * Test method delete_item_tags() with userid.
      */
-    public function test_delete_item_tags_with_userid() {
+    public function test_delete_item_tags_with_userid(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -155,7 +156,7 @@ class provider_test extends provider_testcase {
     /**
      * Test method delete_item_tags_select().
      */
-    public function test_delete_item_tags_select() {
+    public function test_delete_item_tags_select(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -214,14 +215,14 @@ class provider_test extends provider_testcase {
         return [$user1, $user2];
     }
 
-    public function test_export_item_tags() {
+    public function test_export_item_tags(): void {
         list($user1, $user2) = $this->set_up_tags();
         $this->assertEquals([\context_system::instance()->id],
             provider::get_contexts_for_userid($user1->id)->get_contextids());
         $this->assertEmpty(provider::get_contexts_for_userid($user2->id)->get_contextids());
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         list($user1, $user2) = $this->set_up_tags();
         $context = \context_system::instance();
@@ -235,7 +236,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(2, $DB->count_records('tag', ['userid' => 0]));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $course = $this->getDataGenerator()->create_course();
         list($user1, $user2) = $this->set_up_tags();
@@ -249,7 +250,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(0, $DB->count_records('tag_instance', []));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         global $DB;
         list($user1, $user2) = $this->set_up_tags();
         $context = \context_system::instance();
@@ -261,6 +262,7 @@ class provider_test extends provider_testcase {
         }, \core_tag_tag::get_by_name_bulk(\core_tag_collection::get_default(), ['Birdwatching', 'Computers'])));
 
         provider::export_user_data(new \core_privacy\local\request\approved_contextlist($user1, 'core_tag', [$context->id]));
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $data = $writer->get_data(['Tags', $tagids[0]]);
@@ -277,7 +279,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users within a system context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'core_tag';
 
         $user1 = $this->set_up_tags()[0];
@@ -300,7 +302,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'core_tag';
 
         list($user1, $user2) = $this->set_up_tags();

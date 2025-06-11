@@ -1,0 +1,599 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Snap core swatch.
+ *
+ * @package   theme_snap
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* stylelint-disable declaration-no-important*/
+
+// Exclude hidden form elements from being hidden when behat is running or it breaks
+// "I set the following fields to these values". More specifically, the error is because expand_all_fields in
+// behat_forms.php doesn't handle errors with .moreless-toggler not being visible (it handles it not being there but
+// not hidden).
+body:not(.behat-site) {
+
+    // Hide meaningless 'General' legend on forms.
+    #id_generalhdr .ftoggler,
+    #id_general .ftoggler {
+        display: none !important;
+    }
+}
+
+// Hide show description option. Use of nth-child pseudo selector due to lack of id in div.
+body#page-mod-page-mod fieldset#id_general div.fcontainer:nth-child(2) div.form-group:nth-child(3) {
+    display: none;
+}
+
+.mform fieldset {
+    margin-left: 0;
+    border: none;
+    .fcontainer.collapseable .col-form-label {
+        padding-left: unset;
+    }
+}
+
+.form-label .form-shortname {
+    display: inline;
+}
+
+.form-item,
+.path-backup .mform .grouped_settings .fitem,
+.mform .fcontainer > .fitem {
+    margin-bottom: 0;
+    padding: 0.5rem;
+
+    &:hover {
+        background-color: #efefef;
+    }
+}
+
+.mform #id_general .form-group.fitem.snap_content_notification_check {
+    margin-top: 1rem;
+    padding: 0.5rem;
+
+    &:hover {
+        background-color: #efefef;
+    }
+}
+
+.mform .fitem {
+    &.fitem_fcheckbox:not(#fitem_id_onlygraded) {
+        .fitemtitle {
+            display: inline;
+            float: none;
+            width: auto;
+            padding-left: 0;
+        }
+
+        .fcheckbox {
+            width: auto;
+            padding-right: 0;
+        }
+    }
+}
+#page-grade-export-xml-index {
+    .mform .fitem {
+        &.fitem.fitem_fcheckbox .fitemtitle {
+            float: left;
+            width: 25%;
+        }
+        .fcheckbox {
+            color: red;
+            input {
+                margin-right: 20px;
+            }
+        }
+    }
+}
+.femptylabel > .fitemtitle {
+    display: none;
+}
+
+// These checkboxes are unusual as they have two labels, so we hide one.
+#fgroup_id_completiondiscussionsgroup,
+#fgroup_id_completionpostsgroup,
+#fgroup_id_completionrepliesgroup,
+#fgroup_id_completionpostsgroup {
+    &.fitem_fgroup .fitemtitle label {
+        display: none;
+    }
+}
+
+#id_activitycompletionheader {
+    .fitem_fcheckbox .fitemtitle label {
+        display: none;
+    }
+
+    .form-group.row {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+
+      .col-md-9 {
+        @extend .col-12;
+      }
+    }
+
+    .col-md-3 {
+        display: none;
+    }
+
+    .form-check > span{
+        white-space: normal !important;
+    }
+}
+
+.form-item {
+    .form-label .form-shortname {
+        display: inline-block;
+        padding-left: 1em;
+    }
+
+    .form-checkbox.defaultsnext {
+        display: inline-block;
+    }
+
+    .form-defaultinfo,
+    .form-description pre {
+        font-size: $font-size-sm;
+    }
+
+    .form-setting .form-defaultinfo {
+        display: block;
+    }
+}
+
+.moodle-dialogue.filepicker .form-group {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+@include media-breakpoint-up(md) {
+    .form-horizontal .control-label {
+        padding-top: 4px;
+    }
+}
+
+.path-backup .mform .grouped_settings .backup_selector .felement {
+    width: 100%;
+}
+
+.path-backup .root_setting,
+.path-backup .normal_setting {
+    .fitem {
+        .fitemtitle,
+        .felement {
+            width: 50%;
+        }
+    }
+}
+
+
+// Hide "There are required fields in this form marked *" message.
+.fdescription.required {
+    display: none;
+}
+// Style required asterix.
+fieldset abbr[title] {
+    font-size: xx-small;
+    text-decoration: none;
+    border: none;
+    &:after {
+        content: " " attr(title);
+        text-transform: capitalize;
+    }
+}
+
+// Prevent toggler collapse on required section
+#id_general .fcontainer,
+#id_generalhdr .fcontainer {
+    display: block;
+}
+
+textarea {
+    border-color: $gray-lighter;
+    width: 100%;
+}
+
+.editor_atto_content_wrap {
+    border-color: $gray-lighter;
+}
+
+
+// -------------------------
+// Radio buttons.
+// -------------------------
+input[type="radio"] {
+    max-width: none;
+    margin-right: .5rem;
+}
+
+// -------------------------
+// Radio & checkbox padding.
+// -------------------------
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 0.25rem;
+}
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 0.25rem;
+}
+
+// -------------------------
+// Snap add new section form.
+// -------------------------
+#newsection {
+    width: 100%;
+    margin: 0;
+}
+
+#snap-add-new-section {
+
+    .editor_atto_content {
+        min-height: 250px !important; // overcome js
+    }
+    .editor_atto_wrap {
+        margin-bottom: 1em;
+    }
+    #cancel-new-section {
+        margin-left: 1em;
+    }
+}
+
+// -------------------------
+// Fun with Atto
+// -------------------------
+
+// TODO - move all atto styles to here
+
+div.editor_atto_toolbar {
+    background-color: transparent;
+    border-color: #eee;
+    padding-bottom: 0;
+}
+
+.editor_atto_content {
+    padding: 1em 2%;
+    max-height: 100vh !important;
+    min-height: 100px !important;
+    resize: none;
+
+    p {
+        @extend .text-break;
+    }
+}
+
+// Help Atto editor select img's properly
+.editor_atto_content .img-responsive {
+    display: inline;
+}
+
+.editor_atto_toolbar button:active,
+.editor_atto_toolbar button.highlight,
+.editor_atto_toolbar button:hover {
+    background-image: none;
+    background-color: #eee;
+}
+
+div.editor_atto_toolbar button + button {
+    border-color: #fff;
+}
+
+div.editor_atto_toolbar div.atto_group {
+    border: 0;
+    border-radius: 0;
+    margin: 0.3em 0.3em 0.3em 0;
+}
+
+.atto_equation_library button {
+    background-color: #fff;
+    color: $body-color;
+
+    &:hover {
+        background-color: darken(#fff, 5%);
+        color: $body-color;
+    }
+}
+
+.atto_charmap_selector button {
+    width: 40px;
+    padding: 3px;
+    margin: 0;
+}
+
+.atto_equation_groups.yui3-tabview-panel {
+    border: none;
+    background: #fff;
+}
+
+.editor_atto_notification {
+    bottom: 1em;
+    .atto_info,
+    .atto_warning {
+        border-radius: 0;
+    }
+}
+
+.pagelayout-admin .mform,
+#page-course-editsection .mform {
+    max-width: 100%;
+}
+
+// Hide save & display for resources (except in single activity format).
+#page-mod-url-mod:not(.format-singleactivity),
+#page-mod-page-mod:not(.format-singleactivity),
+#page-mod-resource-mod:not(.format-singleactivity) {
+    #id_submitbutton {
+        display: none;
+    }
+}
+
+#fitem_id_externalurl .filemanager-loading {
+    // It seems to be a core bug that this is ever displayed.
+    display: none;
+}
+
+#page-course-edit #maincontent + h2,
+#page-course-editsection #maincontent + h2,
+.pagelayout-admin.path-mod #maincontent + h2 {
+    @extend h6;
+}
+
+// Make Navigation Header visible over items.
+#page-course-edit,
+#page-admin-user {
+    #mr-nav {
+        z-index: 1051;
+    }
+}
+
+// Help for mods displayed in the edit form.
+#snap-collapse-help {
+    padding: 1em 0;
+    margin: 2em 2%;
+    background-color: $gray-lighter;
+}
+
+a[aria-controls="snap-collapse-help"] {
+    img {
+        margin-left: 1em;
+    }
+}
+
+#id_cancel {
+    font-weight: 300;
+}
+
+#fitem_id_outcomes .yui3-moodle-core_outcome-mapoutcome-content-wrapper ul {
+    padding-left: 4%;
+    margin-left: 0;
+}
+
+.btn .badge {
+    color: #fff;
+}
+
+// -------------------------
+// Two column forms
+// -------------------------
+
+.snap-form-required {
+    float: left;
+    #id_name,
+    #id_externalurl,
+    #id_toolurl,
+    #id_sessionname {
+        width: 100%;
+    }
+
+    // FF select elements don't respect % max width.
+    select {
+        max-width: 30em;
+    }
+
+    .editor_atto_content {
+        // Need !important to override the style tag set by JS.
+        min-height: 250px !important;
+    }
+
+    .form-inline[data-fieldtype="editor"] {
+        overflow: visible;
+    }
+}
+
+.snap-form-advanced {
+    float: left;
+    .snap-form-visibility {
+        padding: 1em;
+        background-color: #eee;
+    }
+    .dndupload-message {
+        font-family: $font-family-system;
+        font-size: small;
+    }
+    legend {
+        font-size: 1rem;
+    }
+
+    fieldset[id^="id_category_"],
+    #id_modstandardelshdr,
+    #id_overallfeedbackhdr {
+        .form-inline[data-fieldtype="editor"] {
+            overflow: visible;
+
+            div {
+                max-width: 100%;
+            }
+        }
+        .form-inline[data-fieldtype="date_selector"] {
+            .fdate_selector {
+                flex-wrap: wrap;
+            }
+        }
+    }
+
+    .mceToolbar.mceLeft.mceFirst.mceLast {
+        overflow: auto;
+    }
+
+}
+
+// Hide checkbox useless with this course format.
+#page-course-editsection.format-topics .fdefaultcustom .form-check-inline {
+    display: none;
+}
+
+// Allow for mod edit advanced options to appear at the side and stylize the options.
+form.mform {
+    &[action*="modedit.php"] {
+        clear: both;
+    }
+    .snap-form-advanced fieldset,
+    fieldset.clearfix {
+        margin-bottom: 1rem;
+        .ftoggler {
+            a:hover,
+            a:focus {
+                background-color: transparent;
+                box-shadow: none;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+        }
+        .d-flex {
+            margin-bottom: 0 !important;
+            width: 100%;
+        }
+    }
+
+    // Colapse/expand toggle on forms.
+    fieldset {
+        &.collapsible {
+            legend a.fheader {
+                padding: 0;
+                display: block;
+                background: none;
+                margin-left: 0;
+
+                &:after {
+                    font-family: FontAwesome;
+                    line-height: 1.5;
+                    float: right;
+                    margin-right: .4rem; // magic number to line up with help icons.
+                }
+            }
+        }
+    }
+}
+
+// Remove arrow on expand all link.
+.collapsible-actions .collapseexpand {
+    background: none;
+    padding-left: 0;
+}
+
+@include media-breakpoint-up(lg) {
+
+    #id_name {
+        margin-top: 0;
+    }
+
+    .snap-form-required {
+
+        #fgroup_id_buttonar {
+            margin-top: 25px;
+        }
+    }
+
+    // All the non-essential form elements.
+    .snap-form-advanced {
+        // FF select elements don't respect % max width.
+        select {
+            max-width: 250px !important;
+        }
+        .ftoggler {
+            padding: .3em .5em;
+        }
+        .collapsed .ftoggler {
+            background-color: transparent;
+        }
+        fieldset > .fcontainer {
+            border: 3px solid $gray-lighter;
+            border-radius: 5px;
+        }
+        // Make sure buttons fit container.
+        button,
+        .btn {
+            white-space: normal;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+
+    .snap-form-required #fgroup_id_buttonar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0.5em;
+        background-color: $body-bg;
+        z-index: 25;
+        border-top: 1px solid #eee;
+        text-align: center;
+    }
+}
+
+// Make form advanced more mobile friendly with lower screen resolutions.
+@media (max-width: 992px) {
+    .snap-form-required {
+        max-width: 100%;
+    }
+    .snap-form-advanced {
+        max-width: 100%;
+        fieldset#id_reviewoptionshdr #id_reviewoptionshdrcontainer .form-group {
+            width: 20rem;
+        }
+    }
+}
+
+// -------------------------
+// Enrolled Users filter
+// -------------------------
+
+@include media-breakpoint-up(sm) {
+    #page-enrol-users #filterform > .fitem {
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+
+        &:last-child {
+            display: block;
+        }
+    }
+}
+// Chat graphic glitch fix for Safari.
+#page-mod-chat-gui_header_js-chatinput.safari {
+    #inputForm input#input_chat_message {
+        margin: 0.5em;
+    }
+}

@@ -17,7 +17,7 @@
 namespace quiz_statistics\task;
 
 use core\dml\sql_join;
-use quiz_attempt;
+use mod_quiz\quiz_attempt;
 use quiz_statistics_report;
 
 defined('MOODLE_INTERNAL') || die();

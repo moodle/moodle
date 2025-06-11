@@ -11,7 +11,10 @@ on:
         - 'MOODLE_400_STABLE'
         - 'MOODLE_401_STABLE'
         - 'MOODLE_402_STABLE'
-        default: 'MOODLE_401_STABLE'
+        - 'MOODLE_403_STABLE'
+        - 'MOODLE_404_STABLE'
+        - 'MOODLE_405_STABLE'
+        default: 'MOODLE_404_STABLE'
       phpversion:
         type: choice
         description: Select PHP version
@@ -20,7 +23,7 @@ on:
         - '8.0'
         - '8.1'
         - '8.2'
-        default: '8.0'
+        default: '8.1'
 
 jobs:
   test:
@@ -50,8 +53,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["${{ inputs.phpversion || '8.0' }}"]
-        moodle-branch: ["${{ inputs.moodlebranch || 'MOODLE_401_STABLE' }}"]
+        php: ["${{ inputs.phpversion || '8.1' }}"]
+        moodle-branch: ["${{ inputs.moodlebranch || 'MOODLE_404_STABLE' }}"]
         database: [mariadb]
 
     steps:
@@ -60,10 +63,10 @@ jobs:
         with:
           path: plugin
 
-      - name: Setup PHP ${{ inputs.phpversion || '8.0' }}
+      - name: Setup PHP ${{ inputs.phpversion || '8.1' }}
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.phpversion || '8.0' }}
+          php-version: ${{ inputs.phpversion || '8.1' }}
           extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
           # none to use phpdbg fallback. Specify pcov (Moodle 3.10 and up) or xdebug to use them instead.
@@ -75,15 +78,38 @@ jobs:
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
-          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
-      - name: Install moodle-plugin-ci
+      - name: Install NVM and Node
         run: |
-          
-          moodle-plugin-ci add-plugin --branch master anthology-ally/moodle-tool_ally
-          moodle-plugin-ci add-plugin --branch master anthology-ally/moodle-report_allylti
-          moodle-plugin-ci add-plugin --branch master open-lms-open-source/moodle-mod_hsuforum
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install 20
+          nvm use 20
+
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+      - name: Create citricity branch name
+        id: citricity_branch
+        shell: bash
+        run: |
+          echo "branch_citricity=$(echo '${{ steps.extract_branch.outputs.branch }}' | sed 's/STABLE/CITRICITY/')" >> $GITHUB_OUTPUT
+
+      # See https://moodlehq.github.io/moodle-plugin-ci/AddExtraConfig.html
+      # for adding extra config.php values via moodle-plugin-ci.
+      - name: Install moodle-plugin-ci
+        continue-on-error: false
+        run: |
+          echo "NOTE: Using branch ${{ steps.extract_branch.outputs.branch }}" 
+          moodle-plugin-ci add-plugin --branch ${{ steps.extract_branch.outputs.branch }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-tool_ally
+          moodle-plugin-ci add-plugin --branch ${{ steps.extract_branch.outputs.branch }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-report_allylti
+          moodle-plugin-ci add-plugin --branch ${{ steps.citricity_branch.outputs.branch_citricity }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-mod_hsuforum
+          moodle-plugin-ci add-plugin --branch ${{ steps.citricity_branch.outputs.branch_citricity }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-theme_snap
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+          moodle-plugin-ci add-config '$CFG->behat_increasetimeout = 2;'
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}

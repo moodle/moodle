@@ -29,7 +29,7 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {subscribe} from 'core/pubsub';
 import SortableList from 'core/sortable_list';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {reorderColumnSorting, toggleColumnSorting} from 'core_reportbuilder/local/repository/sorting';
@@ -166,15 +166,16 @@ export const init = (initialized) => {
                 targetColumnSortPosition--;
             }
 
-            reorderColumnSorting(reportElement.dataset.reportId, columnId, targetColumnSortPosition)
-                .then(reloadSettingsSortingRegion)
+            // Re-order column sorting, giving drop event transition time to finish.
+            const reorderPromise = reorderColumnSorting(reportElement.dataset.reportId, columnId, targetColumnSortPosition);
+            Promise.all([reorderPromise, new Promise(resolve => setTimeout(resolve, 1000))])
+                .then(([data]) => reloadSettingsSortingRegion(data))
                 .then(() => getString('columnsortupdated', 'core_reportbuilder', info.element.data('columnSortName')))
                 .then(addToast)
                 .then(() => {
                     dispatchEvent(reportEvents.tableReload, {}, reportElement);
-                    return null;
+                    return pendingPromise.resolve();
                 })
-                .then(() => pendingPromise.resolve())
                 .catch(Notification.exception);
         }
     });

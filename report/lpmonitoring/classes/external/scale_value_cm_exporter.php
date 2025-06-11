@@ -48,7 +48,7 @@ class scale_value_cm_exporter extends \core\external\exporter {
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
     protected static function define_related() {
-        return array('relatedinfo' => '\\stdClass');
+        return ['relatedinfo' => '\\stdClass'];
     }
 
     /**
@@ -57,26 +57,26 @@ class scale_value_cm_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'url' => array(
-                'type' => PARAM_RAW
-            ),
-            'cmicon' => array(
-                'type' => PARAM_RAW
-            ),
-            'cmname' => array(
-                'type' => PARAM_RAW
-            ),
-            'coursename' => array(
-                'type' => PARAM_RAW
-            ),
-            'nbnotes' => array(
-                'type' => PARAM_INT
-            ),
-            'grade' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'url' => [
+                'type' => PARAM_RAW,
+            ],
+            'cmicon' => [
+                'type' => PARAM_RAW,
+            ],
+            'cmname' => [
+                'type' => PARAM_RAW,
+            ],
+            'coursename' => [
+                'type' => PARAM_RAW,
+            ],
+            'nbnotes' => [
+                'type' => PARAM_INT,
+            ],
+            'grade' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -90,7 +90,7 @@ class scale_value_cm_exporter extends \core\external\exporter {
 
         $result = new stdClass();
 
-        $urlparams = array('user' => $this->related['relatedinfo']->userid, 'id' => $cmdata->cmid);
+        $urlparams = ['user' => $this->related['relatedinfo']->userid, 'id' => $cmdata->cmid];
         $url = (new \moodle_url('/report/cmcompetency/index.php', $urlparams))->out();
 
         $nbnotes = 0;

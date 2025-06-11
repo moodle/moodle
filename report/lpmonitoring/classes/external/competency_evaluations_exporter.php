@@ -43,18 +43,18 @@ class competency_evaluations_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'competency' => array(
-                'type' => competency_exporter::read_properties_definition()
-            ),
-            'competencydetail' => array(
-                'type' => lpmonitoring_competency_detail_exporter::read_properties_definition()
-            ),
-            'evaluationslist' => array(
+        return [
+            'competency' => [
+                'type' => competency_exporter::read_properties_definition(),
+            ],
+            'competencydetail' => [
+                'type' => lpmonitoring_competency_detail_exporter::read_properties_definition(),
+            ],
+            'evaluationslist' => [
                 'type' => evaluations_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -70,7 +70,7 @@ class competency_evaluations_exporter extends \core\external\exporter {
      */
     protected static function define_related() {
         // We cache the plan so it does not need to be retrieved every time.
-        return array('plan' => 'core_competency\\plan');
+        return ['plan' => 'core_competency\\plan'];
     }
 
     /**
@@ -86,7 +86,7 @@ class competency_evaluations_exporter extends \core\external\exporter {
 
         $result = new \stdClass();
         $result->competency = $this->data->competencydetailinfos->competency;
-        $result->evaluationslist = array();
+        $result->evaluationslist = [];
 
         foreach ($this->data->allcourses as $courseid => $course) {
             // Evaluation for the course.

@@ -1,5 +1,15 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
+
+=== 4.2 ===
+
+* Support for optional final element returned by engine `add_documents()` implementations is now removed, all
+  six expected returned array elements must be present
 
 === 3.10 ===
 

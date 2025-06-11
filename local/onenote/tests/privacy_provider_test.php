@@ -23,14 +23,17 @@
  * @copyright (C) 2019 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_onenote;
 
+use context_system;
+use context_user;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
-use \local_onenote\privacy\provider;
+use local_onenote\privacy\provider;
+use stdClass;
 
 /**
  * Privacy test for local_onenote
@@ -40,20 +43,22 @@ use \local_onenote\privacy\provider;
  * @group office365
  * @group office365_privacy
  */
-class local_onenote_privacy_testcase extends provider_testcase {
+final class privacy_provider_test extends provider_testcase {
     /**
      * Tests set up.
      */
-    public function setUp() : void {
-        global $CFG;
+    public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
 
     /**
      * Check that a user context is returned if there is any user data for this user.
+     *
+     * @covers \local_onenote\privacy\provider::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
 
@@ -71,8 +76,10 @@ class local_onenote_privacy_testcase extends provider_testcase {
 
     /**
      * Test that only users with a user context are fetched.
+     *
+     * @covers \local_onenote\privacy\provider::get_users_in_context
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'local_onenote';
@@ -103,8 +110,10 @@ class local_onenote_privacy_testcase extends provider_testcase {
 
     /**
      * Test that user data is exported correctly.
+     *
+     * @covers \local_onenote\privacy\provider::export_user_data
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         // Create a user record.
         $user = $this->getDataGenerator()->create_user();
 
@@ -115,7 +124,7 @@ class local_onenote_privacy_testcase extends provider_testcase {
 
         $writer = writer::with_context($usercontext);
         $this->assertFalse($writer->has_any_data());
-        $approvedlist = new core_privacy\local\request\approved_contextlist($user, 'local_onenote', [$usercontext->id]);
+        $approvedlist = new approved_contextlist($user, 'local_onenote', [$usercontext->id]);
         provider::export_user_data($approvedlist);
 
         foreach ($userrecords as $table => $record) {
@@ -129,8 +138,10 @@ class local_onenote_privacy_testcase extends provider_testcase {
 
     /**
      * Test deleting all user data for a specific context.
+     *
+     * @covers \local_onenote\privacy\provider::delete_data_for_all_users_in_context
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Create user data.
@@ -160,8 +171,10 @@ class local_onenote_privacy_testcase extends provider_testcase {
 
     /**
      * This should work identical to the above test.
+     *
+     * @covers \local_onenote\privacy\provider::delete_data_for_user
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         // Create a user record.
@@ -192,8 +205,10 @@ class local_onenote_privacy_testcase extends provider_testcase {
 
     /**
      * Test that data for users in approved userlist is deleted.
+     *
+     * @covers \local_onenote\privacy\provider::delete_data_for_users
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'local_onenote';
@@ -256,9 +271,11 @@ class local_onenote_privacy_testcase extends provider_testcase {
      * @param int $userid The user's ID.
      * @return array Array of records, indexed by table name.
      */
-    private static function create_userdata(int $userid) {
-        $records = ['local_onenote_user_sections' => self::create_usersections_record($userid),
-            'local_onenote_assign_pages' => self::create_assignpages_record($userid),];
+    private static function create_userdata(int $userid): array {
+        $records = [
+                'local_onenote_user_sections' => self::create_usersections_record($userid),
+                'local_onenote_assign_pages' => self::create_assignpages_record($userid),
+        ];
         return $records;
     }
 
@@ -269,7 +286,7 @@ class local_onenote_privacy_testcase extends provider_testcase {
      * @return stdClass
      * @throws dml_exception
      */
-    private static function create_usersections_record(int $userid) : \stdClass {
+    private static function create_usersections_record(int $userid): stdClass {
         global $DB;
         $record = new stdClass();
         $record->user_id = $userid;
@@ -286,7 +303,7 @@ class local_onenote_privacy_testcase extends provider_testcase {
      * @return stdClass
      * @throws dml_exception
      */
-    private static function create_assignpages_record(int $userid) : \stdClass {
+    private static function create_assignpages_record(int $userid): stdClass {
         global $DB;
         $record = new stdClass();
         $record->user_id = $userid;

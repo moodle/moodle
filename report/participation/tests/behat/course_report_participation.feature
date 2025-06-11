@@ -16,12 +16,10 @@ Feature: In a course administration page, navigate through report page, test for
       | admin | C1 | editingteacher |
       | student1 | C1 | student |
 
-  @javascript
   Scenario: Selector should be available in the course participation page
     Given I log in as "admin"
     And I am on "Course 1" course homepage
     When I navigate to "Reports" in current page administration
     And I click on "Course participation" "link"
-    Then "Report" "field" should exist
-    And the "Report" select box should contain "Course participation"
-    And the field "Report" matches value "Course participation"
+    Then "Report" "field" should exist in the "tertiary-navigation" "region"
+    And I should see "Course participation" in the "tertiary-navigation" "region"

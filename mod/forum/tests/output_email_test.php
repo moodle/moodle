@@ -25,11 +25,11 @@ use mod_forum\output\forum_post_email;
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class output_email_test extends \advanced_testcase {
+final class output_email_test extends \advanced_testcase {
     /**
      * Data provider for the postdate function tests.
      */
-    public function postdate_provider() {
+    public static function postdate_provider(): array {
         return array(
             'Timed discussions disabled, timestart unset' => array(
                 'globalconfig'      => array(
@@ -127,7 +127,7 @@ class output_email_test extends \advanced_testcase {
      * @param array  $discussionconfig  The configuration for this discussion
      * @param string $expectation       The expected date
      */
-    public function test_postdate($globalconfig, $forumconfig, $postconfig, $discussionconfig, $expectation) {
+    public function test_postdate($globalconfig, $forumconfig, $postconfig, $discussionconfig, $expectation): void {
         global $CFG, $DB;
         $this->resetAfterTest(true);
 

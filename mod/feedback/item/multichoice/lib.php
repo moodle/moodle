@@ -209,7 +209,7 @@ class feedback_item_multichoice extends feedback_item_base {
         if ($analysed_item) {
             $itemname = $analysed_item[1];
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th class="text-left">';
+            echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
@@ -319,7 +319,7 @@ class feedback_item_multichoice extends feedback_item_base {
         $class = 'multichoice-' . $info->subtype;
         $inputname = $item->typ . '_' . $item->id;
         $options = $this->get_options($item);
-        $separator = !empty($info->horizontal) ? ' ' : '<br>';
+        $separator = !empty($info->horizontal) ? ' ' : \html_writer::div('', 'w-100');
         $tmpvalue = $form->get_item_value($item) ?? 0; // Used for element defaults, so must be a valid value (not null).
 
         // Subtypes:

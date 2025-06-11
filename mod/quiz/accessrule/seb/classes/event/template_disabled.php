@@ -49,7 +49,7 @@ class template_disabled extends base {
      * @param context_system $context Context system.
      * @return base
      */
-    public static function create_strict(template $template, context_system $context) : base {
+    public static function create_strict(template $template, context_system $context): base {
         global $USER;
         $tid = $template->get('id');
 
@@ -105,8 +105,8 @@ class template_disabled extends base {
      *
      * @return array Mapping of object id.
      */
-    public static function get_objectid_mapping() : array {
-        return array('db' => 'quizaccess_seb_template', 'restore' => 'quizaccess_seb_template');
+    public static function get_objectid_mapping(): array {
+        return ['db' => 'quizaccess_seb_template', 'restore' => 'quizaccess_seb_template'];
     }
 
     /**
@@ -115,7 +115,7 @@ class template_disabled extends base {
      *
      * @return array List of mapping of other ids.
      */
-    public static function get_other_mapping() : array {
+    public static function get_other_mapping(): array {
         return [];
     }
 }

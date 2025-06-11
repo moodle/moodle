@@ -24,12 +24,12 @@ namespace tool_monitor;
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class subscription_manager_test extends \advanced_testcase {
+final class subscription_manager_test extends \advanced_testcase {
 
     /**
      * Test count_rule_subscriptions method.
      */
-    public function test_count_rule_subscriptions() {
+    public function test_count_rule_subscriptions(): void {
 
         $this->setAdminUser();
         $this->resetAfterTest(true);

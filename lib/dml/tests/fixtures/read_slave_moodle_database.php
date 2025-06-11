@@ -54,7 +54,7 @@ class read_slave_moodle_database extends test_moodle_database {
      * @param array $dboptions
      * @return bool true
      */
-    public function raw_connect(string $dbhost, string $dbuser, string $dbpass, string $dbname, $prefix, array $dboptions = null): bool {
+    public function raw_connect(string $dbhost, string $dbuser, string $dbpass, string $dbname, $prefix, ?array $dboptions = null): bool {
         $dbport = isset($dboptions['dbport']) ? $dboptions['dbport'] : "";
         $this->handle = implode(':', [$dbhost, $dbport, $dbuser, $dbpass]);
         $this->prefix = $prefix;
@@ -78,14 +78,6 @@ class read_slave_moodle_database extends test_moodle_database {
      * @return void
      */
     protected function commit_transaction() {
-    }
-
-    /**
-     * Abort database transaction
-     * @return void
-     */
-    protected function rollback_transaction() {
-        $this->txnhandle = $this->handle;
     }
 
     /**
@@ -119,9 +111,9 @@ class read_slave_moodle_database extends test_moodle_database {
      * @param string $sql
      * @param array $params
      * @return bool true
-     * @throws Exception
+     * @throws \Exception
      */
-    public function execute($sql, array $params = null) {
+    public function execute($sql, ?array $params = null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         return $this->with_query_start_end($sql, $params, SQL_QUERY_UPDATE);
     }
@@ -134,7 +126,7 @@ class read_slave_moodle_database extends test_moodle_database {
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
      * @return string $handle handle property
      */
-    public function get_records_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+    public function get_records_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         return $this->with_query_start_end($sql, $params, SQL_QUERY_SELECT);
     }
@@ -147,7 +139,7 @@ class read_slave_moodle_database extends test_moodle_database {
      * @param int $limitnum
      * @return bool true
      */
-    public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+    public function get_recordset_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         return $this->with_query_start_end($sql, $params, SQL_QUERY_SELECT);
     }

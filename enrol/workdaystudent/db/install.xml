@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/workdaystudent/db" VERSION="20250217" COMMENT="XMLDB file for Moodle enrol/workdaystudent"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_wds_units" COMMENT="enrol_wds_units table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="academic_unit_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_unit_subtype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_unit_code" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_unit" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="superior_unit_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_uni_uid_idx" UNIQUE="false" FIELDS="academic_unit_id"/>
+        <INDEX NAME="wds_uni_uis_idx" UNIQUE="false" FIELDS="academic_unit_subtype"/>
+        <INDEX NAME="wds_uni_uic_idx" UNIQUE="false" FIELDS="academic_unit_code"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_periods" COMMENT="enrol_wds_periods table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="academic_period_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_period" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="period_type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="period_year" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="academic_calendar" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_year" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="end_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_per_api_idx" UNIQUE="false" FIELDS="academic_period_id"/>
+        <INDEX NAME="wds_per_ept_idx" UNIQUE="false" FIELDS="period_type"/>
+        <INDEX NAME="wds_per_epy_idx" UNIQUE="false" FIELDS="period_year"/>
+        <INDEX NAME="wds_per_sdt_idx" UNIQUE="false" FIELDS="start_date"/>
+        <INDEX NAME="wds_per_edt_idx" UNIQUE="false" FIELDS="end_date"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_grade_schemes" COMMENT="enrol_wds_grade_schemes table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="grading_scheme_id" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grading_basis" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade_id" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade_display" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="requires_last_attendance" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade_note_required" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_grs_grb_ix" UNIQUE="false" FIELDS="grading_basis"/>
+        <INDEX NAME="wds_grs_gid_ix" UNIQUE="false" FIELDS="grade_id"/>
+        <INDEX NAME="wds_grs_gdi_ix" UNIQUE="false" FIELDS="grade_display"/>
+        <INDEX NAME="wds_grs_gsi_ix" UNIQUE="false" FIELDS="grading_scheme_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_pgc_dates" COMMENT="enrol_wds_pgc_dates table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="academic_period_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_level" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="date_type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_pgc_pgcd_pidx" UNIQUE="false" FIELDS="academic_period_id"/>
+        <INDEX NAME="wds_pgc_pgcd_dx" UNIQUE="false" FIELDS="date"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_sport" COMMENT="enrol_wds_sport table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="code" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="wds_spo_cod_uq" TYPE="unique" FIELDS="code"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_wds_programs" COMMENT="enrol_wds_programs table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="academic_unit_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="program_of_study_code" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="program_of_study" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_pgm_psc_ix" UNIQUE="false" FIELDS="program_of_study_code"/>
+        <INDEX NAME="wds_pgm_aui_ix" UNIQUE="false" FIELDS="academic_unit_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_courses" COMMENT="enrol_wds_courses table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course_listing_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_unit_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_definition_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_subject_abbreviation" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_number" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subject_code" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_abbreviated_title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_level" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_cou_cli_idx" UNIQUE="false" FIELDS="course_listing_id"/>
+        <INDEX NAME="wds_cou_cui_idx" UNIQUE="false" FIELDS="academic_unit_id"/>
+        <INDEX NAME="wds_cou_cdi_idx" UNIQUE="false" FIELDS="course_definition_id"/>
+        <INDEX NAME="wds_cou_cn_idx" UNIQUE="false" FIELDS="course_number"/>
+        <INDEX NAME="wds_cou_csa_idx" UNIQUE="false" FIELDS="course_subject_abbreviation"/>
+        <INDEX NAME="wds_cou_al_idx" UNIQUE="false" FIELDS="academic_level"/>
+        <INDEX NAME="wds_cou_csc_idx" UNIQUE="false" FIELDS="subject_code"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_sections" COMMENT="enrol_wds_sections table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="section_listing_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_section_definition_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="section_number" TYPE="char" LENGTH="600" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_listing_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_definition_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_subject_abbreviation" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_unit_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_period_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_section_title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="course_section_abbrev_title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="delivery_mode" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="controls_grading" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="class_type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="wd_status" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Pending" SEQUENCE="false"/>
+        <FIELD NAME="moodle_status" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="Pending" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="wds_sec_sli_uq" TYPE="unique" FIELDS="section_listing_id"/>
+        <KEY NAME="wds_sec_sdi_uq" TYPE="unique" FIELDS="course_section_definition_id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_sec_cdi_idx" UNIQUE="false" FIELDS="course_definition_id"/>
+        <INDEX NAME="wds_sec_aui_idx" UNIQUE="false" FIELDS="academic_unit_id"/>
+        <INDEX NAME="wds_sec_api_idx" UNIQUE="false" FIELDS="academic_period_id"/>
+        <INDEX NAME="wds_sec_osi_idx" UNIQUE="false" FIELDS="idnumber"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_section_meta" COMMENT="enrol_wds_section_meta table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="section_listing_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="day" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="short_day" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="start_time" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="end_time" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="was_sm_sli_ix" UNIQUE="false" FIELDS="section_listing_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_teachers" COMMENT="enrol_wds_teachers table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="universal_id" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="school_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="19" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="firstname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="preferred_firstname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="preferred_lastname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="middlename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastupdate" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="wds_tea_em_uq" TYPE="unique" FIELDS="email"/>
+        <KEY NAME="wds_tea_un_uq" TYPE="unique" FIELDS="username"/>
+        <KEY NAME="wds_tea_mui_uq" TYPE="unique" FIELDS="userid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_tea_lud_ix" UNIQUE="false" FIELDS="lastupdate"/>
+        <INDEX NAME="wds_tea_sid_uq" UNIQUE="false" FIELDS="school_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_teacher_enroll" COMMENT="enrol_wds_teacher_enroll table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="section_listing_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="universal_id" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="role" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="prevrole" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="prevstatus" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_ten_uid_ix" UNIQUE="false" FIELDS="universal_id"/>
+        <INDEX NAME="wds_ten_sli_ix" UNIQUE="false" FIELDS="section_listing_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_students" COMMENT="enrol_wds_students table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="universal_id" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="school_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="19" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="firstname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="preferred_firstname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="preferred_lastname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="middlename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastupdate" TYPE="int" LENGTH="19" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="wds_stu_em_uq" TYPE="unique" FIELDS="email"/>
+        <KEY NAME="wds_stu_un_uq" TYPE="unique" FIELDS="username"/>
+        <KEY NAME="wds_stu_mui_uq" TYPE="unique" FIELDS="userid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_stu_lud_ix" UNIQUE="false" FIELDS="lastupdate"/>
+        <INDEX NAME="wds_stu_sid_ix" UNIQUE="false" FIELDS="school_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_students_meta" COMMENT="enrol_wds_students_meta table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="datatype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="data" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="academic_period_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_sm_sid_ix" UNIQUE="false" FIELDS="studentid"/>
+        <INDEX NAME="wds_sm_dt_ix" UNIQUE="false" FIELDS="datatype"/>
+        <INDEX NAME="wds_sm_da_ix" UNIQUE="false" FIELDS="data"/>
+        <INDEX NAME="wds_sm_api_ix" UNIQUE="false" FIELDS="academic_period_id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_wds_student_enroll" COMMENT="enrol_wds_student_enroll table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="section_listing_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="universal_id" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="credit_hrs" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grading_scheme" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grading_basis" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="registration_status" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="prevstatus" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="registered_date" TYPE="int" LENGTH="19" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="drop_date" TYPE="int" LENGTH="19" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="guild" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lastupdate" TYPE="int" LENGTH="19" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wds_ste_uid_idx" UNIQUE="false" FIELDS="universal_id"/>
+        <INDEX NAME="wds_ste_reg_idx" UNIQUE="false" FIELDS="registration_status"/>
+        <INDEX NAME="wds_ste_sli_idx" UNIQUE="false" FIELDS="section_listing_id"/>
+        <INDEX NAME="wds_ste_sta_idx" UNIQUE="false" FIELDS="status"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

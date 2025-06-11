@@ -41,7 +41,7 @@ require_once($CFG->libdir.'/componentlib.class.php');
  * @copyright  2023 Diego Felipe Monroy <dfelipe.monroyc@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends advanced_testcase {
+final class lib_test extends advanced_testcase {
 
     /**
      * Test set up.
@@ -55,7 +55,7 @@ class lib_test extends advanced_testcase {
      *
      * @covers ::mod_customcert_force_current_language
      */
-    public function test_mod_customcert_force_current_language() {
+    public function test_mod_customcert_force_current_language(): void {
         global $USER;
 
         $user1 = $this->getDataGenerator()->create_user();

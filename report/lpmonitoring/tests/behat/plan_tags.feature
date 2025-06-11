@@ -37,6 +37,8 @@ Feature: Manage learning plans tags
     And I should not see "student in difficulty" in the ".modal.show .form-autocomplete-selection" "css_element"
     And I click on "//div[contains(@class, 'show') and contains(@data-region, 'modal-container')]//button[contains(@data-action, 'save')]" "xpath_element"
     And I should see "0" in the ".tags-stats" "css_element"
+    And I click on "//label[contains(@for, 'template')]" "xpath_element"
+    And I click on "//label[contains(@for, 'tag')]" "xpath_element"
     And the "tagSelectorReport" select box should not contain "student in difficulty"
     And I click on "//label[contains(@for, 'template')]" "xpath_element"
     And I set the field "templateSelectorReport" to "Medicine Year 1"

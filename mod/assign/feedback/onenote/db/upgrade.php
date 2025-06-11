@@ -22,8 +22,6 @@
  * @copyright  Microsoft, Inc. (based on files by NetSpot {@link http://www.netspot.com.au})
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Stub for upgrade code
  * @param int $oldversion

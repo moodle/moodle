@@ -25,7 +25,7 @@ namespace tool_admin_presets\local\action;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_admin_presets\local\action\base
  */
-class base_test extends \advanced_testcase {
+final class base_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of log() method.
@@ -70,7 +70,7 @@ class base_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function log_provider(): array {
+    public static function log_provider(): array {
         return [
             // Action = base.
             'action=base and mode = show' => [

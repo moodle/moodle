@@ -39,7 +39,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class step_list extends \flexible_table {
-
     /**
      * @var     int     $tourid     The id of the tour.
      */
@@ -54,25 +53,25 @@ class step_list extends \flexible_table {
         parent::__construct('steps');
         $this->tourid = $tourid;
 
-        $baseurl = new \moodle_url('/tool/usertours/configure.php', array(
+        $baseurl = new \moodle_url('/tool/usertours/configure.php', [
                 'id' => $tourid,
-            ));
+            ]);
         $this->define_baseurl($baseurl);
 
         // Column definition.
-        $this->define_columns(array(
+        $this->define_columns([
             'title',
             'content',
             'target',
             'actions',
-        ));
+        ]);
 
-        $this->define_headers(array(
-            get_string('title',   'tool_usertours'),
+        $this->define_headers([
+            get_string('title', 'tool_usertours'),
             get_string('content', 'tool_usertours'),
-            get_string('target',  'tool_usertours'),
+            get_string('target', 'tool_usertours'),
             get_string('actions', 'tool_usertours'),
-        ));
+        ]);
 
         $this->set_attribute('class', 'admintable generaltable steptable');
         $this->setup();
@@ -98,8 +97,14 @@ class step_list extends \flexible_table {
     protected function col_content(step $step) {
         $content = $step->get_content();
         $systemcontext = \context_system::instance();
-        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $systemcontext->id,
-            'tool_usertours', 'stepcontent', $step->get_id());
+        $content = file_rewrite_pluginfile_urls(
+            $content,
+            'pluginfile.php',
+            $systemcontext->id,
+            'tool_usertours',
+            'stepcontent',
+            $step->get_id()
+        );
 
         $content = helper::get_string_from_input($content);
         $content = step::get_step_image_from_input($content);
@@ -135,8 +140,11 @@ class step_list extends \flexible_table {
         if ($step->is_last_step()) {
             $actions[] = helper::get_filler_icon();
         } else {
-            $actions[] = helper::format_icon_link($step->get_movedown_link(), 't/down',
-                    get_string('movestepdown', 'tool_usertours'));
+            $actions[] = helper::format_icon_link(
+                $step->get_movedown_link(),
+                't/down',
+                get_string('movestepdown', 'tool_usertours')
+            );
         }
 
         $actions[] = helper::format_icon_link($step->get_edit_link(), 't/edit', get_string('edit'));

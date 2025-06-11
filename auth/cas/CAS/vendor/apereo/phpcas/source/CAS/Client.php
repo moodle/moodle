@@ -973,11 +973,6 @@ class CAS_Client
                 session_start();
                 phpCAS :: trace("Starting a new session " . session_id());
             }
-            // init phpCAS session array
-            if (!isset($_SESSION[static::PHPCAS_SESSION_PREFIX])
-                || !is_array($_SESSION[static::PHPCAS_SESSION_PREFIX])) {
-                $_SESSION[static::PHPCAS_SESSION_PREFIX] = array();
-            }
         }
 
         // Only for debug purposes
@@ -1198,7 +1193,19 @@ class CAS_Client
     {
         $this->validateSession($key);
 
+        $this->ensureSessionArray();
         $_SESSION[static::PHPCAS_SESSION_PREFIX][$key] = $value;
+    }
+
+    /**
+     * Ensure that the session array is initialized before writing to it.
+     */
+    protected function ensureSessionArray() {
+      // init phpCAS session array
+      if (!isset($_SESSION[static::PHPCAS_SESSION_PREFIX])
+          || !is_array($_SESSION[static::PHPCAS_SESSION_PREFIX])) {
+          $_SESSION[static::PHPCAS_SESSION_PREFIX] = array();
+      }
     }
 
     /**

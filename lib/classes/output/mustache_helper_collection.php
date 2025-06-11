@@ -14,23 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Custom Moodle helper collection for mustache.
- *
- * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
 /**
  * Custom Moodle helper collection for mustache.
  *
+ * @package core
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mustache_helper_collection extends \Mustache_HelperCollection {
-
     /**
      * @var string[] Names of helpers that aren't allowed to be called within other helpers.
      */
@@ -73,7 +66,7 @@ class mustache_helper_collection extends \Mustache_HelperCollection {
         $disallowedlist = $this->disallowednestedhelpers;
 
         if (is_callable($helper) && !empty($disallowedlist)) {
-            $helper = function($source, \Mustache_LambdaHelper $lambdahelper) use ($helper, $disallowedlist) {
+            $helper = function ($source, \Mustache_LambdaHelper $lambdahelper) use ($helper, $disallowedlist) {
 
                 // Temporarily override the disallowed helpers to return nothing
                 // so that they can't be executed from within other helpers.
@@ -111,7 +104,7 @@ class mustache_helper_collection extends \Mustache_HelperCollection {
                 $function = $this->get($name);
                 // Null out the helper. Must call parent::add here to avoid
                 // a recursion problem.
-                parent::add($name, function() {
+                parent::add($name, function () {
                     return '';
                 });
 
@@ -155,11 +148,11 @@ class mustache_helper_collection extends \Mustache_HelperCollection {
             $endtoken = '\/';
         }
 
-        $regexes = array_map(function($name) use ($starttoken, $endtoken) {
+        $regexes = array_map(function ($name) use ($starttoken, $endtoken) {
             // We only strip out the name of the helper (excluding delimiters)
             // the user is able to change the delimeters on a per template
             // basis so they may not be curly braces.
-            return '/\s*' . $starttoken . '\s*'. $name . '\W+.*' . $endtoken . '\s*' . $name . '\s*/';
+            return '/\s*' . $starttoken . '\s*' . $name . '\W+.*' . $endtoken . '\s*' . $name . '\s*/';
         }, $disallowedlist);
 
         // This will strip out unwanted helpers from the $source string
@@ -169,24 +162,15 @@ class mustache_helper_collection extends \Mustache_HelperCollection {
         // "core, move, {{#js}} some nasty JS hack {{/js}}"
         // After:
         // "core, move, {{}}".
-        return preg_replace_callback($regexes, function() {
+        return preg_replace_callback($regexes, function () {
             return '';
         }, $string);
     }
 
     /**
-     * Parse the given string and remove any reference to disallowed helpers.
-     *
-     * @deprecated Deprecated since Moodle 3.10 (MDL-69050) - use {@see self::strip_disallowed_helpers()}
-     * @param  string[] $disallowedlist List of helper names to strip
-     * @param  string $string String to parse
-     * @return string Parsed string
+     * @deprecated Deprecated since Moodle 3.10 (MDL-69050) - use {@see strip_disallowed_helpers}
      */
-    public function strip_blacklisted_helpers($disallowedlist, $string) {
-
-        debugging('mustache_helper_collection::strip_blacklisted_helpers() is deprecated. ' .
-            'Please use mustache_helper_collection::strip_disallowed_helpers() instead.', DEBUG_DEVELOPER);
-
-        return $this->strip_disallowed_helpers($disallowedlist, $string);
+    public function strip_blacklisted_helpers() {
+        throw new \coding_exception('\core\output\mustache_helper_collection::strip_blacklisted_helpers() has been removed.');
     }
 }

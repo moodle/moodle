@@ -38,9 +38,9 @@ global $CFG;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
-    public function test_comment_add_user_competency() {
+    public function test_comment_add_user_competency(): void {
         global $DB, $PAGE;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -99,7 +99,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($expectedurlname, $message->contexturlname);
         // Test customdata.
         $customdata = json_decode($message->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
         $this->assertStringContainsString('tokenpluginfile.php', $customdata->notificationiconurl);
         $userpicture = new \user_picture($u1);
         $userpicture->size = 1; // Use f1 size.
@@ -185,7 +185,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Commenting on a plan.
      */
-    public function test_comment_add_plan() {
+    public function test_comment_add_plan(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
@@ -229,7 +229,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($u1->id, $message->useridto);
         // Test customdata.
         $customdata = json_decode($message->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
 
         // Post a comment in a plan with reviewer. The reviewer is messaged.
         $p1->set('reviewerid', $u2->id);

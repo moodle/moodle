@@ -1059,7 +1059,7 @@ class com_wiris_quizzes_impl_QuizzesImpl extends com_wiris_quizzes_api_Quizzes {
 		$r = $this->newGradeRequest($instance);
 		$qr = $r;
 		$qi = $instance;
-		$qr->question = $this->cloneQuestion($qr->question);
+		$qr->question = $this->shallowCopyQuestion($qr->question);
 		com_wiris_quizzes_impl_QuizzesImpl::setVariables($html, $qr->question, $qi, $qr);
 		return $r;
 	}
@@ -1114,21 +1114,12 @@ class com_wiris_quizzes_impl_QuizzesImpl extends com_wiris_quizzes_api_Quizzes {
 		}
 		return $this->newVariablesRequest($sb->b, $instance);
 	}
-	public function sanitizeForQuizzesService($question) {
-		$slots = $question->getSlots();
-		{
-			$_g = 0;
-			while($_g < $slots->length) {
-				$slot = $slots[$_g];
-				++$_g;
-				if($slot->getSyntax()->getName() == com_wiris_quizzes_api_assertion_SyntaxName::$MATH_MULTISTEP) {
-					$slot->setSyntax(com_wiris_quizzes_api_assertion_SyntaxName::$MATH);
-				}
-				unset($slot);
-			}
-		}
+	public function shallowCopyQuestion($question) {
+		$copy = new com_wiris_quizzes_impl_QuestionImpl();
+		$copy->importQuestion($question->getImpl());
+		return $copy;
 	}
-	public function cloneQuestion($question) {
+	public function deepCopyQuestion($question) {
 		$serialized = $question->serialize();
 		return $this->readQuestion($serialized);
 	}
@@ -1141,12 +1132,11 @@ class com_wiris_quizzes_impl_QuizzesImpl extends com_wiris_quizzes_api_Quizzes {
 		if($question === null) {
 			throw new HException("The question must be specified, either as a parameter" . " of this function or as a field of the question instance");
 		}
-		$question = $this->cloneQuestion($question);
+		$question = $this->shallowCopyQuestion($question);
 		$qr = new com_wiris_quizzes_impl_QuestionRequestImpl();
 		$qr->question = $question;
 		$qr->userData = $qi->userData;
 		com_wiris_quizzes_impl_QuizzesImpl::setVariables($html, $question, $qi, $qr);
-		$this->sanitizeForQuizzesService($question);
 		return $qr;
 	}
 	public function readQuestionInstance($xml, $q) {

@@ -365,6 +365,9 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
 
             $fractionsum += $subq->defaultmark * max(0, $subfraction - $lastchange * $this->penalty);
         }
+        if (empty($fractionsum)) {
+            return null;
+        }
 
         return $fractionsum / $fractionmax;
     }

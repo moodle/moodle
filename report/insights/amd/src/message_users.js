@@ -20,9 +20,9 @@
  * @copyright  2019 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/log', 'core/modal_factory', 'core/modal_events', 'core/templates',
+define(['jquery', 'core/str', 'core/log', 'core/modal_save_cancel', 'core/modal_events', 'core/templates',
     'core/notification', 'core/ajax'],
-        function($, Str, Log, ModalFactory, ModalEvents, Templates, Notification, Ajax) {
+        function($, Str, Log, ModalSaveCancel, ModalEvents, Templates, Notification, Ajax) {
 
     var SELECTORS = {
         BULKACTIONSELECT: "#formactionid"
@@ -111,18 +111,18 @@ define(['jquery', 'core/str', 'core/log', 'core/modal_factory', 'core/modal_even
             titlePromise = Str.get_string('sendbulkmessage', 'core_message', userIds.size);
         }
 
-        return $.when(
-            ModalFactory.create({
-                type: ModalFactory.types.SAVE_CANCEL,
-                body: Templates.render('core_user/send_bulk_message', {})
-            }),
-            titlePromise
-        ).then(function(modal, title) {
+        // eslint-disable-next-line promise/catch-or-return
+        ModalSaveCancel.create({
+            body: Templates.render('core_user/send_bulk_message', {}),
+            title: titlePromise,
+            buttons: {
+                save: titlePromise,
+            },
+            show: true,
+        })
+        .then(function(modal) {
             // Keep a reference to the modal.
             this.modal = modal;
-
-            this.modal.setTitle(title);
-            this.modal.setSaveButtonText(title);
 
             // We want to focus on the action select when the dialog is closed.
             this.modal.getRoot().on(ModalEvents.hidden, function() {
@@ -131,8 +131,6 @@ define(['jquery', 'core/str', 'core/log', 'core/modal_factory', 'core/modal_even
             }.bind(this));
 
             this.modal.getRoot().on(ModalEvents.save, this.submitSendMessage.bind(this, users));
-
-            this.modal.show();
 
             return this.modal;
         }.bind(this));

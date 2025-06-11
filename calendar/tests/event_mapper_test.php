@@ -47,11 +47,11 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class event_mapper_test extends \advanced_testcase {
+final class event_mapper_test extends \advanced_testcase {
     /**
      * Test legacy event -> event.
      */
-    public function test_from_legacy_event_to_event() {
+    public function test_from_legacy_event_to_event(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $legacyevent = $this->create_event();
@@ -65,7 +65,7 @@ class event_mapper_test extends \advanced_testcase {
     /**
      * Test event -> legacy event.
      */
-    public function test_from_event_to_legacy_event() {
+    public function test_from_event_to_legacy_event(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $legacyevent = $this->create_event(['modname' => 'assign', 'instance' => 1]);
@@ -80,7 +80,7 @@ class event_mapper_test extends \advanced_testcase {
     /**
      * Test event -> stdClass.
      */
-    public function test_from_event_to_stdclass() {
+    public function test_from_event_to_stdclass(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $legacyevent = $this->create_event(['modname' => 'assign', 'instance' => 1]);
@@ -98,7 +98,7 @@ class event_mapper_test extends \advanced_testcase {
     /**
      * Test event -> array.
      */
-    public function test_from_event_to_assoc_array() {
+    public function test_from_event_to_assoc_array(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $legacyevent = $this->create_event(['modname' => 'assign', 'instance' => 1]);
@@ -116,7 +116,7 @@ class event_mapper_test extends \advanced_testcase {
     /**
      * Test for action event -> legacy event.
      */
-    public function test_from_action_event_to_legacy_event() {
+    public function test_from_action_event_to_legacy_event(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $legacyevent = $this->create_event(['modname' => 'assign', 'instance' => 1]);

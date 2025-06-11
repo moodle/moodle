@@ -25,6 +25,10 @@
 
 namespace qbank_editquestion;
 
+use core\context;
+use core_question\local\bank\view;
+use qbank_editquestion\output\add_new_question;
+
 /**
  * Class columns is the entrypoint for the columns.
  *
@@ -33,13 +37,37 @@ namespace qbank_editquestion;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_feature extends \core_question\local\bank\plugin_features_base{
+class plugin_feature extends \core_question\local\bank\plugin_features_base {
 
     public function get_question_columns($qbank): array {
         return [
-            new edit_action_column($qbank),
-            new copy_action_column($qbank),
-            new question_status_column($qbank)
+            new question_status_column($qbank),
+        ];
+    }
+
+    public function get_question_actions(view $qbank): array {
+        return [
+            new edit_action($qbank),
+            new copy_action($qbank),
+        ];
+    }
+
+    /**
+     * Return "Add new question" control.
+     *
+     * @param view $qbank The question bank view.
+     * @param context $context The current context, for permission checks.
+     * @param int $categoryid The current question category ID.
+     * @return \renderable[]
+     */
+    public function get_question_bank_controls(view $qbank, context $context, int $categoryid): array {
+        if (!$qbank->allow_add_questions()) {
+            return [];
+        }
+        $canadd = has_capability('moodle/question:add', $context);
+        $urlparams = (new edit_action($qbank))->editquestionurl->params();
+        return [
+            100 => new add_new_question($categoryid, $urlparams, $canadd),
         ];
     }
 

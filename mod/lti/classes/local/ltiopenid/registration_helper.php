@@ -281,7 +281,7 @@ class registration_helper {
      *
      * @return array the Client Registration as an associative array.
      */
-    public function config_to_registration(object $config, int $typeid, object $type = null): array {
+    public function config_to_registration(object $config, int $typeid, ?object $type = null): array {
         $configarray = [];
         foreach ((array)$config as $k => $v) {
             if (substr($k, 0, 4) == 'lti_') {
@@ -443,7 +443,7 @@ class registration_helper {
      *
      * @return mixed Tool Proxy details
      */
-    public function get_tool_proxy(int $proxyid) : array {
+    public function get_tool_proxy(int $proxyid): array {
         return lti_get_tool_proxy($proxyid);
     }
 }

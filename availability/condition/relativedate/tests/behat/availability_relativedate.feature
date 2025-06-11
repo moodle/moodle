@@ -125,31 +125,27 @@ Feature: availability_relativedate
     # Log back in as student 1.
     When I am on the "C1" "Course" page logged in as "student1"
     Then I should see "PageA" in the "region-main" "region"
-    # And I should see "2 hours after course start date" in the "region-main" "region"
+    And I should not see "2 hours after course start date" in the "region-main" "region"
     And I should see "PageB" in the "region-main" "region"
     And I should see relativedate "##+2 weeks -4 days 17:00##"
     But I should see "PageC" in the "region-main" "region"
     And I should see relativedate "##+6 weeks -1 days 17:00##"
     And I should see "PageD" in the "region-main" "region"
-    And I should see "Topic 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
     And I log out
 
     # Log back in as student 2.
     When I am on the "C1" "Course" page logged in as "student2"
     And I press "Enrol me"
     Then I should see "PageA" in the "region-main" "region"
-    # And I should see "2 hours after course start date" in the "region-main" "region"
+    And I should not see "2 hours after course start date" in the "region-main" "region"
     And I should see "PageB" in the "region-main" "region"
     But I should see "PageC" in the "region-main" "region"
     And I should see "PageD" in the "region-main" "region"
-    And I should see "Topic 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
     And I log out
 
     # Log back in as admin.
     When I am on the "C1" "Course" page logged in as "admin"
-    # Then I should see "2 hours after course start date" in the "region-main" "region"
+    Then I should see "2 hours after course start date" in the "region-main" "region"
     And I should see "4 days before course end date" in the "region-main" "region"
     And I should see "6 weeks after user enrolment date" in the "region-main" "region"
     And I should see "7 months after enrolment method end date" in the "region-main" "region"

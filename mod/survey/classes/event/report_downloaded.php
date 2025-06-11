@@ -84,15 +84,6 @@ class report_downloaded extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, "survey", "download", $this->get_url(), $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

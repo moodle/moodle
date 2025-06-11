@@ -91,34 +91,6 @@ class blog_entry_deleted extends base {
     }
 
     /**
-     * Does this event replace legacy event?
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'blog_entry_deleted';
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \blog_entry
-     */
-    protected function get_legacy_eventdata() {
-        return $this->blogentry;
-    }
-
-    /**
-     * replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array (SITEID, 'blog', 'delete', 'index.php?userid=' . $this->relateduserid, 'deleted blog entry with entry id# '.
-                $this->objectid);
-    }
-
-    /**
      * Custom validations.
      *
      * @throws \coding_exception

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/chooser_item
+    @template core_course/local/activitychooser/item
 
     Chooser item template.
 
@@ -26,14 +26,16 @@
         "urls": {
             "addoption": "http://addoptionurl.com"
         },
-        "icon": "<img class='icon' src='http://urltooptionicon'>",
-        "purpose": "content"
+        "icon": "<img class='icon' src='http://urltooptionicon' alt='icon'>",
+        "purpose": "content",
+        "branded": 0
     }
 }}
 <div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option border-0 card m-1 bg-white" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
     <div class="optioninfo card-body d-flex flex-column text-center p-1" data-region="chooser-option-info-container">
         <a class="d-flex flex-column justify-content-between flex-fill" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
-            <div class="optionicon mt-2 mb-1 mx-auto icon-no-margin modicon_{{name}} activityiconcontainer {{purpose}}">
+            <div class="optionicon mt-2 mb-1 mx-auto icon-no-margin modicon_{{name}} activityiconcontainer smaller
+                    {{purpose}} {{#branded}}isbranded{{/branded}}">
                 {{{icon}}}
             </div>
             <div class="optionname clamp-2">{{title}}</div>

@@ -31,17 +31,18 @@ namespace tool_langimport\event;
  * @copyright  2014 Dan Poltawski
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->setAdminUser();
         $this->resetAfterTest();
     }
 
-    public function test_langpack_updated() {
+    public function test_langpack_updated(): void {
         global $CFG;
 
         $event = \tool_langimport\event\langpack_updated::event_with_langcode($CFG->lang);
@@ -56,14 +57,14 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(\context_system::instance(), $event->get_context());
     }
 
-    public function test_langpack_updated_validation() {
+    public function test_langpack_updated_validation(): void {
 
         $this->expectException('coding_exception');
         $this->expectExceptionMessage("The 'langcode' value must be set to a valid language code");
         \tool_langimport\event\langpack_updated::event_with_langcode('broken langcode');
     }
 
-    public function test_langpack_installed() {
+    public function test_langpack_installed(): void {
         $event = \tool_langimport\event\langpack_imported::event_with_langcode('fr');
 
         // Trigger and capture the event.
@@ -76,14 +77,14 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(\context_system::instance(), $event->get_context());
     }
 
-    public function test_langpack_installed_validation() {
+    public function test_langpack_installed_validation(): void {
 
         $this->expectException('coding_exception');
         $this->expectExceptionMessage("The 'langcode' value must be set to a valid language code");
         \tool_langimport\event\langpack_imported::event_with_langcode('broken langcode');
     }
 
-    public function test_langpack_removed() {
+    public function test_langpack_removed(): void {
         $event = \tool_langimport\event\langpack_removed::event_with_langcode('fr');
 
         // Trigger and capture the event.
@@ -96,7 +97,7 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(\context_system::instance(), $event->get_context());
     }
 
-    public function test_langpack_removed_validation() {
+    public function test_langpack_removed_validation(): void {
 
         $this->expectException('coding_exception');
         $this->expectExceptionMessage("The 'langcode' value must be set to a valid language code");

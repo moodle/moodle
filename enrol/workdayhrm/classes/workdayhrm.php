@@ -409,8 +409,8 @@ class workdayhrm {
         $manschoolid = isset($employee->Manager_LSU_ID) ? $employee->Manager_LSU_ID : null;
 
         // Update the existing record.
-        $record->employee_id = $employee->Employee_ID;
-        $record->universal_id = isset($employee->Universal_ID) ? $employee->Universal_ID : null;
+        $record->employee_id = "$employee->Employee_ID";
+        $record->universal_id = isset($employee->Universal_ID) ? "$employee->Universal_ID" : null;
         $record->school_id = isset($employee->LSUAM_LSU_ID) ? $employee->LSUAM_LSU_ID : null;
         if (!is_null($schoolid)) {
             $record->school_id = self::fix_wdhrm_schoolid($schoolid);
@@ -762,7 +762,7 @@ die();
         // Set up the user object.
         $user               = new stdClass();
         $user->username     = strtolower($student->work_email);
-        $user->idnumber     = isset($student->school_id) ? $student->school_id : '';
+        $user->idnumber     = isset($student->universal_id) ? $student->universal_id : '';
         $user->email        = strtolower($student->work_email);
         $user->firstname    = empty($student->preferred_first_name) ? $student->legal_first_name : $student->preferred_first_name;
         $user->firstname    = self::capit($user->firstname);
@@ -789,15 +789,18 @@ die();
             $username = strtolower($student->work_email);
         } else {
             // Build the new username (lowercase it in case the admin is a moron).
-            $username = strtolower(str_replace('@', '_', $student->work_email) . '#ext#' . $extdomain);
+            // We are no longer doing external usernames.
+            // $username = strtolower(str_replace('@', '_', $student->work_email) . '#ext#' . $extdomain);
+            $username = strtolower($student->work_email);
         }
 
         // Build the conditions to get some users.
         $conditions = array();
-        $conditions[] = array("idnumber"=>$student->school_id, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1, "suspended"=>0);
-        $conditions[] = array("username"=>$user->username, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1, "suspended"=>0);
-        $conditions[] = array("username"=>$username, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1, "suspended"=>0);
-        $conditions[] = array("email"=>$user->email, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1, "suspended"=>0);
+        $conditions[] = array("idnumber"=>$student->universal_id, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1);
+        $conditions[] = array("idnumber"=>$student->school_id, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1);
+        $conditions[] = array("username"=>$user->username, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1);
+        $conditions[] = array("username"=>$username, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1);
+        $conditions[] = array("email"=>$user->email, "mnethostid"=>1, "deleted"=>0, "confirmed"=>1);
 
         $muser = new stdClass();
         $counter = 0;
@@ -825,7 +828,7 @@ die();
 
         // We don't have a nonexistent user or an existing user.
         if (!isset($muser->id) && !isset($muser->notreallyhere)) {
-            self::dtrace("      We did not find a matching Moodle employee for email or username: $user->email or $username, idnumber: $student->school_id. let's create them.");
+            self::dtrace("      We did not find a matching Moodle employee for email or username: $user->email or $username, idnumber: $student->universal_id. let's create them.");
             $muser = self::create_moodle_user($user);
         // We have a perfect matching user who should exist.
         } else if (isset($muser->id) && !isset($muser->notreallyhere)

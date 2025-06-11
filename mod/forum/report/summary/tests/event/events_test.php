@@ -33,11 +33,11 @@ namespace forumreport_summary\event;
  * @copyright  2019 Michael Hawkins <michaelh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
     /**
      * Test report_downloaded event.
      */
-    public function test_report_downloaded() {
+    public function test_report_downloaded(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -86,7 +86,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test report_viewed event.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         global $DB;
 
         $this->resetAfterTest();

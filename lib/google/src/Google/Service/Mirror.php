@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror extends Google_Service
 {
   /** View your location. */
@@ -388,6 +389,7 @@ class Google_Service_Mirror extends Google_Service
  *   $accounts = $mirrorService->accounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -419,6 +421,7 @@ class Google_Service_Mirror_Accounts_Resource extends Google_Service_Resource
  *   $contacts = $mirrorService->contacts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Contacts_Resource extends Google_Service_Resource
 {
 
@@ -517,6 +520,7 @@ class Google_Service_Mirror_Contacts_Resource extends Google_Service_Resource
  *   $locations = $mirrorService->locations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Locations_Resource extends Google_Service_Resource
 {
 
@@ -557,6 +561,7 @@ class Google_Service_Mirror_Locations_Resource extends Google_Service_Resource
  *   $settings = $mirrorService->settings;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Settings_Resource extends Google_Service_Resource
 {
 
@@ -587,6 +592,7 @@ class Google_Service_Mirror_Settings_Resource extends Google_Service_Resource
  *   $subscriptions = $mirrorService->subscriptions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Subscriptions_Resource extends Google_Service_Resource
 {
 
@@ -655,6 +661,7 @@ class Google_Service_Mirror_Subscriptions_Resource extends Google_Service_Resour
  *   $timeline = $mirrorService->timeline;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Timeline_Resource extends Google_Service_Resource
 {
 
@@ -766,6 +773,7 @@ class Google_Service_Mirror_Timeline_Resource extends Google_Service_Resource
  *   $attachments = $mirrorService->attachments;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Mirror_TimelineAttachments_Resource extends Google_Service_Resource
 {
 
@@ -833,6 +841,7 @@ class Google_Service_Mirror_TimelineAttachments_Resource extends Google_Service_
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Account extends Google_Collection
 {
   protected $collection_key = 'userData';
@@ -880,6 +889,7 @@ class Google_Service_Mirror_Account extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Attachment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -924,6 +934,7 @@ class Google_Service_Mirror_Attachment extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_AttachmentsListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -952,6 +963,7 @@ class Google_Service_Mirror_AttachmentsListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_AuthToken extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -978,6 +990,7 @@ class Google_Service_Mirror_AuthToken extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Command extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -995,6 +1008,7 @@ class Google_Service_Mirror_Command extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Contact extends Google_Collection
 {
   protected $collection_key = 'sharingFeatures';
@@ -1113,6 +1127,7 @@ class Google_Service_Mirror_Contact extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_ContactsListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1141,6 +1156,7 @@ class Google_Service_Mirror_ContactsListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Location extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1221,6 +1237,7 @@ class Google_Service_Mirror_Location extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_LocationsListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1249,6 +1266,7 @@ class Google_Service_Mirror_LocationsListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_MenuItem extends Google_Collection
 {
   protected $collection_key = 'values';
@@ -1314,6 +1332,7 @@ class Google_Service_Mirror_MenuItem extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_MenuValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1349,6 +1368,7 @@ class Google_Service_Mirror_MenuValue extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Notification extends Google_Collection
 {
   protected $collection_key = 'userActions';
@@ -1413,6 +1433,7 @@ class Google_Service_Mirror_Notification extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_NotificationConfig extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1439,6 +1460,7 @@ class Google_Service_Mirror_NotificationConfig extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Setting extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1474,6 +1496,7 @@ class Google_Service_Mirror_Setting extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_Subscription extends Google_Collection
 {
   protected $collection_key = 'operation';
@@ -1565,6 +1588,7 @@ class Google_Service_Mirror_Subscription extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_SubscriptionsListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1593,6 +1617,7 @@ class Google_Service_Mirror_SubscriptionsListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_TimelineItem extends Google_Collection
 {
   protected $collection_key = 'recipients';
@@ -1842,6 +1867,7 @@ class Google_Service_Mirror_TimelineItem extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_TimelineListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1879,6 +1905,7 @@ class Google_Service_Mirror_TimelineListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_UserAction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1905,6 +1932,7 @@ class Google_Service_Mirror_UserAction extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Mirror_UserData extends Google_Model
 {
   protected $internal_gapi_mappings = array(

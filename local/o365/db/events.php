@@ -183,12 +183,6 @@ $observers = [
         'internal'    => true,
     ],
     [
-        'eventname'   => '\core\event\notification_sent',
-        'callback'    => '\local_o365\observers::handle_notification_sent',
-        'priority'    => 200,
-        'internal'    => false,
-    ],
-    [
         'eventname'   => '\core\event\config_log_created',
         'callback'    => '\local_o365\observers::handle_config_log_created',
         'priority'    => 200,
@@ -197,6 +191,12 @@ $observers = [
     [
         'eventname'   => '\core\event\course_reset_started',
         'callback'    => '\local_o365\feature\coursesync\observers::handle_course_reset_started',
+        'priority'    => 200,
+        'internal'    => true,
+    ],
+    [
+        'eventname'   => '\core\event\cohort_deleted',
+        'callback'    => '\local_o365\observers::handle_cohort_deleted',
         'priority'    => 200,
         'internal'    => true,
     ],

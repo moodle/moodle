@@ -30,6 +30,7 @@ $functions = [
         'methodname' => 'execute',
         'description' => 'Resume an autosave session',
         'type' => 'write',
+        'loginrequired' => false,
         'ajax' => true,
     ),
     'tiny_autosave_reset_session' => array(
@@ -37,6 +38,7 @@ $functions = [
         'methodname' => 'execute',
         'description' => 'Reset an autosave session',
         'type' => 'write',
+        'loginrequired' => false,
         'ajax' => true,
     ),
     'tiny_autosave_update_session' => array(
@@ -44,6 +46,7 @@ $functions = [
         'methodname' => 'execute',
         'description' => 'Update an autosave session',
         'type' => 'write',
+        'loginrequired' => false,
         'ajax' => true,
     ),
 ];

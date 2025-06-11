@@ -32,12 +32,20 @@
     Example context (json):
     {
         "label": "Example label",
-        "element": { "html": "Example HTML", "staticlabel": true }
+        "element": {
+            "html": "Example HTML",
+            "staticlabel": true,
+            "extraclasses": null,
+            "name": "static_name",
+            "id": "id_static",
+            "wrapperid": "fitem_id_static",
+            "iderror": "id_error_static"
+        }
     }
 }}
 {{< core_form/element-template }}
     {{$element}}
-        <div class="form-control-static">
+        <div class="form-control-static {{{element.extraclasses}}}" data-name="{{element.name}}">
         {{{element.html}}}
         </div>
     {{/element}}

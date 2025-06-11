@@ -259,7 +259,7 @@ function page_get_file_areas($course, $cm, $context) {
  *
  * @package  mod_page
  * @category files
- * @param stdClass $browser file browser instance
+ * @param file_browser $browser file browser instance
  * @param stdClass $areas file areas
  * @param stdClass $course course object
  * @param stdClass $cm course module object
@@ -577,7 +577,7 @@ function mod_page_core_calendar_provide_event_action(calendar_event $event,
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_page_get_path_from_pluginfile(string $filearea, array $args) : array {
+function mod_page_get_path_from_pluginfile(string $filearea, array $args): array {
     // Page never has an itemid (the number represents the revision but it's not stored in database).
     array_shift($args);
 

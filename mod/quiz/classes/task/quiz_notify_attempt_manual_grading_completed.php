@@ -18,12 +18,12 @@ namespace mod_quiz\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-use context_course;
+use context_module;
 use core_user;
+use mod_quiz\quiz_attempt;
 use moodle_recordset;
 use question_display_options;
-use mod_quiz_display_options;
-use quiz_attempt;
+use mod_quiz\question\display_options;
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -41,11 +41,7 @@ class quiz_notify_attempt_manual_grading_completed extends \core\task\scheduled_
      */
     protected $forcedtime = null;
 
-    /**
-     * Get name of schedule task.
-     *
-     * @return string
-     */
+    #[\Override]
     public function get_name(): string {
         return get_string('notifyattemptsgradedtask', 'mod_quiz');
     }
@@ -75,10 +71,8 @@ class quiz_notify_attempt_manual_grading_completed extends \core\task\scheduled_
         $this->forcedtime = $time;
     }
 
-    /**
-     * Execute sending notification for manual graded attempts.
-     */
-    public function execute() {
+    #[\Override]
+    public function execute(): void {
         global $DB;
 
         mtrace('Looking for quiz attempts which may need a graded notification sent...');
@@ -94,25 +88,27 @@ class quiz_notify_attempt_manual_grading_completed extends \core\task\scheduled_
             if (!$quiz || $attempt->quiz != $quiz->id) {
                 $quiz = $DB->get_record('quiz', ['id' => $attempt->quiz], '*', MUST_EXIST);
                 $cm = get_coursemodule_from_instance('quiz', $attempt->quiz);
+                $quizcontext = context_module::instance($cm->id);
             }
 
             if (!$course || $course->id != $quiz->course) {
-                $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
-                $coursecontext = context_course::instance($quiz->course);
+                $course = get_course($quiz->course);
             }
 
             $quiz = quiz_update_effective_access($quiz, $attempt->userid);
             $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false);
-            $options = mod_quiz_display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
+            $options = display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
 
             if ($options->manualcomment == question_display_options::HIDDEN) {
                 // User cannot currently see the feedback, so don't message them.
                 // However, this may change in future, so leave them on the list.
+                mtrace('Not sending an email because manualcomment review option is not set.');
                 continue;
             }
 
-            if (!has_capability('mod/quiz:emailnotifyattemptgraded', $coursecontext, $attempt->userid, false)) {
+            if (!has_capability('mod/quiz:emailnotifyattemptgraded', $quizcontext, $attempt->userid, false)) {
                 // User not eligible to get a notification. Mark them done while doing nothing.
+                mtrace('Not sending an email because user does not have mod/quiz:emailnotifyattemptgraded capability.');
                 $DB->set_field('quiz_attempts', 'gradednotificationsenttime', $attempt->timefinish, ['id' => $attempt->id]);
                 continue;
             }

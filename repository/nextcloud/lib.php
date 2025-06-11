@@ -431,7 +431,7 @@ class repository_nextcloud extends repository {
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, ?array $options = null) {
         $repositoryname = $this->get_name();
         $reference = json_decode($storedfile->get_reference());
 
@@ -815,7 +815,7 @@ class repository_nextcloud extends repository {
 
                 $folders[strtoupper($title)] = array(
                     'title' => rtrim($title, '/'),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
                     'children' => array(),
                     'datemodified' => $item['lastmodified'],
                     'path' => $item['href']
@@ -825,7 +825,7 @@ class repository_nextcloud extends repository {
                 $size = !empty($item['getcontentlength']) ? $item['getcontentlength'] : '';
                 $files[strtoupper($title)] = array(
                     'title' => $title,
-                    'thumbnail' => $OUTPUT->image_url(file_extension_icon($title, 90))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_extension_icon($title))->out(false),
                     'size' => $size,
                     'datemodified' => $item['lastmodified'],
                     'source' => $item['href']
@@ -857,7 +857,7 @@ class repository_nextcloud extends repository {
         echo $OUTPUT->header();
 
         $button = new single_button($url, get_string('logintoaccount', 'repository', $this->get_name()),
-            'post', true);
+            'post', single_button::BUTTON_PRIMARY);
         $button->add_action(new popup_action('click', $url, 'Login'));
         $button->class = 'mdl-align';
         $button = $OUTPUT->render($button);
@@ -943,7 +943,7 @@ class repository_nextcloud extends repository {
      * @param stored_file $file
      * @return bool true if synced successfully else false if not ready to sync or reference link not set
      */
-    public function sync_reference(stored_file $file):bool {
+    public function sync_reference(stored_file $file): bool {
         global $CFG;
 
         if ($file->get_referencelastsync() + DAYSECS > time()) {

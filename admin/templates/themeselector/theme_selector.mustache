@@ -1,0 +1,77 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/themeselector/theme_selector
+
+    This template renders the cards view for choosing a theme.
+
+    Example context (json):
+    {
+        "themes": [
+            {
+                "name": "Boost",
+                "choose": "boost",
+                "image": "http://moodlesite/theme/image.php?theme=boost&image=screenshot&component=theme",
+                "current": true,
+                "actionurl": "http://moodlesite/admin/themeselector.php",
+                "sesskey": "123XYZ"
+            },
+            {
+                "name": "Classic",
+                "choose": "classic",
+                "image": "http://moodlesite/theme/image.php?theme=classic&image=screenshot&component=theme",
+                "actionurl": "http://moodlesite/admin/themeselector.php",
+                "sesskey": "123XYZ"
+            }
+        ],
+        "resetbutton": {
+            "id": "single_button123",
+            "method": "post",
+            "url": "index.php",
+            "label": "Clear theme caches",
+            "params": [
+                {
+                    "name": "sesskey",
+                    "value": "123XYZ"
+                },
+                {
+                    "name": "reset",
+                    "value": "1"
+                }
+            ]
+        }
+    }
+}}
+<h2>{{#str}}themeselector, admin{{/str}}</h2>
+{{#resetbutton}}
+    <div class="mb-3">
+        {{>core/single_button}}
+    </div>
+{{/resetbutton}}
+<div class="card-grid row row-cols-1 row-cols-md-3 mx-0" id="themelist" data-region="card-deck" role="list" data-definedinconfig="{{definedinconfig}}">
+    {{#themes}}
+        <div class="col d-flex px-1 mb-2">
+            {{>core_admin/themeselector/theme_card}}
+        </div>
+    {{/themes}}
+</div>
+
+{{#js}}
+require(['core_admin/themeselector/preview_modal'], function(Modal) {
+    Modal.init();
+});
+{{/js}}

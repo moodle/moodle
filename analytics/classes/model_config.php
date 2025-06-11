@@ -61,7 +61,7 @@ class model_config {
      * @param bool $includeweights Include the model weights if available
      * @return string
      */
-    public function export(string $zipfilename, bool $includeweights = true) : string {
+    public function export(string $zipfilename, bool $includeweights = true): string {
 
         if (!$this->model) {
             throw new \coding_exception('No model object provided.');
@@ -111,7 +111,7 @@ class model_config {
      * @param  string $zipfilepath Path to the zip file to import
      * @return \core_analytics\model
      */
-    public function import(string $zipfilepath) : \core_analytics\model {
+    public function import(string $zipfilepath): \core_analytics\model {
 
         list($modeldata, $mlbackenddir) = $this->extract_import_contents($zipfilepath);
 
@@ -144,7 +144,7 @@ class model_config {
      * @param  bool $ignoreversionmismatches
      * @return string|null Error string or null if all good.
      */
-    public function check_dependencies(\stdClass $modeldata, bool $ignoreversionmismatches) : ?string {
+    public function check_dependencies(\stdClass $modeldata, bool $ignoreversionmismatches): ?string {
 
         $siteversions = \core_component::get_all_versions();
 
@@ -228,7 +228,7 @@ class model_config {
      * @param  string $fullclassname Qualified name including the namespace.
      * @return string|null Frankenstyle component
      */
-    public static function get_class_component(string $fullclassname) : ?string {
+    public static function get_class_component(string $fullclassname): ?string {
 
         // Strip out leading backslash.
         $fullclassname = ltrim($fullclassname, '\\');
@@ -254,7 +254,7 @@ class model_config {
      * @param  string $zipfilepath Zip file path
      * @return array [0] => \stdClass, [1] => string
      */
-    public function extract_import_contents(string $zipfilepath) : array {
+    public function extract_import_contents(string $zipfilepath): array {
 
         $importtempdir = make_request_directory();
 
@@ -287,7 +287,7 @@ class model_config {
      * Exports the configuration of the model.
      * @return \stdClass
      */
-    protected function export_model_data() : \stdClass {
+    protected function export_model_data(): \stdClass {
 
         $versions = \core_component::get_all_versions();
 

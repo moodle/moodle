@@ -23,12 +23,12 @@ namespace tool_brickfield;
  * @copyright  2020 onward: Brickfield Education Labs, https://www.brickfield.ie
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
 
     /**
      * Tests for the function manager::get_all_areas()
      */
-    public function test_get_areas() {
+    public function test_get_areas(): void {
         $this->resetAfterTest();
         $areas = manager::get_all_areas();
         $areaclassnames = array_map('get_class', $areas);

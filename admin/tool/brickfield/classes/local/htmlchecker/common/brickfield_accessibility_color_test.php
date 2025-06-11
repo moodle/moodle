@@ -170,6 +170,19 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
         'yellowgreen' => '9acd32'
     ];
 
+    /** @var string[] Define estimated relative font-size codes to pt values. */
+    public $fontsizenames = [
+        'xx-small' => 9,
+        'x-small' => 10,
+        'small' => 11,
+        'smaller' => 11,
+        'medium' => 12,
+        'large' => 14,
+        'larger' => 14,
+        'x-large' => 18,
+        'xx-large' => 24,
+    ];
+
     /**
      * Helper method that finds the luminosity between the provided
      * foreground and background parameters.
@@ -227,10 +240,10 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
             $l2 = (.2126 * $r4 + 0.7152 * $g4 + 0.0722 * $b4);
         }
 
-        $luminosity = round(($l1 + 0.05) / ($l2 + 0.05), 2);
+        // Increase round to 4 to avoid a 4.49 contrast being round up to a false pass of 4.5.
+        $luminosity = round(($l1 + 0.05) / ($l2 + 0.05), 4);
         return $luminosity;
     }
-
 
     /**
      * Returns the decimal equivalents for a HEX color. Returns null if it cannot be determined.
@@ -254,13 +267,21 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
      */
     public function convert_color(string $color): string {
         $color = trim($color);
-        if (strpos($color, ' ') !== false) {
-            $colors = explode(' ', $color);
-            foreach ($colors as $backgroundpart) {
-                if (substr(trim($backgroundpart), 0, 1) == '#' ||
-                    in_array(trim($backgroundpart), array_keys($this->colornames)) ||
-                    strtolower(substr(trim($backgroundpart), 0, 3)) == 'rgb') {
-                    $color = $backgroundpart;
+        // Search for color in rgb format first, as this can potentially contain a space.
+        if (strpos($color, 'rgb') !== false) {
+            $colors = explode('rgb', $color, 2); // Getting 2 only in array.
+            // Getting end point of rgb value, i.e. the end bracket.
+            $endpos = strpos($colors[1], ')');
+            $color = 'rgb' . substr($colors[1], 0, ($endpos + 1)); // Recompiling rgb value.
+        } else {
+            // Splitting multi-value css background value.
+            if (strpos($color, ' ') !== false) {
+                $colors = explode(' ', $color);
+                foreach ($colors as $backgroundpart) {
+                    if (substr(trim($backgroundpart), 0, 1) == '#' ||
+                        in_array(trim($backgroundpart), array_keys($this->colornames))) {
+                        $color = $backgroundpart;
+                    }
                 }
             }
         }
@@ -282,9 +303,20 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
         }
         // RGB values.
         if (strtolower(substr($color, 0, 3)) == 'rgb') {
-            $colors = explode(',', trim(str_replace('rgb(', '', $color), '()'));
-            if (count($colors) != 3) {
-                return false;
+            if (strpos($color, 'rgba') !== false) {
+                $tmpbg = $this->get_rgb($this->defaultbackground);
+                $colors = explode(',', trim(str_replace('rgba(', '', $color), '()'));
+                if (count($colors) != 4) {
+                    return false;
+                }
+                $colors[0] = round(((1 - $colors[3]) * $tmpbg['r']) + ($colors[3] * $colors[0]));
+                $colors[1] = round((1 - $colors[3]) * $tmpbg['g']) + ($colors[3] * $colors[1]);
+                $colors[2] = round((1 - $colors[3]) * $tmpbg['b']) + ($colors[3] * $colors[2]);
+            } else {
+                $colors = explode(',', trim(str_replace('rgb(', '', $color), '()'));
+                if (count($colors) != 3) {
+                    return false;
+                }
             }
             $r = intval($colors[0]);
             $g = intval($colors[1]);
@@ -361,5 +393,36 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
             ? $forergb['b'] - $backrgb['b']
             : $backrgb['b'] - $forergb['b'];
         return ['red' => $reddiff, 'green' => $greendiff, 'blue' => $bluediff];
+    }
+
+    /**
+     * Helper method that finds the estimated font-size for the provided
+     * string font-size parameter.
+     * @param string $fontsize The css font-size, in various formats
+     * @return int The estimated font-size
+     */
+    public function get_fontsize(string $fontsize): int {
+        $newfontsize = 12; // Default value, in pt, equivalent to 16px.
+
+        // Search for rem, em, and px initially, typical font-size values.
+        $pos1 = stripos($fontsize, 'rem');
+        $pos2 = stripos($fontsize, 'em');
+        $pos3 = stripos($fontsize, 'px');
+        if ($pos1 !== false) {
+            $rem = substr($fontsize, 0, -3);
+            $newfontsize = is_numeric($rem) ? $newfontsize * $rem : $newfontsize;
+        } else if ($pos2 !== false) {
+            $em = substr($fontsize, 0, -2);
+            $newfontsize = is_numeric($em) ? $newfontsize * $em : $newfontsize;
+        } else if ($pos3 !== false) {
+            $px = substr($fontsize, 0, -2);
+            $newfontsize = is_numeric($px) ? 0.75 * $px : $newfontsize;
+        } else if (in_array($fontsize, array_keys($this->fontsizenames))) {
+            $newfontsize = $this->fontsizenames[$fontsize];
+        } else {
+            preg_match_all('!\d+!', $fontsize, $matches);
+            $newfontsize = $matches[0][0] ?? $newfontsize;
+        }
+        return (int) $newfontsize;
     }
 }

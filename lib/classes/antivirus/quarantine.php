@@ -66,7 +66,7 @@ class quarantine {
      * @return string|null the name of the newly created quarantined file.
      * @throws \dml_exception
      */
-    public static function quarantine_file(string $file, string $filename, string $incidentdetails, string $notice) : ?string {
+    public static function quarantine_file(string $file, string $filename, string $incidentdetails, string $notice): ?string {
         if (!self::is_quarantine_enabled()) {
             return null;
         }
@@ -97,7 +97,7 @@ class quarantine {
      * @return string|null the name of the newly created quarantined file.
      * @throws \dml_exception
      */
-    public static function quarantine_data(string $data, string $filename, string $incidentdetails, string $notice) : ?string {
+    public static function quarantine_data(string $data, string $filename, string $incidentdetails, string $notice): ?string {
         if (!self::is_quarantine_enabled()) {
             return null;
         }
@@ -124,7 +124,7 @@ class quarantine {
      * @return bool
      * @throws \dml_exception
      */
-    public static function is_quarantine_enabled() : bool {
+    public static function is_quarantine_enabled(): bool {
         return !empty(get_config("antivirus", "enablequarantine"));
     }
 
@@ -133,7 +133,7 @@ class quarantine {
      *
      * @return string path of quarantine folder
      */
-    private static function get_quarantine_folder() : string {
+    private static function get_quarantine_folder(): string {
         global $CFG;
         $quarantinefolder = $CFG->dataroot . DIRECTORY_SEPARATOR . self::DEFAULT_QUARANTINE_FOLDER;
         if (!file_exists($quarantinefolder)) {
@@ -148,7 +148,7 @@ class quarantine {
      * @param string $filename the filename to check.
      * @return boolean whether file exists.
      */
-    public static function quarantined_file_exists(string $filename) : bool {
+    public static function quarantined_file_exists(string $filename): bool {
         $folder = self::get_quarantine_folder();
         return file_exists($folder . $filename);
     }
@@ -238,7 +238,7 @@ class quarantine {
      *
      * @return array list of quarantined files.
      */
-    public static function get_quarantined_files() : array {
+    public static function get_quarantined_files(): array {
         $files = new \DirectoryIterator(self::get_quarantine_folder());
         $filestosort = [];
 

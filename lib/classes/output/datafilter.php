@@ -16,10 +16,8 @@
 
 namespace core\output;
 
-use context;
-use renderable;
+use core\context;
 use stdClass;
-use templatable;
 
 /**
  * The filter renderable class.
@@ -30,6 +28,14 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class datafilter implements renderable, templatable {
+    /** @var int None of the following match */
+    public const JOINTYPE_NONE = 0;
+
+    /** @var int Any of the following match */
+    public const JOINTYPE_ANY = 1;
+
+    /** @var int All of the following match */
+    public const JOINTYPE_ALL = 2;
 
     /** @var context $context The context where the filters are being rendered. */
     protected $context;
@@ -81,7 +87,10 @@ abstract class datafilter implements renderable, templatable {
         bool $multiple,
         ?string $filterclass,
         array $values,
-        bool $allowempty = false
+        bool $allowempty = false,
+        ?stdClass $filteroptions = null,
+        bool $required = false,
+        array $joinlist = [self::JOINTYPE_NONE, self::JOINTYPE_ANY, self::JOINTYPE_ALL]
     ): ?stdClass {
 
         if (!$allowempty && empty($values)) {
@@ -96,6 +105,9 @@ abstract class datafilter implements renderable, templatable {
             'allowmultiple' => $multiple,
             'filtertypeclass' => $filterclass,
             'values' => $values,
+            'filteroptions' => $filteroptions,
+            'required' => $required,
+            'joinlist' => json_encode($joinlist),
         ];
     }
 }

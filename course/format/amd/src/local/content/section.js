@@ -25,6 +25,7 @@
 import Header from 'core_courseformat/local/content/section/header';
 import DndSection from 'core_courseformat/local/courseeditor/dndsection';
 import Templates from 'core/templates';
+import Pending from "core/pending";
 
 export default class extends DndSection {
 
@@ -36,6 +37,7 @@ export default class extends DndSection {
         this.name = 'content_section';
         // Default query selectors.
         this.selectors = {
+            ACTIONMENU: '.section-actions',
             SECTION_ITEM: `[data-for='section_title']`,
             CM: `[data-for="cmitem"]`,
             SECTIONINFO: `[data-for="sectioninfo"]`,
@@ -51,6 +53,7 @@ export default class extends DndSection {
             HASDESCRIPTION: 'description',
             HIDE: 'd-none',
             HIDDEN: 'hidden',
+            CURRENT: 'current',
         };
 
         // We need our id to watch specific events.
@@ -78,6 +81,24 @@ export default class extends DndSection {
                 this.configDragDrop(headerComponent);
             }
         }
+        this._openSectionIfNecessary();
+    }
+
+    /**
+     * Open the section if the anchored activity is inside.
+     */
+    async _openSectionIfNecessary() {
+        const pageCmInfo = this.reactive.getPageAnchorCmInfo();
+        if (!pageCmInfo || pageCmInfo.sectionid !== this.id) {
+            return;
+        }
+        await this.reactive.dispatch('sectionContentCollapsed', [this.id], false);
+        const pendingOpen = new Pending(`courseformat/section:openSectionIfNecessary`);
+        this.element.scrollIntoView({block: "center"});
+        setTimeout(() => {
+            this.reactive.dispatch('setPageItem', 'cm', pageCmInfo.id);
+            pendingOpen.resolve();
+        }, 250);
     }
 
     /**
@@ -99,7 +120,7 @@ export default class extends DndSection {
      */
     validateDropData(dropdata) {
         // If the format uses one section per page sections dropping in the content is ignored.
-       if (dropdata?.type === 'section' && this.reactive.sectionReturn != 0) {
+        if (dropdata?.type === 'section' && this.reactive.sectionReturn !== null) {
             return false;
         }
         return super.validateDropData(dropdata);
@@ -116,7 +137,24 @@ export default class extends DndSection {
         if (!cms || cms.length === 0) {
             return null;
         }
-        return cms[cms.length - 1];
+        const lastCm = cms[cms.length - 1];
+        // If it is a delegated section return the last item overall.
+        if (this.section.component !== null) {
+            return lastCm;
+        }
+        // If it is a regular section and the last item overall has a parent cm, return the parent instead.
+        const parentSection = lastCm.parentNode.closest(this.selectors.CM);
+        return parentSection ?? lastCm;
+    }
+
+    /**
+     * Get a fallback element when there is no CM in the section.
+     *
+     * @returns {element|null} the las course module element of the section.
+     */
+    getLastCmFallback() {
+        // The sectioninfo is always present, even when the section is empty.
+        return this.getElement(this.selectors.SECTIONINFO);
     }
 
     /**
@@ -130,6 +168,7 @@ export default class extends DndSection {
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.element.classList.toggle(this.classes.HIDDEN, !element.visible ?? false);
+        this.element.classList.toggle(this.classes.CURRENT, element.current ?? false);
         this.locked = element.locked;
         // The description box classes depends on the section state.
         const sectioninfo = this.getElement(this.selectors.SECTIONINFO);
@@ -170,7 +209,7 @@ export default class extends DndSection {
             newAction = 'sectionShow';
         }
         // Find the affected action.
-        const affectedAction = this.getElement(selector);
+        const affectedAction = this._getActionMenu(selector);
         if (!affectedAction) {
             return;
         }
@@ -187,10 +226,22 @@ export default class extends DndSection {
         const icon = affectedAction.querySelector(this.selectors.ICON);
         if (affectedAction.dataset?.swapicon && icon) {
             const newIcon = affectedAction.dataset.swapicon;
+            affectedAction.dataset.swapicon = affectedAction.dataset.icon;
+            affectedAction.dataset.icon = newIcon;
             if (newIcon) {
                 const pixHtml = await Templates.renderPix(newIcon, 'core');
                 Templates.replaceNode(icon, pixHtml, '');
             }
         }
+    }
+
+    /**
+     * Get the action menu element from the selector.
+     *
+     * @param {string} selector The selector to find the action menu.
+     * @returns The action menu element.
+     */
+    _getActionMenu(selector) {
+        return document.querySelector(`${this.selectors.ACTIONMENU}[data-sectionid='${this.id}'] ${selector}`);
     }
 }

@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class basefont_is_not_used_testcase
  */
-class basefont_is_not_used_test extends all_checks {
+final class basefont_is_not_used_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'basefont_is_not_used';
 
@@ -64,7 +64,7 @@ EOD;
     /**
      * Test for basefont tags being used
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'basefont');
 

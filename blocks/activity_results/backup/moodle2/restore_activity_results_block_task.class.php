@@ -101,7 +101,7 @@ class restore_activity_results_block_task extends restore_block_task {
      * Define the contents in the activity that must be
      * processed by the link decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         return array();
     }
 
@@ -109,7 +109,7 @@ class restore_activity_results_block_task extends restore_block_task {
      * Define the decoding rules for links belonging
      * to the activity to be executed by the link decoder
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         return array();
     }
 }

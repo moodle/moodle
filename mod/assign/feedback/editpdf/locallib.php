@@ -283,7 +283,10 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                     foreach ($nondraftannotations as $ndannotation) {
                         foreach ($draftannotations as $dannotation) {
                             foreach ($ndannotation as $key => $value) {
-                                if ($key != 'id' && $value != $dannotation->{$key}) {
+                                // As the $draft was included in the class annotation,
+                                // it is necessary to omit it in the condition below as well,
+                                // otherwise, an error would be raised.
+                                if ($key != 'id' && $key != 'draft' && $value != $dannotation->{$key}) {
                                     continue 2;
                                 }
                             }
@@ -305,7 +308,10 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                     foreach ($nondraftcomments as $ndcomment) {
                         foreach ($draftcomments as $dcomment) {
                             foreach ($ndcomment as $key => $value) {
-                                if ($key != 'id' && $value != $dcomment->{$key}) {
+                                // As the $draft was included in the class comment,
+                                // it is necessary to omit it in the condition below as well,
+                                // otherwise, an error would be raised.
+                                if ($key != 'id' && $key != 'draft' && $value != $dcomment->{$key}) {
                                     continue 2;
                                 }
                             }

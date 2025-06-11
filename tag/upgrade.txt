@@ -1,5 +1,16 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in tagging, information provided
 here is intended especially for developers.
+
+=== 4.4 ===
+
+* New additional property 'viewurl' has been added to the pre-defined structure in tag_item_exporter. This property
+  represents the URL to view a given tag.
+* The `core_tag_manage_table` class has been deprecated, in favour of new report builder implementation
 
 === 3.6 ===
 

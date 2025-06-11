@@ -24,14 +24,14 @@ namespace enrol_lti\local\ltiadvantage\viewobject;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\viewobject\published_resource
  */
-class published_resource_test extends \advanced_testcase {
+final class published_resource_test extends \advanced_testcase {
 
     /**
      * Test creating a simple published_resource view object and fetching information about it.
      *
      * @covers ::__construct
      */
-    public function test_create() {
+    public function test_create(): void {
         $pr = new published_resource(
             'Assignment one',
             'Course 1',

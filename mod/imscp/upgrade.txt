@@ -1,4 +1,13 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in the imscp code.
+
+=== 4.3 ===
+
+* The `imscp_libxml_disable_entity_loader` method is deprecated, as it is no longer required from PHP 8.0
 
 === 3.0 ===
 

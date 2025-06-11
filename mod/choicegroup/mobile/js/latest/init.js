@@ -212,7 +212,7 @@ class AddonModChoiceGroupProvider {
             });
         };
 
-        if (!context.CoreAppProvider.isOnline() && allowOffline) {
+        if (!context.CoreNetwork.isOnline() && allowOffline) {
             // App is offline, store the action.
             return storeOffline();
         }
@@ -284,7 +284,7 @@ class AddonModChoiceGroupProvider {
             });
         };
 
-        if (!context.CoreAppProvider.isOnline() && allowOffline) {
+        if (!context.CoreNetwork.isOnline() && allowOffline) {
             // App is offline, store the action.
             return storeOffline();
         }
@@ -445,7 +445,7 @@ class AddonModChoiceGroupSyncProvider extends this.CoreSyncBaseProvider {
                     return;
                 }
 
-                if (!context.CoreAppProvider.isOnline()) {
+                if (!context.CoreNetwork.isOnline()) {
                     // Cannot sync in offline.
                     return Promise.reject(new context.CoreNetworkError());
                 }

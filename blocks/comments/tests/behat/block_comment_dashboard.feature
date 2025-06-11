@@ -10,7 +10,7 @@ Feature: Enable Block comments on the dashboard and view comments
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | Frist | teacher1@example.com |
+      | teacher1 | Teacher | First | teacher1@example.com |
 
   Scenario: Add the comments block on the dashboard and add comments with Javascript disabled
     When I log in as "teacher1"

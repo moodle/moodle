@@ -20,6 +20,7 @@ namespace core_reportbuilder\local\helpers;
 
 use advanced_testcase;
 use invalid_parameter_exception;
+use core\clock;
 use core_cohort\reportbuilder\audience\cohortmember;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\models\schedule as model;
@@ -34,7 +35,18 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class schedule_test extends advanced_testcase {
+final class schedule_test extends advanced_testcase {
+
+    /** @var clock $clock */
+    private readonly clock $clock;
+
+    /**
+     * Mock the clock
+     */
+    protected function setUp(): void {
+        parent::setUp();
+        $this->clock = $this->mock_clock_with_frozen(1622847600);
+    }
 
     /**
      * Test create schedule
@@ -47,7 +59,8 @@ class schedule_test extends advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
 
-        $timescheduled = time() + DAYSECS;
+        // Create schedule for tomorrow.
+        $timescheduled = $this->clock->time() + DAYSECS;
         $schedule = schedule::create_schedule((object) [
             'name' => 'My schedule',
             'reportid' => $report->get('id'),
@@ -81,11 +94,12 @@ class schedule_test extends advanced_testcase {
         // Update some record properties.
         $record = $schedule->to_record();
         $record->name = 'My updated schedule';
-        $record->timescheduled = 1861340400; // 25/12/2028 07:00 UTC.
+        $record->timescheduled += (12 * HOURSECS);
 
         $schedule = schedule::update_schedule($record);
         $this->assertEquals($record->name, $schedule->get('name'));
         $this->assertEquals($record->timescheduled, $schedule->get('timescheduled'));
+        $this->assertEquals($record->timescheduled, $schedule->get('timenextsend'));
     }
 
     /**
@@ -225,6 +239,15 @@ class schedule_test extends advanced_testcase {
             'Henrietta',
             'Zoe',
         ], array_column($users, 'firstname'));
+
+        // Now delete one of our users, ensure they are no longer returned.
+        delete_user($manualuserone);
+
+        $users = schedule::get_schedule_report_users($schedule);
+        $this->assertEquals([
+            'Henrietta',
+            'Zoe',
+        ], array_column($users, 'firstname'));
     }
 
     /**
@@ -248,7 +271,7 @@ class schedule_test extends advanced_testcase {
      *
      * @return string[]
      */
-    public function get_schedule_report_file_format(): array {
+    public static function get_schedule_report_file_format(): array {
         return [
             ['csv'],
             ['excel'],
@@ -285,76 +308,94 @@ class schedule_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function should_send_schedule_provider(): array {
-        $time = time();
-
-        // We just need large offsets for dates in the past/future.
-        $yesterday = $time - DAYSECS;
-        $tomorrow = $time + DAYSECS;
-
+    public static function should_send_schedule_provider(): array {
         return [
-            'Disabled' => [[
-                'enabled' => false,
-            ], false],
-            'Time scheduled in the past' => [[
-                'recurrence' => model::RECURRENCE_NONE,
-                'timescheduled' => $yesterday,
-            ], true],
-            'Time scheduled in the past, already sent prior to schedule' => [[
-                'recurrence' => model::RECURRENCE_NONE,
-                'timescheduled' => $yesterday,
-                'timelastsent' => $yesterday - HOURSECS,
-            ], true],
-            'Time scheduled in the past, already sent on schedule' => [[
-                'recurrence' => model::RECURRENCE_NONE,
-                'timescheduled' => $yesterday,
-                'timelastsent' => $yesterday,
-            ], false],
-            'Time scheduled in the future' => [[
-                'recurrence' => model::RECURRENCE_NONE,
-                'timescheduled' => $tomorrow,
-            ], false],
-            'Time scheduled in the future, already sent prior to schedule' => [[
-                'recurrence' => model::RECURRENCE_NONE,
-                'timelastsent' => $yesterday,
-                'timescheduled' => $tomorrow,
-            ], false],
-            'Next send in the past' => [[
-                'recurrence' => model::RECURRENCE_DAILY,
-                'timescheduled' => $yesterday,
-                'timenextsend' => $yesterday,
-            ], true],
-            'Next send in the future' => [[
-                'recurrence' => model::RECURRENCE_DAILY,
-                'timescheduled' => $yesterday,
-                'timenextsend' => $tomorrow,
-            ], false],
+            'Time scheduled in the past' => [
+                model::RECURRENCE_NONE, '-1 hour', null, null, true,
+            ],
+            'Time scheduled in the past, already sent prior to schedule' => [
+                model::RECURRENCE_NONE, '-1 hour', '-2 hour', null, true,
+            ],
+            'Time scheduled in the past, already sent on schedule' => [
+                model::RECURRENCE_NONE, '-1 hour', '-1 hour', null, false,
+            ],
+            'Time scheduled in the future' => [
+                model::RECURRENCE_NONE, '+1 hour', null, null, false,
+            ],
+            'Time scheduled in the future, already sent prior to schedule' => [
+                model::RECURRENCE_NONE, '+1 hour', '-1 hour', null, false,
+            ],
+            'Next send in the past' => [
+                model::RECURRENCE_DAILY, '-1 hour', null, '-1 hour', true,
+            ],
+            'Next send in the future' => [
+                model::RECURRENCE_DAILY, '-1 hour', null, '+1 hour', false,
+            ],
         ];
     }
 
     /**
      * Test for whether a schedule should be sent
      *
-     * @param array $properties
+     * @param int $recurrence
+     * @param string $timescheduled Relative time suitable for passing to {@see strtotime}
+     * @param string|null $timelastsent Relative time suitable for passing to {@see strtotime}, or null to ignore
+     * @param string|null $timenextsend Relative time suitable for passing to {@see strtotime}, or null to ignore
      * @param bool $expected
      *
      * @dataProvider should_send_schedule_provider
      */
-    public function test_should_send_schedule(array $properties, bool $expected): void {
+    public function test_should_send_schedule(
+        int $recurrence,
+        string $timescheduled,
+        ?string $timelastsent,
+        ?string $timenextsend,
+        bool $expected,
+    ): void {
         $this->resetAfterTest();
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
 
-        $schedule = $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'My schedule'] + $properties);
+        // Use relative time period if present, otherwise default to zero (never sent).
+        $scheduletimelastsent = 0;
+        if ($timelastsent !== null) {
+            $scheduletimelastsent = strtotime($timelastsent, $this->clock->time());
+        }
+
+        $schedule = $generator->create_schedule([
+            'reportid' => $report->get('id'),
+            'name' => 'My schedule',
+            'recurrence' => $recurrence,
+            'timescheduled' => strtotime($timescheduled, $this->clock->time()),
+            'timelastsent' => $scheduletimelastsent,
+        ]);
 
         // If "Time next send" is specified, then override calculated value.
-        if (array_key_exists('timenextsend', $properties)) {
-            $schedule->set('timenextsend', $properties['timenextsend']);
+        if ($timenextsend !== null) {
+            $schedule->set('timenextsend', strtotime($timenextsend, $this->clock->time()));
         }
 
         $this->assertEquals($expected, schedule::should_send_schedule($schedule));
+    }
+
+    /**
+     * Test for whether a schedule should be sent that has been disabled
+     */
+    public function test_should_send_schedule_disabled(): void {
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $schedule = $generator->create_schedule([
+            'reportid' => $report->get('id'),
+            'name' => 'My schedule',
+            'enabled' => 0,
+        ]);
+
+        $this->assertFalse(schedule::should_send_schedule($schedule));
     }
 
     /**
@@ -362,23 +403,30 @@ class schedule_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function calculate_next_send_time_provider(): array {
-        $timescheduled = 1635865200; // Tue Nov 02 2021 15:00:00 GMT+0000.
-        $timenow = 1639846800; // Sat Dec 18 2021 17:00:00 GMT+0000.
-
+    public static function calculate_next_send_time_provider(): array {
+        // Times are based on the current clock time (Fri Jun 04 2021 23:00:00 UTC).
         return [
-            'No recurrence' => [model::RECURRENCE_NONE, $timescheduled, $timenow, $timescheduled],
-            'Recurrence, time scheduled in future' => [model::RECURRENCE_DAILY, $timenow + DAYSECS, $timenow, $timenow + DAYSECS],
-            // Sun Dec 19 2021 15:00:00 GMT+0000.
-            'Daily recurrence' => [model::RECURRENCE_DAILY, $timescheduled, $timenow, 1639926000],
-            // Mon Dec 20 2021 15:00:00 GMT+0000.
-            'Weekday recurrence' => [model::RECURRENCE_WEEKDAYS, $timescheduled, $timenow, 1640012400],
-            // Tue Dec 21 2021 15:00:00 GMT+0000.
-            'Weekly recurrence' => [model::RECURRENCE_WEEKLY, $timescheduled, $timenow, 1640098800],
-            // Sun Jan 02 2022 15:00:00 GMT+0000.
-            'Monthy recurrence' => [model::RECURRENCE_MONTHLY, $timescheduled, $timenow, 1641135600],
-            // Wed Nov 02 2022 15:00:00 GMT+0000.
-            'Annual recurrence' => [model::RECURRENCE_ANNUALLY, $timescheduled, $timenow, 1667401200],
+            'No recurrence' => [
+                model::RECURRENCE_NONE, '2021-06-03 12:00', '2021-06-03 12:00',
+            ],
+            'Recurrence, time scheduled in future' => [
+                model::RECURRENCE_DAILY, '2021-06-05 12:00', '2021-06-05 12:00',
+            ],
+            'Daily recurrence' => [
+                model::RECURRENCE_DAILY, '2021-06-02 12:00', '2021-06-05 12:00',
+            ],
+            'Weekday recurrence' => [
+                model::RECURRENCE_WEEKDAYS, '2021-06-02 12:00', '2021-06-07 12:00',
+            ],
+            'Weekly recurrence' => [
+                model::RECURRENCE_WEEKLY, '2021-05-18 12:00', '2021-06-08 12:00',
+            ],
+            'Monthy recurrence' => [
+                model::RECURRENCE_MONTHLY, '2021-03-19 12:00', '2021-06-19 12:00',
+            ],
+            'Annual recurrence' => [
+                model::RECURRENCE_ANNUALLY, '2019-05-01 12:00', '2022-05-01 12:00',
+            ],
          ];
     }
 
@@ -386,27 +434,27 @@ class schedule_test extends advanced_testcase {
      * Test for calculating next schedule send time
      *
      * @param int $recurrence
-     * @param int $timescheduled
-     * @param int $timenow
-     * @param int $expected
+     * @param string $timescheduled Absolute time suitable for passing to {@see strtotime}
+     * @param string $expected Absolute time suitable for passing to {@see strtotime}
      *
      * @dataProvider calculate_next_send_time_provider
      */
-    public function test_calculate_next_send_time(int $recurrence, int $timescheduled, int $timenow, int $expected): void {
+    public function test_calculate_next_send_time(int $recurrence, string $timescheduled, string $expected): void {
         $this->resetAfterTest();
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
 
-        $schedule = $generator->create_schedule([
+        // Create model manually, as the generator automatically calculates next send itself.
+        $schedule = new model(0, (object) [
             'reportid' => $report->get('id'),
             'name' => 'My schedule',
             'recurrence' => $recurrence,
-            'timescheduled' => $timescheduled,
-            'timenow' => $timenow,
+            'timescheduled' => strtotime("{$timescheduled} UTC"),
         ]);
 
-        $this->assertEquals($expected, schedule::calculate_next_send_time($schedule, $timenow));
+        $scheduleexpected = strtotime("{$expected} UTC");
+        $this->assertEquals($scheduleexpected, schedule::calculate_next_send_time($schedule));
     }
 }

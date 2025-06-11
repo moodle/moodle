@@ -22,6 +22,7 @@
  * @copyright  2019 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace report_lpmonitoring;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -33,6 +34,7 @@ use report_lpmonitoring\external;
 use report_lpmonitoring\api;
 use core_competency\api as core_competency_api;
 use tool_cohortroles\api as tool_cohortroles_api;
+use core_external\external_api;
 
 
 /**
@@ -44,7 +46,7 @@ use tool_cohortroles\api as tool_cohortroles_api;
  * @copyright  2019 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_lpmonitoring_external_cm_testcase extends externallib_advanced_testcase {
+final class external_cm_test extends \externallib_advanced_testcase {
 
     /** @var stdClass $appreciator User with enough permissions to access lpmonitoring report in system context. */
     protected $appreciator = null;
@@ -95,6 +97,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
     protected $scale = null;
 
     protected function setUp(): void {
+        parent::setUp();
         if (!api::is_cm_comptency_grading_enabled()) {
             $this->markTestSkipped('Skipped test, grading competency in course module is disabled');
         }
@@ -102,12 +105,12 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $dg = $this->getDataGenerator();
         $cpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
-        $creator = $dg->create_user(array('firstname' => 'Creator'));
-        $appreciator = $dg->create_user(array('firstname' => 'Appreciator'));
+        $creator = $dg->create_user(['firstname' => 'Creator']);
+        $appreciator = $dg->create_user(['firstname' => 'Appreciator']);
 
-        $this->contextcreator = context_user::instance($creator->id);
-        $this->contextappreciator = context_user::instance($appreciator->id);
-        $syscontext = context_system::instance();
+        $this->contextcreator = \context_user::instance($creator->id);
+        $this->contextappreciator = \context_user::instance($appreciator->id);
+        $syscontext = \context_system::instance();
 
         $this->rolecreator = create_role('Creator role', 'rolecreator', 'learning plan manager role description');
         assign_capability('moodle/competency:competencymanage', CAP_ALLOW, $this->rolecreator, $syscontext->id);
@@ -127,89 +130,103 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
 
         $this->setAdminUser();
         // Create category.
-        $this->category = $dg->create_category(array('name' => 'Cat test 1'));
-        $cat1ctx = context_coursecat::instance($this->category->id);
+        $this->category = $dg->create_category(['name' => 'Cat test 1']);
+        $cat1ctx = \context_coursecat::instance($this->category->id);
 
         // Create templates in category.
-        $this->templateincategory = $cpg->create_template(array('shortname' => 'Medicine Year 1', 'contextid' => $cat1ctx->id));
+        $this->templateincategory = $cpg->create_template(['shortname' => 'Medicine Year 1', 'contextid' => $cat1ctx->id]);
 
         // Create scales.
-        $this->scale = $dg->create_scale(array("name" => "Scale default", "scale" => "not good, good"));
+        $this->scale = $dg->create_scale(["name" => "Scale default", "scale" => "not good, good"]);
 
         $scaleconfiguration = '[{"scaleid":"'.$this->scale->id.'"},' .
                 '{"name":"not good","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"good","id":2,"scaledefault":0,"proficient":1}]';
 
         // Create the framework competency.
-        $framework = array(
+        $framework = [
             'shortname' => 'Framework Medicine',
             'idnumber' => 'fr-medicine',
             'scaleid' => $this->scale->id,
             'scaleconfiguration' => $scaleconfiguration,
             'visible' => true,
-            'contextid' => $cat1ctx->id
-        );
+            'contextid' => $cat1ctx->id,
+        ];
         $this->frameworkincategory = $cpg->create_framework($framework);
-        $this->comp1 = $cpg->create_competency(array(
-            'competencyframeworkid' => $this->frameworkincategory->get('id'),
-            'shortname' => 'Competency A')
+        $this->comp1 = $cpg->create_competency(
+            [
+                'competencyframeworkid' => $this->frameworkincategory->get('id'),
+                'shortname' => 'Competency A',
+            ]
         );
 
-        $this->comp2 = $cpg->create_competency(array(
-            'competencyframeworkid' => $this->frameworkincategory->get('id'),
-            'shortname' => 'Competency B')
+        $this->comp2 = $cpg->create_competency(
+            [
+                'competencyframeworkid' => $this->frameworkincategory->get('id'),
+                'shortname' => 'Competency B',
+            ]
         );
         // Create template competency.
-        $cpg->create_template_competency(array('templateid' => $this->templateincategory->get('id'),
-            'competencyid' => $this->comp1->get('id')));
-        $cpg->create_template_competency(array('templateid' => $this->templateincategory->get('id'),
-            'competencyid' => $this->comp2->get('id')));
+        $cpg->create_template_competency([
+            'templateid' => $this->templateincategory->get('id'),
+            'competencyid' => $this->comp1->get('id'),
+        ]);
+        $cpg->create_template_competency([
+            'templateid' => $this->templateincategory->get('id'),
+            'competencyid' => $this->comp2->get('id'),
+        ]);
 
-        $this->user1 = $dg->create_user(array(
-            'firstname' => 'Rebecca',
-            'lastname' => 'Armenta',
-            'email' => 'user11test@nomail.com',
-            'phone1' => 1111111111,
-            'phone2' => 2222222222,
-            'institution' => 'Institution Name',
-            'department' => 'Dep Name')
+        $this->user1 = $dg->create_user(
+            [
+                'firstname' => 'Rebecca',
+                'lastname' => 'Armenta',
+                'email' => 'user11test@nomail.com',
+                'phone1' => 1111111111,
+                'phone2' => 2222222222,
+                'institution' => 'Institution Name',
+                'department' => 'Dep Name',
+            ]
         );
-        $this->user2 = $dg->create_user(array(
-            'firstname' => 'Donald',
-            'lastname' => 'Fletcher',
-            'email' => 'user12test@nomail.com',
-            'phone1' => 1111111111,
-            'phone2' => 2222222222,
-            'institution' => 'Institution Name',
-            'department' => 'Dep Name')
+        $this->user2 = $dg->create_user(
+            [
+                'firstname' => 'Donald',
+                'lastname' => 'Fletcher',
+                'email' => 'user12test@nomail.com',
+                'phone1' => 1111111111,
+                'phone2' => 2222222222,
+                'institution' => 'Institution Name',
+                'department' => 'Dep Name',
+            ]
         );
-        $this->user3 = $dg->create_user(array(
-            'firstname' => 'Stepanie',
-            'lastname' => 'Grant',
-            'email' => 'user13test@nomail.com',
-            'phone1' => 1111111111,
-            'phone2' => 2222222222,
-            'institution' => 'Institution Name',
-            'department' => 'Dep Name')
+        $this->user3 = $dg->create_user(
+            [
+                'firstname' => 'Stepanie',
+                'lastname' => 'Grant',
+                'email' => 'user13test@nomail.com',
+                'phone1' => 1111111111,
+                'phone2' => 2222222222,
+                'institution' => 'Institution Name',
+                'department' => 'Dep Name',
+            ]
         );
 
         $appreciatorforcategory = $dg->create_user(
-                array(
+                [
                     'firstname' => 'Appreciator',
                     'lastname' => 'Test',
                     'username' => 'appreciator',
-                    'password' => 'appreciator'
-                )
+                    'password' => 'appreciator',
+                ]
         );
 
-        $cohort = $dg->create_cohort(array('contextid' => $cat1ctx->id));
+        $cohort = $dg->create_cohort(['contextid' => $cat1ctx->id]);
         cohort_add_member($cohort->id, $this->user1->id);
         cohort_add_member($cohort->id, $this->user2->id);
 
         // Generate plans for cohort.
         core_competency_api::create_plans_from_template_cohort($this->templateincategory->get('id'), $cohort->id);
         // Create plan from template for Stephanie.
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
         $roleid = create_role('Appreciator role', 'roleappreciatortest', 'learning plan appreciator role description');
         assign_capability('moodle/competency:competencyview', CAP_ALLOW, $roleid, $cat1ctx->id);
@@ -225,11 +242,11 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         assign_capability('moodle/site:viewuseridentity', CAP_ALLOW, $roleid, $syscontext->id);
 
         role_assign($roleid, $appreciatorforcategory->id, $cat1ctx->id);
-        $params = (object) array(
+        $params = (object) [
             'userid' => $appreciatorforcategory->id,
             'roleid' => $roleid,
-            'cohortid' => $cohort->id
-        );
+            'cohortid' => $cohort->id,
+        ];
         tool_cohortroles_api::create_cohort_role_assignment($params);
         tool_cohortroles_api::sync_all_cohort_roles();
         $this->appreciatorforcategory = $appreciatorforcategory;
@@ -244,21 +261,21 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
      */
     private function assign_good_letter_boundary($contextid) {
         global $DB;
-        $newlettersscale = array(
-                array('contextid' => $contextid, 'lowerboundary' => 90.00000, 'letter' => 'A'),
-                array('contextid' => $contextid, 'lowerboundary' => 85.00000, 'letter' => 'A-'),
-                array('contextid' => $contextid, 'lowerboundary' => 80.00000, 'letter' => 'B+'),
-                array('contextid' => $contextid, 'lowerboundary' => 75.00000, 'letter' => 'B'),
-                array('contextid' => $contextid, 'lowerboundary' => 70.00000, 'letter' => 'B-'),
-                array('contextid' => $contextid, 'lowerboundary' => 65.00000, 'letter' => 'C+'),
-                array('contextid' => $contextid, 'lowerboundary' => 54.00000, 'letter' => 'C'),
-                array('contextid' => $contextid, 'lowerboundary' => 50.00000, 'letter' => 'C-'),
-                array('contextid' => $contextid, 'lowerboundary' => 40.00000, 'letter' => 'D+'),
-                array('contextid' => $contextid, 'lowerboundary' => 25.00000, 'letter' => 'D'),
-                array('contextid' => $contextid, 'lowerboundary' => 0.00000, 'letter' => 'F'),
-            );
+        $newlettersscale = [
+            ['contextid' => $contextid, 'lowerboundary' => 90.00000, 'letter' => 'A'],
+            ['contextid' => $contextid, 'lowerboundary' => 85.00000, 'letter' => 'A-'],
+            ['contextid' => $contextid, 'lowerboundary' => 80.00000, 'letter' => 'B+'],
+            ['contextid' => $contextid, 'lowerboundary' => 75.00000, 'letter' => 'B'],
+            ['contextid' => $contextid, 'lowerboundary' => 70.00000, 'letter' => 'B-'],
+            ['contextid' => $contextid, 'lowerboundary' => 65.00000, 'letter' => 'C+'],
+            ['contextid' => $contextid, 'lowerboundary' => 54.00000, 'letter' => 'C'],
+            ['contextid' => $contextid, 'lowerboundary' => 50.00000, 'letter' => 'C-'],
+            ['contextid' => $contextid, 'lowerboundary' => 40.00000, 'letter' => 'D+'],
+            ['contextid' => $contextid, 'lowerboundary' => 25.00000, 'letter' => 'D'],
+            ['contextid' => $contextid, 'lowerboundary' => 0.00000, 'letter' => 'F'],
+        ];
 
-        $DB->delete_records('grade_letters', array('contextid' => $contextid));
+        $DB->delete_records('grade_letters', ['contextid' => $contextid]);
         foreach ($newlettersscale as $record) {
             // There is no API to do this, so we have to manually insert into the database.
             $DB->insert_record('grade_letters', $record);
@@ -268,7 +285,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
     /**
      * Test the scale filter values in course module.
      */
-    public function test_search_users_by_templateid_and_filterscale_incoursemodule() {
+    public function test_search_users_by_templateid_and_filterscale_incoursemodule(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -278,8 +295,8 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $course2 = $dg->create_course();
         // Create course modules.
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page1 = $pagegenerator->create_instance(array('course' => $course1->id));
-        $page2 = $pagegenerator->create_instance(array('course' => $course1->id));
+        $page1 = $pagegenerator->create_instance(['course' => $course1->id]);
+        $page2 = $pagegenerator->create_instance(['course' => $course1->id]);
         $cm1 = get_coursemodule_from_instance('page', $page1->id);
         $cm2 = get_coursemodule_from_instance('page', $page2->id);
 
@@ -289,13 +306,13 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $dg->enrol_user($this->user3->id, $course1->id);
 
         // Create some course competencies.
-        $cpg->create_course_competency(array('competencyid' => $this->comp1->get('id'), 'courseid' => $course1->id));
-        $cpg->create_course_competency(array('competencyid' => $this->comp2->get('id'), 'courseid' => $course1->id));
+        $cpg->create_course_competency(['competencyid' => $this->comp1->get('id'), 'courseid' => $course1->id]);
+        $cpg->create_course_competency(['competencyid' => $this->comp2->get('id'), 'courseid' => $course1->id]);
         // Link competencies to course modules.
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm1->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm1->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm2->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm2->id));
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm1->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm1->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm2->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm2->id]);
 
         // Rate users in courses.
         // User 1.
@@ -305,7 +322,8 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $this->setUser($this->appreciatorforcategory);
 
         $scalevalues = '[{"scalevalue" : 1, "scaleid" :' . $this->scale->id . '}]';
-        $result = external::read_plan(null, $this->templateincategory->get('id'), $scalevalues, 'coursemodule', 'ASC');
+        $result = \report_lpmonitoring\external::read_plan(null, $this->templateincategory->get('id'), $scalevalues,
+        'coursemodule', 'ASC');
         $result = external::clean_returnvalue(external::read_plan_returns(), $result);
         $this->assertEquals($this->user1->id, $result['plan']['user']['id']);
     }
@@ -313,7 +331,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
     /**
      * Test get competency detail for lpmonitoring report (grading in course module).
      */
-    public function test_get_competency_detail() {
+    public function test_get_competency_detail(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -324,14 +342,30 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $course1 = $dg->create_course();
         $course2 = $dg->create_course();
         // Create course modules.
-        $data = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course1->id,
-            'name' => 'Data 1'));
-        $data2 = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course1->id,
-            'name' => 'Data 2'));
-        $data11 = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course2->id,
-            'name' => 'Data 11'));
-        $data22 = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course2->id,
-            'name' => 'Data 22'));
+        $data = $dg->create_module('data', [
+            'assessed' => 1,
+            'scale' => 100,
+            'course' => $course1->id,
+            'name' => 'Data 1',
+        ]);
+        $data2 = $dg->create_module('data', [
+            'assessed' => 1,
+            'scale' => 100,
+            'course' => $course1->id,
+            'name' => 'Data 2',
+        ]);
+        $data11 = $dg->create_module('data', [
+            'assessed' => 1,
+            'scale' => 100,
+            'course' => $course2->id,
+            'name' => 'Data 11',
+        ]);
+        $data22 = $dg->create_module('data', [
+            'assessed' => 1,
+            'scale' => 100,
+            'course' => $course2->id,
+            'name' => 'Data 22',
+        ]);
         $cm1 = get_coursemodule_from_id('data', $data->cmid);
         $cm2 = get_coursemodule_from_id('data', $data2->cmid);
         $cm11 = get_coursemodule_from_id('data', $data11->cmid);
@@ -345,9 +379,9 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $dg->enrol_user($this->user3->id, $course1->id);
 
         // Assign the letter boundaries we want for these courses.
-        $context = context_course::instance($course1->id);
+        $context = \context_course::instance($course1->id);
         $this->assign_good_letter_boundary($context->id);
-        $context = context_course::instance($course2->id);
+        $context = \context_course::instance($course2->id);
         $this->assign_good_letter_boundary($context->id);
 
         // Insert student grades for the activities.
@@ -361,19 +395,19 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         grade_update('mod/data', $course2->id, 'mod', 'data', $data11->id, 0, $grade);
 
         // Create some course competencies.
-        $cpg->create_course_competency(array('competencyid' => $this->comp1->get('id'), 'courseid' => $course1->id));
-        $cpg->create_course_competency(array('competencyid' => $this->comp2->get('id'), 'courseid' => $course1->id));
-        $cpg->create_course_competency(array('competencyid' => $this->comp1->get('id'), 'courseid' => $course2->id));
-        $cpg->create_course_competency(array('competencyid' => $this->comp2->get('id'), 'courseid' => $course2->id));
+        $cpg->create_course_competency(['competencyid' => $this->comp1->get('id'), 'courseid' => $course1->id]);
+        $cpg->create_course_competency(['competencyid' => $this->comp2->get('id'), 'courseid' => $course1->id]);
+        $cpg->create_course_competency(['competencyid' => $this->comp1->get('id'), 'courseid' => $course2->id]);
+        $cpg->create_course_competency(['competencyid' => $this->comp2->get('id'), 'courseid' => $course2->id]);
         // Link competencies to course modules.
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm1->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm1->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm2->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm2->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm11->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm11->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm22->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm22->id));
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm1->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm1->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm2->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm2->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm11->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm11->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm22->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm22->id]);
 
         // Rate user1 in course modules cm1, cm2 and cm11.
         \tool_cmcompetency\api::grade_competency_in_coursemodule($cm1, $this->user1->id, $this->comp1->get('id'), 1,
@@ -389,7 +423,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
                 'My note Data 1 u2');
 
         // Test for user1 for comp1.
-        $planuser1 = \core_competency\plan::get_record(array('userid' => $this->user1->id));
+        $planuser1 = \core_competency\plan::get_record(['userid' => $this->user1->id]);
         $result = external::get_competency_detail($this->user1->id, $this->comp1->get('id'), $planuser1->get('id'));
         $result = (object) external_api::clean_returnvalue(external::get_competency_detail_returns(), $result);
 
@@ -423,7 +457,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $this->assertEquals('D', $result->scalecompetencyitems[1]['listcms'][0]['grade']);
 
         // Test for user2 for comp1.
-        $planuser2 = \core_competency\plan::get_record(array('userid' => $this->user2->id));
+        $planuser2 = \core_competency\plan::get_record(['userid' => $this->user2->id]);
         $result = external::get_competency_detail($this->user2->id, $this->comp1->get('id'), $planuser2->get('id'));
         $result = (object) external_api::clean_returnvalue(external::get_competency_detail_returns(), $result);
 
@@ -469,7 +503,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
     /**
      * Test get competency statistics in course modules for lpmonitoring report.
      */
-    public function test_get_lp_monitoring_competency_statistics_incoursemodules() {
+    public function test_get_lp_monitoring_competency_statistics_incoursemodules(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -478,10 +512,10 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $course1 = $dg->create_course();
         $course2 = $dg->create_course();
         // Create course modules.
-        $data = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course1->id));
-        $data2 = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course1->id));
-        $data11 = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course2->id));
-        $data22 = $dg->create_module('data', array('assessed' => 1, 'scale' => 100, 'course' => $course2->id));
+        $data = $dg->create_module('data', ['assessed' => 1, 'scale' => 100, 'course' => $course1->id]);
+        $data2 = $dg->create_module('data', ['assessed' => 1, 'scale' => 100, 'course' => $course1->id]);
+        $data11 = $dg->create_module('data', ['assessed' => 1, 'scale' => 100, 'course' => $course2->id]);
+        $data22 = $dg->create_module('data', ['assessed' => 1, 'scale' => 100, 'course' => $course2->id]);
         $cm1 = get_coursemodule_from_id('data', $data->cmid);
         $cm2 = get_coursemodule_from_id('data', $data2->cmid);
         $cm11 = get_coursemodule_from_id('data', $data11->cmid);
@@ -495,19 +529,19 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $dg->enrol_user($this->user3->id, $course1->id);
 
         // Create some course competencies.
-        $cpg->create_course_competency(array('competencyid' => $this->comp1->get('id'), 'courseid' => $course1->id));
-        $cpg->create_course_competency(array('competencyid' => $this->comp2->get('id'), 'courseid' => $course1->id));
-        $cpg->create_course_competency(array('competencyid' => $this->comp1->get('id'), 'courseid' => $course2->id));
-        $cpg->create_course_competency(array('competencyid' => $this->comp2->get('id'), 'courseid' => $course2->id));
+        $cpg->create_course_competency(['competencyid' => $this->comp1->get('id'), 'courseid' => $course1->id]);
+        $cpg->create_course_competency(['competencyid' => $this->comp2->get('id'), 'courseid' => $course1->id]);
+        $cpg->create_course_competency(['competencyid' => $this->comp1->get('id'), 'courseid' => $course2->id]);
+        $cpg->create_course_competency(['competencyid' => $this->comp2->get('id'), 'courseid' => $course2->id]);
         // Link competencies to course modules.
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm1->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm1->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm2->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm2->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm11->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm11->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp1->get('id'), 'cmid' => $cm22->id));
-        $cpg->create_course_module_competency(array('competencyid' => $this->comp2->get('id'), 'cmid' => $cm22->id));
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm1->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm1->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm2->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm2->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm11->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm11->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp1->get('id'), 'cmid' => $cm22->id]);
+        $cpg->create_course_module_competency(['competencyid' => $this->comp2->get('id'), 'cmid' => $cm22->id]);
 
         // Rate user1 in course modules cm1, cm2 and cm11 for competency 1.
         \tool_cmcompetency\api::grade_competency_in_coursemodule($cm1, $this->user1->id, $this->comp1->get('id'), 1);
@@ -547,7 +581,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
     /**
      * Test get data for the user competency summary in course.
      */
-    public function test_data_for_user_competency_summary_in_course() {
+    public function test_data_for_user_competency_summary_in_course(): void {
         $this->setUser($this->creator);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
@@ -555,7 +589,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $course = $dg->create_course(['fullname' => 'New course']);
 
         $pagegenerator = $this->getDataGenerator()->get_plugin_generator('mod_page');
-        $page = $pagegenerator->create_instance(array('course' => $course->id, 'name' => 'Page 1'));
+        $page = $pagegenerator->create_instance(['course' => $course->id, 'name' => 'Page 1']);
         $cm = get_coursemodule_from_instance('page', $page->id);
 
         $dg->enrol_user($this->creator->id, $course->id, 'editingteacher');
@@ -565,7 +599,7 @@ class report_lpmonitoring_external_cm_testcase extends externallib_advanced_test
         $c1 = $lpg->create_competency(['competencyframeworkid' => $f1->get('id')]);
         $lpg->create_course_competency(['courseid' => $course->id, 'competencyid' => $c1->get('id')]);
         // Link competency to course module.
-        $lpg->create_course_module_competency(array('competencyid' => $c1->get('id'), 'cmid' => $cm->id));
+        $lpg->create_course_module_competency(['competencyid' => $c1->get('id'), 'cmid' => $cm->id]);
 
         \tool_cmcompetency\external::grade_competency_in_coursemodule($cm->id, $this->user1->id, $c1->get('id'), 1,
             'New note', false);

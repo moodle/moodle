@@ -84,16 +84,6 @@ class report_viewed extends \core\event\base {
         return new \moodle_url("/mod/survey/report.php", $params);
     }
 
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, "survey", "view report", "report.php?id=" . $this->contextinstanceid, $this->objectid,
-                     $this->contextinstanceid);
-    }
-
     public static function get_objectid_mapping() {
         return array('db' => 'survey', 'restore' => 'survey');
     }

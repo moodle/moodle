@@ -103,7 +103,7 @@
 <div class="content-bank-container {{#viewlist}}view-list{{/viewlist}} {{^viewlist}}view-grid{{/viewlist}}"
 data-region="contentbank">
     <div class="d-flex justify-content-between">
-        <div class="cb-search-container mb-2 mr-2">
+        <div class="cb-search-container mb-2 me-2">
             {{>core_contentbank/bankcontent/search}}
         </div>
         <div class="cb-toolbar-container mb-2 d-flex">
@@ -127,7 +127,7 @@ data-region="contentbank">
                     class="cb-content-wrapper d-flex px-2" data-region="filearea">
                     <div {{#viewlist}}role="row"{{/viewlist}} class="cb-heading bg-white">
                         <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-file cb-column d-flex">
-                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="contentname" data-action="sortname"
+                            <button class="btn btn-block cb-btnsort dir-none text-start" data-string="contentname" data-action="sortname"
                                 title="{{#str}} sortbyx, core, {{#str}} contentname, contentbank {{/str}} {{/str}}">
                                 <span class="title">{{#str}} contentname, contentbank {{/str}}</span>
                                 <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
@@ -136,7 +136,7 @@ data-region="contentbank">
                             </button>
                         </div>
                         <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-uses cb-column d-flex">
-                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="uses" data-action="sortuses"
+                            <button class="btn btn-block cb-btnsort dir-none text-start" data-string="uses" data-action="sortuses"
                             title="{{#str}} sortbyx, core, {{#str}} uses, contentbank {{/str}} {{/str}}">
                                 <span class="title">{{#str}} uses, contentbank {{/str}}</span>
                                 <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
@@ -145,7 +145,7 @@ data-region="contentbank">
                             </button>
                         </div>
                         <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-date cb-column d-flex">
-                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="lastmodified" data-action="sortdate"
+                            <button class="btn btn-block cb-btnsort dir-none text-start" data-string="lastmodified" data-action="sortdate"
                             title="{{#str}} sortbyx, core, {{#str}} lastmodified, contentbank {{/str}} {{/str}}">
                                 <span class="title">{{#str}} lastmodified, contentbank {{/str}}</span>
                                 <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
@@ -154,7 +154,7 @@ data-region="contentbank">
                             </button>
                         </div>
                         <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-size cb-column d-flex">
-                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="size" data-action="sortsize"
+                            <button class="btn btn-block cb-btnsort dir-none text-start" data-string="size" data-action="sortsize"
                             title="{{#str}} sortbyx, core, {{#str}} size, contentbank {{/str}} {{/str}}">
                                 <span class="title">{{#str}} size, contentbank {{/str}}</span>
                                 <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
@@ -163,7 +163,7 @@ data-region="contentbank">
                             </button>
                         </div>
                         <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-type cb-column d-flex">
-                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="type" data-action="sorttype"
+                            <button class="btn btn-block cb-btnsort dir-none text-start" data-string="type" data-action="sorttype"
                             title="{{#str}} sortbyx, core, {{#str}} type, contentbank {{/str}} {{/str}}">
                                 <span class="title">{{#str}} type, contentbank {{/str}}</span>
                                 <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
@@ -172,7 +172,7 @@ data-region="contentbank">
                             </button>
                         </div>
                         <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-author cb-column d-flex last">
-                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="author" data-action="sortauthor"
+                            <button class="btn btn-block cb-btnsort dir-none text-start" data-string="author" data-action="sortauthor"
                             title="{{#str}} sortbyx, core, {{#str}} author, contentbank {{/str}} {{/str}}">
                                 <span class="title">{{#str}} author, contentbank {{/str}}</span>
                                 <span class="default">{{#pix}} t/sort, core {{/pix}}</span>

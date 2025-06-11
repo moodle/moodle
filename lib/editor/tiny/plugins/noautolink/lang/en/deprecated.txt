@@ -1,0 +1,2 @@
+helplinktext,tiny_noautolink
+errorinvalidurl,tiny_noautolink

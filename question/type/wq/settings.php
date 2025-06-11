@@ -47,7 +47,7 @@ $settings->add(new admin_setting_configtext(
     'qtype_wq/quizzesserviceurl',
     get_string('quizzesserviceurl', 'qtype_wq'),
     get_string('quizzesserviceurl_help', 'qtype_wq'),
-    'http://www.wiris.net/demo/quizzes',
+    'https://www.wiris.net/demo/quizzes',
     PARAM_URL
 ));
 
@@ -55,7 +55,7 @@ $settings->add(new admin_setting_configtext(
     'qtype_wq/quizzeseditorurl',
     get_string('quizzeseditorurl', 'qtype_wq'),
     get_string('quizzeseditorurl_help', 'qtype_wq'),
-    'http://www.wiris.net/demo/editor',
+    'https://www.wiris.net/demo/editor',
     PARAM_URL
 ));
 
@@ -63,7 +63,23 @@ $settings->add(new admin_setting_configtext(
     'qtype_wq/quizzeshandurl',
     get_string('quizzeshandurl', 'qtype_wq'),
     get_string('quizzeshandurl_help', 'qtype_wq'),
-    'http://www.wiris.net/demo/hand',
+    'https://www.wiris.net/demo/hand',
+    PARAM_URL
+));
+
+$settings->add(new admin_setting_configtext(
+    'qtype_wq/quizzescalcurl',
+    get_string('quizzescalcurl', 'qtype_wq'),
+    get_string('quizzescalcurl_help', 'qtype_wq'),
+    'https://calcme.com',
+    PARAM_URL
+));
+
+$settings->add(new admin_setting_configtext(
+    'qtype_wq/quizzesgraphurl',
+    get_string('quizzesgraphurl', 'qtype_wq'),
+    get_string('quizzesgraphurl_help', 'qtype_wq'),
+    'https://www.wiris.net/demo/graph',
     PARAM_URL
 ));
 
@@ -91,6 +107,13 @@ $settings->add(new admin_setting_configcheckbox(
     '0'
 ));
 
+$settings->add(new admin_setting_configcheckbox(
+    'qtype_wq/maxconnections_disabled',
+    get_string('maxconnections_disabled', 'qtype_wq'),
+    get_string('maxconnections_disabled_help', 'qtype_wq'),
+    '0'
+));
+
 $settings->add(new admin_setting_heading(
     'qtype_wq/compatibility_settings',
     get_string('compatibility_settings', 'qtype_wq'),
@@ -101,6 +124,13 @@ $settings->add(new admin_setting_configcheckbox(
     'qtype_wq/filtercodes_compatibility',
     get_string('filtercodes_compatibility_enabled', 'qtype_wq'),
     get_string('filtercodes_compatibility_enabled_help', 'qtype_wq'),
+    '0'
+));
+
+$settings->add(new admin_setting_configcheckbox(
+    'qtype_wq/mathjax_compatibity',
+    get_string('mathjax_compatibity', 'qtype_wq'),
+    get_string('mathjax_compatibity_help', 'qtype_wq'),
     '0'
 ));
 

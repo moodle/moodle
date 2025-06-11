@@ -23,8 +23,12 @@
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
 
+$string['logoutothersessions'] = 'Log out all other browser sessions';
+$string['logoutothersessions_help'] = 'Log out of all browser sessions, except for this one. This does not affect web apps.';
+$string['logoutothersessionssuccess'] = 'You are logged out of all your other sessions.';
+$string['logoutsinglesessionsuccess'] = 'You are logged out of the session at {$a}.';
+$string['mysessions'] = 'My active browser sessions';
 $string['navigationlink'] = 'Browser sessions';
-$string['mysessions'] = 'My active sessions';
 $string['pluginname'] = 'User sessions report';
 $string['thissession'] = 'Current session';
 $string['usersessions:manageownsessions'] = 'Manage own browser sessions';

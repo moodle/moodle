@@ -28,11 +28,11 @@ require_once('split_form.php');
 require_login();
 
 if (!cps_split::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_split::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_split::name());
 }
 
 if (!ues_user::is_teacher()) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $teacher = ues_teacher::get(array('userid' => $USER->id));
@@ -40,7 +40,7 @@ $teacher = ues_teacher::get(array('userid' => $USER->id));
 $sections = cps_unwant::active_sections_for($teacher);
 
 if (empty($sections)) {
-    print_error('no_section', 'block_cps');
+    moodle_exception('no_section', 'block_cps');
 }
 
 $semesters = ues_semester::merge_sections($sections);
@@ -48,7 +48,7 @@ $semesters = ues_semester::merge_sections($sections);
 $validsemesters = cps_split::filter_valid($semesters);
 
 if (empty($validsemesters)) {
-    print_error('no_courses', 'block_cps');
+    moodle_exception('no_courses', 'block_cps');
 }
 
 $s = ues::gen_str('block_cps');

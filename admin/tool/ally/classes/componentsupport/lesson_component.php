@@ -75,9 +75,9 @@ class lesson_component extends file_component_base implements iface_html_content
 
         $params = [
             FORMAT_HTML, $courseid,
-            FORMAT_HTML, FORMAT_HTML, $courseid,
-            FORMAT_HTML, FORMAT_HTML, $courseid,
-            FORMAT_HTML, FORMAT_HTML, $courseid
+            FORMAT_HTML, $courseid,
+            FORMAT_HTML, $courseid,
+            FORMAT_HTML, $courseid
         ];
 
         $sql = <<<SQL
@@ -103,7 +103,7 @@ class lesson_component extends file_component_base implements iface_html_content
                   FROM {lesson} l
                   JOIN {lesson_pages} lp ON lp.lessonid = l.id AND lp.contentsformat = ?
                    AND lp.contents IS NOT NULL AND lp.contents !=''
-                 WHERE l.introformat = ? AND l.course = ?)
+                 WHERE l.course = ?)
 
                  UNION
 
@@ -117,7 +117,7 @@ class lesson_component extends file_component_base implements iface_html_content
                   FROM {lesson} l
                   JOIN {lesson_answers} la ON la.lessonid = l.id AND la.answerformat = ?
                    AND la.answer IS NOT NULL AND la.answer != ''
-                 WHERE l.introformat = ? AND l.course = ?)
+                 WHERE l.course = ?)
 
                  UNION
 
@@ -131,7 +131,7 @@ class lesson_component extends file_component_base implements iface_html_content
                   FROM {lesson} l
                   JOIN {lesson_answers} la ON la.lessonid = l.id AND la.responseformat = ?
                    AND la.response IS NOT NULL AND la.response != ''
-                 WHERE l.introformat = ? AND l.course = ?)
+                 WHERE l.course = ?)
 
               ORDER BY id ASC
 SQL;

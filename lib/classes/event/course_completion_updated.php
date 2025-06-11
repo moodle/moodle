@@ -70,13 +70,4 @@ class course_completion_updated extends base {
     public function get_url() {
         return new \moodle_url('/course/completion.php', array('id' => $this->courseid));
     }
-
-    /**
-     * Return legacy add_to_log() data.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'course', 'completion updated', 'completion.php?id=' . $this->courseid);
-    }
 }

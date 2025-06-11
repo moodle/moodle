@@ -194,6 +194,8 @@ class MergeUserTool
         $eventpath = "\\tool_mergeusers\\event\\";
         $eventpath .= ($success) ? "user_merged_success" : "user_merged_failure";
 
+        $logid = $this->logger->log($toid, $fromid, $success, $log);
+
         $event = $eventpath::create(array(
             'context' => \context_system::instance(),
             'other' => array(
@@ -201,11 +203,12 @@ class MergeUserTool
                     'toid' => $toid,
                     'fromid' => $fromid,
                 ),
+                'logid' => $logid,
                 'log' => $log,
             ),
         ));
         $event->trigger();
-        $logid = $this->logger->log($toid, $fromid, $success, $log);
+
         return array($success, $log, $logid);
     }
 

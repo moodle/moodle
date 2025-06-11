@@ -23,8 +23,10 @@
  */
 namespace tool_ally;
 
+use tool_ally\abstract_testcase;
 use tool_ally\local;
 use tool_ally\webservice\course_files;
+use external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +37,10 @@ require_once(__DIR__.'/abstract_testcase.php');
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2016 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class webservice_course_files_test extends abstract_testcase {
 
@@ -56,6 +61,10 @@ class webservice_course_files_test extends abstract_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
+
+        global $CFG;
+        require_once($CFG->dirroot.'/lib/externallib.php');
+
         $roleid = $this->assignUserCapability('moodle/course:view', \context_system::instance()->id);
         $this->assignUserCapability('moodle/course:viewhiddencourses', \context_system::instance()->id, $roleid);
 
@@ -68,15 +77,15 @@ class webservice_course_files_test extends abstract_testcase {
         // Create a file outside of $this->course. This is to make sure it doesn't get included in counts.
         $course2 = $dg->create_course();
         $dg->create_module('resource', ['course' => $course2->id]);
-
     }
+
     /**
      * Test the web service.
      */
     public function test_service() {
 
         $files = course_files::service([$this->course->id]);
-        $files = \external_api::clean_returnvalue(course_files::service_returns(), $files);
+        $files = external_api::clean_returnvalue(course_files::service_returns(), $files);
         $this->assertCount(1, $files);
         $file = reset($files);
 
@@ -114,14 +123,14 @@ class webservice_course_files_test extends abstract_testcase {
         $DB->set_field('course_sections', 'summary', $summary, ['id' => $section->id]);
 
         $files = course_files::service([$this->course->id]);
-        $files = \external_api::clean_returnvalue(course_files::service_returns(), $files);
+        $files = external_api::clean_returnvalue(course_files::service_returns(), $files);
         $this->assertCount(2, $files);
 
         // The time has come to delete the section.
         course_delete_section($this->course->id, 1, true);
 
         $files = course_files::service([$this->course->id]);
-        $files = \external_api::clean_returnvalue(course_files::service_returns(), $files);
+        $files = external_api::clean_returnvalue(course_files::service_returns(), $files);
 
         $this->assertCount(1, $files);
         $file = reset($files);
@@ -143,7 +152,7 @@ class webservice_course_files_test extends abstract_testcase {
         $DB->update_record('course_modules', $cm);
 
         $files = course_files::service([$this->course->id]);
-        $files = \external_api::clean_returnvalue(course_files::service_returns(), $files);
+        $files = external_api::clean_returnvalue(course_files::service_returns(), $files);
         $this->assertCount(0, $files);
     }
 
@@ -168,7 +177,7 @@ class webservice_course_files_test extends abstract_testcase {
 
         // We expect both files to be returned.
         $files = course_files::service([$this->course->id]);
-        $files = \external_api::clean_returnvalue(course_files::service_returns(), $files);
+        $files = external_api::clean_returnvalue(course_files::service_returns(), $files);
         $this->assertCount(3, $files);
 
         $file = array_shift($files);
@@ -186,7 +195,7 @@ class webservice_course_files_test extends abstract_testcase {
 
         // Now only the one in use file should be present.
         $files = course_files::service([$this->course->id]);
-        $files = \external_api::clean_returnvalue(course_files::service_returns(), $files);
+        $files = external_api::clean_returnvalue(course_files::service_returns(), $files);
         $this->assertCount(2, $files);
 
         $file = array_shift($files);

@@ -21,11 +21,11 @@ defined('MOODLE_INTERNAL') || die();
 use context_user;
 use core_calendar_external;
 use core_course_external;
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 require_once("{$CFG->dirroot}/calendar/externallib.php");
 require_once("{$CFG->dirroot}/course/externallib.php");
@@ -85,12 +85,12 @@ class get_enrolled_courses_with_action_events_by_timeline_classification extends
         string $classification,
         int $limit = 0,
         int $offset = 0,
-        string $sort = null,
-        string $customfieldname = null,
-        string $customfieldvalue = null,
-        string $searchvalue = null,
-        int $eventsfrom = null,
-        int $eventsto = null
+        ?string $sort = null,
+        ?string $customfieldname = null,
+        ?string $customfieldvalue = null,
+        ?string $searchvalue = null,
+        ?int $eventsfrom = null,
+        ?int $eventsto = null
     ): array {
         global $USER;
 
@@ -205,7 +205,7 @@ class get_enrolled_courses_with_action_events_by_timeline_classification extends
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure(

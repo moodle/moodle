@@ -16,18 +16,13 @@
 
 namespace gradereport_singleview\external;
 
-use coding_exception;
 use context_course;
 use core_course_external;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
-use invalid_parameter_exception;
-use moodle_exception;
-use moodle_url;
-use restricted_context_exception;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 use grade_tree;
 
 defined('MOODLE_INTERNAL') || die;
@@ -86,15 +81,7 @@ class singleview extends core_course_external {
         $gradeitems = array_map(function ($gradeitem) use ($PAGE, $USER, $params) {
             $item = new \stdClass();
             $item->id = $gradeitem->id;
-            $url = new moodle_url('/grade/report/singleview/index.php', [
-                    'id' => $params['courseid'],
-                    'itemid' => $gradeitem->id,
-                    'item' => 'grade'
-                ]
-            );
             $item->name = $gradeitem->get_name(true);
-            $item->url = $url->out(false);
-            $item->active = false; // @TODO MDL-76246
 
             return $item;
         }, $gradeableitems);
@@ -115,13 +102,7 @@ class singleview extends core_course_external {
             'gradeitems' => new external_multiple_structure(
                 new external_single_structure([
                     'id'    => new external_value(PARAM_INT, 'ID of the grade item', VALUE_OPTIONAL),
-                    'url' => new external_value(
-                        PARAM_URL,
-                        'The link to the grade report',
-                        VALUE_OPTIONAL
-                    ),
-                    'name' => new external_value(PARAM_TEXT, 'The full name of the grade item', VALUE_OPTIONAL),
-                    'active' => new external_value(PARAM_BOOL, 'Are we currently on this item?', VALUE_REQUIRED)
+                    'name' => new external_value(PARAM_TEXT, 'The full name of the grade item', VALUE_OPTIONAL)
                 ])
             ),
             'warnings' => new external_warnings(),

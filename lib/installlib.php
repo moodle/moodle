@@ -162,7 +162,7 @@ function install_helpbutton($url, $title='') {
     echo "<a href=\"javascript:void(0)\" ";
     echo "onclick=\"return window.open('$url','Help','menubar=0,location=0,scrollbars,resizable,width=500,height=400')\"";
     echo ">";
-    echo "<img src=\"pix/help.gif\" class=\"iconhelp\" alt=\"$title\" title=\"$title\"/>";
+    echo "<img src=\"pix/help.gif\" alt=\"$title\" title=\"$title\"/>";
     echo "</a>\n";
 }
 
@@ -388,9 +388,9 @@ function install_print_footer($config, $reload=false) {
     global $CFG;
 
     if ($config->stage > INSTALL_WELCOME) {
-        $first = '<input type="submit" id="previousbutton" class="btn btn-secondary flex-grow-0 ml-auto" name="previous" value="&laquo; '.s(get_string('previous')).'" />';
+        $first = '<input type="submit" id="previousbutton" class="btn btn-secondary flex-grow-0 ms-auto" name="previous" value="&laquo; '.s(get_string('previous')).'" />';
     } else {
-        $first = '<input type="submit" id="previousbutton" class="btn btn-secondary flex-grow-0  ml-auto" name="next" value="'.s(get_string('reload')).'" />';
+        $first = '<input type="submit" id="previousbutton" class="btn btn-secondary flex-grow-0  ms-auto" name="next" value="'.s(get_string('reload')).'" />';
         $first .= '<script type="text/javascript">
 //<![CDATA[
     var first = document.getElementById("previousbutton");
@@ -401,9 +401,9 @@ function install_print_footer($config, $reload=false) {
     }
 
     if ($reload) {
-        $next = '<input type="submit" id="nextbutton" class="btn btn-primary ml-1 flex-grow-0 mr-auto" name="next" value="'.s(get_string('reload')).'" />';
+        $next = '<input type="submit" id="nextbutton" class="btn btn-primary ms-1 flex-grow-0 me-auto" name="next" value="'.s(get_string('reload')).'" />';
     } else {
-        $next = '<input type="submit" id="nextbutton" class="btn btn-primary ml-1 flex-grow-0 mr-auto" name="next" value="'.s(get_string('next')).' &raquo;" />';
+        $next = '<input type="submit" id="nextbutton" class="btn btn-primary ms-1 flex-grow-0 me-auto" name="next" value="'.s(get_string('next')).' &raquo;" />';
     }
 
     echo '</fieldset><div id="nav_buttons" class="mb-3 w-100 d-flex">'.$first.$next.'</div>';

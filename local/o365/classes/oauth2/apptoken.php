@@ -28,6 +28,8 @@ namespace local_o365\oauth2;
 
 use auth_oidc\jwt;
 use auth_oidc\oidcclient;
+use local_o365\httpclientinterface;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,22 +38,27 @@ require_once($CFG->dirroot . '/auth/oidc/lib.php');
 /**
  * Represents an oauth2 token.
  */
-class apptoken extends \local_o365\oauth2\token {
+class apptoken extends token {
 
     /**
      * Get a token instance for a new resource.
      *
      * @param int $userid
      * @param string $tokenresource The new resource.
-     * @param \local_o365\oauth2\clientdata $clientdata Client information.
-     * @param \local_o365\httpclientinterface $httpclient An HTTP client.
+     * @param clientdata $clientdata Client information.
+     * @param httpclientinterface $httpclient An HTTP client.
      *
-     * @return \local_o365\oauth2\token|bool A constructed token for the new resource, or false if failure.
+     * @return token|bool A constructed token for the new resource, or false if failure.
      */
-    public static function get_for_new_resource($userid, $tokenresource, \local_o365\oauth2\clientdata $clientdata, $httpclient) {
+    public static function get_for_new_resource($userid, $tokenresource, clientdata $clientdata, $httpclient) {
         $token = static::get_app_token($tokenresource, $clientdata, $httpclient);
         if (!empty($token)) {
-            static::store_new_token(null, $token['access_token'], $token['expires_on'], null, $token['scope'], $token['resource']);
+            $expiry = $token['expires_on'] ?? time() + $token['expires_in'];
+            if (get_config('auth_oidc', 'idptype') == AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM) {
+                $token['resource'] = $tokenresource;
+                $token['scope'] = null;
+            }
+            static::store_new_token(null, $token['access_token'], $expiry, null, $token['scope'], $token['resource']);
             return static::instance(null, $tokenresource, $clientdata, $httpclient);
         } else {
             return false;
@@ -65,16 +72,16 @@ class apptoken extends \local_o365\oauth2\token {
      * getting a new token.
      *
      * @param string $tokenresource The desired token resource.
-     * @param \local_o365\oauth2\clientdata $clientdata Client credentials object.
-     * @param \local_o365\httpclientinterface $httpclient An HTTP client.
+     * @param clientdata $clientdata Client credentials object.
+     * @param httpclientinterface $httpclient An HTTP client.
      *
      * @return array|bool If successful, an array of token parameters. False if unsuccessful.
      */
-    public static function get_app_token($tokenresource, \local_o365\oauth2\clientdata $clientdata, $httpclient) {
+    public static function get_app_token($tokenresource, clientdata $clientdata, $httpclient) {
         $tokenendpoint = $clientdata->get_apptokenendpoint();
 
         switch (get_config('auth_oidc', 'idptype')) {
-            case AUTH_OIDC_IDP_TYPE_AZURE_AD:
+            case AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID:
                 $params = [
                     'client_id' => $clientdata->get_clientid(),
                     'client_secret' => $clientdata->get_clientsecret(),
@@ -82,7 +89,7 @@ class apptoken extends \local_o365\oauth2\token {
                     'resource' => $tokenresource,
                 ];
                 break;
-            case AUTH_OIDC_IDP_TYPE_MICROSOFT:
+            case AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM:
                 if (get_config('auth_oidc', 'clientauthmethod') == AUTH_OIDC_AUTH_METHOD_CERTIFICATE) {
                     $params = [
                         'client_id' => $clientdata->get_clientid(),
@@ -106,7 +113,7 @@ class apptoken extends \local_o365\oauth2\token {
         $params = http_build_query($params, '', '&');
         $header = [
             'Content-Type: application/x-www-form-urlencoded',
-            'Content-Length: '.strlen($params)
+            'Content-Length: ' . strlen($params),
         ];
         $httpclient->resetheader();
         $httpclient->setheader($header);
@@ -128,7 +135,7 @@ class apptoken extends \local_o365\oauth2\token {
             }
             $debuginfo = [
                 'tokenresult' => $tokenresult,
-                'resource' => $tokenresource
+                'resource' => $tokenresource,
             ];
             \local_o365\utils::debug($errmsg, __METHOD__, $debuginfo);
             return false;
@@ -139,6 +146,7 @@ class apptoken extends \local_o365\oauth2\token {
      * Refresh the application only token.
      *
      * @return bool Success/Failure.
+     * @throws moodle_exception
      */
     public function refresh() {
         $result = static::get_app_token($this->tokenresource, $this->clientdata, $this->httpclient);
@@ -146,11 +154,7 @@ class apptoken extends \local_o365\oauth2\token {
         if (!empty($result) && is_array($result) && isset($result['access_token'])) {
             $originaltokenresource = $this->tokenresource;
             $this->token = $result['access_token'];
-            $expiry = '';
-            if (isset($result['expires_on'])) {
-                 $expiry = $result['expires_on'];
-            }
-            $this->expiry = $expiry;
+            $this->expiry = $result['expires_on'] ?? time() + $result['expires_in'];
             $this->refreshtoken = $result['access_token'];
             $this->scope = $result['scope'];
             if (isset($result['resource'])) {
@@ -162,7 +166,7 @@ class apptoken extends \local_o365\oauth2\token {
                     'scope' => $this->scope,
                     'token' => $this->token,
                     'expiry' => $this->expiry,
-                    'tokenresource' => $this->tokenresource
+                    'tokenresource' => $this->tokenresource,
                 ];
                 $this->update_stored_token($existingtoken, $newtoken);
             } else {
@@ -170,7 +174,7 @@ class apptoken extends \local_o365\oauth2\token {
             }
             return true;
         } else {
-            throw new \moodle_exception('errorcouldnotrefreshtoken', 'local_o365');
+            throw new moodle_exception('errorcouldnotrefreshtoken', 'local_o365');
         }
     }
 
@@ -184,6 +188,9 @@ class apptoken extends \local_o365\oauth2\token {
      */
     protected static function get_stored_token($userid, $tokenresource) {
         $tokens = get_config('local_o365', 'apptokens');
+        if (empty($tokens)) {
+            return false;
+        }
         $tokens = unserialize($tokens);
         if (isset($tokens[$tokenresource])) {
             // App tokens do not have a user.
@@ -205,7 +212,11 @@ class apptoken extends \local_o365\oauth2\token {
      */
     protected function update_stored_token($existingtoken, $newtoken) {
         $tokens = get_config('local_o365', 'apptokens');
-        $tokens = unserialize($tokens);
+        if ($tokens) {
+            $tokens = unserialize($tokens);
+        } else {
+            $tokens = [];
+        }
         if (isset($tokens[$existingtoken['tokenresource']])) {
             unset($tokens[$existingtoken['tokenresource']]);
         }
@@ -215,6 +226,10 @@ class apptoken extends \local_o365\oauth2\token {
         }
         $tokens[$newtoken['tokenresource']] = $newtoken;
         $tokens = serialize($tokens);
+        $existingapptokenssetting = get_config('local_o365', 'apptokens');
+        if ($existingapptokenssetting != $tokens) {
+            add_to_config_log('apptokens', $existingapptokenssetting, $tokens, 'local_o365');
+        }
         set_config('apptokens', $tokens, 'local_o365');
         return true;
     }
@@ -227,11 +242,18 @@ class apptoken extends \local_o365\oauth2\token {
      */
     protected function delete_stored_token($existingtoken) {
         $tokens = get_config('local_o365', 'apptokens');
+        if (empty($tokens)) {
+            return true;
+        }
         $tokens = unserialize($tokens);
         if (isset($tokens[$existingtoken['tokenresource']])) {
             unset($tokens[$existingtoken['tokenresource']]);
         }
         $tokens = serialize($tokens);
+        $existingapptokenssetting = get_config('local_o365', 'apptokens');
+        if ($existingapptokenssetting != $tokens) {
+            add_to_config_log('apptokens', $existingapptokenssetting, $tokens, 'local_o365');
+        }
         set_config('apptokens', $tokens, 'local_o365');
         return true;
     }
@@ -253,7 +275,11 @@ class apptoken extends \local_o365\oauth2\token {
             $tokenresource = 'https://graph.microsoft.com';
         }
         $tokens = get_config('local_o365', 'apptokens');
-        $tokens = unserialize($tokens);
+        if (empty($tokens)) {
+            $tokens = [];
+        } else {
+            $tokens = unserialize($tokens);
+        }
         $newtoken = [
             'token' => $token,
             'expiry' => $expiry,
@@ -262,6 +288,10 @@ class apptoken extends \local_o365\oauth2\token {
         ];
         $tokens[$tokenresource] = $newtoken;
         $tokens = serialize($tokens);
+        $existingapptokenssetting = get_config('local_o365', 'apptokens');
+        if ($existingapptokenssetting != $tokens) {
+            add_to_config_log('apptokens', $existingapptokenssetting, $tokens, 'local_o365');
+        }
         set_config('apptokens', $tokens, 'local_o365');
         return $newtoken;
     }

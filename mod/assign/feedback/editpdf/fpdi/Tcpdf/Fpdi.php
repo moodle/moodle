@@ -4,18 +4,22 @@
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
+ * @copyright Copyright (c) 2023 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
 namespace setasign\Fpdi\Tcpdf;
 
+use setasign\Fpdi\FpdiException;
 use setasign\Fpdi\FpdiTrait;
 use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
 use setasign\Fpdi\PdfParser\Filter\AsciiHex;
 use setasign\Fpdi\PdfParser\PdfParserException;
+use setasign\Fpdi\PdfParser\Type\PdfArray;
+use setasign\Fpdi\PdfParser\Type\PdfDictionary;
 use setasign\Fpdi\PdfParser\Type\PdfHexString;
 use setasign\Fpdi\PdfParser\Type\PdfIndirectObject;
+use setasign\Fpdi\PdfParser\Type\PdfName;
 use setasign\Fpdi\PdfParser\Type\PdfNull;
 use setasign\Fpdi\PdfParser\Type\PdfNumeric;
 use setasign\Fpdi\PdfParser\Type\PdfStream;
@@ -42,7 +46,7 @@ class Fpdi extends \pdf
      *
      * @string
      */
-    const VERSION = '2.3.6';
+    const VERSION = '2.6.0';
 
     /**
      * A counter for template ids.
@@ -140,12 +144,13 @@ class Fpdi extends \pdf
 
     /**
      * @inheritdoc
+     * @return string
      */
     protected function _getxobjectdict()
     {
         $out = parent::_getxobjectdict();
 
-        foreach ($this->importedPages as $key => $pageData) {
+        foreach ($this->importedPages as $pageData) {
             $out .= '/' . $pageData['id'] . ' ' . $pageData['objectNumber'] . ' 0 R ';
         }
 
@@ -246,7 +251,7 @@ class Fpdi extends \pdf
         if ($value instanceof PdfString) {
             $string = PdfString::unescape($value->value);
             $string = $this->_encrypt_data($this->currentObjectNumber, $string);
-            $value->value = \TCPDF_STATIC::_escape($string);
+            $value->value = PdfString::escape($string);
         } elseif ($value instanceof PdfHexString) {
             $filter = new AsciiHex();
             $string = $filter->decode($value->value);
@@ -266,5 +271,121 @@ class Fpdi extends \pdf
         }
 
         $this->fpdiWritePdfType($value);
+    }
+
+    /**
+     * This method will add additional data to the last created link/annotation.
+     *
+     * It will copy styling properties (supported by TCPDF) of the imported link.
+     *
+     * @param array $externalLink
+     * @param float|int $xPt
+     * @param float|int $scaleX
+     * @param float|int $yPt
+     * @param float|int $newHeightPt
+     * @param float|int $scaleY
+     * @param array $importedPage
+     * @return void
+     */
+    protected function adjustLastLink($externalLink, $xPt, $scaleX, $yPt, $newHeightPt, $scaleY, $importedPage)
+    {
+        $parser = $this->getPdfReader($importedPage['readerId'])->getParser();
+
+        if ($this->inxobj) {
+            // store parameters for later use on template
+            $lastAnnotationKey = count($this->xobjects[$this->xobjid]['annotations']) - 1;
+            $lastAnnotationOpt = &$this->xobjects[$this->xobjid]['annotations'][$lastAnnotationKey]['opt'];
+        } else {
+            $lastAnnotationKey = count($this->PageAnnots[$this->page]) - 1;
+            $lastAnnotationOpt = &$this->PageAnnots[$this->page][$lastAnnotationKey]['opt'];
+        }
+
+        // ensure we have a default value - otherwise TCPDF will set it to 4 throughout
+        $lastAnnotationOpt['f'] = 0;
+
+        // values in this dictonary are all direct objects and we don't need to resolve them here again.
+        $values = $externalLink['pdfObject']->value;
+
+        foreach ($values as $key => $value) {
+            try {
+                switch ($key) {
+                    case 'BS':
+                        $value = PdfDictionary::ensure($value);
+                        $bs = [];
+                        if (isset($value->value['W'])) {
+                            $bs['w'] = PdfNumeric::ensure($value->value['W'])->value;
+                        }
+
+                        if (isset($value->value['S'])) {
+                            $bs['s'] = PdfName::ensure($value->value['S'])->value;
+                        }
+
+                        if (isset($value->value['D'])) {
+                            $d = [];
+                            foreach (PdfArray::ensure($value->value['D'])->value as $item) {
+                                $d[] = PdfNumeric::ensure($item)->value;
+                            }
+                            $bs['d'] = $d;
+                        }
+
+                        $lastAnnotationOpt['bs'] = $bs;
+                        break;
+
+                    case 'Border':
+                        $borderArray = PdfArray::ensure($value)->value;
+                        if (count($borderArray) < 3) {
+                            continue 2;
+                        }
+
+                        $border = [
+                            PdfNumeric::ensure($borderArray[0])->value,
+                            PdfNumeric::ensure($borderArray[1])->value,
+                            PdfNumeric::ensure($borderArray[2])->value,
+                        ];
+                        if (isset($borderArray[3])) {
+                            $dashArray = [];
+                            foreach (PdfArray::ensure($borderArray[3])->value as $item) {
+                                $dashArray[] = PdfNumeric::ensure($item)->value;
+                            }
+                            $border[] = $dashArray;
+                        }
+
+                        $lastAnnotationOpt['border'] = $border;
+                        break;
+
+                    case 'C':
+                        $c = [];
+                        $colors = PdfArray::ensure(PdfType::resolve($value, $parser))->value;
+                        $m = count($colors) === 4 ? 100 : 255;
+                        foreach ($colors as $item) {
+                            $c[] = PdfNumeric::ensure($item)->value * $m;
+                        }
+                        $lastAnnotationOpt['c'] = $c;
+                        break;
+
+                    case 'F':
+                        $lastAnnotationOpt['f'] = $value->value;
+                        break;
+
+                    case 'BE':
+                        // is broken in current TCPDF version: "bc" key is checked but "bs" is used.
+                        break;
+                }
+            // let's silence invalid/not supported values
+            } catch (FpdiException $e) {
+                continue;
+            }
+        }
+
+        // QuadPoints are not supported by TCPDF
+//        if (count($externalLink['quadPoints']) > 0) {
+//            $quadPoints = [];
+//            for ($i = 0, $n = count($externalLink['quadPoints']); $i < $n; $i += 2) {
+//                $quadPoints[] = $xPt + $externalLink['quadPoints'][$i] * $scaleX;
+//                $quadPoints[] = $this->hPt - $yPt - $newHeightPt + $externalLink['quadPoints'][$i + 1] * $scaleY;
+//            }
+//
+//            ????? = $quadPoints;
+//        }
     }
 }

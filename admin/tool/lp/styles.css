@@ -247,3 +247,18 @@ input[type="checkbox"].tool_lp_scale_proficient {
 .path-admin-tool-lp #region-main {
     overflow-x: visible;
 }
+
+ul.competency-tree img {
+    width: 16px;
+    height: 16px;
+}
+
+[data-region="managecompetencies"] a .icon,
+[data-region="plan-page"] a .icon {
+    color: initial;
+}
+
+[data-region="managecompetencies"] h2 a .icon,
+[data-region="plan-page"] h2 a .icon {
+    font-size: smaller;
+}

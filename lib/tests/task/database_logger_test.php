@@ -24,7 +24,7 @@ namespace core\task;
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class database_logger_test extends \advanced_testcase {
+final class database_logger_test extends \advanced_testcase {
 
     /**
      * @var \moodle_database The original database prior to mocking
@@ -36,6 +36,7 @@ class database_logger_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->DB = $DB;
     }
@@ -48,12 +49,13 @@ class database_logger_test extends \advanced_testcase {
 
         $DB = $this->DB;
         $this->DB = null;
+        parent::tearDown();
     }
 
     /**
      * Ensure that store_log_for_task works with a passing scheduled task.
      */
-    public function test_store_log_for_task_scheduled() {
+    public function test_store_log_for_task_scheduled(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -82,7 +84,7 @@ class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that store_log_for_task works with a passing adhoc task.
      */
-    public function test_store_log_for_task_adhoc() {
+    public function test_store_log_for_task_adhoc(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -114,7 +116,7 @@ class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that store_log_for_task works with a failing scheduled task.
      */
-    public function test_store_log_for_task_failed_scheduled() {
+    public function test_store_log_for_task_failed_scheduled(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -143,7 +145,7 @@ class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that store_log_for_task works with a failing adhoc task.
      */
-    public function test_store_log_for_task_failed_adhoc() {
+    public function test_store_log_for_task_failed_adhoc(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -175,7 +177,7 @@ class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that store_log_for_task works with a passing adhoc task run as a specific user.
      */
-    public function test_store_log_for_task_adhoc_userid() {
+    public function test_store_log_for_task_adhoc_userid(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -212,7 +214,7 @@ class database_logger_test extends \advanced_testcase {
      * @dataProvider    delete_task_logs_provider
      * @param   mixed   $ids
      */
-    public function test_delete_task_logs($ids) {
+    public function test_delete_task_logs($ids): void {
         $DB = $this->mock_database();
         $DB->expects($this->once())
             ->method('delete_records_list')
@@ -236,7 +238,7 @@ class database_logger_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function delete_task_logs_provider() : array {
+    public static function delete_task_logs_provider(): array {
         return [
             [
                 [0],
@@ -249,7 +251,7 @@ class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that the retention period applies correctly.
      */
-    public function test_cleanup_retention() {
+    public function test_cleanup_retention(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -313,7 +315,7 @@ class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that the run-count retention applies.
      */
-    public function test_cleanup_retainruns() {
+    public function test_cleanup_retainruns(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -419,7 +421,7 @@ class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that the retention period applies correctly when combined with the run count retention.
      */
-    public function test_cleanup_combined() {
+    public function test_cleanup_combined(): void {
         global $DB;
 
         $this->resetAfterTest();

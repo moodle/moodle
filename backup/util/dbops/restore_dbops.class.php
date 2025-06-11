@@ -117,7 +117,7 @@ abstract class restore_dbops {
      * @param \core\progress\base $progress Progress tracker
      */
     public static function load_inforef_to_tempids($restoreid, $inforeffile,
-            \core\progress\base $progress = null) {
+            ?\core\progress\base $progress = null) {
 
         if (!file_exists($inforeffile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_inforef_xml_file', $inforeffile);
@@ -206,7 +206,7 @@ abstract class restore_dbops {
      * @param int $restoreid id of backup
      * @param string $itemname name of the item
      * @param int $itemid id of item
-     * @return array backup id's
+     * @return stdClass|false record from 'backup_ids_temp' table
      * @todo MDL-25290 replace static backupids* with MUC code
      */
     protected static function get_backup_ids_cached($restoreid, $itemname, $itemid) {
@@ -424,7 +424,7 @@ abstract class restore_dbops {
      * @param \core\progress\base $progress Progress tracker
      */
     public static function load_users_to_tempids($restoreid, $usersfile,
-            \core\progress\base $progress = null) {
+            ?\core\progress\base $progress = null) {
 
         if (!file_exists($usersfile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_users_xml_file', $usersfile);
@@ -567,7 +567,7 @@ abstract class restore_dbops {
      * @return array A separate list of all error and warnings detected
      */
     public static function prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, $contextlevel) {
-        global $DB;
+        global $DB, $CFG;
 
         // To return any errors and warnings found
         $errors   = array();
@@ -669,22 +669,37 @@ abstract class restore_dbops {
                 } else {
                     self::set_backup_ids_record($restoreid, 'question_category', $category->id, $matchcat->id, $targetcontext->id);
                     $questions = self::restore_get_questions($restoreid, $category->id);
+                    $transformer = self::get_backup_xml_transformer($courseid);
 
                     // Collect all the questions for this category into memory so we only talk to the DB once.
-                    $questioncache = $DB->get_records_sql_menu('SELECT q.id,
-                                                                       q.stamp
-                                                                  FROM {question} q
-                                                                  JOIN {question_versions} qv
-                                                                    ON qv.questionid = q.id
-                                                                  JOIN {question_bank_entries} qbe
-                                                                    ON qbe.id = qv.questionbankentryid
-                                                                  JOIN {question_categories} qc
-                                                                    ON qc.id = qbe.questioncategoryid
-                                                                 WHERE qc.id = ?', array($matchcat->id));
+                    $recordset = $DB->get_recordset_sql(
+                        "SELECT q.*
+                           FROM {question} q
+                           JOIN {question_versions} qv ON qv.questionid = q.id
+                           JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                           JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                          WHERE qc.id = ?",
+                        [$matchcat->id],
+                    );
+
+                    // Compute a hash of question and answer fields to differentiate between identical stamp-version questions.
+                    $questioncache = [];
+                    foreach ($recordset as $question) {
+                        $question->export_process = true; // Include all question options required for export.
+                        get_question_options($question);
+                        unset($question->export_process);
+                        // Remove some additional properties from get_question_options() that isn't included in backups
+                        // before we produce the identity hash.
+                        unset($question->categoryobject);
+                        unset($question->questioncategoryid);
+                        $cachekey = restore_questions_parser_processor::generate_question_identity_hash($question, $transformer);
+                        $questioncache[$cachekey] = $question->id;
+                    }
+                    $recordset->close();
 
                     foreach ($questions as $question) {
-                        if (isset($questioncache[$question->stamp." ".$question->version])) {
-                            $matchqid = $questioncache[$question->stamp." ".$question->version];
+                        if (isset($questioncache[$question->questionhash])) {
+                            $matchqid = $questioncache[$question->questionhash];
                         } else {
                             $matchqid = false;
                         }
@@ -920,7 +935,7 @@ abstract class restore_dbops {
     public static function send_files_to_pool($basepath, $restoreid, $component, $filearea,
             $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null,
             $forcenewcontextid = null, $skipparentitemidctxmatch = false,
-            \core\progress\base $progress = null) {
+            ?\core\progress\base $progress = null) {
         global $DB, $CFG;
 
         $backupinfo = backup_general_helper::get_backup_information(basename($basepath));
@@ -1167,9 +1182,10 @@ abstract class restore_dbops {
      * @param string $restoreid Restore ID
      * @param int $userid Default userid for files
      * @param \core\progress\base $progress Object used for progress tracking
+     * @param int $courseid Course ID
      */
     public static function create_included_users($basepath, $restoreid, $userid,
-            \core\progress\base $progress) {
+            \core\progress\base $progress, int $courseid = 0) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
         $progress->start_progress('Creating included users');
@@ -1252,6 +1268,10 @@ abstract class restore_dbops {
                 } else if ($userauth->isinternal and $userauth->canresetpwd) {
                     $user->password = 'restored';
                 }
+            } else if (self::password_should_be_discarded($user->password)) {
+                // Password is not empty and it is MD5 hashed. Generate a new random password for the user.
+                // We don't want MD5 hashes in the database and users won't be able to log in with the associated password anyway.
+                $user->password = hash_internal_user_password(base64_encode(random_bytes(24)));
             }
 
             // Creating new user, we must reset the policyagreed always
@@ -1290,6 +1310,9 @@ abstract class restore_dbops {
                         }
                     }
                 }
+
+                // Trigger event that user was created.
+                \core\event\user_created::create_from_user_id_on_restore($newuserid, $restoreid, $courseid)->trigger();
 
                 // Process tags
                 if (core_tag_tag::is_enabled('core', 'user') && isset($user->tags)) { // If enabled in server and present in backup.
@@ -1730,7 +1753,7 @@ abstract class restore_dbops {
      * @param \core\progress\base $progress Optional progress tracker
      */
     public static function process_included_users($restoreid, $courseid, $userid, $samesite,
-            \core\progress\base $progress = null) {
+            ?\core\progress\base $progress = null) {
         global $DB;
 
         // Just let precheck_included_users() to do all the hard work
@@ -1897,8 +1920,35 @@ abstract class restore_dbops {
      * @param array $options
      * @return bool True for success
      */
-    public static function delete_course_content($courseid, array $options = null) {
+    public static function delete_course_content($courseid, ?array $options = null) {
         return remove_course_contents($courseid, false, $options);
+    }
+
+    /**
+     * Checks if password stored in backup is a MD5 hash.
+     * Returns true if it is, false otherwise.
+     *
+     * @param string $password The password to check.
+     * @return bool
+     */
+    private static function password_should_be_discarded(#[\SensitiveParameter] string $password): bool {
+        return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
+    }
+
+    /**
+     * Load required classes and return a backup XML transformer for the specified course.
+     *
+     * These classes may not have been loaded if we're only doing a restore in the current process,
+     * so make sure we have them here.
+     *
+     * @param int $courseid
+     * @return backup_xml_transformer
+     */
+    protected static function get_backup_xml_transformer(int $courseid): backup_xml_transformer {
+        global $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
+        return new backup_xml_transformer($courseid);
     }
 }
 

@@ -19,11 +19,10 @@
  *
  * @package   local_redislock
  * @author    Sam Chaffee
- * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
+namespace local_redislock;
 
 use core\lock\lock_config;
 use local_redislock\api\shared_redis_connection;
@@ -33,15 +32,14 @@ use local_redislock\api\shared_redis_connection;
  *
  * @package   local_redislock
  * @author    Sam Chaffee
- * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class local_redislock_redis_lock_factory_test extends \advanced_testcase {
+class redis_lock_factory_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $CFG;
-
         $this->resetAfterTest();
         if (empty($CFG->local_redislock_redis_server)) {
             $CFG->local_redislock_redis_server = '127.0.0.1';
@@ -73,7 +71,18 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
         $redislockfactory = lock_config::get_lock_factory('core_cron');
         $lock1 = $redislockfactory->get_lock('test', 2);
         $this->assertNotEmpty($lock1);
-        $this->assertEquals(-1, $redislockfactory->get_ttl($lock1));
+        $factoryclass = get_class($redislockfactory);
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $newttl = $redislockfactory->get_ttl($lock1);
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $newttl = $redislockfactory->get_real_factory()->get_ttl($lock1);
+                break;
+            default:
+                $newttl = 1;
+        }
+        $this->assertEquals(-1, $newttl);
 
         $lock2 = $redislockfactory->get_lock('test', 1);
         $this->assertEmpty($lock2);
@@ -82,7 +91,18 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
 
         $lock3 = $redislockfactory->get_lock('another_test', 2, 1);
         $this->assertNotEmpty($lock3);
-        $this->assertEquals(-1, $redislockfactory->get_ttl($lock3));
+        $factoryclass = get_class($redislockfactory);
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $newttl = $redislockfactory->get_ttl($lock3);
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $newttl = $redislockfactory->get_real_factory()->get_ttl($lock3);
+                break;
+            default:
+                $newttl = 1;
+        }
+        $this->assertEquals(-1, $newttl);
 
         // Not using TTL anymore so this should fail to acquire the lock.
         $lock4 = $redislockfactory->get_lock('another_test', 2);
@@ -95,12 +115,34 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
         $key2 = "\\A\\key_with!odd:Chars$^\\A newline\n\\2\\And unicode ☀↑!";
         $lock5 = $redislockfactory->get_lock($key1, 2);
         $this->assertNotEmpty($lock5);
-        $this->assertEquals(-1, $redislockfactory->get_ttl($lock5));
+        $factoryclass = get_class($redislockfactory);
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $newttl = $redislockfactory->get_ttl($lock5);
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $newttl = $redislockfactory->get_real_factory()->get_ttl($lock5);
+                break;
+            default:
+                $newttl = 1;
+        }
+        $this->assertEquals(-1, $newttl);
 
-        // This key should also aquire.
+        // This key should also acquire.
         $lock6 = $redislockfactory->get_lock($key2, 2);
         $this->assertNotEmpty($lock6);
-        $this->assertEquals(-1, $redislockfactory->get_ttl($lock6));
+        $factoryclass = get_class($redislockfactory);
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $newttl = $redislockfactory->get_ttl($lock6);
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $newttl = $redislockfactory->get_real_factory()->get_ttl($lock6);
+                break;
+            default:
+                $newttl = 1;
+        }
+        $this->assertEquals(-1, $newttl);
 
         // But this should not (already held).
         $lock7 = $redislockfactory->get_lock($key1, 2);
@@ -110,10 +152,21 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
         $this->assertTrue($lock6->release());
 
         // Now get lock 2 again to be sure we had released.
-        // This key should also aquire.
+        // This key should also acquire.
         $lock8 = $redislockfactory->get_lock($key2, 2);
         $this->assertNotEmpty($lock8);
-        $this->assertEquals(-1, $redislockfactory->get_ttl($lock8));
+        $factoryclass = get_class($redislockfactory);
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $newttl = $redislockfactory->get_ttl($lock8);
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $newttl = $redislockfactory->get_real_factory()->get_ttl($lock8);
+                break;
+            default:
+                $newttl = 1;
+        }
+        $this->assertEquals(-1, $newttl);
 
         $this->assertTrue($lock8->release());
     }
@@ -134,7 +187,20 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
         $this->assertNotEmpty($lock1);
         $this->assertFalse($lock1->extend(10000));
 
-        $newttl = $redislockfactory->get_ttl($lock1);
+        $this->assertDebuggingCalledCount(2,
+            ['The function extend() is deprecated, please do not use it anymore.',
+            'The function extend_lock() is deprecated, please do not use it anymore.']);
+        $factoryclass = get_class($redislockfactory);
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $newttl = $redislockfactory->get_ttl($lock1);
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $newttl = $redislockfactory->get_real_factory()->get_ttl($lock1);
+                break;
+            default:
+                $newttl = 1;
+        }
         $this->assertEquals(-1, $newttl);
 
         $lock1->release();
@@ -160,7 +226,17 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
 
         // Class core\lock\lock has a __destruct method that throws a coding exception if the lock wasn't released.
         // The test fails when that happens. Simulate the auto-release being called by the shutdown manager.
-        $redislockfactory->auto_release();
+        $factoryclass = get_class($redislockfactory);
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $redislockfactory->auto_release();
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $redislockfactory->get_real_factory()->auto_release();
+                break;
+            default:
+                $redislockfactory->auto_release();
+        }
     }
 
     /**
@@ -169,7 +245,7 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
      * @throws coding_exception
      */
     public function test_lock_timeout() {
-        $mockbuilder = $this->getMockBuilder('Redis')->setMethods(array('setnx'))->disableOriginalConstructor();
+        $mockbuilder = $this->getMockBuilder('Redis')->onlyMethods(array('setnx'))->disableOriginalConstructor();
         $redis = $mockbuilder->getMock();
 
         $redislockfactory = new \local_redislock\lock\redis_lock_factory('cron', $redis);
@@ -190,7 +266,7 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
      * @throws coding_exception
      */
     public function test_lock_zero_timeout() {
-        $redis   = $this->getMockBuilder('Redis')->setMethods(array('setnx'))->disableOriginalConstructor()->getMock();
+        $redis   = $this->getMockBuilder('Redis')->onlyMethods(array('setnx'))->disableOriginalConstructor()->getMock();
         $redis->expects($this->once())->method('setnx')->will($this->returnValue(false));
 
         $factory = new \local_redislock\lock\redis_lock_factory('cron', $redis);
@@ -224,14 +300,36 @@ class local_redislock_redis_lock_factory_test extends \advanced_testcase {
         $this->assertNotEmpty($lock2);
 
         // Simulating auto releases.
-        $redislockfactory1->auto_release(); // This should not close redis.
+        $factoryclass = get_class($redislockfactory1);
+        // This should not close redis.
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $redislockfactory1->auto_release();
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $redislockfactory1->get_real_factory()->auto_release();
+                break;
+            default:
+                $redislockfactory1->auto_release();
+        }
 
         $redis2 = shared_redis_connection::get_instance()->get_redis();
         $this->assertSame($redis1, $redis2);
         $this->assertTrue($redis2->isConnected());
 
         // Last auto-release.
-        $redislockfactory2->auto_release(); // This SHOULD close redis.
+        $factoryclass = get_class($redislockfactory2);
+        // This SHOULD close redis.
+        switch ($factoryclass) {
+            case 'local_redislock\lock\redis_lock_factory':
+                $redislockfactory2->auto_release();
+                break;
+            case 'core\lock\timing_wrapper_lock_factory':
+                $redislockfactory2->get_real_factory()->auto_release();
+                break;
+            default:
+                $redislockfactory2->auto_release();
+        }
 
         // Connection should be auto closed when Moodle shuts down (All auto-releases have run).
         $redis3 = shared_redis_connection::get_instance()->get_redis();

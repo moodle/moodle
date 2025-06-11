@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Azure AD user sync scheduled task.
+ * Microsoft Entra ID user sync scheduled task.
  *
  * @package local_o365
  * @author James McQuillan <james.mcquillan@remote-learner.net>
@@ -29,11 +29,10 @@ namespace local_o365\task;
 use core\task\scheduled_task;
 use local_o365\feature\usersync\main;
 use local_o365\utils;
-
-defined('MOODLE_INTERNAL') || die();
+use moodle_exception;
 
 /**
- * Scheduled task to sync users with Azure AD.
+ * Scheduled task to sync users with Microsoft Entra ID.
  */
 class usersync extends scheduled_task {
     /**
@@ -68,6 +67,10 @@ class usersync extends scheduled_task {
         if (empty($value)) {
             $value = '';
         }
+        $existingtaskusersynclastsetting = get_config('local_o365', 'task_usersync_last' . $name);
+        if ($existingtaskusersynclastsetting != $value) {
+            add_to_config_log('task_usersync_last' . $name, $existingtaskusersynclastsetting, $value, 'local_o365');
+        }
         set_config('task_usersync_last' . $name, $value, 'local_o365');
     }
 
@@ -91,7 +94,7 @@ class usersync extends scheduled_task {
         }
 
         if (main::is_enabled() !== true) {
-            $this->mtrace('Azure AD cron sync disabled. Nothing to do.');
+            $this->mtrace('Microsoft Entra ID user sync disabled. Nothing to do.');
 
             return true;
         }
@@ -106,47 +109,18 @@ class usersync extends scheduled_task {
         $fullsyncfailed = false;
 
         if (main::sync_option_enabled('nodelta') === true) {
-            $skiptoken = $this->get_token('skiptokenfull');
-            if (!empty($skiptoken)) {
-                $this->mtrace('Using skiptoken (full)');
-            } else {
-                $this->mtrace('No skiptoken (full) stored.');
-            }
-
             $this->mtrace('Forcing full sync.');
-            $this->mtrace('Contacting Azure AD...');
+            $this->mtrace('Contacting Microsoft Entra ID...');
             $users = [];
             try {
-                $continue = true;
-                while ($continue) {
-                    [$returnedusers, $skiptoken] = $usersync->get_users('default', $skiptoken);
-                    $users = array_merge($users, $returnedusers);
-                    $continue = (!empty($skiptoken));
-                }
-            } catch (\Exception $e) {
+                $users = $usersync->get_users('default');
+            } catch (moodle_exception $e) {
                 $fullsyncfailed = true;
                 $this->mtrace('Error in full usersync: ' . $e->getMessage());
                 utils::debug($e->getMessage(), __METHOD__, $e);
-                $this->mtrace('Resetting skip and delta tokens.');
-                $skiptoken = null;
             }
-            $this->mtrace('Got response from Azure AD');
-
-            // Store skiptoken.
-            if (!empty($skiptoken)) {
-                $this->mtrace('Storing skiptoken (full)');
-            } else {
-                $this->mtrace('Clearing skiptoken (full) (none received)');
-            }
-            $this->store_token('skiptokenfull', $skiptoken);
+            $this->mtrace('Got response from Microsoft Entra ID');
         } else {
-            $skiptoken = $this->get_token('skiptokendelta');
-            if (!empty($skiptoken)) {
-                $this->mtrace('Using skiptoken (delta)');
-            } else {
-                $this->mtrace('No skiptoken (delta) stored.');
-            }
-
             $deltatoken = $this->get_token('deltatoken');
             if (!empty($deltatoken)) {
                 $this->mtrace('Using deltatoken.');
@@ -155,24 +129,18 @@ class usersync extends scheduled_task {
             }
 
             $this->mtrace('Using delta sync.');
-            $this->mtrace('Contacting Azure AD...');
-            $users = [];
+            $this->mtrace('Contacting Microsoft Entra ID...');
+
             try {
-                $continue = true;
-                while ($continue) {
-                    [$returnedusers, $skiptoken, $deltatoken] = $usersync->get_users_delta('default', $skiptoken, $deltatoken);
-                    $users = array_merge($users, $returnedusers);
-                    $continue = (empty($deltatoken) && !empty($skiptoken));
-                }
-            } catch (\Exception $e) {
+                [$users, $deltatoken] = $usersync->get_users_delta('default', $deltatoken);
+            } catch (moodle_exception $e) {
                 $this->mtrace('Error in delta usersync: ' . $e->getMessage());
                 utils::debug($e->getMessage(), __METHOD__, $e);
-                $this->mtrace('Resetting skip and delta tokens.');
-                $skiptoken = null;
+                $this->mtrace('Resetting delta tokens.');
                 $deltatoken = null;
             }
 
-            $this->mtrace('Got response from Azure AD');
+            $this->mtrace('Got response from Microsoft Entra ID');
 
             // Store deltatoken.
             if (!empty($deltatoken)) {
@@ -181,14 +149,6 @@ class usersync extends scheduled_task {
                 $this->mtrace('Clearing deltatoken (none received)');
             }
             $this->store_token('deltatoken', $deltatoken);
-
-            // Store skiptoken.
-            if (!empty($skiptoken)) {
-                $this->mtrace('Storing skiptoken (delta)');
-            } else {
-                $this->mtrace('Clearing skiptoken (delta) (none received)');
-            }
-            $this->store_token('skiptokendelta', $skiptoken);
         }
 
         if (!empty($users)) {
@@ -216,14 +176,24 @@ class usersync extends scheduled_task {
                 if (!$suspensiontaskhour) {
                     $suspensiontaskhour = 0;
                 }
-                if(!$suspensiontaskminute) {
+                if (!$suspensiontaskminute) {
                     $suspensiontaskminute = 0;
                 }
                 $currenthour = date('H');
                 $currentminute = date('i');
                 if ($currenthour > $suspensiontaskhour) {
+                    $existingtaskusersynclastdeletesetting = get_config('local_o365', 'task_usersync_lastdelete');
+                    if ($existingtaskusersynclastdeletesetting != date('Ymd')) {
+                        add_to_config_log('task_usersync_lastdelete', $existingtaskusersynclastdeletesetting, date('Ymd'),
+                            'local_o365');
+                    }
                     set_config('task_usersync_lastdelete', date('Ymd'), 'local_o365');
                 } else if (($currenthour == $suspensiontaskhour) && ($currentminute >= $suspensiontaskminute)) {
+                    $existingtaskusersynclastdeletesetting = get_config('local_o365', 'task_usersync_lastdelete');
+                    if ($existingtaskusersynclastdeletesetting != date('Ymd')) {
+                        add_to_config_log('task_usersync_lastdelete', $existingtaskusersynclastdeletesetting, date('Ymd'),
+                            'local_o365');
+                    }
                     set_config('task_usersync_lastdelete', date('Ymd'), 'local_o365');
                 } else {
                     $rundelete = false;
@@ -239,23 +209,15 @@ class usersync extends scheduled_task {
             if ($rundelete) {
                 $this->mtrace('Start suspend/delete users feature...');
                 if (main::sync_option_enabled('nodelta') !== true) {
-                    // Make sure $users contains all aad users - if delta sync was used, do a full sync.
-                    $skiptoken = '';
+                    // Make sure $users contains all Entra ID users - if delta sync was used, do a full sync.
                     $users = [];
 
                     try {
-                        $continue = true;
-                        while ($continue) {
-                            [$returnedusers, $skiptoken] = $usersync->get_users('default', $skiptoken);
-                            $users = array_merge($users, $returnedusers);
-                            $continue = (!empty($skiptoken));
-                        }
-                    } catch (\Exception $e) {
+                        $users = $usersync->get_users('default');
+                    } catch (moodle_exception $e) {
                         $fullsyncfailed = true;
                         $this->mtrace('Error in full usersync: ' . $e->getMessage());
                         utils::debug($e->getMessage(), __METHOD__, $e);
-                        $this->mtrace('Resetting skip and delta tokens.');
-                        $skiptoken = null;
                     }
                 }
 
@@ -286,10 +248,42 @@ class usersync extends scheduled_task {
      * @param array $users
      */
     protected function sync_users($usersync, $users) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/auth/oidc/lib.php');
+
         $chunk = array_chunk($users, 10000);
+
+        $bindingusernameclaim = auth_oidc_get_binding_username_claim();
+        switch ($bindingusernameclaim) {
+            case 'upn':
+                $this->mtrace('Binding username claim: userPrincipalName.');
+                $bindingusernameclaim = 'userPrincipalName';
+                break;
+            case 'oid':
+                $this->mtrace('Binding username claim: id.');
+                $bindingusernameclaim = 'id';
+                break;
+            case 'samaccountname':
+                $this->mtrace('Binding username claim: onPremisesSamAccountName.');
+                $bindingusernameclaim = 'onPremisesSamAccountName';
+                break;
+            case 'email':
+                $this->mtrace('Binding username claim: mail.');
+                $bindingusernameclaim = 'mail';
+                break;
+            case 'unique_name':
+            case 'sub':
+            case 'preferred_username':
+            default:
+                $this->mtrace('Unsupported binding username claim: ' . $bindingusernameclaim .
+                    '. Falls back to userPrincepalName.');
+                $bindingusernameclaim = 'userPrincipalName';
+        }
+
         foreach ($chunk as $u) {
             $this->mtrace(count($u) . ' users in chunk. Syncing...');
-            $usersync->sync_users($u);
+            $usersync->sync_users($u, $bindingusernameclaim);
         }
     }
 }

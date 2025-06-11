@@ -21,12 +21,12 @@
 
     Example context (json):
     {
-        "menu": "<a href=\"#\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
+        "menu": "<a href=\"#\" data-toggle=\"dropdown\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
         "hasmenu": true
     }
 }}
 {{#hasmenu}}
-<div class="cm_action_menu actions" data-cmid="{{id}}">
+<div class="cm_action_menu actions" data-cmid="{{id}}" data-region="actionmenu">
     {{#menu}}
         {{$ core/action_menu }}
             {{> core/action_menu }}

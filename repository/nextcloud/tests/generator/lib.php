@@ -37,7 +37,7 @@ class repository_nextcloud_generator extends testing_repository_generator {
      * Creates an issuer and a user.
      * @return \core\oauth2\issuer
      */
-    public function test_create_issuer () {
+    public function test_create_issuer() {
         $issuerdata = new stdClass();
         $issuerdata->name = "Service";
         $issuerdata->clientid = "Clientid";
@@ -57,7 +57,7 @@ class repository_nextcloud_generator extends testing_repository_generator {
      * @param int $issuerid
      * @return \core\oauth2\issuer
      */
-    public function test_create_endpoints ($issuerid) {
+    public function test_create_endpoints($issuerid) {
         $this->test_create_single_endpoint($issuerid, "ocs_endpoint");
         $this->test_create_single_endpoint($issuerid, "authorization_endpoint");
         $this->test_create_single_endpoint($issuerid, "webdav_endpoint", "https://www.default.test/webdav/index.php");

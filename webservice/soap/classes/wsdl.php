@@ -225,7 +225,7 @@ class wsdl {
      * @param bool $isoutput Flag to indicate if the nodes to be generated are for input or for output.
      */
     private function process_params($functionname, \SimpleXMLElement $porttypeoperation, \SimpleXMLElement $bindingoperation,
-                                    array $params = null, $isoutput = false) {
+                                    ?array $params = null, $isoutput = false) {
         // Do nothing if parameter array is empty.
         if (empty($params)) {
             return;

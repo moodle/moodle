@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 // List of observers.
-$observers = array(
-    array(
+$observers = [
+    [
         'eventname'   => '\core\event\competency_framework_deleted',
         'callback'    => '\report_lpmonitoring\event\observer::framework_deleted',
-    )
-);
+    ],
+];

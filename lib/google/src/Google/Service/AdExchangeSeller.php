@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller extends Google_Service
 {
   /** View and manage your Ad Exchange data. */
@@ -438,6 +439,7 @@ class Google_Service_AdExchangeSeller extends Google_Service
  *   $accounts = $adexchangesellerService->accounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -485,6 +487,7 @@ class Google_Service_AdExchangeSeller_Accounts_Resource extends Google_Service_R
  *   $adclients = $adexchangesellerService->adclients;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsAdclients_Resource extends Google_Service_Resource
 {
 
@@ -517,6 +520,7 @@ class Google_Service_AdExchangeSeller_AccountsAdclients_Resource extends Google_
  *   $alerts = $adexchangesellerService->alerts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsAlerts_Resource extends Google_Service_Resource
 {
 
@@ -546,6 +550,7 @@ class Google_Service_AdExchangeSeller_AccountsAlerts_Resource extends Google_Ser
  *   $customchannels = $adexchangesellerService->customchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsCustomchannels_Resource extends Google_Service_Resource
 {
 
@@ -596,6 +601,7 @@ class Google_Service_AdExchangeSeller_AccountsCustomchannels_Resource extends Go
  *   $metadata = $adexchangesellerService->metadata;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsMetadata_Resource extends Google_Service_Resource
 {
 }
@@ -608,6 +614,7 @@ class Google_Service_AdExchangeSeller_AccountsMetadata_Resource extends Google_S
  *   $dimensions = $adexchangesellerService->dimensions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsMetadataDimensions_Resource extends Google_Service_Resource
 {
 
@@ -634,6 +641,7 @@ class Google_Service_AdExchangeSeller_AccountsMetadataDimensions_Resource extend
  *   $metrics = $adexchangesellerService->metrics;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsMetadataMetrics_Resource extends Google_Service_Resource
 {
 
@@ -660,6 +668,7 @@ class Google_Service_AdExchangeSeller_AccountsMetadataMetrics_Resource extends G
  *   $preferreddeals = $adexchangesellerService->preferreddeals;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsPreferreddeals_Resource extends Google_Service_Resource
 {
 
@@ -702,6 +711,7 @@ class Google_Service_AdExchangeSeller_AccountsPreferreddeals_Resource extends Go
  *   $reports = $adexchangesellerService->reports;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsReports_Resource extends Google_Service_Resource
 {
 
@@ -746,6 +756,7 @@ class Google_Service_AdExchangeSeller_AccountsReports_Resource extends Google_Se
  *   $saved = $adexchangesellerService->saved;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsReportsSaved_Resource extends Google_Service_Resource
 {
 
@@ -800,6 +811,7 @@ class Google_Service_AdExchangeSeller_AccountsReportsSaved_Resource extends Goog
  *   $urlchannels = $adexchangesellerService->urlchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AccountsUrlchannels_Resource extends Google_Service_Resource
 {
 
@@ -829,6 +841,7 @@ class Google_Service_AdExchangeSeller_AccountsUrlchannels_Resource extends Googl
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_Account extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -864,6 +877,7 @@ class Google_Service_AdExchangeSeller_Account extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_Accounts extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -910,6 +924,7 @@ class Google_Service_AdExchangeSeller_Accounts extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AdClient extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -963,6 +978,7 @@ class Google_Service_AdExchangeSeller_AdClient extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_AdClients extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1009,6 +1025,7 @@ class Google_Service_AdExchangeSeller_AdClients extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_Alert extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1062,6 +1079,7 @@ class Google_Service_AdExchangeSeller_Alert extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_Alerts extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1090,6 +1108,7 @@ class Google_Service_AdExchangeSeller_Alerts extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_CustomChannel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1144,6 +1163,7 @@ class Google_Service_AdExchangeSeller_CustomChannel extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_CustomChannelTargetingInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1188,6 +1208,7 @@ class Google_Service_AdExchangeSeller_CustomChannelTargetingInfo extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_CustomChannels extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1234,6 +1255,7 @@ class Google_Service_AdExchangeSeller_CustomChannels extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_Metadata extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1262,6 +1284,7 @@ class Google_Service_AdExchangeSeller_Metadata extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_PreferredDeal extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1342,6 +1365,7 @@ class Google_Service_AdExchangeSeller_PreferredDeal extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_PreferredDeals extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1370,6 +1394,7 @@ class Google_Service_AdExchangeSeller_PreferredDeals extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_Report extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1443,6 +1468,7 @@ class Google_Service_AdExchangeSeller_Report extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_ReportHeaders extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1478,6 +1504,7 @@ class Google_Service_AdExchangeSeller_ReportHeaders extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_ReportingMetadataEntry extends Google_Collection
 {
   protected $collection_key = 'supportedProducts';
@@ -1550,6 +1577,7 @@ class Google_Service_AdExchangeSeller_ReportingMetadataEntry extends Google_Coll
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_SavedReport extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1585,6 +1613,7 @@ class Google_Service_AdExchangeSeller_SavedReport extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_SavedReports extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1631,6 +1660,7 @@ class Google_Service_AdExchangeSeller_SavedReports extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_UrlChannel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1666,6 +1696,7 @@ class Google_Service_AdExchangeSeller_UrlChannel extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdExchangeSeller_UrlChannels extends Google_Collection
 {
   protected $collection_key = 'items';

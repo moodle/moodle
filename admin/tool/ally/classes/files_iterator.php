@@ -166,7 +166,7 @@ class files_iterator implements \Iterator {
      * @return \stored_file
      */
     #[\ReturnTypeWillChange]
-    public function current() {
+    public function current(): mixed {
         return $this->current;
     }
 

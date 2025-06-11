@@ -14,15 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Advanced test case.
- *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+use core\di;
+use core\hook;
+use core\http_client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 
 /**
  * Advanced PHPUnit test case customised for Moodle.
@@ -34,6 +31,7 @@
  */
 abstract class advanced_testcase extends base_testcase {
     /** @var bool automatically reset everything? null means log changes */
+    // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
     private $resetAfterTest;
 
     /** @var moodle_transaction */
@@ -51,8 +49,8 @@ abstract class advanced_testcase extends base_testcase {
      * @param array  $data
      * @param string $dataName
      */
-    final public function __construct($name = null, array $data = array(), $dataName = '') {
-        parent::__construct($name, $data, $dataName);
+    final public function __construct($name = null, array $data = [], $dataname = '') {
+        parent::__construct($name, $data, $dataname);
 
         $this->setBackupGlobals(false);
         $this->setBackupStaticAttributes(false);
@@ -61,47 +59,49 @@ abstract class advanced_testcase extends base_testcase {
 
     /**
      * Runs the bare test sequence.
-     * @return void
      */
     final public function runBare(): void {
-        global $DB;
+        global $CFG, $DB;
 
         if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
-            // this happens when previous test does not reset, we can not use transactions
+            // This happens when previous test does not reset, we can not use transactions.
             $this->testdbtransaction = null;
-
-        } else if ($DB->get_dbfamily() === 'postgres' or $DB->get_dbfamily() === 'mssql') {
-            // database must allow rollback of DDL, so no mysql here
+        } else if ($DB->get_dbfamily() === 'postgres' || $DB->get_dbfamily() === 'mssql') {
+            // Database must allow rollback of DDL, so no mysql here.
             $this->testdbtransaction = $DB->start_delegated_transaction();
         }
 
         try {
             $this->setCurrentTimeStart();
             parent::runBare();
-            // set DB reference in case somebody mocked it in test
-            $DB = phpunit_util::get_global_backup('DB');
-
-            // Deal with any debugging messages.
-            $debugerror = phpunit_util::display_debugging_messages(true);
-            $this->resetDebugging();
-            if (!empty($debugerror)) {
-                trigger_error('Unexpected debugging() call detected.'."\n".$debugerror, E_USER_NOTICE);
-            }
-
         } catch (Exception $ex) {
             $e = $ex;
         } catch (Throwable $ex) {
             // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
             $e = $ex;
+        } finally {
+            // Reset global state after test and test failure.
+            $CFG = phpunit_util::get_global_backup('CFG');
+            $DB = phpunit_util::get_global_backup('DB');
+
+            // We need to reset the autoloader.
+            \core_component::reset();
         }
 
         if (isset($e)) {
-            // cleanup after failed expectation
+            // Cleanup after failed expectation.
             self::resetAllData();
             throw $e;
         }
 
-        if (!$this->testdbtransaction or $this->testdbtransaction->is_disposed()) {
+        // Deal with any debugging messages.
+        $debugerror = phpunit_util::display_debugging_messages(true);
+        $this->resetDebugging();
+        if (!empty($debugerror)) {
+            trigger_error('Unexpected debugging() call detected.' . "\n" . $debugerror, E_USER_NOTICE);
+        }
+
+        if (!$this->testdbtransaction || $this->testdbtransaction->is_disposed()) {
             $this->testdbtransaction = null;
         }
 
@@ -109,24 +109,22 @@ abstract class advanced_testcase extends base_testcase {
             if ($this->testdbtransaction) {
                 $DB->force_transaction_rollback();
                 phpunit_util::reset_all_database_sequences();
-                phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // no db reset necessary
+                phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // No db reset necessary.
             }
             self::resetAllData(null);
-
         } else if ($this->resetAfterTest === false) {
             if ($this->testdbtransaction) {
                 $this->testdbtransaction->allow_commit();
             }
-            // keep all data untouched for other tests
-
+            // Keep all data untouched for other tests.
         } else {
-            // reset but log what changed
+            // Reset but log what changed.
             if ($this->testdbtransaction) {
                 try {
                     $this->testdbtransaction->allow_commit();
                 } catch (dml_transaction_exception $e) {
                     self::resetAllData();
-                    throw new coding_exception('Invalid transaction state detected in test '.$this->getName());
+                    throw new coding_exception('Invalid transaction state detected in test ' . $this->getName());
                 }
             }
             self::resetAllData(true);
@@ -135,76 +133,45 @@ abstract class advanced_testcase extends base_testcase {
         // Reset context cache.
         context_helper::reset_caches();
 
-        // make sure test did not forget to close transaction
+        // Make sure test did not forget to close transaction.
         if ($DB->is_transaction_started()) {
             self::resetAllData();
-            if ($this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_PASSED
-                or $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_SKIPPED
-                or $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_INCOMPLETE) {
-                throw new coding_exception('Test '.$this->getName().' did not close database transaction');
+            if (
+                $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_PASSED
+                || $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_SKIPPED
+                || $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_INCOMPLETE
+            ) {
+                throw new coding_exception('Test ' . $this->getName() . ' did not close database transaction');
             }
         }
     }
 
     /**
-     * Creates a new XMLDataSet with the given $xmlFile. (absolute path.)
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * @param string $xmlFile
-     * @return phpunit_dataset
      */
-    protected function createXMLDataSet($xmlFile) {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.', DEBUG_DEVELOPER);
-        return $this->dataset_from_files([$xmlFile]);
+    protected function createXMLDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.');
     }
 
     /**
-     * Creates a new CsvDataSet from the given array of csv files. (absolute paths.)
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * @param array $files array tablename=>cvsfile
-     * @param string $delimiter unused
-     * @param string $enclosure unused
-     * @param string $escape unused
-     * @return phpunit_dataset
      */
-    protected function createCsvDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.', DEBUG_DEVELOPER);
-        return $this->dataset_from_files($files);
+    protected function createCsvDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.');
     }
 
     /**
-     * Creates new ArrayDataSet from given array
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * @param array $data array of tables, first row in each table is columns
-     * @return phpunit_dataset
      */
-    protected function createArrayDataSet(array $data) {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_array() instead.', DEBUG_DEVELOPER);
-        return $this->dataset_from_array($data);
+    protected function createArrayDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset_from_array() instead.');
     }
 
     /**
-     * Load date into moodle database tables from standard PHPUnit data set.
-     *
      * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
-     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
-     *
-     * Note: it is usually better to use data generators
-     *
-     * @param phpunit_dataset $dataset
-     * @return void
      */
-    protected function loadDataSet(phpunit_dataset $dataset) {
-        debugging(__FUNCTION__ . '() is deprecated. Please use dataset->to_database() instead.', DEBUG_DEVELOPER);
-        $dataset->to_database();
+    protected function loadDataSet() {
+        throw new coding_exception(__FUNCTION__ . '() is deprecated. Please use dataset->to_database() instead.');
     }
 
     /**
@@ -224,7 +191,7 @@ abstract class advanced_testcase extends base_testcase {
      * @param array $files full paths to CSV or XML files to load.
      * @return phpunit_dataset
      */
-    protected function dataset_from_files(array $files) {
+    protected static function dataset_from_files(array $files) {
         // We ignore $delimiter, $enclosure and $escape, use the default ones in your fixtures.
         $dataset = new phpunit_dataset();
         $dataset->from_files($files);
@@ -241,7 +208,7 @@ abstract class advanced_testcase extends base_testcase {
      * @param string $table name of the table which the file belongs to (only for CSV files).
      * @return phpunit_dataset
      */
-    protected function dataset_from_string(string $content, string $type, ?string $table = null) {
+    protected static function dataset_from_string(string $content, string $type, ?string $table = null) {
         $dataset = new phpunit_dataset();
         $dataset->from_string($content, $type, $table);
         return $dataset;
@@ -255,7 +222,7 @@ abstract class advanced_testcase extends base_testcase {
      * @param array $data array of tables, see {@see phpunit_dataset::from_array()} for supported formats.
      * @return phpunit_dataset
      */
-    protected function dataset_from_array(array $data) {
+    protected static function dataset_from_array(array $data) {
         $dataset = new phpunit_dataset();
         $dataset->from_array($data);
         return $dataset;
@@ -271,7 +238,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function preventResetByRollback() {
-        if ($this->testdbtransaction and !$this->testdbtransaction->is_disposed()) {
+        if ($this->testdbtransaction && !$this->testdbtransaction->is_disposed()) {
             $this->testdbtransaction->allow_commit();
             $this->testdbtransaction = null;
         }
@@ -314,7 +281,7 @@ abstract class advanced_testcase extends base_testcase {
      */
     public function assertDebuggingCalled($debugmessage = null, $debuglevel = null, $message = '') {
         $debugging = $this->getDebuggingMessages();
-        $debugdisplaymessage = "\n".phpunit_util::display_debugging_messages(true);
+        $debugdisplaymessage = "\n" . phpunit_util::display_debugging_messages(true);
         $this->resetDebugging();
 
         $count = count($debugging);
@@ -327,7 +294,7 @@ abstract class advanced_testcase extends base_testcase {
         }
         if ($count > 1) {
             if ($message === '') {
-                $message = 'Expectation failed, debugging() triggered '.$count.' times.'.$debugdisplaymessage;
+                $message = 'Expectation failed, debugging() triggered ' . $count . ' times.' . $debugdisplaymessage;
             }
             $this->fail($message);
         }
@@ -352,20 +319,22 @@ abstract class advanced_testcase extends base_testcase {
      * @param string $message
      * @return void
      */
-    public function assertDebuggingCalledCount($expectedcount, $debugmessages = array(), $debuglevels = array(), $message = '') {
+    public function assertdebuggingcalledcount($expectedcount, $debugmessages = [], $debuglevels = [], $message = '') {
         if (!is_int($expectedcount)) {
             throw new coding_exception('assertDebuggingCalledCount $expectedcount argument should be an integer.');
         }
 
         $debugging = $this->getDebuggingMessages();
-        $message .= "\n".phpunit_util::display_debugging_messages(true);
+        $message .= "\n" . phpunit_util::display_debugging_messages(true);
         $this->resetDebugging();
 
         $this->assertEquals($expectedcount, count($debugging), $message);
 
         if ($debugmessages) {
             if (!is_array($debugmessages) || count($debugmessages) != $expectedcount) {
-                throw new coding_exception('assertDebuggingCalledCount $debugmessages should contain ' . $expectedcount . ' messages');
+                throw new coding_exception(
+                    'assertDebuggingCalledCount $debugmessages should contain ' . $expectedcount . ' messages',
+                );
             }
             foreach ($debugmessages as $key => $debugmessage) {
                 $this->assertSame($debugmessage, $debugging[$key]->message, $message);
@@ -374,7 +343,9 @@ abstract class advanced_testcase extends base_testcase {
 
         if ($debuglevels) {
             if (!is_array($debuglevels) || count($debuglevels) != $expectedcount) {
-                throw new coding_exception('assertDebuggingCalledCount $debuglevels should contain ' . $expectedcount . ' messages');
+                throw new coding_exception(
+                    'assertDebuggingCalledCount $debuglevels should contain ' . $expectedcount . ' messages',
+                );
             }
             foreach ($debuglevels as $key => $debuglevel) {
                 $this->assertSame($debuglevel, $debugging[$key]->level, $message);
@@ -431,7 +402,8 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
-     * Assert that an event is not using event->contxet.
+     * Assert that various event methods are not using event->context
+     *
      * While restoring context might not be valid and it should not be used by event url
      * or description methods.
      *
@@ -450,11 +422,8 @@ abstract class advanced_testcase extends base_testcase {
         // Test event methods should not use event->context.
         $event->get_url();
         $event->get_description();
-        $event->get_legacy_eventname();
-        phpunit_event_mock::testable_get_legacy_eventdata($event);
-        phpunit_event_mock::testable_get_legacy_logdata($event);
 
-        // Restore event->context.
+        // Restore event->context (note that this is unreachable when the event uses context). But ok for correct events.
         phpunit_event_mock::testable_set_event_context($event, $eventcontext);
     }
 
@@ -476,9 +445,9 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function assertTimeCurrent($time, $message = '') {
-        $msg =  ($message === '') ? 'Time is lower that allowed start value' : $message;
+        $msg = ($message === '') ? 'Time is lower that allowed start value' : $message;
         $this->assertGreaterThanOrEqual($this->currenttimestart, $time, $msg);
-        $msg =  ($message === '') ? 'Time is in the future' : $message;
+        $msg = ($message === '') ? 'Time is in the future' : $message;
         $this->assertLessThanOrEqual(time(), $time, $msg);
     }
 
@@ -522,6 +491,26 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
+     * Override hook callbacks.
+     *
+     * @param string $hookname
+     * @param callable $callback
+     * @return void
+     */
+    public function redirectHook(string $hookname, callable $callback): void {
+        di::get(hook\manager::class)->phpunit_redirect_hook($hookname, $callback);
+    }
+
+    /**
+     * Remove all hook overrides.
+     *
+     * @return void
+     */
+    public function stopHookRedirections(): void {
+        di::get(hook\manager::class)->phpunit_stop_redirections();
+    }
+
+    /**
      * Reset all database tables, restore global state and clear caches and optionally purge dataroot dir.
      *
      * @param bool $detectchanges
@@ -550,7 +539,7 @@ abstract class advanced_testcase extends base_testcase {
             $user->id = 0;
             $user->mnethostid = $CFG->mnet_localhost_id;
         } else {
-            $user = $DB->get_record('user', array('id'=>$user));
+            $user = $DB->get_record('user', ['id' => $user]);
         }
         unset($user->description);
         unset($user->access);
@@ -618,28 +607,31 @@ abstract class advanced_testcase extends base_testcase {
      * @param bool $https true if https required
      * @return string url
      */
-    public function getExternalTestFileUrl($path, $https = false) {
+    public static function getExternalTestFileUrl(
+        string $path,
+        bool $https = false,
+    ): string {
         $path = ltrim($path, '/');
         if ($path) {
-            $path = '/'.$path;
+            $path = "/{$path}";
         }
         if ($https) {
             if (defined('TEST_EXTERNAL_FILES_HTTPS_URL')) {
                 if (!TEST_EXTERNAL_FILES_HTTPS_URL) {
-                    $this->markTestSkipped('Tests using external https test files are disabled');
+                    self::markTestSkipped('Tests using external https test files are disabled');
                 }
-                return TEST_EXTERNAL_FILES_HTTPS_URL.$path;
+                return TEST_EXTERNAL_FILES_HTTPS_URL . $path;
             }
-            return 'https://download.moodle.org/unittest'.$path;
+            return "https://download.moodle.org/unittest{$path}";
         }
 
         if (defined('TEST_EXTERNAL_FILES_HTTP_URL')) {
             if (!TEST_EXTERNAL_FILES_HTTP_URL) {
-                $this->markTestSkipped('Tests using external http test files are disabled');
+                self::markTestSkipped('Tests using external http test files are disabled');
             }
-            return TEST_EXTERNAL_FILES_HTTP_URL.$path;
+            return TEST_EXTERNAL_FILES_HTTP_URL . $path;
         }
-        return 'http://download.moodle.org/unittest'.$path;
+        return "http://download.moodle.org/unittest{$path}";
     }
 
     /**
@@ -658,9 +650,9 @@ abstract class advanced_testcase extends base_testcase {
         $files = scandir($path);
 
         foreach ($files as $file) {
-            $filepath = $path .'/'. $file;
+            $filepath = $path . '/' . $file;
             if (strpos($file, '.') === 0) {
-                /// Don't check hidden files.
+                // Don't check hidden files.
                 continue;
             } else if (is_dir($filepath)) {
                 if (!in_array($filepath, $ignorefolders)) {
@@ -692,8 +684,7 @@ abstract class advanced_testcase extends base_testcase {
      * @param   int     $matchuserid The userid to match.
      */
     protected function runAdhocTasks($matchclass = '', $matchuserid = null) {
-        global $CFG, $DB;
-        require_once($CFG->libdir.'/cronlib.php');
+        global $DB;
 
         $params = [];
         if (!empty($matchclass)) {
@@ -726,14 +717,10 @@ abstract class advanced_testcase extends base_testcase {
             }
 
             $task->set_lock($lock);
-            if (!$task->is_blocking()) {
-                $cronlock->release();
-            } else {
-                $task->set_cron_lock($cronlock);
-            }
+            $cronlock->release();
 
-            cron_prepare_core_renderer();
-            cron_setup_user($user);
+            \core\cron::prepare_core_renderer();
+            \core\cron::setup_user($user);
 
             $task->execute();
             \core\task\manager::adhoc_task_complete($task);
@@ -741,5 +728,202 @@ abstract class advanced_testcase extends base_testcase {
             unset($task);
         }
         $tasks->close();
+    }
+
+    /**
+     * Run adhoc tasks.
+     */
+    protected function run_all_adhoc_tasks(): void {
+        // Run the adhoc task.
+        while ($task = \core\task\manager::get_next_adhoc_task(time())) {
+            $task->execute();
+            \core\task\manager::adhoc_task_complete($task);
+        }
+    }
+
+    /**
+     * Mock the clock with an incrementing clock.
+     *
+     * @param null|int $starttime
+     * @return \incrementing_clock
+     */
+    public function mock_clock_with_incrementing(
+        ?int $starttime = null,
+    ): \incrementing_clock {
+        require_once(dirname(__DIR__, 2) . '/testing/classes/incrementing_clock.php');
+        $clock = new \incrementing_clock($starttime);
+
+        \core\di::set(\core\clock::class, $clock);
+
+        return $clock;
+    }
+
+    /**
+     * Mock the clock with a frozen clock.
+     *
+     * @param null|int $time
+     * @return \frozen_clock
+     */
+    public function mock_clock_with_frozen(
+        ?int $time = null,
+    ): \frozen_clock {
+        require_once(dirname(__DIR__, 2) . '/testing/classes/frozen_clock.php');
+        $clock = new \frozen_clock($time);
+
+        \core\di::set(\core\clock::class, $clock);
+
+        return $clock;
+    }
+
+    /**
+     * Add a mocked plugintype to Moodle.
+     *
+     * A new plugintype name must be provided with a path to the plugintype's root.
+     *
+     * Please note that tests calling this method must be run in separate isolation mode.
+     * Please avoid using this if at all possible.
+     *
+     * @param string $plugintype The name of the plugintype
+     * @param string $path The path to the plugintype's root
+     */
+    protected function add_mocked_plugintype(
+        string $plugintype,
+        string $path,
+    ): void {
+        require_phpunit_isolation();
+
+        $mockedcomponent = new \ReflectionClass(\core_component::class);
+        $plugintypes = $mockedcomponent->getStaticPropertyValue('plugintypes');
+
+        if (array_key_exists($plugintype, $plugintypes)) {
+            throw new \coding_exception("The plugintype '{$plugintype}' already exists.");
+        }
+
+        $plugintypes[$plugintype] = $path;
+        $mockedcomponent->setStaticPropertyValue('plugintypes', $plugintypes);
+
+        $this->resetDebugging();
+    }
+
+    /**
+     * Add a mocked plugin to Moodle.
+     *
+     * A new plugin name must be provided with a path to the plugin's root.
+     * The plugin type must already exist (or have been mocked separately).
+     *
+     * Please note that tests calling this method must be run in separate isolation mode.
+     * Please avoid using this if at all possible.
+     *
+     * @param string $plugintype The name of the plugintype
+     * @param string $pluginname The name of the plugin
+     * @param string $path The path to the plugin's root
+     */
+    protected function add_mocked_plugin(
+        string $plugintype,
+        string $pluginname,
+        string $path,
+    ): void {
+        require_phpunit_isolation();
+
+        $mockedcomponent = new \ReflectionClass(\core_component::class);
+        $plugins = $mockedcomponent->getStaticPropertyValue('plugins');
+
+        if (!array_key_exists($plugintype, $plugins)) {
+            $plugins[$plugintype] = [];
+        }
+
+        $plugins[$plugintype][$pluginname] = $path;
+        $mockedcomponent->setStaticPropertyValue('plugins', $plugins);
+        $this->resetDebugging();
+    }
+
+    /**
+     * Convenience method to get the path to a fixture.
+     *
+     * @param string $component
+     * @param string $path
+     * @throws coding_exception
+     */
+    protected static function get_fixture_path(
+        string $component,
+        string $path,
+    ): string {
+        return sprintf(
+            "%s/tests/fixtures/%s",
+            \core_component::get_component_directory($component),
+            $path,
+        );
+    }
+
+    /**
+     * Convenience method to load a fixture from a component's fixture directory.
+     *
+     * @param string $component
+     * @param string $path
+     * @throws coding_exception
+     */
+    protected static function load_fixture(
+        string $component,
+        string $path,
+    ): void {
+        global $ADMIN;
+        global $CFG;
+        global $DB;
+        global $SITE;
+        global $USER;
+        global $OUTPUT;
+        global $PAGE;
+        global $SESSION;
+        global $COURSE;
+        global $SITE;
+
+        $fullpath = static::get_fixture_path($component, $path);
+
+        if (!file_exists($fullpath)) {
+            throw new \coding_exception("Fixture file not found: $fullpath");
+        }
+
+        require_once($fullpath);
+    }
+
+    /**
+     * Get a mocked HTTP Client, inserting it into the Dependency Injector.
+     *
+     * @param array|null $history An array which will contain the Request/Response history of the HTTP client
+     * @return array Containing the client, the mock, and the history
+     */
+    protected function get_mocked_http_client(
+        ?array &$history = null,
+    ): array {
+        $mock = new MockHandler([]);
+        $handlerstack = HandlerStack::create($mock);
+
+        if ($history !== null) {
+            $historymiddleware = Middleware::history($history);
+            $handlerstack->push($historymiddleware);
+        }
+        $client = new http_client(['handler' => $handlerstack]);
+
+        di::set(http_client::class, $client);
+
+        return [
+            'client' => $client,
+            'mock' => $mock,
+            'handlerstack' => $handlerstack,
+        ];
+    }
+
+    /**
+     * Get a copy of the mocked string manager.
+     *
+     * @return \core\tests\mocking_string_manager
+     */
+    protected function get_mocked_string_manager(): \core\tests\mocking_string_manager {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->config_php_settings['customstringmanager'] = \core\tests\mocking_string_manager::class;
+
+        return get_string_manager(true);
     }
 }

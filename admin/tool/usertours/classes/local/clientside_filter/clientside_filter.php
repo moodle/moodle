@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Clientside filter base.
- *
- * @package    tool_usertours
- * @copyright  2020 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours\local\clientside_filter;
-
-defined('MOODLE_INTERNAL') || die();
 
 use stdClass;
 use tool_usertours\local\filter\base;
@@ -33,6 +23,7 @@ use tool_usertours\tour;
 /**
  * Clientside filter base.
  *
+ * @package    tool_usertours
  * @copyright  2020 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +37,7 @@ abstract class clientside_filter extends base {
     public static function get_client_side_values(tour $tour): stdClass {
         $data = (object) [];
 
-        if (is_a(static::class, clientside_filter::class, true)) {
+        if (is_a(static::class, self::class, true)) {
             $data->filterdata = $tour->get_filter_values(static::get_filter_name());
         }
 

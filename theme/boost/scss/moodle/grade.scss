@@ -1,6 +1,8 @@
 // The class gradetreebox matches the pages displaying the gradebook
 // "Gradebook setup" > "Simple view" and "Full view".
 .gradetreebox {
+    margin: 20px 0 30px 0;
+
     h4 {
         // Force back the base font-size to minimise width.
         font-size: $font-size-base;
@@ -98,7 +100,7 @@
             overflow: hidden;
             margin: 0.5em;
             padding: 1em;
-            border: 1px solid #aaa;
+            border: 1px solid $grade-manage-action-border-color;
 
             .action-text {
                 position: relative;
@@ -124,7 +126,7 @@
     &.evaluate .criterion .levels .level {
         &:hover,
         &.checked {
-            background: #dff0d8;
+            background: $grade-criterion-level-hover-bg;
         }
         &.checked {
             border: none;
@@ -155,7 +157,7 @@
             margin-right: 28px;
             font-style: italic;
             font-weight: bold;
-            color: #{theme-color-level('success', 2)};
+            color: #{shift-color($success, 20%)};
 
             input {
                 margin-bottom: 0;
@@ -167,12 +169,12 @@
             padding: $rubricPadding;
 
             &.currentchecked {
-                background: #fff0f0;
+                background: $grade-criterion-level-currentchecked-bg;
             }
 
             &.checked {
-                background: #d0ffd0;
-                border: 1px solid #555;
+                background: $grade-criterion-level-checked-bg;
+                border: 1px solid $grade-criterion-level-checked-border-color;
             }
 
             .delete {
@@ -193,7 +195,7 @@
                     margin: 0;
 
                     &:hover {
-                        background-color: #ddd;
+                        background-color: $grade-criterion-level-delete-bg;
                     }
                 }
             }
@@ -296,135 +298,269 @@
 }
 
 // Set up grades layout.
-.path-grade-edit-tree .setup-grades {
-    h4 {
-        margin: 0;
-    }
+.path-grade-edit-tree {
+    .collapse-list {
 
-    .column-rowspan {
-        padding: 0;
-        width: 24px;
-        min-width: 24px;
-        max-width: 24px;
-    }
+        .unlist {
+            padding-left: 2rem;
 
-    .category td.column-name {
-        padding-left: 0;
-    }
+            [data-for="sectionnode"] {
+                &:focus {
+                    > .collapse-list-item:first-child {
+                        background-color: $collapse-list-item-hover-bg;
+                        border-color: $collapse-list-item-hover-border;
+                    }
+                }
 
-    td.column-name {
-        padding-left: 24px;
-    }
+                &[data-selected="true"] {
+                    > .collapse-list-item:first-child {
+                        background-color: $collapse-list-item-hover-bg;
+                        border-color: $collapse-list-item-hover-border;
+                        color: $blue;
+                    }
+                }
 
-    td.movehere {
-        padding: 0;
-    }
+                .collapse-list-item-content {
+                    &[aria-hidden="true"] {
+                        display: none;
+                    }
+                }
 
-    td.movehere a.movehere {
-        display: block;
-        width: 100%;
-        height: 2rem;
-        border: 2px dashed $gray-800;
-    }
+                &[aria-expanded="true"] {
+                    > .collapse-list-item {
+                        .collapsed-icon {
+                            display: none;
+                        }
+                    }
+                }
 
-    .category input[type="text"],
-    .category .column-range,
-    .categoryitem,
-    .courseitem {
-        font-weight: bold;
-    }
+                &[aria-expanded="false"] {
+                    > .collapse-list-item {
+                        .expanded-icon {
+                            display: none;
+                        }
+                    }
+                }
+            }
 
-    .emptyrow {
-        display: none;
-    }
+            .collapse-list-item {
+                padding: 0.5rem 1rem;
+                cursor: pointer;
 
-    .gradeitemdescription {
-        font-weight: normal;
-        padding-left: 24px;
-    }
+                .collapse-list-item-name {
+                    font-weight: bold;
+                }
 
-    .column-weight {
-        white-space: nowrap;
+                .collapse-list-link {
+                    color: $gray-900;
+                    padding: 0 0.2rem;
+                    margin-right: 0.3rem;
 
-        &.level3 {
-            padding-left: 37px;
-        }
-
-        &.level4 {
-            padding-left: 66px;
-        }
-
-        &.level5 {
-            padding-left: 95px;
-        }
-
-        &.level6 {
-            padding-left: 124px;
-        }
-
-        &.level7 {
-            padding-left: 153px;
-        }
-
-        &.level8 {
-            padding-left: 182px;
-        }
-
-        &.level9 {
-            padding-left: 211px;
-        }
-
-        &.level10 {
-            padding-left: 240px;
+                    i {
+                        font-size: 12px;
+                        width: 12px;
+                        height: 12px;
+                        margin: 0;
+                    }
+                }
+            }
         }
     }
 
-    .column-range {
-        &.level2 {
-            padding-left: 37px;
+    .gradetree-wrapper {
+        padding: 10px 10px;
+        background-color: $gray-100;
+
+        .setup-grades {
+            h4 {
+                margin: 0;
+            }
+
+            .column-rowspan {
+                padding: 0;
+                width: 24px;
+                min-width: 24px;
+                max-width: 24px;
+            }
+
+            .emptyrow {
+                display: none;
+            }
+
+            .gradeitemdescription {
+                font-weight: normal;
+                padding-left: 24px;
+            }
+
+            &.generaltable {
+
+                tr {
+                    &.spacer {
+                        height: 0.5rem;
+                    }
+
+                    &[data-hidden="true"] {
+                        display: none;
+                    }
+
+                    th {
+                        vertical-align: bottom;
+                        border: none;
+                        text-align: left;
+                        background-color: $gray-100;
+
+                        &.rowspan {
+                            padding: 0;
+                            width: 24px;
+                            min-width: 24px;
+                        }
+                    }
+
+                    td {
+                        min-width: 4.5em;
+                        background-color: $gray-100;
+                        border: none;
+                        vertical-align: middle;
+
+                        &.column-name {
+                            .small {
+                                font-size: 70%;
+                            }
+
+                            .itemselect {
+                                margin-right: 15px;
+                            }
+                        }
+
+                        &.column-weight {
+                            .weightoverride {
+                                margin-right: 5px;
+                            }
+                            min-width: 15em;
+                        }
+
+                        &.column-actions {
+                            .dropdown-toggle::after {
+                                display: none;
+                            }
+                        }
+
+                        &.movehere {
+                            padding: 0;
+
+                            a.movehere {
+                                display: block;
+                                width: 100%;
+                                margin: 5px 0 5px 0;
+                                padding: 3px 0 3px 0;
+
+                                hr {
+                                    border-top: 2px dashed $gray-500;
+                                    margin: 0;
+                                }
+
+                                &:hover {
+                                    hr {
+                                        border-top: 2px dashed $blue;
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                    &.category {
+                        td {
+                            background-color: $grade-table-td-bg;
+                            border-top: 1px solid $gray-300;
+                            border-bottom: 1px solid $gray-300;
+
+                            &:first-child {
+                                border-left: 1px solid $gray-300;
+                            }
+
+                            &:last-child {
+                                border-right: 1px solid $gray-300;
+                            }
+
+                            &.column-name {
+                                font-weight: bold;
+
+                                div {
+                                    display: flex;
+                                    min-height: 30px;
+                                    align-items: center;
+
+                                    .form-check {
+                                        padding: 0;
+
+                                        .itemselect {
+                                            margin-right: 5px;
+                                        }
+                                    }
+
+                                    a {
+                                        &.toggle-category {
+                                            height: 24px;
+                                            width: 24px;
+                                            font-size: 12px;
+                                            line-height: 24px;
+                                            margin-right: 3px;
+
+                                            &[aria-expanded="true"] .expanded,
+                                            &[aria-expanded="false"] .collapsed {
+                                                display: none;
+                                            }
+
+                                            i {
+                                                font-size: 12px;
+                                                width: 12px;
+                                                height: 12px;
+                                                color: $grade-table-toggle-icon-color;
+                                                margin: 0;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    &.item {
+                        td {
+                            background-color: $grade-table-td-bg;
+                            border-top: 3px solid $gray-100;
+                        }
+
+                        &.categoryitem,
+                        &.courseitem {
+                            td {
+                                min-width: 4.5em;
+                                background-color: $gray-100;
+                                border: none;
+                                vertical-align: middle;
+
+                                &.column-name {
+                                    padding-left: 0;
+                                }
+
+                                &:not(.column-actions) {
+                                    font-weight: bold;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        &.level3 {
-            padding-left: 66px;
+        .badge-light {
+            color: $grade-badge-color;
+            background-color: $grade-badge-bg;
+            margin-right: 0.5em;
+            margin-bottom: 0.5em;
         }
 
-        &.level4 {
-            padding-left: 95px;
-        }
-
-        &.level5 {
-            padding-left: 124px;
-        }
-
-        &.level6 {
-            padding-left: 153px;
-        }
-
-        &.level7 {
-            padding-left: 182px;
-        }
-
-        &.level8 {
-            padding-left: 211px;
-        }
-
-        &.level9 {
-            padding-left: 240px;
-        }
-
-        &.level10 {
-            padding-left: 269px;
-        }
-    }
-
-    &.generaltable {
-        .levelodd {
-            background-color: $table-accent-bg;
-        }
-
-        .leveleven {
-            background-color: $table-bg;
-        }
     }
 }
 
@@ -436,6 +572,14 @@
         tr .cell,
         .floater .cell {
             background-color: $pagination-bg;
+
+            &.gradecell {
+                .dropdown-menu {
+                    &.show {
+                        z-index: 1;
+                    }
+                }
+            }
         }
 
         table,
@@ -443,8 +587,6 @@
             border-color: $table-border-color;
         }
 
-        .userrow.odd .cell,
-        .floater .cell.odd,
         .heading .cell,
         .cell.category,
         .avg .cell {
@@ -457,14 +599,31 @@
 
         tr.heading {
             position: sticky;
-            top: 0;
-            z-index: 1;
+            top: $navbar-height;
+            z-index: 4;
+        }
+
+        tr.userrow {
+            th {
+                z-index: 2;
+
+                &.actions-menu-active {
+                    z-index: 3;
+                }
+            }
         }
 
         tr.lastrow {
-            position: sticky;
-            bottom: 0;
-            z-index: 1;
+
+            &:not(.userrow) {
+                position: sticky;
+                // Hack used by the observer to help detecting when the sticky last row is pinned. */
+                bottom: -1px;
+
+                &.pinned {
+                    z-index: 4;
+                }
+            }
 
             td,
             th {
@@ -473,8 +632,12 @@
         }
 
         th.header {
+            left: 0;
             position: sticky;
-            left: -3rem;
+
+            &#studentheader {
+                z-index: 1;
+            }
         }
 
         td.noborder {
@@ -482,8 +645,14 @@
         }
     }
 
-    .show-drawer-left .gradeparent th.header {
-        left: -1rem;
+    &.hasstickyfooter {
+        .gradeparent {
+            tr.lastrow {
+                // Hack used by the observer to help detecting when the sticky 'Overall average' row is pinned when
+                // sticky footer is present.
+                bottom: calc(#{$stickyfooter-height} - 1px);
+            }
+        }
     }
 }
 
@@ -530,6 +699,16 @@
     }
 }
 
+.gradereport-grader-table {
+    input[name^="grade"] {
+        width: 80px;
+        display: inline-block;
+    }
+    .dropdown-toggle::after {
+        display: none;
+    }
+}
+
 .search-widget {
     .dropdown-menu {
         padding: 0.8rem 1.2rem;
@@ -553,7 +732,7 @@
         .dropdown-item:hover,
         .dropdown-item:active {
             span {
-                color: #fff;
+                color: $grade-search-hover-color;
             }
         }
 
@@ -569,9 +748,21 @@
         }
 
         .unsearchablecontentcontainer {
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid $grade-search-container-border-color;
             padding-top: 10px;
             font-size: 90%;
         }
     }
+}
+
+#fitem_id_submitbutton {
+    padding-right: 2em;
+}
+
+.gradestatus {
+    padding-top: 10px;
+}
+
+.gradestatus .icon {
+    margin-right: 1rem;
 }

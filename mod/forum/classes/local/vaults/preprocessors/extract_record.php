@@ -59,7 +59,7 @@ class extract_record {
      * @param stdClass[] $records The list of records to process
      * @return stdClass[] The extracted records
      */
-    public function execute(array $records) : array {
+    public function execute(array $records): array {
         return array_map(function($record) {
             return $this->table->extract_from_result($record);
         }, $records);

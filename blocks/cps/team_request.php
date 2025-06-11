@@ -28,11 +28,11 @@ require_once('team_request_form.php');
 require_login();
 
 if (!cps_team_request::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_team_request::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_team_request::name());
 }
 
 if (!ues_user::is_teacher()) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $teacher = ues_teacher::get(array('userid' => $USER->id));
@@ -42,7 +42,7 @@ $nonprimaries = (bool) get_config('block_cps', 'team_request_nonprimary');
 $sections = cps_unwant::active_sections_for($teacher, !$nonprimaries);
 
 if (empty($sections)) {
-    print_error('no_section', 'block_cps');
+    moodle_exception('no_section', 'block_cps');
 }
 
 $semesters = ues_semester::merge_sections($sections);

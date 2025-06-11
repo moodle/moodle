@@ -29,12 +29,12 @@ use context_course;
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_summary_exporter_test extends \advanced_testcase {
+final class course_summary_exporter_test extends \advanced_testcase {
 
     /**
      * Test that if no course overview images uploaded get_course_image returns false.
      */
-    public function test_get_course_image_when_no_overview_images_uploaded() {
+    public function test_get_course_image_when_no_overview_images_uploaded(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
@@ -45,7 +45,7 @@ class course_summary_exporter_test extends \advanced_testcase {
     /**
      * Test that if course overview images uploaded get_course_image returns an image URL.
      */
-    public function test_get_course_image_when_overview_images_are_uploaded() {
+    public function test_get_course_image_when_overview_images_are_uploaded(): void {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -61,7 +61,7 @@ class course_summary_exporter_test extends \advanced_testcase {
             'filepath' => '/',
         ];
         $fs = get_file_storage();
-        $fs->create_file_from_string($filerecord, file_get_contents(__DIR__ . '/fixtures/image.jpg'));
+        $fs->create_file_from_string($filerecord, file_get_contents(self::get_fixture_path(__NAMESPACE__, 'image.jpg')));
         $course = $this->getDataGenerator()->create_course(['overviewfiles_filemanager' => $draftid]);
         $coursecontext = context_course::instance($course->id);
 

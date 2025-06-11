@@ -29,9 +29,9 @@ require_once($CFG->libdir . '/gradelib.php');
  * @copyright 2012 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradelib_test extends \advanced_testcase {
+final class gradelib_test extends \advanced_testcase {
 
-    public function test_grade_update_mod_grades() {
+    public function test_grade_update_mod_grades(): void {
 
         $this->resetAfterTest(true);
 
@@ -61,7 +61,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Tests the function remove_grade_letters().
      */
-    public function test_remove_grade_letters() {
+    public function test_remove_grade_letters(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -104,7 +104,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Tests the function grade_course_category_delete().
      */
-    public function test_grade_course_category_delete() {
+    public function test_grade_course_category_delete(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -127,7 +127,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Tests the function grade_regrade_final_grades().
      */
-    public function test_grade_regrade_final_grades() {
+    public function test_grade_regrade_final_grades(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -188,7 +188,7 @@ class gradelib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function grade_get_date_for_user_grade_provider(): array {
+    public static function grade_get_date_for_user_grade_provider(): array {
         $u1 = (object) [
             'id' => 42,
         ];
@@ -251,7 +251,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Test the caching of grade letters.
      */
-    public function test_get_grade_letters() {
+    public function test_get_grade_letters(): void {
 
         $this->resetAfterTest();
 
@@ -276,7 +276,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Test custom letters.
      */
-    public function test_get_grade_letters_custom() {
+    public function test_get_grade_letters_custom(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -301,5 +301,49 @@ class gradelib_test extends \advanced_testcase {
         $expected = $cache->get($context->id);
 
         $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * When getting a calculated grade containing an error, we mark grading finished and don't keep trying to regrade.
+     *
+     * @covers \grade_get_grades()
+     * @return void
+     */
+    public function test_grade_get_grades_errors(): void {
+        $this->resetAfterTest();
+
+        // Setup some basics.
+        $course = $this->getDataGenerator()->create_course();
+        $user1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $user2 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'editingteacher');
+        // Set up 2 gradeable activities.
+        $assign = $this->getDataGenerator()->create_module('assign', ['idnumber' => 'a1', 'course' => $course->id]);
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['idnumber' => 'q1', 'course' => $course->id]);
+
+        // Create a calculated grade item using the activities.
+        $params = ['courseid' => $course->id];
+        $g1 = new \grade_item($this->getDataGenerator()->create_grade_item($params));
+        $g1->set_calculation('=[[a1]] + [[q1]]');
+
+        // Now delete one of the activities to break the calculation.
+        course_delete_module($assign->cmid);
+
+        // Course grade item has needsupdate.
+        $this->assertEquals(1, \grade_item::fetch_course_item($course->id)->needsupdate);
+
+        // Get grades for the quiz, to trigger a regrade.
+        $this->setUser($user2);
+        $grades1 = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id);
+        // We should get an error for the broken calculation.
+        $this->assertNotEmpty($grades1->errors);
+        $this->assertEquals(get_string('errorcalculationbroken', 'grades', $g1->itemname), reset($grades1->errors));
+        // Course grade item should not have needsupdate so that we don't try to regrade again.
+        $this->assertEquals(0, \grade_item::fetch_course_item($course->id)->needsupdate);
+
+        // Get grades for the quiz again. This should not trigger the regrade and resulting error this time.
+        $grades2 = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id);
+        $this->assertEmpty($grades2->errors);
     }
 }

@@ -23,7 +23,8 @@
  * @copyright (C) 2018 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:ignore moodle.Files.RequireLogin.Missing -- This file is called from Microsoft Teams tab.
 require_once(__DIR__ . '/../../config.php');
 
 unset($SESSION->theme);
-print_error('errornodirectaccess', 'local_o365');
+throw new moodle_exception('errornodirectaccess', 'local_o365');

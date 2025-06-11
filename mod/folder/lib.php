@@ -286,7 +286,7 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 
     // Set security posture for in-browser display.
     if (!$forcedownload) {
-        header("Content-Security-Policy: default-src 'none'; img-src 'self'");
+        header("Content-Security-Policy: default-src 'none'; img-src 'self'; media-src 'self'");
     }
 
     // Finally send the file.
@@ -625,7 +625,7 @@ function folder_get_recent_mod_activity(&$activities, &$index, $timestart, $cour
             $image = $url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
             $image = html_writer::empty_tag('img', array('src' => $image));
         } else {
-            $image = $OUTPUT->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+            $image = $OUTPUT->pix_icon(file_file_icon($file), $file->get_filename(), 'moodle');
         }
 
         $tmpactivity->content = (object) [
@@ -848,7 +848,7 @@ function mod_folder_core_calendar_provide_event_action(calendar_event $event,
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_folder_get_path_from_pluginfile(string $filearea, array $args) : array {
+function mod_folder_get_path_from_pluginfile(string $filearea, array $args): array {
     // Folder never has an itemid (the number represents the revision but it's not stored in database).
     array_shift($args);
 

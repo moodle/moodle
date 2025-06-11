@@ -32,7 +32,7 @@ global $CFG;
 // Used to create a wiki page to tag.
 require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -40,13 +40,14 @@ class events_test extends \advanced_testcase {
      * This is executed before running any test in this file.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
     /**
      * Test the tag updated event.
      */
-    public function test_tag_updated() {
+    public function test_tag_updated(): void {
         $this->setAdminUser();
 
         // Save the system context.
@@ -69,8 +70,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_updated', $event);
         $this->assertEquals($systemcontext, $event->get_context());
-        $expected = array(SITEID, 'tag', 'update', 'index.php?id=' . $tag->id, $oldname . '->'. $tag->name);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event when setting the type of a tag.
         $sink = $this->redirectEvents();
@@ -81,8 +80,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_updated', $event);
         $this->assertEquals($systemcontext, $event->get_context());
-        $expected = array(0, 'tag', 'update', 'index.php?id=' . $tag->id, $tag->name);
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Trigger and capture the event for setting the description of a tag.
         $sink = $this->redirectEvents();
@@ -94,14 +91,12 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_updated', $event);
         $this->assertEquals($systemcontext, $event->get_context());
-        $expected = array(0, 'tag', 'update', 'index.php?id=' . $tag->id, $tag->name);
-        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**
      * Test the tag added event.
      */
-    public function test_tag_added() {
+    public function test_tag_added(): void {
         global $DB;
 
         // Create a course to tag.
@@ -117,8 +112,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(1, $DB->count_records('tag_instance', array('component' => 'core')));
         $this->assertInstanceOf('\core\event\tag_added', $event);
         $this->assertEquals(\context_course::instance($course->id), $event->get_context());
-        $expected = array($course->id, 'coursetags', 'add', 'tag/search.php?query=A+tag', 'Course tagged');
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Create a question to tag.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -137,14 +130,12 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(1, $DB->count_records('tag_instance', array('component' => 'core')));
         $this->assertInstanceOf('\core\event\tag_added', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $expected = null;
-        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**
      * Test the tag removed event.
      */
-    public function test_tag_removed() {
+    public function test_tag_removed(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -261,7 +252,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the tag flagged event.
      */
-    public function test_tag_flagged() {
+    public function test_tag_flagged(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -284,8 +275,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\tag_flagged', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag->id, $tag->id, '', '2');
-        $this->assertEventLegacyLogData($expected, $event);
 
         // Unset the flag for both (though by default tag2 should have been created with 0 already).
         foreach ($tags as $t) {
@@ -309,20 +298,16 @@ class events_test extends \advanced_testcase {
         $event = $events[0];
         $this->assertInstanceOf('\core\event\tag_flagged', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag->id, $tag->id, '', '2');
-        $this->assertEventLegacyLogData($expected, $event);
 
         $event = $events[1];
         $this->assertInstanceOf('\core\event\tag_flagged', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag2->id, $tag2->id, '', '2');
-        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**
      * Test the tag unflagged event.
      */
-    public function test_tag_unflagged() {
+    public function test_tag_unflagged(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -380,7 +365,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the tag deleted event
      */
-    public function test_tag_deleted() {
+    public function test_tag_deleted(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -468,7 +453,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the tag created event.
      */
-    public function test_tag_created() {
+    public function test_tag_created(): void {
         global $DB;
 
         // Trigger and capture the event for creating a tag.

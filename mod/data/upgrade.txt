@@ -1,9 +1,47 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
-== 4.1.2 ==
+=== 4.4 ===
+* The following behat steps are now deprecated. Use data generators instead:
+  - I add a ":fieldtype" field to ":activityname" database and I fill the form with:
+  - I add an entry to ":activityname" database with:
+* Use of mustache templates for rendering add/modify fields forms. Elimination of all mod/data/field/*/mod.html files.
+* A function get_field_params() in data_field_base can be extended by datafield plugins to get their parameters.
+
+=== 4.3 ===
+* Function data_export_xls() has been deprecated and moved to deprecatedlib, because xls support has already been dropped.
+* Functions data_export_csv(), data_export_ods() and data_get_exportdata() have been deprecated due to a bigger
+  refactoring of the way data is being exported. This is now being done by new exporter classes
+  \mod_data\local\exporter\csv_entries_exporter and \mod_data\local\exporter\ods_entries_exporter (inheriting from
+  exporter base class \mod_data\local\exporter\entries_exporter) as well as \mod_data\local\exporter\utils::data_exportdata().
+* Function data_import_csv() has been deprecated and moved to deprecatedlib due to a bigger rework of the way data is
+  being imported. This is now being done by new importer class \mod_data\local\importer\csv_importer inheriting from new
+  class \mod_data\local\importer.
+* Field base class now has two new methods file_export_supported() and export_file_value(). The method
+  file_export_supported() can be overwritten to declare that a field type can/wants to export a file. In this case this
+  field type will have to implement the method export_file_value() returning this file for exporting. Also: This field
+  type will have to export the name of the file by overwriting text_export_supported() to return true and make the
+  method export_text_value() return the name of the file.
+* The field types file and picture now are able to export the file/picture.
+* Field base class now has two new methods file_import_supported() and import_file_value(). The method
+  file_import_supported() can be overwritten to declare that a field type is able to import a file. In this case this
+  field type will have to implement the method import_file_value() doing the actual import of the file being passed.
+* The field types file and picture now are able to import the file/picture.
+
+=== 4.2 ===
 * The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
   parameters in the field add/modify form.
+* New tags are added to the current mod_data\templates class: ##otherfields##, [[FIELD#name]],
+  and [[FIELD#description]].
+* The mod_data\template class can provide preprocessor methods to optimize some tags. From now on,
+  when load_template_tags detects a tag, it will call a "preprocess_tag_TAGNAME" method if it exists.
+  This preprocessing can be used, for example, to precalculate some content. Currently, this preprocessor
+  is used to detect which fields needs to be renderer when a ##otherfields## is used.
 
 === 4.1 ===
 * The method data_view is now deprecated. Use $maganer->set_module_viewed instead.

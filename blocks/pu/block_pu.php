@@ -31,6 +31,11 @@ class block_pu extends block_list {
     public $user;
     public $content;
     public $coursecontext;
+    public $pu_codetotals;
+    public $pu_invalidtotals;
+    public $pu_usedcount;
+    public $pu_invalidcount;
+    public $pu_totalcount;
 
     public function init() {
         global $CFG, $PAGE;
@@ -77,7 +82,7 @@ class block_pu extends block_list {
      * @return @context
      */
     private function set_course_context() {
-        $this->course_context = context_course::instance($this->course->id);
+        $this->coursecontext = context_course::instance($this->course->id);
     }
 
     /**

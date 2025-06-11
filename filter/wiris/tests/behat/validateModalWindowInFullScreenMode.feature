@@ -17,6 +17,30 @@ Feature: Filter Settings - Window Settings - Full Screen mode
     And the "wiris" filter is "on"
     And I log in as "admin"
 
+@javascript @5.x @5.x_filter
+  Scenario: MTMOODLE-24 - Validate modal window is maximized when full screen mode is selected
+    # set render type to "client"
+    And I navigate to "Plugins > MathType by WIRIS" in site administration
+    And the MathType filter render type is set to "client"
+    And I check full-screen mode on
+    And I press "Save changes"
+    # set text editor to "HTML"
+    And I follow "Preferences" in the user menu
+    And I follow "Editor preferences"
+    And I set the following fields to these values:
+      | Text editor | TinyMCE editor |
+    And I press "Save changes"
+    # create new page in existing course
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "Page" to section "0" using the activity chooser
+    And I set the following fields to these values:
+      | Name | Test MathType full-screen modal |
+    # Maximize editor
+    And I press "Toggle" in "Page content" field in TinyMCE 6 editor
+    And I press "MathType" in "Page content" field in TinyMCE 6 editor
+    And I wait "1" seconds
+    Then I check editor is in full-screen mode
+
   @javascript @4.x @4.x_filter
   Scenario: MTMOODLE-24 - Validate modal window is maximized when full screen mode is selected
     # set render type to "client"

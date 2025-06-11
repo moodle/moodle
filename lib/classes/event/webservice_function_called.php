@@ -56,15 +56,6 @@ class webservice_function_called extends base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string
@@ -82,15 +73,6 @@ class webservice_function_called extends base {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @param array $legacydata the legacy data to set
-     */
-    public function set_legacy_logdata($legacydata) {
-        $this->legacylogdata = $legacydata;
     }
 
     /**

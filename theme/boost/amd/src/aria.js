@@ -23,6 +23,7 @@
 
 import $ from 'jquery';
 import Pending from 'core/pending';
+import * as FocusLockManager from 'core/local/aria/focuslock';
 
 /**
  * Drop downs from bootstrap don't support keyboard accessibility by default.
@@ -39,12 +40,15 @@ const dropdownFix = () => {
     };
 
     // Special handling for navigation keys when menu is open.
-    const shiftFocus = element => {
-        const delayedFocus = pendingPromise => {
-            element.focus();
+    const shiftFocus = (element, focusCheck = null) => {
+        const pendingPromise = new Pending('core/aria:delayed-focus');
+        setTimeout(() => {
+            if (!focusCheck || focusCheck()) {
+                element.focus();
+            }
+
             pendingPromise.resolve();
-        };
-        setTimeout(delayedFocus, 50, new Pending('core/aria:delayed-focus'));
+        }, 50);
     };
 
     // Event handling for the dropdown menu button.
@@ -103,7 +107,7 @@ const dropdownFix = () => {
     // Search for menu items by finding the first item that has
     // text starting with the typed character (case insensitive).
     document.addEventListener('keypress', e => {
-        if (e.target.matches('.dropdown [role="menu"] [role="menuitem"]')) {
+        if (e.target.matches('[role="menu"] [role="menuitem"]')) {
             const menu = e.target.closest('[role="menu"]');
             if (!menu) {
                 return;
@@ -135,7 +139,7 @@ const dropdownFix = () => {
             handleMenuButton(e);
         }
 
-        if (e.target.matches('.dropdown [role="menu"] [role="menuitem"]')) {
+        if (e.target.matches('[role="menu"] [role="menuitem"]')) {
             const trigger = e.key;
             let next = false;
             const menu = e.target.closest('[role="menu"]');
@@ -189,12 +193,38 @@ const dropdownFix = () => {
         }
     });
 
-    $('.dropdown').on('hidden.bs.dropdown', e => {
+    // Trap focus if the dropdown is a dialog.
+    $(document).on('shown.bs.dropdown', e => {
+        const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
+        if (dialog) {
+            // Use setTimeout to make sure the dialog is positioned correctly to prevent random scrolling.
+            setTimeout(() => {
+                FocusLockManager.trapFocus(dialog);
+            });
+        }
+    });
+
+    // Untrap focus when the dialog dropdown is closed.
+    $(document).on('hidden.bs.dropdown', e => {
+        const dialog = e.target.querySelector('.dropdown-menu[role="dialog"]');
+        if (dialog) {
+            FocusLockManager.untrapFocus();
+        }
+
         // We need to focus on the menu trigger.
         const trigger = e.target.querySelector('[data-toggle="dropdown"]');
-        const focused = document.activeElement != document.body ? document.activeElement : null;
+        // If it's a click event, then no element is focused because the clicked element is inside a closed dropdown.
+        const focused = e.clickEvent?.target || (document.activeElement !== document.body ? document.activeElement : null);
         if (trigger && focused && e.target.contains(focused)) {
-            shiftFocus(trigger);
+            shiftFocus(trigger, () => {
+                if (document.activeElement === document.body) {
+                    // If the focus is currently on the body, then we can safely assume that the focus needs to be updated.
+                    return true;
+                }
+
+                // If the focus is on a child of the clicked element still, then update the focus.
+                return e.target.contains(document.activeElement);
+            });
         }
     });
 };
@@ -206,59 +236,69 @@ const comboboxFix = () => {
     $(document).on('show.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
-            const listbox = combobox.parentElement.querySelector('[role="listbox"]');
-            const selectedOption = listbox.querySelector('[role="option"][aria-selected="true"]');
+            const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
 
-            // To make sure ArrowDown doesn't move the active option afterwards.
-            setTimeout(() => {
-                if (selectedOption) {
-                    selectedOption.classList.add('active');
-                    combobox.setAttribute('aria-activedescendant', selectedOption.id);
-                } else {
-                    const firstOption = listbox.querySelector('[role="option"]');
-                    firstOption.setAttribute('aria-selected', 'true');
-                    firstOption.classList.add('active');
-                    combobox.setAttribute('aria-activedescendant', firstOption.id);
-                }
-            }, 0);
+            if (listbox) {
+                const selectedOption = listbox.querySelector('[role="option"][aria-selected="true"]');
+
+                // To make sure ArrowDown doesn't move the active option afterwards.
+                setTimeout(() => {
+                    if (selectedOption) {
+                        selectedOption.classList.add('active');
+                        combobox.setAttribute('aria-activedescendant', selectedOption.id);
+                    } else {
+                        const firstOption = listbox.querySelector('[role="option"]');
+                        firstOption.setAttribute('aria-selected', 'true');
+                        firstOption.classList.add('active');
+                        combobox.setAttribute('aria-activedescendant', firstOption.id);
+                    }
+                }, 0);
+            }
         }
     });
 
     $(document).on('hidden.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
-            const listbox = combobox.parentElement.querySelector('[role="listbox"]');
+            const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
 
             combobox.removeAttribute('aria-activedescendant');
 
-            setTimeout(() => {
-                // Undo all previously highlighted options.
-                listbox.querySelectorAll('.active[role="option"]').forEach(option => {
-                    option.classList.remove('active');
-                });
-            }, 0);
+            if (listbox) {
+                setTimeout(() => {
+                    // Undo all previously highlighted options.
+                    listbox.querySelectorAll('.active[role="option"]').forEach(option => {
+                        option.classList.remove('active');
+                    });
+                }, 0);
+            }
         }
     });
 
     // Handling keyboard events for both navigating through and selecting options.
     document.addEventListener('keydown', e => {
-        if (e.target.matches('.select-menu [role="combobox"]')) {
+        if (e.target.matches('[role="combobox"][aria-controls]:not([aria-haspopup=dialog])')) {
             const combobox = e.target;
             const trigger = e.key;
             let next = null;
-            const options = combobox.parentElement.querySelectorAll('[role="listbox"] [role="option"]');
-            const activeOption = combobox.parentElement.querySelector('[role="listbox"] .active[role="option"]');
+            const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
+            const options = listbox.querySelectorAll('[role="option"]');
+            const activeOption = listbox.querySelector('.active[role="option"]');
+            const editable = combobox.hasAttribute('aria-autocomplete');
 
-            // Under the special case that the dropdown menu is being shown as a result of they key press (like when the user
+            // Under the special case that the dropdown menu is being shown as a result of the key press (like when the user
             // presses ArrowDown or Enter or ... to open the dropdown menu), activeOption is not set yet.
             // It's because of a race condition with show.bs.dropdown event handler.
-            if (options && activeOption) {
+            if (options && (activeOption || editable)) {
                 if (trigger == 'ArrowDown') {
                     for (let i = 0; i < options.length - 1; i++) {
                         if (options[i] == activeOption) {
                             next = options[i + 1];
                             break;
                         }
+                    }
+                    if (editable && !next) {
+                        next = options[0];
                     }
                 } if (trigger == 'ArrowUp') {
                     for (let i = 1; i < options.length; i++) {
@@ -267,13 +307,17 @@ const comboboxFix = () => {
                             break;
                         }
                     }
-                } else if (trigger == 'Home') {
+                    if (editable && !next) {
+                        next = options[options.length - 1];
+                    }
+                } else if (trigger == 'Home' && !editable) {
                     next = options[0];
-                } else if (trigger == 'End') {
+                } else if (trigger == 'End' && !editable) {
                     next = options[options.length - 1];
-                } else if (trigger == ' ' || trigger == 'Enter') {
+                } else if ((trigger == ' ' && !editable) || trigger == 'Enter') {
+                    e.preventDefault();
                     selectOption(combobox, activeOption);
-                } else {
+                } else if (!editable) {
                     // Search for options by finding the first option that has
                     // text starting with the typed character (case insensitive).
                     for (let i = 0; i < options.length; i++) {
@@ -290,27 +334,32 @@ const comboboxFix = () => {
                 // Variable next is set if we do want to act on the keypress.
                 if (next) {
                     e.preventDefault();
-                    activeOption.classList.remove('active');
+                    if (activeOption) {
+                        activeOption.classList.remove('active');
+                    }
                     next.classList.add('active');
                     combobox.setAttribute('aria-activedescendant', next.id);
+                    next.scrollIntoView({block: 'nearest'});
                 }
             }
         }
     });
 
     document.addEventListener('click', e => {
-        if (e.target.matches('.select-menu [role="option"]')) {
-            const option = e.target;
-            const combobox = option.closest('.select-menu').querySelector('[role="combobox"]');
-            combobox.focus();
-            selectOption(combobox, option);
+        const option = e.target.closest('[role="listbox"] [role="option"]');
+        if (option) {
+            const listbox = option.closest('[role="listbox"]');
+            const combobox = document.querySelector(`[role="combobox"][aria-controls="${listbox.id}"]`);
+            if (combobox) {
+                selectOption(combobox, option);
+            }
         }
     });
 
     // In case some code somewhere else changes the value of the combobox.
     document.addEventListener('change', e => {
-        if (e.target.matches('.select-menu input[type="hidden"]')) {
-            const combobox = e.target.parentElement.querySelector('[role="combobox"]');
+        if (e.target.matches('input[type="hidden"][id]')) {
+            const combobox = document.querySelector(`[role="combobox"][data-input-element="${e.target.id}"]`);
             const option = e.target.parentElement.querySelector(`[role="option"][data-value="${e.target.value}"]`);
 
             if (combobox && option) {
@@ -320,8 +369,8 @@ const comboboxFix = () => {
     });
 
     const selectOption = (combobox, option) => {
-        const oldSelectedOption = combobox.parentElement.querySelector('[role="listbox"] [role="option"][aria-selected="true"]');
-        const inputElement = combobox.parentElement.querySelector('input[type="hidden"]');
+        const listbox = option.closest('[role="listbox"]');
+        const oldSelectedOption = listbox.querySelector('[role="option"][aria-selected="true"]');
 
         if (oldSelectedOption != option) {
             if (oldSelectedOption) {
@@ -329,10 +378,24 @@ const comboboxFix = () => {
             }
             option.setAttribute('aria-selected', 'true');
         }
-        combobox.textContent = option.textContent;
-        if (inputElement.value != option.dataset.value) {
-            inputElement.value = option.dataset.value;
-            inputElement.dispatchEvent(new Event('change', {bubbles: true}));
+
+        if (combobox.hasAttribute('value')) {
+            combobox.value = option.dataset.shortText || option.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+        } else {
+            const selectedOptionContainer = combobox.querySelector('[data-selected-option]');
+            if (selectedOptionContainer) {
+                selectedOptionContainer.textContent = option.dataset.shortText || option.textContent;
+            } else {
+                combobox.textContent = option.dataset.shortText || option.textContent;
+            }
+        }
+
+        if (combobox.dataset.inputElement) {
+            const inputElement = document.getElementById(combobox.dataset.inputElement);
+            if (inputElement && (inputElement.value != option.dataset.value)) {
+                inputElement.value = option.dataset.value;
+                inputElement.dispatchEvent(new Event('change', {bubbles: true}));
+            }
         }
     };
 };
@@ -353,47 +416,50 @@ const autoFocus = () => {
 };
 
 /**
- * Changes the focus to the correct tab based on the key that is pressed.
- * @param {KeyboardEvent} e
+ * Changes the focus to the correct element based on the key that is pressed.
+ * @param {NodeList} elements A NodeList of focusable elements to navigate between.
+ * @param {KeyboardEvent} e The keyboard event that triggers the roving focus.
+ * @param {boolean} vertical Whether the navigation is vertical.
+ * @param {boolean} updateTabIndex Whether to update the tabIndex of the elements.
  */
-const updateTabFocus = e => {
-    const tabList = e.target.closest('[role="tablist"]');
-    const vertical = tabList.getAttribute('aria-orientation') == 'vertical';
+const rovingFocus = (elements, e, vertical, updateTabIndex) => {
     const rtl = window.right_to_left();
     const arrowNext = vertical ? 'ArrowDown' : (rtl ? 'ArrowLeft' : 'ArrowRight');
     const arrowPrevious = vertical ? 'ArrowUp' : (rtl ? 'ArrowRight' : 'ArrowLeft');
-    const tabs = Array.prototype.filter.call(
-        tabList.querySelectorAll('[role="tab"]'),
-        tab => !!tab.offsetHeight); // We only work with the visible tabs.
+    const keys = [arrowNext, arrowPrevious, 'Home', 'End'];
 
-    for (let i = 0; i < tabs.length; i++) {
-        tabs[i].index = i;
+    if (!keys.includes(e.key)) {
+        return;
     }
+
+    const focusElement = index => {
+        elements[index].focus();
+        if (updateTabIndex) {
+            elements.forEach((element, i) => element.setAttribute('tabindex', i === index ? '0' : '-1'));
+        }
+    };
+
+    const currentIndex = Array.prototype.indexOf.call(elements, e.target);
+    let nextIndex;
 
     switch (e.key) {
         case arrowNext:
             e.preventDefault();
-            if (e.target.index !== undefined && tabs[e.target.index + 1]) {
-                tabs[e.target.index + 1].focus();
-            } else {
-                tabs[0].focus();
-            }
+            nextIndex = (currentIndex + 1 < elements.length) ? currentIndex + 1 : 0;
+            focusElement(nextIndex);
             break;
         case arrowPrevious:
             e.preventDefault();
-            if (e.target.index !== undefined && tabs[e.target.index - 1]) {
-                tabs[e.target.index - 1].focus();
-            } else {
-                tabs[tabs.length - 1].focus();
-            }
+            nextIndex = (currentIndex - 1 >= 0) ? currentIndex - 1 : elements.length - 1;
+            focusElement(nextIndex);
             break;
         case 'Home':
             e.preventDefault();
-            tabs[0].focus();
+            focusElement(0);
             break;
         case 'End':
             e.preventDefault();
-            tabs[tabs.length - 1].focus();
+            focusElement(elements.length - 1);
     }
 };
 
@@ -404,7 +470,14 @@ const tabElementFix = () => {
     document.addEventListener('keydown', e => {
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
             if (e.target.matches('[role="tablist"] [role="tab"]')) {
-                updateTabFocus(e);
+                const tabList = e.target.closest('[role="tablist"]');
+                const tabs = Array.prototype.filter.call(
+                    tabList.querySelectorAll('[role="tab"]'),
+                    tab => !!tab.offsetHeight
+                ); // We only work with the visible tabs.
+                const vertical = tabList.getAttribute('aria-orientation') == 'vertical';
+
+                rovingFocus(tabs, e, vertical, false);
             }
         }
     });
@@ -439,10 +512,25 @@ const collapseFix = () => {
     });
 };
 
+/**
+ * Fix accessibility issues
+ */
+const toolbarFix = () => {
+    document.addEventListener('keydown', e => {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+            if (e.target.matches('[role="toolbar"] button')) {
+                const buttons = e.target.closest('[role="toolbar"]').querySelectorAll('button');
+                rovingFocus(buttons, e, false, true);
+            }
+        }
+    });
+};
+
 export const init = () => {
     dropdownFix();
     comboboxFix();
     autoFocus();
     tabElementFix();
     collapseFix();
+    toolbarFix();
 };

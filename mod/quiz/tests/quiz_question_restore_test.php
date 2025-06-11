@@ -16,6 +16,9 @@
 
 namespace mod_quiz;
 
+use core_question\question_reference_manager;
+use mod_quiz\question\display_options;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -31,11 +34,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_quiz\question\bank\qbank_helper
- * @coversDefaultClass \backup_quiz_activity_structure_step
- * @coversDefaultClass \restore_quiz_activity_structure_step
  */
-class quiz_question_restore_test extends \advanced_testcase {
+final class quiz_question_restore_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     /**
@@ -58,9 +58,9 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test a quiz backup and restore in a different course without attempts for course question bank.
      *
-     * @covers ::get_question_structure
+     * @covers \mod_quiz\question\bank\qbank_helper::get_question_structure
      */
-    public function test_quiz_restore_in_a_different_course_using_course_question_bank() {
+    public function test_quiz_restore_in_a_different_course_using_course_question_bank(): void {
         $this->resetAfterTest();
 
         // Create the test quiz.
@@ -97,9 +97,9 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test a quiz backup and restore in a different course without attempts for quiz question bank.
      *
-     * @covers ::get_question_structure
+     * @covers \mod_quiz\question\bank\qbank_helper::get_question_structure
      */
-    public function test_quiz_restore_in_a_different_course_using_quiz_question_bank() {
+    public function test_quiz_restore_in_a_different_course_using_quiz_question_bank(): void {
         $this->resetAfterTest();
 
         // Create the test quiz.
@@ -155,7 +155,7 @@ class quiz_question_restore_test extends \advanced_testcase {
      *
      * @covers ::duplicate_module
      */
-    public function test_quiz_duplicate_does_not_duplicate_course_question_bank_questions() {
+    public function test_quiz_duplicate_does_not_duplicate_course_question_bank_questions(): void {
         $this->resetAfterTest();
         $quiz = $this->create_test_quiz($this->course);
         // Test for questions from a different context.
@@ -177,7 +177,7 @@ class quiz_question_restore_test extends \advanced_testcase {
      *
      * @covers ::duplicate_module
      */
-    public function test_quiz_duplicate_for_quiz_question_bank_questions() {
+    public function test_quiz_duplicate_for_quiz_question_bank_questions(): void {
         $this->resetAfterTest();
         $quiz = $this->create_test_quiz($this->course);
         // Test for questions from a different context.
@@ -197,9 +197,9 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test quiz restore with attempts.
      *
-     * @covers ::get_question_structure
+     * @covers \mod_quiz\question\bank\qbank_helper::get_question_structure
      */
-    public function test_quiz_restore_with_attempts() {
+    public function test_quiz_restore_with_attempts(): void {
         $this->resetAfterTest();
 
         // Create a quiz.
@@ -236,9 +236,11 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for regular questions.
      *
-     * @covers ::process_quiz_question_legacy_instance
+     * Also, for efficiency, tests restore of the review options.
+     *
+     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
-    public function test_pre_4_quiz_restore_for_regular_questions() {
+    public function test_pre_4_quiz_restore_for_regular_questions(): void {
         global $USER, $DB;
         $this->resetAfterTest();
         $backupid = 'abc';
@@ -259,8 +261,14 @@ class quiz_question_restore_test extends \advanced_testcase {
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
-        $quizobj = \quiz::create($quiz->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
+
+        // Verify the restored review options setting.
+        $this->assertEquals(display_options::DURING |
+                    display_options::IMMEDIATELY_AFTER |
+                    display_options::LATER_WHILE_OPEN |
+                    display_options::AFTER_CLOSE, $quizobj->get_quiz()->reviewmaxmarks);
 
         // Are the correct slots returned?
         $slots = $structure->get_slots();
@@ -278,9 +286,9 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for random questions.
      *
-     * @covers ::process_quiz_question_legacy_instance
+     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
-    public function test_pre_4_quiz_restore_for_random_questions() {
+    public function test_pre_4_quiz_restore_for_random_questions(): void {
         global $USER, $DB;
         $this->resetAfterTest();
 
@@ -302,7 +310,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
-        $quizobj = \quiz::create($quiz->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?
@@ -326,9 +334,9 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for random question tags.
      *
-     * @covers ::process_quiz_question_legacy_instance
+     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
-    public function test_pre_4_quiz_restore_for_random_question_tags() {
+    public function test_pre_4_quiz_restore_for_random_question_tags(): void {
         global $USER, $DB;
         $this->resetAfterTest();
         $randomtags = [
@@ -354,7 +362,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         // Get the information about the resulting course and check that it is set up correctly.
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
-        $quizobj = \quiz::create($quiz->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = \mod_quiz\structure::create_for_quiz($quizobj);
 
         // Count the questions in quiz qbank.
@@ -383,9 +391,9 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for random question used on multiple quizzes.
      *
-     * @covers ::process_quiz_question_legacy_instance
+     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
-    public function test_pre_4_quiz_restore_shared_random_question() {
+    public function test_pre_4_quiz_restore_shared_random_question(): void {
         global $USER, $DB;
         $this->resetAfterTest();
 
@@ -410,7 +418,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         $quizzes = $modinfo->get_instances_of('quiz');
         $this->assertCount(2, $quizzes);
         foreach ($quizzes as $quiz) {
-            $quizobj = \quiz::create($quiz->instance);
+            $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
             $structure = structure::create_for_quiz($quizobj);
 
             // Are the correct slots returned?
@@ -470,11 +478,15 @@ class quiz_question_restore_test extends \advanced_testcase {
         quiz_add_quiz_question($saq->id, $quiz, 1, 3);
         quiz_add_quiz_question($numq->id, $quiz, 2, 2);
         quiz_add_quiz_question($matchq->id, $quiz, 3, 1);
-        quiz_add_random_questions($quiz, 3, $randomcat->id, 2, false);
+        $this->add_random_questions($quiz->id, 3, $randomcat->id, 2);
 
-        $quizobj = \quiz::create($quiz->id, $user1->id);
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
         $originalstructure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Set one slot to a non-default display number.
         $originalslots = $originalstructure->get_slots();
+        $firstslot = reset($originalslots);
+        $originalstructure->update_slot_display_number($firstslot->id, rand(5, 10));
 
         // Set one slot to requireprevious.
         $lastslot = end($originalslots);
@@ -488,7 +500,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         $modinfo = get_fast_modinfo($course2);
         $quizzes = $modinfo->get_instances_of('quiz');
         $restoredquiz = reset($quizzes);
-        $restoredquizobj = \quiz::create($restoredquiz->instance, $user1->id);
+        $restoredquizobj = quiz_settings::create($restoredquiz->instance, $user1->id);
         $restoredstructure = \mod_quiz\structure::create_for_quiz($restoredquizobj);
         $restoredslots = array_values($restoredstructure->get_slots());
         $originalstructure = \mod_quiz\structure::create_for_quiz($quizobj);
@@ -499,8 +511,88 @@ class quiz_question_restore_test extends \advanced_testcase {
             $this->assertEquals($restoredslot->quizid, $restoredquiz->instance);
             $this->assertEquals($originalslot->slot, $restoredslot->slot);
             $this->assertEquals($originalslot->page, $restoredslot->page);
+            $this->assertEquals($originalslot->displaynumber, $restoredslot->displaynumber);
             $this->assertEquals($originalslot->requireprevious, $restoredslot->requireprevious);
             $this->assertEquals($originalslot->maxmark, $restoredslot->maxmark);
+        }
+    }
+
+    /**
+     * Test pre 4.3 quiz restore for random question filter conditions.
+     *
+     * @covers \restore_question_set_reference_data_trait::process_question_set_reference
+     */
+    public function test_pre_43_quiz_restore_for_random_question_filtercondition(): void {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $backupid = 'abc';
+        $backuppath = make_backup_temp_directory($backupid);
+        get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+                __DIR__ . "/fixtures/moodle_42_random_question.mbz", $backuppath);
+
+        // Do the restore to new course with default settings.
+        $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the information about the resulting course and check that it is set up correctly.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Count the questions in quiz qbank.
+        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quizobj->get_quizid(), $newcourseid)->id);
+        $this->assertEquals(2, $this->question_count($context->id));
+
+        // Are the correct slots returned?
+        $slots = $structure->get_slots();
+        $this->assertCount(1, $slots);
+
+        // Check that the filtercondition now matches the 4.3 structure.
+        foreach ($slots as $slot) {
+            $setreference = $DB->get_record('question_set_references',
+                    ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+            $filterconditions = json_decode($setreference->filtercondition, true);
+            $this->assertArrayHasKey('cat', $filterconditions);
+            $this->assertArrayHasKey('jointype', $filterconditions);
+            $this->assertArrayHasKey('qpage', $filterconditions);
+            $this->assertArrayHasKey('qperpage', $filterconditions);
+            $this->assertArrayHasKey('filter', $filterconditions);
+            $this->assertArrayHasKey('category', $filterconditions['filter']);
+            $this->assertArrayHasKey('qtagids', $filterconditions['filter']);
+            $this->assertArrayHasKey('filteroptions', $filterconditions['filter']['category']);
+            $this->assertArrayHasKey('includesubcategories', $filterconditions['filter']['category']['filteroptions']);
+
+            // MDL-79708: Bad filter conversion check.
+            $this->assertArrayNotHasKey('includesubcategories', $filterconditions['filter']['category']);
+
+            $this->assertArrayNotHasKey('questioncategoryid', $filterconditions);
+            $this->assertArrayNotHasKey('tags', $filterconditions);
+            $expectedtags = \core_tag_tag::get_by_name_bulk(1, ['foo', 'bar']);
+            $expectedtagids = array_values(array_map(fn($expectedtag) => $expectedtag->id, $expectedtags));
+            $this->assertEquals($expectedtagids, $filterconditions['filter']['qtagids']['values']);
+            $expectedcategory = $DB->get_record('question_categories', ['idnumber' => 'RAND']);
+            $this->assertEquals($expectedcategory->id, $filterconditions['filter']['category']['values'][0]);
+            $expectedcat = implode(',', [$expectedcategory->id, $expectedcategory->contextid]);
+            $this->assertEquals($expectedcat, $filterconditions['cat']);
+
+            // MDL-79708: Try to convert already converted filter.
+            $filterconditionsold = $filterconditions;
+            $filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
+            // Check that the filtercondition didn't change.
+            $this->assertEquals($filterconditionsold, $filterconditions);
+
+            // MDL-79708: Try to convert a filter with previously bad conversion.
+            $filterconditions['filter']['category']['includesubcategories'] = 0;
+            unset($filterconditions['filter']['category']['filteroptions']);
+            $filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
+            $this->assertEquals($filterconditionsold, $filterconditions);
         }
     }
 }

@@ -34,12 +34,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * When no preference exists, there should be no export.
      */
-    public function test_no_preference() {
+    public function test_no_preference(): void {
         global $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -51,7 +51,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that the recently selected perpage is exported.
      */
-    public function test_export_preferences() {
+    public function test_export_preferences(): void {
         global $USER;
         $this->resetAfterTest();
         $this->setAdminUser();

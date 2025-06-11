@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class feedback_test extends \advanced_testcase {
+final class feedback_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -38,7 +38,7 @@ class feedback_test extends \advanced_testcase {
     /**
      * Test the is_feedback_modified() method for the comments feedback.
      */
-    public function test_is_feedback_modified() {
+    public function test_is_feedback_modified(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');

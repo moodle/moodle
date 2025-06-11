@@ -11,9 +11,9 @@ Feature: Course paged mode information
       | Course 1 | C1        | 0        | <courseformat> | 3           | 1             | <completion>     |
     And the following "activities" exist:
       | activity | course | name         | section | completion   |
-      | chat     | C1     | Chat room    | 1       | <completion> |
+      | assign   | C1     | Assignment   | 1       | <completion> |
       | data     | C1     | Database     | 1       | <completion> |
-      | forum    | C1     | First forum  | 2       | <completion> |
+      | forum    | C1     | First forum  | 1       | <completion> |
       | forum    | C1     | Second forum | 2       | <completion> |
     And the following "users" exist:
       | username | firstname | lastname | email                |
@@ -23,13 +23,13 @@ Feature: Course paged mode information
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
-    When I log in as "<user>"
-    And I am on "Course 1" course homepage
-    Then I should see "Chat: 1" in the "#section-1" "css_element"
-    And I should see "Database: 1" in the "#section-1" "css_element"
+    When I am on the "Course 1" "Course" page logged in as "<user>"
+    Then I should see "Activities: 3" in the "#section-1" "css_element"
     And I should <show> "Progress:" in the "#section-1" "css_element"
-    And I should see "Forums: 2" in the "#section-2" "css_element"
+    And I should see "Activities: 1" in the "#section-2" "css_element"
     And I should <show> "Progress:" in the "#section-2" "css_element"
+    And I should see "Activities: 0" in the "#section-3" "css_element"
+    And I should not see "Progress:" in the "#section-3" "css_element"
 
     Examples:
       | user     | courseformat | completion | show    |
@@ -49,20 +49,19 @@ Feature: Course paged mode information
       | Course 1 | C1        | 0        | <courseformat> | 3           | 1             | <completion>     |
     And the following "activities" exist:
       | activity | course | name         | section | completion   |
-      | chat     | C1     | Chat room    | 1       | <completion> |
+      | assign   | C1     | Assignment   | 1       | <completion> |
       | data     | C1     | Database     | 1       | <completion> |
-      | forum    | C1     | First forum  | 2       | <completion> |
+      | forum    | C1     | First forum  | 1       | <completion> |
       | forum    | C1     | Second forum | 2       | <completion> |
     And I am on the "Course 1" "enrolment methods" page logged in as admin
     And I click on "Enable" "link" in the "Guest access" "table_row"
-    And I log out
-    When I log in as "guest"
-    And I am on "Course 1" course homepage
-    Then I should see "Chat: 1" in the "#section-1" "css_element"
-    And I should see "Database: 1" in the "#section-1" "css_element"
+    When I am on the "Course 1" "Course" page logged in as "guest"
+    Then I should see "Activities: 3" in the "#section-1" "css_element"
     And I should not see "Progress:" in the "#section-1" "css_element"
-    And I should see "Forums: 2" in the "#section-2" "css_element"
+    And I should see "Activities: 1" in the "#section-2" "css_element"
     And I should not see "Progress:" in the "#section-2" "css_element"
+    And I should see "Activities: 0" in the "#section-3" "css_element"
+    And I should not see "Progress:" in the "#section-3" "css_element"
 
     Examples:
       | courseformat | completion |

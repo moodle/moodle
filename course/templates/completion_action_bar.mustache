@@ -17,37 +17,39 @@
     Actions bar in the course completion pages.
 
     Context variables required for this template:
-    * urlselect - The data object containing the required properties to render core/url_select.
+    * navigation - The data object containing the required properties to render core/tertiary_navigation_selector.
 
     Example context (json):
     {
-        "urlselect": {
-            "id": "url_select_test",
-            "action": "https://example.com/post",
-            "formid": "url_select_form",
-            "sesskey": "sesskey",
-            "classes": "urlselect",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
+        "navigation": {
+            "name":"coursecompletionnavigation",
+            "label": "Course completion tertiary navigation",
+            "value": "\/course\/completion.php?id=4",
+            "baseid": "select-menu64a40e3ea86ed8",
+            "selectedoption": "Grader report",
             "options": [
                 {
-                    "name": "Some name",
-                    "value": "/mod/data/someurl.php",
-                    "selected": false
+                    "id": "select-menu-option1",
+                    "name": "Course completion settings",
+                    "value": "/course/completion.php?id=4",
+                    "selected": true
                 }
             ],
-            "disabled": false,
-            "title": null
+            "labelattributes":[
+                {
+                    "name":"class",
+                    "value":"sr-only"
+                }
+            ]
         }
     }
 }}
-<div class="container-fluid tertiary-navigation">
+<div class="container-fluid tertiary-navigation border-bottom" id="tertiary-navigation">
     <div class="row">
-        {{#urlselect}}
+        {{#navigation}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/tertiary_navigation_selector}}
             </div>
-        {{/urlselect}}
+        {{/navigation}}
     </div>
 </div>

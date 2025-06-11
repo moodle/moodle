@@ -57,7 +57,13 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
-if ($options['help'] || $options['search'] === null || $options['replace'] === null) {
+if ($unrecognized) {
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
+}
+
+// Ensure that user has populated both the search/replace parameters.
+if ($options['help'] || !is_string($options['search']) || !is_string($options['replace'])) {
     echo $help;
     exit(0);
 }

@@ -11,7 +11,7 @@ Feature: I can add a new preset with current settings
     And I set the field "Name" to "Starter"
     And I set the field "Description" to "Non-core starter preset"
     When I click on "Create preset" "button"
-    Then the following should exist in the "Site admin presets table" table:
+    Then the following should exist in the "reportbuilder-table" table:
       | Name    | Description                                                                                                                        |
       | Starter | Moodle with all of the most popular features, including Assignment, Feedback, Forum, H5P, Quiz and Completion tracking.            |
       | Full    | All the Starter features plus External (LTI) tool, SCORM, Workshop, Analytics, Badges, Competencies, Learning plans and lots more. |
@@ -21,13 +21,10 @@ Feature: I can add a new preset with current settings
     Given I click on "Create preset" "button"
     And I set the field "Name" to "Current"
     And I click on "Create preset" "button"
-    And I should see "Current"
-    And I open the action menu in "Current" "table_row"
-    When I choose "Review settings and apply" in the open action menu
+    And I press "Review settings and apply" action in the "Current" report row
     And I should not see "Setting changes"
     And I click on "Continue" "button"
     And the following config values are set as admin:
       | enableportfolios | 1 |
-    And I open the action menu in "Current" "table_row"
-    And I choose "Review settings and apply" in the open action menu
+    And I press "Review settings and apply" action in the "Current" report row
     Then I should see "Setting changes"

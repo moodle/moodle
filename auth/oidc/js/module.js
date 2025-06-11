@@ -8,6 +8,11 @@ M.auth_oidc.init = function(Y, idptype_ms, authmethodsecret, authmethodcertifica
     var $clientsecret = $("#id_clientsecret");
     var $clientcert = $("#id_clientcert");
     var $clientprivatekey = $("#id_clientprivatekey");
+    var $clientprivatekeyfile = $("#id_clientprivatekeyfile");
+    var $clientcertfile = $("#id_clientcertfile");
+    var $clientcertpassphrase = $("#id_clientcertpassphrase");
+    var $clientcertsource = $("#id_clientcertsource");
+    var $secretexpiryrecipients = $("#id_secretexpiryrecipients");
 
     $idptype.change(function() {
         if ($(this).val() != idptype_ms) {
@@ -16,8 +21,13 @@ M.auth_oidc.init = function(Y, idptype_ms, authmethodsecret, authmethodcertifica
             });
             $clientauthmethod.val(authmethodsecret);
             $clientsecret.prop('disabled', false);
+            $clientcertsource.prop('disabled', true);
             $clientcert.prop('disabled', true);
             $clientprivatekey.prop('disabled', true);
+            $clientprivatekeyfile.prop('disabled', true);
+            $clientcertfile.prop('disabled', true);
+            $clientcertpassphrase.prop('disabled', true);
+            $secretexpiryrecipients.prop('disabled', false);
         } else {
             $clientauthmethod.append("<option value='" + authmethodcertificate + "'>" + authmethodcertificatetext + "</option>");
         }
@@ -25,8 +35,21 @@ M.auth_oidc.init = function(Y, idptype_ms, authmethodsecret, authmethodcertifica
 
     $clientauthmethod.change(function() {
         if ($(this).val() == authmethodcertificate) {
-            $clientcert.prop('disabled', false);
-            $clientprivatekey.prop('disabled', false);
+            if ($clientcertsource.val() == 'file') {
+                $clientcert.prop('disabled', true);
+                $clientprivatekey.prop('disabled', true);
+                $clientprivatekeyfile.prop('disabled', false);
+                $clientcertfile.prop('disabled', false);
+            } else {
+                $clientcert.prop('disabled', false);
+                $clientprivatekey.prop('disabled', false);
+                $clientprivatekeyfile.prop('disabled', true);
+                $clientcertfile.prop('disabled', true);
+            }
+            $clientcertpassphrase.prop('disabled', false);
+            $clientcertsource.prop('disabled', false);
+        } else {
+            $secretexpiryrecipients.prop('disabled', false);
         }
     });
 };

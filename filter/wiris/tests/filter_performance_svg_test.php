@@ -34,10 +34,6 @@ require_once($CFG->dirroot . '/filter/wiris/integration/lib/com/wiris/system/Cal
  * This class contains unit tests for the MathType filter with SVG image format.
  */
 final class filter_performance_svg_test extends advanced_testcase {
-
-
-
-
     /**
      * @var filter_wiris The WIRIS filter instance.
      */

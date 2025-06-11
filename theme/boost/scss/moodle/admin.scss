@@ -58,10 +58,6 @@
     display: none;
 }
 
-#page-admin-report-capability-index #capabilitysearch {
-    width: 30em;
-}
-
 #page-admin-qtypes #qtypes div,
 #page-admin-qtypes #qtypes form,
 #page-admin-qbehaviours #qbehaviours div,
@@ -143,6 +139,10 @@
 #page-admin-roles-define .definenotice {
     margin: 1em 10% 2em 10%;
     text-align: left;
+}
+
+#page-admin-index .upgradekeyreq {
+    min-width: 220px;
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
@@ -306,8 +306,7 @@
     display: block;
 }
 
-#admin-spelllanguagelist textarea,
-#page-admin-setting-editorsettingstinymce .form-textarea textarea {
+#admin-spelllanguagelist textarea {
     /* rtl:ignore */
     text-align: left;
     /* rtl:ignore */
@@ -372,16 +371,6 @@
     width: 4em;
 }
 
-#adminthemeselector .selectedtheme td.c0 {
-    border: 1px solid $state-info-border;
-    border-right-width: 0;
-}
-
-#adminthemeselector .selectedtheme td.c1 {
-    border: 1px solid $state-info-border;
-    border-left-width: 0;
-}
-
 .admin_colourpicker,
 .admin_colourpicker_preview {
     display: none;
@@ -442,11 +431,23 @@
     text-align: center;
 }
 
+#page-admin-index #page-content .alert a {
+    font-weight: normal;
+    text-decoration: underline;
+}
+
 // Plugins overview page at admin/plugins.php
 #page-admin-plugins {
     #plugins-overview-panel {
         .info {
             display: inline-block;
+            margin-right: 1em;
+
+            [data-filterby].active {
+                font-weight: bold;
+            }
+        }
+        .updateavailableinstallall {
             margin-right: 1em;
         }
     }

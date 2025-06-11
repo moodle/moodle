@@ -25,6 +25,10 @@
         "type": 1,
         "table": "table",
         "editmode": true,
+        "attributes": [{
+            "name": "data-custom",
+            "value": "1"
+        }],
         "sidebarmenucards": [{
             "menucards": [{
                 "name": "General",
@@ -73,12 +77,14 @@
                 "title": "Email address",
                 "sortdirection": "4",
                 "sortenabled": true,
+                "sortenabledtitle": "Disable initial sorting for column 'Email address'",
                 "sortorder": 1,
                 "sorticon": [{
-                    "key": "t/uplong",
-                    "component": "core",
-                    "title": "Sort column 'Email address' ascending"
+                    "key": "t/sort_asc",
+                    "component": "moodle",
+                    "title": "Change initial sorting for column 'Email address' to descending"
                 }],
+                "movetitle": "Move sorting for column 'Email address'",
                 "heading": "Email address"
             }]
         }],
@@ -93,7 +99,8 @@
      data-report-id="{{id}}"
      data-report-type="{{type}}"
      data-parameter="[]"
-     {{#editmode}}data-editing{{/editmode}}>
+     {{#editmode}}data-editing{{/editmode}}
+     {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
     <div class="reportbuilder-wrapper d-flex flex-column flex-lg-row">
         {{#editmode}}
             {{! Menu sidebar }}

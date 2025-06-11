@@ -390,13 +390,6 @@ function question_delete_question($questionid): void {
     // Delete questiontype-specific data.
     question_bank::get_qtype($question->qtype, false)->delete_question($question->id, $questiondata->contextid);
 
-    // Delete all tag instances.
-    core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
-
-    // Delete the custom filed data for the question.
-    $customfieldhandler = qbank_customfields\customfield\question_handler::create();
-    $customfieldhandler->delete_instance($question->id);
-
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
             array('parent' => $questionid), '', 'id, qtype')) {
@@ -407,9 +400,6 @@ function question_delete_question($questionid): void {
         }
     }
 
-    // Delete question comments.
-    $DB->delete_records('comments', ['itemid' => $questionid, 'component' => 'qbank_comment',
-                                            'commentarea' => 'question']);
     // Finally delete the question record itself.
     $DB->delete_records('question', ['id' => $question->id]);
     $DB->delete_records('question_versions', ['id' => $questiondata->versionid]);
@@ -422,6 +412,7 @@ function question_delete_question($questionid): void {
     question_bank::notify_question_edited($question->id);
 
     // Log the deletion of this question.
+    // Any qbank plugins storing additional question data should observe this event and perform the necessary deletion.
     $question->category = $questiondata->categoryid;
     $question->contextid = $questiondata->contextid;
     $event = \core\event\question_deleted::create_from_question_instance($question);
@@ -504,7 +495,7 @@ function question_delete_course_category($category, $newcategory, $notused=false
  * Creates a new category to save the questions in use.
  *
  * @param array $questionids of question ids
- * @param object $newcontextid the context to create the saved category in.
+ * @param int $newcontextid the context to create the saved category in.
  * @param string $oldplace a textual description of the think being deleted,
  *      e.g. from get_context_name
  * @param object $newcategory
@@ -850,7 +841,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
 /**
  * Given a list of ids, load the basic information about a set of questions from
  * the questions table. The $join and $extrafields arguments can be used together
- * to pull in extra data. See, for example, the usage in mod/quiz/attemptlib.php, and
+ * to pull in extra data. See, for example, the usage in {@see \mod_quiz\quiz_attempt}, and
  * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
  * @param array $questionids array of question ids to load. If null, then all
@@ -945,10 +936,10 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  *
  * @param object $question the question to tidy.
  * @param stdClass $category The question_categories record for the given $question.
- * @param stdClass[]|null $tagobjects The tags for the given $question.
+ * @param \core_tag_tag[]|null $tagobjects The tags for the given $question.
  * @param stdClass[]|null $filtercourses The courses to filter the course tags by.
  */
-function _tidy_question($question, $category, array $tagobjects = null, array $filtercourses = null): void {
+function _tidy_question($question, $category, ?array $tagobjects = null, ?array $filtercourses = null): void {
     // Convert numeric fields to float. This prevents these being displayed as 1.0000000.
     $question->defaultmark += 0;
     $question->penalty += 0;
@@ -1046,7 +1037,7 @@ function get_question_options(&$questions, $loadtags = false, $filtercourses = n
  * This function also search tag instances that may have a context id that don't match either a course or
  * question context and fix the data setting the correct context id.
  *
- * @param stdClass[] $tagobjects The tags for the given $question.
+ * @param \core_tag_tag[] $tagobjects The tags for the given $question.
  * @param stdClass $categorycontext The question categories context.
  * @param stdClass[]|null $filtercourses The courses to filter the course tags by.
  * @return stdClass $sortedtagobjects Sorted tag objects.
@@ -1315,10 +1306,11 @@ function question_categorylist($categoryid): array {
     global $DB;
 
     // Final list of category IDs.
-    $categorylist = array();
+    $categorylist = [];
 
     // A list of category IDs to check for any sub-categories.
-    $subcategories = array($categoryid);
+    $subcategories = [$categoryid];
+    $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $categoryid]);
 
     while ($subcategories) {
         foreach ($subcategories as $subcategory) {
@@ -1329,37 +1321,40 @@ function question_categorylist($categoryid): array {
             $categorylist[$subcategory] = $subcategory;
         }
 
-        list ($in, $params) = $DB->get_in_or_equal($subcategories);
+        [$in, $params] = $DB->get_in_or_equal($subcategories);
+        $params[] = $contextid;
 
-        $subcategories = $DB->get_records_select_menu('question_categories', "parent $in", $params,
-                                                    null, 'id,id AS id2');
+        // Order by id is not strictly needed, but it will be cheap, and makes the results deterministic.
+        $subcategories = $DB->get_records_select_menu('question_categories',
+                "parent $in AND contextid = ?", $params, 'id', 'id,id AS id2');
     }
 
     return $categorylist;
 }
 
 /**
- * Get all parent categories of a given question category in decending order.
+ * Get all parent categories of a given question category in descending order.
+ *
  * @param int $categoryid for which you want to find the parents.
  * @return array of question category ids of all parents categories.
  */
 function question_categorylist_parents(int $categoryid): array {
     global $DB;
-    $parent = $DB->get_field('question_categories', 'parent', array('id' => $categoryid));
-    if (!$parent) {
-        return [];
-    }
-    $categorylist = [$parent];
-    $currentid = $parent;
-    while ($currentid) {
-        $currentid = $DB->get_field('question_categories', 'parent', array('id' => $currentid));
-        if ($currentid) {
-            $categorylist[] = $currentid;
+
+    $category = $DB->get_record('question_categories', ['id' => $categoryid]);
+    $contextid = $category->contextid;
+
+    $categorylist = [];
+    while ($category->parent) {
+        $category = $DB->get_record('question_categories', ['id' => $category->parent]);
+        if (!$category || $category->contextid != $contextid) {
+            break;
         }
+        $categorylist[] = $category->id;
     }
-    // Present the list in decending order (the top category at the top).
-    $categorylist = array_reverse($categorylist);
-    return $categorylist;
+
+    // Present the list in descending order (the top category at the top).
+    return array_reverse($categorylist);
 }
 
 // Import/Export Functions.
@@ -1439,7 +1434,7 @@ function question_has_capability_on($questionorid, $cap, $notused = -1): bool {
     } else if (is_object($questionorid)) {
         // All we really need in this function is the contextid and author of the question.
         // We won't bother fetching other details of the question if these 2 fields are provided.
-        if (isset($questionorid->contextid) && isset($questionorid->createdby)) {
+        if (isset($questionorid->contextid) && property_exists($questionorid, 'createdby')) {
             $question = $questionorid;
         } else if (!empty($questionorid->id)) {
             $questionid = $questionorid->id;
@@ -1470,7 +1465,7 @@ function question_has_capability_on($questionorid, $cap, $notused = -1): bool {
                      WHERE q.id = :id';
 
             // Well, at least we tried. Seems that we really have to read from DB.
-            $question = $DB->get_record_sql($sql, ['id' => $questionid]);
+            $question = $DB->get_record_sql($sql, ['id' => $questionid], MUST_EXIST);
         }
     }
 
@@ -1511,7 +1506,7 @@ function question_require_capability_on($question, $cap): bool {
  * Gets the question edit url.
  *
  * @param object $context a context
- * @return string|bool A URL for editing questions in this context.
+ * @return string|bool|void A URL for editing questions in this context.
  */
 function question_edit_url($context) {
     global $CFG, $SITE;
@@ -1697,7 +1692,7 @@ function question_get_all_capabilities(): array {
  * @return string
  */
 function question_rewrite_question_urls($text, $file, $contextid, $component, $filearea,
-                                        array $ids, $itemid, array $options=null): string {
+                                        array $ids, $itemid, ?array $options=null): string {
 
     $idsstr = '';
     if (!empty($ids)) {
@@ -2084,7 +2079,7 @@ function get_next_version(int $questionbankentryid): int {
  * @param string $questionbankentryid Entry to check against.
  * @return bool
  */
-function is_latest(string $version, string $questionbankentryid) : bool {
+function is_latest(string $version, string $questionbankentryid): bool {
     global $DB;
 
     $sql = 'SELECT MAX(version) AS max
@@ -2096,263 +2091,4 @@ function is_latest(string $version, string $questionbankentryid) : bool {
         return ($version === $latestversion->max) ? true : false;
     }
     return false;
-}
-
-// Deprecated functions from Moodle 4.0.
-
-/**
- * Generate the URL for starting a new preview of a given question with the given options.
- * @param integer $questionid the question to preview.
- * @param string $preferredbehaviour the behaviour to use for the preview.
- * @param float $maxmark the maximum to mark the question out of.
- * @param question_display_options $displayoptions the display options to use.
- * @param int $variant the variant of the question to preview. If null, one will
- *      be picked randomly.
- * @param object $context context to run the preview in (affects things like
- *      filter settings, theme, lang, etc.) Defaults to $PAGE->context.
- * @return moodle_url the URL.
- * @deprecated since Moodle 4.0
- * @see qbank_previewquestion\helper::question_preview_url()
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_preview_url($questionid, $preferredbehaviour = null,
-                              $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
-    debugging('Function question_preview_url() has been deprecated and moved to qbank_previewquestion plugin,
-    Please use qbank_previewquestion\previewquestion_helper::question_preview_url() instead.', DEBUG_DEVELOPER);
-
-    return \qbank_previewquestion\helper::question_preview_url($questionid, $preferredbehaviour,
-        $maxmark, $displayoptions, $variant, $context);
-}
-
-/**
- * Popup params for the question preview.
- *
- * @return array that can be passed as $params to the {@see popup_action()} constructor.
- * @deprecated since Moodle 4.0
- * @see qbank_previewquestion\previewquestion_helper::question_preview_popup_params()
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_preview_popup_params() {
-    debugging('Function question_preview_popup_params() has been deprecated and moved to qbank_previewquestion plugin,
-    Please use qbank_previewquestion\previewquestion_helper::question_preview_popup_params() instead.', DEBUG_DEVELOPER);
-
-    return \qbank_previewquestion\helper::question_preview_popup_params();
-}
-
-/**
- * Creates a stamp that uniquely identifies this version of the question
- *
- * In future we want this to use a hash of the question data to guarantee that
- * identical versions have the same version stamp.
- *
- * @param object $question
- * @return string A unique version stamp
- * @deprecated since Moodle 4.0
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_hash($question) {
-    debugging('Function question_hash() has been deprecated without replacement.', DEBUG_DEVELOPER);
-    return make_unique_id_code();
-}
-
-/**
- * Create url for question export.
- *
- * @param int $contextid
- * @param int $categoryid
- * @param string $format
- * @param string $withcategories
- * @param string $withcontexts
- * @param string $filename
- * @return moodle_url export file url
- * @deprecated since Moodle 4.0 MDL-71573
- * @see qbank_exportquestions\exportquestions_helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_make_export_url($contextid, $categoryid, $format, $withcategories,
-                                  $withcontexts, $filename) {
-    debugging('Function question_make_export_url() has been deprecated and moved to qbank_exportquestions plugin,
-    Please use qbank_exportquestions\exportquestions_helper::question_make_export_url() instead.', DEBUG_DEVELOPER);
-
-    return \qbank_exportquestions\exportquestions_helper::question_make_export_url($contextid, $categoryid, $format,
-        $withcategories, $withcontexts, $filename);
-}
-
-/**
- * Get the URL to export a single question (exportone.php).
- *
- * @param stdClass|question_definition $question the question definition as obtained from
- *      question_bank::load_question_data() or question_bank::make_question().
- *      (Only ->id and ->contextid are used.)
- * @return moodle_url the requested URL.
- * @deprecated since Moodle 4.0
- * @see \qbank_exporttoxml\helper::question_get_export_single_question_url()
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_get_export_single_question_url($question) {
-    debugging('Function question_get_export_single_question_url() has been deprecated and moved to qbank_exporttoxml plugin,
-     please use qbank_exporttoxml\helper::question_get_export_single_question_url() instead.', DEBUG_DEVELOPER);
-    qbank_exporttoxml\helper::question_get_export_single_question_url($question);
-}
-
-/**
- * Remove stale questions from a category.
- *
- * While questions should not be left behind when they are not used any more,
- * it does happen, maybe via restore, or old logic, or uncovered scenarios. When
- * this happens, the users are unable to delete the question category unless
- * they move those stale questions to another one category, but to them the
- * category is empty as it does not contain anything. The purpose of this function
- * is to detect the questions that may have gone stale and remove them.
- *
- * You will typically use this prior to checking if the category contains questions.
- *
- * The stale questions (unused and hidden to the user) handled are:
- * - hidden questions
- * - random questions
- *
- * @param int $categoryid The category ID.
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_remove_stale_questions_from_category($categoryid) {
-    debugging('Function question_remove_stale_questions_from_category()
-    has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_remove_stale_questions_from_category() instead.',
-        DEBUG_DEVELOPER);
-    \qbank_managecategories\helper::question_remove_stale_questions_from_category($categoryid);
-}
-
-/**
- * Private method, only for the use of add_indented_names().
- *
- * Recursively adds an indentedname field to each category, starting with the category
- * with id $id, and dealing with that category and all its children, and
- * return a new array, with those categories in the right order.
- *
- * @param array $categories an array of categories which has had childids
- *          fields added by flatten_category_tree(). Passed by reference for
- *          performance only. It is not modfied.
- * @param int $id the category to start the indenting process from.
- * @param int $depth the indent depth. Used in recursive calls.
- * @param int $nochildrenof
- * @return array a new array of categories, in the right order for the tree.
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function flatten_category_tree(&$categories, $id, $depth = 0, $nochildrenof = -1) {
-    debugging('Function flatten_category_tree() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::flatten_category_tree() instead.', DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::flatten_category_tree($categories, $id, $depth, $nochildrenof);
-}
-
-/**
- * Format categories into an indented list reflecting the tree structure.
- *
- * @param array $categories An array of category objects, for example from the.
- * @param int $nochildrenof
- * @return array The formatted list of categories.
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function add_indented_names($categories, $nochildrenof = -1) {
-    debugging('Function add_indented_names() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::add_indented_names() instead.', DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::add_indented_names($categories, $nochildrenof);
-}
-
-/**
- * Output a select menu of question categories.
- * Categories from this course and (optionally) published categories from other courses
- * are included. Optionally, only categories the current user may edit can be included.
- *
- * @param array $contexts
- * @param bool $top
- * @param int $currentcat
- * @param integer $selected optionally, the id of a category to be selected by
- *      default in the dropdown.
- * @param int $nochildrenof
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_category_select_menu($contexts, $top = false, $currentcat = 0,
-                                       $selected = "", $nochildrenof = -1) {
-    debugging('Function question_category_select_menu() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_category_select_menu() instead.', DEBUG_DEVELOPER);
-    \qbank_managecategories\helper::question_category_select_menu($contexts, $top, $currentcat, $selected, $nochildrenof);
-}
-
-/**
- * Get all the category objects, including a count of the number of questions in that category,
- * for all the categories in the lists $contexts.
- *
- * @param mixed $contexts either a single contextid, or a comma-separated list of context ids.
- * @param string $sortorder used as the ORDER BY clause in the select statement.
- * @param bool $top Whether to return the top categories or not.
- * @return array of category objects.
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC', $top = false) {
-    debugging('Function get_categories_for_contexts() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::get_categories_for_contexts() instead.', DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::get_categories_for_contexts($contexts, $sortorder, $top);
-}
-
-/**
- * Output an array of question categories.
- *
- * @param array $contexts The list of contexts.
- * @param bool $top Whether to return the top categories or not.
- * @param int $currentcat
- * @param bool $popupform
- * @param int $nochildrenof
- * @param boolean $escapecontextnames Whether the returned name of the thing is to be HTML escaped or not.
- * @return array
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_category_options($contexts, $top = false, $currentcat = 0,
-                                   $popupform = false, $nochildrenof = -1, $escapecontextnames = true) {
-    debugging('Function question_category_options() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_category_options() instead.', DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::question_category_options($contexts, $top, $currentcat,
-        $popupform, $nochildrenof, $escapecontextnames);
-}
-
-/**
- * Add context in categories key.
- *
- * @param array $categories The list of categories.
- * @return array
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_add_context_in_key($categories) {
-    debugging('Function question_add_context_in_key() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_add_context_in_key() instead.', DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::question_add_context_in_key($categories);
-}
-
-/**
- * Finds top categories in the given categories hierarchy and replace their name with a proper localised string.
- *
- * @param array $categories An array of question categories.
- * @param boolean $escape Whether the returned name of the thing is to be HTML escaped or not.
- * @return array The same question category list given to the function, with the top category names being translated.
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_fix_top_names($categories, $escape = true) {
-    debugging('Function question_fix_top_names() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_fix_top_names() instead.', DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::question_fix_top_names($categories, $escape);
 }

@@ -353,7 +353,6 @@ XPATH;
             throw new coding_exception('$numpages cannot be less than 1');
         }
 
-        $course = $this->get_current_course();
         $lesson = $this->get_lesson_instance_by_name_for_current_course($lessonname);
         list ($course, $cm) = get_course_and_cm_from_instance($lesson->id, 'lesson');
         $lesson->cmid = $cm->id;
@@ -947,7 +946,7 @@ XPATH;
      * @Given /^I view all submissions$/
      */
     public function i_view_all_submissions() {
-        $path = "//a[contains(text(), 'View all submissions')][contains(@class, 'btn')]";
+        $path = "//a[contains(text(), 'Submissions')][contains(@role, 'menuitem')]";
         $this->execute('behat_general::i_click_on', [$path, 'xpath_element']);
     }
 
@@ -1002,11 +1001,20 @@ XPATH;
         $this->section_has_summary($shortname, $section, $summary, FORMAT_PLAIN);
     }
 
+    private function section_selector(int $section, $targetally = true) {
+        $allyselector = $targetally ? '[data-ally-richcontent]' : '';
+        $selector = <<<CSS
+            #section-$section > .content div[class*="summarytext"] .no-overflow$allyselector,
+            #section-$section > .section-item div[class*="summarytext"] .no-overflow$allyselector             
+CSS;
+        return $selector;
+    }
+
     /**
      * @Given /^section (?P<section_number>\d*) html is annotated$/
      */
-    public function section_is_annotated($section) {
-        $selector = '#section-'.$section.' > .content div[class*="summarytext"] .no-overflow[data-ally-richcontent]';
+    public function section_is_annotated(int $section) {
+        $selector = $this->section_selector($section);
         $node = $this->find('css', $selector);
         if (empty($node)) {
             throw new ExpectationException(
@@ -1020,6 +1028,19 @@ XPATH;
     }
 
     /**
+     * @Given /^section (?P<section_number>\d*) html is not annotated$/
+     */
+    public function section_is_not_annotated(int $section) {
+        $selector = $this->section_selector($section, false);
+        $node = $this->find('css', $selector);
+
+        if ($node->hasAttribute('data-ally-richcontent')) {
+            throw new ExpectationException(
+                'Annotation exists but should not exist for section '.$section.' summary', $this->getSession());
+        }
+    }
+
+    /**
      * @Given Forum should be annotated
      */
     public function forum_is_annotated() {
@@ -1028,19 +1049,6 @@ XPATH;
         if (empty($node)) {
             throw new ExpectationException(
                 'Failed to find annotation', $this->getSession());
-        }
-    }
-
-    /**
-     * @Given /^section (?P<section_number>\d*) html is not annotated$/
-     */
-    public function section_is_not_annotated($section) {
-        $selector = '#section-'.$section.' > .content div[class*="summarytext"] .no-overflow';
-        $node = $this->find('css', $selector);
-
-        if ($node->hasAttribute('data-ally-richcontent')) {
-            throw new ExpectationException(
-                    'Annotation exists but should not exist for section '.$section.' summary', $this->getSession());
         }
     }
 
@@ -1085,12 +1093,21 @@ XPATH;
 
     /**
      * @param string $title
-     * @Given html block with title ":title" is annotated
+     * @Then html block with title ":title" is annotated
      */
     public function html_block_with_title_is_annotated($title) {
         $this->wait_for_pending_js();
         $selectors = [];
-        // Boost theme selector.
+        // Boost theme selector < Moodle 4.3
+        $selectors[] = <<<XPATH
+            //section[contains(@class, 'block_html')]
+            //div//h3[contains(@class, 'card-title')][contains(text(), '$title')]
+            /ancestor::section[contains(@class, 'block_html')]
+            //div[contains(@class, 'card-text')]
+            //div[@data-ally-richcontent]
+XPATH;
+
+        // Boost theme selector >= Moodle 4.3
         $selectors[] = <<<XPATH
             //section[contains(@class, 'block_html')]
             //div//h5[contains(text(), '$title')]
@@ -1098,6 +1115,7 @@ XPATH;
             //div[contains(@class, 'card-text')]
             //div[@data-ally-richcontent]
 XPATH;
+
         // Clean theme selector.
         $selectors[] = <<<XPATH
             //div//h2[contains(@id, 'instance')][contains(text(), '$title')]

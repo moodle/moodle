@@ -37,7 +37,7 @@ use core_h5p\local\library\autoloader;
  *
  * @runTestsInSeparateProcesses
  */
-class editor_framework_test extends \advanced_testcase {
+final class editor_framework_test extends \advanced_testcase {
 
     /** @var editor_framework H5P editor_framework instance */
     protected $editorframework;
@@ -125,7 +125,7 @@ class editor_framework_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_language_provider(): array {
+    public static function get_language_provider(): array {
         return [
             'No library' => [
                 [],
@@ -289,7 +289,7 @@ class editor_framework_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_available_languages_provider(): array {
+    public static function get_available_languages_provider(): array {
         return [
             'No library' => [
                 [],

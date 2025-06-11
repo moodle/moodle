@@ -44,11 +44,10 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | data1    | multimenu   | Not required Multimenu        | 0        | Not required Multimenu        | Option 1                       |
 
   Scenario: Students receive errors for empty required fields but not for optional fields
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I add an entry to "Test database name" database with:
-       | Base Text input | Some input to allow us to submit the otherwise empty form |
-    And I press "Save"
+    Given I am on the "Test database name" "data activity" page logged in as student1
+    And I click on "Add entry" "button"
+    And I set the field "Base Text input" to "Some input to allow us to submit the otherwise empty form"
+    When I press "Save"
 #    Then ".alert" "css_element" should exist in the "//div[contains(@id,'defaulttemplate-addentry']//div[position()=1]]" "xpath_element"
     Then ".alert" "css_element" should appear after "Checkbox" "text"
     And ".alert" "css_element" should appear before "Required Checkbox" "text"
@@ -74,10 +73,10 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And I follow "Test database name"
     And I should see "No entries yet"
 
-  Scenario: Students recieve no error for filled in required fields
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I add an entry to "Test database name" database with:
+  Scenario: Students receive no error for filled in required fields
+    Given I am on the "Test database name" "data activity" page logged in as student1
+    And I click on "Add entry" "button"
+    And I set the following fields to these values:
        | Base Text input               | Some input to allow us to submit the otherwise empty form |
        | Required Checkbox Option 1    | 1                                                         |
        | RTOC Option 1                 | 1                                                         |
@@ -91,15 +90,15 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    And I press "Save"
+    When I press "Save"
     And I select "List view" from the "jump" singleselect
     Then I should not see "No entries in database"
     And I should see "New entry text"
 
   Scenario: Fields refill with data after having an error
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I add an entry to "Test database name" database with:
+    Given I am on the "Test database name" "data activity" page logged in as student1
+    And I click on "Add entry" "button"
+    And I set the following fields to these values:
        | RTOC Option 1                 | 1                   |
        | Latitude                      | 0                   |
        | Longitude                     | 0                   |
@@ -111,7 +110,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/ |
        | Required Multimenu            | 1                   |
        | Required Two-Option Multimenu | 1                   |
-    And I press "Save"
+    When I press "Save"
     Then the following fields match these values:
        | Base Text input               |                     |
        | Latitude                      | 0                   |
@@ -127,9 +126,9 @@ Feature: Users can be required to specify certain fields when adding entries to 
 
   @javascript
   Scenario: A student fills in Latitude but not Longitude will see an error
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I add an entry to "Test database name" database with:
+    Given I am on the "Test database name" "data activity" page logged in as student1
+    And I click on "Add entry" "button"
+    And I set the following fields to these values:
        | Base Text input               | Some input to allow us to submit the otherwise empty form |
        | Required Checkbox Option 1    | 1                                                         |
        | RTOC Option 1                 | 1                                                         |
@@ -142,15 +141,15 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    And I set the field "Latitude" to "20"
-    #And I set the field with xpath "//div[@title='Not required Coordinates']//tr[td/label[normalize-space(.)='Latitude']]/td/input" to "20"
-    And I press "Save"
+       | Latitude                      | 20                                                        |
+    When I press "Save"
     Then I should see "Both latitude and longitude are required."
 
   Scenario: A student filling in number and text fields with zero will not see an error.
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I add an entry to "Test database name" database with:
+  Scenario: A student fills in Latitude but not Longitude will see an error
+    Given I am on the "Test database name" "data activity" page logged in as student1
+    And I click on "Add entry" "button"
+    And I set the following fields to these values:
        | Base Text input               | Some input to allow us to submit the otherwise empty form |
        | Required Checkbox Option 1    | 1                                                         |
        | RTOC Option 1                 | 1                                                         |
@@ -164,7 +163,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    And I press "Save"
+    When I press "Save"
     And I select "List view" from the "jump" singleselect
     Then I should not see "No entries in database"
     And I should see "Some input to allow us to submit the otherwise empty form"

@@ -1,0 +1,78 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_mfa/mfa_card
+
+    This template renders the singular card for an authentication factor.
+
+    Example context (json):
+    {
+        "label": "SMS Mobile phone",
+        "name": "sms",
+        "info": "Have a verification number sent to the mobile number you choose.",
+        "icon": "fa-commenting-o",
+        "active": true,
+        "button": {
+            "id": "single_button123",
+            "method": "post",
+            "action": "action.php",
+            "label": "Setup",
+            "params": [
+                {
+                    "name": "sesskey",
+                    "value": "123XYZ"
+                },
+                {
+                    "name": "factor",
+                    "value": "sms"
+                },
+                {
+                    "name": "action",
+                    "value": "setup"
+                }
+            ]
+        }
+    }
+}}
+<div class="card dashboard-card {{#active}}active{{/active}}" role="listitem" id="factor-card-{{name}}" aria-labelledby="factor-name-{{name}} {{#active}}active-factor-{{name}}{{/active}}">
+    <div class="card-img p-3">
+        <div class="icon-circle {{^active}}reversed{{/active}}">
+            <i class="icon iconsize-big fa {{icon}}" role="presentation"></i>
+        </div>
+    </div>
+    <div class="card-body p-3">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <h3 class="h5" id="factor-name-{{name}}">{{label}}</h3>
+                {{{info}}}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-end justify-content-between p-3">
+        {{#active}}
+            <div class="d-flex">
+                <strong><span class="text-success" id="active-factor-{{name}}">{{#str}}active, moodle{{/str}}</span></strong>
+            </div>
+        {{/active}}
+        {{#button}}
+            <div class="d-flex ms-auto">
+                {{>core/single_button}}
+            </div>
+        {{/button}}
+    </div>
+</div>
+

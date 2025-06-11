@@ -25,6 +25,8 @@
 
 namespace local_o365\oauth2;
 
+use moodle_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/auth/oidc/lib.php');
@@ -45,7 +47,7 @@ class clientdata {
     /** @var string The token endpoint URI. */
     protected $tokenendpoint;
 
-    /** @var boolean The app-only token endpoint URI. */
+    /** @var bool The app-only token endpoint URI. */
     protected $apptokenendpoint = false;
 
     /**
@@ -65,11 +67,11 @@ class clientdata {
         if (!empty($apptokenendpoint)) {
             $this->apptokenendpoint = $apptokenendpoint;
         } else {
-            $tenant = get_config('local_o365', 'aadtenant');
+            $tenant = get_config('local_o365', 'entratenant');
             if (!empty($tenant)) {
                 $this->apptokenendpoint = static::get_apptokenendpoint_from_tenant($tenant);
             } else {
-                $tenantid = get_config('local_o365', 'aadtenantid');
+                $tenantid = get_config('local_o365', 'entratenantid');
                 if (!empty($tenantid)) {
                     $this->apptokenendpoint = static::get_apptokenendpoint_from_tenant($tenantid);
                 } else {
@@ -88,9 +90,9 @@ class clientdata {
      */
     public static function get_apptokenendpoint_from_tenant($tenant) {
         $idptype = get_config('auth_oidc', 'idptype');
-        if ($idptype == AUTH_OIDC_IDP_TYPE_AZURE_AD) {
+        if ($idptype == AUTH_OIDC_IDP_TYPE_MICROSOFT_ENTRA_ID) {
             return 'https://login.microsoftonline.com/' . $tenant . '/oauth2/token';
-        } else if ($idptype == AUTH_OIDC_IDP_TYPE_MICROSOFT) {
+        } else if ($idptype == AUTH_OIDC_IDP_TYPE_MICROSOFT_IDENTITY_PLATFORM) {
             return 'https://login.microsoftonline.com/' . $tenant . '/oauth2/v2.0/token';
         } else {
             return '';
@@ -101,20 +103,26 @@ class clientdata {
      * Get an instance from auth_oidc config.
      *
      * @param string|null $tenant
-     * @return \local_o365\oauth2\clientdata The constructed client data creds.
+     * @return clientdata The constructed client data creds.
+     * @throws moodle_exception
      */
     public static function instance_from_oidc($tenant = null) {
         $cfg = get_config('auth_oidc');
 
         if (!auth_oidc_is_setup_complete()) {
-            throw new \moodle_exception('erroracpauthoidcnotconfig', 'local_o365');
+            throw new moodle_exception('erroracpauthoidcnotconfig', 'local_o365');
         }
 
         $apptokenendpoint = null;
         if (!empty($tenant)) {
             $apptokenendpoint = static::get_apptokenendpoint_from_tenant($tenant);
         }
-        return new static($cfg->clientid, $cfg->clientsecret, $cfg->authendpoint, $cfg->tokenendpoint, $apptokenendpoint);
+        $clientsecret = null;
+        if (property_exists($cfg, 'clientsecret')) {
+            $clientsecret = $cfg->clientsecret;
+        }
+
+        return new static($cfg->clientid, $clientsecret, $cfg->authendpoint, $cfg->tokenendpoint, $apptokenendpoint);
     }
 
     /**

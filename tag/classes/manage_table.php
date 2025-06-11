@@ -26,6 +26,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @package   core_tag
  * @copyright 2015 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.4
  */
 class core_tag_manage_table extends table_sql {
 
@@ -43,11 +44,13 @@ class core_tag_manage_table extends table_sql {
     public function __construct($tagcollid) {
         global $USER, $PAGE, $OUTPUT;
 
+        debugging('core_tag_manage_table is deprecated, please use the new system report', DEBUG_DEVELOPER);
+
         parent::__construct('tag-management-list-'.$USER->id);
 
         $this->tagcollid = $tagcollid;
 
-        $perpage = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
+        $perpage = optional_param('perpage', 30, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
         $filter = optional_param('filter', '', PARAM_NOTAGS);
         $baseurl = new moodle_url('/tag/manage.php', array('tc' => $tagcollid,

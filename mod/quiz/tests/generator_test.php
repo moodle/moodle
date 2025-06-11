@@ -25,8 +25,8 @@ namespace mod_quiz;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz_generator
  */
-class generator_test extends \advanced_testcase {
-    public function test_generator() {
+final class generator_test extends \advanced_testcase {
+    public function test_generator(): void {
         global $DB, $SITE;
 
         $this->resetAfterTest(true);
@@ -38,10 +38,10 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('mod_quiz_generator', $generator);
         $this->assertEquals('quiz', $generator->get_modulename());
 
-        $generator->create_instance(array('course'=>$SITE->id));
-        $generator->create_instance(array('course'=>$SITE->id));
+        $generator->create_instance(['course' => $SITE->id]);
+        $generator->create_instance(['course' => $SITE->id]);
         $createtime = time();
-        $quiz = $generator->create_instance(array('course' => $SITE->id, 'timecreated' => 0));
+        $quiz = $generator->create_instance(['course' => $SITE->id, 'timecreated' => 0]);
         $this->assertEquals(3, $DB->count_records('quiz'));
 
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
@@ -56,7 +56,7 @@ class generator_test extends \advanced_testcase {
                 $DB->get_field('quiz', 'timecreated', ['id' => $cm->instance]), 2);
     }
 
-    public function test_generating_a_user_override() {
+    public function test_generating_a_user_override(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -87,7 +87,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals(strtotime('2022-10-20'), $event->timestart);
     }
 
-    public function test_generating_a_group_override() {
+    public function test_generating_a_group_override(): void {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
@@ -115,5 +115,27 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals($quiz->id, $event->instance);
         $this->assertEquals('close', $event->eventtype);
         $this->assertEquals(strtotime('2022-10-20'), $event->timestart);
+    }
+
+    public function test_generating_a_grade_item(): void {
+        $this->resetAfterTest();
+
+        // Create a quiz to use in the test.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $quiz = $generator->create_module('quiz', ['course' => $course->id]);
+
+        // Create a grade item.
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $newgradeitem = $quizgenerator->create_grade_item([
+            'quizid' => $quiz->id,
+            'name' => 'Awesomeness!',
+        ]);
+
+        // Verify the grade item was created correctly.
+        $this->assertObjectHasProperty('id', $newgradeitem);
+        $this->assertEquals($quiz->id, $newgradeitem->quizid);
+        $this->assertEquals('Awesomeness!', $newgradeitem->name);
     }
 }

@@ -40,8 +40,8 @@ class frontend extends \core_availability\frontend {
                 'label_operator', 'label_value');
     }
 
-    protected function get_javascript_init_params($course, \cm_info $cm = null,
-            \section_info $section = null) {
+    protected function get_javascript_init_params($course, ?\cm_info $cm = null,
+            ?\section_info $section = null) {
 
         // Standard user fields.
         $standardfields = condition::get_standard_profile_fields();

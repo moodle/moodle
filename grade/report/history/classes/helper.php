@@ -44,7 +44,7 @@ class helper {
      *
      * @return output\user_button the user select button.
      */
-    public static function init_js($courseid, array $currentusers = null) {
+    public static function init_js($courseid, ?array $currentusers = null) {
         global $PAGE;
 
         // Load the strings for js.
@@ -138,7 +138,7 @@ class helper {
         }
         $params = array();
         if (!empty($search)) {
-            list($filtersql, $params) = users_search_sql($search, 'u', true, $extrafields);
+            list($filtersql, $params) = users_search_sql($search, 'u', USER_SEARCH_CONTAINS, $extrafields);
             $filtersql .= ' AND ';
         } else {
             $filtersql = '';

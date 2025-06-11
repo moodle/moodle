@@ -23,12 +23,13 @@ Feature: Exporting and importing feedbacks
 
   Scenario: Export sample feedback and compare with the fixture
     When I am on the "Learning experience" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
+    And "Export questions" "link" should not exist in the ".tertiary-navigation" "css_element"
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
       | Information type | Course                          |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | label text |
     And I add a "Longer text answer" question to the feedback with:
       | Question         | this is a longer text answer |
@@ -39,7 +40,7 @@ Feature: Exporting and importing feedbacks
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer |
       | Multiple choice values | option a\noption b\noption c  |
-    And I select "Add a page break" from the "typ" singleselect
+    And I add a page break to the feedback
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | this is a multiple choice 2        |
       | Label                          | multichoice2                       |
@@ -67,20 +68,19 @@ Feature: Exporting and importing feedbacks
       | Label                  | shorttext                   |
       | Maximum characters accepted | 200                    |
     Then following "Export questions" should export feedback identical to "mod/feedback/tests/fixtures/testexport.xml"
-    And I log out
 
   @javascript @_file_upload
   Scenario: Import feedback deleting old items
     When I am on the "Learning experience" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Numeric answer" question to the feedback with:
       | Question               | Existing question |
       | Label                  | numeric           |
       | Range to               | 100               |
-    And I select "Import questions" from the "jump" singleselect
+    And I press "Actions"
+    And I choose "Import" in the open action menu
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
-    And I press "Save"
-    And I select "Add question" from the "jump" singleselect
+    And I press "Import"
     Then I should not see "Existing question"
     And I should see "this is an information question"
     And I should see "label text"
@@ -95,16 +95,16 @@ Feature: Exporting and importing feedbacks
   @javascript @_file_upload
   Scenario: Import feedback appending new items
     When I am on the "Learning experience" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Numeric answer" question to the feedback with:
       | Question               | Existing question |
       | Label                  | numeric           |
       | Range to               | 100               |
-    And I select "Import questions" from the "jump" singleselect
+    And I press "Actions"
+    And I choose "Import" in the open action menu
     And I set the field "Append new items" to "1"
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
-    And I press "Save"
-    And I select "Add question" from the "jump" singleselect
+    And I press "Import"
     Then I should see "Existing question"
     And "Existing question" "text" should appear before "this is an information question" "text"
     And I should see "this is an information question"

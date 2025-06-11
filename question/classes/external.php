@@ -24,9 +24,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_api;
+use core_external\external_description;
+use core_external\external_value;
+use core_external\external_single_structure;
+use core_external\external_multiple_structure;
+use core_external\external_function_parameters;
+use core_external\external_warnings;
+
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
@@ -121,121 +128,6 @@ class core_question_external extends external_api {
      * Returns description of method parameters.
      *
      * @return external_function_parameters.
-     * @deprecated since Moodle 4.0
-     * @see \qbank_tagquestion\external\qbank_tagquestion_external
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
-     */
-    public static function submit_tags_form_parameters() {
-        return new external_function_parameters([
-                'questionid' => new external_value(PARAM_INT, 'The question id'),
-                'contextid' => new external_value(PARAM_INT, 'The editing context id'),
-                'formdata' => new external_value(PARAM_RAW, 'The data from the tag form'),
-        ]);
-    }
-
-    /**
-     * Handles the tags form submission.
-     *
-     * @param int $questionid The question id.
-     * @param int $contextid The editing context id.
-     * @param string $formdata The question tag form data in a URI encoded param string
-     * @return array The created or modified question tag
-     * @deprecated since Moodle 4.0
-     * @see \qbank_tagquestion\external\qbank_tagquestion_external
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
-     */
-    public static function submit_tags_form($questionid, $contextid, $formdata) {
-        global $DB, $CFG;
-
-        $data = [];
-        $result = ['status' => false];
-
-        // Parameter validation.
-        $params = self::validate_parameters(self::submit_tags_form_parameters(), [
-            'questionid' => $questionid,
-            'contextid' => $contextid,
-            'formdata' => $formdata
-        ]);
-
-        $editingcontext = \context::instance_by_id($contextid);
-        self::validate_context($editingcontext);
-        parse_str($params['formdata'], $data);
-
-        if (!$question = $DB->get_record_sql('
-                SELECT q.*, qc.contextid
-                FROM {question} q
-                JOIN {question_categories} qc ON qc.id = q.category
-                WHERE q.id = ?', [$questionid])) {
-            throw new \moodle_exception('questiondoesnotexist', 'question');
-        }
-
-        require_once($CFG->libdir . '/questionlib.php');
-
-        $cantag = question_has_capability_on($question, 'tag');
-        $questioncontext = \context::instance_by_id($question->contextid);
-        $contexts = new \core_question\local\bank\question_edit_contexts($editingcontext);
-
-        $formoptions = [
-            'editingcontext' => $editingcontext,
-            'questioncontext' => $questioncontext,
-            'contexts' => $contexts->all()
-        ];
-
-        $mform = new \qbank_tagquestion\form\tags_form(null, $formoptions, 'post', '', null, $cantag, $data);
-
-        if ($validateddata = $mform->get_data()) {
-            if ($cantag) {
-                if (isset($validateddata->tags)) {
-                    // Due to a mform bug, if there's no tags set on the tag element, it submits the name as the value.
-                    // The only way to discover is checking if the tag element is an array.
-                    $tags = is_array($validateddata->tags) ? $validateddata->tags : [];
-
-                    core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id,
-                        $questioncontext, $tags);
-
-                    $result['status'] = true;
-                }
-
-                if (isset($validateddata->coursetags)) {
-                    $coursetags = is_array($validateddata->coursetags) ? $validateddata->coursetags : [];
-                    core_tag_tag::set_item_tags('core_question', 'question', $validateddata->id,
-                        $editingcontext->get_course_context(false), $coursetags);
-
-                    $result['status'] = true;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value.
-     *
-     * @deprecated since Moodle 4.0
-     * @see \qbank_tagquestion\external\qbank_tagquestion_external
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
-     */
-    public static function  submit_tags_form_returns() {
-        return new external_single_structure([
-                'status' => new external_value(PARAM_BOOL, 'status: true if success')
-        ]);
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
-     */
-    public static function submit_tags_form_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters.
-     *
-     * @return external_function_parameters.
      */
     public static function get_random_question_summaries_parameters() {
         return new external_function_parameters([
@@ -307,8 +199,22 @@ class core_question_external extends external_api {
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
         // Only load the properties we require from the DB.
         $properties = \core_question\external\question_summary_exporter::get_mandatory_properties();
-        $questions = $loader->get_questions($categoryid, $includesubcategories, $tagids, $limit, $offset, $properties);
-        $totalcount = $loader->count_questions($categoryid, $includesubcategories, $tagids);
+
+        // Transform to filters.
+        $filters = [
+            'category' => [
+                'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                'values' => [$categoryid],
+                'filteroptions' => ['includesubcategories' => $includesubcategories],
+            ],
+            'qtagids' => [
+                'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
+                'values' => $tagids,
+            ],
+        ];
+
+        $questions = $loader->get_filtered_questions($filters, $limit, $offset, $properties);
+        $totalcount = $loader->count_filtered_questions($filters);
         $renderer = $PAGE->get_renderer('core');
 
         $formattedquestions = array_map(function($question) use ($context, $renderer) {
@@ -325,7 +231,7 @@ class core_question_external extends external_api {
     /**
      * Returns description of method result value.
      */
-    public static function  get_random_question_summaries_returns() {
+    public static function get_random_question_summaries_returns() {
         return new external_single_structure([
             'totalcount' => new external_value(PARAM_INT, 'total number of questions in result set'),
             'questions' => new external_multiple_structure(

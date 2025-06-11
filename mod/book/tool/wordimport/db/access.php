@@ -24,22 +24,22 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'booktool/wordimport:export' => array(
+$capabilities = [
+    'booktool/wordimport:export' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-        ),
-    ),
-    'booktool/wordimport:import' => array(
+        ],
+    ],
+    'booktool/wordimport:import' => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-        ),
-    ),
-);
+        ],
+    ],
+];

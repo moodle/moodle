@@ -44,7 +44,55 @@ class behat_mod_lti_generator extends behat_generator_base {
                 'singular' => 'tool type',
                 'datagenerator' => 'tool_types',
                 'required' => ['baseurl'],
+                'switchids' => ['lti_coursecategories' => 'lti_coursecategories']
+            ],
+            'course tools' => [
+                'singular' => 'course tool',
+                'datagenerator' => 'course_tool_types',
+                'required' => ['baseurl', 'course'],
+                'switchids' => ['course' => 'course']
+            ],
+            'tool instances' => [
+                'singular' => 'instance',
+                'datagenerator' => 'instance',
+                'required' => ['course', 'tool'],
+                'switchids' => ['course' => 'course', 'tool' => 'typeid']
             ],
         ];
+    }
+
+    /**
+     * Handles the switchid ['tool' => 'typeid'] for finding a tool by name.
+     *
+     * @param string $name the name of the tool.
+     * @return int the id of the tool type identified by the name $name.
+     */
+    protected function get_tool_id(string $name): int {
+        global $DB;
+
+        if (!$id = $DB->get_field('lti_types', 'id', ['name' => $name])) {
+            throw new coding_exception('The specified tool with name "' . $name . '" does not exist');
+        }
+        return (int) $id;
+    }
+
+    /**
+     * Handles the switchid ['lti_coursecategories' => 'lti_coursecategories'] for restricting a tool to certain categories.
+     *
+     * @param string $idnumbers a comma-separated string containing the course category id numbers, e.g. 'cata, catb, catc'.
+     * @return string a comma-separated string containing the course category ids.
+     * @throws coding_exception if one or more of the categories is unable to be matched by its idnumber.
+     */
+    protected function get_lti_coursecategories_id(string $idnumbers): string {
+        global $DB;
+        $categoryids = array_map('trim', explode(',', $idnumbers));
+
+        [$insql, $inparams] = $DB->get_in_or_equal($categoryids);
+        $ids = $DB->get_fieldset_sql("SELECT id FROM {course_categories} WHERE idnumber $insql", $inparams);
+        if (!$ids || count($ids) != count($categoryids)) {
+            throw new coding_exception("One or more course categories unable to be matched using idnumbers: $idnumbers");
+        }
+
+        return implode(',', $ids);
     }
 }

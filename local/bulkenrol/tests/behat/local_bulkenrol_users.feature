@@ -38,7 +38,7 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       student1@example.com
@@ -66,7 +66,7 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       student1@example.com
@@ -100,7 +100,7 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       student1@example.com
@@ -131,7 +131,7 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       student1@example.com
@@ -160,13 +160,13 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I press "Enrol me"
-    And I should see "Topic 1"
+    And I should see "New section"
     And I should not see "Enrol me in this course"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       student1@example.com
@@ -186,7 +186,7 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       student4@example.com
@@ -198,7 +198,7 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       foo
@@ -213,7 +213,7 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I select "Participants" from secondary navigation
-    And I select "User bulk enrolment" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
     And I set the field "List of e-mail addresses" to multiline:
       """
       student1@example.com

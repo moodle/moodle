@@ -15,20 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test factory for lib/outputfactories.php.
- *
- * @package   core
- * @category  phpunit
- * @copyright 2014 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputfactories.php');
-
-/**
  * This is renderer factory testing of the classname autoloading.
  *
  * @copyright 2014 Damyon Wiese
@@ -43,7 +29,7 @@ class test_output_factory extends renderer_factory_base {
      *
      */
     public function __construct() {
-        $this->prefixes = array('theme_child', 'theme_parent');
+        // Leave the construct empty to override the parent.
     }
 
     /**
@@ -93,6 +79,7 @@ class test_output_factory extends renderer_factory_base {
      * @return string[] of classnames
      */
     public function get_theme_overridden_renderer_factory_search_paths($component, $subtype = null, $target = null) {
+        $themeprefixes = ['theme_child', 'theme_parent'];
         $searchtargets = array();
         $classnames = $this->standard_renderer_classnames($component, $subtype);
 
@@ -102,7 +89,7 @@ class test_output_factory extends renderer_factory_base {
         // when loading the theme configs.
 
         // First try the renderers with correct suffix.
-        foreach ($this->prefixes as $prefix) {
+        foreach ($themeprefixes as $prefix) {
             foreach ($classnames as $classnamedetails) {
                 if ($classnamedetails['validwithprefix']) {
                     if ($classnamedetails['autoloaded']) {
@@ -122,7 +109,7 @@ class test_output_factory extends renderer_factory_base {
         }
 
         // Then try general renderer.
-        foreach ($this->prefixes as $prefix) {
+        foreach ($themeprefixes as $prefix) {
             foreach ($classnames as $classnamedetails) {
                 if ($classnamedetails['validwithprefix']) {
                     if ($classnamedetails['autoloaded']) {

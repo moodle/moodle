@@ -30,25 +30,32 @@ class helper {
      * Get the usage count for a question.
      *
      * @param \question_definition $question
+     * @param bool $specificversion Count usages just for this version of the question?
      * @return int
      */
-    public static function get_question_entry_usage_count($question) {
+    public static function get_question_entry_usage_count($question, bool $specificversion = false) {
         global $DB;
 
-        $sql = 'SELECT COUNT(*) FROM (' . self::question_usage_sql() . ') quizid';
+        $sql = 'SELECT COUNT(*) FROM (' . self::question_usage_sql($specificversion) . ') quizid';
 
-        return $DB->count_records_sql($sql, [$question->id, $question->questionbankentryid, 'mod_quiz', 'slot']);
+        $params = [$question->id, $question->questionbankentryid, 'mod_quiz', 'slot'];
+        if ($specificversion) {
+            $params[] = $question->id;
+        }
+
+        return $DB->count_records_sql($sql, $params);
     }
 
     /**
      * Get the sql for usage data.
      *
+     * @param bool $specificversion Count usages just for this version of the question?
      * @return string
      */
-    public static function question_usage_sql(): string {
-        $sqlset = "(". self::get_question_attempt_usage_sql() .")".
-                   "UNION".
-                   "(". self::get_question_bank_usage_sql() .")";
+    public static function question_usage_sql(bool $specificversion = false): string {
+        $sqlset = "(". self::get_question_attempt_usage_sql($specificversion) .")".
+            "UNION".
+            "(". self::get_question_bank_usage_sql($specificversion) .")";
         return $sqlset;
     }
 
@@ -94,9 +101,10 @@ class helper {
      * parameters in the correct order which are the question id, then
      * the component and finally the question area.
      *
+     * @param bool $specificversion Count usages just for this version of the question?
      * @return string
      */
-    public static function get_question_bank_usage_sql(): string {
+    public static function get_question_bank_usage_sql(bool $specificversion = false): string {
         $sql = "SELECT qz.id as quizid,
                        qz.name as modulename,
                        qz.course as courseid
@@ -108,6 +116,23 @@ class helper {
                  WHERE qv.questionbankentryid = ?
                    AND qr.component = ?
                    AND qr.questionarea = ?";
+
+        if ($specificversion) {
+            // Only get results where the reference matches the specific question ID that was requested,
+            // or the question ID that's requested is the latest version, and the reference is set to null (always latest version).
+            $sql .= " AND qv.questionid = ?
+                      AND (
+                          qv.version = qr.version
+                          OR (
+                              qr.version IS NULL
+                              AND qv.version = (
+                                  SELECT MAX(qv1.version)
+                                    FROM {question_versions} qv1
+                                   WHERE qv1.questionbankentryid = qbe.id
+                              )
+                          )
+                      )";
+        }
         return $sql;
     }
 
@@ -118,19 +143,29 @@ class helper {
      * called accompanying a $params array which includes the necessary
      * parameter, the question id.
      *
+     * @param bool $specificversion Count usages just for this version of the question?
      * @return string
      */
-    public static function get_question_attempt_usage_sql(): string {
+    public static function get_question_attempt_usage_sql(bool $specificversion = false): string {
         $sql = "SELECT qz.id as quizid,
                        qz.name as modulename,
                        qz.course as courseid
                   FROM {quiz} qz
                   JOIN {quiz_attempts} qa ON qa.quiz = qz.id
                   JOIN {question_usages} qu ON qu.id = qa.uniqueid
-                  JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
+                  JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id";
+        if ($specificversion) {
+            $sql .= "
                   JOIN {question} q ON q.id = qatt.questionid
                  WHERE qa.preview = 0
                    AND q.id = ?";
+        } else {
+            $sql .= "
+                  JOIN {question_versions} qv ON qv.questionid = qatt.questionid
+                  JOIN {question_versions} qv2 ON qv.questionbankentryid = qv2.questionbankentryid
+                 WHERE qa.preview = 0
+                   AND qv2.questionid = ?";
+        }
         return $sql;
     }
 

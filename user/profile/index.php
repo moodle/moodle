@@ -142,7 +142,7 @@ foreach ($categories as $category) {
                 'data-datatypename' => $fieldname]);
         $menu->add($action);
     }
-    $menu->attributes['class'] .= ' float-left mr-1';
+    $menu->attributes['class'] .= ' float-start me-1';
 
     // Add category information to the template.
     $outputcategories[] = [

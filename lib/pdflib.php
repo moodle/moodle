@@ -168,9 +168,9 @@ class pdf extends TCPDF {
 
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
 
-        // theses replace the tcpdf's config/lang/ definitions
+        // These values replace TCPDF's own config/lang definitions.
         $this->l['w_page']          = get_string('page');
-        $this->l['a_meta_language'] = current_language();
+        $this->l['a_meta_language'] = get_html_lang_attribute_value(current_language());
         $this->l['a_meta_charset']  = 'UTF-8';
         $this->l['a_meta_dir']      = get_string('thisdirection', 'langconfig');
     }
@@ -249,5 +249,33 @@ class pdf extends TCPDF {
         }
 
         return $families;
+    }
+
+    /**
+     * Get font list from config.
+     * @return array|string[]
+     */
+    public function get_export_fontlist(): array {
+        global $CFG;
+        $fontlist = [];
+        if (!empty($CFG->pdfexportfont)) {
+            if (is_array($CFG->pdfexportfont)) {
+                $fontlist = $CFG->pdfexportfont;
+            } else {
+                $fontlist[$CFG->pdfexportfont] = $CFG->pdfexportfont;
+            }
+        }
+        // Verify fonts.
+        $availablefonts = $this->get_font_families();
+        foreach ($fontlist as $key => $value) {
+            if (empty($availablefonts[$key])) {
+                unset($fontlist[$key]);
+            }
+        }
+        if (empty($fontlist)) {
+            // Default font if there is no value set in CFG.
+            $fontlist = ['freesans' => 'FreeSans'];
+        }
+        return $fontlist;
     }
 }

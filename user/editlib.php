@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/user/lib.php');
  */
 function cancel_email_update($userid) {
     unset_user_preference('newemail', $userid);
-    unset_user_preference('newemailkey', $userid);
     unset_user_preference('newemailattemptsleft', $userid);
+    delete_user_key('core_user/email_change', $userid);
 }
 
 /**
@@ -244,7 +244,7 @@ function useredit_update_interests($user, $interests) {
 /**
  * Powerful function that is used by edit and editadvanced to add common form elements/rules/etc.
  *
- * @param moodleform $mform
+ * @param MoodleQuickForm $mform
  * @param array $editoroptions
  * @param array $filemanageroptions
  * @param stdClass $user

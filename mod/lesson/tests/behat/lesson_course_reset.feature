@@ -25,20 +25,13 @@ Feature: Lesson reset
     And the following "activities" exist:
       | activity | name             | course | idnumber |
       | lesson   | Test lesson name | C1     | lesson1  |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title           | True/false question 1 |
-      | Page contents        | Cat is an amphibian |
-      | id_answer_editor_0   | False |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0          | Next page |
-      | id_answer_editor_1   | True |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1          | This page |
-    And I press "Save page"
+    And the following "mod_lesson > page" exist:
+      | lesson           | qtype     | title                 | content             |
+      | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer    | response | jumpto    | score |
+      | True/false question 1 | False     | Correct  | Next page | 1     |
+      | True/false question 1 | True      | Wrong    | This page | 0     |
 
   Scenario: Use course reset to clear all attempt data
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
@@ -53,7 +46,7 @@ Feature: Lesson reset
     And I should see "Sam1 Student1"
     And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
-        | Delete all lesson attempts | 1  |
+        | All lesson attempts | 1  |
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page
@@ -61,8 +54,8 @@ Feature: Lesson reset
     Then I should see "No attempts have been made on this lesson"
 
   @javascript
-  Scenario: Use course reset to remove user overrides.
-    When I am on the "Test lesson name" "lesson activity" page
+  Scenario: Use course reset to remove user overrides
+    When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
     And I follow "Add user override"
     And I set the following fields to these values:
@@ -71,16 +64,20 @@ Feature: Lesson reset
     And I press "Save"
     And I should see "Sam1 Student1"
     And I am on the "Course 1" "reset" page
+    And I press "Deselect all"
     And I set the following fields to these values:
-        | Delete all user overrides | 1  |
+        | All user overrides | 1  |
     And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
-  Scenario: Use course reset to remove group overrides.
-    When I navigate to "Overrides" in current page administration
+  @javascript
+  Scenario: Use course reset to remove group overrides
+    When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
     And I select "Group overrides" from the "jump" singleselect
     And I follow "Add group override"
     And I set the following fields to these values:
@@ -89,9 +86,11 @@ Feature: Lesson reset
     And I press "Save"
     And I should see "Group 1"
     And I am on the "Course 1" "reset" page
+    And I press "Deselect all"
     And I set the following fields to these values:
-        | Delete all group overrides | 1  |
+        | All group overrides | 1  |
     And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration

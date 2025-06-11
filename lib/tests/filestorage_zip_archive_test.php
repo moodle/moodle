@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/filestorage/zip_archive.php');
  * @copyright 2020 Université Rennes 2 {@link https://www.univ-rennes2.fr}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filestorage_zip_archive_test extends \advanced_testcase {
+final class filestorage_zip_archive_test extends \advanced_testcase {
     /**
      * Test mangle_pathname() method.
      *
@@ -40,11 +40,10 @@ class filestorage_zip_archive_test extends \advanced_testcase {
      * @param string $string   Parameter sent to mangle_pathname method.
      * @param string $expected Expected return value.
      */
-    public function test_mangle_pathname($string, $expected) {
+    public function test_mangle_pathname($string, $expected): void {
         $ziparchive = new zip_archive();
 
         $method = new \ReflectionMethod('zip_archive', 'mangle_pathname');
-        $method->setAccessible(true);
 
         $result = $method->invoke($ziparchive, $string);
         $this->assertSame($expected, $result);
@@ -55,7 +54,7 @@ class filestorage_zip_archive_test extends \advanced_testcase {
      *
      * @return array Array of tested pathnames and expected results.
      */
-    public function pathname_provider() {
+    public static function pathname_provider(): array {
         return [
             // Test a string.
             ['my file.pdf', 'my file.pdf'],

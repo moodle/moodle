@@ -29,12 +29,13 @@ use core_h5p\local\library\autoloader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_h5p\helper
  */
-class helper_test extends \advanced_testcase {
+final class helper_test extends \advanced_testcase {
 
     /**
      * Register the H5P autoloader
      */
     protected function setUp(): void {
+        parent::setUp();
         autoloader::register();
     }
 
@@ -77,7 +78,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function display_options_provider(): array {
+    public static function display_options_provider(): array {
         return [
             'All display options disabled' => [
                 false,
@@ -137,7 +138,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // This is a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
 
@@ -154,8 +155,8 @@ class helper_test extends \advanced_testcase {
         $errors = $factory->get_framework()->getMessages('error');
         $this->assertCount(1, $errors);
         $error = reset($errors);
-        $this->assertEquals('missing-required-library', $error->code);
-        $this->assertEquals('Missing required library H5P.GreetingCard 1.0', $error->message);
+        $this->assertEquals('missing-main-library', $error->code);
+        $this->assertEquals('Missing main library H5P.GreetingCard 1.0', $error->message);
     }
 
     /**
@@ -173,7 +174,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // This is a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
 
@@ -201,6 +202,55 @@ class helper_test extends \advanced_testcase {
     }
 
     /**
+     * Test the behaviour of save_h5p() when the H5P file contains metadata.
+     *
+     * @runInSeparateProcess
+     */
+    public function test_save_h5p_metadata(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $factory = new \core_h5p\factory();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // This is a valid .H5P file.
+        $path = self::get_fixture_path(__NAMESPACE__, 'guess-the-answer.h5p');
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+        $factory->get_framework()->set_file($file);
+
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 1,
+        ];
+        // The required libraries exist in the system before saving the .h5p file.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $lib = $generator->create_library_record('H5P.GuessTheAnswer', 'Guess the Answer', 1, 5);
+        $generator->create_library_record('H5P.Image', 'Image', 1, 1);
+        $generator->create_library_record('FontAwesome', 'Font Awesome', 4, 5);
+        $h5pid = helper::save_h5p($factory, $file, $config);
+        $this->assertNotEmpty($h5pid);
+
+        // No errors are raised.
+        $errors = $factory->get_framework()->getMessages('error');
+        $this->assertCount(0, $errors);
+
+        // And the content in the .h5p file has been saved as expected.
+        $h5p = $DB->get_record('h5p', ['id' => $h5pid]);
+        $this->assertEquals($lib->id, $h5p->mainlibraryid);
+        $this->assertEquals(helper::get_display_options($factory->get_core(), $config), $h5p->displayoptions);
+        $this->assertStringContainsString('Which fruit is this?', $h5p->jsoncontent);
+        // Metadata has been also saved.
+        $this->assertStringContainsString('This is licence extras information added for testing purposes.', $h5p->jsoncontent);
+        $this->assertStringContainsString('H5P Author', $h5p->jsoncontent);
+        $this->assertStringContainsString('Add metadata information', $h5p->jsoncontent);
+    }
+
+    /**
      * Test the behaviour of save_h5p() when the .h5p file is invalid.
      * @runInSeparateProcess
      */
@@ -213,7 +263,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // Prepare an invalid .H5P file.
-        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $path = self::get_fixture_path(__NAMESPACE__, 'h5ptest.zip');
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
         $config = (object)[
@@ -247,7 +297,7 @@ class helper_test extends \advanced_testcase {
         $admin = get_admin();
 
         // Prepare a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
 
         // Files created by users can't be deployed.
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
@@ -261,6 +311,16 @@ class helper_test extends \advanced_testcase {
         $factory->get_framework()->set_file($file);
         $candeploy = helper::can_deploy_package($file);
         $this->assertTrue($candeploy);
+
+        $usertobedeleted = $this->getDataGenerator()->create_user();
+        $this->setUser($usertobedeleted);
+        $file = helper::create_fake_stored_file_from_path($path, (int)$usertobedeleted->id);
+        $factory->get_framework()->set_file($file);
+        // Then we delete this user.
+        $this->setAdminUser();
+        delete_user($usertobedeleted);
+        $candeploy = helper::can_deploy_package($file);
+        $this->assertTrue($candeploy); // We can update as admin.
     }
 
     /**
@@ -275,7 +335,7 @@ class helper_test extends \advanced_testcase {
         $admin = get_admin();
 
         // Prepare a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, 'greeting-card.h5p');
 
         // Libraries can't be updated when the file has been created by users.
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
@@ -289,6 +349,16 @@ class helper_test extends \advanced_testcase {
         $factory->get_framework()->set_file($file);
         $candeploy = helper::can_update_library($file);
         $this->assertTrue($candeploy);
+
+        $usertobedeleted = $this->getDataGenerator()->create_user();
+        $this->setUser($usertobedeleted);
+        $file = helper::create_fake_stored_file_from_path($path, (int)$usertobedeleted->id);
+        $factory->get_framework()->set_file($file);
+        // Then we delete this user.
+        $this->setAdminUser();
+        delete_user($usertobedeleted);
+        $canupdate = helper::can_update_library($file);
+        $this->assertTrue($canupdate); // We can update as admin.
     }
 
     /**
@@ -315,7 +385,7 @@ class helper_test extends \advanced_testcase {
         $this->assertCount(2, $messages->info);
 
         // When saving an invalid .h5p file, 6 errors should be raised.
-        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $path = self::get_fixture_path(__NAMESPACE__, 'h5ptest.zip');
         $file = helper::create_fake_stored_file_from_path($path);
         $factory->get_framework()->set_file($file);
         $config = (object)[
@@ -398,7 +468,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function parse_js_array_provider(): array {
+    public static function parse_js_array_provider(): array {
         $lines = [
             "{",
             "  missingTranslation: '[Missing translation :key]',",

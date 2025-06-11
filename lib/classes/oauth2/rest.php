@@ -57,7 +57,7 @@ abstract class rest {
      * @return array Example:
      *  [ 'listFiles' => [ 'method' => 'get', 'args' => [ 'folder' => PARAM_STRING ], 'response'  => 'json' ] ]
      */
-    public abstract function get_api_functions();
+    abstract public function get_api_functions();
 
     /**
      * Call a function from the Api with a set of arguments and optional data.

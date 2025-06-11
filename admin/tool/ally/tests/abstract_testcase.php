@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+use coding_exception;
+use stdClass;
+use stored_file;
 use tool_ally\local;
 use tool_ally\local_content;
 use tool_ally\models\component;

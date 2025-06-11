@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../lib/db/inmemoryfindbyquery.php');
 require_once(__DIR__ . '/../lib/duplicateddata/assignsubmissionduplicateddatamerger.php');
 
-class tool_mergeusers_assign_submission_duplicated_testcase extends advanced_testcase {
+class assign_submission_duplicated_test extends advanced_testcase {
 
     /**
      * Should do nothing with new submission and remove old submission when old user has no content submission

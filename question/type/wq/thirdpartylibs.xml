@@ -3,7 +3,7 @@
     <library>
         <location>quizzes</location>
         <name>WirisQuizzes generic integration</name>
-        <version>4.11.2</version>
+        <version>4.13.0</version>
         <license>GPL</license>
         <licenseversion>3.0+</licenseversion>
     </library>

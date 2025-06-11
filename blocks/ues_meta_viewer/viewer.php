@@ -37,13 +37,13 @@ $supportedtypes = ues_meta_viewer::supported_types();
 $type = required_param('type', PARAM_TEXT);
 
 if (!isset($supportedtypes[$type])) {
-    print_error('unsupported_type', 'block_ues_meta_viewer', '', $type);
+    moodle_exception('unsupported_type', 'block_ues_meta_viewer', '', $type);
 }
 
 $supportedtype = $supportedtypes[$type];
 
 if (!$supportedtype->can_use()) {
-    print_error('unsupported_type', 'block_ues_meta_viewer', '', $type);
+    moodle_exception('unsupported_type', 'block_ues_meta_viewer', '', $type);
 }
 
 $class = $supportedtype->wrapped_class();

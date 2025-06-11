@@ -19,7 +19,7 @@ namespace MyCLabs\Enum;
  * @psalm-immutable
  * @psalm-consistent-constructor
  */
-abstract class Enum implements \JsonSerializable
+abstract class Enum implements \JsonSerializable, \Stringable
 {
     /**
      * Enum value

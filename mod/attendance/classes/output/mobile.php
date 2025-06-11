@@ -67,11 +67,11 @@ class mobile {
         $context = \context_module::instance($cm->id);
         require_capability('mod/attendance:view', $context);
 
-        $attendance    = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
-        $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+        $attendance    = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
+        $course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
         $config = get_config('attendance');
 
-        $data = array(); // Data to pass to renderer.
+        $data = []; // Data to pass to renderer.
         $data['cmid'] = $cmid;
         $data['courseid'] = $courseid;
         $data['attendance'] = $attendance;
@@ -90,7 +90,7 @@ class mobile {
         $pageparams->group = groups_get_activity_group($cm, true);
         $canseegroupsession = true;
         if (!empty($sessid) && (!empty($takenstatus) || $isteacher)) {
-            $session = $DB->get_record('attendance_sessions', array('id' => $sessid));
+            $session = $DB->get_record('attendance_sessions', ['id' => $sessid]);
             $pageparams->grouptype = $session->groupid;
             $pageparams->sessionid = $sessid;
 
@@ -130,11 +130,11 @@ class mobile {
         $timefrom = time() - $config->mobilesessionfrom;
         $timeto = time() + $config->mobilesessionto;
 
-        $data['sessions'] = array();
+        $data['sessions'] = [];
 
         $sessions = $DB->get_records_select('attendance_sessions',
             'attendanceid = ? AND sessdate > ? AND sessdate < ? ORDER BY sessdate',
-            array($attendance->id, $timefrom, $timeto));
+            [$attendance->id, $timefrom, $timeto]);
 
         if (!empty($sessions)) {
             $userdata = new user_data($att, $USER->id, true);
@@ -159,11 +159,12 @@ class mobile {
                 }
 
                 if ($isteacher || $canmark) {
-                    $html = array('time' => strip_tags(construct_session_full_date_time($sess->sessdate, $sess->duration)),
-                        'groupname' => '');
+                    $html = ['time' => strip_tags(construct_session_full_date_time($sess->sessdate, $sess->duration)),
+                        'groupname' => '', ];
                     if (!empty($sess->groupid)) {
+                        // phpcs:disable moodle.Commenting.TodoComment
                         // TODO In-efficient way to get group name - we should get all groups in one query.
-                        $html['groupname'] = $DB->get_field('groups', 'name', array('id' => $sess->groupid));
+                        $html['groupname'] = $DB->get_field('groups', 'name', ['id' => $sess->groupid]);
                     }
 
                     // Check if Status already recorded.
@@ -243,7 +244,7 @@ class mobile {
             }
         }
 
-        $summary = new \mod_attendance_summary($att->id, array($USER->id), $att->pageparams->startdate,
+        $summary = new \mod_attendance_summary($att->id, [$USER->id], $att->pageparams->startdate,
             $att->pageparams->enddate);
         $data['summary'] = $summary->get_all_sessions_summary_for($USER->id);
 
@@ -255,7 +256,7 @@ class mobile {
                 ],
             ],
             'javascript' => '',
-            'otherdata' => ''
+            'otherdata' => '',
         ];
     }
 
@@ -284,24 +285,24 @@ class mobile {
         $context = \context_module::instance($cm->id);
         require_capability('mod/attendance:view', $context);
 
-        $attendance    = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
-        $attforsession = $DB->get_record('attendance_sessions', array('id' => $sessid), '*', MUST_EXIST);
-        $course        = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+        $attendance    = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
+        $attforsession = $DB->get_record('attendance_sessions', ['id' => $sessid], '*', MUST_EXIST);
+        $course        = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
         $pageparams = new \mod_attendance_sessions_page_params();
         $pageparams->sessionid = $sessid;
         $att = new \mod_attendance_structure($attendance, $cm, $course, $context, $pageparams);
 
-        $data = array(); // Data to pass to renderer.
+        $data = []; // Data to pass to renderer.
         $data['attendance'] = $attendance;
         $data['cmid'] = $cmid;
         $data['courseid'] = $courseid;
         $data['sessid'] = $sessid;
-        $data['messages'] = array();
+        $data['messages'] = [];
         $data['showmessage'] = false;
         $data['showstatuses'] = true;
         $data['showpassword'] = false;
-        $data['statuses'] = array();
+        $data['statuses'] = [];
         $data['disabledduetotime'] = false;
 
         list($canmark, $reason) = attendance_can_student_mark($attforsession, false);
@@ -328,10 +329,10 @@ class mobile {
                 if (!empty($status->studentavailability) &&
                     time() > $attforsession->sessdate + ($status->studentavailability * 60)) {
                     unset($statuses[$status->id]);
-                    continue;
                     $data['disabledduetotime'] = true;
+                    continue;
                 }
-                $data['statuses'][] = array('stid' => $status->id, 'description' => $status->description);
+                $data['statuses'][] = ['stid' => $status->id, 'description' => $status->description];
             }
             if (empty($data['statuses'])) {
                 $data['messages'][]['string'] = 'attendance_no_status';
@@ -340,7 +341,7 @@ class mobile {
                 $data['showpassword'] = true;
                 if ($attforsession->autoassignstatus) {
                     // If this is an auto status - don't show the statuses, but show the form.
-                    $data['statuses'] = array();
+                    $data['statuses'] = [];
                 }
             }
         }
@@ -353,11 +354,11 @@ class mobile {
                 [
                     'id' => 'main',
                     'html' => $OUTPUT->render_from_template("mod_attendance/mobile_user_form_$versionname", $data),
-                    'cache-view' => false
+                    'cache-view' => false,
                 ],
             ],
             'javascript' => '',
-            'otherdata' => ''
+            'otherdata' => '',
         ];
     }
 
@@ -386,27 +387,27 @@ class mobile {
         $context = \context_module::instance($cm->id);
         require_capability('mod/attendance:takeattendances', $context);
 
-        $attendance    = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
-        $course        = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+        $attendance    = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
+        $course        = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
         $pageparams = new \mod_attendance_sessions_page_params();
         $pageparams->sessionid = $sessid;
         $att = new \mod_attendance_structure($attendance, $cm, $course, $context, $pageparams);
 
-        $data = array(); // Data to pass to renderer.
+        $data = []; // Data to pass to renderer.
         $data['attendance'] = $attendance;
         $data['cmid'] = $cmid;
         $data['courseid'] = $courseid;
         $data['sessid'] = $sessid;
-        $data['messages'] = array();
+        $data['messages'] = [];
         $data['showmessage'] = false;
-        $data['statuses'] = array();
+        $data['statuses'] = [];
         $data['btnargs'] = ''; // Stores list of userid status args that should be added to form post.
 
         $statuses = $att->get_statuses();
-        $otherdata = array();
+        $otherdata = [];
         $existinglog = $DB->get_records('attendance_log',
-            array('sessionid' => $sessid), '', 'studentid,statusid');
+            ['sessionid' => $sessid], '', 'studentid,statusid');
         foreach ($existinglog as $log) {
             if (!empty($log->statusid)) {
                 $otherdata['status'.$log->studentid] = $log->statusid;
@@ -414,18 +415,18 @@ class mobile {
         }
 
         foreach ($statuses as $status) {
-            $data['statuses'][] = array('stid' => $status->id, 'acronym' => $status->acronym,
-                'description' => $status->description);
+            $data['statuses'][] = ['stid' => $status->id, 'acronym' => $status->acronym,
+                'description' => $status->description, ];
         }
 
-        $data['users'] = array();
+        $data['users'] = [];
         $data['selectall'] = '';
         $users = $att->get_users($att->get_session_info($sessid)->groupid, 0);
         foreach ($users as $user) {
             $userpicture = new \user_picture($user);
             $userpicture->size = 1; // Size f1.
             $profileimageurl = $userpicture->get_url($PAGE)->out(false);
-            $data['users'][] = array('userid' => $user->id, 'fullname' => $user->fullname, 'profileimageurl' => $profileimageurl);
+            $data['users'][] = ['userid' => $user->id, 'fullname' => $user->fullname, 'profileimageurl' => $profileimageurl];
             // Generate args to use in submission button here.
             $data['btnargs'] .= ', status'. $user->id. ': CONTENT_OTHERDATA.status'. $user->id;
             // Really Hacky way to do a select-all. This really needs to be moved into a JS function within the app.
@@ -440,11 +441,11 @@ class mobile {
                 [
                     'id' => 'main',
                     'html' => $OUTPUT->render_from_template("mod_attendance/mobile_teacher_form_$versionname", $data),
-                    'cache-view' => false
+                    'cache-view' => false,
                 ],
             ],
             'javascript' => '',
-            'otherdata' => $otherdata
+            'otherdata' => $otherdata,
         ];
     }
 

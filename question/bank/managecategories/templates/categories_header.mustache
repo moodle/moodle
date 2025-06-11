@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/categories_header
+
+    Template for displaying category view.
+
+    Context variables required for this template:
+    * helpstringhead - String header accompanied with it help button.
+    * hascapability - Boolean, true if user has capability to add categories.
+    * checkbox - Checkbox displaying descriptions.
+    * contextid - Context id for js init.
+    * cmid - Course module id, if in a plugin.
+
+    Example context (json):
+    {
+        "helpstringhead": "<h2> Edit categories <a href='someurl'>...</a></h2>",
+        "hascapability": true,
+        "checkbox": "<form>...</form>",
+        "contextid": "18",
+        "cmid": "1234",
+        "courseid": "1234"
+    }
+}}
+<div class="row">
+    <div class="pl-3">
+        {{{helpstringhead}}}
+    </div>
+</div>
+<div class="row">
+    {{#hascapability}}
+        {{>qbank_managecategories/addcategory}}
+    {{/hascapability}}
+    {{#showdescriptions}}
+        {{>qbank_managecategories/showdescriptions}}
+    {{/showdescriptions}}
+</div>

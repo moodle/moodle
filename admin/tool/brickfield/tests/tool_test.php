@@ -27,10 +27,10 @@ use tool_brickfield\local\tool\tool;
  * @author     Jay Churchward (jay.churchward@poetopensource.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_test extends \advanced_testcase {
+final class tool_test extends \advanced_testcase {
 
     /** @var string base 64 image */
-    protected $base64img = <<<EOF
+    protected static string $base64img = <<<EOF
 <img src="data:image/gif;base64,R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH/
 8mJl+fn/9ZWb8/PzWlwv///6wWGbImAPgTEMImIN9gUFCEm/gDALULDN8PAD6atYdCTX9gUNKlj8wZAKUsAOzZz+UMAOsJAP/Z2ccMDA8PD/95eX5N
 WvsJCOVNQPtfX/8zM8+QePLl38MGBr8JCP+zs9myn/8GBqwpAP/GxgwJCPny78lzYLgjAJ8vAP9fX/+MjMUcAN8zM/9wcM8ZGcATEL+QePdZWf/29u
@@ -58,7 +58,7 @@ w==" alt="This is a bus." />';
 EOF;
 
 
-    public function test_build_all_accessibilitytools() {
+    public function test_build_all_accessibilitytools(): void {
         $tools = tool::build_all_accessibilitytools();
 
         $this->assertEquals($tools['errors']::toolshortname(), 'Error list');
@@ -68,14 +68,14 @@ EOF;
         $this->assertEquals($tools['advanced']::toolshortname(), 'Advanced');
     }
 
-    public function test_data_is_valid() {
+    public function test_data_is_valid(): void {
         $object = $this->getMockForAbstractClass(tool::class);
         $object->set_filter(new filter());
         $output = $object->data_is_valid();
         $this->assertFalse($output);
     }
 
-    public function test_can_access() {
+    public function test_can_access(): void {
         $this->resetAfterTest();
         $category = $this->getDataGenerator()->create_category();
         $filter = new filter(1, $category->id, 'tab', 3, 4);
@@ -86,14 +86,14 @@ EOF;
         $this->assertFalse($output);
     }
 
-    public function test_get_error_message() {
+    public function test_get_error_message(): void {
         $tool = $this->getMockForAbstractClass(tool::class);
 
         $output = $tool->get_error_message();
         $this->assertEquals($output, '');
     }
 
-    public function test_get_module_label() {
+    public function test_get_module_label(): void {
         $output = tool::get_module_label('core_course');
         $this->assertEquals($output, 'Course');
 
@@ -101,7 +101,7 @@ EOF;
         $this->assertEquals($output, 'Book');
     }
 
-    public function test_toplevel_arguments() {
+    public function test_toplevel_arguments(): void {
         $this->resetAfterTest();
         $category = $this->getDataGenerator()->create_category();
         $filter = new filter(1, $category->id, 'tab', 3, 4);
@@ -118,11 +118,11 @@ EOF;
      * Base64 image provider.
      * @return array
      */
-    public function base64_img_provider(): array {
+    public static function base64_img_provider(): array {
         $img = '<img src="myimage.jpg" />';
         return [
             'Image tag alone (base64)' => [
-                $this->base64img,
+                self::$base64img,
                 true,
             ],
             'Image tag alone (link)' => [
@@ -130,7 +130,7 @@ EOF;
                 false,
             ],
             'Image tag in string (base64)' => [
-                "This is my image {$this->base64img}.",
+                "This is my image " . self::$base64img,
                 true,
             ],
             'Image tag in string (link)' => [
@@ -154,15 +154,15 @@ EOF;
      * @param string $content
      * @param bool $expectation
      */
-    public function test_base64_img_detected(string $content, bool $expectation) {
+    public function test_base64_img_detected(string $content, bool $expectation): void {
         $this->assertEquals(
             $expectation,
             tool::base64_img_detected($content)
         );
     }
 
-    public function test_truncate_base64() {
-        $truncated = tool::truncate_base64($this->base64img);
+    public function test_truncate_base64(): void {
+        $truncated = tool::truncate_base64(self::$base64img);
         $this->assertStringContainsString('<img src="data:image/gif;base64..."', $truncated);
     }
 }

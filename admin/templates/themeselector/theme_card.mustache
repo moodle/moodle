@@ -1,0 +1,101 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/themeselector/theme_card
+
+    This template renders the singular card for a theme.
+
+    Example context (json):
+    {
+        "name": "Boost",
+        "choose": "boost",
+        "image": "http://moodlesite/theme/image.php?theme=boost&image=screenshot&component=theme",
+        "current": true,
+        "actionurl": "http://moodlesite/admin/themeselector.php",
+        "sesskey": "123XYZ",
+        "settingsurl": "http://moodlesite/admin/settings.php?section=themesettingboost",
+        "reporturl": "http://moodlesite/report/themeusage/index.php?themechoice=boost"
+    }
+}}
+<div class="card theme-card" role="listitem" id="theme-card-{{choose}}" aria-labelledby="theme-name-{{choose}} {{#current}}current-theme-{{choose}}{{/current}}">
+    <div class="card-img card-img-top" style='background-image: url("{{image}}");'></div>
+    <div class="card-body p-3">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <h3 class="h5" id="theme-name-{{choose}}">{{name}}</h3>
+            </div>
+            <div>
+                <button
+                    type="button"
+                    id="theme-preview-{{choose}}"
+                    class="btn btn-link p-0"
+                    title="{{#str}}previewthemename, moodle, {{name}}{{/str}}"
+                    data-action="preview"
+                    data-name="{{name}}"
+                    data-image="{{image}}"
+                    data-current="{{current}}"
+                    data-actionurl="{{actionurl}}"
+                    data-choose="{{choose}}"
+                    data-sesskey="{{sesskey}}">
+                    <i class="icon fa fa-info-circle m-0" aria-hidden="true"></i>
+                    <span class="sr-only">{{#str}}previewthemename, moodle, {{name}}{{/str}}</span>
+                </button>
+                {{#reporturl}}
+                    <a
+                        href="{{reporturl}}"
+                        id="theme-usage-report-{{choose}}"
+                        class="btn btn-link p-0 ms-2"
+                        title="{{#str}}themeusagereportname, admin, {{name}}{{/str}}">
+                        <i class="icon fa fa-area-chart m-0" aria-hidden="true"></i>
+                        <span class="sr-only">{{#str}}themeusagereportname, admin, {{name}}{{/str}}</span>
+                    </a>
+                {{/reporturl}}
+                {{#settingsurl}}
+                    <a
+                        href="{{settingsurl}}"
+                        id="theme-settings-{{choose}}"
+                        class="btn btn-link p-0 ms-2"
+                        title="{{#str}}themeeditsettingsname, admin, {{name}}{{/str}}">
+                        <i class="icon fa fa-cog m-0" aria-hidden="true"></i>
+                        <span class="sr-only">{{#str}}themeeditsettingsname, admin, {{name}}{{/str}}</span>
+                    </a>
+                {{/settingsurl}}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-end flex-column p-3">
+        {{#current}}
+            <strong><span class="text-success" id="current-theme-{{choose}}">{{#str}}currenttheme, moodle{{/str}}</span></strong>
+            {{#definedinconfig}}
+                <div class="alert alert-info p-1">{{#str}}configoverride, admin{{/str}}</div>
+            {{/definedinconfig}}
+        {{/current}}
+        {{^current}}
+            {{#actionurl}}
+                <form method="post" action="{{actionurl}}" id="theme-select-form-{{choose}}">
+                    <input type="hidden" name="sesskey" value="{{sesskey}}">
+                    <input type="hidden" name="choose" value="{{choose}}">
+                    <button type="submit" class="btn btn-primary">
+                        <span aria-hidden="true">{{#str}}selecttheme, moodle{{/str}}</span>
+                        <span class="sr-only">{{#str}}selectthemename, moodle, {{name}}{{/str}}</span>
+                    </button>
+                </form>
+            {{/actionurl}}
+        {{/current}}
+    </div>
+</div>
+

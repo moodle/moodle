@@ -187,7 +187,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_connection_exception if error
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, ?array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
             // Enforce prefixes for everybody but mysql.
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
@@ -680,9 +680,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool
      */
     private function free_result($resource) {
-        if (!is_bool($resource)) { // true/false resources cannot be freed
+        if (!is_bool($resource) && is_resource($resource)) {
+            // We need to make sure that the statement resource is in the correct type before freeing it.
             return sqlsrv_free_stmt($resource);
         }
+        return false;
     }
 
     /**
@@ -770,7 +772,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Prepare the array of params for native binding
      */
-    protected function build_native_bound_params(array $params = null) {
+    protected function build_native_bound_params(?array $params = null) {
 
         return null;
     }
@@ -779,7 +781,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * Workaround for SQL*Server Native driver similar to MSSQL driver for
      * consistent behavior.
      */
-    protected function emulate_bound_params($sql, array $params = null) {
+    protected function emulate_bound_params($sql, ?array $params = null) {
 
         if (empty($params)) {
             return $sql;
@@ -820,7 +822,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function execute($sql, array $params = null) {
+    public function execute($sql, ?array $params = null) {
         if (strpos($sql, ';') !== false) {
             throw new coding_exception('moodle_database::execute() Multiple sql statements found or bound parameters not used properly in query!');
         }
@@ -869,7 +871,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return moodle_recordset instance
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+    public function get_recordset_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
 
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
         $needscrollable = (bool)$limitfrom; // To determine if we'll need to perform scroll to $limitfrom.
@@ -978,7 +980,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return array of objects, or empty array if no records were found
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_records_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+    public function get_records_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
 
         $rs = $this->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
 
@@ -1007,7 +1009,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return array of values
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_fieldset_sql($sql, array $params = null) {
+    public function get_fieldset_sql($sql, ?array $params = null) {
 
         $rs = $this->get_recordset_sql($sql, $params);
 
@@ -1189,7 +1191,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param mixed $params data record as object or array
+     * @param stdClass|array $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1231,7 +1233,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * specify the record to update
      *
      * @param string $table The database table to be checked against.
-     * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+     * @param stdClass|array $dataobject An object with contents equal to fieldname=>fieldvalue.
+     *        Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1264,7 +1267,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params = null) {
+    public function set_field_select($table, $newfield, $newvalue, $select, ?array $params = null) {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -1304,7 +1307,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records_select($table, $select, array $params = null) {
+    public function delete_records_select($table, $select, ?array $params = null) {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -1446,9 +1449,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return $text;
     }
 
-    public function sql_concat() {
-        $arr = func_get_args();
-
+    public function sql_concat(...$arr) {
         foreach ($arr as $key => $ele) {
             $arr[$key] = $this->sql_cast_to_char($ele);
         }

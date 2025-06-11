@@ -24,6 +24,9 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'OpenID Connect';
 $string['auth_oidcdescription'] = 'OpenID Connect -lisäosa mahdollistaa kertakirjautumisen käyttämällä määritettävissä olevaa identiteetintarjoajaa.';
 $string['cfg_authendpoint_key'] = 'Todennuksen päätepiste';
@@ -125,3 +128,6 @@ $string['ucp_status_disabled'] = 'Ei käytössä';
 $string['ucp_disconnect_title'] = '{$a} -yhteyden katkaisu';
 $string['ucp_disconnect_details'] = 'Tämä katkaisee Moodle-tilin yhteyden kohteesta {$a}. Tarvitset käyttäjänimen ja salasanan, jotta voit kirjautua Moodleen.';
 $string['ucp_title'] = '{$a} -hallinta';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

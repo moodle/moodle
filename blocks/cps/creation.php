@@ -28,11 +28,11 @@ require_once('creation_form.php');
 require_login();
 
 if (!cps_creation::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_creation::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_creation::name());
 }
 
 if (!ues_user::is_teacher()) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $teacher = ues_teacher::get(array('userid' => $USER->id));
@@ -50,7 +50,7 @@ foreach ($all as $sec) {
 
 
 if (empty($sections)) {
-    print_error('no_section', 'block_cps');
+    moodle_exception('no_section', 'block_cps');
 }
 
 $s = ues::gen_str('block_cps');

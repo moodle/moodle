@@ -25,9 +25,9 @@
             "displayvalue" : "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Activity example</span></a>"
         },
         "hasname": "true",
-        "afterlink": "<span class=\"badge badge-primary\">30 unread messages</span>",
+        "afterlink": "<span class=\"badge bg-primary\">30 unread messages</span>",
         "hasextras": true,
-        "extras": ["<span class=\"badge badge-secondary\">[extras]</span>"],
+        "extras": ["<span class=\"badge bg-secondary\">[extras]</span>"],
         "activityinfo": {
             "hasmodavailability": true,
             "activityname": "Activity example",
@@ -57,9 +57,21 @@
         "indent": 1
     }
 }}
-<div class="activity-item {{#modstealth}}hiddenactivity{{/modstealth}}{{!
+{{#editing}}
+    {{< core_courseformat/local/content/divider}}
+        {{$content}}
+            {{#activitychooserbutton}}{{> core_course/activitychooserbutton}}{{/activitychooserbutton}}
+        {{/content}}
+    {{/ core_courseformat/local/content/divider}}
+{{/editing}}
+<div class="activity-item focus-control {{#modstealth}}hiddenactivity{{/modstealth}}{{!
         }}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}{{!
-        }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}">
+        }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}" data-region="activity-card">
+    {{#cmbulk}}
+        {{$ core_courseformat/local/content/cm/bulkselect }}
+            {{> core_courseformat/local/content/cm/bulkselect }}
+        {{/ core_courseformat/local/content/cm/bulkselect }}
+    {{/cmbulk}}
     {{!
       Place the actual content of the activity-item in a separate template to make it easier for other formats to add
       additional content to the activity wrapper.

@@ -310,7 +310,7 @@ EOF;
      * @BeforeScenario @~javascript
      * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
      */
-    public function before_goutte_scenarios(BeforeScenarioScope $scope) {
+    public function before_browserkit_scenarios(BeforeScenarioScope $scope) {
         if ($this->running_javascript()) {
             // A bug in the BeforeScenario filtering prevents the @~javascript filter on this hook from working
             // properly.
@@ -546,7 +546,7 @@ EOF;
      *
      * @return array Array where key is tag name and value is an integer
      */
-    public static function get_tags_for_scenario() : array {
+    public static function get_tags_for_scenario(): array {
         return self::$scenariotags;
     }
 
@@ -702,7 +702,7 @@ EOF;
      * @param AfterStepScope $scope scope passed by event after step.
      */
     protected function take_screenshot(AfterStepScope $scope) {
-        // Goutte can't save screenshots.
+        // BrowserKit can't save screenshots.
         if (!$this->running_javascript()) {
             return false;
         }

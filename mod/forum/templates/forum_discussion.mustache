@@ -30,7 +30,7 @@
         "html": {
             "hasanyactions": true,
             "posts": "<article id='p33' class='forum-post-container mb-2' data-post-id='33'></article>",
-            "modeselectorform": "<div class='singleselect d-inline-block'> <form method='get' action='http://localhost/m/pg_stable_master/mod/forum/discuss.php' class='form-inline' id='mode'></div>",
+            "modeselectorform": "<div class='singleselect d-inline-block'> <form method='get' action='http://localhost/m/pg_stable_master/mod/forum/discuss.php' class='d-flex flex-wrap' id='mode'></div>",
             "subscribe": null,
             "movediscussion": null,
             "pindiscussion": null,
@@ -47,10 +47,10 @@
 
     <div class="d-flex flex-column flex-sm-row mb-1">
         <div>{{{exportdiscussion}}}</div>
-        <div class="{{#exportdiscussion}}ml-2{{/exportdiscussion}}">{{{modeselectorform}}}</div>
-        <div class="ml-2">{{{movediscussion}}}</div>
+        <div class="{{#exportdiscussion}}ms-2{{/exportdiscussion}}">{{{modeselectorform}}}</div>
+        <div class="ms-2">{{{movediscussion}}}</div>
         {{#hasanyactions}}
-            <div class="drop-down ml-auto" data-container="discussion-tools">
+            <div class="drop-down ms-auto" data-container="discussion-tools">
                 {{> mod_forum/forum_action_menu}}
             </div>
         {{/hasanyactions}}

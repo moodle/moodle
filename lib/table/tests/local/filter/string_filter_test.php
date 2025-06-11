@@ -38,7 +38,7 @@ use TypeError;
  * @copyright 2020 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class string_filter_test extends advanced_testcase {
+final class string_filter_test extends advanced_testcase {
     /**
      * Ensure that the add_filter_value function works as expected with valid values.
      */
@@ -91,7 +91,7 @@ class string_filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function add_filter_value_invalid_types_provider(): array {
+    public static function add_filter_value_invalid_types_provider(): array {
         return [
             'Null' => [null, 'NULL'],
             '1' => [1, 'integer'],

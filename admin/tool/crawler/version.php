@@ -27,10 +27,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2024031401;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->release   = 2024031401;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2025020401;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->release   = 2025020401;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2016021800;        // Requires this Moodle version.
-$plugin->supported = [34, 401];
+$plugin->supported = [34, 405];
 $plugin->component = 'tool_crawler'; // To check on upgrade, that module sits in correct place.
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->dependencies = array(

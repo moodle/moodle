@@ -4,7 +4,7 @@
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
+ * @copyright Copyright (c) 2023 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -46,9 +46,8 @@ class PdfStream extends PdfType
 
         // Find the first "newline"
         while (($firstByte = $reader->getByte($offset)) !== false) {
-            if ($firstByte !== "\n" && $firstByte !== "\r") {
-                $offset++;
-            } else {
+            $offset++;
+            if ($firstByte === "\n" || $firstByte === "\r") {
                 break;
             }
         }
@@ -60,11 +59,7 @@ class PdfStream extends PdfType
             );
         }
 
-        $sndByte = $reader->getByte($offset + 1);
-        if ($firstByte === "\n" || $firstByte === "\r") {
-            $offset++;
-        }
-
+        $sndByte = $reader->getByte($offset);
         if ($sndByte === "\n" && $firstByte !== "\n") {
             $offset++;
         }
@@ -218,6 +213,28 @@ class PdfStream extends PdfType
     }
 
     /**
+     * Get all filters defined for this stream.
+     *
+     * @return PdfType[]
+     * @throws PdfTypeException
+     */
+    public function getFilters()
+    {
+        $filters = PdfDictionary::get($this->value, 'Filter');
+        if ($filters instanceof PdfNull) {
+            return [];
+        }
+
+        if ($filters instanceof PdfArray) {
+            $filters = $filters->value;
+        } else {
+            $filters = [$filters];
+        }
+
+        return $filters;
+    }
+
+    /**
      * Get the unfiltered stream data.
      *
      * @return string
@@ -227,15 +244,9 @@ class PdfStream extends PdfType
     public function getUnfilteredStream()
     {
         $stream = $this->getStream();
-        $filters = PdfDictionary::get($this->value, 'Filter');
-        if ($filters instanceof PdfNull) {
+        $filters = $this->getFilters();
+        if ($filters === []) {
             return $stream;
-        }
-
-        if ($filters instanceof PdfArray) {
-            $filters = $filters->value;
-        } else {
-            $filters = [$filters];
         }
 
         $decodeParams = PdfDictionary::get($this->value, 'DecodeParms');
@@ -312,6 +323,21 @@ class PdfStream extends PdfType
                     $filterObject = new AsciiHex();
                     $stream = $filterObject->decode($stream);
                     break;
+
+                case 'Crypt':
+                    if (!$decodeParam instanceof PdfDictionary) {
+                        break;
+                    }
+                    // Filter is "Identity"
+                    $name = PdfDictionary::get($decodeParam, 'Name');
+                    if (!$name instanceof PdfName || $name->value !== 'Identity') {
+                        break;
+                    }
+
+                    throw new FilterException(
+                        'Support for Crypt filters other than "Identity" is not implemented.',
+                        FilterException::UNSUPPORTED_FILTER
+                    );
 
                 default:
                     throw new FilterException(

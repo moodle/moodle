@@ -40,6 +40,8 @@ class assign_grading_table extends table_sql implements renderable {
     private $assignment = null;
     /** @var int $perpage */
     private $perpage = 10;
+    /** @var int[] $pagingoptions Available pagination options */
+    private $pagingoptions = [10, 20, 50, 100];
     /** @var int $rownum (global index of current row in table) */
     private $rownum = -1;
     /** @var renderer_base for getting output */
@@ -58,12 +60,12 @@ class assign_grading_table extends table_sql implements renderable {
     private $groupsubmissions = array();
     /** @var array $submissiongroups - A static cache of submission groups */
     private $submissiongroups = array();
-    /** @var string $plugingradingbatchoperations - List of plugin supported batch operations */
-    public $plugingradingbatchoperations = array();
     /** @var array $plugincache - A cache of plugin lookups to match a column name to a plugin efficiently */
     private $plugincache = array();
     /** @var array $scale - A list of the keys and descriptions for the custom scale */
     private $scale = null;
+    /** @var bool true if the user has this capability. Otherwise false. */
+    private $hasviewblind;
 
     /**
      * overridden constructor keeps a reference to the assignment class that is displaying this table
@@ -86,6 +88,7 @@ class assign_grading_table extends table_sql implements renderable {
         parent::__construct('mod_assign_grading-' . $assignment->get_context()->id);
 
         $this->is_persistent(true);
+        $this->set_attribute('id', 'submissions');
         $this->assignment = $assignment;
 
         // Check permissions up front.
@@ -97,16 +100,6 @@ class assign_grading_table extends table_sql implements renderable {
         $this->hasviewblind = has_capability('mod/assign:viewblinddetails',
                 $this->assignment->get_context());
 
-        foreach ($assignment->get_feedback_plugins() as $plugin) {
-            if ($plugin->is_visible() && $plugin->is_enabled()) {
-                foreach ($plugin->get_grading_batch_operations() as $action => $description) {
-                    if (empty($this->plugingradingbatchoperations)) {
-                        $this->plugingradingbatchoperations[$plugin->get_type()] = array();
-                    }
-                    $this->plugingradingbatchoperations[$plugin->get_type()][$action] = $description;
-                }
-            }
-        }
         $this->perpage = $perpage;
         $this->quickgrading = $quickgrading && $this->hasgrade;
         $this->output = $PAGE->get_renderer('mod_assign');
@@ -122,6 +115,12 @@ class assign_grading_table extends table_sql implements renderable {
             $this->rownum = $rowoffset - 1;
         }
 
+        $userid = optional_param('userid', null, PARAM_INT);
+        $groupid = groups_get_course_group($assignment->get_course(), true);
+        // If the user ID is set, it indicates that a user has been selected. In this case, override the user search
+        // string with the full name of the selected user.
+        $usersearch = $userid ? fullname(\core_user::get_user($userid)) : optional_param('search', '', PARAM_NOTAGS);
+        $assignment->set_usersearch($userid, $groupid, $usersearch);
         $users = array_keys( $assignment->list_participants($currentgroup, true));
         if (count($users) == 0) {
             // Insert a record that will never match to the sql is still valid.
@@ -384,12 +383,8 @@ class assign_grading_table extends table_sql implements renderable {
                     <input type="checkbox" id="selectall" name="selectall" title="' . get_string('selectall') . '"/></div>';
         }
 
-        // User picture.
         if ($this->hasviewblind || !$this->assignment->is_blind_marking()) {
-            if (!$this->is_downloading()) {
-                $columns[] = 'picture';
-                $headers[] = get_string('pictureofuser');
-            } else {
+            if ($this->is_downloading()) {
                 $columns[] = 'recordid';
                 $headers[] = get_string('recordid', 'assign');
             }
@@ -397,7 +392,6 @@ class assign_grading_table extends table_sql implements renderable {
             // Fullname.
             $columns[] = 'fullname';
             $headers[] = get_string('fullname');
-
             // Participant # details if can view real identities.
             if ($this->assignment->is_blind_marking()) {
                 if (!$this->is_downloading()) {
@@ -469,11 +463,6 @@ class assign_grading_table extends table_sql implements renderable {
             // Add a column to show if this grade can be changed.
             $columns[] = 'gradecanbechanged';
             $headers[] = get_string('gradecanbechanged', 'assign');
-        }
-        if (!$this->is_downloading() && $this->hasgrade) {
-            // We have to call this column userid so we can use userid as a default sortable column.
-            $columns[] = 'userid';
-            $headers[] = get_string('edit');
         }
 
         // Submission plugins.
@@ -547,6 +536,9 @@ class assign_grading_table extends table_sql implements renderable {
         // Set the columns.
         $this->define_columns($columns);
         $this->define_headers($headers);
+        $this->column_class('fullname', 'username');
+        $this->column_class('status', 'status');
+        $this->column_class('grade', 'grade');
         foreach ($extrauserfields as $extrafield) {
              $this->column_class($extrafield, $extrafield);
         }
@@ -648,15 +640,20 @@ class assign_grading_table extends table_sql implements renderable {
         if ($this->quickgrading && !$gradingdisabled) {
             $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
             $name = 'quickgrade_' . $row->id . '_workflowstate';
-            $o .= html_writer::select($workflowstates, $name, $workflowstate, array('' => $notmarked));
-            // Check if this user is a marker that can't manage allocations and doesn't have the marker column added.
-            if ($this->assignment->get_instance()->markingworkflow &&
-                $this->assignment->get_instance()->markingallocation &&
-                !has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
+            if ($workflowstate !== ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED && !array_key_exists($workflowstate, $workflowstates)) {
+                $allworkflowstates = $this->assignment->get_all_marking_workflow_states();
+                $o .= html_writer::div($allworkflowstates[$workflowstate]);
+            } else {
+                $o .= html_writer::select($workflowstates, $name, $workflowstate, ['' => $notmarked]);
+                // Check if this user is a marker that can't manage allocations and doesn't have the marker column added.
+                if ($this->assignment->get_instance()->markingworkflow &&
+                    $this->assignment->get_instance()->markingallocation &&
+                    !has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
 
-                $name = 'quickgrade_' . $row->id . '_allocatedmarker';
-                $o .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $name,
-                        'value' => $row->allocatedmarker));
+                    $name = 'quickgrade_' . $row->id . '_allocatedmarker';
+                    $o .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => $name,
+                            'value' => $row->allocatedmarker]);
+                }
             }
         } else {
             $o .= $this->output->container(get_string('markingworkflowstate' . $workflowstate, 'assign'), $workflowstate);
@@ -875,8 +872,16 @@ class assign_grading_table extends table_sql implements renderable {
      *
      * @param stdClass $row
      * @return string
+     * @deprecated since Moodle 4.5
+     * @todo Final deprecation in Moodle 6.0. See MDL-82336.
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.5',
+        reason: 'Picture column is merged with fullname column'
+    )]
     public function col_picture(stdClass $row) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         return $this->output->user_picture($row);
     }
 
@@ -889,8 +894,8 @@ class assign_grading_table extends table_sql implements renderable {
     public function col_fullname($row) {
         if (!$this->is_downloading()) {
             $courseid = $this->assignment->get_course()->id;
-            $link = new moodle_url('/user/view.php', array('id' => $row->id, 'course' => $courseid));
-            $fullname = $this->output->action_link($link, $this->assignment->fullname($row));
+            $fullname = $this->output->render(\core_user::get_profile_picture($row, null,
+                ['courseid' => $courseid, 'includefullname' => true]));
         } else {
             $fullname = $this->assignment->fullname($row);
         }
@@ -914,6 +919,7 @@ class assign_grading_table extends table_sql implements renderable {
         $selectcol .= get_string('selectuser', 'assign', $this->assignment->fullname($row));
         $selectcol .= '</label>';
         $selectcol .= '<input type="checkbox"
+                              class="ignoredirty"
                               id="selectuser_' . $row->userid . '"
                               name="selectedusers"
                               value="' . $row->userid . '"/>';
@@ -975,18 +981,16 @@ class assign_grading_table extends table_sql implements renderable {
      * @param stdClass $row
      * @return string
      */
-    public function col_grade(stdClass $row) {
-        $o = '';
-
-        $link = '';
-        $separator = $this->output->spacer(array(), true);
-        $grade = '';
+    public function col_grade(stdClass $row): string {
         $gradingdisabled = $this->assignment->grading_disabled($row->id, true, $this->gradinginfo);
+        $displaygrade = $this->display_grade($row->grade, $this->quickgrading && !$gradingdisabled, $row->userid, $row->timemarked);
 
         if (!$this->is_downloading() && $this->hasgrade) {
-            $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                               'rownum' => 0,
-                               'action' => 'grader');
+            $urlparams = [
+                'id' => $this->assignment->get_course_module()->id,
+                'rownum' => 0,
+                'action' => 'grader',
+            ];
 
             if ($this->assignment->is_blind_marking()) {
                 if (empty($row->recordid)) {
@@ -996,18 +1000,28 @@ class assign_grading_table extends table_sql implements renderable {
             } else {
                 $urlparams['userid'] = $row->userid;
             }
-
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
-            $link = '<a href="' . $url . '" class="btn btn-primary">' . get_string('gradeverb') . '</a>';
-            $grade .= $link . $separator;
+
+            // The container with the grade information.
+            $gradecontainer = $this->output->container($displaygrade, 'w-100');
+
+            $menu = new action_menu();
+            $menu->set_owner_selector('.gradingtable-actionmenu');
+            $menu->set_boundary('window');
+            $menu->set_kebab_trigger(get_string('gradeactions', 'assign'));
+            $menu->set_additional_classes('ps-2 ms-auto');
+            // Prioritise the menu ahead of all other actions.
+            $menu->prioritise = true;
+            // Add the 'Grade' action item to the contextual menu.
+            $menu->add(new action_menu_link_secondary($url, null, get_string('gradeverb')));
+            // The contextual menu container.
+            $contextualmenucontainer = $this->output->container($this->output->render($menu), 'd-flex');
+
+            return $this->output->container($gradecontainer . $contextualmenucontainer, ['class' => 'd-flex']);
         }
-
-        $grade .= $this->display_grade($row->grade,
-                                       $this->quickgrading && !$gradingdisabled,
-                                       $row->userid,
-                                       $row->timemarked);
-
-        return $grade;
+        // The table data is being downloaded, or the user cannot grade; therefore, only the formatted grade for display
+        // is returned.
+        return $displaygrade;
     }
 
     /**
@@ -1075,6 +1089,8 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_status(stdClass $row) {
+        global $USER;
+
         $o = '';
 
         $instance = $this->assignment->get_instance($row->userid);
@@ -1112,56 +1128,162 @@ class assign_grading_table extends table_sql implements renderable {
             $displaystatus = '';
         }
 
+        // Generate the output for the submission contextual (action) menu.
+        $actionmenu = '';
+        if (!$this->is_downloading() && $this->hasgrade) {
+
+            $submissionsopen = $this->assignment->submissions_open(
+                userid: $row->id,
+                skipenrolled: true,
+                submission: $submission ? $submission : $row,
+                flags: $row,
+                gradinginfo: $this->gradinginfo
+            );
+            $caneditsubmission = $this->assignment->can_edit_submission($row->id, $USER->id);
+
+            $baseactionurl = new moodle_url('/mod/assign/view.php', [
+                'id' => $this->assignment->get_course_module()->id,
+                'userid' => $row->id,
+                'sesskey' => sesskey(),
+                'page' => $this->currpage,
+            ]);
+
+            $menu = new action_menu();
+            $menu->set_owner_selector('.gradingtable-actionmenu');
+            $menu->set_boundary('window');
+            $menu->set_kebab_trigger(get_string('submissionactions', 'assign'));
+            $menu->set_additional_classes('ps-2 ms-auto');
+            // Prioritise the menu ahead of all other actions.
+            $menu->prioritise = true;
+
+            // Hide for offline assignments.
+            if ($this->assignment->is_any_submission_plugin_enabled()) {
+
+                if ($submissionsopen && $USER->id != $row->id && $caneditsubmission) {
+                    // Edit submission action link.
+                    $baseactionurl->param('action', 'editsubmission');
+                    $description = get_string('editsubmission', 'assign');
+                    $menu->add(new action_menu_link_secondary($baseactionurl, null, $description));
+                }
+
+                if (!$row->status || $row->status == ASSIGN_SUBMISSION_STATUS_DRAFT
+                        || !$this->assignment->get_instance()->submissiondrafts) {
+                    // Allow/prevent submission changes action link.
+                    $baseactionurl->param('action', $row->locked ? 'unlock' : 'lock');
+                    $description = $row->locked ? get_string('allowsubmissionsshort', 'assign') :
+                        get_string('preventsubmissionsshort', 'assign');
+                    $menu->add(new action_menu_link_secondary($baseactionurl, null, $description));
+                }
+            }
+
+            if (($this->assignment->get_instance()->duedate || $this->assignment->get_instance()->cutoffdate) &&
+                    $this->hasgrantextension) {
+                // Grant extension action link.
+                $baseactionurl->param('action', 'grantextension');
+                $description = get_string('grantextension', 'assign');
+                $menu->add(new action_menu_link_secondary($baseactionurl, null, $description));
+            }
+
+            if ($row->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED &&
+                    $this->assignment->get_instance()->submissiondrafts) {
+                // Revert submission to draft action link.
+                $baseactionurl->param('action', 'reverttodraft');
+                $description = get_string('reverttodraftshort', 'assign');
+                $menu->add(new action_menu_link_secondary($baseactionurl, null, $description));
+            }
+
+            if ($row->status == ASSIGN_SUBMISSION_STATUS_DRAFT && $this->assignment->get_instance()->submissiondrafts &&
+                    $caneditsubmission && $submissionsopen && $row->id != $USER->id) {
+                // Submit for grading action link.
+                $baseactionurl->param('action', 'submitotherforgrading');
+                $description = get_string('submitforgrading', 'assign');
+                $menu->add(new action_menu_link_secondary($baseactionurl, null, $description));
+            }
+
+            $ismanual = $this->assignment->get_instance()->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL;
+            $hassubmission = !empty($row->status);
+            $notreopened = $hassubmission && $row->status != ASSIGN_SUBMISSION_STATUS_REOPENED;
+            $isunlimited = $this->assignment->get_instance()->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS;
+            $hasattempts = $isunlimited || $row->attemptnumber < $this->assignment->get_instance()->maxattempts - 1;
+
+            if ($ismanual && $hassubmission && $notreopened && $hasattempts) {
+                // Allow another attempt action link.
+                $baseactionurl->param('action', 'addattempt');
+                $description = get_string('addattempt', 'assign');
+                $menu->add(new action_menu_link_secondary($baseactionurl, null, $description));
+            }
+
+            if ($this->assignment->is_any_submission_plugin_enabled()) {
+                if ($USER->id != $row->id && $caneditsubmission && !empty($row->status)) {
+                    // Remove submission action link. This action link should be always placed as the last item
+                    // within the contextual menu.
+                    $baseactionurl->param('action', 'removesubmissionconfirm');
+                    $description = get_string('removesubmission', 'assign');
+                    $menu->add(new action_menu_link_secondary($baseactionurl, null, $description,
+                        ['class' => 'text-danger']));
+                }
+            }
+
+            $actionmenu = $this->output->render($menu);
+        }
+
+        $actionmenucontainer = $this->output->container($actionmenu, 'd-flex');
+
+        // Generate the output for the submission information.
+        $submissioninfo = '';
         if ($this->assignment->is_any_submission_plugin_enabled()) {
 
-            $o .= $this->output->container(get_string('submissionstatus_' . $displaystatus, 'assign'),
-                                           array('class' => 'submissionstatus' .$displaystatus));
+            $submissioninfo .= $this->output->container(get_string('submissionstatus_' . $displaystatus, 'assign'),
+                ['class' => 'submissionstatus' . $displaystatus]);
+
             if ($due && $timesubmitted > $due && $status != ASSIGN_SUBMISSION_STATUS_NEW) {
                 $usertime = format_time($timesubmitted - $due);
                 $latemessage = get_string('submittedlateshort',
                                           'assign',
                                           $usertime);
-                $o .= $this->output->container($latemessage, 'latesubmission');
+                $submissioninfo .= $this->output->container($latemessage, 'latesubmission');
             } else if ($timelimitenabled && $instance->timelimit && !empty($submission->timestarted)
                 && ($timesubmitted - $submission->timestarted > $instance->timelimit)
                 && $status != ASSIGN_SUBMISSION_STATUS_NEW) {
                 $usertime = format_time($timesubmitted - $submission->timestarted - $instance->timelimit);
-                $latemessage = get_string('submittedlateshort',
-                    'assign',
-                    $usertime);
-                $o .= $this->output->container($latemessage, 'latesubmission');
+                $latemessage = get_string('submittedlateshort', 'assign', $usertime);
+                $submissioninfo .= $this->output->container($latemessage, 'latesubmission');
             }
             if ($row->locked) {
                 $lockedstr = get_string('submissionslockedshort', 'assign');
-                $o .= $this->output->container($lockedstr, 'lockedsubmission');
+                $submissioninfo .= $this->output->container($lockedstr, 'lockedsubmission');
             }
 
             // Add status of "grading" if markflow is not enabled.
             if (!$instance->markingworkflow) {
                 if ($row->grade !== null && $row->grade >= 0) {
                     if ($row->timemarked < $row->timesubmitted) {
-                        $o .= $this->output->container(get_string('gradedfollowupsubmit', 'assign'), 'gradingreminder');
+                        $submissioninfo .= $this->output->container(get_string('gradedfollowupsubmit', 'assign'), 'gradingreminder');
                     } else {
-                        $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
+                        $submissioninfo .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
                     }
                 } else if (!$timesubmitted || $status == ASSIGN_SUBMISSION_STATUS_NEW) {
                     $now = time();
                     if ($due && ($now > $due)) {
                         $overduestr = get_string('overdue', 'assign', format_time($now - $due));
-                        $o .= $this->output->container($overduestr, 'overduesubmission');
+                        $submissioninfo .= $this->output->container($overduestr, 'overduesubmission');
                     }
                 }
             }
         }
 
         if ($instance->markingworkflow) {
-            $o .= $this->col_workflowstatus($row);
+            $submissioninfo .= $this->col_workflowstatus($row);
         }
         if ($row->extensionduedate) {
             $userdate = userdate($row->extensionduedate);
             $extensionstr = get_string('userextensiondate', 'assign', $userdate);
-            $o .= $this->output->container($extensionstr, 'extensiondate');
+            $submissioninfo .= $this->output->container($extensionstr, 'extensiondate');
         }
+        // The container with the submission information.
+        $submissoninfocontainer = $this->output->container($submissioninfo, 'submissioninfo w-100');
+
+        $o .= $this->output->container($submissoninfocontainer . $actionmenucontainer, 'd-flex');
 
         if ($this->is_downloading()) {
             $o = strip_tags(rtrim(str_replace('</div>', ' - ', $o), '- '));
@@ -1226,10 +1348,18 @@ class assign_grading_table extends table_sql implements renderable {
      *
      * @param stdClass $row
      * @return string
+     * @deprecated since Moodle 4.5
+     * @todo Final deprecation in Moodle 6.0. See MDL-82336.
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.5',
+        reason: 'Userid column is merged with status and grade columns'
+    )]
     public function col_userid(stdClass $row) {
         global $USER;
 
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $edit = '';
 
         $actions = array();
@@ -1271,24 +1401,24 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         $submissionsopen = $this->assignment->submissions_open($row->id,
-                                                               true,
-                                                               $submission,
-                                                               $flags,
-                                                               $this->gradinginfo);
+            true,
+            $submission,
+            $flags,
+            $this->gradinginfo);
         $caneditsubmission = $this->assignment->can_edit_submission($row->id, $USER->id);
 
         // Hide for offline assignments.
         if ($this->assignment->is_any_submission_plugin_enabled()) {
             if (!$row->status ||
-                    $row->status == ASSIGN_SUBMISSION_STATUS_DRAFT ||
-                    !$this->assignment->get_instance()->submissiondrafts) {
+                $row->status == ASSIGN_SUBMISSION_STATUS_DRAFT ||
+                !$this->assignment->get_instance()->submissiondrafts) {
 
                 if (!$row->locked) {
                     $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                                       'userid' => $row->id,
-                                       'action' => 'lock',
-                                       'sesskey' => sesskey(),
-                                       'page' => $this->currpage);
+                        'userid' => $row->id,
+                        'action' => 'lock',
+                        'sesskey' => sesskey(),
+                        'page' => $this->currpage);
                     $url = new moodle_url('/mod/assign/view.php', $urlparams);
 
                     $description = get_string('preventsubmissionsshort', 'assign');
@@ -1299,10 +1429,10 @@ class assign_grading_table extends table_sql implements renderable {
                     );
                 } else {
                     $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                                       'userid' => $row->id,
-                                       'action' => 'unlock',
-                                       'sesskey' => sesskey(),
-                                       'page' => $this->currpage);
+                        'userid' => $row->id,
+                        'action' => 'unlock',
+                        'sesskey' => sesskey(),
+                        'page' => $this->currpage);
                     $url = new moodle_url('/mod/assign/view.php', $urlparams);
                     $description = get_string('allowsubmissionsshort', 'assign');
                     $actions['unlock'] = new action_menu_link_secondary(
@@ -1314,13 +1444,13 @@ class assign_grading_table extends table_sql implements renderable {
             }
 
             if ($submissionsopen &&
-                    $USER->id != $row->id &&
-                    $caneditsubmission) {
+                $USER->id != $row->id &&
+                $caneditsubmission) {
                 $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                                   'userid' => $row->id,
-                                   'action' => 'editsubmission',
-                                   'sesskey' => sesskey(),
-                                   'page' => $this->currpage);
+                    'userid' => $row->id,
+                    'action' => 'editsubmission',
+                    'sesskey' => sesskey(),
+                    'page' => $this->currpage);
                 $url = new moodle_url('/mod/assign/view.php', $urlparams);
                 $description = get_string('editsubmission', 'assign');
                 $actions['editsubmission'] = new action_menu_link_secondary(
@@ -1330,13 +1460,13 @@ class assign_grading_table extends table_sql implements renderable {
                 );
             }
             if ($USER->id != $row->id &&
-                    $caneditsubmission &&
-                    !empty($row->status)) {
+                $caneditsubmission &&
+                !empty($row->status)) {
                 $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                                   'userid' => $row->id,
-                                   'action' => 'removesubmissionconfirm',
-                                   'sesskey' => sesskey(),
-                                   'page' => $this->currpage);
+                    'userid' => $row->id,
+                    'action' => 'removesubmissionconfirm',
+                    'sesskey' => sesskey(),
+                    'page' => $this->currpage);
                 $url = new moodle_url('/mod/assign/view.php', $urlparams);
                 $description = get_string('removesubmission', 'assign');
                 $actions['removesubmission'] = new action_menu_link_secondary(
@@ -1348,27 +1478,27 @@ class assign_grading_table extends table_sql implements renderable {
         }
         if (($this->assignment->get_instance()->duedate ||
                 $this->assignment->get_instance()->cutoffdate) &&
-                $this->hasgrantextension) {
-             $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                                'userid' => $row->id,
-                                'action' => 'grantextension',
-                                'sesskey' => sesskey(),
-                                'page' => $this->currpage);
-             $url = new moodle_url('/mod/assign/view.php', $urlparams);
-             $description = get_string('grantextension', 'assign');
-             $actions['grantextension'] = new action_menu_link_secondary(
-                 $url,
-                 $noimage,
-                 $description
-             );
+            $this->hasgrantextension) {
+            $urlparams = array('id' => $this->assignment->get_course_module()->id,
+                'userid' => $row->id,
+                'action' => 'grantextension',
+                'sesskey' => sesskey(),
+                'page' => $this->currpage);
+            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $description = get_string('grantextension', 'assign');
+            $actions['grantextension'] = new action_menu_link_secondary(
+                $url,
+                $noimage,
+                $description
+            );
         }
         if ($row->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED &&
-                $this->assignment->get_instance()->submissiondrafts) {
+            $this->assignment->get_instance()->submissiondrafts) {
             $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                               'userid' => $row->id,
-                               'action' => 'reverttodraft',
-                               'sesskey' => sesskey(),
-                               'page' => $this->currpage);
+                'userid' => $row->id,
+                'action' => 'reverttodraft',
+                'sesskey' => sesskey(),
+                'page' => $this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('reverttodraftshort', 'assign');
             $actions['reverttodraft'] = new action_menu_link_secondary(
@@ -1378,15 +1508,15 @@ class assign_grading_table extends table_sql implements renderable {
             );
         }
         if ($row->status == ASSIGN_SUBMISSION_STATUS_DRAFT &&
-                $this->assignment->get_instance()->submissiondrafts &&
-                $caneditsubmission &&
-                $submissionsopen &&
-                $row->id != $USER->id) {
+            $this->assignment->get_instance()->submissiondrafts &&
+            $caneditsubmission &&
+            $submissionsopen &&
+            $row->id != $USER->id) {
             $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                               'userid' => $row->id,
-                               'action' => 'submitotherforgrading',
-                               'sesskey' => sesskey(),
-                               'page' => $this->currpage);
+                'userid' => $row->id,
+                'action' => 'submitotherforgrading',
+                'sesskey' => sesskey(),
+                'page' => $this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('submitforgrading', 'assign');
             $actions['submitforgrading'] = new action_menu_link_secondary(
@@ -1404,10 +1534,10 @@ class assign_grading_table extends table_sql implements renderable {
 
         if ($ismanual && $hassubmission && $notreopened && $hasattempts) {
             $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                               'userid' => $row->id,
-                               'action' => 'addattempt',
-                               'sesskey' => sesskey(),
-                               'page' => $this->currpage);
+                'userid' => $row->id,
+                'action' => 'addattempt',
+                'sesskey' => sesskey(),
+                'page' => $this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('addattempt', 'assign');
             $actions['addattempt'] = new action_menu_link_secondary(
@@ -1455,7 +1585,7 @@ class assign_grading_table extends table_sql implements renderable {
         $separator = '';
         if ($showviewlink) {
             $viewstr = get_string('view' . substr($plugin->get_subtype(), strlen('assign')), 'assign');
-            $icon = $this->output->pix_icon('t/preview', $viewstr);
+            $icon = $this->output->pix_icon('t/viewdetails', $viewstr);
             $urlparams = array('id' => $this->assignment->get_course_module()->id,
                                                      'sid' => $item->id,
                                                      'gid' => $item->id,
@@ -1684,5 +1814,122 @@ class assign_grading_table extends table_sql implements renderable {
             return;
         }
         parent::setup();
+    }
+
+    /**
+     * Returns the html for the paging bar.
+     *
+     * @return string
+     */
+    public function get_paging_bar(): string {
+        global $OUTPUT;
+
+        if ($this->use_pages) {
+            $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+            $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
+            return $OUTPUT->render($pagingbar);
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the html for the paging selector.
+     *
+     * @return string
+     */
+    public function get_paging_selector(): string {
+        global $OUTPUT;
+
+        if ($this->use_pages) {
+            $pagingoptions = [...$this->pagingoptions, $this->perpage]; // To make sure the actual page size is within the options.
+            $pagingoptions = array_unique($pagingoptions);
+            sort($pagingoptions);
+            $pagingoptions = array_combine($pagingoptions, $pagingoptions);
+            $maxperpage = get_config('assign', 'maxperpage');
+            if (isset($maxperpage) && $maxperpage != -1) {
+                // Remove any options that are greater than the maxperpage.
+                $pagingoptions = array_filter($pagingoptions, fn($value) => $value <= $maxperpage);
+            } else {
+                $pagingoptions[-1] = get_string('all');
+            }
+
+            $data = [
+                'baseurl' => $this->baseurl->out(false),
+                'options' => array_map(fn($key, $name): array => [
+                    'name' => $name,
+                    'value' => $key,
+                    'selected' => $key == $this->perpage,
+                ], array_keys($pagingoptions), $pagingoptions),
+            ];
+
+            return $OUTPUT->render_from_template('mod_assign/grading_paging_selector', $data);
+        }
+
+        return '';
+    }
+
+    /**
+     * Finish the HTML output.
+     * This function is essentially a copy of the parent function except the paging bar not being rendered.
+     *
+     * @return void
+     */
+    public function finish_html(): void {
+        if (!$this->started_output) {
+            // No data has been added to the table.
+            $this->print_nothing_to_display();
+        } else {
+            // Print empty rows to fill the table to the current pagesize.
+            // This is done so the header aria-controls attributes do not point to
+            // non-existent elements.
+            $emptyrow = array_fill(0, count($this->columns), '');
+            while ($this->currentrow < $this->pagesize) {
+                $this->print_row($emptyrow, 'emptyrow');
+            }
+
+            echo html_writer::end_tag('tbody');
+            echo html_writer::end_tag('table');
+            if ($this->responsive) {
+                echo html_writer::end_tag('div');
+            }
+            $this->wrap_html_finish();
+
+            if (in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
+                echo $this->download_buttons();
+            }
+
+            // Render the dynamic table footer.
+            echo $this->get_dynamic_table_html_end();
+        }
+    }
+
+    /**
+     * Start the HTML output.
+     * This function is essentially a copy of the parent function except the paging bar not being rendered.
+     *
+     * @return void
+     */
+    public function start_html(): void {
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        // Do we need to print initial bars?
+        $this->print_initials_bar();
+
+        if (in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
+            echo $this->download_buttons();
+        }
+
+        $this->wrap_html_start();
+        // Start of main data table.
+
+        if ($this->responsive) {
+            echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        }
+        echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
     }
 }

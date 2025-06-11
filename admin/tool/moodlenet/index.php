@@ -63,7 +63,7 @@ if ($cancel) {
     }
     redirect($url);
 } else if ($continue) {
-    confirm_sesskey();
+    require_sesskey();
 
     // Handle backups.
     if (strtolower($importinfo->get_resource()->get_extension()) == 'mbz') {

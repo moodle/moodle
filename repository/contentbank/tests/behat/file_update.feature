@@ -17,8 +17,7 @@ Feature: Updating a file in the content bank after using in a course
 
   Scenario: Referenced files is the default option and updates alias as well
     When I log in as "admin"
-    And I am on "Course1" course homepage with editing mode on
-    And I add a "H5P" to section "1"
+    And I add an h5pactivity activity to course "Course1" section "1"
     And I set the following fields to these values:
       | Name                      | guessFile     |
     And I click on "Add..." "link" in the ".fp-toolbar" "css_element"
@@ -59,8 +58,7 @@ Feature: Updating a file in the content bank after using in a course
 
   Scenario: Copied files should not be updated if the original is edited
     When I log in as "admin"
-    And I am on "Course1" course homepage with editing mode on
-    And I add a "H5P" to section "1"
+    And I add an h5pactivity activity to course "Course1" section "1"
     And I set the following fields to these values:
       | Name                      | guessFile     |
     And I click on "Add..." "link" in the ".fp-toolbar" "css_element"

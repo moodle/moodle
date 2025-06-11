@@ -81,9 +81,6 @@
 
             $items = array();
 
-            $formatoptions = new stdClass();
-            $formatoptions->trusttext = true;
-
             foreach ($recs as $rec) {
                 $item = new stdClass();
                 $item->title = $rec->entryconcept;
@@ -97,7 +94,10 @@
 
                 $definition = file_rewrite_pluginfile_urls($rec->entrydefinition, 'pluginfile.php',
                     $modcontext->id, 'mod_glossary', 'entry', $rec->entryid);
-                $item->description = format_text($definition, $rec->entryformat, $formatoptions, $glossary->course);
+                $item->description = format_text($definition, $rec->entryformat, [
+                    'context' => $modcontext,
+                    'trusted' => true,
+                ]);
                 $items[] = $item;
             }
 

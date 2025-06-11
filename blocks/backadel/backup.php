@@ -30,7 +30,7 @@ require_login();
 
 // Ensure only site admins can use the Backup and Delete system.
 if (!is_siteadmin($USER->id)) {
-    print_error('need_permission', 'block_backadel');
+    moodle_exception('need_permission', 'block_backadel');
 }
 
 // Page Setup.

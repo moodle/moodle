@@ -26,12 +26,6 @@ namespace report_lpmonitoring;
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use core_competency\plan;
-use report_lpmonitoring\api;
-use core_competency\api as core_competency_api;
-use tool_cohortroles\api as tool_cohortroles_api;
-use report_lpmonitoring\report_competency_config;
-use core\invalid_persistent_exception;
 
 /**
  * Tags tests.
@@ -42,27 +36,27 @@ use core\invalid_persistent_exception;
  * @copyright  2018 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tag_test extends \advanced_testcase {
+final class tag_test extends \advanced_testcase {
 
     /**
      * manage tags.
      */
-    public function test_plan_tags() {
+    public function test_plan_tags(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
 
-        $user1 = $dg->create_user(array('lastname' => 'Austin', 'firstname' => 'Sharon'));
-        $user2 = $dg->create_user(array('lastname' => 'Cortez', 'firstname' => 'Jonathan'));
-        $user3 = $dg->create_user(array('lastname' => 'Underwood', 'firstname' => 'Alicia'));
+        $user1 = $dg->create_user(['lastname' => 'Austin', 'firstname' => 'Sharon']);
+        $user2 = $dg->create_user(['lastname' => 'Cortez', 'firstname' => 'Jonathan']);
+        $user3 = $dg->create_user(['lastname' => 'Underwood', 'firstname' => 'Alicia']);
         $user1context = \context_user::instance($user1->id);
         $user2context = \context_user::instance($user2->id);
         $user3context = \context_user::instance($user3->id);
 
-        $plan1 = $lpg->create_plan(array('userid' => $user1->id));
-        $plan2 = $lpg->create_plan(array('userid' => $user2->id));
-        $plan3 = $lpg->create_plan(array('userid' => $user3->id));
+        $plan1 = $lpg->create_plan(['userid' => $user1->id]);
+        $plan2 = $lpg->create_plan(['userid' => $user2->id]);
+        $plan3 = $lpg->create_plan(['userid' => $user3->id]);
         // Test add tags.
         \core_tag_tag::add_item_tag('report_lpmonitoring', 'competency_plan', $plan1->get('id'), $user1context, 'Tag plan 1 and 2');
         \core_tag_tag::add_item_tag('report_lpmonitoring', 'competency_plan', $plan2->get('id'), $user2context, 'Tag plan 1 and 2');

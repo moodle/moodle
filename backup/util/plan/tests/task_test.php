@@ -34,7 +34,7 @@ require_once(__DIR__.'/fixtures/plan_fixtures.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_test extends \advanced_testcase {
+final class task_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -66,7 +66,7 @@ class task_test extends \advanced_testcase {
     /**
      * test base_task class
      */
-    function test_base_task() {
+    function test_base_task(): void {
 
         $bp = new \mock_base_plan('planname'); // We need one plan
         // Instantiate
@@ -82,7 +82,7 @@ class task_test extends \advanced_testcase {
     /**
      * test backup_task class
      */
-    function test_backup_task() {
+    function test_backup_task(): void {
 
         // We need one (non interactive) controller for instatiating plan
         $bc = new backup_controller(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
@@ -104,7 +104,7 @@ class task_test extends \advanced_testcase {
     /**
      * wrong base_task class tests
      */
-    function test_base_task_wrong() {
+    function test_base_task_wrong(): void {
 
         // Try to pass one wrong plan
         try {
@@ -132,7 +132,7 @@ class task_test extends \advanced_testcase {
     /**
      * wrong backup_task class tests
      */
-    function test_backup_task_wrong() {
+    function test_backup_task_wrong(): void {
 
         // Try to pass one wrong plan
         try {

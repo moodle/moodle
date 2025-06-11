@@ -14,19 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file defines the quiz manual grading report class.
- *
- * @package   quiz_grading
- * @copyright 2006 Gustav Delius
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+use mod_quiz\local\reports\report_base;
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/report/grading/gradingsettings_form.php');
-
 
 /**
  * Quiz report to help teachers manually grade questions that need it.
@@ -38,7 +31,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/grading/gradingsettings_form.php'
  * @copyright 2006 Gustav Delius
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_grading_report extends quiz_default_report {
+class quiz_grading_report extends report_base {
     const DEFAULT_PAGE_SIZE = 5;
     const DEFAULT_ORDER = 'random';
 
@@ -87,7 +80,7 @@ class quiz_grading_report extends quiz_default_report {
         $grade = optional_param('grade', null, PARAM_ALPHA);
 
         $includeauto = optional_param('includeauto', false, PARAM_BOOL);
-        if (!in_array($grade, array('all', 'needsgrading', 'autograded', 'manuallygraded'))) {
+        if (!in_array($grade, ['all', 'needsgrading', 'autograded', 'manuallygraded'])) {
             $grade = null;
         }
         $pagesize = optional_param('pagesize',
@@ -99,7 +92,7 @@ class quiz_grading_report extends quiz_default_report {
                 PARAM_ALPHAEXT);
 
         // Assemble the options required to reload this page.
-        $optparams = array('includeauto', 'page');
+        $optparams = ['includeauto', 'page'];
         foreach ($optparams as $param) {
             if ($$param) {
                 $this->viewoptions[$param] = $$param;
@@ -163,10 +156,10 @@ class quiz_grading_report extends quiz_default_report {
         // Get the group, and the list of significant users.
         $this->currentgroup = $this->get_current_group($cm, $course, $this->context);
         if ($this->currentgroup == self::NO_GROUPS_ALLOWED) {
-            $this->userssql = array();
+            $this->userssql = [];
         } else {
             $this->userssql = get_enrolled_sql($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $this->currentgroup);
+                    ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $this->currentgroup);
         }
 
         $hasquestions = quiz_has_questions($this->quiz->id);
@@ -213,15 +206,15 @@ class quiz_grading_report extends quiz_default_report {
         $where = "quiza.quiz = :mangrquizid AND
                 quiza.preview = 0 AND
                 quiza.state = :statefinished";
-        $params = array('mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED);
+        $params = ['mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED];
 
         $usersjoin = '';
         $currentgroup = groups_get_activity_group($this->cm, true);
         $enrolleduserscount = count_enrolled_users($this->context,
-                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+                ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $currentgroup);
         if ($currentgroup) {
             $userssql = get_enrolled_sql($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+                    ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $currentgroup);
             if ($enrolleduserscount < 1) {
                 $where .= ' AND quiza.userid = 0';
             } else {
@@ -262,7 +255,7 @@ class quiz_grading_report extends quiz_default_report {
                 WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
                 $params);
 
-        $attempts = array();
+        $attempts = [];
         foreach ($attemptsbyid as $attempt) {
             $attempts[$attempt->uniqueid] = $attempt;
         }
@@ -327,14 +320,15 @@ class quiz_grading_report extends quiz_default_report {
      *
      * @param stdClass $counts counts of different types of attempt for this slot.
      * @param string $type the type of count to format.
-     * @param string $gradestring get_string identifier for the grading link text, if required.
+     * @param string $string get_string identifier for the grading link text, if required.
+     * @param string $component get_string component identifier for the grading link text, if required.
      * @return string HTML.
      */
-    protected function format_count_for_table($counts, $type, $gradestring) {
+    protected function format_count_for_table($counts, $type, $string, $component) {
         $result = $counts->$type;
         if ($counts->$type > 0) {
             $gradeurl = $this->grade_question_url($counts->slot, $counts->questionid, $type);
-            $result .= $this->renderer->render_grade_link($counts, $type, $gradestring, $gradeurl);
+            $result .= $this->renderer->render_grade_link($counts, $type, $string, $component, $gradeurl);
         }
         return $result;
     }
@@ -389,21 +383,21 @@ class quiz_grading_report extends quiz_default_report {
 
             $row = [];
 
-            $row[] = $this->questions[$counts->slot]->number;
+            $row[] = $this->questions[$counts->slot]->displaynumber;
 
             $row[] = $PAGE->get_renderer('question', 'bank')->qtype_icon($this->questions[$counts->slot]->qtype);
 
             $row[] = format_string($counts->name);
 
-            $row[] = $this->format_count_for_table($counts, 'needsgrading', 'grade');
+            $row[] = $this->format_count_for_table($counts, 'needsgrading', 'gradeverb', 'moodle');
 
-            $row[] = $this->format_count_for_table($counts, 'manuallygraded', 'updategrade');
+            $row[] = $this->format_count_for_table($counts, 'manuallygraded', 'updategrade', 'quiz_grading');
 
             if ($includeauto) {
-                $row[] = $this->format_count_for_table($counts, 'autograded', 'updategrade');
+                $row[] = $this->format_count_for_table($counts, 'autograded', 'updategrade', 'quiz_grading');
             }
 
-            $row[] = $this->format_count_for_table($counts, 'all', 'gradeall');
+            $row[] = $this->format_count_for_table($counts, 'all', 'gradeall', 'quiz_grading');
 
             $data[] = $row;
         }
@@ -703,9 +697,9 @@ class quiz_grading_report extends quiz_default_report {
     /**
      * Initialise some parts of $PAGE and start output.
      *
-     * @param object $cm the course_module information.
-     * @param object $course the course settings.
-     * @param object $quiz the quiz settings.
+     * @param stdClass $cm the course_module information.
+     * @param stdClass $course the course settings.
+     * @param stdClass $quiz the quiz settings.
      * @param string $reportmode the report name.
      */
     public function print_header_and_tabs($cm, $course, $quiz, $reportmode = 'overview') {

@@ -23,9 +23,16 @@
 
     Example context (json):
     {
+        "cmid": 123,
         "activityname": "Course announcements",
         "hascompletion": true,
         "uservisible": true,
+        "completiondialog": {
+            "buttoncontent": "To do",
+            "dialogcontent": "You must view this activity to complete it.",
+            "buttonclasses": "btn btn-sm btn-outline-secondary dropdown-toggle",
+            "classes": "completion-dropdown"
+        },
         "isautomatic": true,
         "showmanualcompletion": true,
         "completiondetails": [
@@ -41,26 +48,23 @@
     }
 }}
 <div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
-    {{#hascompletion}}
-        {{#uservisible}}
-            <div data-region="completion-info">
-                {{#isautomatic}}
-                    <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
-                        {{#completiondetails}}
-                            {{$ core_course/completion_automatic }}
-                                {{> core_course/completion_automatic }}
-                            {{/ core_course/completion_automatic }}
-                        {{/completiondetails}}
-                    </div>
-                {{/isautomatic}}
-                {{^isautomatic}}
-                    {{#showmanualcompletion}}
-                        {{$ core_course/completion_manual }}
-                            {{> core_course/completion_manual }}
-                        {{/ core_course/completion_manual }}
-                    {{/showmanualcompletion}}
-                {{/isautomatic}}
-            </div>
-        {{/uservisible}}
-    {{/hascompletion}}
+    {{#uservisible}}
+        <div data-region="completion-info">
+            {{! Completion dropdown dialog }}
+            {{#completiondialog}}
+                <div data-region="completionrequirements" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
+                    {{> core/local/dropdown/dialog }}
+                </div>
+            {{/completiondialog}}
+
+            {{! Manual completion button }}
+            {{#showmanualcompletion}}
+                {{#istrackeduser}}
+                    {{$ core_course/completion_manual }}
+                        {{> core_course/completion_manual }}
+                    {{/ core_course/completion_manual }}
+                {{/istrackeduser}}
+            {{/showmanualcompletion}}
+        </div>
+    {{/uservisible}}
 </div>

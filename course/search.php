@@ -94,10 +94,8 @@ if (empty($searchcriteria)) {
     if ((can_edit_in_category() || !empty($usercatlist))) {
         $aurl = new moodle_url('/course/management.php', $searchcriteria);
         $searchform = $OUTPUT->single_button($aurl, get_string('managecourses'), 'get');
-    } else {
-        $searchform = $courserenderer->course_search_form($search);
+        $PAGE->set_button($searchform);
     }
-    $PAGE->set_button($searchform);
 
     // Trigger event, courses searched.
     $eventparams = array('context' => $PAGE->context, 'other' => array('query' => $search));

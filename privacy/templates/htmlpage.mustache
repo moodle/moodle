@@ -54,18 +54,20 @@
 </head>
 <body>
     <nav class="navbar navbar-light bg-light border-bottom">
-        <a class="navbar-brand" href="https://moodle.org" title="Moodle">
-            <img class="moodle-logo" src="pix/moodlelogo.svg" alt="Moodle logo" />
-        </a>
-        <span class="navbar-brand">{{#str}}broughtbymoodle, core_privacy{{/str}}</span>
+        <div class="container-fluid p-0">
+            <a class="navbar-brand" href="https://moodle.org" title="Moodle">
+                <img class="moodle-logo" src="pix/moodlelogo.svg" alt="Moodle logo" />
+            </a>
+            <span class="navbar-brand">{{#str}}broughtbymoodle, core_privacy{{/str}}</span>
+        </div>
     </nav>
     <div id="page" class="container-fluid mt-2">
 
         {{{navigation}}}
-        <div data-main-content class="jumbotron bg-light border">
+        <div data-main-content class="p-5 mb-4 bg-light border rounded">
             <h2 class="display-8">{{#str}}viewdata, core_privacy{{/str}}</h2>
         </div>
-        <script src="js/jquery-3.6.1.min.js"></script>
+        <script src="js/jquery-3.7.1.min.js"></script>
         <script src="js/data_index.js"></script>
         <script src="js/general.js"></script>
         <script src="js/require.min.js"></script>
@@ -74,7 +76,7 @@
                 "baseUrl": "./",
                 "paths": {
                     "app": "./",
-                    "jquery": "./js/jquery-3.6.1.min",
+                    "jquery": "./js/jquery-3.7.1.min",
                     "core/tree": "./js/tree.min"
                 }
             });

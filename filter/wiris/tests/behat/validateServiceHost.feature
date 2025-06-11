@@ -1,4 +1,4 @@
-@filter @filter_wiris @wiris_mathtype @3.x @3.x_filter @4.0 @4.0_filter @4.x @4.x_filter @filter_settings @connection_settings @mtmoodle-27
+@filter @filter_wiris @wiris_mathtype @3.x @3.x_filter @4.0 @4.0_filter @4.x @4.x_filter @5.x @5.x_filter @filter_settings @connection_settings @mtmoodle-27
 Feature: Filter Settings - Connection Settings - Service host
   In order to check the service host setting
   As an admin

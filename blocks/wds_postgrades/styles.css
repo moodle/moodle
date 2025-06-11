@@ -1,0 +1,53 @@
+.individual-sections {
+  font-size: 0.7;
+  padding: 5px;
+  text-align: center;
+}
+
+.wdspgradesbutton-section button {
+  margin: 5px;
+  font-size: 0.9em;
+}
+
+/* Modal styles */
+#loadingModal {
+  display: none; /* Initially hidden, JS will toggle */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+  border-radius: 25px;
+}
+
+.modal-content h4 {
+  margin-top: 0;
+}
+
+.spinner {
+  margin: 20px auto;
+  border: 4px solid #3a1867;
+  border-top: 4px solid #fefefe;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

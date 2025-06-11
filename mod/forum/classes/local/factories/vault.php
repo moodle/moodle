@@ -77,7 +77,7 @@ class vault {
      *
      * @return forum_vault
      */
-    public function get_forum_vault() : forum_vault {
+    public function get_forum_vault(): forum_vault {
         return new forum_vault(
             $this->db,
             $this->entityfactory,
@@ -90,7 +90,7 @@ class vault {
      *
      * @return discussion_vault
      */
-    public function get_discussion_vault() : discussion_vault {
+    public function get_discussion_vault(): discussion_vault {
         return new discussion_vault(
             $this->db,
             $this->entityfactory,
@@ -103,7 +103,7 @@ class vault {
      *
      * @return discussion_list_vault
      */
-    public function get_discussions_in_forum_vault() : discussion_list_vault {
+    public function get_discussions_in_forum_vault(): discussion_list_vault {
         return new discussion_list_vault(
             $this->db,
             $this->entityfactory,
@@ -116,7 +116,7 @@ class vault {
      *
      * @return post_vault
      */
-    public function get_post_vault() : post_vault {
+    public function get_post_vault(): post_vault {
         return new post_vault(
             $this->db,
             $this->entityfactory,
@@ -129,7 +129,7 @@ class vault {
      *
      * @return author_vault
      */
-    public function get_author_vault() : author_vault {
+    public function get_author_vault(): author_vault {
         return new author_vault(
             $this->db,
             $this->entityfactory,
@@ -142,7 +142,7 @@ class vault {
      *
      * @return post_read_receipt_collection_vault
      */
-    public function get_post_read_receipt_collection_vault() : post_read_receipt_collection_vault {
+    public function get_post_read_receipt_collection_vault(): post_read_receipt_collection_vault {
         return new post_read_receipt_collection_vault(
             $this->db,
             $this->entityfactory,
@@ -155,7 +155,7 @@ class vault {
      *
      * @return post_attachment_vault
      */
-    public function get_post_attachment_vault() : post_attachment_vault {
+    public function get_post_attachment_vault(): post_attachment_vault {
         return new post_attachment_vault(
             $this->filestorage
         );

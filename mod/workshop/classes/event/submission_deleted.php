@@ -80,17 +80,6 @@ class submission_deleted extends \core\event\base {
     }
 
     /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'workshop', 'delete submission',
-            'submission.php?cmid=' . $this->contextinstanceid . '&id=' . $this->objectid,
-            $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Defines mapping of the 'objectid' property when restoring course logs.
      *
      * @return array

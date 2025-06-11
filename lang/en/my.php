@@ -22,7 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['coursemanagementoptions'] = 'Course management options';
 $string['error:dashboardisdisabled'] = 'The Dashboard has been disabled by an administrator.';
 $string['mymoodle'] = 'Dashboard';
 $string['nocourses'] = 'No course information to show.';
@@ -42,3 +41,6 @@ $string['reseteveryonesprofile'] = 'Reset profile for all users';
 $string['resetpage'] = 'Reset page to default';
 $string['reseterror'] = 'There was an error resetting your page';
 $string['privacy:metadata:core_my:preference:user_home_page_preference'] = 'The user home page preference.';
+
+// Deprecated since Moodle 4.5.
+$string['coursemanagementoptions'] = 'Course management options';

@@ -24,6 +24,7 @@
 namespace enrol_lti\privacy;
 
 use enrol_lti\privacy\provider;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * @var stdClass The user
@@ -60,6 +61,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Basic setup for these tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         $this->course = $this->getDataGenerator()->create_course();
@@ -83,7 +85,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $contextlist = provider::get_contexts_for_userid($this->user->id);
 
         $this->assertCount(2, $contextlist);
@@ -99,7 +101,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context() {
+    public function test_export_for_context(): void {
         $coursecontext = \context_course::instance($this->course->id);
         $cmcontext = \context_module::instance($this->activity->cmid);
 
@@ -133,7 +135,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $count = $DB->count_records('enrol_lti_users');
@@ -153,7 +155,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $cmcontext = \context_module::instance($this->activity->cmid);
@@ -176,7 +178,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Creates a LTI user given the provided context
      *
-     * @param context $context
+     * @param \context $context
      * @param int $userid
      */
     private function create_lti_users(\context $context, int $userid) {
@@ -207,7 +209,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when the context is a course.
      */
-    public function test_get_users_in_context_course() {
+    public function test_get_users_in_context_course(): void {
         $coursecontext = \context_course::instance($this->course->id);
         $userlist = new \core_privacy\local\request\userlist($coursecontext, 'enrol_paypal');
         provider::get_users_in_context($userlist);
@@ -220,7 +222,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when the context is an activity.
      */
-    public function test_get_users_in_context_activity() {
+    public function test_get_users_in_context_activity(): void {
         $activityctx = \context_module::instance($this->activity->cmid);
         $userlist = new \core_privacy\local\request\userlist($activityctx, 'enrol_paypal');
         provider::get_users_in_context($userlist);
@@ -233,7 +235,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_users() when the context is a course.
      */
-    public function test_delete_data_for_users_course() {
+    public function test_delete_data_for_users_course(): void {
         global $DB;
 
         $coursecontext = \context_course::instance($this->course->id);
@@ -263,7 +265,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_users() when the context is an activity.
      */
-    public function test_delete_data_for_users_activity() {
+    public function test_delete_data_for_users_activity(): void {
         global $DB;
 
         $cmcontext = \context_module::instance($this->activity->cmid);

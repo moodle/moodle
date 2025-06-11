@@ -107,7 +107,7 @@ M.gradereport_singleview.init = function(Y) {
 
             var interest = '_' + itemid + '_' + userid;
 
-            Y.all('input[name$=' + interest + ']').filter('input[type=text]').each(function(text) {
+            Y.all('input[name$=' + interest + ']').filter('input[data-uielement=text]').each(function(text) {
                 text.getDOMNode().disabled = !checked;
             });
             // deal with scales that are not text... UCSB

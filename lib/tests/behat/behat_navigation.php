@@ -27,8 +27,8 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
-use Behat\Mink\Exception\DriverException as DriverException;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
@@ -725,6 +725,24 @@ class behat_navigation extends behat_base {
             case 'Admin notifications':
                 return new moodle_url('/admin/');
 
+            case 'Content bank':
+                return new moodle_url('/contentbank/');
+
+            case 'My private files':
+                return new moodle_url('/user/files.php');
+
+            case 'System logs report':
+                return new moodle_url('/report/log/index.php');
+
+            case 'Profile':
+                return new moodle_url('/user/view.php');
+
+            case 'Profile advanced editing':
+                return new moodle_url('/user/editadvanced.php', ['returnto' => 'profile']);
+
+            case 'Profile editing':
+                return new moodle_url('/user/edit.php', ['returnto' => 'profile']);
+
             default:
                 throw new Exception('Unrecognised core page type "' . $name . '."');
         }
@@ -734,24 +752,29 @@ class behat_navigation extends behat_base {
      * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      * Recognised page names are:
-     * | Page type                  | Identifier meaning        | description                          |
-     * | Category                   | category idnumber         | List of courses in that category.    |
-     * | Course                     | course shortname          | Main course home pag                 |
-     * | Course editing             | course shortname          | Edit settings page for the course    |
-     * | Activity                   | activity idnumber         | Start page for that activity         |
-     * | Activity editing           | activity idnumber         | Edit settings page for that activity |
-     * | [modname] Activity         | activity name or idnumber | Start page for that activity         |
-     * | [modname] Activity editing | activity name or idnumber | Edit settings page for that activity |
-     * | Backup                     | course shortname          | Course to backup                     |
-     * | Import                     | course shortname          | Course import from                   |
-     * | Restore                    | course shortname          | Course to restore from               |
-     * | Reset                      | course shortname          | Course to reset                      |
-     * | Course copy                | course shortname          | Course to copy                       |
-     * | Groups                     | course shortname          | Groups page for the course           |
-     * | Permissions                | course shortname          | Permissions page for the course      |
-     * | Enrolment methods          | course shortname          | Enrolment methods for the course     |
-     * | Enrolled users             | course shortname          | The main participants page           |
-     * | Other users                | course shortname          | The course other users page          |
+     * | Page type                       | Identifier meaning        | description                                                      |
+     * | Category                        | category idnumber         | List of courses in that category.                                |
+     * | Course                          | course shortname          | Main course home pag                                             |
+     * | Course editing                  | course shortname          | Edit settings page for the course                                |
+     * | Activity                        | activity idnumber         | Start page for that activity                                     |
+     * | Activity editing                | activity idnumber         | Edit settings page for that activity                             |
+     * | [modname] Activity              | activity name or idnumber | Start page for that activity                                     |
+     * | [modname] Activity editing      | activity name or idnumber | Edit settings page for that activity                             |
+     * | Backup                          | course shortname          | Course to backup                                                 |
+     * | Import                          | course shortname          | Course import from                                               |
+     * | Restore                         | course shortname          | Course to restore from                                           |
+     * | Reset                           | course shortname          | Course to reset                                                  |
+     * | Course copy                     | course shortname          | Course to copy                                                   |
+     * | Groups                          | course shortname          | Groups page for the course                                       |
+     * | Groups overview                 | course shortname          | Groups overview page for the course                              |
+     * | Groupings                       | course shortname          | Groupings page for the course                                    |
+     * | Permissions                     | course shortname          | Permissions page for the course                                  |
+     * | Enrolment methods               | course shortname          | Enrolment methods for the course                                 |
+     * | Enrolled users                  | course shortname          | The main participants page                                       |
+     * | Other users                     | course shortname          | The course other users page                                      |
+     * | Course profile                  | course shortname          | The current user's profile for this course                       |
+     * | Course profile editing          | course shortname          | The current user's profile editing page for this course          |
+     * | Course profile advanced editing | course shortname          | The current user's advanced profile editing page for this course |
      *
      * Examples:
      *
@@ -764,6 +787,9 @@ class behat_navigation extends behat_base {
      */
     protected function resolve_core_page_instance_url(string $type, string $identifier): moodle_url {
         $type = strtolower($type);
+        $coursenotfoundexception = new Exception(
+            "The specified course with shortname, fullname, or idnumber '{$identifier}' does not exist",
+        );
 
         switch ($type) {
             case 'category':
@@ -776,16 +802,14 @@ class behat_navigation extends behat_base {
             case 'course editing':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                        $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/course/edit.php', ['id' => $courseid]);
 
             case 'course':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                        $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/course/view.php', ['id' => $courseid]);
 
@@ -807,81 +831,118 @@ class behat_navigation extends behat_base {
             case 'backup':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/backup/backup.php', ['id' => $courseid]);
             case 'import':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/backup/import.php', ['id' => $courseid]);
             case 'restore':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 $context = context_course::instance($courseid);
                 return new moodle_url('/backup/restorefile.php', ['contextid' => $context->id]);
             case 'reset':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/course/reset.php', ['id' => $courseid]);
             case 'course copy':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/backup/copy.php', ['id' => $courseid]);
             case 'groups':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/group/index.php', ['id' => $courseid]);
+            case 'groups overview':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw $coursenotfoundexception;
+                }
+                return new moodle_url('/group/overview.php', ['id' => $courseid]);
+            case 'groupings':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw $coursenotfoundexception;
+                }
+                return new moodle_url('/group/groupings.php', ['id' => $courseid]);
             case 'permissions':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 $context = context_course::instance($courseid);
                 return new moodle_url('/admin/roles/permissions.php', ['contextid' => $context->id]);
             case 'enrolment methods':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/enrol/instances.php', ['id' => $courseid]);
             case 'enrolled users':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/user/index.php', ['id' => $courseid]);
             case 'other users':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
-                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                        $identifier . '" does not exist');
+                    throw $coursenotfoundexception;
                 }
                 return new moodle_url('/enrol/otherusers.php', ['id' => $courseid]);
+            case 'renameroles':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw $coursenotfoundexception;
+                }
+                return new moodle_url('/enrol/renameroles.php', ['id' => $courseid]);
+
+            case 'course profile':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw $coursenotfoundexception;
+                }
+                return new moodle_url('/user/user.php', ['course' => $courseid]);
+
+            case 'course profile editing':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw $coursenotfoundexception;
+                }
+                return new moodle_url('/user/edit.php', [
+                    'course' => $courseid,
+                    'returnto' => 'profile',
+                ]);
+
+            case 'course profile advanced editing':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw $coursenotfoundexception;
+                }
+                return new moodle_url('/user/editadvanced.php', [
+                    'course' => $courseid,
+                    'returnto' => 'profile',
+                ]);
         }
 
+        // This next section handles page types starting with an activity name. For example:
+        // "forum activity" or "quiz activity editing".
         $parts = explode(' ', $type);
         if (count($parts) > 1) {
+            $modname = $parts[0];
             if ($parts[1] === 'activity') {
-                $modname = $parts[0];
                 $cm = $this->get_cm_by_activity_name($modname, $identifier);
 
                 if (count($parts) == 2) {
@@ -903,10 +964,74 @@ class behat_navigation extends behat_base {
                     // Permissions page.
                     return new moodle_url('/admin/roles/permissions.php', ['contextid' => $cm->context->id]);
                 }
+
+            } else if ($parts[1] === 'index' && count($parts) == 2) {
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw $coursenotfoundexception;
+                }
+                return new moodle_url("/mod/$modname/index.php", ['id' => $courseid]);
             }
         }
 
         throw new Exception('Unrecognised core page type "' . $type . '."');
+    }
+
+    /**
+     * Opens a new tab with given name on the same URL as current page and switches to it.
+     *
+     * @param string $name Tab name that can be used for switching later (no whitespace)
+     * @When /^I open a tab named "(?<name>[^"]*)" on the current page$/
+     */
+    public function i_open_a_tab_on_the_current_page(string $name): void {
+        $this->open_tab($name, 'location.href');
+    }
+
+    /**
+     * Opens a new tab with given name on specified page, and switches to it.
+     *
+     * @param string $name Tab name that can be used for switching later (no whitespace)
+     * @param string $page Page name
+     * @When /^I open a tab named "(?<name>[^"]*)" on the "(?<page>[^"]*)" page$/
+     */
+    public function i_open_a_tab_on_the_page(string $name, string $page): void {
+        if ($page === 'current') {
+            $jstarget = 'location.href';
+        } else {
+            $jstarget = '"' . addslashes_js($this->resolve_page_helper($page)->out(false)) . '"';
+        }
+        $this->open_tab($name, $jstarget);
+    }
+
+    /**
+     * Opens a new tab with given name (on specified page), and switches to it.
+     *
+     * @param string $name Tab name that can be used for switching later (no whitespace)
+     * @param string $identifier Page identifier
+     * @param string $page Page type
+     * @When /^I open a tab named "(?<name>[^"]*)" on the "(?<identifier>[^"]*)" "(?<page>[^"]*)" page$/
+     */
+    public function i_open_a_tab_on_the_page_instance(string $name, string $identifier, string $page): void {
+        $this->open_tab($name, '"' . addslashes_js(
+            $this->resolve_page_instance_helper($identifier, $page)->out(false)) . '"');
+    }
+
+    /**
+     * Opens a new tab at the given target URL.
+     *
+     * @param string $name Name for tab
+     * @param string $jstarget Target in JavaScript syntax, i.e. if a string, must be quoted
+     */
+    protected function open_tab(string $name, string $jstarget): void {
+        // Tab names aren't allowed spaces, and our JavaScript below doesn't do any escaping.
+        if (clean_param($name, PARAM_ALPHANUMEXT) !== $name) {
+            throw new Exception('Tab name may not contain whitespace or special characters: "' . $name . '"');
+        }
+
+        // Normally you can't open a tab unless in response to a user action, but presumably Behat
+        // is exempt from this restriction, because it works to just open it directly.
+        $this->execute_script('window.open(' . $jstarget . ', "' . $name . '");');
+        $this->execute('behat_general::switch_to_window', [$name]);
     }
 
     /**
@@ -1043,7 +1168,7 @@ class behat_navigation extends behat_base {
     protected function select_on_administration_page($nodelist) {
         $parentnodes = $nodelist;
         $lastnode = array_pop($parentnodes);
-        $xpath = '//section[@id=\'region-main\']';
+        $xpath = '//div[@id=\'region-main\']';
 
         // Check if there is a separate tab for this submenu of the page. If found go to it.
         if ($parentnodes) {
@@ -1402,5 +1527,170 @@ class behat_navigation extends behat_base {
         if ($this->is_editing_on()) {
             throw new ExpectationException('The edit mode could not be turned off', $this->getSession());
         }
+    }
+
+    /**
+     * The named item should exist in the named dropdown.
+     *
+     * @Then /^the "(?P<item_string>[^"]*)" item should (?P<not_bool>not )?exist in the "(?P<dropdown_string>[^"]*)" dropdown$/
+     * @Then /^the "(?P<item_string>[^"]*)" item should (?P<not_bool>not )?exist in the "(?P<dropdown_string>[^"]*)" dropdown of the "(?P<container_string>[^"]*)" "(?P<containertype_string>[^"]*)"$/
+     * @param string $item The text on the dropdown menu item
+     * @param bool $not Whether to negate this search
+     * @param string $dropdown The name of the dropdown
+     * @param string $container The name of the container
+     * @param string $containertype The type of the container
+     */
+    public function should_exist_in_dropdown(
+        string $item,
+        bool $not,
+        string $dropdown,
+        ?string $container = null,
+        ?string $containertype = null,
+    ): void {
+        $containernode = null;
+        if ($container && $containertype) {
+            $containernode = $this->find(
+                selector: $containertype,
+                locator: $container,
+                node: null,
+            );
+        }
+        $this->should_exist_in_dropdown_in(
+            item: $item,
+            dropdown: $dropdown,
+            container: $containernode,
+            not: $not,
+        );
+    }
+
+    /**
+     * Helper to check whether an item exists in a dropdown.
+     *
+     * @param string $item The text of the item to look for
+     * @param string $dropdown The name of the dropdown
+     * @param null|NodeElement $container The container to look within
+     */
+    public function should_exist_in_dropdown_in(
+        string $item,
+        string $dropdown,
+        null|NodeElement $container,
+        bool $not,
+    ): void {
+        $dropdownnode = $this->find(
+            selector: 'named_partial',
+            locator: ['dropdown', $dropdown],
+            node: $container ?? false,
+        );
+
+        if ($not) {
+            try {
+                $this->find(
+                    selector: 'named_partial',
+                    locator: ['dropdown_item', $item],
+                    node: $dropdownnode,
+                );
+
+                throw new ExpectationException(
+                    "The '{$item}' dropdown item was found in the '{$dropdown}' selector",
+                    $this->getSession(),
+                );
+            } catch (ElementNotFoundException $e) {
+                return;
+            }
+        } else {
+            $this->find(
+                selector: 'named_partial',
+                locator: ['dropdown_item', $item],
+                node: $dropdownnode,
+            );
+        }
+    }
+
+    /**
+     * Close the block drawer if it is open.
+     *
+     * This is necessary as in Behat the block drawer is open at each page load (disregarding user's settings)
+     * As the block drawer is positioned at the front of some contextual dialogs on the grade report for example.
+     * @Given I close block drawer if open
+     * @return void
+     */
+    public function i_close_block_drawer_if_open() {
+        if ($this->running_javascript()) {
+            $xpath = "//button[contains(@data-action,'closedrawer')][contains(@data-placement,'left')]";
+            $node = $this->getSession()->getPage()->find('xpath', $xpath);
+            if ($node && $node->isVisible()) {
+                $ishidden = $node->getAttribute('aria-hidden-tab-index');
+                if (!$ishidden) {
+                    $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
+                }
+            }
+        }
+    }
+
+    /**
+     * I close the block drawer and keep it closed.
+     *
+     * @Given I keep block drawer closed
+     * @return void
+     */
+    public function i_keep_block_drawer_closed() {
+        set_user_preference('behat_keep_drawer_closed', 1);
+        $this->i_close_block_drawer_if_open();
+    }
+
+    /**
+     * Checks if a navigation menu item is active.
+     *
+     * @Then menu item :navigationmenuitem should be active
+     * @param string $navigationmenuitem The navigation menu item name.
+     */
+    public function menu_item_should_be_active(string $navigationmenuitem): void {
+        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $params = [$elementselector, "xpath_element"];
+        $this->execute("behat_general::should_exist", $params);
+    }
+
+    /**
+     * Checks if a navigation menu item is not active
+     *
+     * @Then menu item :navigationmenuitem should not be active
+     * @param string $navigationmenuitem The navigation menu item name.
+     */
+    public function menu_item_should_not_be_active(string $navigationmenuitem): void {
+        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $params = [$elementselector, "xpath_element"];
+        $this->execute("behat_general::should_not_exist", $params);
+    }
+
+    /**
+     * Sets a link to no longer navigate when selected.
+     *
+     * @When /^I update the href of the "(?P<locator_string>[^"]*)" "(?P<selector_string>[^"]*)" link to "(?P<href_string>[^"]*)"$/
+     * @param string $locator The locator to use
+     * @param string $selector selector type
+     * @param string $href The value
+     */
+    public function i_update_the_link_to_go_nowhere(
+        string $locator,
+        string $selector,
+        string $href,
+    ): void {
+        $this->require_javascript();
+        $xpath = $this->find(
+            selector: $selector,
+            locator: $locator,
+        )->getXpath();
+        $script = <<<JS
+            var result = document.evaluate("{$xpath}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            var link = result.singleNodeValue;
+
+            if (link) {
+                link.setAttribute('href', '{$href}');
+            } else {
+                throw new Error('No element found with the XPath: ' + "$selector");
+            }
+        JS;
+
+        $this->getSession()->executeScript($script);
     }
 }

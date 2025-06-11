@@ -1,0 +1,74 @@
+<!-- question: 123  -->
+  <question type="ordering">
+    <name>
+      <text>Moodle</text>
+    </name>
+    <questiontext format="html">
+      <text>Put these words in order.</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[The correct answer is "Modular Object Oriented Dynamic Learning Environment".]]></text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber>myid</idnumber>
+    <layouttype></layouttype>
+    <selecttype></selecttype>
+    <selectcount>2</selectcount>
+    <gradingtype></gradingtype>
+    <showgrading></showgrading>
+    <numberingstyle>none</numberingstyle>
+    <correctfeedback format="html">
+      <text>Well done!</text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text>Parts, but only parts, of your response are correct.</text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text>That is not right at all.</text>
+    </incorrectfeedback>
+    <shownumcorrect>1</shownumcorrect>
+    <answer fraction="1" format="html">
+      <text>Modular</text>
+      <feedback format="html">
+        <text>Modular is correct.</text>
+      </feedback>
+    </answer>
+    <answer fraction="2" format="html">
+      <text>Object</text>
+      <feedback format="html">
+        <text>Object is correct.</text>
+      </feedback>
+    </answer>
+    <answer fraction="3" format="html">
+      <text>Oriented</text>
+      <feedback format="html">
+        <text>Oriented is correct.</text>
+      </feedback>
+    </answer>
+    <answer fraction="4" format="html">
+      <text>Dynamic</text>
+      <feedback format="html">
+        <text>Dynamic is correct.</text>
+      </feedback>
+    </answer>
+    <answer fraction="5" format="html">
+      <text>Learning</text>
+      <feedback format="html">
+        <text>Learning is correct.</text>
+      </feedback>
+    </answer>
+    <answer fraction="6" format="html">
+      <text>Environment</text>
+      <feedback format="html">
+        <text>Environment is correct.</text>
+      </feedback>
+    </answer>
+    <hint format="html">
+      <text>Hint 1</text>
+    </hint>
+    <hint format="html">
+      <text>Hint 2</text>
+    </hint>
+  </question>

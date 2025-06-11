@@ -527,7 +527,7 @@ abstract class component_gradeitem {
      * @param int $instanceid The instanceid of the advanced grading form
      * @return gradingform_instance
      */
-    public function get_advanced_grading_instance(stdClass $grader, stdClass $grade, int $instanceid = null): ?gradingform_instance {
+    public function get_advanced_grading_instance(stdClass $grader, stdClass $grade, ?int $instanceid = null): ?gradingform_instance {
         $controller = $this->get_advanced_grading_controller($this->itemname);
 
         if (empty($controller)) {

@@ -1,0 +1,365 @@
+$sidebar-width: 50px;
+$sidebar-tab-width: 40px;
+$sidebar-peek-width: 15px;
+$open-drawer-width: 370px;
+$sidebar-tab-bg-color: #eff0f6;
+$sidebar-shadow: -1px 0 2px rgba(0, 0, 0, 0.2);
+$sidebar-z-index: 1050;
+$border-color: #e5e5e5;
+$hover-text-color: #fff;
+$text-color: #fff;
+$transition-speed: 0.3s;
+
+// Mobile variables
+$mobile-sidebar-width: 40px;
+$mobile-sidebar-peek-width: 10px;
+
+.snap-sidebar-menu {
+    position: fixed;
+    top: 0;
+    right: -($sidebar-width - $sidebar-peek-width);
+    width: $sidebar-width;
+    height: 100%;
+    z-index: $sidebar-z-index;
+    transition: 
+        right $transition-speed ease,
+        top $transition-speed ease, 
+        height $transition-speed ease,
+        background-color $transition-speed ease;
+    overflow: visible;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 3px;
+        background-color: #fff;
+        border-radius: 3px;
+        z-index: $sidebar-z-index + 1;
+        opacity: 0;
+        transition: width $transition-speed ease, opacity $transition-speed ease;
+    }
+    
+    &.show {
+        right: 0;
+                
+        &::before {
+            width: 40px;
+            opacity: 1;
+        }
+    }
+}
+
+.snap-sidebar-menu-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: $sidebar-width;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 0 15px;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: translateX($sidebar-peek-width);
+    transition: transform $transition-speed ease;
+    
+    .snap-sidebar-menu.show & {
+        transform: translateX(0);
+    }
+    
+    // Force white color for all links and icons inside the content area
+    a, i, .fa {
+        color: #fff !important;
+    }
+    
+    // Force white color for custom content
+    .custom-menu-item {
+        color: #fff !important;
+        
+        a, i, .fa {
+            color: #fff !important;
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+.snap-sidebar-menu-trigger {
+    position: absolute;
+    bottom: 30px;
+    left: -12px;
+    width: 24px;
+    height: 24px;
+    background-color: #ccc;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: $sidebar-z-index + 1; // Ensure button is above sidebar
+
+    &:hover {
+        background-color: #9d9d9d;
+    }
+
+    i {
+        font-size: 0.8rem;
+        transition: transform $transition-speed ease;
+        color: black !important;
+        
+        &.rotate-180 {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.snap-sidebar-menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    color: #fff !important; // Force white color
+    text-decoration: none;
+    border-radius: 50%;
+    transition: background-color $transition-speed ease, color $transition-speed ease;
+    position: relative; // For positioning custom content
+    background-color: transparent; // For buttons
+    border: none; // For buttons
+    padding: 0; // For buttons
+    cursor: pointer; // For buttons
+    
+    &:hover {
+        color: #fff !important; // Force white color on hover
+    }
+        
+    i, .fa {
+        font-size: 1.2rem;
+        color: #fff !important; // Force white color for icons
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+    
+    // Style for image icons
+    img {
+        filter: brightness(0) invert(1); // Make the icon white
+    }
+}
+
+.custom-menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    color: #fff !important; // Force white color
+    
+    a, i, .fa {
+        color: #fff !important; // Force white color for all elements
+    }
+}
+
+// Active state for drawer buttons
+.snap-sidebar-menu-item.active {
+    position: relative;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        background-color: #fff;
+        border-radius: 3px;
+        opacity: 1;
+        transition: width 0.3s ease, opacity 0.3s ease;
+    }
+    
+    &:hover {        
+        &::after {
+            width: 35px;
+        }
+    }
+}
+
+// Animation for the active indicator
+.snap-sidebar-menu-item {
+    position: relative;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 3px;
+        background-color: #fff;
+        border-radius: 3px;
+        opacity: 0;
+        transition: width 0.3s ease, opacity 0.3s ease;
+    }
+    
+    &.active::after {
+        width: 30px;
+        opacity: 1;
+    }
+}
+
+// Remove background hover effect for active items
+.snap-sidebar-menu-item.active:hover {
+    background-color: transparent;
+}
+
+@media screen and (max-width: 992px) {
+    .snap-sidebar-menu {
+        width: $mobile-sidebar-width;
+        right: -($mobile-sidebar-width - $mobile-sidebar-peek-width);
+    }
+
+    .snap-sidebar-menu-content {
+        width: $mobile-sidebar-width;
+    }
+}
+
+.snap-sidebar-menu.positioning-offscreen {
+    right: -200px;
+}
+
+// ---------------------------------------
+// External overrides/adaptations
+// ---------------------------------------
+
+#page-content .block_settings.state-visible,
+.block_settings:target {
+    right: $sidebar-width;
+    @media screen and (max-width: 992px) {
+        right: $mobile-sidebar-width;
+    }
+}
+
+.drawer.drawer-right.show {
+    right: $sidebar-width;
+    @media screen and (max-width: 992px) {
+        right: $mobile-sidebar-width;
+    }
+    
+    // Add z-index when dropdown menu is visible to not hide it.
+    body:has(.dropdown-menu.dropdown-menu-right.show) & {
+        z-index: 22; // For some reason this z-index works
+    }
+}
+
+#snap_feeds_side_menu.state-visible {
+    right: $sidebar-width;
+    @media screen and (max-width: 992px) {
+        right: $mobile-sidebar-width;
+        width: calc(100% - #{$mobile-sidebar-width});
+        .snap-feeds-mobile-menu .nav{
+            width: calc(100% - #{$mobile-sidebar-width});
+        }
+    }
+}
+
+[data-region=right-hand-drawer].drawer {
+    margin-right: $sidebar-width;
+    @media screen and (max-width: 992px) {
+        margin-right: $mobile-sidebar-width;
+    }
+}
+
+[data-region="popover-region-messages"] {
+    .count-container {
+        right: 10px;
+    }
+
+    a {
+        &::before,
+        &::after {
+            content: none;
+        }
+    }
+}
+
+.snap-sidebar-menu {
+    &.show {
+        & ~ #page {
+            margin-right: $sidebar-width;
+            @media screen and (max-width: 992px) {
+                margin-right: $mobile-sidebar-width;
+            }
+        }
+    }
+}
+
+
+#mr-nav {
+    &.headroom--unpinned {
+        & ~ .snap-sidebar-menu {
+            top: 0 !important;
+            height: 100vh !important;
+        }
+    }
+}
+
+#goto-top-link {
+    bottom: 6em;
+    right: $sidebar-width;
+
+    @media (max-width: 991px) {
+        right: $mobile-sidebar-width;
+    }
+    
+    a.btn {
+        border-radius: 1.5rem 0 0 1.5rem;
+        width: 2rem;
+    }
+}
+
+footer#moodle-footer {
+    margin-right: $sidebar-width;
+    @media (max-width: 991px) {
+        margin-right: $mobile-sidebar-width;
+    }
+}
+
+// Adjust sticky footer to Sidebar.
+body:has(.snap-sidebar-menu.show) #sticky-footer {
+    margin-right: $sidebar-width;
+    @media screen and (max-width: 992px) {
+        margin-right: $mobile-sidebar-width;
+    }
+
+    // Adjust sticky footer to open Drawer.
+    @media screen and (min-width: 992px) {
+        &.snap-mod-data-sticky-footer {
+            margin-right: $open-drawer-width;
+        }
+    }
+}
+
+// TOC Mobile Toggle
+.mobile-only-toc-toggle {
+    display: none;
+    
+    @media screen and (max-width: 767px) {
+        display: block;
+    }
+}

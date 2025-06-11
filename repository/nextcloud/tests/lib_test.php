@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/webdavlib.php');
  * @copyright  2017 Project seminar (Learnweb, University of Münster)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /** @var null|\repository_nextcloud the repository_nextcloud object, which the tests are run on. */
     private $repo = null;
@@ -50,6 +50,7 @@ class lib_test extends \advanced_testcase {
      * SetUp to create an repository instance.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
 
         // Admin is neccessary to create api and issuer objects.
@@ -87,7 +88,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Checks the is_visible method in case the repository is set to hidden in the database.
      */
-    public function test_is_visible_parent_false() {
+    public function test_is_visible_parent_false(): void {
         global $DB;
         $id = $this->repo->options['typeid'];
 
@@ -101,7 +102,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test whether the repo is disabled.
      */
-    public function test_repo_creation() {
+    public function test_repo_creation(): void {
         $issuerid = $this->repo->get_option('issuerid');
 
         // Config saves the right id.
@@ -137,7 +138,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test if repository is disabled when webdav_endpoint is deleted.
      */
-    public function test_issuer_webdav() {
+    public function test_issuer_webdav(): void {
         $idwebdav = $this->get_endpoint_id('webdav_endpoint');
         if (!empty($idwebdav)) {
             foreach ($idwebdav as $id) {
@@ -149,7 +150,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test if repository is disabled when ocs_endpoint is deleted.
      */
-    public function test_issuer_ocs() {
+    public function test_issuer_ocs(): void {
         $idocs = $this->get_endpoint_id('ocs_endpoint');
         if (!empty($idocs)) {
             foreach ($idocs as $id) {
@@ -162,7 +163,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test if repository is disabled when userinfo_endpoint is deleted.
      */
-    public function test_issuer_userinfo() {
+    public function test_issuer_userinfo(): void {
         $idtoken = $this->get_endpoint_id('userinfo_endpoint');
         if (!empty($idtoken)) {
             foreach ($idtoken as $id) {
@@ -175,7 +176,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test if repository is disabled when token_endpoint is deleted.
      */
-    public function test_issuer_token() {
+    public function test_issuer_token(): void {
         $idtoken = $this->get_endpoint_id('token_endpoint');
         if (!empty($idtoken)) {
             foreach ($idtoken as $id) {
@@ -188,7 +189,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test if repository is disabled when auth_endpoint is deleted.
      */
-    public function test_issuer_authorization() {
+    public function test_issuer_authorization(): void {
         $idauth = $this->get_endpoint_id('authorization_endpoint');
         if (!empty($idauth)) {
             foreach ($idauth as $id) {
@@ -200,14 +201,14 @@ class lib_test extends \advanced_testcase {
     /**
      * Test if repository throws an error when endpoint does not exist.
      */
-    public function test_parse_endpoint_url_error() {
+    public function test_parse_endpoint_url_error(): void {
         $this->expectException(\repository_nextcloud\configuration_exception::class);
         \repository_nextcloud\issuer_management::parse_endpoint_url('notexisting', $this->issuer);
     }
     /**
      * Test get_listing method with an example directory. Tests error cases.
      */
-    public function test_get_listing_error() {
+    public function test_get_listing_error(): void {
         $ret = $this->get_initialised_return_array();
         $this->setUser();
         // WebDAV socket is not opened.
@@ -228,7 +229,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test get_listing method with an example directory. Tests the root directory.
      */
-    public function test_get_listing_root() {
+    public function test_get_listing_root(): void {
         $this->setUser();
         $ret = $this->get_initialised_return_array();
 
@@ -292,7 +293,7 @@ class lib_test extends \advanced_testcase {
      * Test get_listing method with an example directory. Tests a different directory than the root
      * directory.
      */
-    public function test_get_listing_directory() {
+    public function test_get_listing_directory(): void {
         $ret = $this->get_initialised_return_array();
         $this->setUser();
 
@@ -361,7 +362,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test the get_link method.
      */
-    public function test_get_link_success() {
+    public function test_get_link_success(): void {
         $mock = $this->getMockBuilder(\repository_nextcloud\ocs_client::class)->disableOriginalConstructor()->disableOriginalClone(
             )->getMock();
         $file = '/datei';
@@ -421,7 +422,7 @@ XML;
     /**
      * get_link can get OCS failure responses. Test that this is handled appropriately.
      */
-    public function test_get_link_failure() {
+    public function test_get_link_failure(): void {
         $mock = $this->getMockBuilder(\repository_nextcloud\ocs_client::class)->disableOriginalConstructor()->disableOriginalClone(
             )->getMock();
         $file = '/datei';
@@ -461,7 +462,7 @@ XML;
     /**
      * get_link can get OCS responses that are not actually XML. Test that this is handled appropriately.
      */
-    public function test_get_link_problem() {
+    public function test_get_link_problem(): void {
         $mock = $this->getMockBuilder(\repository_nextcloud\ocs_client::class)->disableOriginalConstructor()->disableOriginalClone(
             )->getMock();
         $file = '/datei';
@@ -491,14 +492,14 @@ JSON;
     /**
      * Test get_file reference, merely returns the input if no optional_param is set.
      */
-    public function test_get_file_reference_withoutoptionalparam() {
+    public function test_get_file_reference_withoutoptionalparam(): void {
         $this->assertEquals('/somefile', $this->repo->get_file_reference('/somefile'));
     }
 
     /**
      * Test logout.
      */
-    public function test_logout() {
+    public function test_logout(): void {
         $mock = $this->createMock(\core\oauth2\client::class);
 
         $mock->expects($this->exactly(2))->method('log_out');
@@ -518,7 +519,7 @@ JSON;
     /**
      * Test for the get_file method from the repository_nextcloud class.
      */
-    public function test_get_file() {
+    public function test_get_file(): void {
         // WebDAV socket is not open.
         $mock = $this->createMock(\webdav_client::class);
         $mock->expects($this->once())->method('open')->will($this->returnValue(false));
@@ -540,7 +541,7 @@ JSON;
     /**
      * Test callback.
      */
-    public function test_callback() {
+    public function test_callback(): void {
         $mock = $this->createMock(\core\oauth2\client::class);
         // Should call check_login exactly once.
         $mock->expects($this->once())->method('log_out');
@@ -553,7 +554,7 @@ JSON;
     /**
      * Test check_login.
      */
-    public function test_check_login() {
+    public function test_check_login(): void {
         $mock = $this->createMock(\core\oauth2\client::class);
         $mock->expects($this->once())->method('is_logged_in')->will($this->returnValue(true));
         $this->set_private_property($mock, 'client');
@@ -563,7 +564,7 @@ JSON;
     /**
      * Test print_login.
      */
-    public function test_print_login() {
+    public function test_print_login(): void {
         $mock = $this->createMock(\core\oauth2\client::class);
         $mock->expects($this->exactly(2))->method('get_login_url')->will($this->returnValue(new \moodle_url('url')));
         $this->set_private_property($mock, 'client');
@@ -592,7 +593,7 @@ JSON;
     /**
      * Test the initiate_webdavclient function.
      */
-    public function test_initiate_webdavclient() {
+    public function test_initiate_webdavclient(): void {
         global $CFG;
 
         $idwebdav = $this->get_endpoint_id('webdav_endpoint');
@@ -618,7 +619,6 @@ JSON;
         $refclient = new \ReflectionClass($dav);
 
         $property = $refclient->getProperty('_port');
-        $property->setAccessible(true);
 
         $port = $property->getValue($dav);
 
@@ -630,7 +630,7 @@ JSON;
      * FILE_INTERNAL | FILE_REFERENCE when no system account is connected.
      * FILE_INTERNAL | FILE_CONTROLLED_LINK | FILE_REFERENCE when a system account is connected.
      */
-    public function test_supported_returntypes() {
+    public function test_supported_returntypes(): void {
         global $DB;
         $this->assertEquals(FILE_INTERNAL | FILE_REFERENCE, $this->repo->supported_returntypes());
         $dataobject = new \stdClass();
@@ -655,7 +655,7 @@ JSON;
      * function are tested.
      *
      */
-    public function test_reference_file_selected_error() {
+    public function test_reference_file_selected_error(): void {
         $this->repo->disabled = true;
         $this->expectException(\repository_exception::class);
         $this->repo->reference_file_selected('', \context_system::instance(), '', '', '');
@@ -703,7 +703,7 @@ JSON;
             array('success' => 201)));
         $this->repo->expects($this->once())->method('delete_share_dataowner_sysaccount')->willReturn(
             array('statuscode' => array('success' => 100)));
-        $filereturn = array();
+        $filereturn = new \stdClass();
         $filereturn->link = 'some/fullpath' . 'some/target/path';
         $filereturn->name = 'mysource';
         $filereturn->usesystem = true;
@@ -715,7 +715,7 @@ JSON;
     /**
      * Test the send_file function for access controlled links.
      */
-    public function test_send_file_errors() {
+    public function test_send_file_errors(): void {
         $fs = get_file_storage();
         $storedfile = $fs->create_file_from_reference([
             'contextid' => \context_system::instance()->id,
@@ -853,7 +853,7 @@ XML;
      *
      * @return array[]
      */
-    public function sync_reference_provider():array {
+    public static function sync_reference_provider(): array {
         return [
             'referecncelastsync done recently' => [
                 [
@@ -952,7 +952,7 @@ XML;
      * @param bool $expectedresult
      * @return void
      */
-    public function test_sync_reference(array $storedfileargs, $storedfilemethodsmock, bool $expectedresult):void {
+    public function test_sync_reference(array $storedfileargs, $storedfilemethodsmock, bool $expectedresult): void {
         $this->resetAfterTest(true);
 
         if (isset($storedfilemethodsmock[0])) {
@@ -977,7 +977,6 @@ XML;
                 $curl->method('get_info')->willReturn(['http_code' => 200]);
 
                 $reflectionproperty = new \ReflectionProperty($this->repo, 'curl');
-                $reflectionproperty->setAccessible(true);
                 $reflectionproperty->setValue($this->repo, $curl);
             }
         } else {
@@ -1002,7 +1001,6 @@ XML;
     protected function set_private_property($value, $propertyname) {
         $refclient = new \ReflectionClass($this->repo);
         $private = $refclient->getProperty($propertyname);
-        $private->setAccessible(true);
         $private->setValue($this->repo, $value);
 
         return $private;

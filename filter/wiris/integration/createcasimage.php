@@ -3,7 +3,13 @@
 require_once ('pluginbuilder.php');
 
 $provider = $pluginBuilder->getCustomParamsProvider();
-$image = $provider->getRequiredParameter('image');
+
+try {
+    $image = $provider->getRequiredParameter('image');
+} catch (Exception $e) {
+    exit("Error: Required parameter 'image' not found.");
+}
+
 // Adding - if necessary - CORS headers.
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : "";
 $res = new com_wiris_system_service_HttpResponse();

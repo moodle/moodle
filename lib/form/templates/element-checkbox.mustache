@@ -1,4 +1,4 @@
-<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+<div class="mb-3 row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}} {{{element.parentclasses}}}">
     <div class="col-md-3 col-form-label pb-0 pt-0">
         {{#text}}
             <label class="d-inline word-break" for="{{element.id}}">
@@ -31,6 +31,9 @@
                         aria-describedby="{{element.id}}_description"
                     {{/text}}
                 {{/error}}
+                {{#required}}
+                   aria-required="true"
+                {{/required}}
                 {{#element.frozen}}
                     disabled
                 {{/element.frozen}}
@@ -45,7 +48,7 @@
                     {{{label}}}
                 </label>
             {{/text}}
-            <div class="ml-2 d-flex align-items-center align-self-start">
+            <div class="ms-2 d-flex align-items-center align-self-start">
                 {{#required}}
                     <div class="text-danger" title="{{#str}}required{{/str}}">
                     {{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}

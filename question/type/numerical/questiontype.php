@@ -57,7 +57,7 @@ class qtype_numerical extends question_type {
      * @param string $x a string
      * @return bool whether $x is a number that the numerical question type can interpret.
      */
-    public static function is_valid_number(string $x) : bool {
+    public static function is_valid_number(string $x): bool {
         $ap = new qtype_numerical_answer_processor(array());
         list($value, $unit) = $ap->apply_units($x);
         return !is_null($value) && !$unit;

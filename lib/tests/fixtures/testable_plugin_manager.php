@@ -113,7 +113,7 @@ class testable_core_plugin_manager extends core_plugin_manager {
     /**
      * Adds fake plugin information from record.
      *
-     * @param stdClass $record
+     * @param testable_plugininfo_base $record
      * @return void
      */
     public function add_fake_plugin_info($record): void {

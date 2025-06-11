@@ -29,9 +29,9 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
+final class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
 
-    public function test_numerical_deferredfeedback_history620() {
+    public function test_numerical_deferredfeedback_history620(): void {
         $quiz = (object) array(
             'id' => '221',
             'course' => '187',
@@ -256,7 +256,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_numerical_deferredfeedback_required_units() {
+    public function test_numerical_deferredfeedback_required_units(): void {
         $quiz = (object) array(
             'id' => '2',
             'course' => '2',

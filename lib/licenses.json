@@ -1,0 +1,82 @@
+{
+  "licenses": [
+    {
+      "shortname": "unknown",
+      "fullname": "Licence not specified",
+      "source": "",
+      "enabled": 1,
+      "version": "2010033100",
+      "custom": 0
+    },
+    {
+      "shortname": "allrightsreserved",
+      "fullname": "All rights reserved",
+      "source": "https://en.wikipedia.org/wiki/All_rights_reserved",
+      "enabled": 1,
+      "version": "2010033100",
+      "custom": 0
+    },
+    {
+      "shortname": "public",
+      "fullname": "Public domain",
+      "source": "https://en.wikipedia.org/wiki/Public_domain",
+      "enabled": 1,
+      "version": "2010033100",
+      "custom": 0
+    },
+    {
+      "shortname": "cc-4.0",
+      "fullname": "Creative Commons - 4.0 International",
+      "source": "https://creativecommons.org/licenses/by/4.0/",
+      "enabled": 1,
+      "version": "2022120100",
+      "custom": 0,
+      "replaces": ["cc"]
+    },
+    {
+      "shortname": "cc-nc-4.0",
+      "fullname": "Creative Commons - NonCommercial 4.0 International",
+      "source": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "enabled": 1,
+      "version": "2022120100",
+      "custom": 0,
+      "replaces": ["cc-nc"]
+    },
+    {
+      "shortname": "cc-nd-4.0",
+      "fullname": "Creative Commons - NoDerivatives 4.0 International",
+      "source": "https://creativecommons.org/licenses/by-nd/4.0/",
+      "enabled": 1,
+      "version": "2022120100",
+      "custom": 0,
+      "replaces": ["cc-nd"]
+    },
+    {
+      "shortname": "cc-nc-nd-4.0",
+      "fullname": "Creative Commons - NonCommercial-NoDerivatives 4.0 International",
+      "source": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+      "enabled": 1,
+      "version": "2022120100",
+      "custom": 0,
+      "replaces": ["cc-nc-nd"]
+    },
+    {
+      "shortname": "cc-nc-sa-4.0",
+      "fullname": "Creative Commons - NonCommercial-ShareAlike 4.0 International",
+      "source": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "enabled": 1,
+      "version": "2022120100",
+      "custom": 0,
+      "replaces": ["cc-nc-sa"]
+    },
+    {
+      "shortname": "cc-sa-4.0",
+      "fullname": "Creative Commons - ShareAlike 4.0 International",
+      "source": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "enabled": 1,
+      "version": "2022120100",
+      "custom": 0,
+      "replaces": ["cc-sa"]
+    }
+  ]
+}

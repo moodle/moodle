@@ -1,3 +1,7 @@
+version 2015122018 release 1.0.3
+
+Fixes drawer bug and footer
+
 version 2015122008
 
 If the editor loses focus, drop out of fullscreen. This happens if

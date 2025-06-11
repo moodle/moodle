@@ -1,0 +1,151 @@
+%fake-btn {
+    display: inline-block;
+    font-weight: $btn-font-weight;
+    line-height: $btn-line-height;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: $input-btn-border-width solid transparent;
+    @include button-size($btn-padding-y, $btn-padding-x, $font-size-base, $btn-line-height, $btn-border-radius);
+    @include transition(all .2s ease-in-out);
+
+    /*
+
+    tab-focus mixin no longer available in BS4 - it was a webkit workaround, possibly no longer required.
+
+    &,
+    &:active,
+    &.active {
+        &:focus,
+        &.focus {
+            @include tab-focus();
+        }
+    }*/
+
+    &:hover,
+    &:focus {
+        text-decoration: none;
+    }
+    
+    &.focus {
+        text-decoration: none;
+    }
+
+    &:active,
+    &.active {
+        background-image: none;
+        outline: 0;
+        @include box-shadow($btn-active-box-shadow);
+    }
+
+    &.disabled,
+    &:disabled {
+        cursor: $cursor-disabled;
+        opacity: .65;
+        @include box-shadow(none);
+    }
+}
+
+@keyframes circleajax {
+    0% {
+        border-top-color: rgba(100, 100, 100, 1);
+        border-right-color: rgba(50, 50, 50, 0.25);
+        border-bottom-color: rgba(50, 50, 50, 0.25);
+        border-left-color: rgba(50, 50, 50, 0.25);
+    }
+    25% {
+        border-top-color: rgba(50, 50, 50, 0.25);
+        border-right-color: rgba(100, 100, 100, 1);
+        border-bottom-color: rgba(50, 50, 50, 0.25);
+        border-left-color: rgba(50, 50, 50, 0.25);
+    }
+    50% {
+        border-top-color: rgba(50, 50, 50, 0.25);
+        border-right-color: rgba(50, 50, 50, 0.25);
+        border-bottom-color: rgba(100, 100, 100, 1);
+        border-left-color: rgba(50, 50, 50, 0.25);
+    }
+    75% {
+        border-top-color: rgba(50, 50, 50, 0.25);
+        border-right-color: rgba(50, 50, 50, 0.25);
+        border-bottom-color: rgba(50, 50, 50, 0.25);
+        border-left-color: rgba(100, 100, 100, 1);
+    }
+    100% {
+        border-top-color: rgba(100, 100, 100, 1);
+        border-right-color: rgba(50, 50, 50, 0.25);
+        border-bottom-color: rgba(50, 50, 50, 0.25);
+        border-left-color: rgba(50, 50, 50, 0.25);
+    }
+}
+
+@keyframes circleajaxwhite {
+    0% {
+        border-top-color: rgba(255, 255, 255, 1);
+        border-right-color: rgba(250, 250, 250, 0.5);
+        border-bottom-color: rgba(250, 250, 250, 0.5);
+        border-left-color: rgba(250, 250, 250, 0.5);
+    }
+    25% {
+        border-top-color: rgba(250, 250, 250, 0.5);
+        border-right-color: rgba(255, 255, 255, 1);
+        border-bottom-color: rgba(250, 250, 250, 0.5);
+        border-left-color: rgba(250, 250, 250, 0.5);
+    }
+    50% {
+        border-top-color: rgba(250, 250, 250, 0.5);
+        border-right-color: rgba(250, 250, 250, 0.5);
+        border-bottom-color: rgba(255, 255, 255, 1);
+        border-left-color: rgba(250, 250, 250, 0.5);
+    }
+    75% {
+        border-top-color: rgba(250, 250, 250, 0.5);
+        border-right-color: rgba(250, 250, 250, 0.5);
+        border-bottom-color: rgba(250, 250, 250, 0.5);
+        border-left-color: rgba(255, 255, 255, 1);
+    }
+    100% {
+        border-top-color: rgba(255, 255, 255, 1);
+        border-right-color: rgba(250, 250, 250, 0.5);
+        border-bottom-color: rgba(250, 250, 250, 0.5);
+        border-left-color: rgba(250, 250, 250, 0.5);
+    }
+}
+
+@mixin ajaxing($display, $position, $size, $borderwidth) {
+    content: '';
+    display: $display;
+    position: $position;
+    width: $size;
+    height: $size;
+    // The min / max settings are just to override original elements :after sizings if present.
+    min-width: $size;
+    min-height: $size;
+    max-width: $size;
+    max-height: $size;
+    top: 0;
+    left: 0;
+    border: solid;
+    border-width: $borderwidth;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-top-color: rgba(50, 50, 50, 1);
+    border-right-color: rgba(50, 50, 50, 0.25);
+    border-bottom-color: rgba(50, 50, 50, 0.25);
+    border-left-color: rgba(50, 50, 50, 0.25);
+    animation-name: circleajax;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@mixin ajaxingwhite($display, $position, $size, $borderwidth) {
+    @include ajaxing($display, $position, $size, $borderwidth);
+    animation-name: circleajaxwhite;
+    border-top-color: rgba(255, 255, 255, 1);
+    border-right-color: rgba(250, 250, 250, 0.5);
+    border-bottom-color: rgba(250, 250, 250, 0.5);
+    border-left-color: rgba(250, 250, 250, 0.5);
+}

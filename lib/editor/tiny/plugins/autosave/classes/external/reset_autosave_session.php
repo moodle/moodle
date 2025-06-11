@@ -16,14 +16,10 @@
 
 namespace tiny_autosave\external;
 
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once("{$CFG->libdir}/externallib.php");
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * Web Service to reset the autosave session.
@@ -66,7 +62,6 @@ class reset_autosave_session extends external_api {
         string $pageinstance,
         string $elementid
     ): array {
-        global $DB, $USER;
 
         [
             'contextid' => $contextid,
@@ -81,8 +76,11 @@ class reset_autosave_session extends external_api {
 
         ]);
 
-        $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
-        $manager->remove_autosave_record();
+        // May have been called by a non-logged in user.
+        if (isloggedin() && !isguestuser()) {
+            $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
+            $manager->remove_autosave_record();
+        }
 
         return [];
     }

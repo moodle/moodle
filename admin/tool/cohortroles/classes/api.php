@@ -25,7 +25,7 @@ namespace tool_cohortroles;
 
 use stdClass;
 use context_system;
-use core_competency\invalid_persistent_exception;
+use core\invalid_persistent_exception;
 
 /**
  * Class for doing things with cohort roles.

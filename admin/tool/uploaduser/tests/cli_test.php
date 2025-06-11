@@ -23,7 +23,7 @@ namespace tool_uploaduser;
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cli_test extends \advanced_testcase {
+final class cli_test extends \advanced_testcase {
 
     /**
      * Generate cli_helper and mock $_SERVER['argv']
@@ -48,7 +48,7 @@ class cli_test extends \advanced_testcase {
     /**
      * Tests simple upload with course enrolment and group allocation
      */
-    public function test_upload_with_course_enrolment() {
+    public function test_upload_with_course_enrolment(): void {
         global $CFG;
         $this->resetAfterTest();
         set_config('passwordpolicy', 0);
@@ -85,7 +85,7 @@ class cli_test extends \advanced_testcase {
     /**
      * Test applying defaults during the user upload
      */
-    public function test_upload_with_applying_defaults() {
+    public function test_upload_with_applying_defaults(): void {
         global $CFG;
         $this->resetAfterTest();
         set_config('passwordpolicy', 0);
@@ -117,13 +117,13 @@ class cli_test extends \advanced_testcase {
     /**
      * User upload with user profile fields
      */
-    public function test_upload_with_profile_fields() {
+    public function test_upload_with_profile_fields(): void {
         global $CFG;
         $this->resetAfterTest();
         set_config('passwordpolicy', 0);
         $this->setAdminUser();
 
-        $this->field1 = $this->getDataGenerator()->create_custom_profile_field([
+        $this->getDataGenerator()->create_custom_profile_field([
             'shortname' => 'superfield', 'name' => 'Super field',
             'datatype' => 'text', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 1]);
 
@@ -143,14 +143,14 @@ class cli_test extends \advanced_testcase {
         // Created users have data in the profile fields.
         $user1 = \core_user::get_user_by_username('reznort');
         $profilefields1 = profile_user_record($user1->id);
-        $this->assertObjectHasAttribute('superfield', $profilefields1);
+        $this->assertObjectHasProperty('superfield', $profilefields1);
         $this->assertEquals('Loves cats', $profilefields1->superfield);
     }
 
     /**
      * Testing that help for CLI does not throw errors
      */
-    public function test_cli_help() {
+    public function test_cli_help(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $clihelper = $this->construct_helper(["--help"]);
@@ -168,7 +168,7 @@ class cli_test extends \advanced_testcase {
     /**
      * Testing skipped user when one exists
      */
-    public function test_create_when_user_exists() {
+    public function test_create_when_user_exists(): void {
         global $CFG;
         $this->resetAfterTest();
         set_config('passwordpolicy', 0);
@@ -203,7 +203,7 @@ class cli_test extends \advanced_testcase {
     /**
      * Testing update mode - do not update user records but allow enrolments
      */
-    public function test_enrolments_when_user_exists() {
+    public function test_enrolments_when_user_exists(): void {
         global $CFG;
         require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/uploaduser/locallib.php');
 
@@ -245,7 +245,7 @@ class cli_test extends \advanced_testcase {
     /**
      * Testing update mode - update user records and perform enrolments.
      */
-    public function test_udpate_user() {
+    public function test_udpate_user(): void {
         global $CFG;
         require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/uploaduser/locallib.php');
 

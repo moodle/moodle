@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_tag\reportbuilder\datasource;
 
 use lang_string;
+use core\reportbuilder\local\entities\context;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 use core_tag\reportbuilder\local\entities\{collection, tag, instance};
@@ -46,10 +47,9 @@ class tags extends datasource {
      */
     protected function initialise(): void {
         $collectionentity = new collection();
-
         $collectionalias = $collectionentity->get_table_alias('tag_coll');
-        $this->set_main_table('tag_coll', $collectionalias);
 
+        $this->set_main_table('tag_coll', $collectionalias);
         $this->add_entity($collectionentity);
 
         // Join tag entity to collection.
@@ -65,6 +65,14 @@ class tags extends datasource {
         $this->add_entity($instanceentity
             ->add_joins($tagentity->get_joins())
             ->add_join("LEFT JOIN {tag_instance} {$instancealias} ON {$instancealias}.tagid = {$tagalias}.id")
+        );
+
+        // Join the context entity.
+        $contextentity = new context();
+        $contextalias = $contextentity->get_table_alias('context');
+        $this->add_entity($contextentity
+            ->add_joins($instanceentity->get_joins())
+            ->add_join("LEFT JOIN {context} {$contextalias} ON {$contextalias}.id = {$instancealias}.contextid")
         );
 
         // Join user entity to represent the tag author.
@@ -90,7 +98,19 @@ class tags extends datasource {
             'collection:name',
             'tag:namewithlink',
             'tag:standard',
-            'instance:context',
+            'context:name',
+        ];
+    }
+
+    /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'collection:name' => SORT_ASC,
+            'tag:namewithlink' => SORT_ASC,
         ];
     }
 

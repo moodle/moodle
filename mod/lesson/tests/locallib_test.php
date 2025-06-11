@@ -40,12 +40,12 @@ require_once($CFG->dirroot.'/mod/lesson/locallib.php');
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locallib_test extends \advanced_testcase {
+final class locallib_test extends \advanced_testcase {
 
     /**
      * Test duplicating a lesson page element.
      */
-    public function test_duplicate_page() {
+    public function test_duplicate_page(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -83,7 +83,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test test_lesson_get_user_deadline().
      */
-    public function test_lesson_get_user_deadline() {
+    public function test_lesson_get_user_deadline(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -220,7 +220,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($comparearray, lesson_get_user_deadline($course->id));
     }
 
-    public function test_is_participant() {
+    public function test_is_participant(): void {
         global $USER, $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -250,7 +250,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals(true, $lesson->is_participant($USER->id),
             'Admin is enrolled and can participate');
 
-        $this->getDataGenerator()->enrol_user(2, $course->id, [], 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $this->getDataGenerator()->enrol_user(2, $course->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
         $this->assertEquals(true, $lesson->is_participant($USER->id),
             'Admin is enrolled, suspended and can participate');
     }
@@ -260,7 +260,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_last_attempt_dataprovider() {
+    public static function get_last_attempt_dataprovider(): array {
         return [
             [0, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 3]],
             [1, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 1]],
@@ -278,7 +278,7 @@ class locallib_test extends \advanced_testcase {
      * @param array $attempts The list of student attempts.
      * @param object $expected Expected result.
      */
-    public function test_get_last_attempt($maxattempts, $attempts, $expected) {
+    public function test_get_last_attempt($maxattempts, $attempts, $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();

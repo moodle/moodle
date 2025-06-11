@@ -22,33 +22,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Run all Atto equation upgrade steps between the current DB version and the current version on disk.
  * @param int $oldversion The old version of atto equation in the DB.
  * @return bool
  */
 function xmldb_atto_equation_upgrade($oldversion) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2022110700) {
-        $oldmatrix = '\left| \begin{matrix} a_1 & a_2 \\ a_3 & a_4 \end{matrix} \right|';
-        $fixedmatrix = '\left| \begin{matrix} a_1 & a_2 \\\\ a_3 & a_4 \end{matrix} \right|';
-        $config = get_config('atto_equation', 'librarygroup4');
-        $newdefault = str_replace($oldmatrix, $fixedmatrix, $config);
-        set_config('librarygroup4', $newdefault, 'atto_equation');
-        // Atto equation savepoint reached.
-        upgrade_plugin_savepoint(true, 2022110700, 'atto', 'equation');
-    }
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

@@ -1,0 +1,253 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_tiles/content
+
+    Displays the complete course format for tiles course format When using snap theme.
+
+    Classes required for JS:
+        * core_courseformat/local/content
+
+        Data attributes required for JS:
+        * none
+
+    Context variables required for Snap in this template:
+        * imgurltools - Source URL for dashboard tools image
+        * urlcoursetools - URL for dashboard tools link
+        * has_edit_capability - Bool to see if user has capability and context to edit
+        * urleditmode - URL parameter to set edit mod ON/OFF
+        * editstring - String for edit mode button
+        * course_tools - from shared::course_tools output HTML to render Snap Course tools
+        * edit_mode - from shared::render_edit_mode output HTML to render edit mode button
+        See theme/snap/classes/output/format_tiles/content/tiles_content.php
+
+    Example context (json):
+    {
+        "initialsection": {
+                "num": 0,
+                "id": 34,
+                "cmlist": {
+                    "cms": [
+                        {
+                            "cmitem": {
+                                "cmformat": {
+                                    "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Forum example</span></a>",
+                                    "hasname": "true"
+                                },
+                                "id": 3,
+                                "cmid": 3,
+                                "module": "forum",
+                                "extraclasses": "newmessages",
+                                "anchor": "module-3"
+                            }
+                        }
+                    ],
+                    "hascms": true
+                },
+                "iscurrent": true,
+                "summary": {
+                    "summarytext": "Summary text!"
+                }
+            },
+        "sections": [
+            {
+                "num": 1,
+                "id": 35,
+                "header": {
+                    "name": "Section title",
+                    "url": "#"
+                },
+                "cmlist": {
+                    "cms": [
+                        {
+                            "cmitem": {
+                                "cmformat": {
+                                    "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Another forum</span></a>",
+                                    "hasname": "true"
+                                },
+                                "id": 4,
+                                "cmid": 4,
+                                "module": "forum",
+                                "extraclasses": "newmessages",
+                                "anchor": "module-4"
+                            }
+                        }
+                    ],
+                    "hascms": true
+                },
+                "iscurrent": true,
+                "summary": {
+                    "summarytext": "Summary text!"
+                }
+            },
+            {
+                "num": 4,
+                "id": 36,
+                "header": {
+                    "name": "Section 2 title",
+                    "url": "#"
+                },
+                "cmlist": {
+                    "cms": [
+                        {
+                            "cmitem": {
+                                "cmformat": {
+                                    "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Forum example</span></a>",
+                                    "hasname": "true"
+                                },
+                                "id": 5,
+                                "cmid": 5,
+                                "module": "forum",
+                                "extraclasses": "newmessages",
+                                "anchor": "module-5"
+                            }
+                        }
+                    ],
+                    "hascms": true
+                },
+                "iscurrent": true,
+                "summary": {
+                    "summarytext": "Summary text!"
+                }
+            }
+        ],
+        "format": "tiles",
+        "title": "Course title example",
+            "hasnavigation": true,
+            "sectionnavigation": {
+            "hasprevious": true,
+            "previousurl": "#",
+            "larrow": "&#x25C4;",
+            "previousname": "Section 3",
+            "hasnext": true,
+            "rarrow": "&#x25BA;",
+            "nexturl": "#",
+            "nextname": "Section 5"
+        },
+        "sectionselector": {
+            "hasprevious": true,
+            "previousurl": "#",
+            "larrow": "&#x25C4;",
+            "previousname": "Section 3",
+            "hasnext": true,
+            "rarrow": "&#x25BA;",
+            "nexturl": "#",
+            "nextname": "Section 5",
+            "selector": "<select><option>Section 4</option></select>"
+        },
+        "sectionreturn": 1,
+        "singlesection": {
+            "num": 5,
+            "id": 37,
+            "header": {
+                "name": "Single Section Example",
+                "url": "#"
+            },
+            "cmlist": {
+                "cms": [
+                    {
+                        "cmitem": {
+                            "cmformat": {
+                                "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Assign example</span></a>",
+                                "hasname": "true"
+                            },
+                            "id": 6,
+                            "cmid": 6,
+                            "module": "assign",
+                            "extraclasses": "",
+                            "anchor": "module-6"
+                        }
+                    }
+                ],
+                "hascms": true
+            },
+            "iscurrent": true,
+            "summary": {
+                "summarytext": "Summary text!"
+            }
+        }
+    }
+}}
+<div id="course-format-{{uniqid}}">
+    {{! Open LMS patch. }}
+    <div id="snap-course-dashboard">
+        <a href="{{urlcoursetools}}" id="snap-course-tools" class="tiles-dashboard">
+            <img src="{{imgurltools}}" class="svg-icon" alt="" />{{#str}}coursetools, theme_snap{{/str}}
+        </a>
+    </div>
+    {{! Open LMS patch end. }}
+    <h2 class="accesshide">{{{title}}}</h2>
+    {{{completionhelp}}}
+    {{#editoradvice}}
+        <div class="alert alert-{{class}} alert-block fade show"><i class="icon fa fa-{{icon}}"></i>{{{text}}}
+            <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">{{#str}}dismissnotification, core{{/str}}</span>
+            </button>
+        </div>
+    {{/editoradvice}}
+
+    <ul class="{{format}}" data-for="course_sectionlist">
+        {{#initialsection}}
+            {{$ format_tiles/local/content/section }}
+                {{> format_tiles/local/content/section }}
+            {{/ format_tiles/local/content/section }}
+        {{/initialsection}}
+        {{#sections}}
+            {{$ format_tiles/local/content/section }}
+                {{> format_tiles/local/content/section }}
+            {{/ format_tiles/local/content/section }}
+        {{/sections}}
+    </ul>
+    {{#hasnavigation}}
+        <div class="single-section">
+            {{#sectionnavigation}}
+                {{$ core_courseformat/local/content/sectionnavigation }}
+                    {{> core_courseformat/local/content/sectionnavigation }}
+                {{/ core_courseformat/local/content/sectionnavigation }}
+            {{/sectionnavigation}}
+            <ul class="{{format}}">
+                {{#singlesection}}
+                    {{$ format_tiles/local/content/section }}
+                        {{> format_tiles/local/content/section }}
+                    {{/ format_tiles/local/content/section }}
+                {{/singlesection}}
+            </ul>
+            {{#sectionselector}}
+                {{$ core_courseformat/local/content/sectionselector }}
+                    {{> core_courseformat/local/content/sectionselector }}
+                {{/ core_courseformat/local/content/sectionselector }}
+            {{/sectionselector}}
+        </div>
+    {{/hasnavigation}}
+    {{^ismoodle41minus}}
+        {{#bulkedittools}}
+            {{$ core_courseformat/local/content/bulkedittools}}
+                {{> core_courseformat/local/content/bulkedittools}}
+            {{/ core_courseformat/local/content/bulkedittools}}
+        {{/bulkedittools}}
+    {{/ismoodle41minus}}
+</div>
+
+{{{ course_tools }}}
+{{{ edit_mode }}}
+
+{{#js}}
+    require(['core_courseformat/local/content'], function(component) {
+    component.init('course-format-{{uniqid}}', {}, {{sectionreturn}});
+    });
+{{/js}}

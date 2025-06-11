@@ -1,0 +1,12 @@
+// question: 25  name: Moodle
+// [id:myid]
+::Moodle::[html]Put these words in order.{>4 CONTIGUOUS VERT ABSOLUTE TRUE ABCD
+Modular
+Object
+Oriented
+Dynamic
+Learning
+Environment
+#### The correct answer is "Modular Object Oriented Dynamic Learning Environment".
+}
+

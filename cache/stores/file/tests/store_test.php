@@ -16,8 +16,8 @@
 
 namespace cachestore_file;
 
-use cache_definition;
-use cache_store;
+use core_cache\definition;
+use core_cache\store;
 use cachestore_file;
 
 defined('MOODLE_INTERNAL') || die();
@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/cache/stores/file/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \cachestore_file
  */
-class store_test extends \cachestore_tests {
+final class store_test extends \cachestore_tests {
     /**
      * Returns the file class name
      * @return string
@@ -51,10 +51,10 @@ class store_test extends \cachestore_tests {
      * The deleting of cache simulates some other process purging
      * the cache.
      */
-    public function test_cache_get_with_prescan_and_purge() {
+    public function test_cache_get_with_prescan_and_purge(): void {
         global $CFG;
 
-        $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'cachestore_file', 'phpunit_test');
+        $definition = definition::load_adhoc(store::MODE_REQUEST, 'cachestore_file', 'phpunit_test');
         $name = 'File test';
 
         $path = make_cache_directory('cachestore_file_test');
@@ -78,7 +78,7 @@ class store_test extends \cachestore_tests {
      * Tests the get_last_read byte count.
      */
     public function test_get_last_io_bytes(): void {
-        $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'cachestore_file', 'phpunit_test');
+        $definition = definition::load_adhoc(store::MODE_REQUEST, 'cachestore_file', 'phpunit_test');
         $store = new \cachestore_file('Test');
         $store->initialise($definition);
 
@@ -101,7 +101,7 @@ class store_test extends \cachestore_tests {
         $this->assertEquals(21, $store->get_last_io_bytes());
     }
 
-    public function test_lock() {
+    public function test_lock(): void {
         $store = new \cachestore_file('Test');
 
         $this->assertTrue($store->acquire_lock('lock', '123'));

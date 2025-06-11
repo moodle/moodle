@@ -80,7 +80,7 @@ if ($semesterid) {
 
     // If we don't have a semester, error out.
     if (empty($semester)) {
-        print_error('no_semester', 'enrol_ues');
+        moodle_exception('no_semester', 'enrol_ues');
     }
 
     // If the user wants to delete a semester, do it.

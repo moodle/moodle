@@ -47,7 +47,7 @@ class report implements renderable, templatable {
     protected $pagecontext;
 
     /** @var array $learningplantemplates List of learning plan templates. */
-    protected $learningplantemplates = array();
+    protected $learningplantemplates = [];
 
     /**
      * Construct this renderable.
@@ -73,7 +73,7 @@ class report implements renderable, templatable {
         $data->urlbulkrating = $url->out(true);
         $data->cmcompgradingenabled = report_lpmonitoring_api::is_cm_comptency_grading_enabled();
 
-        $data->templates = array();
+        $data->templates = [];
         foreach ($this->learningplantemplates as $template) {
             $exporter = new template_exporter($template);
             $data->templates[] = $exporter->export($output);

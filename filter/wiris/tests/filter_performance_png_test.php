@@ -38,8 +38,6 @@ require_once($CFG->dirroot . '/filter/wiris/integration/lib/com/wiris/system/Cal
  * @subpackage MOODLE_39_STABLE/filter/wiris/tests
  */
 final class filter_performance_png_test extends advanced_testcase {
-
-
     /**
      * @var mixed $wirisfilter The WIRIS filter instance used for testing.
      */

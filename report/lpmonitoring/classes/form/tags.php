@@ -52,7 +52,7 @@ class tags extends moodleform  implements renderable {
                 "$CFG->dirroot/report/lpmonitoring/classes/form/tagautocomplete.php", 'tagautocomplete');
 
         $mform->addElement('tagautocomplete', 'tags', get_string('tags', 'report_lpmonitoring'),
-                array('itemtype' => 'competency_plan', 'component' => 'report_lpmonitoring'));
+                ['itemtype' => 'competency_plan', 'component' => 'report_lpmonitoring']);
 
         $this->add_action_buttons();
         $mform->addElement('hidden', 'action');

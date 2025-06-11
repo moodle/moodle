@@ -46,15 +46,20 @@ require_once($CFG->dirroot . '/mod/survey/lib.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
+        parent::setUp();
         $this->resetAfterTest();
         $PAGE->get_renderer('core');
+
+        // Survey module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('survey', 1);
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -90,7 +95,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::test_get_users_in_context().
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $dg = $this->getDataGenerator();
         $component = 'mod_survey';
 
@@ -140,7 +145,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals($bothusers, $actual);
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $dg = $this->getDataGenerator();
 
@@ -201,7 +206,7 @@ class provider_test extends provider_testcase {
         $this->assertFalse($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
 
@@ -248,7 +253,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $component = 'mod_survey';
@@ -303,7 +308,7 @@ class provider_test extends provider_testcase {
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
 

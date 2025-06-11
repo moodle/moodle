@@ -31,9 +31,9 @@ require_once($CFG->dirroot.'/course/lib.php');
  * @copyright  2012 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class courserequest_test extends \advanced_testcase {
+final class courserequest_test extends \advanced_testcase {
 
-    public function test_create_request() {
+    public function test_create_request(): void {
         global $DB, $USER;
         $this->resetAfterTest(true);
 
@@ -78,7 +78,7 @@ class courserequest_test extends \advanced_testcase {
         $this->assertEquals($cat1->id, $cr->category);
     }
 
-    public function test_approve_request() {
+    public function test_approve_request(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->preventResetByRollback();
@@ -113,7 +113,7 @@ class courserequest_test extends \advanced_testcase {
         $this->setAdminUser();
         $sink = $this->redirectMessages();
         $id = $cr->approve();
-        $this->assertCount(1, $sink->get_messages());
+        $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->fullname, $course->fullname);
@@ -133,13 +133,13 @@ class courserequest_test extends \advanced_testcase {
         $this->setAdminUser();
         $sink = $this->redirectMessages();
         $id = $cr->approve();
-        $this->assertCount(1, $sink->get_messages());
+        $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->category, $course->category);
     }
 
-    public function test_reject_request() {
+    public function test_reject_request(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->preventResetByRollback();

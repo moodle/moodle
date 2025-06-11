@@ -6,11 +6,11 @@ Feature: Restrict sections availability through completion or grade conditions
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
     And the following "users" exist:
       | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | Frist    | teacher1@example.com |
+      | teacher1 | Teacher   | First    | teacher1@example.com |
       | student1 | Student   | First    | student1@example.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
@@ -23,15 +23,11 @@ Feature: Restrict sections availability through completion or grade conditions
 
   @javascript
   Scenario: Show section greyed-out to student when completion condition is not satisfied
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    And the following "activities" exist:
+    Given the following "activities" exist:
       | activity | course | section | intro      | completion | idnumber |
       | label    | C1     | 1       | Test label | 1          | 1        |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     When I edit the section "2"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
@@ -71,8 +67,9 @@ Feature: Restrict sections availability through completion or grade conditions
     And I should see "Submitted for grading"
     And I log out
     And I am on the "Grade assignment" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
-    And I click on "Grade" "link" in the "Student First" "table_row"
+    And I change window size to "large"
+    And I go to "Student First" "Grade assignment" activity advanced grading page
+    And I change window size to "medium"
     And I set the following fields to these values:
       | Grade | 21 |
     And I press "Save changes"

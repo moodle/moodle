@@ -28,14 +28,12 @@ Feature: Do a H5P attempt
 
   Scenario: View an H5P as a teacher
     When I am on the "Awesome H5P package" "h5pactivity activity" page logged in as teacher1
-    And I wait until the page is ready
-    Then I should see "This content is displayed in preview mode"
+    Then I should see "You are in preview mode."
 
   @javascript
   Scenario: Do an attempt and check on course log report
     When I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I wait until the page is ready
-    And I should not see "This content is displayed in preview mode"
+    And I should not see "You are in preview mode."
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
@@ -50,8 +48,7 @@ Feature: Do a H5P attempt
   @javascript
   Scenario: Do various attempts and check them with the attempts and user grades reports
     Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I wait until the page is ready
-    And I should not see "This content is displayed in preview mode"
+    And I should not see "You are in preview mode."
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
@@ -83,7 +80,7 @@ Feature: Do a H5P attempt
     And "3" row "Score" column of "table" table should contain "0"
     And "4" row "Score" column of "table" table should contain "1"
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
-    And I click on "Student 1" in the "user" search widget
+    And I click on "Student 1" in the "Search users" search combo box
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage  |
       | Awesome H5P package | 50.00 | 50.00 %     |

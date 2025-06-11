@@ -14,25 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy Subsystem implementation for tool_usertours.
- *
- * @package    tool_usertours
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours\privacy;
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\transform;
-
-defined('MOODLE_INTERNAL') || die();
+use core_privacy\local\request\writer;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\transform;
 
 /**
  * Implementation of the privacy subsystem plugin provider for the user tours feature.
  *
+ * @package    tool_usertours
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,16 +32,14 @@ class provider implements
     \core_privacy\local\metadata\provider,
 
     // This plugin has some sitewide user preferences to export.
-    \core_privacy\local\request\user_preference_provider
-{
-
+    \core_privacy\local\request\user_preference_provider {
     /**
      * Returns meta data about this system.
      *
      * @param   collection     $items The initialised item collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         // There are several user preferences.
         $items->add_user_preference(\tool_usertours\tour::TOUR_REQUESTED_BY_USER, 'privacy:metadata:preference:requested');
         $items->add_user_preference(\tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER, 'privacy:metadata:preference:completed');

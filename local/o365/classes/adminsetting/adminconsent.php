@@ -32,7 +32,7 @@ global $CFG;
 require_once($CFG->dirroot.'/lib/adminlib.php');
 
 /**
- * Admin setting to provide admin consent for Azure permissions.
+ * Admin setting to provide admin consent for API permissions.
  */
 class adminconsent extends \admin_setting {
     /** @var mixed int means PARAM_XXX type, string is a allowed format in regex */

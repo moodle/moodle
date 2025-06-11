@@ -32,8 +32,8 @@ require_once($CFG->libdir.'/formslib.php');
 $id             = required_param('id', PARAM_INT);
 
 $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att            = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att            = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 
@@ -49,7 +49,7 @@ $PAGE->force_settings_menu(true);
 $PAGE->set_cacheable(true);
 $PAGE->navbar->add(get_string('export', 'attendance'));
 
-$formparams = array('course' => $course, 'cm' => $cm, 'modcontext' => $context);
+$formparams = ['course' => $course, 'cm' => $cm, 'modcontext' => $context];
 $mform = new mod_attendance\form\export($att->url_export(), $formparams);
 
 if ($formdata = $mform->get_data()) {
@@ -87,7 +87,7 @@ if ($formdata = $mform->get_data()) {
 
         $group = $formdata->group ? $reportdata->groups[$formdata->group] : 0;
         $data = new stdClass;
-        $data->tabhead = array();
+        $data->tabhead = [];
         $data->course = $att->course->fullname;
         $data->group = $group ? $group->name : get_string('allparticipants');
 
@@ -107,7 +107,7 @@ if ($formdata = $mform->get_data()) {
                 } else if (in_array($opt, array_column($customfields, 'shortname'))) {
                     foreach ($customfields as $customfield) {
                         if ($opt == $customfield->shortname) {
-                            $data->tabhead[] = format_string($customfield->name, true, array('context' => $context));
+                            $data->tabhead[] = format_string($customfield->name, true, ['context' => $context]);
                         }
                     }
                 } else {
@@ -151,7 +151,7 @@ if ($formdata = $mform->get_data()) {
         $data->tabhead[] = get_string('percentage', 'attendance');
 
         $i = 0;
-        $data->table = array();
+        $data->table = [];
         foreach ($reportdata->users as $user) {
             profile_load_custom_fields($user);
 
@@ -160,7 +160,7 @@ if ($formdata = $mform->get_data()) {
             if (!empty($groupmode)) {
                 $grouptext = '';
                 $groupsraw = groups_get_all_groups($course->id, $user->id, 0, 'g.name');
-                $groups = array();
+                $groups = [];
                 foreach ($groupsraw as $group) {
                     $groups[] = $group->name;;
                 }
@@ -171,7 +171,7 @@ if ($formdata = $mform->get_data()) {
                 foreach (array_keys($formdata->ident) as $opt) {
                     if (in_array($opt, array_column($customfields, 'shortname'))) {
                         if (isset($user->profile[$opt])) {
-                            $data->table[$i][] = format_string($user->profile[$opt], true, array('context' => $context));
+                            $data->table[$i][] = format_string($user->profile[$opt], true, ['context' => $context]);
                         } else {
                             $data->table[$i][] = '';
                         }

@@ -53,7 +53,7 @@ class feedback_import_form extends moodleform {
         $mform->addElement('radio', 'deleteolditems', '', $strnodeleteolditmes);
 
         // buttons
-        $this->add_action_buttons(false, get_string('save'));
+        $this->add_action_buttons(true, get_string('import'));
 
     }
 }

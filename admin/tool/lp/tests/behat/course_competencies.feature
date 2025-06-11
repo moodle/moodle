@@ -4,13 +4,13 @@ Feature: See the competencies for an activity on the course competencies page.
   In order to see only the competencies for an activity in the course competencies page.
 
   Background:
-    Given the following lp "frameworks" exist:
-      | shortname | idnumber |
-      | Test-Framework | ID-FW1 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Test-Comp1 | ID-FW1 |
-      | Test-Comp2 | ID-FW1 |
+    Given the following "core_competency > frameworks" exist:
+      | shortname      | idnumber |
+      | Test-Framework | ID-FW1   |
+    And the following "core_competency > competencies" exist:
+      | shortname  | competencyframework |
+      | Test-Comp1 | ID-FW1              |
+      | Test-Comp2 | ID-FW1              |
     Given the following "courses" exist:
       | shortname | fullname   | enablecompletion |
       | C1        | Course 1   | 1                |
@@ -35,7 +35,7 @@ Feature: See the competencies for an activity on the course competencies page.
     And I select "Test-Comp2" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
     And I am on the PageName1 "page activity editing" page
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Course competencies" to "Test-Comp1"
     And I press "Save and return to course"
     And I log out

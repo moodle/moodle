@@ -24,7 +24,7 @@ namespace core;
  * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class notification_test extends \advanced_testcase {
+final class notification_test extends \advanced_testcase {
 
     /**
      * Setup required for all notification tests.
@@ -59,7 +59,7 @@ class notification_test extends \advanced_testcase {
     /**
      * Test the way in which notifications are added to the session in different stages of the page load.
      */
-    public function test_add_during_output_stages() {
+    public function test_add_during_output_stages(): void {
         global $PAGE, $SESSION;
 
         \core\notification::add('Example before header', \core\notification::INFO);
@@ -91,7 +91,7 @@ class notification_test extends \advanced_testcase {
     /**
      * Test fetching of notifications from the session.
      */
-    public function test_fetch() {
+    public function test_fetch(): void {
         // Initially there won't be any notifications.
         $this->assertCount(0, \core\notification::fetch());
 
@@ -104,7 +104,7 @@ class notification_test extends \advanced_testcase {
     /**
      * Test that session notifications are persisted across session clears.
      */
-    public function test_session_persistance() {
+    public function test_session_persistance(): void {
         global $PAGE, $SESSION;
 
         // Initially there won't be any notifications.

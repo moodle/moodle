@@ -37,15 +37,14 @@ $csvfilename = $CFG->dataroot . '/' . $path . '/' .
     core_date::strftime('%Y%m%d-%H%M%S', (int)$timestamp) . '.csv';
         
 if (!$courseid) {
-    print_error('invalid course id', 'report_coursesize', 'blip blip', 'Kabloo-eeeee');
+    moodle_exception('invalid course id', 'report_coursesize', 'blip blip', 'Kabloo-eeeee');
 }
 
 require_login();
 $context = context_system::instance();
 
 if (!is_readable($csvfilename)) {
-    error_log("\n\nFAIL FAIL FAIL");
-    print_error('unknowndownloadfile', 'report_coursesize', $downloadurl);
+    moodle_exception('unknowndownloadfile', 'report_coursesize', $downloadurl);
 }
 
 send_file($csvfilename, $courseid.'_'.$timestamp.'_report.csv', 'default' , 0, false, true, 'text/csv; charset=UTF-8');

@@ -24,11 +24,11 @@ namespace block_recentlyaccesseditems;
  * @author     Neill Magill <neill.magill@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends \advanced_testcase {
+final class helper_test extends \advanced_testcase {
     /**
      * Tests that the get recent items method can handle getting records when courses have been deleted.
      */
-    public function test_get_recent_items() {
+    public function test_get_recent_items(): void {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
         $coursetodelete = self::getDataGenerator()->create_course();

@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Prepares things before this test case is initialised
@@ -46,13 +46,24 @@ class lib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/survey/lib.php');
+        parent::setUpBeforeClass();
+    }
+
+    /**
+     * Setup testcase.
+     */
+    public function setUp(): void {
+        parent::setUp();
+        // Survey module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('survey', 1);
     }
 
     /**
      * Test survey_view
      * @return void
      */
-    public function test_survey_view() {
+    public function test_survey_view(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -94,7 +105,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test survey_order_questions
      */
-    public function test_survey_order_questions() {
+    public function test_survey_order_questions(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -115,7 +126,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test survey_save_answers
      */
-    public function test_survey_save_answers() {
+    public function test_survey_save_answers(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -168,7 +179,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($survey->id, $event->other['surveyid']);
     }
 
-    public function test_survey_core_calendar_provide_event_action() {
+    public function test_survey_core_calendar_provide_event_action(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -194,7 +205,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_survey_core_calendar_provide_event_action_for_user() {
+    public function test_survey_core_calendar_provide_event_action_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -229,7 +240,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_survey_core_calendar_provide_event_action_as_non_user() {
+    public function test_survey_core_calendar_provide_event_action_as_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -257,7 +268,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_survey_core_calendar_provide_event_action_already_completed() {
+    public function test_survey_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -291,7 +302,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_survey_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_survey_core_calendar_provide_event_action_already_completed_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -358,7 +369,7 @@ class lib_test extends \advanced_testcase {
      * This function should work given either an instance of the module (cm_info), such as when checking the active rules,
      * or if passed a stdClass of similar structure, such as when checking the the default completion settings for a mod type.
      */
-    public function test_mod_survey_completion_get_active_rule_descriptions() {
+    public function test_mod_survey_completion_get_active_rule_descriptions(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

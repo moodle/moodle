@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
  * @copyright   Andrew Nicols <andrew@nicols.co.uk>
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class export_test extends \advanced_testcase {
+final class export_test extends \advanced_testcase {
 
     /**
      * Ensure that feedback is correct formatted. Test the default implementation of format_feedback
@@ -40,7 +40,7 @@ class export_test extends \advanced_testcase {
      * @param   int     $inputformat The format of the input string
      * @param   string  $expected The expected result of the format.
      */
-    public function test_format_feedback($input, $inputformat, $expected) {
+    public function test_format_feedback($input, $inputformat, $expected): void {
         $feedback = $this->getMockForAbstractClass(
                 \grade_export::class,
                 [],
@@ -60,7 +60,7 @@ class export_test extends \advanced_testcase {
     /**
      * Ensure that feedback is correctly formatted. Test augmented functionality to handle file links
      */
-    public function test_format_feedback_with_grade() {
+    public function test_format_feedback_with_grade(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -127,7 +127,7 @@ class export_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function format_feedback_provider() : array {
+    public static function format_feedback_provider(): array {
         return [
             'Basic string (PLAIN)' => [
                 'This is an example string',

@@ -131,7 +131,7 @@ class expired_contexts_table extends table_sql {
         }
         $infoicon = new pix_icon('i/info', implode(' / ', array_reverse($contextsinpath)));
         $infoiconhtml = $OUTPUT->render($infoicon);
-        $name = html_writer::span(get_string('nameandparent', 'tool_dataprivacy', $contextdata), 'mr-1');
+        $name = html_writer::span(get_string('nameandparent', 'tool_dataprivacy', $contextdata), 'me-1');
 
         return  $name . $infoiconhtml;
     }
@@ -158,7 +158,7 @@ class expired_contexts_table extends table_sql {
             }
             $infoicon = new pix_icon('i/info', implode(', ', $childnames));
             $infoiconhtml = $OUTPUT->render($infoicon);
-            $name = html_writer::span(get_string('nchildren', 'tool_dataprivacy', count($children)), 'mr-1');
+            $name = html_writer::span(get_string('nchildren', 'tool_dataprivacy', count($children)), 'me-1');
 
             return  $name . $infoiconhtml;
         }
@@ -370,7 +370,7 @@ class expired_contexts_table extends table_sql {
      * @param   expired_context $expiredcontext
      * @return  purpose
      */
-    protected function get_purpose_for_expiry(expired_context $expiredcontext) : purpose {
+    protected function get_purpose_for_expiry(expired_context $expiredcontext): purpose {
         $context = context_helper::instance_by_id($expiredcontext->get('contextid'));
 
         if (empty($this->purposemap[$context->id])) {

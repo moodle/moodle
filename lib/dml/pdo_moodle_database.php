@@ -59,7 +59,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param array $dboptions driver specific options
      * @return bool success
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, ?array $dboptions=null) {
         $driverstatus = $this->driver_installed();
 
         if ($driverstatus !== true) {
@@ -205,7 +205,7 @@ abstract class pdo_moodle_database extends moodle_database {
         return true;
     }
 
-    public function delete_records_select($table, $select, array $params=null) {
+    public function delete_records_select($table, $select, ?array $params=null) {
         $sql = "DELETE FROM {{$table}}";
         if ($select) {
             $sql .= " WHERE $select";
@@ -231,7 +231,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param array $params query parameters
      * @return bool success
      */
-    public function execute($sql, array $params=null) {
+    public function execute($sql, ?array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         $result = true;
@@ -264,7 +264,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
      * @return moodle_recordset instance
      */
-    public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+    public function get_recordset_sql($sql, ?array $params=null, $limitfrom=0, $limitnum=0) {
 
         $result = true;
 
@@ -292,7 +292,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @return array of values
      */
-    public function get_fieldset_sql($sql, array $params=null) {
+    public function get_fieldset_sql($sql, ?array $params=null) {
         $rs = $this->get_recordset_sql($sql, $params);
         if (!$rs->valid()) {
             $rs->close(); // Not going to iterate (but exit), close rs
@@ -320,7 +320,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
      * @return array of objects, or empty array if no records were found, or false if an error occurred.
      */
-    public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+    public function get_records_sql($sql, ?array $params=null, $limitfrom=0, $limitnum=0) {
         global $CFG;
 
         $rs = $this->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
@@ -429,7 +429,7 @@ abstract class pdo_moodle_database extends moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param mixed $params data record as object or array
+     * @param stdClass|array $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool success
      */
@@ -499,7 +499,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @return bool success
      */
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
+    public function set_field_select($table, $newfield, $newvalue, $select, ?array $params=null) {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -534,7 +534,7 @@ abstract class pdo_moodle_database extends moodle_database {
         return $this->execute($sql, $params);
     }
 
-    public function sql_concat() {
+    public function sql_concat(...$arr) {
         throw new \moodle_exception('TODO');
     }
 

@@ -27,18 +27,16 @@
 
     Example context (json):
     {
-        "submissionlink": "https://moodle.org",
         "gradelink": "https://moodle.org"
     }
 
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="navitem">
-            <a class="btn btn-secondary mr-1" href="{{submissionlink}}">{{#str}}viewgrading, mod_assign{{/str}}</a>
-        </div>
+        {{#gradelink}}
         <div class="navitem">
             <a class="btn btn-primary" href="{{gradelink}}">{{#str}}gradeverb, core{{/str}}</a>
         </div>
+        {{/gradelink}}
     </div>
 </div>

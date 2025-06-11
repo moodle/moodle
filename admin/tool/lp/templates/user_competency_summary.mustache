@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tool_lp/user_competency_page
+    @template tool_lp/user_competency_summary
 
     Moodle template for the the summary of a user competency
 
@@ -57,7 +57,7 @@
             </dd>
             <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
             <dd>
-                <span class="badge {{#proficiency}}badge-success{{/proficiency}}{{^proficiency}}badge-danger{{/proficiency}} float-left">
+                <span class="badge {{#proficiency}}bg-success{{/proficiency}}{{^proficiency}}bg-danger{{/proficiency}} text-white float-start">
                     {{proficiencyname}}
                 </span>
             </dd>

@@ -53,18 +53,14 @@ class course_hider_view implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output, $results = array()): array {
         global $CFG;
-        unset($this->courses["lockme"]);
         unset($this->courses["hideme"]);
 
-        error_log("\n\n------------------------------------\n\n");
-        error_log("\nExporting for TEMPLATE\n\n");
         $courses = array();
         if (isset($this->courses)) {
             // Convert to array objects for the template.
             foreach ($this->courses as $course) {
                 // Use the more obvious hidden / visible versus 0 / 1.
                 $course->visible = $course->visible == 1 ? 'visible' : 'hidden';
-                $course->locked = $course->locked == 1 ? 'locked' : 'Open';
                 $courses[] = json_decode(json_encode($course), true);
             }
         }

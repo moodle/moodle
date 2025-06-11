@@ -28,12 +28,9 @@ Feature: Teachers can override the grade for any question
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
     And the following "user private files" exist:
-      | user     | filepath                                | filename        |
-      | teacher1 | mod/quiz/tests/fixtures/moodle_logo.jpg | moodle_logo.jpg |
+      | user     | filepath                                |
+      | teacher1 | mod/quiz/tests/fixtures/moodle_logo.jpg |
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
     And I press "Attempt quiz"
     And I follow "Finish attempt ..."
@@ -68,12 +65,12 @@ Feature: Teachers can override the grade for any question
     And I set the field "Comment" to "Administrator's comment"
     And I select the "p" element in position "0" of the "Comment" TinyMCE editor
     And I click on the "Image" button for the "Comment" TinyMCE editor
-    And I click on "Browse repositories..." "button" in the "Image properties" "dialogue"
+    And I click on "Browse repositories" "button" in the "Insert image" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
-    And I click on "Save image" "button" in the "Image properties" "dialogue"
+    And I set the field "How would you describe this image to someone who can't see it?" to "It's the logo"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save" and switch to main window
     And I switch to the main window
     Then I should see "Commented: [It's the logo]" in the ".history table" "css_element"

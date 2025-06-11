@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_content_test extends \advanced_testcase {
+final class search_content_test extends \advanced_testcase {
 
     /**
      * Creates an HTML block on a course.
@@ -73,7 +73,7 @@ class search_content_test extends \advanced_testcase {
     /**
      * Tests all functionality in the search area.
      */
-    public function test_search_area() {
+    public function test_search_area(): void {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
 

@@ -24,6 +24,9 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'OpenID Connect';
 $string['auth_oidcdescription'] = 'Das Plugin OpenID Connect bietet eine Single-Sign-On-Funktion mit konfigurierbaren Identitätsprovidern.';
 $string['cfg_authendpoint_key'] = 'Autorisierungsendpunkt';
@@ -125,3 +128,6 @@ $string['ucp_status_disabled'] = 'Deaktiviert';
 $string['ucp_disconnect_title'] = '{$a} Trennung';
 $string['ucp_disconnect_details'] = 'Damit wird Ihr Moodle-Konto von {$a} getrennt. Sie müssen einen Benutzernamen und ein Kennwort erstellen, um sich bei Moodle anzumelden.';
 $string['ucp_title'] = '{$a} Verwaltung';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

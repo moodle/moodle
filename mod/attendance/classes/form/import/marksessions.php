@@ -52,10 +52,10 @@ class marksessions extends moodleform {
 
         $mform->addElement('header', 'uploadattendance', get_string('uploadattendance', 'attendance'));
 
-        $fileoptions = array('subdirs' => 0,
+        $fileoptions = ['subdirs' => 0,
                                 'maxbytes' => $COURSE->maxbytes,
                                 'accepted_types' => 'csv',
-                                'maxfiles' => 1);
+                                'maxfiles' => 1, ];
 
         $mform->addElement('filepicker', 'attendancefile', get_string('uploadafile'), null, $fileoptions);
         $mform->addRule('attendancefile', get_string('uploadnofilefound'), 'required', null, 'client');
@@ -65,7 +65,7 @@ class marksessions extends moodleform {
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
         $mform->addHelpButton('encoding', 'encoding', 'grades');
 
-        $radio = array();
+        $radio = [];
         $radio[] = $mform->createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');
         $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepcomma', 'grades'), 'comma');
         $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepcolon', 'grades'), 'colon');

@@ -29,4 +29,21 @@ Feature: Welcome message
     And I log out
     And I should see "You are not logged in" in the "page-footer" "region"
     And I log in as "admin"
-    Then I should see "Welcome back, Admin!" in the "page-header" "region"
+    Then I should see "Hi, Admin!" in the "page-header" "region"
+
+  @accessibility @javascript
+  Scenario Outline: The start page must meet accessibility standards when the welcome message is displayed
+    Given the following config values are set as admin:
+      | defaulthomepage | <defaulthomepage> |
+    When I log in as "admin"
+    Then I should see "Welcome, Admin!" in the "page-header" "region"
+    And the page should meet accessibility standards
+
+    Examples:
+      | defaulthomepage |
+      # Home.
+      | 0               |
+      # Dashboard.
+      | 1               |
+      # My courses.
+      | 2               |

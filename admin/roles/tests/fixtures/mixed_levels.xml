@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<role>
+  <shortname>courseviewer</shortname>
+  <name/>
+  <description/>
+  <archetype/>
+  <contextlevels>
+    <level>system</level>
+    <level>40</level>
+    <level>50</level>
+  </contextlevels>
+  <allowassign/>
+  <allowoverride/>
+  <allowswitch/>
+  <allowview>
+    <shortname>student</shortname>
+  </allowview>
+  <permissions>
+    <allow>moodle/category:viewhiddencategories</allow>
+    <allow>moodle/course:ignoreavailabilityrestrictions</allow>
+    <allow>moodle/course:viewhiddencourses</allow>
+    <allow>moodle/site:configview</allow>
+  </permissions>
+</role>

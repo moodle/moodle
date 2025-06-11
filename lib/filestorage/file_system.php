@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Core file system class definition.
- *
- * @package   core_files
- * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+use Psr\Http\Message\StreamInterface;
 
 /**
  * File system class used for low level access to real files in filedir.
@@ -292,7 +284,7 @@ abstract class file_system {
      * @param file_progress $progress progress indicator callback or null if not required
      * @return array|bool List of processed files; false if error
      */
-    public function extract_to_pathname(stored_file $file, file_packer $packer, $pathname, file_progress $progress = null) {
+    public function extract_to_pathname(stored_file $file, file_packer $packer, $pathname, ?file_progress $progress = null) {
         $archivefile = $this->get_local_path_from_storedfile($file, true);
         return $packer->extract_to_pathname($archivefile, $pathname, null, $progress);
     }
@@ -312,7 +304,7 @@ abstract class file_system {
      * @return array|bool list of processed files; false if error
      */
     public function extract_to_storage(stored_file $file, file_packer $packer, $contextid,
-            $component, $filearea, $itemid, $pathbase, $userid = null, file_progress $progress = null) {
+            $component, $filearea, $itemid, $pathbase, $userid = null, ?file_progress $progress = null) {
 
         // Since we do not know which extractor we have, and whether it supports remote paths, use a local path here.
         $archivefile = $this->get_local_path_from_storedfile($file, true);
@@ -629,6 +621,16 @@ abstract class file_system {
             default:
                 throw new coding_exception('Unexpected file handle type');
         }
+    }
+
+    /**
+     * Get a PSR7 Stream for the specified file which implements the PSR Message StreamInterface.
+     *
+     * @param stored_file $file
+     * @return StreamInterface
+     */
+    public function get_psr_stream(stored_file $file): StreamInterface {
+        return \GuzzleHttp\Psr7\Utils::streamFor($this->get_content_file_handle($file));
     }
 
     /**

@@ -25,7 +25,7 @@
 
 namespace local_o365\tests;
 
-defined('MOODLE_INTERNAL') || die();
+use moodle_exception;
 
 /**
  * A mock HTTP client allowing set responses.
@@ -80,8 +80,9 @@ class mockhttpclient extends \local_o365\httpclient {
      * @param string $url The request URL
      * @param array $options Additional curl options.
      * @return string The set response.
+     * @throws moodle_exception If no responses are available.
      */
-    protected function request($url, $options = array()) {
+    protected function request($url, $options = []) {
         $this->requests[] = [
             'url' => $url,
             'options' => $options,
@@ -93,7 +94,7 @@ class mockhttpclient extends \local_o365\httpclient {
         } else {
             $this->curresponse = 0;
             if (!isset($this->mockresponse[$this->curresponse])) {
-                throw new \moodle_exception('No responses available.');
+                throw new moodle_exception('errornoresponsesavailable', 'local_o365');
             }
             return $this->mockresponse[$this->curresponse];
         }

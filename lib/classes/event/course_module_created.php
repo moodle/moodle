@@ -64,7 +64,7 @@ class course_module_created extends base {
      *
      * @return \core\event\base returns instance of new event
      */
-    public static final function create_from_cm($cm, $modcontext = null) {
+    final public static function create_from_cm($cm, $modcontext = null) {
         // If not set, get the module context.
         if (empty($modcontext)) {
             $modcontext = \context_module::instance($cm->id);
@@ -108,44 +108,6 @@ class course_module_created extends base {
      */
     public function get_url() {
         return new \moodle_url('/mod/' . $this->other['modulename'] . '/view.php', array('id' => $this->objectid));
-    }
-
-    /**
-     * Legacy event name.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'mod_created';
-    }
-
-    /**
-     * Legacy event data.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $eventdata = new \stdClass();
-        $eventdata->modulename = $this->other['modulename'];
-        $eventdata->name       = $this->other['name'];
-        $eventdata->cmid       = $this->objectid;
-        $eventdata->courseid   = $this->courseid;
-        $eventdata->userid     = $this->userid;
-        return $eventdata;
-    }
-
-    /**
-     * replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        $log1 = array($this->courseid, "course", "add mod", "../mod/" . $this->other['modulename'] . "/view.php?id=" .
-                $this->objectid, $this->other['modulename'] . " " . $this->other['instanceid']);
-        $log2 = array($this->courseid, $this->other['modulename'], "add",
-            "view.php?id={$this->objectid}",
-                "{$this->other['instanceid']}", $this->objectid);
-        return array($log1, $log2);
     }
 
     /**

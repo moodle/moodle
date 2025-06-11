@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @copyright Copyright (c) 2017 Open LMS
+
+    @template theme_snap/course_search_form
+
+    Course search template
+
+    Context variables required for this template:
+    * searchurl - url to submit form to
+    * id - unique CSS id
+    * inputid - unique CSS id for the input
+    * value - term previously searched for
+
+    Example context (json):
+    {
+        "searchurl": "/",
+        "id": "id123",
+        "inputid": "input_id",
+        "value": ""
+    }
+}}
+<form action="{{searchurl}}" id="{{id}}" method="get">
+    <fieldset class="coursesearchbox invisiblefieldset">
+        <label for="{{inputid}}" class="sr-only">{{#str}}searchcourses{{/str}}</label>
+        <div class="input-group">
+            <input id="{{inputid}}" name="search" type="text" size="0" value="{{value}}" class="form-control" placeholder="{{#str}}searchcourses{{/str}}">
+            <span class="input-group-append">
+                <button class="btn btn-secondary" type="submit">
+                    <i class="icon fa fa-search fa-fw m-0" aria-hidden="true"></i>
+                    <span class="sr-only">{{#str}}searchcourses{{/str}}</span>
+                </button>
+            </span>
+        </div>
+    </fieldset>
+</form>

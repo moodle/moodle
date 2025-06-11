@@ -1,4 +1,12 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in the mod_scorm code.
+
+=== 4.3 ===
+* Add SCORM options in get_scorms_by_courses() external/ws function.
 
 === 4.0 ===
 * Setting 'displayactivityname' has been removed from scorm. This will be handled by activityheader and is theme dependent.

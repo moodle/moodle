@@ -123,11 +123,11 @@ if (!$chapterid) {
     $renderer = $PAGE->get_renderer('mod_book');
     $actionmenu = new \mod_book\output\main_action_menu($cm->id, $chapters, $chapter, $book);
     $renderedmenu = $renderer->render($actionmenu);
-    echo $renderedmenu;
+    echo html_writer::div($renderedmenu, '', ['id' => 'mod_book-chaptersnavigation']);
 
     // The chapter itself.
     $hidden = $chapter->hidden ? ' dimmed_text' : null;
-    echo $OUTPUT->box_start('generalbox book_content' . $hidden);
+    echo $OUTPUT->box_start('generalbox book_content' . $hidden, 'mod_book-chapter');
 
     if (!$book->customtitles) {
         if (!$chapter->subchapter) {
@@ -150,6 +150,5 @@ if (!$chapterid) {
     if (core_tag_tag::is_enabled('mod_book', 'book_chapters')) {
         echo $OUTPUT->tag_list(core_tag_tag::get_item_tags('mod_book', 'book_chapters', $chapter->id), null, 'book-tags');
     }
-    echo $renderedmenu;
 }
 echo $OUTPUT->footer();

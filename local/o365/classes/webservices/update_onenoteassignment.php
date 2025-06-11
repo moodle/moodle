@@ -25,33 +25,38 @@
 
 namespace local_o365\webservices;
 
-use \local_o365\webservices\exception as exception;
-
 defined('MOODLE_INTERNAL') || die();
+
+use context_course;
+use local_o365\webservices\exception as exception;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 global $CFG;
 
-require_once($CFG->dirroot.'/course/modlib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
 
 /**
  * Update assignment API class.
  */
-class update_onenoteassignment extends \external_api {
+class update_onenoteassignment extends external_api {
     /**
      * Returns description of method parameters.
      *
      * @return external_function_parameters The parameters object for this webservice method.
      */
     public static function assignment_update_parameters() {
-        return new \external_function_parameters([
-            'data' => new \external_single_structure([
-                'coursemodule' => new \external_value(PARAM_INT, 'course module id'),
-                'course' => new \external_value(PARAM_INT, 'course id'),
-                'name' => new \external_value(PARAM_TEXT, 'name', VALUE_DEFAULT, null),
-                'intro' => new \external_value(PARAM_TEXT, 'intro', VALUE_DEFAULT, null),
-                'section' => new \external_value(PARAM_INT, 'section', VALUE_DEFAULT, null),
-                'visible' => new \external_value(PARAM_BOOL, 'visible', VALUE_DEFAULT, null),
-            ])
+        return new external_function_parameters([
+            'data' => new external_single_structure([
+                'coursemodule' => new external_value(PARAM_INT, 'course module id'),
+                'course' => new external_value(PARAM_INT, 'course id'),
+                'name' => new external_value(PARAM_TEXT, 'name', VALUE_DEFAULT, null),
+                'intro' => new external_value(PARAM_TEXT, 'intro', VALUE_DEFAULT, null),
+                'section' => new external_value(PARAM_INT, 'section', VALUE_DEFAULT, null),
+                'visible' => new external_value(PARAM_BOOL, 'visible', VALUE_DEFAULT, null),
+            ]),
         ]);
     }
 
@@ -60,6 +65,7 @@ class update_onenoteassignment extends \external_api {
      *
      * @param array $data The incoming data parameter.
      * @return array An array of parameters, if successful.
+     * @throws exception\sectionnotfound
      */
     public static function assignment_update($data) {
         global $DB;
@@ -67,10 +73,10 @@ class update_onenoteassignment extends \external_api {
         $params = self::validate_parameters(self::assignment_update_parameters(), ['data' => $data]);
         $params = $params['data'];
 
-        list($course, $module, $assign) = \local_o365\webservices\utils::verify_assignment($params['coursemodule'],
+        [$course, $module, $assign] = utils::verify_assignment($params['coursemodule'],
             $params['course']);
 
-        $context = \context_course::instance($params['course']);
+        $context = context_course::instance($params['course']);
         self::validate_context($context);
 
         // Update assignment information.
@@ -79,7 +85,7 @@ class update_onenoteassignment extends \external_api {
             $updatedassigninfo['name'] = $params['name'];
         }
         if (isset($params['intro']) && $params['intro'] !== null) {
-            $updatedassigninfo['introeditor'] = ['text' => (string)$params['intro'], 'format' => FORMAT_HTML, 'itemid' => null];
+            $updatedassigninfo['introeditor'] = ['text' => (string) $params['intro'], 'format' => FORMAT_HTML, 'itemid' => null];
         }
         if (!empty($updatedassigninfo)) {
             $assignkeys = [
@@ -97,12 +103,13 @@ class update_onenoteassignment extends \external_api {
                 'requireallteammemberssubmit',
                 'blindmarking',
                 'markingworkflow',
+                'markinganonymous',
                 'markingallocation',
             ];
             $assigninfo = [
                 'coursemodule' => $module->id,
                 'cmidnumber' => $module->idnumber,
-                'introeditor' => ['text' => (string)$assign->intro, 'format' => FORMAT_HTML, 'itemid' => null],
+                'introeditor' => ['text' => (string) $assign->intro, 'format' => FORMAT_HTML, 'itemid' => null],
                 'assignsubmission_onenote_enabled' => 1,
                 'assignsubmission_onenote_maxfiles' => 1,
                 'assignsubmission_onenote_maxsizebytes' => 1024,
@@ -115,7 +122,7 @@ class update_onenoteassignment extends \external_api {
             }
 
             $assigninfo = array_merge($assigninfo, $updatedassigninfo);
-            update_module((object)$assigninfo);
+            update_module((object) $assigninfo);
         }
 
         // Update module visibility if requested.
@@ -134,7 +141,8 @@ class update_onenoteassignment extends \external_api {
             moveto_module($module, $section);
         }
 
-        $modinfo = \local_o365\webservices\utils::get_assignment_return_info($module->id, $course->id);
+        $modinfo = utils::get_assignment_return_info($module->id, $course->id);
+
         return ['data' => [$modinfo]];
     }
 
@@ -144,6 +152,6 @@ class update_onenoteassignment extends \external_api {
      * @return external_single_structure Object describing return parameters for this webservice method.
      */
     public static function assignment_update_returns() {
-        return \local_o365\webservices\utils::get_assignment_return_info_schema();
+        return utils::get_assignment_return_info_schema();
     }
 }

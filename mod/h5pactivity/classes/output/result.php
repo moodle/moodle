@@ -57,7 +57,7 @@ class result implements renderable, templatable {
     /** Pass answer state. */
     const FAIL = 6;
 
-    /** Unkown answer state. */
+    /** Unknown answer state. */
     const UNKNOWN = 7;
 
     /** Text answer state. */
@@ -276,7 +276,7 @@ class result implements renderable, templatable {
      * @param string $answer the extra text to display (default null)
      * @return stdClass with "answer" text and the state attribute to be displayed
      */
-    protected function get_answer(int $state, string $answer = null): stdClass {
+    protected function get_answer(int $state, ?string $answer = null): stdClass {
         $states = [
             self::CORRECT => 'correct',
             self::INCORRECT => 'incorrect',
@@ -284,7 +284,7 @@ class result implements renderable, templatable {
             self::UNCHECKED => 'unchecked',
             self::PASS => 'pass',
             self::FAIL => 'fail',
-            self::UNKNOWN => 'unkown',
+            self::UNKNOWN => 'unknown',
             self::TEXT => 'text',
         ];
         $state = $states[$state] ?? self::UNKNOWN;

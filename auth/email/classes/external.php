@@ -24,9 +24,16 @@
  * @since      Moodle 3.2
  */
 
+use core_external\external_api;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->libdir . '/authlib.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
@@ -101,15 +108,16 @@ class auth_email_external extends external_api {
         if (!empty($CFG->country)) {
             $result['country'] = $CFG->country;
         }
+        $result['extendedusernamechars'] = !empty($CFG->extendedusernamechars);
 
         if ($fields = profile_get_signup_fields()) {
             $result['profilefields'] = array();
             foreach ($fields as $field) {
                 $fielddata = $field->object->get_field_config_for_external();
-                $fielddata['categoryname'] = external_format_string($field->categoryname, $context->id);
-                $fielddata['name'] = external_format_string($fielddata['name'], $context->id);
+                $fielddata['categoryname'] = \core_external\util::format_string($field->categoryname, $context->id);
+                $fielddata['name'] = \core_external\util::format_string($fielddata['name'], $context->id);
                 list($fielddata['defaultdata'], $fielddata['defaultdataformat']) =
-                    external_format_text($fielddata['defaultdata'], $fielddata['defaultdataformat'], $context->id);
+                    \core_external\util::format_text($fielddata['defaultdata'], $fielddata['defaultdataformat'], $context->id);
 
                 $result['profilefields'][] = $fielddata;
             }
@@ -133,7 +141,7 @@ class auth_email_external extends external_api {
     public static function get_signup_settings_returns() {
 
         return new external_single_structure(
-            array(
+            [
                 'namefields' => new external_multiple_structure(
                      new external_value(PARAM_NOTAGS, 'The order of the name fields')
                 ),
@@ -142,9 +150,12 @@ class auth_email_external extends external_api {
                 'sitepolicyhandler' => new external_value(PARAM_PLUGIN, 'Site policy handler', VALUE_OPTIONAL),
                 'defaultcity' => new external_value(PARAM_NOTAGS, 'Default city', VALUE_OPTIONAL),
                 'country' => new external_value(PARAM_ALPHA, 'Default country', VALUE_OPTIONAL),
+                'extendedusernamechars' => new external_value(
+                    PARAM_BOOL, 'Extended characters in usernames or not', VALUE_OPTIONAL
+                ),
                 'profilefields' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'id' => new external_value(PARAM_INT, 'Profile field id', VALUE_OPTIONAL),
                             'shortname' => new external_value(PARAM_ALPHANUMEXT, 'Profile field shortname', VALUE_OPTIONAL),
                             'name' => new external_value(PARAM_RAW, 'Profield field name', VALUE_OPTIONAL),
@@ -166,7 +177,7 @@ class auth_email_external extends external_api {
                             'param3' => new external_value(PARAM_RAW, 'Profield field settings', VALUE_OPTIONAL),
                             'param4' => new external_value(PARAM_RAW, 'Profield field settings', VALUE_OPTIONAL),
                             'param5' => new external_value(PARAM_RAW, 'Profield field settings', VALUE_OPTIONAL),
-                        )
+                        ]
                     ), 'Required profile fields', VALUE_OPTIONAL
                 ),
                 'recaptchapublickey' => new external_value(PARAM_RAW, 'Recaptcha public key', VALUE_OPTIONAL),
@@ -174,7 +185,7 @@ class auth_email_external extends external_api {
                 'recaptchachallengeimage' => new external_value(PARAM_URL, 'Recaptcha challenge noscript image', VALUE_OPTIONAL),
                 'recaptchachallengejs' => new external_value(PARAM_URL, 'Recaptcha challenge js url', VALUE_OPTIONAL),
                 'warnings'  => new external_warnings(),
-            )
+            ]
         );
     }
 

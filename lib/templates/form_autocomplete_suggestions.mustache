@@ -32,11 +32,19 @@
     Example context (json):
     { "suggestionsId": 1, "options": [
         { "label": "Item label with <strong>tags</strong>", "value": "5" },
-        { "label": "Another item label with <strong>tags</strong>", "value": "4" }
+        { "label": "Another item label with <strong>tags</strong>", "value": "4"},
+        { "label": "A disabled item", "value": "", "disabled": true}
     ]}
 }}
 <ul class="form-autocomplete-suggestions" id="{{suggestionsId}}" role="listbox" aria-label="{{#str}}suggestions, form{{/str}}" aria-hidden="true" tabindex="-1">
     {{#options}}
-        <li role="option" data-value="{{value}}">{{{label}}}</li>
+        <li
+            role="option"
+            data-value="{{value}}"
+            {{#disabled}}aria-disabled="true"{{/disabled}}
+            {{#classes}}class="{{{classes}}}"{{/classes}}
+        >
+            {{{label}}}
+        </li>
     {{/options}}
 </ul>

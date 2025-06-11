@@ -49,9 +49,11 @@ class scale_competency_item_exporter extends \core\external\exporter {
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
     protected static function define_related() {
-        return array('courses' => '\\stdClass[]',
-                     'cms' => '\\stdClass[]',
-                     'relatedinfo' => '\\stdClass');
+        return [
+            'courses' => '\\stdClass[]',
+            'cms' => '\\stdClass[]',
+            'relatedinfo' => '\\stdClass',
+        ];
     }
 
     /**
@@ -60,17 +62,17 @@ class scale_competency_item_exporter extends \core\external\exporter {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'value' => array(
-                'type' => PARAM_INT
-            ),
-            'name' => array(
-                'type' => PARAM_RAW
-            ),
-            'color' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'value' => [
+                'type' => PARAM_INT,
+            ],
+            'name' => [
+                'type' => PARAM_RAW,
+            ],
+            'color' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -79,22 +81,22 @@ class scale_competency_item_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'nbcourse' => array(
-                'type' => PARAM_INT
-            ),
-            'listcourses' => array(
+        return [
+            'nbcourse' => [
+                'type' => PARAM_INT,
+            ],
+            'listcourses' => [
                 'type' => scale_value_course_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'nbcm' => array(
-                'type' => PARAM_INT
-            ),
-            'listcms' => array(
+                'multiple' => true,
+            ],
+            'nbcm' => [
+                'type' => PARAM_INT,
+            ],
+            'listcms' => [
                 'type' => scale_value_cm_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -108,21 +110,21 @@ class scale_competency_item_exporter extends \core\external\exporter {
         $result = new \stdClass();
 
         $result->nbcourse = 0;
-        $result->listcourses = array();
+        $result->listcourses = [];
 
         foreach ($this->related['courses'] as $course) {
             if ($this->data->value == $course->usecompetencyincourse->get('grade')) {
-                $courseexporter = new scale_value_course_exporter($course, array('relatedinfo' => $this->related['relatedinfo']));
+                $courseexporter = new scale_value_course_exporter($course, ['relatedinfo' => $this->related['relatedinfo']]);
                 $result->listcourses[] = $courseexporter->export($output);
                 $result->nbcourse++;
             }
         }
 
         $result->nbcm = 0;
-        $result->listcms = array();
+        $result->listcms = [];
         foreach ($this->related['cms'] as $cm) {
             if ($this->data->value == $cm->usecompetencyincm->get('grade')) {
-                $cmexporter = new scale_value_cm_exporter($cm, array('relatedinfo' => $this->related['relatedinfo']));
+                $cmexporter = new scale_value_cm_exporter($cm, ['relatedinfo' => $this->related['relatedinfo']]);
                 $result->listcms[] = $cmexporter->export($output);
                 $result->nbcm++;
             }

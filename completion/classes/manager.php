@@ -25,6 +25,7 @@
 
 namespace core_completion;
 
+use core\context;
 use stdClass;
 use context_course;
 use cm_info;
@@ -54,6 +55,20 @@ class manager {
      */
     public function __construct($courseid) {
         $this->courseid = $courseid;
+    }
+
+    /**
+     * Returns current course context or system level for $SITE courseid.
+     *
+     * @return context The course based on current courseid or system context.
+     */
+    protected function get_context(): context {
+        global $SITE;
+
+        if ($this->courseid && $this->courseid != $SITE->id) {
+            return context_course::instance($this->courseid);
+        }
+        return \context_system::instance();
     }
 
     /**
@@ -205,9 +220,10 @@ class manager {
     /**
      * Gets the course modules for the current course.
      *
+     * @param bool $includedefaults Whether the default values should be included or not.
      * @return stdClass $data containing the modules
      */
-    public function get_activities_and_resources() {
+    public function get_activities_and_resources(bool $includedefaults = true) {
         global $DB, $OUTPUT, $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -219,18 +235,34 @@ class manager {
         $data->helpicon = $OUTPUT->help_icon('bulkcompletiontracking', 'core_completion');
         // Add icon information.
         $data->modules = array_values($modules);
-        $coursecontext = context_course::instance($this->courseid);
-        $canmanage = has_capability('moodle/course:manageactivities', $coursecontext);
+        $context = $this->get_context();
+        $canmanage = has_capability('moodle/course:manageactivities', $context);
         $course = get_course($this->courseid);
+        $availablemodules = [];
         foreach ($data->modules as $module) {
+            $libfile = "$CFG->dirroot/mod/$module->name/lib.php";
+            if (!file_exists($libfile)) {
+                continue;
+            }
+            if (!plugin_supports('mod', $module->name, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
+                continue;
+            }
             $module->icon = $OUTPUT->image_url('monologo', $module->name)->out();
-            $module->formattedname = format_string(get_string('modulenameplural', 'mod_' . $module->name),
-                true, ['context' => $coursecontext]);
+            $module->formattedname = format_string(get_string('modulename', 'mod_' . $module->name),
+                true, ['context' => $context]);
             $module->canmanage = $canmanage && course_allowed_module($course, $module->name);
-            $defaults = self::get_default_completion($course, $module, false);
-            $defaults->modname = $module->name;
-            $module->completionstatus = $this->get_completion_detail($defaults);
+            if ($includedefaults) {
+                $defaults = self::get_default_completion($course, $module, false);
+                $defaults->modname = $module->name;
+                $module->completionstatus = $this->get_completion_detail($defaults);
+            }
+            $availablemodules[] = $module;
         }
+        // Order modules by displayed name.
+        usort($availablemodules, function($a, $b) {
+            return strcmp($a->formattedname, $b->formattedname);
+        });
+        $data->modules = $availablemodules;
 
         return $data;
     }
@@ -244,6 +276,9 @@ class manager {
      */
     public static function can_edit_bulk_completion($courseorid, $cm = null) {
         if ($cm) {
+            if (!plugin_supports('mod', $cm->modname, FEATURE_COMPLETION, true)) {
+                return false;
+            }
             return $cm->uservisible && has_capability('moodle/course:manageactivities', $cm->context);
         }
         $coursecontext = context_course::instance(is_object($courseorid) ? $courseorid->id : $courseorid);
@@ -260,46 +295,10 @@ class manager {
     }
 
     /**
-     * Gets the available completion tabs for the current course and user.
-     *
      * @deprecated since Moodle 4.0
-     * @param stdClass|int $courseorid the course object or id.
-     * @return tabobject[]
      */
-    public static function get_available_completion_tabs($courseorid) {
-        debugging('get_available_completion_tabs() has been deprecated. Please use ' .
-            'core_completion\manager::get_available_completion_options() instead.', DEBUG_DEVELOPER);
-
-        $tabs = [];
-
-        $courseid = is_object($courseorid) ? $courseorid->id : $courseorid;
-        $coursecontext = context_course::instance($courseid);
-
-        if (has_capability('moodle/course:update', $coursecontext)) {
-            $tabs[] = new tabobject(
-                'completion',
-                new moodle_url('/course/completion.php', ['id' => $courseid]),
-                new lang_string('coursecompletion', 'completion')
-            );
-        }
-
-        if (has_capability('moodle/course:manageactivities', $coursecontext)) {
-            $tabs[] = new tabobject(
-                'defaultcompletion',
-                new moodle_url('/course/defaultcompletion.php', ['id' => $courseid]),
-                new lang_string('defaultcompletion', 'completion')
-            );
-        }
-
-        if (self::can_edit_bulk_completion($courseorid)) {
-            $tabs[] = new tabobject(
-                'bulkcompletion',
-                new moodle_url('/course/bulkcompletion.php', ['id' => $courseid]),
-                new lang_string('bulkactivitycompletion', 'completion')
-            );
-        }
-
-        return $tabs;
+    public static function get_available_completion_tabs() {
+        throw new \coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
@@ -314,7 +313,7 @@ class manager {
 
         if (has_capability('moodle/course:update', $coursecontext)) {
             $completionlink = new moodle_url('/course/completion.php', ['id' => $courseid]);
-            $options[$completionlink->out(false)] = get_string('coursecompletion', 'completion');
+            $options[$completionlink->out(false)] = get_string('coursecompletionsettings', 'completion');
         }
 
         if (has_capability('moodle/course:manageactivities', $coursecontext)) {
@@ -443,9 +442,35 @@ class manager {
      * @param stdClass $data data received from the core_completion_bulkedit_form
      * @param bool $updatecustomrules if we need to update the custom rules of the module -
      *      if no module-specific completion rules were added to the form, update of the module table is not needed.
+     * @param string $suffix the suffix to add to the name of the completion rules.
      */
-    public function apply_default_completion($data, $updatecustomrules) {
+    public function apply_default_completion($data, $updatecustomrules, string $suffix = '') {
         global $DB;
+
+        if (!empty($suffix)) {
+            // Fields were renamed to avoid conflicts, but they need to be stored in DB with the original name.
+            $modules = property_exists($data, 'modules') ? $data->modules : null;
+            if ($modules !== null) {
+                unset($data->modules);
+                $data = (array)$data;
+                foreach ($data as $name => $value) {
+                    if (str_ends_with($name, $suffix)) {
+                        $data[substr($name, 0, strpos($name, $suffix))] = $value;
+                        unset($data[$name]);
+                    } else if ($name == 'customdata') {
+                        $customrules = $value['customcompletionrules'];
+                        foreach ($customrules as $rulename => $rulevalue) {
+                            if (str_ends_with($rulename, $suffix)) {
+                                $customrules[substr($rulename, 0, strpos($rulename, $suffix))] = $rulevalue;
+                                unset($customrules[$rulename]);
+                            }
+                        }
+                        $data['customdata'] = $customrules;
+                    }
+                }
+                $data = (object)$data;
+            }
+        }
 
         $courseid = $data->id;
         // MDL-72375 Unset the id here, it should not be stored in customrules.
@@ -463,13 +488,22 @@ class manager {
         ];
 
         $data = (array)$data;
+        if (!array_key_exists('completionusegrade', $data)) {
+            $data['completionusegrade'] = 0;
+        }
+        if (!array_key_exists('completionpassgrade', $data)) {
+            $data['completionpassgrade'] = 0;
+        }
+        if ($data['completionusegrade'] == 0) {
+            $data['completionpassgrade'] = 0;
+        }
 
         if ($updatecustomrules) {
             $customdata = array_diff_key($data, $defaults);
             $data['customrules'] = $customdata ? json_encode($customdata) : null;
             $defaults['customrules'] = null;
         }
-        $data = array_intersect_key($data, $defaults);
+        $data = array_merge($defaults, $data);
 
         // Get names of the affected modules.
         list($modidssql, $params) = $DB->get_in_or_equal($modids);
@@ -511,12 +545,22 @@ class manager {
      * @param stdClass $module
      * @param bool $flatten if true all module custom completion rules become properties of the same object,
      *   otherwise they can be found as array in ->customdata['customcompletionrules']
+     * @param string $suffix the suffix to add to the name of the completion rules.
      * @return stdClass
      */
-    public static function get_default_completion($course, $module, $flatten = true) {
-        global $DB, $CFG;
-        if ($data = $DB->get_record('course_completion_defaults', ['course' => $course->id, 'module' => $module->id],
-            'completion, completionview, completionexpected, completionusegrade, completionpassgrade, customrules')) {
+    public static function get_default_completion($course, $module, $flatten = true, string $suffix = '') {
+        global $DB, $CFG, $SITE;
+
+        $fields = 'completion, completionview, completionexpected, completionusegrade, completionpassgrade, customrules';
+        // Check course default completion values.
+        $params = ['course' => $course->id, 'module' => $module->id];
+        $data = $DB->get_record('course_completion_defaults', $params, $fields);
+        if (!$data && $course->id != $SITE->id) {
+            // If there is no course default completion, check site level default completion values ($SITE->id).
+            $params['course'] = $SITE->id;
+            $data = $DB->get_record('course_completion_defaults', $params, $fields);
+        }
+        if ($data) {
             if ($data->customrules && ($customrules = @json_decode($data->customrules, true))) {
                 // MDL-72375 This will override activity id for new mods. Skip this field, it is already exposed as courseid.
                 unset($customrules['id']);
@@ -533,14 +577,82 @@ class manager {
         } else {
             $data = new stdClass();
             $data->completion = COMPLETION_TRACKING_NONE;
-            if ($CFG->completiondefault) {
-                $completion = new \completion_info(get_fast_modinfo($course->id)->get_course());
-                if ($completion->is_enabled() && plugin_supports('mod', $module->name, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
-                    $data->completion = COMPLETION_TRACKING_MANUAL;
-                    $data->completionview = 1;
+        }
+
+        // If the suffix is not empty, the completion rules need to be renamed to avoid conflicts.
+        if (!empty($suffix)) {
+            $data = (array)$data;
+            foreach ($data as $name => $value) {
+                if (str_starts_with($name, 'completion')) {
+                    $data[$name . $suffix] = $value;
+                    unset($data[$name]);
+                } else if ($name == 'customdata') {
+                    $customrules = $value['customcompletionrules'];
+                    foreach ($customrules as $rulename => $rulevalue) {
+                        if (str_starts_with($rulename, 'completion')) {
+                            $customrules[$rulename . $suffix] = $rulevalue;
+                            unset($customrules[$rulename]);
+                        }
+                    }
+                    $data['customdata'] = $customrules;
                 }
             }
+            $data = (object)$data;
         }
+
         return $data;
+    }
+
+    /**
+     * Return a mod_form of the given module.
+     *
+     * @param string $modname   Module to get the form from.
+     * @param stdClass $course  Course object.
+     * @param ?cm_info $cm      cm_info object to use.
+     * @param string $suffix    The suffix to add to the name of the completion rules.
+     * @return ?\moodleform_mod The moodleform_mod object if everything goes fine. Null otherwise.
+     */
+    public static function get_module_form(
+            string $modname,
+            stdClass $course,
+            ?cm_info $cm = null,
+            string $suffix = ''
+    ): ?\moodleform_mod {
+        global $CFG, $PAGE;
+
+        $modmoodleform = "$CFG->dirroot/mod/$modname/mod_form.php";
+        if (file_exists($modmoodleform)) {
+            require_once($modmoodleform);
+        } else {
+            throw new \moodle_exception('noformdesc');
+        }
+
+        if ($cm) {
+            [$cmrec, $context, $module, $data, $cw] = get_moduleinfo_data($cm, $course);
+            $data->update = $modname;
+        } else {
+            [$module, $context, $cw, $cmrec, $data] = prepare_new_moduleinfo_data($course, $modname, 0, $suffix);
+            $data->add = $modname;
+        }
+        $data->return = 0;
+        $data->sr = 0;
+
+        // Initialise the form but discard all JS requirements it adds, our form has already added them.
+        $mformclassname = 'mod_'.$modname.'_mod_form';
+        $PAGE->start_collecting_javascript_requirements();
+        try {
+            $moduleform = new $mformclassname($data, 0, $cmrec, $course);
+            if (!$cm) {
+                $moduleform->set_suffix('_' . $modname);
+            }
+        } catch (\Exception $e) {
+            // The form class has thrown an error when instantiating.
+            // This could happen because some conditions for the module are not met.
+            $moduleform = null;
+        } finally {
+            $PAGE->end_collecting_javascript_requirements();
+        }
+
+        return $moduleform;
     }
 }

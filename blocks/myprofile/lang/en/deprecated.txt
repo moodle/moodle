@@ -1,5 +1,0 @@
-display_aim,block_myprofile
-display_icq,block_myprofile
-display_msn,block_myprofile
-display_skype,block_myprofile
-display_yahoo,block_myprofile

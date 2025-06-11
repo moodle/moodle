@@ -41,12 +41,12 @@ require_once($CFG->dirroot . '/files/externallib.php');
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /** @var repository Recent repository */
     private $repo;
 
-    /** @var context repository */
+    /** @var \context repository */
     private $usercontext;
 
     /**
@@ -54,6 +54,7 @@ class lib_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $USER;
+        parent::setUp();
         $this->setAdminUser();
         $this->usercontext = \context_user::instance($USER->id);
         $repoid = $this->getDataGenerator()->create_repository('recent')->id;
@@ -63,7 +64,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test get listing
      */
-    public function test_get_listing_with_duplicate_file() {
+    public function test_get_listing_with_duplicate_file(): void {
         global $itemid;
         $this->resetAfterTest(true);
 
@@ -93,7 +94,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test get listing reference file
      */
-    public function test_get_listing_with_reference_file() {
+    public function test_get_listing_with_reference_file(): void {
         $this->resetAfterTest(true);
         // Create test file 1.
         $file1 = $this->create_test_file('TestFile1', 'private');
@@ -114,7 +115,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test number limit
      */
-    public function test_get_listing_number_limit() {
+    public function test_get_listing_number_limit(): void {
         $this->resetAfterTest(true);
         $this->create_multiple_test_files('private', 75);
         $filelist = $this->repo->get_listing()['list'];
@@ -131,7 +132,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test time limit
      */
-    public function test_get_listing_time_limit() {
+    public function test_get_listing_time_limit(): void {
         $this->resetAfterTest(true);
         $this->create_multiple_test_files('private', 25);
         $file1 = $this->create_test_file('TestFileTimeLimit', 'private');
@@ -170,7 +171,7 @@ class lib_test extends \advanced_testcase {
      * @param string $filename file name
      * @param string $filearea file area
      * @param int $itemid item id
-     * @return stored_file the newly created file
+     * @return \stored_file the newly created file
      */
     private function create_test_file($filename, $filearea, $itemid = 0) {
         global $USER;
@@ -192,11 +193,11 @@ class lib_test extends \advanced_testcase {
     /**
      * Create reference file
      *
-     * @param stored_file $file source file
+     * @param \stored_file $file source file
      * @param string $filename file name
      * @param string $filearea file area
      * @param int $itemid item id
-     * @return stored_file the newly created file
+     * @return \stored_file the newly created file
      */
     private function create_reference_file($file, $filename, $filearea, $itemid = 0) {
         global $USER, $DB;

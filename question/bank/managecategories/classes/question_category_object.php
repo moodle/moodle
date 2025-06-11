@@ -18,6 +18,9 @@ namespace qbank_managecategories;
 
 /**
  * QUESTION_PAGE_LENGTH - Number of categories to display on page.
+ *
+ * @deprecated Since Moodle 4.5 MDL-72397. This was only used in moodle_list::display_page_numbers which is now deprecated.
+ * @todo Final removal in Moodle 6.0 MDL-80804.
  */
 define('QUESTION_PAGE_LENGTH', 25);
 
@@ -34,6 +37,8 @@ use stdClass;
  * @package    qbank_managecategories
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.5 MDL-72397. Use \core_question\category_manager or \qbank_managecategories\question_categories.
+ * @todo Final removal in Moodle 6.0 MDL-80804
  */
 class question_category_object {
 
@@ -77,9 +82,17 @@ class question_category_object {
      * @param int|null $defaultcategory id of the current category. null if none.
      * @param int $todelete id of the category to delete. 0 if none.
      * @param context[] $addcontexts contexts where the current user can add questions.
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \qbank_managecategories\question_categories or \core_question\category_manager.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\qbank_managecategories\question_categories or \core_question\category_manager',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function __construct($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
-
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
 
         $this->str = new stdClass();
@@ -105,8 +118,6 @@ class question_category_object {
         $this->str->page           = get_string('page');
 
         $this->pageurl = $pageurl;
-
-        $this->initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts);
     }
 
     /**
@@ -118,8 +129,17 @@ class question_category_object {
      * @param int|null $defaultcategory id of the current category. null if none.
      * @param int $todelete id of the category to delete. 0 if none.
      * @param context[] $addcontexts contexts where the current user can add questions.
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \qbank_managecategories\question_categories instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\qbank_managecategories\question_categories',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $lastlist = null;
         foreach ($contexts as $context) {
             $this->editlists[$context->id] =
@@ -146,16 +166,35 @@ class question_category_object {
     /**
      * Displays the user interface.
      *
+     * @deprecated Since Moodle 4.5 MDL-72397. No longer used.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'No longer used',
+        mdl: 'MDL-72397',
+    )]
     public function display_user_interface(): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         // Interface for editing existing categories.
         $this->output_edit_lists();
     }
 
     /**
      * Outputs a table to allow entry of a new category
+     *
+     * @deprecated Since Moodle 4.5 MDL-72397. No longer used.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'No longer used',
+        mdl: 'MDL-72397',
+    )]
     public function output_new_table(): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->catform->display();
     }
 
@@ -164,8 +203,17 @@ class question_category_object {
      *
      * $this->initialize() must have already been called
      *
+     * @deprecated Since Moodle 4.5 MDL-72397. No longer used.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'No longer used',
+        mdl: 'MDL-72397',
+    )]
     public function output_edit_lists(): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $OUTPUT;
 
         echo $OUTPUT->heading_with_help(get_string('questioncategories', 'question'), 'editcategories', 'question');
@@ -189,8 +237,17 @@ class question_category_object {
      *
      * @param array $categories contains category objects in  a tree representation
      * @return array courseids flat array in form categoryid=>courseid
+     * @deprecated Since Moodle 4.5 MDL-72397. No longer used.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'No longer used',
+        mdl: 'MDL-72397',
+    )]
     public function get_course_ids(array $categories): array {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $courseids = [];
         foreach ($categories as $key => $cat) {
             $courseids[$key] = $cat->course;
@@ -205,8 +262,17 @@ class question_category_object {
      * Edit a category, or add a new one if the id is zero.
      *
      * @param int $categoryid Category id.
+     * @deprecated Since Moodle 4.5 MDL-72397. No longer used.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'No longer used',
+        mdl: 'MDL-72397',
+    )]
     public function edit_single_category(int $categoryid): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         // Interface for adding a new category.
         global $DB;
 
@@ -235,9 +301,17 @@ class question_category_object {
      *
      * @param array $parentstrings a list of parentstrings
      * @param object $category Category object
+     * @deprecated Since Moodle 4.5 MDL-72397. No longer used.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'No longer used',
+        mdl: 'MDL-72397',
+    )]
     public function set_viable_parents(array &$parentstrings, object $category): void {
-
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         unset($parentstrings[$category->id]);
         if (isset($category->children)) {
             foreach ($category->children as $child) {
@@ -252,8 +326,17 @@ class question_category_object {
      * @param int|null $parent - if given, restrict records to those with this parent id.
      * @param string $sort - [[sortfield [,sortfield]] {ASC|DESC}].
      * @return array categories.
+     * @deprecated Since Moodle 4.5 MDL-72397. No longer used.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
-    public function get_question_categories(int $parent = null, string $sort = "sortorder ASC"): array {
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'No longer used',
+        mdl: 'MDL-72397',
+    )]
+    public function get_question_categories(?int $parent = null, string $sort = "sortorder ASC"): array {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $COURSE, $DB;
         if (is_null($parent)) {
             $categories = $DB->get_records('question_categories', ['course' => $COURSE->id], $sort);
@@ -268,8 +351,17 @@ class question_category_object {
      * Deletes an existing question category.
      *
      * @param int $categoryid id of category to delete.
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \core_question\category_manager instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::delete_category',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function delete_category(int $categoryid): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $CFG, $DB;
         helper::question_can_delete_cat($categoryid);
         if (!$category = $DB->get_record("question_categories", ["id" => $categoryid])) {  // Security.
@@ -293,8 +385,17 @@ class question_category_object {
      *
      * @param int $oldcat id of the old category.
      * @param int $newcat id of the new category.
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \core_question\category_manager instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::move_questions_and_delete_category',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function move_questions_and_delete_category(int $oldcat, int $newcat): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         helper::question_can_delete_cat($oldcat);
         $this->move_questions($oldcat, $newcat);
         $this->delete_category($oldcat);
@@ -306,8 +407,15 @@ class question_category_object {
      * @param int $questionsincategory
      * @param object $category
      * @throws \coding_exception
+     *
+     * @deprecated No longer used by internal code and not recommended since Moodle 4.2 MDL-77299.
      */
     public function display_move_form($questionsincategory, $category): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        debugging(
+            'display_move_form() is deprecated and no longer used by internal code.',
+            DEBUG_DEVELOPER
+        );
         global $OUTPUT;
         $vars = new stdClass();
         $vars->name = $category->name;
@@ -322,8 +430,17 @@ class question_category_object {
      * @param int $oldcat id of the old category.
      * @param int $newcat id of the new category.
      * @throws \dml_exception
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \core_question\category_manager instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::move_questions',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function move_questions(int $oldcat, int $newcat): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $questionids = $this->get_real_question_ids_in_category($oldcat);
         question_move_questions_to_category($questionids, $newcat);
     }
@@ -342,9 +459,18 @@ class question_category_object {
      * @param int|string $newinfoformat description format. One of the FORMAT_ constants.
      * @param null $idnumber the idnumber. '' is converted to null.
      * @return bool|int New category id if successful, else false.
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \core_question\category_manager instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::add_category',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function add_category($newparent, $newcategory, $newinfo, $return = false, $newinfoformat = FORMAT_HTML,
             $idnumber = null): int {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $DB;
         if (empty($newcategory)) {
             throw new moodle_exception('categorynamecantbeblank', 'question');
@@ -408,9 +534,18 @@ class question_category_object {
      * @param int|string $newinfoformat description format. One of the FORMAT_ constants.
      * @param int $idnumber the idnumber. '' is converted to null.
      * @param bool $redirect if true, will redirect once the DB is updated (default).
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \core_question\category_manager instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::update_category',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function update_category($updateid, $newparent, $newname, $newinfo, $newinfoformat = FORMAT_HTML,
             $idnumber = null, $redirect = true): void {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $CFG, $DB;
         if (empty($newname)) {
             throw new moodle_exception('categorynamecantbeblank', 'question');
@@ -495,8 +630,17 @@ class question_category_object {
      *
      * @param int $categoryid id of the category.
      * @return int[] array of question ids.
+     * @deprecated Since Moodle 4.5 MDL-72397. Use \core_question\category_manager instead.
+     * @todo Final removal in Moodle 6.0 MDL-80804
      */
+    #[\core\attribute\deprecated(
+        '\core_question\category_manager::get_real_question_ids_in_category',
+        since: 4.5,
+        reason: 'API properly divided between qbank_managecategories and core_question',
+        mdl: 'MDL-72397',
+    )]
     public function get_real_question_ids_in_category(int $categoryid): array {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $DB;
 
         $sql = "SELECT q.id

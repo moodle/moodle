@@ -1,0 +1,75 @@
+/**
+ * Print style sheet.
+ *
+ */
+
+/* stylelint-disable declaration-no-important*/
+
+@media print {
+    body {
+        color: $body-color;
+        background: white;
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    #mr-nav,
+    #moodle-footer {
+        display: none;
+    }
+
+    @page {
+        margin: 2cm;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+        page-break-after: avoid;
+    }
+
+    // Printing a course page.
+    .path-course-view {
+        .section {
+            width: 100%;
+        }
+        // List elements which are actually content.
+        .section.img-text li {
+            page-break-inside: auto;
+        }
+        // Section at the top of the printout.
+        .course-content > ul li.section.state-visible {
+            position: absolute;
+            page-break-inside: avoid;
+        }
+        // Remove padding as edit commands are hidden.
+        .section li.snap-asset.snap-can-edit {
+            padding-bottom: 0 !important;
+        }
+        // Hide left toc.
+        #snap-course-wrapper > .row > .col-lg-3 {
+            display: none;
+        }
+        // Full width content.
+        #snap-course-wrapper > .row > .col-lg-9 {
+            width: 100%;
+        }
+        // Hide all the things!
+        #page-header,
+        #snap-course-footer,
+        #course-toc,
+        #toc-mobile-menu-toggle,
+        .summary .edit-summary,
+        .section_footer,
+        .snap-modchooser,
+        .snap-dropzone,
+        .snap-asset-actions,
+        .snap-section-editing {
+            display: none;
+        }
+    }
+}

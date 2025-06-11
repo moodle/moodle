@@ -51,7 +51,7 @@ abstract class binary extends discrete {
      *
      * @return array
      */
-    public static final function get_classes() {
+    final public static function get_classes() {
         return array(0, 1);
     }
 

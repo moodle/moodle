@@ -55,7 +55,7 @@
                         {{/action_link_actions}}
                     {{/is_action_link}}
                     {{^is_action_link}}
-                        <a class="dropdown-item" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1"
+                        <a class="dropdown-item" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} data-disableactive="true" tabindex="-1"
                             {{#title}}title="{{.}}"{{/title}}
                         >
                             {{{text}}}
@@ -87,6 +87,7 @@
                     href="{{tab}}" data-toggle="tab" data-text="{{{text}}}"
                     {{#title}}title="{{.}}"{{/title}}
                     {{#isactive}}aria-selected="true"{{/isactive}}
+                    data-disableactive="true"
                     {{^isactive}}tabindex="-1"{{/isactive}}
                 >
                     {{{text}}}
@@ -110,6 +111,7 @@
                     href="{{{url}}}{{{action}}}"
                     {{#title}}title="{{.}}"{{/title}}
                     {{#isactive}}aria-current="true"{{/isactive}}
+                    data-disableactive="true"
                     {{^isactive}}tabindex="-1"{{/isactive}}
                 >
                     {{{text}}}

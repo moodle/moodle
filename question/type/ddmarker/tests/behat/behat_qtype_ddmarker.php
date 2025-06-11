@@ -68,31 +68,37 @@ class behat_qtype_ddmarker extends behat_base {
         // DOM node so that its centre is over the centre of anothe DOM node.
         // Therefore to make it drag to the specified place, we have to add
         // a target div.
+        // We also need to scroll the marker into view so we can calculate the correct offsetHeight and offsetWidth.
         $markerxpath = $this->marker_xpath($marker);
         $this->execute_script("
                 (function() {
-                    if (document.getElementById('target-{$x}-{$y}')) {
-                        return;
-                    }
-                    var image = document.querySelector('.dropbackground');
-                    var target = document.createElement('div');
-                    target.setAttribute('id', 'target-{$x}-{$y}');
-                    var container = document.querySelector('.droparea');
-                    container.insertBefore(target, image);
-                    var widthRatio = image.offsetWidth / image.naturalWidth;
-                    var heightRatio = image.offsetHeight / image.naturalHeight;
-                    var marker = document.evaluate('{$markerxpath}', document, null, XPathResult.ANY_TYPE, null).iterateNext();
-                    var xadjusted = {$x} * widthRatio
-                                    + (container.offsetWidth - image.offsetWidth) / 2
-                                    + marker.offsetWidth / 2;
-                    var yadjusted = {$y} * heightRatio
-                                    + (container.offsetHeight - image.offsetHeight) / 2
-                                    + marker.offsetHeight / 2;
-                    target.style.setProperty('position', 'absolute');
-                    target.style.setProperty('left', xadjusted + 'px');
-                    target.style.setProperty('top', yadjusted + 'px');
-                    target.style.setProperty('width', '1px');
-                    target.style.setProperty('height', '1px');
+                    require(['core/pending'], function(Pending) {
+                        if (document.getElementById('target-{$x}-{$y}')) {
+                            return;
+                        }
+                        const pendingPromise = new Pending('qtype_ddmarker:drag-drop');
+                        const image = document.querySelector('.dropbackground');
+                        const target = document.createElement('div');
+                        target.setAttribute('id', 'target-{$x}-{$y}');
+                        const container = document.querySelector('.droparea');
+                        container.insertBefore(target, image);
+                        const widthRatio = image.offsetWidth / image.naturalWidth;
+                        const heightRatio = image.offsetHeight / image.naturalHeight;
+                        const marker = document.evaluate('{$markerxpath}', document, null, XPathResult.ANY_TYPE, null).iterateNext();
+                        marker.scrollIntoView();
+                        const xadjusted = {$x} * widthRatio
+                                        + (container.offsetWidth - image.offsetWidth) / 2
+                                        + marker.offsetWidth / 2;
+                        const yadjusted = {$y} * heightRatio
+                                        + (container.offsetHeight - image.offsetHeight) / 2
+                                        + marker.offsetHeight / 2;
+                        target.style.setProperty('position', 'absolute');
+                        target.style.setProperty('left', xadjusted + 'px');
+                        target.style.setProperty('top', yadjusted + 'px');
+                        target.style.setProperty('width', '1px');
+                        target.style.setProperty('height', '1px');
+                        pendingPromise.resolve();
+                    });
                 }())"
         );
 

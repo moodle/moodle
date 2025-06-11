@@ -58,7 +58,7 @@ class WikiToMarkdown {
   var $output; // output buffer
   var $courseid;
 
-  function close_block( $state ) {
+  function close_block($state ) {
     // provide appropriate closure for block according to state
 
     // if in list close this first
@@ -86,7 +86,7 @@ class WikiToMarkdown {
     return $lclose . $sclose;
   }
 
-  function do_replace( $line, $mark, $tag ) {
+  function do_replace($line, $mark, $tag ) {
     // do the regex thingy for things like bold, italic etc
     // $mark is the magic character, and $tag the HTML tag to insert
 
@@ -106,7 +106,7 @@ class WikiToMarkdown {
   }
 
 
-  function do_replace_markdown( $line, $mark, $tag ) {
+  function do_replace_markdown($line, $mark, $tag ) {
     // do the regex thingy for things like bold, italic etc
     // $mark is the magic character, and $tag the HTML tag to insert
     // MARKDOWN version does not generate HTML tags, just straigt replace
@@ -127,7 +127,7 @@ class WikiToMarkdown {
   }
 
 
-  function do_replace_sub( $line, $mark, $tag ) {
+  function do_replace_sub($line, $mark, $tag ) {
     // do regex for subscript and superscript (slightly different)
     // $mark is the magic character and $tag the HTML tag to insert
 
@@ -137,7 +137,7 @@ class WikiToMarkdown {
     return preg_replace( $regex, $replace, $line );
   }
 
-  function do_list( $line, $blank=false ) {
+  function do_list($line, $blank=false ) {
     // handle line with list character on it
     // if blank line implies drop to level 0
 
@@ -222,7 +222,7 @@ class WikiToMarkdown {
   }
 
 
-  function line_replace( $line ) {
+  function line_replace($line ) {
     // return line after various formatting replacements
     // have been made - order is vital to stop them interfering with each other
 
@@ -311,7 +311,7 @@ class WikiToMarkdown {
     return $line;
   }
 
-  function convert( $content,$courseid ) {
+  function convert($content,$courseid ) {
 
     // main entry point for processing Wiki-like text
     // $content is string containing text with Wiki-Like formatting
@@ -323,7 +323,6 @@ class WikiToMarkdown {
     $this->list_state = LIST_NONE;
     $this->list_depth = 0;
     $this->list_backtrack = array();
-    $this->spelling_on = false;
     $this->courseid = $courseid;
 
     // split content into array of single lines

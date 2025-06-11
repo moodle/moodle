@@ -37,6 +37,9 @@ class cc_version1 extends cc_version_base {
     const   discussiontopic     = 'imsdt_xmlv1p0';
     const   weblink             = 'imswl_xmlv1p0';
 
+    /** @var array CC URL profiles. */
+    protected $ccnsnames = [];
+
     public static $checker = array(self::webcontent,
                                    self::assessment,
                                    self::associatedcontent,
@@ -250,7 +253,7 @@ class cc_version1 extends cc_version_base {
      * @param DOMDocument $doc
      * @param DOMElement $xmlnode
      */
-    protected function create_item_folder(cc_i_organization &$org, DOMDocument &$doc, DOMElement &$xmlnode = null) {
+    protected function create_item_folder(cc_i_organization &$org, DOMDocument &$doc, ?DOMElement &$xmlnode = null) {
 
         $itemfoldernode = $doc->createElementNS($this->ccnamespaces['imscc'], 'item');
         $this->update_attribute($doc, 'identifier', "root", $itemfoldernode);

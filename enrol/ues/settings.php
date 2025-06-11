@@ -103,7 +103,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('enrol_ues/user_lang',
         get_string('language'), '', $CFG->lang, $languages));
 
-    $auths = get_plugin_list('auth');
+    $auths = core_component::get_plugin_list('auth');
     $authoptions = array();
     foreach ($auths as $auth => $unused) {
         $authoptions[$auth] = get_string('pluginname', "auth_{$auth}");

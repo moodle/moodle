@@ -25,12 +25,12 @@ namespace tool_admin_presets\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \tool_admin_presets\event\preset_reverted
  */
-class preset_reverted_test extends \advanced_testcase {
+final class preset_reverted_test extends \advanced_testcase {
 
     /**
      * Test preset_reverted event.
      */
-    public function test_preset_reverted_event() {
+    public function test_preset_reverted_event(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -55,7 +55,5 @@ class preset_reverted_test extends \advanced_testcase {
         $this->assertInstanceOf('\tool_admin_presets\event\preset_reverted', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($presetid, $event->objectid);
-        $expected = [0, 'tool_admin_presets', 'rollback', '', $presetid, 0];
-        $this->assertEventLegacyLogData($expected, $event);
     }
 }

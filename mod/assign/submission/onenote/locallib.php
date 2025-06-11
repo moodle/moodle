@@ -29,8 +29,6 @@ use assignsubmission_onenote\event\submission_created;
 use assignsubmission_onenote\event\submission_updated;
 use local_onenote\api\base;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Library class for OneNote submission plugin extending submission plugin base class
  *
@@ -135,7 +133,7 @@ class assign_submission_onenote extends assign_submission_plugin {
 
         try {
             $onenoteapi = base::getinstance();
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             $html = '<div>' . $e->getMessage() . '</div>';
             $mform->addElement('html', $html);
             return false;
@@ -203,7 +201,7 @@ class assign_submission_onenote extends assign_submission_plugin {
 
         try {
             $onenoteapi = base::getinstance();
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             // Display error.
             $this->set_error($e->getMessage());
             return false;
@@ -370,7 +368,7 @@ class assign_submission_onenote extends assign_submission_plugin {
 
         try {
             $onenoteapi = base::getinstance();
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             return $e->getMessage();
         }
 
@@ -470,22 +468,10 @@ class assign_submission_onenote extends assign_submission_plugin {
     }
 
     /**
-     * Formatting for log info
-     *
-     * @param stdClass $submission The submission
-     * @return string
-     */
-    public function format_for_log(stdClass $submission) {
-        // Format the info for each submission plugin (will be added to log).
-        $filecount = $this->count_files($submission->id, base::ASSIGNSUBMISSION_ONENOTE_FILEAREA);
-
-        return get_string('numfilesforlog', 'assignsubmission_onenote', $filecount);
-    }
-
-    /**
      * Return true if there are no submission OneNote files
      *
      * @param stdClass $submission
+     * @return bool
      */
     public function is_empty(stdClass $submission) {
         return $this->count_files($submission->id, base::ASSIGNSUBMISSION_ONENOTE_FILEAREA) == 0;

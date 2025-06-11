@@ -233,7 +233,7 @@ class message_airnotifier_manager {
 
         $results = [];
         // Check Mobile services enabled.
-        $summary = html_writer::link((new moodle_url('/admin/settings.php', ['section' => 'mobilesettings'])),
+        $summary = html_writer::link(new moodle_url('/admin/search.php', ['query' => 'enablemobilewebservice']),
                 get_string('enablemobilewebservice', 'admin'));
         if (empty($CFG->enablewebservices) || empty($CFG->enablemobilewebservice)) {
             $results[] = new core\check\result(core\check\result::CRITICAL, $summary, get_string('enablewsdescription', 'webservice'));
@@ -402,7 +402,7 @@ class message_airnotifier_manager {
      * @param  int $userid the user to check the devices for (empty for current user)
      * @return bool true when the user has enabled devices, false otherwise
      */
-    public function has_enabled_devices(string $appname, int $userid = null): bool {
+    public function has_enabled_devices(string $appname, ?int $userid = null): bool {
         $enableddevices = false;
         $devices = $this->get_user_devices($appname, $userid);
 

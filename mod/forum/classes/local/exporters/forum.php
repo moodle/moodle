@@ -187,7 +187,7 @@ class forum extends exporter {
      *
      * @return  stdClass
      */
-    private function get_forum_record() : stdClass {
+    private function get_forum_record(): stdClass {
         $forumdbdatamapper = $this->related['legacydatamapperfactory']->get_forum_data_mapper();
         return $forumdbdatamapper->to_legacy_object($this->forum);
     }

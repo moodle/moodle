@@ -80,13 +80,13 @@ class filtering extends \user_filtering {
      * Returns sql where statement based on active user filters.
      *
      * @param string $extra sql
-     * @param array $params named params (recommended prefix ex)
+     * @param array|null $params named params (recommended prefix ex)
      * @return array sql string and $params
      */
-    public function get_sql_filter($extra='', array $params=null) {
+    public function get_sql_filter($extra='', ?array $params=null) {
         global $SESSION;
 
-        $sqls = array();
+        $sqls = [];
         if ($extra != '') {
             $sqls[] = $extra;
         }
@@ -102,7 +102,7 @@ class filtering extends \user_filtering {
                 }
                 $field = $this->_fields[$fname];
                 foreach ($datas as $i => $data) {
-                    list($s, $p) = $field->get_sql_filter($data);
+                    [$s, $p] = $field->get_sql_filter($data);
                     $sqls[] = $s;
                     $params = $params + $p;
                 }
@@ -131,7 +131,7 @@ class filtering extends \user_filtering {
             $datas = $SESSION->user_filtering[$fname];
             $field = $this->_fields[$fname];
             foreach ($datas as $i => $data) {
-                list($s, $p) = $field->get_sql_filter($data);
+                [$s, $p] = $field->get_sql_filter($data);
                 $sqls[] = $s;
                 $params = $params + $p;
             }

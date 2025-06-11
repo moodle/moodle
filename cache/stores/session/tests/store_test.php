@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/cache/stores/session/lib.php');
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends \cachestore_tests {
+final class store_test extends \cachestore_tests {
     /**
      * Returns the session class name
      * @return string
@@ -44,7 +44,7 @@ class store_test extends \cachestore_tests {
     /**
      * Test the maxsize option.
      */
-    public function test_maxsize() {
+    public function test_maxsize(): void {
         $config = \cache_config_testing::instance();
         $config->phpunit_add_definition('phpunit/one', array(
             'mode' => cache_store::MODE_SESSION,
@@ -166,7 +166,7 @@ class store_test extends \cachestore_tests {
                 $cacheone->get_many(array('keyC', 'keyE', 'keyD', 'keyF')));
     }
 
-    public function test_ttl() {
+    public function test_ttl(): void {
         $config = \cache_config_testing::instance();
         $config->phpunit_add_definition('phpunit/three', array(
             'mode' => cache_store::MODE_SESSION,

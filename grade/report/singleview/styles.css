@@ -6,7 +6,6 @@
 }
 
 .path-grade-report-singleview div.groupselector,
-.path-grade-report-singleview div.reporttable form div.singleview_buttons,
 .path-grade-report-singleview div.selectitems {
     display: block;
     text-align: right;
@@ -28,10 +27,6 @@
 
 .path-grade-report-singleview div.reporttable form div {
     text-align: left;
-}
-
-.path-grade-report-singleview .singleview_buttons {
-    padding: 10px 0;
 }
 
 .path-grade-report-singleview div.reporttable h2 {

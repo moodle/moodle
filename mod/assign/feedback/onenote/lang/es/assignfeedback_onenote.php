@@ -24,26 +24,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addfeedback'] = 'Agregar retroalimentación';
+$string['addfeedbackhelp'] = 'Haga clic en el botón de arriba para agregar sus comentarios para la entrega del alumno en OneNote. Puede volver aquí más tarde para guardar su trabajo en Moodle.';
 $string['configmaxbytes'] = 'Tamaño máximo de OneNote';
 $string['countfiles'] = 'OneNote: {$a}';
 $string['default'] = 'Habilitado por defecto';
 $string['default_help'] = 'Si se ajusta esta opción, este método de retroalimentación se habilitará por defecto para todas las tareas nuevas.';
 $string['enabled'] = 'Comentario de OneNote';
 $string['enabled_help'] = 'Si está habilitado, el profesor podrá cargar páginas de OneNote con comentarios cuando marque las tareas. Los profesores pueden optar por anotar en la entrega de OneNote del alumno o cargar una página de OneNote completamente nueva.';
-$string['onenote'] = 'OneNote de retroalimentación';
+$string['feedbackdownloadfailed'] = 'No se pudieron descargar los comentarios desde OneNote. Vuelva a intentarlo.';
+$string['feedbacklimitexceed'] = 'El tamaño de sus comentarios excede el límite aceptable.';
+$string['feedbacknotstarted'] = 'Agregue sus comentarios utilizando OneNote y guarde los cambios.';
 $string['filesadded'] = 'OneNote de retroalimentación agregados: {$a}';
 $string['maxbytes'] = 'Tamaño de paquete máximo de OneNote';
 $string['maxfiles'] = 'Número máximo de OneNote cargados';
 $string['maximumsize'] = 'Tamaño de paquete máximo de OneNote';
 $string['moreusers'] = '{$a} más...';
 $string['nochanges'] = 'Sin cambios';
+$string['notsignedin'] = 'Inicie sesión en OneNote antes de intentar guardar los cambios.';
+$string['onenote'] = 'OneNote de retroalimentación';
 $string['pluginname'] = 'Comentario de OneNote';
-$string['addfeedback'] = 'Agregar retroalimentación';
-$string['addfeedbackhelp'] = 'Haga clic en el botón de arriba para agregar sus comentarios para la entrega del alumno en OneNote. Puede volver aquí más tarde para guardar su trabajo en Moodle.';
 $string['signinhelp1'] = 'Haga clic en el botón de arriba para iniciar sesión en OneNote para agregar sus comentarios en la entrega del estudiante desde allí.';
 $string['signinhelp2'] = 'Haga clic en el botón de arriba para iniciar sesión en OneNote si desea ver los comentarios allí.';
 $string['viewfeedback'] = 'Ver retroalimentación';
-$string['feedbackdownloadfailed'] = 'No se pudieron descargar los comentarios desde OneNote. Vuelva a intentarlo.';
-$string['notsignedin'] = 'Inicie sesión en OneNote antes de intentar guardar los cambios.';
-$string['feedbacknotstarted'] = 'Agregue sus comentarios utilizando OneNote y guarde los cambios.';
-$string['feedbacklimitexceed'] = 'El tamaño de sus comentarios excede el límite aceptable.';

@@ -79,10 +79,27 @@ class data_field_date extends data_field_base {
             $content = time();
         }
 
-        $str = '<div title="'.s($this->field->description).'" class="mod-data-input form-inline">';
-        $dayselector = html_writer::select_time('days', 'field_'.$this->field->id.'_day', $content);
-        $monthselector = html_writer::select_time('months', 'field_'.$this->field->id.'_month', $content);
-        $yearselector = html_writer::select_time('years', 'field_'.$this->field->id.'_year', $content);
+        $str = '<div title="'.s($this->field->description).'" class="mod-data-input d-flex flex-wrap align-items-center">';
+
+        $dayselector = html_writer::select_time(
+            type: 'days',
+            name: "field_{$this->field->id}_day",
+            currenttime: $content,
+            timezone: 0,
+        );
+        $monthselector = html_writer::select_time(
+            type: 'months',
+            name: "field_{$this->field->id}_month",
+            currenttime: $content,
+            timezone: 0,
+        );
+        $yearselector = html_writer::select_time(
+            type: 'years',
+            name: "field_{$this->field->id}_year",
+            currenttime: $content,
+            timezone: 0,
+        );
+
         $str .= $dayselector . $monthselector . $yearselector;
         $str .= '</div>';
 
@@ -103,7 +120,7 @@ class data_field_date extends data_field_base {
             . html_writer::select_time('months', 'f_' . $this->field->id . '_m', $value['timestamp'] ?? $currenttime)
             . html_writer::select_time('years', 'f_' . $this->field->id . '_y', $value['timestamp'] ?? $currenttime);
         $datecheck = html_writer::checkbox('f_' . $this->field->id . '_z', 1, $value['usedate'] ?? 0);
-        $str = '<div class="form-inline">' . $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data') . '</div>';
+        $str = '<div class="d-flex flex-wrap">' . $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data') . '</div>';
 
         return $str;
     }
@@ -198,7 +215,7 @@ class data_field_date extends data_field_base {
 
     function get_sort_sql($fieldname) {
         global $DB;
-        return $DB->sql_cast_char2int($fieldname, true);
+        return $DB->sql_cast_char2real($fieldname, true);
     }
 
     /**

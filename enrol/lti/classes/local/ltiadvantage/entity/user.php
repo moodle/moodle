@@ -169,7 +169,7 @@ class user {
     public static function create(int $resourceid, int $userid, int $deploymentid, string $sourceid,
             string $lang, string $timezone, string $city = '',
             string $country = '', string $institution = '', ?int $maildisplay = null, ?float $lastgrade = null,
-            ?int $lastaccess = null, ?int $resourcelinkid = null, int $id = null): user {
+            ?int $lastaccess = null, ?int $resourcelinkid = null, ?int $id = null): user {
 
         return new self($resourceid, $userid, $deploymentid, $sourceid, $lang, $city,
             $country, $institution, $timezone, $maildisplay, $lastgrade, $lastaccess, $resourcelinkid, $id);

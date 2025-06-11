@@ -28,6 +28,7 @@ use core_reportbuilder\manager;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\audience;
@@ -38,6 +39,8 @@ use core_reportbuilder\local\report\filter;
 use core_reportbuilder\output\report_name_editable;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\permission;
+use core_tag\reportbuilder\local\entities\tag;
+use core_tag_tag;
 
 /**
  * Reports list
@@ -74,9 +77,14 @@ class reports_list extends system_report {
         // Join user entity for "User modified" column.
         $entityuser = new user();
         $entityuseralias = $entityuser->get_table_alias('user');
-
         $this->add_entity($entityuser
             ->add_join("JOIN {user} {$entityuseralias} ON {$entityuseralias}.id = rb.usermodified")
+        );
+
+        // Join tag entity.
+        $entitytag = new tag();
+        $this->add_entity($entitytag
+            ->add_joins($entitytag->get_tag_joins('core_reportbuilder', 'reportbuilder_report', 'rb.id'))
         );
 
         // Define our internal entity for report elements.
@@ -151,12 +159,18 @@ class reports_list extends system_report {
             ->add_callback(function(string $value, stdClass $row) {
                 if (!$this->report_source_valid($value)) {
                     // Add danger badge if report source is not valid (either it's missing, or has errors).
-                    return html_writer::span(get_string('errorsourceinvalid', 'core_reportbuilder'), 'badge badge-danger');
+                    return html_writer::span(get_string('errorsourceinvalid', 'core_reportbuilder'), 'badge bg-danger text-white');
                 }
 
                 return call_user_func([$value, 'get_name']);
             })
         );
+
+        // Tags column.
+        $this->add_column_from_entity('tag:name')
+            ->set_title(new lang_string('tags'))
+            ->set_aggregation('groupconcat')
+            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true);
 
         // Time created column.
         $this->add_column((new column(
@@ -218,6 +232,21 @@ class reports_list extends system_report {
             })
         );
 
+        // Tags filter.
+        $this->add_filter((new filter(
+            tags::class,
+            'tags',
+            new lang_string('tags'),
+            $this->get_report_entity_name(),
+            "{$tablealias}.id",
+        ))
+            ->set_options([
+                'component' => 'core_reportbuilder',
+                'itemtype' => 'reportbuilder_report',
+            ])
+            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true)
+        );
+
         // Time created filter.
         $this->add_filter((new filter(
             date::class,
@@ -253,7 +282,7 @@ class reports_list extends system_report {
         // Edit details action.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('t/edit', ''),
+            new pix_icon('i/settings', ''),
             ['data-action' => 'report-edit', 'data-report-id' => ':id'],
             false,
             new lang_string('editreportdetails', 'core_reportbuilder')
@@ -281,7 +310,12 @@ class reports_list extends system_report {
         $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/delete', ''),
-            ['data-action' => 'report-delete', 'data-report-id' => ':id', 'data-report-name' => ':name'],
+            [
+                'data-action' => 'report-delete',
+                'data-report-id' => ':id',
+                'data-report-name' => ':name',
+                'class' => 'text-danger',
+            ],
             false,
             new lang_string('deletereport', 'core_reportbuilder')
         ))

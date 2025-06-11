@@ -43,7 +43,7 @@ require_once($CFG->dirroot.'/mod/wiki/locallib.php');
  * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var array */
     protected $users = [];
@@ -74,6 +74,7 @@ class provider_test extends provider_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest();
 
         $dg = $this->getDataGenerator();
@@ -244,7 +245,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the contexts for a user.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
 
         // Get contexts for the first user.
         $contextids = provider::get_contexts_for_userid($this->users[1]->id)->get_contextids();
@@ -273,7 +274,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the users within a context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
         $component = 'mod_wiki';
 
@@ -327,7 +328,7 @@ class provider_test extends provider_testcase {
     /**
      * Export data for user 1
      */
-    public function test_export_user_data1() {
+    public function test_export_user_data1(): void {
 
         // Export all contexts for the first user.
         $contextids = array_values(array_map(function($c) {
@@ -383,7 +384,7 @@ class provider_test extends provider_testcase {
     /**
      * Test export data for user 2
      */
-    public function test_export_user_data2() {
+    public function test_export_user_data2(): void {
 
         // Export all contexts for the second user.
         $contextids = array_values(array_map(function($c) {
@@ -434,7 +435,7 @@ class provider_test extends provider_testcase {
     /**
      * Test export data for user 3 (locks, empty individual wiki)
      */
-    public function test_export_user_data3() {
+    public function test_export_user_data3(): void {
 
         // Export all contexts for the third user.
         $contextids = array_values(array_map(function($c) {
@@ -515,7 +516,7 @@ class provider_test extends provider_testcase {
     /**
      * Test export data when there are comments.
      */
-    public function test_export_user_data_with_comments() {
+    public function test_export_user_data_with_comments(): void {
         global $DB;
         // Comment on each page in the first wiki as the first user.
         $this->setUser($this->users[1]);
@@ -560,7 +561,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         provider::delete_data_for_all_users_in_context($this->contexts[1]);
 
         $appctx = new approved_contextlist($this->users[1], 'mod_wiki',
@@ -583,7 +584,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $appctx = new approved_contextlist($this->users[1], 'mod_wiki',
             [$this->contexts[1]->id, $this->contexts[1]->id]);
         provider::delete_data_for_user($appctx);
@@ -596,7 +597,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'mod_wiki';
 
         // Ensure data exists within context 2 - individual wikis.

@@ -24,38 +24,38 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$addons = array(
-    "mod_choicegroup" => array(
-        "handlers" => array( // Different places where the add-on will display content.
-            'coursechoicegroup' => array( // Handler unique name (can be anything)
-                'displaydata' => array(
+$addons = [
+    "mod_choicegroup" => [
+        "handlers" => [ // Different places where the add-on will display content.
+            'coursechoicegroup' => [ // Handler unique name (can be anything).
+                'displaydata' => [
                     'title' => 'pluginname',
                     'icon' => $CFG->wwwroot . '/mod/choicegroup/pix/icon.svg',
                     'class' => '',
-                ),
-                'delegate' => 'CoreCourseModuleDelegate', // Delegate (where to display the link to the add-on)
-                'method' => 'mobile_course_view', // Main function in \mod_choicegroup\output\mobile
+                ],
+                'delegate' => 'CoreCourseModuleDelegate', // Delegate (where to display the link to the add-on).
+                'method' => 'mobile_course_view', // Main function in \mod_choicegroup\output\mobile.
                 'init' => 'mobile_init',
-                'offlinefunctions' => array(
-                    'mobile_course_view' => array(),
-                ), // Function needs caching for offline.
-                'styles' => array(
+                'offlinefunctions' => [
+                    'mobile_course_view' => [],
+                ], // Function needs caching for offline.
+                'styles' => [
                     'url' => $CFG->wwwroot . '/mod/choicegroup/styles_app.css',
-                    'version' => '0.2'
-                ),
+                    'version' => '0.2',
+                ],
                 'displayrefresh' => false, // Hide default refresh button, a custom one will be used.
-            )
-        ),
-        'lang' => array(
-            array('group', 'moodle'),
-            array('choice', 'choicegroup'),
-            array('choicegroupsaved', 'choicegroup'),
-            array('members/', 'choicegroup'),
-            array('members/max', 'choicegroup'),
-            array('modulename', 'choicegroup'),
-            array('pluginname', 'choicegroup'),
-            array('removemychoicegroup', 'choicegroup'),
-            array('savemychoicegroup', 'choicegroup')
-        )
-    )
-);
+            ],
+        ],
+        'lang' => [
+            ['group', 'moodle'],
+            ['choice', 'choicegroup'],
+            ['choicegroupsaved', 'choicegroup'],
+            ['members/', 'choicegroup'],
+            ['members/max', 'choicegroup'],
+            ['modulename', 'choicegroup'],
+            ['pluginname', 'choicegroup'],
+            ['removemychoicegroup', 'choicegroup'],
+            ['savemychoicegroup', 'choicegroup'],
+        ],
+    ],
+];

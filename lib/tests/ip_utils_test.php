@@ -24,7 +24,7 @@ namespace core;
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ip_utils_test extends \basic_testcase {
+final class ip_utils_test extends \basic_testcase {
     /**
      * Test for \core\ip_utils::is_domain_name().
      *
@@ -32,7 +32,7 @@ class ip_utils_test extends \basic_testcase {
      * @param bool $expected the expected result.
      * @dataProvider domain_name_data_provider
      */
-    public function test_is_domain_name($domainname, $expected) {
+    public function test_is_domain_name($domainname, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_domain_name($domainname));
     }
 
@@ -41,7 +41,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function domain_name_data_provider() {
+    public static function domain_name_data_provider(): array {
         return [
             ["com", true],
             ["i.net", true], // Single char, alpha tertiary domain.
@@ -82,7 +82,7 @@ class ip_utils_test extends \basic_testcase {
      * @param bool $expected the expected result.
      * @dataProvider domain_matching_patterns_data_provider
      */
-    public function test_is_domain_matching_pattern($str, $expected) {
+    public function test_is_domain_matching_pattern($str, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_domain_matching_pattern($str));
     }
 
@@ -91,7 +91,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function domain_matching_patterns_data_provider() {
+    public static function domain_matching_patterns_data_provider(): array {
         return [
             ["*.com", true],
             ["*.example.com", true],
@@ -127,7 +127,7 @@ class ip_utils_test extends \basic_testcase {
      * @param bool $expected the expected result.
      * @dataProvider ip_address_data_provider
      */
-    public function test_is_ip_address($address, $expected) {
+    public function test_is_ip_address($address, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ip_address($address));
     }
 
@@ -136,7 +136,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function ip_address_data_provider() {
+    public static function ip_address_data_provider(): array {
         return [
             ["127.0.0.1", true],
             ["10.1", false],
@@ -174,7 +174,7 @@ class ip_utils_test extends \basic_testcase {
      * @param bool $expected the expected result.
      * @dataProvider ipv4_address_data_provider
      */
-    public function test_is_ipv4_address($address, $expected) {
+    public function test_is_ipv4_address($address, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv4_address($address));
     }
 
@@ -183,7 +183,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function ipv4_address_data_provider() {
+    public static function ipv4_address_data_provider(): array {
         return [
             ["127.0.0.1", true],
             ["0.0.0.0", true],
@@ -210,7 +210,7 @@ class ip_utils_test extends \basic_testcase {
      * @param bool $expected the expected result.
      * @dataProvider ipv4_range_data_provider
      */
-    public function test_is_ipv4_range($addressrange, $expected) {
+    public function test_is_ipv4_range($addressrange, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv4_range($addressrange));
     }
 
@@ -219,7 +219,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function ipv4_range_data_provider() {
+    public static function ipv4_range_data_provider(): array {
         return [
             ["127.0.0.1/24", true],
             ["127.0.0.20-20", true],
@@ -251,7 +251,7 @@ class ip_utils_test extends \basic_testcase {
      * @param bool $expected the expected result.
      * @dataProvider ipv6_address_data_provider
      */
-    public function test_is_ipv6_address($address, $expected) {
+    public function test_is_ipv6_address($address, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv6_address($address));
     }
 
@@ -260,7 +260,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function ipv6_address_data_provider() {
+    public static function ipv6_address_data_provider(): array {
         return [
             ["::", true],
             ["::0", true],
@@ -291,7 +291,7 @@ class ip_utils_test extends \basic_testcase {
      * @param bool $expected the expected result.
      * @dataProvider ipv6_range_data_provider
      */
-    public function test_is_ipv6_range($addressrange, $expected) {
+    public function test_is_ipv6_range($addressrange, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv6_range($addressrange));
     }
 
@@ -300,7 +300,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function ipv6_range_data_provider() {
+    public static function ipv6_range_data_provider(): array {
         return [
             ["::/128", true],
             ["::1/128", true],
@@ -338,7 +338,7 @@ class ip_utils_test extends \basic_testcase {
      * @param  string $domain domain address
      * @dataProvider data_domain_addresses
      */
-    public function test_check_domain_against_allowed_domains($expected, $domain) {
+    public function test_check_domain_against_allowed_domains($expected, $domain): void {
         $alloweddomains = ['example.com',
                            '*.moodle.com',
                            '*.per.this.penny-arcade.com',
@@ -352,7 +352,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function data_domain_addresses() {
+    public static function data_domain_addresses(): array {
         return [
             [true, 'example.com'],
             [true, 'ExAmPle.com'],
@@ -378,7 +378,7 @@ class ip_utils_test extends \basic_testcase {
      *
      * @return array
      */
-    public function data_is_ip_in_subnet_list() {
+    public static function data_is_ip_in_subnet_list(): array {
         return [
             [true, '1.1.1.1', '1.1.1.1', "\n"],
             [false, '1.1.1.1', '2.2.2.2', "\n"],
@@ -396,8 +396,159 @@ class ip_utils_test extends \basic_testcase {
      * @param  string $delim delimiter of list
      * @dataProvider data_is_ip_in_subnet_list
      */
-    public function test_is_ip_in_subnet_list($expected, $ip, $list, $delim) {
+    public function test_is_ip_in_subnet_list($expected, $ip, $list, $delim): void {
         $this->assertEquals($expected, \core\ip_utils::is_ip_in_subnet_list($ip, $list, $delim));
     }
 
+    /**
+     * Data provider for test_normalize_internet_address.
+     *
+     * @return array
+     */
+    public static function normalize_internet_address_provider(): array {
+        return [
+            'Strip all white spaces on IP address' => [
+                '   192.168.5.5  ',
+                '192.168.5.5',
+            ],
+            'Strip all white spaces on domain name' => [
+                ' www.moodle.org   ',
+                'www.moodle.org',
+            ],
+            'Preserve IPv4 address' => [
+                '127.0.0.1',
+                '127.0.0.1',
+            ],
+            'Preserve IPv4 address range' => [
+                '192.168.0.0/16',
+                '192.168.0.0/16',
+            ],
+            'Preserve IPv6 address' => [
+                'fe80:fe80:fe80:fe80:fe80:fe80:fe80:fe80',
+                'fe80:fe80:fe80:fe80:fe80:fe80:fe80:fe80',
+            ],
+            'Preserve IPv6 address range' => [
+                'fe80::ffff',
+                'fe80::ffff',
+            ],
+            'Preserve valid domain' => [
+                'localhost',
+                'localhost',
+            ],
+            'Preserve valid FQDN' => [
+                'www.moodle.org',
+                'www.moodle.org',
+            ],
+            'Preserve valid FQDN with trailing dot' => [
+                'www.moodle.com.',
+                'www.moodle.com',
+            ],
+            'Preserve valid domain with wildcard' => [
+                '*.moodledev.io',
+                '*.moodledev.io',
+            ],
+            'Convert previous allowed "127." format to CIDR format (127.0.0.0/8)' => [
+                '127.',
+                '127.0.0.0/8',
+            ],
+            'Convert previous allowed "169.8." format to CIDR format (169.8.0.0/16)' => [
+                '169.8.',
+                '169.8.0.0/16',
+            ],
+            'Convert previous allowed "192.168.10." format to CIDR format (192.168.10.0/24)' => [
+                '192.168.10.',
+                '192.168.10.0/24',
+            ],
+            'Convert previous allowed ".moodle.org" subdomain format to new format (*.moodle.org)' => [
+                '.moodle.org',
+                '*.moodle.org',
+            ],
+            'Ignore invalid IPv4' => [
+                '327.0.0.1',
+                '',
+            ],
+            'Ignore invalid IPv4 range' => [
+                '192.168',
+                '',
+            ],
+            'Ignore invalid IPv6' => [
+                'fe80::ddddd',
+                '',
+            ],
+            'Ignore invalid IPv6 range' => [
+                'fe80:',
+                '',
+            ],
+            'Ignore invalid domain' => [
+                '-example.com',
+                '',
+            ],
+        ];
+    }
+
+    /**
+     * Test if input address value is correctly normalized.
+     *
+     * @covers ::normalize_internet_address
+     *
+     * @dataProvider normalize_internet_address_provider
+     *
+     * @param string $input    Raw input value.
+     * @param string $expected Expected value after normalization.
+     */
+    public function test_normalize_internet_address(string $input, string $expected): void {
+        $this->assertEquals($expected, \core\ip_utils::normalize_internet_address($input));
+    }
+
+    /**
+     * Data provider for test_normalize_internet_address_list.
+     *
+     * @return array
+     */
+    public static function normalize_internet_address_list_provider(): array {
+        return [
+            'Strip all white spaces' => [
+                '   192.168.5.5, 127.0.0.1,    www.moodle.org   ',
+                '192.168.5.5,127.0.0.1,www.moodle.org',
+            ],
+            'Trim input' => [
+                '    192.168.5.5,127.0.0.1,www.moodle.org   ',
+                '192.168.5.5,127.0.0.1,www.moodle.org',
+            ],
+            'Preserve valid full and partial IP' => [
+                '127.0.0.1,192.168.0.0/16,fe80:fe80:fe80:fe80:fe80:fe80:fe80:fe80,fe80::ffff',
+                '127.0.0.1,192.168.0.0/16,fe80:fe80:fe80:fe80:fe80:fe80:fe80:fe80,fe80::ffff',
+            ],
+            'Convert previous allowed format to new allowed format' => [
+                '127.,169.8.,192.168.10.,.moodle.org',
+                '127.0.0.0/8,169.8.0.0/16,192.168.10.0/24,*.moodle.org',
+            ],
+            'Preserve valid domain and pattern domain' => [
+                'localhost,www.moodle.org,.moodle.com,*.moodledev.io',
+                'localhost,www.moodle.org,*.moodle.com,*.moodledev.io',
+            ],
+            'Remove all invalid IP and domains' => [
+                '327.0.0.1,192.168,fe80::ddddd,fe80:,-example.com',
+                '',
+            ],
+            'Remove duplicate values' => [
+                '.moodle.org,*.moodle.org,*.moodle.org,.moodle.org',
+                '*.moodle.org',
+            ],
+        ];
+    }
+
+    /**
+     * Test if input address list is correctly normalized.
+     *
+     * @covers ::normalize_internet_address_list
+     *
+     * @dataProvider normalize_internet_address_list_provider
+     *
+     * @param string $input    Raw input value.
+     * @param string $expected Expected value after normalization.
+     */
+    public function test_normalize_internet_address_list(string $input, string $expected): void {
+        $this->assertEquals($expected, \core\ip_utils::normalize_internet_address_list($input));
+    }
 }

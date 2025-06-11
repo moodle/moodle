@@ -28,7 +28,7 @@ use assign;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_assign\downloader
  */
-class downloader_test extends \advanced_testcase {
+final class downloader_test extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */
@@ -57,7 +57,7 @@ class downloader_test extends \advanced_testcase {
         bool $blindmarking,
         bool $downloadasfolder,
         array $expected
-    ) {
+    ): void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -116,7 +116,7 @@ class downloader_test extends \advanced_testcase {
             }
             $datagenerator->create_submission([
                 'userid' => $user->id,
-                'assignid' => $cm->id,
+                'cmid' => $cm->id,
                 'file' => implode(',', $files),
             ]);
         }
@@ -134,7 +134,6 @@ class downloader_test extends \advanced_testcase {
         // Expose protected filelist attribute.
         $rc = new \ReflectionClass(downloader::class);
         $rcp = $rc->getProperty('filesforzipping');
-        $rcp->setAccessible(true);
 
         // Add some replacements.
         $search = ['PARTICIPANT', 'DEFAULTTEAM'];
@@ -179,9 +178,9 @@ class downloader_test extends \advanced_testcase {
      *
      * @return array of scenarios
      */
-    public function load_filelist_provider(): array {
-        $downloadasfoldertests = $this->load_filelist_downloadasfolder_scenarios();
-        $downloadasfilestests = $this->load_filelist_downloadasfiles_scenarios();
+    public static function load_filelist_provider(): array {
+        $downloadasfoldertests = static::load_filelist_downloadasfolder_scenarios();
+        $downloadasfilestests = static::load_filelist_downloadasfiles_scenarios();
         return array_merge(
             $downloadasfoldertests,
             $downloadasfilestests,
@@ -196,8 +195,8 @@ class downloader_test extends \advanced_testcase {
      *
      * @return array of scenarios
      */
-    private function load_filelist_downloadasfiles_scenarios(): array {
-        $result = $this->load_filelist_downloadasfolder_scenarios("Download as files:");
+    private static function load_filelist_downloadasfiles_scenarios(): array {
+        $result = static::load_filelist_downloadasfolder_scenarios("Download as files:");
         // Transform paths from files.
         foreach ($result as $scenario => $info) {
             $info['downloadasfolder'] = false;
@@ -215,7 +214,9 @@ class downloader_test extends \advanced_testcase {
      * @param string $prefix the scenarios prefix
      * @return array of scenarios
      */
-    private function load_filelist_downloadasfolder_scenarios(string $prefix = "Download as folders:"): array {
+    private static function load_filelist_downloadasfolder_scenarios(
+        string $prefix = "Download as folders:",
+    ): array {
         return [
             // Test without team submissions.
             $prefix . ' All users without groups' => [

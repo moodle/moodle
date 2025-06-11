@@ -1,8 +1,8 @@
 @local @local_adminer
-Feature: Start the adminer modal iframe
+Feature: Start the adminer plugin
   In order to use adminer
   As an admin
-  I need to be able to see the adminer frame
+  I need to be able to see the adminer content
 
   @javascript
   Scenario: Start without the current database
@@ -14,7 +14,6 @@ Feature: Start the adminer modal iframe
     And I should see "Moodle Adminer"
     And I click on "Moodle Adminer" "link" in the "#linkserver" "css_element"
     And I wait "2" seconds
-    And I switch to "adminer-frame" iframe
     Then I should see "Adminer started without database"
 
   @javascript
@@ -27,7 +26,6 @@ Feature: Start the adminer modal iframe
     And I should see "Moodle Adminer"
     And I click on "Moodle Adminer" "link" in the "#linkserver" "css_element"
     And I wait "2" seconds
-    And I switch to "adminer-frame" iframe
     Then I should see "Adminer started with database"
 
   @javascript
@@ -40,7 +38,6 @@ Feature: Start the adminer modal iframe
     And I should see "Moodle Adminer"
     And I click on "Moodle Adminer" "link" in the "#linkserver" "css_element"
     And I wait "2" seconds
-    And I switch to "adminer-frame" iframe
     And I should see "Adminer secret"
     And I set the field "adminersecret" to "abc"
     And I click on "input#id_submitbutton" "css_element"
@@ -56,7 +53,6 @@ Feature: Start the adminer modal iframe
     And I should see "Moodle Adminer"
     And I click on "Moodle Adminer" "link" in the "#linkserver" "css_element"
     And I wait "2" seconds
-    And I switch to "adminer-frame" iframe
     And I should see "Adminer secret"
     And I set the field "adminersecret" to "mysecret"
     And I click on "input#id_submitbutton" "css_element"

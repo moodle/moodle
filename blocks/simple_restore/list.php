@@ -43,7 +43,7 @@ $shortname = optional_param('shortname', null, PARAM_TEXT);
 $archivemode = $courseid == SITEID && get_config('simple_restore', 'is_archive_server');
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('no_course', 'block_simple_restore', '', $courseid);
+    moodle_exception('no_course', 'block_simple_restore', '', $courseid);
 }
 
 $blockname = get_string('pluginname', 'block_simple_restore');

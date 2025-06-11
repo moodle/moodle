@@ -101,7 +101,7 @@ class email_certificate_task extends \core\task\adhoc_task {
         }
 
         // Setup the user for the cron.
-        cron_setup_user($user);
+        \core\cron::setup_user($user);
 
         $userfullname = fullname($user);
         $info->userfullname = $userfullname;

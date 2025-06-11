@@ -23,21 +23,22 @@ namespace core;
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \testing_data_generator
  */
-class testing_generator_test extends \advanced_testcase {
-    public function test_get_plugin_generator_good_case() {
+final class testing_generator_test extends \advanced_testcase {
+    public function test_get_plugin_generator_good_case(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $this->assertInstanceOf('core_question_generator', $generator);
     }
 
-    public function test_get_plugin_generator_sloppy_name() {
+    public function test_get_plugin_generator_sloppy_name(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('quiz');
         $this->assertDebuggingCalled('Please specify the component you want a generator for as ' .
                     'mod_quiz, not quiz.', DEBUG_DEVELOPER);
         $this->assertInstanceOf('mod_quiz_generator', $generator);
     }
 
-    public function test_get_default_generator() {
+    public function test_get_default_generator(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('block_somethingthatdoesnotexist');
         $this->assertInstanceOf('default_block_generator', $generator);
     }
@@ -45,13 +46,13 @@ class testing_generator_test extends \advanced_testcase {
     /**
      * Test plugin generator, with no component directory.
      */
-    public function test_get_plugin_generator_no_component_dir() {
+    public function test_get_plugin_generator_no_component_dir(): void {
         $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessage('Component core_completion does not support generators yet. Missing tests/generator/lib.php.');
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_completion');
+        $this->expectExceptionMessage('Component core_cohort does not support generators yet. Missing tests/generator/lib.php.');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_cohort');
     }
 
-    public function test_create_user() {
+    public function test_create_user(): void {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/user/lib.php');
 
@@ -128,7 +129,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertSame('Cats, Dogs', $userdetails['interests']);
     }
 
-    public function test_create() {
+    public function test_create(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -168,6 +169,7 @@ class testing_generator_test extends \advanced_testcase {
 
         $section = $generator->create_course_section(array('course'=>$course->id, 'section'=>3));
         $this->assertEquals($course->id, $section->course);
+        $this->assertNull($section->name);
 
         $course = $generator->create_course(array('tags' => 'Cat, Dog'));
         $this->assertEquals(array('Cat', 'Dog'), array_values(\core_tag_tag::get_item_tags_array('core', 'course', $course->id)));
@@ -176,7 +178,41 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertNotEmpty($scale);
     }
 
-    public function test_create_module() {
+    /**
+     * Test case for the `test_create_course_initsections` method.
+     *
+     * This method tests the behavior of creating a course with initialized sections.
+     * It checks that the sections are renamed to "Section x" when `initsections` is true,
+     * and that the sections are not renamed when `initsections` is false.
+     *
+     * @covers ::create_course
+     */
+    public function test_create_course_initsections(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        // Check that the sections are renamed to "Section x" when initsections is true.
+        $course = $generator->create_course(['initsections' => 1]);
+        $sections = course_get_format($course)->get_sections();
+        foreach ($sections as $section) {
+            if ($section->sectionnum > 0) {
+                $this->assertEquals(get_string('section') . ' ' . $section->sectionnum, $section->name);
+            }
+        }
+
+        // Check that the sections are not renamed when initsections is false.
+        $course = $generator->create_course(['initsections' => 0]);
+        $sections = course_get_format($course)->get_sections();
+        foreach ($sections as $section) {
+            if ($section->sectionnum > 0) {
+                $this->assertNull($section->name);
+            }
+        }
+    }
+
+    public function test_create_module(): void {
         global $CFG, $SITE, $DB;
 
         $this->setAdminUser();
@@ -334,7 +370,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertEquals($optionsavailability['availability'], $cm4->availability);
     }
 
-    public function test_create_block() {
+    public function test_create_block(): void {
         global $CFG;
         if (!file_exists("$CFG->dirroot/blocks/online_users/")) {
             $this->markTestSkipped('Can not find standard Online users block');
@@ -347,7 +383,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertNotEmpty($page);
     }
 
-    public function test_enrol_user() {
+    public function test_enrol_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -434,7 +470,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertFalse($result);
     }
 
-    public function test_create_grade_category() {
+    public function test_create_grade_category(): void {
         global $DB, $CFG;
         require_once $CFG->libdir . '/grade/constants.php';
 
@@ -464,7 +500,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertEquals($gradecategory->id, $gradecategory2->parent);
     }
 
-    public function test_create_custom_profile_field_category() {
+    public function test_create_custom_profile_field_category(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -496,7 +532,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertEquals(10, $record->sortorder);
     }
 
-    public function test_create_custom_profile_field() {
+    public function test_create_custom_profile_field(): void {
         global $DB;
 
         $this->resetAfterTest();

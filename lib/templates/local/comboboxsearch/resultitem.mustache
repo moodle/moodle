@@ -1,0 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/comboboxsearch/resultitem
+
+    Template for the individual result item.
+
+    Context variables required for this template:
+    * id - Result item system ID.
+    * instance - The instance ID of the combo box.
+    * name - Result item human readable name.
+
+    The shorttext pragma can be used to provide a short text for the result item.
+    This is especially useful when the result item content contains html tags.
+
+    Example context (json):
+    {
+        "id": 2,
+        "instance": 25,
+        "name": "Foo bar"
+    }
+}}
+<li
+    id="result-{{instance}}-{{id}}"
+    class="w-100 dropdown-item d-flex px-0 align-items-center"
+    role="option"
+    {{! aria.js would use the data-short-text attribute if it is provided. }}
+    data-short-text="{{$shorttext}}{{/shorttext}}"
+    data-value="{{id}}"
+    aria-label="{{$arialabel}}{{name}}{{/arialabel}}"
+>
+    {{$content}}
+        <span class="d-block w-100 px-2 text-truncate">
+            {{name}}
+        </span>
+    {{/content}}
+</li>

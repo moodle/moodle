@@ -31,7 +31,7 @@ use moodle_url;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class secondary_test extends \advanced_testcase {
+final class secondary_test extends \advanced_testcase {
     /**
      * Test the get_leaf_nodes function
      * @param float $siteorder The order for the siteadmin node
@@ -39,7 +39,7 @@ class secondary_test extends \advanced_testcase {
      * @param float $moduleorder The order for the module node
      * @dataProvider leaf_nodes_order_provider
      */
-    public function test_get_leaf_nodes(float $siteorder, float $courseorder, float $moduleorder) {
+    public function test_get_leaf_nodes(float $siteorder, float $courseorder, float $moduleorder): void {
         global $PAGE;
 
         // Create a secondary navigation and populate with some dummy nodes.
@@ -63,7 +63,6 @@ class secondary_test extends \advanced_testcase {
         ];
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'get_leaf_nodes');
-        $method->setAccessible(true);
         $sortednodes = $method->invoke($secondary, $secondary, $nodes);
         foreach ($sortednodes as $order => $node) {
             $this->assertEquals($expectednodes[$order], $node->key);
@@ -74,7 +73,7 @@ class secondary_test extends \advanced_testcase {
      * Data provider for test_get_leaf_nodes
      * @return array
      */
-    public function leaf_nodes_order_provider(): array {
+    public static function leaf_nodes_order_provider(): array {
         return [
             'Initialise the order with whole numbers' => [3, 2, 1],
             'Initialise the order with a mix of whole and float numbers' => [2.1, 2, 1],
@@ -140,7 +139,7 @@ class secondary_test extends \advanced_testcase {
      * Data provider for the test_setting_initialise function
      * @return array
      */
-    public function setting_initialise_provider(): array {
+    public static function setting_initialise_provider(): array {
         return [
             'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course'],
             'Testing in a course context using a single activity course format' =>
@@ -216,7 +215,6 @@ class secondary_test extends \advanced_testcase {
         $node = $this->get_tree_initilised_to_set_activate($seturl);
         $secondary = new secondary($PAGE);
         $method = new ReflectionMethod('core\navigation\views\secondary', 'active_node_scan');
-        $method->setAccessible(true);
 
         $result = $method->invoke($secondary, $node);
 
@@ -233,7 +231,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function active_node_scan_provider(): array {
+    public static function active_node_scan_provider(): array {
         return [
             'Test by activating node adjacent to root node'
                 => ['firstchild', 'firstchild'],
@@ -264,7 +262,7 @@ class secondary_test extends \advanced_testcase {
      * @dataProvider force_nodes_into_more_menu_provider
      */
     public function test_force_nodes_into_more_menu(array $secondarynavnodesdata, array $defaultmoremenunodes,
-            ?int $maxdisplayednodes, array $expecedmoremenunodes) {
+            ?int $maxdisplayednodes, array $expecedmoremenunodes): void {
         global $PAGE;
 
         // Create a dummy secondary navigation.
@@ -274,7 +272,6 @@ class secondary_test extends \advanced_testcase {
         }
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'force_nodes_into_more_menu');
-        $method->setAccessible(true);
         $method->invoke($secondary, $defaultmoremenunodes, $maxdisplayednodes);
 
         $actualmoremenunodes = [];
@@ -292,7 +289,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function force_nodes_into_more_menu_provider(): array {
+    public static function force_nodes_into_more_menu_provider(): array {
         return [
             'The total number of navigation nodes exceeds the max display limit (5); ' .
             'navnode2 and navnode4 are forced into "more" menu by default.' =>
@@ -448,7 +445,7 @@ class secondary_test extends \advanced_testcase {
      * @param string $expectednode
      * @dataProvider nodes_match_current_url_provider
      */
-    public function test_nodes_match_current_url(string $selectedurl, string $expectednode) {
+    public function test_nodes_match_current_url(string $selectedurl, string $expectednode): void {
         global $PAGE;
         $structure = [
             'parentnode1' => [
@@ -465,7 +462,6 @@ class secondary_test extends \advanced_testcase {
         $PAGE->set_url($selectedurl);
         $secondary = new secondary($PAGE);
         $method = new ReflectionMethod('core\navigation\views\secondary', 'nodes_match_current_url');
-        $method->setAccessible(true);
         $response = $method->invoke($secondary, $node);
 
         $this->assertSame($response->key ?? null, $expectednode);
@@ -476,7 +472,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return \string[][]
      */
-    public function nodes_match_current_url_provider(): array {
+    public static function nodes_match_current_url_provider(): array {
         return [
             "Match url to a node that is a deep nested" => [
                 '/view/course.php',
@@ -498,7 +494,7 @@ class secondary_test extends \advanced_testcase {
      * @param array $expected
      * @dataProvider get_menu_array_provider
      */
-    public function test_get_menu_array(string $selected, array $expected) {
+    public function test_get_menu_array(string $selected, array $expected): void {
         global $PAGE;
 
         // Custom nodes - mimicing nodes added via 3rd party plugins.
@@ -534,7 +530,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_menu_array_provider(): array {
+    public static function get_menu_array_provider(): array {
         return [
             "Fetch information from a node with action and no children" => [
                 'child1',
@@ -590,7 +586,7 @@ class secondary_test extends \advanced_testcase {
      * @param string|null $expectedkey
      * @dataProvider get_node_with_first_action_provider
      */
-    public function test_get_node_with_first_action(string $selectedkey, ?string $expectedkey) {
+    public function test_get_node_with_first_action(string $selectedkey, ?string $expectedkey): void {
         global $PAGE;
         $structure = [
             'parentnode1' => [
@@ -630,7 +626,6 @@ class secondary_test extends \advanced_testcase {
 
         $secondary = new secondary($PAGE);
         $method = new ReflectionMethod('core\navigation\views\secondary', 'get_node_with_first_action');
-        $method->setAccessible(true);
         $response = $method->invoke($secondary, $selectednode, $selectednode);
         $this->assertEquals($expected, $response);
     }
@@ -640,7 +635,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_node_with_first_action_provider(): array {
+    public static function get_node_with_first_action_provider(): array {
         return [
             "Search for action when parent has no action and multiple children with actions" => [
                 "child3",
@@ -669,7 +664,7 @@ class secondary_test extends \advanced_testcase {
      * @param bool $separatenode Whether or not to create a separate node to add nodes to.
      * @dataProvider add_external_nodes_to_secondary_provider
      */
-    public function test_add_external_nodes_to_secondary(array $structure, array $expectednodes, bool $separatenode = false) {
+    public function test_add_external_nodes_to_secondary(array $structure, array $expectednodes, bool $separatenode = false): void {
         global $PAGE;
 
         $this->resetAfterTest();
@@ -688,7 +683,6 @@ class secondary_test extends \advanced_testcase {
         }
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'add_external_nodes_to_secondary');
-        $method->setAccessible(true);
         $method->invoke($secondary, $firstnode, $firstnode, $customparent);
 
         $actualnodes = $separatenode ? $customparent->get_children_key_list() : $secondary->get_children_key_list();
@@ -700,7 +694,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function add_external_nodes_to_secondary_provider() {
+    public static function add_external_nodes_to_secondary_provider(): array {
         return [
             "Container node with internal action and external children" => [
                 [
@@ -809,7 +803,7 @@ class secondary_test extends \advanced_testcase {
      * @param bool $emptynode
      * @dataProvider get_overflow_menu_data_provider
      */
-    public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false) {
+    public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false): void {
         global $PAGE;
 
         $this->resetAfterTest();
@@ -850,12 +844,10 @@ class secondary_test extends \advanced_testcase {
         } else {
             // Set the correct node as active.
             $method = new ReflectionMethod('core\navigation\views\secondary', 'scan_for_active_node');
-            $method->setAccessible(true);
             $method->invoke($secondary, $secondary);
         }
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'get_overflow_menu_data');
-        $method->setAccessible(true);
         $response = $method->invoke($secondary);
         if ($expectednull) {
             $this->assertNull($response);
@@ -870,7 +862,7 @@ class secondary_test extends \advanced_testcase {
      *
      * @return string[]
      */
-    public function get_overflow_menu_data_provider(): array {
+    public static function get_overflow_menu_data_provider(): array {
         return [
             "Active node is the course home node" => [
                 '/coursehome.php',
@@ -917,7 +909,6 @@ class secondary_test extends \advanced_testcase {
         $pageurl = new \moodle_url($url, [$contextidentifier => $id]);
         $PAGE->set_url($pageurl);
         navigation_node::override_active_url($pageurl);
-        $PAGE->set_course($pagecourse);
         $PAGE->set_context($contextrecord);
 
         $node = new secondary($PAGE);
@@ -936,32 +927,32 @@ class secondary_test extends \advanced_testcase {
      *
      * @return array Provider information.
      */
-    public function get_overflow_menu_data_course_admin_provider(): array {
+    public static function get_overflow_menu_data_course_admin_provider(): array {
         return [
             "Backup page returns overflow" => [
                 '/backup/backup.php',
                 'id',
-                true
+                false,
             ],
             "Restore course page returns overflow" => [
                 '/backup/restorefile.php',
                 'contextid',
-                true
+                false,
             ],
             "Import course page returns overflow" => [
                 '/backup/import.php',
                 'id',
-                true
+                false,
             ],
             "Course copy page returns overflow" => [
                 '/backup/copy.php',
                 'id',
-                true
+                false,
             ],
             "Course reset page returns overflow" => [
                 '/course/reset.php',
                 'id',
-                true
+                false,
             ],
             // The following pages should not return the overflow menu.
             "Course page returns nothing" => [

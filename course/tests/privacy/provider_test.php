@@ -36,7 +36,7 @@ use core_privacy\local\request\transform;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
 
     use \completion_creation;
 
@@ -44,7 +44,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Test getting the appropriate context for the userid. This should only ever
      * return the user context for the user id supplied.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -90,7 +90,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test fetching users within a context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
         $component = 'core_course';
 
@@ -138,7 +138,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that user data is exported.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -173,7 +173,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Verify that if a module context is included in the contextlist_collection and its parent course is not, the
      * export_context_data() call picks this up, and that the contextual course information is included.
      */
-    public function test_export_context_data_module_context_only() {
+    public function test_export_context_data_module_context_only(): void {
         $this->resetAfterTest();
 
         // Create a course and a single module.
@@ -193,17 +193,17 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = \core_privacy\local\request\writer::with_context($context1);
         $this->assertTrue($writer->has_any_data());
         $writerdata = $writer->get_data();
-        $this->assertObjectHasAttribute('fullname', $writerdata);
-        $this->assertObjectHasAttribute('shortname', $writerdata);
-        $this->assertObjectHasAttribute('idnumber', $writerdata);
-        $this->assertObjectHasAttribute('summary', $writerdata);
+        $this->assertObjectHasProperty('fullname', $writerdata);
+        $this->assertObjectHasProperty('shortname', $writerdata);
+        $this->assertObjectHasProperty('idnumber', $writerdata);
+        $this->assertObjectHasProperty('summary', $writerdata);
     }
 
     /**
      * Verify that if a module context and its parent course context are both included in the contextlist_collection, that course
      * contextual information is present in the export.
      */
-    public function test_export_context_data_course_and_module_contexts() {
+    public function test_export_context_data_course_and_module_contexts(): void {
         $this->resetAfterTest();
 
         // Create a course and a single module.
@@ -226,16 +226,16 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = \core_privacy\local\request\writer::with_context($context1);
         $this->assertTrue($writer->has_any_data());
         $writerdata = $writer->get_data();
-        $this->assertObjectHasAttribute('fullname', $writerdata);
-        $this->assertObjectHasAttribute('shortname', $writerdata);
-        $this->assertObjectHasAttribute('idnumber', $writerdata);
-        $this->assertObjectHasAttribute('summary', $writerdata);
+        $this->assertObjectHasProperty('fullname', $writerdata);
+        $this->assertObjectHasProperty('shortname', $writerdata);
+        $this->assertObjectHasProperty('idnumber', $writerdata);
+        $this->assertObjectHasProperty('summary', $writerdata);
     }
 
     /**
      * Test deleting all user data for one context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -303,7 +303,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting data for only one user.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -399,7 +399,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting data within a context for an approved userlist.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'core_course';

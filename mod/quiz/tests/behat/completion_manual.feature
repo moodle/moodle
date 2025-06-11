@@ -16,8 +16,6 @@ Feature: Manually complete a quiz
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following config values are set as admin:
-      | grade_item_advanced | hiddenuntil |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
@@ -32,7 +30,7 @@ Feature: Manually complete a quiz
       | First question | 1    |
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the quiz activity as done but a teacher cannot
     Given I am on the "Test quiz name" "quiz activity" page logged in as teacher1
     And the manual completion button for "Test quiz name" should be disabled
     And I log out

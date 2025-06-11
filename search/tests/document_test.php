@@ -32,7 +32,7 @@ use stdClass;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_search\document
  */
-class document_test extends \advanced_testcase {
+final class document_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -49,6 +49,7 @@ class document_test extends \advanced_testcase {
     protected $generator = null;
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         set_config('enableglobalsearch', true);
 
@@ -65,7 +66,7 @@ class document_test extends \advanced_testcase {
      * @covers ::export_for_template
      * @return void
      */
-    public function test_search_user_accesses() {
+    public function test_search_user_accesses(): void {
         global $PAGE;
 
         $area = new mock_search_area();
@@ -114,7 +115,7 @@ class document_test extends \advanced_testcase {
      *
      * @covers ::set_doc_icon
      */
-    public function test_get_and_set_doc_icon() {
+    public function test_get_and_set_doc_icon(): void {
         $document = $this->getMockBuilder('\core_search\document')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
@@ -134,6 +135,7 @@ class document_test extends \advanced_testcase {
             $this->generator->teardown();
             $this->generator = null;
         }
+        parent::tearDown();
     }
 
     /**
@@ -151,7 +153,7 @@ class document_test extends \advanced_testcase {
         array $capexceptions = [],
         bool $expected = true,
         bool $owndocument = false
-    ) {
+    ): void {
         global $DB, $PAGE;
 
         $area = new mock_search_area();
@@ -211,7 +213,7 @@ class document_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function document_author_visibility_provider(): array {
+    public static function document_author_visibility_provider(): array {
         return [
             'Teacher' => [
                 'rolename' => 'editingteacher',

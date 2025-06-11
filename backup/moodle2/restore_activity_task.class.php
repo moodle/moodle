@@ -101,6 +101,15 @@ abstract class restore_activity_task extends restore_task {
     }
 
     /**
+     * Return if the activity is inside a subsection.
+     *
+     * @return bool
+     */
+    public function is_in_subsection(): bool {
+        return !empty($this->info->insubsection);
+    }
+
+    /**
      * Returns the old course module id (cmid of activity which will be restored)
      *
      * @return int
@@ -200,6 +209,11 @@ abstract class restore_activity_task extends restore_task {
             }
         }
 
+        // The xAPI state (conditionally).
+        if ($this->get_setting_value('xapistate')) {
+            $this->add_step(new restore_xapistate_structure_step('activity_xapistate', 'xapistate.xml'));
+        }
+
         // At the end, mark it as built
         $this->built = true;
     }
@@ -255,7 +269,7 @@ abstract class restore_activity_task extends restore_task {
      * Define the contents in the activity that must be
      * processed by the link decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         throw new coding_exception('define_decode_contents() method needs to be overridden in each subclass of restore_activity_task');
     }
 
@@ -263,7 +277,7 @@ abstract class restore_activity_task extends restore_task {
      * Define the decoding rules for links belonging
      * to the activity to be executed by the link decoder
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         throw new coding_exception('define_decode_rules() method needs to be overridden in each subclass of restore_activity_task');
     }
 
@@ -273,7 +287,7 @@ abstract class restore_activity_task extends restore_task {
      * activity logs. It must return one array
      * of {@link restore_log_rule} objects
      */
-    static public function define_restore_log_rules() {
+    public static function define_restore_log_rules() {
         throw new coding_exception('define_restore_log_rules() method needs to be overridden in each subclass of restore_activity_task');
     }
 
@@ -283,42 +297,79 @@ abstract class restore_activity_task extends restore_task {
      * Define the common setting that any restore activity will have
      */
     protected function define_settings() {
-
         // All the settings related to this activity will include this prefix
         $settingprefix = $this->info->modulename . '_' . $this->info->moduleid . '_';
 
         // All these are common settings to be shared by all activities
+        $activityincluded = $this->add_activity_included_setting($settingprefix);
+        $this->add_activity_userinfo_setting($settingprefix, $activityincluded);
 
-        // Define activity_include (to decide if the whole task must be really executed)
+        // End of common activity settings, let's add the particular ones.
+        $this->define_my_settings();
+    }
+
+    /**
+     * Add the activity included setting to the task.
+     *
+     * @param string $settingprefix the identifier of the setting
+     * @return activity_backup_setting the setting added
+     */
+    protected function add_activity_included_setting(string $settingprefix): activity_backup_setting {
+        // Define activity_included (to decide if the whole task must be really executed)
         // Dependent of:
-        // - activities root setting
-        // - section_included setting (if exists)
+        // - activities root setting.
+        // - sectionincluded setting (if exists).
         $settingname = $settingprefix . 'included';
-        $activity_included = new restore_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
-        $activity_included->get_ui()->set_icon(new image_icon('monologo', get_string('pluginname', $this->modulename),
-            $this->modulename, array('class' => 'iconlarge icon-post ml-1')));
-        $this->add_setting($activity_included);
-        // Look for "activities" root setting
-        $activities = $this->plan->get_setting('activities');
-        $activities->add_dependency($activity_included);
-        // Look for "section_included" section setting (if exists)
-        $settingname = 'section_' . $this->info->sectionid . '_included';
-        if ($this->plan->setting_exists($settingname)) {
-            $section_included = $this->plan->get_setting($settingname);
-            $section_included->add_dependency($activity_included);
+
+        if ($this->is_in_subsection()) {
+            $activityincluded = new restore_subactivity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
+        } else {
+            $activityincluded = new restore_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
         }
 
-        // Define activity_userinfo. Dependent of:
-        // - users root setting
-        // - section_userinfo setting (if exists)
-        // - activity_included setting.
+        $activityincluded->get_ui()->set_icon(new image_icon('monologo', get_string('pluginname', $this->modulename),
+            $this->modulename, ['class' => 'ms-1']));
+        $this->add_setting($activityincluded);
+        // Look for "activities" root setting.
+        $activities = $this->plan->get_setting('activities');
+        $activities->add_dependency($activityincluded);
+        // Look for "sectionincluded" section setting (if exists).
+        $settingname = 'section_' . $this->info->sectionid . '_included';
+        if ($this->plan->setting_exists($settingname)) {
+            $sectionincluded = $this->plan->get_setting($settingname);
+            $sectionincluded->add_dependency($activityincluded);
+        }
+
+        return $activityincluded;
+    }
+
+    /**
+     * Add the activity userinfo setting to the task.
+     *
+     * @param string $settingprefix the identifier of the setting
+     * @param activity_backup_setting $includefield the activity included setting
+     * @return activity_backup_setting the setting added
+     */
+    protected function add_activity_userinfo_setting(
+        string $settingprefix,
+        activity_backup_setting $includefield
+    ): activity_backup_setting {
+        // Define activityuserinfo. Dependent of:
+        // - users root setting.
+        // - sectionuserinfo setting (if exists).
+        // - activity included setting.
         $settingname = $settingprefix . 'userinfo';
         $defaultvalue = false;
         if (isset($this->info->settings[$settingname]) && $this->info->settings[$settingname]) { // Only enabled when available
             $defaultvalue = true;
         }
 
-        $activity_userinfo = new restore_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, $defaultvalue);
+        if ($this->is_in_subsection()) {
+            $activityuserinfo = new restore_subactivity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, $defaultvalue);
+        } else {
+            $activityuserinfo = new restore_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, $defaultvalue);
+        }
+
         if (!$defaultvalue) {
             // This is a bit hacky, but if there is no user data to restore, then
             // we replace the standard check-box with a select menu with the
@@ -328,30 +379,34 @@ abstract class restore_activity_task extends restore_task {
             // It would probably be better design to have a special UI class
             // setting_ui_checkbox_or_no, rather than this hack, but I am not
             // going to do that today.
-            $activity_userinfo->set_ui(new backup_setting_ui_select($activity_userinfo, '-',
-                    array(0 => get_string('no'))));
+            $activityuserinfo->set_ui(
+                new backup_setting_ui_select(
+                    $activityuserinfo,
+                    '-',
+                    [0 => get_string('no')]
+                )
+            );
         } else {
-            $activity_userinfo->get_ui()->set_label('-');
+            $activityuserinfo->get_ui()->set_label('-');
         }
 
-        $this->add_setting($activity_userinfo);
+        $this->add_setting($activityuserinfo);
 
-        // Look for "users" root setting
+        // Look for "users" root setting.
         $users = $this->plan->get_setting('users');
-        $users->add_dependency($activity_userinfo);
+        $users->add_dependency($activityuserinfo);
 
-        // Look for "section_userinfo" section setting (if exists)
+        // Look for "sectionuserinfo" section setting (if exists).
         $settingname = 'section_' . $this->info->sectionid . '_userinfo';
         if ($this->plan->setting_exists($settingname)) {
-            $section_userinfo = $this->plan->get_setting($settingname);
-            $section_userinfo->add_dependency($activity_userinfo);
+            $sectionuserinfo = $this->plan->get_setting($settingname);
+            $sectionuserinfo->add_dependency($activityuserinfo);
         }
 
-        // Look for "activity_included" setting.
-        $activity_included->add_dependency($activity_userinfo);
+        // Look for "activity included" setting.
+        $includefield->add_dependency($activityuserinfo);
 
-        // End of common activity settings, let's add the particular ones.
-        $this->define_my_settings();
+        return $activityuserinfo;
     }
 
     /**

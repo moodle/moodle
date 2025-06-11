@@ -19,6 +19,9 @@
 
     This template renders the list item for each category.
 
+    @deprecated since Moodle 4.3
+    @todo Final deprecation on Moodle 4.7 MDL-78090
+
     Example context (json):
     {
         "questionbankurl": "question/edit.php?cmid=",
@@ -35,7 +38,7 @@
     <a title="{{#str}}editquestions, question{{/str}}" href="{{{questionbankurl}}}">
         {{{categoryname}}}
         {{#idnumber}}
-        <span class="badge badge-primary">
+        <span class="badge bg-primary text-white">
             <span class="accesshide">
                 {{#str}}idnumber, question{{/str}}
             </span>
@@ -46,7 +49,7 @@
     </a>
 </b>
 {{#categorydesc}}
-<div class="text_to_html">
+<div>
     {{{categorydesc}}}
 </div>
 {{/categorydesc}}

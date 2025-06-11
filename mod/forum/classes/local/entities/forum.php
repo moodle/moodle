@@ -220,7 +220,7 @@ class forum {
      *
      * @return context
      */
-    public function get_context() : context {
+    public function get_context(): context {
         return $this->context;
     }
 
@@ -229,7 +229,7 @@ class forum {
      *
      * @return stdClass
      */
-    public function get_course_module_record() : stdClass {
+    public function get_course_module_record(): stdClass {
         return $this->coursemodule;
     }
 
@@ -238,7 +238,7 @@ class forum {
      *
      * @return int
      */
-    public function get_effective_group_mode() : int {
+    public function get_effective_group_mode(): int {
         return $this->effectivegroupmode;
     }
 
@@ -247,7 +247,7 @@ class forum {
      *
      * @return bool
      */
-    public function is_in_group_mode() : bool {
+    public function is_in_group_mode(): bool {
         return $this->get_effective_group_mode() !== NOGROUPS;
     }
 
@@ -256,7 +256,7 @@ class forum {
      *
      * @return stdClass
      */
-    public function get_course_record() : stdClass {
+    public function get_course_record(): stdClass {
         return $this->course;
     }
 
@@ -265,7 +265,7 @@ class forum {
      *
      * @return int
      */
-    public function get_id() : int {
+    public function get_id(): int {
         return $this->id;
     }
 
@@ -274,7 +274,7 @@ class forum {
      *
      * @return int
      */
-    public function get_course_id() : int {
+    public function get_course_id(): int {
         return $this->courseid;
     }
 
@@ -283,7 +283,7 @@ class forum {
      *
      * @return string
      */
-    public function get_type() : string {
+    public function get_type(): string {
         return $this->type;
     }
 
@@ -292,7 +292,7 @@ class forum {
      *
      * @return string
      */
-    public function get_name() : string {
+    public function get_name(): string {
         return $this->name;
     }
 
@@ -301,7 +301,7 @@ class forum {
      *
      * @return string
      */
-    public function get_intro() : string {
+    public function get_intro(): string {
         return $this->intro;
     }
 
@@ -310,7 +310,7 @@ class forum {
      *
      * @return int
      */
-    public function get_intro_format() : int {
+    public function get_intro_format(): int {
         return $this->introformat;
     }
 
@@ -319,7 +319,7 @@ class forum {
      *
      * @return int
      */
-    public function get_rating_aggregate() : int {
+    public function get_rating_aggregate(): int {
         return $this->assessed;
     }
 
@@ -328,7 +328,7 @@ class forum {
      *
      * @return bool
      */
-    public function has_rating_aggregate() : bool {
+    public function has_rating_aggregate(): bool {
         return $this->get_rating_aggregate() != RATING_AGGREGATE_NONE;
     }
 
@@ -337,7 +337,7 @@ class forum {
      *
      * @return int
      */
-    public function get_assess_time_start() : int {
+    public function get_assess_time_start(): int {
         return $this->assesstimestart;
     }
 
@@ -346,7 +346,7 @@ class forum {
      *
      * @return int
      */
-    public function get_assess_time_finish() : int {
+    public function get_assess_time_finish(): int {
         return $this->assesstimefinish;
     }
 
@@ -355,7 +355,7 @@ class forum {
      *
      * @return int
      */
-    public function get_scale() : int {
+    public function get_scale(): int {
         return $this->scale;
     }
 
@@ -364,7 +364,7 @@ class forum {
      *
      * @return int
      */
-    public function get_grade_for_forum() : int {
+    public function get_grade_for_forum(): int {
         return $this->gradeforum;
     }
 
@@ -391,7 +391,7 @@ class forum {
      *
      * @return int
      */
-    public function get_max_bytes() : int {
+    public function get_max_bytes(): int {
         return $this->maxbytes;
     }
 
@@ -400,7 +400,7 @@ class forum {
      *
      * @return int
      */
-    public function get_max_attachments() : int {
+    public function get_max_attachments(): int {
         return $this->maxattachments;
     }
 
@@ -409,7 +409,7 @@ class forum {
      *
      * @return int
      */
-    public function get_subscription_mode() : int {
+    public function get_subscription_mode(): int {
         return $this->forcesubscribe;
     }
 
@@ -418,7 +418,7 @@ class forum {
      *
      * @return bool
      */
-    public function is_subscription_optional() : bool {
+    public function is_subscription_optional(): bool {
         return $this->get_subscription_mode() === FORUM_CHOOSESUBSCRIBE;
     }
 
@@ -427,7 +427,7 @@ class forum {
      *
      * @return bool
      */
-    public function is_subscription_forced() : bool {
+    public function is_subscription_forced(): bool {
         return $this->get_subscription_mode() === FORUM_FORCESUBSCRIBE;
     }
 
@@ -436,7 +436,7 @@ class forum {
      *
      * @return bool
      */
-    public function is_subscription_automatic() : bool {
+    public function is_subscription_automatic(): bool {
         return $this->get_subscription_mode() === FORUM_INITIALSUBSCRIBE;
     }
 
@@ -445,7 +445,7 @@ class forum {
      *
      * @return bool
      */
-    public function is_subscription_disabled() : bool {
+    public function is_subscription_disabled(): bool {
         return $this->get_subscription_mode() === FORUM_DISALLOWSUBSCRIBE;
     }
 
@@ -454,7 +454,7 @@ class forum {
      *
      * @return int
      */
-    public function get_tracking_type() : int {
+    public function get_tracking_type(): int {
         return $this->trackingtype;
     }
 
@@ -463,7 +463,7 @@ class forum {
      *
      * @return int
      */
-    public function get_rss_type() : int {
+    public function get_rss_type(): int {
         return $this->rsstype;
     }
 
@@ -472,7 +472,7 @@ class forum {
      *
      * @return int
      */
-    public function get_rss_articles() : int {
+    public function get_rss_articles(): int {
         return $this->rssarticles;
     }
 
@@ -481,7 +481,7 @@ class forum {
      *
      * @return int
      */
-    public function get_time_modified() : int {
+    public function get_time_modified(): int {
         return $this->timemodified;
     }
 
@@ -490,7 +490,7 @@ class forum {
      *
      * @return int
      */
-    public function get_warn_after() : int {
+    public function get_warn_after(): int {
         return $this->warnafter;
     }
 
@@ -499,7 +499,7 @@ class forum {
      *
      * @return int
      */
-    public function get_block_after() : int {
+    public function get_block_after(): int {
         return $this->blockafter;
     }
 
@@ -508,7 +508,7 @@ class forum {
      *
      * @return int
      */
-    public function get_block_period() : int {
+    public function get_block_period(): int {
         return $this->blockperiod;
     }
 
@@ -517,7 +517,7 @@ class forum {
      *
      * @return bool
      */
-    public function has_blocking_enabled() : bool {
+    public function has_blocking_enabled(): bool {
         return !empty($this->get_block_after()) && !empty($this->get_block_period());
     }
 
@@ -526,7 +526,7 @@ class forum {
      *
      * @return int
      */
-    public function get_completion_discussions() : int {
+    public function get_completion_discussions(): int {
         return $this->completiondiscussions;
     }
 
@@ -535,7 +535,7 @@ class forum {
      *
      * @return int
      */
-    public function get_completion_replies() : int {
+    public function get_completion_replies(): int {
         return $this->completionreplies;
     }
 
@@ -544,7 +544,7 @@ class forum {
      *
      * @return int
      */
-    public function get_completion_posts() : int {
+    public function get_completion_posts(): int {
         return $this->completionposts;
     }
 
@@ -553,7 +553,7 @@ class forum {
      *
      * @return bool
      */
-    public function should_display_word_count() : bool {
+    public function should_display_word_count(): bool {
         return $this->displaywordcount;
     }
 
@@ -562,7 +562,7 @@ class forum {
      *
      * @return int
      */
-    public function get_lock_discussions_after() : int {
+    public function get_lock_discussions_after(): int {
         return $this->lockdiscussionafter;
     }
 
@@ -571,7 +571,7 @@ class forum {
      *
      * @return bool
      */
-    public function has_lock_discussions_after() : bool {
+    public function has_lock_discussions_after(): bool {
         return !empty($this->get_lock_discussions_after());
     }
 
@@ -581,7 +581,7 @@ class forum {
      * @param discussion_entity $discussion
      * @return bool
      */
-    public function is_discussion_time_locked(discussion_entity $discussion) : bool {
+    public function is_discussion_time_locked(discussion_entity $discussion): bool {
         if (!$this->has_lock_discussions_after()) {
             return false;
         }
@@ -599,7 +599,7 @@ class forum {
      *
      * @return int
      */
-    public function get_cutoff_date() : int {
+    public function get_cutoff_date(): int {
         return $this->cutoffdate;
     }
 
@@ -608,7 +608,7 @@ class forum {
      *
      * @return bool
      */
-    public function has_cutoff_date() : bool {
+    public function has_cutoff_date(): bool {
         return !empty($this->get_cutoff_date());
     }
 
@@ -617,7 +617,7 @@ class forum {
      *
      * @return bool
      */
-    public function is_cutoff_date_reached() : bool {
+    public function is_cutoff_date_reached(): bool {
         if ($this->has_cutoff_date() && ($this->get_cutoff_date() < time())) {
             return true;
         }
@@ -630,7 +630,7 @@ class forum {
      *
      * @return int
      */
-    public function get_due_date() : int {
+    public function get_due_date(): int {
         return $this->duedate;
     }
 
@@ -639,7 +639,7 @@ class forum {
      *
      * @return bool
      */
-    public function has_due_date() : bool {
+    public function has_due_date(): bool {
         return !empty($this->get_due_date());
     }
 
@@ -648,7 +648,7 @@ class forum {
      *
      * @return bool
      */
-    public function is_due_date_reached() : bool {
+    public function is_due_date_reached(): bool {
         if ($this->has_due_date() && ($this->get_due_date() < time())) {
             return true;
         }
@@ -662,7 +662,7 @@ class forum {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function is_discussion_locked(discussion_entity $discussion) : bool {
+    public function is_discussion_locked(discussion_entity $discussion): bool {
         if ($discussion->is_locked()) {
             return true;
         }

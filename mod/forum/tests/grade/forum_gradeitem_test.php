@@ -41,7 +41,7 @@ require_once(__DIR__ . '/../generator_trait.php');
  * @copyright Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class forum_gradeitem_test extends \advanced_testcase {
+final class forum_gradeitem_test extends \advanced_testcase {
     use \mod_forum_tests_generator_trait;
 
     /**
@@ -216,7 +216,7 @@ class forum_gradeitem_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function should_grade_only_active_users_provider(): array {
+    public static function should_grade_only_active_users_provider(): array {
         return [
             'Enabled showonlyactiveenrol setting; enabled showonlyactiveenrol preference; view suspended users capability' =>
                 [

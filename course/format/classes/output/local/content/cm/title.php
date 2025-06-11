@@ -35,7 +35,7 @@ use lang_string;
 use renderable;
 use section_info;
 use stdClass;
-use external_api;
+use core_external\external_api;
 use context_module;
 
 /**
@@ -138,7 +138,7 @@ class title extends inplace_editable implements named_templatable, renderable {
      * Return the title template data to be used inside the inplace editable.
      *
      */
-    protected function get_title_displayvalue (): string {
+    protected function get_title_displayvalue(): string {
         global $PAGE;
 
         // Inplace editable uses core renderer by default. However, course elements require

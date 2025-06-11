@@ -1,14 +1,37 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This file replaces:
-//   * STATEMENTS section in db/install.xml
-//   * lib.php/modulename_install() post installation hook
-//   * partially defaults.php
+/**
+ * Survey module installation.
+ *
+ * @package    mod_survey
+ * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * Perform the post-install procedures.
+ */
 function xmldb_survey_install() {
     global $DB;
 
-/// insert survey data
+    // Disable the survey activity module on new installs by default.
+    $DB->set_field('modules', 'visible', 0, ['name' => 'survey']);
+
+    // Insert survey data.
     $records = array(
         array_combine(array('course', 'template', 'days', 'timecreated', 'timemodified', 'name', 'intro', 'questions'), array(0, 0, 0, 985017600, 985017600, 'collesaname', 'collesaintro', '25,26,27,28,29,30,43,44')),
         array_combine(array('course', 'template', 'days', 'timecreated', 'timemodified', 'name', 'intro', 'questions'), array(0, 0, 0, 985017600, 985017600, 'collespname', 'collespintro', '31,32,33,34,35,36,43,44')),

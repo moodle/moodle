@@ -25,9 +25,6 @@
 namespace report_lpmonitoring\event;
 
 use report_lpmonitoring\api;
-use report_lpmonitoring\report_competency_config;
-use core_competency\competency_framework;
-use core_competency\competency;
 
 /**
  * An event observer.

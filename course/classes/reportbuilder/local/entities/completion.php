@@ -22,9 +22,13 @@ use core_reportbuilder\local\entities\base;
 use core_course\reportbuilder\local\formatters\completion as completion_formatter;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
+use completion_criteria_completion;
+use completion_info;
+use html_writer;
 use lang_string;
 use stdClass;
 
@@ -38,17 +42,17 @@ use stdClass;
 class completion extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'course_completion' => 'ccomp',
-            'course' => 'c',
-            'grade_grades' => 'gg',
-            'grade_items' => 'gi',
-            'user' => 'u',
+            'course_completion',
+            'course',
+            'grade_grades' ,
+            'grade_items',
+            'user',
         ];
     }
 
@@ -87,11 +91,13 @@ class completion extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        $coursecompletion = $this->get_table_alias('course_completion');
-        $course = $this->get_table_alias('course');
-        $grade = $this->get_table_alias('grade_grades');
-        $gradeitem = $this->get_table_alias('grade_items');
-        $user = $this->get_table_alias('user');
+        [
+            'course_completion' => $coursecompletion,
+            'course' => $course,
+            'grade_grades' => $grade,
+            'grade_items' => $gradeitem,
+            'user' => $user,
+        ] = $this->get_table_aliases();
 
         // Completed column.
         $columns[] = (new column(
@@ -101,14 +107,56 @@ class completion extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
-            ->add_field("CASE WHEN {$coursecompletion}.timecompleted > 0 THEN 1 ELSE 0 END", 'completed')
-            ->add_field("{$user}.id", 'userid')
+            ->add_field("
+                CASE
+                    WHEN {$coursecompletion}.id IS NULL THEN NULL
+                    WHEN {$coursecompletion}.timecompleted > 0 THEN 1
+                    ELSE 0
+                END", 'completed')
             ->set_is_sortable(true)
-            ->add_callback(static function(bool $value, stdClass $row): string {
-                if (!$row->userid) {
+            ->add_callback([format::class, 'boolean_as_text']);
+
+        // Completion criteria column.
+        $criterias = database::generate_alias();
+        $columns[] = (new column(
+            'criteria',
+            new lang_string('criteria', 'core_completion'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            // Determine whether any criteria exist for the course. We also group per course, rather than report each separately.
+            ->add_join("LEFT JOIN (
+                            SELECT DISTINCT course FROM {course_completion_criteria}
+                       ) {$criterias} ON {$criterias}.course = {$course}.id")
+            ->set_type(column::TYPE_TEXT)
+            // Select enough fields to determine user criteria for the course.
+            ->add_field("{$criterias}.course", 'courseid')
+            ->add_field("{$course}.enablecompletion")
+            ->add_field("{$user}.id", 'userid')
+            ->set_disabled_aggregation_all()
+            ->add_callback(static function($id, stdClass $record): string {
+                if (!$record->courseid) {
                     return '';
                 }
-                return format::boolean_as_text($value);
+
+                $info = new completion_info((object) ['id' => $record->courseid, 'enablecompletion' => $record->enablecompletion]);
+                if ($info->get_aggregation_method() == COMPLETION_AGGREGATION_ALL) {
+                    $title = get_string('criteriarequiredall', 'core_completion');
+                } else {
+                    $title = get_string('criteriarequiredany', 'core_completion');
+                }
+
+                // Map all completion data to their criteria summaries.
+                $items = array_map(static function(completion_criteria_completion $completion): string {
+                    $criteria = $completion->get_criteria();
+
+                    return get_string('criteriasummary', 'core_completion', [
+                        'type' => $criteria->get_details($completion)['type'],
+                        'summary' => $criteria->get_title_detailed(),
+                    ]);
+                }, $info->get_completions((int) $record->userid));
+
+                return $title . html_writer::alist($items);
             });
 
         // Progress percentage column.
@@ -176,21 +224,22 @@ class completion extends base {
         $currenttime = time();
         $columns[] = (new column(
             'dayscourse',
-            new lang_string('daystakingcourse', 'course'),
+            new lang_string('daystakingcourse', 'completion'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
             ->add_field("(
                 CASE
-                    WHEN {$coursecompletion}.timecompleted > 0 THEN
+                    WHEN {$coursecompletion}.id IS NULL THEN NULL
+                    ELSE (CASE WHEN {$coursecompletion}.timecompleted > 0 THEN
                         {$coursecompletion}.timecompleted
-                    ELSE
+                        ELSE
                         {$currenttime}
-                END - {$course}.startdate) / " . DAYSECS, 'dayscourse')
-            ->add_field("{$user}.id", 'userid')
+                    END - {$course}.startdate)
+                END)", 'dayscourse')
             ->set_is_sortable(true)
-            ->add_callback([completion_formatter::class, 'get_days']);
+            ->set_callback([format::class, 'format_time']);
 
         // Days since last completion (days since last enrolment date until completion or until current date if not completed).
         $columns[] = (new column(
@@ -202,14 +251,15 @@ class completion extends base {
             ->set_type(column::TYPE_INTEGER)
             ->add_field("(
                 CASE
-                    WHEN {$coursecompletion}.timecompleted > 0 THEN
+                    WHEN {$coursecompletion}.id IS NULL THEN NULL
+                    ELSE (CASE WHEN {$coursecompletion}.timecompleted > 0 THEN
                         {$coursecompletion}.timecompleted
-                    ELSE
+                        ELSE
                         {$currenttime}
-                END - {$coursecompletion}.timeenrolled) / " . DAYSECS, 'daysuntilcompletion')
-            ->add_field("{$user}.id", 'userid')
+                    END - {$coursecompletion}.timeenrolled)
+                END)", 'daysuntilcompletion')
             ->set_is_sortable(true)
-            ->add_callback([completion_formatter::class, 'get_days']);
+            ->set_callback([format::class, 'format_time']);
 
         // Student course grade.
         $columns[] = (new column(
@@ -264,6 +314,45 @@ class completion extends base {
             new lang_string('timecompleted', 'completion'),
             $this->get_entity_name(),
             "{$coursecompletion}.timecompleted"
+        ))
+            ->add_joins($this->get_joins())
+            ->set_limited_operators([
+                date::DATE_ANY,
+                date::DATE_NOT_EMPTY,
+                date::DATE_EMPTY,
+                date::DATE_RANGE,
+                date::DATE_LAST,
+                date::DATE_CURRENT,
+            ]);
+
+        // Time enrolled/started filter and condition.
+        $fields = ['timeenrolled', 'timestarted'];
+        foreach ($fields as $field) {
+            $filters[] = (new filter(
+                date::class,
+                $field,
+                new lang_string($field, 'enrol'),
+                $this->get_entity_name(),
+                "{$coursecompletion}.{$field}"
+            ))
+                ->add_joins($this->get_joins())
+                ->set_limited_operators([
+                    date::DATE_ANY,
+                    date::DATE_NOT_EMPTY,
+                    date::DATE_EMPTY,
+                    date::DATE_RANGE,
+                    date::DATE_LAST,
+                    date::DATE_CURRENT,
+                ]);
+        }
+
+        // Time reaggregated filter and condition.
+        $filters[] = (new filter(
+            date::class,
+            'reaggregate',
+            new lang_string('timereaggregated', 'enrol'),
+            $this->get_entity_name(),
+            "{$coursecompletion}.reaggregate"
         ))
             ->add_joins($this->get_joins())
             ->set_limited_operators([

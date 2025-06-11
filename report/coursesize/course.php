@@ -122,7 +122,7 @@ foreach ($cxsizes as $cxdata) {
             $header = new html_table_cell(html_writer::tag('span', $cxdata->sectionname, array('id'=>'coursesize_header')));
             $header->header = true;
             $header->colspan = count($headerlist);
-            $header->colclasses = array ('centeralign'); 
+            // $header->colclasses = array ('centeralign'); 
             $header = new html_table_row(array($header));
             $header->attributes['class'] = 'table-info';
 

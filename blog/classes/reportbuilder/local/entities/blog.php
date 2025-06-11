@@ -20,7 +20,10 @@ namespace core_blog\reportbuilder\local\entities;
 
 use blog_entry_attachment;
 use context_system;
+use core_collator;
+use html_writer;
 use lang_string;
+use moodle_url;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
@@ -37,15 +40,15 @@ use core_reportbuilder\local\report\{column, filter};
 class blog extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'post' => 'bp',
-            'tag_instance' => 'bti',
-            'tag' => 'bt',
+            'post',
+            'tag_instance',
+            'tag',
         ];
     }
 
@@ -101,6 +104,23 @@ class blog extends base {
             ->add_fields("{$postalias}.subject")
             ->set_is_sortable(true);
 
+        // Title with link.
+        $columns[] = (new column(
+            'titlewithlink',
+            new lang_string('entrytitlewithlink', 'core_blog'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$postalias}.subject, {$postalias}.id")
+            ->set_is_sortable(true)
+            ->add_callback(static function(?string $subject, stdClass $post): string {
+                if ($subject === null) {
+                    return '';
+                }
+                return html_writer::link(new moodle_url('/blog/index.php', ['entryid' => $post->id]), $subject);
+            });
+
         // Body.
         $summaryfieldsql = "{$postalias}.summary";
         if ($DB->get_dbfamily() === 'oracle') {
@@ -116,7 +136,7 @@ class blog extends base {
             ->set_type(column::TYPE_LONGTEXT)
             ->add_field($summaryfieldsql, 'summary')
             ->add_fields("{$postalias}.summaryformat, {$postalias}.id")
-            ->add_callback(static function(?string $summary, stdClass $blog): string {
+            ->add_callback(static function(?string $summary, stdClass $post): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
 
@@ -126,9 +146,9 @@ class blog extends base {
 
                 // All blog files are stored in system context.
                 $context = context_system::instance();
-                $summary = file_rewrite_pluginfile_urls($summary, 'pluginfile.php', $context->id, 'blog', 'post', $blog->id);
+                $summary = file_rewrite_pluginfile_urls($summary, 'pluginfile.php', $context->id, 'blog', 'post', $post->id);
 
-                return format_text($summary, $blog->summaryformat, ['context' => $context->id]);
+                return format_text($summary, $post->summaryformat, ['context' => $context->id]);
             });
 
         // Attachment.
@@ -165,21 +185,25 @@ class blog extends base {
         // Publish state.
         $columns[] = (new column(
             'publishstate',
-            new lang_string('publishto', 'core_blog'),
+            new lang_string('published', 'core_blog'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$postalias}.publishstate")
+            ->add_field("{$postalias}.publishstate")
             ->set_is_sortable(true)
             ->add_callback(static function(?string $publishstate): string {
                 $states = [
-                    'draft' => new lang_string('publishtonoone', 'core_blog'),
+                    'draft' => new lang_string('publishtodraft', 'core_blog'),
                     'site' => new lang_string('publishtosite', 'core_blog'),
                     'public' => new lang_string('publishtoworld', 'core_blog'),
                 ];
 
-                return (string) ($states[$publishstate] ?? $publishstate ?? '');
+                if ($publishstate === null || !array_key_exists($publishstate, $states)) {
+                    return (string) $publishstate;
+                }
+
+                return (string) $states[$publishstate];
             });
 
         // Time created.
@@ -253,16 +277,21 @@ class blog extends base {
         $filters[] = (new filter(
             select::class,
             'publishstate',
-            new lang_string('publishto', 'core_blog'),
+            new lang_string('published', 'core_blog'),
             $this->get_entity_name(),
             "{$postalias}.publishstate"
         ))
             ->add_joins($this->get_joins())
-            ->set_options([
-                'draft' => new lang_string('publishtonoone', 'core_blog'),
-                'site' => new lang_string('publishtosite', 'core_blog'),
-                'public' => new lang_string('publishtoworld', 'core_blog'),
-            ]);
+            ->set_options_callback(static function(): array {
+                $states = [
+                    'draft' => new lang_string('publishtodraft', 'core_blog'),
+                    'site' => new lang_string('publishtosite', 'core_blog'),
+                    'public' => new lang_string('publishtoworld', 'core_blog'),
+                ];
+
+                core_collator::asort($states);
+                return $states;
+            });
 
         // Time created.
         $filters[] = (new filter(
@@ -305,17 +334,6 @@ class blog extends base {
      * @return string[]
      */
     public function get_tag_joins(): array {
-        $postalias = $this->get_table_alias('post');
-        $taginstancealias = $this->get_table_alias('tag_instance');
-        $tagalias = $this->get_table_alias('tag');
-
-        return [
-            "LEFT JOIN {tag_instance} {$taginstancealias}
-                    ON {$taginstancealias}.component = 'core'
-                   AND {$taginstancealias}.itemtype = 'post'
-                   AND {$taginstancealias}.itemid = {$postalias}.id",
-            "LEFT JOIN {tag} {$tagalias}
-                    ON {$tagalias}.id = {$taginstancealias}.tagid",
-        ];
+        return $this->get_tag_joins_for_entity('core', 'post', $this->get_table_alias('post') . '.id');
     }
 }

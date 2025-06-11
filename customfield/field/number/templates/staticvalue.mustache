@@ -1,0 +1,39 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template customfield_number/staticvalue
+
+    Automatically calculated value for a number field.
+
+    Example context (json):
+    {
+        "value": 5,
+        "instanceid": 4,
+        "fieldid": 5
+    }
+}}
+<div class="customfield_number-recalculate-wrapper d-flex mt-2" data-fieldtype="wrapper">
+    <div class="customfield_number-recalculate-value" data-fieldtype="value">{{{value}}}</div>
+    {{#instanceid}}
+        <div class="customfield_number-recalculate-link ms-2">
+            <a href="#" data-customfield_number-action="recalculate" data-fieldtype="link"
+                data-fieldid="{{fieldid}}" data-instanceid="{{instanceid}}">{{#pix}}t/reload, core{{/pix}}{{#str}} update, core {{/str}}</a>
+        </div>
+    {{/instanceid}}
+</div>
+{{#js}}
+require(['customfield_number/recalculate'], function(Recalculate) {
+    Recalculate.init();
+});
+{{/js}}

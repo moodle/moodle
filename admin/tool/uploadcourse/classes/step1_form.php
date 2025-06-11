@@ -39,7 +39,7 @@ class tool_uploadcourse_step1_form extends tool_uploadcourse_base_form {
      * The standard form definiton.
      * @return void
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
@@ -73,6 +73,9 @@ class tool_uploadcourse_step1_form extends tool_uploadcourse_base_form {
 
         $mform->addElement('hidden', 'showpreview', 1);
         $mform->setType('showpreview', PARAM_INT);
+
+        $mform->addElement('hidden', 'categoryid');
+        $mform->setType('categoryid', PARAM_INT);
 
         $this->add_action_buttons(false, get_string('preview', 'tool_uploadcourse'));
     }

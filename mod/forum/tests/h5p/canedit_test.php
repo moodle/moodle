@@ -28,7 +28,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_forum\h5p\canedit
  */
-class canedit_test extends \advanced_testcase {
+final class canedit_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of can_edit_content().
@@ -123,7 +123,7 @@ class canedit_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_edit_content_provider(): array {
+    public static function can_edit_content_provider(): array {
         return [
             // Component = mod_forum.
             'mod_forum: Admin user is author' => [

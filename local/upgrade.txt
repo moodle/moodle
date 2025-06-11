@@ -1,3 +1,8 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes for the plugins of the type 'local'.
 
 === 3.1 ===

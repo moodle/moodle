@@ -37,6 +37,9 @@ class action_bar extends \core_grades\output\action_bar {
     /** @var int|null $currentgroupid The user report view mode. */
     protected $currentgroupid;
 
+    /** @var string $usersearch String to search matching users. */
+    protected $usersearch;
+
     /**
      * The class constructor.
      *
@@ -44,12 +47,20 @@ class action_bar extends \core_grades\output\action_bar {
      * @param int $userview The user report view mode.
      * @param int|null $userid The user ID or 0 if displaying all users.
      * @param int|null $currentgroupid The ID of the current group.
+     * @param string $usersearch String to search matching user.
      */
-    public function __construct(\context $context, int $userview, ?int $userid = null, ?int $currentgroupid = null) {
+    public function __construct(
+        \context $context,
+        int $userview,
+        ?int $userid = null,
+        ?int $currentgroupid = null,
+        string $usersearch = ''
+    ) {
         parent::__construct($context);
         $this->userview = $userview;
         $this->userid = $userid;
         $this->currentgroupid = $currentgroupid;
+        $this->usersearch = $usersearch;
     }
 
     /**
@@ -81,15 +92,45 @@ class action_bar extends \core_grades\output\action_bar {
         // and the view mode selector (if applicable).
         if (has_capability('moodle/grade:viewall', $this->context)) {
             $course = get_course($courseid);
-            $gradesrenderer = $PAGE->get_renderer('core_grades');
-            $userreportrenderer = $PAGE->get_renderer('gradereport_user');
+            if ($course->groupmode) {
+                $groupselector = new \core_course\output\actionbar\group_selector($this->context);
+                $data['groupselector'] = $groupselector->export_for_template($output);
+            }
 
-            $data['groupselector'] = $gradesrenderer->group_selector($course);
-            $data['userselector'] = $userreportrenderer->users_selector($course, $this->userid, $this->currentgroupid);
+            $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'group' => 0]);
+            $baseurl = new moodle_url('/grade/report/user/index.php', ['id' => $courseid]);
+            $PAGE->requires->js_call_amd('gradereport_user/user', 'init', [$baseurl->out(false)]);
+
+            $userselector = new \core_course\output\actionbar\user_selector(
+                course: $course,
+                resetlink: $resetlink,
+                userid: $this->userid,
+                groupid: $this->currentgroupid,
+                usersearch: $this->usersearch
+            );
+            $data['userselector'] = [
+                'courseid' => $courseid,
+                'content' => $userselector->export_for_template($output),
+            ];
 
             // Do not output the 'view mode' selector when in zero state or when the current user is viewing its own report.
             if (!is_null($this->userid) && $USER->id != $this->userid) {
-                $data['viewasselector'] = $userreportrenderer->view_mode_selector($this->userid, $this->userview, $courseid);
+                $viewasotheruser = new moodle_url('/grade/report/user/index.php',
+                    ['id' => $courseid, 'userid' => $this->userid, 'userview' => GRADE_REPORT_USER_VIEW_USER]);
+                $viewasmyself = new moodle_url('/grade/report/user/index.php',
+                    ['id' => $courseid, 'userid' => $this->userid, 'userview' => GRADE_REPORT_USER_VIEW_SELF]);
+
+                $selectoroptions = [
+                    $viewasotheruser->out(false) => get_string('otheruser', 'core_grades'),
+                    $viewasmyself->out(false) => get_string('myself', 'core_grades')
+                ];
+
+                $selectoractiveurl = $this->userview === GRADE_REPORT_USER_VIEW_USER ? $viewasotheruser : $viewasmyself;
+
+                $viewasselect = new \core\output\select_menu('viewas', $selectoroptions, $selectoractiveurl->out(false));
+                $viewasselect->set_label(get_string('viewas', 'core_grades'));
+
+                $data['viewasselector'] = $viewasselect->export_for_template($output);
             }
         }
 

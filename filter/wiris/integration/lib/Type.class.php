@@ -79,7 +79,7 @@ class Type {
 		if($c === null) {
 			return null;
 		}
-		return $inst = $c->getConstructor() ? $c->newInstanceArgs($args->»a) : $c->newInstanceArgs();
+		return $inst = $c->getConstructor() ? $c->newInstanceArgs($args->Â»a) : $c->newInstanceArgs();
 	}
 	static function createEmptyInstance($cl) {
 		if($cl->__qname__ === "Array") {

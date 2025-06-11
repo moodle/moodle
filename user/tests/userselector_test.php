@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/user/tests/fixtures/testable_user_selector.php');
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userselector_test extends \advanced_testcase {
+final class userselector_test extends \advanced_testcase {
 
     /**
      * Setup the environment for the tests.
@@ -66,7 +66,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * No identity fields are not shown to student user (no permission to view identity fields).
      */
-    public function test_hidden_siteidentity_fields_no_access() {
+    public function test_hidden_siteidentity_fields_no_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->student);
@@ -75,9 +75,9 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($selector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectNotHasAttribute('idnumber', $user);
-                $this->assertObjectNotHasAttribute('country', $user);
-                $this->assertObjectNotHasAttribute('city', $user);
+                $this->assertObjectNotHasProperty('idnumber', $user);
+                $this->assertObjectNotHasProperty('country', $user);
+                $this->assertObjectNotHasProperty('city', $user);
             }
         }
     }
@@ -85,7 +85,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Teacher can see students' identity fields only within the course.
      */
-    public function test_hidden_siteidentity_fields_course_only_access() {
+    public function test_hidden_siteidentity_fields_course_only_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->teacher);
@@ -95,17 +95,17 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($systemselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectNotHasAttribute('idnumber', $user);
-                $this->assertObjectNotHasAttribute('country', $user);
-                $this->assertObjectNotHasAttribute('city', $user);
+                $this->assertObjectNotHasProperty('idnumber', $user);
+                $this->assertObjectNotHasProperty('country', $user);
+                $this->assertObjectNotHasProperty('city', $user);
             }
         }
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
     }
@@ -113,7 +113,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Teacher can be prevented from seeing students' identity fields even within the course.
      */
-    public function test_hidden_siteidentity_fields_course_prevented_access() {
+    public function test_hidden_siteidentity_fields_course_prevented_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->teacher);
@@ -124,9 +124,9 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectNotHasAttribute('country', $user);
-                $this->assertObjectNotHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectNotHasProperty('country', $user);
+                $this->assertObjectNotHasProperty('city', $user);
             }
         }
     }
@@ -134,7 +134,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Manager can see students' identity fields anywhere.
      */
-    public function test_hidden_siteidentity_fields_anywhere_access() {
+    public function test_hidden_siteidentity_fields_anywhere_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);
@@ -144,17 +144,17 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($systemselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
     }
@@ -162,7 +162,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Manager can be prevented from seeing hidden fields outside the course.
      */
-    public function test_hidden_siteidentity_fields_schismatic_access() {
+    public function test_hidden_siteidentity_fields_schismatic_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);
@@ -178,17 +178,17 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($systemselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectNotHasAttribute('country', $user);
-                $this->assertObjectNotHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectNotHasProperty('country', $user);
+                $this->assertObjectNotHasProperty('city', $user);
             }
         }
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
     }
@@ -196,7 +196,7 @@ class userselector_test extends \advanced_testcase {
     /**
      * Two capabilities must be currently set to prevent manager from seeing hidden fields.
      */
-    public function test_hidden_siteidentity_fields_hard_to_prevent_access() {
+    public function test_hidden_siteidentity_fields_hard_to_prevent_access(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);
@@ -209,17 +209,17 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($systemselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectNotHasAttribute('country', $user);
-                $this->assertObjectNotHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectNotHasProperty('country', $user);
+                $this->assertObjectNotHasProperty('city', $user);
             }
         }
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectNotHasAttribute('country', $user);
-                $this->assertObjectNotHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectNotHasProperty('country', $user);
+                $this->assertObjectNotHasProperty('city', $user);
             }
         }
     }
@@ -230,7 +230,7 @@ class userselector_test extends \advanced_testcase {
      * However, this was found as violating the principle of respecting site privacy settings. So the feature has been
      * dropped in Moodle 3.6.
      */
-    public function test_hidden_siteidentity_fields_explicit_extrafields() {
+    public function test_hidden_siteidentity_fields_explicit_extrafields(): void {
         $this->resetAfterTest();
         $env = $this->setup_hidden_siteidentity();
         $this->setUser($env->manager);
@@ -242,21 +242,21 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($implicitselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
-                $this->assertObjectNotHasAttribute('email', $user);
-                $this->assertObjectNotHasAttribute('department', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
+                $this->assertObjectNotHasProperty('email', $user);
+                $this->assertObjectNotHasProperty('department', $user);
             }
         }
 
         foreach ($explicitselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
-                $this->assertObjectNotHasAttribute('email', $user);
-                $this->assertObjectNotHasAttribute('department', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
+                $this->assertObjectNotHasProperty('email', $user);
+                $this->assertObjectNotHasProperty('department', $user);
             }
         }
     }

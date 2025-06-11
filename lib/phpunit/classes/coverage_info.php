@@ -22,30 +22,7 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Coverage information for PHPUnit.
- *
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class phpunit_coverage_info {
-
-    /**
-     * @var array The list of folders relative to the plugin root to whitelist in coverage generation.
-     * @deprecated since Moodle 3.11 MDL-70745 - please don't use this property any more.
-     * @todo MDL-71067 - remove in Moodle 4.3
-     */
-    protected $whitelistfolders = [];
-
-    /**
-     * @var array The list of files relative to the plugin root to whitelist in coverage generation.
-     * @deprecated since Moodle 3.11 MDL-70745 - please don't use this property any more.
-     * @todo MDL-71067 - remove in Moodle 4.3
-     */
-    protected $whitelistfiles = [];
 
     /** @var array The list of folders relative to the plugin root to include in coverage generation. */
     protected $includelistfolders = [];
@@ -65,7 +42,7 @@ class phpunit_coverage_info {
      * @param   string  $plugindir The root of the plugin, relative to the dataroot.
      * @return  array
      */
-    final public function get_includelists(string $plugindir) : array {
+    final public function get_includelists(string $plugindir): array {
         $coverages = [];
 
         $includelistfolders = array_merge([
@@ -83,18 +60,6 @@ class phpunit_coverage_info {
 
         if (!empty($plugindir)) {
             $plugindir .= "/";
-
-            // TODO: MDL-71067 - remove this whole block once these properties deprecation period ends.
-            if (!empty($this->whitelistfolders) || !empty($this->whitelistfiles)) {
-                // Warning if the deprecated (whitelist) properties are found.
-                echo "Warning: \$whitelistfolders and \$whitelistfiles in " .
-                    "coverage.php files are deprecated since Moodle 3.11. " .
-                    "Please, replace them with \$includelistfolders and " .
-                    "\$includelistfiles in {$plugindir}tests/coverage.php\n";
-
-                $includelistfolders = array_merge($includelistfolders, $this->whitelistfolders);
-                $includelistfiles = array_merge($includelistfiles, $this->whitelistfiles);
-            }
         }
 
         foreach (array_unique($includelistfolders) as $folder) {
@@ -114,7 +79,7 @@ class phpunit_coverage_info {
      * @param   string  $plugindir The root of the plugin, relative to the dataroot.
      * @return  array
      */
-    final public function get_excludelists(string $plugindir) : array {
+    final public function get_excludelists(string $plugindir): array {
         $coverages = [];
 
         if (!empty($plugindir)) {

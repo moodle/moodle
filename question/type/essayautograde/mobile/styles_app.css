@@ -1,0 +1,9 @@
+.qtype-essayautograde .countwords {
+    margin-top: 0.5rem; /* mt-2 */
+    margin-bottom: 0;
+}
+.qtype-essayautograde .minwords,
+.qtype-essayautograde .minwords {
+    margin-top: 0;
+    margin-bottom: 0;
+}

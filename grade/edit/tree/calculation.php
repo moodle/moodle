@@ -195,7 +195,7 @@ function get_grade_tree(&$gtree, $element, $current_itemid=null, $errors=null) {
         }
     }
 
-    $icon = $gtree->get_element_icon($element, true);
+    $icon = grade_helper::get_element_icon($element, true);
     $last = '';
     $catcourseitem = ($element['type'] == 'courseitem' or $element['type'] == 'categoryitem');
 

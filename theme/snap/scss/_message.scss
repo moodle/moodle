@@ -1,0 +1,257 @@
+/**
+ * New message page in moodle 3.2
+ *
+ */
+
+/* stylelint-disable declaration-no-important*/
+
+// Hide unnecessary content on the page.
+#page-message-index {
+    #page-mast,
+    #page-header,
+    #moodle-footer,
+    #moodle-blocks,
+    #admin-menu-trigger,
+    .snap_line_separator {
+        display: none;
+    }
+
+    .editmode-switch-form {
+        display: none !important;
+    }
+
+    #maincontent + h2 {
+        @include sr-only();
+    }
+
+    #region-main {
+        max-width: 100%;
+        padding: 58px 0 0 0; // 58px for #mr-nav height.
+
+        textarea {
+            font-family: $font-family-system;
+        }
+    }
+}
+
+// Style messaging area.
+// Note - once supported this should probably use a css grid or flex.
+.messaging-area-container {
+    font-family: $font-family-system;
+    margin-bottom: 0;
+
+    .messaging-area {
+        border: none;
+        border-top: 1px solid $gray-lighter;
+        overflow: visible !important;
+        // Contacts area.
+        .contacts-area {
+            // Footer to switch between contacts and messages.
+            .tabs .tab {
+                background-color: transparent;
+            }
+            // Contact media element type things.
+            .contacts .contact .information {
+
+                .name {
+                    font-weight: normal;
+                }
+
+                .lastmessage {
+                    line-height: normal;
+                    height: auto;
+                }
+            }
+
+            // Search area headings.
+            .searcharea .heading {
+                border: 0;
+                @extend .h1;
+                padding: 1rem 0;
+            }
+        }
+        // Messages area.
+        .messages-area {
+            // Delete messages link.
+            .response .delete-confirmation .btn.btn-link.confirm {
+                height: auto;
+            }
+            // Message.
+            .messages .message {
+
+                .content {
+                    font-size: 1rem;
+                    background-color: white !important; // SHAME - !important to overide hover styles when editing.
+                    border: none;
+                    padding: 0;
+                    // This is your own message, and gets a brand-color background.
+                    &.right {
+                        color: white;
+                    }
+                    // These are other messages.
+                    .text {
+                        background-color: $gray-lighter;
+                        border-radius: 1rem;
+                        border: none;
+                        padding: 0.25rem 0.5rem;
+                    }
+                }
+
+                // Selecting messages to delete when editing a thread.
+                &[aria-checked="true"] .content,
+                &[aria-checked="false"] .content:hover {
+
+                    .text {
+                        background-color: $brand-success;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Show message drawer in full width.
+#page-message-edit,
+#page-message-index {
+    .drawer .message-app {
+        height: calc(100% - 10em);
+        top: 10em;
+        z-index: 1;
+        left: 0;
+        @media (max-width: 560px) {
+            top: 8em;
+            height: calc(100% - 9em);
+        }
+    }
+    .switch input:checked + label::before {
+        background-color: rgba($brand-primary, 0.3);
+    }
+    .switch input:checked + label::after {
+        background-color: $brand-primary;
+    }
+    .custom-radio .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: $brand-primary;
+        border-color: rgba($brand-primary, 0.3);
+    }
+    .drawer.bg-white .message-app {
+        padding: 1em;
+        .body-container {
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+        }
+    }
+    [data-region="button-text"],
+    [data-region="searchable"] {
+        color: $brand-primary;
+    }
+
+    .message-app .body-container > * {
+        position: absolute;
+    }
+}
+
+#page-message-edit [data-region=right-hand-drawer].drawer {
+    .message-app {
+        width: 100% !important;
+    }
+    position: inherit;
+    width: 100%;
+}
+
+// Fix for personal menu hidden in IE 11 message page.
+.ie11#page-message-index {
+    #region-main div[role="main"] .message-app.main > .container-fluid {
+        position: inherit;
+    }
+    #snap-pm {
+        position: relative;
+        z-index: 2;
+    }
+    .message-drawer {
+        z-index: 1;
+    }
+}
+
+// Fixes for Inherited boost styles for the message app page.
+// Message background #E6E6E6 to better AX over the message view.
+.message-app {
+    padding-bottom: 0.5rem;
+    .message {
+        &.send .tail {
+            border-bottom-color: #e6e6e6 !important;
+        }
+    }
+    .message.send {
+        background-color: #e6e6e6 !important;
+        color: #373a3c !important;
+    }
+    .message.rounded {
+        border-radius: .25rem !important;
+    }
+    &.main {
+        min-height: 600px !important;
+    }
+    a[data-action="view-contact"] {
+        img.rounded-circle {
+            // Need to use px b/c height is hard coded in template.
+            max-width: 38px;
+        }
+    }
+
+    [data-region="confirm-dialogue-container"]
+    [data-region="confirm-dialogue"]
+    [data-region="delete-messages-for-all-users-toggle-container"]
+    label.custom-control-label.text-muted::before {
+        background-color: transparent;
+    }
+
+    img.rounded-circle {
+        max-width: max-content;
+        height: 38px;
+        width: 38px;
+    }
+}
+
+// Fix for message page to modify visibility on search input for mobile view"
+@media (max-width: 575px) {
+    #page-message-index #region-main div[role="main"] {
+        div.alert.alert-warning.alert-block.fade.in {
+            margin-top: 4em;
+        }
+    }
+}
+
+// Fix for message page to use the page height and scrolls to show messages.
+#page-message-index {
+    #page {
+        height: 100%;
+        overflow: hidden;
+        margin-top: 2em;
+    }
+    &.contains-snap-custom_menu-spacer #page {
+        margin-top: 0;
+    }
+    #page-content {
+        height: 100%;
+        @media (min-width: 992px) {
+            height: 90%;
+        }
+    }
+    #region-main-box {
+        height: 100%;
+        overflow: scroll;
+    }
+    #region-main .message-app .col-4 {
+        height: 90%;
+        .panel-body-container {
+            height: 90%;
+            overflow: scroll;
+        }
+    }
+    #moodle-page {
+        height: 100%;
+        .message-app .view-overview-body .section {
+            max-height: 80%;
+        }
+    }
+}

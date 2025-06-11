@@ -17,7 +17,7 @@ Feature: In a report, admin can see configuration changes
   Scenario: Display configuration changes report
     When I navigate to "Reports > Config changes" in site administration
     Then the following should exist in the "reportbuilder-table" table:
-      | User       | Plugin | Setting             | New value | Original value |
+      | First name | Plugin | Setting             | New value | Original value |
       | Admin User | quiz   | initialnumfeedbacks | 5         | 2              |
       | Admin User | folder | maxsizetodownload   | 2048      | 0              |
       | Admin User | core   | defaultcity         | Perth     |                |
@@ -37,6 +37,7 @@ Feature: In a report, admin can see configuration changes
     And I should not see "<excluded>" in the "reportbuilder-table" "table"
     Examples:
       | field     | search              | plugin | setting             | value  | excluded            |
+      | Plugin    | folder              | folder | maxsizetodownload   | 2048   | quiz                |
       | Setting   | initialnumfeedbacks | quiz   | initialnumfeedbacks | 5      | maxsizetodownload   |
       | Setting   | maxsizetodownload   | folder | maxsizetodownload   | 2048   | initialnumfeedbacks |
       | New value | Perth               | core   | defaultcity         | Perth  | maxsizetodownload   |

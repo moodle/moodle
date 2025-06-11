@@ -23,7 +23,9 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_externalpage;
+use admin_externalpage;
+use moodle_url;
+use part_of_admin_tree;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/repository/lib.php');
@@ -41,6 +43,10 @@ class repository extends base {
 
     /** @var int Repository state, when it's disabled. */
     public const REPOSITORY_DISABLED = -1;
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     /**
      * Finds all enabled plugins, the result may include missing plugins.
@@ -138,10 +144,8 @@ class repository extends base {
         if ($hassiteconfig && $this->is_enabled()) {
             // Completely no access to repository setting when it is not enabled.
             $sectionname = $this->get_settings_section_name();
-            $settingsurl = new moodle_url('/admin/repository.php',
-                array('sesskey' => sesskey(), 'action' => 'edit', 'repos' => $this->name));
             $settings = new admin_externalpage($sectionname, $this->displayname,
-                $settingsurl, 'moodle/site:config', false);
+                new moodle_url('/admin/repository.php', ['action' => 'edit', 'repos' => $this->name]), 'moodle/site:config', false);
             $adminroot->add($parentnodename, $settings);
         }
     }

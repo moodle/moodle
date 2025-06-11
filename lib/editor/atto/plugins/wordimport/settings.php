@@ -33,7 +33,7 @@ if ($ADMIN->fulltree) {
     $name = new lang_string('heading1stylelevel', 'atto_wordimport');
     $desc = new lang_string('heading1stylelevel_desc', 'atto_wordimport');
     $default = 3;
-    $options = array_combine(range(1, 6), array('h1', 'h2', 'h3', 'h4', 'h5', 'h6'));
+    $options = array_combine(range(1, 6), ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 
     $setting = new admin_setting_configselect('atto_wordimport/heading1stylelevel',
                                               $name,

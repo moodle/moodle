@@ -25,10 +25,6 @@
 
 namespace local_o365\obj;
 
-use local_o365\utils;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class representing Microsoft 365 user information.
  */
@@ -52,6 +48,8 @@ class o365user {
     /**
      * @var string|null
      */
+    public $useridentifier = null;
+    /** @var string|null  */
     public $upn = null;
 
     /**
@@ -65,6 +63,7 @@ class o365user {
         $this->oidctoken = $oidctoken;
         $this->objectid = $oidctoken->oidcuniqid;
         $this->username = $oidctoken->oidcusername;
+        $this->useridentifier = $oidctoken->useridentifier;
         $this->upn = $oidctoken->oidcusername;
     }
 
@@ -86,8 +85,8 @@ class o365user {
     public static function instance_from_muserid($userid) {
         global $DB;
 
-        $aadresource = \local_o365\rest\unified::get_tokenresource();
-        $params = ['userid' => $userid, 'tokenresource' => $aadresource];
+        $tokenresource = \local_o365\rest\unified::get_tokenresource();
+        $params = ['userid' => $userid, 'tokenresource' => $tokenresource];
         $oidctoken = $DB->get_record('auth_oidc_token', $params);
         if (empty($oidctoken)) {
             return null;

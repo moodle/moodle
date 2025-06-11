@@ -14,32 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Redis based session handler.
- *
- * @package    core
- * @copyright  2015 Russell Smith <mr-russ@smith2001.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\session;
 
+use coding_exception;
+use core\di;
+use core\clock;
+use RedisCluster;
+use RedisClusterException;
 use RedisException;
-
-defined('MOODLE_INTERNAL') || die();
+use SessionHandlerInterface;
 
 /**
  * Redis based session handler.
  *
- * The default Redis session handler does not handle locking in 2.2.7, so we have written a php session handler
- * that uses locking.  The places where locking is used was modeled from the memcached code that is used in Moodle
- * https://github.com/php-memcached-dev/php-memcached/blob/master/php_memcached_session.c
- *
  * @package    core
- * @copyright  2016 Russell Smith
+ * @copyright  Russell Smith
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class redis extends handler {
+class redis extends handler implements SessionHandlerInterface {
     /**
      * Compressor: none.
      */
@@ -53,16 +45,31 @@ class redis extends handler {
      */
     const COMPRESSION_ZSTD      = 'zstd';
 
-    /** @var string $host save_path string  */
-    protected $host = '';
+    /** @var string Minimum server version */
+    const REDIS_MIN_SERVER_VERSION = "5.0.0";
+
+    /** @var string Minimum extension version */
+    const REDIS_MIN_EXTENSION_VERSION = "5.1.0";
+
+    /** @var array $host save_path string  */
+    protected array $host = [];
     /** @var int $port The port to connect to */
     protected $port = 6379;
+    /** @var array $sslopts SSL options, if applicable */
+    protected $sslopts = [];
     /** @var string $auth redis password  */
     protected $auth = '';
     /** @var int $database the Redis database to store sesions in */
     protected $database = 0;
     /** @var array $servers list of servers parsed from save_path */
     protected $prefix = '';
+
+    /** @var string $sessionkeyprefix the prefix for the session key */
+    protected string $sessionkeyprefix = 'session_';
+
+    /** @var string $userkeyprefix the prefix for the user key */
+    protected string $userkeyprefix = 'user_';
+
     /** @var int $acquiretimeout how long to wait for session lock in seconds */
     protected $acquiretimeout = 120;
     /** @var int $acquirewarn how long before warning when waiting for a lock in seconds */
@@ -76,20 +83,39 @@ class redis extends handler {
     /** @var string $lasthash hash of the session data content */
     protected $lasthash = null;
 
-    /**
-     * @var int $lockexpire how long to wait in seconds before expiring the lock automatically
-     * so that other requests may continue execution, ignored if PECL redis is below version 2.2.0.
-     */
-    protected $lockexpire;
+    /** @var int $gcbatchsize The number of redis keys that will be processed each time the garbage collector is executed. */
+    protected int $gcbatchsize = 100;
 
-    /** @var Redis Connection */
-    protected $connection = null;
+    /**
+     * How long to wait in seconds before expiring the lock automatically so that other requests may continue execution.
+     *
+     * @var int $lockexpire
+     */
+    protected int $lockexpire;
+
+    /** @var \Redis|\RedisCluster|null Connection */
+    protected \Redis|\RedisCluster|null $connection = null;
 
     /** @var array $locks List of currently held locks by this page. */
     protected $locks = array();
 
     /** @var int $timeout How long sessions live before expiring. */
     protected $timeout;
+
+    /** @var bool $clustermode Redis in cluster mode. */
+    protected bool $clustermode = false;
+
+    /** @var int Maximum number of retries for cache store operations. */
+    protected int $maxretries = 3;
+
+    /** @var int $firstaccesstimeout The initial timeout (seconds) for the first browser access without login. */
+    protected int $firstaccesstimeout = 180;
+
+    /** @var clock A clock instance */
+    protected clock $clock;
+
+    /** @var int $connectiontimeout The number of seconds to wait for a connection or response from the Redis server. */
+    protected int $connectiontimeout = 3;
 
     /**
      * Create new instance of handler.
@@ -98,11 +124,18 @@ class redis extends handler {
         global $CFG;
 
         if (isset($CFG->session_redis_host)) {
-            $this->host = $CFG->session_redis_host;
+            // If there is only one host, use the single Redis connection.
+            // If there are multiple hosts (separated by a comma), use the Redis cluster connection.
+            $this->host = array_filter(array_map('trim', explode(',', $CFG->session_redis_host)));
+            $this->clustermode = count($this->host) > 1;
         }
 
         if (isset($CFG->session_redis_port)) {
             $this->port = (int)$CFG->session_redis_port;
+        }
+
+        if (isset($CFG->session_redis_encrypt) && $CFG->session_redis_encrypt) {
+            $this->sslopts = $CFG->session_redis_encrypt;
         }
 
         if (isset($CFG->session_redis_auth)) {
@@ -133,13 +166,36 @@ class redis extends handler {
             $this->serializer = \Redis::SERIALIZER_IGBINARY; // Set igbinary serializer if phpredis supports it.
         }
 
-        // The following configures the session lifetime in redis to allow some
-        // wriggle room in the user noticing they've been booted off and
-        // letting them log back in before they lose their session entirely.
-        $updatefreq = empty($CFG->session_update_timemodified_frequency) ? 20 : $CFG->session_update_timemodified_frequency;
-        $this->timeout = $CFG->sessiontimeout + $updatefreq + MINSECS;
+        // This sets the Redis session lock expiry time to whatever is lower, either
+        // the PHP execution time `max_execution_time`, if the value is positive, or the
+        // globally configured `sessiontimeout`.
+        //
+        // Setting it to the lower of the two will not make things worse it if the execution timeout
+        // is longer than the session timeout.
+        //
+        // For the PHP execution time, once the PHP execution time is over, we can be sure
+        // that the lock is no longer actively held so that the lock can expire safely.
+        //
+        // Although at `lib/classes/php_time_limit.php::raise(int)`, Moodle can
+        // progressively increase the maximum PHP execution time, this is limited to the
+        // `max_execution_time` value defined in the `php.ini`.
+        // For the session timeout, we assume it is safe to consider the lock to expire
+        // once the session itself expires.
+        // If we unnecessarily hold the lock any longer, it blocks other session requests.
+        $this->lockexpire = ini_get('max_execution_time');
+        if ($this->lockexpire < 0) {
+            // If the max_execution_time is set to a value lower than 0, which is invalid, use the default value.
+            // https://www.php.net/manual/en/info.configuration.php#ini.max-execution-time defines the default as 30.
+            // Note: This value is not available programatically.
+            $this->lockexpire = 30;
+        }
 
-        $this->lockexpire = $CFG->sessiontimeout;
+        if (empty($this->lockexpire) || ($this->lockexpire > (int)$CFG->sessiontimeout)) {
+            // The value of the max_execution_time is either unlimited (0), or higher than the session timeout.
+            // Cap it at the session timeout.
+            $this->lockexpire = (int)$CFG->sessiontimeout;
+        }
+
         if (isset($CFG->session_redis_lock_expire)) {
             $this->lockexpire = (int)$CFG->session_redis_lock_expire;
         }
@@ -147,114 +203,223 @@ class redis extends handler {
         if (isset($CFG->session_redis_compressor)) {
             $this->compressor = $CFG->session_redis_compressor;
         }
+
+        if (isset($CFG->session_redis_connection_timeout)) {
+            $this->connectiontimeout = (int)$CFG->session_redis_connection_timeout;
+        }
+
+        if (isset($CFG->session_redis_max_retries)) {
+            $this->maxretries = (int)$CFG->session_redis_max_retries;
+        }
+
+        $this->clock = di::get(clock::class);
     }
 
-    /**
-     * Start the session.
-     *
-     * @return bool success
-     */
-    public function start() {
-        $result = parent::start();
-
-        return $result;
-    }
-
-    /**
-     * Init session handler.
-     */
-    public function init() {
+    #[\Override]
+    public function init(): bool {
         if (!extension_loaded('redis')) {
             throw new exception('sessionhandlerproblem', 'error', '', null, 'redis extension is not loaded');
         }
 
         if (empty($this->host)) {
-            throw new exception('sessionhandlerproblem', 'error', '', null,
-                    '$CFG->session_redis_host must be specified in config.php');
+            throw new exception(
+                'sessionhandlerproblem',
+                'error',
+                '',
+                null,
+                '$CFG->session_redis_host must be specified in config.php',
+            );
         }
 
-        // The session handler requires a version of Redis with the SETEX command (at least 2.0).
         $version = phpversion('Redis');
-        if (!$version or version_compare($version, '2.0') <= 0) {
-            throw new exception('sessionhandlerproblem', 'error', '', null, 'redis extension version must be at least 2.0');
+        if (!$version || version_compare($version, self::REDIS_MIN_EXTENSION_VERSION) <= 0) {
+            throw new exception(
+                errorcode: 'sessionhandlerproblem',
+                module: 'error',
+                debuginfo: sprintf('redis extension version must be at least %s', self::REDIS_MIN_EXTENSION_VERSION),
+            );
         }
 
-        $this->connection = new \Redis();
-
-        $result = session_set_save_handler(array($this, 'handler_open'),
-            array($this, 'handler_close'),
-            array($this, 'handler_read'),
-            array($this, 'handler_write'),
-            array($this, 'handler_destroy'),
-            array($this, 'handler_gc'));
+        $result = session_set_save_handler($this);
         if (!$result) {
             throw new exception('redissessionhandlerproblem', 'error');
         }
 
-        // MDL-59866: Add retries for connections (up to 5 times) to make sure it goes through.
-        $counter = 1;
-        $maxnumberofretries = 5;
-
-        while ($counter <= $maxnumberofretries) {
-
-            try {
-
-                $delay = rand(100, 500);
-
-                // One second timeout was chosen as it is long for connection, but short enough for a user to be patient.
-                if (!$this->connection->connect($this->host, $this->port, 1, null, $delay)) {
-                    throw new RedisException('Unable to connect to host.');
+        $encrypt = (bool) ($this->sslopts ?? false);
+        // Set Redis server(s).
+        $trimmedservers = [];
+        foreach ($this->host as $host) {
+            $server = strtolower(trim($host));
+            if (!empty($server)) {
+                if ($server[0] === '/' || str_starts_with($server, 'unix://')) {
+                    $port = 0;
+                    $trimmedservers[] = $server;
+                } else {
+                    $port = $this->port ?? 6379; // No Unix socket so set default port.
+                    if (strpos($server, ':')) { // Check for custom port.
+                        list($server, $port) = explode(':', $server);
+                    }
+                    $trimmedservers[] = $server.':'.$port;
                 }
 
-                if ($this->auth !== '') {
-                    if (!$this->connection->auth($this->auth)) {
-                        throw new RedisException('Unable to authenticate.');
+                // We only need the first record for the single redis.
+                if (!$this->clustermode) {
+                    // Handle the case when the server is not a Unix domain socket.
+                    if ($port !== 0) {
+                        list($server, ) = explode(':', $trimmedservers[0]);
+                    } else {
+                        $server = $trimmedservers[0];
+                    }
+                    break;
+                }
+            }
+        }
+
+        // TLS/SSL Configuration.
+        $opts = [];
+        if ($encrypt) {
+            if ($this->clustermode) {
+                $opts = $this->sslopts;
+            } else {
+                // For a single (non-cluster) Redis, the TLS/SSL config must be added to the 'stream' key.
+                $opts['stream'] = $this->sslopts;
+            }
+        }
+
+        // Add retries for connections to make sure it goes through.
+        $counter = 1;
+        $exceptionclass = $this->clustermode ? 'RedisClusterException' : 'RedisException';
+        while ($counter <= $this->maxretries) {
+            $this->connection = null;
+            // Make a connection to Redis server(s).
+            try {
+                // Create a $redis object of a RedisCluster or Redis class.
+                $phpredisversion = phpversion('redis');
+                if ($this->clustermode) {
+                    if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                        // Named parameters are fully supported starting from version 6.0.0.
+                        $this->connection = new \RedisCluster(
+                            name: null,
+                            seeds: $trimmedservers,
+                            timeout: $this->connectiontimeout, // Timeout.
+                            read_timeout: $this->connectiontimeout, // Read timeout.
+                            persistent: true,
+                            auth: $this->auth,
+                            context: !empty($opts) ? $opts : null,
+                        );
+                    } else {
+                        $this->connection = new \RedisCluster(
+                            null,
+                            $trimmedservers,
+                            $this->connectiontimeout,
+                            $this->connectiontimeout,
+                            true,
+                            $this->auth,
+                            !empty($opts) ? $opts : null
+                        );
+                    }
+                } else {
+                    $delay = rand(100, 500);
+                    $this->connection = new \Redis();
+                    if (version_compare($phpredisversion, '6.0.0', '>=')) {
+                        // Named parameters are fully supported starting from version 6.0.0.
+                        $this->connection->connect(
+                            host: $server,
+                            port: $port,
+                            timeout: $this->connectiontimeout, // Timeout.
+                            retry_interval: $delay,
+                            read_timeout: $this->connectiontimeout, // Read timeout.
+                            context: $opts,
+                        );
+                    } else {
+                        $this->connection->connect(
+                            $server,
+                            $port,
+                            $this->connectiontimeout,
+                            null,
+                            $delay,
+                            $this->connectiontimeout,
+                            $opts
+                        );
+                    }
+
+                    if ($this->auth !== '' && !$this->connection->auth($this->auth)) {
+                        throw new $exceptionclass('Unable to authenticate.');
                     }
                 }
 
                 if (!$this->connection->setOption(\Redis::OPT_SERIALIZER, $this->serializer)) {
-                    throw new RedisException('Unable to set Redis PHP Serializer option.');
+                    throw new $exceptionclass('Unable to set the Redis PHP Serializer option.');
                 }
-
                 if ($this->prefix !== '') {
                     // Use custom prefix on sessions.
                     if (!$this->connection->setOption(\Redis::OPT_PREFIX, $this->prefix)) {
-                        throw new RedisException('Unable to set Redis Prefix option.');
+                        throw new $exceptionclass('Unable to set the Redis Prefix option.');
                     }
                 }
+                $info = $this->connection->info('server');
+                if (!$info) {
+                    throw new $exceptionclass("Failed to fetch server information");
+                }
+
+                // Check the server version.
+                // Note: In case of a TLS connection,
+                // if phpredis client does not communicate immediately with the server the connection hangs.
+                // See https://github.com/phpredis/phpredis/issues/2332.
+                // This version check satisfies that requirement.
+                $version = $info['redis_version'];
+                if (!$version || version_compare($version, static::REDIS_MIN_SERVER_VERSION) <= 0) {
+                    throw new $exceptionclass(sprintf(
+                        "Version %s is not supported. The minimum version required is %s.",
+                        $version,
+                        static::REDIS_MIN_SERVER_VERSION,
+                    ));
+                }
+
                 if ($this->database !== 0) {
                     if (!$this->connection->select($this->database)) {
-                        throw new RedisException('Unable to select Redis database '.$this->database.'.');
+                        throw new $exceptionclass('Unable to select the Redis database ' . $this->database . '.');
                     }
                 }
-                return true;
-            } catch (RedisException $e) {
-                $logstring = "Failed to connect (try {$counter} out of {$maxnumberofretries}) to redis ";
-                $logstring .= "at {$this->host}:{$this->port}, error returned was: {$e->getMessage()}";
 
+                // The session handler requires a version of Redis server with support for SET command options (at least 2.6.12).
+                $serverversion = $this->connection->info('server')['redis_version'];
+                if (version_compare($serverversion, self::REDIS_MIN_SERVER_VERSION) <= 0) {
+                    throw new exception('sessionhandlerproblem', 'error', '', null,
+                        'redis server version must be at least ' . self::REDIS_MIN_SERVER_VERSION);
+                }
+                return true;
+            } catch (RedisException | RedisClusterException $e) {
+                $redishost = $this->clustermode ? implode(',', $this->host) : $server . ':' . $port;
+                $logstring = "Failed to connect (try {$counter} out of " . $this->maxretries . ") to Redis ";
+                $logstring .= "at ". $redishost .", the error returned was: {$e->getMessage()}";
                 debugging($logstring);
             }
-
             $counter++;
-
             // Introduce a random sleep between 100ms and 500ms.
             usleep(rand(100000, 500000));
         }
 
-        // We have exhausted our retries, time to give up.
         if (isset($logstring)) {
-            throw new RedisException($logstring);
+            // We have exhausted our retries; it's time to give up.
+            throw new $exceptionclass($logstring);
         }
+
+        $result = session_set_save_handler($this);
+        if (!$result) {
+            throw new exception('redissessionhandlerproblem', 'error');
+        }
+        return false;
     }
 
     /**
      * Update our session search path to include session name when opened.
      *
-     * @param string $savepath  unused session save path. (ignored)
-     * @param string $sessionname Session name for this session. (ignored)
+     * @param string $path  unused session save path. (ignored)
+     * @param string $name Session name for this session. (ignored)
      * @return bool true always as we will succeed.
      */
-    public function handler_open($savepath, $sessionname) {
+    public function open(string $path, string $name): bool {
         return true;
     }
 
@@ -263,49 +428,66 @@ class redis extends handler {
      *
      * @return bool true on success.  false on unable to unlock sessions.
      */
-    public function handler_close() {
+    public function close(): bool {
         $this->lasthash = null;
         try {
             foreach ($this->locks as $id => $expirytime) {
-                if ($expirytime > $this->time()) {
+                if ($expirytime > $this->clock->time()) {
                     $this->unlock_session($id);
                 }
                 unset($this->locks[$id]);
             }
-        } catch (RedisException $e) {
+        } catch (RedisException | RedisClusterException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
             return false;
         }
 
         return true;
     }
+
     /**
      * Read the session data from storage
      *
      * @param string $id The session id to read from storage.
-     * @return string The session data for PHP to process.
+     * @return string|false The session data for PHP to process or false.
      *
      * @throws RedisException when we are unable to talk to the Redis server.
      */
-    public function handler_read($id) {
+    public function read(string $id): string|false {
         try {
             if ($this->requires_write_lock()) {
-                $this->lock_session($id);
+                $this->lock_session($this->sessionkeyprefix . $id);
             }
-            $sessiondata = $this->uncompress($this->connection->get($id));
+
+            $keys = $this->connection->hmget($this->sessionkeyprefix . $id, ['userid', 'sessdata']);
+            $userid = $keys['userid'];
+            $sessiondata = $this->uncompress($keys['sessdata']);
 
             if ($sessiondata === false) {
                 if ($this->requires_write_lock()) {
-                    $this->unlock_session($id);
+                    $this->unlock_session($this->sessionkeyprefix . $id);
                 }
                 $this->lasthash = sha1('');
                 return '';
             }
-            $this->connection->expire($id, $this->timeout);
-        } catch (RedisException $e) {
+
+            // Do not update expiry if non-login user (0). This would affect the first access timeout.
+            if ($userid != 0) {
+                $maxlifetime = $this->get_maxlifetime($userid);
+                $this->connection->expire($this->sessionkeyprefix . $id, $maxlifetime);
+                $this->connection->expire($this->userkeyprefix . $userid, $maxlifetime);
+            }
+        } catch (RedisException | RedisClusterException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
             throw $e;
         }
+
+        // Update last hash.
+        if ($sessiondata === null) {
+            // As of PHP 8.1 we can't pass null to base64_encode.
+            $sessiondata = '';
+        }
+
         $this->lasthash = sha1(base64_encode($sessiondata));
         return $sessiondata;
     }
@@ -316,7 +498,7 @@ class redis extends handler {
      * @param mixed $value
      * @return string
      */
-    private function compress($value) {
+    private function compress($value): string {
         switch ($this->compressor) {
             case self::COMPRESSION_NONE:
                 return $value;
@@ -364,8 +546,7 @@ class redis extends handler {
      * @param string $data session data
      * @return bool true on write success, false on failure
      */
-    public function handler_write($id, $data) {
-
+    public function write(string $id, string $data): bool {
         $hash = sha1(base64_encode($data));
 
         // If the content has not changed don't bother writing.
@@ -385,27 +566,144 @@ class redis extends handler {
         // address that in the future.
         try {
             $data = $this->compress($data);
+            $this->connection->hset($this->sessionkeyprefix . $id, 'sessdata', $data);
+            $keys = $this->connection->hmget($this->sessionkeyprefix . $id, ['userid', 'timecreated', 'timemodified']);
+            $userid = $keys['userid'];
 
-            $this->connection->setex($id, $this->timeout, $data);
-        } catch (RedisException $e) {
+            // Don't update expiry if still first access.
+            if ($keys['timecreated'] != $keys['timemodified']) {
+                $maxlifetime = $this->get_maxlifetime($userid);
+                $this->connection->expire($this->sessionkeyprefix . $id, $maxlifetime);
+                $this->connection->expire($this->userkeyprefix . $userid, $maxlifetime);
+            }
+        } catch (RedisException | RedisClusterException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
             return false;
         }
         return true;
     }
 
-    /**
-     * Handle destroying a session.
-     *
-     * @param string $id the session id to destroy.
-     * @return bool true if the session was deleted, false otherwise.
-     */
-    public function handler_destroy($id) {
+    #[\Override]
+    public function get_session_by_sid(string $sid): \stdClass {
+        $this->init_redis_if_required();
+        $keys = ["id", "state", "sid", "userid", "sessdata", "timecreated", "timemodified", "firstip", "lastip"];
+        $sessiondata = $this->connection->hmget($this->sessionkeyprefix . $sid, $keys);
+
+        return (object)$sessiondata;
+    }
+
+    #[\Override]
+    public function add_session(int $userid): \stdClass {
+        $timestamp = $this->clock->time();
+        $sid = session_id();
+        $maxlifetime = $this->get_maxlifetime($userid, true);
+        $sessiondata = [
+            'id' => $sid,
+            'state' => '0',
+            'sid' => $sid,
+            'userid' => $userid,
+            'sessdata' => null,
+            'timecreated' => $timestamp,
+            'timemodified' => $timestamp,
+            'firstip' => getremoteaddr(),
+            'lastip' => getremoteaddr(),
+        ];
+
+        $userhashkey = $this->userkeyprefix . $userid;
+        $this->connection->hSet($userhashkey, $sid, $timestamp);
+        $this->connection->expire($userhashkey, $maxlifetime);
+
+        $sessionhashkey = $this->sessionkeyprefix . $sid;
+        $this->connection->hmSet($sessionhashkey, $sessiondata);
+        $this->connection->expire($sessionhashkey, $maxlifetime);
+
+        return (object)$sessiondata;
+    }
+
+    #[\Override]
+    public function get_sessions_by_userid(int $userid): array {
+        $this->init_redis_if_required();
+
+        $userhashkey = $this->userkeyprefix . $userid;
+        $sessions = $this->connection->hGetAll($userhashkey);
+        $records = [];
+        foreach (array_keys($sessions) as $session) {
+            $item = $this->connection->hGetAll($this->sessionkeyprefix . $session);
+            if (!empty($item)) {
+                $records[] = (object) $item;
+            }
+        }
+        return $records;
+    }
+
+    #[\Override]
+    public function update_session(\stdClass $record): bool {
+        if (!isset($record->sid) && isset($record->id)) {
+            $record->sid = $record->id;
+        }
+
+        // If record does not have userid set, we need to get it from the session.
+        if (!isset($record->userid)) {
+            $session = $this->get_session_by_sid($record->sid);
+            $record->userid = $session->userid;
+        }
+
+        $sessionhashkey = $this->sessionkeyprefix . $record->sid;
+        $userhashkey = $this->userkeyprefix . $record->userid;
+
+        $recordata = (array) $record;
+        unset($recordata['sid']);
+        $this->connection->hmSet($sessionhashkey, $recordata);
+
+        // Update the expiry time.
+        $maxlifetime = $this->get_maxlifetime($record->userid);
+        $this->connection->expire($sessionhashkey, $maxlifetime);
+        $this->connection->expire($userhashkey, $maxlifetime);
+
+        return true;
+    }
+
+
+    #[\Override]
+    public function get_all_sessions(): \Iterator {
+        $sessions = [];
+        $iterator = null;
+        while (false !== ($keys = $this->connection->scan($iterator, '*' . $this->sessionkeyprefix . '*'))) {
+            foreach ($keys as $key) {
+                $sessions[] = $key;
+            }
+        }
+        return new \ArrayIterator($sessions);
+    }
+
+    #[\Override]
+    public function destroy_all(): bool {
+        $this->init_redis_if_required();
+
+        $sessions = $this->get_all_sessions();
+        foreach ($sessions as $session) {
+            // Remove the prefixes from the session id, as destroy expects the raw session id.
+            if (str_starts_with($session, $this->prefix . $this->sessionkeyprefix)) {
+                $session = substr($session, strlen($this->prefix . $this->sessionkeyprefix));
+            }
+
+            $this->destroy($session);
+        }
+        return true;
+    }
+
+    #[\Override]
+    public function destroy(string $id): bool {
+        $this->init_redis_if_required();
         $this->lasthash = null;
         try {
-            $this->connection->del($id);
+            $sessionhashkey = $this->sessionkeyprefix . $id;
+            $userid = $this->connection->hget($sessionhashkey, "userid");
+            $userhashkey = $this->userkeyprefix . $userid;
+            $this->connection->hDel($userhashkey, $id);
+            $this->connection->unlink($sessionhashkey);
             $this->unlock_session($id);
-        } catch (RedisException $e) {
+        } catch (RedisException | RedisClusterException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
             return false;
         }
@@ -413,14 +711,53 @@ class redis extends handler {
         return true;
     }
 
+    // phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameUnderscore
+    #[\Override]
+    public function gc(int $max_lifetime = 0): int|false {
+        return 0;
+    }
+    // phpcs:enable
+
     /**
-     * Garbage collect sessions.  We don't we any as Redis does it for us.
+     * Get session maximum lifetime in seconds.
      *
-     * @param integer $maxlifetime All sessions older than this should be removed.
-     * @return bool true, as Redis handles expiry for us.
+     * @param int|null $userid The user id to calculate the max lifetime for.
+     * @param bool $firstbrowseraccess This indicates that this is calculating the expiry when the key is first added.
+     *                                 The first access made by the browser has a shorter timeout to reduce abandoned sessions.
+     * @return float|int
      */
-    public function handler_gc($maxlifetime) {
-        return true;
+    private function get_maxlifetime(?int $userid = null, bool $firstbrowseraccess = false): float|int {
+        global $CFG;
+
+        // Guest user.
+        if ($userid == $CFG->siteguest) {
+            return $CFG->sessiontimeout * 5;
+        }
+
+        // All other users.
+        if ($userid == 0 && $firstbrowseraccess) {
+            $maxlifetime = $this->firstaccesstimeout;
+        } else {
+            // As per MDL-56823 - The following configures the session lifetime in redis to allow some
+            // wriggle room in the user noticing they've been booted off and
+            // letting them log back in before they lose their session entirely.
+            $updatefreq = empty($CFG->session_update_timemodified_frequency) ? 20 : $CFG->session_update_timemodified_frequency;
+            $maxlifetime = (int) $CFG->sessiontimeout + $updatefreq + MINSECS;
+        }
+
+        return $maxlifetime;
+    }
+
+    /**
+     * Connection will be null if these methods are called from cli or where NO_MOODLE_COOKIES is used.
+     * We need to check for this and initialize the connection if required.
+     *
+     * @return void
+     */
+    private function init_redis_if_required(): void {
+        if (is_null($this->connection)) {
+            $this->init();
+        }
     }
 
     /**
@@ -430,7 +767,7 @@ class redis extends handler {
      */
     protected function unlock_session($id) {
         if (isset($this->locks[$id])) {
-            $this->connection->del($id.".lock");
+            $this->connection->unlink("{$id}.lock");
             unset($this->locks[$id]);
         }
     }
@@ -443,25 +780,30 @@ class redis extends handler {
      * @throws exception When we are unable to obtain a session lock.
      */
     protected function lock_session($id) {
-        $lockkey = $id.".lock";
+        $lockkey = "{$id}.lock";
 
-        $haslock = isset($this->locks[$id]) && $this->time() < $this->locks[$id];
-        $startlocktime = $this->time();
+        $haslock = isset($this->locks[$id]) && $this->clock->time() < $this->locks[$id];
+        if ($haslock) {
+            return true;
+        }
 
-        /* To be able to ensure sessions don't write out of order we must obtain an exclusive lock
-         * on the session for the entire time it is open.  If another AJAX call, or page is using
-         * the session then we just wait until it finishes before we can open the session.
-         */
+        $startlocktime = $this->clock->time();
+
+        // To be able to ensure sessions don't write out of order we must obtain an exclusive lock
+        // on the session for the entire time it is open.  If another AJAX call, or page is using
+        // the session then we just wait until it finishes before we can open the session.
 
         // Store the current host, process id and the request URI so it's easy to track who has the lock.
         $hostname = gethostname();
         if ($hostname === false) {
             $hostname = 'UNKNOWN HOST';
         }
+
         $pid = getmypid();
         if ($pid === false) {
             $pid = 'UNKNOWN';
         }
+
         $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'unknown uri';
 
         $whoami = "[pid {$pid}] {$hostname}:$uri";
@@ -469,43 +811,46 @@ class redis extends handler {
         $haswarned = false; // Have we logged a lock warning?
 
         while (!$haslock) {
-
-            $haslock = $this->connection->setnx($lockkey, $whoami);
+            $haslock = $this->connection->set($lockkey, $whoami, ['nx', 'ex' => $this->lockexpire]);
 
             if ($haslock) {
-                $this->locks[$id] = $this->time() + $this->lockexpire;
-                $this->connection->expire($lockkey, $this->lockexpire);
+                $this->locks[$id] = $this->clock->time() + $this->lockexpire;
                 return true;
             }
 
-            if (!empty($this->acquirewarn) && !$haswarned && $this->time() > $startlocktime + $this->acquirewarn) {
+            if (!empty($this->acquirewarn) && !$haswarned && $this->clock->time() > $startlocktime + $this->acquirewarn) {
                 // This is a warning to better inform users.
                 $whohaslock = $this->connection->get($lockkey);
                 // phpcs:ignore
-                error_log("Warning: Cannot obtain session lock for sid: $id within $this->acquirewarn seconds but will keep trying. " .
-                    "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.");
+                error_log(
+                    "Warning: Cannot obtain session lock for sid: $id within $this->acquirewarn seconds but will keep trying. " .
+                        "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.",
+                );
                 $haswarned = true;
             }
 
-            if ($this->time() > $startlocktime + $this->acquiretimeout) {
+            if ($this->clock->time() > $startlocktime + $this->acquiretimeout) {
                 // This is a fatal error, better inform users.
                 // It should not happen very often - all pages that need long time to execute
                 // should close session immediately after access control checks.
                 $whohaslock = $this->connection->get($lockkey);
                 // phpcs:ignore
-                error_log("Error: Cannot obtain session lock for sid: $id within $this->acquiretimeout seconds. " .
-                    "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.");
+                error_log(
+                    "Error: Cannot obtain session lock for sid: $id within $this->acquiretimeout seconds. " .
+                        "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.",
+                );
                 $acquiretimeout = format_time($this->acquiretimeout);
                 $lockexpire = format_time($this->lockexpire);
                 $a = (object)[
                     'id' => substr($id, 0, 10),
                     'acquiretimeout' => $acquiretimeout,
                     'whohaslock' => $whohaslock,
-                    'lockexpire' => $lockexpire];
+                    'lockexpire' => $lockexpire,
+                ];
                 throw new exception("sessioncannotobtainlock", 'error', '', $a);
             }
 
-            if ($this->time() < $startlocktime + 5) {
+            if ($this->clock->time() < $startlocktime + 5) {
                 // We want a random delay to stagger the polling load. Ideally
                 // this delay should be a fraction of the average response
                 // time. If it is too small we will poll too much and if it is
@@ -521,63 +866,20 @@ class redis extends handler {
 
             usleep($delay * 1000);
         }
+        throw new coding_exception('Unable to lock session');
     }
 
-    /**
-     * Return the current time.
-     *
-     * @return int the current time as a unixtimestamp.
-     */
-    protected function time() {
-        return time();
-    }
-
-    /**
-     * Check the backend contains data for this session id.
-     *
-     * Note: this is intended to be called from manager::session_exists() only.
-     *
-     * @param string $sid
-     * @return bool true if session found.
-     */
+    #[\Override]
     public function session_exists($sid) {
         if (!$this->connection) {
             return false;
         }
 
         try {
-            return !empty($this->connection->exists($sid));
-        } catch (RedisException $e) {
+            $sessionhashkey = $this->sessionkeyprefix . $sid;
+            return !empty($this->connection->exists($sessionhashkey));
+        } catch (RedisException | RedisClusterException $e) {
             return false;
         }
-    }
-
-    /**
-     * Kill all active sessions, the core sessions table is purged afterwards.
-     */
-    public function kill_all_sessions() {
-        global $DB;
-        if (!$this->connection) {
-            return;
-        }
-
-        $rs = $DB->get_recordset('sessions', array(), 'id DESC', 'id, sid');
-        foreach ($rs as $record) {
-            $this->handler_destroy($record->sid);
-        }
-        $rs->close();
-    }
-
-    /**
-     * Kill one session, the session record is removed afterwards.
-     *
-     * @param string $sid
-     */
-    public function kill_session($sid) {
-        if (!$this->connection) {
-            return;
-        }
-
-        $this->handler_destroy($sid);
     }
 }

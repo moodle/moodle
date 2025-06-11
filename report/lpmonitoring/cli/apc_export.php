@@ -33,20 +33,22 @@ require_once($CFG->dirroot . '/report/lpmonitoring/classes/apcexport.php');
 
 // Now get cli options.
 list($options, $unrecognized) = cli_get_params(
-        array(
-            'help' => false,
-            'templateid' => false,
-            'userid' => false,
-            'filepath' => false,
-            'flatfiledelimiter' => false,
-            'verbose' => false),
-        array(
-            'h' => 'help',
-            't' => 'templateid',
-            'u' => 'userid',
-            'f' => 'filepath',
-            'd' => 'flatfiledelimiter',
-            'v' => 'verbose')
+    [
+        'help' => false,
+        'templateid' => false,
+        'userid' => false,
+        'filepath' => false,
+        'flatfiledelimiter' => false,
+        'verbose' => false,
+    ],
+    [
+        'h' => 'help',
+        't' => 'templateid',
+        'u' => 'userid',
+        'f' => 'filepath',
+        'd' => 'flatfiledelimiter',
+        'v' => 'verbose',
+    ]
 );
 
 
@@ -75,14 +77,14 @@ if ($options['help']) {
     die;
 }
 
-$params = array(
+$params = [
     'help',
     'templateid',
     'userid',
     'filepath',
     'flatfiledelimiter',
-    'verbose'
-);
+    'verbose',
+];
 
 foreach ($params as $param) {
     if ($options[$param] === false) {
@@ -99,7 +101,7 @@ if (!isset($options['flatfiledelimiter']) || empty($options['flatfiledelimiter']
     $options['flatfiledelimiter'] = 'semicolon';
 }
 
-cron_setup_user();
+\core\cron::setup_user();
 
 // Initialise the timer.
 $starttime = microtime();

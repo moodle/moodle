@@ -30,23 +30,23 @@ use context_course;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \block_accessreview
  */
-class accessibility_review_test extends advanced_testcase {
+final class accessibility_review_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../../moodleblock.class.php');
         require_once(__DIR__ . '/../block_accessreview.php');
+        parent::setUpBeforeClass();
     }
 
-    public function test_get_toggle_link() {
+    public function test_get_toggle_link(): void {
         $rc = new ReflectionClass(block_accessreview::class);
         $rm = $rc->getMethod('get_toggle_link');
-        $rm->setAccessible(true);
 
         $block = new block_accessreview();
         $output = $rm->invoke($block);
         $this->assertNotEmpty($output);
     }
 
-    public function test_get_download_link() {
+    public function test_get_download_link(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -60,7 +60,6 @@ class accessibility_review_test extends advanced_testcase {
 
         $rc = new ReflectionClass(block_accessreview::class);
         $rm = $rc->getMethod('get_download_link');
-        $rm->setAccessible(true);
         $block = new block_accessreview();
 
         $this->setUser($user1);
@@ -72,7 +71,7 @@ class accessibility_review_test extends advanced_testcase {
         $this->assertEmpty($result);
     }
 
-    public function test_get_report_link() {
+    public function test_get_report_link(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -86,7 +85,6 @@ class accessibility_review_test extends advanced_testcase {
 
         $rc = new ReflectionClass(block_accessreview::class);
         $rm = $rc->getMethod('get_report_link');
-        $rm->setAccessible(true);
         $block = new block_accessreview();
 
         $this->setUser($user1);

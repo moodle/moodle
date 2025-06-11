@@ -21,11 +21,12 @@ Feature: Admin can set default status set for use in new attendance
 
   @javascript
   Scenario: Modified default status set added to new attendance
-
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Attendance" to section "1" and I fill the form with:
-      | Name        | Attendance1       |
+    Given the following "activity" exists:
+      | activity | attendance                |
+      | course   | C1                        |
+      | idnumber | 00001                     |
+      | name     | Attendance1               |
+    And I log in as "teacher1"
     And I am on the "Attendance1" "mod_attendance > View" page
     And I click on "More" "link" in the ".secondary-navigation" "css_element"
     And I select "Status set" from secondary navigation

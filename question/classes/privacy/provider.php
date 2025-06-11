@@ -73,7 +73,7 @@ class provider implements
      * @param   collection  $items  The collection to add metadata to.
      * @return  collection  The array of metadata
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         // Other tables link against it.
 
         // The 'question_usages' table does not contain any user data.
@@ -169,7 +169,7 @@ class provider implements
         ]);
 
         foreach ($quba->get_attempt_iterator() as $qa) {
-            $question = $qa->get_question(false);
+            $question = $qa->get_question();
             $slotno = $qa->get_slot();
             $questionnocontext = array_merge($questionscontext, [$slotno]);
 
@@ -302,7 +302,7 @@ class provider implements
                             $step->get_id()
                         );
 
-                    $stepdata->comment = $qa->get_behaviour(false)->format_comment($comment, $commentformat);
+                    $stepdata->comment = $qa->get_behaviour()->format_comment($comment, $commentformat);
                 }
 
                 // Export any response files associated with this step.
@@ -335,7 +335,7 @@ class provider implements
      * @param   int             $userid The user to search.
      * @return  contextlist     $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
         // A user may have created or updated a question.
@@ -390,7 +390,7 @@ class provider implements
      * @param   int             $userid     The user to search.
      * @return  \qubaid_join
      */
-    public static function get_related_question_usages_for_user(string $prefix, string $component, string $joinfield, int $userid) : \qubaid_join {
+    public static function get_related_question_usages_for_user(string $prefix, string $component, string $joinfield, int $userid): \qubaid_join {
         return new \qubaid_join("
                 JOIN {question_usages} {$prefix}_qu ON {$prefix}_qu.id = {$joinfield}
                  AND {$prefix}_qu.component = :{$prefix}_usagecomponent
@@ -414,7 +414,7 @@ class provider implements
      * @param   int|null    $contextid  An optional context id, in case the $sql query is not already filtered by that.
      */
     public static function get_users_in_context_from_sql(userlist $userlist, string $prefix, string $insql, $params,
-            int $contextid = null) {
+            ?int $contextid = null) {
 
         $sql = "SELECT {$prefix}_qas.userid
                   FROM {question_attempt_steps} {$prefix}_qas

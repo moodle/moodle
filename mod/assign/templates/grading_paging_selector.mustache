@@ -1,0 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_assign/grading_paging_selector
+
+    Template for pagination dropdown on the assignment grading page.
+
+    Example context (json):
+    {
+        "baseurl": "http://example.com/grading.php?id=1",
+        "options": [
+            {"name": "10", "value": "10", "selected": false},
+            {"name": "20", "value": "20", "selected": false},
+            {"name": "50", "value": "50", "selected": true},
+            {"name": "All", "value": "-1", "selected": false}
+        ]
+    }
+}}
+<label>
+    {{#str}}show{{/str}}
+    <select name="perpage" class="mt-1 custom-select ignoredirty" id="{{uniqid}}-perpage">
+        {{#options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+        {{/options}}
+    </select>
+</label>
+{{#js}}
+    document.getElementById('{{uniqid}}-perpage').addEventListener('change', function(e) {
+        var url = new URL('{{{baseurl}}}');
+        url.searchParams.set('perpage', e.target.value);
+
+        window.location.href = url;
+    });
+{{/js}}

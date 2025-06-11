@@ -28,11 +28,11 @@ require_once('team_section_form.php');
 require_login();
 
 if (!cps_team_request::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_team_request::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_team_request::name());
 }
 
 if (!ues_user::is_teacher()) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $teacher = ues_teacher::get(array('userid' => $USER->id));
@@ -40,7 +40,7 @@ $teacher = ues_teacher::get(array('userid' => $USER->id));
 $sections = cps_unwant::active_sections_for($teacher);
 
 if (empty($sections)) {
-    print_error('no_section', 'block_cps');
+    moodle_exception('no_section', 'block_cps');
 }
 
 $semesters = ues_semester::merge_sections($sections);
@@ -49,7 +49,7 @@ $key = required_param('id', PARAM_RAW);
 list($semid, $couid) = explode('_', $key);
 
 if (!isset($semesters[$semid]) or !isset($semesters[$semid]->courses[$couid])) {
-    print_error('not_course', 'block_cps');
+    moodle_exception('not_course', 'block_cps');
 }
 
 $semester = $semesters[$semid];
@@ -58,7 +58,7 @@ $course = $semester->courses[$couid];
 $currentrequests = cps_team_request::in_course($course, $semester, true);
 
 if (empty($currentrequests)) {
-    print_error('not_approved', 'block_cps');
+    moodle_exception('not_approved', 'block_cps');
 }
 
 $initialdata = array('course' => $course

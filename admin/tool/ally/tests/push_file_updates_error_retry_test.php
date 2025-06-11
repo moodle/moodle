@@ -24,6 +24,7 @@
 namespace tool_ally;
 
 use Prophecy\Argument;
+use tool_ally\prophesize_deprecation_workaround_mixin;
 use tool_ally\push_config;
 use tool_ally\file_processor;
 use tool_ally\task\file_updates_task;
@@ -32,6 +33,7 @@ use tool_ally\push_file_updates;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/abstract_testcase.php');
+require_once(__DIR__.'/prophesize_deprecation_workaround_mixin.php');
 
 /**
  * Tests for file push error retrying.
@@ -39,9 +41,12 @@ require_once(__DIR__.'/abstract_testcase.php');
  * @class     tool_ally_push_file_updates_error_retry_test
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class push_file_updates_error_retry_test extends abstract_testcase {
+    use prophesize_deprecation_workaround_mixin;
 
     public function test_retry_increase_push_disabled_task_reset() {
         $this->resetAfterTest();
@@ -67,16 +72,16 @@ class push_file_updates_error_retry_test extends abstract_testcase {
         set_config('push_timestamp', time() - (WEEKSECS * 2), 'tool_ally');
 
         // Since the file was not pushed above, the task should call cURL push once.
-        $updates = $this->prophesize(push_file_updates::class);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(1);
-        $updates->send(Argument::type('array'))->willReturn(true);
+        $updates = $this->createMock(push_file_updates::class);
+        $updates->expects($this->once())
+        ->method('send')
+        ->with($this->isType('array'))
+        ->willReturn(true);
 
         $task          = new file_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $task->updates = $updates->reveal();
+        $task->updates = $updates;
         $task->execute();
-
-        $updates->checkProphecyMethodsPredictions();
 
         // Recreate push config to get current counter values.
         unset($config);

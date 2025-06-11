@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $COURSE, $DB, $PAGE;
+        global $CFG, $COURSE, $DB;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -138,19 +138,31 @@ class mod_assign_mod_form extends moodleform_mod {
                               'assign');
         $mform->setType('requiresubmissionstatement', PARAM_BOOL);
 
-        $options = array(
-            ASSIGN_ATTEMPT_REOPEN_METHOD_NONE => get_string('attemptreopenmethod_none', 'mod_assign'),
-            ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL => get_string('attemptreopenmethod_manual', 'mod_assign'),
-            ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS => get_string('attemptreopenmethod_untilpass', 'mod_assign')
-        );
-        $mform->addElement('select', 'attemptreopenmethod', get_string('attemptreopenmethod', 'mod_assign'), $options);
-        $mform->addHelpButton('attemptreopenmethod', 'attemptreopenmethod', 'mod_assign');
-
-        $options = array(ASSIGN_UNLIMITED_ATTEMPTS => get_string('unlimitedattempts', 'mod_assign'));
+        $options = [ASSIGN_UNLIMITED_ATTEMPTS => get_string('unlimitedattempts', 'mod_assign')];
         $options += array_combine(range(1, 30), range(1, 30));
         $mform->addElement('select', 'maxattempts', get_string('maxattempts', 'mod_assign'), $options);
         $mform->addHelpButton('maxattempts', 'maxattempts', 'assign');
-        $mform->hideIf('maxattempts', 'attemptreopenmethod', 'eq', ASSIGN_ATTEMPT_REOPEN_METHOD_NONE);
+
+        $choice = new core\output\choicelist();
+
+        $choice->add_option(
+            value: ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
+            name: get_string('attemptreopenmethod_manual', 'mod_assign'),
+            definition: ['description' => get_string('attemptreopenmethod_manual_help', 'mod_assign')]
+        );
+        $choice->add_option(
+            value: ASSIGN_ATTEMPT_REOPEN_METHOD_AUTOMATIC,
+            name: get_string('attemptreopenmethod_automatic', 'mod_assign'),
+            definition: ['description' => get_string('attemptreopenmethod_automatic_help', 'mod_assign')]
+        );
+        $choice->add_option(
+            value: ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS,
+            name: get_string('attemptreopenmethod_untilpass', 'mod_assign'),
+            definition: ['description' => get_string('attemptreopenmethod_untilpass_help', 'mod_assign')]
+        );
+
+        $mform->addElement('choicedropdown', 'attemptreopenmethod', get_string('attemptreopenmethod', 'mod_assign'), $choice);
+        $mform->hideIf('attemptreopenmethod', 'maxattempts', 'eq', 1);
 
         $mform->addElement('header', 'groupsubmissionsettings', get_string('groupsubmissionsettings', 'assign'));
 
@@ -205,12 +217,6 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'sendstudentnotifications', $name);
         $mform->addHelpButton('sendstudentnotifications', 'sendstudentnotificationsdefault', 'assign');
 
-        // Plagiarism enabling form. To be removed (deprecated) with MDL-67526.
-        if (!empty($CFG->enableplagiarism)) {
-            require_once($CFG->libdir . '/plagiarismlib.php');
-            plagiarism_get_form_elements_module($mform, $ctx->get_course_context(), 'mod_assign');
-        }
-
         $this->standard_grading_coursemodule_elements();
         $name = get_string('blindmarking', 'assign');
         $mform->addElement('selectyesno', 'blindmarking', $name);
@@ -231,6 +237,12 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'markingallocation', $name);
         $mform->addHelpButton('markingallocation', 'markingallocation', 'assign');
         $mform->hideIf('markingallocation', 'markingworkflow', 'eq', 0);
+
+        $name = get_string('markinganonymous', 'assign');
+        $mform->addElement('selectyesno', 'markinganonymous', $name);
+        $mform->addHelpButton('markinganonymous', 'markinganonymous', 'assign');
+        $mform->hideIf('markinganonymous', 'markingworkflow', 'eq', 0);
+        $mform->hideIf('markinganonymous', 'blindmarking', 'eq', 0);
 
         $this->standard_coursemodule_elements();
         $this->apply_admin_defaults();
@@ -269,7 +281,9 @@ class mod_assign_mod_form extends moodleform_mod {
                 $errors['gradingduedate'] = get_string('gradingdueduedatevalidation', 'assign');
             }
         }
-        if ($data['blindmarking'] && $data['attemptreopenmethod'] == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
+        $multipleattemptsallowed = $data['maxattempts'] > 1 || $data['maxattempts'] == ASSIGN_UNLIMITED_ATTEMPTS;
+        if ($data['blindmarking'] && $multipleattemptsallowed &&
+                $data['attemptreopenmethod'] == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
             $errors['attemptreopenmethod'] = get_string('reopenuntilpassincompatiblewithblindmarking', 'assign');
         }
 
@@ -325,10 +339,13 @@ class mod_assign_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform =& $this->_form;
 
-        $mform->addElement('advcheckbox', 'completionsubmit', '', get_string('completionsubmit', 'assign'));
+        $suffix = $this->get_suffix();
+        $completionsubmitel = 'completionsubmit' . $suffix;
+        $mform->addElement('advcheckbox', $completionsubmitel, '', get_string('completionsubmit', 'assign'));
         // Enable this completion rule by default.
-        $mform->setDefault('completionsubmit', 1);
-        return array('completionsubmit');
+        $mform->setDefault($completionsubmitel, 1);
+
+        return [$completionsubmitel];
     }
 
     /**
@@ -338,7 +355,55 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return bool
      */
     public function completion_rule_enabled($data) {
-        return !empty($data['completionsubmit']);
+        $suffix = $this->get_suffix();
+        return !empty($data['completionsubmit' . $suffix]);
     }
 
+    /**
+     * Get the list of admin settings for this module and apply any defaults/advanced/locked/required settings.
+     *
+     * @param array $datetimeoffsets  - If passed, this is an array of fieldnames => times that the
+     *                          default date/time value should be relative to. If not passed, all
+     *                          date/time fields are set relative to the users current midnight.
+     * @return void
+     */
+    public function apply_admin_defaults($datetimeoffsets = []): void {
+        parent::apply_admin_defaults($datetimeoffsets);
+
+        $isupdate = !empty($this->_cm);
+        if ($isupdate) {
+            return;
+        }
+
+        $settings = get_config('mod_assign');
+        $mform = $this->_form;
+
+        if ($mform->elementExists('grade')) {
+            $element = $mform->getElement('grade');
+
+            if (property_exists($settings, 'defaultgradetype')) {
+                $modgradetype = $element->getName() . '[modgrade_type]';
+                switch ((int)$settings->defaultgradetype) {
+                    case GRADE_TYPE_NONE :
+                        $mform->setDefault($modgradetype, 'none');
+                        break;
+                    case GRADE_TYPE_SCALE :
+                        $mform->setDefault($modgradetype, 'scale');
+                        break;
+                    case GRADE_TYPE_VALUE :
+                        $mform->setDefault($modgradetype, 'point');
+                        break;
+                }
+            }
+
+            if (property_exists($settings, 'defaultgradescale')) {
+                /** @var grade_scale|false $gradescale */
+                $gradescale = grade_scale::fetch(['id' => (int)$settings->defaultgradescale, 'courseid' => 0]);
+
+                if ($gradescale) {
+                    $mform->setDefault($element->getName() . '[modgrade_scale]', $gradescale->id);
+                }
+            }
+        }
+    }
 }

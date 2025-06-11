@@ -25,12 +25,13 @@ namespace tool_monitor;
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /**
      * Set up method.
      */
     public function setUp(): void {
+        parent::setUp();
         // Enable monitor.
         set_config('enablemonitor', 1, 'tool_monitor');
     }
@@ -38,7 +39,7 @@ class generator_test extends \advanced_testcase {
     /**
      * Test create_rule data generator.
      */
-    public function test_create_rule() {
+    public function test_create_rule(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
         $course = $this->getDataGenerator()->create_course();
@@ -59,7 +60,7 @@ class generator_test extends \advanced_testcase {
     /**
      * Test create_subscription data generator.
      */
-    public function test_create_subscription() {
+    public function test_create_subscription(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
@@ -88,7 +89,7 @@ class generator_test extends \advanced_testcase {
     /**
      * Test create_event data generator.
      */
-    public function test_create_event_entries() {
+    public function test_create_event_entries(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
         $context = \context_system::instance();
@@ -106,7 +107,7 @@ class generator_test extends \advanced_testcase {
     /**
      * Test create_history data generator.
      */
-    public function test_create_history() {
+    public function test_create_history(): void {
         $this->setAdminUser();
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();

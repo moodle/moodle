@@ -56,19 +56,19 @@ class lpmonitoring_user_competency_summary_in_course extends user_competency_sum
         }
 
         $relatedcompetencies = competency_api::list_related_competencies($competency->get('id'));
-        $user = $DB->get_record('user', array('id' => $this->userid));
+        $user = $DB->get_record('user', ['id' => $this->userid]);
         $evidence = competency_api::list_evidence_in_course($this->userid, $this->courseid, $this->competencyid);
-        $course = $DB->get_record('course', array('id' => $this->courseid));
+        $course = $DB->get_record('course', ['id' => $this->courseid]);
 
-        $params = array(
+        $params = [
             'competency' => $competency,
             'usercompetencycourse' => $usercompetencycourse,
             'evidence' => $evidence,
             'user' => $user,
             'course' => $course,
             'scale' => $competency->get_scale(),
-            'relatedcompetencies' => $relatedcompetencies
-        );
+            'relatedcompetencies' => $relatedcompetencies,
+        ];
         $exporter = new lpmonitoring_user_competency_summary_in_course_exporter(null, $params);
         $data = $exporter->export($output);
 

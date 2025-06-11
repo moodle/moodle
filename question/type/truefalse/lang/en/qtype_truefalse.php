@@ -41,6 +41,3 @@ $string['pluginnamesummary'] = 'A simple form of multiple choice question with j
 $string['privacy:preference:showstandardinstruction'] = 'Whether showing standard instruction.';
 $string['showstandardinstruction'] = 'Show standard instructions';
 $string['showstandardinstruction_help'] = 'Whether to show the instructions "Select one:" before true/false answers.';
-
-// Deprecated since Moodle 4.1.
-$string['privacy:metadata'] = 'The True/False question type plugin does not store any personal data.';

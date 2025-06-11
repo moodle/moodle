@@ -35,12 +35,12 @@ use core_course\local\repository\content_item_readonly_repository;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exporters_content_items_test extends \advanced_testcase {
+final class exporters_content_items_test extends \advanced_testcase {
 
     /**
      * Test confirming the collection of content_items can be exported for a course.
      */
-    public function test_export_course_content_items() {
+    public function test_export_course_content_items(): void {
         $this->resetAfterTest();
         global $PAGE;
 
@@ -53,16 +53,16 @@ class exporters_content_items_test extends \advanced_testcase {
         $renderer = $PAGE->get_renderer('core');
         $exportedcontentitems = $ciexporter->export($renderer);
 
-        $this->assertObjectHasAttribute('content_items', $exportedcontentitems);
+        $this->assertObjectHasProperty('content_items', $exportedcontentitems);
         foreach ($exportedcontentitems->content_items as $key => $dto) {
-            $this->assertObjectHasAttribute('id', $dto);
-            $this->assertObjectHasAttribute('name', $dto);
-            $this->assertObjectHasAttribute('title', $dto);
-            $this->assertObjectHasAttribute('link', $dto);
-            $this->assertObjectHasAttribute('icon', $dto);
-            $this->assertObjectHasAttribute('help', $dto);
-            $this->assertObjectHasAttribute('archetype', $dto);
-            $this->assertObjectHasAttribute('componentname', $dto);
+            $this->assertObjectHasProperty('id', $dto);
+            $this->assertObjectHasProperty('name', $dto);
+            $this->assertObjectHasProperty('title', $dto);
+            $this->assertObjectHasProperty('link', $dto);
+            $this->assertObjectHasProperty('icon', $dto);
+            $this->assertObjectHasProperty('help', $dto);
+            $this->assertObjectHasProperty('archetype', $dto);
+            $this->assertObjectHasProperty('componentname', $dto);
         }
     }
 }

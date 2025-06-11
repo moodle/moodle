@@ -16,6 +16,7 @@
 
 namespace tool_admin_presets\local\action;
 
+use core_adminpresets\manager;
 use moodle_exception;
 
 /**
@@ -34,8 +35,8 @@ class delete extends base {
     public function show(): void {
         global $DB, $OUTPUT;
 
-        // Getting the preset name.
-        $presetdata = $DB->get_record('adminpresets', ['id' => $this->id], 'name');
+        // Check the preset exists (cannot delete the pre-installed core "Starter" and "Full" presets).
+        $presetdata = $DB->get_record('adminpresets', ['id' => $this->id, 'iscore' => manager::NONCORE_PRESET], 'name');
 
         if ($presetdata) {
             $deletetext = get_string('deletepreset', 'tool_admin_presets', $presetdata->name);
@@ -64,7 +65,7 @@ class delete extends base {
      * Delete the DB preset
      */
     public function execute(): void {
-        confirm_sesskey();
+        require_sesskey();
 
         $this->manager->delete_preset($this->id);
 

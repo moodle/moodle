@@ -77,7 +77,6 @@ abstract class backup_plan_dbops extends backup_dbops {
         // Get the course and sequence of the section
         $secrec = $DB->get_record('course_sections', array('id' => $sectionid), 'course, sequence');
         $courseid = $secrec->course;
-        $sequence = $secrec->sequence;
 
         // Get the section->sequence contents (it roots the activities order)
         // Get all course modules belonging to requested section
@@ -89,7 +88,7 @@ abstract class backup_plan_dbops extends backup_dbops {
              WHERE cm.course = ?
                AND cm.section = ?
                AND cm.deletioninprogress <> 1", array($courseid, $sectionid));
-        foreach (explode(',', $sequence) as $moduleid) {
+        foreach (explode(',', (string) $secrec->sequence) as $moduleid) {
             if (isset($modules[$moduleid])) {
                 $module = array('id' => $modules[$moduleid]->id, 'modname' => $modules[$moduleid]->modname);
                 $modulesarr[] = (object)$module;
@@ -118,6 +117,17 @@ abstract class backup_plan_dbops extends backup_dbops {
             $sectionsarr[] = $section->id;
         }
         return $sectionsarr;
+    }
+
+    /**
+     * Given one section id, returns the full section record.
+     *
+     * @param int $sectionid
+     * @return stdClass
+     */
+    public static function get_section_from_id($sectionid): stdClass {
+        global $DB;
+        return $DB->get_record('course_sections', ['id' => $sectionid]);
     }
 
     /**

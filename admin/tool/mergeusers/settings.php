@@ -61,19 +61,19 @@ if ($hassiteconfig) {
         get_string('suspenduser_setting_desc', 'tool_mergeusers'),
         1));
 
-    $supporting_lang = (tool_mergeusers_transactionssupported()) ? 'transactions_supported' : 'transactions_not_supported';
+    $supportinglang = (tool_mergeusers_transactionssupported()) ? 'transactions_supported' : 'transactions_not_supported';
 
     $settings->add(new admin_setting_configcheckbox('tool_mergeusers/transactions_only',
         get_string('transactions_setting', 'tool_mergeusers'),
         get_string('transactions_setting_desc', 'tool_mergeusers') . '<br /><br />' .
-            get_string($supporting_lang, 'tool_mergeusers'),
+            get_string($supportinglang, 'tool_mergeusers'),
         1));
 
     $exceptionoptions = tool_mergeusers_build_exceptions_options();
     $settings->add(new admin_setting_configmultiselect('tool_mergeusers/excluded_exceptions',
         get_string('excluded_exceptions', 'tool_mergeusers'),
         get_string('excluded_exceptions_desc', 'tool_mergeusers', $exceptionoptions->defaultvalue),
-        array($exceptionoptions->defaultkey), //default value: empty => apply all exceptions.
+        array($exceptionoptions->defaultkey), // Default value: empty => apply all exceptions.
         $exceptionoptions->options));
 
     // Quiz attempts.
@@ -90,6 +90,6 @@ if ($hassiteconfig) {
         get_string('uniquekeynewidtomaintain_desc', 'tool_mergeusers'),
         1));
 
-    // Add settings
+    // Add settings.
     $ADMIN->add('tools', $settings);
 }

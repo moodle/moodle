@@ -103,15 +103,6 @@ class user_login_failed extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'login', 'error', 'index.php', $this->other['username']);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

@@ -867,7 +867,9 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
             $plugin->version = null;
             $module = $plugin;
             include($versionfile);
-            $data['version'] = $plugin->version;
+            // Have to hardcode - since quiz uses some hardcoded version numbers when restoring.
+            // This is the lowest number used minus one.
+            $data['version'] = 2011010099;
         } else {
             $data['version'] = null;
         }
@@ -2035,7 +2037,7 @@ abstract class moodle1_resource_successor_handler extends moodle1_mod_handler {
      * @param array $data pre-cooked legacy resource data
      * @param array $raw raw legacy resource data
      */
-    public function process_legacy_resource(array $data, array $raw = null) {
+    public function process_legacy_resource(array $data, ?array $raw = null) {
     }
 
     /**

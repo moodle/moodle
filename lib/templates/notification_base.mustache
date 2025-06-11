@@ -38,14 +38,31 @@
         "message": "<p>Hello <a href=\"#\">World!</a></p><p>Your pants are on fire!</p>",
         "closebutton": 1,
         "announce": 1,
-        "extraclasses": "foo bar"
+        "extraclasses": "foo bar",
+        "title": "Notification title",
+        "titleicon": {
+            "icon": "i/circleinfo",
+            "component": "core"
+        }
     }
 }}
 <div class="alert {{$alertclass}}alert-secondary{{/alertclass}} alert-block fade in {{ extraclasses }} {{#closebutton}}alert-dismissible{{/closebutton}}" {{!
         }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}>
+    {{#title}}
+        <div class="mb-2 mt-1 d-flex alert-heading">
+            {{#titleicon}}
+                <span>
+                    {{#pix}}{{icon}}, {{component}}{{/pix}}
+                </span>
+            {{/titleicon}}
+            <h3 class="h6 mb-0">
+                <span class="align-middle">{{.}}</span>
+            </h3>
+        </div>
+    {{/title}}
     {{{ message }}}
     {{# closebutton }}{{!
-    }}<button type="button" class="close" data-dismiss="alert">
+    }}<button type="button" class="btn-close" data-dismiss="alert">
         <span aria-hidden="true">&times;</span>
         <span class="sr-only">{{#str}}dismissnotification, core{{/str}}</span>
     </button>{{!

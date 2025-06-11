@@ -23,7 +23,7 @@ Feature: Insert a MathType formula in an assignment's feedbacks
     And the "urltolink" filter is "off"
     And I log in as "admin"
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-98 - Insert a MathType formula in an assignment's feedback
     # 01. Create the assignment
     And I am on "Course 1" course homepage with editing mode on
@@ -36,7 +36,7 @@ Feature: Insert a MathType formula in an assignment's feedbacks
     And I should see "Grade"
     And I wait "1" seconds
     # Suboptimal way to click on the 'Grade' link since "I press", "I follow" and 'I click on "Grade" "link"' don't work.
-    And I click on ".btn-primary" "css_element" in the "//div[@class='row']" "xpath_element"
+    And I click on "Grade" "link" in the ".tertiary-navigation" "css_element"
     # 02. Grade the assignment.
     And I click on "More options" in TinyMCE 6 editor toolbar
     And I click on "MathType" "button"

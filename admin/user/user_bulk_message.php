@@ -10,7 +10,8 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 admin_externalpage_setup('userbulk');
 require_capability('moodle/site:manageallmessaging', context_system::instance());
 
-$return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
+$returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
+$return = new moodle_url($returnurl ?: '/admin/user/user_bulk.php');
 
 if (empty($SESSION->bulk_users)) {
     redirect($return);
@@ -39,6 +40,7 @@ if ($confirm and !empty($msg) and confirm_sesskey()) {
 }
 
 $msgform = new user_message_form('user_bulk_message.php');
+$msgform->set_data(['returnurl' => $returnurl]);
 
 if ($msgform->is_cancelled()) {
     redirect($return);
@@ -47,7 +49,6 @@ if ($msgform->is_cancelled()) {
     $options = new stdClass();
     $options->para     = false;
     $options->newlines = true;
-    $options->smiley   = false;
     $options->trusted = trusttext_trusted(\context_system::instance());
 
     $msg = format_text($formdata->messagebody['text'], $formdata->messagebody['format'], $options);
@@ -59,8 +60,10 @@ if ($msgform->is_cancelled()) {
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview'); //TODO: clean once we start using proper text formats here
 
-    $formcontinue = new single_button(new moodle_url('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg)), get_string('yes')); //TODO: clean once we start using proper text formats here
-    $formcancel = new single_button(new moodle_url('user_bulk.php'), get_string('no'), 'get');
+    $formcontinue = new single_button(new moodle_url('user_bulk_message.php',
+        ['confirm' => 1, 'msg' => $msg, 'returnurl' => $returnurl]),
+        get_string('yes')); // TODO: clean once we start using proper text formats here.
+    $formcancel = new single_button($return, get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
     echo $OUTPUT->footer();
     die;

@@ -43,13 +43,14 @@ use core_block\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
@@ -97,7 +98,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user IDs are returned for a given context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -125,7 +126,7 @@ class provider_test extends provider_testcase {
     }
 
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -195,7 +196,7 @@ class provider_test extends provider_testcase {
             'name' => "docked_block_instance_{$blockmentees->instance->id}"]));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -301,7 +302,7 @@ class provider_test extends provider_testcase {
     /**
      * Test the deletion of data related to a context and a list of users.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -339,7 +340,7 @@ class provider_test extends provider_testcase {
                 ['name' => "block{$blockcontext->instanceid}hidden"]));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -381,22 +382,22 @@ class provider_test extends provider_testcase {
         $this->assertEquals($yes, $prefs->block_is_hidden->value);
 
         $prefs = writer::with_context($bprivatefiles->context)->get_user_context_preferences('core_block');
-        $this->assertObjectNotHasAttribute('block_is_docked', $prefs);
+        $this->assertObjectNotHasProperty('block_is_docked', $prefs);
         $this->assertEquals($no, $prefs->block_is_hidden->value);
 
         $prefs = writer::with_context($bmyprofile->context)->get_user_context_preferences('core_block');
         $this->assertEquals($yes, $prefs->block_is_docked->value);
-        $this->assertObjectNotHasAttribute('block_is_hidden', $prefs);
+        $this->assertObjectNotHasProperty('block_is_hidden', $prefs);
     }
 
     /**
      * Get the block manager.
      *
      * @param array $regions The regions.
-     * @param context $context The context.
+     * @param \context $context The context.
      * @param string $pagetype The page type.
      * @param string $subpage The sub page.
-     * @return block_manager
+     * @return \block_manager
      */
     protected function get_block_manager($regions, $context, $pagetype = 'page-type', $subpage = '') {
         $page = new \moodle_page();
@@ -415,7 +416,7 @@ class provider_test extends provider_testcase {
     /**
      * Set a docked preference.
      *
-     * @param block_base $block The block.
+     * @param \block_base $block The block.
      * @param bool $value The value.
      * @param int $userid The user ID.
      */
@@ -426,7 +427,7 @@ class provider_test extends provider_testcase {
     /**
      * Set a hidden preference.
      *
-     * @param block_base $block The block.
+     * @param \block_base $block The block.
      * @param bool $value The value.
      * @param int $userid The user ID.
      */

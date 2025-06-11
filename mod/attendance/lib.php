@@ -64,7 +64,7 @@ function attendance_supports($feature) {
 function att_add_default_statuses($attid) {
     global $DB;
 
-    $statuses = $DB->get_recordset('attendance_statuses', array('attendanceid' => 0), 'id');
+    $statuses = $DB->get_recordset('attendance_statuses', ['attendanceid' => 0], 'id');
     foreach ($statuses as $st) {
         $rec = $st;
         $rec->attendanceid = $attid;
@@ -83,7 +83,7 @@ function attendance_add_default_warnings($id) {
     require_once($CFG->dirroot.'/mod/attendance/locallib.php');
 
     $warnings = $DB->get_recordset('attendance_warning',
-        array('idnumber' => 0), 'id');
+        ['idnumber' => 0], 'id');
     foreach ($warnings as $n) {
         $rec = $n;
         $rec->idnumber = $id;
@@ -151,24 +151,25 @@ function attendance_delete_instance($id) {
     global $DB, $CFG;
     require_once($CFG->dirroot.'/mod/attendance/locallib.php');
 
-    if (! $attendance = $DB->get_record('attendance', array('id' => $id))) {
+    if (! $attendance = $DB->get_record('attendance', ['id' => $id])) {
         return false;
     }
 
-    if ($sessids = array_keys($DB->get_records('attendance_sessions', array('attendanceid' => $id), '', 'id'))) {
+    if ($sessids = array_keys($DB->get_records('attendance_sessions', ['attendanceid' => $id], '', 'id'))) {
         if (attendance_existing_calendar_events_ids($sessids)) {
             attendance_delete_calendar_events($sessids);
         }
         $DB->delete_records_list('attendance_log', 'sessionid', $sessids);
-        $DB->delete_records('attendance_sessions', array('attendanceid' => $id));
+        $DB->delete_records('attendance_sessions', ['attendanceid' => $id]);
     }
-    $DB->delete_records('attendance_statuses', array('attendanceid' => $id));
+    $DB->delete_records('attendance_statuses', ['attendanceid' => $id]);
 
-    $DB->delete_records('attendance_warning', array('idnumber' => $id));
+    $DB->delete_records('attendance_warning', ['idnumber' => $id]);
 
-    $DB->delete_records('attendance', array('id' => $id));
-
+    // Grades must be deleted before the main attendance record.
     attendance_grade_item_delete($attendance);
+
+    $DB->delete_records('attendance', ['id' => $id]);
 
     return true;
 }
@@ -199,7 +200,7 @@ function attendance_reset_course_form_definition(&$mform) {
  * @return array
  */
 function attendance_reset_course_form_defaults($course) {
-    return array('reset_attendance_log' => 0, 'reset_attendance_statuses' => 0, 'reset_attendance_sessions' => 0);
+    return ['reset_attendance_log' => 0, 'reset_attendance_statuses' => 0, 'reset_attendance_sessions' => 0];
 }
 
 /**
@@ -211,9 +212,9 @@ function attendance_reset_course_form_defaults($course) {
 function attendance_reset_userdata($data) {
     global $DB;
 
-    $status = array();
+    $status = [];
 
-    $attids = array_keys($DB->get_records('attendance', array('course' => $data->courseid), '', 'id'));
+    $attids = array_keys($DB->get_records('attendance', ['course' => $data->courseid], '', 'id'));
 
     if (!empty($data->reset_attendance_log)) {
         $sess = $DB->get_records_list('attendance_sessions', 'attendanceid', $attids, '', 'id');
@@ -227,11 +228,11 @@ function attendance_reset_userdata($data) {
                 $DB->set_field_select('attendance_sessions', 'automarkcompleted', 0, "attendanceid $sql", $params);
             }
 
-            $status[] = array(
+            $status[] = [
                 'component' => get_string('modulenameplural', 'attendance'),
                 'item' => get_string('attendancedata', 'attendance'),
-                'error' => false
-            );
+                'error' => false,
+            ];
         }
     }
 
@@ -241,11 +242,11 @@ function attendance_reset_userdata($data) {
             att_add_default_statuses($attid);
         }
 
-        $status[] = array(
+        $status[] = [
             'component' => get_string('modulenameplural', 'attendance'),
             'item' => get_string('sessions', 'attendance'),
-            'error' => false
-        );
+            'error' => false,
+        ];
     }
 
     if (!empty($data->reset_attendance_sessions)) {
@@ -255,11 +256,11 @@ function attendance_reset_userdata($data) {
         }
         $DB->delete_records_list('attendance_sessions', 'attendanceid', $attids);
 
-        $status[] = array(
+        $status[] = [
             'component' => get_string('modulenameplural', 'attendance'),
             'item' => get_string('statuses', 'attendance'),
-            'error' => false
-        );
+            'error' => false,
+        ];
     }
 
     return $status;
@@ -349,15 +350,12 @@ function attendance_grade_item_update($attendance, $grades=null) {
     if (!isset($attendance->courseid)) {
         $attendance->courseid = $attendance->course;
     }
-    if (!$DB->get_record('course', array('id' => $attendance->course))) {
-        error("Course is misconfigured");
-    }
 
     if (!empty($attendance->cmidnumber)) {
-        $params = array('itemname' => $attendance->name, 'idnumber' => $attendance->cmidnumber);
+        $params = ['itemname' => $attendance->name, 'idnumber' => $attendance->cmidnumber];
     } else {
         // MDL-14303.
-        $params = array('itemname' => $attendance->name);
+        $params = ['itemname' => $attendance->name];
     }
 
     if ($attendance->grade > 0) {
@@ -395,7 +393,7 @@ function attendance_grade_item_delete($attendance) {
     }
 
     return grade_update('mod/attendance', $attendance->courseid, 'mod', 'attendance',
-                        $attendance->id, 0, null, array('deleted' => 1));
+                        $attendance->id, 0, null, ['deleted' => 1]);
 }
 
 /**
@@ -444,18 +442,18 @@ function attendance_pluginfile($course, $cm, $context, $filearea, $args, $forced
 
     require_login($course, false, $cm);
 
-    if (!$DB->record_exists('attendance', array('id' => $cm->instance))) {
+    if (!$DB->record_exists('attendance', ['id' => $cm->instance])) {
         return false;
     }
 
     // Session area is served by pluginfile.php.
-    $fileareas = array('session');
+    $fileareas = ['session'];
     if (!in_array($filearea, $fileareas)) {
         return false;
     }
 
     $sessid = (int)array_shift($args);
-    if (!$DB->record_exists('attendance_sessions', array('id' => $sessid))) {
+    if (!$DB->record_exists('attendance_sessions', ['id' => $sessid])) {
         return false;
     }
 
@@ -476,7 +474,7 @@ function attendance_pluginfile($course, $cm, $context, $filearea, $args, $forced
 function attendance_print_settings_tabs($selected = 'settings') {
     global $CFG;
     // Print tabs for different settings pages.
-    $tabs = array();
+    $tabs = [];
     $tabs[] = new tabobject('settings', "{$CFG->wwwroot}/{$CFG->admin}/settings.php?section=modsettingattendance",
         get_string('settings', 'attendance'), get_string('settings'), false);
 
@@ -506,7 +504,7 @@ function attendance_print_settings_tabs($selected = 'settings') {
         get_string('importsessions', 'attendance'), get_string('importsessions', 'attendance'), false);
 
     ob_start();
-    print_tabs(array($tabs), $selected);
+    print_tabs([$tabs], $selected);
     $tabmenu = ob_get_contents();
     ob_end_clean();
 
@@ -524,13 +522,13 @@ function attendance_remove_user_from_thirdpartyemails($warnings, $userid) {
 
     // Update the third party emails list for all the relevant warnings.
     $updatedwarnings = array_map(
-        function(stdClass $warning) use ($userid) : stdClass {
+        function(stdClass $warning) use ($userid): stdClass {
             $warning->thirdpartyemails = implode(',', array_diff(explode(',', $warning->thirdpartyemails), [$userid]));
             return $warning;
         },
         array_filter(
             $warnings,
-            function (stdClass $warning) use ($userid) : bool {
+            function (stdClass $warning) use ($userid): bool {
                 return in_array($userid, explode(',', $warning->thirdpartyemails));
             }
         )
@@ -586,34 +584,34 @@ function attendance_extend_settings_navigation(settings_navigation $settingsnav,
     $nodes = [];
     if (has_capability('mod/attendance:viewreports', $context)) {
         $nodes[] = ['url' => new moodle_url('/mod/attendance/report.php', ['id' => $cm->id]),
-                    'title' => get_string('report', 'attendance')];
+                    'title' => get_string('report', 'attendance'), ];
     }
     if (has_capability('mod/attendance:import', $context)) {
         $nodes[] = ['url' => new moodle_url('/mod/attendance/import.php', ['id' => $cm->id]),
-                    'title' => get_string('import', 'attendance')];
+                    'title' => get_string('import', 'attendance'), ];
     }
     if (has_capability('mod/attendance:export', $context)) {
         $nodes[] = ['url' => new moodle_url('/mod/attendance/export.php', ['id' => $cm->id]),
-                    'title' => get_string('export', 'attendance')];
+                    'title' => get_string('export', 'attendance'), ];
     }
 
     if (has_capability('mod/attendance:viewreports', $context) && get_config('attendance', 'enablewarnings')) {
         $nodes[] = ['url' => new moodle_url('/mod/attendance/absentee.php', ['id' => $cm->id]),
-                    'title' => get_string('absenteereport', 'attendance')];
+                    'title' => get_string('absenteereport', 'attendance'), ];
     }
     if (has_capability('mod/attendance:changepreferences', $context)) {
         $nodes[] = ['url' => new moodle_url('/mod/attendance/preferences.php', ['id' => $cm->id]),
-                    'title' => get_string('statussetsettings', 'attendance')];
+                    'title' => get_string('statussetsettings', 'attendance'), ];
         if (get_config('attendance', 'enablewarnings')) {
             $nodes[] = ['url' => new moodle_url('/mod/attendance/warnings.php', ['id' => $cm->id]),
-            'title' => get_string('warnings', 'attendance')];
+            'title' => get_string('warnings', 'attendance'), ];
         }
     }
 
     if (has_capability('mod/attendance:managetemporaryusers', context_module::instance($cm->id))) {
         $nodes[] = ['url' => new moodle_url('/mod/attendance/tempusers.php', ['id' => $cm->id]),
         'title' => get_string('tempusers', 'attendance'),
-        'more' => true];
+        'more' => true, ];
     }
 
     foreach ($nodes as $node) {

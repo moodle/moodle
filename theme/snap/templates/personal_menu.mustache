@@ -1,0 +1,119 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+ @package   theme_snap
+ @copyright Copyright (c) 2017 Open LMS
+ @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+
+<nav id="snap-pm" tabindex="-1">
+    <div id="snap-pm-inner">
+        <!-- Header -->
+        {{#advancedfeeds}} <feed-error-modal></feed-error-modal> {{/advancedfeeds}}
+        <header id="snap-pm-header" class="clearfix">
+            <div class="float-end">
+                <a id="snap-pm-close" class="js-snap-pm-trigger snap-action-icon snap-icon-close" href="#">
+                        <small>{{#str}}closebuttontitle{{/str}}</small>
+                </a>
+            </div>
+            <!-- User details -->
+            <div class="snap-pm-user">
+                {{{userpicture}}}
+                {{{fullnamelink}}}
+                {{{realfullnamelink}}}
+                <div id="snap-pm-header-quicklinks">
+                {{#quicklinks}}
+                    <a {{#id}}id="{{.}}" {{/id}}href="{{link}}">{{title}}</a>
+                {{/quicklinks}}
+                </div>
+            </div>
+
+
+        </header>
+{{#courselimitstr}}
+    <div class='alert alert-block alert-{{courselimitclass}} fade in'>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button>
+        {{courselimitstr}}
+    </div>
+{{/courselimitstr}}
+        <!-- Content -->
+        <div id="snap-pm-content" class="row">
+            <!-- Courses -->
+            <section id="snap-pm-courses" class="col-lg-9">
+                <h2 class="sr-only">{{#str}}courses{{/str}}</h2>
+
+{{!
+    When the user has courses which have finished, output course by year as tabs.
+}}
+
+                {{#coursenav}}
+                    <!-- Nav tabs -->
+                <div id="snap-pm-accessible-tab">
+                    <ul class="nav nav-tabs" role="tablist" id="snap-pm-courses-nav">
+                            <li class="tab active">
+                                <a id="snap-pm-tab-current" class="nav-link" href="#snap-pm-courses-current" role="tab" aria-controls="snap-pm-courses-current" data-toggle="tab" tabindex="0">{{#str}}courses{{/str}}</a>
+                            </li>
+                            {{#pastcourselist}}
+                                <li class="tab">
+                                    <a id="snap-pm-tab-{{year}}" class="nav-link" href="#snap-pm-courses-{{year}}" role="tab" aria-controls="snap-pm-courses-{{year}}" data-toggle="tab" tabindex="-1">{{year}}</a>
+                                </li>
+                            {{/pastcourselist}}
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content" id="snap-pm-courses-content" aria-live="polite">
+                        <!-- Current courses -->
+                        {{> theme_snap/personal_menu_current_courses }}
+
+                        <!-- Past courses by year -->
+                        {{#pastcourselist}}
+                            <div id="snap-pm-courses-{{year}}" class="tab-pane fade in clearfix" role="tabpanel" aria-labelledby="hsnap-pm-tab-{{year}}" aria-hidden="false" tabindex="0">
+                                {{#courses}}
+                                    {{> theme_snap/course_cards }}
+                                {{/courses}}
+                            </div>
+                        {{/pastcourselist}}
+                    </div>
+                </div>
+                {{/coursenav}}
+
+{{!
+    When the user has no course which have finished, output current courses only.
+}}
+
+                {{^coursenav}}
+                <!-- Current courses -->
+                {{> theme_snap/personal_menu_current_courses }}
+                {{/coursenav}}
+
+                {{{browseallcourses}}}
+            </section>
+            <!-- Updates -->
+            <div id="snap-pm-updates" class="col-lg-3">
+                {{#updates}}
+                    {{#update}}
+                        <section>{{{.}}}</section>
+                    {{/update}}
+                {{/updates}}
+            </div>
+        </div>
+        {{#updates}}
+            {{{mobilemenu}}}
+        {{/updates}}
+        <!-- // End Content -->
+    </div>
+</nav>

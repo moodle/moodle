@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
     $plugininfos = core_plugin_manager::instance()->get_plugins_of_type('local');
 
     // Paging options.
-    $options = array(
+    $options = [
           0 => get_string('donotusepaging', 'attendance'),
          25 => 25,
          50 => 50,
@@ -45,7 +45,7 @@ if ($ADMIN->fulltree) {
          250 => 250,
          500 => 500,
          1000 => 1000,
-    );
+    ];
 
     $settings->add(new admin_setting_configselect('attendance/resultsperpage',
         get_string('resultsperpage', 'attendance'), get_string('resultsperpage_desc', 'attendance'), 25, $options));
@@ -76,14 +76,14 @@ if ($ADMIN->fulltree) {
         get_string('subnetactivitylevel', 'attendance'),
         get_string('subnetactivitylevel_desc', 'attendance'), 1));
 
-    $options = array(
+    $options = [
         ATT_VIEW_ALL => get_string('all', 'attendance'),
         ATT_VIEW_ALLPAST => get_string('allpast', 'attendance'),
         ATT_VIEW_NOTPRESENT => get_string('below', 'attendance', 'X'),
         ATT_VIEW_MONTHS => get_string('months', 'attendance'),
         ATT_VIEW_WEEKS => get_string('weeks', 'attendance'),
-        ATT_VIEW_DAYS => get_string('days', 'attendance')
-    );
+        ATT_VIEW_DAYS => get_string('days', 'attendance'),
+    ];
 
     $settings->add(new admin_setting_configselect('attendance/defaultview',
         get_string('defaultview', 'attendance'),
@@ -113,7 +113,7 @@ if ($ADMIN->fulltree) {
         get_string('automarkuseempty', 'attendance'),
         get_string('automarkuseempty_desc', 'attendance'), 1));
 
-    $fields = array('id' => get_string('studentid', 'attendance'));
+    $fields = ['id' => get_string('studentid', 'attendance')];
     $customfields = profile_get_custom_fields();
     foreach ($customfields as $field) {
         $fields[$field->shortname] = format_string($field->name);
@@ -122,7 +122,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configmultiselect('attendance/customexportfields',
             new lang_string('customexportfields', 'attendance'),
             new lang_string('customexportfields_help', 'attendance'),
-            array('id'), $fields)
+            ['id'], $fields)
     );
 
     $name = new lang_string('mobilesettings', 'mod_attendance');
@@ -192,14 +192,14 @@ if ($ADMIN->fulltree) {
     $description = new lang_string('defaultwarningsettings_help', 'mod_attendance');
     $settings->add(new admin_setting_heading('defaultwarningsettings', $name, $description));
 
-    $options = array();
+    $options = [];
     for ($i = 1; $i <= 100; $i++) {
         $options[$i] = "$i%";
     }
     $settings->add(new admin_setting_configselect('attendance/warningpercent',
         get_string('warningpercent', 'attendance'), get_string('warningpercent_help', 'attendance'), 70, $options));
 
-    $options = array();
+    $options = [];
     for ($i = 1; $i <= 50; $i++) {
         $options[$i] = "$i";
     }

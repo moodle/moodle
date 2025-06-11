@@ -11,6 +11,8 @@ Feature: availability_relativedate relative activities
     And the following config values are set as admin:
       | enableavailability       | 1 |        |
       | backup_import_activities | 0 | backup |
+      | enableasyncbackup        | 0 |        |
+
     And the following "course" exists:
       | fullname          | Course 1             |
       | shortname         | C1                   |
@@ -86,6 +88,7 @@ Feature: availability_relativedate relative activities
     Then I should see "Page A1" in the "region-main" "region"
     And I should see "1 hour after completion of activity Page A1"
     And I press "Mark as done"
+    And I reload the page
     But I should not see "1 hour after completion of activity Page A1"
     And I log out
     And I trigger cron
@@ -102,7 +105,18 @@ Feature: availability_relativedate relative activities
     And I should see "Page B2 (copy)"
 
   @javascript
-  Scenario: Admin can backup and restore a course with restricted activities
+  Scenario: Admin can backup and restore a course with relative restricted activities
+    When I am on "Course 1" course homepage
+    And I backup "Course 1" course using this options:
+      | Confirmation | Filename | test_backup.mbz |
+    And I restore "test_backup.mbz" backup into a new course using this options:
+      | Schema | Course name       | Course 2 |
+      | Schema | Course short name | C2       |
+    And I am on "Course 2" course homepage
+    Then I should see "Not available unless: (1 hour after completion of activity"
+
+  @javascript
+  Scenario: Admin can backup and restore a module with relative restricted activities
     When I am on "Course 1" course homepage
     And I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |

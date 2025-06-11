@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Function to upgrade tool_dataprivacy.
  *
@@ -35,56 +33,80 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2020061501) {
-
-        // Define field commentsformat to be added to tool_dataprivacy_request.
-        $table = new xmldb_table('tool_dataprivacy_request');
-        $field = new xmldb_field('commentsformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'comments');
-
-        // Conditionally launch add field commentsformat.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field dpocommentformat to be added to tool_dataprivacy_request.
-        $field = new xmldb_field('dpocommentformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'dpocomment');
-
-        // Conditionally launch add field dpocommentformat.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field systemapproved to be added to tool_dataprivacy_request.
-        $field = new xmldb_field('systemapproved', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'dpocommentformat');
-
-        // Conditionally launch add field systemapproved.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Dataprivacy savepoint reached.
-        upgrade_plugin_savepoint(true, 2020061501, 'tool', 'dataprivacy');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-    if ($oldversion < 2022053000) {
-
-        // Define key usermodified (foreign) to be added to tool_dataprivacy_purposerole.
-        $table = new xmldb_table('tool_dataprivacy_purposerole');
-        $key = new xmldb_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
-
-        // Launch add key usermodified.
-        $dbman->add_key($table, $key);
-
-        // Dataprivacy savepoint reached.
-        upgrade_plugin_savepoint(true, 2022053000, 'tool', 'dataprivacy');
-    }
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2023062700) {
+        // Define table tool_dataprivacy_contextlist to be created.
+        $table = new xmldb_table('tool_dataprivacy_contextlist');
+
+        // Adding fields to table tool_dataprivacy_contextlist.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table tool_dataprivacy_contextlist.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for tool_dataprivacy_contextlist.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table tool_dataprivacy_ctxlst_ctx to be created.
+        $table = new xmldb_table('tool_dataprivacy_ctxlst_ctx');
+
+        // Adding fields to table tool_dataprivacy_ctxlst_ctx.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextlistid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table tool_dataprivacy_ctxlst_ctx.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('contextlistid', XMLDB_KEY_FOREIGN, ['contextlistid'], 'tool_dataprivacy_contextlist', ['id']);
+
+        // Conditionally launch create table for tool_dataprivacy_ctxlst_ctx.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table tool_dataprivacy_rqst_ctxlst to be created.
+        $table = new xmldb_table('tool_dataprivacy_rqst_ctxlst');
+
+        // Adding fields to table tool_dataprivacy_rqst_ctxlst.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('requestid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextlistid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table tool_dataprivacy_rqst_ctxlst.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('requestid', XMLDB_KEY_FOREIGN, ['requestid'], 'tool_dataprivacy_request', ['id']);
+        $table->add_key('contextlistid', XMLDB_KEY_FOREIGN, ['contextlistid'], 'tool_dataprivacy_contextlist', ['id']);
+        $table->add_key('requestidcontextlistid', XMLDB_KEY_UNIQUE, ['requestid', 'contextlistid']);
+
+        // Conditionally launch create table for tool_dataprivacy_rqst_ctxlst.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Dataprivacy savepoint reached.
+        upgrade_plugin_savepoint(true, 2023062700, 'tool', 'dataprivacy');
+    }
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

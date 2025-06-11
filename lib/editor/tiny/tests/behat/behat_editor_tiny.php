@@ -86,6 +86,36 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
     }
 
     /**
+     * Checks that a button exists in specified TinyMCE editor.
+     *
+     * @When /^"(?P<button_string>(?:[^"]|\\")*)" button should exist in the "(?P<locator_string>(?:[^"]|\\")*)" TinyMCE editor$/
+     *
+     * @param string $button The label of the button
+     * @param string $locator The locator for the editor
+     */
+    public function button_should_exist(string $button, string $locator): void {
+        $this->require_tiny_tags();
+        $container = $this->get_editor_container_for_locator($locator);
+
+        $this->execute('behat_general::should_exist_in_the', [$button, 'button', $container, 'NodeElement']);
+    }
+
+    /**
+     * Checks that a button does not exist in specified TinyMCE editor.
+     *
+     * @When /^"(?P<button_string>(?:[^"]|\\")*)" button should not exist in the "(?P<locator_string>(?:[^"]|\\")*)" TinyMCE editor$/
+     *
+     * @param string $button The label of the button
+     * @param string $locator The locator for the editor
+     */
+    public function button_should_not_exist(string $button, string $locator): void {
+        $this->require_tiny_tags();
+        $container = $this->get_editor_container_for_locator($locator);
+
+        $this->execute('behat_general::should_not_exist_in_the', [$button, 'button', $container, 'NodeElement']);
+    }
+
+    /**
      * Confirm that the button state of the specified button/editor combination matches the expectation.
      *
      * @Then /^the "(?P<button_string>(?:[^"]|\\")*)" button of the "(?P<locator_string>(?:[^"]|\\")*)" TinyMCE editor has state "(?P<state_string>(?:[^"]|\\")*)"$/
@@ -140,7 +170,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
             $firstlink->mouseover();
 
             // Now match by title where the role matches any menuitem, or menuitemcheckbox, or menuitem*.
-            $link = $openmenu->find('css', "[title='{$menuitem}'][role^='menuitem']");
+            $link = $openmenu->find('css', "[aria-label='{$menuitem}'][role^='menuitem']");
             $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
         }
     }
@@ -161,7 +191,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
 
         // Ensure that a name is set on the iframe relating to the editorid.
         $js = <<<EOF
-            const element = instance.dom.select("${textlocator}")[${position}];
+            const element = instance.dom.select("{$textlocator}")[{$position}];
             instance.selection.select(element);
         EOF;
 
@@ -241,7 +271,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         $js = <<<EOF
             const editorDocument = instance.getDoc();
             const element = editorDocument.evaluate(
-                "${xpath}",
+                "{$xpath}",
                 editorDocument,
                 null,
                 XPathResult.FIRST_ORDERED_NODE_TYPE,
@@ -265,13 +295,13 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
 
         $editor = $this->get_editor_container_for_locator($editorlocator);
         try {
-            $button = $this->find('button', get_string('tiny:more...', 'editor_tiny'), false, $editor);
+            $button = $this->find('button', get_string('tiny:reveal_or_hide_additional_toolbar_items', 'editor_tiny'), false, $editor);
         } catch (ExpectationException $e) {
             // No more button, so no need to expand.
             return;
         }
 
-        if ($button->getAttribute(('aria-pressed')) === 'false') {
+        if ($button->getAttribute(('aria-expanded')) === 'false') {
             $this->execute('behat_general::i_click_on', [$button, 'NodeElement']);
         }
     }

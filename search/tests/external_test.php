@@ -31,16 +31,17 @@ namespace core_search;
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends \advanced_testcase {
+final class external_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
     /**
      * Checks the get_relevant_users function used when selecting users in search filter.
      */
-    public function test_get_relevant_users() {
+    public function test_get_relevant_users(): void {
         // Set up two users to search for and one to do the searching.
         $generator = $this->getDataGenerator();
         $student1 = $generator->create_user(['firstname' => 'Amelia', 'lastname' => 'Aardvark']);

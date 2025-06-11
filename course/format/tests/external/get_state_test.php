@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use external_api;
+use core_external\external_api;
 
 /**
  * Tests for the get_state class.
@@ -32,7 +32,7 @@ use external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_courseformat\external\get_state
  */
-class get_state_test extends \externallib_advanced_testcase {
+final class get_state_test extends \externallib_advanced_testcase {
 
     /** @var array Sections in the testing course. */
     private $sections;
@@ -55,6 +55,7 @@ class get_state_test extends \externallib_advanced_testcase {
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         $this->sections = [];
@@ -67,6 +68,7 @@ class get_state_test extends \externallib_advanced_testcase {
     public function tearDown(): void {
         unset($this->sections);
         unset($this->activities);
+        parent::tearDown();
     }
 
     /**
@@ -108,14 +110,29 @@ class get_state_test extends \externallib_advanced_testcase {
             $this->setUser($user);
         }
 
-        // Add some activities to the course.
-        $this->create_activity($course->id, 'page', 1, true, $canedit);
-        $this->create_activity($course->id, 'forum', 1, true, $canedit);
-        $this->create_activity($course->id, 'book', 1, false, $canedit);
-        $this->create_activity($course->id, 'assign', 2, false, $canedit);
-        $this->create_activity($course->id, 'glossary', 4, true, $canedit);
-        $this->create_activity($course->id, 'label', 5, false, $canedit);
-        $this->create_activity($course->id, 'feedback', 5, true, $canedit);
+        // Social course format automatically creates a forum activity.
+        if (course_get_format($course)->get_format() === 'social') {
+            $cms = get_fast_modinfo($course)->get_cms();
+
+            // Let's add this assertion just to ensure course format has only one activity.
+            $this->assertCount(1, $cms);
+            $activitycm = reset($cms);
+
+            // And that activity is a forum.
+            $this->assertEquals('forum', $activitycm->modname);
+
+            // Assign the activity cm to the activities array.
+            $this->activities[$activitycm->id] = $activitycm;
+        } else {
+            // Add some activities to the course.
+            $this->create_activity($course->id, 'page', 1, true, $canedit);
+            $this->create_activity($course->id, 'forum', 1, true, $canedit);
+            $this->create_activity($course->id, 'book', 1, false, $canedit);
+            $this->create_activity($course->id, 'assign', 2, false, $canedit);
+            $this->create_activity($course->id, 'glossary', 4, true, $canedit);
+            $this->create_activity($course->id, 'label', 5, false, $canedit);
+            $this->create_activity($course->id, 'feedback', 5, true, $canedit);
+        }
 
         if ($expectedexception) {
             $this->expectException($expectedexception);
@@ -167,7 +184,7 @@ class get_state_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function get_state_provider(): array {
+    public static function get_state_provider(): array {
         return [
             // ROLES. Testing behaviour depending on the user role calling the method.
             'Admin user should work' => [

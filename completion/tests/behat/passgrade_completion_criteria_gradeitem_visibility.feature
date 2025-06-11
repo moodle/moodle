@@ -10,7 +10,7 @@ Feature: Students will be shown relevant completion state based on grade item vi
       | Course 1 | C1        | 0        | 1                |
     And the following "users" exist:
       | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | Frist    | teacher1@example.com |
+      | teacher1 | Teacher   | First    | teacher1@example.com |
       | student1 | Student   | First    | student1@example.com |
       | student2 | Student   | Second   | student2@example.com |
     And the following "course enrolments" exist:
@@ -51,7 +51,7 @@ Feature: Students will be shown relevant completion state based on grade item vi
 
   Scenario: Passing grade and receive a grade completions for hidden grade item (passgrade completion enabled)
     Given I am on the "Course 1" "grades > gradebook setup" page logged in as "teacher1"
-    And I hide the grade item "Test assignment name"
+    And I hide the grade item "Test assignment name" of type "gradeitem" on "setup" page
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "21" to the user "Student First" for the grade item "Test assignment name"
@@ -99,7 +99,7 @@ Feature: Students will be shown relevant completion state based on grade item vi
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "todo"
     And I should not see "Receive a passing grade"
     And I am on the "Course 1" "grades > gradebook setup" page logged in as "teacher1"
-    And I hide the grade item "Test assignment name"
+    And I hide the grade item "Test assignment name" of type "gradeitem" on "setup" page
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "21" to the user "Student First" for the grade item "Test assignment name"

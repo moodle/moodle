@@ -67,21 +67,21 @@ function xmldb_attendance_upgrade($oldversion=0) {
          * Only update the user's custom capabilities where modifierid is not zero.
          */
         $sql = $DB->sql_like('capability', '?').' AND modifierid <> 0';
-        $rs = $DB->get_recordset_select('role_capabilities', $sql, array('%mod/attforblock%'));
+        $rs = $DB->get_recordset_select('role_capabilities', $sql, ['%mod/attforblock%']);
         foreach ($rs as $cap) {
             $renamedcapability = str_replace('mod/attforblock', 'mod/attendance', $cap->capability);
-            $exists = $DB->record_exists('role_capabilities', array('roleid' => $cap->roleid, 'capability' => $renamedcapability));
+            $exists = $DB->record_exists('role_capabilities', ['roleid' => $cap->roleid, 'capability' => $renamedcapability]);
             if (!$exists) {
-                $DB->update_record('role_capabilities', array('id' => $cap->id, 'capability' => $renamedcapability));
+                $DB->update_record('role_capabilities', ['id' => $cap->id, 'capability' => $renamedcapability]);
             }
         }
 
         // Delete old role capabilities.
         $sql = $DB->sql_like('capability', '?');
-        $DB->delete_records_select('role_capabilities', $sql, array('%mod/attforblock%'));
+        $DB->delete_records_select('role_capabilities', $sql, ['%mod/attforblock%']);
 
         // Delete old capabilities.
-        $DB->delete_records_select('capabilities', 'component = ?', array('mod_attforblock'));
+        $DB->delete_records_select('capabilities', 'component = ?', ['mod_attforblock']);
 
         upgrade_mod_savepoint(true, 2014112001, 'attendance');
     }
@@ -99,7 +99,7 @@ function xmldb_attendance_upgrade($oldversion=0) {
         $table->add_field('created', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table attendance_tempusers.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for attendance_tempusers.
         if (!$dbman->table_exists($table)) {
@@ -107,13 +107,13 @@ function xmldb_attendance_upgrade($oldversion=0) {
         }
 
         // Conditionally launch add index courseid.
-        $index = new xmldb_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+        $index = new xmldb_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
 
         // Conditionally launch add index studentid.
-        $index = new xmldb_index('studentid', XMLDB_INDEX_UNIQUE, array('studentid'));
+        $index = new xmldb_index('studentid', XMLDB_INDEX_UNIQUE, ['studentid']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -274,7 +274,7 @@ function xmldb_attendance_upgrade($oldversion=0) {
         foreach ($attendances as $attendance) {
             if (!empty($attendance->subnet)) {
                 // Get all sessions for this attendance.
-                $sessions = $DB->get_recordset('attendance_sessions', array('attendanceid' => $attendance->id));
+                $sessions = $DB->get_recordset('attendance_sessions', ['attendanceid' => $attendance->id]);
                 foreach ($sessions as $session) {
                     $session->subnet = $attendance->subnet;
                     $DB->update_record('attendance_sessions', $session);
@@ -351,10 +351,10 @@ function xmldb_attendance_upgrade($oldversion=0) {
         $table->add_field('timesent', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table attendance_warning_done.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table attendance_warning_done.
-        $table->add_index('notifyid_userid', XMLDB_INDEX_UNIQUE, array('notifyid', 'userid'));
+        $table->add_index('notifyid_userid', XMLDB_INDEX_UNIQUE, ['notifyid', 'userid']);
 
         // Conditionally launch create table for attendance_warning_done.
         if (!$dbman->table_exists($table)) {
@@ -383,8 +383,8 @@ function xmldb_attendance_upgrade($oldversion=0) {
             $table->add_field('thirdpartyemails', XMLDB_TYPE_TEXT, null, null, null, null, null);
 
             // Adding keys to table attendance_warning.
-            $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-            $table->add_key('level_id', XMLDB_KEY_UNIQUE, array('idnumber', 'warningpercent', 'warnafter'));
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $table->add_key('level_id', XMLDB_KEY_UNIQUE, ['idnumber', 'warningpercent', 'warnafter']);
 
             // Conditionally launch create table for attendance_warning.
             $dbman->create_table($table);
@@ -399,7 +399,7 @@ function xmldb_attendance_upgrade($oldversion=0) {
                     $DB->execute("DROP INDEX ". $name);
                 }
             }
-            $index = new xmldb_key('level_id', XMLDB_KEY_UNIQUE, array('idnumber', 'warningpercent', 'warnafter'));
+            $index = new xmldb_key('level_id', XMLDB_KEY_UNIQUE, ['idnumber', 'warningpercent', 'warnafter']);
             $dbman->add_key($table, $index);
         }
         // Attendance savepoint reached.
@@ -423,12 +423,12 @@ function xmldb_attendance_upgrade($oldversion=0) {
         // Define field setunmarked to be added to attendance_statuses.
         $table = new xmldb_table('attendance_warning_done');
 
-        $index = new xmldb_index('notifyid_userid', XMLDB_INDEX_UNIQUE, array('notifyid', 'userid'));
+        $index = new xmldb_index('notifyid_userid', XMLDB_INDEX_UNIQUE, ['notifyid', 'userid']);
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
 
-        $index = new xmldb_index('notifyid', XMLDB_INDEX_NOTUNIQUE, array('notifyid', 'userid'));
+        $index = new xmldb_index('notifyid', XMLDB_INDEX_NOTUNIQUE, ['notifyid', 'userid']);
         $dbman->add_index($table, $index);
 
         // Attendance savepoint reached.
@@ -630,7 +630,7 @@ function xmldb_attendance_upgrade($oldversion=0) {
         $table = new xmldb_table('attendance_sessions');
 
         // Conditionally launch add index caleventid.
-        $index = new xmldb_index('caleventid', XMLDB_INDEX_NOTUNIQUE, array('caleventid'));
+        $index = new xmldb_index('caleventid', XMLDB_INDEX_NOTUNIQUE, ['caleventid']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -643,7 +643,7 @@ function xmldb_attendance_upgrade($oldversion=0) {
         $sql = "modulename = 'attendance' AND NOT EXISTS (
                     SELECT 1
                     FROM {attendance_sessions} a
-                    WHERE mdl_event.id = a.caleventid
+                    WHERE {event}.id = a.caleventid
                 )";
         $DB->delete_records_select('event', $sql);
 
@@ -781,7 +781,7 @@ function xmldb_attendance_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2023020100, 'attendance');
     }
 
-    if ($oldversion < 2023020102) {
+    if ($oldversion < 2023021700) {
 
         // Define field studentavailability to be added to attendance_statuses.
         $table = new xmldb_table('attendance_sessions');
@@ -793,11 +793,11 @@ function xmldb_attendance_upgrade($oldversion=0) {
         }
 
         // Attendance savepoint reached.
-        upgrade_mod_savepoint(true, 2023020102, 'attendance');
+        upgrade_mod_savepoint(true, 2023021700, 'attendance');
     }
 
-    if ($oldversion < 2023020106) {
-        // Update any records with null values and set to 0;
+    if ($oldversion < 2023032800) {
+        // Update any records with null values and set to 0.
         $sql = 'UPDATE {attendance_sessions} set allowupdatestatus = 0 WHERE allowupdatestatus is null';
         $DB->execute($sql);
 
@@ -811,7 +811,7 @@ function xmldb_attendance_upgrade($oldversion=0) {
         $dbman->change_field_notnull($table, $field);
 
         // Attendance savepoint reached.
-        upgrade_mod_savepoint(true, 2023020106, 'attendance');
+        upgrade_mod_savepoint(true, 2023032800, 'attendance');
     }
 
     return true;

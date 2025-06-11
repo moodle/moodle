@@ -16,13 +16,14 @@
 
 namespace core_question;
 
+use quiz_statistics\tests\statistics_helper;
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 use qubaid_list;
 use question_bank;
 use question_engine;
 use question_engine_data_mapper;
 use question_state;
-use quiz;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +39,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
+final class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var question_engine_data_mapper */
     protected $dm;
@@ -65,7 +66,7 @@ class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
      * operations on the data, we use a single method to do the set-up, which
      * calls diffents methods to test each query.
      */
-    public function test_reporting_queries() {
+    public function test_reporting_queries(): void {
         // We create two usages, each with two questions, a short-answer marked
         // out of 5, and and essay marked out of 10.
         //
@@ -361,7 +362,7 @@ class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
 
         // Create attempt.
         $user = $this->getDataGenerator()->create_user();
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();
@@ -376,7 +377,6 @@ class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
 
         // Calculate the statistics.
         $this->expectOutputRegex('~.*Calculations completed.*~');
-        $statisticstask = new \quiz_statistics\task\recalculate();
-        $statisticstask->execute();
+        statistics_helper::run_pending_recalculation_tasks();
     }
 }

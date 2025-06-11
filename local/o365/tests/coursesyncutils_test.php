@@ -24,108 +24,120 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+namespace local_o365;
+
+use externallib_advanced_testcase;
+use local_o365\feature\coursesync\utils;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot.'/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Tests \local_o365\feature\coursesync\utils.
  *
  * @group local_o365
  */
-class local_o365_coursesyncutils_testcase extends \externallib_advanced_testcase {
+final class coursesyncutils_test extends externallib_advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
-    protected function setUp() : void {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
 
     /**
      * Test is_enabled() method.
+     *
+     * @covers \local_o365\feature\coursesync\utils::is_enabled
      */
-    public function test_is_enabled() {
+    public function test_is_enabled(): void {
         global $DB;
 
         $DB->delete_records('config_plugins', ['name' => 'coursesync', 'plugin' => 'local_o365']);
-        $this->assertFalse(\local_o365\feature\coursesync\utils::is_enabled());
+        $this->assertFalse(utils::is_enabled());
 
         set_config('coursesync', '', 'local_o365');
-        $this->assertFalse(\local_o365\feature\coursesync\utils::is_enabled());
+        $this->assertFalse(utils::is_enabled());
 
         set_config('coursesync', 'onall', 'local_o365');
-        $this->assertTrue(\local_o365\feature\coursesync\utils::is_enabled());
+        $this->assertTrue(utils::is_enabled());
 
         set_config('coursesync', 'off', 'local_o365');
-        $this->assertFalse(\local_o365\feature\coursesync\utils::is_enabled());
+        $this->assertFalse(utils::is_enabled());
 
         set_config('coursesync', 'oncustom', 'local_o365');
-        $this->assertTrue(\local_o365\feature\coursesync\utils::is_enabled());
+        $this->assertTrue(utils::is_enabled());
 
         set_config('coursesync', 'off', 'local_o365');
-        $this->assertFalse(\local_o365\feature\coursesync\utils::is_enabled());
+        $this->assertFalse(utils::is_enabled());
     }
 
     /**
      * Test get_enabled_courses() method.
+     *
+     * @covers \local_o365\feature\coursesync\utils::get_enabled_courses
      */
-    public function test_get_enabled_courses() {
+    public function test_get_enabled_courses(): void {
         global $DB;
 
         $DB->delete_records('config_plugins', ['name' => 'coursesync', 'plugin' => 'local_o365']);
-        $actual = \local_o365\feature\coursesync\utils::get_enabled_courses();
+        $actual = utils::get_enabled_courses();
         $this->assertIsArray($actual);
         $this->assertEmpty($actual);
 
         set_config('coursesync', 'off', 'local_o365');
         set_config('coursesynccustom', json_encode([1 => 1]), 'local_o365');
-        $actual = \local_o365\feature\coursesync\utils::get_enabled_courses();
+        $actual = utils::get_enabled_courses();
         $this->assertIsArray($actual);
         $this->assertEmpty($actual);
 
         set_config('coursesync', 'onall', 'local_o365');
         set_config('coursesynccustom', json_encode([1 => 1]), 'local_o365');
-        $actual = \local_o365\feature\coursesync\utils::get_enabled_courses();
+        $actual = utils::get_enabled_courses();
         $this->assertTrue($actual);
 
         set_config('coursesync', 'oncustom', 'local_o365');
         set_config('coursesynccustom', json_encode([1 => 1]), 'local_o365');
-        $actual = \local_o365\feature\coursesync\utils::get_enabled_courses();
+        $actual = utils::get_enabled_courses();
         $this->assertIsArray($actual);
         $this->assertEquals([1], $actual);
     }
 
     /**
      * Test course_is_group_enabled() method.
+     *
+     * @covers \local_o365\feature\coursesync\utils::is_course_sync_enabled
      */
-    public function test_course_is_group_enabled() {
+    public function test_course_is_group_enabled(): void {
         global $DB;
+
         $DB->delete_records('config_plugins', ['name' => 'coursesync', 'plugin' => 'local_o365']);
         $DB->delete_records('config_plugins', ['name' => 'coursesynccustom', 'plugin' => 'local_o365']);
-        $actual = \local_o365\feature\coursesync\utils::is_course_sync_enabled(3);
+        $actual = utils::is_course_sync_enabled(3);
         $this->assertFalse($actual);
 
         set_config('coursesync', 'off', 'local_o365');
         set_config('coursesynccustom', json_encode([1 => 1, 3 => 1]), 'local_o365');
-        $actual = \local_o365\feature\coursesync\utils::is_course_sync_enabled(3);
+        $actual = utils::is_course_sync_enabled(3);
         $this->assertFalse($actual);
 
         set_config('coursesync', 'onall', 'local_o365');
         set_config('coursesynccustom', json_encode([2 => 1]), 'local_o365');
-        $actual = \local_o365\feature\coursesync\utils::is_course_sync_enabled(3);
+        $actual = utils::is_course_sync_enabled(3);
         $this->assertTrue($actual);
 
         set_config('coursesync', 'oncustom', 'local_o365');
         set_config('coursesynccustom', json_encode([2 => 1]), 'local_o365');
-        $actual = \local_o365\feature\coursesync\utils::is_course_sync_enabled(3);
+        $actual = utils::is_course_sync_enabled(3);
         $this->assertFalse($actual);
 
         set_config('coursesync', 'oncustom', 'local_o365');
         set_config('coursesynccustom', json_encode([2 => 1, 3 => 1]), 'local_o365');
-        $actual = \local_o365\feature\coursesync\utils::is_course_sync_enabled(3);
+        $actual = utils::is_course_sync_enabled(3);
         $this->assertTrue($actual);
     }
 }

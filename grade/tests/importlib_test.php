@@ -26,7 +26,7 @@ use grade_item;
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class importlib_test extends \advanced_testcase {
+final class importlib_test extends \advanced_testcase {
 
     /**
      * Load required test libraries
@@ -34,6 +34,7 @@ class importlib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once("{$CFG->dirroot}/grade/import/lib.php");
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -80,7 +81,7 @@ class importlib_test extends \advanced_testcase {
      *
      * @covers ::grade_import_commit
      */
-    public function test_grade_import_commit() {
+    public function test_grade_import_commit(): void {
         global $USER, $DB, $CFG;
         $this->resetAfterTest();
 

@@ -14,22 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class core_user\output\user_roles_editable
- *
- * @package   core_user
- * @copyright 2017 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_user\output;
 
 use context_course;
 use core_user;
-use core_external;
+use core_external\external_api;
 use coding_exception;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class to display list of user roles.
@@ -102,8 +92,10 @@ class user_roles_editable extends \core\output\inplace_editable {
                 }
             }
         }
-        $this->edithint = get_string('xroleassignments', 'role', fullname($user));
-        $this->editlabel = get_string('xroleassignments', 'role', fullname($user));
+
+        $fullname = htmlspecialchars(fullname($user), ENT_QUOTES, 'utf-8');
+        $this->edithint = get_string('xroleassignments', 'role', $fullname);
+        $this->editlabel = get_string('xroleassignments', 'role', $fullname);
 
         $attributes = ['multiple' => true];
         $this->set_type_autocomplete($options, $attributes);
@@ -145,9 +137,8 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @return \self
      */
     public static function update($itemid, $newvalue) {
-        global $DB, $CFG;
+        global $DB;
 
-        require_once($CFG->libdir . '/external/externallib.php');
         // Check caps.
         // Do the thing.
         // Return one of me.
@@ -163,7 +154,7 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         // Check user is enrolled in the course.
         $context = context_course::instance($courseid);
-        core_external::validate_context($context);
+        external_api::validate_context($context);
 
         // Check permissions.
         require_capability('moodle/role:assign', $context);

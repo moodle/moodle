@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_configtoggle
+
+    Template for toggle element in admin settings.
+
+    Context variables required for this template:
+    * id - element id
+    * checked - bool, true if the toggle is enabled
+    * name - form element name
+    * value - form for name field
+    * action - action to be performed when the toggle is clicked
+    * plugin - plugin name
+    * state - state of the toggle
+    * title - title of the toggle tooltip
+    * label - label of the toggle
+    * labelclasses - classes for the label (sr-only for screen readers)
+
+    Example context (json):
+    {
+        "id": "reality-toggle-3",
+        "checked": true,
+        "dataattributes": [{
+            "name": "id",
+            "value": "toggle-reality",
+            "action": "togglestate",
+            "plugin": "tool_reality",
+            "state": 1
+        }],
+        "title": "Title example",
+        "label": "Enable/disable reality",
+        "labelclasses": "sr-only"
+    }
+}}
+<div id="container-{{id}}"
+     data-toggle-method="{{dataattributes.toggle-method}}"
+     data-action="{{dataattributes.action}}"
+     data-plugin="{{dataattributes.plugin}}"
+     data-state="{{dataattributes.state}}"
+     data-value="{{dataattributes.value}}"
+     >
+  {{> core/toggle }}
+</div>
+

@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/mod/lightboxgallery/lib.php');
  * @author     Adam Olley <adam.olley@openlms.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lightboxgallery_privacy_testcase extends provider_testcase {
+class mod_lightboxgallery_privacy_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;

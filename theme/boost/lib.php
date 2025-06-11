@@ -64,7 +64,7 @@ function theme_boost_get_extra_scss($theme) {
     }
 
     // Always return the background image with the scss when we have it.
-    return !empty($theme->settings->scss) ? $theme->settings->scss . ' ' . $content : $content;
+    return !empty($theme->settings->scss) ? "{$theme->settings->scss}  \n  {$content}" : $content;
 }
 
 /**
@@ -91,6 +91,28 @@ function theme_boost_pluginfile($course, $cm, $context, $filearea, $args, $force
     } else {
         send_file_not_found();
     }
+}
+
+/**
+ * Get the current user preferences that are available
+ *
+ * @return array[]
+ */
+function theme_boost_user_preferences(): array {
+    return [
+        'drawer-open-block' => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
+        'drawer-open-index' => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => true,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
+    ];
 }
 
 /**

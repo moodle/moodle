@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:13
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -17,7 +17,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
       mariadb:
         # https://tracker.moodle.org/browse/MDL-72131
-        image: mariadb:10.5
+        image: mariadb:10
         env:
           MYSQL_USER: 'root'
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
@@ -28,23 +28,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.3', '7.4', '8.0']
-        moodle-branch: ['MOODLE_311_STABLE', 'MOODLE_400_STABLE', 'MOODLE_401_STABLE']
+        php: ['8.1', '8.2', '8.3']
+        moodle-branch: ['MOODLE_405_STABLE']
         database: ['pgsql', 'mariadb']
         extensions: ["mbstring, pgsql, mysqli"]
+        # Whenever necessary:
         # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#example-including-new-combinations
-        include:
-          - moodle-branch: 'MOODLE_401_STABLE'
-            php: '8.1'
-            extensions: "mbstring, pgsql, mysqli"
-            database: 'pgsql'
-          - moodle-branch: 'MOODLE_401_STABLE'
-            php: '8.1'
-            extensions: "mbstring, pgsql, mysqli"
-            database: 'mariadb'
-        exclude:
-          - php: '7.3'
-            moodle-branch: 'MOODLE_401_STABLE'
 
     steps:
       - name: Check out repository code

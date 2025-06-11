@@ -11,7 +11,8 @@ $drawer-bg-color: $gray-100 !default;
 $drawer-scroll-bg-track: $gray-100 !default;
 $drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
-:target {
+:target,
+:focus {
     scroll-margin-top: $fixed-header-y + 10px;
 }
 
@@ -47,7 +48,9 @@ $drawer-bg: darken($body-bg, 5%) !default;
     [data-region="drawer"] {
         padding: $drawer-padding-x $drawer-padding-y;
     }
-    .jsenabled .btn-footer-popover {
+    .jsenabled .popover-process-monitor,
+    .jsenabled .btn-footer-popover,
+    .jsenabled .btn-footer-communication {
         @include transition(0.2s);
     }
 }
@@ -159,9 +162,17 @@ $right-drawer-width: 320px;
 }
 
 @mixin drawer() {
-    @include transition(left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease);
     background-color: $drawer-bg-color;
-    z-index: $zindex-modal;
+    // Drawers has a z-index higher than the page content,
+    // lower than the top navbar and the sticky footer,
+    // and lower to the message drawer.
+    z-index: $zindex-sticky - 5;
+
+    @include media-breakpoint-down(md) {
+        // In small screens the drawer goes over the top navbar with a modal with a backdrop effect.
+        z-index: $zindex-fixed + 5;
+    }
+
     position: fixed;
     height: 100vh;
     top: 0;
@@ -173,6 +184,7 @@ $right-drawer-width: 320px;
 
 @mixin drawertypes() {
     &.drawer-right {
+        @include transition(right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease);
         width: $drawer-right-width;
         max-width: $drawer-right-width;
         right: calc(-#{$drawer-right-width} + -10px);
@@ -190,6 +202,7 @@ $right-drawer-width: 320px;
         }
     }
     &.drawer-left {
+        @include transition(left 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease);
         width: $drawer-left-width;
         max-width: $drawer-left-width;
         left: calc(-#{$drawer-left-width} + -10px);
@@ -212,6 +225,12 @@ $right-drawer-width: 320px;
             bottom: 0;
         }
     }
+    &.drawer-primary {
+        .drawertoggle {
+            margin-right: 16px;
+            margin-left: 5px;
+        }
+    }
 }
 
 .drawer {
@@ -221,15 +240,14 @@ $right-drawer-width: 320px;
 
 @include media-breakpoint-up(lg) {
     .drawer {
-        z-index: inherit;
 
         // Workaround to display the skip link elements from the blocks drawer infront of the navbar.
+        // As the skip link is in a fixed position and z-index for this element is ignored
+        // then it is hidden behind the top navbar.
+        // The workaround is to actually give a z-index to the drawer so it appears in front of the
+        // navbar (https://developer.mozilla.org/en-US/docs/Web/CSS/z-index).
         &#theme_boost-drawers-blocks:focus-within {
-            position: absolute;
-
-            .drawercontent {
-                z-index: auto;
-            }
+            z-index: $zindex-fixed + 1;
         }
 
         &.not-initialized {
@@ -248,6 +266,12 @@ $right-drawer-width: 320px;
     height: $navbar-height;
     display: flex;
     align-items: center;
+    .sitename {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-right: 16px;
+    }
 }
 .drawer.scrolled .drawerheader {
     box-shadow: 0 8px 11px -7px $drawer-shadow-color;

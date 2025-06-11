@@ -1,0 +1,93 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template quiz_overview/regrade_modal_body
+
+    Example context (json):
+    {
+        "actionurl": "https://example.com/moodle/mod/quiz/report.php?mode=overview?id=123",
+        "hasselectedattempts": false,
+        "questions": [
+            {"slot": 3, "name": "Question 1"},
+            {"slot": 5, "name": "Question 2"}
+        ],
+        "hiddeninputs": [
+            {"name": "cmid", "value": 123}
+        ]
+    }
+}}
+<form action="{{actionurl}}" method="post">
+    {{#hiddeninputs}}
+        <input type="hidden" name="{{name}}" value="{{value}}">
+    {{/hiddeninputs}}
+    <div class="form-row">
+        <div class="col">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="regradeselectedattempts"
+                       id="regradeallattempts" value="0" {{^hasselectedattempts}}checked{{/hasselectedattempts}}>
+                <label class="form-check-label" for="regradeallattempts">
+                    {{# str }} regrade_allattempts, quiz_overview {{/str}}
+                </label>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="regradeselectedattempts"
+                       id="regradeselectedattempts" value="1" {{#hasselectedattempts}}checked{{/hasselectedattempts}}
+                        {{^hasselectedattempts}}disabled{{/hasselectedattempts}}>
+                <label class="form-check-label" for="regradeselectedattempts">
+                    {{# str }} regrade_selectedattempts, quiz_overview {{/str}}
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-row mt-2">
+        <div class="col">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="regradeselectedquestions"
+                       id="regradeallquestions" value="0" checked>
+                <label class="form-check-label" for="regradeallquestions">
+                    {{# str }} regrade_allquestions, quiz_overview {{/str}}
+                </label>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="regradeselectedquestions"
+                       id="regradeselectedquestions" value="1">
+                <label class="form-check-label" for="regradeselectedquestions">
+                    {{# str }} regrade_selectedquestions, quiz_overview {{/str}}
+                </label>
+            </div>
+            <fieldset>
+                {{#questions}}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="regradeslot[]"
+                               id="regradeslot{{slot}}" value="{{slot}}" disabled>
+                        <label class="form-check-label" for="regradeslot{{slot}}">
+                            {{name}}
+                        </label>
+                    </div>
+                {{/questions}}
+            </fieldset>
+        </div>
+    </div>
+    <div class="modal-footer mt-2 pb-0" data-region="footer">
+        <input type="submit" class="btn btn-primary" id="regradebutton" name="regrade" value="{{#str}} regrade_regradenow, quiz_overview {{/str}}">
+        <input type="submit" class="btn btn-primary" id="dryrunbutton" name="dryrunregrade" value="{{#str}} regrade_dryrun, quiz_overview {{/str}}">
+    </div>
+</form>

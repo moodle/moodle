@@ -116,7 +116,7 @@ class discussion_list {
         forum_gradeitem $forumgradeitem,
         string $template,
         array $notifications = [],
-        callable $postprocessfortemplate = null
+        ?callable $postprocessfortemplate = null
     ) {
         $this->forum = $forum;
         $this->renderer = $renderer;
@@ -156,9 +156,9 @@ class discussion_list {
         ?int $sortorder,
         ?int $pageno,
         ?int $pagesize,
-        int $displaymode = null,
+        ?int $displaymode = null,
         bool $enablediscussioncreation = true
-    ) : string {
+    ): string {
         global $PAGE;
 
         $forum = $this->forum;
@@ -230,7 +230,7 @@ class discussion_list {
             $exportedposts = ($this->postprocessfortemplate) ($discussions, $user, $forum);
         }
 
-        $baseurl = new \moodle_url($PAGE->url, array('o' => $sortorder));
+        $baseurl = new \moodle_url($PAGE->url, ['o' => $sortorder, 's' => $pagesize]);
 
         $forumview = array_merge(
             $forumview,
@@ -332,7 +332,7 @@ class discussion_list {
      * @param   int         $pagesize The number of discussions to show on the page
      * @return  int         The normalised page size
      */
-    private function get_page_size(?int $pagesize) : int {
+    private function get_page_size(?int $pagesize): int {
         if (null === $pagesize || $pagesize <= 0) {
             $pagesize = discussion_list_vault::PAGESIZE_DEFAULT;
         }
@@ -346,7 +346,7 @@ class discussion_list {
      * @param   int         $pageno The zero-indexed page number to use
      * @return  int         The normalised page number
      */
-    private function get_page_number(?int $pageno) : int {
+    private function get_page_number(?int $pageno): int {
         if (null === $pageno || $pageno < 0) {
             $pageno = 0;
         }

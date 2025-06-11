@@ -46,12 +46,14 @@ class task_log extends base {
     protected const FAILED = 1;
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
-        return ['task_log' => 'tl'];
+    protected function get_default_tables(): array {
+        return [
+            'task_log',
+        ];
     }
 
     /**
@@ -103,7 +105,7 @@ class task_log extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_field("$tablealias.classname")
+            ->add_field("{$tablealias}.classname")
             ->set_is_sortable(true)
             ->add_callback(static function(string $classname): string {
                 $output = '';
@@ -181,15 +183,7 @@ class task_log extends base {
             ->set_type(column::TYPE_FLOAT)
             ->add_field("{$tablealias}.timeend - {$tablealias}.timestart", 'duration')
             ->set_is_sortable(true)
-            ->add_callback(static function(float $value): string {
-                $duration = round($value, 2);
-                if (empty($duration)) {
-                    // The format_time function returns 'now' when the difference is exactly 0.
-                    // Note: format_time performs concatenation in exactly this fashion so we should do this for consistency.
-                    return '0 ' . get_string('secs', 'moodle');
-                }
-                return format_time($duration);
-            });
+            ->add_callback([format::class, 'format_time'], 2);
 
         // Hostname column.
         $columns[] = (new column(
@@ -209,11 +203,8 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_field("{$tablealias}.pid")
-            ->set_is_sortable(true)
-            // Although this is an integer column, it doesn't make sense to perform numeric aggregation on it.
-            ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
+            ->set_is_sortable(true);
 
         // Database column.
         $columns[] = (new column(
@@ -222,17 +213,14 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$tablealias}.dbreads, {$tablealias}.dbwrites")
             ->set_is_sortable(true, ["{$tablealias}.dbreads", "{$tablealias}.dbwrites"])
-            ->add_callback(static function(int $value, stdClass $row): string {
+            ->add_callback(static function($value, stdClass $row): string {
                 $output = '';
                 $output .= \html_writer::div(get_string('task_stats:dbreads', 'admin', $row->dbreads));
                 $output .= \html_writer::div(get_string('task_stats:dbwrites', 'admin', $row->dbwrites));
                 return $output;
-            })
-            // Although this is an integer column, it doesn't make sense to perform numeric aggregation on it.
-            ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
+            });
 
         // Database reads column.
         $columns[] = (new column(

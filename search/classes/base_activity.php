@@ -54,6 +54,9 @@ abstract class base_activity extends base_mod {
      */
     protected static $levels = [CONTEXT_MODULE];
 
+    /** @var array activity data instance. */
+    public $activitiesdata = [];
+
     /**
      * Returns recordset containing all activities within the given context.
      *
@@ -61,7 +64,7 @@ abstract class base_activity extends base_mod {
      * @param int $modifiedfrom Return only records modified after this date
      * @return \moodle_recordset|null Recordset, or null if no possible activities in given context
      */
-    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+    public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         global $DB;
         list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
                 $context, $this->get_module_name(), 'modtable');
@@ -81,7 +84,7 @@ abstract class base_activity extends base_mod {
      * content. Any activity can overwrite this function if it is interested in setting other fields than the
      * default ones, or to fill description optional fields with extra stuff.
      *
-     * @param stdClass $record
+     * @param \stdClass $record
      * @param array    $options
      * @return \core_search\document
      */

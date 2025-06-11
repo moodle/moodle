@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent extends Google_Service
 {
   /** Manage your product listings and accounts for Google Shopping. */
@@ -1014,6 +1015,7 @@ class Google_Service_ShoppingContent extends Google_Service
  *   $accounts = $contentService->accounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -1160,6 +1162,7 @@ class Google_Service_ShoppingContent_Accounts_Resource extends Google_Service_Re
  *   $accountshipping = $contentService->accountshipping;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Accountshipping_Resource extends Google_Service_Resource
 {
 
@@ -1263,6 +1266,7 @@ class Google_Service_ShoppingContent_Accountshipping_Resource extends Google_Ser
  *   $accountstatuses = $contentService->accountstatuses;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Accountstatuses_Resource extends Google_Service_Resource
 {
 
@@ -1323,6 +1327,7 @@ class Google_Service_ShoppingContent_Accountstatuses_Resource extends Google_Ser
  *   $accounttax = $contentService->accounttax;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Accounttax_Resource extends Google_Service_Resource
 {
 
@@ -1426,6 +1431,7 @@ class Google_Service_ShoppingContent_Accounttax_Resource extends Google_Service_
  *   $datafeeds = $contentService->datafeeds;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Datafeeds_Resource extends Google_Service_Resource
 {
 
@@ -1558,6 +1564,7 @@ class Google_Service_ShoppingContent_Datafeeds_Resource extends Google_Service_R
  *   $datafeedstatuses = $contentService->datafeedstatuses;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Datafeedstatuses_Resource extends Google_Service_Resource
 {
 
@@ -1619,6 +1626,7 @@ class Google_Service_ShoppingContent_Datafeedstatuses_Resource extends Google_Se
  *   $inventory = $contentService->inventory;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Inventory_Resource extends Google_Service_Resource
 {
 
@@ -1673,6 +1681,7 @@ class Google_Service_ShoppingContent_Inventory_Resource extends Google_Service_R
  *   $orders = $contentService->orders;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Orders_Resource extends Google_Service_Resource
 {
 
@@ -1947,6 +1956,7 @@ class Google_Service_ShoppingContent_Orders_Resource extends Google_Service_Reso
  *   $products = $contentService->products;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Products_Resource extends Google_Service_Resource
 {
 
@@ -2042,6 +2052,7 @@ class Google_Service_ShoppingContent_Products_Resource extends Google_Service_Re
  *   $productstatuses = $contentService->productstatuses;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Productstatuses_Resource extends Google_Service_Resource
 {
 
@@ -2099,6 +2110,7 @@ class Google_Service_ShoppingContent_Productstatuses_Resource extends Google_Ser
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Account extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -2191,6 +2203,7 @@ class Google_Service_ShoppingContent_Account extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountAdwordsLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2217,6 +2230,7 @@ class Google_Service_ShoppingContent_AccountAdwordsLink extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountIdentifier extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2243,6 +2257,7 @@ class Google_Service_ShoppingContent_AccountIdentifier extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShipping extends Google_Collection
 {
   protected $collection_key = 'services';
@@ -2310,6 +2325,7 @@ class Google_Service_ShoppingContent_AccountShipping extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingCarrierRate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2382,6 +2398,7 @@ class Google_Service_ShoppingContent_AccountShippingCarrierRate extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingCondition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2456,6 +2473,7 @@ class Google_Service_ShoppingContent_AccountShippingCondition extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingLocationGroup extends Google_Collection
 {
   protected $collection_key = 'postalCodes';
@@ -2511,6 +2529,7 @@ class Google_Service_ShoppingContent_AccountShippingLocationGroup extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingPostalCodeRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2537,6 +2556,7 @@ class Google_Service_ShoppingContent_AccountShippingPostalCodeRange extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingRateTable extends Google_Collection
 {
   protected $collection_key = 'content';
@@ -2574,6 +2594,7 @@ class Google_Service_ShoppingContent_AccountShippingRateTable extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingRateTableCell extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2602,6 +2623,7 @@ class Google_Service_ShoppingContent_AccountShippingRateTableCell extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingShippingService extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2657,6 +2679,7 @@ class Google_Service_ShoppingContent_AccountShippingShippingService extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingShippingServiceCalculationMethod extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2711,6 +2734,7 @@ class Google_Service_ShoppingContent_AccountShippingShippingServiceCalculationMe
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountShippingShippingServiceCostRule extends Google_Collection
 {
   protected $collection_key = 'children';
@@ -2750,6 +2774,7 @@ class Google_Service_ShoppingContent_AccountShippingShippingServiceCostRule exte
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountStatus extends Google_Collection
 {
   protected $collection_key = 'dataQualityIssues';
@@ -2787,6 +2812,7 @@ class Google_Service_ShoppingContent_AccountStatus extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountStatusDataQualityIssue extends Google_Collection
 {
   protected $collection_key = 'exampleItems';
@@ -2869,6 +2895,7 @@ class Google_Service_ShoppingContent_AccountStatusDataQualityIssue extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountStatusExampleItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2922,6 +2949,7 @@ class Google_Service_ShoppingContent_AccountStatusExampleItem extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountTax extends Google_Collection
 {
   protected $collection_key = 'rules';
@@ -2959,6 +2987,7 @@ class Google_Service_ShoppingContent_AccountTax extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountTaxTaxRule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3012,6 +3041,7 @@ class Google_Service_ShoppingContent_AccountTaxTaxRule extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountUser extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3038,6 +3068,7 @@ class Google_Service_ShoppingContent_AccountUser extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountsAuthInfoResponse extends Google_Collection
 {
   protected $collection_key = 'accountIdentifiers';
@@ -3066,6 +3097,7 @@ class Google_Service_ShoppingContent_AccountsAuthInfoResponse extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountsCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3085,6 +3117,7 @@ class Google_Service_ShoppingContent_AccountsCustomBatchRequest extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountsCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3139,6 +3172,7 @@ class Google_Service_ShoppingContent_AccountsCustomBatchRequestEntry extends Goo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountsCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3167,6 +3201,7 @@ class Google_Service_ShoppingContent_AccountsCustomBatchResponse extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountsCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3213,6 +3248,7 @@ class Google_Service_ShoppingContent_AccountsCustomBatchResponseEntry extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountsListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -3250,6 +3286,7 @@ class Google_Service_ShoppingContent_AccountsListResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountshippingCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3269,6 +3306,7 @@ class Google_Service_ShoppingContent_AccountshippingCustomBatchRequest extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountshippingCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3323,6 +3361,7 @@ class Google_Service_ShoppingContent_AccountshippingCustomBatchRequestEntry exte
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountshippingCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3351,6 +3390,7 @@ class Google_Service_ShoppingContent_AccountshippingCustomBatchResponse extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountshippingCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3397,6 +3437,7 @@ class Google_Service_ShoppingContent_AccountshippingCustomBatchResponseEntry ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountshippingListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -3434,6 +3475,7 @@ class Google_Service_ShoppingContent_AccountshippingListResponse extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountstatusesCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3453,6 +3495,7 @@ class Google_Service_ShoppingContent_AccountstatusesCustomBatchRequest extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountstatusesCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3497,6 +3540,7 @@ class Google_Service_ShoppingContent_AccountstatusesCustomBatchRequestEntry exte
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountstatusesCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3525,6 +3569,7 @@ class Google_Service_ShoppingContent_AccountstatusesCustomBatchResponse extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountstatusesCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3562,6 +3607,7 @@ class Google_Service_ShoppingContent_AccountstatusesCustomBatchResponseEntry ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccountstatusesListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -3599,6 +3645,7 @@ class Google_Service_ShoppingContent_AccountstatusesListResponse extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccounttaxCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3618,6 +3665,7 @@ class Google_Service_ShoppingContent_AccounttaxCustomBatchRequest extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccounttaxCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3672,6 +3720,7 @@ class Google_Service_ShoppingContent_AccounttaxCustomBatchRequestEntry extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccounttaxCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -3700,6 +3749,7 @@ class Google_Service_ShoppingContent_AccounttaxCustomBatchResponse extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccounttaxCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3746,6 +3796,7 @@ class Google_Service_ShoppingContent_AccounttaxCustomBatchResponseEntry extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_AccounttaxListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -3783,6 +3834,7 @@ class Google_Service_ShoppingContent_AccounttaxListResponse extends Google_Colle
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Datafeed extends Google_Collection
 {
   protected $collection_key = 'intendedDestinations';
@@ -3893,6 +3945,7 @@ class Google_Service_ShoppingContent_Datafeed extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedFetchSchedule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3964,6 +4017,7 @@ class Google_Service_ShoppingContent_DatafeedFetchSchedule extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedFormat extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3999,6 +4053,7 @@ class Google_Service_ShoppingContent_DatafeedFormat extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedStatus extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -4082,6 +4137,7 @@ class Google_Service_ShoppingContent_DatafeedStatus extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedStatusError extends Google_Collection
 {
   protected $collection_key = 'examples';
@@ -4128,6 +4184,7 @@ class Google_Service_ShoppingContent_DatafeedStatusError extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedStatusExample extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4163,6 +4220,7 @@ class Google_Service_ShoppingContent_DatafeedStatusExample extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedsCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -4182,6 +4240,7 @@ class Google_Service_ShoppingContent_DatafeedsCustomBatchRequest extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedsCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4236,6 +4295,7 @@ class Google_Service_ShoppingContent_DatafeedsCustomBatchRequestEntry extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedsCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -4264,6 +4324,7 @@ class Google_Service_ShoppingContent_DatafeedsCustomBatchResponse extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedsCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4301,6 +4362,7 @@ class Google_Service_ShoppingContent_DatafeedsCustomBatchResponseEntry extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedsListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -4338,6 +4400,7 @@ class Google_Service_ShoppingContent_DatafeedsListResponse extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -4357,6 +4420,7 @@ class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchRequest extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4401,6 +4465,7 @@ class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchRequestEntry ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -4429,6 +4494,7 @@ class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchResponse extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4466,6 +4532,7 @@ class Google_Service_ShoppingContent_DatafeedstatusesCustomBatchResponseEntry ex
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_DatafeedstatusesListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -4503,6 +4570,7 @@ class Google_Service_ShoppingContent_DatafeedstatusesListResponse extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Error extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4538,6 +4606,7 @@ class Google_Service_ShoppingContent_Error extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Errors extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -4575,6 +4644,7 @@ class Google_Service_ShoppingContent_Errors extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Inventory extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4648,6 +4718,7 @@ class Google_Service_ShoppingContent_Inventory extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_InventoryCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -4667,6 +4738,7 @@ class Google_Service_ShoppingContent_InventoryCustomBatchRequest extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_InventoryCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4721,6 +4793,7 @@ class Google_Service_ShoppingContent_InventoryCustomBatchRequestEntry extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_InventoryCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -4749,6 +4822,7 @@ class Google_Service_ShoppingContent_InventoryCustomBatchResponse extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_InventoryCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4785,6 +4859,7 @@ class Google_Service_ShoppingContent_InventoryCustomBatchResponseEntry extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_InventorySetRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4849,6 +4924,7 @@ class Google_Service_ShoppingContent_InventorySetRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_InventorySetResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4866,6 +4942,7 @@ class Google_Service_ShoppingContent_InventorySetResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_LoyaltyPoints extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4901,6 +4978,7 @@ class Google_Service_ShoppingContent_LoyaltyPoints extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Order extends Google_Collection
 {
   protected $collection_key = 'shipments';
@@ -5081,6 +5159,7 @@ class Google_Service_ShoppingContent_Order extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderAddress extends Google_Collection
 {
   protected $collection_key = 'streetAddress';
@@ -5162,6 +5241,7 @@ class Google_Service_ShoppingContent_OrderAddress extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderCancellation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5215,6 +5295,7 @@ class Google_Service_ShoppingContent_OrderCancellation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderCustomer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5250,6 +5331,7 @@ class Google_Service_ShoppingContent_OrderCustomer extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderDeliveryDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5277,6 +5359,7 @@ class Google_Service_ShoppingContent_OrderDeliveryDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderLineItem extends Google_Collection
 {
   protected $collection_key = 'returns';
@@ -5419,6 +5502,7 @@ class Google_Service_ShoppingContent_OrderLineItem extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderLineItemProduct extends Google_Collection
 {
   protected $collection_key = 'variantAttributes';
@@ -5565,6 +5649,7 @@ class Google_Service_ShoppingContent_OrderLineItemProduct extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderLineItemProductVariantAttribute extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5591,6 +5676,7 @@ class Google_Service_ShoppingContent_OrderLineItemProductVariantAttribute extend
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderLineItemReturnInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5626,6 +5712,7 @@ class Google_Service_ShoppingContent_OrderLineItemReturnInfo extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderLineItemShippingDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5662,6 +5749,7 @@ class Google_Service_ShoppingContent_OrderLineItemShippingDetails extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderLineItemShippingDetailsMethod extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5706,6 +5794,7 @@ class Google_Service_ShoppingContent_OrderLineItemShippingDetailsMethod extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderPaymentMethod extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5769,6 +5858,7 @@ class Google_Service_ShoppingContent_OrderPaymentMethod extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderRefund extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5823,6 +5913,7 @@ class Google_Service_ShoppingContent_OrderRefund extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderReturn extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5876,6 +5967,7 @@ class Google_Service_ShoppingContent_OrderReturn extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderShipment extends Google_Collection
 {
   protected $collection_key = 'lineItems';
@@ -5949,6 +6041,7 @@ class Google_Service_ShoppingContent_OrderShipment extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrderShipmentLineItemShipment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5975,6 +6068,7 @@ class Google_Service_ShoppingContent_OrderShipmentLineItemShipment extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersAcknowledgeRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5992,6 +6086,7 @@ class Google_Service_ShoppingContent_OrdersAcknowledgeRequest extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersAcknowledgeResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6018,6 +6113,7 @@ class Google_Service_ShoppingContent_OrdersAcknowledgeResponse extends Google_Mo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersAdvanceTestOrderResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6035,6 +6131,7 @@ class Google_Service_ShoppingContent_OrdersAdvanceTestOrderResponse extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCancelLineItemRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6088,6 +6185,7 @@ class Google_Service_ShoppingContent_OrdersCancelLineItemRequest extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCancelLineItemResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6114,6 +6212,7 @@ class Google_Service_ShoppingContent_OrdersCancelLineItemResponse extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCancelRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6149,6 +6248,7 @@ class Google_Service_ShoppingContent_OrdersCancelRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCancelResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6175,6 +6275,7 @@ class Google_Service_ShoppingContent_OrdersCancelResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCreateTestOrderRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6202,6 +6303,7 @@ class Google_Service_ShoppingContent_OrdersCreateTestOrderRequest extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCreateTestOrderResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6228,6 +6330,7 @@ class Google_Service_ShoppingContent_OrdersCreateTestOrderResponse extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -6247,6 +6350,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequest extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6369,6 +6473,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntry extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryCancel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6395,6 +6500,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryCancel extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryCancelLineItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6439,6 +6545,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryCancelLineItem
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryRefund extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6475,6 +6582,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryRefund extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryReturnLineItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6519,6 +6627,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryReturnLineItem
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryShipLineItems extends Google_Collection
 {
   protected $collection_key = 'lineItems';
@@ -6565,6 +6674,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryShipLineItems 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryUpdateShipment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6609,6 +6719,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchRequestEntryUpdateShipment
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -6637,6 +6748,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchResponse extends Google_Co
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6692,6 +6804,7 @@ class Google_Service_ShoppingContent_OrdersCustomBatchResponseEntry extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersGetByMerchantOrderIdResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6719,6 +6832,7 @@ class Google_Service_ShoppingContent_OrdersGetByMerchantOrderIdResponse extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersGetTestOrderTemplateResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6746,6 +6860,7 @@ class Google_Service_ShoppingContent_OrdersGetTestOrderTemplateResponse extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -6783,6 +6898,7 @@ class Google_Service_ShoppingContent_OrdersListResponse extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersRefundRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6828,6 +6944,7 @@ class Google_Service_ShoppingContent_OrdersRefundRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersRefundResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6854,6 +6971,7 @@ class Google_Service_ShoppingContent_OrdersRefundResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersReturnLineItemRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6907,6 +7025,7 @@ class Google_Service_ShoppingContent_OrdersReturnLineItemRequest extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersReturnLineItemResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6933,6 +7052,7 @@ class Google_Service_ShoppingContent_OrdersReturnLineItemResponse extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersShipLineItemsRequest extends Google_Collection
 {
   protected $collection_key = 'lineItems';
@@ -6988,6 +7108,7 @@ class Google_Service_ShoppingContent_OrdersShipLineItemsRequest extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersShipLineItemsResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7014,6 +7135,7 @@ class Google_Service_ShoppingContent_OrdersShipLineItemsResponse extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersUpdateMerchantOrderIdRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7040,6 +7162,7 @@ class Google_Service_ShoppingContent_OrdersUpdateMerchantOrderIdRequest extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersUpdateMerchantOrderIdResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7066,6 +7189,7 @@ class Google_Service_ShoppingContent_OrdersUpdateMerchantOrderIdResponse extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersUpdateShipmentRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7119,6 +7243,7 @@ class Google_Service_ShoppingContent_OrdersUpdateShipmentRequest extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_OrdersUpdateShipmentResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7145,6 +7270,7 @@ class Google_Service_ShoppingContent_OrdersUpdateShipmentResponse extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Price extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7171,6 +7297,7 @@ class Google_Service_ShoppingContent_Price extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Product extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -7827,6 +7954,7 @@ class Google_Service_ShoppingContent_Product extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductAspect extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7862,6 +7990,7 @@ class Google_Service_ShoppingContent_ProductAspect extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductCustomAttribute extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7906,6 +8035,7 @@ class Google_Service_ShoppingContent_ProductCustomAttribute extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductCustomGroup extends Google_Collection
 {
   protected $collection_key = 'attributes';
@@ -7934,6 +8064,7 @@ class Google_Service_ShoppingContent_ProductCustomGroup extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductDestination extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7960,6 +8091,7 @@ class Google_Service_ShoppingContent_ProductDestination extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductInstallment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7987,6 +8119,7 @@ class Google_Service_ShoppingContent_ProductInstallment extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductShipping extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8059,6 +8192,7 @@ class Google_Service_ShoppingContent_ProductShipping extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductShippingDimension extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8085,6 +8219,7 @@ class Google_Service_ShoppingContent_ProductShippingDimension extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductShippingWeight extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8111,6 +8246,7 @@ class Google_Service_ShoppingContent_ProductShippingWeight extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductStatus extends Google_Collection
 {
   protected $collection_key = 'destinationStatuses';
@@ -8203,6 +8339,7 @@ class Google_Service_ShoppingContent_ProductStatus extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductStatusDataQualityIssue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8283,6 +8420,7 @@ class Google_Service_ShoppingContent_ProductStatusDataQualityIssue extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductStatusDestinationStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8318,6 +8456,7 @@ class Google_Service_ShoppingContent_ProductStatusDestinationStatus extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductTax extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8380,6 +8519,7 @@ class Google_Service_ShoppingContent_ProductTax extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductUnitPricingBaseMeasure extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8406,6 +8546,7 @@ class Google_Service_ShoppingContent_ProductUnitPricingBaseMeasure extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductUnitPricingMeasure extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8432,6 +8573,7 @@ class Google_Service_ShoppingContent_ProductUnitPricingMeasure extends Google_Mo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductsCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -8451,6 +8593,7 @@ class Google_Service_ShoppingContent_ProductsCustomBatchRequest extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductsCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8505,6 +8648,7 @@ class Google_Service_ShoppingContent_ProductsCustomBatchRequestEntry extends Goo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductsCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -8533,6 +8677,7 @@ class Google_Service_ShoppingContent_ProductsCustomBatchResponse extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8579,6 +8724,7 @@ class Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductsListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -8616,6 +8762,7 @@ class Google_Service_ShoppingContent_ProductsListResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductstatusesCustomBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -8635,6 +8782,7 @@ class Google_Service_ShoppingContent_ProductstatusesCustomBatchRequest extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductstatusesCustomBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8679,6 +8827,7 @@ class Google_Service_ShoppingContent_ProductstatusesCustomBatchRequestEntry exte
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductstatusesCustomBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -8707,6 +8856,7 @@ class Google_Service_ShoppingContent_ProductstatusesCustomBatchResponse extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductstatusesCustomBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8753,6 +8903,7 @@ class Google_Service_ShoppingContent_ProductstatusesCustomBatchResponseEntry ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_ProductstatusesListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -8790,6 +8941,7 @@ class Google_Service_ShoppingContent_ProductstatusesListResponse extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_TestOrder extends Google_Collection
 {
   protected $collection_key = 'lineItems';
@@ -8876,6 +9028,7 @@ class Google_Service_ShoppingContent_TestOrder extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_TestOrderCustomer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8911,6 +9064,7 @@ class Google_Service_ShoppingContent_TestOrderCustomer extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_TestOrderLineItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8968,6 +9122,7 @@ class Google_Service_ShoppingContent_TestOrderLineItem extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_TestOrderLineItemProduct extends Google_Collection
 {
   protected $collection_key = 'variantAttributes';
@@ -9096,6 +9251,7 @@ class Google_Service_ShoppingContent_TestOrderLineItemProduct extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_TestOrderPaymentMethod extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9149,6 +9305,7 @@ class Google_Service_ShoppingContent_TestOrderPaymentMethod extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_ShoppingContent_Weight extends Google_Model
 {
   protected $internal_gapi_mappings = array(

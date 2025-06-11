@@ -82,7 +82,7 @@ if ($importform->is_cancelled()) {
 
     // make arrays of valid fields for error checking
     $required = array("groupname" => 1);
-    $optionalDefaults = array("lang" => 1);
+    $optionaldefaults = array("lang" => 1);
     $optional = array("coursename" => 1,
             "idnumber" => 1,
             "groupidnumber" => 1,
@@ -91,17 +91,34 @@ if ($importform->is_cancelled()) {
             "groupingname" => 1,
             "enablemessaging" => 1,
         );
+    // Check custom fields from group and grouping.
+    $customfields = \core_group\customfield\group_handler::create()->get_fields();
+    $customfieldnames = [];
+    foreach ($customfields as $customfield) {
+        $controller = \core_customfield\data_controller::create(0, null, $customfield);
+        $customfieldnames['customfield_' . $customfield->get('shortname')] = 1;
+    }
+    $customfields = \core_group\customfield\grouping_handler::create()->get_fields();
+    $groupingcustomfields = [];
+    foreach ($customfields as $customfield) {
+        $controller = \core_customfield\data_controller::create(0, null, $customfield);
+        $groupingcustomfieldname = 'grouping_customfield_' . $customfield->get('shortname');
+        $customfieldnames[$groupingcustomfieldname] = 1;
+        $groupingcustomfields[$groupingcustomfieldname] = 'customfield_' . $customfield->get('shortname');
+    }
 
     // --- get header (field names) ---
     // Using get_columns() ensures the Byte Order Mark is removed.
     $header = $csvimport->get_columns();
 
-    // check for valid field names
+    // Check for valid field names.
     foreach ($header as $i => $h) {
-        $h = trim($h); $header[$i] = $h; // remove whitespace
-        if (!(isset($required[$h]) or isset($optionalDefaults[$h]) or isset($optional[$h]))) {
-                throw new \moodle_exception('invalidfieldname', 'error', $PAGE->url, $h);
-            }
+        // Remove whitespace.
+        $h = trim($h);
+        $header[$i] = $h;
+        if (!isset($required[$h]) && !isset($optionaldefaults[$h]) && !isset($optional[$h]) && !isset($customfieldnames[$h])) {
+            throw new \moodle_exception('invalidfieldname', 'error', $PAGE->url, $h);
+        }
         if (isset($required[$h])) {
             $required[$h] = 2;
         }
@@ -117,7 +134,7 @@ if ($importform->is_cancelled()) {
     while ($line = $csvimport->next()) {
 
         $newgroup = new stdClass();//to make Martin happy
-        foreach ($optionalDefaults as $key => $value) {
+        foreach ($optionaldefaults as $key => $value) {
             $newgroup->$key = current_language(); //defaults to current language
         }
         foreach ($line as $key => $value) {
@@ -211,6 +228,12 @@ if ($importform->is_cancelled()) {
                             $data = new stdClass();
                             $data->courseid = $newgroup->courseid;
                             $data->name = $groupingname;
+                            // Add customfield if exists.
+                            foreach ($header as $fieldname) {
+                                if (isset($customfieldnames[$fieldname]) && isset($newgroup->$fieldname)) {
+                                    $data->{$groupingcustomfields[$groupingcustomfieldname]} = $newgroup->$fieldname;
+                                }
+                            }
                             if ($groupingid = groups_create_grouping($data)) {
                                 echo $OUTPUT->notification(get_string('groupingaddedsuccesfully', 'group', $groupingname), 'notifysuccess');
                             } else {

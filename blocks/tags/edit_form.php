@@ -77,24 +77,14 @@ class block_tags_edit_form extends block_edit_form {
      * @param object $mform the form being built.
      */
     protected function add_collection_selector($mform) {
-        $tagcolls = core_tag_collection::get_collections_menu(false, false, get_string('anycollection', 'block_tags'));
+        $tagcolls = core_tag_collection::get_collections_menu(false, true, get_string('anycollection', 'block_tags'));
         if (count($tagcolls) <= 1) {
+            $mform->addElement('hidden', 'config_tagcoll', 0);
+            $mform->setType('config_tagcoll', PARAM_INT);
             return;
         }
 
-        $tagcollssearchable = core_tag_collection::get_collections_menu(false, true);
-        $hasunsearchable = false;
-        foreach ($tagcolls as $id => $name) {
-            if ($id && !array_key_exists($id, $tagcollssearchable)) {
-                $hasunsearchable = true;
-                $tagcolls[$id] = $name . '*';
-            }
-        }
-
         $mform->addElement('select', 'config_tagcoll', get_string('tagcollection', 'block_tags'), $tagcolls);
-        if ($hasunsearchable) {
-            $mform->addHelpButton('config_tagcoll', 'tagcollection', 'block_tags');
-        }
         $mform->setDefault('config_tagcoll', 0);
     }
 }

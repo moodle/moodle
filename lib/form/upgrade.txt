@@ -1,0 +1,27 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This files describes API changes in core_form libraries and APIs,
+information provided here is intended especially for developers.
+
+=== 4.4 ===
+
+* Now autocomplete suggestions will preserve classes defined in respective original "option" elements
+  Alongside with that new ".suggestions-heading" class was added to easily generate suggestion headings
+* The `core/form-autocomplete` module now exports an `enhanceField` method to return native promise (of
+  which the previous `enhance` is now a wrapper of, while preserving jQuery promise return)
+* The group element has a new method `getAttributesForFormElement` which should be used in conjunction
+  with `createFormElement` to ensure that all elements within the group have unique IDs
+* New method `setHiddenLabel` added to the group form element type
+* The deprecated `moodle-core-formchangechecker` YUI module and legacy `M.core_formchangechecker` have been
+  removed and can no longer be used
+
+=== 4.3 ===
+
+* Added a new parameter to allow Groups to add attributes.
+
+=== 4.2 ===
+
+* The moodle-form-passwordunmask module has been removed. It was deprecated in Moodle 3.2.

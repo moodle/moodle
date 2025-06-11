@@ -35,9 +35,16 @@ require_once($CFG->libdir . '/formslib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_grading_settings_form extends moodleform {
+    /** @var bool whether the user has asked to include automatically graded attempts. */
     protected $includeauto;
-    protected $hidden = array();
+
+    /** @var array extra hidden fields to add to the form. Things like cm id. */
+    protected $hidden = [];
+
+    /** @var stdClass data about how many attempts of each type their are. */
     protected $counts;
+
+    /** @var bool Whether the user has permission to see user names. */
     protected $shownames;
 
     /** @var bool $showcustomfields whether custom field values should be shown. */
@@ -71,8 +78,8 @@ class quiz_grading_settings_form extends moodleform {
 
         $mform->addElement('header', 'options', get_string('options', 'quiz_grading'));
 
-        $gradeoptions = array();
-        foreach (array('needsgrading', 'manuallygraded', 'autograded', 'all') as $type) {
+        $gradeoptions = [];
+        foreach (['needsgrading', 'manuallygraded', 'autograded', 'all'] as $type) {
             if (empty($this->counts->$type)) {
                 continue;
             }
@@ -86,7 +93,7 @@ class quiz_grading_settings_form extends moodleform {
                 $gradeoptions);
 
         $mform->addElement('text', 'pagesize', get_string('questionsperpage', 'quiz_grading'),
-                array('size' => 3));
+                ['size' => 3]);
         $mform->addRule('pagesize', null, 'positiveint', null, 'client');
         $mform->setType('pagesize', PARAM_INT);
 

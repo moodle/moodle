@@ -32,7 +32,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use dml_missing_record_exception;
-use external_api;
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 /**
@@ -42,7 +42,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_h5pactivity_access_information_test extends externallib_advanced_testcase {
+final class get_h5pactivity_access_information_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_h5pactivity_access_information().
@@ -52,7 +52,7 @@ class get_h5pactivity_access_information_test extends externallib_advanced_testc
      * @param int $enabletracking if tracking is enabled
      * @param array $enabledcaps capabilities enabled
      */
-    public function test_get_h5pactivity_access_information(string $role, int $enabletracking, array $enabledcaps) {
+    public function test_get_h5pactivity_access_information(string $role, int $enabletracking, array $enabledcaps): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -90,7 +90,7 @@ class get_h5pactivity_access_information_test extends externallib_advanced_testc
      *
      * @return array
      */
-    public function get_h5pactivity_access_information_data(): array {
+    public static function get_h5pactivity_access_information_data(): array {
         return [
             'Admin, tracking enabled' => [
                 '', 1, ['canview', 'canreviewattempts', 'canaddinstance']
@@ -124,7 +124,7 @@ class get_h5pactivity_access_information_test extends externallib_advanced_testc
     /**
      * Test dml_missing_record_exception in get_h5pactivity_access_information.
      */
-    public function test_dml_missing_record_exception() {
+    public function test_dml_missing_record_exception(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

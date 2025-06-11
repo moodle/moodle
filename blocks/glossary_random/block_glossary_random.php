@@ -35,6 +35,9 @@ class block_glossary_random extends block_base {
      */
     protected $glossarycm = null;
 
+    /** @var stdClass course data. */
+    public $course;
+
     function init() {
         $this->title = get_string('pluginname','block_glossary_random');
     }

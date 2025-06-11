@@ -1,16 +1,173 @@
-This files describes API changes in the quiz code.
+=== 4.5 Onwards ===
 
-=== 4.1.7 ===
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This file describes API changes in the quiz code.
+
+=== 4.4 ===
 * A quiz_structure_modified callback has been added for quiz_ plugins, called from
-  quiz_update_sumgrades(). Plugins can implement this by creating a `quiz_structure_modified`
+  grade_calculator::recompute_quiz_sumgrades(). Plugins can implement this by creating a `quiz_structure_modified`
   class in their namespace with a static `callback` method, see quiz_statistics as an example.
+* External functions returning question information, currently get_attempt_summary(), get_attempt_data() and get_attemp_review()
+  now return a new field called "stateclass". A machine-readable class name for the state that this question attempt is in,
+  as returned by question_usage_by_activity::get_question_state_class().
+* External function mod_quiz_external::get_attempt_summary() now returns a new field "totalunanswered", with the total number of
+  unanswered questions.
+* quiz_settings::no_review_message now takes a new argument $attemptsubmittime for the time when the quiz attempt was
+  submitted. It is strongly recommended that you always pass that.
+* In the renderer, related to rendering the review page, review_summary_table and filter_review_summary_table have been
+  replaced by review_attempt_summary and filter_review_attempt_summary. This is to support changing the $summarydata argument
+  the review_page() method to an instance of a new templateable class attempt_summary_information for displaying this.
+  The $summarydata argument of review_question_page has also been changed to an attempt_summary_information.
+* In the renderer, the view_table has been deprecated. Please use the list_of_attempts renderable instead.
+* There is a new function qbank_helper::get_version_information_for_questions_in_attempt to efficiently
+  check whether each question in an attempt is using the latest versions. This is used by re-grading,
+  replacing some old code there, and to update teacher previews automatically.
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `get_slot_tags_for_slot_id`
+  - `quiz_retrieve_tags_for_slot_ids`
+* Quiz override logic has been refactored and put in a new override_manager class.
+* Quiz override cache should now be accessed using the new override_cache class.
+* The quiz_delete_overrides and quiz_delete_all_overrides functions are now deprecated. Please instead use:
+  - override_manager::delete_override_by_id
+  - override_manager::delete_overrides
+  - override_manager::delete_all_overrides
+* There is a new renderable grade_out_of to help with display a nicely formatted "42.00 out of 100.00" with a few variants.
+* The quiz now supports computing multiple total grades for each attempt. To support this there is a new database table
+  quiz_grade_items and a new column quizgradeitemid in quiz_slots. There are new methods in structure grade_calculator
+  and quiz_attempt to support this, and the new grades are shown on review.php, view.php and in some of the quiz reports.
+  Also, the external functions get_attempt_review and get_user_attempts return the information about the extra grades if applicable.
 
-=== 4.1.1 ===
+=== 4.3 ===
+
+* The method get_questions() has a new parameter 'requirequestionfullyloaded' which can be used to instruct whether the
+  questions should be fully loaded or not.
+* the quiz_settings and quiz_attempt classes now always store the ->cm property as a cm_info class.
+  In the distant past it was always a stdClass, then at one point there was an undocumented change making
+  it sometimes a stdClass and sometimes a cm_info. Now it is consistently a cm_info. Type hints have been
+  updated to reflect this.
+* The parameter filtercondition in the web service mod_quiz_add_random_questions is now optional. This parameter is
+  only used when adding random questions from an existing category. It is not required when adding random questions from
+  a new category since it is not used in this case.
+
+=== 4.2 ===
+
+* For the three quiz web services: mod_quiz_get_attempt_data, mod_quiz_get_attempt_summary and
+  mod_quiz_get_attempt_review, the ->number property of each question is now deprecated
+  (It had the wrong time and was documented wrongly.) In the future, please use the new property
+  ->questionnumber. Note, this question 'number' can include any string (e.g. 'Qs 1 & 2') so it is
+  important to applying htmlspecialchars, or equivalent, to the value if you are outputting to HTML.
+
+* The methods in the quiz_settings class which return a URL now all return a moodle_url. Previously
+  some returns a moodle_url and others aa string.
+
 * 'firstslotid' value is not used in section_shuffle_updated event anymore.
+
+* The quiz has a lot of old classes in lib.php files. These have now been moved into the classes folder,
+  and so are now in namespaces. Because of Moodle's class renaming support, your code should continue
+  working, but output deprecated warnings, so you probably want to update. This should mostly be
+  doable by adding use statements, and a search/replace.
+  - mod_quiz_display_options => mod_quiz\question\display_options
+  - qubaids_for_quiz => mod_quiz\question\qubaids_for_quiz
+  - qubaids_for_quiz_user => mod_quiz\question\qubaids_for_quiz_user - which is deprecated, because
+          it is almost the same as mod_quiz\question\qubaids_for_users_attempts.
+  - mod_quiz_admin_setting_browsersecurity => mod_quiz\admin\browser_security_setting
+  - mod_quiz_admin_setting_grademethod => mod_quiz\admin\grade_method_setting
+  - mod_quiz_admin_setting_overduehandling => mod_quiz\admin\overdue_handling_setting
+  - mod_quiz_admin_review_setting => mod_quiz\admin\review_setting
+  - mod_quiz_admin_setting_user_image => mod_quiz\admin\user_image_setting
+  - mod_quiz_admin_setting_browsersecurity => mod_quiz\admin\browser_security_setting
+  - mod_quiz_admin_setting_grademethod => mod_quiz\admin\grade_method_setting
+  - mod_quiz_admin_setting_overduehandling => mod_quiz\admin\overdue_handling_setting
+  - mod_quiz_admin_review_setting => mod_quiz\admin\review_setting
+  - mod_quiz_admin_setting_user_image => mod_quiz\admin\user_image_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_browsersecurity =>
+            mod_quiz\adminpresets\adminpresets_browser_security_setting
+  - mod_quiz\adminpresets/adminpresets_mod_quiz_admin_setting_grademethod =>
+            mod_quiz\adminpresets\adminpresets_grade_method_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_overduehandling =>
+            mod_quiz\adminpresets\adminpresets_overdue_handling_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_review_setting =>
+            mod_quiz\adminpresets\adminpresets_review_setting
+  - mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_user_image =>
+            mod_quiz\adminpresets\adminpresets_user_image_setting
+  - quiz_default_report => mod_quiz\local\reports\report_base
+  - quiz_attempts_report => mod_quiz\local\reports\attempts_report
+  - mod_quiz_attempts_report_form => mod_quiz\local\reports\attempts_report_options_form
+  - mod_quiz_attempts_report_options => mod_quiz\local\reports\attempts_report_options
+  - quiz_attempts_report_table => mod_quiz\local\reports\attempts_report_table
+  - quiz_access_manager => mod_quiz\access_manager
+  - mod_quiz_preflight_check_form => mod_quiz\form\preflight_check_form
+  - quiz_override_form => mod_quiz\form\edit_override_form
+  - quiz_access_rule_base => mod_quiz\local\access_rule_base
+  - quiz_add_random_form => mod_quiz\form\add_random_form
+  - mod_quiz_links_to_other_attempts => mod_quiz\output\links_to_other_attempts
+  - mod_quiz_view_object => mod_quiz\output\view_page
+  - mod_quiz_renderer => mod_quiz\output\renderer
+  - quiz_nav_question_button => mod_quiz\output\navigation_question_button
+  - quiz_nav_section_heading => mod_quiz\output\navigation_section_heading
+  - quiz_nav_panel_base => mod_quiz\output\navigation_panel_base
+  - quiz_attempt_nav_panel => mod_quiz\output\navigation_panel_attempt
+  - quiz_review_nav_panel => mod_quiz\output\navigation_panel_review
+  - quiz_attempt => mod_quiz\quiz_attempt
+  - quiz => mod_quiz\quiz_settings
+  - quizaccess_seb\quiz_settings => quizaccess_seb\seb_quiz_settings
+  - quizaccess_seb\access_manager => quizaccess_seb\seb_access_manager
+
+* The following classes have been deprecated:
+  - mod_quiz_overdue_attempt_updater - merged into mod_quiz\task\update_overdue_attempts
+  - moodle_quiz_exception - just use normal moodle_exception
+
+* As part of the clean-up, the following files are no longer required, and if you try to
+  include them, you will get a debugging notices telling you not to:
+  - mod/quiz/report/attemptsreport.php
+  - mod/quiz/report/attemptsreport_form.php
+  - mod/quiz/report/attemptsreport_options.php
+  - mod/quiz/report/attemptsreport_table.php
+  - mod/quiz/report/default.php
+  - mod/quiz/accessmanager.php
+  - mod/quiz/accessmanager_form.php
+  - mod/quiz/cronlib.php
+  - mod/quiz/override_form.php
+  - mod/quiz/accessrule/accessrulebase.php
+  - mod/quiz/renderer.php - actually, no debugging ouput for this one because of how renderer factories work.
+  - mod/quiz/attemptlib.php
+
+* Various functions related to calculating grades have moved into a new class mod_quiz\grade_calculator.
+  You get that using $quizobj->get_grade_calculator(), then the following old functions have become these new methods.
+  - quiz_update_sumgrades -> recompute_quiz_sumgrades
+  - quiz_update_all_attempt_sumgrades -> recompute_all_attempt_sumgrades
+  - quiz_update_all_final_grades -> recompute_all_final_grades
+  - quiz_set_grade -> update_quiz_maximum_grade
+  - quiz_save_best_grade -> recompute_final_grade
+  - quiz_calculate_best_grade -> [no public direct replacement]
+  - quiz_calculate_best_attempt - [no replacement. It was not used.]
+
+* Final deprecation (complete removal) of the following functions which were deprecated long ago:
+  - quiz_groups_member_added_handler - deprecated since 2.6
+  - quiz_groups_member_removed_handler - deprecated since 2.6
+  - quiz_groups_group_deleted_handler - deprecated since 2.6
+  - quiz_groups_members_removed_handler - deprecated since 2.6
+  - The method quiz_settings::confirm_start_attempt_message - deprecated in Moodle 3.1
+  - The field view_page::$startattemptwarning - deprecated in Moodle 3.1
+  - attempts_report::load_relevant_students - deprecated since 3.2
+  - quiz_statistics_graph_get_new_colour - deprecated since 3.2
+  - The file mod/quiz/report/overview/overviewgraph.php - deprecated since 3.2
+  - The file mod/quiz/report/statistics/statistics_graph.php - deprecated since 3.2
+  - quiz_print_overview - deprecated since 3.3
+
+* For properties that were previously only declared dynamically, a few classes now include property declarations to support PHP 8.2.
+  The affected classes are:
+   - restore_quiz_activity_structure_step
+   - attempts_report_table
+   - attempts_report
+   - quiz_overview_report (Removing $hasgroupstudents, because the parent attempts_report class has the same variable.)
 
 === 4.1 ===
 
 * quiz_has_question_use is now deprecated. Use mod_quiz\structure::has_use_capability istead.
+
 
 === 4.0.3, 4.1 ===
 

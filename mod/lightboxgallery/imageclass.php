@@ -204,12 +204,14 @@ class lightboxgallery_image {
             'filename'      => $this->storedfile->get_filename());
 
         ob_start();
+        $original = $this->storedfile->get_filename();
         $fileinfo['filename'] = $this->output_by_mimetype($this->get_image_flipped($direction));
         $flipped = ob_get_clean();
         $this->delete_file(false);
         $fs = get_file_storage();
         $this->set_stored_file($fs->create_file_from_string($fileinfo, $flipped));
         $this->create_thumbnail();
+        $this->update_meta_file($original, $fileinfo['filename']);
         return $fileinfo['filename'];
     }
 
@@ -357,7 +359,7 @@ class lightboxgallery_image {
             $srcy = floor($cy - ($srch / 2)) + $offsety;
         }
 
-        imagecopybicubic($resized, $image, 0, 0, $srcx, $srcy, $width, $height, $srcw, $srch);
+        imagecopyresampled($resized, $image, 0, 0, $srcx, $srcy, $width, $height, $srcw, $srch);
 
         return $resized;
 
@@ -435,6 +437,7 @@ class lightboxgallery_image {
             'filename'      => $this->storedfile->get_filename());
 
         ob_start();
+        $original = $fileinfo['filename'];
         $fileinfo['filename'] = $this->output_by_mimetype($this->get_image_resized($height, $width));
         $resized = ob_get_clean();
 
@@ -446,6 +449,7 @@ class lightboxgallery_image {
         $this->width = $imageinfo['width'];
 
         $this->thumbnail = $this->create_thumbnail();
+        $this->update_meta_file($original, $fileinfo['filename']);
 
         return $fileinfo['filename'];
     }
@@ -460,6 +464,7 @@ class lightboxgallery_image {
             'filename'      => $this->storedfile->get_filename());
 
         ob_start();
+        $original = $fileinfo['filename'];
         $fileinfo['filename'] = $this->output_by_mimetype($this->get_image_rotated($angle));
         $rotated = ob_get_clean();
 
@@ -468,6 +473,7 @@ class lightboxgallery_image {
         $this->set_stored_file($fs->create_file_from_string($fileinfo, $rotated));
 
         $this->create_thumbnail();
+        $this->update_meta_file($original, $fileinfo['filename']);
         return $fileinfo['filename'];
     }
 
@@ -487,6 +493,18 @@ class lightboxgallery_image {
         } else {
             return $DB->insert_record('lightboxgallery_image_meta', $imagemeta);
         }
+    }
+
+    public function update_meta_file($old, $new) {
+        global $DB;
+
+        if ($old == $new) {
+            return;
+        }
+
+        $sql = 'UPDATE {lightboxgallery_image_meta} SET image = ?
+                WHERE image = ? AND gallery = ?';
+        $DB->execute($sql, [$new, $old, $this->gallery->id]);
     }
 
     public function copy_content_to_temp() {

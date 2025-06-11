@@ -43,9 +43,10 @@ class core_badges_generator extends component_generator_base {
 
         $record = (array) $record;
 
-        // Save badge image path for later.
+        // Save badge image/tags for later.
         $badgeimage = $record['image'] ?? '';
-        unset($record['image']);
+        $badgetags = $record['tags'] ?? '';
+        unset($record['image'], $record['tags']);
 
         $record = (object) array_merge([
             'name' => 'Test badge',
@@ -91,6 +92,14 @@ class core_badges_generator extends component_generator_base {
 
             // Copy image to temp file, as it'll be deleted by the following call.
             badges_process_badge_image($badge, $file->copy_content_to_temp());
+        }
+
+        // Process badge tags (if supplied).
+        if ($badgetags !== '') {
+            if (!is_array($badgetags)) {
+                $badgetags = preg_split('/\s*,\s*/', $badgetags, -1, PREG_SPLIT_NO_EMPTY);
+            }
+            core_tag_tag::set_item_tags('core_badges', 'badge', $badge->id, $badge->get_context(), $badgetags);
         }
 
         return $badge;

@@ -142,7 +142,20 @@ This plugin also manages the 'merging_success' event is trigered, what includes:
 2. Changing the old user's profile picture by the given on pix/suspended.jpg. It is a simple
    white image with the text "suspended user", which could help to teachers and
    managers to rapidly detect them.
+3. Add merge date in user profile field `mergeusers_date` to both old and new users.
+4. Add merge log id in user profile field `mergeusers_logid` to both old and new user.
+5. Update user profile field `mergeusers_olduserid` with:
+   1. The old user id on the new user profile.
+   2. Empty value on the old user.
+6. Update user profile field `mergeusers_newuserid` with:
+   1. The new user id on the old user profile.
+   2. Empty value for the new user.
 
+Custom profile fields `mergeusers_olduserid` and `mergeusers_newuserid` helps identify
+which users were merged and are the old ones:
+   * `mergeusers_newuserid` is set and not empty.
+and which users were merged and are the new ones:
+   * `mergeusers_olduserid` is set and not empty.
 
 Correct way of testing this plugin
 ==================================
@@ -233,7 +246,7 @@ Contributors
 
 Maintained by:
 
-* Nicolas Dunand.
-* [Jordi Pujol-Ahulló](https://recursoseducatius.urv.cat).
+* [Jordi Pujol-Ahulló](https://www.urv.cat).
+* [Nicolas Dunand](https://moodle.org/plugins/browse.php?list=contributor&id=141933).
 
-[See all Github contributors](https://github.com/ndunand/moodle-tool_mergeusers/graphs/contributors)
+[See all Github contributors](https://github.com/jpahullo/moodle-tool_mergeusers/graphs/contributors)

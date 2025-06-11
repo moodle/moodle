@@ -60,7 +60,7 @@ class filter extends dynamic_form {
     /**
      * Ensure current user is able to use this form
      *
-     * A {@see \core_reportbuilder\report_access_exception} will be thrown if they can't
+     * A {@see \core_reportbuilder\exception\report_access_exception} will be thrown if they can't
      */
     protected function check_access_for_dynamic_submission(): void {
         $reportpersistent = $this->get_report()->get_report_persistent();
@@ -149,9 +149,10 @@ class filter extends dynamic_form {
         $buttons = [];
         $buttons[] = $mform->createElement('submit', 'submitbutton', get_string('apply', 'core_reportbuilder'));
         $buttons[] = $mform->createElement('submit', 'resetfilters',  get_string('resetall', 'core_reportbuilder'),
-            null, null, ['customclassoverride' => 'btn-link']);
+            null, null, ['customclassoverride' => 'btn-link ms-1']);
 
-        $mform->addGroup($buttons, 'buttonar', '', [' '], false);
+        $mform->addGroup($buttons, 'buttonar', get_string('formactions', 'core_form'), '', false)
+            ->setHiddenLabel(true);
         $mform->closeHeaderBefore('buttonar');
 
         $mform->disable_form_change_checker();

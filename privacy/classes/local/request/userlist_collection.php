@@ -64,7 +64,7 @@ class userlist_collection implements \Iterator, \Countable {
      *
      * @return  int
      */
-    public function get_context() : \context {
+    public function get_context(): \context {
         return $this->context;
     }
 
@@ -74,7 +74,7 @@ class userlist_collection implements \Iterator, \Countable {
      * @param   userlist_base $userlist the userlist to export.
      * @return  $this
      */
-    public function add_userlist(userlist_base $userlist) : userlist_collection {
+    public function add_userlist(userlist_base $userlist): userlist_collection {
         $component = $userlist->get_component();
         if (isset($this->userlists[$component])) {
             throw new \moodle_exception("A userlist has already been added for the '{$component}' component");
@@ -91,7 +91,7 @@ class userlist_collection implements \Iterator, \Countable {
      * @return  array   the associative array of userlists in this collection, indexed by component name.
      * E.g. mod_assign => userlist, core_comment => userlist.
      */
-    public function get_userlists() : array {
+    public function get_userlists(): array {
         return $this->userlists;
     }
 

@@ -90,7 +90,7 @@ if (!empty($ruleid)) {
 
 // Modify the lists to add the choosers.
 $eventlist = array_merge(array('' => get_string('choosedots')), $eventlist);
-$pluginlist = array_merge(array('' => get_string('choosedots')), $pluginlist);
+$pluginlist = array_merge(['' => [0 => get_string('choosedots')]], $pluginlist);
 $mform = new tool_monitor\rule_form(null, array('eventlist' => $eventlist, 'pluginlist' => $pluginlist, 'rule' => $rule,
         'courseid' => $courseid, 'subscriptioncount' => $subscriptioncount));
 
@@ -110,10 +110,6 @@ if ($mformdata = $mform->get_data()) {
 
     redirect($manageurl);
 } else {
-    // Set up the yui module.
-    $PAGE->requires->yui_module('moodle-tool_monitor-dropdown', 'Y.M.tool_monitor.DropDown.init',
-            array(array('eventlist' => $eventlist)));
-
     echo $OUTPUT->header();
     $mform->set_data($rule);
     // If there's any subscription for this rule, display an information message.

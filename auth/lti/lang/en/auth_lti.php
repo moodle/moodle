@@ -31,11 +31,10 @@ $string['createaccountforme'] = 'Create an account for me';
 $string['createnewaccount'] = 'I\'d like to create a new account';
 $string['currentlyloggedinas'] = 'You are currently logged in as:';
 $string['firstlaunchnotice'] = 'It looks like this is your first time here. Please select from one of the following account options.';
-$string['firstlaunchnoauthnotice'] = 'To link your existing account you must be logged in to the site. Please log in to the site in a new tab/window and then relaunch the tool here. For further information, see the documentation <a href="{$a}" target="_blank">Publish as LTI tool</a>.';
 $string['getstartedwithnewaccount'] = 'Get started with a new account';
 $string['haveexistingaccount'] = 'I have an existing account';
 $string['linkthisaccount'] = 'Link this account';
-$string['mustbeloggedin'] = 'You need to be logged in to your existing account';
+$string['mustbeloggedin'] = 'Log in to link your existing account.';
 $string['pluginname'] = 'LTI';
 $string['privacy:metadata:auth_lti'] = 'LTI authentication';
 $string['privacy:metadata:auth_lti:authsubsystem'] = 'This plugin is connected to the authentication subsystem.';
@@ -53,5 +52,5 @@ $string['provisioningmodeexistingonly'] = 'Existing accounts only (prompt)';
 $string['useexistingaccount'] = 'Use existing account';
 $string['welcome'] = 'Welcome!';
 
-// Deprecated since Moodle 4.0.
-$string['privacy:metadata'] = 'The LTI authentication plugin does not store any personal data.';
+// Deprecated since Moodle 4.4.
+$string['firstlaunchnoauthnotice'] = 'To link your existing account you must be logged in to the site. Please log in to the site in a new tab/window and then relaunch the tool here. For further information, see the documentation <a href="{$a}" target="_blank">Publish as LTI tool</a>.';

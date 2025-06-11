@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class systemrole_test extends advanced_testcase {
+final class systemrole_test extends advanced_testcase {
 
     /**
      * Test that this audience type description is generated correctly

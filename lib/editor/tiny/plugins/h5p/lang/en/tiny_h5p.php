@@ -22,11 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['helplinktext'] = 'H5P helper';
 $string['modaltitle'] = 'Insert H5P content';
-$string['buttontitle'] = 'Configure H5P content';
+$string['buttontitle'] = 'Insert H5P content';
 $string['insert'] = 'Insert H5P content';
-$string['pluginname'] = 'Tiny insert H5P';
+$string['pluginname'] = 'Insert H5P';
 $string['browserepositories'] = 'Browse repositories...';
 $string['copyrightbutton'] = 'Copyright button';
 $string['downloadbutton'] = 'Allow download';
@@ -40,3 +39,6 @@ $string['invalidh5purl'] = 'Invalid URL';
 $string['instructions'] = 'You can insert H5P content by <strong>either</strong> entering a URL <strong>or</strong> by uploading an H5P file.';
 $string['noh5pcontent'] = 'No H5P content added';
 $string['privacy:metadata'] = 'The H5P plugin for TinyMCE does not store any personal data.';
+
+// Deprecated since Moodle 4.5.
+$string['helplinktext'] = 'H5P helper';

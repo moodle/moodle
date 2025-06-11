@@ -53,6 +53,9 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
         require_once($CFG->libdir.'/modinfolib.php');
         $iconurl = get_fast_modinfo($this->data->courseid)->cms[$this->data->cmid]->get_icon_url();
         $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
+
+        $isbranded = component_callback('mod_' . $this->data->modname, 'is_branded') !== null ? : false;
+
         return array(
             'viewurl' => (new moodle_url('/mod/'.$this->data->modname.'/view.php',
                 array('id' => $this->data->cmid)))->out(false),
@@ -63,6 +66,7 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
                 ['title' => get_string('pluginname', $this->data->modname), 'class' => "icon $iconclass"]
             ),
             'purpose' => plugin_supports('mod', $this->data->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
+            'branded' => $isbranded,
         );
     }
 
@@ -86,7 +90,7 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
                 'type' => PARAM_INT,
             ),
             'modname' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_PLUGIN,
             ),
             'name' => array(
                     'type' => PARAM_TEXT,
@@ -108,7 +112,7 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
     public static function define_other_properties() {
         return array(
             'viewurl' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
             ),
             'courseviewurl' => array(
                     'type' => PARAM_URL,
@@ -117,8 +121,12 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
                 'type' => PARAM_RAW,
             ),
             'purpose' => array(
-                'type' => PARAM_TEXT,
-            )
+                'type' => PARAM_ALPHA,
+            ),
+            'branded' => [
+                'type' => PARAM_BOOL,
+                'optional' => true,
+            ],
         );
     }
 }

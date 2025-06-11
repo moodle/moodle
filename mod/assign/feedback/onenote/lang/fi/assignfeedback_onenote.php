@@ -24,26 +24,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addfeedback'] = 'Lisää palaute';
+$string['addfeedbackhelp'] = 'Lisää palaute opiskelijan palautukseen OneNote napsauttamalla yllä olevaa painiketta. Voit palata tähän myöhemmin ja tallentaa työn uudelleen Moodleen.';
 $string['configmaxbytes'] = 'OneNoten enimmäiskoko';
 $string['countfiles'] = 'OneNote-tiedostot: {$a}';
 $string['default'] = 'Käytössä oletuksena';
 $string['default_help'] = 'Jos asetus on käytössä, tämä palautetapa on oletusarvoisesti käytössä kaikissa uusissa tehtävissä.';
 $string['enabled'] = 'OneNote-palaute';
 $string['enabled_help'] = 'Jos asetus on käytössä, opettaja voi ladata palautetta sisältäviä OneNote-sivuja tehtävien arvioinnin yhteydessä. Opettajat voivat halutessaan merkitä palautteen opiskelijan OneNote-palautukseen tai täysin uudelle OneNote-sivulle.';
-$string['onenote'] = 'OneNote-palautteet';
+$string['feedbackdownloadfailed'] = 'Palautetta ei voitu ladata OneNote. Yritä uudelleen.';
+$string['feedbacklimitexceed'] = 'Palautteen koko ylittää määritetyn rajan.';
+$string['feedbacknotstarted'] = 'Lisää palaute OneNote ja tallenna sitten muutokset.';
 $string['filesadded'] = 'OneNote-palautteet lisätty: {$a}';
 $string['maxbytes'] = 'OneNote-paketin enimmäiskoko';
 $string['maxfiles'] = 'Ladattavien OneNote-tiedostojen enimmäismäärä';
 $string['maximumsize'] = 'OneNote-paketin enimmäiskoko';
 $string['moreusers'] = '{$a} muuta...';
 $string['nochanges'] = 'Ei muutoksia';
+$string['notsignedin'] = 'Kirjaudu OneNoteen, ennen kuin yrität tallentaa muutokset.';
+$string['onenote'] = 'OneNote-palautteet';
 $string['pluginname'] = 'OneNote-palaute';
-$string['addfeedback'] = 'Lisää palaute';
-$string['addfeedbackhelp'] = 'Lisää palaute opiskelijan palautukseen OneNote napsauttamalla yllä olevaa painiketta. Voit palata tähän myöhemmin ja tallentaa työn uudelleen Moodleen.';
 $string['signinhelp1'] = 'Kirjaudu OneNoteen yllä olevan painikkeen kautta, jotta voit lisätä palautteen opiskelijan palautukseen.';
 $string['signinhelp2'] = 'Kirjaudu OneNoteen yllä olevan painikkeen kautta, jos haluat tarkistella palautetta siellä.';
 $string['viewfeedback'] = 'Näytä palaute';
-$string['feedbackdownloadfailed'] = 'Palautetta ei voitu ladata OneNote. Yritä uudelleen.';
-$string['notsignedin'] = 'Kirjaudu OneNoteen, ennen kuin yrität tallentaa muutokset.';
-$string['feedbacknotstarted'] = 'Lisää palaute OneNote ja tallenna sitten muutokset.';
-$string['feedbacklimitexceed'] = 'Palautteen koko ylittää määritetyn rajan.';

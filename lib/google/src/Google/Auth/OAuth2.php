@@ -23,6 +23,7 @@ if (!class_exists('Google_Client')) {
  * Authentication class that deals with the OAuth 2 web-server authentication flow
  *
  */
+#[AllowDynamicProperties]
 class Google_Auth_OAuth2 extends Google_Auth_Abstract
 {
   const OAUTH2_REVOKE_URI = 'https://accounts.google.com/o/oauth2/revoke';

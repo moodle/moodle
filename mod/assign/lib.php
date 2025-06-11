@@ -35,7 +35,7 @@ require_once(__DIR__ . '/deprecatedlib.php');
  * @param mod_assign_mod_form $form
  * @return int The instance id of the new assignment
  */
-function assign_add_instance(stdClass $data, mod_assign_mod_form $form = null) {
+function assign_add_instance(stdClass $data, ?mod_assign_mod_form $form = null) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
@@ -70,22 +70,25 @@ function assign_reset_userdata($data) {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-    $status = array();
-    $params = array('courseid'=>$data->courseid);
+    $status = [];
+    $params = ['courseid' => $data->courseid];
     $sql = "SELECT a.id FROM {assign} a WHERE a.course=:courseid";
-    $course = $DB->get_record('course', array('id'=>$data->courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $data->courseid], '*', MUST_EXIST);
     if ($assigns = $DB->get_records_sql($sql, $params)) {
         foreach ($assigns as $assign) {
-            $cm = get_coursemodule_from_instance('assign',
-                                                 $assign->id,
-                                                 $data->courseid,
-                                                 false,
-                                                 MUST_EXIST);
+            $cm = get_coursemodule_from_instance(
+                'assign',
+                $assign->id,
+                $data->courseid,
+                false,
+                MUST_EXIST,
+            );
             $context = context_module::instance($cm->id);
             $assignment = new assign($context, $cm, $course);
             $status = array_merge($status, $assignment->reset_userdata($data));
         }
     }
+
     return $status;
 }
 
@@ -200,10 +203,11 @@ function assign_reset_gradebook($courseid, $type='') {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the assignment.
- * @param moodleform $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function assign_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'assignheader', get_string('modulenameplural', 'assign'));
+    $mform->addElement('static', 'assigndelete', get_string('delete'));
     $name = get_string('deleteallsubmissions', 'assign');
     $mform->addElement('advcheckbox', 'reset_assign_submissions', $name);
     $mform->addElement('advcheckbox', 'reset_assign_user_overrides',
@@ -408,7 +412,9 @@ function assign_supports($feature) {
  * @return void
  */
 function assign_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
-    global $DB;
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
@@ -452,6 +458,18 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
             $linkname = get_string('revealidentities', 'assign');
             $node = $navref->add($linkname, $url, navigation_node::TYPE_SETTING);
         }
+    }
+
+    $assign = new assign($context, null, null);
+    // If the current user can view grades, include the 'Submissions' navigation node.
+    if ($assign->can_view_grades()) {
+        $url = new moodle_url('/mod/assign/view.php', ['id' => $settings->get_page()->cm->id, 'action' => 'grading']);
+        $navref->add(
+            text: get_string('gradeitem:submissions', 'assign'),
+            action: $url,
+            type: navigation_node::TYPE_SETTING,
+            key: 'mod_assign_submissions'
+        );
     }
 }
 
@@ -616,27 +634,6 @@ function assign_page_type_list($pagetype, $parentcontext, $currentcontext) {
         'mod-assign-view' => get_string('page-mod-assign-view', 'assign'),
     );
     return $modulepagetype;
-}
-
-/**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function assign_print_overview() {
-    throw new coding_exception('assign_print_overview() can not be used any more and is obsolete.');
-}
-
-/**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function assign_get_mysubmission_details_for_print_overview() {
-    throw new coding_exception('assign_get_mysubmission_details_for_print_overview() can not be used any more and is obsolete.');
-}
-
-/**
- * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
- */
-function assign_get_grade_details_for_print_overview() {
-    throw new coding_exception('assign_get_grade_details_for_print_overview() can not be used any more and is obsolete.');
 }
 
 /**
@@ -962,28 +959,19 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
 }
 
 /**
- * @deprecated since Moodle 3.8
- */
-function assign_scale_used() {
-    throw new coding_exception('assign_scale_used() can not be used anymore. Plugins can implement ' .
-        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
-}
-
-/**
- * Checks if scale is being used by any instance of assignment
+ * Checks if scale is being used by any instance of assignment or is the default scale used for assignments.
  *
  * This is used to find out if scale used anywhere
  * @param int $scaleid
- * @return boolean True if the scale is used by any assignment
+ * @return boolean True if the scale is used by any assignment or is the default scale used for assignments.
  */
 function assign_scale_used_anywhere($scaleid) {
     global $DB;
 
-    if ($scaleid and $DB->record_exists('assign', array('grade'=>-$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
+    return $scaleid && (
+        $DB->record_exists('assign', ['grade' => -(int)$scaleid]) ||
+        (int)get_config('mod_assign', 'defaultgradescale') === (int)$scaleid
+    );
 }
 
 /**
@@ -1429,6 +1417,8 @@ function assign_pluginfile($course,
 function mod_assign_output_fragment_gradingpanel($args) {
     global $CFG;
 
+    \core\session\manager::write_close(); // No changes to session in this function.
+
     $context = $args['context'];
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -1613,6 +1603,14 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
             return null;
         }
 
+        $instance = $assign->get_instance();
+        if ($instance->teamsubmission && !$instance->requireallteammemberssubmit) {
+            $groupsubmission = $assign->get_group_submission($userid, 0, false);
+            if ($groupsubmission && $groupsubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                return null;
+            }
+        }
+
         $participant = $assign->get_participant($userid);
 
         if (!$participant) {
@@ -1773,24 +1771,29 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
 /**
  * Return a list of all the user preferences used by mod_assign.
  *
- * @return array
+ * @uses core_user::is_current_user
+ *
+ * @return array[]
  */
-function mod_assign_user_preferences() {
+function mod_assign_user_preferences(): array {
     $preferences = array();
     $preferences['assign_filter'] = array(
         'type' => PARAM_ALPHA,
         'null' => NULL_NOT_ALLOWED,
-        'default' => ''
+        'default' => '',
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
     $preferences['assign_workflowfilter'] = array(
         'type' => PARAM_ALPHA,
         'null' => NULL_NOT_ALLOWED,
-        'default' => ''
+        'default' => '',
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
     $preferences['assign_markerfilter'] = array(
         'type' => PARAM_ALPHANUMEXT,
         'null' => NULL_NOT_ALLOWED,
-        'default' => ''
+        'default' => '',
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
 
     return $preferences;
@@ -1803,7 +1806,7 @@ function mod_assign_user_preferences() {
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_assign_get_path_from_pluginfile(string $filearea, array $args) : array {
+function mod_assign_get_path_from_pluginfile(string $filearea, array $args): array {
     // Assign never has an itemid (the number represents the revision but it's not stored in database).
     array_shift($args);
 
