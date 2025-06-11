@@ -36,14 +36,14 @@ use \core_privacy\local\request\userlist;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\userlist
  */
-class userlist_test extends advanced_testcase {
+final class userlist_test extends advanced_testcase {
 
     /**
      * Ensure that valid SQL results in the relevant users being added.
      *
      * @covers ::add_from_sql
      */
-    public function test_add_from_sql() {
+    public function test_add_from_sql(): void {
         global $DB;
 
         $sql = "SELECT c.id FROM {user} c";
@@ -61,7 +61,7 @@ class userlist_test extends advanced_testcase {
      *
      * @covers ::add_user
      */
-    public function test_add_user() {
+    public function test_add_user(): void {
         $this->resetAfterTest();
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -80,7 +80,7 @@ class userlist_test extends advanced_testcase {
      *
      * @covers ::add_users
      */
-    public function test_add_users() {
+    public function test_add_users(): void {
         $this->resetAfterTest();
 
         $u1 = $this->getDataGenerator()->create_user();

@@ -70,7 +70,7 @@ class data_field_file extends data_field_base {
 
         // database entry label
         $html = '<div title="' . s($this->field->description) . '">';
-        $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+        $html .= '<fieldset><legend><span class="accesshide">'.s($this->field->name);
 
         if ($this->field->required) {
             $html .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
@@ -105,7 +105,7 @@ class data_field_file extends data_field_base {
     }
 
     function display_search_field($value = '') {
-        return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>' .
+        return '<label class="accesshide" for="f_' . $this->field->id . '">' . s($this->field->name) . '</label>' .
                '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" ' .
                     'value="'.s($value).'" class="form-control"/>';
     }
@@ -218,8 +218,64 @@ class data_field_file extends data_field_base {
         $DB->update_record('data_content', $content);
     }
 
-    function text_export_supported() {
-        return false;
+    /**
+     * Here we export the text value of a file field which is the filename of the exported file.
+     *
+     * @param stdClass $record the record which is being exported
+     * @return string the value which will be stored in the exported file for this field
+     */
+    public function export_text_value(stdClass $record): string {
+        return !empty($record->content) ? $record->content : '';
+    }
+
+    /**
+     * Specifies that this field type supports the export of files.
+     *
+     * @return bool true which means that file export is being supported by this field type
+     */
+    public function file_export_supported(): bool {
+        return true;
+    }
+
+    /**
+     * Specifies that this field type supports the import of files.
+     *
+     * @return bool true which means that file import is being supported by this field type
+     */
+    public function file_import_supported(): bool {
+        return true;
+    }
+
+    /**
+     * Provides the necessary code for importing a file when importing the content of a mod_data instance.
+     *
+     * @param int $contentid the id of the mod_data content record
+     * @param string $filecontent the content of the file to import as string
+     * @param string $filename the filename the imported file should get
+     * @return void
+     */
+    public function import_file_value(int $contentid, string $filecontent, string $filename): void {
+        $filerecord = [
+            'contextid' => $this->context->id,
+            'component' => 'mod_data',
+            'filearea' => 'content',
+            'itemid' => $contentid,
+            'filepath' => '/',
+            'filename' => $filename,
+        ];
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, $filecontent);
+    }
+
+    /**
+     * Exports the file content for file export.
+     *
+     * @param stdClass $record the data content record the file belongs to
+     * @return null|string The file content of the stored file or null if no file should be exported for this record
+     */
+    public function export_file_value(stdClass $record): null|string {
+        $file = $this->get_file($record->id);
+        return $file ? $file->get_content() : null;
     }
 
     function file_ok($path) {
@@ -259,5 +315,24 @@ class data_field_file extends data_field_base {
             $configs["param$i"] = $this->field->{"param$i"};
         }
         return $configs;
+    }
+
+    public function get_field_params(): array {
+        global $DB, $CFG;
+
+        $data = parent::get_field_params();
+
+        $course = $DB->get_record('course', ['id' => $this->data->course]);
+        $filesizes = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes, 0, $this->field->param3);
+
+        foreach ($filesizes as $value => $name) {
+            if (!((isset($this->field->param3) && $value == $this->field->param3))) {
+                $data['filesizes'][] = ['name' => $name, 'value' => $value, 'selected' => 0];
+            } else {
+                $data['filesizes'][] = ['name' => $name, 'value' => $value, 'selected' => 1];
+            }
+        }
+
+        return $data;
     }
 }

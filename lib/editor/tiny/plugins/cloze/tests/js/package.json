@@ -1,0 +1,11 @@
+{
+    "type": "module",
+    "devDependencies": {
+        "mocha": "^11.0.1",
+        "jsdom": "^25.0.1"
+    },
+    "scripts": {
+        "cpsrc": "mkdir -p src && for i in ../../amd/src/*.js ; do t=${i##*/}; x=${t%*.js}; cp $i src/${x}.mjs; done",
+        "test": "npm run cpsrc && mocha --recursive ./*.js"
+    }
+}

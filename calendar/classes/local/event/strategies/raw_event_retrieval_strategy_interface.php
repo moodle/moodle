@@ -49,12 +49,12 @@ interface raw_event_retrieval_strategy_interface {
      * @return \stdClass[] Array of event records.
      */
     public function get_raw_events(
-        array $usersfilter = null,
-        array $groupsfilter = null,
-        array $coursesfilter = null,
-        array $categoriesfilter = null,
-        array $whereconditions = null,
-        array $whereparams = null,
+        ?array $usersfilter = null,
+        ?array $groupsfilter = null,
+        ?array $coursesfilter = null,
+        ?array $categoriesfilter = null,
+        ?array $whereconditions = null,
+        ?array $whereparams = null,
         $ordersql = null,
         $offset = null,
         $limitnum = 40,

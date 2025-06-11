@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline extends Google_Service
 {
 
@@ -102,6 +103,7 @@ class Google_Service_Pagespeedonline extends Google_Service
  *   $pagespeedapi = $pagespeedonlineService->pagespeedapi;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_Pagespeedapi_Resource extends Google_Service_Resource
 {
 
@@ -134,6 +136,7 @@ class Google_Service_Pagespeedonline_Pagespeedapi_Resource extends Google_Servic
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2 extends Google_Collection
 {
   protected $collection_key = 'args';
@@ -162,6 +165,7 @@ class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2 extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2Args extends Google_Collection
 {
   protected $collection_key = 'secondary_rects';
@@ -219,6 +223,7 @@ class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2Args extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2ArgsRects extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -263,6 +268,7 @@ class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2ArgsRects extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2ArgsSecondaryRects extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -307,6 +313,7 @@ class Google_Service_Pagespeedonline_PagespeedApiFormatStringV2ArgsSecondaryRect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_PagespeedApiImageV2 extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -372,6 +379,7 @@ class Google_Service_Pagespeedonline_PagespeedApiImageV2 extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_PagespeedApiImageV2PageRect extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -416,6 +424,7 @@ class Google_Service_Pagespeedonline_PagespeedApiImageV2PageRect extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_Result extends Google_Collection
 {
   protected $collection_key = 'invalidRules';
@@ -520,6 +529,7 @@ class Google_Service_Pagespeedonline_Result extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultFormattedResults extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -547,10 +557,12 @@ class Google_Service_Pagespeedonline_ResultFormattedResults extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultFormattedResultsRuleResults extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultFormattedResultsRuleResultsElement extends Google_Collection
 {
   protected $collection_key = 'urlBlocks';
@@ -607,6 +619,7 @@ class Google_Service_Pagespeedonline_ResultFormattedResultsRuleResultsElement ex
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultFormattedResultsRuleResultsElementUrlBlocks extends Google_Collection
 {
   protected $collection_key = 'urls';
@@ -636,6 +649,7 @@ class Google_Service_Pagespeedonline_ResultFormattedResultsRuleResultsElementUrl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultFormattedResultsRuleResultsElementUrlBlocksUrls extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -665,6 +679,7 @@ class Google_Service_Pagespeedonline_ResultFormattedResultsRuleResultsElementUrl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultPageStats extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -790,10 +805,12 @@ class Google_Service_Pagespeedonline_ResultPageStats extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultRuleGroups extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultRuleGroupsElement extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -811,6 +828,7 @@ class Google_Service_Pagespeedonline_ResultRuleGroupsElement extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Pagespeedonline_ResultVersion extends Google_Model
 {
   protected $internal_gapi_mappings = array(

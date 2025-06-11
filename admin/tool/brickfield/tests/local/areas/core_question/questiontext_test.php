@@ -30,19 +30,20 @@ use tool_brickfield\area_test_base;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_brickfield\local\areas\core_question\base
  */
-class questiontext_test extends area_test_base {
+final class questiontext_test extends area_test_base {
     /**
      * Set up before class.
      */
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
      * Test find course areas.
      */
-    public function test_find_course_areas() {
+    public function test_find_course_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -126,7 +127,7 @@ class questiontext_test extends area_test_base {
     /**
      * Test find relevant areas.
      */
-    public function test_find_relevant_areas() {
+    public function test_find_relevant_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -156,7 +157,7 @@ class questiontext_test extends area_test_base {
     /**
      * Test find system areas.
      */
-    public function test_find_system_areas() {
+    public function test_find_system_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -197,7 +198,7 @@ class questiontext_test extends area_test_base {
      *
      * @covers ::get_course_and_category
      */
-    public function test_get_course_and_category() {
+    public function test_get_course_and_category(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

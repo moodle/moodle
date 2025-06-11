@@ -14,17 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External user API
- *
- * @package    core_user
- * @category   external
- * @copyright  2009 Petr Skodak
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-require_once("$CFG->libdir/externallib.php");
+use core_external\external_description;
+use core_external\external_value;
+use core_external\external_format_value;
+use core_external\external_single_structure;
+use core_external\external_multiple_structure;
+use core_external\external_function_parameters;
+use core_external\external_warnings;
 
 /**
  * User external functions
@@ -35,7 +31,7 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class core_user_external extends external_api {
+class core_user_external extends \core_external\external_api {
 
     /**
      * Returns description of method parameters
@@ -414,18 +410,6 @@ class core_user_external extends external_api {
         if (!empty($preferences)) {
             $userpref = ['id' => $userid];
             foreach ($preferences as $preference) {
-
-                /*
-                 * Rename user message provider preferences to avoid orphan settings on old app versions.
-                 * @todo Remove this "translation" block on MDL-73284.
-                 */
-                if (preg_match('/message_provider_.*_loggedin/', $preference['type']) ||
-                        preg_match('/message_provider_.*_loggedoff/', $preference['type'])) {
-                    $nameparts = explode('_', $preference['type']);
-                    array_pop($nameparts);
-                    $preference['type'] = implode('_', $nameparts).'_enabled';
-                }
-
                 $userpref['preference_' . $preference['type']] = $preference['value'];
             }
             useredit_update_user_preference($userpref);
@@ -675,7 +659,7 @@ class core_user_external extends external_api {
                     useredit_update_user_preference($userpref);
                 }
                 if (isset($user['suspended']) and $user['suspended']) {
-                    \core\session\manager::kill_user_sessions($user['id']);
+                    \core\session\manager::destroy_user_sessions($user['id']);
                 }
 
                 $transaction->allow_commit();
@@ -1116,7 +1100,7 @@ class core_user_external extends external_api {
      * Create user return value description.
      *
      * @param array $additionalfields some additional field
-     * @return single_structure_description
+     * @return external_description
      */
     public static function user_description($additionalfields = array()) {
         $userfields = array(
@@ -1143,6 +1127,8 @@ class core_user_external extends external_api {
             'theme'       => new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
             'timezone'    => new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
             'mailformat'  => new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
+            'trackforums'  => new external_value(core_user::get_property_type('trackforums'),
+                'Whether the user is tracking forums.', VALUE_OPTIONAL),
             'description' => new external_value(core_user::get_property_type('description'), 'User profile description', VALUE_OPTIONAL),
             'descriptionformat' => new external_format_value(core_user::get_property_type('descriptionformat'), VALUE_OPTIONAL),
             'city'        => new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
@@ -1153,7 +1139,9 @@ class core_user_external extends external_api {
                 new external_single_structure(
                     array(
                         'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
-                        'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                        'value' => new external_value(PARAM_RAW, 'The value of the custom field (as stored in the database)'),
+                        'displayvalue' => new external_value(PARAM_RAW, 'The value of the custom field for display',
+                            VALUE_OPTIONAL),
                         'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
                         'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
                     )
@@ -1806,7 +1794,8 @@ class core_user_external extends external_api {
                         array(
                             'name' => new external_value(PARAM_RAW, 'The name of the preference'),
                             'value' => new external_value(PARAM_RAW, 'The value of the preference'),
-                            'userid' => new external_value(PARAM_INT, 'Id of the user to set the preference'),
+                            'userid' => new external_value(PARAM_INT,
+                                'Id of the user to set the preference (default to current user)', VALUE_DEFAULT, 0),
                         )
                     )
                 )
@@ -1823,29 +1812,31 @@ class core_user_external extends external_api {
      * @throws moodle_exception
      */
     public static function set_user_preferences($preferences) {
-        global $USER;
+        global $PAGE, $USER;
 
         $params = self::validate_parameters(self::set_user_preferences_parameters(), array('preferences' => $preferences));
         $warnings = array();
         $saved = array();
 
         $context = context_system::instance();
-        self::validate_context($context);
+        $PAGE->set_context($context);
 
         $userscache = array();
         foreach ($params['preferences'] as $pref) {
+            $userid = $pref['userid'] ?: $USER->id;
+
             // Check to which user set the preference.
-            if (!empty($userscache[$pref['userid']])) {
-                $user = $userscache[$pref['userid']];
+            if (!empty($userscache[$userid])) {
+                $user = $userscache[$userid];
             } else {
                 try {
-                    $user = core_user::get_user($pref['userid'], '*', MUST_EXIST);
+                    $user = core_user::get_user($userid, '*', MUST_EXIST);
                     core_user::require_active_user($user);
-                    $userscache[$pref['userid']] = $user;
+                    $userscache[$userid] = $user;
                 } catch (Exception $e) {
                     $warnings[] = array(
                         'item' => 'user',
-                        'itemid' => $pref['userid'],
+                        'itemid' => $userid,
                         'warningcode' => 'invaliduser',
                         'message' => $e->getMessage()
                     );
@@ -1854,7 +1845,18 @@ class core_user_external extends external_api {
             }
 
             try {
-                if (core_user::can_edit_preference($pref['name'], $user)) {
+
+                // Support legacy preferences from the old M.util.set_user_preference API (always using the current user).
+                if (isset($USER->ajax_updatable_user_prefs[$pref['name']])) {
+                    debugging('Updating preferences via ajax_updatable_user_prefs is deprecated. ' .
+                        'Please use the "core_user/repository" module instead.', DEBUG_DEVELOPER);
+
+                    set_user_preference($pref['name'], $pref['value']);
+                    $saved[] = array(
+                        'name' => $pref['name'],
+                        'userid' => $USER->id,
+                    );
+                } else if (core_user::can_edit_preference($pref['name'], $user)) {
                     $value = core_user::clean_preference($pref['value'], $pref['name']);
                     set_user_preference($pref['name'], $value, $user->id);
                     $saved[] = array(

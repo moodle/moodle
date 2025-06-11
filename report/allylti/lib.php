@@ -40,8 +40,3 @@ function report_allylti_extend_navigation_course($navigation, $course, $context)
         $navigation->add(get_string('coursereport', 'report_allylti'), $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
 }
-
-function report_allylti_before_standard_html_head() {
-    global $PAGE;
-    $PAGE->requires->js_call_amd('report_allylti/main', 'init');
-}

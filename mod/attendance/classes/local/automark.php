@@ -107,7 +107,7 @@ class automark {
                     $duration = get_config('attendance', 'studentscanmarksessiontimeend') * 60;
                 }
                 $timeend = $timestart + $duration;
-                $logusers = $DB->get_recordset_sql($sql, array($course->id, $timestart, $timeend));
+                $logusers = $DB->get_recordset_sql($sql, [$course->id, $timestart, $timeend]);
                 // Check if user access is in allowed subnet.
                 foreach ($logusers as $loguser) {
                     if (!empty($session->subnet) && !address_in_subnet($loguser->ip, $session->subnet)) {
@@ -164,13 +164,14 @@ class automark {
                 }
                 if (!empty($newlogs)) {
                     $DB->insert_records('attendance_log', $newlogs);
+                    $donesomething = true;
                 }
             }
 
             // Get all unmarked students.
             $users = $att->get_users($session->groupid, 0);
 
-            $existinglog = $DB->get_recordset('attendance_log', array('sessionid' => $session->id));
+            $existinglog = $DB->get_recordset('attendance_log', ['sessionid' => $session->id]);
             $updated = 0;
 
             foreach ($existinglog as $log) {
@@ -247,13 +248,13 @@ class automark {
                     $att->update_users_grade(array_keys($users));
                 }
 
-                $params = array(
+                $params = [
                     'sessionid' => $att->pageparams->sessionid,
-                    'grouptype' => $att->pageparams->grouptype);
-                $event = \mod_attendance\event\attendance_taken::create(array(
+                    'grouptype' => $att->pageparams->grouptype, ];
+                $event = \mod_attendance\event\attendance_taken::create([
                     'objectid' => $att->id,
                     'context' => $att->context,
-                    'other' => $params));
+                    'other' => $params]);
                 $event->add_record_snapshot('course_modules', $att->cm);
                 $event->add_record_snapshot('attendance_sessions', $session);
                 $event->trigger();

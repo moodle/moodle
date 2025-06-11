@@ -1,0 +1,65 @@
+notifications:
+  email: false
+
+language: php
+
+os: linux
+
+dist: xenial
+
+services:
+  - mysql
+
+sudo: true
+
+addons:
+  firefox: "47.0.1"
+  postgresql: "9.6"
+  apt:
+    packages:
+      - openjdk-8-jre-headless
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+php:
+  - 7.2
+
+env:
+  global:
+    - IGNORE_PATHS=node_modules
+    - MOODLE_BRANCH=MOODLE_38_STABLE
+  matrix:
+    - DB=pgsql
+    - DB=mysqli
+
+matrix:
+  include:
+    - env: MOODLE_BRANCH=master DB=pgsql
+  allow_failures:
+    - env: MOODLE_BRANCH=master DB=pgsql
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - nvm install 8.9
+  - nvm use 8.9
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints
+  - moodle-plugin-ci mustache
+  - moodle-plugin-ci grunt
+  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat

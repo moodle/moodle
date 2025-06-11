@@ -23,12 +23,8 @@
  */
 
 namespace core\output;
-defined('MOODLE_INTERNAL') || die();
 
-use renderable;
-use renderer_base;
 use stdClass;
-use templatable;
 
 /**
  * The checkbox-toggleall renderable class.
@@ -38,7 +34,6 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class checkbox_toggleall implements renderable, templatable {
-
     /** @var string The name of the group of checkboxes to be toggled. */
     protected $togglegroup;
 

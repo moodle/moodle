@@ -26,7 +26,6 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
 
-
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
@@ -34,9 +33,9 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \basic_testcase {
+final class question_test extends \basic_testcase {
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $this->assertEquals('The quick brown fox jumped over the lazy dog.; '.
                             '[[Drop zone 1]] -> {quick / fox / lazy}; '.
@@ -45,7 +44,7 @@ class question_test extends \basic_testcase {
                             $dd->get_question_summary());
     }
 
-    public function test_get_question_summary_maths() {
+    public function test_get_question_summary_maths(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $this->assertEquals('Fill in the operators to make this equation work:; '.
                             '[[Drop zone 1]] -> {+ / - / * / /}; '.
@@ -54,7 +53,7 @@ class question_test extends \basic_testcase {
                                     $dd->get_question_summary());
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -67,7 +66,7 @@ class question_test extends \basic_testcase {
                                                 'c3' => '50,150')));
     }
 
-    public function test_summarise_response_maths() {
+    public function test_summarise_response_maths(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -80,17 +79,17 @@ class question_test extends \basic_testcase {
                                                 'c3' => '')));
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $this->assertEquals(null, $dd->get_random_guess_score());
     }
 
-    public function test_get_random_guess_score_maths() {
+    public function test_get_random_guess_score_maths(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $this->assertEquals(null, $dd->get_random_guess_score());
     }
 
-    public function test_get_right_choice_for() {
+    public function test_get_right_choice_for(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -100,7 +99,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(3, $dd->get_right_choice_for(3));
     }
 
-    public function test_get_right_choice_for_maths() {
+    public function test_get_right_choice_for_maths(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -110,7 +109,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(1, $dd->get_right_choice_for(3));
     }
 
-    public function test_clear_wrong_from_response() {
+    public function test_clear_wrong_from_response(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -120,7 +119,7 @@ class question_test extends \basic_testcase {
                 $dd->clear_wrong_from_response($initialresponse));
     }
 
-    public function test_get_num_parts_right() {
+    public function test_get_num_parts_right(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -139,7 +138,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(array(1, 3), $dd->get_num_parts_right($response3));
     }
 
-    public function test_get_num_parts_right_maths() {
+    public function test_get_num_parts_right_maths(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -149,7 +148,7 @@ class question_test extends \basic_testcase {
                         'c1' => '50,50;150,50;50,150', 'c2' => '', 'c3' => '')));
     }
 
-    public function test_get_expected_data() {
+    public function test_get_expected_data(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -159,7 +158,7 @@ class question_test extends \basic_testcase {
         );
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -168,7 +167,7 @@ class question_test extends \basic_testcase {
                             $dd->get_correct_response());
     }
 
-    public function test_get_correct_response_maths() {
+    public function test_get_correct_response_maths(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -176,7 +175,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(array('c1' => '50,50;150,50;50,150'), $dd->get_correct_response());
     }
 
-    public function test_is_same_response() {
+    public function test_is_same_response(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -224,7 +223,7 @@ class question_test extends \basic_testcase {
                 array('c1' => '200,200;100,100', 'c2' => '',
                         'c3' => '300,300;100,100', 'c4' => '400,400')));
     }
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -236,13 +235,13 @@ class question_test extends \basic_testcase {
                 array('c1' => '300,300', 'c2' => '300,300', 'c3' => '300,300')));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($dd->is_gradable_response(array()));
         $this->assertFalse($dd->is_gradable_response(
-                array('c1' => '', 'c2' => '', 'c3' => '', 'c3' => '')));
+                array('c1' => '', 'c2' => '', 'c3' => '')));
         $this->assertTrue($dd->is_gradable_response(
                 array('c1' => '300,300', 'c2' => '300,300', 'c3' => '')));
         $this->assertTrue($dd->is_gradable_response(array('c1' => '300,300')));
@@ -250,7 +249,7 @@ class question_test extends \basic_testcase {
                 array('c1' => '300,300', 'c2' => '300,300', 'c3' => '300,300')));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -263,7 +262,7 @@ class question_test extends \basic_testcase {
                 $dd->grade_response(array('c1' => '150,50', 'c2' => '50,50', 'c3' => '100,50')));
     }
 
-    public function test_grading_maths() {
+    public function test_grading_maths(): void {
         $dd = \test_question_maker::make_question('ddmarker', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -281,7 +280,7 @@ class question_test extends \basic_testcase {
                                                         'c3' => '100,50')));
     }
 
-    public function test_classify_response() {
+    public function test_classify_response(): void {
         $dd = \test_question_maker::make_question('ddmarker');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);

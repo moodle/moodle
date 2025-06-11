@@ -70,7 +70,7 @@ class behat_mod_attendance extends behat_question_base {
      */
     protected function get_attendance_by_name(string $name): stdClass {
         global $DB;
-        return $DB->get_record('attendance', array('name' => $name), '*', MUST_EXIST);
+        return $DB->get_record('attendance', ['name' => $name], '*', MUST_EXIST);
     }
 
     /**

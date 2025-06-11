@@ -27,7 +27,7 @@ Manual tests
 ------------
 
 * There aren't any manual tests needed to upgrade this plugin.
-* However, if you look at the Behat feature file, you will see that there are some scenarios commented out. If you have time, you should test them manually or write a proper Behat test for them.
+
 
 Visual checks
 -------------

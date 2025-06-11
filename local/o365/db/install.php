@@ -31,6 +31,5 @@ require_once($CFG->dirroot.'/local/o365/lib.php');
  * Installation script.
  */
 function xmldb_local_o365_install() {
-    local_o365_check_sharedsecret();
     local_o365_set_default_user_sync_suspension_feature_schedule();
 }

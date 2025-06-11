@@ -18,7 +18,7 @@ Feature: Insert equations containing sensible symbols
     And the "urltolink" filter is "off"
     And I log in as "admin"
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-96 - Checking «<»>§&¨"`' symbols in text
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "0" using the activity chooser
@@ -30,7 +30,7 @@ Feature: Insert equations containing sensible symbols
     Then "`'" "text" should exist
     Then Wirisformula should not exist
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-96 - Checking french quotes in text
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "0" using the activity chooser
@@ -41,7 +41,7 @@ Feature: Insert equations containing sensible symbols
     Then "«Bonjour»" "text" should exist
     Then Wirisformula should not exist
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-96 - Checking «<»>§&¨"`' symbols in MATHML
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "0" using the activity chooser

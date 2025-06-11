@@ -25,14 +25,14 @@ namespace contenttype_h5p;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \contenttype_h5p\content
  */
-class content_h5p_test extends \advanced_testcase {
+final class content_h5p_test extends \advanced_testcase {
 
     /**
      * Tests for uploaded file.
      *
      * @covers ::get_file
      */
-    public function test_upload_file() {
+    public function test_upload_file(): void {
         $this->resetAfterTest();
 
         // Create content.
@@ -138,7 +138,7 @@ class content_h5p_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_view_allowed_provider(): array {
+    public static function is_view_allowed_provider(): array {
         return [
             'Editing teacher with all libraries enabled' => [
                 'role' => 'editingteacher',

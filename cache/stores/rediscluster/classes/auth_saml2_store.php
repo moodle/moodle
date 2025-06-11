@@ -27,7 +27,7 @@ namespace cachestore_rediscluster;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/auth/saml2/extlib/simplesamlphp/lib/SimpleSAML/Store.php');
+require_once($CFG->dirroot . '/auth/saml2/.extlib/simplesamlphp/lib/SimpleSAML/Store.php');
 
 /**
  * RedisCluster store simpleSAMLphp class for auth/saml2.

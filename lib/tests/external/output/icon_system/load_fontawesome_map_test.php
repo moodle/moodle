@@ -40,19 +40,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\external\output\icon_system\load_fontawesome_map
  */
-class load_fontawesome_map_test extends externallib_advanced_testcase {
-
-    /**
-     * Perform setup before these tests are run.
-     */
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-
-        // In normal operation the external_api classes will have been loaded by the caller.
-        // The load_fontawesome_map class should not need to supplement our lack of autoloading of these classes.
-        require_once($CFG->libdir . '/externallib.php');
-    }
-
+final class load_fontawesome_map_test extends externallib_advanced_testcase {
     /**
      * Ensure that a valid theme which uses fontawesome returns a map.
      *
@@ -89,7 +77,7 @@ class load_fontawesome_map_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function valid_fontawesome_theme_provider(): array {
+    public static function valid_fontawesome_theme_provider(): array {
         return [
             'Boost theme' => ['boost'],
             'Classic theme (extends boost)' => ['classic'],

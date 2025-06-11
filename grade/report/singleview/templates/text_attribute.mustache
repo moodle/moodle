@@ -24,7 +24,11 @@
         "name": "Awesome-report",
         "label": "Text label",
         "value": "Text information",
-        "disabled": "true"
+        "disabled": false,
+        "type": "number",
+        "isnumeric": true,
+        "min": "0",
+        "max": "100"
     }
 }}
 {{#readonly}}
@@ -32,6 +36,7 @@
 {{/readonly}}
 {{^readonly}}
     {{#label}}<label for="{{name}}" class="accesshide">{{label}}</label>{{/label}}
-    <input id="{{name}}" name="{{name}}" type="text" value="{{value}}" class="form-control" {{#disabled}}disabled{{/disabled}}>
+    <input id="{{name}}" data-uielement="text" name="{{name}}" type="{{#type}}{{.}}{{/type}}{{^type}}text{{/type}}" value="{{value}}" class="form-control" {{#disabled}}disabled{{/disabled}}{{!
+        }} {{#isnumeric}} {{#min}}min="{{.}}" {{/min}} {{#max}}max="{{.}}" {{/max}} step="any" {{/isnumeric}}>
     <input type="hidden" name="old{{name}}" value="{{value}}">
 {{/readonly}}

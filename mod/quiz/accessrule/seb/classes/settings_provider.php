@@ -212,12 +212,13 @@ class settings_provider {
      * @param \MoodleQuickForm $mform the wrapped MoodleQuickForm.
      */
     protected static function add_seb_templates(\mod_quiz_mod_form $quizform, \MoodleQuickForm $mform) {
-        if (self::can_use_seb_template($quizform->get_context()) || self::is_conflicting_permissions($quizform->get_context())) {
+        $context = $quizform->get_context();
+        if (self::can_use_seb_template($context) || self::is_conflicting_permissions($context)) {
             $element = $mform->createElement(
                 'select',
                 'seb_templateid',
                 get_string('seb_templateid', 'quizaccess_seb'),
-                self::get_template_options()
+                self::get_template_options($context->instanceid)
             );
         } else {
             $element = $mform->createElement('hidden', 'seb_templateid');
@@ -230,7 +231,7 @@ class settings_provider {
 
         // In case if the user can't use templates, but the quiz is configured to use them,
         // we'd like to display template, but freeze it.
-        if (self::is_conflicting_permissions($quizform->get_context())) {
+        if (self::is_conflicting_permissions($context)) {
             self::freeze_element($quizform, $mform, 'seb_templateid');
         }
     }
@@ -395,7 +396,7 @@ class settings_provider {
             self::freeze_element($quizform, $mform, 'seb_showsebdownloadlink');
             self::freeze_element($quizform, $mform, 'seb_allowedbrowserexamkeys');
 
-            $quizsettings = quiz_settings::get_by_quiz_id((int) $quizform->get_instance());
+            $quizsettings = seb_quiz_settings::get_by_quiz_id((int) $quizform->get_instance());
 
             // If the file has been uploaded, then replace it with the link to download the file.
             if (!empty($quizsettings) && $quizsettings->get('requiresafeexambrowser') == self::USE_SEB_UPLOAD_CONFIG) {
@@ -430,7 +431,7 @@ class settings_provider {
      * @param \MoodleQuickForm $mform the wrapped MoodleQuickForm.
      * @return string
      */
-    protected static function get_uploaded_seb_file_download_link(\mod_quiz_mod_form $quizform, \MoodleQuickForm $mform) : string {
+    protected static function get_uploaded_seb_file_download_link(\mod_quiz_mod_form $quizform, \MoodleQuickForm $mform): string {
         $link = '';
         $file = self::get_module_context_sebconfig_file($quizform->get_coursemodule()->id);
 
@@ -457,7 +458,7 @@ class settings_provider {
      *
      * @return array All quiz form elements to be added and their types.
      */
-    public static function get_seb_config_elements() : array {
+    public static function get_seb_config_elements(): array {
         return [
             'seb_linkquitseb' => 'text',
             'seb_userconfirmquit' => 'selectyesno',
@@ -486,7 +487,7 @@ class settings_provider {
      * Get the types of the quiz settings elements.
      * @return array List of types for the setting elements.
      */
-    public static function get_seb_config_element_types() : array {
+    public static function get_seb_config_element_types(): array {
         return [
             'seb_linkquitseb' => PARAM_RAW,
             'seb_userconfirmquit' => PARAM_BOOL,
@@ -511,13 +512,14 @@ class settings_provider {
     }
 
     /**
-     * Check that we have conflicting permissions.
+     * Check that we have conflicting permissions with the current SEB settings.
      *
-     * In Some point we can have settings save by the person who use specific
-     * type of SEB usage (e.g. use templates). But then another person who can't
-     * use template (but still can update other settings) edit the same quiz. This is
-     * conflict of permissions and we'd like to build the settings form having this in
-     * mind.
+     * Check if the existing settings of the quiz (if any) are conflicting with the
+     * capabilities of the managing user.
+     *
+     * E.g. a quiz is using an SEB template and a site admin is able to select this
+     * option while a course manager cannot. Therefore it will return true for a course
+     * manager and return false for a site admin.
      *
      * @param \context $context Context used with capability checking.
      *
@@ -528,24 +530,29 @@ class settings_provider {
             return false;
         }
 
-        $settings = quiz_settings::get_record(['cmid' => (int) $context->instanceid]);
+        $settings = seb_quiz_settings::get_record(['cmid' => (int) $context->instanceid]);
 
         if (empty($settings)) {
             return false;
         }
 
         if (!self::can_use_seb_template($context) &&
-            $settings->get('requiresafeexambrowser') == self::USE_SEB_TEMPLATE) {
+                $settings->get('requiresafeexambrowser') == self::USE_SEB_TEMPLATE) {
+            return true;
+        }
+
+        if (!self::can_use_seb_client_config($context) &&
+                $settings->get('requiresafeexambrowser') == self::USE_SEB_CLIENT_CONFIG) {
             return true;
         }
 
         if (!self::can_upload_seb_file($context) &&
-            $settings->get('requiresafeexambrowser') == self::USE_SEB_UPLOAD_CONFIG) {
+                $settings->get('requiresafeexambrowser') == self::USE_SEB_UPLOAD_CONFIG) {
             return true;
         }
 
         if (!self::can_configure_manually($context) &&
-            $settings->get('requiresafeexambrowser') == self::USE_SEB_CONFIG_MANUALLY) {
+                $settings->get('requiresafeexambrowser') == self::USE_SEB_CONFIG_MANUALLY) {
             return true;
         }
 
@@ -558,7 +565,7 @@ class settings_provider {
      * @param \context $context Context used with capability checking selection options.
      * @return array
      */
-    public static function get_requiresafeexambrowser_options(\context $context) : array {
+    public static function get_requiresafeexambrowser_options(\context $context): array {
         $options[self::USE_SEB_NO] = get_string('no');
 
         if (self::can_configure_manually($context) || self::is_conflicting_permissions($context)) {
@@ -566,7 +573,7 @@ class settings_provider {
         }
 
         if (self::can_use_seb_template($context) || self::is_conflicting_permissions($context)) {
-            if (!empty(self::get_template_options())) {
+            if (!empty(self::get_template_options($context->instanceid))) {
                 $options[self::USE_SEB_TEMPLATE] = get_string('seb_use_template', 'quizaccess_seb');
             }
         }
@@ -575,7 +582,9 @@ class settings_provider {
             $options[self::USE_SEB_UPLOAD_CONFIG] = get_string('seb_use_upload', 'quizaccess_seb');
         }
 
-        $options[self::USE_SEB_CLIENT_CONFIG] = get_string('seb_use_client', 'quizaccess_seb');
+        if (self::can_use_seb_client_config($context) || self::is_conflicting_permissions($context)) {
+            $options[self::USE_SEB_CLIENT_CONFIG] = get_string('seb_use_client', 'quizaccess_seb');
+        }
 
         return $options;
     }
@@ -584,10 +593,18 @@ class settings_provider {
      * Returns a list of templates.
      * @return array
      */
-    protected static function get_template_options() : array {
+    protected static function get_template_options($cmid): array {
         $templates = [];
-        $records = template::get_records(['enabled' => 1], 'name');
-        if ($records) {
+        $templatetable = template::TABLE;
+        $sebquizsettingstable = seb_quiz_settings::TABLE;
+        $select = "enabled = 1
+            OR EXISTS (
+                SELECT 1
+                  FROM {{$sebquizsettingstable}}
+                 WHERE templateid = {{$templatetable}}.id
+                   AND cmid = ?
+            )";
+        if ($records = template::get_records_select($select, [$cmid], 'id, name')) {
             foreach ($records as $record) {
                 $templates[$record->get('id')] = $record->get('name');
             }
@@ -600,7 +617,7 @@ class settings_provider {
      * Returns a list of options for the file manager element.
      * @return array
      */
-    public static function get_filemanager_options() : array {
+    public static function get_filemanager_options(): array {
         return [
             'subdirs' => 0,
             'maxfiles' => 1,
@@ -615,7 +632,7 @@ class settings_provider {
      *
      * @return array List of settings and their defaults.
      */
-    public static function get_seb_config_element_defaults() : array {
+    public static function get_seb_config_element_defaults(): array {
         return [
             'seb_linkquitseb' => '',
             'seb_userconfirmquit' => 1,
@@ -673,7 +690,7 @@ class settings_provider {
      * @param string $itemid Item ID of the file.
      * @return stored_file|null Returns null if no file is found.
      */
-    public static function get_current_user_draft_file(string $itemid) : ?stored_file {
+    public static function get_current_user_draft_file(string $itemid): ?stored_file {
         global $USER;
         $context = context_user::instance($USER->id);
         $fs = get_file_storage();
@@ -689,7 +706,7 @@ class settings_provider {
      * @param string $cmid The course module id which is used as an itemid reference.
      * @return stored_file|null Returns null if no file is found.
      */
-    public static function get_module_context_sebconfig_file(string $cmid) : ?stored_file {
+    public static function get_module_context_sebconfig_file(string $cmid): ?stored_file {
         $fs = new \file_storage();
         $context = context_module::instance($cmid);
 
@@ -708,7 +725,7 @@ class settings_provider {
      * @param string $cmid The cmid of for the quiz.
      * @return bool Always true
      */
-    public static function save_filemanager_sebconfigfile_draftarea(string $draftitemid, string $cmid) : bool {
+    public static function save_filemanager_sebconfigfile_draftarea(string $draftitemid, string $cmid): bool {
         if ($draftitemid) {
             $context = context_module::instance($cmid);
             file_save_draft_area_files($draftitemid, $context->id, 'quizaccess_seb', 'filemanager_sebconfigfile',
@@ -725,7 +742,7 @@ class settings_provider {
      * @param string $cmid The cmid of for the quiz.
      * @return bool Always true or exception if error occurred
      */
-    public static function delete_uploaded_config_file(string $cmid) : bool {
+    public static function delete_uploaded_config_file(string $cmid): bool {
         $file = self::get_module_context_sebconfig_file($cmid);
 
         if (!empty($file)) {
@@ -741,8 +758,18 @@ class settings_provider {
      * @param \context $context Context to check access in.
      * @return bool
      */
-    public static function can_configure_seb(\context $context) : bool {
+    public static function can_configure_seb(\context $context): bool {
         return has_capability('quizaccess/seb:manage_seb_requiresafeexambrowser', $context);
+    }
+
+    /**
+     * Check if the current user can select to use the SEB client configuration.
+     *
+     * @param \context $context Context to check access in.
+     * @return bool
+     */
+    public static function can_use_seb_client_config(\context $context): bool {
+        return has_capability('quizaccess/seb:manage_seb_usesebclientconfig', $context);
     }
 
     /**
@@ -751,7 +778,7 @@ class settings_provider {
      * @param \context $context Context to check access in.
      * @return bool
      */
-    public static function can_use_seb_template(\context $context) : bool {
+    public static function can_use_seb_template(\context $context): bool {
         return has_capability('quizaccess/seb:manage_seb_templateid', $context);
     }
 
@@ -761,7 +788,7 @@ class settings_provider {
      * @param \context $context Context to check access in.
      * @return bool
      */
-    public static function can_upload_seb_file(\context $context) : bool {
+    public static function can_upload_seb_file(\context $context): bool {
         return has_capability('quizaccess/seb:manage_filemanager_sebconfigfile', $context);
     }
 
@@ -771,7 +798,7 @@ class settings_provider {
      * @param \context $context Context to check access in.
      * @return bool
      */
-    public static function can_change_seb_showsebdownloadlink(\context $context) : bool {
+    public static function can_change_seb_showsebdownloadlink(\context $context): bool {
         return has_capability('quizaccess/seb:manage_seb_showsebdownloadlink', $context);
     }
 
@@ -781,7 +808,7 @@ class settings_provider {
      * @param \context $context Context to check access in.
      * @return bool
      */
-    public static function can_change_seb_allowedbrowserexamkeys(\context $context) : bool {
+    public static function can_change_seb_allowedbrowserexamkeys(\context $context): bool {
         return has_capability('quizaccess/seb:manage_seb_allowedbrowserexamkeys', $context);
     }
 
@@ -791,7 +818,11 @@ class settings_provider {
      * @param \context $context Context to check access in.
      * @return bool
      */
-    public static function can_configure_manually(\context $context) : bool {
+    public static function can_configure_manually(\context $context): bool {
+        if (!has_capability('quizaccess/seb:manage_seb_configuremanually', $context)) {
+            return false;
+        }
+
         foreach (self::get_seb_config_elements() as $name => $type) {
             if (self::can_manage_seb_config_setting($name, $context)) {
                 return true;
@@ -808,7 +839,7 @@ class settings_provider {
      * @param \context $context Context to check access in.
      * @return bool
      */
-    public static function can_manage_seb_config_setting(string $settingname, \context $context) : bool {
+    public static function can_manage_seb_config_setting(string $settingname, \context $context): bool {
         $capsttocheck = [];
 
         foreach (self::get_seb_settings_map() as $type => $settings) {
@@ -835,7 +866,7 @@ class settings_provider {
      * @param array $settings A list of settings to go through.
      * @return array
      */
-    protected static function build_config_capabilities_to_check(string $settingname, array $settings) : array {
+    protected static function build_config_capabilities_to_check(string $settingname, array $settings): array {
         $capsttocheck = [];
 
         foreach ($settings as $setting => $children) {
@@ -861,7 +892,7 @@ class settings_provider {
      *
      * @return array
      */
-    public static function get_seb_settings_map() : array {
+    public static function get_seb_settings_map(): array {
         return [
             self::USE_SEB_NO => [
 
@@ -917,7 +948,7 @@ class settings_provider {
      * @param int $requiresafeexambrowser SEB usage type.
      * @return array
      */
-    private static function get_allowed_settings(int $requiresafeexambrowser) : array {
+    private static function get_allowed_settings(int $requiresafeexambrowser): array {
         $result = [];
         $map = self::get_seb_settings_map();
 
@@ -934,7 +965,7 @@ class settings_provider {
      * @param array $settings A list of settings from settings map.
      * @return array
      */
-    private static function build_allowed_settings(array $settings) : array {
+    private static function build_allowed_settings(array $settings): array {
         $result = [];
 
         foreach ($settings as $name => $children) {
@@ -956,7 +987,7 @@ class settings_provider {
      *
      * @return array List of rules per element.
      */
-    public static function get_quiz_hideifs() : array {
+    public static function get_quiz_hideifs(): array {
         $hideifs = [];
 
         // We are building rules based on the settings map, that means children will be dependant on parent.
@@ -1009,7 +1040,7 @@ class settings_provider {
      * @param string $settingname Name of the setting.
      * @return string
      */
-    public static function build_setting_capability_name(string $settingname) : string {
+    public static function build_setting_capability_name(string $settingname): string {
         if (!key_exists($settingname, self::get_seb_config_elements())) {
             throw new \coding_exception('Incorrect SEB quiz setting ' . $settingname);
         }
@@ -1023,7 +1054,7 @@ class settings_provider {
      * @param int $quizid Quiz ID.
      * @return bool
      */
-    public static function is_seb_settings_locked($quizid) : bool {
+    public static function is_seb_settings_locked($quizid): bool {
         if (empty($quizid)) {
             return false;
         }
@@ -1054,7 +1085,7 @@ class settings_provider {
      * @param stdClass $settings Quiz settings.
      * @return \stdClass
      */
-    private static function filter_by_settings_map(stdClass $settings) : stdClass {
+    private static function filter_by_settings_map(stdClass $settings): stdClass {
         if (!isset($settings->seb_requiresafeexambrowser)) {
             return $settings;
         }
@@ -1081,7 +1112,7 @@ class settings_provider {
      * @param stdClass $settings Quiz settings.
      * @return stdClass Filtered settings.
      */
-    public static function filter_plugin_settings(stdClass $settings) : stdClass {
+    public static function filter_plugin_settings(stdClass $settings): stdClass {
         $settings = self::filter_by_prefix($settings);
         $settings = self::filter_by_settings_map($settings);
 

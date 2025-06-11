@@ -104,6 +104,9 @@ class restore_workshop_activity_structure_step extends restore_activity_structur
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        $data->strategy = clean_param($data->strategy, PARAM_PLUGIN);
+        $data->evaluation = clean_param($data->evaluation, PARAM_PLUGIN);
+
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
         $data->submissionstart = $this->apply_date_offset($data->submissionstart);

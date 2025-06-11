@@ -31,11 +31,11 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entities_forum_test extends \advanced_testcase {
+final class entities_forum_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */
-    public function test_entity() {
+    public function test_entity(): void {
         $this->resetAfterTest();
 
         $time = time() - 10;

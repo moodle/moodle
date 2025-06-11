@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Session manager class.
- *
- * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\session;
 
-defined('MOODLE_INTERNAL') || die();
-
+use core\clock;
+use core\di;
 use html_writer;
 
 /**
@@ -60,6 +52,9 @@ class manager {
     /** @var array Stores the the SESSION before a request is performed, used to check incorrect read-only modes */
     private static $priorsession = [];
 
+    /** @var array Stores the the SESSION after write_close is called, used to check if it was mutated after the session is closed */
+    private static $sessionatclose = [];
+
     /**
      * @var bool Used to trigger the SESSION mutation warning without actually preventing SESSION mutation.
      * This variable is used to "copy" what the $requireslock parameter  does in start_session().
@@ -86,7 +81,9 @@ class manager {
     public static function restart_with_write_lock(bool $readonlysession) {
         global $CFG;
 
-        self::$requireslockdebug = !$readonlysession;
+        if (!empty($CFG->enable_read_only_sessions_debug)) {
+            self::$requireslockdebug = !$readonlysession;
+        }
 
         if (self::$sessionactive && !self::$handler->requires_write_lock()) {
             @self::$handler->abort();
@@ -159,9 +156,11 @@ class manager {
                 throw new \core\session\exception(get_string('servererror'));
             }
 
-            // Grab the time when session lock starts.
-            $PERF->sessionlock['gained'] = microtime(true);
-            $PERF->sessionlock['wait'] = $PERF->sessionlock['gained'] - $PERF->sessionlock['start'];
+            if ($requireslock) {
+                // Grab the time when session lock starts.
+                $PERF->sessionlock['gained'] = microtime(true);
+                $PERF->sessionlock['wait'] = $PERF->sessionlock['gained'] - $PERF->sessionlock['start'];
+            }
             self::initialise_user_session($isnewsession);
             self::$sessionactive = true; // Set here, so the session can be cleared if the security check fails.
             self::check_security();
@@ -245,14 +244,14 @@ class manager {
         global $CFG, $DB;
 
         if (PHPUNIT_TEST) {
-            return '\core\session\file';
+            return \core\tests\session\mock_handler::class;
         } else if (!empty($CFG->session_handler_class)) {
             return $CFG->session_handler_class;
-        } else if (!empty($CFG->dbsessions) and $DB->session_lock_supported()) {
-            return '\core\session\database';
+        } else if (!empty($CFG->dbsessions) && $DB->session_lock_supported()) {
+            return database::class;
         }
 
-        return '\core\session\file';
+        return file::class;
     }
 
     /**
@@ -266,6 +265,9 @@ class manager {
         // Find out which handler to use.
         $class = self::get_handler_class();
         self::$handler = new $class();
+        if (!self::$handler instanceof \core\session\handler) {
+            throw new exception("$class must implement the \core\session\handler");
+        }
     }
 
     /**
@@ -318,7 +320,7 @@ class manager {
         $cookiesecure = is_moodle_cookie_secure();
 
         if (!isset($CFG->cookiehttponly)) {
-            $CFG->cookiehttponly = 0;
+            $CFG->cookiehttponly = 1;
         }
 
         // Set sessioncookie variable if it isn't already.
@@ -385,12 +387,13 @@ class manager {
             'httponly' => $CFG->cookiehttponly,
         ];
 
-            // BEGIN LSU Samesite Cookie Setting.
-            if (self::force_samesite_none() || self::should_use_samesite_none()) {
-                // If $samesite is empty, we don't want there to be any SameSite attribute.
-                $sessionoptions['samesite'] = 'None';
-            }
-            // END LSU Samesite Cookie Setting.
+        // BEGIN LSU Samesite Cookie Setting.
+        // if (self::should_use_samesite_none()) {
+        if (self::force_samesite_none() || self::should_use_samesite_none()) {
+            // If $samesite is empty, we don't want there to be any SameSite attribute.
+            $sessionoptions['samesite'] = 'None';
+        }
+        // END LSU Samesite Cookie Setting.
 
         session_set_cookie_params($sessionoptions);
 
@@ -414,7 +417,7 @@ class manager {
      * @param bool $newsid is this a new session in first http request?
      */
     protected static function initialise_user_session($newsid) {
-        global $CFG, $DB;
+        global $CFG;
 
         $sid = session_id();
         if (!$sid) {
@@ -423,8 +426,8 @@ class manager {
             self::init_empty_session($newsid);
             return;
         }
-
-        if (!$record = $DB->get_record('sessions', array('sid'=>$sid), 'id, sid, state, userid, lastip, timecreated, timemodified')) {
+        $record = self::get_session_by_sid($sid);
+        if (!isset($record->sid)) {
             if (!$newsid) {
                 if (!empty($_SESSION['USER']->id)) {
                     // This should not happen, just log it, we MUST not produce any output here!
@@ -451,7 +454,7 @@ class manager {
                 // Ignore guest and not-logged in timeouts, there is very little risk here.
                 $timeout = false;
 
-            } else if ($record->timemodified < time() - $maxlifetime) {
+            } else if ($record->timemodified < di::get(clock::class)->time() - $maxlifetime) {
                 $timeout = true;
                 $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
                 foreach ($authsequence as $authname) {
@@ -469,11 +472,9 @@ class manager {
                 }
                 session_regenerate_id(true);
                 $_SESSION = array();
-                $DB->delete_records('sessions', array('id'=>$record->id));
-
+                self::destroy($record->sid);
             } else {
                 // Update session tracking record.
-
                 $update = new \stdClass();
                 $updated = false;
 
@@ -488,33 +489,34 @@ class manager {
                     $updated = true;
                 }
 
+                $time = di::get(clock::class)->time();
+
                 $updatefreq = empty($CFG->session_update_timemodified_frequency) ? 20 : $CFG->session_update_timemodified_frequency;
 
                 if ($record->timemodified == $record->timecreated) {
                     // Always do first update of existing record.
-                    $update->timemodified = $record->timemodified = time();
+                    $update->timemodified = $record->timemodified = $time;
                     $updated = true;
 
-                } else if ($record->timemodified < time() - $updatefreq) {
+                } else if ($record->timemodified < $time - $updatefreq) {
                     // Update the session modified flag only once every 20 seconds.
-                    $update->timemodified = $record->timemodified = time();
+                    $update->timemodified = $record->timemodified = $time;
                     $updated = true;
                 }
 
                 if ($updated && (!defined('NO_SESSION_UPDATE') || !NO_SESSION_UPDATE)) {
                     $update->id = $record->id;
-                    $DB->update_record('sessions', $update);
+                    $update->userid = $record->userid;
+                    self::$handler->update_session($update);
                 }
 
                 return;
             }
-        } else {
-            if ($record) {
-                // This happens when people switch session handlers...
-                session_regenerate_id(true);
-                $_SESSION = array();
-                $DB->delete_records('sessions', array('id'=>$record->id));
-            }
+        } else if (isset($record->sid)) {
+            // This happens when people switch session handlers...
+            session_regenerate_id(true);
+            $_SESSION = [];
+            self::destroy($record->sid);
         }
         unset($record);
 
@@ -546,10 +548,10 @@ class manager {
         // Setup $USER and insert the session tracking record.
         if ($user) {
             self::set_user($user);
-            self::add_session_record($user->id);
+            self::add_session($user->id);
         } else {
             self::init_empty_session($newsid);
-            self::add_session_record(0);
+            self::add_session(0);
         }
 
         if ($timedout) {
@@ -558,23 +560,43 @@ class manager {
     }
 
     /**
+     * Returns a single session record for this session id.
+     *
+     * @param string $sid
+     * @return \stdClass
+     */
+    public static function get_session_by_sid(string $sid): \stdClass {
+        return self::$handler->get_session_by_sid($sid);
+    }
+
+    /**
+     * Returns all the session records for this user id.
+     *
+     * @param int $userid
+     * @return array
+     */
+    public static function get_sessions_by_userid(int $userid): array {
+        return self::$handler->get_sessions_by_userid($userid);
+    }
+
+    /**
      * Insert new empty session record.
+     *
      * @param int $userid
      * @return \stdClass the new record
      */
-    protected static function add_session_record($userid) {
-        global $DB;
-        $record = new \stdClass();
-        $record->state       = 0;
-        $record->sid         = session_id();
-        $record->sessdata    = null;
-        $record->userid      = $userid;
-        $record->timecreated = $record->timemodified = time();
-        $record->firstip     = $record->lastip = getremoteaddr();
+    public static function add_session(int $userid): \stdClass {
+        return self::$handler->add_session($userid);
+    }
 
-        $record->id = $DB->insert_record('sessions', $record);
-
-        return $record;
+    /**
+     * Update a session record.
+     *
+     * @param \stdClass $record
+     * @return bool
+     */
+    public static function update_session(\stdClass $record): bool {
+        return self::$handler->update_session($record);
     }
 
     /**
@@ -614,8 +636,8 @@ class manager {
 
         $sid = session_id();
         session_regenerate_id(true);
-        $DB->delete_records('sessions', array('sid'=>$sid));
-        self::add_session_record($user->id);
+        self::destroy($sid);
+        self::add_session($user->id);
 
         // Let enrol plugins deal with new enrolments if necessary.
         enrol_check_plugins($user);
@@ -663,41 +685,6 @@ class manager {
     // END LSU Samesite Cookie Setting.
 
     /**
-     * Conditionally append the SameSite attribute to the session cookie if necessary.
-     *
-     * Contains a hack for versions of PHP lower than 7.3 as there is no API built into PHP cookie API
-     * for adding the SameSite setting.
-     *
-     * This won't change the Set-Cookie headers if:
-     *  - PHP 7.3 or higher is being used. That already adds the SameSite attribute without any hacks.
-     *  - If the samesite setting is empty.
-     *  - If the samesite setting is None but the browser is not compatible with that setting.
-     */
-    private static function append_samesite_cookie_attribute() {
-        if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
-            // This hack is only necessary if we weren't able to set the samesite flag via the session_set_cookie_params API.
-            return;
-        }
-
-        // BEGIN LSU Samesite Cookie Setting.
-        if (!self::force_samesite_none() && !self::should_use_samesite_none()) {
-            return;
-        }
-        // END LSU Samesite Cookie Setting.
-
-        $cookies = headers_list();
-        header_remove('Set-Cookie');
-        $setcookiesession = 'Set-Cookie: ' . session_name() . '=';
-
-        foreach ($cookies as $cookie) {
-            if (strpos($cookie, $setcookiesession) === 0) {
-                $cookie .= '; SameSite=None';
-            }
-            header($cookie, false);
-        }
-    }
-
-    /**
      * Terminate current user session.
      * @return void
      */
@@ -726,9 +713,9 @@ class manager {
         // Write new empty session and make sure the old one is deleted.
         $sid = session_id();
         session_regenerate_id(true);
-        $DB->delete_records('sessions', array('sid'=>$sid));
+        self::destroy($sid);
         self::init_empty_session();
-        self::add_session_record($_SESSION['USER']->id); // Do not use $USER here because it may not be set up yet.
+        self::add_session($_SESSION['USER']->id); // Do not use $USER here because it may not be set up yet.
         self::write_close();
     }
 
@@ -740,16 +727,24 @@ class manager {
         global $PERF, $ME, $CFG;
 
         if (self::$sessionactive) {
-            // Grab the time when session lock is released.
-            $PERF->sessionlock['released'] = microtime(true);
-            if (!empty($PERF->sessionlock['gained'])) {
-                $PERF->sessionlock['held'] = $PERF->sessionlock['released'] - $PERF->sessionlock['gained'];
-            }
-            $PERF->sessionlock['url'] = me();
-            self::update_recent_session_locks($PERF->sessionlock);
-            self::sessionlock_debugging();
-
             $requireslock = self::$handler->requires_write_lock();
+            if ($requireslock) {
+                // Grab the time when session lock is released.
+                $PERF->sessionlock['released'] = microtime(true);
+                if (!empty($PERF->sessionlock['gained'])) {
+                    $PERF->sessionlock['held'] = $PERF->sessionlock['released'] - $PERF->sessionlock['gained'];
+                }
+                $PERF->sessionlock['url'] = me();
+                self::update_recent_session_locks($PERF->sessionlock);
+                self::sessionlock_debugging();
+            }
+
+            // If debugging, take a snapshot of session at close and compare on shutdown to detect any accidental mutations.
+            if (debugging()) {
+                self::$sessionatclose = (array) $_SESSION['SESSION'];
+                \core_shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
+            }
+
             if (!$requireslock || !self::$requireslockdebug) {
                 // Compare the array of the earlier session data with the array now, if
                 // there is a difference then a lock is required.
@@ -790,6 +785,50 @@ class manager {
     }
 
     /**
+     * Checks if the session has been mutated since it was closed.
+     * In write_close the session is saved to the variable $sessionatclose
+     * If there is a difference between $sessionatclose and the current session,
+     * it means a script has erroneously closed the session too early.
+     * Script is usually called in shutdown_manager
+     */
+    public static function check_mutated_closed_session() {
+        global $ME;
+
+        // Session is still open, mutations are allowed.
+        if (self::$sessionactive) {
+            return;
+        }
+
+        // Detect if session was cleared.
+        if (!isset($_SESSION['SESSION']) && isset(self::$sessionatclose)) {
+            debugging("Script $ME cleared the session after it was closed.");
+            return;
+        } else if (!isset($_SESSION['SESSION'])) {
+            // Else session is empty, nothing to check.
+            return;
+        }
+
+        // Session is closed - compare the current session to the session when write_close was called.
+        $arraydiff = self::array_session_diff(
+            self::$sessionatclose,
+            (array) $_SESSION['SESSION']
+        );
+
+        if ($arraydiff) {
+            $error = "Script $ME mutated the session after it was closed:";
+            foreach ($arraydiff as $key => $value) {
+                $error .= ' $SESSION->' . $key;
+
+                // Extra debugging for cachestore session changes.
+                if (strpos($key, 'cachestore_') === 0 && is_array($value)) {
+                    $error .= ': ' . implode(',', array_keys($value));
+                }
+            }
+            debugging($error);
+        }
+    }
+
+    /**
      * Does the PHP session with given id exist?
      *
      * The session must exist both in session table and actual
@@ -809,13 +848,14 @@ class manager {
         }
 
         // Note: add sessions->state checking here if it gets implemented.
-        if (!$record = $DB->get_record('sessions', array('sid' => $sid), 'id, userid, timemodified')) {
+        $record = self::get_session_by_sid($sid);
+        if (!isset($record->sid)) {
             return false;
         }
 
         if (empty($record->userid) or isguestuser($record->userid)) {
             // Ignore guest and not-logged-in timeouts, there is very little risk here.
-        } else if ($record->timemodified < time() - $CFG->sessiontimeout) {
+        } else if ($record->timemodified < di::get(clock::class)->time() - $CFG->sessiontimeout) {
             return false;
         }
 
@@ -837,7 +877,7 @@ class manager {
         }
 
         // Note: add sessions->state checking here if it gets implemented.
-        if (!$record = $DB->get_record('sessions', array('sid' => $sid), 'id, userid, timemodified')) {
+        if (!$record = self::get_session_by_sid($sid)) {
             return ['userid' => 0, 'timeremaining' => $CFG->sessiontimeout];
         }
 
@@ -845,7 +885,10 @@ class manager {
             // Ignore guest and not-logged-in timeouts, there is very little risk here.
             return ['userid' => 0, 'timeremaining' => $CFG->sessiontimeout];
         } else {
-            return ['userid' => $record->userid, 'timeremaining' => $CFG->sessiontimeout - (time() - $record->timemodified)];
+            return [
+                'userid' => $record->userid,
+                'timeremaining' => $CFG->sessiontimeout - (di::get(clock::class)->time() - $record->timemodified),
+            ];
         }
     }
 
@@ -854,64 +897,137 @@ class manager {
      * @param string $sid
      */
     public static function touch_session($sid) {
-        global $DB;
-
         // Timeouts depend on core sessions table only, no need to update anything in external stores.
-
-        $sql = "UPDATE {sessions} SET timemodified = :now WHERE sid = :sid";
-        $DB->execute($sql, array('now'=>time(), 'sid'=>$sid));
+        self::$handler->update_session((object) [
+            'sid' => $sid,
+            'timemodified' => di::get(clock::class)->time(),
+        ]);
     }
 
     /**
      * Terminate all sessions unconditionally.
+     *
+     * @return void
+     * @deprecated since Moodle 4.5 See MDL-66161
+     * @todo Remove in MDL-81848
      */
-    public static function kill_all_sessions() {
-        global $DB;
-
-        self::terminate_current();
-
-        self::load_handler();
-        self::$handler->kill_all_sessions();
-
-        try {
-            $DB->delete_records('sessions');
-        } catch (\dml_exception $ignored) {
-            // Do not show any warnings - might be during upgrade/installation.
-        }
+    #[\core\attribute\deprecated(
+        replacement: 'destroy_all',
+        since: '4.5',
+    )]
+    public static function kill_all_sessions(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        self::destroy_all();
     }
 
     /**
      * Terminate give session unconditionally.
+     *
      * @param string $sid
+     * @return void
+     * @deprecated since Moodle 4.5 See MDL-66161
+     * @todo Remove in MDL-81848
      */
-    public static function kill_session($sid) {
-        global $DB;
+    #[\core\attribute\deprecated(
+        replacement: 'destroy',
+        since: '4.5',
+    )]
+    public static function kill_session($sid): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        self::destroy($sid);
+    }
 
-        self::load_handler();
-
-        if ($sid === session_id()) {
-            self::write_close();
-        }
-
-        self::$handler->kill_session($sid);
-
-        $DB->delete_records('sessions', array('sid'=>$sid));
+    /**
+     * Kill sessions of users with disabled plugins.
+     *
+     * @param string $pluginname
+     * @return void
+     * @deprecated since Moodle 4.5 See MDL-66161
+     * @todo Remove in MDL-81848
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'destroy_by_auth_plugin',
+        since: '4.5',
+    )]
+    public static function kill_sessions_for_auth_plugin(string $pluginname): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        self::destroy_by_auth_plugin($pluginname);
     }
 
     /**
      * Terminate all sessions of given user unconditionally.
+     *
+     * @param int $userid
+     * @param string $keepsid keep this sid if present
+     * @deprecated since Moodle 4.5 See MDL-66161
+     * @todo Remove in MDL-81848
+     */
+    #[\core\attribute\deprecated(
+            replacement: 'destroy_user_sessions',
+            since: '4.5',
+    )]
+    public static function kill_user_sessions($userid, $keepsid = null) {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        self::destroy_user_sessions($userid, $keepsid);
+    }
+
+    /**
+     * Destroy all sessions for a given plugin.
+     * Typically used when a plugin is disabled or uninstalled, so all sessions (users) for that plugin are logged out.
+     *
+     * @param string $pluginname Auth plugin name.
+     */
+    public static function destroy_by_auth_plugin(string $pluginname): void {
+        self::$handler->destroy_by_auth_plugin($pluginname);
+    }
+
+    /**
+     * Destroy all sessions, and delete all the session data.
+     *
+     * @return bool
+     */
+    public static function destroy_all(): bool {
+        self::terminate_current();
+        self::load_handler();
+
+        try {
+            $result = self::$handler->destroy_all();
+        } catch (\moodle_exception $ignored) {
+            // Do not show any warnings - might be during upgrade/installation.
+            $result = true;
+        }
+
+         return $result;
+    }
+
+    /**
+     * Destroy a specific session and delete this session record for this session id.
+     *
+     * @param string $id
+     * @return bool
+     */
+    public static function destroy(string $id): bool {
+        self::load_handler();
+
+        if ($id === session_id()) {
+            self::write_close();
+        }
+
+        return self::$handler->destroy($id);
+    }
+
+    /**
+     * Destroy all sessions of given user unconditionally.
      * @param int $userid
      * @param string $keepsid keep this sid if present
      */
-    public static function kill_user_sessions($userid, $keepsid = null) {
-        global $DB;
-
-        $sessions = $DB->get_records('sessions', array('userid'=>$userid), 'id DESC', 'id, sid');
+    public static function destroy_user_sessions($userid, $keepsid = null) {
+        $sessions = self::get_sessions_by_userid($userid);
         foreach ($sessions as $session) {
             if ($keepsid and $keepsid === $session->sid) {
                 continue;
             }
-            self::kill_session($session->sid);
+            self::destroy($session->sid);
         }
     }
 
@@ -944,30 +1060,35 @@ class manager {
             return;
         }
 
-        $count = $DB->count_records('sessions', array('userid' => $userid));
+        $sessions = self::get_sessions_by_userid($userid);
+
+        $count = count($sessions);
 
         if ($count <= $CFG->limitconcurrentlogins) {
             return;
         }
 
         $i = 0;
-        $select = "userid = :userid";
-        $params = array('userid' => $userid);
         if ($sid) {
-            if ($DB->record_exists('sessions', array('sid' => $sid, 'userid' => $userid))) {
-                $select .= " AND sid <> :sid";
-                $params['sid'] = $sid;
-                $i = 1;
+            foreach ($sessions as $key => $session) {
+                if ($session->sid == $sid && $session->userid == $userid) {
+                    $i = 1;
+                    unset($sessions[$key]);
+                }
             }
         }
 
-        $sessions = $DB->get_records_select('sessions', $select, $params, 'timecreated DESC', 'id, sid');
+        // Order records by timecreated DESC.
+        usort($sessions, function($a, $b){
+            return $b->timecreated <=> $a->timecreated;
+        });
+
         foreach ($sessions as $session) {
             $i++;
             if ($i <= $CFG->limitconcurrentlogins) {
                 continue;
             }
-            self::kill_session($session->sid);
+            self::destroy($session->sid);
         }
     }
 
@@ -1001,86 +1122,18 @@ class manager {
 
     /**
      * Periodic timed-out session cleanup.
+     *
+     * @param int $maxlifetime Sessions that have not updated for the last max_lifetime seconds will be removed.
+     * @return void
      */
-    public static function gc() {
-        global $CFG, $DB;
+    public static function gc(int $maxlifetime = 0): void {
+        global $CFG;
 
-        // This may take a long time...
-        \core_php_time_limit::raise();
-
-        $maxlifetime = $CFG->sessiontimeout;
-
-        try {
-            // Kill all sessions of deleted and suspended users without any hesitation.
-            $rs = $DB->get_recordset_select('sessions', "userid IN (SELECT id FROM {user} WHERE deleted <> 0 OR suspended <> 0)", array(), 'id DESC', 'id, sid');
-            foreach ($rs as $session) {
-                self::kill_session($session->sid);
-            }
-            $rs->close();
-
-            // Kill sessions of users with disabled plugins.
-            $authsequence = get_enabled_auth_plugins();
-            $authsequence = array_flip($authsequence);
-            unset($authsequence['nologin']); // No login means user cannot login.
-            $authsequence = array_flip($authsequence);
-
-            list($notplugins, $params) = $DB->get_in_or_equal($authsequence, SQL_PARAMS_QM, '', false);
-            $rs = $DB->get_recordset_select('sessions', "userid IN (SELECT id FROM {user} WHERE auth $notplugins)", $params, 'id DESC', 'id, sid');
-            foreach ($rs as $session) {
-                self::kill_session($session->sid);
-            }
-            $rs->close();
-
-            // Now get a list of time-out candidates - real users only.
-            $sql = "SELECT u.*, s.sid, s.timecreated AS s_timecreated, s.timemodified AS s_timemodified
-                      FROM {user} u
-                      JOIN {sessions} s ON s.userid = u.id
-                     WHERE s.timemodified < :purgebefore AND u.id <> :guestid";
-            $params = array('purgebefore' => (time() - $maxlifetime), 'guestid'=>$CFG->siteguest);
-
-            $authplugins = array();
-            foreach ($authsequence as $authname) {
-                $authplugins[$authname] = get_auth_plugin($authname);
-            }
-            $rs = $DB->get_recordset_sql($sql, $params);
-            foreach ($rs as $user) {
-                foreach ($authplugins as $authplugin) {
-                    /** @var \auth_plugin_base $authplugin*/
-                    if ($authplugin->ignore_timeout_hook($user, $user->sid, $user->s_timecreated, $user->s_timemodified)) {
-                        continue 2;
-                    }
-                }
-                self::kill_session($user->sid);
-            }
-            $rs->close();
-
-            // Delete expired sessions for guest user account, give them larger timeout, there is no security risk here.
-            $params = array('purgebefore' => (time() - ($maxlifetime * 5)), 'guestid'=>$CFG->siteguest);
-            $rs = $DB->get_recordset_select('sessions', 'userid = :guestid AND timemodified < :purgebefore', $params, 'id DESC', 'id, sid');
-            foreach ($rs as $session) {
-                self::kill_session($session->sid);
-            }
-            $rs->close();
-
-            // Delete expired sessions for userid = 0 (not logged in), better kill them asap to release memory.
-            $params = array('purgebefore' => (time() - $maxlifetime));
-            $rs = $DB->get_recordset_select('sessions', 'userid = 0 AND timemodified < :purgebefore', $params, 'id DESC', 'id, sid');
-            foreach ($rs as $session) {
-                self::kill_session($session->sid);
-            }
-            $rs->close();
-
-            // Cleanup letfovers from the first browser access because it may set multiple cookies and then use only one.
-            $params = array('purgebefore' => (time() - 60*3));
-            $rs = $DB->get_recordset_select('sessions', 'userid = 0 AND timemodified = timecreated AND timemodified < :purgebefore', $params, 'id ASC', 'id, sid');
-            foreach ($rs as $session) {
-                self::kill_session($session->sid);
-            }
-            $rs->close();
-
-        } catch (\Exception $ex) {
-            debugging('Error gc-ing sessions: '.$ex->getMessage(), DEBUG_NORMAL, $ex->getTrace());
+        // If max lifetime is not provided, use the default session timeout.
+        if ($maxlifetime == 0) {
+            $maxlifetime = $CFG->sessiontimeout;
         }
+        self::$handler->gc($maxlifetime);
     }
 
     /**
@@ -1176,7 +1229,7 @@ class manager {
      * @param string $component The string component for the message to show on failure.
      * @param int $frequency The update frequency in seconds.
      * @param int $timeout The timeout of each request in seconds.
-     * @throws coding_exception IF the frequency is longer than the session lifetime.
+     * @throws \coding_exception IF the frequency is longer than the session lifetime.
      */
     public static function keepalive($identifier = 'sessionerroruser', $component = 'error', $frequency = null, $timeout = 0) {
         global $CFG, $PAGE;
@@ -1209,7 +1262,7 @@ class manager {
 
         $state = [
             'token' => random_string(32),
-            'created' => time() // Server time - not user time.
+            'created' => di::get(clock::class)->time(), // Server time - not user time.
         ];
 
         if (!isset($SESSION->logintoken)) {
@@ -1249,7 +1302,7 @@ class manager {
         }
 
         // Check token lifespan.
-        if ($state['created'] < (time() - $CFG->sessiontimeout)) {
+        if ($state['created'] < (di::get(clock::class)->time() - $CFG->sessiontimeout)) {
             $state = self::create_login_token();
         }
 
@@ -1269,7 +1322,7 @@ class manager {
      * @return boolean If the submitted token is valid.
      */
     public static function validate_login_token($token = false) {
-        global $CFG;
+        global $CFG, $SESSION;
 
         if (!empty($CFG->alternateloginurl) || !empty($CFG->disablelogintoken)) {
             // An external login page cannot generate the login token we need to protect CSRF on
@@ -1289,7 +1342,7 @@ class manager {
         $currenttoken = self::get_login_token();
 
         // We need to clean the login token so the old one is not valid again.
-        self::create_login_token();
+        unset($SESSION->logintoken);
 
         if ($currenttoken !== $token) {
             // Fail the login.
@@ -1439,25 +1492,69 @@ class manager {
     }
 
     /**
-     * Compares two arrays outputs the difference.
+     * Compares two arrays and outputs the difference.
      *
-     * Note this does not use array_diff_assoc due to
-     * the use of stdClasses in Moodle sessions.
+     * Note - checking between objects and array type is only done at the top level.
+     * Any changes in types below the top level will not be detected.
+     * However, if their values are the same, they will be treated as equal.
      *
-     * @param array $array1
-     * @param array $array2
+     * Any changes, such as removals, edits or additions will be detected.
+     *
+     * @param array $previous
+     * @param array $current
      * @return array
      */
-    private static function array_session_diff(array $array1, array $array2) : array {
-        $difference = [];
-        foreach ($array1 as $key => $value) {
-            if (!isset($array2[$key])) {
-                $difference[$key] = $value;
-            } else if ($array2[$key] !== $value) {
-                $difference[$key] = $value;
-            }
-        }
+    private static function array_session_diff(array $previous, array $current): array {
+        // To use array_udiff_uassoc, the first array must have the most keys; this ensures every key is checked.
+        // To do this, we first need to sort them by the length of their keys.
+        $arrays = [$current, $previous];
 
-        return $difference;
+        // Sort them by the length of their keys.
+        usort($arrays, function ($a, $b) {
+            return count(array_keys($b)) - count(array_keys($a));
+        });
+
+        // The largest is the first value in the $arrays, after sorting.
+        // The smallest is then the last one.
+        // If they are the same size, it does not matter which is which.
+        $largest = $arrays[0];
+        $smallest = $arrays[1];
+
+        // Defines a function that casts the values to arrays.
+        // This is so the properties are compared, instead any object's identities.
+        $casttoarray = function ($value) {
+            return json_decode(json_encode($value), true);
+        };
+
+        // Defines a function that compares all keys by their string value.
+        $keycompare = function ($a, $b) {
+            return strcmp($a, $b);
+        };
+
+        // Defines a function that compares all values by first their type, and then their values.
+        // If the value contains any objects, they are cast to arrays before comparison.
+        $valcompare = function ($a, $b) use ($casttoarray) {
+            // First compare type.
+            // If they are not the same type, they are definitely not the same.
+            // Note we do not check types recursively.
+            if (gettype($a) !== gettype($b)) {
+                return 1;
+            }
+
+            // Next compare value. Cast any objects to arrays to compare their properties,
+            // instead of the identitiy of the object itself.
+            $v1 = $casttoarray($a);
+            $v2 = $casttoarray($b);
+
+            if ($v1 !== $v2) {
+                return 1;
+            }
+
+            return 0;
+        };
+
+        // Apply the comparison functions to the two given session arrays,
+        // making sure to use the largest array first, so that all keys are considered.
+        return array_udiff_uassoc($largest, $smallest, $valcompare, $keycompare);
     }
 }

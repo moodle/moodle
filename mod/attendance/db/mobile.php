@@ -36,9 +36,9 @@ $addons = [
                 'method' => 'mobile_view_activity',
                 'styles' => [
                     'url' => $CFG->wwwroot . '/mod/attendance/mobilestyles.css',
-                    'version' => 22
-                ]
-            ]
+                    'version' => 22,
+                ],
+            ],
         ],
         'lang' => [ // Language strings that are used in all the handlers.
             ['pluginname', 'attendance'],
@@ -64,7 +64,8 @@ $addons = [
             ['enterpassword', 'attendance'],
             ['incorrectpasswordshort', 'attendance'],
             ['attendancesuccess', 'attendance'],
-            ['setallstatuses', 'attendance']
+            ['setallstatuses', 'attendance'],
+            ['nousers', 'attendance'],
         ],
-    ]
+    ],
 ];

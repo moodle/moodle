@@ -38,36 +38,38 @@ require_once($CFG->dirroot . '/question/type/shortanswer/edit_shortanswer_form.p
  * @covers \question_type
  * @covers \qtype_shortanswer
  */
-class question_type_test extends \advanced_testcase {
+final class question_type_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->qtype = new qtype_shortanswer();
     }
 
     protected function tearDown(): void {
         $this->qtype = null;
+        parent::tearDown();
     }
 
     protected function get_test_question_data() {
         return \test_question_maker::get_question_data('shortanswer');
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'shortanswer');
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $q = \test_question_maker::get_question_data('shortanswer');
         $q->options->answers[15]->fraction = 0.1;
         $this->assertEquals(0.1, $this->qtype->get_random_guess_score($q));
     }
 
-    public function test_get_possible_responses() {
+    public function test_get_possible_responses(): void {
         $q = \test_question_maker::get_question_data('shortanswer');
 
         $this->assertEquals(array(
@@ -80,7 +82,7 @@ class question_type_test extends \advanced_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_get_possible_responses_no_star() {
+    public function test_get_possible_responses_no_star(): void {
         $q = \test_question_maker::get_question_data('shortanswer', 'frogonly');
 
         $this->assertEquals(array(
@@ -92,7 +94,7 @@ class question_type_test extends \advanced_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_question_saving_frogtoad() {
+    public function test_question_saving_frogtoad(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -118,7 +120,7 @@ class question_type_test extends \advanced_testcase {
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('id', 'timemodified', 'timecreated', 'options'))) {
+            if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'hints'])) {
                 $this->assertEquals($value, $actualquestiondata->$property);
             }
         }
@@ -138,9 +140,14 @@ class question_type_test extends \advanced_testcase {
                 }
             }
         }
+
+        $this->assertCount(1, $actualquestiondata->hints);
+        $hint = array_pop($actualquestiondata->hints);
+        $this->assertEquals($formdata->hint[0]['text'], $hint->hint);
+        $this->assertEquals($formdata->hint[0]['format'], $hint->hintformat);
     }
 
-    public function test_question_saving_trims_answers() {
+    public function test_question_saving_trims_answers(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 

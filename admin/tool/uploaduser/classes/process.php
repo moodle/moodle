@@ -110,7 +110,7 @@ class process {
      * @param string|null $progresstrackerclass
      * @throws \coding_exception
      */
-    public function __construct(\csv_import_reader $cir, string $progresstrackerclass = null) {
+    public function __construct(\csv_import_reader $cir, ?string $progresstrackerclass = null) {
         $this->cir = $cir;
         if ($progresstrackerclass) {
             if (!class_exists($progresstrackerclass) || !is_subclass_of($progresstrackerclass, \uu_progress_tracker::class)) {
@@ -461,9 +461,22 @@ class process {
             return;
         }
 
-        $matchparam = $this->get_match_on_email() ? ['email' => $user->email] : ['username' => $user->username];
-        if ($existinguser = $DB->get_records('user', $matchparam + ['mnethostid' => $user->mnethostid])) {
-            if (is_array($existinguser) && count($existinguser) !== 1) {
+        if ($this->get_match_on_email()) {
+            // Case-insensitive query for the given email address.
+            $userselect = $DB->sql_equal('email', ':email', false);
+            $userparams = ['email' => $user->email];
+        } else {
+            $userselect = 'username = :username';
+            $userparams = ['username' => $user->username];
+        }
+
+        // Match the user, also accounting for multiple records by email.
+        $existinguser = $DB->get_records_select('user', "{$userselect} AND mnethostid = :mnethostid",
+            $userparams + ['mnethostid' => $user->mnethostid]);
+        $existingusercount = count($existinguser);
+
+        if ($existingusercount > 0) {
+            if ($existingusercount !== 1) {
                 $this->upt->track('status', get_string('duplicateemail', 'tool_uploaduser', $user->email), 'warning');
                 $this->userserrors++;
                 return;
@@ -675,6 +688,17 @@ class process {
                 break;
 
             case UU_USER_ADD_UPDATE:
+                if ($this->get_match_on_email()) {
+                    if ($usersbyname = $DB->get_records('user', ['username' => $user->username])) {
+                        foreach ($usersbyname as $userbyname) {
+                            if (strtolower($userbyname->email) != strtolower($user->email)) {
+                                $this->usersskipped++;
+                                $this->upt->track('status', get_string('usernotaddedusernameexists', 'error'), 'warning');
+                                $skip = true;
+                            }
+                        }
+                    }
+                }
                 break;
 
             case UU_USER_UPDATE:
@@ -907,7 +931,7 @@ class process {
             }
 
             if ($dologout) {
-                \core\session\manager::kill_user_sessions($existinguser->id);
+                \core\session\manager::destroy_user_sessions($existinguser->id);
             }
 
         } else {
@@ -1371,8 +1395,14 @@ class process {
                 }
             }
         }
+
+        // Warn user about invalid data values.
         if (($invalid = \core_user::validate($user)) !== true) {
-            $this->upt->track('status', get_string('invaliduserdata', 'tool_uploaduser', s($user->username)), 'warning');
+            $listseparator = get_string('listsep', 'langconfig') . ' ';
+            $this->upt->track('status', get_string('invaliduserdatavalues', 'tool_uploaduser', [
+                'username' => s($user->username),
+                'values' => implode($listseparator, array_keys($invalid)),
+            ]), 'warning');
         }
     }
 

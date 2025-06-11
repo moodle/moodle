@@ -1,12 +1,12 @@
 /** The message area **/
 @mixin setSelectedContact() {
-    background-color: #4f94cd;
-    color: #fff;
+    background-color: $message-selected-bg;
+    color: $message-selected-color;
     border: none;
 
     .information {
         .lastmessage {
-            color: #fff;
+            color: $message-selected-color;
         }
     }
     .picture {
@@ -30,7 +30,7 @@
         vertical-align: bottom;
     }
     .preference-table {
-        border: 1px solid #ddd;
+        border: 1px solid $message-preference-table-border-color;
 
         thead {
             th {
@@ -121,7 +121,7 @@
         width: 100%;
         height: 100%;
         text-align: center;
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: $message-loading-bg;
 
         .vertical-align {
             height: 100%;
@@ -168,7 +168,7 @@
     box-sizing: border-box;
     border-radius: 4px;
     margin-bottom: 30px;
-    border: 1px solid #e3e3e3;
+    border: 1px solid $message-notif-area-border-color;
 
     .control-area {
         box-sizing: border-box;
@@ -177,7 +177,7 @@
         height: 100%;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-        border-right: 1px solid #e3e3e3;
+        border-right: 1px solid $message-notif-area-border-color;
 
         .content {
             position: relative;
@@ -228,7 +228,7 @@
         .header {
             height: 50px;
             box-sizing: border-box;
-            border-bottom: 1px solid #e3e3e3;
+            border-bottom: 1px solid $message-notif-area-border-color;
             padding: 5px;
 
             .image-container {
@@ -253,7 +253,7 @@
                 font-size: 10px;
                 line-height: 10px;
                 margin: 0;
-                color: #666;
+                color: $message-notif-area-timestamp-color;
                 margin-left: 30px;
             }
 
@@ -335,8 +335,8 @@
                 height: 50px;
                 line-height: 50px;
                 box-sizing: border-box;
-                border-right: 1px solid #e3e3e3;
-                border-bottom: 1px solid #e3e3e3;
+                border-right: 1px solid $message-notif-area-border-color;
+                border-bottom: 1px solid $message-notif-area-border-color;
             }
 
             .header {
@@ -442,13 +442,11 @@ $message-day-color: color-yiq($message-app-bg) !default;
     .contact-status {
         position: absolute;
         left: 39px;
-        top: 39px;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
+        top: 34px;
         &.online {
-            border: 1px solid $body-bg;
-            background-color: $green;
+            .icon {
+                color: $green;
+            }
         }
     }
 
@@ -462,7 +460,7 @@ $message-day-color: color-yiq($message-app-bg) !default;
         cursor: pointer;
 
         &:hover {
-            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+            filter: drop-shadow(2px 2px 2px $message-clickable-hover-shadow);
         }
     }
 
@@ -506,10 +504,6 @@ $message-day-color: color-yiq($message-app-bg) !default;
         padding: 0;
         border-radius: 50%;
         flex-shrink: 0;
-
-        @include hover-focus {
-            background-color: $gray-200;
-        }
 
         @each $size, $length in $iconsizes {
             &.icon-size-#{$size} {
@@ -641,7 +635,7 @@ $message-day-color: color-yiq($message-app-bg) !default;
 }
 .dir-rtl {
     .message-drawer {
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+        box-shadow: 2px 2px 4px $message-drawer-shadow;
     }
 }
 

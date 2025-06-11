@@ -119,7 +119,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_id() : int {
+    public function get_id(): int {
         return $this->id;
     }
 
@@ -128,7 +128,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_course_id() : int {
+    public function get_course_id(): int {
         return $this->courseid;
     }
 
@@ -137,7 +137,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_forum_id() : int {
+    public function get_forum_id(): int {
         return $this->forumid;
     }
 
@@ -146,7 +146,7 @@ class discussion {
      *
      * @return string
      */
-    public function get_name() : string {
+    public function get_name(): string {
         return $this->name;
     }
 
@@ -155,7 +155,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_first_post_id() : int {
+    public function get_first_post_id(): int {
         return $this->firstpostid;
     }
 
@@ -164,7 +164,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_user_id() : int {
+    public function get_user_id(): int {
         return $this->userid;
     }
 
@@ -173,7 +173,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_group_id() : int {
+    public function get_group_id(): int {
         return $this->groupid;
     }
 
@@ -182,7 +182,7 @@ class discussion {
      *
      * @return bool
      */
-    public function is_assessed() : bool {
+    public function is_assessed(): bool {
         return $this->assessed;
     }
 
@@ -191,7 +191,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_time_modified() : int {
+    public function get_time_modified(): int {
         return $this->timemodified;
     }
 
@@ -200,7 +200,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_user_modified() : int {
+    public function get_user_modified(): int {
         return $this->usermodified;
     }
 
@@ -210,7 +210,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_time_start() : int {
+    public function get_time_start(): int {
         return $this->timestart;
     }
 
@@ -220,7 +220,7 @@ class discussion {
      *
      * @return int
      */
-    public function get_time_end() : int {
+    public function get_time_end(): int {
         return $this->timeend;
     }
 
@@ -229,7 +229,7 @@ class discussion {
      *
      * @return bool
      */
-    public function is_pinned() : bool {
+    public function is_pinned(): bool {
         return $this->pinned;
     }
 
@@ -238,7 +238,7 @@ class discussion {
      *
      * @return bool
      */
-    public function get_locked() : int {
+    public function get_locked(): int {
         return $this->timelocked;
     }
 
@@ -247,7 +247,7 @@ class discussion {
      *
      * @return bool
      */
-    public function is_locked() : bool {
+    public function is_locked(): bool {
         return ($this->timelocked ? true : false);
     }
 
@@ -267,7 +267,7 @@ class discussion {
      * @param post_entity $post The post to check
      * @return bool
      */
-    public function is_first_post(post_entity $post) : bool {
+    public function is_first_post(post_entity $post): bool {
         return $this->get_first_post_id() === $post->get_id();
     }
 
@@ -276,7 +276,7 @@ class discussion {
      *
      * @return bool
      */
-    public function has_started() : bool {
+    public function has_started(): bool {
         $startime = $this->get_time_start();
         return empty($startime) || $startime < time();
     }
@@ -286,7 +286,7 @@ class discussion {
      *
      * @return bool
      */
-    public function has_ended() : bool {
+    public function has_ended(): bool {
         $endtime = $this->get_time_end();
         return !empty($endtime) && $endtime < time();
     }
@@ -296,7 +296,7 @@ class discussion {
      *
      * @return bool
      */
-    public function has_group() : bool {
+    public function has_group(): bool {
         return $this->get_group_id() > 0;
     }
 
@@ -317,7 +317,7 @@ class discussion {
      *
      * @return bool
      */
-    public function is_timed_discussion() : bool {
+    public function is_timed_discussion(): bool {
         global $CFG;
 
         return !empty($CFG->forum_enabletimedposts) &&
@@ -329,7 +329,7 @@ class discussion {
      *
      * @return bool
      */
-    public function is_timed_discussion_visible() : bool {
+    public function is_timed_discussion_visible(): bool {
         return !$this->is_timed_discussion() || ($this->has_started() && !$this->has_ended());
     }
 }

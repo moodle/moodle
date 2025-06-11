@@ -16,6 +16,7 @@
 
 namespace core;
 
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,12 +33,12 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_externallib_test extends externallib_advanced_testcase {
+final class external_externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_string
      */
-    public function test_get_string() {
+    public function test_get_string(): void {
         $this->resetAfterTest(true);
 
         $service = new \stdClass();
@@ -50,7 +51,7 @@ class external_externallib_test extends externallib_advanced_testcase {
                       array('name' => 'id', 'value' => $service->id)));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedstring = \external_api::clean_returnvalue(\core_external::get_string_returns(), $returnedstring);
+        $returnedstring = external_api::clean_returnvalue(\core_external::get_string_returns(), $returnedstring);
 
         $corestring = get_string('addservice', 'webservice', $service);
         $this->assertSame($corestring, $returnedstring);
@@ -61,7 +62,7 @@ class external_externallib_test extends externallib_advanced_testcase {
                 array(array('value' => $acapname)));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedstring = \external_api::clean_returnvalue(\core_external::get_string_returns(), $returnedstring);
+        $returnedstring = external_api::clean_returnvalue(\core_external::get_string_returns(), $returnedstring);
 
         $corestring = get_string('missingrequiredcapability', 'webservice', $acapname);
         $this->assertSame($corestring, $returnedstring);
@@ -70,7 +71,7 @@ class external_externallib_test extends externallib_advanced_testcase {
         $returnedstring = \core_external::get_string('missingpassword', 'webservice');
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedstring = \external_api::clean_returnvalue(\core_external::get_string_returns(), $returnedstring);
+        $returnedstring = external_api::clean_returnvalue(\core_external::get_string_returns(), $returnedstring);
 
         $corestring = get_string('missingpassword', 'webservice');
         $this->assertSame($corestring, $returnedstring);
@@ -85,9 +86,9 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_string with HTML.
      */
-    public function test_get_string_containing_html() {
+    public function test_get_string_containing_html(): void {
         $result = \core_external::get_string('registrationinfo');
-        $actual = \external_api::clean_returnvalue(\core_external::get_string_returns(), $result);
+        $actual = external_api::clean_returnvalue(\core_external::get_string_returns(), $result);
         $expected = get_string('registrationinfo', 'moodle');
         $this->assertSame($expected, $actual);
     }
@@ -95,9 +96,9 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_string with arguments containing HTML.
      */
-    public function test_get_string_with_args_containing_html() {
+    public function test_get_string_with_args_containing_html(): void {
         $result = \core_external::get_string('added', 'moodle', null, [['value' => '<strong>Test</strong>']]);
-        $actual = \external_api::clean_returnvalue(\core_external::get_string_returns(), $result);
+        $actual = external_api::clean_returnvalue(\core_external::get_string_returns(), $result);
         $expected = get_string('added', 'moodle', '<strong>Test</strong>');
         $this->assertSame($expected, $actual);
     }
@@ -105,7 +106,7 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_strings
      */
-    public function test_get_strings() {
+    public function test_get_strings(): void {
         $this->resetAfterTest(true);
 
         $stringmanager = get_string_manager();
@@ -127,7 +128,7 @@ class external_externallib_test extends externallib_advanced_testcase {
                 ));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedstrings = \external_api::clean_returnvalue(\core_external::get_strings_returns(), $returnedstrings);
+        $returnedstrings = external_api::clean_returnvalue(\core_external::get_strings_returns(), $returnedstrings);
 
         foreach($returnedstrings as $returnedstring) {
             $corestring = $stringmanager->get_string($returnedstring['stringid'],
@@ -141,9 +142,9 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_strings with HTML.
      */
-    public function test_get_strings_containing_html() {
+    public function test_get_strings_containing_html(): void {
         $result = \core_external::get_strings([['stringid' => 'registrationinfo'], ['stringid' => 'loginaspasswordexplain']]);
-        $actual = \external_api::clean_returnvalue(\core_external::get_strings_returns(), $result);
+        $actual = external_api::clean_returnvalue(\core_external::get_strings_returns(), $result);
         $this->assertSame(get_string('registrationinfo', 'moodle'), $actual[0]['string']);
         $this->assertSame(get_string('loginaspasswordexplain', 'moodle'), $actual[1]['string']);
     }
@@ -151,12 +152,12 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_strings with arguments containing HTML.
      */
-    public function test_get_strings_with_args_containing_html() {
+    public function test_get_strings_with_args_containing_html(): void {
         $result = \core_external::get_strings([
             ['stringid' => 'added', 'stringparams' => [['value' => '<strong>Test</strong>']]],
             ['stringid' => 'loggedinas', 'stringparams' => [['value' => '<strong>Test</strong>']]]]
         );
-        $actual = \external_api::clean_returnvalue(\core_external::get_strings_returns(), $result);
+        $actual = external_api::clean_returnvalue(\core_external::get_strings_returns(), $result);
         $this->assertSame(get_string('added', 'moodle', '<strong>Test</strong>'), $actual[0]['string']);
         $this->assertSame(get_string('loggedinas', 'moodle', '<strong>Test</strong>'), $actual[1]['string']);
     }
@@ -164,7 +165,7 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_component_strings
      */
-    public function test_get_component_strings() {
+    public function test_get_component_strings(): void {
         global $USER;
         $this->resetAfterTest(true);
 
@@ -175,7 +176,7 @@ class external_externallib_test extends externallib_advanced_testcase {
         $componentstrings = \core_external::get_component_strings('webservice');
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $componentstrings = \external_api::clean_returnvalue(\core_external::get_component_strings_returns(), $componentstrings);
+        $componentstrings = external_api::clean_returnvalue(\core_external::get_component_strings_returns(), $componentstrings);
 
         $this->assertEquals(count($componentstrings), count($wsstrings));
         foreach($componentstrings as $string) {
@@ -186,7 +187,7 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_inplace_editable()
      */
-    public function test_update_inplace_editable() {
+    public function test_update_inplace_editable(): void {
         $this->resetAfterTest(true);
 
         // Call service for component that does not have inplace_editable callback.
@@ -202,7 +203,7 @@ class external_externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         $tag = $this->getDataGenerator()->create_tag();
         $res = \core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'new tag name');
-        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
+        $res = external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
 
         $this->assertEquals('new tag name', $res['value']);
     }
@@ -210,7 +211,7 @@ class external_externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_inplace_editable with mathjax.
      */
-    public function test_update_inplace_editable_with_mathjax() {
+    public function test_update_inplace_editable_with_mathjax(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -226,11 +227,11 @@ class external_externallib_test extends externallib_advanced_testcase {
         // Change the forum name.
         $newname = 'New forum name $$(a+b)=2$$';
         $res = \core_external::update_inplace_editable('core_course', 'activityname', $forum->cmid, $newname);
-        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
+        $res = external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
 
         // Format original data.
         $context = \context_module::instance($forum->cmid);
-        $newname = external_format_string($newname, $context->id);
+        $newname = \core_external\util::format_string($newname, $context);
         $editlabel = get_string('newactivityname', '', $newname);
 
         // Check editlabel is the same and has mathjax.
@@ -238,7 +239,7 @@ class external_externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($editlabel, $res['editlabel']);
     }
 
-    public function test_get_user_dates() {
+    public function test_get_user_dates(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -269,7 +270,7 @@ class external_externallib_test extends externallib_advanced_testcase {
         ];
 
         $result = \core_external::get_user_dates($context->id, null, null, $request);
-        $result = \external_api::clean_returnvalue(\core_external::get_user_dates_returns(), $result);
+        $result = external_api::clean_returnvalue(\core_external::get_user_dates_returns(), $result);
 
         $this->assertEquals('Saturday, 1 January 2011, 6:00', $result['dates'][0]);
         $this->assertEquals('1 01 2011', $result['dates'][1]);

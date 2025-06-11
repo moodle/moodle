@@ -1,0 +1,84 @@
+---
+moodle_plugin_ci:
+  stage: test
+  image: $MOODLE_PHP_IMAGE
+  services:
+    - $POSTGRES_IMAGE
+    - name: selenium/standalone-chrome:4
+      alias: selenium-standalone-chrome
+  variables:
+    DB: "pgsql"
+    POSTGRES_HOST_AUTH_METHOD: trust
+    MOODLE_DIR: "/var/www/html/moodle"
+    MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
+    MOODLE_START_BEHAT_SERVERS: "NO"
+    NODE_VERSION: "v20.16.0"
+    COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.composer/cache"
+    MOODLE_REPO: "https://gitlab-ci-token:${GROUP_READ_ONLY_TOKEN}@gitlab.uni-graz.at/715-scrum1/grp_moodle/moodle.git"
+    NVM_VERSION: "v0.40.1"
+  cache:
+    paths:
+      - .composer/cache
+  before_script:
+    # Update packages and install mysql-client.
+    - apt update && apt install -y postgresql-client postgresql-client-common
+    # Install nvm and NodeJS.
+    - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
+    - . $HOME/.nvm/nvm.sh
+    - nvm install $NODE_VERSION
+    # Install composer.
+    - curl -sS https://getcomposer.org/installer | php
+    - mv composer.phar /usr/local/bin/composer
+    # Setup Behat.
+    - export IPADDRESS=`grep "$HOSTNAME$" /etc/hosts | awk '{print $1}'`
+    - export MOODLE_BEHAT_WWWROOT="http://$IPADDRESS:8000"
+    # Install Moodle CI plugin.
+    - cd $CI_PROJECT_DIR/.. && rm -rf ci
+    - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+    - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+    - chmod u+x ci/bin/moodle-plugin-ci
+    - chmod u+x ci/bin/*
+    - umask u+x
+    # Add AMC SSH Key
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo -n "$AMC_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    # This should be replaced with a proper known_hosts (see https://docs.gitlab.com/ee/ci/ssh_keys/)
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >> ~/.ssh/config
+    # Install booktool_wordimport
+    - rm -rf moodle-plugin-ci-plugins/moodle-booktool_wordimport
+    - moodle-plugin-ci add-plugin --branch v1.4.12 ecampbell/moodle-booktool_wordimport
+    # Install Moodle (ommit the --moodle argument if not needed)
+    - cd $CI_PROJECT_DIR
+    - moodle-plugin-ci install --moodle=$MOODLE_DIR --db-type=pgsql --db-host=postgres # -vvv
+    - cd $MOODLE_DIR
+    - composer install
+    - php -S $IPADDRESS:8000 -t $MOODLE_DIR > /dev/null 2>&1 &
+    - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=1 --optimize-runs=@local_ffhs_exam_toolbox
+  script:
+    # Documentation for each step: https://moodlehq.github.io/moodle-plugin-ci/Help.html
+    - moodle-plugin-ci phplint
+    - moodle-plugin-ci phpcpd
+    - moodle-plugin-ci phpmd
+    - moodle-plugin-ci phpcs --max-warnings 0
+    - moodle-plugin-ci phpdoc --max-warnings 0
+    - moodle-plugin-ci validate
+    - moodle-plugin-ci savepoints
+    - moodle-plugin-ci mustache
+    - moodle-plugin-ci grunt --max-lint-warnings 0
+    - moodle-plugin-ci phpunit --fail-on-warning
+    - moodle-plugin-ci behat --profile chrome
+
+  artifacts:
+    when: on_failure
+    paths:
+      - $CI_PROJECT_DIR/moodledata/behat_dump/*
+    expire_in: 1 week
+
+  parallel:
+    matrix:
+      - MOODLE_BRANCH: [MOODLE_405_STABLE]
+        MOODLE_PHP_IMAGE: ["moodlehq/moodle-php-apache:8.1"]
+        POSTGRES_IMAGE: ["postgres:14-alpine"]

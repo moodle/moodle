@@ -28,11 +28,11 @@ require_once(__DIR__.'/..//fixtures/event_fixtures.php');
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class base_test extends \advanced_testcase {
+final class base_test extends \advanced_testcase {
 
     const DEBUGGING_MSG = 'Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.';
 
-    public function test_event_properties() {
+    public function test_event_properties(): void {
         global $USER;
 
         $system = \context_system::instance();
@@ -87,7 +87,7 @@ class base_test extends \advanced_testcase {
         $this->assertSame(1, $event3->anonymous);
     }
 
-    public function test_event_properties_guessing() {
+    public function test_event_properties_guessing(): void {
         global $USER;
         $this->resetAfterTest();
 
@@ -120,7 +120,7 @@ class base_test extends \advanced_testcase {
         $this->assertSame($user->id, $event->relateduserid);
     }
 
-    public function test_observers_parsing() {
+    public function test_observers_parsing(): void {
         global $CFG;
 
         $observers = array(
@@ -287,7 +287,7 @@ class base_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
-    public function test_normal_dispatching() {
+    public function test_normal_dispatching(): void {
         $observers = array(
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
@@ -323,7 +323,7 @@ class base_test extends \advanced_testcase {
             \core_tests\event\unittest_observer::$info);
     }
 
-    public function test_event_sink() {
+    public function test_event_sink(): void {
         $sink = $this->redirectEvents();
         $event1 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
         $event1->trigger();
@@ -356,7 +356,7 @@ class base_test extends \advanced_testcase {
         $this->assertSame($event3, $retult[0]);
     }
 
-    public function test_ignore_exceptions() {
+    public function test_ignore_exceptions(): void {
         $observers = array(
 
             array(
@@ -387,7 +387,7 @@ class base_test extends \advanced_testcase {
             \core_tests\event\unittest_observer::$info);
     }
 
-    public function test_external_buffer() {
+    public function test_external_buffer(): void {
         global $DB;
 
         $this->preventResetByRollback();
@@ -461,7 +461,7 @@ class base_test extends \advanced_testcase {
             \core_tests\event\unittest_observer::$info);
     }
 
-    public function test_rollback() {
+    public function test_rollback(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -514,7 +514,7 @@ class base_test extends \advanced_testcase {
         $this->assertCount(1, \core_tests\event\unittest_observer::$event);
     }
 
-    public function test_forced_rollback() {
+    public function test_forced_rollback(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -556,7 +556,7 @@ class base_test extends \advanced_testcase {
         $this->assertCount(1, \core_tests\event\unittest_observer::$event);
     }
 
-    public function test_deprecated() {
+    public function test_deprecated(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -573,57 +573,7 @@ class base_test extends \advanced_testcase {
         $this->assertSame($event::LEVEL_TEACHING, $event->edulevel);
     }
 
-    public function test_legacy() {
-        global $DB, $CFG;
-
-        $this->resetAfterTest(true);
-
-        $observers = array(
-            array(
-                'eventname'   => '\core_tests\event\unittest_executed',
-                'callback'    => '\core_tests\event\unittest_observer::observe_one',
-            ),
-            array(
-                'eventname'   => '*',
-                'callback'    => '\core_tests\event\unittest_observer::observe_all',
-                'includefile' => null,
-                'internal'    => 1,
-                'priority'    => 9999,
-            ),
-        );
-
-        $DB->delete_records('log', array());
-        $this->expectException(\coding_exception::class);
-        events_update_definition('unittest');
-
-        $DB->delete_records_select('events_handlers', "component <> 'unittest'");
-
-        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
-        $this->assertEquals(3, $DB->count_records('events_handlers'));
-        set_config('loglifetime', 60*60*24*5);
-
-        \core\event\manager::phpunit_replace_observers($observers);
-        \core_tests\event\unittest_observer::reset();
-
-        $event1 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)));
-        $event1->trigger();
-
-        $event2 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>6, 'xx'=>11)));
-        $event2->nest = true;
-        $event2->trigger();
-
-        $this->assertSame(
-            array('observe_all-5', 'observe_one-5', 'observe_all-nesting-6', 'observe_one-6', 'observe_all-666', 'observe_one-666'),
-            \core_tests\event\unittest_observer::$info);
-
-        $this->assertSame($event1, \core_tests\event\unittest_observer::$event[0]);
-        $this->assertSame($event1, \core_tests\event\unittest_observer::$event[1]);
-
-        $logs = $DB->get_records('log', array(), 'id ASC');
-        $this->assertCount(0, $logs);
-    }
-
-    public function test_restore_event() {
+    public function test_restore_event(): void {
         $event1 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
         $data1 = $event1->get_data();
 
@@ -657,7 +607,7 @@ class base_test extends \advanced_testcase {
 
     }
 
-    public function test_trigger_problems() {
+    public function test_trigger_problems(): void {
         $this->resetAfterTest(true);
 
         $event = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)));
@@ -690,7 +640,7 @@ class base_test extends \advanced_testcase {
         }
     }
 
-    public function test_bad_events() {
+    public function test_bad_events(): void {
         $this->resetAfterTest(true);
 
         try {
@@ -749,7 +699,7 @@ class base_test extends \advanced_testcase {
         $this->assertDebuggingCalled('Event property objectid must be set when objecttable is defined');
     }
 
-    public function test_problematic_events() {
+    public function test_problematic_events(): void {
         $this->resetAfterTest(true);
 
         $event1 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance()));
@@ -800,7 +750,7 @@ class base_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
-    public function test_record_snapshots() {
+    public function test_record_snapshots(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -837,12 +787,12 @@ class base_test extends \advanced_testcase {
         }
     }
 
-    public function test_get_name() {
+    public function test_get_name(): void {
         $event = \core_tests\event\noname_event::create(array('other' => array('sample' => 1, 'xx' => 10)));
         $this->assertEquals("core_tests: noname event", $event->get_name());
     }
 
-    public function test_iteration() {
+    public function test_iteration(): void {
         $event = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
 
         $data = array();
@@ -853,31 +803,10 @@ class base_test extends \advanced_testcase {
         $this->assertSame($event->get_data(), $data);
     }
 
-    public function test_context_not_used() {
-        // TODO: MDL-69688 - This test is far away from my understanding. It throws a
-        // "Trying to get property 'instanceid' of non-object" notice, so
-        // it's not clear for me what the test is doing. This was detected
-        // when preparing tests for PHPUnit 8 (MDL-67673) and, at the end
-        // all that was done is to move the annotation (deprecated) to
-        // explicit expectation. Still try commenting it out and you'll see
-        // the notice.
-        if (PHP_VERSION_ID >= 80000) {
-            $this->expectWarning();
-        } else {
-            $this->expectNotice();
-        }
-        $event = \core_tests\event\context_used_in_event::create(array('other' => array('sample' => 1, 'xx' => 10)));
-        $this->assertEventContextNotUsed($event);
-
-        $eventcontext = phpunit_event_mock::testable_get_event_context($event);
-        phpunit_event_mock::testable_set_event_context($event, null);
-        $this->assertEventContextNotUsed($event);
-    }
-
     /**
      * Test that all observer information is returned correctly.
      */
-    public function test_get_all_observers() {
+    public function test_get_all_observers(): void {
         // Retrieve all observers.
         $observers = \core\event\manager::get_all_observers();
 
@@ -905,7 +834,7 @@ class base_test extends \advanced_testcase {
      * Test formatting of the get_explanation method.
      * This formats the information from an events class docblock.
      */
-    public function test_get_explanation() {
+    public function test_get_explanation(): void {
         $explanation = \core_tests\event\full_docblock::get_explanation();
 
         $expected = "This is an explanation of the event.
@@ -933,7 +862,7 @@ and nothing else.";
      * Test that general information about an event is returned
      * by the get_static_info() method.
      */
-    public function test_get_static_info() {
+    public function test_get_static_info(): void {
         $staticinfo = \core_tests\event\static_info_viewing::get_static_info();
 
         $expected = array(
@@ -955,7 +884,7 @@ and nothing else.";
      * the base event class or the final, implemented event class.  This enables us to subscribe
      * to things like all course module view events, all comment created events, etc.
      */
-    public function test_observe_parent_event() {
+    public function test_observe_parent_event(): void {
         $this->resetAfterTest();
 
         // Ensure this has been reset prior to using it.

@@ -37,9 +37,7 @@ $contextid = optional_param('contextid', 0, PARAM_INT);
 $usercourseid = optional_param('usercourseid', SITEID, PARAM_INT);  // Extra: used for user context only
 
 $url = new moodle_url('/repository/manage_instances.php');
-
 $baseurl = new moodle_url('/repository/manage_instances.php');
-$baseurl->param('sesskey', sesskey());
 
 if ($edit){
     $url->param('edit', $edit);
@@ -168,9 +166,6 @@ if (!empty($edit) || !empty($new)) {
         exit;
 
     } else if ($fromform = $mform->get_data()){
-        if (!confirm_sesskey()) {
-            throw new \moodle_exception('confirmsesskeybad', '', $baseurl);
-        }
         if ($edit) {
             $settings = array();
             $settings['name'] = $fromform->name;
@@ -199,9 +194,7 @@ if (!empty($edit) || !empty($new)) {
     }
 } else if (!empty($delete)) {
     if ($sure) {
-        if (!confirm_sesskey()) {
-            throw new \moodle_exception('confirmsesskeybad', '', $baseurl);
-        }
+        require_sesskey();
         if ($instance->delete()) {
             $deletedstr = get_string('instancedeleted', 'repository');
             redirect($baseurl, $deletedstr, 3);

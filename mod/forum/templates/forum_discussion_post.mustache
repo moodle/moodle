@@ -51,7 +51,7 @@
             <header id="post-header-{{id}}-{{uniqid}}" class="mb-2 header row d-flex">
                 {{^isdeleted}}
                     {{#author}}
-                        <div class="mr-2" style="width: 45px;">
+                        <div class="me-2" style="width: 45px;">
                             {{#urls.profileimage}}
                                 <img
                                     class="rounded-circle w-100"
@@ -101,7 +101,7 @@
             <div class="d-flex body-content-container">
                 {{^isdeleted}}
                     {{#author}}
-                        <div class="mr-2 author-groups-container" style="width: 45px; flex-shrink: 0">
+                        <div class="me-2 author-groups-container" style="width: 45px; flex-shrink: 0">
                             {{#groups}}
                                 {{#urls.group}}
                                     {{#urls.image}}
@@ -190,7 +190,7 @@
                                 {{/html.rating}}
                                 {{$actions}}
                                     <div
-                                        class="post-actions d-flex align-self-end justify-content-end flex-wrap ml-auto"
+                                        class="post-actions d-flex align-self-end justify-content-end flex-wrap ms-auto"
                                         data-region="post-actions-container"
                                         role="menubar"
                                         aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'

@@ -53,6 +53,7 @@ $silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 $groupid = optional_param('group', 0, PARAM_INT);
 $activityinclude = optional_param('activityinclude', 'all', PARAM_TEXT);
 $activityorder = optional_param('activityorder', 'orderincourse', PARAM_TEXT);
+$activitysection = optional_param('activitysection', -1, PARAM_INT);
 
 // Whether to show extra user identity information
 $userfields = \core_user\fields::for_identity($context);
@@ -69,6 +70,7 @@ function csv_quote($value) {
 }
 
 $url = new moodle_url('/report/progress/index.php', array('course'=>$id));
+$PAGE->navigation->override_active_url($url);
 if ($sort !== '') {
     $url->param('sort', $sort);
 }
@@ -93,6 +95,9 @@ if ($activityinclude !== '') {
 if ($activityorder !== '') {
     $url->param('activityorder', $activityorder);
 }
+if ($activitysection !== '') {
+    $url->param('activitysection', $activitysection);
+}
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
@@ -111,7 +116,7 @@ if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
 // Get data on activities and progress of all users, and give error if we've
 // nothing to display (no users or no activities).
 $completion = new completion_info($course);
-list($activitytypes, $activities) = helper::get_activities_to_show($completion, $activityinclude, $activityorder);
+list($activitytypes, $activities) = helper::get_activities_to_show($completion, $activityinclude, $activityorder, $activitysection);
 $output = $PAGE->get_renderer('report_progress');
 
 if ($sifirst !== 'all') {
@@ -208,6 +213,21 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     // Display activity order options.
     echo $output->render_activity_order_select($url, $activityorder);
 
+    // Display section selector.
+    $modinfo = get_fast_modinfo($course);
+    $sections = [];
+    $cmids = array_keys($completion->get_activities());
+    foreach ($modinfo->get_sections() as $sectionnum => $section) {
+        if (empty(array_intersect($section, $cmids))) {
+            continue;
+        }
+        $sectionname = get_section_name($course, $sectionnum);
+        if (empty($sectionname)) {
+            $sectionname = get_string('section') . ' ' . $sectionnum;
+        }
+        $sections[$sectionnum] = $sectionname;
+    }
+    echo $output->render_activity_section_select($url, $activitysection, $sections);
 }
 
 if (count($activities)==0) {
@@ -253,13 +273,13 @@ if (!$csv) {
     print $pagingbar;
 
     if (!$total) {
-        echo $OUTPUT->heading(get_string('nothingtodisplay'));
+        echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
         echo $OUTPUT->footer();
         exit;
     }
 
     print '<div id="completion-progress-wrapper" class="no-overflow">';
-    print '<table id="completion-progress" class="generaltable flexible boxaligncenter" style="text-align:left"><thead><tr style="vertical-align:top">';
+    print '<table id="completion-progress" class="generaltable flexible boxaligncenter"><thead><tr style="vertical-align:top">';
 
     // User heading / sort option
     print '<th scope="col" class="completion-sortchoice">';

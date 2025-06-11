@@ -22,28 +22,27 @@ Feature: Using the database activities which support point scale
 
   @javascript
   Scenario: Database rescale grade should not be possible when users are graded
-    Given I am on the "Course 1" course page logged in as teacher1
-    And I add a "Short text" field to "Test database name" database and I fill the form with:
-      | Field name | Test field name |
-      | Field description | Test field description |
-    And I navigate to "Templates" in current page administration
-    And I wait until the page is ready
-    And I am on the "Test database name" "data activity editing" page
+    Given the following "mod_data > fields" exist:
+      | database | type | name            | description            |
+      | data1    | text | Test field name | Test field description |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
+    And the following "mod_data > entries" exist:
+      | database | user     | Test field name          |
+      | data1    | student1 | Student original entry   |
+      | data1    | student1 | Student original entry 2 |
+    And I am on the "Test database name" "data activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
-    And I press "Save and return to course"
-    And I log out
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student original entry |
-      | Test field name | Student original entry 2 |
-    And I press "Save"
-    And I log out
-    And I am on the "Test database name" "data activity" page logged in as teacher1
+    And I press "Save and display"
     And I select "Single view" from the "jump" singleselect
     And I set the field "rating" to "51"
     And I am on the "Test database name" "data activity editing" page
-    And I expand all fieldsets
+    When I expand all fieldsets
     Then the "Maximum grade" "field" should be disabled

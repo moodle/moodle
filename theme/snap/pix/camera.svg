@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 100 100">
+  <style>
+    .st0{fill:#999999;} .st1{fill:#999999;stroke:#FFFFFF;stroke-width:5;stroke-miterlimit:10;}
+  </style>
+  <path d="M92.3 82.9H7.7c-2.8 0-5-2.2-5-5V22.1c0-2.8 2.2-5 5-5h84.6c2.8 0 5 2.2 5 5v55.8c0 2.7-2.3 5-5 5z" class="st0"/>
+  <path d="M33.6 26.7H15.1c-2.8 0-5-2.2-5-5V12c0-2.8 2.2-5 5-5h18.4c2.8 0 5 2.2 5 5v9.8c.1 2.7-2.2 4.9-4.9 4.9z" class="st0"/>
+  <circle cx="51.1" cy="48.9" r="15.3" class="st1"/>
+</svg>

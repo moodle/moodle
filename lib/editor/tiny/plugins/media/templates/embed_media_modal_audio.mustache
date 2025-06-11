@@ -32,9 +32,11 @@
             </label>
             <div class="input-group input-append w-100">
                 <input id="audio-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{.}}"/>
+                {{#showfilepicker}}
                 <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
+                {{/showfilepicker}}
             </div>
         </div>
         <div class="addcomponent-wrapper">
@@ -60,9 +62,11 @@
             </label>
             <div class="input-group input-append w-100">
                 <input id="audio-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                {{#showfilepicker}}
                 <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
+                {{/showfilepicker}}
             </div>
         </div>
         <div class="addcomponent-wrapper">
@@ -83,10 +87,10 @@
 <fieldset class="collapsible collapsed" id="{{elementid}}_audio-display-options">
     <input name="mform_isexpanded_{{elementid}}_audio-display-options" type="hidden">
     <legend class="d-flex align-items-center px-1">
-        <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+        <div class="position-relative d-flex ftoggler align-items-center position-relative me-1">
             <a role="button" data-toggle="collapse" href="#adisplayoptions" aria-expanded="false"
                aria-controls="adisplayoptions"
-               class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader collapsed">
+               class="btn btn-icon me-1 icons-collapse-expand stretched-link fheader collapsed">
             <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
                                 <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
                             </span>
@@ -118,10 +122,10 @@
 <fieldset class="collapsible collapsed" id="{{elementid}}_audio-advanced-settings">
     <input name="mform_isexpanded_{{elementid}}_audio-advanced-settings" type="hidden">
     <legend class="d-flex align-items-center px-1">
-        <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+        <div class="position-relative d-flex ftoggler align-items-center position-relative me-1">
             <a role="button" data-toggle="collapse" href="#aadvancedsettings" aria-expanded="false"
                aria-controls="aadvancedsettings"
-               class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader collapsed">
+               class="btn btn-icon me-1 icons-collapse-expand stretched-link fheader collapsed">
             <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
                                 <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
                             </span>
@@ -176,10 +180,10 @@
 <fieldset class="collapsible collapsed" id="{{elementid}}_audio-tracks">
     <input name="mform_isexpanded_{{elementid}}_audio-tracks" type="hidden">
     <legend class="d-flex align-items-center px-1">
-        <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+        <div class="position-relative d-flex ftoggler align-items-center position-relative me-1">
             <a role="button" data-toggle="collapse" href="#atracks" aria-expanded="false"
                aria-controls="atracks"
-               class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader collapsed">
+               class="btn btn-icon me-1 icons-collapse-expand stretched-link fheader collapsed">
             <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
                                 <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
                             </span>
@@ -248,13 +252,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="subtitle-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="subtitle-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="subtitle-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -269,7 +275,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="subtitle-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="subtitle-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
@@ -298,13 +304,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="subtitle-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="subtitle-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="subtitle-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -319,7 +327,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="subtitle-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="subtitle-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
@@ -356,13 +364,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="caption-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="caption-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="caption-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -377,7 +387,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="caption-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="caption-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
@@ -406,13 +416,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="caption-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="caption-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="caption-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -427,7 +439,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="caption-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="caption-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
@@ -464,13 +476,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="description-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="description-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="description-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -485,7 +499,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="description-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="description-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
@@ -514,13 +528,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="description-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="description-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="description-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -535,7 +551,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="description-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="description-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
@@ -572,13 +588,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="chapter-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="chapter-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="chapter-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -593,7 +611,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="chapter-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="chapter-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
@@ -622,13 +640,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="chapter-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="chapter-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="chapter-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -643,7 +663,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="chapter-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="chapter-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
@@ -681,13 +701,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="metadata-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="metadata-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="metadata-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -702,7 +724,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="metadata-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="metadata-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
@@ -731,13 +753,15 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="metadata-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="metadata-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
                             <select id="metadata-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
@@ -752,7 +776,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="w-100" for="metadata-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
                             <input id="metadata-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>

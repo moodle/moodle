@@ -76,26 +76,48 @@ if ($form->is_cancelled()) {
 }
 
 /// Print the page header
-$PAGE->navbar->add(get_string('add', 'data'));
+$pagename = get_string('uploadrecords', 'data');
+$PAGE->navbar->add($pagename);
 $PAGE->add_body_class('mediumwidth');
-$PAGE->set_title($data->name);
+$titleparts = [
+    $pagename,
+    format_string($data->name),
+    format_string($course->fullname),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
 echo $OUTPUT->header();
-echo $OUTPUT->heading_with_help(get_string('uploadrecords', 'mod_data'), 'uploadrecords', 'mod_data');
+echo $OUTPUT->heading_with_help($pagename, 'uploadrecords', 'mod_data');
 
 if ($formdata = $form->get_data()) {
-    $filecontent = $form->get_file_content('recordsfile');
-    $recordsadded = data_import_csv($cm, $data, $filecontent, $formdata->encoding, $formdata->fielddelimiter);
+    $uploadedfilepath = $form->save_temp_file('recordsfile');
+    $filestempdir = null;
 
-    if ($recordsadded > 0) {
-        echo $OUTPUT->notification($recordsadded. ' '. get_string('recordssaved', 'data'), '');
-    } else {
-        echo $OUTPUT->notification(get_string('recordsnotsaved', 'data'), 'notifysuccess');
+    if (!$uploadedfilepath) {
+        throw new coding_exception('No file uploaded.');
     }
 
-    echo $OUTPUT->continue_button($redirectbackto);
+    $importer = new \mod_data\local\importer\csv_entries_importer($uploadedfilepath, $form->get_new_filename('recordsfile'));
+
+    if (!$importer->get_data_file_content()) {
+        echo $OUTPUT->notification(get_string('errordatafilenotfound', 'data'),
+            \core\output\notification::NOTIFY_ERROR);
+    } else {
+        $importer->import_csv($cm, $data, $formdata->encoding, $formdata->fielddelimiter);
+        unlink($uploadedfilepath);
+
+        $addedrecordsmessages = $importer->get_added_records_messages();
+        echo html_writer::div(implode('<br/>', $addedrecordsmessages));
+        if (count($addedrecordsmessages) > 0) {
+            echo $OUTPUT->notification(count($addedrecordsmessages) . ' ' . get_string('recordssaved', 'data'),
+                \core\output\notification::NOTIFY_SUCCESS);
+        } else {
+            echo $OUTPUT->notification(get_string('recordsnotsaved', 'data'),
+                \core\output\notification::NOTIFY_ERROR);
+        }
+    }
 } else {
     /// Upload records section. Only for teachers and the admin.
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');

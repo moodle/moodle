@@ -96,7 +96,7 @@ if (!$edit) {
         echo $renderer->render_action_bar($actionbar);
         echo $OUTPUT->heading($heading);
     } else {
-        print_grade_page_head($course->id, 'letter', 'view', $heading, false, false,
+        print_grade_page_head($course->id, 'letter', 'view', false, false, false,
             true, null, null, null, $actionbar);
     }
 

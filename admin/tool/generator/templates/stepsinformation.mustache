@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_generator/stepsinformation
+
+    Template with the available steps for the generator tool.
+
+    Example context (json):
+    {
+        "steps": [
+            {
+                "given": "I do something with <strong>:param</strong>",
+                "example": "example code"
+            },
+            {
+                "given": "I do another thing with <strong>:param</strong>"
+            }
+        ]
+    }
+}}
+<div class="border rounded border-info mb-3 p-2" id="stepsinformation">
+    {{< core/showmore }}
+        {{$collapsedcontent}}
+            {{#str}} testscenario_filedesc, tool_generator {{/str}}
+        {{/collapsedcontent}}
+        {{$expandedcontent}}
+            <p>{{#str}} testscenario_filedesc, tool_generator {{/str}}</p>
+            <p>{{#str}} testscenario_filedesc_cleanup, tool_generator {{/str}}</p>
+            <p>{{#str}} testscenario_filedesc_list, tool_generator {{/str}}</p>
+            <ul class="list-group">
+                {{#steps}}
+                <li class="list-group-item">
+                    {{{given}}}
+                    {{#example}}
+                    <div class="alert alert-info mb-0 mt-2" role="alert" style="overflow: auto;">
+                        <div class="font-weight-bold mr-2 ">{{#str}} step_example, tool_generator {{/str}}</div>
+                        <pre class="mb-0">{{example}}</pre>
+                    </div>
+                    {{/example}}
+                </li>
+                {{/steps}}
+            </ul>
+        {{/expandedcontent}}
+    {{/core/showmore }}
+</div>

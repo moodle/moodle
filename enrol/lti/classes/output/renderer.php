@@ -263,4 +263,19 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('enrol_lti/local/ltiadvantage/registration_view',
             $tcontext);
     }
+
+    /**
+     * Render a warning, indicating to the user that cookies are require but couldn't be set.
+     *
+     * @return string the html.
+     */
+    public function render_cookies_required_notice(): string {
+        $notification = new notification(get_string('cookiesarerequiredinfo', 'enrol_lti'), notification::NOTIFY_WARNING, false);
+        $tcontext = [
+            'heading' => get_string('cookiesarerequired', 'enrol_lti'),
+            'notification' => $notification->export_for_template($this),
+        ];
+
+        return parent::render_from_template('enrol_lti/local/ltiadvantage/cookies_required_notice', $tcontext);
+    }
 }

@@ -106,12 +106,12 @@ class my_data_requests_page implements renderable, templatable {
             $cancancel = true;
             switch ($status) {
                 case api::DATAREQUEST_STATUS_COMPLETE:
-                    $item->statuslabelclass = 'badge-success';
+                    $item->statuslabelclass = 'bg-success text-white';
                     $item->statuslabel = get_string('statuscomplete', 'tool_dataprivacy');
                     $cancancel = false;
                     break;
                 case api::DATAREQUEST_STATUS_DOWNLOAD_READY:
-                    $item->statuslabelclass = 'badge-success';
+                    $item->statuslabelclass = 'bg-success text-white';
                     $item->statuslabel = get_string('statusready', 'tool_dataprivacy');
                     $cancancel = false;
                     $candownload = true;
@@ -122,12 +122,12 @@ class my_data_requests_page implements renderable, templatable {
                     }
                     break;
                 case api::DATAREQUEST_STATUS_DELETED:
-                    $item->statuslabelclass = 'badge-success';
+                    $item->statuslabelclass = 'bg-success text-white';
                     $item->statuslabel = get_string('statusdeleted', 'tool_dataprivacy');
                     $cancancel = false;
                     break;
                 case api::DATAREQUEST_STATUS_EXPIRED:
-                    $item->statuslabelclass = 'badge-secondary';
+                    $item->statuslabelclass = 'bg-secondary text-dark';
                     $item->statuslabel = get_string('statusexpired', 'tool_dataprivacy');
                     $item->statuslabeltitle = get_string('downloadexpireduser', 'tool_dataprivacy');
                     $cancancel = false;

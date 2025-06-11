@@ -1,0 +1,157 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qtype_ordering/formulation_and_controls
+
+    Renders the question formulation and controls.
+
+    Context variables required for this template:
+    * questiontext - Question text.
+    * responsename - Response name for this question attempt.
+    * responseid - Response name for this question attempt.
+    * value - Comma separated md5keys of the answer.
+    * ablockid - Block id.
+    * layoutclass - Layout class.
+    * numberingstyle - Numbering style.
+    * active - if qa is active.
+    * sortableid - Sortable id.
+    * answers - An array containing the score details.
+    * readonly - Whether the question is readonly or not.
+    Example context (json):
+    {
+        "questiontext": "Order this",
+        "responsename": "q13:1_response_2",
+        "responseid": "id_q13_1_response_2",
+        "value": "ordering_item_497031794414a552435f90151ac3b54b,ordering_item_5a35edab0f2bf86dfa3901baa8c235dc",
+        "ablockid": "id_ablock_2",
+        "layoutclass": "vertical",
+        "numberingstyle": "numberingnone",
+        "active": true,
+        "sortableid": "id_sortable_2",
+        "readonly": true,
+        "answers": [
+            {
+                "id": "ordering_item_497031794414a552435f90151ac3b54b",
+                "scoreclass": "correct",
+                "answertext": "Oriented",
+                "feedbackimage": "<i class='icon fa fa-remove text-danger fa-fw' title='Incorrect' role='img' aria-label='Incorrect'></i>"
+            },
+            {
+                "id": "ordering_item_5a35edab0f2bf86dfa3901baa8c235dc",
+                "scoreclass": "correct",
+                "answertext": "Object",
+                "feedbackimage": "<i class='icon fa fa-remove text-danger fa-fw' title='Incorrect' role='img' aria-label='Incorrect'></i>"
+            }
+        ]
+    }
+}}
+
+<div class="qtext">
+    {{{questiontext}}}
+    {{#responsename}}
+        <div class="ablock" id="{{ablockid}}">
+            <div class="answer ordering">
+                <div aria-live="polite" class="sr-only" id="{{sortableid}}-announcement"></div>
+                <ul class="sortablelist {{layoutclass}} {{#numberingstyle}}numbering{{numberingstyle}}{{/numberingstyle}} {{#active}}active{{/active}}{{^active}}notactive{{/active}}" id="{{sortableid}}">
+                    {{#answers}}
+                        <li class="p-2 {{^readonly}}sortableitem{{/readonly}} {{scoreclass}}" id="{{id}}">
+                            <div class="d-flex">
+                                {{^readonly}}
+                                    <div class="d-flex p-2 grip">
+                                        <i class='fas fa-grip-vertical' aria-hidden="true"></i>
+                                    </div>
+                                {{/readonly}}
+                                <div class="d-flex align-items-center flex-grow-1 px-2" id="{{id}}-text" data-itemcontent>
+                                    {{{feedbackimage}}}{{{answertext}}}
+                                </div>
+                                {{^readonly}}
+                                    <div class="d-flex px-2">
+                                        {{#horizontallayout}}
+                                            <button
+                                                type="button"
+                                                class="dir-rtl-hide btn btn-icon icon-no-margin"
+                                                data-action="move-backward"
+                                                aria-label="{{#cleanstr}}moveleft, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-left" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="dir-rtl-hide btn btn-icon icon-no-margin"
+                                                data-action="move-forward"
+                                                aria-label="{{#cleanstr}}moveright, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="dir-ltr-hide btn btn-icon icon-no-margin"
+                                                data-action="move-backward"
+                                                aria-label="{{#cleanstr}}moveright, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="dir-ltr-hide btn btn-icon icon-no-margin"
+                                                data-action="move-forward"
+                                                aria-label="{{#cleanstr}}moveleft, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-left" aria-hidden="true"></i>
+                                            </button>
+                                        {{/horizontallayout}}
+                                        {{^horizontallayout}}
+                                            <button
+                                                type="button"
+                                                class="btn btn-icon icon-no-margin"
+                                                data-action="move-backward"
+                                                aria-label="{{#cleanstr}}moveup{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-up" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-icon icon-no-margin"
+                                                data-action="move-forward" aria-label="{{#cleanstr}}movedown{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-down" aria-hidden="true"></i>
+                                            </button>
+                                        {{/horizontallayout}}
+                                    </div>
+                                {{/readonly}}
+                            </div>
+                        </li>
+                    {{/answers}}
+                </ul>
+            </div>
+        </div>
+        <input name="{{responsename}}" id="{{responseid}}" type="hidden" value="{{value}}"/>
+    {{/responsename}}
+</div>
+{{^readonly}}
+    {{#js}}
+        require(['qtype_ordering/drag_reorder'], function(drag_reorder) {
+        drag_reorder.init('{{sortableid}}', '{{responseid}}');
+        });
+    {{/js}}
+{{/readonly}}

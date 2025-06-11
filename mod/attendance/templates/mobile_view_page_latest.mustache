@@ -68,7 +68,7 @@
             <h3><% groupname %></h3>
             <h3><% currentstatus %></h3>
             <%#sessid%>
-            <ion-button core-site-plugins-new-content component="mod_attendance" method="<% attendancefunction %>" [args]="{cmid: <% cmid %>, courseid: <% courseid %>, sessid: <% sessid %>, timestamp: <% timestamp %>}">
+            <ion-button core-site-plugins-new-content component="mod_attendance" method="<% attendancefunction %>" [args]="{cmid: <% cmid %>, courseid: <% courseid %>, sessid: <% sessid %>, timestamp: <% timestamp %>}" [preSets]="{getFromCache: 0, saveToCache: 0}" refreshOnSuccess="true" samePage="true">
                 {{ 'plugin.mod_attendance.submitattendance' | translate }}
             </ion-button>
             <%/sessid%>

@@ -87,9 +87,6 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'overview';
 
-// First make sure we have proper final grades.
-grade_regrade_final_grades_if_required($course);
-
 $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/overview/index.php', ['id' => $courseid]), 'report', 'overview');
 

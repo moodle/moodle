@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Badge assertion library.
- *
- * @package    core
- * @subpackage badges
- * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
-
 namespace core_badges;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,8 +34,10 @@ use stdClass;
 /**
  * Class that represents badge.
  *
+ * @package    core_badges
  * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 class badge {
     /** @var int Badge id */
@@ -129,6 +121,24 @@ class badge {
     /** @var array Badge criteria */
     public $criteria = array();
 
+    /** @var int|null Total users which have the award. Called from badges_get_badges() */
+    public $awards;
+
+    /** @var string|null The name of badge status. Called from badges_get_badges() */
+    public $statstring;
+
+    /** @var int|null The date the badges were issued. Called from badges_get_badges() */
+    public $dateissued;
+
+    /** @var string|null Unique hash. Called from badges_get_badges() */
+    public $uniquehash;
+
+    /** @var string|null Message format. Called from file_prepare_standard_editor() */
+    public $messageformat;
+
+    /** @var array Message editor. Called from file_prepare_standard_editor() */
+    public $message_editor = [];
+
     /**
      * Constructs with badge details.
      *
@@ -150,21 +160,13 @@ class badge {
             }
         }
 
-        if (badges_open_badges_backpack_api() != OPEN_BADGES_V1) {
-            // For Open Badges 2 we need to use a single site issuer with no exceptions.
-            $issuer = badges_get_default_issuer();
-            $this->issuername = $issuer['name'];
-            $this->issuercontact = $issuer['email'];
-            $this->issuerurl = $issuer['url'];
-        }
-
         $this->criteria = self::get_criteria();
     }
 
     /**
      * Use to get context instance of a badge.
      *
-     * @return context instance.
+     * @return \context|void instance.
      */
     public function get_context() {
         if ($this->type == BADGE_TYPE_SITE) {
@@ -240,7 +242,16 @@ class badge {
         foreach (get_object_vars($this) as $k => $v) {
             $fordb->{$k} = $v;
         }
+        // TODO: We need to making it more simple.
+        // Since the variables are not exist in the badge table,
+        // unsetting them is a must to avoid errors.
         unset($fordb->criteria);
+        unset($fordb->awards);
+        unset($fordb->statstring);
+        unset($fordb->dateissued);
+        unset($fordb->uniquehash);
+        unset($fordb->messageformat);
+        unset($fordb->message_editor);
 
         $fordb->timemodified = time();
         if ($DB->update_record_raw('badge', $fordb)) {
@@ -275,6 +286,7 @@ class badge {
         $fordb->usermodified = $USER->id;
         $fordb->timecreated = time();
         $fordb->timemodified = time();
+        $tags = $this->get_badge_tags();
         unset($fordb->id);
 
         if ($fordb->notification > 1) {
@@ -286,6 +298,8 @@ class badge {
 
         if ($new = $DB->insert_record('badge', $fordb, true)) {
             $newbadge = new badge($new);
+            // Copy badge tags.
+            \core_tag_tag::set_item_tags('core_badges', 'badge', $newbadge->id, $this->get_context(), $tags);
 
             // Copy badge image.
             $fs = get_file_storage();
@@ -718,6 +732,9 @@ class badge {
         $DB->delete_records_select('badge_related', $relatedsql, $relatedparams);
         $DB->delete_records('badge_alignment', array('badgeid' => $this->id));
 
+        // Delete all tags.
+        \core_tag_tag::remove_all_item_tags('core_badges', 'badge', $this->id);
+
         // Finally, remove badge itself.
         $DB->delete_records('badge', array('id' => $this->id));
 
@@ -929,24 +946,154 @@ class badge {
      * @return array Issuer informations of the badge.
      */
     public function get_badge_issuer(?int $obversion = null) {
-        global $DB;
+        return [
+            'name' => $this->issuername,
+            'url' => $this->issuerurl,
+            'email' => $this->issuercontact,
+            '@context' => OPEN_BADGES_V2_CONTEXT,
+            'id' => (new moodle_url('/badges/issuer_json.php', ['id' => $this->id]))->out(false),
+            'type' => OPEN_BADGES_V2_TYPE_ISSUER,
+        ];
+    }
 
-        $issuer = [];
-        if ($obversion == OPEN_BADGES_V1) {
-            $data = $DB->get_record('badge', ['id' => $this->id]);
-            $issuer['name'] = $data->issuername;
-            $issuer['url'] = $data->issuerurl;
-            $issuer['email'] = $data->issuercontact;
+    /**
+     * Get tags of badge.
+     *
+     * @return array Badge tags.
+     */
+    public function get_badge_tags(): array {
+        return array_values(\core_tag_tag::get_item_tags_array('core_badges', 'badge', $this->id));
+    }
+
+    /**
+     * Create a badge, to store it in the database.
+     *
+     * @param stdClass $data Data to create a badge.
+     * @param int|null $courseid The course where the badge will be added.
+     * @return badge The badge object created.
+     */
+    public static function create_badge(stdClass $data, ?int $courseid = null): badge {
+        global $DB, $USER, $CFG;
+
+        $now = time();
+
+        $fordb = new stdClass();
+        $fordb->id = null;
+        $fordb->courseid = $courseid;
+        $fordb->type = $courseid ? BADGE_TYPE_COURSE : BADGE_TYPE_SITE;
+        $fordb->name = trim($data->name);
+        $fordb->version = $data->version;
+        $fordb->language = $data->language;
+        $fordb->description = $data->description;
+        $fordb->imageauthorname = $data->imageauthorname;
+        $fordb->imageauthoremail = $data->imageauthoremail;
+        $fordb->imageauthorurl = $data->imageauthorurl;
+        $fordb->imagecaption = $data->imagecaption;
+        $fordb->timecreated = $now;
+        $fordb->timemodified = $now;
+        $fordb->usercreated = $USER->id;
+        $fordb->usermodified = $USER->id;
+        $fordb->issuername = $data->issuername;
+        $fordb->issuerurl = $data->issuerurl;
+        $fordb->issuercontact = $data->issuercontact;
+
+        if (!property_exists($data, 'expiry')) {
+            $data->expiry = 0;
+        }
+        $fordb->expiredate = ($data->expiry == 1) ? $data->expiredate : null;
+        $fordb->expireperiod = ($data->expiry == 2) ? $data->expireperiod : null;
+        $fordb->messagesubject = get_string('messagesubject', 'badges');
+        $fordb->message = get_string('messagebody', 'badges',
+                html_writer::link($CFG->wwwroot . '/badges/mybadges.php', get_string('managebadges', 'badges')));
+        $fordb->attachment = 1;
+        $fordb->notification = BADGE_MESSAGE_NEVER;
+        $fordb->status = BADGE_STATUS_INACTIVE;
+
+        $badgeid = $DB->insert_record('badge', $fordb, true);
+
+        if ($courseid) {
+            $course = get_course($courseid);
+            $context = context_course::instance($course->id);
         } else {
-            $issuer['name'] = $this->issuername;
-            $issuer['url'] = $this->issuerurl;
-            $issuer['email'] = $this->issuercontact;
-            $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-            $issueridurl = new moodle_url('/badges/issuer_json.php', array('id' => $this->id));
-            $issuer['id'] = $issueridurl->out(false);
-            $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
+            $context = context_system::instance();
         }
 
-        return $issuer;
+        // Trigger event, badge created.
+        $eventparams = [
+            'objectid' => $badgeid,
+            'context' => $context,
+        ];
+        $event = \core\event\badge_created::create($eventparams);
+        $event->trigger();
+
+        $badge = new badge($badgeid);
+        if (property_exists($data, 'tags')) {
+            \core_tag_tag::set_item_tags('core_badges', 'badge', $badgeid, $context, $data->tags);
+        }
+
+        return $badge;
+    }
+
+    /**
+     * Update badge data.
+     *
+     * @param stdClass $data Data to update a badge.
+     * @return bool A status for update a badge.
+     */
+    public function update(stdClass $data): bool {
+        global $USER;
+
+        $this->name = trim($data->name);
+        $this->version = trim($data->version);
+        $this->language = $data->language;
+        $this->description = $data->description;
+        $this->imageauthorname = $data->imageauthorname;
+        $this->imageauthoremail = $data->imageauthoremail;
+        $this->imageauthorurl = $data->imageauthorurl;
+        $this->imagecaption = $data->imagecaption;
+        $this->usermodified = $USER->id;
+        $this->issuername = $data->issuername;
+        $this->issuerurl = $data->issuerurl;
+        $this->issuercontact = $data->issuercontact;
+        $this->expiredate = ($data->expiry == 1) ? $data->expiredate : null;
+        $this->expireperiod = ($data->expiry == 2) ? $data->expireperiod : null;
+
+        // Need to unset message_editor options to avoid errors on form edit.
+        unset($this->messageformat);
+        unset($this->message_editor);
+
+        if (!$this->save()) {
+            return false;
+        }
+
+        \core_tag_tag::set_item_tags('core_badges', 'badge', $this->id, $this->get_context(), $data->tags);
+
+        return true;
+    }
+
+    /**
+     * Update the message of badge.
+     *
+     * @param stdClass $data Data to update a badge message.
+     * @return bool A status for update a badge message.
+     */
+    public function update_message(stdClass $data): bool {
+        // Calculate next message cron if form data is different from original badge data.
+        if ($data->notification != $this->notification) {
+            if ($data->notification > BADGE_MESSAGE_ALWAYS) {
+                $this->nextcron = badges_calculate_message_schedule($data->notification);
+            } else {
+                $this->nextcron = null;
+            }
+        }
+
+        $this->message = clean_text($data->message_editor['text'], FORMAT_HTML);
+        $this->messagesubject = $data->messagesubject;
+        $this->notification = $data->notification;
+        $this->attachment = $data->attachment;
+
+        unset($this->messageformat);
+        unset($this->message_editor);
+        return $this->save();
     }
 }

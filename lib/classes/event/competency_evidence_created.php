@@ -57,7 +57,7 @@ class competency_evidence_created extends base {
      * @return evidence_created
      * @throws \coding_exception
      */
-    public static final function create_from_evidence(evidence $evidence, user_competency $usercompetency, $recommend) {
+    final public static function create_from_evidence(evidence $evidence, user_competency $usercompetency, $recommend) {
         // Make sure we have a valid evidence.
         if (!$evidence->get('id')) {
             throw new \coding_exception('The evidence ID must be set.');

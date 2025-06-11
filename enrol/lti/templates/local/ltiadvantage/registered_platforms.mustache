@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template enrol_lti/registered_platforms
+    @template enrol_lti/local/ltiadvantage/registered_platforms
 
     Template which displays a table view of all registered apps with options to add, delete and manage deployments.
 
@@ -81,10 +81,10 @@
             </td>
             <td>
                 {{#isactive}}
-                <span class="badge badge-success">{{{statusstring}}}</span>
+                <span class="badge bg-success text-white">{{{statusstring}}}</span>
                 {{/isactive}}
                 {{^isactive}}
-                <span class="badge badge-info">{{{statusstring}}}</span>
+                <span class="badge bg-info text-white">{{{statusstring}}}</span>
                 {{/isactive}}
             </td>
             <td>

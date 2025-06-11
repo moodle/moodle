@@ -39,6 +39,8 @@
  *  3) Run the unit tests using the standard process for running PHP Unit tests for Moodle.
  */
 
+namespace local_onenote;
+
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
@@ -49,7 +51,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @group local_onenote
  * @group office365
  */
-class local_onenote_onenoteapi_testcase extends advanced_testcase {
+final class onenoteapi_test extends \advanced_testcase {
     /** @var \onenoteapi */
     private $onenoteapi;
     /** @var \user */
@@ -80,7 +82,7 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
      *
      * @return bool
      */
-    public function setup() : void {
+    public function setup(): void {
         global $CFG;
         return; // Need to update tests to not contact external services.
         $this->resetAfterTest(true);
@@ -142,9 +144,11 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
     /**
      * Test for checking create_temp_folder
+     *
+     * @covers \local_onenote\api\base::create_temp_folder
      */
-    public function test_createtempfolder() {
-        return true; // Need to update test to not require config data.
+    public function test_createtempfolder(): void {
+        return; // Need to update test to not require config data.
         $this->set_test_config();
         $this->set_user(0);
 
@@ -153,9 +157,11 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
     /**
      * Test for onenote action button
+     *
+     * @covers \local_onenote\api\base::render_action_button
      */
-    public function test_renderactionbutton() {
-        return true; // Need to update test to not require config data.
+    public function test_renderactionbutton(): void {
+        return; // Need to update test to not require config data.
         $this->set_test_config();
         $this->set_user(0);
         global $CFG;
@@ -175,9 +181,11 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
     /**
      * Test for checking if the user is teacher
+     *
+     * @covers \local_onenote\api\base::is_teacher
      */
-    public function test_isteacher() {
-        return true; // Need to update test to not require config data.
+    public function test_isteacher(): void {
+        return; // Need to update test to not require config data.
         $this->set_test_config();
         $this->set_user(0);
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -189,9 +197,11 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
     /**
      * Test for getitemlist api
+     *
+     * @covers \local_onenote\api\base::get_items_list
      */
-    public function test_getitemlist() {
-        return true; // Need to update test to not require config data.
+    public function test_getitemlist(): void {
+        return; // Need to update test to not require config data.
         $this->set_test_config();
         $this->set_user(0);
 
@@ -219,10 +229,12 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for checking if assignment submission size is greater than than assignment limit.
+     * Test for checking if assignment submission size is greater than assignment limit.
+     *
+     * @covers \local_onenote\api\base::check_size_limits
      */
-    public function test_sizelimits() {
-        return true; // Need to update test to not require config data.
+    public function test_sizelimits(): void {
+        return; // Need to update test to not require config data.
         $this->set_test_config();
         $this->set_user(0);
 
@@ -269,9 +281,11 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
     /**
      * Test for checking html processing.
+     *
+     * @covers \local_onenote\api\base::download_page
      */
-    public function test_downloadpagehtml() {
-        return true; // Need to update test to not require config data.
+    public function test_downloadpagehtml(): void {
+        return; // Need to update test to not require config data.
         global $DB;
         $this->set_test_config();
         $this->set_user(0);
@@ -324,7 +338,8 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
         $expectedhtml = '<h3 style="font-size:12pt;color:#5b9bd5;margin-top:11pt;margin-bottom:11pt">';
         $expectedhtml .= '<span style="font-family:Helvetica;font-size:13.5pt;color:#333333">Heading 1</span></h3> ';
-        $expectedhtml .= '<p><span style="font-family:Helvetica;font-size:10.5pt;color:#333333">This is test assignment.</span></p> ';
+        $expectedhtml .= '<p><span style="font-family:Helvetica;font-size:10.5pt;color:#333333">';
+        $expectedhtml .= 'This is test assignment.</span></p> ';
         $expectedhtml .= '<p><span style="font-family:Helvetica;font-size:10.5pt;color:#333333">&nbsp;</span></p>';
 
         $output = trim(preg_replace('/\s+/', ' ', $output));
@@ -334,9 +349,11 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
     /**
      * Test for getpage method.
+     *
+     * @covers \local_onenote\api\base::get_page
      */
-    public function test_getpage() {
-        return true; // Need to update test to not require config data.
+    public function test_getpage(): void {
+        return; // Need to update test to not require config data.
         $this->set_test_config();
         $this->set_user(0);
 
@@ -391,9 +408,11 @@ class local_onenote_onenoteapi_testcase extends advanced_testcase {
 
     /**
      * Test for download page method.
+     *
+     * @covers \local_onenote\api\base::download_page
      */
-    public function test_downloadpage() {
-        return true; // Need to update test to not require config data.
+    public function test_downloadpage(): void {
+        return; // Need to update test to not require config data.
         $this->set_test_config();
         $this->set_user(0);
 

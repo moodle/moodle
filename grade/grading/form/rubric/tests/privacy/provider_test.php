@@ -36,12 +36,12 @@ use context_module;
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Test the export of rubric data.
      */
-    public function test_get_gradingform_export_data() {
+    public function test_get_gradingform_export_data(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -81,7 +81,7 @@ class provider_test extends provider_testcase {
     /**
      * Test the deletion of rubric user information via the instance ID.
      */
-    public function test_delete_gradingform_for_instances() {
+    public function test_delete_gradingform_for_instances(): void {
         global $DB;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();

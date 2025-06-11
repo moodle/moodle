@@ -21,6 +21,7 @@ namespace core_reportbuilder;
 use advanced_testcase;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\models\{audience, column, filter, report, schedule};
+use core_tag_tag;
 use core_user\reportbuilder\datasource\users;
 
 /**
@@ -34,7 +35,7 @@ use core_user\reportbuilder\datasource\users;
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends advanced_testcase {
+final class generator_test extends advanced_testcase {
 
     /**
      * Test creating a report
@@ -44,9 +45,11 @@ class generator_test extends advanced_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'tags' => ['cat', 'dog']]);
 
         $this->assertTrue(report::record_exists($report->get('id')));
+        $this->assertEqualsCanonicalizing(['cat', 'dog'],
+            core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $report->get('id')));
     }
 
     /**

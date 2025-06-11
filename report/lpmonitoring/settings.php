@@ -32,8 +32,8 @@ if ($hassiteconfig && get_config('core_competency', 'enabled')) {
     $adminpage = new admin_externalpage(
         'colorconfiguration',
         get_string('colorconfiguration', 'report_lpmonitoring'),
-        new moodle_url('/report/lpmonitoring/scalecolorconfiguration.php', array('pagecontextid' => $systemcontextid)),
-        array('moodle/competency:competencymanage')
+        new moodle_url('/report/lpmonitoring/scalecolorconfiguration.php', ['pagecontextid' => $systemcontextid]),
+        ['moodle/competency:competencymanage']
     );
     $ADMIN->add('competencies', $adminpage);
 
@@ -41,8 +41,8 @@ if ($hassiteconfig && get_config('core_competency', 'enabled')) {
     $adminpage = new admin_externalpage(
         'reportlpmonitoring',
         get_string('pluginname', 'report_lpmonitoring'),
-        new moodle_url('/report/lpmonitoring/index.php', array('pagecontextid' => $systemcontextid)),
-        array('moodle/competency:templateview')
+        new moodle_url('/report/lpmonitoring/index.php', ['pagecontextid' => $systemcontextid]),
+        ['moodle/competency:templateview']
     );
     $ADMIN->add('reports', $adminpage);
 
@@ -50,8 +50,8 @@ if ($hassiteconfig && get_config('core_competency', 'enabled')) {
     $statsadminpage = new admin_externalpage(
         'statslpmonitoring',
         get_string('statslearningplan', 'report_lpmonitoring'),
-        new moodle_url('/report/lpmonitoring/stats.php', array('pagecontextid' => $systemcontextid)),
-        array('moodle/competency:templateview')
+        new moodle_url('/report/lpmonitoring/stats.php', ['pagecontextid' => $systemcontextid]),
+        ['moodle/competency:templateview']
     );
     $ADMIN->add('reports', $statsadminpage);
 
@@ -71,7 +71,7 @@ if ($hassiteconfig && get_config('core_competency', 'enabled')) {
 
         // Student ID mappping setting.
         $userfields = $DB->get_records('user_info_field');
-        $mappingoptions = array();
+        $mappingoptions = [];
         $mappingoptions['id'] = get_string('moodleuserid', 'report_lpmonitoring');
 
         if (isset($userfields) && is_array($userfields) && count($userfields) > 0) {

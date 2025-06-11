@@ -1,5 +1,17 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
+
+=== 4.2 ===
+* Any activity module (mod) that declares the 'xxx_course_backend_generator_create_activity' function in lib.php will now be able to create instance of the
+module in the test course. There is now an additional parameter to the admin/tool/generator/cli/maketestcourse.php command so we can whitelist all the modules
+that need to be added to the course via the additionalmodules parameter.
+See bigbluebuttonbn_course_backend_generator_create_activity as an example.
+
 
 === 4.0 ===
 

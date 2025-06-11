@@ -25,8 +25,6 @@
 
 namespace local_redislock\api;
 
-defined('MOODLE_INTERNAL') || die();
-
 use Redis;
 
 /**
@@ -65,10 +63,10 @@ class shared_redis_connection {
      */
     private function __construct() {
         $this->factorycount = 0;
+        // Logging enabled only for CLI, web gets damaged by lock logs.
+        $this->logging = (CLI_SCRIPT && debugging() && !PHPUNIT_TEST);
         if (isset($CFG->local_redislock_logging)) {
-            $this->logging = (bool) $CFG->local_redislock_logging;
-        } else {
-            $this->logging = (CLI_SCRIPT && debugging() && !PHPUNIT_TEST);
+            $this->logging = $this->logging && ((bool) $CFG->local_redislock_logging);
         }
     }
 

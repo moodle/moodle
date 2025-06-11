@@ -6,7 +6,7 @@ class com_wiris_plugin_impl_TextServiceImpl implements com_wiris_plugin_impl_Htt
 		$this->plugin = $plugin;
 	}}
 	public function onError($msg) {
-		if($this->serviceName === "mathml2accessible") {
+		if("mathml2accessible" === $this->serviceName) {
 			$this->status = com_wiris_util_json_JsonAPIResponse::$STATUS_WARNING;
 			$this->data = "Error converting from MathML to accessible text.";
 		} else {
@@ -49,14 +49,14 @@ class com_wiris_plugin_impl_TextServiceImpl implements com_wiris_plugin_impl_Htt
 		}
 	}
 	public function latex2mathml($latex) {
-		$param = array();
+		$param = array();;
 		$param["latex"] = $latex;
 		$provider = $this->plugin->newGenericParamsProvider($param);
 		$mathml = $this->service("latex2mathml", $provider);
 		return ((_hx_index_of($mathml, "Http Error #500", null) === -1) ? $mathml : "Error converting from latex to mathml");
 	}
 	public function mathml2latex($mml) {
-		$param = array();
+		$param = array();;
 		$param["mml"] = $mml;
 		$provider = $this->plugin->newGenericParamsProvider($param);
 		return $this->service("mathml2latex", $provider);
@@ -91,6 +91,7 @@ class com_wiris_plugin_impl_TextServiceImpl implements com_wiris_plugin_impl_Htt
 			unset($k);
 		}
 		$h->setParameter("httpstatus", "true");
+		com_wiris_plugin_impl_RequestHeadersStoreImpl::dumpInto($h);
 		try {
 			$h->request(true);
 		}catch(Exception $»e) {
@@ -164,16 +165,10 @@ class com_wiris_plugin_impl_TextServiceImpl implements com_wiris_plugin_impl_Htt
 			throw new HException('Unable to call «'.$m.'»');
 	}
 	static function hasCache($serviceName) {
-		if($serviceName === "mathml2accessible") {
-			return true;
-		}
-		return false;
+		return $serviceName === "mathml2accessible";
 	}
 	static function hasStats($serviceName) {
-		if($serviceName === "latex2mathml") {
-			return true;
-		}
-		return false;
+		return $serviceName === "latex2mathml";
 	}
 	static function getDigestExtension($serviceName, $provider) {
 		$lang = $provider->getParameter("lang", "en");

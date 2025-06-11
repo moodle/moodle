@@ -69,6 +69,9 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         if (!in_array($data->displayformat, $formats)) {
             $data->displayformat = 'dictionary';
         }
+        if (!empty($data->globalglossary) && !has_capability('mod/glossary:manageentries', context_system::instance())) {
+            $data->globalglossary = 0;
+        }
         if (!empty($data->mainglossary) and $data->mainglossary == 1 and
             $DB->record_exists('glossary', array('mainglossary' => 1, 'course' => $this->get_courseid()))) {
             // Only allow one main glossary in the course
@@ -89,6 +92,11 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $data->glossaryid = $this->get_new_parentid('glossary');
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->sourceglossaryid = $this->get_mappingid('glossary', $data->sourceglossaryid);
+
+        $context = context_module::instance($this->task->get_moduleid());
+        if (!empty($data->definitiontrust) && !trusttext_trusted($context)) {
+            $data->definitiontrust = 0;
+        }
 
         // insert the entry record
         $newitemid = $DB->insert_record('glossary_entries', $data);

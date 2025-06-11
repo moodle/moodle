@@ -284,7 +284,7 @@ class helper {
      * @param string $questionbankentryid Entry to check against
      * @return bool
      */
-    public static function is_latest(string $version, string $questionbankentryid) : bool {
+    public static function is_latest(string $version, string $questionbankentryid): bool {
         global $DB;
 
         $sql = 'SELECT MAX(version) AS max
@@ -304,7 +304,7 @@ class helper {
      * @param  string $questionbankentryid Question bank entry id
      * @return array  $questionids Array containing question id as key and version as value.
      */
-    public static function load_versions(string $questionbankentryid) : array {
+    public static function load_versions(string $questionbankentryid): array {
         global $DB;
 
         $questionids = [];

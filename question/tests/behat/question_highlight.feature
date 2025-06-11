@@ -24,12 +24,12 @@ Feature: A teacher can see highlighted questions in the question bank
       | questiontext     | Write about whatever you want |
 
   Scenario: Edited question highlight is retained when go to multiple pages.
-    Given I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
-    And I am on the "essay 1" "core_question > edit" page logged in as "teacher1"
+    Given I am on the "essay 1" "core_question > edit" page logged in as "teacher1"
     And I set the following fields to these values:
       | Question name | essay 1 edited |
     And I press "id_submitbutton"
     And I should see "essay 1 edited"
     And ".highlight" "css_element" should exist in the "#categoryquestions" "css_element"
-    When I click on "Show all 101" "link"
+    When I click on "2" "link" in the ".pagination" "css_element"
+    And I click on "1" "link" in the ".pagination" "css_element"
     Then ".highlight" "css_element" should exist in the "#categoryquestions" "css_element"

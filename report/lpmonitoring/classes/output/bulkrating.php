@@ -27,7 +27,6 @@ namespace report_lpmonitoring\output;
 use renderable;
 use renderer_base;
 use templatable;
-use context_course;
 use stdClass;
 
 /**

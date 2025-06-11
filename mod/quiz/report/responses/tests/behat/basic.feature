@@ -28,8 +28,8 @@ Feature: Basic use of the Responses report
       | questioncategory | qtype     | name | template |
       | Test questions   | numerical | NQ   | pi3tries |
     And quiz "Quiz 1" contains the following questions:
-      | question | page | maxmark |
-      | NQ       | 1    | 3.0     |
+      | question | page | maxmark | displaynumber |
+      | NQ       | 1    | 3.0     | 1a            |
 
   @javascript
   Scenario: Report works when there are no attempts
@@ -58,13 +58,14 @@ Feature: Basic use of the Responses report
     And I should not see "Student Two"
     And I set the field "Attempts from" to "enrolled users who have, or have not, attempted the quiz"
     And I set the field "Which tries" to "All tries"
+    And I should see "Response 1a"
     And I press "Show report"
-    And "Student OneReview attempt" row "Response 1Sort by Response 1 Ascending" column of "responses" table should contain "1.0"
-    And "Student OneReview attempt" row "State" column of "responses" table should contain ""
+    And "Student OneReview attempt" row "Response 1aSort by Response 1a Ascending" column of "responses" table should contain "1.0"
+    And "Student OneReview attempt" row "Status" column of "responses" table should contain ""
     And "Finished" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "responses" table should contain "33.33"
-    And "Finished" row "Response 1Sort by Response 1 Ascending" column of "responses" table should contain "3.14"
-    And "Student Two" row "State" column of "responses" table should contain "-"
-    And "Student Two" row "Response 1Sort by Response 1 Ascending" column of "responses" table should contain "-"
+    And "Finished" row "Response 1aSort by Response 1a Ascending" column of "responses" table should contain "3.14"
+    And "Student Two" row "Status" column of "responses" table should contain "-"
+    And "Student Two" row "Response 1aSort by Response 1a Ascending" column of "responses" table should contain "-"
 
   @javascript
   Scenario: Report does not allow strange combinations of options

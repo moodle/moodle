@@ -40,45 +40,66 @@ Feature: Adding questions to a quiz from the question bank
     Then I should see "foo" in the "question 01 name" "table_row"
     And I should see "bar" in the "question 02 name" "table_row"
     And I should see "qidnum" in the "question 02 name" "table_row"
-    And I set the field "Filter by tags..." to "foo"
-    And I press the enter key
+    When I apply question bank filter "Tag" with value "foo"
     And I should see "question 01 name" in the "categoryquestions" "table"
     And I should not see "question 02 name" in the "categoryquestions" "table"
 
   Scenario: The question modal can be paginated
-    Given the following "questions" exist:
-      | questioncategory | qtype     | name             | user     | questiontext     |
-      | Test questions   | essay     | question 03 name | teacher1 | Question 03 text |
-      | Test questions   | essay     | question 04 name | teacher1 | Question 04 text |
-      | Test questions   | essay     | question 05 name | teacher1 | Question 05 text |
-      | Test questions   | essay     | question 06 name | teacher1 | Question 06 text |
-      | Test questions   | essay     | question 07 name | teacher1 | Question 07 text |
-      | Test questions   | essay     | question 08 name | teacher1 | Question 08 text |
-      | Test questions   | essay     | question 09 name | teacher1 | Question 09 text |
-      | Test questions   | essay     | question 10 name | teacher1 | Question 10 text |
-      | Test questions   | essay     | question 11 name | teacher1 | Question 11 text |
-      | Test questions   | essay     | question 12 name | teacher1 | Question 12 text |
-      | Test questions   | essay     | question 13 name | teacher1 | Question 13 text |
-      | Test questions   | essay     | question 14 name | teacher1 | Question 14 text |
-      | Test questions   | essay     | question 15 name | teacher1 | Question 15 text |
-      | Test questions   | essay     | question 16 name | teacher1 | Question 16 text |
-      | Test questions   | essay     | question 17 name | teacher1 | Question 17 text |
-      | Test questions   | essay     | question 18 name | teacher1 | Question 18 text |
-      | Test questions   | essay     | question 19 name | teacher1 | Question 19 text |
-      | Test questions   | essay     | question 20 name | teacher1 | Question 20 text |
-      | Test questions   | essay     | question 21 name | teacher1 | Question 21 text |
-      | Test questions   | essay     | question 22 name | teacher1 | Question 22 text |
-    And I log in as "teacher1"
-    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    Given the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | My collection  |
+    And 45 "questions" exist with the following data:
+      | questioncategory | My collection             |
+      | qtype            | essay                     |
+      | name             | Feature question [count]  |
+      | questiontext     | Write about topic [count] |
+      | user             | teacher1                  |
+    # Sadly, the above step generates questions which sort like FQ1, FQ11, FQ12, ..., FQ19, FQ2, FQ20, ...
+    # so the expected paging behaviour is not immediately intuitive with 20 questions per page.
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
     And I open the "last" add to quiz menu
     And I follow "from question bank"
-    And I click on "2" "link" in the ".pagination" "css_element"
-    Then I should see "question 21 name" in the "categoryquestions" "table"
-    And I should see "question 22 name" in the "categoryquestions" "table"
-    And I should not see "question 01 name" in the "categoryquestions" "table"
-    And I click on "Show all 22" "link" in the ".question-showall-text" "css_element"
     And I should see "question 01 name" in the "categoryquestions" "table"
-    And I should see "question 22 name" in the "categoryquestions" "table"
+    And I should see "question 02 name" in the "categoryquestions" "table"
+    And I should not see "Feature question" in the "categoryquestions" "table"
+    And I set the field "Category" to "My collection"
+    And I press "Apply filters"
+    And I wait until the page is ready
+    Then I should not see "question 01 name" in the "categoryquestions" "table"
+    And I should see "Feature question 1" in the "categoryquestions" "table"
+    And I should see "Feature question 27" in the "categoryquestions" "table"
+    And I should not see "Feature question 28" in the "categoryquestions" "table"
+    And I click on "2" "link" in the ".pagination" "css_element"
+    And I wait until the page is ready
+    And I should not see "Feature question 27" in the "categoryquestions" "table"
+    And I should see "Feature question 28" in the "categoryquestions" "table"
+    And I should see "Feature question 45" in the "categoryquestions" "table"
+    And I should not see "Feature question 5"
+    And I click on "3" "link" in the ".pagination" "css_element"
+    And I wait until the page is ready
+    And I should not see "Feature question 45" in the "categoryquestions" "table"
+    And I should see "Feature question 5"
+    And I should see "Feature question 9"
+
+  Scenario: After closing and reopening the modal, it still works
+    Given the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | My collection  |
+    And the following "question" exists:
+      | questioncategory | My collection     |
+      | qtype            | essay             |
+      | name             | Feature question  |
+      | questiontext     | Write about topic |
+      | user             | teacher1          |
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I click on "Close" "button" in the "Add from the question bank at the end" "dialogue"
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I set the field "Category" to "My collection"
+    And I press "Apply filters"
+    Then I should see "Feature question"
 
   Scenario: Questions are added in the right place with multiple sections
     Given the following "questions" exist:

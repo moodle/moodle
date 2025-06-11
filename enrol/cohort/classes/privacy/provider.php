@@ -55,7 +55,7 @@ class provider implements
      * @param   collection     $collection The initialised item collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $collection->add_subsystem_link('core_group', [], 'privacy:metadata:core_group');
         return $collection;
@@ -67,7 +67,7 @@ class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         return \core_group\privacy\provider::get_contexts_for_group_member($userid, 'enrol_cohort');
     }
 
@@ -109,7 +109,7 @@ class provider implements
     /**
      * Delete all use data which matches the specified deletion_criteria.
      *
-     * @param context $context A user context.
+     * @param \context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         if (empty($context)) {

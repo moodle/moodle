@@ -18,6 +18,7 @@ namespace core_backup;
 
 use backup;
 use backup_controller;
+use backup_setting;
 use restore_controller;
 use restore_dbops;
 
@@ -35,13 +36,13 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle2_test extends \advanced_testcase {
+final class moodle2_test extends \advanced_testcase {
 
     /**
      * Tests the availability field on modules and sections is correctly
      * backed up and restored.
      */
-    public function test_backup_availability() {
+    public function test_backup_availability(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -114,7 +115,7 @@ class moodle2_test extends \advanced_testcase {
      * ensures that a Moodle 2.6 backup with this data can still be correctly
      * restored.
      */
-    public function test_restore_legacy_availability() {
+    public function test_restore_legacy_availability(): void {
         global $DB, $USER, $CFG;
         require_once($CFG->dirroot . '/grade/querylib.php');
         require_once($CFG->libdir . '/completionlib.php');
@@ -261,7 +262,7 @@ class moodle2_test extends \advanced_testcase {
      * when it contains availability conditions that depend on other items in
      * course.
      */
-    public function test_duplicate_availability() {
+    public function test_duplicate_availability(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -328,7 +329,7 @@ class moodle2_test extends \advanced_testcase {
      * When restoring a course, you can change the start date, which shifts other
      * dates. This test checks that certain dates are correctly modified.
      */
-    public function test_restore_dates() {
+    public function test_restore_dates(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -386,7 +387,7 @@ class moodle2_test extends \advanced_testcase {
      * Test front page backup/restore and duplicate activities
      * @return void
      */
-    public function test_restore_frontpage() {
+    public function test_restore_frontpage(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -463,9 +464,10 @@ class moodle2_test extends \advanced_testcase {
      * @param \stdClass $course Course object to backup
      * @param int $newdate If non-zero, specifies custom date for new course
      * @param callable|null $inbetween If specified, function that is called before restore
+     * @param bool $userdata Whether the backup/restory must be with user data or not.
      * @return int ID of newly restored course
      */
-    protected function backup_and_restore($course, $newdate = 0, $inbetween = null) {
+    protected function backup_and_restore($course, $newdate = 0, $inbetween = null, bool $userdata = false) {
         global $USER, $CFG;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
@@ -476,6 +478,9 @@ class moodle2_test extends \advanced_testcase {
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
                 backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
                 $USER->id);
+        $bc->get_plan()->get_setting('users')->set_status(backup_setting::NOT_LOCKED);
+        $bc->get_plan()->get_setting('users')->set_value($userdata);
+
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $bc->destroy();
@@ -493,6 +498,13 @@ class moodle2_test extends \advanced_testcase {
         if ($newdate) {
             $rc->get_plan()->get_setting('course_startdate')->set_value($newdate);
         }
+
+        $rc->get_plan()->get_setting('users')->set_status(backup_setting::NOT_LOCKED);
+        $rc->get_plan()->get_setting('users')->set_value($userdata);
+        if ($userdata) {
+            $rc->get_plan()->get_setting('xapistate')->set_value(true);
+        }
+
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
         $rc->destroy();
@@ -636,7 +648,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Backup a course with enrolment methods and restore it without user data and without enrolment methods
      */
-    public function test_restore_without_users_without_enrolments() {
+    public function test_restore_without_users_without_enrolments(): void {
         global $DB;
 
         list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE);
@@ -661,7 +673,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Backup a course with enrolment methods and restore it without user data with enrolment methods
      */
-    public function test_restore_without_users_with_enrolments() {
+    public function test_restore_without_users_with_enrolments(): void {
         global $DB;
 
         list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE,
@@ -691,7 +703,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Backup a course with enrolment methods and restore it with user data and without enrolment methods
      */
-    public function test_restore_with_users_without_enrolments() {
+    public function test_restore_with_users_without_enrolments(): void {
         global $DB;
 
         list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE,
@@ -719,7 +731,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Backup a course with enrolment methods and restore it with user data with enrolment methods
      */
-    public function test_restore_with_users_with_enrolments() {
+    public function test_restore_with_users_with_enrolments(): void {
         global $DB;
 
         list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_NEW_COURSE,
@@ -749,7 +761,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Backup a course with enrolment methods and restore it with user data with enrolment methods merging into another course
      */
-    public function test_restore_with_users_with_enrolments_merging() {
+    public function test_restore_with_users_with_enrolments_merging(): void {
         global $DB;
 
         list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_EXISTING_ADDING,
@@ -779,7 +791,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Backup a course with enrolment methods and restore it with user data with enrolment methods into another course deleting it's contents
      */
-    public function test_restore_with_users_with_enrolments_deleting() {
+    public function test_restore_with_users_with_enrolments_deleting(): void {
         global $DB;
 
         list($course, $newcourseid, $rc) = $this->prepare_for_enrolments_test(backup::TARGET_EXISTING_DELETING,
@@ -809,7 +821,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Test the block instance time fields (timecreated, timemodified) through a backup and restore.
      */
-    public function test_block_instance_times_backup() {
+    public function test_block_instance_times_backup(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -870,7 +882,7 @@ class moodle2_test extends \advanced_testcase {
      * When you restore a site with global search (or search indexing) turned on, then it should
      * add entries to the search index requests table so that the data gets indexed.
      */
-    public function test_restore_search_index_requests() {
+    public function test_restore_search_index_requests(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -958,7 +970,7 @@ class moodle2_test extends \advanced_testcase {
      * Test restoring courses based on the backup plan. Primarily used with
      * the import functionality
      */
-    public function test_restore_course_using_plan_defaults() {
+    public function test_restore_course_using_plan_defaults(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -1005,7 +1017,7 @@ class moodle2_test extends \advanced_testcase {
      * From 3.5, all question categories in each context are a child of a single top level question category for that context.
      * This test ensures that both Moodle 3.4 and 3.5 backups can still be correctly restored.
      */
-    public function test_restore_question_category_34_35() {
+    public function test_restore_question_category_34_35(): void {
         global $DB, $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -1066,7 +1078,7 @@ class moodle2_test extends \advanced_testcase {
     /**
      * Test the content bank content through a backup and restore.
      */
-    public function test_contentbank_content_backup() {
+    public function test_contentbank_content_backup(): void {
         global $DB, $USER, $CFG;
         $this->resetAfterTest();
 
@@ -1089,5 +1101,75 @@ class moodle2_test extends \advanced_testcase {
 
         $this->assertEquals(4, $DB->count_records('contentbank_content'));
         $this->assertEquals(2, $DB->count_records('contentbank_content', ['contextid' => $newcontext->id]));
+    }
+
+    /**
+     * Test the xAPI state through a backup and restore.
+     *
+     * @covers \backup_xapistate_structure_step
+     * @covers \restore_xapistate_structure_step
+     */
+    public function test_xapistate_backup(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $this->setUser($user);
+
+        /** @var \mod_h5pactivity_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+
+        /** @var \core_h5p_generator $h5pgenerator */
+        $h5pgenerator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+
+        // Add an attempt to the H5P activity.
+        $attemptinfo = [
+            'userid' => $user->id,
+            'h5pactivityid' => $activity->id,
+            'attempt' => 1,
+            'interactiontype' => 'compound',
+            'rawscore' => 2,
+            'maxscore' => 2,
+            'duration' => 1,
+            'completion' => 1,
+            'success' => 0,
+        ];
+        $generator->create_attempt($attemptinfo);
+
+        // Add also a xAPI state to the H5P activity.
+        $filerecord = [
+            'contextid' => \context_module::instance($activity->cmid)->id,
+            'component' => 'mod_h5pactivity',
+            'filearea' => 'package',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'dummy.h5p',
+            'addxapistate' => true,
+        ];
+        $h5pgenerator->generate_h5p_data(false, $filerecord);
+
+        // Check the H5P activity exists and the attempt has been created.
+        $this->assertEquals(1, $DB->count_records('h5pactivity'));
+        $this->assertEquals(2, $DB->count_records('grade_items'));
+        $this->assertEquals(2, $DB->count_records('grade_grades'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
+
+        // Do backup and restore.
+        $this->setAdminUser();
+        $newcourseid = $this->backup_and_restore($course, 0, null, true);
+
+        // Confirm that values were transferred correctly into H5P activity on new course.
+        $this->assertEquals(2, $DB->count_records('h5pactivity'));
+        $this->assertEquals(4, $DB->count_records('grade_items'));
+        $this->assertEquals(4, $DB->count_records('grade_grades'));
+        $this->assertEquals(2, $DB->count_records('xapi_states'));
+
+        $newactivity = $DB->get_record('h5pactivity', ['course' => $newcourseid]);
+        $cm = get_coursemodule_from_instance('h5pactivity', $newactivity->id);
+        $context = \context_module::instance($cm->id);
+        $this->assertEquals(1, $DB->count_records('xapi_states', ['itemid' => $context->id]));
     }
 }

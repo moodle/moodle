@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
  * @copyright   2016 Devang Gaur
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_sent_test extends \advanced_testcase {
+final class search_sent_test extends \advanced_testcase {
 
     /**
      * @var string Area id
@@ -40,6 +40,7 @@ class search_sent_test extends \advanced_testcase {
      * @return void
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         set_config('enableglobalsearch', true);
 
@@ -54,7 +55,7 @@ class search_sent_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_message_sent_indexing() {
+    public function test_message_sent_indexing(): void {
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->messagesentareaid);
@@ -110,7 +111,7 @@ class search_sent_test extends \advanced_testcase {
     /**
      * Indexing messages, with restricted contexts.
      */
-    public function test_message_sent_indexing_contexts() {
+    public function test_message_sent_indexing_contexts(): void {
         global $SITE;
 
         $searcharea = \core_search\manager::get_search_area($this->messagesentareaid);
@@ -191,7 +192,7 @@ class search_sent_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_message_sent_document() {
+    public function test_message_sent_document(): void {
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->messagesentareaid);
@@ -237,7 +238,7 @@ class search_sent_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_message_sent_access() {
+    public function test_message_sent_access(): void {
         global $CFG;
 
         // Returns the instance as long as the area is supported.
@@ -307,7 +308,7 @@ class search_sent_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_message_sent_deleted_user() {
+    public function test_message_sent_deleted_user(): void {
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->messagesentareaid);
@@ -349,7 +350,7 @@ class search_sent_test extends \advanced_testcase {
     /**
      * Test document icon.
      */
-    public function test_get_doc_icon() {
+    public function test_get_doc_icon(): void {
         $searcharea = \core_search\manager::get_search_area($this->messagesentareaid);
 
         $document = $this->getMockBuilder('\core_search\document')
@@ -365,7 +366,7 @@ class search_sent_test extends \advanced_testcase {
     /**
      * Test assigned search categories.
      */
-    public function test_get_category_names() {
+    public function test_get_category_names(): void {
         $searcharea = \core_search\manager::get_search_area($this->messagesentareaid);
 
         $expected = ['core-users'];

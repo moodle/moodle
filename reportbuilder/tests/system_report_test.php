@@ -30,7 +30,7 @@ use core_reportbuilder\local\report\action;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class system_report_test extends advanced_testcase {
+final class system_report_test extends advanced_testcase {
     /**
      * Test for actions
      */

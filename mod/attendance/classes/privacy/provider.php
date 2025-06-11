@@ -47,7 +47,7 @@ final class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table(
             'attendance_log',
             [
@@ -58,7 +58,7 @@ final class provider implements
                 'timetaken' => 'privacy:metadata:timetaken',
                 'takenby' => 'privacy:metadata:takenby',
                 'remarks' => 'privacy:metadata:remarks',
-                'ipaddress' => 'privacy:metadata:ipaddress'
+                'ipaddress' => 'privacy:metadata:ipaddress',
             ],
             'privacy:metadata:attendancelog'
         );
@@ -71,7 +71,7 @@ final class provider implements
                 'duration' => 'privacy:metadata:duration',
                 'lasttaken' => 'privacy:metadata:lasttaken',
                 'lasttakenby' => 'privacy:metadata:lasttakenby',
-                'timemodified' => 'privacy:metadata:timemodified'
+                'timemodified' => 'privacy:metadata:timemodified',
             ],
             'privacy:metadata:attendancesessions'
         );
@@ -81,7 +81,7 @@ final class provider implements
             [
                 'notifyid' => 'privacy:metadata:notifyid',
                 'userid' => 'privacy:metadata:userid',
-                'timesent' => 'privacy:metadata:timesent'
+                'timesent' => 'privacy:metadata:timesent',
             ],
             'privacy:metadata:attendancewarningdone'
         );
@@ -98,7 +98,7 @@ final class provider implements
      * @param int $userid The user to search.
      * @return contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         return (new contextlist)->add_from_sql(
             "SELECT ctx.id
                  FROM {course_modules} cm
@@ -111,7 +111,7 @@ final class provider implements
                 'modulename' => 'attendance',
                 'contextlevel' => CONTEXT_MODULE,
                 'userid' => $userid,
-                'takenbyid' => $userid
+                'takenbyid' => $userid,
             ]
         );
     }
@@ -177,7 +177,7 @@ final class provider implements
             'attendance_log',
             "sessionid IN (SELECT id FROM {attendance_sessions} WHERE attendanceid = :attendanceid",
             [
-                'attendanceid' => $cm->instance
+                'attendanceid' => $cm->instance,
             ]
         );
 
@@ -248,7 +248,7 @@ final class provider implements
             $sql = 'SELECT DISTINCT w.*
                 FROM {attendance_warning} w
                 JOIN {attendance_warning_done} d ON d.notifyid = w.id AND d.userid = ?';
-            $warnings = $DB->get_records_sql($sql, array($userid));
+            $warnings = $DB->get_records_sql($sql, [$userid]);
             if (!empty($warnings)) {
                 attendance_remove_user_from_thirdpartyemails($warnings, $userid);
             }
@@ -283,7 +283,7 @@ final class provider implements
             'modulename' => 'attendance',
             'contextlevel' => CONTEXT_MODULE,
             'studentid' => $contextlist->get_user()->id,
-            'takenby' => $contextlist->get_user()->id
+            'takenby' => $contextlist->get_user()->id,
         ];
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
@@ -310,7 +310,7 @@ final class provider implements
             get_string('attendancestaken', 'mod_attendance'),
             array_filter(
                 $attendances,
-                function(stdClass $attendance) use ($contextlist) : bool {
+                function(stdClass $attendance) use ($contextlist): bool {
                     return $attendance->takenby == $contextlist->get_user()->id;
                 }
             )
@@ -320,7 +320,7 @@ final class provider implements
             get_string('attendanceslogged', 'mod_attendance'),
             array_filter(
                 $attendances,
-                function(stdClass $attendance) use ($contextlist) : bool {
+                function(stdClass $attendance) use ($contextlist): bool {
                     return $attendance->studentid == $contextlist->get_user()->id;
                 }
             )
@@ -458,10 +458,10 @@ final class provider implements
      * @param array $classes An array of classes to group.
      * @param string $property A common property to group the classes by.
      */
-    private static function group_by_property(array $classes, string $property) : array {
+    private static function group_by_property(array $classes, string $property): array {
         return array_reduce(
             $classes,
-            function (array $classes, stdClass $class) use ($property) : array {
+            function (array $classes, stdClass $class) use ($property): array {
                 $classes[$class->{$property}][] = $class;
                 return $classes;
             },
@@ -478,7 +478,7 @@ final class provider implements
      * @param stdClass $dbrow A row from the database containing session information.
      * @return stdClass The transformed row.
      */
-    private static function transform_db_row_to_session_data(stdClass $dbrow) : stdClass {
+    private static function transform_db_row_to_session_data(stdClass $dbrow): stdClass {
         return (object) [
             'name' => $dbrow->attendancename,
             'session' => $dbrow->session,
@@ -489,7 +489,7 @@ final class provider implements
             'sessiondescription' => $dbrow->description,
             'timetaken' => transform::datetime($dbrow->timetaken),
             'remarks' => $dbrow->remarks,
-            'ipaddress' => $dbrow->ipaddress
+            'ipaddress' => $dbrow->ipaddress,
         ];
     }
 
@@ -502,12 +502,12 @@ final class provider implements
      * @param stdClass $warning A row from the database containing warning information.
      * @return stdClass The transformed row.
      */
-    private static function transform_warning_data(stdClass $warning) : stdClass {
+    private static function transform_warning_data(stdClass $warning): stdClass {
         return (object) [
             'timesent' => transform::datetime($warning->timesent),
             'thirdpartyemails' => $warning->thirdpartyemails,
             'subject' => $warning->emailsubject,
-            'body' => $warning->emailcontent
+            'body' => $warning->emailcontent,
         ];
     }
 

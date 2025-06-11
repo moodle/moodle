@@ -40,8 +40,6 @@ if (!interface_exists('com_wiris_util_sys_AccessProvider')) {
  * It implements the com_wiris_util_sys_AccessProvider interface.
  */
 class filter_wiris_accessprovider implements com_wiris_util_sys_AccessProvider {
-
-
     /**
      * This method is called before all service. We use it as a wrapper to call
      * Moodle require_login() method. Any WIRIS service can't be called without a

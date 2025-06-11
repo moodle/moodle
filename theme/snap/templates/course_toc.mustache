@@ -1,0 +1,21 @@
+{{#formatsupportstoc}}
+<nav id="course-toc" class="js-only">
+    <div>
+        <h2 id="toc-desktop-menu-heading">
+             {{#str}}contents, theme_snap{{/str}}
+        </h2>
+        {{> theme_snap/course_toc_module_search}}
+        <a id="toc-mobile-menu-toggle" href="#course-toc" class="toc-mobile-menu-toggle-close">
+            <small class="sr-only"><br>{{#str}}contents, theme_snap{{/str}}"</small>
+        </a>
+    </div>
+
+    {{#chapters}}
+        {{> theme_snap/course_toc_chapters }}
+    {{/chapters}}
+
+    {{#footer}}
+        {{> theme_snap/course_toc_footer }}
+    {{/footer}}
+</nav>
+{{/formatsupportstoc}}

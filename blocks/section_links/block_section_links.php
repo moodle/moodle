@@ -44,10 +44,12 @@ class block_section_links extends block_base {
      * @return array
      */
     public function applicable_formats() {
-        return array(
+        return [
             'course-view-weeks' => true,
-            'course-view-topics' => true
-        );
+            'course-view-topics' => true,
+            'course-view-section-weeks' => true,
+            'course-view-section-topics' => true,
+        ];
     }
 
     /**
@@ -179,5 +181,3 @@ class block_section_links extends block_base {
         ];
     }
 }
-
-

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Course field';
-$string['privacy:metadata'] = 'The course field plugin does not store any personal data.';
 $string['coursefield'] = 'Course field';
 $string['coursefield_help'] = 'This is the course field that will be displayed on the PDF.';
+$string['pluginname'] = 'Course field';
+$string['privacy:metadata'] = 'The course field plugin does not store any personal data.';

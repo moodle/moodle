@@ -2,37 +2,38 @@
 
 namespace Packback\Lti1p3\Interfaces;
 
+/** @internal */
 interface ILtiRegistration
 {
     public function getIssuer();
 
-    public function setIssuer($issuer);
+    public function setIssuer(string $issuer): ILtiRegistration;
 
     public function getClientId();
 
-    public function setClientId($clientId);
+    public function setClientId(string $clientId): ILtiRegistration;
 
-    public function getKeySetUrl();
+    public function getKeySetUrl(): ?string;
 
-    public function setKeySetUrl($keySetUrl);
+    public function setKeySetUrl(string $keySetUrl): ILtiRegistration;
 
-    public function getAuthTokenUrl();
+    public function getAuthTokenUrl(): ?string;
 
-    public function setAuthTokenUrl($authTokenUrl);
+    public function setAuthTokenUrl(?string $authTokenUrl): ILtiRegistration;
 
-    public function getAuthLoginUrl();
+    public function getAuthLoginUrl(): ?string;
 
-    public function setAuthLoginUrl($authLoginUrl);
+    public function setAuthLoginUrl(string $authLoginUrl): ILtiRegistration;
 
-    public function getAuthServer();
+    public function getAuthServer(): ?string;
 
-    public function setAuthServer($authServer);
+    public function setAuthServer(string $authServer): ILtiRegistration;
 
     public function getToolPrivateKey();
 
-    public function setToolPrivateKey($toolPrivateKey);
+    public function setToolPrivateKey(string $toolPrivateKey): ILtiRegistration;
 
     public function getKid();
 
-    public function setKid($kid);
+    public function setKid(string $kid): ILtiRegistration;
 }

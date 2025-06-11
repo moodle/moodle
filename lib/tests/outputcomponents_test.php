@@ -21,15 +21,11 @@ use custom_menu;
 use custom_menu_item;
 use paging_bar;
 use renderer_base;
+use single_button;
 use single_select;
 use theme_config;
 use url_select;
-use user_picture;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputcomponents.php');
+use core\output\user_picture;
 
 /**
  * Unit tests for lib/outputcomponents.php.
@@ -39,14 +35,13 @@ require_once($CFG->libdir . '/outputcomponents.php');
  * @copyright 2011 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outputcomponents_test extends \advanced_testcase {
-
+final class outputcomponents_test extends \advanced_testcase {
     /**
      * Tests user_picture::fields.
      *
      * @deprecated since Moodle 3.11 MDL-45242
      */
-    public function test_fields_aliasing() {
+    public function test_fields_aliasing(): void {
         $fields = user_picture::fields();
         $fields = array_map('trim', explode(',', $fields));
         $this->assertTrue(in_array('id', $fields));
@@ -81,7 +76,7 @@ class outputcomponents_test extends \advanced_testcase {
     /**
      * Tests user_picture::unalias.
      */
-    public function test_fields_unaliasing() {
+    public function test_fields_unaliasing(): void {
         $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
@@ -108,7 +103,7 @@ class outputcomponents_test extends \advanced_testcase {
     /**
      * Tests user_picture::unalias with null values.
      */
-    public function test_fields_unaliasing_null() {
+    public function test_fields_unaliasing_null(): void {
         $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
@@ -134,13 +129,10 @@ class outputcomponents_test extends \advanced_testcase {
         $this->assertSame('Value of custom1', $returned->custom1);
     }
 
-    public function test_get_url() {
+    public function test_get_url(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest();
-
-        // Force SVG on so that we have predictable URL's.
-        $CFG->svgicons = true;
 
         // Verify new install contains expected defaults.
         $this->assertSame(theme_config::DEFAULT_THEME, $CFG->theme);
@@ -323,13 +315,13 @@ class outputcomponents_test extends \advanced_testcase {
         $this->assertSame($CFG->wwwroot.'/theme/image.php?theme=classic&component=core&rev=1&image=u%2Ff2', $up3->get_url($page, $renderer)->out(false));
     }
 
-    public function test_empty_menu() {
+    public function test_empty_menu(): void {
         $emptymenu = new custom_menu();
         $this->assertInstanceOf(custom_menu::class, $emptymenu);
         $this->assertFalse($emptymenu->has_children());
     }
 
-    public function test_basic_syntax() {
+    public function test_basic_syntax(): void {
         $definition = <<<EOF
 Moodle community|http://moodle.org
 -Moodle free support|http://moodle.org/support
@@ -374,7 +366,7 @@ EOF;
         $this->assertSame('Commercial hosting', $subitem->get_title());
     }
 
-    public function test_custommenu_mulitlang() {
+    public function test_custommenu_mulitlang(): void {
         $definition = <<<EOF
 Start|http://school.info
 Info
@@ -451,22 +443,22 @@ EOF;
         return $str;
     }
 
-    public function test_prepare() {
+    public function test_prepare(): void {
         $expecteda = array('<span class="current-page">1</span>',
-                           '<a href="index.php?page=1">2</a>',
-                           '<a href="index.php?page=2">3</a>',
-                           '<a href="index.php?page=3">4</a>',
-                           '<a href="index.php?page=4">5</a>',
-                           '<a href="index.php?page=5">6</a>',
-                           '<a href="index.php?page=6">7</a>',
-                           '<a href="index.php?page=7">8</a>',
-                           );
+            '<a href="index.php?page=1">2</a>',
+            '<a href="index.php?page=2">3</a>',
+            '<a href="index.php?page=3">4</a>',
+            '<a href="index.php?page=4">5</a>',
+            '<a href="index.php?page=5">6</a>',
+            '<a href="index.php?page=6">7</a>',
+            '<a href="index.php?page=7">8</a>',
+        );
         $expectedb = array('<a href="page?page=3">4</a>',
-                           '<a href="page?page=4">5</a>',
-                           '<span class="current-page">6</span>',
-                           '<a href="page?page=6">7</a>',
-                           '<a href="page?page=7">8</a>',
-                           );
+            '<a href="page?page=4">5</a>',
+            '<span class="current-page">6</span>',
+            '<a href="page?page=6">7</a>',
+            '<a href="page?page=7">8</a>',
+        );
 
         $mpage = new \moodle_page();
         $rbase = new renderer_base($mpage, "/");
@@ -480,7 +472,7 @@ EOF;
         $this->assertEquals($expectedb, $pbarb->pagelinks);
     }
 
-    public function test_pix_icon() {
+    public function test_pix_icon(): void {
         $this->resetAfterTest();
 
         $page = new \moodle_page();
@@ -512,7 +504,7 @@ EOF;
     /**
      * Test for checking the template context data for the single_select element.
      */
-    public function test_single_select() {
+    public function test_single_select(): void {
         global $PAGE;
 
         $fakename = 'fakename';
@@ -588,11 +580,90 @@ EOF;
         $this->assertTrue(in_array(['name' => 'class', 'value' => $labelclass], $data->labelattributes));
         $this->assertTrue(in_array(['name' => 'style', 'value' => $labelstyle], $data->labelattributes));
     }
+    /**
+     * Test for checking the template context data for the single_select element.
+     * @covers \single_button
+     */
+    public function test_single_button(): void {
+        global $PAGE;
+        $url = new \moodle_url('/');
+        $realname = 'realname';
+        $attributes = [
+            'data-dummy' => 'dummy',
+        ];
+        $singlebutton = new single_button($url, $realname, 'post', single_button::BUTTON_SECONDARY, $attributes);
+        $renderer = $PAGE->get_renderer('core');
+        $data = $singlebutton->export_for_template($renderer);
+
+        $this->assertEquals($realname, $data->label);
+        $this->assertEquals('post', $data->method);
+        $this->assertEquals('singlebutton', $data->classes);
+        $this->assertEquals('secondary', $data->type);
+        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
+
+        $singlebutton = new single_button($url, $realname, 'post', single_button::BUTTON_PRIMARY, $attributes);
+        $renderer = $PAGE->get_renderer('core');
+        $data = $singlebutton->export_for_template($renderer);
+
+        $this->assertEquals($realname, $data->label);
+        $this->assertEquals('post', $data->method);
+        $this->assertEquals('singlebutton', $data->classes);
+        $this->assertEquals('primary', $data->type);
+        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
+    }
+
+    /**
+     * Test for checking the template context data for the single_select element legacy API.
+     * @covers \single_button
+     */
+    public function test_single_button_deprecated(): void {
+        global $PAGE;
+        $url = new \moodle_url('/');
+        $realname = 'realname';
+        $attributes = [
+            'data-dummy' => 'dummy',
+        ];
+
+        // Test that when we use a true boolean value for the 4th parameter this is set as primary type.
+        $singlebutton = new single_button($url, $realname, 'post', single_button::BUTTON_PRIMARY, $attributes);
+        $renderer = $PAGE->get_renderer('core');
+        $data = $singlebutton->export_for_template($renderer);
+        $this->assertEquals($realname, $data->label);
+        $this->assertEquals('post', $data->method);
+        $this->assertEquals('singlebutton', $data->classes);
+        $this->assertEquals('primary', $data->type);
+        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
+
+        // Test that when we use a false boolean value for the 4th parameter this is set as secondary type.
+        $singlebutton = new single_button($url, $realname, 'post', false, $attributes);
+        $this->assertDebuggingCalled();
+        $renderer = $PAGE->get_renderer('core');
+        $data = $singlebutton->export_for_template($renderer);
+        $this->assertEquals($realname, $data->label);
+        $this->assertEquals('post', $data->method);
+        $this->assertEquals('singlebutton', $data->classes);
+        $this->assertEquals('secondary', $data->type);
+        $this->assertEquals($attributes['data-dummy'], $data->attributes[0]['value']);
+
+        // Test that when we set the primary value, then this is reflected in the type.
+        $singlebutton->primary = false;
+        $this->assertDebuggingCalled();
+        $this->assertEquals(single_button::BUTTON_SECONDARY, $singlebutton->type);
+        $singlebutton->primary = true;
+        $this->assertDebuggingCalled();
+        $this->assertEquals(single_button::BUTTON_PRIMARY, $singlebutton->type);
+        // Then set the type directly.
+
+        $singlebutton->type = single_button::BUTTON_DANGER;
+        $data = $singlebutton->export_for_template($renderer);
+        $this->assertEquals('danger', $data->type);
+
+    }
 
     /**
      * Test for checking the template context data for the url_select element.
      */
-    public function test_url_select() {
+    public function test_url_select(): void {
         global $PAGE;
 
         $fakename = 'fakename';
@@ -674,11 +745,43 @@ EOF;
     }
 
     /**
+     * Test for checking the template context data for the url_select element.
+     * @covers \url_select::disable_option
+     * @covers \url_select::enable_option
+     */
+    public function test_url_select_disabled_options(): void {
+        global $PAGE;
+        $url1 = new \moodle_url("/#a");
+        $url2 = new \moodle_url("/#b");
+        $url3 = new \moodle_url("/#c");
+
+        $urls = [
+            $url1->out() => 'A',
+            $url2->out() => 'B',
+            $url3->out() => 'C',
+        ];
+        $urlselect = new url_select($urls,
+            null,
+            null,
+            'someformid',
+            null);
+        $renderer = $PAGE->get_renderer('core');
+        $urlselect->set_option_disabled($url2->out(), true);
+        $data = $urlselect->export_for_template($renderer);
+        $this->assertFalse($data->options[0]['disabled']);
+        $this->assertTrue($data->options[1]['disabled']);
+        $urlselect->set_option_disabled($url2->out(), false);
+        $data = $urlselect->export_for_template($renderer);
+        $this->assertFalse($data->options[0]['disabled']);
+        $this->assertFalse($data->options[1]['disabled']);
+    }
+
+    /**
      * Data provider for test_block_contents_is_fake().
      *
      * @return array
      */
-    public function block_contents_is_fake_provider() {
+    public static function block_contents_is_fake_provider(): array {
         return [
             'Null' => [null, false],
             'Not set' => [false, false],
@@ -694,7 +797,7 @@ EOF;
      * @param mixed $value Value for the data-block attribute
      * @param boolean $expected The expected result
      */
-    public function test_block_contents_is_fake($value, $expected) {
+    public function test_block_contents_is_fake($value, $expected): void {
         $bc = new block_contents(array());
         if ($value !== false) {
             $bc->attributes['data-block'] = $value;

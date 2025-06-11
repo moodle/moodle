@@ -203,6 +203,6 @@ function tool_recyclebin_pre_course_category_delete($category) {
  */
 function tool_recyclebin_get_fontawesome_icon_map() {
     return [
-        'tool_recyclebin:trash' => 'fa-trash'
+        'tool_recyclebin:trash' => 'fa-trash-can-arrow-up',
     ];
 }

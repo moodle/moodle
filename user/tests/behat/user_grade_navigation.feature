@@ -67,6 +67,7 @@ Feature: The student can navigate to their grades page and user grade report.
       | blockname | contextlevel | reference | pagetypepattern | defaultregion |
       | mentees   | System       | 1         | site-index      | side-pre      |
     When I log in as "admin"
+    And I am on site homepage
     And I am on the "student1" "user > profile" page
     And I click on "Preferences" "link" in the ".profile_tree" "css_element"
     And I follow "Assign roles relative to this user"

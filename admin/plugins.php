@@ -29,8 +29,6 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 $fetchupdates = optional_param('fetchupdates', false, PARAM_BOOL); // Check for available plugins updates.
-$updatesonly = optional_param('updatesonly', false, PARAM_BOOL); // Show updateable plugins only.
-$contribonly = optional_param('contribonly', false, PARAM_BOOL); // Show additional plugins only.
 $uninstall = optional_param('uninstall', '', PARAM_COMPONENT); // Uninstall the plugin.
 $delete = optional_param('delete', '', PARAM_COMPONENT); // Delete the plugin folder after it is uninstalled.
 $confirmed = optional_param('confirm', false, PARAM_BOOL); // Confirm the uninstall/delete action.
@@ -47,8 +45,7 @@ require_admin();
 $syscontext = context_system::instance();
 
 // URL params we want to maintain on redirects.
-$pageparams = array('updatesonly' => $updatesonly, 'contribonly' => $contribonly);
-$pageurl = new moodle_url('/admin/plugins.php', $pageparams);
+$pageurl = new moodle_url('/admin/plugins.php');
 
 $pluginman = core_plugin_manager::instance();
 
@@ -57,7 +54,7 @@ $PAGE->set_primary_active_tab('siteadminnode');
 if ($uninstall) {
 
     if (!$confirmed) {
-        admin_externalpage_setup('pluginsoverview', '', $pageparams);
+        admin_externalpage_setup('pluginsoverview');
     } else {
         $PAGE->set_url($pageurl);
         $PAGE->set_context($syscontext);
@@ -201,7 +198,7 @@ if ($installupdate and $installupdateversion) {
     }
 }
 
-admin_externalpage_setup('pluginsoverview', '', $pageparams);
+admin_externalpage_setup('pluginsoverview');
 
 /** @var core_admin_renderer $output */
 $output = $PAGE->get_renderer('core', 'admin');
@@ -214,4 +211,4 @@ if ($fetchupdates) {
     redirect($PAGE->url);
 }
 
-echo $output->plugin_management_page($pluginman, $checker, $pageparams);
+echo $output->plugin_management_page($pluginman, $checker);

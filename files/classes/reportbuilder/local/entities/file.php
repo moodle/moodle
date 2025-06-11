@@ -20,13 +20,15 @@ namespace core_files\reportbuilder\local\entities;
 
 use context;
 use context_helper;
+use core_collator;
+use core_filetypes;
+use html_writer;
 use lang_string;
 use license_manager;
-use html_writer;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\helpers\format;
-use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
+use core_reportbuilder\local\filters\{boolean_select, date, filesize, select, text};
 use core_reportbuilder\local\report\{column, filter};
 
 /**
@@ -39,14 +41,14 @@ use core_reportbuilder\local\report\{column, filter};
 class file extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'files' => 'f',
-            'context' => 'fctx',
+            'files',
+            'context',
         ];
     }
 
@@ -156,6 +158,36 @@ class file extends base {
                 return get_mimetype_description($fileinfo->mimetype);
             });
 
+        // Icon.
+        $columns[] = (new column(
+            'icon',
+            new lang_string('icon'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("{$filesalias}.mimetype")
+            ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
+            ->set_disabled_aggregation_all()
+            ->add_callback(static function($mimetype, stdClass $fileinfo): string {
+                global $CFG, $OUTPUT;
+                require_once("{$CFG->libdir}/filelib.php");
+
+                if ($fileinfo->mimetype === null && !$fileinfo->directory) {
+                    return '';
+                }
+
+                if ($fileinfo->directory) {
+                    $icon = file_folder_icon();
+                    $description = get_string('directory');
+                } else {
+                    $icon = file_file_icon($fileinfo);
+                    $description = get_mimetype_description($fileinfo->mimetype);
+                }
+
+                return $OUTPUT->pix_icon($icon, $description, 'moodle', ['class' => 'iconsize-medium']);
+            });
+
         // Author.
         $columns[] = (new column(
             'author',
@@ -200,6 +232,7 @@ class file extends base {
             ->add_fields("{$filesalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:name\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
@@ -221,6 +254,7 @@ class file extends base {
             ->add_fields("{$filesalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:link\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
@@ -231,6 +265,17 @@ class file extends base {
 
                 return html_writer::link($context->get_url(), $context->get_context_name());
             });
+
+        // Content hash.
+        $columns[] = (new column(
+             'contenthash',
+            new lang_string('contenthash', 'core_files'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("{$filesalias}.contenthash")
+            ->set_is_sortable(true);
 
         // Component.
         $columns[] = (new column(
@@ -261,10 +306,8 @@ class file extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$filesalias}.itemid")
-            ->set_is_sortable(true)
-            ->set_disabled_aggregation_all();
+            ->set_is_sortable(true);
 
         // Time created.
         $columns[] = (new column(
@@ -321,19 +364,44 @@ class file extends base {
 
         // Size.
         $filters[] = (new filter(
-            number::class,
+            filesize::class,
             'size',
             new lang_string('size'),
             $this->get_entity_name(),
             "{$filesalias}.filesize"
         ))
+            ->add_joins($this->get_joins());
+
+        // Type.
+        $filters[] = (new filter(
+            select::class,
+            'type',
+            new lang_string('type', 'core_repository'),
+            $this->get_entity_name(),
+            "{$filesalias}.mimetype"
+        ))
             ->add_joins($this->get_joins())
-            ->set_limited_operators([
-                number::ANY_VALUE,
-                number::LESS_THAN,
-                number::GREATER_THAN,
-                number::RANGE,
-            ]);
+            ->set_options_callback(static function(): array {
+                $mimetypenames = array_column(core_filetypes::get_types(), 'type');
+
+                // Convert the names into a map of name => description.
+                $mimetypes = array_combine($mimetypenames, array_map(static function(string $mimetype): string {
+                    return get_mimetype_description($mimetype);
+                }, $mimetypenames));
+
+                core_collator::asort($mimetypes);
+                return $mimetypes;
+            });
+
+        // Author.
+        $filters[] = (new filter(
+            text::class,
+            'author',
+            new lang_string('author', 'core_repository'),
+            $this->get_entity_name(),
+            "{$filesalias}.author"
+        ))
+            ->add_joins($this->get_joins());
 
         // License (consider null = 'unknown/license not specified' for filtering purposes).
         $filters[] = (new filter(
@@ -354,6 +422,36 @@ class file extends base {
                     return $license->fullname;
                 }, $licenses);
             });
+
+        // Content hash.
+        $filters[] = (new filter(
+            text::class,
+            'contenthash',
+            new lang_string('contenthash', 'core_files'),
+            $this->get_entity_name(),
+            "{$filesalias}.contenthash"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Component.
+        $filters[] = (new filter(
+            text::class,
+            'component',
+            new lang_string('plugin'),
+            $this->get_entity_name(),
+            "{$filesalias}.component"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Area.
+        $filters[] = (new filter(
+            text::class,
+            'area',
+            new lang_string('pluginarea'),
+            $this->get_entity_name(),
+            "{$filesalias}.filearea"
+        ))
+            ->add_joins($this->get_joins());
 
         // Time created.
         $filters[] = (new filter(

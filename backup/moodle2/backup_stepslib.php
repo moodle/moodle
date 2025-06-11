@@ -119,6 +119,20 @@ abstract class backup_activity_structure_step extends backup_structure_step {
         // Return the root element (activity)
         return $activity;
     }
+
+    /**
+     * Set a delegate section itemid mapping.
+     *
+     * @param string $pluginname the name of the plugin that is delegating the section.
+     * @param int $itemid the itemid of the section being delegated.
+     */
+    protected function set_delegated_section_mapping(string $pluginname, int $itemid) {
+        backup_structure_dbops::insert_backup_ids_record(
+            $this->get_backupid(),
+            "course_section::$pluginname::$itemid",
+            $this->task->get_moduleid()
+        );
+    }
 }
 
 /**
@@ -400,9 +414,14 @@ class backup_section_structure_step extends backup_structure_step {
 
         // Define each element separated
 
-        $section = new backup_nested_element('section', array('id'), array(
+        $section = new backup_nested_element(
+            'section',
+            ['id'],
+            [
                 'number', 'name', 'summary', 'summaryformat', 'sequence', 'visible',
-                'availabilityjson', 'timemodified'));
+                'availabilityjson', 'component', 'itemid', 'timemodified',
+            ]
+        );
 
         // attach format plugin structure to $section element, only one allowed
         $this->add_plugin_structure('format', $section, false);
@@ -459,7 +478,7 @@ class backup_course_structure_step extends backup_structure_step {
             'timecreated', 'timemodified',
             'requested',
             'showactivitydates',
-            'showcompletionconditions',
+            'showcompletionconditions', 'pdfexportfont',
             'enablecompletion', 'completionstartonenrol', 'completionnotify'));
 
         $category = new backup_nested_element('category', array('id'), array(
@@ -472,7 +491,7 @@ class backup_course_structure_step extends backup_structure_step {
 
         $customfields = new backup_nested_element('customfields');
         $customfield = new backup_nested_element('customfield', array('id'), array(
-          'shortname', 'type', 'value', 'valueformat'
+            'shortname', 'type', 'value', 'valueformat', 'valuetrust',
         ));
 
         $courseformatoptions = new backup_nested_element('courseformatoptions');
@@ -552,9 +571,13 @@ class backup_course_structure_step extends backup_structure_step {
                                  FROM {course_format_options}
                                  WHERE courseid = ? AND sectionid = 0', [ backup::VAR_PARENTID ]);
 
-        $handler = core_course\customfield\course_handler::create();
-        $fieldsforbackup = $handler->get_instance_data_for_backup($this->task->get_courseid());
-        $customfield->set_source_array($fieldsforbackup);
+        // Custom fields.
+        if ($this->get_setting_value('customfield')) {
+            $handler = core_course\customfield\course_handler::create();
+            $fieldsforbackup = $handler->get_instance_data_for_backup($this->task->get_courseid());
+            $handler->backup_define_structure($this->task->get_courseid(), $customfield);
+            $customfield->set_source_array($fieldsforbackup);
+        }
 
         // Some annotations
 
@@ -894,14 +917,6 @@ class backup_comments_structure_step extends backup_structure_step {
  */
 class backup_badges_structure_step extends backup_structure_step {
 
-    protected function execute_condition() {
-        // Check that all activities have been included.
-        if ($this->task->is_excluding_activities()) {
-            return false;
-        }
-        return true;
-    }
-
     protected function define_structure() {
         global $CFG;
 
@@ -939,13 +954,22 @@ class backup_badges_structure_step extends backup_structure_step {
         $manual_award = new backup_nested_element('manual_award', array('id'), array('badgeid',
                 'recipientid', 'issuerid', 'issuerrole', 'datemet'));
 
+        $tags = new backup_nested_element('tags');
+        $tag = new backup_nested_element('tag', ['id'], ['name', 'rawname']);
+
         // Build the tree.
 
         $badges->add_child($badge);
-        $badge->add_child($criteria);
-        $criteria->add_child($criterion);
-        $criterion->add_child($parameters);
-        $parameters->add_child($parameter);
+
+        // Have the activities been included? Only if that's the case, the criteria will be included too.
+        $activitiesincluded = !$this->task->is_excluding_activities();
+        if ($activitiesincluded) {
+            $badge->add_child($criteria);
+            $criteria->add_child($criterion);
+            $criterion->add_child($parameters);
+            $parameters->add_child($parameter);
+        }
+
         $badge->add_child($endorsement);
         $badge->add_child($alignments);
         $alignments->add_child($alignment);
@@ -953,6 +977,8 @@ class backup_badges_structure_step extends backup_structure_step {
         $relatedbadges->add_child($relatedbadge);
         $badge->add_child($manual_awards);
         $manual_awards->add_child($manual_award);
+        $badge->add_child($tags);
+        $tags->add_child($tag);
 
         // Define sources.
 
@@ -965,27 +991,36 @@ class backup_badges_structure_step extends backup_structure_step {
             'courseid' => backup::VAR_COURSEID
         ];
         $badge->set_source_sql($parametersql, $parameterparams);
-        $criterion->set_source_table('badge_criteria', array('badgeid' => backup::VAR_PARENTID));
+        if ($activitiesincluded) {
+            $criterion->set_source_table('badge_criteria', ['badgeid' => backup::VAR_PARENTID]);
+            $parametersql = 'SELECT cp.*, c.criteriatype
+                               FROM {badge_criteria_param} cp JOIN {badge_criteria} c
+                                 ON cp.critid = c.id
+                              WHERE critid = :critid';
+            $parameterparams = ['critid' => backup::VAR_PARENTID];
+            $parameter->set_source_sql($parametersql, $parameterparams);
+        }
         $endorsement->set_source_table('badge_endorsement', array('badgeid' => backup::VAR_PARENTID));
 
         $alignment->set_source_table('badge_alignment', array('badgeid' => backup::VAR_PARENTID));
         $relatedbadge->set_source_table('badge_related', array('badgeid' => backup::VAR_PARENTID));
 
-        $parametersql = 'SELECT cp.*, c.criteriatype
-                             FROM {badge_criteria_param} cp JOIN {badge_criteria} c
-                                 ON cp.critid = c.id
-                             WHERE critid = :critid';
-        $parameterparams = array('critid' => backup::VAR_PARENTID);
-        $parameter->set_source_sql($parametersql, $parameterparams);
-
         $manual_award->set_source_table('badge_manual_award', array('badgeid' => backup::VAR_PARENTID));
+
+        $tag->set_source_sql('SELECT t.id, t.name, t.rawname
+                                FROM {tag} t
+                                JOIN {tag_instance} ti ON ti.tagid = t.id
+                               WHERE ti.itemtype = ?
+                                 AND ti.itemid = ?', [backup_helper::is_sqlparam('badge'), backup::VAR_PARENTID]);
 
         // Define id annotations.
 
         $badge->annotate_ids('user', 'usercreated');
         $badge->annotate_ids('user', 'usermodified');
-        $criterion->annotate_ids('badge', 'badgeid');
-        $parameter->annotate_ids('criterion', 'critid');
+        if ($activitiesincluded) {
+            $criterion->annotate_ids('badge', 'badgeid');
+            $parameter->annotate_ids('criterion', 'critid');
+        }
         $endorsement->annotate_ids('badge', 'badgeid');
         $alignment->annotate_ids('badge', 'badgeid');
         $relatedbadge->annotate_ids('badge', 'badgeid');
@@ -1341,7 +1376,11 @@ class backup_groups_structure_step extends backup_structure_step {
 
         $group = new backup_nested_element('group', array('id'), array(
             'name', 'idnumber', 'description', 'descriptionformat', 'enrolmentkey',
-            'picture', 'timecreated', 'timemodified'));
+            'picture', 'visibility', 'participation', 'timecreated', 'timemodified'));
+
+        $groupcustomfields = new backup_nested_element('groupcustomfields');
+        $groupcustomfield = new backup_nested_element('groupcustomfield', ['id'], [
+            'shortname', 'type', 'value', 'valueformat', 'valuetrust', 'groupid']);
 
         $members = new backup_nested_element('group_members');
 
@@ -1354,6 +1393,10 @@ class backup_groups_structure_step extends backup_structure_step {
             'name', 'idnumber', 'description', 'descriptionformat', 'configdata',
             'timecreated', 'timemodified'));
 
+        $groupingcustomfields = new backup_nested_element('groupingcustomfields');
+        $groupingcustomfield = new backup_nested_element('groupingcustomfield', ['id'], [
+            'shortname', 'type', 'value', 'valueformat', 'valuetrust', 'groupingid']);
+
         $groupinggroups = new backup_nested_element('grouping_groups');
 
         $groupinggroup = new backup_nested_element('grouping_group', array('id'), array(
@@ -1362,12 +1405,16 @@ class backup_groups_structure_step extends backup_structure_step {
         // Build the tree
 
         $groups->add_child($group);
+        $groups->add_child($groupcustomfields);
+        $groupcustomfields->add_child($groupcustomfield);
         $groups->add_child($groupings);
 
         $group->add_child($members);
         $members->add_child($member);
 
         $groupings->add_child($grouping);
+        $groupings->add_child($groupingcustomfields);
+        $groupingcustomfields->add_child($groupingcustomfield);
         $grouping->add_child($groupinggroups);
         $groupinggroups->add_child($groupinggroup);
 
@@ -1380,19 +1427,39 @@ class backup_groups_structure_step extends backup_structure_step {
                   FROM {groups} g
                   JOIN {backup_ids_temp} bi ON g.id = bi.itemid
                  WHERE bi.backupid = ?
-                   AND bi.itemname = 'groupfinal'", array(backup::VAR_BACKUPID));
+                   AND bi.itemname = 'groupfinal'",
+                [backup_helper::is_sqlparam($this->get_backupid())]
+            );
 
             $grouping->set_source_sql("
                 SELECT g.*
                   FROM {groupings} g
                   JOIN {backup_ids_temp} bi ON g.id = bi.itemid
                  WHERE bi.backupid = ?
-                   AND bi.itemname = 'groupingfinal'", array(backup::VAR_BACKUPID));
+                   AND bi.itemname = 'groupingfinal'",
+                [backup_helper::is_sqlparam($this->get_backupid())]
+            );
+
             $groupinggroup->set_source_table('groupings_groups', array('groupingid' => backup::VAR_PARENTID));
 
             // This only happens if we are including users.
             if ($userinfo) {
                 $member->set_source_table('groups_members', array('groupid' => backup::VAR_PARENTID));
+            }
+
+            // Custom fields.
+            if ($this->get_setting_value('customfield')) {
+                $groupcustomfieldarray = $this->get_group_custom_fields_for_backup(
+                    $group->get_source_sql(),
+                    [$this->get_backupid()]
+                );
+                $groupcustomfield->set_source_array($groupcustomfieldarray);
+
+                $groupingcustomfieldarray = $this->get_grouping_custom_fields_for_backup(
+                    $grouping->get_source_sql(),
+                    [$this->get_backupid()]
+                );
+                $groupingcustomfield->set_source_array($groupingcustomfieldarray);
             }
         }
 
@@ -1408,6 +1475,44 @@ class backup_groups_structure_step extends backup_structure_step {
 
         // Return the root element (groups)
         return $groups;
+    }
+
+    /**
+     * Get custom fields array for group
+     *
+     * @param string $groupsourcesql
+     * @param array $groupsourceparams
+     * @return array
+     */
+    protected function get_group_custom_fields_for_backup(string $groupsourcesql, array $groupsourceparams): array {
+        global $DB;
+        $handler = \core_group\customfield\group_handler::create();
+        $fieldsforbackup = [];
+        if ($groups = $DB->get_records_sql($groupsourcesql, $groupsourceparams)) {
+            foreach ($groups as $group) {
+                $fieldsforbackup = array_merge($fieldsforbackup, $handler->get_instance_data_for_backup($group->id));
+            }
+        }
+        return $fieldsforbackup;
+    }
+
+    /**
+     * Get custom fields array for grouping
+     *
+     * @param string $groupingsourcesql
+     * @param array $groupingsourceparams
+     * @return array
+     */
+    protected function get_grouping_custom_fields_for_backup(string $groupingsourcesql, array $groupingsourceparams): array {
+        global $DB;
+        $handler = \core_group\customfield\grouping_handler::create();
+        $fieldsforbackup = [];
+        if ($groupings = $DB->get_records_sql($groupingsourcesql, $groupingsourceparams)) {
+            foreach ($groupings as $grouping) {
+                $fieldsforbackup = array_merge($fieldsforbackup, $handler->get_instance_data_for_backup($grouping->id));
+            }
+        }
+        return $fieldsforbackup;
     }
 }
 
@@ -1602,7 +1707,13 @@ class backup_block_instance_structure_step extends backup_structure_step {
         // Transform configdata information if needed (process links and friends)
         $blockrec = $DB->get_record('block_instances', array('id' => $this->task->get_blockid()));
         if ($attrstotransform = $this->task->get_configdata_encoded_attributes()) {
-            $configdata = (array)unserialize(base64_decode($blockrec->configdata));
+            $configdata = array_filter(
+                (array) unserialize_object(base64_decode($blockrec->configdata)),
+                static function($value): bool {
+                    return !($value instanceof __PHP_Incomplete_Class);
+                }
+            );
+
             foreach ($configdata as $attribute => $value) {
                 if (in_array($attribute, $attrstotransform)) {
                     $configdata[$attribute] = $this->contenttransformer->process($value);
@@ -2049,14 +2160,19 @@ class backup_main_structure_step extends backup_structure_step {
 
         $activities = new backup_nested_element('activities');
 
-        $activity = new backup_nested_element('activity', null, array(
-            'moduleid', 'sectionid', 'modulename', 'title',
-            'directory'));
+        $activity = new backup_nested_element(
+            'activity',
+            null,
+            ['moduleid', 'sectionid', 'modulename', 'title', 'directory', 'insubsection']
+        );
 
         $sections = new backup_nested_element('sections');
 
-        $section = new backup_nested_element('section', null, array(
-            'sectionid', 'title', 'directory'));
+        $section = new backup_nested_element(
+            'section',
+            null,
+            ['sectionid', 'title', 'directory', 'parentcmid', 'modname']
+        );
 
         $course = new backup_nested_element('course', null, array(
             'courseid', 'title', 'directory'));
@@ -2997,5 +3113,37 @@ class backup_contentbankcontent_structure_step extends backup_structure_step {
 
         // Return the root element (contents).
         return $contents;
+    }
+}
+
+/**
+ * Structure step in charge of constructing the xapistate.xml file for all the xAPI states found in a given context.
+ */
+class backup_xapistate_structure_step extends backup_structure_step {
+
+    /**
+     * Define structure for content bank step
+     */
+    protected function define_structure() {
+
+        // Define each element separated.
+        $states = new backup_nested_element('states');
+        $state = new backup_nested_element(
+            'state',
+            ['id'],
+            ['component', 'userid', 'itemid', 'stateid', 'statedata', 'registration', 'timecreated', 'timemodified']
+        );
+
+        // Build the tree.
+        $states->add_child($state);
+
+        // Define sources.
+        $state->set_source_table('xapi_states', ['itemid' => backup::VAR_CONTEXTID]);
+
+        // Define annotations.
+        $state->annotate_ids('user', 'userid');
+
+        // Return the root element (contents).
+        return $states;
     }
 }

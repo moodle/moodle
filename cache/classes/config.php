@@ -14,19 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Cache configuration reader
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cache;
 
-defined('MOODLE_INTERNAL') || die();
+use core_cache\exception\cache_exception;
 
 /**
  * Cache configuration reader.
@@ -34,42 +24,41 @@ defined('MOODLE_INTERNAL') || die();
  * This class is used to interact with the cache's configuration.
  * The configuration is stored in the Moodle data directory.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_config {
-
+class config {
     /**
      * The configured stores
      * @var array
      */
-    protected $configstores = array();
+    protected $configstores = [];
 
     /**
      * The configured mode mappings
      * @var array
      */
-    protected $configmodemappings = array();
+    protected $configmodemappings = [];
 
     /**
      * The configured definitions as picked up from cache.php files
      * @var array
      */
-    protected $configdefinitions = array();
+    protected $configdefinitions = [];
 
     /**
      * The definition mappings that have been configured.
      * @var array
      */
-    protected $configdefinitionmappings = array();
+    protected $configdefinitionmappings = [];
 
     /**
      * An array of configured cache lock instances.
      * @var array
      */
-    protected $configlocks = array();
+    protected $configlocks = [];
 
     /**
      * The site identifier used when the cache config was last saved.
@@ -78,19 +67,19 @@ class cache_config {
     protected $siteidentifier = null;
 
     /**
-     * Please use cache_config::instance to get an instance of the cache config that is ready to be used.
+     * Please use config::instance to get an instance of the cache config that is ready to be used.
      */
     public function __construct() {
         // Nothing to do here but look pretty.
     }
 
     /**
-     * Gets an instance of the cache_configuration class.
+     * Gets an instance of the cache config class.
      *
-     * @return cache_config
+     * @return self
      */
     public static function instance() {
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         return $factory->create_config_instance();
     }
 
@@ -115,14 +104,14 @@ class cache_config {
             $path = $CFG->altcacheconfigpath;
             if (is_dir($path) && is_writable($path)) {
                 // Its a writable directory, thats fine.
-                return $path.'/cacheconfig.php';
+                return $path . '/cacheconfig.php';
             } else if (is_writable(dirname($path)) && (!file_exists($path) || is_writable($path))) {
                 // Its a file, either it doesn't exist and the directory is writable or the file exists and is writable.
                 return $path;
             }
         }
         // Return the default location within dataroot.
-        return $CFG->dataroot.'/muc/config.php';
+        return $CFG->dataroot . '/muc/config.php';
     }
 
     /**
@@ -138,12 +127,11 @@ class cache_config {
             $configuration = $this->include_configuration();
         }
 
-        $this->configstores = array();
-        $this->configdefinitions = array();
-        $this->configlocks = array();
-        $this->configmodemappings = array();
-        $this->configdefinitionmappings = array();
-        $this->configlockmappings = array();
+        $this->configstores = [];
+        $this->configdefinitions = [];
+        $this->configlocks = [];
+        $this->configmodemappings = [];
+        $this->configdefinitionmappings = [];
 
         $siteidentifier = 'unknown';
         if (array_key_exists('siteidentifier', $configuration)) {
@@ -175,7 +163,7 @@ class cache_config {
         }
 
         // Filter the stores.
-        $availableplugins = cache_helper::early_get_cache_plugins();
+        $availableplugins = helper::early_get_cache_plugins();
         foreach ($configuration['stores'] as $store) {
             if (!is_array($store) || !array_key_exists('name', $store) || !array_key_exists('plugin', $store)) {
                 // Not a valid instance configuration.
@@ -183,25 +171,25 @@ class cache_config {
                 continue;
             }
             $plugin = $store['plugin'];
-            $class = 'cachestore_'.$plugin;
+            $class = 'cachestore_' . $plugin;
             $exists = array_key_exists($plugin, $availableplugins);
             if (!$exists) {
                 // Not a valid plugin, or has been uninstalled, just skip it an carry on.
                 debugging('Invalid cache store in config. Not an available plugin.', DEBUG_DEVELOPER);
                 continue;
             }
-            $file = $CFG->dirroot.'/cache/stores/'.$plugin.'/lib.php';
+            $file = $CFG->dirroot . '/cache/stores/' . $plugin . '/lib.php';
             if (!class_exists($class) && file_exists($file)) {
                 require_once($file);
             }
             if (!class_exists($class)) {
                 continue;
             }
-            if (!array_key_exists('cache_store', class_parents($class))) {
+            if (!array_key_exists(store::class, class_parents($class))) {
                 continue;
             }
             if (!array_key_exists('configuration', $store) || !is_array($store['configuration'])) {
-                $store['configuration'] = array();
+                $store['configuration'] = [];
             }
             $store['class'] = $class;
             $store['default'] = !empty($store['default']);
@@ -227,26 +215,26 @@ class cache_config {
                 continue;
             }
             $conf['mode'] = (int)$conf['mode'];
-            if ($conf['mode'] < cache_store::MODE_APPLICATION || $conf['mode'] > cache_store::MODE_REQUEST) {
+            if ($conf['mode'] < store::MODE_APPLICATION || $conf['mode'] > store::MODE_REQUEST) {
                 // Invalid cache mode used for the definition.
                 continue;
             }
-            if ($conf['mode'] === cache_store::MODE_SESSION || $conf['mode'] === cache_store::MODE_REQUEST) {
+            if ($conf['mode'] === store::MODE_SESSION || $conf['mode'] === store::MODE_REQUEST) {
                 // We force this for session and request caches.
                 // They are only allowed to use the default as we don't want people changing them.
-                $conf['sharingoptions'] = cache_definition::SHARING_DEFAULT;
-                $conf['selectedsharingoption'] = cache_definition::SHARING_DEFAULT;
+                $conf['sharingoptions'] = definition::SHARING_DEFAULT;
+                $conf['selectedsharingoption'] = definition::SHARING_DEFAULT;
                 $conf['userinputsharingkey'] = '';
             } else {
                 // Default the sharing option as it was added for 2.5.
                 // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
                 if (!isset($conf['sharingoptions'])) {
-                    $conf['sharingoptions'] = cache_definition::SHARING_DEFAULTOPTIONS;
+                    $conf['sharingoptions'] = definition::SHARING_DEFAULTOPTIONS;
                 }
                 // Default the selected sharing option as it was added for 2.5.
                 // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
                 if (!isset($conf['selectedsharingoption'])) {
-                    $conf['selectedsharingoption'] = cache_definition::SHARING_DEFAULT;
+                    $conf['selectedsharingoption'] = definition::SHARING_DEFAULT;
                 }
                 // Default the user input sharing key as it was added for 2.5.
                 // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
@@ -300,8 +288,8 @@ class cache_config {
             $this->configdefinitionmappings[] = $mapping;
         }
 
-        usort($this->configmodemappings, array($this, 'sort_mappings'));
-        usort($this->configdefinitionmappings, array($this, 'sort_mappings'));
+        usort($this->configmodemappings, [$this, 'sort_mappings']);
+        usort($this->configdefinitionmappings, [$this, 'sort_mappings']);
 
         return true;
     }
@@ -339,19 +327,19 @@ class cache_config {
             throw new cache_exception('Invalid cache configuration file');
         }
         if (!array_key_exists('stores', $configuration) || !is_array($configuration['stores'])) {
-            $configuration['stores'] = array();
+            $configuration['stores'] = [];
         }
         if (!array_key_exists('modemappings', $configuration) || !is_array($configuration['modemappings'])) {
-            $configuration['modemappings'] = array();
+            $configuration['modemappings'] = [];
         }
         if (!array_key_exists('definitions', $configuration) || !is_array($configuration['definitions'])) {
-            $configuration['definitions'] = array();
+            $configuration['definitions'] = [];
         }
         if (!array_key_exists('definitionmappings', $configuration) || !is_array($configuration['definitionmappings'])) {
-            $configuration['definitionmappings'] = array();
+            $configuration['definitionmappings'] = [];
         }
         if (!array_key_exists('locks', $configuration) || !is_array($configuration['locks'])) {
-            $configuration['locks'] = array();
+            $configuration['locks'] = [];
         }
 
         return $configuration;
@@ -402,13 +390,13 @@ class cache_config {
      * @return array Associative array of definitions, id=>definition
      */
     public function get_definitions_by_store($storename) {
-        $definitions = array();
+        $definitions = [];
 
         // This function was accidentally made static at some stage in the past.
         // It was converted to an instance method but to be backwards compatible
         // we must step around this in code.
         if (!isset($this)) {
-            $config = cache_config::instance();
+            $config = self::instance();
         } else {
             $config = $this;
         }
@@ -421,18 +409,18 @@ class cache_config {
 
         $defmappings = $config->get_definition_mappings();
         // Create an associative array for the definition mappings.
-        $thedefmappings = array();
+        $thedefmappings = [];
         foreach ($defmappings as $defmapping) {
             $thedefmappings[$defmapping['definition']] = $defmapping;
         }
 
         // Search for matches in default mappings.
         $defs = $config->get_definitions();
-        foreach($config->get_mode_mappings() as $modemapping) {
+        foreach ($config->get_mode_mappings() as $modemapping) {
             if ($modemapping['store'] !== $storename) {
                 continue;
             }
-            foreach($defs as $id => $definition) {
+            foreach ($defs as $id => $definition) {
                 if ($definition['mode'] !== $modemapping['mode']) {
                     continue;
                 }
@@ -444,7 +432,7 @@ class cache_config {
             }
         }
 
-        // Search for matches in the custom definitions mapping
+        // Search for matches in the custom definitions mapping.
         foreach ($defmappings as $defmapping) {
             if ($defmapping['store'] !== $storename) {
                 continue;
@@ -461,12 +449,12 @@ class cache_config {
     /**
      * Returns all of the stores that are suitable for the given mode and requirements.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      * @param int $requirements The requirements of the cache as a binary flag
      * @return array An array of suitable stores.
      */
     public function get_stores($mode, $requirements = 0) {
-        $stores = array();
+        $stores = [];
         foreach ($this->configstores as $name => $store) {
             // If the mode is supported and all of the requirements are provided features.
             if (($store['modes'] & $mode) && ($store['features'] & $requirements) === $requirements) {
@@ -479,23 +467,23 @@ class cache_config {
     /**
      * Gets all of the stores that are to be used for the given definition.
      *
-     * @param cache_definition $definition
-     * @return array
+     * @param definition $definition
+     * @return array<store>
      */
-    public function get_stores_for_definition(cache_definition $definition) {
+    public function get_stores_for_definition(definition $definition) {
         // Check if MUC has been disabled.
-        $factory = cache_factory::instance();
+        $factory = factory::instance();
         if ($factory->stores_disabled()) {
             // Yip its been disabled.
             // To facilitate this we are going to always return an empty array of stores to use.
             // This will force all cache instances to use the cachestore_dummy.
             // MUC will still be used essentially so that code using it will still continue to function but because no cache stores
             // are being used interaction with MUC will be purely based around a static var.
-            return array();
+            return [];
         }
 
         $availablestores = $this->get_stores($definition->get_mode(), $definition->get_requirements_bin());
-        $stores = array();
+        $stores = [];
         $id = $definition->get_id();
 
         // Now get any mappings and give them priority.
@@ -595,3 +583,8 @@ class cache_config {
         throw new cache_exception('ex_nodefaultlock');
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(config::class, \cache_config::class);

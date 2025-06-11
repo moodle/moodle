@@ -24,9 +24,7 @@
 
 namespace core_cache\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
-use \core_privacy\local\metadata\collection;
+use core_privacy\local\metadata\collection;
 
 /**
  * Privacy Subsystem implementation for core_cache.
@@ -36,13 +34,12 @@ use \core_privacy\local\metadata\collection;
  */
 class provider implements
         // Caches store data.
-        \core_privacy\local\metadata\provider,
+    \core_privacy\local\metadata\provider,
 
         // The cache subsystem stores data on behalf of other components.
-        \core_privacy\local\request\subsystem\plugin_provider,
-        \core_privacy\local\request\shared_userlist_provider
-    {
-
+    \core_privacy\local\request\subsystem\plugin_provider,
+    \core_privacy\local\request\shared_userlist_provider
+{
     /**
      * Returns meta data about this system.
      *
@@ -57,7 +54,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // Data is stored in cache stores.
         $collection->add_plugintype_link('cachestore', [], 'privacy:metadata:cachestore');
 

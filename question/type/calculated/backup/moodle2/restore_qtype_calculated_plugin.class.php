@@ -113,4 +113,46 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_calculated_options', $data);
         }
     }
+
+    #[\Override]
+    public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+        $questiondata = parent::convert_backup_to_questiondata($backupdata);
+        $qtype = $questiondata->qtype;
+        foreach ($backupdata["plugin_qtype_{$qtype}_question"]['calculated_records']['calculated_record'] as $record) {
+            foreach ($questiondata->options->answers as &$answer) {
+                if ($answer->id == $record['answer']) {
+                    $answer->tolerance = $record['tolerance'];
+                    $answer->tolerancetype = $record['tolerancetype'];
+                    $answer->correctanswerlength = $record['correctanswerlength'];
+                    $answer->correctanswerformat = $record['correctanswerformat'];
+                    continue 2;
+                }
+            }
+        }
+        if (isset($backupdata["plugin_qtype_{$qtype}_question"]['calculated_options'])) {
+            $questiondata->options = (object) array_merge(
+                (array) $questiondata->options,
+                $backupdata["plugin_qtype_{$qtype}_question"]['calculated_options']['calculated_option'][0],
+            );
+        }
+        return $questiondata;
+    }
+
+    #[\Override]
+    protected function define_excluded_identity_hash_fields(): array {
+        return [
+            // These option fields are present in the database, but are only used by calculatedmulti.
+            '/options/synchronize',
+            '/options/single',
+            '/options/shuffleanswers',
+            '/options/correctfeedback',
+            '/options/correctfeedbackformat',
+            '/options/partiallycorrectfeedback',
+            '/options/partiallycorrectfeedbackformat',
+            '/options/incorrectfeedback',
+            '/options/incorrectfeedbackformat',
+            '/options/answernumbering',
+            '/options/shownumcorrect',
+        ];
+    }
 }

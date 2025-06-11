@@ -88,11 +88,11 @@ class hvpactivities_table extends table_sql {
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
-        $this->column_class('id', 'd-none d-sm-table-cell');
-        $this->column_class('contenttype', 'd-none d-sm-table-cell');
-        $this->column_class('graded', 'd-none d-md-table-cell');
-        $this->column_class('attempted', 'd-none d-md-table-cell');
-        $this->column_class('savedstate', 'd-none d-md-table-cell');
+        $this->column_class(array_search('id', $columnheaders), 'd-none d-sm-table-cell');
+        $this->column_class(array_search('contenttype', $columnheaders), 'd-none d-sm-table-cell');
+        $this->column_class(array_search('graded', $columnheaders), 'd-none d-md-table-cell');
+        $this->column_class(array_search('attempted', $columnheaders), 'd-none d-md-table-cell');
+        $this->column_class(array_search('savedstate', $columnheaders), 'd-none d-md-table-cell');
     }
 
     /**
@@ -114,7 +114,7 @@ class hvpactivities_table extends table_sql {
      * @param stdClass $data The row data.
      * @return string
      * @throws \moodle_exception
-     * @throws coding_exception
+     * @throws \coding_exception
      */
     public function col_select(stdClass $data):string {
         global $OUTPUT;
@@ -139,7 +139,7 @@ class hvpactivities_table extends table_sql {
      * @param stdClass $data The row data.
      * @return string
      * @throws \moodle_exception
-     * @throws coding_exception
+     * @throws \coding_exception
      */
     public function col_graded(stdClass $data): string {
         global $DB;
@@ -158,7 +158,7 @@ class hvpactivities_table extends table_sql {
      * @param stdClass $data The row data.
      * @return string
      * @throws \moodle_exception
-     * @throws coding_exception
+     * @throws \coding_exception
      */
     public function col_attempted(stdClass $data): string {
         global $DB;
@@ -177,7 +177,7 @@ class hvpactivities_table extends table_sql {
      * @param stdClass $data The row data.
      * @return string
      * @throws \moodle_exception
-     * @throws coding_exception
+     * @throws \coding_exception
      */
     public function col_name(stdClass $data): string {
         $url = new moodle_url('/mod/hvp/view.php', ['id' => $data->instanceid]);

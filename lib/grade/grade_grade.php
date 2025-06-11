@@ -189,6 +189,36 @@ class grade_grade extends grade_object {
     public $feedbackfiles = [];
 
     /**
+     * Feedback content.
+     * @var string $feedback
+     */
+    public $feedback;
+
+    /**
+     * Feedback format.
+     * @var int $feedbackformat
+     */
+    public $feedbackformat = FORMAT_PLAIN;
+
+    /**
+     * Information text.
+     * @var string $information
+     */
+    public $information;
+
+    /**
+     * Information text format.
+     * @var int $informationformat
+     */
+    public $informationformat = FORMAT_PLAIN;
+
+    /**
+     * label text.
+     * @var string $label
+     */
+    public $label;
+
+    /**
      * Returns array of grades for given grade_item+users
      *
      * @param grade_item $grade_item
@@ -235,7 +265,7 @@ class grade_grade extends grade_object {
     /**
      * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access
      *
-     * @return grade_item The grade_item instance referenced by $this->itemid
+     * @return ?grade_item The grade_item instance referenced by $this->itemid
      */
     public function load_grade_item() {
         if (empty($this->itemid)) {
@@ -419,7 +449,7 @@ class grade_grade extends grade_object {
     /**
      * Returns timestamp when last graded, null if no grade present
      *
-     * @return int
+     * @return ?int
      */
     public function get_dategraded() {
         //TODO: HACK - create new fields (MDL-31379)
@@ -682,7 +712,7 @@ class grade_grade extends grade_object {
      * @param float $source_max
      * @param float $target_min
      * @param float $target_max
-     * @return float Converted value
+     * @return ?float Converted value
      */
     public static function standardise_score($rawgrade, $source_min, $source_max, $target_min, $target_max) {
         if (is_null($rawgrade)) {
@@ -713,7 +743,7 @@ class grade_grade extends grade_object {
      *
      * @param array $dependson Array to flatten
      * @param array $dependencydepth Array of itemids => depth. Initially these should be all set to 1.
-     * @return array Flattened array
+     * @return bool|null
      */
     protected static function flatten_dependencies_array(&$dependson, &$dependencydepth) {
         // Flatten the nested dependencies - this will handle recursion bombs because it removes duplicates.
@@ -1000,7 +1030,7 @@ class grade_grade extends grade_object {
      * Returns true if the grade's value is superior or equal to the grade item's gradepass value, false otherwise.
      *
      * @param grade_item $grade_item An optional grade_item of which gradepass value we can use, saves having to load the grade_grade's grade_item
-     * @return bool
+     * @return ?bool
      */
     public function is_passed($grade_item = null) {
         if (empty($grade_item)) {
@@ -1051,7 +1081,7 @@ class grade_grade extends grade_object {
      *
      * @param int|null $historyid
      */
-    protected function add_feedback_files(int $historyid = null) {
+    protected function add_feedback_files(?int $historyid = null) {
         global $CFG;
 
         // We only support feedback files for modules atm.
@@ -1072,7 +1102,7 @@ class grade_grade extends grade_object {
      *
      * @param int|null $historyid
      */
-    protected function update_feedback_files(int $historyid = null) {
+    protected function update_feedback_files(?int $historyid = null) {
         global $CFG;
 
         // We only support feedback files for modules atm.
@@ -1117,16 +1147,18 @@ class grade_grade extends grade_object {
      */
     public function delete($source = null) {
         global $DB;
-
-        $transaction = $DB->start_delegated_transaction();
-        $success = parent::delete($source);
-
-        // If the grade was deleted successfully trigger a grade_deleted event.
-        if ($success && !empty($this->grade_item)) {
-            \core\event\grade_deleted::create_from_grade($this)->trigger();
+        try {
+            $transaction = $DB->start_delegated_transaction();
+            $success = parent::delete($source);
+            // If the grade was deleted successfully trigger a grade_deleted event.
+            if ($success && !empty($this->grade_item)) {
+                $this->load_grade_item();
+                \core\event\grade_deleted::create_from_grade($this)->trigger();
+            }
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
-
-        $transaction->allow_commit();
         return $success;
     }
 

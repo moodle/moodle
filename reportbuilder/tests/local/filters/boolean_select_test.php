@@ -31,14 +31,14 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class boolean_select_test extends advanced_testcase {
+final class boolean_select_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter_simple}
      *
      * @return array
      */
-    public function get_sql_filter_simple_provider(): array {
+    public static function get_sql_filter_simple_provider(): array {
         return [
             [boolean_select::ANY_VALUE, true],
             [boolean_select::CHECKED, true],

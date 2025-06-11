@@ -336,7 +336,7 @@ class send_user_digests extends \core\task\adhoc_task {
      * @param int $userid user id which queue elements are going to be removed.
      * @param int $timemodified up time limit of the queue elements to be removed.
      */
-    protected function empty_queue(int $userid, int $timemodified) : void {
+    protected function empty_queue(int $userid, int $timemodified): void {
         global $DB;
 
         $DB->delete_records_select('forum_queue', "userid = :userid AND timemodified < :timemodified", [

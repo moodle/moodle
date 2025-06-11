@@ -74,15 +74,6 @@ class course_section_deleted extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'course', 'delete section', 'view.php?id=' . $this->courseid, $this->other['sectionnum']);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

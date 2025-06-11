@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Upgrade code for the recordrtc atto text editor.
  *
@@ -31,24 +29,19 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function xmldb_atto_recordrtc_upgrade($oldversion) {
-    global $CFG;
-
-    // Change settings from timelimit to audiotimelimit and videotimelimit.
-    require_once($CFG->dirroot . '/lib/editor/atto/plugins/recordrtc/lib.php');
-    if ($oldversion < 2021073000) {
-        $timelimit = get_config('atto_recordrtc', 'timelimit');
-        if ($timelimit != DEFAULT_TIME_LIMIT) {
-            set_config('audiotimelimit', $timelimit, 'atto_recordrtc');
-            set_config('videotimelimit', $timelimit, 'atto_recordrtc');
-        }
-        // Recordrtc savepoint reached.
-        upgrade_plugin_savepoint(true, 2021073000, 'atto', 'recordrtc');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Automatically generated Moodle v4.1.0 release upgrade line.
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

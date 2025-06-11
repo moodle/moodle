@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class headers_have_text_testcase
  */
-class headers_have_text_test extends all_checks {
+final class headers_have_text_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'headers_have_text';
 
@@ -76,7 +76,7 @@ EOD;
     /**
      * Test for headers not containing text
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'h2');
 

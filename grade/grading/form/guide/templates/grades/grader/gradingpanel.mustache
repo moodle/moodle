@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template gradingform_rubric/grades/grader/gradingpanel
+    @template gradingform_guide/grades/grader/gradingpanel
 
     Classes required for JS:
     * none
@@ -75,7 +75,7 @@
             {{# pix }} info, gradingform_guide {{/ pix }}
             <span class="sr-only">{{#str}}informationforcriterion, gradingform_guide, {{name}}{{/str}}</span>
         </button>
-        <button class="criterion-toggle btn btn-icon icon-no-margin text-reset p-0 font-weight-bold mb-0 ml-auto"
+        <button class="criterion-toggle btn btn-icon icon-no-margin text-reset p-0 font-weight-bold mb-0 ms-auto"
                 type="button"
                 data-toggle="collapse"
                 data-target="#criteria-{{id}}"
@@ -101,7 +101,7 @@
           </div>
       </div>
       <div class="collapse show" id="criteria-{{id}}">
-        <div class="form-group">
+        <div class="mb-3">
           <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-score">{{#str}}outof, gradingform_guide, {{maxscore}}{{/str}}</label>
           <input class="form-control" type="number" name="advancedgrading[criteria][{{id}}][score]" value="{{score}}"
             id="gradingform_guide-{{uniqid}}-criteria-{{id}}-score"
@@ -112,7 +112,7 @@
             }}{{#str}}score_help, gradingform_guide, { "criterion":  {{# quote }}{{ name }}{{/ quote }}, "maxscore": {{# quote }}{{ maxscore }}{{/ quote }} }{{/str}}
           </span>
         </div>
-        <div class="form-group ">
+        <div class="mb-3 ">
           <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark">{{#str}}additionalcomments, gradingform_guide{{/str}}</label>
           <div class="input-group mb-3 form-inset form-inset-right">
             <textarea class="form-control" type="text" name="advancedgrading[criteria][{{id}}][remark]"
@@ -126,7 +126,7 @@
                 >{{remark}}</textarea>
             {{#hascomments}}
               <button
-                class="btn btn-icon form-inset-item icon-no-margin p-0 mt-1 mr-1 text-reset collapsed"
+                class="btn btn-icon form-inset-item icon-no-margin p-0 mt-1 me-1 text-reset collapsed"
                 aria-controls="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark-frequent-comments"
                 aria-expanded="false"
                 data-toggle="collapse"

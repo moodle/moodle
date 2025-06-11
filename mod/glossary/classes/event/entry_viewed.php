@@ -75,17 +75,6 @@ class entry_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    public function get_legacy_logdata() {
-        return array($this->courseid, 'glossary', 'view entry',
-            "showentry.php?eid={$this->objectid}",
-            $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -122,7 +122,7 @@ class mod_data_renderer extends plugin_renderer_base {
         }
 
         $html .= html_writer::start_tag('div', array('class'=>'overwritesettings'));
-        $attrs = ['type' => 'checkbox', 'name' => 'overwritesettings', 'id' => 'overwritesettings', 'class' => 'mr-2'];
+        $attrs = ['type' => 'checkbox', 'name' => 'overwritesettings', 'id' => 'overwritesettings', 'class' => 'me-2'];
         $html .= html_writer::empty_tag('input', $attrs);
         $html .= html_writer::tag('label', get_string('overwritesettings', 'data'), ['for' => 'overwritesettings']);
         $html .= html_writer::end_tag('div');
@@ -131,12 +131,12 @@ class mod_data_renderer extends plugin_renderer_base {
         $cancelurl = new moodle_url('/mod/data/field.php', ['d' => $datamodule->id]);
         $actionbuttons .= html_writer::tag('a', get_string('cancel') , [
             'href' => $cancelurl->out(false),
-            'class' => 'btn btn-secondary mr-2',
+            'class' => 'btn btn-secondary mx-1',
             'role' => 'button',
         ]);
         $actionbuttons .= html_writer::empty_tag('input', [
             'type' => 'submit',
-            'class' => 'btn btn-primary',
+            'class' => 'btn btn-primary mx-1',
             'value' => get_string('continue'),
         ]);
         $actionbuttons .= html_writer::end_div();
@@ -159,10 +159,7 @@ class mod_data_renderer extends plugin_renderer_base {
      */
     public function render_fields_action_bar(\mod_data\output\fields_action_bar $actionbar): string {
         $data = $actionbar->export_for_template($this);
-        $data['title'] = get_string('nofields', 'mod_data');
-        $data['intro'] = get_string('createfields', 'mod_data');
-        $data['noitemsimgurl'] = $this->output->image_url('fields_zero_state', 'mod_data')->out();
-        return $this->render_from_template('mod_data/fields_action_bar', $data);
+        return $this->render_from_template('mod_data/action_bar', $data);
     }
 
     /**
@@ -170,8 +167,13 @@ class mod_data_renderer extends plugin_renderer_base {
      *
      * @param manager $manager the instance manager
      * @return string The HTML output
+     *
+     * @deprecated since Moodle 4.5 - please do not use this function anymore
      */
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.5')]
     public function render_fields_footer(manager $manager): string {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         $cm = $manager->get_coursemodule();
         $pageurl = new moodle_url('/mod/data/templates.php', ['id' => $cm->id]);
         return $this->render_from_template('mod_data/fields_footer', [

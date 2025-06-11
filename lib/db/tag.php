@@ -52,39 +52,51 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tagareas = array(
-    array(
+$tagareas = [
+    [
         'itemtype' => 'user', // Users.
         'component' => 'core',
         'callback' => 'user_get_tagged_users',
         'callbackfile' => '/user/lib.php',
         'showstandard' => core_tag_tag::HIDE_STANDARD,
-    ),
-    array(
+    ],
+    [
         'itemtype' => 'course', // Courses.
         'component' => 'core',
         'callback' => 'course_get_tagged_courses',
         'callbackfile' => '/course/lib.php',
-    ),
-    array(
+    ],
+    [
         'itemtype' => 'question', // Questions.
         'component' => 'core_question',
         'multiplecontexts' => true,
-    ),
-    array(
+    ],
+    [
         'itemtype' => 'post', // Blog posts.
         'component' => 'core',
         'callback' => 'blog_get_tagged_posts',
         'callbackfile' => '/blog/lib.php',
-    ),
-    array(
+    ],
+    [
         'itemtype' => 'blog_external', // External blogs.
         'component' => 'core',
-    ),
-    array(
+    ],
+    [
         'itemtype' => 'course_modules', // Course modules.
         'component' => 'core',
         'callback' => 'course_get_tagged_course_modules',
         'callbackfile' => '/course/lib.php',
-    ),
-);
+    ],
+    [
+        'itemtype' => 'badge', // Badges.
+        'component' => 'core_badges',
+        'callback' => 'badge_get_tagged_badges',
+        'callbackfile' => '/badges/lib.php',
+    ],
+    [
+        'itemtype' => 'reportbuilder_report',
+        'component' => 'core_reportbuilder',
+        'callback' => 'core_reportbuilder_get_tagged_reports',
+        'callbackfile' => '/reportbuilder/lib.php',
+    ],
+];

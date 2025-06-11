@@ -41,12 +41,12 @@ $courseparams = array('id' => $courseid);
 
 $course = $DB->get_record('course', $courseparams);
 if (empty($course)) {
-    print_error('no_course', 'block_ues_logs');
+    moodle_exception('no_course', 'block_ues_logs');
 }
 
 $context = context_course::instance($course->id);
 if (!has_capability('moodle/grade:edit', $context)) {
-    print_error('no_permission', 'block_ues_logs');
+    moodle_exception('no_permission', 'block_ues_logs');
 }
 
 $s = ues::gen_str('block_ues_logs');

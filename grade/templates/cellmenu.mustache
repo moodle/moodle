@@ -1,0 +1,93 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_grades/cellmenu
+
+    This template renders action menu for a given cell.
+    Example context (json):
+    {
+        "editurl": "<a class='dropdown-item' aria-label='Edit grade' role='menuitem' href='grade/edit/tree/grade.php?courseid=13&itemid=608&userid=85&gpr_type=report&gpr_plugin=grader&gpr_courseid=13'>Edit grade</a>",
+        "hideurl": "<a class='dropdown-item' aria-label='Hide' role='menuitem' href='grade/edit/tree/action.php?id=13&sesskey=sMAOMLAAN5&eid=n608u85&gpr_type=report&gpr_plugin=grader&gpr_courseid=13&action=hide'>Hide</a>",
+        "reporturl0": "<a class='dropdown-item' aria-label='Single view for this user' role='menuitem' href='grade/report/singleview/index.php?id=13&amp;itemid=39&amp;item=user&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Single view for this user</a>",
+        "reporturl1": "<a class='dropdown-item' aria-label='User report' role='menuitem' href='grade/report/user/index.php?userid=39&amp;id=13&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>User report</a>",
+        "ascendingurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=email&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
+        "descendingurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=email&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
+        "ascendingfirstnameurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=firstname&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
+        "descendingfirstnameurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=firstname&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
+        "ascendinglastnameurl": "<a class='dropdown-item' aria-label='Ascending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=asc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Ascending</a>",
+        "descendinglastnameurl": "<a class='dropdown-item' aria-label='Descending' role='menuitem' href='index.php?id=13&amp;sortitemid=lastname&amp;sort=desc&amp;gpr_type=report&amp;gpr_plugin=grader&amp;gpr_courseid=13'>Descending</a>",
+        "viewfeedbackurl": "<a href='#' class='dropdown-item' aria-label='View feedback' role='menuitem'>View feedback</a>",
+        "divider1": "true",
+        "divider2": "true",
+        "datatype": "item",
+        "dataid": "123",
+        "columncollapse": "<a class='dropdown-item' data-hider='hide' aria-label='Collapse' role='menuitem' href='#'>Collapse</a>"
+    }
+}}
+<div class="action-menu moodle-actionmenu grader" data-collapse="menu">
+    <div class="dropdown">
+        <button class="btn btn-link btn-icon icon-size-3 cellmenubtn"
+            type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                {{#databoundary}}data-boundary="{{databoundary}}"{{/databoundary}}
+                {{#datatype}}data-type="{{datatype}}"{{/datatype}}
+                {{#dataid}}data-id="{{dataid}}"{{/dataid}}>
+            <i class="icon fa fa-ellipsis-h fa-fw m-0" title="{{#str}} cellactions, gradereport_grader {{/str}}" aria-hidden="true"></i>
+            <span class="sr-only">{{#str}} cellactions, gradereport_grader {{/str}}</span>
+        </button>
+
+        <div role="menu" class="dropdown-menu">
+            {{#editurl}}{{{editurl}}}{{/editurl}}
+            {{#editcalculationurl}}{{{editcalculationurl}}}{{/editcalculationurl}}
+            {{#reporturl0}}{{{reporturl0}}}{{/reporturl0}}
+            {{#reporturl1}}{{{reporturl1}}}{{/reporturl1}}
+            {{#advancedgradingurl}}{{{advancedgradingurl}}}{{/advancedgradingurl}}
+            {{#gradesonlyurl}}{{{gradesonlyurl}}}{{/gradesonlyurl}}
+            {{#aggregatesonlyurl}}{{{aggregatesonlyurl}}}{{/aggregatesonlyurl}}
+            {{#fullmodeurl}}{{{fullmodeurl}}}{{/fullmodeurl}}
+            {{#deleteurl}}{{{deleteurl}}}{{/deleteurl}}
+            {{#duplicateurl}}{{{duplicateurl}}}{{/duplicateurl}}
+            {{#gradeanalysisurl}}{{{gradeanalysisurl}}}{{/gradeanalysisurl}}
+            {{#divider1}}
+                <div class="dropdown-divider" role="separator"></div>
+            {{/divider1}}
+            {{#ascendingfirstnameurl}}
+            <div role="group" aria-label="{{#str}} sortbyfirstname, core_grades {{/str}}">
+                <div class="h6 dropdown-header">{{#str}} firstname, moodle {{/str}}</div>
+                {{{ascendingfirstnameurl}}}
+                {{{descendingfirstnameurl}}}
+            </div>
+            <div role="group" aria-label="{{#str}} sortbylastname, core_grades {{/str}}">
+                <div class="h6 dropdown-header">{{#str}} lastname, moodle {{/str}}</div>
+                {{{ascendinglastnameurl}}}
+                {{{descendinglastnameurl}}}
+            </div>
+            {{/ascendingfirstnameurl}}
+            {{#ascendingurl}}
+                {{{ascendingurl}}}
+                {{{descendingurl}}}
+            {{/ascendingurl}}
+            {{#divider2}}
+                <div class="dropdown-divider" role="separator"></div>
+            {{/divider2}}
+            {{#hideurl}}{{{hideurl}}}{{/hideurl}}
+            {{#lockurl}}{{{lockurl}}}{{/lockurl}}
+            {{#columncollapse}}{{{columncollapse}}}{{/columncollapse}}
+            {{#resetweightsurl}}{{{resetweightsurl}}}{{/resetweightsurl}}
+            {{#viewfeedbackurl}}{{{viewfeedbackurl}}}{{/viewfeedbackurl}}
+        </div>
+    </div>
+</div>

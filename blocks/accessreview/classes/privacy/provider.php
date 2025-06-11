@@ -49,7 +49,7 @@ class provider implements
      * @param  collection $items The initialised item collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         $items->add_user_preference(self::TOGGLE_STATE, 'privacy:metadata:preference:block_accessreviewtogglestate');
         return $items;
     }

@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Language strings
  *
@@ -21,6 +22,10 @@
  * @copyright Microsoft, Inc.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'Microsoft OneNote';
 $string['submissiontitle'] = 'Odeslaný příspěvek: {$a->assign_name} [{$a->student_firstname} {$a->student_lastname}]';
 $string['feedbacktitle'] = 'Zpětná vazba: {$a->assign_name} [{$a->student_firstname} {$a->student_lastname}]';
@@ -28,3 +33,6 @@ $string['connction_error'] = 'Nelze se připojit k OneNote. Chvilku počkejte a 
 $string['onenote_page_error'] = 'Nelze otevřít stránku OneNote pro tento příspěvek nebo zpětnou vazbu.';
 $string['error_noapiavailable'] = 'Není k dispozici žádné rozhraní OneNote API. S použitím sady pluginů Microsoft 365 se nám nepodařilo OneNote kontaktovat.';
 $string['notebookname'] = 'Poznámkový blok Moodle';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

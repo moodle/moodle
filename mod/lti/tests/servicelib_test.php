@@ -29,7 +29,7 @@ require_once($CFG->dirroot.'/mod/lti/servicelib.php');
  * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class servicelib_test extends \basic_testcase {
+final class servicelib_test extends \basic_testcase {
     /**
      * Test that lti_parse_message_id never fails with good and bad XML.
      *
@@ -37,7 +37,7 @@ class servicelib_test extends \basic_testcase {
      * @param mixed $expected Expected message ID.
      * @param string $xml XML to parse.
      */
-    public function test_lti_parse_message_id($expected, $xml) {
+    public function test_lti_parse_message_id($expected, $xml): void {
         $xml = simplexml_load_string($xml);
         $this->assertEquals($expected, lti_parse_message_id($xml));
     }
@@ -47,7 +47,7 @@ class servicelib_test extends \basic_testcase {
      *
      * @return array
      */
-    public function message_id_provider() {
+    public static function message_id_provider(): array {
         $valid = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <imsx_POXEnvelopeRequest xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">

@@ -28,11 +28,11 @@ require_once('unwant_form.php');
 require_login();
 
 if (!cps_unwant::is_enabled()) {
-    print_error('not_enabled', 'block_cps', '', cps_unwant::name());
+    moodle_exception('not_enabled', 'block_cps', '', cps_unwant::name());
 }
 
 if (!ues_user::is_teacher()) {
-    print_error('not_teacher', 'block_cps');
+    moodle_exception('not_teacher', 'block_cps');
 }
 
 $teacher = ues_teacher::get(array('userid' => $USER->id));
@@ -40,7 +40,7 @@ $teacher = ues_teacher::get(array('userid' => $USER->id));
 $sections = $teacher->sections(true);
 
 if (empty($sections)) {
-    print_error('no_section', 'block_cps');
+    moodle_exception('no_section', 'block_cps');
 }
 
 $PAGE->requires->jquery();

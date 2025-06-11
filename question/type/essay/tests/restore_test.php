@@ -28,7 +28,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright  2019 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_test extends \restore_date_testcase {
+final class restore_test extends \restore_date_testcase {
 
     /**
      * Test missing qtype_essay_options creation.
@@ -37,7 +37,7 @@ class restore_test extends \restore_date_testcase {
      * During restore, we add default options for any questions like that.
      * That is what is tested in this file.
      */
-    public function test_restore_create_missing_qtype_essay_options() {
+    public function test_restore_create_missing_qtype_essay_options(): void {
         global $DB;
 
         // Create a course with one essay question in its question bank.

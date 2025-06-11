@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 use core_question\statistics\responses\analyser;
+use mod_quiz\local\reports\report_base;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 
-require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_table.php');
@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
  * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_statistics_report extends quiz_default_report {
+class quiz_statistics_report extends report_base {
 
     /** @var context_module context of this quiz.*/
     protected $context;
@@ -81,7 +81,7 @@ class quiz_statistics_report extends quiz_default_report {
         $whichattempts = optional_param('whichattempts', $quiz->grademethod, PARAM_INT);
         $whichtries = optional_param('whichtries', question_attempt::LAST_TRY, PARAM_ALPHA);
 
-        $pageoptions = array();
+        $pageoptions = [];
         $pageoptions['id'] = $cm->id;
         $pageoptions['mode'] = 'statistics';
 
@@ -89,7 +89,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         $mform = new quiz_statistics_settings_form($reporturl, compact('quiz'));
 
-        $mform->set_data(array('whichattempts' => $whichattempts, 'whichtries' => $whichtries));
+        $mform->set_data(['whichattempts' => $whichattempts, 'whichtries' => $whichtries]);
 
         if ($whichattempts != $quiz->grademethod) {
             $reporturl->param('whichattempts', $whichattempts);
@@ -113,7 +113,7 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             // All users who can attempt quizzes and who are in the currently selected group.
             $groupstudentsjoins = get_enrolled_with_capabilities_join($this->context, '',
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+                    ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $currentgroup);
             if (!empty($groupstudentsjoins->joins)) {
                 $sql = "SELECT DISTINCT u.id
                     FROM {user} u
@@ -141,7 +141,7 @@ class quiz_statistics_report extends quiz_default_report {
             $report = get_string('questionstatsfilename', 'quiz_statistics');
         }
         $courseshortname = format_string($course->shortname, true,
-                array('context' => context_course::instance($course->id)));
+                ['context' => context_course::instance($course->id)]);
         $filename = quiz_report_download_filename($report, $courseshortname, $quiz->name);
         $this->table->is_downloading($download, $filename,
                 get_string('quizstructureanalysis', 'quiz_statistics'));
@@ -201,7 +201,7 @@ class quiz_statistics_report extends quiz_default_report {
                 $this->output_quiz_structure_analysis_table($questionstats);
 
                 if ($this->table->is_downloading() == 'html' && $quizstats->s() != 0) {
-                    $this->output_statistics_graph($quiz->id, $qubaids);
+                    $this->output_statistics_graph($quiz, $qubaids);
                 }
 
                 $this->output_all_question_response_analysis($qubaids, $questions, $questionstats, $reporturl, $whichtries);
@@ -239,7 +239,7 @@ class quiz_statistics_report extends quiz_default_report {
                     $number = $questionstats->for_slot($slot)->question->number;
                     echo $OUTPUT->heading(get_string('slotstructureanalysis', 'quiz_statistics', $number), 3);
                 }
-                $this->table->define_baseurl(new moodle_url($reporturl, array('slot' => $slot)));
+                $this->table->define_baseurl(new moodle_url($reporturl, ['slot' => $slot]));
                 $this->table->format_and_add_array_of_rows($questionstats->structure_analysis_for_one_slot($slot));
             } else {
                 $this->output_individual_question_data($quiz, $questionstats->for_slot($slot, $variantno));
@@ -289,7 +289,7 @@ class quiz_statistics_report extends quiz_default_report {
      * Display the statistical and introductory information about a question.
      * Only called when not downloading.
      *
-     * @param object                                         $quiz         the quiz settings.
+     * @param stdClass                                         $quiz         the quiz settings.
      * @param \core_question\statistics\questions\calculated $questionstat the question to report on.
      */
     protected function output_individual_question_data($quiz, $questionstat) {
@@ -301,29 +301,29 @@ class quiz_statistics_report extends quiz_default_report {
 
         // Set up the question info table.
         $questioninfotable = new html_table();
-        $questioninfotable->align = array('center', 'center');
+        $questioninfotable->align = ['center', 'center'];
         $questioninfotable->width = '60%';
         $questioninfotable->attributes['class'] = 'generaltable titlesleft';
 
-        $questioninfotable->data = array();
-        $questioninfotable->data[] = array(get_string('modulename', 'quiz'), $quiz->name);
-        $questioninfotable->data[] = array(get_string('questionname', 'quiz_statistics'),
-                $questionstat->question->name.'&nbsp;'.$datumfromtable['actions']);
+        $questioninfotable->data = [];
+        $questioninfotable->data[] = [get_string('modulename', 'quiz'), $quiz->name];
+        $questioninfotable->data[] = [get_string('questionname', 'quiz_statistics'),
+                $questionstat->question->name.'&nbsp;'.$datumfromtable['actions']];
 
         if ($questionstat->variant !== null) {
-            $questioninfotable->data[] = array(get_string('variant', 'quiz_statistics'), $questionstat->variant);
+            $questioninfotable->data[] = [get_string('variant', 'quiz_statistics'), $questionstat->variant];
 
         }
-        $questioninfotable->data[] = array(get_string('questiontype', 'quiz_statistics'),
+        $questioninfotable->data[] = [get_string('questiontype', 'quiz_statistics'),
                 $datumfromtable['icon'] . '&nbsp;' .
                 question_bank::get_qtype($questionstat->question->qtype, false)->menu_name() . '&nbsp;' .
-                $datumfromtable['icon']);
-        $questioninfotable->data[] = array(get_string('positions', 'quiz_statistics'),
-                $questionstat->positions);
+                $datumfromtable['icon']];
+        $questioninfotable->data[] = [get_string('positions', 'quiz_statistics'),
+                $questionstat->positions];
 
         // Set up the question statistics table.
         $questionstatstable = new html_table();
-        $questionstatstable->align = array('center', 'center');
+        $questionstatstable->align = ['center', 'center'];
         $questionstatstable->width = '60%';
         $questionstatstable->attributes['class'] = 'generaltable titlesleft';
 
@@ -332,7 +332,7 @@ class quiz_statistics_report extends quiz_default_report {
         $actions = $datumfromtable['actions'];
         unset($datumfromtable['actions']);
         unset($datumfromtable['name']);
-        $labels = array(
+        $labels = [
             's' => get_string('attempts', 'quiz_statistics'),
             'facility' => get_string('facility', 'quiz_statistics'),
             'sd' => get_string('standarddeviationq', 'quiz_statistics'),
@@ -342,9 +342,9 @@ class quiz_statistics_report extends quiz_default_report {
             'discrimination_index' => get_string('discrimination_index', 'quiz_statistics'),
             'discriminative_efficiency' =>
                                 get_string('discriminative_efficiency', 'quiz_statistics')
-        );
+        ];
         foreach ($datumfromtable as $item => $value) {
-            $questionstatstable->data[] = array($labels[$item], $value);
+            $questionstatstable->data[] = [$labels[$item], $value];
         }
 
         // Display the various bits.
@@ -358,7 +358,7 @@ class quiz_statistics_report extends quiz_default_report {
     /**
      * Output question text in a box with urls appropriate for a preview of the question.
      *
-     * @param object $question question data.
+     * @param stdClass $question question data.
      * @return string HTML of question text, ready for display.
      */
     protected function render_question_text($question) {
@@ -369,14 +369,14 @@ class quiz_statistics_report extends quiz_default_report {
                 $this->context->id, 'quiz_statistics');
 
         return $OUTPUT->box(format_text($text, $question->questiontextformat,
-                array('noclean' => true, 'para' => false, 'overflowdiv' => true)),
+                ['noclean' => true, 'para' => false, 'overflowdiv' => true]),
                 'questiontext boxaligncenter generalbox boxwidthnormal mdl-align');
     }
 
     /**
      * Display the response analysis for a question.
      *
-     * @param object           $question  the question to report on.
+     * @param stdClass           $question  the question to report on.
      * @param int|null         $variantno the variant
      * @param int              $s
      * @param moodle_url       $reporturl the URL to redisplay this report.
@@ -496,13 +496,13 @@ class quiz_statistics_report extends quiz_default_report {
     protected function output_quiz_info_table($quizinfo) {
 
         $quizinfotable = new html_table();
-        $quizinfotable->align = array('center', 'center');
+        $quizinfotable->align = ['center', 'center'];
         $quizinfotable->width = '60%';
         $quizinfotable->attributes['class'] = 'generaltable titlesleft';
-        $quizinfotable->data = array();
+        $quizinfotable->data = [];
 
         foreach ($quizinfo as $heading => $value) {
-             $quizinfotable->data[] = array($heading, $value);
+             $quizinfotable->data[] = [$heading, $value];
         }
 
         return html_writer::table($quizinfotable);
@@ -524,8 +524,8 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         // Reformat the data ready for output.
-        $headers = array();
-        $row = array();
+        $headers = [];
+        $row = [];
         foreach ($quizinfo as $heading => $value) {
             $headers[] = $heading;
             $row[] = $value;
@@ -542,17 +542,11 @@ class quiz_statistics_report extends quiz_default_report {
     /**
      * Output the HTML needed to show the statistics graph.
      *
-     * @param int|object $quizorid The quiz, or its ID.
+     * @param stdClass $quiz the quiz.
      * @param qubaid_condition $qubaids the question usages whose responses to analyse.
-     * @param string $whichattempts Which attempts constant.
      */
-    protected function output_statistics_graph($quizorid, $qubaids) {
+    protected function output_statistics_graph($quiz, $qubaids) {
         global $DB, $PAGE;
-
-        $quiz = $quizorid;
-        if (!is_object($quiz)) {
-            $quiz = $DB->get_record('quiz', array('id' => $quizorid), '*', MUST_EXIST);
-        }
 
         // Load the rest of the required data.
         $questions = quiz_report_get_significant_questions($quiz);
@@ -622,7 +616,7 @@ class quiz_statistics_report extends quiz_default_report {
      * Get the quiz and question statistics, either by loading the cached results,
      * or by recomputing them.
      *
-     * @param object $quiz               the quiz settings.
+     * @param stdClass $quiz               the quiz settings.
      * @param string $whichattempts      which attempts to use, represented internally as one of the constants as used in
      *                                   $quiz->grademethod ie.
      *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
@@ -731,7 +725,7 @@ class quiz_statistics_report extends quiz_default_report {
             $lock->release();
         }
 
-        return array($quizstats, $questionstats);
+        return [$quizstats, $questionstats];
     }
 
     /**
@@ -754,8 +748,8 @@ class quiz_statistics_report extends quiz_default_report {
     /**
      * Analyse responses for all questions and sub questions in this quiz.
      *
-     * @param object[] $questions as returned by self::load_and_initialise_questions_for_calculations
-     * @param object[] $subquestions full question objects.
+     * @param stdClass[] $questions as returned by self::load_and_initialise_questions_for_calculations
+     * @param stdClass[] $subquestions full question objects.
      * @param qubaid_condition $qubaids the question usages whose responses to analyse.
      * @param string $whichtries which tries to analyse \question_attempt::FIRST_TRY, LAST_TRY or ALL_TRIES.
      * @param null|\core\progress\base $progress Used to indicate progress of task.
@@ -780,17 +774,17 @@ class quiz_statistics_report extends quiz_default_report {
     /**
      * Analyse responses for an array of questions or sub questions.
      *
-     * @param object[] $questions  as returned by self::load_and_initialise_questions_for_calculations.
+     * @param stdClass[] $questions  as returned by self::load_and_initialise_questions_for_calculations.
      * @param qubaid_condition $qubaids the question usages whose responses to analyse.
      * @param string $whichtries which tries to analyse \question_attempt::FIRST_TRY, LAST_TRY or ALL_TRIES.
      * @param null|\core\progress\base $progress Used to indicate progress of task.
      * @param int[] $done array keys are ids of questions that have been analysed before calling method.
      * @return array array keys are ids of questions that were analysed after this method call.
      */
-    protected function analyse_responses_for_questions($questions, $qubaids, $whichtries, $progress = null, $done = array()) {
+    protected function analyse_responses_for_questions($questions, $qubaids, $whichtries, $progress = null, $done = []) {
         $countquestions = count($questions);
         if (!$countquestions) {
-            return array();
+            return [];
         }
         if ($progress === null) {
             $progress = new \core\progress\none();
@@ -818,7 +812,7 @@ class quiz_statistics_report extends quiz_default_report {
     protected function everything_download_options(moodle_url $reporturl) {
         global $OUTPUT;
         return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'quiz_statistics'),
-            $reporturl->out_omit_querystring(), 'download', $reporturl->params() + array('everything' => 1));
+            $reporturl->out_omit_querystring(), 'download', $reporturl->params() + ['everything' => 1]);
     }
 
     /**
@@ -826,7 +820,8 @@ class quiz_statistics_report extends quiz_default_report {
      *
      * @param int    $lastcachetime  the time the stats were last cached.
      * @param int    $quizid         the quiz id.
-     * @param array  $groupstudentsjoins (joins, wheres, params) for students in the group or empty array if groups not used.
+     * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params) for students in the group
+     *                                   or empty array if groups not used.
      * @param string $whichattempts which attempts to use, represented internally as one of the constants as used in
      *                                   $quiz->grademethod ie.
      *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
@@ -859,7 +854,7 @@ class quiz_statistics_report extends quiz_default_report {
         $a->count = $count;
 
         $recalcualteurl = new moodle_url($reporturl,
-                array('recalculate' => 1, 'sesskey' => sesskey()));
+                ['recalculate' => 1, 'sesskey' => sesskey()]);
         $output = '';
         $output .= $OUTPUT->box_start(
                 'boxaligncenter generalbox boxwidthnormal mdl-align', 'cachingnotice');
@@ -879,15 +874,15 @@ class quiz_statistics_report extends quiz_default_report {
      */
     public function clear_cached_data($qubaids) {
         global $DB;
-        $DB->delete_records('quiz_statistics', array('hashcode' => $qubaids->get_hash_code()));
-        $DB->delete_records('question_statistics', array('hashcode' => $qubaids->get_hash_code()));
-        $DB->delete_records('question_response_analysis', array('hashcode' => $qubaids->get_hash_code()));
+        $DB->delete_records('quiz_statistics', ['hashcode' => $qubaids->get_hash_code()]);
+        $DB->delete_records('question_statistics', ['hashcode' => $qubaids->get_hash_code()]);
+        $DB->delete_records('question_response_analysis', ['hashcode' => $qubaids->get_hash_code()]);
     }
 
     /**
      * Load the questions in this quiz and add some properties to the objects needed in the reports.
      *
-     * @param object $quiz the quiz.
+     * @param stdClass $quiz the quiz.
      * @return array of questions for this quiz.
      */
     public function load_and_initialise_questions_for_calculations($quiz) {
@@ -895,11 +890,13 @@ class quiz_statistics_report extends quiz_default_report {
         $questions = quiz_report_get_significant_questions($quiz);
         $questiondata = [];
         foreach ($questions as $qs => $question) {
+            $displaynumber = $question->displaynumber;
             if ($question->qtype === 'random') {
                 $question->id = 0;
                 $question->name = get_string('random', 'quiz');
                 $question->questiontext = get_string('random', 'quiz');
                 $question->parenttype = 'random';
+                $question->number = $displaynumber;
                 $questiondata[$question->slot] = $question;
             } else if ($question->qtype === 'missingtype') {
                 $question->id = is_numeric($question->id) ? (int) $question->id : 0;
@@ -910,7 +907,7 @@ class quiz_statistics_report extends quiz_default_report {
                 $q = question_bank::load_question_data($question->id);
                 $q->maxmark = $question->maxmark;
                 $q->slot = $question->slot;
-                $q->number = $question->number;
+                $q->number = $displaynumber;
                 $q->parenttype = null;
                 $questiondata[$question->slot] = $q;
             }
@@ -994,7 +991,7 @@ class quiz_statistics_report extends quiz_default_report {
     public function calculate_questions_stats_for_question_bank(
             int $quizid,
             bool $calculateifrequired = true,
-            bool $performanalysis = true
+            bool $performanalysis = true,
         ): ?all_calculated_for_qubaid_condition {
         global $DB;
         $quiz = $DB->get_record('quiz', ['id' => $quizid], '*', MUST_EXIST);

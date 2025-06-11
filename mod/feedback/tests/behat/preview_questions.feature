@@ -22,7 +22,7 @@ Feature: Preview feedback questions
       | activity   | name                | course | idnumber    |
       | feedback   | Music history | C1     | feedback0   |
     And I am on the "Music history" "feedback activity" page logged in as editingteacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
         | Question               | What is your favourite instrument |
         | Label                  | instrument1                       |

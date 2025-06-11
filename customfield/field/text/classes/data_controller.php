@@ -14,24 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Customfields text field plugin
- *
- * @package   customfield_text
- * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace customfield_text;
-
-defined('MOODLE_INTERNAL') || die;
-
-use core_customfield\api;
 
 /**
  * Class data
  *
- * @package customfield_text
+ * @package   customfield_text
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,7 +29,7 @@ class data_controller extends \core_customfield\data_controller {
      * Return the name of the field where the information is stored
      * @return string
      */
-    public function datafield() : string {
+    public function datafield(): string {
         return 'charvalue';
     }
 
@@ -72,7 +60,7 @@ class data_controller extends \core_customfield\data_controller {
      * @param array $files
      * @return array
      */
-    public function instance_form_validation(array $data, array $files) : array {
+    public function instance_form_validation(array $data, array $files): array {
 
         $errors = parent::instance_form_validation($data, $files);
         $maxlength = $this->get_field()->get_configdata_property('maxlength');
@@ -105,8 +93,8 @@ class data_controller extends \core_customfield\data_controller {
 
         $link = $this->get_field()->get_configdata_property('link');
         if ($link) {
+            $url = new \moodle_url(str_replace('$$', $this->get_value(), $link));
             $linktarget = $this->get_field()->get_configdata_property('linktarget');
-            $url = str_replace('$$', urlencode($this->get_value()), $link);
             $attributes = $linktarget ? ['target' => $linktarget] : [];
             $value = \html_writer::link($url, $value, $attributes);
         }

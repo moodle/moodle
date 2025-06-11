@@ -20,7 +20,7 @@ class com_wiris_system_CallWrapper {
 		$this->errorReportingLevel = $level;
 	}
 	public function phpStart() {
-		$this->errorReportingLevel = error_reporting(E_ALL & ~E_STRICT);
+		$this->errorReportingLevel = error_reporting(E_ALL);
 		set_error_handler('_hx_error_handler', E_ALL);
 		set_exception_handler('_hx_exception_handler');
 		spl_autoload_register('_hx_autoload');

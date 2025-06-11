@@ -32,6 +32,9 @@ require_once($CFG->libdir.'/authlib.php');
  */
 class auth_plugin_mnet extends auth_plugin_base {
 
+    /** @var mnet_environment mnet environment. */
+    protected $mnet;
+
     /**
      * Constructor.
      */
@@ -865,7 +868,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                                  array('useragent'=>$useragent, 'userid'=>$userid));
 
         if (isset($remoteclient) && isset($remoteclient->id)) {
-            \core\session\manager::kill_user_sessions($userid);
+            \core\session\manager::destroy_user_sessions($userid);
         }
         return $returnstring;
     }
@@ -885,7 +888,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $session = $DB->get_record('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id, 'useragent'=>$useragent));
         $DB->delete_records('mnet_session', array('username'=>$username, 'mnethostid'=>$remoteclient->id, 'useragent'=>$useragent));
         if (false != $session) {
-            \core\session\manager::kill_session($session->session_id);
+            \core\session\manager::destroy($session->session_id);
             return true;
         }
         return false;
@@ -902,7 +905,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG;
         if (is_array($sessionArray)) {
             while($session = array_pop($sessionArray)) {
-                \core\session\manager::kill_session($session->session_id);
+                \core\session\manager::destroy($session->session_id);
             }
             return true;
         }
@@ -1034,7 +1037,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @param object $logline The log information to be trimmed
      * @return object The passed logline object trimmed to not exceed storable limits
      */
-    function trim_logline ($logline) {
+    function trim_logline($logline) {
         $limits = array('ip' => 15, 'coursename' => 40, 'module' => 20, 'action' => 40,
                         'url' => 255);
         foreach ($limits as $property => $limit) {

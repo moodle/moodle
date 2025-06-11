@@ -1,0 +1,5 @@
+confirmimportskydrive,repository_onedrive
+importskydrivefiles,repository_onedrive
+skydrivefilesexist,repository_onedrive
+skydrivefilesimported,repository_onedrive
+skydrivefilesnotimported,repository_onedrive

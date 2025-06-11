@@ -27,7 +27,7 @@ use core_privacy\local\metadata\types\subsystem_link;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\metadata\types\subsystem_link
  */
-class types_subsystem_link_test extends \advanced_testcase {
+final class types_subsystem_link_test extends \advanced_testcase {
 
     /**
      * Ensure that warnings are thrown if string identifiers contain invalid characters.
@@ -37,7 +37,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs($name, $privacyfields, $summary) {
+    public function test_invalid_configs($name, $privacyfields, $summary): void {
         $record = new subsystem_link($name, $privacyfields, $summary);
         $this->assertDebuggingCalled();
     }
@@ -50,7 +50,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_invalid_configs_debug_normal($name, $privacyfields, $summary) {
+    public function test_invalid_configs_debug_normal($name, $privacyfields, $summary): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -67,7 +67,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      * @param   string  $summary Summary
      * @covers ::__construct
      */
-    public function test_valid_configs($name, $privacyfields, $summary) {
+    public function test_valid_configs($name, $privacyfields, $summary): void {
         $record = new subsystem_link($name, $privacyfields, $summary);
         $this->assertDebuggingNotCalled();
     }
@@ -77,7 +77,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_string_provider() {
+    public static function invalid_string_provider(): array {
         return [
             'Space in summary' => [
                 'example',
@@ -97,7 +97,7 @@ class types_subsystem_link_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function valid_string_provider() {
+    public static function valid_string_provider(): array {
         return [
             'Valid combination' => [
                 'example',

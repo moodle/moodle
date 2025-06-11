@@ -29,6 +29,8 @@
  * @subpackage lib
  * @copyright  Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+ * @todo Final removal in Moodle 6.0 MDL-80804.
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -43,7 +45,10 @@ defined('MOODLE_INTERNAL') || die();
  * @package moodlecore
  * @copyright Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+ * @todo Final removal in Moodle 6.0 MDL-80804.
  */
+#[\core\attribute\deprecated(null, since: 4.5, reason: 'No longer used in core code', mdl: 'MDL-72397')]
 abstract class moodle_list {
     public $attributes;
     public $listitemclassname = 'list_item';
@@ -79,6 +84,9 @@ abstract class moodle_list {
     public $pageurl;
     public $pageparamname;
 
+    /** @var int no of top level items. */
+    private $itemsperpage;
+
     /**
      * Constructor.
      *
@@ -89,8 +97,11 @@ abstract class moodle_list {
      * @param integer $page if 0 no pagination. (These three params only used in top level list.)
      * @param string $pageparamname name of url param that is used for passing page no
      * @param integer $itemsperpage no of top level items.
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function __construct($type='ul', $attributes='', $editable = false, $pageurl=null, $page = 0, $pageparamname = 'page', $itemsperpage = 20) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $PAGE;
 
         $this->editable = $editable;
@@ -111,8 +122,11 @@ abstract class moodle_list {
      * Returns html string.
      *
      * @param integer $indent depth of indentation.
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function to_html($indent=0, $extraargs=array()) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         if (count($this->items)) {
             $tabs = str_repeat("\t", $indent);
             $first = true;
@@ -153,8 +167,11 @@ abstract class moodle_list {
      * @param integer $id
      * @param boolean $suppresserror error if not item found?
      * @return list_item *copy* or null if item is not found
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function find_item($id, $suppresserror = false) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         if (isset($this->items)) {
             foreach ($this->items as $key => $child) {
                 if ($child->id == $id) {
@@ -176,11 +193,29 @@ abstract class moodle_list {
         return null;
     }
 
+    /**
+     * Add list item
+     *
+     * @param $item
+     * @return void
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
+     */
     public function add_item($item) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->items[] = $item;
     }
 
+    /**
+     * Set parent item.
+     *
+     * @param $parent
+     * @return void
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
+     */
     public function set_parent($parent) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->parentitem = $parent;
     }
 
@@ -193,9 +228,11 @@ abstract class moodle_list {
      *
      * @param integer $offset how many list toplevel items are there in lists before this one
      * @return array(boolean, integer) whether there is more than one page, $offset + how many toplevel items where there in this list.
-     *
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function list_from_records($paged = false, $offset = 0) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->paged = $paged;
         $this->offset = $offset;
         $this->get_records();
@@ -246,13 +283,20 @@ abstract class moodle_list {
 
     /**
      * Should be overriden to return an array of records of list items.
+     *
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
-    public abstract function get_records();
+    abstract public function get_records();
 
     /**
      * display list of page numbers for navigation
+     *
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function display_page_numbers() {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $html = '';
         $topcount = count($this->items);
         $this->pagecount = (integer) ceil(($topcount + $this->offset)/ QUESTION_PAGE_LENGTH );
@@ -277,8 +321,11 @@ abstract class moodle_list {
      *
      * @param    int itemid - if given, restrict records to those with this parent id.
      * @return   array peer ids
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function get_items_peers($itemid) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $itemref = $this->find_item($itemid);
         $peerids = $itemref->parentlist->get_child_ids();
         return $peerids;
@@ -288,8 +335,11 @@ abstract class moodle_list {
      * Returns an array of ids of child items.
      *
      * @return   array peer ids
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function get_child_ids() {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $childids = array();
         foreach ($this->items as $child) {
            $childids[] = $child->id;
@@ -303,8 +353,11 @@ abstract class moodle_list {
      *
      * @param list_item $item The item which its top level parent is going to be returned.
      * @return int
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function get_top_level_parent_id($item) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         return 0; // Top level items have no parent.
     }
 
@@ -313,8 +366,11 @@ abstract class moodle_list {
      *
      * @param string $direction up / down
      * @param integer $id
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function move_item_up_down($direction, $id) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $peers = $this->get_items_peers($id);
         $itemkey = array_search($id, $peers);
         switch ($direction) {
@@ -341,7 +397,17 @@ abstract class moodle_list {
         $this->reorder_peers($peers);
     }
 
+    /**
+     * Reorder peers
+     *
+     * @param $peers
+     * @return void
+     * @throws dml_exception
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
+     */
     public function reorder_peers($peers) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $DB;
         foreach ($peers as $key => $peer) {
             $DB->set_field($this->table, "sortorder", $key, array("id"=>$peer));
@@ -353,8 +419,11 @@ abstract class moodle_list {
      *
      * @param int $id an item index.
      * @return list_item the item that used to be the parent of the item moved.
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function move_item_left($id) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $DB;
 
         $item = $this->find_item($id);
@@ -379,8 +448,11 @@ abstract class moodle_list {
      * Make item with id $id the child of the peer that is just above it in the sort order.
      *
      * @param integer $id
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function move_item_right($id) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $DB;
 
         $peers = $this->get_items_peers($id);
@@ -408,8 +480,11 @@ abstract class moodle_list {
      * @param integer $moveup id of item to move up
      * @param integer $movedown id of item to move down
      * @return unknown
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function process_actions($left, $right, $moveup, $movedown) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         //should this action be processed by this list object?
         if (!(array_key_exists($left, $this->records) || array_key_exists($right, $this->records) || array_key_exists($moveup, $this->records) || array_key_exists($movedown, $this->records))) {
             return false;
@@ -453,8 +528,11 @@ abstract class moodle_list {
      * @param integer $itemid an item id.
      * @return boolean Is the item with the given id the first top-level item on
      * the current page?
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function item_is_first_on_page($itemid) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         return $this->page && isset($this->items[$this->firstitem]) &&
                 $itemid == $this->items[$this->firstitem]->id;
     }
@@ -463,8 +541,11 @@ abstract class moodle_list {
      * @param integer $itemid an item id.
      * @return boolean Is the item with the given id the last top-level item on
      * the current page?
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function item_is_last_on_page($itemid) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         return $this->page && isset($this->items[$this->lastitem]) &&
                 $itemid == $this->items[$this->lastitem]->id;
     }
@@ -474,7 +555,10 @@ abstract class moodle_list {
  * @package moodlecore
  * @copyright Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+ * @todo Final removal in Moodle 6.0 MDL-80804.
  */
+#[\core\attribute\deprecated(null, since: '4.5', reason: 'No longer used in core code.', mdl: 'MDL-72397')]
 abstract class list_item {
     /** @var integer id of record, used if list is editable. */
     public $id;
@@ -497,14 +581,18 @@ abstract class list_item {
 
     /**
      * Constructor
+     *
      * @param mixed $item fragment of html for list item or record
      * @param object $parent reference to parent of this item
      * @param string $attributes attributes for li tag
      * @param boolean $display whether this item is displayed. Some items may be loaded so we have a complete
      *                              structure in memory to work with for actions but are not displayed.
      * @return list_item
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function __construct($item, $parent, $attributes = '', $display = true) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->item = $item;
         if (is_object($this->item)) {
             $this->id = $this->item->id;
@@ -521,8 +609,11 @@ abstract class list_item {
     /**
      * Output the html just for this item. Called by to_html which adds html for children.
      *
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function item_html($extraargs = array()) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         if (is_string($this->item)) {
             $html = $this->item;
         } elseif (is_object($this->item)) {
@@ -540,8 +631,11 @@ abstract class list_item {
      * @param array $extraargs any extra data that is needed to print the list item
      *                            may be used by sub class.
      * @return string html
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function to_html($indent = 0, $extraargs = array()) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         if (!$this->display) {
             return '';
         }
@@ -555,7 +649,18 @@ abstract class list_item {
         return $this->item_html($extraargs).'&nbsp;'.(join('', $this->icons)).(($childrenhtml !='')?("\n".$childrenhtml):'');
     }
 
+    /**
+     * Set icon HTML
+     *
+     * @param $first
+     * @param $last
+     * @param $lastitem
+     * @return void
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
+     */
     public function set_icon_html($first, $last, $lastitem) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $CFG;
         $strmoveup = get_string('moveup');
         $strmovedown = get_string('movedown');
@@ -605,13 +710,32 @@ abstract class list_item {
         }
     }
 
+    /**
+     * Return image icon HTML
+     *
+     * @param $action
+     * @param $url
+     * @param $icon
+     * @return string
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
+     */
     public function image_icon($action, $url, $icon) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $OUTPUT;
         return '<a title="' . s($action) .'" href="'.$url.'">' .
                 $OUTPUT->pix_icon('t/' . $icon, $action) . '</a> ';
     }
 
+    /**
+     * Return image spacer HTML
+     *
+     * @return mixed
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
+     */
     public function image_spacer() {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         global $OUTPUT;
         return $OUTPUT->spacer();
     }
@@ -622,10 +746,13 @@ abstract class list_item {
      * @param array $records
      * @param array $children
      * @param integer $thisrecordid
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function create_children(&$records, &$children, $thisrecordid) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         //keys where value is $thisrecordid
-        $thischildren = array_keys($children, $thisrecordid);
+        $thischildren = moodle_array_keys_filter($children, $thisrecordid);
         foreach ($thischildren as $child) {
             $thisclass = get_class($this);
             $newlistitem = new $thisclass($records[$child], $this->children, $this->attributes);
@@ -634,7 +761,16 @@ abstract class list_item {
         }
     }
 
+    /**
+     * Set parent list
+     *
+     * @param $parent
+     * @return void
+     * @deprecated Since Moodle 4.5 MDL-72397. This is no longer used in core code.
+     * @todo Final removal in Moodle 6.0 MDL-80804.
+     */
     public function set_parent($parent) {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $this->parentlist = $parent;
     }
 }

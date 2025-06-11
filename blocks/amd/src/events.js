@@ -65,20 +65,3 @@ export const notifyBlockContentUpdated = element => dispatchEvent(
     },
     element
 );
-
-let legacyEventsRegistered = false;
-if (!legacyEventsRegistered) {
-    // The following event triggers are legacy and will be removed in the future.
-    // The following approach provides a backwards-compatability layer for the new events.
-    // Code should be updated to make use of native events.
-
-    Y.use('event', 'moodle-core-event', Y => {
-        // Provide a backwards-compatability layer for YUI Events.
-        document.addEventListener(eventTypes.blockContentUpdated, e => {
-            // Trigger the legacy YUI event.
-            Y.Global.fire(M.core.event.BLOCK_CONTENT_UPDATED, {instanceid: e.detail.instanceId});
-        });
-    });
-
-    legacyEventsRegistered = true;
-}

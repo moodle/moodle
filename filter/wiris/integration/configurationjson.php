@@ -4,7 +4,12 @@
 require_once ('pluginbuilder.php');
 
 $provider = $pluginBuilder->getCustomParamsProvider();
-$variablekeys = $provider->getRequiredParameter('variablekeys');
+
+try {
+    $variablekeys = $provider->getRequiredParameter('variablekeys');
+} catch (Exception $e) {
+    exit("Error: Required parameter 'variablekeys' not found.");
+}
 
 // Adding - if necessary - CORS headers
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : "";

@@ -80,8 +80,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I press "Save and display"
     And I turn editing mode on
     And I add the "Calendar" block
-    And I click on "Full calendar" "link"
-    And I set the field "course" to "C1"
+    And I click on "Course calendar" "link"
     And I create a calendar event:
       | Type of event | group       |
       | Group         | Group 1     |
@@ -91,3 +90,22 @@ Feature: Enable the calendar block in a course and test it's functionality
     Then I should see "Group Event"
     And I am on the "Course 1" course page logged in as student2
     And I should not see "Group Event"
+
+  @javascript
+  Scenario: Click on today's course event on the calendar view page's calendar block
+    Given I log in as "admin"
+    And I create a calendar event with form data:
+      | id_eventtype | Site       |
+      | id_name      | Site Event |
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Calendar" block
+    And I configure the "Calendar" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    When I am on "Course 1" course homepage
+    And I follow "Course calendar"
+    And I click on today in the mini-calendar block to view the detail
+    Then I should see "Site Event" in the "Calendar" "block"
+    And ".popover" "css_element" should not exist

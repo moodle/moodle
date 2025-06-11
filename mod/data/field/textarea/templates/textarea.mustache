@@ -1,0 +1,75 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template datafield_textarea/textarea
+
+    The purpose of this template is to enable the user to define a textarea field.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * name string The field's name.
+    * description string The field's description.
+    * required bool The field's requiredness.
+    * param2 int The field's width in columns.
+    * param3 int The field's height in rows.
+    * param5 int The field's attached files maxsize.
+
+    Example context (json):
+    {
+        "name": "A name",
+        "description": "A description",
+        "required": true,
+        "param2": 60,
+        "param3": 35,
+        "param5": 4096
+    }
+}}
+
+<fieldset>
+    {{> mod_data/fields/basicfields }}
+    {{> mod_data/fields/requiredfield }}
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="param2">{{#str}}fieldwidth, data{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="textareafieldsize form-control me-1" type="text" name="param2" id="param2" value="{{#param2}}{{param2}}{{/param2}}{{^param2}}60{{/param2}}">
+            {{#str}}columns, data{{/str}}</div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="param3">{{#str}}fieldheight, data{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="textareafieldsize form-control me-1" type="text" name="param3" id="param3" value="{{#param3}}{{param3}}{{/param3}}{{^param3}}35{{/param3}}">
+            {{#str}}rows, data{{/str}}</div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="param5">{{#str}}maxbytes, datafield_textarea{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="c1 form-control me-1" type="text" name="param5" id="param5" value="{{#param5}}{{param5}}{{/param5}}{{^param5}}0{{/param5}}">
+            {{#str}}maxbytes_desc, datafield_textarea{{/str}}</div>
+    </div>
+    <input type="hidden" name="param4" id="param4" value="1"/>
+</fieldset>

@@ -72,54 +72,6 @@ function tool_policy_myprofile_navigation(tree $tree, $user, $iscurrentuser, $co
 }
 
 /**
- * Load policy message for guests.
- *
- * @return string The HTML code to insert before the head.
- */
-function tool_policy_before_standard_html_head() {
-    global $CFG, $PAGE, $USER;
-
-    $message = null;
-    if (!empty($CFG->sitepolicyhandler)
-            && $CFG->sitepolicyhandler == 'tool_policy'
-            && empty($USER->policyagreed)
-            && (isguestuser() || !isloggedin())) {
-        $output = $PAGE->get_renderer('tool_policy');
-        try {
-            $page = new \tool_policy\output\guestconsent();
-            $message = $output->render($page);
-        } catch (dml_read_exception $e) {
-            // During upgrades, the new plugin code with new SQL could be in place but the DB not upgraded yet.
-            $message = null;
-        }
-    }
-
-    return $message;
-}
-
-/**
- * Callback to add footer elements.
- *
- * @return string HTML footer content
- */
-function tool_policy_standard_footer_html() {
-    global $CFG, $PAGE;
-
-    $output = '';
-    if (!empty($CFG->sitepolicyhandler)
-            && $CFG->sitepolicyhandler == 'tool_policy') {
-        $policies = api::get_current_versions_ids();
-        if (!empty($policies)) {
-            $url = new moodle_url('/admin/tool/policy/viewall.php', ['returnurl' => $PAGE->url]);
-            $output .= html_writer::link($url, get_string('userpolicysettings', 'tool_policy'));
-            $output = html_writer::div($output, 'policiesfooter');
-        }
-    }
-
-    return $output;
-}
-
-/**
  * Hooks redirection to policy acceptance pages before sign up.
  */
 function tool_policy_pre_signup_requests() {
@@ -205,10 +157,10 @@ function tool_policy_pluginfile($course, $cm, $context, $filearea, $args, $force
 function tool_policy_get_fontawesome_icon_map() {
     return [
         'tool_policy:agreed' => 'fa-check text-success',
-        'tool_policy:declined' => 'fa-times text-danger',
-        'tool_policy:pending' => 'fa-clock-o text-warning',
-        'tool_policy:partial' => 'fa-exclamation-triangle text-warning',
-        'tool_policy:level' => 'fa-level-up fa-rotate-90 text-muted',
+        'tool_policy:declined' => 'fa-xmark text-danger',
+        'tool_policy:level' => 'fa-turn-up fa-rotate-90 text-muted',
+        'tool_policy:partial' => 'fa-triangle-exclamation text-warning',
+        'tool_policy:pending' => 'fa-regular fa-clock text-warning',
     ];
 }
 

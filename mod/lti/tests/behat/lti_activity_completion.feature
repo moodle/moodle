@@ -39,10 +39,10 @@ Feature: View activity completion information in the LTI activity
     And the "View" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the LTI activity as done but a teacher cannot
     Given I am on the "Music history" "lti activity editing" page logged in as teacher1
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled

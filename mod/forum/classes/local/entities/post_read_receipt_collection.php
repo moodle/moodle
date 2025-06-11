@@ -65,7 +65,7 @@ class post_read_receipt_collection {
      * @param post_entity $post The post to check
      * @return bool
      */
-    public function has_user_read_post(stdClass $user, post_entity $post) : bool {
+    public function has_user_read_post(stdClass $user, post_entity $post): bool {
         global $CFG;
         $isoldpost = ($post->get_time_modified() < (time() - ($CFG->forum_oldpostdays * 24 * 3600)));
 

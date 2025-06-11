@@ -29,7 +29,7 @@ require_once("{$CFG->dirroot}/mod/forum/rsslib.php");
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rsslib_test extends \advanced_testcase {
+final class rsslib_test extends \advanced_testcase {
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
     use \mod_forum_tests_generator_trait;
@@ -37,7 +37,7 @@ class rsslib_test extends \advanced_testcase {
     /**
      * Ensure that deleted posts are not included.
      */
-    public function test_forum_rss_feed_discussions_sql_respect_deleted() {
+    public function test_forum_rss_feed_discussions_sql_respect_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -68,7 +68,7 @@ class rsslib_test extends \advanced_testcase {
     /**
      * Ensure that deleted posts are not included.
      */
-    public function test_forum_rss_feed_posts_sql_respect_deleted() {
+    public function test_forum_rss_feed_posts_sql_respect_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();

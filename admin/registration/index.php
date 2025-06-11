@@ -125,4 +125,7 @@ if (\core\hub\registration::is_registered()) {
     echo html_writer::div(html_writer::link(new moodle_url($returnurl), get_string('skipregistration', 'hub')),
         'skipregistration mt-2');
 }
+
+$PAGE->requires->js_call_amd('core_admin/expand_hash', 'init');
+
 echo $OUTPUT->footer();

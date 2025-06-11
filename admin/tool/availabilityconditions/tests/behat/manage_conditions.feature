@@ -44,16 +44,16 @@ Feature: Manage availability conditions
     # Check the icon is there (it should be a Hide icon, meaning is currently visible).
     Then "Hide" "icon" should exist in the "Restriction by date" "table_row"
 
-    # Click the icon. It should toggle to hidden (title=Show).
-    And I click on "Hide" "icon" in the "Restriction by date" "table_row"
-    And "Show" "icon" should exist in the "Restriction by date" "table_row"
+    # Click the icon. It should toggle to disabled.
+    And I toggle the "Disable Restriction by date" admin switch "off"
+    And I should see "Restriction by date disabled."
 
     # Toggle it back to visible (title=Hide).
-    And I click on "Show" "icon" in the "Restriction by date" "table_row"
-    And "Hide" "icon" should exist in the "Restriction by date" "table_row"
+    And I toggle the "Enable Restriction by date" admin switch "on"
+    And I should see "Restriction by date enabled."
 
     # OK, toggling works. Set the grade one to Hide and we'll go see if it actually worked.
-    And I click on "Hide" "icon" in the "Restriction by grade" "table_row"
+    And I toggle the "Disable Restriction by grade" admin switch "off"
     And I am on the "P1" "page activity editing" page
     And I expand all fieldsets
     And I click on "Add restriction..." "button"

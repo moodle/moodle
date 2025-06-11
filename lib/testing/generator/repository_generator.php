@@ -110,7 +110,7 @@ class testing_repository_generator extends component_generator_base {
      * @param array $options
      * @return stdClass repository instance record
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG, $DB, $PAGE;
         require_once($CFG->dirroot . '/repository/lib.php');
 
@@ -173,7 +173,7 @@ class testing_repository_generator extends component_generator_base {
      *
      * @return stdClass repository type record
      */
-    public function create_type($record = null, array $options = null) {
+    public function create_type($record = null, ?array $options = null) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/repository/lib.php');
 

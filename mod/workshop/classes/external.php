@@ -26,9 +26,16 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 
+use core_external\external_api;
+use core_external\external_files;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
 use mod_workshop\external\workshop_summary_exporter;
 use mod_workshop\external\submission_exporter;
 use mod_workshop\external\assessment_exporter;
@@ -88,7 +95,7 @@ class mod_workshop_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
             $output = $PAGE->get_renderer('core');
 
             // Get the workshops in this course, this function checks users visibility permissions.
@@ -532,7 +539,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function add_submission_returns() {
@@ -640,7 +647,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function update_submission_returns() {
@@ -706,7 +713,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function delete_submission_returns() {
@@ -870,7 +877,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_submissions_returns() {
@@ -965,7 +972,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_submission_returns() {
@@ -1118,7 +1125,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_submission_assessments_returns() {
@@ -1186,7 +1193,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_assessment_returns() {
@@ -1255,7 +1262,7 @@ class mod_workshop_external extends external_api {
 
         $result = array(
             'dimenssionscount' => $formdata['nodims'],
-            'descriptionfiles' => external_util::get_area_files($context->id, $strategyname, 'description'),
+            'descriptionfiles' => util::get_area_files($context->id, $strategyname, 'description'),
             'warnings' => $warnings
         );
         // Include missing dimension fields.
@@ -1274,7 +1281,7 @@ class mod_workshop_external extends external_api {
                     if (strpos($key, 'description__idx_')) {
                         // Format dimension description.
                         $id = str_replace('description__idx_', '', $key);
-                        list($val, $format) = external_format_text($val, $alldata['dimensionid__idx_' . $id . 'format'],
+                        list($val, $format) = \core_external\util::format_text($val, $alldata['dimensionid__idx_' . $id . 'format'],
                             $context->id, $strategyname, 'description', $alldata['dimensionid__idx_' . $id]);
                     }
                     $result[$typeofdata][] = array(
@@ -1295,7 +1302,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_assessment_form_definition_returns() {
@@ -1421,7 +1428,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_reviewer_assessments_returns() {
@@ -1501,7 +1508,7 @@ class mod_workshop_external extends external_api {
                     $data->feedbackauthor_editor['text'] = $wsdata['value'];
                     break;
                 case 'feedbackauthorformat':
-                    $data->feedbackauthor_editor['format'] = clean_param($wsdata['value'], PARAM_FORMAT);
+                    $data->feedbackauthor_editor['format'] = clean_param($wsdata['value'], PARAM_ALPHANUMEXT);
                     break;
                 case 'feedbackauthorinlineattachmentsid':
                     $data->feedbackauthor_editor['itemid'] = clean_param($wsdata['value'], PARAM_INT);
@@ -1549,7 +1556,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function update_assessment_returns() {
@@ -1770,7 +1777,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function evaluate_assessment_returns() {
@@ -1900,7 +1907,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function get_grades_report_returns() {
@@ -2120,7 +2127,7 @@ class mod_workshop_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.4
      */
     public static function evaluate_submission_returns() {

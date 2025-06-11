@@ -24,6 +24,7 @@
 
 namespace tool_migratehvp2h5p\event;
 
+use stdClass;
 use core\event\base;
 
 /**
@@ -67,7 +68,7 @@ class hvp_migrated extends base {
      * Create event from record.
      *
      * @param stdClass $record
-     * @return acceptance_created
+     * @return hvp_migrated
      */
     public static function create_from_record($record) {
         $event = static::create([
@@ -119,7 +120,7 @@ class hvp_migrated extends base {
     /**
      * No mapping required for this event because this event is not backed up.
      *
-     * @return bool
+     * @return array
      */
     public static function get_other_mapping() {
         $othermapped = [

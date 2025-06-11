@@ -27,8 +27,6 @@ namespace assignsubmission_onenote\event;
 
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The assignsubmission_onenote assessable uploaded event class.
  *
@@ -52,35 +50,6 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     public function get_description() {
         return "The user with id '$this->userid' has uploaded a file to the submission with id '$this->objectid' " .
             "in the assignment activity with the course module id '$this->contextinstanceid'.";
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $eventdata = new stdClass();
-        $eventdata->modulename = 'assign';
-        $eventdata->cmid = $this->contextinstanceid;
-        $eventdata->itemid = $this->objectid;
-        $eventdata->courseid = $this->courseid;
-        $eventdata->userid = $this->userid;
-        if (count($this->legacyfiles) > 1) {
-            $eventdata->files = $this->legacyfiles;
-        }
-        $eventdata->file = $this->legacyfiles;
-        $eventdata->pathnamehashes = array_keys($this->legacyfiles);
-        return $eventdata;
-    }
-
-    /**
-     * Return the legacy event name.
-     *
-     * @return string
-     */
-    public static function get_legacy_eventname() {
-        return 'assessable_onenote_uploaded';
     }
 
     /**

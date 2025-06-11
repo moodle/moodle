@@ -1,0 +1,41 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template media_youtube/embed
+
+    This template will render the YouTube embeded player.
+
+    Variables required for this template:
+    * title: The title of the video.
+    * width: The width of the video.
+    * height: The height of the video.
+    * embedurl: The URL to the video.
+
+    Example context (json):
+    {
+        "title": "YouTube video",
+        "width": 640,
+        "height": 360,
+        "embedurl": "https://www.youtube.com/embed/9bZkp7q19f0?rel=0&amp;wmode=transparent"
+    }
+
+}}
+
+<span class="mediaplugin mediaplugin_youtube">
+<iframe title="{{title}}" width="{{width}}" height="{{height}}" style="border:0;"
+        src="{{{embedurl}}}" allow="fullscreen" loading="lazy"></iframe>
+</span>

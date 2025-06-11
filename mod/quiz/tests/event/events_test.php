@@ -25,14 +25,10 @@
 
 namespace mod_quiz\event;
 
-use quiz;
-use quiz_attempt;
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 use context_module;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
+use mod_quiz\external\submit_question_version;
 
 /**
  * Unit tests for quiz events.
@@ -41,13 +37,16 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
  * @category   phpunit
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz\external\submit_question_version
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
-     * Setup a quiz.
+     * Set up a quiz.
      *
-     * @return quiz the generated quiz.
+     * The quiz contains two questions, a short-answer one and a numerical one.
+     *
+     * @return quiz_settings the generated quiz.
      */
     protected function prepare_quiz() {
 
@@ -59,17 +58,21 @@ class events_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $quiz = $quizgenerator->create_instance(array('course' => $course->id, 'questionsperpage' => 0,
-                'grade' => 100.0, 'sumgrades' => 2));
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'questionsperpage' => 0,
+                'grade' => 100.0, 'sumgrades' => 2]);
 
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
+        get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
 
         // Create a couple of questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         $cat = $questiongenerator->create_question_category();
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+
+        // Update the numq question so it has multiple versions. Needed to test
+        // the version updated event.
+        $questiongenerator->update_question($numq, null, ['name' => 'Second version of numq']);
 
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
@@ -79,13 +82,13 @@ class events_test extends \advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        return quiz::create($quiz->id, $user1->id);
+        return quiz_settings::create($quiz->id, $user1->id);
     }
 
     /**
      * Setup a quiz attempt at the quiz created by {@link prepare_quiz()}.
      *
-     * @param quiz $quizobj the generated quiz.
+     * @param \mod_quiz\quiz_settings $quizobj the generated quiz.
      * @param bool $ispreview Make the attempt a preview attempt when true.
      * @return array with three elements, array($quizobj, $quba, $attempt)
      */
@@ -99,7 +102,7 @@ class events_test extends \advanced_testcase {
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
-        return array($quizobj, $quba, $attempt);
+        return [$quizobj, $quba, $attempt];
     }
 
     /**
@@ -113,7 +116,7 @@ class events_test extends \advanced_testcase {
         return $this->prepare_quiz_attempt($quizobj, $ispreview);
     }
 
-    public function test_attempt_submitted() {
+    public function test_attempt_submitted(): void {
 
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -134,23 +137,10 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEquals($attempt->userid, $event->relateduserid);
         $this->assertEquals(null, $event->other['submitterid']); // Should be the user, but PHP Unit complains...
-        $this->assertEquals('quiz_attempt_submitted', $event->get_legacy_eventname());
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = (string) $attempt->id;
-        $legacydata->timestamp = $timefinish;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $legacydata->quizid = $quizobj->get_quizid();
-        // Submitterid should be the user, but as we are in PHP Unit, CLI_SCRIPT is set to true which sets null in submitterid.
-        $legacydata->submitterid = null;
-        $legacydata->timefinish = $timefinish;
-        $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_attempt_becameoverdue() {
+    public function test_attempt_becameoverdue(): void {
 
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -171,21 +161,10 @@ class events_test extends \advanced_testcase {
         $this->assertNotEmpty($event->get_description());
         // Submitterid should be the user, but as we are in PHP Unit, CLI_SCRIPT is set to true which sets null in submitterid.
         $this->assertEquals(null, $event->other['submitterid']);
-        $this->assertEquals('quiz_attempt_overdue', $event->get_legacy_eventname());
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = (string) $attempt->id;
-        $legacydata->timestamp = $timefinish;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $legacydata->quizid = $quizobj->get_quizid();
-        $legacydata->submitterid = null; // Should be the user, but PHP Unit complains...
-        $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_attempt_abandoned() {
+    public function test_attempt_abandoned(): void {
 
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -205,21 +184,10 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($attempt->userid, $event->relateduserid);
         // Submitterid should be the user, but as we are in PHP Unit, CLI_SCRIPT is set to true which sets null in submitterid.
         $this->assertEquals(null, $event->other['submitterid']);
-        $this->assertEquals('quiz_attempt_abandoned', $event->get_legacy_eventname());
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = (string) $attempt->id;
-        $legacydata->timestamp = $timefinish;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $legacydata->quizid = $quizobj->get_quizid();
-        $legacydata->submitterid = null; // Should be the user, but PHP Unit complains...
-        $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
-    public function test_attempt_started() {
+    public function test_attempt_started(): void {
         $quizobj = $this->prepare_quiz();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -241,24 +209,7 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($attempt->id, $event->objectid);
         $this->assertEquals($attempt->userid, $event->relateduserid);
         $this->assertEquals($quizobj->get_context(), $event->get_context());
-        $this->assertEquals('quiz_attempt_started', $event->get_legacy_eventname());
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        // Check legacy log data.
-        $expected = array($quizobj->get_courseid(), 'quiz', 'attempt', 'review.php?attempt=' . $attempt->id,
-            $quizobj->get_quizid(), $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
-        // Check legacy event data.
-        $legacydata = new \stdClass();
-        $legacydata->component = 'mod_quiz';
-        $legacydata->attemptid = $attempt->id;
-        $legacydata->timestart = $attempt->timestart;
-        $legacydata->timestamp = $attempt->timestart;
-        $legacydata->userid = $attempt->userid;
-        $legacydata->quizid = $quizobj->get_quizid();
-        $legacydata->cmid = $quizobj->get_cmid();
-        $legacydata->courseid = $quizobj->get_courseid();
-        $this->assertEventLegacyData($legacydata, $event);
-        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -267,7 +218,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for replacing a question, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_question_restarted() {
+    public function test_attempt_question_restarted(): void {
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
 
         $params = [
@@ -302,7 +253,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating an attempt, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_updated() {
+    public function test_attempt_updated(): void {
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
 
         $params = [
@@ -335,7 +286,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for auto-saving an attempt, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_autosaved() {
+    public function test_attempt_autosaved(): void {
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
 
         $params = [
@@ -369,20 +320,20 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating a quiz, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_edit_page_viewed() {
+    public function test_edit_page_viewed(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\edit_page_viewed::create($params);
 
         // Trigger and capture the event.
@@ -394,15 +345,13 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\edit_page_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'editquestions', 'view.php?id=' . $quiz->cmid, $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test the attempt deleted event.
      */
-    public function test_attempt_deleted() {
+    public function test_attempt_deleted(): void {
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
 
         // Trigger and capture the event.
@@ -414,16 +363,13 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_deleted', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'delete attempt', 'report.php?id=' . $quizobj->get_cmid(),
-            $attempt->id, $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test that preview attempt deletions are not logged.
      */
-    public function test_preview_attempt_deleted() {
+    public function test_preview_attempt_deleted(): void {
         // Create quiz with preview attempt.
         list($quizobj, $quba, $previewattempt) = $this->prepare_quiz_data(true);
 
@@ -441,20 +387,20 @@ class events_test extends \advanced_testcase {
      * There is no external API for viewing reports, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'context' => $context = \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'reportname' => 'overview'
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\report_viewed::create($params);
 
         // Trigger and capture the event.
@@ -466,9 +412,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\report_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'report', 'report.php?id=' . $quiz->cmid . '&mode=overview',
-            $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -478,22 +421,22 @@ class events_test extends \advanced_testcase {
      * There is no external API for reviewing attempts, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_reviewed() {
+    public function test_attempt_reviewed(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_reviewed::create($params);
 
         // Trigger and capture the event.
@@ -505,8 +448,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_reviewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'review', 'review.php?attempt=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -516,22 +457,22 @@ class events_test extends \advanced_testcase {
      * There is no external API for viewing the attempt summary, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_summary_viewed() {
+    public function test_attempt_summary_viewed(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_summary_viewed::create($params);
 
         // Trigger and capture the event.
@@ -543,8 +484,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_summary_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'view summary', 'summary.php?attempt=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -554,21 +493,21 @@ class events_test extends \advanced_testcase {
      * There is no external API for creating a user override, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_user_override_created() {
+    public function test_user_override_created(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\user_override_created::create($params);
 
         // Trigger and capture the event.
@@ -589,21 +528,21 @@ class events_test extends \advanced_testcase {
      * There is no external API for creating a group override, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_group_override_created() {
+    public function test_group_override_created(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'groupid' => 2
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\group_override_created::create($params);
 
         // Trigger and capture the event.
@@ -624,21 +563,21 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating a user override, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_user_override_updated() {
+    public function test_user_override_updated(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\user_override_updated::create($params);
 
         // Trigger and capture the event.
@@ -650,8 +589,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\user_override_updated', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -661,21 +598,21 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating a group override, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_group_override_updated() {
+    public function test_group_override_updated(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'groupid' => 2
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\group_override_updated::create($params);
 
         // Trigger and capture the event.
@@ -687,22 +624,21 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\group_override_updated', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test the user override deleted event.
      */
-    public function test_user_override_deleted() {
+    public function test_user_override_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $quizsettings = quiz_settings::create($quiz->id);
 
         // Create an override.
         $override = new \stdClass();
@@ -712,29 +648,28 @@ class events_test extends \advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        quiz_delete_override($quiz, $override->id);
+        $quizsettings->get_override_manager()->delete_overrides(overrides: [$override]);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\user_override_deleted', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test the group override deleted event.
      */
-    public function test_group_override_deleted() {
+    public function test_group_override_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $quizsettings = quiz_settings::create($quiz->id);
 
         // Create an override.
         $override = new \stdClass();
@@ -744,15 +679,13 @@ class events_test extends \advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        quiz_delete_override($quiz, $override->id);
+        $quizsettings->get_override_manager()->delete_overrides(overrides: [$override]);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\group_override_deleted', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -762,23 +695,23 @@ class events_test extends \advanced_testcase {
      * There is no external API for continuing an attempt, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_viewed() {
+    public function test_attempt_viewed(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'relateduserid' => 2,
             'courseid' => $course->id,
             'context' => \context_module::instance($quiz->cmid),
-            'other' => array(
+            'other' => [
                 'quizid' => $quiz->id,
                 'page' => 0
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\attempt_viewed::create($params);
 
         // Trigger and capture the event.
@@ -790,15 +723,13 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_viewed', $event);
         $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-        $expected = array($course->id, 'quiz', 'continue attempt', 'review.php?attempt=1', $quiz->id, $quiz->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test the attempt previewed event.
      */
-    public function test_attempt_preview_started() {
+    public function test_attempt_preview_started(): void {
         $quizobj = $this->prepare_quiz();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -817,9 +748,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\attempt_preview_started', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'preview', 'view.php?id=' . $quizobj->get_cmid(),
-            $quizobj->get_quizid(), $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -829,19 +757,19 @@ class events_test extends \advanced_testcase {
      * There is no external API for manually grading a question, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_question_manually_graded() {
+    public function test_question_manually_graded(): void {
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
 
-        $params = array(
+        $params = [
             'objectid' => 1,
             'courseid' => $quizobj->get_courseid(),
             'context' => \context_module::instance($quizobj->get_cmid()),
-            'other' => array(
+            'other' => [
                 'quizid' => $quizobj->get_quizid(),
                 'attemptid' => 2,
                 'slot' => 3
-            )
-        );
+            ]
+        ];
         $event = \mod_quiz\event\question_manually_graded::create($params);
 
         // Trigger and capture the event.
@@ -853,9 +781,6 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\question_manually_graded', $event);
         $this->assertEquals(\context_module::instance($quizobj->get_cmid()), $event->get_context());
-        $expected = array($quizobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?attempt=2&slot=3',
-            $quizobj->get_quizid(), $quizobj->get_cmid());
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -865,34 +790,34 @@ class events_test extends \advanced_testcase {
      * There is no external API for regrading attempts, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_regraded() {
-      $this->resetAfterTest();
+    public function test_attempt_regraded(): void {
+        $this->resetAfterTest();
 
-      $this->setAdminUser();
-      $course = $this->getDataGenerator()->create_course();
-      $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-      $params = array(
-        'objectid' => 1,
-        'relateduserid' => 2,
-        'courseid' => $course->id,
-        'context' => \context_module::instance($quiz->cmid),
-        'other' => array(
-          'quizid' => $quiz->id
-        )
-      );
-      $event = \mod_quiz\event\attempt_regraded::create($params);
+        $params = [
+            'objectid' => 1,
+            'relateduserid' => 2,
+            'courseid' => $course->id,
+            'context' => \context_module::instance($quiz->cmid),
+            'other' => [
+                'quizid' => $quiz->id
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_regraded::create($params);
 
-      // Trigger and capture the event.
-      $sink = $this->redirectEvents();
-      $event->trigger();
-      $events = $sink->get_events();
-      $event = reset($events);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
 
-      // Check that the event data is valid.
-      $this->assertInstanceOf('\mod_quiz\event\attempt_regraded', $event);
-      $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
-      $this->assertEventContextNotUsed($event);
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_regraded', $event);
+        $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -900,7 +825,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for notification email when manual grading of user's attempt is completed,
      * so the unit test will simply create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_attempt_manual_grading_completed() {
+    public function test_attempt_manual_grading_completed(): void {
         $this->resetAfterTest();
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -939,7 +864,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for creating page break, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_page_break_created() {
+    public function test_page_break_created(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -970,7 +895,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for deleting page break, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_page_deleted_created() {
+    public function test_page_deleted_created(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1001,7 +926,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating quiz grade, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_quiz_grade_updated() {
+    public function test_quiz_grade_updated(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1032,7 +957,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for re-paginating quiz, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_quiz_repaginated() {
+    public function test_quiz_repaginated(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1062,7 +987,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for creating section break, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_section_break_created() {
+    public function test_section_break_created(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1096,7 +1021,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for deleting section break, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_section_break_deleted() {
+    public function test_section_break_deleted(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1128,7 +1053,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating section shuffle, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_section_shuffle_updated() {
+    public function test_section_shuffle_updated(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1160,7 +1085,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating section title, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_section_title_updated() {
+    public function test_section_title_updated(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1194,7 +1119,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for creating slot, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_slot_created() {
+    public function test_slot_created(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1226,7 +1151,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for deleting slot, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_slot_deleted() {
+    public function test_slot_deleted(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1257,7 +1182,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating slot mark, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_slot_mark_updated() {
+    public function test_slot_mark_updated(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1279,8 +1204,168 @@ class events_test extends \advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\slot_mark_updated', $event);
-        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEventContextNotUsed($event);
+    }
+
+    public function test_slot_version_updated(): void {
+        $quizobj = $this->prepare_quiz();
+        $this->setAdminUser();
+
+        $quizobj->preload_questions();
+        [, $numqslotid] = array_column($quizobj->get_questions(null, false), 'slotid');
+
+        $sink = $this->redirectEvents();
+        submit_question_version::execute($numqslotid, 2);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $expecteddesc = "The user with id '2' updated the slot with id '$numqslotid' " .
+            "belonging to the quiz with course module id '{$quizobj->get_cmid()}'. " .
+            "Its question version was changed from 'Always latest' to '2'.";
+        $this->assertInstanceOf('\mod_quiz\event\slot_version_updated', $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEquals($expecteddesc, $event->get_description());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test quiz_grade_item_created.
+     *
+     * @covers \mod_quiz\event\quiz_grade_item_created
+     */
+    public function test_quiz_grade_item_created(): void {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        $stucture = $quizobj->get_structure();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->create_grade_item((object) ['quizid' => $quizobj->get_quizid(), 'name' => 'Test']);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $stucture = $quizobj->get_structure();
+        $gradeitem = array_values($stucture->get_grade_items())[0];
+        $this->assertInstanceOf(quiz_grade_item_created::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' created quiz grade item with id '$gradeitem->id' " .
+            "for the quiz with course module id '{$quizobj->get_cmid()}'.",
+            $event->get_description());
+    }
+
+    /**
+     * Test quiz_grade_item_updated.
+     *
+     * @covers \mod_quiz\event\quiz_grade_item_updated
+     */
+    public function test_quiz_grade_item_updated(): void {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+        $stucture = $quizobj->get_structure();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->update_grade_item((object) ['id' => $gradeitem->id, 'name' => 'Test']);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf(quiz_grade_item_updated::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' updated quiz grade item with id '$gradeitem->id' " .
+            "for the quiz with course module id '{$quizobj->get_cmid()}'.",
+            $event->get_description());
+    }
+
+    /**
+     * Test quiz_grade_item_deleted.
+     *
+     * @covers \mod_quiz\event\quiz_grade_item_deleted
+     */
+    public function test_quiz_grade_item_deleted(): void {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+        $stucture = $quizobj->get_structure();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->delete_grade_item($gradeitem->id);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf(quiz_grade_item_deleted::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' deleted quiz grade item with id '$gradeitem->id' " .
+            "for the quiz with course module id '{$quizobj->get_cmid()}'.",
+            $event->get_description());
+    }
+
+    /**
+     * Test slot_grade_item_updated.
+     *
+     * @covers \mod_quiz\event\slot_grade_item_updated
+     */
+    public function test_slot_grade_item_updated(): void {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+        $stucture = $quizobj->get_structure();
+        $slot = $stucture->get_slot_by_number(1);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->update_slot_grade_item($slot, $gradeitem->id);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf(slot_grade_item_updated::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' updated the slot with id '{$slot->id}' " .
+            "belonging to the quiz with course module id '{$quizobj->get_cmid()}'. " .
+            "The grade item this slot contributes to was changed from '' to '$gradeitem->id'.",
+            $event->get_description());
+
+        // Check nothing logged if the value is not changed.
+        $sink = $this->redirectEvents();
+        $stucture->update_slot_grade_item($slot, $gradeitem->id);
+        $events = $sink->get_events();
+        $this->assertCount(0, $events);
     }
 
     /**
@@ -1289,7 +1374,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for moving slot, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_slot_moved() {
+    public function test_slot_moved(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [
@@ -1322,7 +1407,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for updating slot require previous option, so the unit test will simply
      * create and trigger the event and ensure the event data is returned as expected.
      */
-    public function test_slot_requireprevious_updated() {
+    public function test_slot_requireprevious_updated(): void {
         $quizobj = $this->prepare_quiz();
 
         $params = [

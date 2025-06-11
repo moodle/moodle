@@ -1,3 +1,13 @@
+### Date:       2025-March-05
+### Release:    v2025030501
+
+---
+
+#### Quiz Attempt Issue Fixed
+An issue was identified which affected the ability of users to view student submissions to quizzes in Moodle 4.1. This has now been fixed.
+
+---
+
 ### Date:       2024-December-19
 ### Release:    v2024121901
 

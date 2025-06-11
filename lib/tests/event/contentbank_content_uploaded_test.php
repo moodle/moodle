@@ -36,7 +36,7 @@ use core_contentbank\contentbank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\event\contentbank_content_uploaded
  */
-class contentbank_content_uploaded_test extends \advanced_testcase {
+final class contentbank_content_uploaded_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -46,6 +46,7 @@ class contentbank_content_uploaded_test extends \advanced_testcase {
 
         require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
         require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -53,7 +54,7 @@ class contentbank_content_uploaded_test extends \advanced_testcase {
      *
      * @covers ::create_from_record
      */
-    public function test_content_created() {
+    public function test_content_created(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest();

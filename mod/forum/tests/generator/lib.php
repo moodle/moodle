@@ -14,17 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * mod_forum data generator
- *
- * @package    mod_forum
- * @category   test
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Forum module data generator class
@@ -35,7 +24,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_forum_generator extends testing_module_generator {
-
     /**
      * @var int keep track of how many forum discussions have been created.
      */
@@ -52,6 +40,15 @@ class mod_forum_generator extends testing_module_generator {
     protected $forumsubscriptionscount = 0;
 
     /**
+     * Get the clock implementation to use when generating data.
+     *
+     * @return \core\clock
+     */
+    protected function get_clock(): \core\clock {
+        return \core\di::get(\core\clock::class);
+    }
+
+    /**
      * To be called from data reset code only,
      * do not use in tests.
      * @return void
@@ -64,7 +61,7 @@ class mod_forum_generator extends testing_module_generator {
         parent::reset();
     }
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         $record = (object)(array)$record;
@@ -188,8 +185,14 @@ class mod_forum_generator extends testing_module_generator {
             $record['mailnow'] = "0";
         }
 
+        if (!isset($record['timecreated'])) {
+            $record['timecreated'] = $this->get_clock()->now()->getTimestamp();
+        }
+
         if (isset($record['timemodified'])) {
             $timemodified = $record['timemodified'];
+        } else {
+            $timemodified = $record['timecreated'];
         }
 
         if (!isset($record['pinned'])) {
@@ -251,7 +254,7 @@ class mod_forum_generator extends testing_module_generator {
         $this->forumpostcount++;
 
         // Variable to store time.
-        $time = time() + $this->forumpostcount;
+        $time = time();
 
         $record = (array) $record;
 
@@ -276,11 +279,19 @@ class mod_forum_generator extends testing_module_generator {
         }
 
         if (!isset($record['created'])) {
-            $record['created'] = $time;
+            // If we are using the system clock, then revert to the time + count approach.
+            // Unfortunately a lot of Forum code relies on things not happening at the same time.
+            // See MDL-80838 for more information on this issue.
+
+            if ($this->get_clock() instanceof \core\system_clock) {
+                $record['created'] = $time;
+            } else {
+                $record['created'] = $this->get_clock()->now()->getTimestamp();
+            }
         }
 
         if (!isset($record['modified'])) {
-            $record['modified'] = $time;
+            $record['modified'] = $record['created'];
         }
 
         if (!isset($record['mailed'])) {
@@ -368,7 +379,7 @@ class mod_forum_generator extends testing_module_generator {
      * @param int $timecreated The post time created timestamp if it's to be displayed
      * @return string
      */
-    public function get_author_subheading_html(stdClass $exportedauthor, int $timecreated) : string {
+    public function get_author_subheading_html(stdClass $exportedauthor, int $timecreated): string {
         $fullname = $exportedauthor->fullname;
         $profileurl = $exportedauthor->urls['profile'] ?? null;
         $name = $profileurl ? "<a href=\"{$profileurl}\">{$fullname}</a>" : $fullname;

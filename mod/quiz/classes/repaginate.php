@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines the quiz repaginate class.
- *
- * @package   mod_quiz
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_quiz;
+
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -31,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * The quiz setting allows users to write quizzes with one question per page,
  * n questions per page, or all questions on one page.
  *
+ * @package   mod_quiz
  * @copyright 2014 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,10 +51,10 @@ class repaginate {
         global $DB;
         $this->quizid = $quizid;
         if (!$this->quizid) {
-            $this->slots = array();
+            $this->slots = [];
         }
         if (!$slots) {
-            $this->slots = $DB->get_records('quiz_slots', array('quizid' => $this->quizid), 'slot');
+            $this->slots = $DB->get_records('quiz_slots', ['quizid' => $this->quizid], 'slot');
         } else {
             $this->slots = $slots;
         }
@@ -83,7 +79,7 @@ class repaginate {
      * @return stdClass $slot
      */
     protected function get_this_slot($slots, $slotnumber) {
-        foreach ($slots as $key => $slot) {
+        foreach ($slots as $slot) {
             if ($slot->slot == $slotnumber) {
                 return $slot;
             }
@@ -98,9 +94,9 @@ class repaginate {
      */
     protected function get_slots_by_slot_number($slots) {
         if (!$slots) {
-            return array();
+            return [];
         }
-        $newslots = array();
+        $newslots = [];
         foreach ($slots as $slot) {
             $newslots[$slot->slot] = $slot;
         }
@@ -114,9 +110,9 @@ class repaginate {
      */
     protected function get_slots_by_slotid($slots) {
         if (!$slots) {
-            return array();
+            return [];
         }
-        $newslots = array();
+        $newslots = [];
         foreach ($slots as $slot) {
             $newslots[$slot->id] = $slot;
         }
@@ -124,15 +120,16 @@ class repaginate {
     }
 
     /**
-     * Repaginate, update DB and slots object
+     * Repaginate, update DB and slots object.
+     *
      * @param int $nextslotnumber
      * @param int $type repaginate::LINK or repaginate::UNLINK.
      */
     public function repaginate_slots($nextslotnumber, $type) {
         global $DB;
-        $this->slots = $DB->get_records('quiz_slots', array('quizid' => $this->quizid), 'slot');
+        $this->slots = $DB->get_records('quiz_slots', ['quizid' => $this->quizid], 'slot');
         $nextslot = null;
-        $newslots = array();
+        $newslots = [];
         foreach ($this->slots as $slot) {
             if ($slot->slot < $nextslotnumber) {
                 $newslots[$slot->id] = $slot;
@@ -153,7 +150,8 @@ class repaginate {
     }
 
     /**
-     * Repaginate next slot and return the modified slot object
+     * Repaginate next slot and return the modified slot object.
+     *
      * @param int $nextslotnumber
      * @param int $type repaginate::LINK or repaginate::UNLINK.
      * @return stdClass|null
@@ -182,11 +180,11 @@ class repaginate {
      */
     public function repaginate_n_question_per_page($slots, $number) {
         $slots = $this->get_slots_by_slot_number($slots);
-        $newslots = array();
+        $newslots = [];
         $count = 0;
         $page = 1;
-        foreach ($slots as $key => $slot) {
-            for ($page + $count; $page < ($number + $count + 1); $page++) {
+        foreach ($slots as $slot) {
+            for (; $page < ($number + $count + 1); $page++) {
                 if ($slot->slot >= $page) {
                     $slot->page = $page;
                     $count++;
@@ -199,6 +197,7 @@ class repaginate {
 
     /**
      * Repaginate the rest.
+     *
      * @param stdClass[] $quizslots
      * @param int $slotfrom
      * @param int $type
@@ -210,7 +209,7 @@ class repaginate {
         if (!$quizslots) {
             return null;
         }
-        $newslots = array();
+        $newslots = [];
         foreach ($quizslots as $slot) {
             if ($type == self::LINK) {
                 if ($slot->slot <= $slotfrom) {

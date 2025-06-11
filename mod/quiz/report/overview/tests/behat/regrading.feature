@@ -43,11 +43,11 @@ Feature: Regrading quiz attempts using the Grades report
       | 1    | True     |
       | 2    | toad     |
 
-  Scenario: Regrade all attempts
+  Scenario: Regrade all attempts and all questions.
     Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
     And I navigate to "Results" in current page administration
-    When I press "Regrade all"
-
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
     # Note, the order is not defined, so we can only check part of the message.
     # Also, nothing has changed in the quiz, so the regrade won't alter any scores,
     # but this is still a useful test that the regrade process completes without errors.
@@ -60,12 +60,12 @@ Feature: Regrading quiz attempts using the Grades report
     And I should see "Quiz for testing regrading"
     And I should see "Overall number of students achieving grade ranges"
 
-  Scenario: Regrade selected attempts
+  Scenario: Regrade selected attempts and all questions.
     Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
     And I navigate to "Results" in current page administration
     When I click on "Select attempt" "checkbox" in the "Student Two" "table_row"
-
-    And I press "Regrade selected attempts"
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
     Then I should see "Quiz for testing regrading"
     And I should see "Finished regrading (1/1)"
     And I should see "Regrade completed"
@@ -75,7 +75,58 @@ Feature: Regrading quiz attempts using the Grades report
     And I should see "Quiz for testing regrading"
     And I should see "Overall number of students achieving grade ranges"
 
-  Scenario: Dry-run a full regrade, then regrade the attempts that will need it.
+  Scenario: Regrade all attempts and selected questions.
+    Given I am on the "Quiz for testing regrading" "mod_quiz > edit" page logged in as teacher
+    When I follow "Edit question SA"
+    And I set the field "id_fraction_1" to "50%"
+    And I press "id_submitbutton"
+    And I follow "Edit question TF"
+    And I set the field "Correct answer" to "False"
+    And I press "id_submitbutton"
+    And I follow "Attempts: 2"
+    And I press "Regrade attempts..."
+    And I click on "Selected questions" "radio"
+    And I click on "Question 1" "checkbox"
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
+    Then I should see "Quiz for testing regrading"
+    And I should see "Finished regrading (2/2)"
+    And I should see "Regrade completed"
+    And I press "Continue"
+    And "Student OneReview attempt" row "Q. 1/50.00Sort by Q. 1/50.00 Ascending" column of "attempts" table should contain "50.00/0.00"
+    And "Student TwoReview attempt" row "Q. 1/50.00Sort by Q. 1/50.00 Ascending" column of "attempts" table should contain "50.00/0.00"
+    And "Student OneReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "100.00/50.00"
+    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/40.00"
+
+  Scenario: Regrade selected attempts and selected questions.
+    Given I am on the "Quiz for testing regrading" "mod_quiz > edit" page logged in as teacher
+    When I follow "Edit question SA"
+    And I set the field "id_fraction_1" to "50%"
+    And I press "id_submitbutton"
+    And I follow "Edit question TF"
+    And I set the field "Correct answer" to "False"
+    And I press "id_submitbutton"
+    And I follow "Attempts: 2"
+    And I click on "Select attempt" "checkbox" in the "Student Two" "table_row"
+    And I press "Regrade attempts..."
+    And the "Question 1" "checkbox" should be disabled
+    And the "Question 2" "checkbox" should be disabled
+    And I click on "Selected questions" "radio"
+    And the "Question 1" "checkbox" should be enabled
+    And the "Question 2" "checkbox" should be enabled
+    And the "Regrade now" "button" should be disabled
+    And the "Dry run" "button" should be disabled
+    And I click on "Question 1" "checkbox"
+    And the "Regrade now" "button" should be enabled
+    And the "Dry run" "button" should be enabled
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
+    Then I should see "Quiz for testing regrading"
+    And I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
+    And I press "Continue"
+    And "Student TwoReview attempt" row "Q. 1/50.00Sort by Q. 1/50.00 Ascending" column of "attempts" table should contain "50.00/0.00"
+    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/40.00"
+
+  Scenario: Dry-run all attempts, then regrade all attempts.
     Given I am on the "Quiz for testing regrading" "mod_quiz > edit" page logged in as teacher
     And I follow "Edit question SA"
     And I set the field "id_fraction_1" to "50%"
@@ -83,8 +134,8 @@ Feature: Regrading quiz attempts using the Grades report
     And I set the field "version" in the "TF" "list_item" to "v1"
     And I set the field "version" in the "SA" "list_item" to "v2 (latest)"
     And I follow "Attempts: 2"
-    And I press "Dry run a full regrade"
-
+    And I press "Regrade attempts..."
+    And I click on "Dry run" "button" in the "Regrade" "dialogue"
     # Note, the order is not defined, so we can only check part of the message.
     Then I should see "Quiz for testing regrading"
     And I should see "Finished regrading (2/2)"
@@ -97,7 +148,42 @@ Feature: Regrading quiz attempts using the Grades report
     # At this point, it is showing what would change.
     And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
     And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
-    And I press "Regrade attempts marked as needing regrading (1)"
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
+    And I should see "Quiz for testing regrading"
+    And I should see "Finished regrading (2/2)"
+    And I should see "Regrade completed"
+    And I press "Continue"
+    # These next tests just serve to check we got back to the report.
+    And I should see "Quiz for testing regrading"
+    And I should see "Overall number of students achieving grade ranges"
+    # Now, both old-score strike-through and new score plain, are still shown, but now it indicates what did change.
+    And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
+    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
+
+  Scenario: Dry-run a full regrade, then regrade the commit regrade.
+    Given I am on the "Quiz for testing regrading" "mod_quiz > edit" page logged in as teacher
+    When I follow "Edit question SA"
+    And I set the field "id_fraction_1" to "50%"
+    And I press "id_submitbutton"
+    And I set the field "version" in the "TF" "list_item" to "v1"
+    And I set the field "version" in the "SA" "list_item" to "v2 (latest)"
+    And I follow "Attempts: 2"
+    And I press "Regrade attempts..."
+    And I click on "Dry run" "button" in the "Regrade" "dialogue"
+    # Note, the order is not defined, so we can only check part of the message.
+    And I should see "Quiz for testing regrading"
+    And I should see "Finished regrading (2/2)"
+    And I should see "Regrade completed"
+    And I press "Continue"
+    And "Student One" row "Regrade" column of "attempts" table should not contain "Needed"
+    And "Student TwoReview attempt" row "Regrade" column of "attempts" table should contain "Needed"
+    # In the following, the first number is strike-through, and the second is not, but Behat can't see that.
+    # At this point, it is showing what would change.
+    And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
+    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
+    Then I should see "The last dry run of a regrade found that the regrade would change the marks for 1 questions in 1 attempts."
+    And I press "Commit regrade"
     And I should see "Quiz for testing regrading"
     And I should see "Finished regrading (1/1)"
     And I should see "Regrade completed"
@@ -109,12 +195,13 @@ Feature: Regrading quiz attempts using the Grades report
     # Now, both old-score strike-through and new score plain, are still shown, but now it indicates what did change.
     And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
     And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
-    And "Regrade attempts marked as needing regrading" "button" should not exist
+    And I should not see "The last dry run of a regrade found that the regrade would change the marks for 1 questions in 1 attempts."
 
   Scenario: Regrade all attempts works against quiz selected question version
     Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
     And I navigate to "Results" in current page administration
-    When I press "Dry run a full regrade"
+    And I press "Regrade attempts..."
+    And I click on "Dry run" "button" in the "Regrade" "dialogue"
     Then I should see "Quiz for testing regrading"
     And I should see "Finished regrading (2/2)"
     And I should see "Regrade completed"
@@ -129,12 +216,14 @@ Feature: Regrading quiz attempts using the Grades report
     And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
     And I set the field "version" in the "TF" "list_item" to "v2 (latest)"
     And I navigate to "Results" in current page administration
-    And I press "Dry run a full regrade"
+    And I press "Regrade attempts..."
+    And I click on "Dry run" "button" in the "Regrade" "dialogue"
     And I should see "Regrade completed"
     And I press "Continue"
     And "student1@example.com" row "Regrade" column of "attempts" table should contain "Needed"
     And "Correct" "icon" should appear before "50.00/0.00" "text"
-    And I press "Regrade all"
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
     And I should see "Regrade completed"
     And I press "Continue"
     Then "student1@example.com" row "Regrade" column of "attempts" table should contain "Done"
@@ -173,7 +262,8 @@ Feature: Regrading quiz attempts using the Grades report
     And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
     And I set the field "version" in the "TF" "list_item" to "Always latest"
     And I navigate to "Results" in current page administration
-    And I press "Regrade all"
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
     And I should see "Finished regrading (1/1)"
     And I should see "Regrade completed"
     And I press "Continue"
@@ -197,7 +287,6 @@ Feature: Regrading quiz attempts using the Grades report
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     And I click on "Add" "link"
     And I follow "a random question"
-    And I set the field "Number of random questions" to "1"
     And I press "Add random question"
     And I am on the "Quiz for testing regrading" "quiz activity" page logged in as student3
     And I click on "Attempt quiz" "button"
@@ -213,7 +302,8 @@ Feature: Regrading quiz attempts using the Grades report
     And I navigate to "Results" in current page administration
     And "student3@example.com" row "Q. 1/100.00Sort by Q. 1/100.00 Ascending" column of "attempts" table should contain "100.00"
     And "Correct" "icon" should be visible
-    And I press "Regrade all"
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
     And I should see "Finished regrading (1/1)"
     And I should see "Regrade completed"
     And I press "Continue"

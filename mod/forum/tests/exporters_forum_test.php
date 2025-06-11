@@ -26,11 +26,11 @@ use mod_forum\local\exporters\forum as forum_exporter;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exporters_forum_test extends \advanced_testcase {
+final class exporters_forum_test extends \advanced_testcase {
     /**
      * Test the export function returns expected values.
      */
-    public function test_export() {
+    public function test_export(): void {
         global $PAGE;
         $this->resetAfterTest();
 

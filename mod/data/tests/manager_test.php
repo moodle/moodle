@@ -30,7 +30,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_data\manager
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
 
     /**
      * Test for static create methods.
@@ -39,7 +39,7 @@ class manager_test extends \advanced_testcase {
      * @covers ::create_from_coursemodule
      * @covers ::create_from_data_record
      */
-    public function test_create() {
+    public function test_create(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -87,7 +87,7 @@ class manager_test extends \advanced_testcase {
      * Test set_module_viewed
      * @covers ::set_module_viewed
      */
-    public function test_set_module_viewed() {
+    public function test_set_module_viewed(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -133,7 +133,7 @@ class manager_test extends \advanced_testcase {
      * Test set_template_viewed
      * @covers ::set_template_viewed
      */
-    public function test_set_template_viewed() {
+    public function test_set_template_viewed(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -169,7 +169,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::has_records
      */
-    public function test_has_records() {
+    public function test_has_records(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -196,7 +196,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::has_fields
      */
-    public function test_has_fields() {
+    public function test_has_fields(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -222,7 +222,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_available_presets
      */
-    public function test_get_available_presets() {
+    public function test_get_available_presets(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -323,7 +323,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_available_plugin_presets
      */
-    public function test_get_available_plugin_presets() {
+    public function test_get_available_plugin_presets(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -369,7 +369,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_available_saved_presets
      */
-    public function test_get_available_saved_presets() {
+    public function test_get_available_saved_presets(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -439,7 +439,7 @@ class manager_test extends \advanced_testcase {
      * @param bool $plugin if the preset is a plugin or not
      * @param bool $expected the expected result
      */
-    public function test_can_view_preset(string $rolename, bool $ownpreset, ?bool $useridparam, bool $plugin, bool $expected) {
+    public function test_can_view_preset(string $rolename, bool $ownpreset, ?bool $useridparam, bool $plugin, bool $expected): void {
 
         $this->resetAfterTest();
 
@@ -482,7 +482,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_view_preset_provider(): array {
+    public static function can_view_preset_provider(): array {
         return [
             // User presets.
             'Teacher owned preset without user id param' => [
@@ -578,7 +578,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::can_export_entries
      */
-    public function test_can_export_entries() {
+    public function test_can_export_entries(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -643,7 +643,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::reset_all_templates
      */
-    public function test_reset_all_templates() {
+    public function test_reset_all_templates(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -689,7 +689,7 @@ class manager_test extends \advanced_testcase {
      * @param string $templatetoreset the template to reset
      * @param string[] $expected the expected templates to be reset
      */
-    public function test_reset_template(string $templatetoreset, array $expected) {
+    public function test_reset_template(string $templatetoreset, array $expected): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -737,7 +737,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function reset_template_provider(): array {
+    public static function reset_template_provider(): array {
         return [
             // User presets.
             'listtemplate' => [

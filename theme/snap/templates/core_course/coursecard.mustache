@@ -1,0 +1,96 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/coursecard
+
+    This template renders the a card for the course cards.
+
+    Example context (json):
+    {
+        "courses": [
+            {
+                "name": "Assignment due 1",
+                "viewurl": "https://moodlesite/course/view.php?id=2",
+                "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
+                "fullname": "course 3",
+                "hasprogress": true,
+                "progress": 10,
+                "visible": true
+            }
+        ]
+    }
+}}
+{{! BEGIN LSU Course Card Quick Links.
+    *** NOTE *** This is copied from:
+    course/templates/coursecard.mustache
+    END LSU Course Card Quick Links. }}
+
+<div class="card course-card mx-1" role="listitem"
+    data-region="course-content"
+    data-course-id="{{{id}}}">
+    {{! BEGIN LSU Course Card Quick Links. }}
+    <span class="course_quick_link_swap_{{{id}}}"></span>
+    {{! END LSU Course Card Quick Links. }}
+    <a href="{{viewurl}}" tabindex="-1">
+        <div class="card-img-top" style='background-image: url("{{{courseimage}}}");'>
+            <span class="sr-only">{{fullname}}</span>
+        </div>
+    </a>
+    <div class="card-body pe-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+        <div class="d-flex align-items-start">
+            <div class="w-100 text-truncate">
+                {{#showshortname}}
+                    <div class="text-muted muted d-flex mb-1 flex-wrap">
+                        <span class="sr-only">
+                            {{#str}}aria:courseshortname, core_course{{/str}}
+                        </span>
+                        <div>
+                            {{{shortname}}}
+                        </div>
+                    </div>
+                {{/showshortname}}
+                <a href="{{viewurl}}" class="aalink coursename me-2 mb-1">
+                    {{> core_course/favouriteicon }}
+                    <span class="sr-only">
+                        {{#str}}aria:coursename, core_course{{/str}}
+                    </span>
+                    {{$coursename}}{{/coursename}}
+                </a>
+                <div class="text-muted muted d-flex flex-wrap">
+                    {{$coursecategory}}{{/coursecategory}}
+                </div>
+                {{^visible}}
+                    <div class="d-flex flex-wrap">
+                        <span class="badge bg-info text-white">{{#str}} hiddenfromstudents {{/str}}</span>
+                    </div>
+                {{/visible}}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-start">
+        {{$progress}}{{/progress}}
+        {{$menu}}{{/menu}}
+    </div>
+</div>
+
+{{! BEGIN LSU Course Card Quick Links. }}
+{{#js}}
+require(['jquery', 'theme_snap/lsu'], function($, LSU) {
+    LSU.updateCard({{{id}}});
+});
+{{/js}}
+{{! END LSU Course Card Quick Links. }}

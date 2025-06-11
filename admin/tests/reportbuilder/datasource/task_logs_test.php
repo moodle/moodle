@@ -20,14 +20,9 @@ namespace core_admin\reportbuilder\datasource;
 
 use core\task\database_logger;
 use core_reportbuilder_generator;
-use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, duration, number, select, text};
 use core_reportbuilder\task\send_schedules;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
  * Unit tests for task logs datasource
@@ -37,7 +32,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_logs_test extends core_reportbuilder_testcase {
+final class task_logs_test extends core_reportbuilder_testcase {
 
     /**
      * Test default datasource
@@ -46,16 +41,23 @@ class task_logs_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $this->generate_task_log_data(true, 3, 2, 1654038000, 1654038060);
+        $this->generate_task_log_data(false, 5, 1, 1654556400, 1654556700);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Tasks', 'source' => task_logs::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
+        $this->assertCount(2, $content);
 
-        // Default columns are name, starttime, duration, result.
+        // Default columns are name, start time, duration, result. Sorted by start time descending.
         [$name, $timestart, $duration, $result] = array_values($content[0]);
+        $this->assertStringContainsString(send_schedules::class, $name);
+        $this->assertEquals('7/06/22, 07:00:00', $timestart);
+        $this->assertEquals('5 mins', $duration);
+        $this->assertEquals('Fail', $result);
+
+        [$name, $timestart, $duration, $result] = array_values($content[1]);
         $this->assertStringContainsString(send_schedules::class, $name);
         $this->assertEquals('1/06/22, 07:00:00', $timestart);
         $this->assertEquals('1 min', $duration);
@@ -103,7 +105,7 @@ class task_logs_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function datasource_filters_provider(): array {
+    public static function datasource_filters_provider(): array {
         return [
             'Filter name' => ['task_log:name', [
                 'task_log:name_values' => [send_schedules::class],

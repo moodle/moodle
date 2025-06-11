@@ -42,7 +42,7 @@ class author {
      * @param author_entity[] $authors The authors to convert.
      * @return stdClass[]
      */
-    public function to_legacy_objects(array $authors) : array {
+    public function to_legacy_objects(array $authors): array {
         return array_map(function(author_entity $author) {
             return (object) [
                 'id' => $author->get_id(),
@@ -67,7 +67,7 @@ class author {
      * @param author_entity $author The author to convert.
      * @return stdClass
      */
-    public function to_legacy_object(author_entity $author) : stdClass {
+    public function to_legacy_object(author_entity $author): stdClass {
         return $this->to_legacy_objects([$author])[0];
     }
 }

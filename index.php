@@ -33,10 +33,13 @@ require_once($CFG->libdir .'/filelib.php');
 
 redirect_if_major_upgrade_required();
 
+// Redirect logged-in users to homepage if required.
+$redirect = optional_param('redirect', 1, PARAM_BOOL);
+
 $urlparams = array();
 if (!empty($CFG->defaulthomepage) &&
         ($CFG->defaulthomepage == HOMEPAGE_MY || $CFG->defaulthomepage == HOMEPAGE_MYCOURSES) &&
-        optional_param('redirect', 1, PARAM_BOOL) === 0
+        $redirect === 0
 ) {
     $urlparams['redirect'] = 0;
 }
@@ -68,9 +71,8 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
 // If site registration needs updating, redirect.
 \core\hub\registration::registration_reminder('/index.php');
 
-if (get_home_page() != HOMEPAGE_SITE) {
-    // Redirect logged-in users to My Moodle overview if required.
-    $redirect = optional_param('redirect', 1, PARAM_BOOL);
+$homepage = get_home_page();
+if ($homepage != HOMEPAGE_SITE) {
     if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
         set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && $redirect === 1) {
@@ -78,6 +80,8 @@ if (get_home_page() != HOMEPAGE_SITE) {
         redirect($CFG->wwwroot .'/my/');
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) && $redirect === 1) {
         redirect($CFG->wwwroot .'/my/courses.php');
+    } else if ($homepage == HOMEPAGE_URL) {
+        redirect(get_default_home_page_url());
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER)) {
         $frontpagenode = $PAGE->settingsnav->find('frontpage', null);
         if ($frontpagenode) {

@@ -229,7 +229,7 @@ class participants_filter extends \core\output\datafilter {
 
         // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
         // We need to make it diferently for normal courses and site course.
-        if (!$this->course->id == SITEID) {
+        if (!($this->course->id == SITEID)) {
             // Regular course.
             $params = [
                 'courseid' => $this->course->id,
@@ -237,7 +237,17 @@ class participants_filter extends \core\output\datafilter {
             ];
             $select = 'courseid = :courseid AND timeaccess != :timeaccess';
             $minlastaccess = $DB->get_field_select('user_lastaccess', 'MIN(timeaccess)', $select, $params);
-            $lastaccess0exists = $DB->record_exists('user_lastaccess', $params);
+
+            // Determine enrolled users, who do not have accompanying lastaccess to the course.
+            [$enrolledsql, $enrolledparams] = get_enrolled_sql($this->context);
+
+            $sql = "SELECT 'x'
+                     FROM {user} u
+                     JOIN ({$enrolledsql}) je ON je.id = u.id
+                LEFT JOIN {user_lastaccess} ula ON ula.userid = je.id AND ula.courseid = :courseid
+                    WHERE COALESCE(ula.timeaccess, 0) = :timeaccess";
+
+            $lastaccess0exists = $DB->record_exists_sql($sql, array_merge($params, $enrolledparams));
         } else {
             // Front page.
             $params = ['lastaccess' => 0];
@@ -247,8 +257,6 @@ class participants_filter extends \core\output\datafilter {
         }
 
         $now = usergetmidnight(time());
-        $timeoptions = [];
-        $criteria = get_string('usersnoaccesssince');
 
         $getoptions = function(int $count, string $singletype, string $type) use ($now, $minlastaccess): array {
             $values = [];
@@ -282,7 +290,7 @@ class participants_filter extends \core\output\datafilter {
 
         if ($lastaccess0exists) {
             $values[] = [
-                'value' => time(),
+                'value' => -1,
                 'title' => get_string('never', 'moodle'),
             ];
         }

@@ -27,9 +27,9 @@ use core_competency\template;
  * @copyright  2015 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_test extends \advanced_testcase {
+final class task_test extends \advanced_testcase {
 
-    public function test_sync_plans_from_cohorts_task() {
+    public function test_sync_plans_from_cohorts_task(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -149,7 +149,7 @@ class task_test extends \advanced_testcase {
         $this->assertEquals(3, plan::count_records(array('templateid' => $tpl->get('id'))));
     }
 
-    public function test_sync_plans_from_cohorts_with_templateduedate_task() {
+    public function test_sync_plans_from_cohorts_with_templateduedate_task(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -228,7 +228,7 @@ class task_test extends \advanced_testcase {
         $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
     }
 
-    public function test_sync_plans_from_cohorts_with_passed_duedate() {
+    public function test_sync_plans_from_cohorts_with_passed_duedate(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -266,7 +266,7 @@ class task_test extends \advanced_testcase {
         $this->assertEquals(2, plan::count_records()); // Now there is two.
     }
 
-    public function test_complete_plans_task() {
+    public function test_complete_plans_task(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();

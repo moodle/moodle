@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
+final class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var qbehaviour_deferredfeedback_type */
     protected $behaviourtype;
@@ -43,20 +43,20 @@ class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
         $this->behaviourtype = question_engine::get_behaviour_type('deferredfeedback');
     }
 
-    public function test_is_archetypal() {
+    public function test_is_archetypal(): void {
         $this->assertTrue($this->behaviourtype->is_archetypal());
     }
 
-    public function test_can_questions_finish_during_the_attempt() {
+    public function test_can_questions_finish_during_the_attempt(): void {
         $this->assertFalse($this->behaviourtype->can_questions_finish_during_the_attempt());
     }
 
-    public function test_get_unused_display_options() {
+    public function test_get_unused_display_options(): void {
         $this->assertEquals(array('correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'),
                 $this->behaviourtype->get_unused_display_options());
     }
 
-    public function test_adjust_random_guess_score() {
+    public function test_adjust_random_guess_score(): void {
         $this->assertEquals(0, $this->behaviourtype->adjust_random_guess_score(0));
         $this->assertEquals(1, $this->behaviourtype->adjust_random_guess_score(1));
     }

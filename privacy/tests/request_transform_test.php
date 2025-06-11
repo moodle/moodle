@@ -36,7 +36,7 @@ use \core_privacy\local\request\transform;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\request\transform
  */
-class request_transform_test extends advanced_testcase {
+final class request_transform_test extends advanced_testcase {
     /**
      * Test that user translation currently does nothing.
      *
@@ -45,7 +45,7 @@ class request_transform_test extends advanced_testcase {
      *
      * @covers ::user
      */
-    public function test_user() {
+    public function test_user(): void {
         // Note: This test currently sucks, but there's no point creating users just to test this.
         for ($i = 0; $i < 10; $i++) {
             $this->assertEquals($i, transform::user($i));
@@ -57,7 +57,7 @@ class request_transform_test extends advanced_testcase {
      *
      * @covers ::datetime
      */
-    public function test_datetime() {
+    public function test_datetime(): void {
         $time = 1;
 
         $datestr = transform::datetime($time);
@@ -79,7 +79,7 @@ class request_transform_test extends advanced_testcase {
      *
      * @covers ::date
      */
-    public function test_date() {
+    public function test_date(): void {
         $time = 1;
 
         $datestr = transform::date($time);
@@ -101,7 +101,7 @@ class request_transform_test extends advanced_testcase {
      * @param   string  $expected The expected value
      * @covers ::yesno
      */
-    public function test_yesno($input, $expected) {
+    public function test_yesno($input, $expected): void {
         $this->assertEquals($expected, transform::yesno($input));
     }
 
@@ -110,7 +110,7 @@ class request_transform_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function yesno_provider() {
+    public static function yesno_provider(): array {
         return [
             'Bool False' => [
                 false,

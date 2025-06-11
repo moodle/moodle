@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class img_alt_is_different_testcase
  */
-class img_alt_is_different_test extends all_checks {
+final class img_alt_is_different_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'img_alt_is_different';
 
@@ -64,7 +64,7 @@ EOD;
     /**
      * Test for img alt attributes matching the src attribute
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'img');
 

@@ -16,6 +16,10 @@
 
 namespace core_group;
 
+use core_customfield\field_controller;
+use core_external\external_api;
+use core_group\customfield\group_handler;
+use core_group\customfield\grouping_handler;
 use core_group_external;
 use externallib_advanced_testcase;
 
@@ -35,13 +39,49 @@ require_once($CFG->dirroot . '/group/lib.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.4
+ * @covers \core_group_external
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
+
+    /**
+     * Create group custom field for testing.
+     *
+     * @return field_controller
+     */
+    protected function create_group_custom_field(): field_controller {
+        $fieldcategory = self::getDataGenerator()->create_custom_field_category([
+            'component' => 'core_group',
+            'area' => 'group',
+        ]);
+
+        return self::getDataGenerator()->create_custom_field([
+            'shortname' => 'testgroupcustomfield1',
+            'type' => 'text',
+            'categoryid' => $fieldcategory->get('id'),
+        ]);
+    }
+    /**
+     * Create grouping custom field for testing.
+     *
+     * @return field_controller
+     */
+    protected function create_grouping_custom_field(): field_controller {
+        $fieldcategory = self::getDataGenerator()->create_custom_field_category([
+            'component' => 'core_group',
+            'area' => 'grouping',
+        ]);
+
+        return self::getDataGenerator()->create_custom_field([
+            'shortname' => 'testgroupingcustomfield1',
+            'type' => 'text',
+            'categoryid' => $fieldcategory->get('id'),
+        ]);
+    }
 
     /**
      * Test create_groups
      */
-    public function test_create_groups() {
+    public function test_create_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -59,6 +99,8 @@ class externallib_test extends externallib_advanced_testcase {
         $group2['courseid'] = $course->id;
         $group2['name'] = 'Group Test 2';
         $group2['description'] = 'Group Test 2 description';
+        $group2['visibility'] = GROUPS_VISIBILITY_MEMBERS;
+        $group2['participation'] = false;
         $group3 = array();
         $group3['courseid'] = $course->id;
         $group3['name'] = 'Group Test 3';
@@ -78,7 +120,7 @@ class externallib_test extends externallib_advanced_testcase {
         $groups = core_group_external::create_groups(array($group1, $group2));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groups = \external_api::clean_returnvalue(core_group_external::create_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::create_groups_returns(), $groups);
 
         // Checks against DB values
         $this->assertEquals(2, count($groups));
@@ -91,10 +133,15 @@ class externallib_test extends externallib_advanced_testcase {
                     $this->assertEquals($dbgroup->descriptionformat, $group1['descriptionformat']);
                     $this->assertEquals($dbgroup->enrolmentkey, $group1['enrolmentkey']);
                     $this->assertEquals($dbgroup->idnumber, $group1['idnumber']);
+                    // The visibility and participation attributes were not specified, so should match the default values.
+                    $groupvisibility = GROUPS_VISIBILITY_ALL;
+                    $groupparticipation = true;
                     break;
                 case $group2['name']:
                     $groupdescription = $group2['description'];
                     $groupcourseid = $group2['courseid'];
+                    $groupvisibility = $group2['visibility'];
+                    $groupparticipation = $group2['participation'];
                     break;
                 default:
                     throw new \moodle_exception('unknowgroupname');
@@ -102,6 +149,8 @@ class externallib_test extends externallib_advanced_testcase {
             }
             $this->assertEquals($dbgroup->description, $groupdescription);
             $this->assertEquals($dbgroup->courseid, $groupcourseid);
+            $this->assertEquals($dbgroup->visibility, $groupvisibility);
+            $this->assertEquals($dbgroup->participation, $groupparticipation);
         }
 
         try {
@@ -120,9 +169,71 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test create_groups with custom fields.
+     */
+    public function test_create_groups_with_customfields(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_group_custom_field();
+        $group = [
+            'courseid' => $course->id,
+            'name' => 'Create groups test (with custom fields)',
+            'description' => 'Description for create groups test with custom fields',
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupcustomfield1',
+                    'value' => 'Test group value 1',
+                ],
+            ],
+        ];
+        $createdgroups = core_group_external::create_groups([$group]);
+        $createdgroups = external_api::clean_returnvalue(core_group_external::create_groups_returns(), $createdgroups);
+
+        $this->assertCount(1, $createdgroups);
+        $createdgroup = reset($createdgroups);
+        $dbgroup = $DB->get_record('groups', ['id' => $createdgroup['id']], '*', MUST_EXIST);
+        $this->assertEquals($group['name'], $dbgroup->name);
+        $this->assertEquals($group['description'], $dbgroup->description);
+
+        $data = group_handler::create()->export_instance_data_object($createdgroup['id'], true);
+        $this->assertEquals('Test group value 1', $data->testgroupcustomfield1);
+    }
+
+    /**
+     * Test that creating a group with an invalid visibility value throws an exception.
+     *
+     * @covers \core_group_external::create_groups
+     * @return void
+     */
+    public function test_create_group_invalid_visibility(): void {
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+
+        $group1 = array();
+        $group1['courseid'] = $course->id;
+        $group1['name'] = 'Group Test 1';
+        $group1['description'] = 'Group Test 1 description';
+        $group1['visibility'] = 1000;
+
+        // Set the required capabilities by the external function.
+        $context = \context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Call the external function.
+        $this->expectException('invalid_parameter_exception');
+        core_group_external::create_groups([$group1]);
+    }
+
+    /**
      * Test update_groups
      */
-    public function test_update_groups() {
+    public function test_update_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -160,6 +271,7 @@ class externallib_test extends externallib_advanced_testcase {
         $group1data['idnumber'] = 'CHANGED';
         core_group_external::update_groups(array($group1data));
         $group2data['description'] = 'Group Test 2 description CHANGED';
+        $group2data['visibility'] = GROUPS_VISIBILITY_MEMBERS;
         core_group_external::update_groups(array($group2data));
 
         foreach ([$group1, $group2] as $group) {
@@ -168,16 +280,20 @@ class externallib_test extends externallib_advanced_testcase {
                 case $group1data['name']:
                     $this->assertEquals($dbgroup->idnumber, $group1data['idnumber']);
                     $groupdescription = $group1data['description'];
+                    // Visibility was not specified, so should match the default value.
+                    $groupvisibility = GROUPS_VISIBILITY_ALL;
                     break;
                 case $group2data['name']:
                     $this->assertEquals($dbgroup->idnumber, $group2data['idnumber']);
                     $groupdescription = $group2data['description'];
+                    $groupvisibility = $group2data['visibility'];
                     break;
                 default:
                     throw new \moodle_exception('unknowngroupname');
                     break;
             }
             $this->assertEquals($dbgroup->description, $groupdescription);
+            $this->assertEquals($dbgroup->visibility, $groupvisibility);
         }
 
         // Taken idnumber exception.
@@ -199,9 +315,135 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test update_groups with custom fields.
+     */
+    public function test_update_groups_with_customfields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_group_custom_field();
+        $group = self::getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        $data = group_handler::create()->export_instance_data_object($group->id, true);
+        $this->assertNull($data->testgroupcustomfield1);
+
+        $updategroup = [
+            'id' => $group->id,
+            'name' => $group->name,
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupcustomfield1',
+                    'value' => 'Test value 1',
+                ],
+            ],
+        ];
+        core_group_external::update_groups([$updategroup]);
+        $data = group_handler::create()->export_instance_data_object($group->id, true);
+        $this->assertEquals('Test value 1', $data->testgroupcustomfield1);
+    }
+
+    /**
+     * Test an exception is thrown when an invalid visibility value is passed in an update.
+     *
+     * @covers \core_group_external::update_groups
+     * @return void
+     */
+    public function test_update_groups_invalid_visibility(): void {
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+
+        // Set the required capabilities by the external function.
+        $context = \context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Create the test group.
+        $group1 = self::getDataGenerator()->create_group($group1data);
+
+        $group1data['id'] = $group1->id;
+        unset($group1data['courseid']);
+        $group1data['visibility'] = 1000;
+
+        $this->expectException('invalid_parameter_exception');
+        core_group_external::update_groups(array($group1data));
+    }
+
+    /**
+     * Attempting to change the visibility of a group with members should throw an exception.
+     *
+     * @covers \core_group_external::update_groups
+     * @return void
+     */
+    public function test_update_groups_visibility_with_members(): void {
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+
+        // Set the required capabilities by the external function.
+        $context = \context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Create the test group and add a member.
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $user1 = self::getDataGenerator()->create_and_enrol($course);
+        self::getDataGenerator()->create_group_member(['userid' => $user1->id, 'groupid' => $group1->id]);
+
+        $group1data['id'] = $group1->id;
+        unset($group1data['courseid']);
+        $group1data['visibility'] = GROUPS_VISIBILITY_MEMBERS;
+
+        $this->expectExceptionMessage('The visibility of this group cannot be changed as it currently has members.');
+        core_group_external::update_groups(array($group1data));
+    }
+
+    /**
+     * Attempting to change the participation field of a group with members should throw an exception.
+     *
+     * @covers \core_group_external::update_groups
+     * @return void
+     */
+    public function test_update_groups_participation_with_members(): void {
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+
+        // Set the required capabilities by the external function.
+        $context = \context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Create the test group and add a member.
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $user1 = self::getDataGenerator()->create_and_enrol($course);
+        self::getDataGenerator()->create_group_member(['userid' => $user1->id, 'groupid' => $group1->id]);
+
+        $group1data['id'] = $group1->id;
+        unset($group1data['courseid']);
+        $group1data['participation'] = false;
+
+        $this->expectExceptionMessage('The participation mode of this group cannot be changed as it currently has members.');
+        core_group_external::update_groups(array($group1data));
+    }
+
+    /**
      * Test get_groups
      */
-    public function test_get_groups() {
+    public function test_get_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -218,6 +460,8 @@ class externallib_test extends externallib_advanced_testcase {
         $group2data['courseid'] = $course->id;
         $group2data['name'] = 'Group Test 2';
         $group2data['description'] = 'Group Test 2 description';
+        $group2data['visibility'] = GROUPS_VISIBILITY_MEMBERS;
+        $group2data['participation'] = false;
         $group1 = self::getDataGenerator()->create_group($group1data);
         $group2 = self::getDataGenerator()->create_group($group2data);
 
@@ -230,7 +474,7 @@ class externallib_test extends externallib_advanced_testcase {
         $groups = core_group_external::get_groups(array($group1->id, $group2->id));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groups = \external_api::clean_returnvalue(core_group_external::get_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_groups_returns(), $groups);
 
         // Checks against DB values
         $this->assertEquals(2, count($groups));
@@ -240,6 +484,9 @@ class externallib_test extends externallib_advanced_testcase {
                 case $group1->name:
                     $groupdescription = $group1->description;
                     $groupcourseid = $group1->courseid;
+                    // The visibility and participation attributes were not specified, so should match the default values.
+                    $groupvisibility = GROUPS_VISIBILITY_ALL;
+                    $groupparticipation = true;
                     $this->assertEquals($dbgroup->descriptionformat, $group1->descriptionformat);
                     $this->assertEquals($dbgroup->enrolmentkey, $group1->enrolmentkey);
                     $this->assertEquals($dbgroup->idnumber, $group1->idnumber);
@@ -247,6 +494,8 @@ class externallib_test extends externallib_advanced_testcase {
                 case $group2->name:
                     $groupdescription = $group2->description;
                     $groupcourseid = $group2->courseid;
+                    $groupvisibility = $group2->visibility;
+                    $groupparticipation = $group2->participation;
                     break;
                 default:
                     throw new \moodle_exception('unknowgroupname');
@@ -254,6 +503,8 @@ class externallib_test extends externallib_advanced_testcase {
             }
             $this->assertEquals($dbgroup->description, $groupdescription);
             $this->assertEquals($dbgroup->courseid, $groupcourseid);
+            $this->assertEquals($dbgroup->visibility, $groupvisibility);
+            $this->assertEquals($dbgroup->participation, $groupparticipation);
         }
 
         // Call without required capability
@@ -264,9 +515,36 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_groups with customfields.
+     */
+    public function test_get_groups_with_customfields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_group_custom_field();
+        $group = self::getDataGenerator()->create_group([
+            'courseid' => $course->id,
+            'customfield_testgroupcustomfield1' => 'Test group value 1',
+        ]);
+
+        // Call the external function.
+        $groups = core_group_external::get_groups([$group->id]);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groups = external_api::clean_returnvalue(core_group_external::get_groups_returns(), $groups);
+
+        $this->assertEquals(1, count($groups));
+        $groupresult = reset($groups);
+        $this->assertEquals(1, count($groupresult['customfields']));
+        $customfield = reset($groupresult['customfields']);
+        $this->assertEquals('testgroupcustomfield1', $customfield['shortname']);
+        $this->assertEquals('Test group value 1', $customfield['value']);
+    }
+
+    /**
      * Test delete_groups
      */
-    public function test_delete_groups() {
+    public function test_delete_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -316,7 +594,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test create and update groupings.
      * @return void
      */
-    public function test_create_update_groupings() {
+    public function test_create_update_groupings(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -372,9 +650,76 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test create_groupings with custom fields.
+     */
+    public function test_create_groupings_with_customfields(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_grouping_custom_field();
+        $grouping = [
+            'courseid' => $course->id,
+            'name' => 'Create groupings test (with custom fields)',
+            'description' => 'Description for create groupings test with custom fields',
+            'idnumber' => 'groupingidnumber1',
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupingcustomfield1',
+                    'value' => 'Test grouping value 1',
+                ],
+            ],
+        ];
+        $createdgroupings = core_group_external::create_groupings([$grouping]);
+        $createdgroupings = external_api::clean_returnvalue(core_group_external::create_groupings_returns(), $createdgroupings);
+
+        $this->assertCount(1, $createdgroupings);
+        $createdgrouping = reset($createdgroupings);
+        $dbgroup = $DB->get_record('groupings', ['id' => $createdgrouping['id']], '*', MUST_EXIST);
+        $this->assertEquals($grouping['name'], $dbgroup->name);
+        $this->assertEquals($grouping['description'], $dbgroup->description);
+        $this->assertEquals($grouping['idnumber'], $dbgroup->idnumber);
+
+        $data = grouping_handler::create()->export_instance_data_object($createdgrouping['id'], true);
+        $this->assertEquals('Test grouping value 1', $data->testgroupingcustomfield1);
+    }
+
+    /**
+     * Test update_groups with custom fields.
+     */
+    public function test_update_groupings_with_customfields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_grouping_custom_field();
+        $grouping = self::getDataGenerator()->create_grouping(['courseid' => $course->id]);
+
+        $data = grouping_handler::create()->export_instance_data_object($grouping->id, true);
+        $this->assertNull($data->testgroupingcustomfield1);
+
+        $updategroup = [
+            'id' => $grouping->id,
+            'name' => $grouping->name,
+            'description' => $grouping->description,
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupingcustomfield1',
+                    'value' => 'Test grouping value 1',
+                ],
+            ],
+        ];
+        core_group_external::update_groupings([$updategroup]);
+        $data = grouping_handler::create()->export_instance_data_object($grouping->id, true);
+        $this->assertEquals('Test grouping value 1', $data->testgroupingcustomfield1);
+    }
+
+    /**
      * Test get_groupings
      */
-    public function test_get_groupings() {
+    public function test_get_groupings(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -397,7 +742,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function without specifying the optional parameter.
         $groupings = core_group_external::get_groupings(array($grouping->id));
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groupings = \external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
 
         $this->assertEquals(1, count($groupings));
 
@@ -421,7 +766,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function specifying that groups are returned.
         $groupings = core_group_external::get_groupings(array($grouping->id), true);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $groupings = \external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
         $this->assertEquals(1, count($groupings));
         $this->assertEquals(2, count($groupings[0]['groups']));
         foreach ($groupings[0]['groups'] as $group) {
@@ -449,9 +794,59 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_groupings with customfields.
+     */
+    public function test_get_groupings_with_customfields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_grouping_custom_field();
+        $grouping = self::getDataGenerator()->create_grouping([
+            'courseid' => $course->id,
+            'customfield_testgroupingcustomfield1' => 'Test grouping value 1',
+        ]);
+        $this->create_group_custom_field();
+        $group = self::getDataGenerator()->create_group([
+            'courseid' => $course->id,
+            'customfield_testgroupcustomfield1' => 'Test group value 1',
+        ]);
+        groups_assign_grouping($grouping->id, $group->id);
+
+        // Call the external function.
+        $groupings = core_group_external::get_groupings([$grouping->id]);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+
+        $this->assertEquals(1, count($groupings));
+        $groupingresult = reset($groupings);
+        $this->assertEquals(1, count($groupingresult['customfields']));
+        $customfield = reset($groupingresult['customfields']);
+        $this->assertEquals('testgroupingcustomfield1', $customfield['shortname']);
+        $this->assertEquals('Test grouping value 1', $customfield['value']);
+        $this->assertArrayNotHasKey('groups', $groupingresult);
+
+        // Call the external function with return group parameter.
+        $groupings = core_group_external::get_groupings([$grouping->id], true);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+
+        $this->assertEquals(1, count($groupings));
+        $groupingresult = reset($groupings);
+        $this->assertEquals(1, count($groupingresult['customfields']));
+        $this->assertArrayHasKey('groups', $groupingresult);
+        $this->assertEquals(1, count($groupingresult['groups']));
+        $groupresult = reset($groupingresult['groups']);
+        $this->assertEquals(1, count($groupresult['customfields']));
+        $customfield = reset($groupresult['customfields']);
+        $this->assertEquals('testgroupcustomfield1', $customfield['shortname']);
+        $this->assertEquals('Test group value 1', $customfield['value']);
+    }
+
+    /**
      * Test delete_groupings.
      */
-    public function test_delete_groupings() {
+    public function test_delete_groupings(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -504,7 +899,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_groups
      */
-    public function test_get_course_user_groups() {
+    public function test_get_course_user_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -563,7 +958,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student1);
 
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups.
         $this->assertCount(2, $groups['groups']);
         $this->assertEquals($course->id, $groups['groups'][0]['courseid']);
@@ -571,7 +966,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check that I only see my groups inside the given grouping.
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id, $grouping->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups in the grouping.
         $this->assertCount(1, $groups['groups']);
         $this->assertEquals($group1->id, $groups['groups'][0]['id']);
@@ -579,13 +974,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check optional parameters (all student 1 courses and current user).
         $groups = core_group_external::get_course_user_groups();
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups in all my courses.
         $this->assertCount(3, $groups['groups']);
 
         $this->setUser($student2);
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that I see my groups.
         $this->assertCount(1, $groups['groups']);
 
@@ -595,17 +990,17 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($teacher);
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in given course.
         $this->assertCount(2, $groups['groups']);
 
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in given course.
         $this->assertCount(1, $groups['groups']);
 
         $groups = core_group_external::get_course_user_groups(0, $student1->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in all the user courses if the teacher is enrolled in the course.
         $this->assertCount(2, $groups['groups']); // Teacher only see groups in first course.
         $this->assertCount(1, $groups['warnings']); // Enrolment warnings.
@@ -614,7 +1009,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Enrol teacher in second course.
         $this->getDataGenerator()->enrol_user($teacher->id, $anothercourse->id, $teacherrole->id);
         $groups = core_group_external::get_course_user_groups(0, $student1->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         // Check that a teacher can see student groups in all the user courses if the teacher is enrolled in the course.
         $this->assertCount(3, $groups['groups']);
 
@@ -623,20 +1018,20 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Student can's see other students group.
         $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertEquals('cannotmanagegroups', $groups['warnings'][0]['warningcode']);
 
         // Not enrolled course.
         $groups = core_group_external::get_course_user_groups($emptycourse->id, $student2->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertEquals('1', $groups['warnings'][0]['warningcode']);
 
         $this->setUser($teacher);
         // Check user checking not enrolled in given course.
         $groups = core_group_external::get_course_user_groups($emptycourse->id, $student1->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertEquals('notenrolled', $groups['warnings'][0]['warningcode']);
     }
@@ -644,7 +1039,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_activity_allowed_groups
      */
-    public function test_get_activity_allowed_groups() {
+    public function test_get_activity_allowed_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -705,7 +1100,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Retrieve my groups.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
         $this->assertFalse($groups['canaccessallgroups']);
 
@@ -722,20 +1117,20 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($teacher);
         // Retrieve other users groups.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id, $student->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
         // We are checking the $student passed as parameter so this will return false.
         $this->assertFalse($groups['canaccessallgroups']);
 
         // Check warnings. Trying to get groups for a user not enrolled in course.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id, $otherstudent->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(1, $groups['warnings']);
         $this->assertFalse($groups['canaccessallgroups']);
 
         // Checking teacher groups.
         $groups = core_group_external::get_activity_allowed_groups($cm1->id);
-        $groups = \external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
         $this->assertCount(2, $groups['groups']);
         // Teachers by default can access all groups.
         $this->assertTrue($groups['canaccessallgroups']);
@@ -744,7 +1139,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_activity_groupmode
      */
-    public function test_get_activity_groupmode() {
+    public function test_get_activity_groupmode(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -770,7 +1165,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student);
 
         $data = core_group_external::get_activity_groupmode($cm1->id);
-        $data = \external_api::clean_returnvalue(core_group_external::get_activity_groupmode_returns(), $data);
+        $data = external_api::clean_returnvalue(core_group_external::get_activity_groupmode_returns(), $data);
         $this->assertEquals(VISIBLEGROUPS, $data['groupmode']);
 
         try {
@@ -790,7 +1185,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_group_members.
      */
-    public function test_add_group_members() {
+    public function test_add_group_members(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -849,7 +1244,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_group_members.
      */
-    public function test_delete_group_members() {
+    public function test_delete_group_members(): void {
         global $DB;
 
         $this->resetAfterTest(true);

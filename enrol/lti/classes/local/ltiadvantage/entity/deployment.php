@@ -155,7 +155,7 @@ class deployment {
      * @throws \coding_exception if the resource_link can't be created.
      */
     public function add_resource_link(string $resourcelinkid, int $resourceid,
-            int $contextid = null): resource_link {
+            ?int $contextid = null): resource_link {
 
         if (!$this->get_id()) {
             throw new \coding_exception('Can\'t add resource_link to a deployment that hasn\'t first been saved');

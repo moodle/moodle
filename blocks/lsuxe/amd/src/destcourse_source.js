@@ -16,7 +16,6 @@
 /**
  * Cross Enrollment Tool
  *
- * @package   block_lsuxe
  * @copyright 2008 onwards Louisiana State University
  * @copyright 2008 onwards David Lowe, Robert Russo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,10 +29,12 @@ define(['jquery', 'core/ajax', 'block_lsuxe/notifications', 'block_lsuxe/xe_lib'
          * Make an ajax call to the destination server and get groups.
          * This is currently not being used but may in the future?
          *
-         * @param {Object} all the options to use jquery's $.ajax function (not moodle's)
+         * @param {string} c course shortname
+         * @param {int} v courseid
          * @return {Promise}
          */
          getGroups: function (c, v) {
+
             var params = {
                 'type': 'GET',
                 'url': sessionStorage.getItem("currentUrl") + '/webservice/rest/server.php',
@@ -77,7 +78,8 @@ define(['jquery', 'core/ajax', 'block_lsuxe/notifications', 'block_lsuxe/xe_lib'
          *
          * This is currently not being used but may in the future?
          *
-         * @param {Object} all the options to use jquery's $.ajax function (not moodle's)
+         * @param {Object} selector selector used.
+         * @param {Object} data data being passed in.
          * @return {Promise}
          */
         onSelected: function (selector, data) {
@@ -87,7 +89,7 @@ define(['jquery', 'core/ajax', 'block_lsuxe/notifications', 'block_lsuxe/xe_lib'
         /**
          * Make an ajax call to the destination server and get courses.
          *
-         * @param {Object} all the options to use jquery's $.ajax function (not moodle's)
+         * @param {Object} params for ajax call.
          * @return {Promise}
          */
          getCourses: function (params) {

@@ -23,7 +23,7 @@ namespace mod_feedback\form;
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package mod_feedback
  */
-class create_template_form_test extends \advanced_testcase {
+final class create_template_form_test extends \advanced_testcase {
     /**
      * Run the basic setup for the test
      */
@@ -71,7 +71,7 @@ class create_template_form_test extends \advanced_testcase {
      * @dataProvider createtemplate_form_with_modified_capabilities_provider
      */
     public function test_createtemplate_form_with_modified_capabilities(array $unassignedroles, bool $accessallowed,
-            bool $public = false, bool $expectedispublicvalue = false) {
+            bool $public = false, bool $expectedispublicvalue = false): void {
         global $DB;
         [$manager, $teacher, $user, $managerrole, $feedback] = $this->setup_instance();
         $this->setAdminUser();
@@ -102,7 +102,7 @@ class create_template_form_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function createtemplate_form_with_modified_capabilities_provider(): array {
+    public static function createtemplate_form_with_modified_capabilities_provider(): array {
         return [
             "Manager without edititems permission cannot create any templates" => [
                 ['mod/feedback:edititems'], false
@@ -134,7 +134,7 @@ class create_template_form_test extends \advanced_testcase {
      * @dataProvider createtemplate_form_provider
      */
     public function test_createtemplate_form(string $loginas, bool $public,
-            bool $accessallowed = true) {
+            bool $accessallowed = true): void {
         global $DB;
         [$manager, $teacher, $user, $managerrole, $feedback] = $this->setup_instance();
         switch($loginas) {
@@ -180,7 +180,7 @@ class create_template_form_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function createtemplate_form_provider(): array {
+    public static function createtemplate_form_provider(): array {
         return [
             'Create a private template as an admin' => [
                 'admin', false

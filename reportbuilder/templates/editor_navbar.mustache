@@ -22,12 +22,14 @@
     Example context (json):
     {
         "title": "Report title",
-        "buttons": "<button class='btn btn-secondary mr-2'>Close</button>"
+        "buttons": "<button class='btn btn-secondary me-2'>Close</button>"
     }
 }}
 <nav class="navbar fixed-top navbar-light bg-white navbar-expand align-items-center" aria-label="{{#str}}sitemenubar, admin{{/str}}">
-    <h1 class="h3 m-0 p-0">{{{title}}}</h1>
-    <div class="ml-auto d-flex">
-        {{{buttons}}}
+    <div class="container-fluid">
+        <h1 class="h3 m-0 p-0">{{{title}}}</h1>
+        <div class="ms-auto d-flex">
+            {{{buttons}}}
+        </div>
     </div>
 </nav>

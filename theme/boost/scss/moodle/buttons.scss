@@ -47,7 +47,8 @@ p.arrow_button {
     border-radius: 50%;
     flex-shrink: 0;
 
-    @include hover-focus {
+    &:hover,
+    &:focus {
         background-color: $gray-200;
     }
 
@@ -58,6 +59,15 @@ p.arrow_button {
             font-size: $length !important; /* stylelint-disable-line declaration-no-important */
             line-height: $length !important; /* stylelint-disable-line declaration-no-important */
         }
+    }
+}
+
+// Specific styles for the collapse/expand buttons.
+.btn.btn-icon.icons-collapse-expand {
+    color: $primary;
+    background-color: $primary-light-background;
+    &:hover {
+        outline: 2px solid $primary;
     }
 }
 

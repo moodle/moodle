@@ -23,13 +23,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package    core
  */
-class client_test extends advanced_testcase {
+final class client_test extends advanced_testcase {
     /**
      * Uses the static dataset as feed-in
      *
      * @return array
      */
-    public function map_response_provider(): array {
+    public static function map_response_provider(): array {
         return [
             "Nested objects syntax a-b-c syntax " => [
                 [
@@ -83,7 +83,7 @@ class client_test extends advanced_testcase {
      * @param array $expected
      * @throws ReflectionException
      */
-    public function test_map_userinfo_to_fields(array $mapping, array $expected) {
+    public function test_map_userinfo_to_fields(array $mapping, array $expected): void {
         $dataset = [
             "name" => (object) [
                 "firstname" => "John",
@@ -109,7 +109,6 @@ class client_test extends advanced_testcase {
         ];
 
         $method = new ReflectionMethod("core\oauth2\client", "map_userinfo_to_fields");
-        $method->setAccessible(true);
 
         $issuer = new \core\oauth2\issuer(0);
         $mockbuilder = $this->getMockBuilder('core\oauth2\client');

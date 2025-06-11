@@ -24,6 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 require_once("$CFG->dirroot/enrol/externallib.php");
 
 /**
@@ -158,7 +164,7 @@ class local_remote_courses_external extends external_api {
     /**
      * Returns description of get_courses_by_username_returns() result value.
      *
-     * @return \external_description
+     * @return \core_external\external_description
      */
     public static function get_courses_by_username_returns() {
         return new external_multiple_structure(

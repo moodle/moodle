@@ -59,11 +59,13 @@
             style="height: 38px"
         >
         {{#showonlinestatus}}
-            <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
+            <span class="contact-status icon-size-2 {{#isonline}}online{{/isonline}}">
+                {{#isonline}} {{#pix}} t/online, core, {{#str}} online, core_message {{/str}} {{/pix}} {{/isonline}}
+            </span>
         {{/showonlinestatus}}
-        <h6 class="ml-2">{{fullname}}</h6>
+        <h6 class="ms-2">{{fullname}}</h6>
         <div
-            class="ml-auto align-self-end {{^isblocked}}hidden{{/isblocked}}"
+            class="ms-auto align-self-end {{^isblocked}}hidden{{/isblocked}}"
             data-region="block-icon-container"
         >
             {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}

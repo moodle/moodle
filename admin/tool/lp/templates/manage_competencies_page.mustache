@@ -41,7 +41,7 @@
 <h2>
     {{{framework.shortname}}}
     {{#canmanage}}
-            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{framework.id}}&pagecontextid={{pagecontextid}}&return=competencies">{{#pix}}t/edit, core, {{#str}}editcompetencyframework, tool_lp{{/str}}{{/pix}}</a>
+            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{framework.id}}&pagecontextid={{pagecontextid}}&return=competencies">{{#pix}}i/settings, core, {{#str}}editcompetencyframework, tool_lp{{/str}}{{/pix}}</a>
     {{/canmanage}}
 </h2>
 <div>{{{framework.description}}}</div>
@@ -49,7 +49,7 @@
     <div class="row">
         <div class="col-lg-6">
             <p>
-                <form data-region="filtercompetencies" data-frameworkid="{{framework.id}}" class="form-inline">
+                <form data-region="filtercompetencies" data-frameworkid="{{framework.id}}" class="d-flex flex-wrap align-items-center">
                     <div class="input-group mb-3">
                         <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
                         <input class="form-control" type="text" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
@@ -68,7 +68,7 @@
             <div class="border p-2 mb-2">
                 <div class="card-title">
                     <h4 data-region="selected-competency">{{#str}}selectedcompetency, tool_lp{{/str}}</h4>
-                        <span data-region="competencyactionsmenu" class="float-sm-right">
+                        <span data-region="competencyactionsmenu" class="float-sm-end">
                             <ul title="{{#str}}edit{{/str}}" class="competencyactionsmenu">
                                 <li>
                                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
@@ -151,4 +151,3 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 
 
 });
 {{/js}}
-

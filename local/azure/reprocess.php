@@ -22,7 +22,7 @@ require_once('provider.php');
 require_login();
 
 if (!is_siteadmin($USER->id)) {
-    print_error('no_permission', 'local_azure', '/my');
+    moodle_exception('no_permission', 'local_azure', '/my');
 }
 
 $provider = new azure_enrollment_provider();

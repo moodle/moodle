@@ -19,7 +19,7 @@ Feature: MathType and ChemType editor switch
     And the "urltolink" filter is "off"
     And I log in as "admin"
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-90 - Change from ChemType editor to MathType Editor
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "0" using the activity chooser
@@ -40,7 +40,7 @@ Feature: MathType and ChemType editor switch
     Then a Wirisformula containing 'square root' should exist
     And Wirisformula should has height 48 with error of 2
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-90 - Change from MathType editor to ChemType Editor
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Page" to section "0" using the activity chooser

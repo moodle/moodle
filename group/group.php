@@ -93,7 +93,7 @@ if (!empty($group->id)) {
 }
 
 /// First create the form
-$editform = new group_form(null, array('editoroptions'=>$editoroptions));
+$editform = new group_form(null, array('editoroptions' => $editoroptions, 'group' => $group));
 $editform->set_data($group);
 
 if ($editform->is_cancelled()) {

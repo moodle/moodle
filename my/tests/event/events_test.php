@@ -27,7 +27,7 @@ use context_user;
  * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var user cobject */
     protected $user;
@@ -37,6 +37,7 @@ class events_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $USER;
+        parent::setUp();
 
         $this->resetAfterTest();
 
@@ -51,7 +52,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for viewing the dashboard, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_dashboard_viewed() {
+    public function test_dashboard_viewed(): void {
 
         $user = $this->user;
         // Trigger an event: dashboard viewed.
@@ -80,7 +81,7 @@ class events_test extends \advanced_testcase {
      *
      * @covers ::my_reset_page
      */
-    public function test_dashboard_reset() {
+    public function test_dashboard_reset(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/my/lib.php');
 
@@ -150,7 +151,7 @@ class events_test extends \advanced_testcase {
      *
      * @covers ::my_reset_page_for_all_users
      */
-    public function test_dashboards_reset() {
+    public function test_dashboards_reset(): void {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . '/my/lib.php');
 

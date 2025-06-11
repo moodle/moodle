@@ -19,7 +19,7 @@ Feature: User edits deleted formula
     And the "urltolink" filter is "off"
     And I log in as "admin"
 
-  @javascript @4.x @4.x_tinymce6
+  @javascript @4.x @4.x_tinymce6 @5.x @5.x_tinymce6
   Scenario: MTMOODLE-76 - User edits deleted formula
     # Course
     And I am on "Course 1" course homepage with editing mode on

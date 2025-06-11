@@ -41,8 +41,6 @@ require_once($CFG->dirroot . '/lib/editorlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filter_wiris_pluginwrapper {
-
-
     /**
      * @var bool $isinit Indicates whether the initialization is done.
      */
@@ -282,6 +280,11 @@ class filter_wiris_pluginwrapper {
                 return $plugin;
             } else if ($editor == 'tiny') {
                 $relativepath = '/lib/editor/tiny/plugins/wiris';
+
+                if (!file_exists($CFG->dirroot . $relativepath . '/js/plugin.min.js')) {
+                    // MathType not installed.
+                    continue;
+                }
 
                 $plugin = new stdClass();
                 $plugin->url = $CFG->wwwroot . $relativepath;

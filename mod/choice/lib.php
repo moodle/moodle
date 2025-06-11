@@ -721,11 +721,12 @@ function choice_get_post_actions() {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the choice.
  *
- * @param object $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function choice_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'choiceheader', get_string('modulenameplural', 'choice'));
-    $mform->addElement('advcheckbox', 'reset_choice', get_string('removeresponses','choice'));
+    $mform->addElement('static', 'choicedelete', get_string('delete'));
+    $mform->addElement('advcheckbox', 'reset_choice', get_string('removeresponses', 'choice'));
 }
 
 /**
@@ -750,23 +751,31 @@ function choice_reset_userdata($data) {
     global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'choice');
-    $status = array();
+    $status = [];
 
     if (!empty($data->reset_choice)) {
         $choicessql = "SELECT ch.id
                        FROM {choice} ch
                        WHERE ch.course=?";
 
-        $DB->delete_records_select('choice_answers', "choiceid IN ($choicessql)", array($data->courseid));
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('removeresponses', 'choice'), 'error'=>false);
+        $DB->delete_records_select('choice_answers', "choiceid IN ($choicessql)", [$data->courseid]);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('removeresponses', 'choice'),
+            'error' => false,
+        ];
     }
 
-    /// updating dates - shift may be negative too
+    // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates('choice', array('timeopen', 'timeclose'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+        shift_course_mod_dates('choice', ['timeopen', 'timeclose'], $data->timeshift, $data->courseid);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('date'),
+            'error' => false,
+        ];
     }
 
     return $status;
@@ -1265,16 +1274,6 @@ function mod_choice_core_calendar_event_timestart_updated(\calendar_event $event
         $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
         $event->trigger();
     }
-}
-
-/**
- * Get icon mapping for font-awesome.
- */
-function mod_choice_get_fontawesome_icon_map() {
-    return [
-        'mod_choice:row' => 'fa-info',
-        'mod_choice:column' => 'fa-columns',
-    ];
 }
 
 /**

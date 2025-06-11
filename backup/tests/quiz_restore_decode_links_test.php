@@ -31,12 +31,12 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2020 Ilya Tregubov <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_restore_decode_links_test extends \advanced_testcase {
+final class quiz_restore_decode_links_test extends \advanced_testcase {
 
     /**
      * Test restore_decode_rule class
      */
-    public function test_restore_quiz_decode_links() {
+    public function test_restore_quiz_decode_links(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -64,6 +64,8 @@ class quiz_restore_decode_links_test extends \advanced_testcase {
 
         $questiondata = \question_bank::load_question_data($question->id);
 
+        $DB->set_field('question', 'questiontext', $CFG->wwwroot . '/mod/quiz/view.php?id=' . $quiz->cmid, ['id' => $question->id]);
+
         $firstanswer = array_shift($questiondata->options->answers);
         $DB->set_field('question_answers', 'answer', $CFG->wwwroot . '/course/view.php?id=' . $course->id,
             ['id' => $firstanswer->id]);
@@ -87,6 +89,7 @@ class quiz_restore_decode_links_test extends \advanced_testcase {
         $questionids = [];
         foreach ($quizquestions as $quizquestion) {
             if ($quizquestion->questionid) {
+                $this->assertEquals($CFG->wwwroot . '/mod/quiz/view.php?id=' . $quiz->cmid, $quizquestion->questiontext);
                 $questionids[] = $quizquestion->questionid;
             }
         }

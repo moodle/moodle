@@ -40,12 +40,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Setup.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
@@ -57,13 +58,14 @@ class lib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/folder/lib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
      * Test folder_view
      * @return void
      */
-    public function test_folder_view() {
+    public function test_folder_view(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -99,7 +101,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(1, $completiondata->completionstate);
     }
 
-    public function test_folder_core_calendar_provide_event_action() {
+    public function test_folder_core_calendar_provide_event_action(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $folder = $this->getDataGenerator()->create_module('folder', array('course' => $course->id));
@@ -122,7 +124,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_folder_core_calendar_provide_event_action_for_non_user() {
+    public function test_folder_core_calendar_provide_event_action_for_non_user(): void {
         global $CFG;
 
         // Create a course.
@@ -149,7 +151,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_folder_core_calendar_provide_event_action_in_hidden_section() {
+    public function test_folder_core_calendar_provide_event_action_in_hidden_section(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -176,7 +178,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_folder_core_calendar_provide_event_action_for_user() {
+    public function test_folder_core_calendar_provide_event_action_for_user(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -207,7 +209,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_folder_core_calendar_provide_event_action_already_completed() {
+    public function test_folder_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -238,7 +240,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_folder_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_folder_core_calendar_provide_event_action_already_completed_for_user(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -307,7 +309,7 @@ class lib_test extends \advanced_testcase {
      * @param bool $hascapability if the user has the mod/folder:view capability
      * @param int $count The expected recent activities entries.
      */
-    public function test_folder_get_recent_mod_activity(int $forcedownload, bool $hascapability, int $count) {
+    public function test_folder_get_recent_mod_activity(int $forcedownload, bool $hascapability, int $count): void {
         global $USER, $DB;
 
         $this->resetAfterTest();
@@ -376,7 +378,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function folder_get_recent_mod_activity_provider(): array {
+    public static function folder_get_recent_mod_activity_provider(): array {
         return [
             'Teacher with force download' => [
                 'forcedownload' => 1,

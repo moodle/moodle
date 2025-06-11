@@ -25,15 +25,25 @@
 
 namespace local_o365\healthcheck;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Interface for all health checks.
  */
 interface healthcheckinterface {
+    /**
+     * @var int SEVERITY_OK
+     */
     const SEVERITY_OK = 0;
+    /**
+     * @var int SEVERITY_TRIVIAL
+     */
     const SEVERITY_TRIVIAL = 1;
+    /**
+     * @var int SEVERITY_WARNING
+     */
     const SEVERITY_WARNING = 2;
+    /**
+     * @var int SEVERITY_FATAL
+     */
     const SEVERITY_FATAL = 3;
 
     /**

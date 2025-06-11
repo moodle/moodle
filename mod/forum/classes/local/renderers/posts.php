@@ -58,7 +58,7 @@ class posts {
         renderer_base $renderer,
         exported_posts_builder $exportedpostsbuilder,
         string $template,
-        callable $postprocessfortemplate = null
+        ?callable $postprocessfortemplate = null
     ) {
         $this->renderer = $renderer;
         $this->exportedpostsbuilder = $exportedpostsbuilder;
@@ -80,7 +80,7 @@ class posts {
         array $forums,
         array $discussions,
         array $posts
-    ) : string {
+    ): string {
         // Format the forums and discussion to make them more easily accessed later.
         $forums = array_reduce($forums, function($carry, $forum) {
             $carry[$forum->get_id()] = $forum;

@@ -71,7 +71,7 @@ abstract class contextlist_base implements
      *
      * @return  int[]
      */
-    public function get_contextids() : array {
+    public function get_contextids(): array {
         return $this->contextids;
     }
 
@@ -81,7 +81,7 @@ abstract class contextlist_base implements
      *
      * @return  \context[]
      */
-    public function get_contexts() : array {
+    public function get_contexts(): array {
         $contexts = [];
         foreach ($this->contextids as $contextid) {
             // It is possible that this context has been deleted and we now have subsequent calls being made with this
@@ -112,7 +112,7 @@ abstract class contextlist_base implements
      *
      * @return string the component name associated with this contextlist.
      */
-    public function get_component() : string {
+    public function get_component(): string {
         return $this->component;
     }
 

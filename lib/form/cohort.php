@@ -46,6 +46,11 @@ class MoodleQuickForm_cohort extends MoodleQuickForm_autocomplete {
     protected $exclude = array();
 
     /**
+     * @var string $includes One of self/parents/all
+     */
+    protected $includes = 'parents';
+
+    /**
      * @var int $contextid The context id to fetch cohorts in.
      */
     protected $contextid = 0;
@@ -86,6 +91,9 @@ class MoodleQuickForm_cohort extends MoodleQuickForm_autocomplete {
                 $this->exclude = array($this->exclude);
             }
         }
+        if (isset($options['includes'])) {
+            $this->includes = $options['includes'];
+        }
         if (isset($options['requiredcapabilities'])) {
             $this->requiredcapabilities = $options['requiredcapabilities'];
         }
@@ -93,6 +101,7 @@ class MoodleQuickForm_cohort extends MoodleQuickForm_autocomplete {
         $validattributes = array(
             'ajax' => 'core/form-cohort-selector',
             'data-exclude' => implode(',', $this->exclude),
+            'data-includes' => $this->includes,
             'data-contextid' => (int)$this->contextid
         );
         if ($this->multiple) {
@@ -141,7 +150,7 @@ class MoodleQuickForm_cohort extends MoodleQuickForm_autocomplete {
             if (!cohort_can_view_cohort($cohort, $currentcontext)) {
                 continue;
             }
-            $label = format_string($cohort->name, true, $currentcontext);
+            $label = format_string($cohort->name, true, ['context' => $currentcontext]);
             $this->addOption($label, $cohort->id);
         }
 

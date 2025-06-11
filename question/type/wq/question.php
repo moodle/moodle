@@ -50,7 +50,7 @@ class qtype_wq_question extends question_graded_automatically {
      */
     public $corrupt = false;
 
-    public function __construct(question_definition $base = null) {
+    public function __construct(?question_definition $base = null) {
         $this->base = $base;
     }
 
@@ -185,23 +185,49 @@ class qtype_wq_question extends question_graded_automatically {
             $format = FORMAT_HTML;
         }
         $text = $this->expand_variables($text);
-
         return $this->base->format_text($text, $format, $qa, $component, $filearea, $itemid, $clean);
+    }
+
+    private function mathml_to_safe($input) {
+        $safe = array('«', '»', '¨', '§', '`');
+        $mathml = array('<', '>', '"', '&', '\'');
+        return str_replace($mathml, $safe, $input);
     }
 
     public function expand_variables($text) {
         if (isset($this->wirisquestioninstance)) {
             $text = $this->wirisquestioninstance->expandVariables($text);
         }
-        return $this->filtercodes_compatibility($text);
+
+        if (get_config('qtype_wq', 'filtercodes_compatibility')) {
+            $text = $this->filtercodes_compatibility($text);
+        }
+        if (get_config('qtype_wq', 'mathjax_compatibity')) {
+            $text = $this->mathjax_compatibility($text);
+        }
+
+        return $text;
+    }
+
+    /**
+     * If MathType is in client mode and we want to use MathJax to render LaTeX,
+     * the MathJax plugin can conflict with standard MathML due to supporting
+     * HTML inside formulae. This function replaces MathML special chars with a MathType's
+     * safe enconding so MathJax does not interact with it.
+     */
+    private function mathjax_compatibility($text) {
+        return preg_replace_callback(
+            '/<math.*?<\/math>/s',
+            function ($matches) {
+                return $this->mathml_to_safe($matches[0]);
+            },
+            $text
+        );
     }
 
     private function filtercodes_compatibility($text) {
-        $configfiltercodes = get_config('qtype_wq', 'filtercodes_compatibility');
-        if (isset($configfiltercodes) && $configfiltercodes == '1') {
-            $text = str_replace('[{', '[[{', $text);
-            $text = str_replace('}]', '}]]', $text);
-        }
+        $text = str_replace('[{', '[[{', $text);
+        $text = str_replace('}]', '}]]', $text);
         return $text;
     }
 

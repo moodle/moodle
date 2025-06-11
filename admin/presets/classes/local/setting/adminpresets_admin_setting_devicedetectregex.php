@@ -19,6 +19,8 @@ namespace core_adminpresets\local\setting;
 /**
  * Reimplementation to allow human friendly view of the selected regexps.
  *
+ * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
+ * @todo Final deprecation on Moodle 4.7 MDL-79052
  * @package          core_adminpresets
  * @copyright        2021 Pimenko <support@pimenko.com><pimenko.com>
  * @author           Jordan Kesraoui | Sylvain Revenu | Pimenko based on David Monllaó <david.monllao@urv.cat> code
@@ -26,7 +28,16 @@ namespace core_adminpresets\local\setting;
  */
 class adminpresets_admin_setting_devicedetectregex extends adminpresets_admin_setting_configtext {
 
+    /**
+     * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
+     * @todo Final deprecation on Moodle 4.7 MDL-79052
+     */
     public function set_visiblevalue() {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with devicedetectregex theme setting are being removed.',
+            DEBUG_DEVELOPER
+        );
         $values = json_decode($this->get_value());
 
         if (!$values) {

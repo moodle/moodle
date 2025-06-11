@@ -37,7 +37,7 @@ $admin = (
 );
 
 if (!$admin) {
-    print_error('no_permission', 'block_student_gradeviewer');
+    moodle_exception('no_permission', 'block_student_gradeviewer');
 }
 
 $classes = student_mentor_admin_page::gather_classes();

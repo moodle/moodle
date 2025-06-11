@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \copy_helper
  */
-class copy_helper_test extends \advanced_testcase {
+final class copy_helper_test extends \advanced_testcase {
 
     /**
      *
@@ -65,6 +65,7 @@ class copy_helper_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $DB, $CFG, $USER;
+        parent::setUp();
 
         $this->resetAfterTest(true);
 
@@ -149,7 +150,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::process_formdata
      */
-    public function test_process_formdata_missing_fields() {
+    public function test_process_formdata_missing_fields(): void {
         $this->expectException(\moodle_exception::class);
         \copy_helper::process_formdata(new \stdClass);
     }
@@ -159,7 +160,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::process_formdata
      */
-    public function test_process_formdata() {
+    public function test_process_formdata(): void {
         $validformdata = [
             'courseid' => 1729,
             'fullname' => 'Taxicab Numbers',
@@ -195,7 +196,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::cleanup_orphaned_copy_controllers
      */
-    public function test_cleanup_orphaned_copy_controllers() {
+    public function test_cleanup_orphaned_copy_controllers(): void {
         global $DB;
 
         // Mock up the form data.
@@ -289,7 +290,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::create_copy
      */
-    public function test_create_copy() {
+    public function test_create_copy(): void {
 
         // Mock up the form data.
         $formdata = new \stdClass;
@@ -333,7 +334,6 @@ class copy_helper_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\\core\\task\\asynchronous_copy_task', $task);
         $this->assertEquals($result, (array)$task->get_custom_data());
-        $this->assertFalse($task->is_blocking());
 
         \core\task\manager::adhoc_task_complete($task);
     }
@@ -343,7 +343,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::get_copies
      */
-    public function test_get_copies() {
+    public function test_get_copies(): void {
         global $USER;
 
         // Mock up the form data.
@@ -417,7 +417,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::get_copies
      */
-    public function test_get_copies_invalid_state() {
+    public function test_get_copies_invalid_state(): void {
         global $DB, $USER;
 
         // Mock up the form data.
@@ -476,7 +476,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::get_copies
      */
-    public function test_get_copies_course() {
+    public function test_get_copies_course(): void {
         global $USER;
 
         // Mock up the form data.
@@ -508,7 +508,7 @@ class copy_helper_test extends \advanced_testcase {
      *
      * @covers ::get_copies
      */
-    public function test_get_copies_course_deleted() {
+    public function test_get_copies_course_deleted(): void {
         global $USER;
 
         // Mock up the form data.
@@ -540,7 +540,7 @@ class copy_helper_test extends \advanced_testcase {
     /**
      * Test course copy.
      */
-    public function test_course_copy() {
+    public function test_course_copy(): void {
         global $DB;
 
         // Mock up the form data.
@@ -617,7 +617,7 @@ class copy_helper_test extends \advanced_testcase {
     /**
      * Test course copy, not including any users (or data).
      */
-    public function test_course_copy_no_users() {
+    public function test_course_copy_no_users(): void {
         global $DB;
 
         // Mock up the form data.
@@ -686,7 +686,7 @@ class copy_helper_test extends \advanced_testcase {
     /**
      * Test course copy, including students and their data.
      */
-    public function test_course_copy_students_data() {
+    public function test_course_copy_students_data(): void {
         global $DB;
 
         // Mock up the form data.
@@ -755,7 +755,7 @@ class copy_helper_test extends \advanced_testcase {
     /**
      * Test course copy, not including any users (or data).
      */
-    public function test_course_copy_no_data() {
+    public function test_course_copy_no_data(): void {
         global $DB;
 
         // Mock up the form data.
@@ -823,7 +823,7 @@ class copy_helper_test extends \advanced_testcase {
     /**
      * Test instantiation with incomplete formdata.
      */
-    public function test_malformed_instantiation() {
+    public function test_malformed_instantiation(): void {
         // Mock up the form data, missing things so we get an exception.
         $formdata = new \stdClass;
         $formdata->courseid = $this->course->id;

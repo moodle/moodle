@@ -33,9 +33,9 @@ namespace core_payment;
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
-    public function test_create_account() {
+    public function test_create_account(): void {
         global $DB;
         $this->resetAfterTest();
         /** @var \core_payment_generator $generator */
@@ -57,7 +57,7 @@ class generator_test extends \advanced_testcase {
         $this->assertCount(1, $DB->get_records('payment_gateways', ['accountid' => $account2->get('id')]));
     }
 
-    public function test_create_payment() {
+    public function test_create_payment(): void {
         global $DB;
         $this->resetAfterTest();
         /** @var \core_payment_generator $generator */

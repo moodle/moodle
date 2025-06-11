@@ -16,12 +16,9 @@
 
 namespace mod_quiz;
 
-use quiz_attempt;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
 /**
@@ -32,9 +29,9 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @copyright 2008 Jamie Pratt me@jamiep.org
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class reportlib_test extends \advanced_testcase {
-    public function test_quiz_report_index_by_keys() {
-        $datum = array();
+final class reportlib_test extends \advanced_testcase {
+    public function test_quiz_report_index_by_keys(): void {
+        $datum = [];
         $object = new \stdClass();
         $object->qid = 3;
         $object->aid = 101;
@@ -42,14 +39,14 @@ class reportlib_test extends \advanced_testcase {
         $object->grade = 3;
         $datum[] = $object;
 
-        $indexed = quiz_report_index_by_keys($datum, array('aid', 'qid'));
+        $indexed = quiz_report_index_by_keys($datum, ['aid', 'qid']);
 
         $this->assertEquals($indexed[101][3]->qid, 3);
         $this->assertEquals($indexed[101][3]->aid, 101);
         $this->assertEquals($indexed[101][3]->response, '');
         $this->assertEquals($indexed[101][3]->grade, 3);
 
-        $indexed = quiz_report_index_by_keys($datum, array('aid', 'qid'), false);
+        $indexed = quiz_report_index_by_keys($datum, ['aid', 'qid'], false);
 
         $this->assertEquals($indexed[101][3][0]->qid, 3);
         $this->assertEquals($indexed[101][3][0]->aid, 101);
@@ -57,7 +54,7 @@ class reportlib_test extends \advanced_testcase {
         $this->assertEquals($indexed[101][3][0]->grade, 3);
     }
 
-    public function test_quiz_report_scale_summarks_as_percentage() {
+    public function test_quiz_report_scale_summarks_as_percentage(): void {
         $quiz = new \stdClass();
         $quiz->sumgrades = 10;
         $quiz->decimalpoints = 2;
@@ -70,20 +67,20 @@ class reportlib_test extends \advanced_testcase {
             quiz_report_scale_summarks_as_percentage('-', $quiz, true));
     }
 
-    public function test_quiz_report_qm_filter_select_only_one_attempt_allowed() {
+    public function test_quiz_report_qm_filter_select_only_one_attempt_allowed(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 1;
         $this->assertSame('', quiz_report_qm_filter_select($quiz));
     }
 
-    public function test_quiz_report_qm_filter_select_average() {
+    public function test_quiz_report_qm_filter_select_average(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 10;
         $quiz->grademethod = QUIZ_GRADEAVERAGE;
         $this->assertSame('', quiz_report_qm_filter_select($quiz));
     }
 
-    public function test_quiz_report_qm_filter_select_first_last_best() {
+    public function test_quiz_report_qm_filter_select_first_last_best(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -139,7 +136,7 @@ class reportlib_test extends \advanced_testcase {
         $quiz->grademethod = QUIZ_ATTEMPTFIRST;
         $firstattempt = $DB->get_records_sql("
                 SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
-                        . quiz_report_qm_filter_select($quiz), array(123, 456));
+                        . quiz_report_qm_filter_select($quiz), [123, 456]);
         $this->assertEquals(1, count($firstattempt));
         $firstattempt = reset($firstattempt);
         $this->assertEquals(1, $firstattempt->attempt);
@@ -147,7 +144,7 @@ class reportlib_test extends \advanced_testcase {
         $quiz->grademethod = QUIZ_ATTEMPTLAST;
         $lastattempt = $DB->get_records_sql("
                 SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
-                . quiz_report_qm_filter_select($quiz), array(123, 456));
+                . quiz_report_qm_filter_select($quiz), [123, 456]);
         $this->assertEquals(1, count($lastattempt));
         $lastattempt = reset($lastattempt);
         $this->assertEquals(3, $lastattempt->attempt);
@@ -156,13 +153,13 @@ class reportlib_test extends \advanced_testcase {
         $quiz->grademethod = QUIZ_GRADEHIGHEST;
         $bestattempt = $DB->get_records_sql("
                 SELECT * FROM {quiz_attempts} qa_alias WHERE userid = ? AND quiz = ? AND "
-                . quiz_report_qm_filter_select($quiz, 'qa_alias'), array(123, 456));
+                . quiz_report_qm_filter_select($quiz, 'qa_alias'), [123, 456]);
         $this->assertEquals(1, count($bestattempt));
         $bestattempt = reset($bestattempt);
         $this->assertEquals(2, $bestattempt->attempt);
     }
 
-    public function test_quiz_results_never_below_zero() {
+    public function test_quiz_results_never_below_zero(): void {
         global $DB;
         $this->resetAfterTest();
 

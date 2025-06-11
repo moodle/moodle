@@ -40,15 +40,15 @@
     }
 }}
 
-<div class="modal moodle-has-zindex" data-region="modal-container" aria-hidden="true" role="dialog">
-    <div class="modal-dialog {{$classes}}{{classes}}{{/classes}}" role="document" data-region="modal" aria-labelledby="{{uniqid}}-modal-title" tabindex="0">
+<div class="modal moodle-has-zindex" data-region="modal-container" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="{{uniqid}}-modal-title">
+    <div class="modal-dialog {{$classes}}{{classes}}{{/classes}}" data-region="modal" tabindex="0">
         <div class="modal-content">
             <div class="modal-header {{$headerclasses}}{{headerclasses}}{{/headerclasses}}" data-region="header">
 
                 {{$header}}
                     <h5 id="{{uniqid}}-modal-title" class="modal-title" data-region="title">{{$title}}{{title}}{{/title}}</h5>
                 {{/header}}
-                <button type="button" class="close" data-action="hide" aria-label="{{#cleanstr}}closebuttontitle{{/cleanstr}}">
+                <button type="button" class="btn-close" data-action="hide" aria-label="{{#cleanstr}}closebuttontitle{{/cleanstr}}">
                   <span aria-hidden="true">&times;</span>
                 </button>
             </div>

@@ -16,7 +16,7 @@
 
 namespace quizaccess_password;
 
-use quiz;
+use mod_quiz\quiz_settings;
 use quizaccess_password;
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,13 +33,13 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/password/rule.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class rule_test extends \basic_testcase {
-    public function test_password_access_rule() {
+final class rule_test extends \basic_testcase {
+    public function test_password_access_rule(): void {
         $quiz = new \stdClass();
         $quiz->password = 'frog';
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz($quiz, $cm, null);
+        $quizobj = new quiz_settings($quiz, $cm, null);
         $rule = new quizaccess_password($quizobj, 0);
         $attempt = new \stdClass();
 

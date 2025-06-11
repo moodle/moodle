@@ -36,7 +36,7 @@ $s = function($key) {
 };
 
 if (!is_siteadmin($USER->id)) {
-    print_error('need_permission', 'block_mypic');
+    moodle_exception('need_permission', 'block_mypic');
 }
 
 $header = $s('fetch_missing_title');

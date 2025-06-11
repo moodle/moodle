@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class content_too_long_testcase
  */
-class content_too_long_test extends all_checks {
+final class content_too_long_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'content_too_long';
 
@@ -124,7 +124,7 @@ EOD;
     /**
      * Test for checking the length of the content
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->message == '<p id=\'wc\'>Word Count: 578</p>');
 

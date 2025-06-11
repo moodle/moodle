@@ -30,13 +30,13 @@ require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->libdir.'/tcpdf/tcpdf_barcodes_2d.php'); // Used for generating qrcode.
 
 $session = required_param('session', PARAM_INT);
-$session = $DB->get_record('attendance_sessions', array('id' => $session), '*', MUST_EXIST);
+$session = $DB->get_record('attendance_sessions', ['id' => $session], '*', MUST_EXIST);
 
 $cm = get_coursemodule_from_instance('attendance', $session->attendanceid);
 require_login($cm->course, $cm);
 
 $context = context_module::instance($cm->id);
-$capabilities = array('mod/attendance:manageattendances', 'mod/attendance:takeattendances', 'mod/attendance:changeattendances');
+$capabilities = ['mod/attendance:manageattendances', 'mod/attendance:takeattendances', 'mod/attendance:changeattendances'];
 if (!has_any_capability($capabilities, $context)) {
     exit;
 }

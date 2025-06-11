@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template auth_lti/login
+    @template auth_lti/local/ltiadvantage/login
 
     Template which displays a choice screen for instructors on first launch, allowing them to select whether to use an
     existing account in the tool, or to auto provision a new one.
@@ -32,7 +32,6 @@
     * info - a notification describing the first launch options
     * cancreateaccounts - whether or not the user is allowed to create auth_lti accounts
     * accountinfo - information about the user, importantly whether they are logged in or not.
-    * noauthnotice - a notification telling the user they must be authenticated to link accounts. Only relevant when not logged in.
 
     Example context (json):
     {
@@ -46,19 +45,12 @@
             "issuccess": true
         },
         "cancreateaccounts": true,
+        "isloggedin": true,
         "accountinfo": {
-            "isloggedin": true,
             "firstname": "John",
             "lastname": "Smith",
             "email": "john@example.com",
             "picturehtml": "<img src=\"http://site.example.com/pluginfile.php/5/user/icon/boost/f2?rev=99\" class=\"round\" alt=\"\" width=\"35\" height=\"35\">"
-        },
-        "noauthnotice": {
-            "message": "To link your existing account you must be logged in to the site...",
-            "extraclasses": "",
-            "announce": false,
-            "closebutton": false,
-            "iswarning": true
         }
     }
 }}
@@ -79,8 +71,8 @@
                         <div class="card-body text-center d-flex flex-column">
                             <i class="fa fa-user-circle-o fa-2x link"></i>
                             <h4 class="card-title">{{#str}} useexistingaccount, auth_lti {{/str}}</h4>
-                            {{#accountinfo}}
                                 {{#isloggedin}}
+                                    {{#accountinfo}}
                                     <p class="card-text mt-2">
                                         <span class="text-muted">
                                             {{#str}} currentlyloggedinas, auth_lti {{/str}}
@@ -90,14 +82,12 @@
                                         {{firstname}} {{lastname}} ({{email}})
                                     </p>
                                     <input type="submit" class="btn btn-primary mt-auto" name="existing_account" value="{{#str}} linkthisaccount, auth_lti {{/str}}">
+                                    {{/accountinfo}}
                                 {{/isloggedin}}
                                 {{^isloggedin}}
                                     <p class="card-text text-muted">{{#str}} mustbeloggedin, auth_lti {{/str}}</p>
-                                    {{#noauthnotice}}
-                                        {{> core/notification}}
-                                    {{/noauthnotice}}
+                                    <input type="submit" class="btn btn-primary mt-auto" name="existing_account" value="{{#str}} login, moodle {{/str}}">
                                 {{/isloggedin}}
-                            {{/accountinfo}}
                         </div>
                     </div>
                 </div>

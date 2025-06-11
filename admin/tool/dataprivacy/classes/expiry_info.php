@@ -76,7 +76,7 @@ class expiry_info {
      *
      * @return  bool
      */
-    public function is_fully_expired() : bool {
+    public function is_fully_expired(): bool {
         return $this->defaultexpiryreached && empty($this->unexpired);
     }
 
@@ -85,7 +85,7 @@ class expiry_info {
      *
      * @return  bool
      */
-    public function is_any_expired() : bool {
+    public function is_any_expired(): bool {
         if ($this->is_fully_expired()) {
             return true;
         }
@@ -107,7 +107,7 @@ class expiry_info {
      *
      * @return  int[]
      */
-    public function get_expired_roles() : array {
+    public function get_expired_roles(): array {
         if ($this->is_default_expired()) {
             return [];
         }
@@ -121,7 +121,7 @@ class expiry_info {
      * @param   int $roleid
      * @return  bool
      */
-    public function is_role_expired(int $roleid) : bool {
+    public function is_role_expired(int $roleid): bool {
         return false !== array_search($roleid, $this->expired);
     }
 
@@ -130,7 +130,7 @@ class expiry_info {
      *
      * @return  bool
      */
-    public function is_default_expired() : bool {
+    public function is_default_expired(): bool {
         return $this->defaultexpiryreached;
     }
 
@@ -139,7 +139,7 @@ class expiry_info {
      *
      * @return  bool
      */
-    public function is_default_protected() : bool {
+    public function is_default_protected(): bool {
         return $this->defaultprotected;
     }
 
@@ -148,7 +148,7 @@ class expiry_info {
      *
      * @return  int[]
      */
-    public function get_unexpired_roles() : array {
+    public function get_unexpired_roles(): array {
         return $this->unexpired;
     }
 
@@ -157,7 +157,7 @@ class expiry_info {
      *
      * @return  int[]
      */
-    public function get_unexpired_protected_roles() : array {
+    public function get_unexpired_protected_roles(): array {
         return array_keys(array_filter($this->protectedroles));
     }
 
@@ -165,7 +165,7 @@ class expiry_info {
      * Get a list of all overridden roles which are unprotected.
      * @return  int[]
      */
-    public function get_unprotected_overridden_roles() : array {
+    public function get_unprotected_overridden_roles(): array {
         $allroles = array_merge($this->expired, $this->unexpired);
 
         return array_diff($allroles, $this->protectedroles);
@@ -181,7 +181,7 @@ class expiry_info {
      * @param   expiry_info $child The child record to merge with.
      * @return  $this
      */
-    public function merge_with_child(expiry_info $child) : expiry_info {
+    public function merge_with_child(expiry_info $child): expiry_info {
         if ($child->is_fully_expired()) {
             return $this;
         }

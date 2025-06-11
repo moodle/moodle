@@ -26,6 +26,9 @@ namespace core_adminpresets\local\setting;
  */
 class adminpresets_admin_setting_users_with_capability extends adminpresets_admin_setting_configmultiselect {
 
+    /** @var \admin_setting_configmultiselect $settingdata */
+    protected $settingdata;
+
     protected function set_behaviors() {
         $this->behaviors['loadchoices'] = &$this->settingdata;
     }

@@ -24,7 +24,7 @@
  */
 namespace core\check;
 
-defined('MOODLE_INTERNAL') || die();
+use coding_exception;
 
 /**
  * Base class for checks
@@ -35,11 +35,12 @@ defined('MOODLE_INTERNAL') || die();
 abstract class check {
 
     /**
-     * @var $string $component - The component / plugin this task belongs to.
+     * @var string $component - The component / plugin this task belongs to.
      *
-     * This is autopopulated by the check manager.
+     * This can be autopopulated by the check manager.
+     * Otherwise, it is dynamically determined by get_component().
      */
-    protected $component = 'core';
+    protected $component = '';
 
     /**
      * Get the frankenstyle component name
@@ -47,7 +48,20 @@ abstract class check {
      * @return string
      */
     public function get_component(): string {
-        return $this->component;
+        // Return component if has been set by the manager.
+        if (!empty($this->component)) {
+            return $this->component;
+        }
+
+        // Else work it out based on the classname.
+        // Because the first part of the classname is always the component.
+        $parts = explode("\\", get_called_class());
+
+        if (empty($parts)) {
+            throw new coding_exception("Unable to determine component for check");
+        }
+
+        return $parts[0];
     }
 
     /**
@@ -101,7 +115,7 @@ abstract class check {
     /**
      * A link to a place to action this
      *
-     * @return action_link|null
+     * @return \action_link|null
      */
     public function get_action_link(): ?\action_link {
         return null;

@@ -28,8 +28,6 @@ namespace auth_oidc\event;
 use context_system;
 use core\event\base;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Fired when a user attempts to change their username from the auth_oidc plugin.
  */

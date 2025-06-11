@@ -58,7 +58,7 @@ Feature: Cohort enrolment management
       | Cohort      | A1 |
       | customint2  | -1 |
     Then I should see "Cohort sync (Alpha1 - Student)"
-    And I select "Groups" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groups"
     # Confirm that group was created and corresponding group members are present
     And I set the field "groups[]" to "Alpha1 cohort (2)"
     And the "members" select box should contain "Sandra Cole (s1@example.com)"
@@ -83,11 +83,11 @@ Feature: Cohort enrolment management
     And I navigate to course participants
     # Verifies students 1 and 4 are in the cohort and student 2 is not any more.
     And the following should exist in the "participants" table:
-      | First name / Last name | Email address  | Roles   | Groups        |
+      | First name             | Email address  | Roles   | Groups        |
       | Sandra Cole            | s1@example.com | Student | Alpha1 cohort |
       | Jane Doe               | s4@example.com | Student | Alpha1 cohort |
     And the following should not exist in the "participants" table:
-      | First name / Last name | Email address  | Roles   | Groups        |
+      | First name             | Email address  | Roles   | Groups        |
       | John Smith             | s2@example.com | Student | Alpha1 cohort |
 
   @javascript
@@ -106,7 +106,7 @@ Feature: Cohort enrolment management
     And I click on "Edit" "link" in the "Beta2" "table_row"
     And I set the field "Add to group" to "Create new group"
     And I click on "Save changes" "button"
-    And I select "Groups" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groups"
     And I set the field "groups[]" to "Beta2 cohort (2)"
     Then the "members" select box should contain "Bianca McAfee (s3@example.com)"
     And the "members" select box should contain "Abigail Wyatt (s5@example.com)"

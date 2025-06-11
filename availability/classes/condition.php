@@ -77,7 +77,7 @@ abstract class condition extends tree_node {
      * @param int $userid User ID to check availability for
      * @return bool True if available
      */
-    public abstract function is_available($not, info $info, $grabthelot, $userid);
+    abstract public function is_available($not, info $info, $grabthelot, $userid);
 
     public function check_available($not, info $info, $grabthelot, $userid) {
         // Use is_available, and we always display (at this stage).
@@ -195,7 +195,7 @@ abstract class condition extends tree_node {
      * @return string Information string (for admin) about all restrictions on
      *   this item
      */
-    public abstract function get_description($full, $not, info $info);
+    abstract public function get_description($full, $not, info $info);
 
     /**
      * Obtains a string describing this restriction, used when there is only
@@ -235,7 +235,7 @@ abstract class condition extends tree_node {
      *
      * @return string Text representation of parameters
      */
-    protected abstract function get_debug_string();
+    abstract protected function get_debug_string();
 
     public function update_dependency_id($table, $oldid, $newid) {
         // By default, assumes there are no dependent ids.

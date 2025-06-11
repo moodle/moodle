@@ -47,7 +47,7 @@ class linked_course_exporter extends \core\external\exporter {
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
     protected static function define_related() {
-        return array('relatedinfo' => '\\stdClass');
+        return ['relatedinfo' => '\\stdClass'];
     }
 
     /**
@@ -56,17 +56,17 @@ class linked_course_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'url' => array(
-                'type' => PARAM_RAW
-            ),
-            'rated' => array(
-                'type' => PARAM_BOOL
-            ),
-            'coursename' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'url' => [
+                'type' => PARAM_RAW,
+            ],
+            'rated' => [
+                'type' => PARAM_BOOL,
+            ],
+            'coursename' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -81,11 +81,14 @@ class linked_course_exporter extends \core\external\exporter {
         $result = new \stdClass();
 
         if (isset($this->related['relatedinfo']->competencyid) && !empty($this->related['relatedinfo']->competencyid)) {
-            $urlparams = array('userid' => $this->related['relatedinfo']->userid,
-                    'competencyid' => $this->related['relatedinfo']->competencyid, 'courseid' => $coursedata->course->id);
+            $urlparams = [
+                'userid' => $this->related['relatedinfo']->userid,
+                'competencyid' => $this->related['relatedinfo']->competencyid,
+                'courseid' => $coursedata->course->id,
+            ];
             $url = (new \moodle_url('/admin/tool/lp/user_competency_in_course.php', $urlparams))->out();
         } else {
-            $urlparams = array('user' => $this->related['relatedinfo']->userid, 'id' => $coursedata->course->id);
+            $urlparams = ['user' => $this->related['relatedinfo']->userid, 'id' => $coursedata->course->id];
             $url = (new \moodle_url('/report/competency/index.php', $urlparams))->out();
         }
 

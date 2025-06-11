@@ -50,10 +50,22 @@ class mod_attendance_view_page_params extends mod_attendance_page_with_filter_co
     /** @var string */
     public $sesscourses;
 
+    /** @var mixed */
+    public $grouptype;
+
+    /** @var mixed */
+    public $group;
+
+    /** @var int */
+    public $sessionid;
+
+    /** @var int */
+    public $sort;
+
     /**
      * mod_attendance_view_page_params constructor.
      */
-    public function  __construct() {
+    public function __construct() {
         $this->defaultview = ATT_VIEW_MONTHS;
     }
 
@@ -63,7 +75,7 @@ class mod_attendance_view_page_params extends mod_attendance_page_with_filter_co
      * @return array
      */
     public function get_significant_params() {
-        $params = array();
+        $params = [];
 
         if (isset($this->studentid)) {
             $params['studentid'] = $this->studentid;

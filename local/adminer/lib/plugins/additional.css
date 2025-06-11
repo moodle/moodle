@@ -2,6 +2,10 @@ body {
     background-image: none;
 }
 /* Remove the adminer lang menu */
-form div#lang {
-	display: none;
+#lang form,
+form #logout {
+    display: none;
+}
+#menu {
+    margin-top: -30px;
 }

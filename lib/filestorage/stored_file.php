@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use Psr\Http\Message\StreamInterface;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/filestorage/file_progress.php');
@@ -438,6 +440,18 @@ class stored_file {
     }
 
     /**
+     * Get a read-only PSR-7 stream for this file.
+     *
+     * Note: This stream is read-only. If you want to modify the file, create a new file and delete the old one.
+     * The File API creates immutable files.
+     *
+     * @return StreamInterface
+     */
+    public function get_psr_stream(): StreamInterface {
+        return $this->filesystem->get_psr_stream($this);
+    }
+
+    /**
      * Dumps file content to page.
      */
     public function readfile() {
@@ -526,7 +540,7 @@ class stored_file {
      * @return array|bool list of processed files; false if error
      */
     public function extract_to_pathname(file_packer $packer, $pathname,
-            file_progress $progress = null) {
+            ?file_progress $progress = null) {
         return $this->filesystem->extract_to_pathname($this, $packer, $pathname, $progress);
     }
 
@@ -544,7 +558,7 @@ class stored_file {
      * @return array|bool list of processed files; false if error
      */
     public function extract_to_storage(file_packer $packer, $contextid,
-            $component, $filearea, $itemid, $pathbase, $userid = null, file_progress $progress = null) {
+            $component, $filearea, $itemid, $pathbase, $userid = null, ?file_progress $progress = null) {
 
         return $this->filesystem->extract_to_storage($this, $packer, $contextid, $component, $filearea,
                 $itemid, $pathbase, $userid, $progress);

@@ -17,16 +17,18 @@ class LtiConstants
 
     // Optional message claims
     public const CONTEXT = 'https://purl.imsglobal.org/spec/lti/claim/context';
-    public const TOOL_PLATFORM = 'https://purl.imsglobal.org/spec/lti/claim/tool_platform';
-    public const ROLE_SCOPE_MENTOR = 'https://purlimsglobal.org/spec/lti/claim/role_scope_mentor';
+    public const CUSTOM = 'https://purl.imsglobal.org/spec/lti/claim/custom';
     public const LAUNCH_PRESENTATION = 'https://purl.imsglobal.org/spec/lti/claim/launch_presentation';
     public const LIS = 'https://purl.imsglobal.org/spec/lti/claim/lis';
-    public const CUSTOM = 'https://purl.imsglobal.org/spec/lti/claim/custom';
+    public const LTI1P1 = 'https://purl.imsglobal.org/spec/lti/claim/lti1p1';
+    public const ROLE_SCOPE_MENTOR = 'https://purlimsglobal.org/spec/lti/claim/role_scope_mentor';
+    public const TOOL_PLATFORM = 'https://purl.imsglobal.org/spec/lti/claim/tool_platform';
 
     // LTI DL
     public const DL_CONTENT_ITEMS = 'https://purl.imsglobal.org/spec/lti-dl/claim/content_items';
     public const DL_DATA = 'https://purl.imsglobal.org/spec/lti-dl/claim/data';
     public const DL_DEEP_LINK_SETTINGS = 'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings';
+    public const DL_RESOURCE_LINK_TYPE = 'ltiResourceLink';
 
     // LTI NRPS
     public const NRPS_CLAIM_SERVICE = 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice';
@@ -72,6 +74,7 @@ class LtiConstants
     public const MEMBERSHIP_MANAGER = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Manager';
     public const MEMBERSHIP_MEMBER = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Member';
     public const MEMBERSHIP_OFFICER = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Officer';
+
     // Context sub-roles
     public const MEMBERSHIP_EXTERNALINSTRUCTOR = 'http://purl.imsglobal.org/vocab/lis/v2/membership/Instructor#ExternalInstructor';
     public const MEMBERSHIP_GRADER = 'http://purl.imsglobal.org/vocab/lis/v2/membership/Instructor#Grader';
@@ -91,4 +94,10 @@ class LtiConstants
     public const COURSE_OFFERING = 'http://purl.imsglobal.org/vocab/lis/v2/course#CourseOffering';
     public const COURSE_SECTION = 'http://purl.imsglobal.org/vocab/lis/v2/course#CourseSection';
     public const COURSE_GROUP = 'http://purl.imsglobal.org/vocab/lis/v2/course#Group';
+
+    // Message Types
+    public const MESSAGE_TYPE_DEEPLINK = 'LtiDeepLinkingRequest';
+    public const MESSAGE_TYPE_DEEPLINK_RESPONSE = 'LtiDeepLinkingResponse';
+    public const MESSAGE_TYPE_RESOURCE = 'LtiResourceLinkRequest';
+    public const MESSAGE_TYPE_SUBMISSIONREVIEW = 'LtiSubmissionReviewRequest';
 }

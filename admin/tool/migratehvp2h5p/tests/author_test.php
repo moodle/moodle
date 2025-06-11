@@ -51,7 +51,7 @@ class author_test extends advanced_testcase {
         if (empty($this->modid)) {
             $mod = $DB->get_record('modules', [ 'name' => 'hvp' ], '*', IGNORE_MISSING);
             if (empty($mod)) {
-                $this->fail("The 'mod_hvp' plugin must be installed for these tests to succeed.");
+                throw new \moodle_exception("The 'mod_hvp' plugin must be installed for these tests to succeed.");
             }
             $this->modid = $mod->id;
         }

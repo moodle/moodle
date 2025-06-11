@@ -16,7 +16,6 @@
 /**
  * Cross Enrollment Tool
  *
- * @package   block_lsuxe
  * @copyright 2008 onwards Louisiana State University
  * @copyright 2008 onwards David Lowe, Robert Russo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,7 +30,6 @@
         /**
          * Fetch the token for the current selected URL. Store in temp sessionStorage
          *
-         * @param null
          * @return void
          */
         getTokenReady: function () {
@@ -50,7 +48,7 @@
 
         /**
          * Get group data from a course.
-         * @param {object} the json object sent to the server
+         * @param {object} params for the json object.
          * @return resolved data
          */
         getGroupData: function (params) {
@@ -326,7 +324,6 @@
 
         /**
          * These are registered events being loaded that are NOT being called from mustache templates
-         * @param null
          * @return resolved data
          */
         registerEvents: function () {

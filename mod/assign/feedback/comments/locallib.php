@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_single_structure;
+use core_external\external_value;
+
 defined('MOODLE_INTERNAL') || die();
 
 // File component for feedback comments.
@@ -572,7 +575,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @param stdClass $grade The assign_grades object from the db
      * @return array
      */
-    public function files_for_gradebook(stdClass $grade) : array {
+    public function files_for_gradebook(stdClass $grade): array {
         return [
             'contextid' => $this->assignment->get_context()->id,
             'component' => ASSIGNFEEDBACK_COMMENTS_COMPONENT,
@@ -615,7 +618,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
     /**
      * Return a description of external params suitable for uploading an feedback comment from a webservice.
      *
-     * @return external_description|null
+     * @return \core_external\external_description|null
      */
     public function get_external_parameters() {
         $editorparams = array('text' => new external_value(PARAM_RAW, 'The text for this feedback.'),

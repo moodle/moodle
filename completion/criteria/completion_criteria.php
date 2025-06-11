@@ -152,6 +152,12 @@ abstract class completion_criteria extends data_object {
     /* @var int Role ID that has the ability to mark a user as complete (for role completion) */
     public $role;
 
+    /** @var string course instance. */
+    public $courseinstance;
+
+    /** @var mixed time end. */
+    public $timeend;
+
     /**
      * Finds and returns all data_object instances based on params.
      *
@@ -241,7 +247,7 @@ abstract class completion_criteria extends data_object {
      * @param array $attributes html attributes
      * @return pix_icon
      */
-    public function get_icon($alt, array $attributes = null) {
+    public function get_icon($alt, ?array $attributes = null) {
         global $COMPLETION_CRITERIA_TYPES;
 
         $criteriatype = $COMPLETION_CRITERIA_TYPES[$this->criteriatype];

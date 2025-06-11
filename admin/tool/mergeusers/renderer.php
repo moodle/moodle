@@ -274,7 +274,7 @@ class tool_mergeusers_renderer extends plugin_renderer_base
     /**
      * Produces the page with the list of logs.
      * TODO: make pagination.
-     * @global type $CFG
+     *
      * @param array $logs array of logs.
      * @return string the corresponding HTML.
      */

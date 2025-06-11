@@ -25,29 +25,40 @@
 
 namespace local_o365\webservices;
 
+use context_course;
+use context_helper;
+use moodle_exception;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
+
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 global $CFG;
 
-require_once($CFG->dirroot.'/course/modlib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
 
 /**
  * Get a list of students in a course by course id.
  */
-class read_courseusers extends \external_api {
+class read_courseusers extends external_api {
     /**
      * Return description of method parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function courseusers_read_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'courseid' => new \external_value(PARAM_INT, 'course id'),
-                'limitfrom' => new \external_value(PARAM_INT, 'sql limit from', VALUE_DEFAULT, 0),
-                'limitnumber' => new \external_value(PARAM_INT, 'maximum number of returned users', VALUE_DEFAULT, 0),
-                'userids' => new \external_multiple_structure(
-                    new \external_value(PARAM_INT, 'user id, empty to retrieve all users'),
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'limitfrom' => new external_value(PARAM_INT, 'sql limit from', VALUE_DEFAULT, 0),
+                'limitnumber' => new external_value(PARAM_INT, 'maximum number of returned users', VALUE_DEFAULT, 0),
+                'userids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'user id, empty to retrieve all users'),
                     '0 or more user ids',
                     VALUE_DEFAULT,
                     []
@@ -64,10 +75,11 @@ class read_courseusers extends \external_api {
      * @param int $limitnumber
      * @param array $userids
      * @return array
+     * @throws moodle_exception
      */
     public static function courseusers_read($courseid, $limitfrom = 0, $limitnumber = 0, $userids = []) {
         global $CFG, $DB;
-        require_once($CFG->dirroot.'/user/lib.php');
+        require_once($CFG->dirroot . '/user/lib.php');
 
         $params = self::validate_parameters(
             self::courseusers_read_parameters(),
@@ -99,19 +111,19 @@ class read_courseusers extends \external_api {
         $limitnumber = clean_param($limitnumber, PARAM_INT);
 
         if ($courseid == SITEID) {
-            // TODO exception.
+            return [];
         }
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
-        $context = \context_course::instance($courseid);
+        $context = context_course::instance($courseid);
         self::validate_context($context);
 
         try {
             self::validate_context($context);
-        } catch (\Exception $e) {
-            $exceptionparam = new \stdClass();
+        } catch (moodle_exception $e) {
+            $exceptionparam = new stdClass();
             $exceptionparam->message = $e->getMessage();
             $exceptionparam->courseid = $params['courseid'];
-            throw new \moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+            throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
         }
 
         require_capability('moodle/course:viewparticipants', $context);
@@ -119,7 +131,7 @@ class read_courseusers extends \external_api {
         [$enrolledsql, $enrolledparams] = get_enrolled_sql($context, $withcapability);
 
         // For user context preloading.
-        $ctxselect = ', ' . \context_helper::get_preload_record_columns_sql('ctx');
+        $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
         $enrolledparams['contextlevel'] = CONTEXT_USER;
 
@@ -156,7 +168,7 @@ class read_courseusers extends \external_api {
             }
 
             // Get user info.
-            \context_helper::preload_from_record($user);
+            context_helper::preload_from_record($user);
             if ($userdetails = user_get_user_details($user, $course, $userfields)) {
                 $users[] = $userdetails;
             }
@@ -169,26 +181,26 @@ class read_courseusers extends \external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return external_multiple_structure
      */
     public static function courseusers_read_returns() {
-        return new \external_multiple_structure(
-            new \external_single_structure(
+        return new external_multiple_structure(
+            new external_single_structure(
                 [
-                    'id' => new \external_value(PARAM_INT, 'ID of the user'),
-                    'username' => new \external_value(PARAM_RAW, 'Username policy is defined in Moodle security config',
+                    'id' => new external_value(PARAM_INT, 'ID of the user'),
+                    'username' => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config',
                         VALUE_OPTIONAL),
-                    'fullname' => new \external_value(PARAM_NOTAGS, 'The fullname of the user'),
-                    'firstname' => new \external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-                    'lastname' => new \external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-                    'email' => new \external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
-                    'idnumber' => new \external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
+                    'fullname' => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
+                    'firstname' => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
+                    'lastname' => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
+                    'email' => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
+                    'idnumber' => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
                         VALUE_OPTIONAL),
-                    'lang' => new \external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
+                    'lang' => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
                         VALUE_OPTIONAL),
-                    'profileimageurlsmall' => new \external_value(PARAM_URL, 'User image profile URL - small version',
+                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version',
                         VALUE_OPTIONAL),
-                    'profileimageurl' => new \external_value(PARAM_URL, 'User image profile URL - big version', VALUE_OPTIONAL),
+                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version', VALUE_OPTIONAL),
                 ]
             )
         );

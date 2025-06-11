@@ -244,8 +244,23 @@ class enrol_workdayhrm_plugin extends enrol_plugin {
  * @return @object $navigation node
  */
 function enrol_workdayhrm_extend_navigation_course($navigation, $course, $context) {
-    // Make sure we can reprocess enrollments.
-    if (has_capability('enrol/workdayhrm:reprocess', $context)) {
+    // Get courses.
+    $courseids = get_config('enrol_workdayhrm', 'courseids');
+
+    // Make sure we have this set.
+    if (!empty($courseids)) {
+
+        // Explode the string into an array of courseids.
+        $courseidlist = array_map('trim', explode(',', $courseids));
+    } else {
+
+        // Set to 1, JIC.
+        $courseidlist = [1];
+    }
+
+    // Make sure we can reprocess enrollments AND we are in a specified course.
+    if (has_capability('enrol/workdayhrm:reprocess', $context) &&
+        in_array($course->id, $courseidlist)) {
 
         // Set the url for the reprocesser.
         $url = new moodle_url('/enrol/workdayhrm/reprocess.php', array('courseid' => $course->id));

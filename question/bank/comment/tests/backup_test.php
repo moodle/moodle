@@ -31,7 +31,7 @@ require_once($CFG->dirroot. '/comment/lib.php');
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_test extends \advanced_testcase {
+final class backup_test extends \advanced_testcase {
 
     /**
      * @var array Data object for generating a question.
@@ -138,7 +138,7 @@ class backup_test extends \advanced_testcase {
      * Test comments attached to questions persist
      * across the backup and restore process.
      */
-    public function test_backup_restore() {
+    public function test_backup_restore(): void {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
         $this->resetAfterTest();

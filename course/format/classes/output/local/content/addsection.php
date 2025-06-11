@@ -145,23 +145,19 @@ class addsection implements named_templatable, renderable {
         $course = $format->get_course();
         $data = new stdClass();
 
-        if (get_string_manager()->string_exists('addsections', 'format_' . $course->format)) {
-            $addstring = get_string('addsections', 'format_' . $course->format);
-        } else {
-            $addstring = get_string('addsections');
-        }
+        $addstring = $format->get_format_string('addsection');
 
         $params = ['courseid' => $course->id, 'insertsection' => 0, 'sesskey' => sesskey()];
 
-        $singlesection = $this->format->get_section_number();
+        $singlesection = $this->format->get_sectionnum();
         if ($singlesection) {
             $params['sectionreturn'] = $singlesection;
         }
-
         $data->addsections = (object) [
             'url' => new moodle_url('/course/changenumsections.php', $params),
             'title' => $addstring,
             'newsection' => $maxsections - $lastsection,
+            'canaddsection' => $lastsection < $maxsections,
         ];
         return $data;
     }

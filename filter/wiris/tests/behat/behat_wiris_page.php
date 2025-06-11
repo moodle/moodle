@@ -28,8 +28,6 @@ use Behat\Mink\Exception\ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_wiris_page extends behat_wiris_base {
-
-
     /**
      * Check the size of the formula in full screen mode
      *
@@ -71,12 +69,12 @@ class behat_wiris_page extends behat_wiris_base {
             "wipis.net" => "www.wipis.net",
         ];
         if (empty($fieldarray[$field])) {
-            throw new ExpectationException($field." field not registered.", $this->getSession());
+            throw new ExpectationException($field . " field not registered.", $this->getSession());
         }
         $session = $this->getSession();
-        $component = $session->getPage()->find('xpath', '//input[@id="'.$fieldarray[$field].'" and @value="'.$valuearray[$value].'"]');
+        $component = $session->getPage()->find('xpath', '//input[@id="' . $fieldarray[$field] . '" and @value="' . $valuearray[$value] . '"]');
         if (empty($component)) {
-            throw new ExpectationException ('"'.$field.'" input value attribute is not equal to "'.$valuearray[$value].'"', $this->getSession());
+            throw new ExpectationException('"' . $field . '" input value attribute is not equal to "' . $valuearray[$value] . '"', $this->getSession());
         }
     }
 
@@ -117,12 +115,12 @@ class behat_wiris_page extends behat_wiris_base {
             "Page content" => "id_page",
         ];
         if (empty($fieldarray[$field])) {
-            throw new ExpectationException($field." field not registered.");
+            throw new ExpectationException($field . " field not registered.");
         }
         $session = $this->getSession();
-        $component = $session->getPage()->find('xpath', '//body[@data-id="'.$fieldarray[$field].'"]');
+        $component = $session->getPage()->find('xpath', '//body[@data-id="' . $fieldarray[$field] . '"]');
         if (empty($component)) {
-            throw new ExpectationException($field." field not correctly recognized.", $this->getSession());
+            throw new ExpectationException($field . " field not correctly recognized.", $this->getSession());
         }
         $component->click();
     }
@@ -207,11 +205,11 @@ class behat_wiris_page extends behat_wiris_base {
         $session = $this->getSession();
 
         $script = 'var editor = tinymce.get(\'' . $fieldarray[$field] . '\');'
-            .'editor.focus();'
-            .'var body = editor.getBody();'
-            .'var textNode = body.querySelector(\'p\').firstChild;'
-            .'var offset = ' . $position . ';'
-            .'editor.selection.setCursorLocation(textNode, offset);';
+            . 'editor.focus();'
+            . 'var body = editor.getBody();'
+            . 'var textNode = body.querySelector(\'p\').firstChild;'
+            . 'var offset = ' . $position . ';'
+            . 'editor.selection.setCursorLocation(textNode, offset);';
 
         $session->executeScript($script);
     }
@@ -290,8 +288,8 @@ class behat_wiris_page extends behat_wiris_base {
             throw new ExpectationException($button . " button not registered.", $this->getSession());
         }
         $session = $this->getSession();
-        $component = $session->getPage()->find('xpath', '//div[@id="'.$sectionarray[$field].'"]
-        //*[contains(@title,\''.$buttonarray[$button].'\')]');
+        $component = $session->getPage()->find('xpath', '//div[@id="' . $sectionarray[$field] . '"]
+        //*[contains(@title,\'' . $buttonarray[$button] . '\')]');
         if (empty($component)) {
             throw new ExpectationException('"' . $button . '" button not found in "' . $field . '" field', $this->getSession());
         }
@@ -322,6 +320,7 @@ class behat_wiris_page extends behat_wiris_base {
             "Question text" => "fitem_id_questiontext",
             "General feedback" => "fitem_id_generalfeedback",
             "Feedback" => "fitem_id_feedback_0",
+            "Message" => "fitem_id_message",
         ];
         if (empty($sectionarray[$field])) {
             throw new ExpectationException($field . " field not registered.", $this->getSession());
@@ -587,7 +586,7 @@ class behat_wiris_page extends behat_wiris_base {
             throw new ExpectationException($button . " button not registered.", $this->getSession());
         }
         $session = $this->getSession();
-        $component = $session->getPage()->find( 'xpath', '//button[@title="'.$buttonarray[$button].'"]');
+        $component = $session->getPage()->find('xpath', '//button[@title="' . $buttonarray[$button] . '"]');
         // From 4.5, the button is not found via id but via data-mce-name //TODO verify if 4.x may always work like this
         global $CFG;
         if ($button != 'Toggle' && $CFG->version >= 2024092400) {
@@ -616,16 +615,16 @@ class behat_wiris_page extends behat_wiris_base {
             "More options" => "More...",
         ];
         if (empty($buttonarray[$button])) {
-            throw new ExpectationException($button." button not registered.");
+            throw new ExpectationException($button . " button not registered.");
         }
         $session = $this->getSession();
-        $component = $session->getPage()->find('xpath', '//button[@title="'.$buttonarray[$button].'"]');
+        $component = $session->getPage()->find('xpath', '//button[@title="' . $buttonarray[$button] . '"]');
         if ($CFG->version >= 2024042202.02) {
             $component = $session->getPage()->find('xpath', '//*[contains(@aria-label,"Reveal or hide")]');
         }
 
         if (empty($component)) {
-            throw new ExpectationException($button." button not correctly recognized.", $this->getSession());
+            throw new ExpectationException($button . " button not correctly recognized.", $this->getSession());
         }
         $component->click();
     }

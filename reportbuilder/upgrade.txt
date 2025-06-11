@@ -1,22 +1,90 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
-=== 4.1.3 ===
+=== 4.4 ===
 
+* New methods `get_identity_[columns|filters]` in user entity, for retrieving all user identity field report elements
+* Entity table aliases are now auto-generated, hence usage of the `get_default_table_aliases` method is now deprecated. Instead,
+  entities should implement the `get_default_tables` method to define the tables they use
+* New method `get_table_aliases` in base entity class, for retrieving all table aliases in a single call
+* The database helper `generate_alias[es]` and `generate_param_name[s]` methods now accept an optional `$suffix` argument for
+  appending additional string to the generated value
+* The `get_name` method has been moved to the base report class and can now be implemented for both custom and system reports, it
+  will be used as the caption when rendering tables (which can also be targeted in Behat scenarios)
+* The default value for the filename when calling `set_downloadable` is now taken from calling `get_name` on the current report
+* The base datasource `add_all_from_entity` method accepts additional parameters to limit which columns, filters and conditions
+  are added. The `add_[columns|filters|conditions]_from_entity` class methods also now support wildcard matching in both `$include`
+  and `$exclude` parameters
+* Custom reports now implement the tag API, with options for specifying in the `report::[create|update]_report` helper methods
+  as well as in the `create_report` test generator method
+* The `tags` filter has been improved to also allow for filtering by component/itemtype core_tag definition - this is more
+  suited for system reports
+* New report filter types:
+  - `cohort` for reports containing cohort data
+  - `courserole` for reports showing course enrolments
+  - `filesize` for reports containing filesize data
+
+=== 4.3 ===
+
+* New external methods for retrieving system report data:
+  - `core_reportbuilder_can_view_system_report`
+  - `core_reportbuilder_retrieve_system_report`
+* New `get_tag_joins_for_entity` helper in base entity class, for returning SQL joins necessary for retrieving tags
+* New methods `[set|has]_table_join_alias` in the base entity class, to allow entities to reduce joins on the same table
+* New `set_is_deprecated` method in base `local\report\[column|filter]` classes to deprecate report entity columns and filters
+* The following report entity columns have been deprecated, with replacements as follows:
+  - `comment:context` => `context:name`
+  - `comment:contexturl` => `context:link`
+  - `enrolment:method` => `enrol:name` (plus enrolment formatter `enrolment_name` method)
+  - 'enrolment:role` => `role:name`
+  - `file:context` => `context:name`
+  - `file:contexturl` => `context:link`
+  - `instance:context` (tag) => `context:name`
+  - `instance:contexturl` (tag) => `context:link`
+* The following report entity filters/conditions have been deprecated, with replacements as follows:
+  - `enrolment:method` => `enrol:plugin`
+* The `local/audience/form` template outer region has renamed some of it's `data-` attributes (relevant for any themes that
+  have overridden this template):
+  - `data-instanceid` => `data-audience-id`
+  - `data-title` => `data-audience-title`
+* The `add_base_condition_sql` method of the base report class will now ignore empty where clauses
+* If a non-default column is specified in a datasource `get_default_column_sorting` method, a coding exception will be thrown
+* Trying to add/annotate duplicate entity names to a report will now throw a coding exception
+* The `get_default_entity_name` method of the base entity class is now private, and shouldn't be overridden in extending classes
+* The report helper methods `add_report_[condition|filter]` now throw an exception when trying to add duplicate conditions or
+  filters to a report
+* Two new methods:
+  - `get_default_no_results_notice` and
+  - `set_default_no_results_notice`
+  have been added to core_reportbuilder\local\report\base, allowing report implementations to control what lang string is used in
+  the notice when the report has no results. Reports can either set a preferred lang string, or pass null if the notice isn't
+  required in that particular report.
+
+=== 4.2 ===
+
+* New method `set_checkbox_toggleall` in system report class to allow reports to easily create checkbox toggle columns
+* Column callbacks are now passed a fourth argument to indicate the aggregation type currently being applied, which allows
+  for columns to define how the aggregated data is displayed
+* New methods `[add|get]_attributes` added to report base class, for including custom attributes in report container HTML
 * New database helper method `sql_replace_parameter_names` to help ensure uniqueness of parameters within an expression (where
   that expression can be used multiple times as part of a larger query)
 * The local report filter class has a new `get_field_sql_and_params` method which should be used by filter types that re-use
   the filter field SQL within their generated expression, to ensure SQL containing parameters works correctly
-
-=== 4.1.2 ===
-
+* The following attributes can be added to custom reports in order to control card view display (via the `add_attributes` method):
+  - `data-force-card` to force cards view
+  - `data-force-table` to force table view
+* New optional parameter `pagesize` in external method `core_reportbuilder_reports_get` to set the displayed rows per page.
+* Javascript reports repository module method `getReport` updated to accept new pagesize parameter.
 * The schedule helper `create_schedule` method accepts a `$timenow` parameter to use for comparisons against current date
   during tests
-
-=== 4.1.1 ===
-
 * The `datasource_stress_test_columns` test helper now enables sorting on those columns that support it
 * The `create_[column|filter|condition]` test generator methods now allow for setting all persistent properties
+* The `get_category` method of the base audience class has been deprecated, callers should instead use `get_component_displayname`
 
 === 4.1 ===
 

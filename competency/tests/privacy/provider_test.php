@@ -46,18 +46,20 @@ use core_competency\privacy\provider;
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_competency\privacy\provider
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
+        parent::setUp();
         $this->resetAfterTest();
 
         // We need this or exporters (core\external\exporter) do not receive the right renderer.
         $PAGE->get_renderer('core');
     }
 
-    public function test_get_contexts_for_userid_with_usermodified_for_framework() {
+    public function test_get_contexts_for_userid_with_usermodified_for_framework(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -114,7 +116,7 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist($contextlist, [$sysctx, $cat1ctx]);
     }
 
-    public function test_get_users_in_context_with_usermodified_for_framework() {
+    public function test_get_users_in_context_with_usermodified_for_framework(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -170,7 +172,7 @@ class provider_test extends provider_testcase {
         $this->assert_array_match($expected, $userlist->get_userids());
     }
 
-    public function test_get_contexts_for_userid_with_usermodified_for_template() {
+    public function test_get_contexts_for_userid_with_usermodified_for_template(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -233,7 +235,7 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist($contextlist, [$sysctx, $cat1ctx]);
     }
 
-    public function test_get_users_in_context_with_usermodified_for_template() {
+    public function test_get_users_in_context_with_usermodified_for_template(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -296,7 +298,7 @@ class provider_test extends provider_testcase {
         $this->assert_array_match($expected, $userlist->get_userids());
     }
 
-    public function test_get_contexts_for_userid_with_usermodified_for_course() {
+    public function test_get_contexts_for_userid_with_usermodified_for_course(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $c1 = $dg->create_course();
@@ -347,7 +349,7 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$c2ctx]);
     }
 
-    public function test_get_users_in_context_with_usermodified_for_course() {
+    public function test_get_users_in_context_with_usermodified_for_course(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $c1 = $dg->create_course();
@@ -392,7 +394,7 @@ class provider_test extends provider_testcase {
         $this->assert_array_match($expected, $userlist->get_userids());
     }
 
-    public function test_get_contexts_for_userid_with_usermodified_for_module() {
+    public function test_get_contexts_for_userid_with_usermodified_for_module(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $c1 = $dg->create_course();
@@ -425,7 +427,7 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$m1ctx, $m2ctx]);
     }
 
-    public function test_get_users_in_context_with_usermodified_for_module() {
+    public function test_get_users_in_context_with_usermodified_for_module(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $c1 = $dg->create_course();
@@ -461,7 +463,7 @@ class provider_test extends provider_testcase {
         $this->assert_array_match($expected, $userlist->get_userids());
     }
 
-    public function test_get_contexts_for_userid_with_usermodified_for_plan() {
+    public function test_get_contexts_for_userid_with_usermodified_for_plan(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $u0 = $dg->create_user();
@@ -497,7 +499,7 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$u0ctx]);
     }
 
-    public function test_get_users_in_context_with_usermodified_for_plan() {
+    public function test_get_users_in_context_with_usermodified_for_plan(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $u0 = $dg->create_user();
@@ -529,7 +531,7 @@ class provider_test extends provider_testcase {
         $this->assert_array_match($expected, $userlist->get_userids());
     }
 
-    public function test_get_contexts_for_userid_with_usermodified_for_competency_data() {
+    public function test_get_contexts_for_userid_with_usermodified_for_competency_data(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $u0 = $dg->create_user();
@@ -607,7 +609,7 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u8->id), [$u0ctx]);
     }
 
-    public function test_get_users_in_context_with_usermodified_for_competency_data() {
+    public function test_get_users_in_context_with_usermodified_for_competency_data(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $u0 = $dg->create_user();
@@ -658,7 +660,7 @@ class provider_test extends provider_testcase {
         $this->assert_array_match($expected, $userlist->get_userids());
     }
 
-    public function test_get_contexts_for_userid_with_actual_data_and_actual_data_is_goooood() {
+    public function test_get_contexts_for_userid_with_actual_data_and_actual_data_is_goooood(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $c1 = $dg->create_course();
@@ -666,6 +668,7 @@ class provider_test extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
+        $u5 = $dg->create_user();
 
         $c1ctx = \context_course::instance($c1->id);
         $u1ctx = \context_user::instance($u1->id);
@@ -681,33 +684,48 @@ class provider_test extends provider_testcase {
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
         $ccg->create_plan(['userid' => $u1->id]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
         $ccg->create_user_competency(['userid' => $u2->id, 'competencyid' => $comp1->get('id')]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), []);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
         $ccg->create_user_competency_course(['userid' => $u3->id, 'competencyid' => $comp1->get('id'), 'courseid' => $c1->id]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$c1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), []);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
 
-        $ccg->create_user_evidence(['userid' => $u4->id]);
+        $ue = $ccg->create_user_evidence(['userid' => $u4->id]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$c1ctx]);
         $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$u4ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), []);
+
+        // A user editing a context relationship.
+        $this->setUser($u5);
+        $ccg->create_user_evidence_competency(['userevidenceid' => $ue->get('id'), 'competencyid' => $comp1->get('id')]);
+        $this->setAdminUser();
+        $this->assert_contextlist(provider::get_contexts_for_userid($u1->id), [$u1ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u2->id), [$u2ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u3->id), [$c1ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u4->id), [$u4ctx]);
+        $this->assert_contextlist(provider::get_contexts_for_userid($u5->id), [$u4ctx]);
     }
 
-    public function test_get_users_in_context_with_actual_data_and_actual_data_is_goooood() {
+    public function test_get_users_in_context_with_actual_data_and_actual_data_is_goooood(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $c1 = $dg->create_course();
@@ -754,7 +772,7 @@ class provider_test extends provider_testcase {
         $this->assert_array_match([$u4->id], $userlist->get_userids());
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -927,7 +945,7 @@ class provider_test extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc2->get('id')));
     }
 
-    public function test_delete_data_for_user_with_other_user_context() {
+    public function test_delete_data_for_user_with_other_user_context(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1020,7 +1038,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
     }
 
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1192,7 +1210,7 @@ class provider_test extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc2->get('id')));
     }
 
-    public function test_delete_data_for_users_with_other_user_context() {
+    public function test_delete_data_for_users_with_other_user_context(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1287,7 +1305,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(1, $this->get_comments_count($uc1a->get_comment_object(), $u2->id));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1423,7 +1441,7 @@ class provider_test extends provider_testcase {
         $this->assertTrue(\core_competency\user_competency_course::record_exists($ucc1b->get('id')));
     }
 
-    public function test_export_data_for_user_in_module_context_where_usermodified_matches() {
+    public function test_export_data_for_user_in_module_context_where_usermodified_matches(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1478,7 +1496,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(transform::yesno(true), $data->associations[0]['created_or_modified_by_you']);
     }
 
-    public function test_export_data_for_user_in_course_context_where_usermodified_matches() {
+    public function test_export_data_for_user_in_course_context_where_usermodified_matches(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1572,7 +1590,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals($comp2->get('shortname'), $data->ratings[0]['name']);
     }
 
-    public function test_export_data_for_user_in_course_context_with_real_data() {
+    public function test_export_data_for_user_in_course_context_with_real_data(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1630,7 +1648,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals('-', $data->ratings[1]['rating']['proficient']);
     }
 
-    public function test_export_data_for_user_in_system_and_category_contexts() {
+    public function test_export_data_for_user_in_system_and_category_contexts(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
 
@@ -1804,7 +1822,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(transform::yesno(true), $competency['created_or_modified_by_you']);
     }
 
-    public function test_export_data_for_user_with_related_learning_plans() {
+    public function test_export_data_for_user_with_related_learning_plans(): void {
         global $DB;
 
         $path = [
@@ -1982,7 +2000,7 @@ class provider_test extends provider_testcase {
         $this->assert_exported_comments(['Hi.'], $data->comments);
     }
 
-    public function test_export_data_for_user_with_related_competencies() {
+    public function test_export_data_for_user_with_related_competencies(): void {
         $path = [
             get_string('competencies', 'core_competency'),
             get_string('privacy:path:relatedtome', 'core_competency'),
@@ -2142,7 +2160,7 @@ class provider_test extends provider_testcase {
         $this->assert_exported_comments(['Hello!', 'It\'s me...'], $data->comments);
     }
 
-    public function test_export_data_for_user_with_related_user_evidence() {
+    public function test_export_data_for_user_with_related_user_evidence(): void {
         $path = [
             get_string('competencies', 'core_competency'),
             get_string('privacy:path:relatedtome', 'core_competency'),
@@ -2225,7 +2243,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals($yes, $competency['created_or_modified_by_you']);
     }
 
-    public function test_export_data_for_user_about_their_learning_plans() {
+    public function test_export_data_for_user_about_their_learning_plans(): void {
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -2388,7 +2406,7 @@ class provider_test extends provider_testcase {
         $this->assertEmpty($data);
     }
 
-    public function test_export_data_for_user_about_their_competencies() {
+    public function test_export_data_for_user_about_their_competencies(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $path = [get_string('competencies', 'core_competency'), get_string('competencies', 'core_competency')];
@@ -2494,7 +2512,7 @@ class provider_test extends provider_testcase {
         $this->assertEmpty($data);
     }
 
-    public function test_export_data_for_user_about_their_user_evidence() {
+    public function test_export_data_for_user_about_their_user_evidence(): void {
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
         $path = [get_string('competencies', 'core_competency'), get_string('privacy:path:userevidence', 'core_competency')];
@@ -2598,7 +2616,7 @@ class provider_test extends provider_testcase {
         $expectedids = array_unique(array_map(function($item) {
             return $item instanceof \context ? $item->id : $id;
         }, $expectedcontextsorids));
-        $this->assert_array_match($contextids, $expectedids);
+        $this->assert_array_match($expectedids, $contextids);
     }
 
     /**

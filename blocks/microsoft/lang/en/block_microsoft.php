@@ -24,6 +24,9 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder -- The strings are organised by features.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment -- The strings are organised by features.
+
 $string['pluginname'] = 'Microsoft block';
 $string['contactadmin'] = 'Contact administrator for more information.';
 $string['error_nomoodlenotebook'] = 'Could not find your Moodle notebook.';
@@ -31,6 +34,7 @@ $string['linkonedrive'] = 'My OneDrive';
 $string['linkonenote'] = 'My OneNote Notebook';
 $string['linksways'] = 'My Sways';
 $string['linkmsstream'] = 'Microsoft Stream';
+$string['linkmsstreamclassic'] = 'Microsoft Stream (classic)';
 $string['linkmsteams'] = 'Microsoft Teams';
 $string['linkemail'] = 'My Email';
 $string['linkonenote_unavailable'] = 'OneNote unavailable';
@@ -74,8 +78,10 @@ $string['settings_showdocsdotcom'] = 'Show "My Docs.com"';
 $string['settings_showdocsdotcom_desc'] = 'Enable or disable the "My Docs.com" link in the block.';
 $string['settings_showsways'] = 'Show "My Sways"';
 $string['settings_showsways_desc'] = 'Enable or disable the "My Sways" link in the block.';
-$string['settings_showmsstream'] = 'Show "Microsoft Stream"';
-$string['settings_showmsstream_desc'] = 'Enable or disable the "Microsoft Stream" link in the block.';
+$string['settings_showmsstream'] = 'Show "Microsoft Stream (on SharePoint)"';
+$string['settings_showmsstream_desc'] = 'Enable or disable the "Microsoft Stream (on SharePoint)" link in the block.';
+$string['settings_showmsstreamclassic'] = 'Show "Microsoft Stream (classic)"';
+$string['settings_showmsstreamclassic_desc'] = 'Enable or disable the "Microsoft Stream (classic)" link in the block.';
 $string['settings_showmsteams'] = 'Show "Microsoft Teams"';
 $string['settings_showmsteams_desc'] = 'Enable or disable the "Microsoft Teams" link in the block.';
 $string['settings_showonedrive'] = 'Show "My OneDrive"';
@@ -136,3 +142,11 @@ $string['error_site_course_sync_disabled'] = 'Course sync is not enabled';
 $string['error_reset_setting_not_managed_per_course'] = 'Reset action configuration is centrally managed by site administrators.';
 $string['error_connected_team_missing'] = 'The course is configured to be synced, but the Team cannot be found.';
 $string['error_course_sync_disabled'] = 'The course is not configured to be synced.';
+
+// Course request.
+$string['linkcourserequest'] = 'Request course from Teams';
+$string['settings_courserequest'] = 'Request course from Teams';
+$string['settings_courserequest_desc'] = 'Request a new course from Microsoft Teams. After approval, the course will be created and connected to a Team. Microsoft Team members will be enrolled in the course.';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

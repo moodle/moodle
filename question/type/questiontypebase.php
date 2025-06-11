@@ -562,10 +562,11 @@ class question_type {
     /**
      * Saves question-type specific options
      *
-     * This is called by {@link save_question()} to save the question-type specific data
-     * @return object $result->error or $result->notice
-     * @param object $question  This holds the information from the editing form,
+     * This is called by {@see save_question()} to save the question-type specific data
+     *
+     * @param object $question This holds the information from the editing form,
      *      it is not a standard question object.
+     * @return bool|stdClass $result->error or $result->notice
      */
     public function save_question_options($question) {
         global $DB;
@@ -930,13 +931,13 @@ class question_type {
         if (is_array($extraanswerfields)) {
             $answerextensiontable = array_shift($extraanswerfields);
             // Use LEFT JOIN in case not every answer has extra data.
-            $question->options->answers = $DB->get_records_sql("
+            $answers = $DB->get_records_sql("
                     SELECT qa.*, qax." . implode(', qax.', $extraanswerfields) . '
                     FROM {question_answers} qa ' . "
                     LEFT JOIN {{$answerextensiontable}} qax ON qa.id = qax.answerid
                     WHERE qa.question = ?
                     ORDER BY qa.id", array($question->id));
-            if (!$question->options->answers) {
+            if (!$answers) {
                 echo $OUTPUT->notification('Failed to load question answers from the table ' .
                         $answerextensiontable . 'for questionid ' . $question->id);
                 return false;
@@ -944,9 +945,15 @@ class question_type {
         } else {
             // Don't check for success or failure because some question types do
             // not use the answers table.
-            $question->options->answers = $DB->get_records('question_answers',
+            $answers = $DB->get_records('question_answers',
                     array('question' => $question->id), 'id ASC');
         }
+        // Store the answers into the question object.
+        $question->options->answers = array_map(function($answer) {
+            // Some database engines return floats as strings like '1.0000000'. Cast to float for consistency.
+            $answer->fraction = (float) $answer->fraction;
+            return $answer;
+        }, $answers);
 
         $question->hints = $DB->get_records('question_hints',
                 array('questionid' => $question->id), 'id ASC');
@@ -1405,7 +1412,7 @@ class question_type {
 
         $question = new stdClass();
         $question->courseid = $courseid;
-        $question->qtype = $this->qtype;
+        $question->qtype = $this->name();
         return array($form, $question);
     }
 

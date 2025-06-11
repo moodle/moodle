@@ -10,7 +10,7 @@ Feature: Add a comment to the comments block
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | Frist | teacher1@example.com |
+      | teacher1 | Teacher | First | teacher1@example.com |
       | student1 | Student | First | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
@@ -25,11 +25,16 @@ Feature: Add a comment to the comments block
   Scenario: Add a comment with Javascript enabled
     When I add "I'm a comment from student1" comment to comments block
     Then I should see "I'm a comment from student1"
+    And I am on the "Course 1" course page logged in as teacher1
+    And I should see "I'm a comment from student1"
 
   Scenario: Add a comment with Javascript disabled
     When I follow "Show comments"
     And I add "I'm a comment from student1" comment to comments block
     Then I should see "I'm a comment from student1"
+    And I am on the "Course 1" course page logged in as teacher1
+    And I follow "Show comments"
+    And I should see "I'm a comment from student1"
 
   @javascript
   Scenario: Test comment block pagination

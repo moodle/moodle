@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_badges/issued_badges
+    @template core_badges/issued_badge
 
     Display an issued badge.
 
@@ -211,6 +211,11 @@
             </div>
             {{/coursefullname}}
         </div>
+        {{#badgetag}}
+            <p class="pb-2">
+                {{> core_tag/taglist}}
+            </p>
+        {{/badgetag}}
 
         <p class="pb-4">{{{badgedescription}}}</p>
 
@@ -225,7 +230,7 @@
                 {{#str}}moredetails, core_badges{{/str}}
             </a>
             <div class="collapse" id="collapseOtherDetails">
-                <div class="container ml-0">
+                <div class="container ms-0">
                     {{#version}}
                         <dl>
                             <dt>
@@ -294,7 +299,7 @@
 
             {{#endorsement}}
                 <h4>{{#str}}endorsement, core_badges{{/str}}</h4>
-                <div class="container ml-0">
+                <div class="container ms-0">
                     <dl>
                         <dt>
                             {{#str}}issuername, core_badges{{/str}}

@@ -17,8 +17,7 @@
 /**
  * Version information
  *
- * @package    mod
- * @subpackage choicegroup
+ * @package    mod_choicegroup
  * @copyright  2013 Université de Lausanne
  * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,5 +31,17 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('defaults', get_string('defaultsettings', 'choicegroup'), ''));
 
     $options = choicegroup_get_sort_options();
-    $settings->add(new admin_setting_configselect('choicegroup/sortgroupsby', get_string('sortgroupsby', 'choicegroup'), '', CHOICEGROUP_SORTGROUPS_CREATEDATE, $options));
+    $settings->add(new admin_setting_configselect('choicegroup/sortgroupsby', get_string('sortgroupsby', 'choicegroup'), '',
+        CHOICEGROUP_SORTGROUPS_CREATEDATE, $options));
+
+    $settings->add(new admin_setting_configselect(
+        'choicegroup/defaultgroupdescriptionstate',
+        get_string('defaultgroupdescriptionstate', 'choicegroup'),
+        get_string('defaultgroupdescriptionstate_desc', 'choicegroup'),
+        CHOICEGROUP_GROUPDESCRIPTIONSTATE_HIDDEN,
+        [
+            CHOICEGROUP_GROUPDESCRIPTIONSTATE_VISIBLE => get_string('showdescription', 'choicegroup'),
+            CHOICEGROUP_GROUPDESCRIPTIONSTATE_HIDDEN => get_string('hidedescription', 'choicegroup'),
+        ]
+    ));
 }

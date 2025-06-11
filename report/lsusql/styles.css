@@ -15,11 +15,13 @@ body.path-admin-report-lsusql a.view-category {
 }
 .csql_category.csql_categoryhidden .categoryname {
     background-image: url([[pix:moodle|t/collapsed]]);
+    background-size: 50% 50%;
     background-repeat: no-repeat;
     background-position: center left;
 }
 .csql_category.csql_categoryshown .categoryname {
     background-image: url([[pix:moodle|t/expanded]]);
+    background-size: 50% 50%;
     background-repeat: no-repeat;
     background-position: center left;
 }

@@ -34,6 +34,18 @@ $string['assignnotpermitted'] = 'You do not have permission or can not assign ro
 $string['bulkuseroperation'] = 'Bulk user operation';
 $string['configenrolplugins'] = 'Please select all required plugins and arrange then in appropriate order.';
 $string['custominstancename'] = 'Custom instance name';
+$string['customwelcomemessage'] = 'Custom welcome message';
+$string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
+<ul>
+<li>Course name {$a->coursename}</li>
+<li>Link to user\'s profile page {$a->profileurl}</li>
+<li>User email {$a->email}</li>
+<li>User fullname {$a->fullname}</li>
+<li>User first name {$a->firstname}</li>
+<li>User last name {$a->lastname}</li>
+<li>User course role {$a->courserole}</li>
+</ul>';
+$string['customwelcomemessageplaceholder'] = 'Hi {$a->firstname}, you are enrolled in the course {$a->coursename}.';
 $string['defaultenrol'] = 'Add instance to new courses';
 $string['defaultenrol_desc'] = 'It is possible to add this plugin to all new courses by default.';
 $string['deleteinstanceconfirm'] = 'You are about to delete the enrolment method "{$a->name}". All {$a->users} users currently enrolled using this method will be unenrolled and any course-related data such as users\' grades, group membership or forum subscriptions will be deleted.
@@ -121,6 +133,7 @@ $string['periodend'] = 'until {$a}';
 $string['periodnone'] = 'enrolled {$a}';
 $string['periodstart'] = 'from {$a}';
 $string['periodstartend'] = 'from {$a->start} until {$a->end}';
+$string['plugindisabled'] = '{$a} enrol plugin is disabled';
 $string['recovergrades'] = 'Recover user\'s old grades if possible';
 $string['rolefromthiscourse'] = '{$a->role} (Assigned in this course)';
 $string['rolefrommetacourse'] = '{$a->role} (Inherited from parent course)';
@@ -129,6 +142,8 @@ $string['rolefromsystem'] = '{$a->role} (Assigned at site level)';
 $string['sendfromcoursecontact'] = 'From the course contact';
 $string['sendfromkeyholder'] = 'From the key holder';
 $string['sendfromnoreply'] = 'From the no-reply address';
+$string['sendcoursewelcomemessage'] = 'Send course welcome message';
+$string['sendcoursewelcomemessage_help'] = 'When enrolling a user or cohort in the course, they may be sent a welcome message email. If sent from the course contact (by default the teacher), and more than one user has this role, the email is sent from the first user to be assigned the role.';
 $string['startdatetoday'] = 'Today';
 $string['synced'] = 'Synced';
 $string['testsettings'] = 'Test settings';
@@ -144,7 +159,7 @@ $string['unassignnotpermitted'] = 'You do not have permission to unassign roles 
 $string['unenrol'] = 'Unenrol';
 $string['unenrolleduser'] = 'The user "{$a->fullname}" was unenrolled from the course';
 $string['unenrolconfirm'] = 'Do you really want to unenrol "{$a->user}" (previously enrolled via "{$a->enrolinstancename}") from "{$a->course}"?';
-$string['unenrolme'] = 'Unenrol me from {$a}';
+$string['unenrolme'] = 'Unenrol me from this course';
 $string['unenrolnotpermitted'] = 'You do not have permission to unenrol this user from the course.';
 $string['unenrolroleusers'] = 'Unenrol users';
 $string['uninstallmigrating'] = 'Migrating "{$a}" enrolments';
@@ -171,6 +186,3 @@ $string['privacy:metadata:user_enrolments:timemodified'] = 'The time when the us
 $string['privacy:metadata:user_enrolments:userid'] = 'The ID of the user';
 $string['youenrolledincourse'] = 'You are enrolled in the course.';
 $string['youunenrolledfromcourse'] = 'You are unenrolled from the course "{$a}".';
-
-// Deprecated since Moodle 4.0.
-$string['proceedtocourse'] = 'Proceed to course content';

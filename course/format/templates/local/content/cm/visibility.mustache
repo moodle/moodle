@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/cm/visibility
+
+    Template to displays if an activity is in hidden or stealth mode.
+
+    Example context (json):
+    {
+        "modhiddenfromstudents" : "1",
+        "modstealth" : "1",
+        "isInteractive": "1",
+        "dropwdown": {
+            "buttonid": "dropwdownbutton_648b1549b929e30",
+            "buttoncontent": "Show on course page",
+            "choices": {
+                "description": null,
+                "options": [
+                    {
+                        "value": "show",
+                        "name": "Show on course page",
+                        "description": "Available to students.",
+                        "url": null,
+                        "icon": null,
+                        "disabled": false,
+                        "hasicon": false,
+                        "hasurl": false,
+                        "selected": true,
+                        "optionnumber": 1,
+                        "first": true,
+                        "optionuniqid": "choice_option_648b1549b929e31"
+                    },
+                    {
+                        "value": "hide",
+                        "name": "Hide on course page",
+                        "description": "Not available to students.",
+                        "url": null,
+                        "icon": null,
+                        "disabled": false,
+                        "hasicon": false,
+                        "hasurl": false,
+                        "optionnumber": 2,
+                        "first": false,
+                        "optionuniqid": "choice_option_648b1549b929e32"
+                    }
+                ],
+                "hasoptions": true
+            }
+        }
+    }
+}}
+{{#isInteractive}}
+    <div class="activity-badges my-1" data-region="visibility">
+    {{#dropwdown}}
+        {{< core/local/dropdown/status}}
+            {{$ buttonclasses }} badge rounded-pill bg-secondary text-dark dropdown-toggle border-0 {{/ buttonclasses }}
+        {{/ core/local/dropdown/status}}
+    {{/dropwdown}}
+    </div>
+{{/isInteractive}}
+{{^isInteractive}}
+    {{#modhiddenfromstudents}}
+        <div class="activity-badges my-1 d-flex align-self-start align-items-center" data-region="visibility">
+            <span class="badge rounded-pill bg-secondary text-dark">{{#pix}}i/show, core{{/pix}}{{#str}}hiddenfromstudents{{/str}}</span>
+        </div>
+    {{/modhiddenfromstudents}}
+    {{#modstealth}}
+        <div class="activity-badges my-1 d-flex align-self-start align-items-center" data-region="visibility">
+            <span class="badge rounded-pill bg-secondary text-dark">{{#pix}}t/stealth, core{{/pix}}{{#str}}hiddenoncoursepage{{/str}}</span>
+        </div>
+    {{/modstealth}}
+{{/isInteractive}}

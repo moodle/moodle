@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,8 +42,9 @@ require_once($CFG->dirroot . '/mod/assign/tests/privacy/provider_test.php');
  *
  * @copyright  Microsoft, Inc.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \assignfeedback_onenote\privacy\provider
  */
-class provider_test extends \mod_assign\privacy\provider_test {
+final class provider_test extends \mod_assign\tests\provider_testcase {
 
     /**
      * Convenience function for creating feedback data.
@@ -78,8 +78,10 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Quick test to make sure that get_metadata returns something.
+     *
+     * @covers \assignfeedback_onenote\privacy\provider::get_metadata
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('assignfeedback_onenote');
         $collection = provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -87,8 +89,10 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Test that feedback comments are exported for a user.
+     *
+     * @covers \assignfeedback_onenote\privacy\provider::export_feedback_user_data
      */
-    public function test_export_feedback_user_data() {
+    public function test_export_feedback_user_data(): void {
         $this->resetAfterTest();
 
         // Create course, assignment, submission, and then a feedback onenote.
@@ -134,8 +138,10 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Test that all feedback is deleted for a context.
+     *
+     * @covers \assignfeedback_onenote\privacy\provider::delete_feedback_for_context
      */
-    public function test_delete_feedback_for_context() {
+    public function test_delete_feedback_for_context(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback onenote.
         $course = $this->getDataGenerator()->create_course();
@@ -182,8 +188,10 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Test that a grade item is deleted for a user.
+     *
+     * @covers \assignfeedback_onenote\privacy\provider::delete_feedback_for_grade
      */
-    public function test_delete_feedback_for_grade() {
+    public function test_delete_feedback_for_grade(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback onenote.
         $course = $this->getDataGenerator()->create_course();
@@ -239,8 +247,10 @@ class provider_test extends \mod_assign\privacy\provider_test {
 
     /**
      * Test that a grade item is deleted for a user.
+     *
+     * @covers \assignfeedback_onenote\privacy\provider::delete_feedback_for_grades
      */
-    public function test_delete_feedback_for_grades() {
+    public function test_delete_feedback_for_grades(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback onenote.
         $course = $this->getDataGenerator()->create_course();

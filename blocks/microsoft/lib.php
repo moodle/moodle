@@ -92,11 +92,16 @@ function block_microsoft_get_course_reset_setting(int $courseid) {
  */
 function block_microsoft_set_course_reset_setting(int $courseid, string $resetsetting) {
     $courseresetsettings = get_config('local_o365', 'courseresetsettings');
+    $originalcourseresetsettings = $courseresetsettings;
     $courseresetsettings = @json_decode($courseresetsettings, true);
     if (empty($courseresetsettings) || !is_array($courseresetsettings)) {
         $courseresetsettings = [$courseid => $resetsetting];
     } else {
         $courseresetsettings[$courseid] = $resetsetting;
+    }
+
+    if ($originalcourseresetsettings != json_encode($courseresetsettings)) {
+        add_to_config_log('courseresetsettings', $originalcourseresetsettings, json_encode($courseresetsettings), 'local_o365');
     }
 
     set_config('courseresetsettings', json_encode($courseresetsettings), 'local_o365');

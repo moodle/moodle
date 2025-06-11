@@ -26,6 +26,7 @@ use core_reportbuilder\manager;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report as report_model;
+use core_tag_tag;
 
 /**
  * Helper class for manipulating custom reports and their elements (columns, filters, conditions, etc)
@@ -48,19 +49,26 @@ class report {
         $data->name = trim($data->name);
         $data->type = datasource::TYPE_CUSTOM_REPORT;
 
-        $reportpersistent = manager::create_report_persistent($data);
+        // Create report persistent.
+        $report = manager::create_report_persistent($data);
 
         // Add datasource default columns, filters and conditions to the report.
         if ($default) {
-            $source = $reportpersistent->get('source');
+            $source = $report->get('source');
             /** @var datasource $datasource */
-            $datasource = new $source($reportpersistent, []);
+            $datasource = new $source($report);
             $datasource->add_default_columns();
             $datasource->add_default_filters();
             $datasource->add_default_conditions();
         }
 
-        return $reportpersistent;
+        // Report tags.
+        if (property_exists($data, "tags")) {
+            core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
+                $report->get_context(), $data->tags);
+        }
+
+        return $report;
     }
 
     /**
@@ -80,6 +88,12 @@ class report {
             'uniquerows' => $data->uniquerows,
         ])->update();
 
+        // Report tags.
+        if (property_exists($data, "tags")) {
+            core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
+                $report->get_context(), $data->tags);
+        }
+
         return $report;
     }
 
@@ -96,6 +110,9 @@ class report {
             throw new invalid_parameter_exception('Invalid report');
         }
 
+        // Report tags.
+        core_tag_tag::remove_all_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'));
+
         return $report->delete();
     }
 
@@ -110,6 +127,7 @@ class report {
     public static function add_report_column(int $reportid, string $uniqueidentifier): column {
         $report = manager::get_report_from_id($reportid);
 
+        // Ensure column is available.
         if (!array_key_exists($uniqueidentifier, $report->get_columns())) {
             throw new invalid_parameter_exception('Invalid column');
         }
@@ -237,8 +255,14 @@ class report {
     public static function add_report_condition(int $reportid, string $uniqueidentifier): filter {
         $report = manager::get_report_from_id($reportid);
 
+        // Ensure condition is available.
         if (!array_key_exists($uniqueidentifier, $report->get_conditions())) {
             throw new invalid_parameter_exception('Invalid condition');
+        }
+
+        // Ensure condition wasn't already added.
+        if (array_key_exists($uniqueidentifier, $report->get_active_conditions())) {
+            throw new invalid_parameter_exception('Duplicate condition');
         }
 
         $condition = new filter(0, (object) [
@@ -317,9 +341,14 @@ class report {
     public static function add_report_filter(int $reportid, string $uniqueidentifier): filter {
         $report = manager::get_report_from_id($reportid);
 
-        $reportfilters = $report->get_filters();
-        if (!array_key_exists($uniqueidentifier, $reportfilters)) {
+        // Ensure filter is available.
+        if (!array_key_exists($uniqueidentifier, $report->get_filters())) {
             throw new invalid_parameter_exception('Invalid filter');
+        }
+
+        // Ensure filter wasn't already added.
+        if (array_key_exists($uniqueidentifier, $report->get_active_filters())) {
+            throw new invalid_parameter_exception('Duplicate filter');
         }
 
         $filter = new filter(0, (object) [
@@ -387,42 +416,11 @@ class report {
     }
 
     /**
-     * Get available columns for a given report
-     *
-     * @param report_model $persistent
-     * @return array
-     *
      * @deprecated since Moodle 4.1 - please do not use this function any more, {@see custom_report_column_cards_exporter}
      */
-    public static function get_available_columns(report_model $persistent) : array {
-        debugging('The function ' . __FUNCTION__ . '() is deprecated, please do not use it any more. ' .
-            'See \'custom_report_column_cards_exporter\' class for replacement', DEBUG_DEVELOPER);
-
-        $available = [];
-
-        $report = manager::get_report_from_persistent($persistent);
-
-        // Get current report columns.
-        foreach ($report->get_columns() as $column) {
-            $entityname = $column->get_entity_name();
-            $entitytitle = $column->get_title();
-            if (!array_key_exists($entityname, $available)) {
-                $available[$entityname] = [
-                    'name' => (string) $report->get_entity_title($entityname),
-                    'key' => $entityname,
-                    'items' => [],
-                ];
-            }
-
-            $available[$entityname]['items'][] = [
-                'name' => $entitytitle,
-                'identifier' => $column->get_unique_identifier(),
-                'title' => get_string('addcolumn', 'core_reportbuilder', $entitytitle),
-                'action' => 'report-add-column'
-            ];
-        }
-
-        return array_values($available);
+    #[\core\attribute\deprecated('custom_report_column_cards_exporter', since: '4.1', final: true)]
+    public static function get_available_columns() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**

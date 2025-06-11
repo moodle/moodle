@@ -14,32 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for assignfeedback_editpdf.
- *
- * @package    assignfeedback_editpdf
- * @copyright  2018 Adrian Greeve <adrian@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace assignfeedback_editpdf\privacy;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/assign/locallib.php');
-require_once($CFG->dirroot . '/mod/assign/tests/privacy/provider_test.php');
 
 use assignfeedback_editpdf\page_editor;
 use mod_assign\privacy\assign_plugin_request_data;
 
 /**
- * Unit tests for mod/assign/feedback/editpdf/classes/privacy/
+ * Unit tests for mod/assign/feedback/editpdf/classes/privacy/provider.
  *
+ * @package    assignfeedback_editpdf
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \assignfeedback_editpdf\privacy\provider
  */
-class provider_test extends \mod_assign\privacy\provider_test {
+final class provider_test extends \mod_assign\tests\provider_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
 
+        parent::setUpBeforeClass();
+        require_once($CFG->dirroot . '/mod/assign/locallib.php');
+    }
+
+    #[\Override]
     public function setUp(): void {
         // Skip this test if ghostscript is not supported.
         $result = \assignfeedback_editpdf\pdf::test_gs_path(false);
@@ -53,9 +50,9 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Convenience function for creating feedback data.
      *
-     * @param  object   $assign         assign object
-     * @param  stdClass $student        user object
-     * @param  stdClass $teacher        user object
+     * @param  object    $assign         assign object
+     * @param  \stdClass $student        user object
+     * @param  \stdClass $teacher        user object
      * @return array   Feedback plugin object and the grade object.
      */
     protected function create_feedback($assign, $student, $teacher) {
@@ -121,7 +118,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Quick test to make sure that get_metadata returns something.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('assignfeedback_editpdf');
         $collection = \assignfeedback_editpdf\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -130,7 +127,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that feedback comments are exported for a user.
      */
-    public function test_export_feedback_user_data() {
+    public function test_export_feedback_user_data(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -169,7 +166,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that all feedback is deleted for a context.
      */
-    public function test_delete_feedback_for_context() {
+    public function test_delete_feedback_for_context(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -207,7 +204,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that a grade item is deleted for a user.
      */
-    public function test_delete_feedback_for_grade() {
+    public function test_delete_feedback_for_grade(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -246,7 +243,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that a grade item is deleted for a user.
      */
-    public function test_delete_feedback_for_grades() {
+    public function test_delete_feedback_for_grades(): void {
         global $DB;
 
         $this->resetAfterTest();

@@ -11,7 +11,7 @@ Feature: Restrict activity availability through grade conditions
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | Frist | teacher1@example.com |
+      | teacher1 | Teacher | First | teacher1@example.com |
       | student1 | Student | First | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
@@ -44,8 +44,9 @@ Feature: Restrict activity availability through grade conditions
     And I should see "Submitted for grading"
 
     And I am on the "Grade assignment" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
-    And I click on "Grade" "link" in the "Student First" "table_row"
+    And I change window size to "large"
+    And I go to "Student First" "Grade assignment" activity advanced grading page
+    And I change window size to "medium"
     And I set the following fields to these values:
       | Grade | 21 |
     And I press "Save changes"

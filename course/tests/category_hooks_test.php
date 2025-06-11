@@ -36,9 +36,10 @@ use core_course\test\mock_hooks;
 /**
  * Functional test for class core_course_category methods invoking hooks.
  */
-class category_hooks_test extends \advanced_testcase {
+final class category_hooks_test extends \advanced_testcase {
 
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
@@ -53,7 +54,7 @@ class category_hooks_test extends \advanced_testcase {
      * @param string $callback Callback function used in method we test.
      * @return MockObject
      */
-    public function get_mock_category(\core_course_category $category, string $callback = '') : MockObject {
+    public function get_mock_category(\core_course_category $category, string $callback = ''): MockObject {
         // Setup mock object for \core_course_category.
         // Disable original constructor, since we can't use it directly since it is private.
         $mockcategory = $this->getMockBuilder(\core_course_category::class)
@@ -72,13 +73,12 @@ class category_hooks_test extends \advanced_testcase {
         // This is used to overcome private constructor.
         $reflected = new \ReflectionClass(\core_course_category::class);
         $constructor = $reflected->getConstructor();
-        $constructor->setAccessible(true);
         $constructor->invoke($mockcategory, $category->get_db_record());
 
         return $mockcategory;
     }
 
-    public function test_can_course_category_delete_hook() {
+    public function test_can_course_category_delete_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
         $category3 = \core_course_category::create(array('name' => 'Cat3'));
@@ -105,7 +105,7 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertSame($mockcategory2, $argument);
     }
 
-    public function test_can_course_category_delete_move_hook() {
+    public function test_can_course_category_delete_move_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
         $category3 = \core_course_category::create(array('name' => 'Cat3'));
@@ -137,7 +137,7 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertEquals($category3->id, $argument->id);
     }
 
-    public function test_pre_course_category_delete_hook() {
+    public function test_pre_course_category_delete_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
 
@@ -153,7 +153,7 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertEquals($mockcategory2->get_db_record(), $argument);
     }
 
-    public function test_pre_course_category_delete_move_hook() {
+    public function test_pre_course_category_delete_move_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
         $category3 = \core_course_category::create(array('name' => 'Cat3'));
@@ -179,23 +179,28 @@ class category_hooks_test extends \advanced_testcase {
         $this->assertEquals($category3->id, $argument->id);
     }
 
-    public function test_get_course_category_contents_hook() {
+    public function test_get_course_category_contents_hook(): void {
         $category1 = \core_course_category::create(array('name' => 'Cat1'));
         $category2 = \core_course_category::create(array('name' => 'Cat2', 'parent' => $category1->id));
 
         $mockcategory2 = $this->get_mock_category($category2);
 
         // Define get_plugins_callback_function use in the mock, it is called twice for different callback in the form.
-        $mockcategory2->expects($this->exactly(2))
+        $callbackinvocations = $this->exactly(2);
+        $mockcategory2->expects($callbackinvocations)
             ->method('get_plugins_callback_function')
-            ->withConsecutive(
-                [$this->equalTo('can_course_category_delete')],
-                [$this->equalTo('get_course_category_contents')]
-            )
-            ->willReturn(
-                ['tool_unittest_can_course_category_delete'],
-                ['tool_unittest_get_course_category_contents']
-            );
+            ->willReturnCallback(function ($method) use ($callbackinvocations): array {
+                switch (self::getInvocationCount($callbackinvocations)) {
+                    case 1:
+                        $this->assertEquals('can_course_category_delete', $method);
+                        return ['tool_unittest_can_course_category_delete'];
+                    case 2:
+                        $this->assertEquals('get_course_category_contents', $method);
+                        return ['tool_unittest_get_course_category_contents'];
+                    default:
+                        $this->fail('Unexpected callback invocation');
+                }
+            });
 
         // Now configure fixture to return string for the callback.
         $content = 'Bunch of test artefacts';

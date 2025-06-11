@@ -30,7 +30,7 @@ function attendance_upgrade_create_calendar_events() {
 
     $attendances = $DB->get_records('attendance', null, null, 'id, name, course');
     foreach ($attendances as $att) {
-        $sessionsdata = $DB->get_records('attendance_sessions', array('attendanceid' => $att->id), null,
+        $sessionsdata = $DB->get_records('attendance_sessions', ['attendanceid' => $att->id], null,
             'id, groupid, sessdate, duration, description, descriptionformat');
         foreach ($sessionsdata as $session) {
             $calevent = new stdClass();
@@ -47,7 +47,7 @@ function attendance_upgrade_create_calendar_events() {
             $calevent->format         = $session->descriptionformat;
 
             $caleventid = $DB->insert_record('event', $calevent);
-            $DB->set_field('attendance_sessions', 'caleventid', $caleventid, array('id' => $session->id));
+            $DB->set_field('attendance_sessions', 'caleventid', $caleventid, ['id' => $session->id]);
         }
     }
 }

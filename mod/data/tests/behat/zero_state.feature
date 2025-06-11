@@ -65,3 +65,9 @@ Feature: Zero state page (no fields created)
     Then I click on "Use this preset" "button"
     And I should not see "Field mappings"
     And I should see "Image" in the "image" "table_row"
+
+  @javascript @accessibility
+  Scenario: Check the accessibility of the database activity zero state
+    When I am on the "Test database name" "data activity" page logged in as "teacher1"
+    Then I should see "Start building your activity"
+    And the page should meet accessibility standards

@@ -167,7 +167,7 @@ class xmldb_file extends xmldb_object {
      * @param array $xmlarr
      * @return xmldb_structure
      */
-    public function arr2xmldb_structure ($xmlarr) {
+    public function arr2xmldb_structure($xmlarr) {
         $structure = new xmldb_structure($this->path);
         $structure->arr2xmldb_structure($xmlarr);
         return $structure;

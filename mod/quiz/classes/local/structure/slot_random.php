@@ -16,6 +16,8 @@
 
 namespace mod_quiz\local\structure;
 
+use context_module;
+
 /**
  * Class slot_random, represents a random question slot type.
  *
@@ -88,7 +90,7 @@ class slot_random {
             if (empty($this->record->quizid)) {
                 throw new \coding_exception('quizid is not set.');
             }
-            $this->quiz = $DB->get_record('quiz', array('id' => $this->record->quizid));
+            $this->quiz = $DB->get_record('quiz', ['id' => $this->record->quizid]);
         }
 
         return $this->quiz;
@@ -110,8 +112,13 @@ class slot_random {
      * Set some tags for this quiz slot.
      *
      * @param \core_tag_tag[] $tags
+     *
+     * @deprecated since Moodle 4.3
+     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
     public function set_tags($tags) {
+        debugging('Method set_tags() is deprecated, ' .
+            'please do not use this function.', DEBUG_DEVELOPER);
         $this->tags = [];
         foreach ($tags as $tag) {
             // We use $tag->id as the key for the array so not only it handles duplicates of the same tag being given,
@@ -124,22 +131,24 @@ class slot_random {
      * Set some tags for this quiz slot. This function uses tag ids to find tags.
      *
      * @param int[] $tagids
+     * @deprecated since Moodle 4.3
+     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
     public function set_tags_by_id($tagids) {
+        debugging(
+            'Method set_tags_by_id() is deprecated, please do not use this function.',
+            DEBUG_DEVELOPER
+        );
         $this->tags = \core_tag_tag::get_bulk($tagids, 'id, name');
     }
 
     /**
      * Set filter condition.
      *
-     * @param \stdClass $filters
+     * @param \string $filters
      */
-    public function set_filter_condition($filters) {
-        if (!empty($this->tags)) {
-            $filters->tags = $this->tags;
-        }
-
-        $this->filtercondition = json_encode($filters);
+    public function set_filter_condition(string $filters): void {
+        $this->filtercondition = $filters;
     }
 
     /**
@@ -151,7 +160,7 @@ class slot_random {
     public function insert($page) {
         global $DB;
 
-        $slots = $DB->get_records('quiz_slots', array('quizid' => $this->record->quizid),
+        $slots = $DB->get_records('quiz_slots', ['quizid' => $this->record->quizid],
                 'slot', 'id, slot, page');
         $quiz = $this->get_quiz();
 
@@ -173,7 +182,7 @@ class slot_random {
             $lastslotbefore = 0;
             foreach (array_reverse($slots) as $otherslot) {
                 if ($otherslot->page > $page) {
-                    $DB->set_field('quiz_slots', 'slot', $otherslot->slot + 1, array('id' => $otherslot->id));
+                    $DB->set_field('quiz_slots', 'slot', $otherslot->slot + 1, ['id' => $otherslot->id]);
                 } else {
                     $lastslotbefore = $otherslot->slot;
                     break;
@@ -210,7 +219,7 @@ class slot_random {
         // Log slot created event.
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
         $event = \mod_quiz\event\slot_created::create([
-            'context' => \context_module::instance($cm->id),
+            'context' => context_module::instance($cm->id),
             'objectid' => $this->record->id,
             'other' => [
                 'quizid' => $quiz->id,

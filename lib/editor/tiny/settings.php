@@ -27,6 +27,13 @@ defined('MOODLE_INTERNAL') || die;
 $ADMIN->add('editorsettings', new admin_category('editortiny', $editor->displayname, $editor->is_enabled() === false));
 
 $settings = new admin_settingpage('editorsettingstiny', new lang_string('settings', 'editor_tiny'));
+$settings->add(new \core_admin\admin\admin_setting_plugin_manager(
+    'tiny',
+    \editor_tiny\table\plugin_management_table::class,
+    'editor_tiny_settings',
+    get_string('editorsettings', 'editor'),
+));
+
 if ($ADMIN->fulltree) {
     $setting = new admin_setting_configcheckbox(
         'editor_tiny/branding',
@@ -36,16 +43,25 @@ if ($ADMIN->fulltree) {
     );
 
     $settings->add($setting);
-}
 
-foreach (core_plugin_manager::instance()->get_plugins_of_type('tiny') as $plugin) {
-    /** @var \editor_tiny\plugininfo\tiny $plugin */
-    $plugin->load_settings($ADMIN, 'editortiny', $hassiteconfig);
+    $setting = new admin_setting_configtext(
+        'editor_tiny/extended_valid_elements',
+        new lang_string('extended_valid_elements', 'editor_tiny'),
+        new lang_string('extended_valid_elements_desc', 'editor_tiny'),
+        'script[*],p[*],i[*]'
+    );
+
+    $settings->add($setting);
 }
 
 // Note: We add editortiny to the settings page here manually rather than deferring to the plugininfo class.
 // This ensures that it shows in the category list too.
 $ADMIN->add('editortiny', $settings);
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('tiny') as $plugin) {
+    /** @var \editor_tiny\plugininfo\tiny $plugin */
+    $plugin->load_settings($ADMIN, 'editortiny', $hassiteconfig);
+}
 
 // Required or the editor plugininfo will add this section twice.
 unset($settings);

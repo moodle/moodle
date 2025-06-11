@@ -62,7 +62,8 @@ function dispatchStateChangedEvent(detail, target) {
  * @param {setup} setup format, page and course settings
  * @param {boolean} setup.editing if the page is in edit mode
  * @param {boolean} setup.supportscomponents if the format supports components for content
- * @param {boolean} setup.statekey the backend cached state revision
+ * @param {String} setup.statekey the backend cached state revision
+ * @param {Array} setup.overriddenStrings optional overridden strings
  */
 export const setViewFormat = (courseId, setup) => {
     courseId = parseInt(courseId);

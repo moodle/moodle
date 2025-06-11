@@ -24,7 +24,7 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class geoplugin_test extends \advanced_testcase {
+final class geoplugin_test extends \advanced_testcase {
 
     /**
      * Load required test libraries
@@ -32,12 +32,14 @@ class geoplugin_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once("{$CFG->dirroot}/iplookup/lib.php");
+        parent::setUpBeforeClass();
     }
 
     /**
      * In order to execute this test PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
      */
     public function setUp(): void {
+        parent::setUp();
         if (!PHPUNIT_LONGTEST) {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }

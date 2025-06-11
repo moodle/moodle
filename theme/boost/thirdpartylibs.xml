@@ -28,6 +28,7 @@
   </library>
   <library>
     <location>amd/src/bootstrap/button.js</location>
+    <name>bootstrap-button</name>
     <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
     <version>4.6.2</version>
     <license>MIT</license>
@@ -197,13 +198,13 @@
   </library>
   <library>
     <location>scss/fontawesome</location>
-    <name>Font Awesome - http://fontawesome.io</name>
+    <name>Font Awesome - http://fontawesome.com</name>
     <description>Font Awesome CSS, LESS, and Sass files. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
-    <version>4.7.0</version>
+    <version>6.5.2</version>
     <license>(MIT)</license>
     <repository>https://github.com/FortAwesome/Font-Awesome</repository>
     <copyrights>
-      <copyright>Dave Gandy</copyright>
+      <copyright>2023 Fonticons, Inc</copyright>
     </copyrights>
   </library>
 </libraries>

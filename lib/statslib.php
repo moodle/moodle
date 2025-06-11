@@ -164,7 +164,7 @@ function stats_cron_daily($maxdays=1) {
     $defaultfproleid = (int)$CFG->defaultfrontpageroleid;
 
     mtrace("Running daily statistics gathering, starting at $timestart:");
-    cron_trace_time_and_memory();
+    \core\cron::trace_time_and_memory();
 
     $days  = 0;
     $total = 0;
@@ -664,7 +664,7 @@ function stats_cron_weekly() {
     $DB->delete_records_select('stats_user_weekly', "timeend > $timestart");
 
     mtrace("Running weekly statistics gathering, starting at $timestart:");
-    cron_trace_time_and_memory();
+    \core\cron::trace_time_and_memory();
 
     $weeks = 0;
     while ($now > $nextstartweek) {
@@ -807,7 +807,7 @@ function stats_cron_monthly() {
 
 
     mtrace("Running monthly statistics gathering, starting at $timestart:");
-    cron_trace_time_and_memory();
+    \core\cron::trace_time_and_memory();
 
     $months = 0;
     while ($now > $nextstartmonth) {
@@ -1026,7 +1026,7 @@ function stats_get_base_monthly($time=0) {
 /**
  * Start of next day
  * @param int $time timestamp
- * @return start of next day
+ * @return int start of next day
  */
 function stats_get_next_day_start($time) {
     $next = stats_get_base_daily($time);
@@ -1039,7 +1039,7 @@ function stats_get_next_day_start($time) {
 /**
  * Start of next week
  * @param int $time timestamp
- * @return start of next week
+ * @return int start of next week
  */
 function stats_get_next_week_start($time) {
     $next = stats_get_base_weekly($time);
@@ -1052,7 +1052,7 @@ function stats_get_next_week_start($time) {
 /**
  * Start of next month
  * @param int $time timestamp
- * @return start of next month
+ * @return int start of next month
  */
 function stats_get_next_month_start($time) {
     $next = stats_get_base_monthly($time);
@@ -1068,7 +1068,7 @@ function stats_get_next_month_start($time) {
 function stats_clean_old() {
     global $DB;
     mtrace("Running stats cleanup tasks...");
-    cron_trace_time_and_memory();
+    \core\cron::trace_time_and_memory();
     $deletebefore =  stats_get_base_monthly();
 
     // delete dailies older than 3 months (to be safe)
@@ -1301,7 +1301,8 @@ function stats_get_view_actions() {
 }
 
 function stats_get_post_actions() {
-    return array('add','delete','edit','add mod','delete mod','edit section'.'enrol','loginas','new','unenrol','update','update mod');
+    return ['add', 'delete', 'edit', 'add mod', 'delete mod', 'edit section', 'enrol', 'loginas', 'new', 'unenrol', 'update',
+            'update mod'];
 }
 
 function stats_get_action_names($str) {
@@ -1457,7 +1458,7 @@ function stats_get_report_options($courseid,$mode) {
  * @param string $timestr type of statistics to generate (dayly, weekly, monthly).
  * @param boolean $line2
  * @param boolean $line3
- * @return array of fixed statistics.
+ * @return ?array of fixed statistics.
  */
 function stats_fix_zeros($stats,$timeafter,$timestr,$line2=true,$line3=false) {
 

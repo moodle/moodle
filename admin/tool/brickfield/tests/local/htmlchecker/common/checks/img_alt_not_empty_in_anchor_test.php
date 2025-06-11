@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class img_alt_not_empty_in_anchor_testcase
  */
-class img_alt_not_empty_in_anchor_test extends all_checks {
+final class img_alt_not_empty_in_anchor_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'img_alt_not_empty_in_anchor';
 
@@ -63,7 +63,7 @@ EOD;
     /**
      * Test for >Anchor tags containing a nested img tag, must not have an empty alt attribute
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'img');
 

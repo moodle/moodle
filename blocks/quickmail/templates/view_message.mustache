@@ -1,0 +1,138 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_quickmail
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="block_quickmail_view_message_component">
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 12px;">
+        <h4>{{ messageSubject }}</h4>
+
+        <a href="{{ urlBack }}">{{ urlBackLabel }}</a>
+    </div>
+    
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 12px;">
+        <div style="margin-bottom: 12px; padding-right: 10px;">
+            <small class="text-muted" style="margin-top: 0px;">{{# str }} status, block_quickmail {{/ str }}</small>
+            <p style="margin-bottom: 0px;">{{ status }}</p>
+        </div>
+
+        <div style="margin-bottom: 12px; padding-right: 10px;">
+            <small class="text-muted" style="margin-top: 0px;">{{# str }} from_email, block_quickmail {{/ str }}</small>
+            <p style="margin-bottom: 0px;">{{ fromEmail }}</p>
+        </div>
+
+        <div style="margin-bottom: 12px; padding-right: 10px;">
+            <small class="text-muted" style="margin-top: 0px;">{{# str }} status, block_quickmail {{/ str }}</small>
+            <p style="margin-bottom: 0px;">{{ courseName }}</p>
+        </div>
+        
+        {{^isSending}}
+            <div style="margin-bottom: 12px; padding-right: 10px;">
+                <small class="text-muted" style="margin-top: 0px;">{{# str }} date {{/ str }}</small>
+                <p style="margin-bottom: 0px;">{{ sendDate }}</p>
+            </div>
+        {{/isSending}}
+    </div>
+
+    <h6>{{ messageType }} {{# str }} content {{/ str }}</h6>
+    <div style="margin-bottom: 30px;">
+        {{{ messageBody }}}
+    </div>
+
+    <!-- if message is queued, show all unsent recipients as "recipients" and do not show unsent -->
+    {{#isQueued}}
+        <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+        <div style="margin-bottom: 30px;">
+            {{#unsentRecipientUsers}}
+                <span class="label recipients">{{{ . }}}</span>
+            {{/unsentRecipientUsers}}
+        </div>
+    {{/isQueued}}
+
+    <!-- if message is not queued then it must be sent or sending, show both sent and unsent recipients individually -->
+    {{^isQueued}}
+        <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ sentRecipientCount }}</span></h6>
+        <small>{{# str }} success_recipients_promise, block_quickmail {{/ str }}</small>
+        <div style="margin-bottom: 30px;">
+            {{#sentRecipientUsers}}
+                <span class="label recipients">{{{ . }}}</span>
+            {{/sentRecipientUsers}}
+        </div>
+
+        {{#wasSent}}
+            <h6>{{# str }} failed_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+            <small>{{# str }} failed_recipients_promise, block_quickmail {{/ str }}</small>
+        {{/wasSent}}
+
+        {{#isSending}}
+            <h6>{{# str }} pending_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+            <small>{{# str }} pending_recipients_promise, block_quickmail {{/ str }}</small>
+        {{/isSending}}
+        <div style="margin-bottom: 30px;">
+            {{#unsentRecipientUsers}}
+                <span class="label recipients">{{{ . }}}</span>
+            {{/unsentRecipientUsers}}
+        </div>
+    {{/isQueued}}
+
+    <h6>{{# str }} additional_emails, block_quickmail {{/ str }} <span class="badge badge-primary">{{ additionalEmailCount }}</span></h6>
+    <div style="margin-bottom: 30px;">
+        {{#additionalEmails}}
+            <span class="label recipients">{{{ . }}}</span>
+        {{/additionalEmails}}
+    </div>
+    
+    <h6>{{# str }} mentors_copied, block_quickmail {{/ str }}</h6>
+    <div style="margin-bottom: 20px;">
+        {{#mentorCopyRequested}}
+            <small>{{# str }} yes {{/ str }}</small>
+        {{/mentorCopyRequested}}
+
+        {{^mentorCopyRequested}}
+            <small>{{# str }} no {{/ str }}</small>
+        {{/mentorCopyRequested}}
+    </div>
+
+    <h6>{{# str }} attachments, block_quickmail {{/ str }} <span class="badge badge-primary">{{ attachmentCount }}</span></h6>
+
+    <div style="margin-bottom: 30px;">
+        {{#attachments}}
+            <p>{{{ . }}}</p>
+        {{/attachments}}
+    </div>
+    
+    <div style="display: flex;">
+        <a href="{{ urlBack }}" class="btn" style="margin-right: 10px;">{{ urlBackLabel }}</a>
+        
+        {{^wasSent}}
+            <a href="{{ urlSendNow }}" class="btn btn-success" style="margin-right: 10px;">{{# str }} send_now, block_quickmail {{/ str }}</a>
+        {{/wasSent}}
+        
+        {{^wasSent}}
+            <a href="{{ urlUnqueue }}" class="btn btn-warning" style="margin-right: 10px;">{{# str }} unqueue, block_quickmail {{/ str }}</a>
+        {{/wasSent}}
+        
+        <a href="{{ urlDuplicate }}" class="btn btn-info">{{# str }} duplicate, block_quickmail {{/ str }}</a>
+    </div>
+    
+</div>

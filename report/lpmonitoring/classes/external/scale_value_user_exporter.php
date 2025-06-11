@@ -43,11 +43,11 @@ class scale_value_user_exporter extends exporter {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'email' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'email' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -56,20 +56,20 @@ class scale_value_user_exporter extends exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'fullname' => array(
-                'type' => PARAM_RAW
-            ),
-            'userid' => array(
-                'type' => PARAM_INT
-            ),
-            'profileimagesmall' => array(
-                'type' => PARAM_RAW
-            ),
-            'profileurl' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'fullname' => [
+                'type' => PARAM_RAW,
+            ],
+            'userid' => [
+                'type' => PARAM_INT,
+            ],
+            'profileimagesmall' => [
+                'type' => PARAM_RAW,
+            ],
+            'profileurl' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -83,11 +83,11 @@ class scale_value_user_exporter extends exporter {
         $userexporter = new user_summary_exporter($this->data, '*', \MUST_EXIST);
         $userexport = $userexporter->export($output);
 
-        return array(
+        return [
             'fullname' => $userexport->fullname,
             'profileimagesmall' => $userexport->profileimageurlsmall,
             'userid' => $userexport->id,
-            'profileurl' => $userexport->profileurl
-        );
+            'profileurl' => $userexport->profileurl,
+        ];
     }
 }

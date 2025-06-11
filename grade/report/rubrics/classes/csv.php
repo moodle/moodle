@@ -31,7 +31,7 @@ class csv {
      *
      * @param mixed $value
      * @param mixed $excel
-     * @return void
+     * @return string
      */
     public function csv_quote($value, $excel) {
         if ($excel) {

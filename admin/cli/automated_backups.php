@@ -30,7 +30,6 @@ define('CLI_SCRIPT', true);
 
 require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/clilib.php');      // cli only functions
-require_once($CFG->libdir.'/cronlib.php');
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(array('help'=>false),
@@ -80,10 +79,10 @@ if (!empty($CFG->showcrondebugging)) {
 
 $starttime = microtime();
 
-/// emulate normal session
-cron_setup_user();
+// Emulate normal session.
+\core\cron::setup_user();
 
-/// Start output log
+// Start output log.
 $timenow = time();
 
 mtrace("Server Time: ".date('r',$timenow)."\n\n");

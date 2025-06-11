@@ -1,7 +1,6 @@
-# Migrate mod_hvp to mod_h5pactivity #
+# Migrate mod_hvp to mod_h5pactivity
 
 [![Moodle Plugin CI](https://github.com/moodlehq/moodle-tool_migratehvp2h5p/actions/workflows/ci.yml/badge.svg)](https://github.com/moodlehq/moodle-tool_migratehvp2h5p/actions/workflows/ci.yml)
-
 
 Moodle plugin allowing to migrate activities created with the mod_hvp plugin created by Joubel to the new mod_h5pactivity created by Moodle HQ since Moodle 3.9.
 
@@ -10,7 +9,7 @@ Some limitations to consider before using this plugin:
 * Currently it's still not possible to save the current status with the mod_h5pactivity. The mod_hvp supports it (although it's disabled by default) so, before migrating the activities, consider students might loose these unfinished attempts.
 * The new mod_h5pactivity hasn't any global settings to define the default behaviour so general settings defined in mod_hvp, such as the default display options or whether to use or not the hub, are not migrated.
 
-# How to use this tool #
+## How to use this tool
 
 There are two ways to execute the activity migration:
 
@@ -23,7 +22,7 @@ By default, the CLI method will only migrate up to 100 hvp activities per execut
 
 The tool will only migrate each hvp once. In case you need to re-migrate an hvp, just remove or rename the migrated h5p activity, this way the tool won't detect the hvp as migrated.
 
-# Tool dependencies #
+## Tool dependencies
 
 This tools requires both core H5P and the third party plugin (mod_hvp) installed in the system. The minimum requirements are:
 
@@ -36,7 +35,7 @@ Apart from that, for adding contents to the content bank too (so it's not strict
 * H5P content type of the content bank enabled
 * Content bank repository enabled
 
-## License ##
+### License
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

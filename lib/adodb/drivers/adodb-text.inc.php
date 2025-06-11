@@ -129,14 +129,21 @@ class ADODB_text extends ADOConnection {
 		return true;
 	}
 
-
-
-	// returns queryID or false
-	// We presume that the select statement is on the same table (what else?),
-	// with the only difference being the order by.
-	//You can filter by using $eval and each clause is stored in $arr .eg. $arr[1] == 'name'
-	// also supports SELECT [DISTINCT] COL FROM ... -- only 1 col supported
-	function _query($sql,$input_arr,$eval=false)
+	/**
+	 * Execute a query.
+	 *
+	 * We presume that the select statement is on the same table (what else?),
+	 * with the only difference being the order by.
+	 * You can filter by using $eval and each clause is stored in $arr e.g. $arr[1] == 'name'
+	 * also supports SELECT [DISTINCT] COL FROM ... -- only 1 col supported
+	 *
+	 * @param string|array $sql      Query to execute.
+	 * @param array        $inputarr An optional array of parameters.
+	 * @param string       $eval     Optional eval string
+	 *
+	 * @return mixed|bool Query identifier or true if execution successful, false if failed.
+	 */
+	function _query($sql, $inputarr=false, $eval=false)
 	{
 		if ($this->_origarray === false) return false;
 

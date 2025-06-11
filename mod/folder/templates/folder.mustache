@@ -1,0 +1,102 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_folder/folder
+
+    Template for displaying folder resource.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+        "id": 42,
+        "showexpanded": true,
+        "buttons": {
+           "edit_button": {
+                "id": "edit_button",
+                "label": "Edit",
+                "url": "/mod/folder/edit.php",
+                "classes": "navitem"
+            },
+            "download_button": {
+                "id": "download_button",
+                "label": "Download",
+                "url": "/mod/folder/download.php",
+                "classes": "navitem"
+            }
+        },
+        "dir": [
+            {
+                "name": "Folder",
+                "icon": "<img src='icon' alt='alt'>",
+                "hassubdirs": true,
+                "subdirs": [
+                    {
+                        "name": "File1",
+                        "icon": "<img src='icon' alt='alt'>",
+                        "hassubdirs": false,
+                        "subdirs": null
+                     }
+                ]
+            },
+            {
+                "name": "File2",
+                "icon": "<img src='icon' alt='alt'>",
+                "hassubdirs": false,
+                "subdirs": null
+            }
+        ]
+    }
+}}
+
+<div class="flex-fill description-inner text-break">
+    {{{intro}}}
+    {{#hasbuttons}}
+        <div class="container-fluid">
+            <div class="row">
+                {{#edit_button}}
+                    {{>core/single_button}}
+                {{/edit_button}}
+                {{#download_button}}
+                    {{>core/single_button}}
+                {{/download_button}}
+            </div>
+        </div>
+    {{/hasbuttons}}
+    <div class="box generalbox pt-0 pb-3 foldertree">
+        <div id="{{{id}}}" class="filemanager">
+            {{#dir}}
+                <ul>
+                    <li>
+                        {{>mod_folder/tree}}
+                    </li>
+                </ul>
+            {{/dir}}
+        </div>
+    </div>
+</div>
+
+{{#js}}
+    // Init tree JS.
+    require(['mod_folder/folder'], function(Folder) {
+        Folder.initTree('{{{id}}}', '{{{showexpanded}}}');
+    });
+{{/js}}

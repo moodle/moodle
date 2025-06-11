@@ -73,7 +73,7 @@ class zipwriter {
      * @param \ZipStream\ZipStream $archive
      * @param stdClass|null $options
      */
-    public function __construct(\ZipStream\ZipStream $archive, stdClass $options = null) {
+    public function __construct(\ZipStream\ZipStream $archive, ?stdClass $options = null) {
         $this->archive = $archive;
         if ($options) {
             $this->parse_options($options);
@@ -140,10 +140,10 @@ class zipwriter {
      * @param stdClass|null $exportoptions
      * @return static
      */
-    public static function get_stream_writer(string $filename, stdClass $exportoptions = null) {
-        $options = new \ZipStream\Option\Archive();
-        $options->setSendHttpHeaders(true);
-        $archive = new \ZipStream\ZipStream($filename, $options);
+    public static function get_stream_writer(string $filename, ?stdClass $exportoptions = null) {
+        $archive = new \ZipStream\ZipStream(
+            outputName: $filename,
+        );
 
         $zipwriter = new static($archive, $exportoptions);
 
@@ -158,16 +158,16 @@ class zipwriter {
      * @param stdClass|null $exportoptions
      * @return static
      */
-    public static function get_file_writer(string $filename, stdClass $exportoptions = null) {
-        $options = new \ZipStream\Option\Archive();
-
+    public static function get_file_writer(string $filename, ?stdClass $exportoptions = null) {
         $dir = make_request_directory();
         $filepath = $dir . "/$filename";
         $fh = fopen($filepath, 'w');
 
-        $options->setOutputStream($fh);
-        $options->setSendHttpHeaders(false);
-        $archive = new \ZipStream\ZipStream($filename, $options);
+        $archive = new \ZipStream\ZipStream(
+            outputName: $filename,
+            outputStream: $fh,
+            sendHttpHeaders: false,
+        );
 
         $zipwriter = new static($archive, $exportoptions);
 
@@ -351,7 +351,7 @@ class zipwriter {
 
         $path[] = $filepathinzip;
 
-        $finalpath = implode(DIRECTORY_SEPARATOR, $path);
+        $finalpath = implode('/', $path);
 
         // Remove relative paths (./).
         $finalpath = str_replace('./', '/', $finalpath);
@@ -359,10 +359,7 @@ class zipwriter {
         // De-duplicate slashes.
         $finalpath = str_replace('//', '/', $finalpath);
 
-        // Remove leading /.
-        ltrim($finalpath, '/');
-
-        return $this->sanitise_filename($finalpath);
+        return $finalpath;
     }
 
     /**
@@ -404,18 +401,7 @@ class zipwriter {
             $relativepath = "./{$relativepath}";
         }
 
-        return $this->sanitise_filename($relativepath);
-    }
-
-    /**
-     * Sanitise the file path, removing any unsuitable characters.
-     *
-     * @param   string $filepath
-     * @return  string
-     */
-    protected function sanitise_filename(string $filepath): string {
-        // The filename must be sanitised in the same as the parent ZipStream library.
-        return \ZipStream\File::filterFilename($filepath);
+        return $relativepath;
     }
 
     /**

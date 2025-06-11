@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:14
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -29,59 +29,43 @@ jobs:
       matrix:
         include:
           # Highest php versions supported by each branch (with main always being tested twice).
-          - php: 8.2
+          - php: 8.3
             moodle-branch: main
             database: pgsql
-          - php: 8.2
+          - php: 8.3
             moodle-branch: main
             database: mariadb
+          - php: 8.2
+            moodle-branch: MOODLE_405_STABLE
+            database: pgsql
+          - php: 8.2
+            moodle-branch: MOODLE_404_STABLE
+            database: pgsql
           - php: 8.2
             moodle-branch: MOODLE_403_STABLE
             database: pgsql
           - php: 8.2
             moodle-branch: MOODLE_402_STABLE
-            database: pgsql
-
-          - php: 8.1
-            moodle-branch: MOODLE_401_STABLE
-            database: pgsql
-
-          - php: 8.0
-            moodle-branch: MOODLE_400_STABLE
-            database: pgsql
-            # The following line is only needed if you're going to run php8 jobs and your
-            # plugin needs xmlrpc services.
-            extensions: xmlrpc-beta
-          - php: 8.0
-            moodle-branch: MOODLE_311_STABLE
-            database: pgsql
-            # The following line is only needed if you're going to run php8 jobs and your
-            # plugin needs xmlrpc services.
-            extensions: xmlrpc-beta
-
-          - php: 7.4
-            moodle-branch: MOODLE_310_STABLE
-            database: pgsql
-          - php: 7.4
-            moodle-branch: MOODLE_39_STABLE
             database: pgsql
 
           # Lowest php versions supported by each branch (with main always being tested twice).
-          - php: 8.1
+          - php: 8.2
             moodle-branch: main
             database: pgsql
-          - php: 8.1
+          - php: 8.2
             moodle-branch: main
             database: mariadb
+          - php: 8.1
+            moodle-branch: MOODLE_405_STABLE
+            database: pgsql
+          - php: 8.1
+            moodle-branch: MOODLE_404_STABLE
+            database: pgsql
           - php: 8.0
             moodle-branch: MOODLE_403_STABLE
             database: pgsql
           - php: 8.0
             moodle-branch: MOODLE_402_STABLE
-            database: pgsql
-
-          - php: 7.4
-            moodle-branch: MOODLE_401_STABLE
             database: pgsql
     steps:
       - name: Check out repository code
@@ -156,9 +140,9 @@ jobs:
     #     if: ${{ !cancelled() }}
     #     run: moodle-plugin-ci phpunit
 
-      - name: Behat features
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci behat --profile chrome
+    #   - name: Behat features
+    #     if: ${{ !cancelled() }}
+    #     run: moodle-plugin-ci behat --profile chrome
 
       - name: Mark cancelled jobs as failed.
         if: ${{ cancelled() }}

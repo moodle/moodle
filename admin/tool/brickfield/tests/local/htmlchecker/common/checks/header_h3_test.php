@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class header_h3_testcase
  */
-class header_h3_test extends all_checks {
+final class header_h3_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'header_h3';
 
@@ -122,7 +122,7 @@ EOD;
     /**
      * Test the header following an h3 must be h1, h2, h3 or h4.
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail1);
         $this->assertTrue($results[0]->element->tagName == 'h5');
 

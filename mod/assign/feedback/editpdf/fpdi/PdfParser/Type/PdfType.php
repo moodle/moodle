@@ -4,7 +4,7 @@
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
+ * @copyright Copyright (c) 2023 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -64,6 +64,34 @@ class PdfType
                 $errorMessage,
                 PdfTypeException::INVALID_DATA_TYPE
             );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Flatten indirect object references to direct objects.
+     *
+     * @param PdfType $value
+     * @param PdfParser $parser
+     * @return PdfType
+     * @throws CrossReferenceException
+     * @throws PdfParserException
+     */
+    public static function flatten(PdfType $value, PdfParser $parser)
+    {
+        if ($value instanceof PdfIndirectObjectReference) {
+            return self::flatten(self::resolve($value, $parser), $parser);
+        }
+
+        if ($value instanceof PdfDictionary || $value instanceof PdfArray) {
+            foreach ($value->value as $key => $_value) {
+                $value->value[$key] = self::flatten($_value, $parser);
+            }
+        }
+
+        if ($value instanceof PdfStream) {
+            throw new PdfTypeException('There is a stream object found which cannot be flattened to a direct object.');
         }
 
         return $value;

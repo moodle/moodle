@@ -25,55 +25,170 @@ namespace core;
  * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers ::html_to_text
  */
-class html2text_test extends \basic_testcase {
-
+final class html2text_test extends \basic_testcase {
     /**
-     * ALT as image replacements.
+     * Data provider for general tests.
+     *
+     * @return array
      */
-    public function test_images() {
-        $this->assertSame('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
+    public static function examples_provider(): array {
+        // Used in the line wrapping tests.
+        // phpcs:ignore Generic.Files.LineLength.TooLong
+        $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
+        // phpcs:ignore Generic.Files.LineLength.TooLong
+        $wrapped = "Here is a long string, more than 75 characters long, since by default\nhtml_to_text wraps text at 75 chars.";
 
-        $text = 'xx<img src="gif.gif" alt="some gif" />xx';
-        $result = html_to_text($text, null, false, false);
-        $this->assertSame($result, 'xx[some gif]xx');
+        // These two are used in the PRE parsing tests.
+        // phpcs:ignore Generic.Files.LineLength.TooLong
+        $strorig = 'Consider the following function:<br /><pre><span style="color: rgb(153, 51, 102);">void FillMeUp(char* in_string) {'.
+            '<br />  int i = 0;<br />  while (in_string[i] != \'\0\') {<br />    in_string[i] = \'X\';<br />    i++;<br />  }<br />'.
+            '}</span></pre>What would happen if a non-terminated string were input to this function?<br /><br />';
+
+        // Note, the spaces in the <pre> section are Unicode NBSPs - they may not be displayed in your editor.
+        $strconv = <<<EOF
+        Consider the following function:
+
+        void FillMeUp(char* in_string) {
+          int i = 0;
+          while (in_string[i] != '\\0') {
+            in_string[i] = 'X';
+            i++;
+          }
+        }
+        What would happen if a non-terminated string were input to this function?
+
+
+        EOF;
+
+        return [
+            // Image alt tag replacements.
+            'Image alt tag' => [
+                '[edit]',
+                [],
+                '<img src="edit.png" alt="edit" />',
+            ],
+            'Image alt tag between strings' => [
+                'xx[some gif]xx',
+                [
+                    'dolinks' => false,
+                ],
+                'xx<img src="gif.gif" alt="some gif" />xx',
+            ],
+            'core_text integration' => [
+                'ŽLUŤOUČKÝ KONÍČEK',
+                ['dolinks' => false],
+                '<strong>Žluťoučký koníček</strong>',
+            ],
+            'No strip slashes in a tag' => [
+                '[\edit]',
+                [],
+                '<img src="edit.png" alt="\edit" />',
+            ],
+            'No strip slashes in a string' => [
+                '\\magic\\quotes\\are\\\\horrible',
+                [],
+                '\\magic\\quotes\\are\\\\horrible',
+            ],
+            'Protect "0"' => [
+                '0',
+                ['dolinks' => false],
+                '0',
+            ],
+            'Invalid HTML 1' => [
+                'Gin & Tonic',
+                [],
+                'Gin & Tonic',
+            ],
+            'Invalid HTML 2' => [
+                'Gin > Tonic',
+                [],
+                'Gin > Tonic',
+            ],
+            'Invalid HTML 3' => [
+                'Gin < Tonic',
+                [],
+                'Gin < Tonic',
+            ],
+            'Simple test 1' => [
+                "_Hello_ WORLD!\n",
+                [],
+                '<p><i>Hello</i> <b>world</b>!</p>',
+            ],
+            'Simple test 2' => [
+                "All the WORLD’S a stage.\n\n-- William Shakespeare\n",
+                [],
+                '<p>All the <strong>world’s</strong> a stage.</p><p>-- William Shakespeare</p>',
+            ],
+            'Simple test 3' => [
+                "HELLO WORLD!\n\n",
+                [],
+                '<h1>Hello world!</h1>',
+            ],
+            'Simple test 4' => [
+                "Hello\nworld!",
+                [],
+                'Hello<br />world!',
+            ],
+            'No wrapping when width set to 0' => [
+                $long,
+                ['width' => 0],
+                $long,
+            ],
+            'Wrapping when width set to default' => [
+                $wrapped,
+                [],
+                $long,
+            ],
+            'Trailing whitespace removal' => [
+                'With trailing whitespace and some more text',
+                [],
+                "With trailing whitespace   \nand some   more text",
+            ],
+            'PRE parsing' => [
+                $strconv,
+                [],
+                $strorig,
+            ],
+            'Strip script tags' => [
+                'Interesting text',
+                [],
+                'Interesting <script type="text/javascript">var what_a_mess = "Yuck!";</script> text',
+            ],
+            'Trailing spaces before newline or tab' => [
+                "Some text with trailing space\n\nAnd some more text\n",
+                [],
+                '<p>Some text with trailing space </p> <p>And some more text</p>',
+            ],
+            'Trailing spaces before newline or tab (list)' => [
+                "\t* Some text with trailing space\n\t* And some more text\n\n",
+                [],
+                '<ul><li>Some text with trailing space </li> <li> And some more text </li> </ul>',
+            ],
+        ];
     }
 
     /**
-     * No magic quotes messing.
+     * Test html2text with various examples.
+     *
+     * @dataProvider examples_provider
+     * @param string $expected
+     * @param array $options
+     * @param string $html
      */
-    public function test_no_strip_slashes() {
-        $this->assertSame('[\edit]', html_to_text('<img src="edit.png" alt="\edit" />'));
-
-        $text = '\\magic\\quotes\\are\\\\horrible';
-        $result = html_to_text($text, null, false, false);
-        $this->assertSame($result, $text);
-    }
-
-    /**
-     * core_text integration.
-     */
-    public function test_core_text() {
-        $text = '<strong>Žluťoučký koníček</strong>';
-        $result = html_to_text($text, null, false, false);
-        $this->assertSame($result, 'ŽLUŤOUČKÝ KONÍČEK');
-    }
-
-    /**
-     * Protect 0.
-     */
-    public function test_zero() {
-        $text = '0';
-        $result = html_to_text($text, null, false, false);
-        $this->assertSame($result, $text);
-
-        $this->assertSame('0', html_to_text('0'));
+    public function test_runner(
+        string $expected,
+        array $options,
+        string $html,
+    ): void {
+        $this->assertSame($expected, html_to_text($html, ...$options));
     }
 
     /**
      * Test the links list enumeration.
      */
-    public function test_build_link_list() {
+    public function test_build_link_list(): void {
 
         // Note the trailing whitespace left intentionally in the text after first link.
         $text = 'Total of <a title="List of integrated issues"
@@ -107,82 +222,5 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
         $this->assertSame(1, preg_match('|^'.preg_quote('[3] http://www.univ-lemans.fr').'$|m', $result));
         $this->assertSame(1, preg_match('|^'.preg_quote('[4] https://www.google.fr').'$|m', $result));
         $this->assertSame(false, strpos($result, '[5]'));
-    }
-
-    /**
-     * Various invalid HTML typed by users that ignore html strict.
-     **/
-    public function test_invalid_html() {
-        $text = 'Gin & Tonic';
-        $result = html_to_text($text, null, false, false);
-        $this->assertSame($result, $text);
-
-        $text = 'Gin > Tonic';
-        $result = html_to_text($text, null, false, false);
-        $this->assertSame($result, $text);
-
-        $text = 'Gin < Tonic';
-        $result = html_to_text($text, null, false, false);
-        $this->assertSame($result, $text);
-    }
-
-    /**
-     * Basic text formatting.
-     */
-    public function test_simple() {
-        $this->assertSame("_Hello_ WORLD!\n", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
-        $this->assertSame("All the WORLD’S a stage.\n\n-- William Shakespeare\n", html_to_text('<p>All the <strong>world’s</strong> a stage.</p><p>-- William Shakespeare</p>'));
-        $this->assertSame("HELLO WORLD!\n\n", html_to_text('<h1>Hello world!</h1>'));
-        $this->assertSame("Hello\nworld!", html_to_text('Hello<br />world!'));
-    }
-
-    /**
-     * Test line wrapping.
-     */
-    public function test_text_nowrap() {
-        $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
-        $wrapped = "Here is a long string, more than 75 characters long, since by default\nhtml_to_text wraps text at 75 chars.";
-        $this->assertSame($long, html_to_text($long, 0));
-        $this->assertSame($wrapped, html_to_text($long));
-    }
-
-    /**
-     * Whitespace removal.
-     */
-    public function test_trailing_whitespace() {
-        $this->assertSame('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
-    }
-
-    /**
-     * PRE parsing.
-     */
-    public function test_html_to_text_pre_parsing_problem() {
-        $strorig = 'Consider the following function:<br /><pre><span style="color: rgb(153, 51, 102);">void FillMeUp(char* in_string) {'.
-            '<br />  int i = 0;<br />  while (in_string[i] != \'\0\') {<br />    in_string[i] = \'X\';<br />    i++;<br />  }<br />'.
-            '}</span></pre>What would happen if a non-terminated string were input to this function?<br /><br />';
-
-        // Note, the spaces in the <pre> section are Unicode NBSPs - they may not be displayed in your editor.
-        $strconv = 'Consider the following function:
-
-void FillMeUp(char* in_string) {
-  int i = 0;
-  while (in_string[i] != \'\0\') {
-    in_string[i] = \'X\';
-    i++;
-  }
-}
-What would happen if a non-terminated string were input to this function?
-
-';
-
-        $this->assertSame($strconv, html_to_text($strorig));
-    }
-
-    /**
-     * Scripts should be stripped.
-     */
-    public function test_strip_scripts() {
-        $this->assertSame('Interesting text',
-                html_to_text('Interesting <script type="text/javascript">var what_a_mess = "Yuck!";</script> text', 0));
     }
 }

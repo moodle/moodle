@@ -52,7 +52,7 @@ class tool_installaddon_installer {
      * @param array optional parameters
      * @return moodle_url
      */
-    public function index_url(array $params = null) {
+    public function index_url(?array $params = null) {
         return new moodle_url('/admin/tool/installaddon/index.php', $params);
     }
 

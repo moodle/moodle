@@ -463,7 +463,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * @param  string $modeldir  The directory that contains the trained model.
      * @return string            The path to the directory that contains the exported model.
      */
-    public function export(string $uniqueid, string $modeldir) : string {
+    public function export(string $uniqueid, string $modeldir): string {
 
         $modelfilepath = $this->get_model_filepath($modeldir);
 
@@ -483,7 +483,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * @param  string $importdir The directory that contains the files to import.
      * @return bool Success
      */
-    public function import(string $uniqueid, string $modeldir, string $importdir) : bool {
+    public function import(string $uniqueid, string $modeldir, string $importdir): bool {
 
         $importmodelfilepath = $this->get_model_filepath($importdir);
         $modelfilepath = $this->get_model_filepath($modeldir);
@@ -521,7 +521,7 @@ class processor implements \core_analytics\classifier, \core_analytics\regressor
      * @param  string $modeldir The model directory
      * @return string           The model file
      */
-    protected function get_model_filepath(string $modeldir) : string {
+    protected function get_model_filepath(string $modeldir): string {
         // Output directory is already unique to the model.
         return $modeldir . DIRECTORY_SEPARATOR . self::MODEL_FILENAME;
     }

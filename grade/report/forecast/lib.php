@@ -195,6 +195,10 @@ class grade_report_forecast extends grade_report {
      */
     protected $aggregationhints = array();
 
+    // BEGIN LSU To avoid "creation of dynamic property" warning
+    public $enabledforstudents;
+    // END LSU To avoid "creation of dynamic property" warning
+
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
@@ -1217,8 +1221,10 @@ class grade_report_forecast extends grade_report {
         ];
         
         $this->tableheaders = [
-            $this->get_lang_string('gradeitem', 'grades'), 
-            $this->get_lang_string('grade', 'grades')
+            // $this->get_lang_string('gradeitem', 'grades'), 
+            // $this->get_lang_string('grade', 'grades')
+            get_string('gradeitem', 'gradereport_forecast'), 
+            get_string('grade', 'gradereport_forecast')
         ];
     }
 
@@ -1244,7 +1250,9 @@ class grade_report_forecast extends grade_report {
         $grade_object = $element['object'];
         $eid = $grade_object->id;
         $element['userid'] = $this->user->id;
-        $fullname = $this->gtree->get_element_header($element, true, true, true, true, true);
+
+        // $fullname = $this->gtree->get_element_header($element, true, true, true, true, true);
+        $fullname = grade_helper::get_element_header($element, true, true, true, true, true);
         $data = array();
         $hidden = '';
         $excluded = '';
@@ -1474,7 +1482,7 @@ class grade_report_forecast extends grade_report {
             <input type='hidden' name='userid' value='" . $this->user->id . "'>
             <table cellspacing='0'
                    cellpadding='0'
-                   summary='" . s($this->get_lang_string('tablesummary', 'gradereport_forecast')) . "'
+                   summary='" . s(get_string('tablesummary', 'gradereport_forecast')) . "'
                    class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>

@@ -38,14 +38,14 @@ use core_reportbuilder\local\report\{column, filter};
 class comment extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'comments' => 'c',
-            'context' => 'cmctx',
+            'comments',
+            'context',
         ];
     }
 
@@ -103,7 +103,7 @@ class comment extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_join("LEFT JOIN {context} {$contextalias} ON {$contextalias}.id = {$commentalias}.contextid")
+            ->add_join($this->get_context_join())
             ->add_field($contentfieldsql, 'content')
             ->add_fields("{$commentalias}.format, {$commentalias}.contextid, " .
                 context_helper::get_preload_record_columns_sql($contextalias))
@@ -126,10 +126,11 @@ class comment extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_join("LEFT JOIN {context} {$contextalias} ON {$contextalias}.id = {$commentalias}.contextid")
+            ->add_join($this->get_context_join())
             ->add_fields("{$commentalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:name\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
@@ -147,10 +148,11 @@ class comment extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_join("LEFT JOIN {context} {$contextalias} ON {$contextalias}.id = {$commentalias}.contextid")
+            ->add_join($this->get_context_join())
             ->add_fields("{$commentalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:link\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
@@ -170,7 +172,8 @@ class comment extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$commentalias}.component");
+            ->add_fields("{$commentalias}.component")
+            ->set_is_sortable(true);
 
         // Area.
         $columns[] = (new column(
@@ -180,7 +183,8 @@ class comment extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$commentalias}.commentarea");
+            ->add_fields("{$commentalias}.commentarea")
+            ->set_is_sortable(true);
 
         // Item ID.
         $columns[] = (new column(
@@ -189,9 +193,8 @@ class comment extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$commentalias}.itemid")
-            ->set_disabled_aggregation_all();
+            ->set_is_sortable(true);
 
         // Time created.
         $columns[] = (new column(
@@ -202,6 +205,7 @@ class comment extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$commentalias}.timecreated")
+            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;
@@ -244,5 +248,17 @@ class comment extends base {
             ]);
 
         return $filters;
+    }
+
+    /**
+     * Return syntax for joining on the context table
+     *
+     * @return string
+     */
+    public function get_context_join(): string {
+        $commentalias = $this->get_table_alias('comments');
+        $contextalias = $this->get_table_alias('context');
+
+        return "LEFT JOIN {context} {$contextalias} ON {$contextalias}.id = {$commentalias}.contextid";
     }
 }

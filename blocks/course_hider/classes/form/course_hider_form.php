@@ -63,6 +63,9 @@ class course_hider_form extends \moodleform {
         $semtype = \course_hider_helpers::getSemesterType();
         $semester = \course_hider_helpers::getSemester();
         $section = \course_hider_helpers::getSemesterSection();
+        
+        // If we use Workday then query will be different.
+        $sis = \course_hider_helpers::getSIS();
 
         // Add the preview area.
         $mform->addElement('header', 'previewsettings', get_string('previewsettings', 'block_course_hider'));
@@ -80,18 +83,21 @@ class course_hider_form extends \moodleform {
             $mform->setDefault('ch_years', $this->_customdata->ch_years);
         }
 
-        // Add the Semester Type selector.
-        $mform->addElement(
-            'select',
-            'ch_semester_type',
-            get_string('defaultsemestertype2', 'block_course_hider'),
-            $semtype,
-            array('class' => 'ch_hider_form')
-        );
+        if (!$sis) {
+            // Add the Semester Type selector.
+            $mform->addElement(
+                'select',
+                'ch_semester_type',
+                get_string('defaultsemestertype2', 'block_course_hider'),
+                $semtype,
+                array('class' => 'ch_hider_form')
+            );
 
-        if (isset($this->_customdata->ch_semester_types)) {
-            $mform->setDefault('ch_semester_type', $this->_customdata->ch_semester);
+            if (isset($this->_customdata->ch_semester_types)) {
+                $mform->setDefault('ch_semester_type', $this->_customdata->ch_semester);
+            }
         }
+
 
         // Semester.
         $mform->addElement(
@@ -106,17 +112,19 @@ class course_hider_form extends \moodleform {
            $mform->setDefault('ch_semester', $this->_customdata->ch_semester);
         }
 
-        // Semester Section.
-        $mform->addElement(
-            'select',
-            'ch_semester_section',
-            get_string('defaultsemestersection2', 'block_course_hider'),
-            $section,
-            array('class' => 'ch_hider_form')
-        );
+        if (!$sis) {
+            // Semester Section.
+            $mform->addElement(
+                'select',
+                'ch_semester_section',
+                get_string('defaultsemestersection2', 'block_course_hider'),
+                $section,
+                array('class' => 'ch_hider_form')
+            );
 
-        if (isset($this->_customdata->semester)) {
-            $mform->setDefault('ch_semester_section', $this->_customdata->ch_semester);
+            if (isset($this->_customdata->semester)) {
+                $mform->setDefault('ch_semester_section', $this->_customdata->ch_semester);
+            }
         }
 
         // Preview visible.
@@ -128,16 +136,6 @@ class course_hider_form extends \moodleform {
             array('class' => 'ch_hider_form')
         );
         $mform->setDefault('hiddenonly', 2);
-
-        // Preview locked.
-        $mform->addElement(
-            'select',
-            'lockedonly',
-            get_string('lockedonly', 'block_course_hider'),
-            array(2 => 'Locked + Unlocked', 0 => 'Unlocked Only', 1 => 'Locked Only'),
-            array('class' => 'ch_hider_form')
-        );
-        $mform->setDefault('lockedonly', 2);
 
         // Manually search.
         $mform->addElement(
@@ -165,6 +163,8 @@ class course_hider_form extends \moodleform {
         $mform->addElement('header', 'updatesettings', get_string('updatesettings', 'block_course_hider'));
 
         // Leave / Unlock / Lock courses.
+	// Leaving this here in case we want this in the future.
+	/*
         $mform->addElement(
             'select',
             'lockcourses',
@@ -173,7 +173,7 @@ class course_hider_form extends \moodleform {
             array('class' => 'ch_hider_form')
         );
         $mform->setDefault('lockcourses', 2);
-
+	*/
         // Leave / Unhide / hide courses.
         $mform->addElement(
             'select',
@@ -197,14 +197,9 @@ class course_hider_form extends \moodleform {
         // The button can either be Save or Update for the submit action.
         $buttons = [
             $mform->createElement('submit', 'preview', get_string('previewquery', 'block_course_hider')),
-            // $mform->createElement('submit', 'execute', get_string('executequery', 'block_course_hider'))
-            // $mform->createElement('submit', 'execute', get_string('executequery', 'block_course_hider'), array('class' => 'btn btn-danger')),
         ];
         $mform->addGroup($buttons, 'actions', '&nbsp;', [' '], false);
         
-        // Disable execute until it has been previewed.
-        // $mform->disabledIf('execute', 'vpreview', 'eq', 0);
-
         $mform->addElement('html', '</span>');
     }
 

@@ -97,7 +97,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
      * @param stdClass $grade The assign_grades object from the db
      * @return array
      */
-    public function files_for_gradebook(stdClass $grade) : array {
+    public function files_for_gradebook(stdClass $grade): array {
         return [];
     }
 
@@ -159,13 +159,32 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
+     * Return a list of detailed batch grading operations supported by this plugin.
+     *
+     * @return array - An array of objects containing batch operation details. Each object should contain:
+     *                  - 'key': the action identifier (string)
+     *                  - 'label': the button label (string)
+     *                  - 'icon': the button icon (string)
+     *                  - 'confirmationtitle': the title for the confirmation modal (string)
+     *                  - 'confirmationquestion': the question for the confirmation modal (string)
+     */
+    public function get_grading_batch_operation_details() {
+        return [];
+    }
+
+    /**
      * Return a list of the batch grading operations supported by this plugin.
      *
      * @return array - An array of action and description strings.
      *                 The action will be passed to grading_batch_operation.
+     * @deprecated since 4.5, use get_grading_batch_operation_details() instead.
+     * @todo Final deprecation in Moodle 6.0. See MDL-82856.
      */
+    #[\core\attribute\deprecated('get_grading_batch_operation_details', since: '4.5', mdl: 'MDL-80750')]
     public function get_grading_batch_operations() {
-        return array();
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+
+        return array_column(static::get_grading_batch_operation_details(), 'confirmationtitle', 'key');
     }
 
     /**

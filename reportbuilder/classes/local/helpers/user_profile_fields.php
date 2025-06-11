@@ -18,15 +18,10 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
-use context_system;
+use core\lang_string;
 use core_text;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
-use lang_string;
+use core_reportbuilder\local\filters\{boolean_select, date, select, text};
+use core_reportbuilder\local\report\{column, filter};
 use profile_field_base;
 use stdClass;
 
@@ -44,76 +39,28 @@ require_once($CFG->dirroot.'/user/profile/lib.php');
  */
 class user_profile_fields {
 
-    /** @var array user profile fields */
-    private $userprofilefields;
+    use join_trait;
 
-    /** @var string $entityname Name of the entity */
-    private $entityname;
-
-    /** @var int $usertablefieldalias The user table/field alias */
-    private $usertablefieldalias;
-
-    /** @var array additional joins */
-    private $joins = [];
+    /** @var profile_field_base[] User profile fields */
+    private array $userprofilefields;
 
     /**
-     * Class userprofilefields constructor.
+     * Constructor
      *
-     * @param string $usertablefieldalias The user table/field alias used when adding columns and filters.
+     * @param string $usertablefieldalias The table/field alias to match the user ID when adding columns and filters.
      * @param string $entityname The entity name used when adding columns and filters.
      */
-    public function __construct(string $usertablefieldalias, string $entityname) {
-        $this->usertablefieldalias = $usertablefieldalias;
-        $this->entityname = $entityname;
-        $this->userprofilefields = $this->get_user_profile_fields();
+    public function __construct(
+        /** @var string The table/field alias to match the user ID when adding columns and filters */
+        private readonly string $usertablefieldalias,
+        /** @var string The entity name used when adding columns and filters */
+        private readonly string $entityname,
+    ) {
+        $this->userprofilefields = profile_get_user_fields_with_data(0);
     }
 
     /**
-     * Retrieves the list of available/visible user profile fields
-     *
-     * @return profile_field_base[]
-     */
-    private function get_user_profile_fields(): array {
-        return array_filter(profile_get_user_fields_with_data(0), static function(profile_field_base $profilefield): bool {
-            return $profilefield->is_visible();
-        });
-    }
-
-    /**
-     * Additional join that is needed.
-     *
-     * @param string $join
-     * @return self
-     */
-    public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
-
-    /**
-     * Additional joins that are needed.
-     *
-     * @param array $joins
-     * @return self
-     */
-    public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
-        }
-        return $this;
-    }
-
-    /**
-     * Return joins
-     *
-     * @return string[]
-     */
-    private function get_joins(): array {
-        return array_values($this->joins);
-    }
-
-    /**
-     * Generate table alias for given profile field
+     * Get table alias for given profile field
      *
      * The entity name is used to ensure the alias differs when the entity is used multiple times within the same report, each
      * having their own table alias/join
@@ -133,7 +80,7 @@ class user_profile_fields {
     }
 
     /**
-     * Generate table join for given profile field
+     * Get table join for given profile field
      *
      * @param profile_field_base $profilefield
      * @return string
@@ -155,42 +102,58 @@ class user_profile_fields {
         global $DB;
 
         $columns = [];
-        foreach ($this->userprofilefields as $profilefield) {
-            $columntype = $this->get_user_field_type($profilefield->field->datatype);
-            $columnfieldsql = $this->get_table_alias($profilefield) . '.data';
 
-            // Numeric (checkbox/time) fields should be cast, as should all fields for Oracle, for aggregation support.
-            if ($columntype === column::TYPE_BOOLEAN || $columntype === column::TYPE_TIMESTAMP) {
-                $columnfieldsql = "CASE WHEN {$columnfieldsql} IS NULL THEN NULL ELSE " .
-                    $DB->sql_cast_char2int($columnfieldsql, true) . " END";
-            } else if ($DB->get_dbfamily() === 'oracle') {
-                $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
+        foreach ($this->userprofilefields as $profilefield) {
+            $userinfotablealias = $this->get_table_alias($profilefield);
+            $userinfosql = "{$userinfotablealias}.data";
+
+            if ($DB->get_dbfamily() === 'oracle') {
+                $userinfosql = $DB->sql_order_by_text($userinfosql, 1024);
             }
 
-            $columns[] = (new column(
-                'profilefield_' . core_text::strtolower($profilefield->field->shortname),
-                new lang_string('customfieldcolumn', 'core_reportbuilder',
-                    format_string($profilefield->field->name, true,
-                        ['escape' => false, 'context' => context_system::instance()])),
+            // Numeric column (non-text) should cast/coalesce with default, as should all fields for Oracle, for aggregation.
+            $columntype = $this->get_user_field_type($profilefield->field->datatype);
+            if (!in_array($columntype, [column::TYPE_TEXT, column::TYPE_LONGTEXT])) {
+
+                // See MDL-78783 regarding no bound parameters, and Oracle limitations of GROUP BY.
+                $userinfosql = "
+                    CASE WHEN {$this->usertablefieldalias} IS NOT NULL
+                         THEN " .
+                            $DB->sql_cast_char2int("COALESCE({$userinfosql}, '" . (float) $profilefield->field->defaultdata . "')")
+                            . "
+                         ELSE NULL
+                    END";
+            }
+
+            $columnname = 'profilefield_' . core_text::strtolower($profilefield->field->shortname);
+            $columns[$columnname] = (new column(
+                $columnname,
+                new lang_string('customfieldcolumn', 'core_reportbuilder', $profilefield->display_name(false)),
                 $this->entityname
             ))
                 ->add_joins($this->get_joins())
                 ->add_join($this->get_table_join($profilefield))
-                ->add_field($columnfieldsql, 'data')
+                ->add_field($userinfosql, 'data')
+                ->add_field("{$userinfotablealias}.dataformat")
+                ->add_field($this->usertablefieldalias, 'userid')
                 ->set_type($columntype)
                 ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
                 ->add_callback(static function($value, stdClass $row, profile_field_base $field): string {
-                    // Special handling of checkboxes, we want to display their boolean state rather than the input element itself.
-                    if (is_a($field, 'profile_field_checkbox')) {
-                        return format::boolean_as_text($value);
+                    if ($row->userid === null && $value === null) {
+                        return '';
                     }
 
-                    $field->data = $value;
-                    return (string) $field->display_data();
-                }, $profilefield);
+                    $field->set_user_data(
+                        $row->data ?? $field->field->defaultdata,
+                        $row->dataformat ?? $field->field->defaultdataformat,
+                    );
+
+                    return $field->display_data();
+                }, $profilefield)
+                ->set_is_available($profilefield->is_visible());
         }
 
-        return $columns;
+        return array_values($columns);
     }
 
     /**
@@ -202,61 +165,74 @@ class user_profile_fields {
         global $DB;
 
         $filters = [];
-        foreach ($this->userprofilefields as $profilefield) {
-            $field = $this->get_table_alias($profilefield) . '.data';
-            $params = [];
 
+        foreach ($this->userprofilefields as $profilefield) {
+            $userinfotablealias = $this->get_table_alias($profilefield);
+            $userinfosql = "{$userinfotablealias}.data";
+            $userinfoparams = [];
+
+            // Perform casts where necessary, as this is a text DB field.
             switch ($profilefield->field->datatype) {
                 case 'checkbox':
                     $classname = boolean_select::class;
-                    $fieldsql = "COALESCE(" . $DB->sql_cast_char2int($field, true) . ", 0)";
+                    $userinfosql = $DB->sql_cast_char2int($userinfosql, true);
                     break;
                 case 'datetime':
                     $classname = date::class;
-                    $fieldsql = $DB->sql_cast_char2int($field, true);
+                    $userinfosql = $DB->sql_cast_char2int($userinfosql, true);
                     break;
                 case 'menu':
                     $classname = select::class;
-
-                    $emptyparam = database::generate_param_name();
-                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
-                    $params[$emptyparam] = '';
-
+                    $userinfosql = $DB->sql_cast_to_char($userinfosql);
                     break;
                 case 'text':
                 case 'textarea':
                 default:
                     $classname = text::class;
-
-                    $emptyparam = database::generate_param_name();
-                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
-                    $params[$emptyparam] = '';
-
+                    $userinfosql = $DB->sql_cast_to_char($userinfosql);
                     break;
             }
 
-            $filter = (new filter(
-                $classname,
-                'profilefield_' . core_text::strtolower($profilefield->field->shortname),
-                new lang_string('customfieldcolumn', 'core_reportbuilder',
-                    format_string($profilefield->field->name, true,
-                        ['escape' => false, 'context' => context_system::instance()])),
-                $this->entityname,
-                $fieldsql,
-                $params
-            ))
-                ->add_joins($this->get_joins())
-                ->add_join($this->get_table_join($profilefield));
+            // Account for field default value, when joined to the user table.
+            if (($fielddefault = $profilefield->field->defaultdata) !== null) {
+                $paramdefault = database::generate_param_name();
 
-            // If menu type then set filter options as appropriate.
-            if ($profilefield->field->datatype === 'menu') {
-                $filter->set_options($profilefield->options);
+                // Oracle be crazy.
+                $paramdefaultsql = ":{$paramdefault}";
+                if ($DB->get_dbfamily() === 'oracle' && in_array($profilefield->field->datatype, ['checkbox', 'datetime'])) {
+                    $paramdefaultsql = $DB->sql_cast_char2int($paramdefaultsql);
+                }
+
+                $userinfosql = "
+                        CASE WHEN {$this->usertablefieldalias} IS NOT NULL
+                             THEN COALESCE({$userinfosql}, {$paramdefaultsql})
+                             ELSE NULL
+                        END";
+                $userinfoparams[$paramdefault] = $fielddefault;
             }
 
-            $filters[] = $filter;
+            $filtername = 'profilefield_' . core_text::strtolower($profilefield->field->shortname);
+            $filter = (new filter(
+                $classname,
+                $filtername,
+                new lang_string('customfieldcolumn', 'core_reportbuilder', $profilefield->display_name(false)),
+                $this->entityname,
+                $userinfosql,
+                $userinfoparams,
+            ))
+                ->add_joins($this->get_joins())
+                ->add_join($this->get_table_join($profilefield))
+                ->set_is_available($profilefield->is_visible());
+
+            // If using a select filter, then populate the options.
+            if ($filter->get_filter_class() === select::class) {
+                $filter->set_options_callback(fn(): array => $profilefield->options);
+            }
+
+            $filters[$filtername] = $filter;
         }
 
-        return $filters;
+        return array_values($filters);
     }
 
     /**

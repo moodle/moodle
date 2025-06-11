@@ -38,7 +38,7 @@ use core_grades\component_gradeitems;
  * @category grading
  * @example $manager = get_grading_manager($areaid);
  * @example $manager = get_grading_manager(context_system::instance());
- * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
+ * @example $manager = get_grading_manager($context, 'mod_assign', 'submission');
  * @param stdClass|int|null $context_or_areaid if $areaid is passed, no other parameter is needed
  * @param string|null $component the frankenstyle name of the component
  * @param string|null $area the name of the gradable area
@@ -443,7 +443,7 @@ class grading_manager {
      * @param settings_navigation $settingsnav {@link settings_navigation}
      * @param navigation_node $modulenode {@link navigation_node}
      */
-    public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $modulenode=null) {
+    public function extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $modulenode=null) {
 
         $this->ensure_isset(array('context', 'component'));
 
@@ -472,7 +472,7 @@ class grading_manager {
      * @param global_navigation $navigation
      * @param navigation_node $modulenode
      */
-    public function extend_navigation(global_navigation $navigation, navigation_node $modulenode=null) {
+    public function extend_navigation(global_navigation $navigation, ?navigation_node $modulenode=null) {
         $this->ensure_isset(array('context', 'component'));
 
         $areas = $this->get_available_areas();
@@ -551,7 +551,7 @@ class grading_manager {
      * @param moodle_url $returnurl optional URL of the page where the user should be sent back to
      * @return moodle_url
      */
-    public function get_management_url(moodle_url $returnurl = null) {
+    public function get_management_url(?moodle_url $returnurl = null) {
 
         $this->ensure_isset(array('context', 'component'));
 

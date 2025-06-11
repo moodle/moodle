@@ -87,6 +87,7 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
 
         $data->dataid = $this->get_new_parentid('data');
+        $data->type = clean_param($data->type, PARAM_ALPHA);
 
         // insert the data_fields record
         $newitemid = $DB->insert_record('data_fields', $data);

@@ -68,6 +68,7 @@ class boostnavbar implements \renderable {
             }
         }
         if ($this->page->context->contextlevel == CONTEXT_COURSE) {
+            $removesections = course_get_format($this->page->course)->can_sections_be_removed_from_navigation();
             // Remove any duplicate navbar nodes.
             $this->remove_duplicate_items();
             // Remove 'My courses' and 'Courses' if we are in the course context.
@@ -79,7 +80,9 @@ class boostnavbar implements \renderable {
                 $this->remove($item->key, \breadcrumb_navigation_node::TYPE_CATEGORY);
             }
             // Remove the course breadcrumb node.
-            $this->remove($this->page->course->id, \breadcrumb_navigation_node::TYPE_COURSE);
+            if (!str_starts_with($this->page->pagetype, 'course-view-section-')) {
+                $this->remove($this->page->course->id, \breadcrumb_navigation_node::TYPE_COURSE);
+            }
             // Remove the navbar nodes that already exist in the secondary navigation menu.
             $this->remove_items_that_exist_in_navigation($PAGE->secondarynav);
 
@@ -111,11 +114,8 @@ class boostnavbar implements \renderable {
                 // Remove if it is a course category breadcrumb node.
                 $this->remove($item->key, \breadcrumb_navigation_node::TYPE_CATEGORY);
             }
-            $courseformat = course_get_format($this->page->course)->get_course();
-            // Section items can be only removed if a course layout (coursedisplay) is not explicitly set in the
-            // given course format or the set course layout is not 'One section per page'.
-            $removesections = !isset($courseformat->coursedisplay) ||
-                $courseformat->coursedisplay != COURSE_DISPLAY_MULTIPAGE;
+            $courseformat = course_get_format($this->page->course);
+            $removesections = $courseformat->can_sections_be_removed_from_navigation();
             if ($removesections) {
                 // If the course sections are removed, we need to add the anchor of current section to the Course.
                 $coursenode = $this->get_item($this->page->course->id);

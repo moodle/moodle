@@ -94,11 +94,3 @@ $string['privacy:metadata:mnet_session:useragent'] = 'User agent used to access 
 $string['privacy:metadata:mnet_session:userid'] = 'ID of the user jumping to remote system.';
 $string['privacy:metadata:mnet_session:username'] = 'Username of the user jumping to remote system.';
 $string['unknownhost'] = 'Unknown host';
-
-// Deprecated since Moodle 3.11.
-$string['privacy:metadata:mnet_external:aim'] = 'The AIM identifier of the user';
-$string['privacy:metadata:mnet_external:icq'] = 'The ICQ number of the user.';
-$string['privacy:metadata:mnet_external:msn'] = 'The MSN identifier of the user';
-$string['privacy:metadata:mnet_external:skype'] = 'The Skype identifier of the user';
-$string['privacy:metadata:mnet_external:url'] = 'A URL related to this user.';
-$string['privacy:metadata:mnet_external:yahoo'] = 'The Yahoo identifier of the user';

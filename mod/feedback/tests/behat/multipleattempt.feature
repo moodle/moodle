@@ -27,7 +27,7 @@ Feature: Non anonymous feedback with multiple submissions
     When I log in as "teacher"
     And I am on "Course 1" course homepage
     And I follow "Course feedback"
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Short text answer" question to the feedback with:
       | Question                    | first      |
       | Label                       | shorttext1 |

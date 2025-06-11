@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Class for exporting calendar footer view options data.
- *
- * @package    core_calendar
- * @copyright  2017 Simey Lameze <simey@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_calendar\external;
-
-defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
@@ -33,6 +24,7 @@ use moodle_url;
 /**
  * Class for exporting calendar footer view options data.
  *
+ * @package    core_calendar
  * @copyright  2017 Simey Lameze
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -101,9 +93,14 @@ class footer_options_exporter extends exporter {
         $values->footerlinks = [];
 
         if ($this->showfullcalendarlink) {
+            if ($this->calendar->courseid !== SITEID) {
+                $linkname = get_string('coursecalendarlink', 'calendar');
+            } else {
+                $linkname = get_string('fullcalendar', 'calendar');
+            }
             $values->footerlinks[] = (object)[
                 'url' => $this->get_calendar_url(),
-                'linkname' => get_string('fullcalendar', 'calendar'),
+                'linkname' => $linkname,
             ];
         }
 
@@ -148,6 +145,7 @@ class footer_options_exporter extends exporter {
         $url = new moodle_url('/calendar/view.php', [
             'view' => 'month',
             'time' => $this->calendar->time,
+            'course' => $this->calendar->courseid,
         ]);
 
         return $url->out(false);

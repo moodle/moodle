@@ -66,6 +66,8 @@ class completion_completion extends data_object {
     /* @var int Flag to trigger cron aggregation (timestamp) */
     public $reaggregate;
 
+    /** @var float user's course grade. */
+    public $gradefinal;
 
     /**
      * Finds and returns a data_object instance based on params.
@@ -177,8 +179,10 @@ class completion_completion extends data_object {
         // Notify user.
         $course = get_course($data->course);
         $messagesubject = get_string('coursecompleted', 'completion');
+        $options = new stdClass();
+        $options->context = context_course::instance($course->id);
         $a = [
-            'coursename' => get_course_display_name_for_list($course),
+            'coursename' => format_string(get_course_display_name_for_list($course), true, $options),
             'courselink' => (string) new moodle_url('/course/view.php', array('id' => $course->id)),
         ];
         $messagebody = get_string('coursecompletedmessage', 'completion', $a);

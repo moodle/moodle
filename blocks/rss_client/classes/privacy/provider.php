@@ -49,7 +49,7 @@ class provider implements
      * @param   collection $collection The initialised collection to add items to.
      * @return  collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('block_rss_client', [
             'userid' => 'privacy:metadata:block_rss_client:userid',
             'title' => 'privacy:metadata:block_rss_client:title',
@@ -69,7 +69,7 @@ class provider implements
      * @param   int         $userid     The user to search.
      * @return  contextlist $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "SELECT ctx.id
                 FROM {block_rss_client} brc
                 JOIN {user} u
@@ -134,7 +134,7 @@ class provider implements
     /**
      * Delete all use data which matches the specified deletion_criteria.
      *
-     * @param   context $context A user context.
+     * @param   \context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         if ($context instanceof \context_user) {

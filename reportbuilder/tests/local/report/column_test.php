@@ -32,7 +32,7 @@ use core_reportbuilder\local\helpers\database;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class column_test extends advanced_testcase {
+final class column_test extends advanced_testcase {
 
     /**
      * Test column name getter/setter
@@ -113,37 +113,11 @@ class column_test extends advanced_testcase {
     }
 
     /**
-     * Test adding single join
-     */
-    public function test_add_join(): void {
-        $column = $this->create_column('test');
-        $this->assertEquals([], $column->get_joins());
-
-        $column->add_join('JOIN {user} u ON u.id = table.userid');
-        $this->assertEquals(['JOIN {user} u ON u.id = table.userid'], $column->get_joins());
-    }
-
-    /**
-     * Test adding multiple joins
-     */
-    public function test_add_joins(): void {
-        $tablejoins = [
-            "JOIN {course} c2 ON c2.id = c1.id",
-            "JOIN {course} c3 ON c3.id = c1.id",
-        ];
-
-        $column = $this->create_column('test')
-            ->add_joins($tablejoins);
-
-        $this->assertEquals($tablejoins, $column->get_joins());
-    }
-
-    /**
      * Data provider for {@see test_add_field}
      *
      * @return array
      */
-    public function add_field_provider(): array {
+    public static function add_field_provider(): array {
         return [
             ['foo', '', ['foo AS c1_foo']],
             ['foo', 'bar', ['foo AS c1_bar']],
@@ -231,7 +205,7 @@ class column_test extends advanced_testcase {
      *
      * @return array
      */
-    public function add_fields_provider(): array {
+    public static function add_fields_provider(): array {
         return [
             ['t.foo', ['t.foo AS c1_foo']],
             ['t.foo bar', ['t.foo AS c1_bar']],
@@ -327,7 +301,7 @@ class column_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function column_type_provider(): array {
+    public static function column_type_provider(): array {
         return [
             [column::TYPE_INTEGER, 42],
             [column::TYPE_TEXT, 'Hello'],
@@ -429,6 +403,22 @@ class column_test extends advanced_testcase {
             'c1_bar' => 10,
             'c1_foo' => 42,
         ]));
+    }
+
+    /**
+     * Test that column value with callback (where aggregation is not set) is returned
+     */
+    public function test_format_value_callback_aggregation(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('t.foo')
+            ->set_type(column::TYPE_INTEGER)
+            ->add_callback(static function(int $value, stdClass $values, $argument, ?string $aggregation): string {
+                // Simple callback to return the given value, and append type of aggregation parameter.
+                return "{$value} " . gettype($aggregation);
+            });
+
+        $this->assertEquals("42 NULL", $column->format_value(['c1_foo' => 42]));
     }
 
     /**

@@ -30,7 +30,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_forum\local\vaults\post
  */
-class vaults_post_test extends \advanced_testcase {
+final class vaults_post_test extends \advanced_testcase {
     // Make use of the test generator trait.
     use mod_forum_tests_generator_trait;
 
@@ -41,6 +41,7 @@ class vaults_post_test extends \advanced_testcase {
      * Set up function for tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $this->vault = $vaultfactory->get_post_vault();
     }
@@ -50,12 +51,13 @@ class vaults_post_test extends \advanced_testcase {
      */
     public function tearDown(): void {
         unset($this->vault);
+        parent::tearDown();
     }
 
     /**
      * Test get_from_id.
      */
-    public function test_get_from_id() {
+    public function test_get_from_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -74,7 +76,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_discussion_id
      */
-    public function test_get_from_discussion_id() {
+    public function test_get_from_discussion_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -103,7 +105,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_discussion_id
      */
-    public function test_get_from_discussion_id_private_replies() {
+    public function test_get_from_discussion_id_private_replies(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -147,7 +149,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_discussion_ids
      */
-    public function test_get_from_discussion_ids_empty() {
+    public function test_get_from_discussion_ids_empty(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -163,7 +165,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_discussion_ids
      */
-    public function test_get_from_discussion_ids() {
+    public function test_get_from_discussion_ids(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -209,7 +211,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_discussion_ids
      */
-    public function test_get_from_discussion_ids_private_replies() {
+    public function test_get_from_discussion_ids_private_replies(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -305,7 +307,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_replies_to_post
      */
-    public function test_get_replies_to_post() {
+    public function test_get_replies_to_post(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -353,7 +355,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_replies_to_post
      */
-    public function test_get_replies_to_post_private_replies() {
+    public function test_get_replies_to_post_private_replies(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -513,7 +515,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_reply_count_for_discussion_ids
      */
-    public function test_get_reply_count_for_discussion_ids_empty() {
+    public function test_get_reply_count_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -529,7 +531,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_reply_count_for_discussion_ids
      */
-    public function test_get_reply_count_for_discussion_ids() {
+    public function test_get_reply_count_for_discussion_ids(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -578,7 +580,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_reply_count_for_discussion_ids
      */
-    public function test_get_reply_count_for_discussion_ids_private_replies() {
+    public function test_get_reply_count_for_discussion_ids_private_replies(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -628,7 +630,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_reply_count_for_post_id_in_discussion_id
      */
-    public function test_get_reply_count_for_post_id_in_discussion_id() {
+    public function test_get_reply_count_for_post_id_in_discussion_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -658,7 +660,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_reply_count_for_post_id_in_discussion_id
      */
-    public function test_get_reply_count_for_post_id_in_discussion_id_private_replies() {
+    public function test_get_reply_count_for_post_id_in_discussion_id_private_replies(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -708,7 +710,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_unread_count_for_discussion_ids
      */
-    public function test_get_unread_count_for_discussion_ids() {
+    public function test_get_unread_count_for_discussion_ids(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -768,7 +770,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_unread_count_for_discussion_ids
      */
-    public function test_get_unread_count_for_discussion_ids_empty() {
+    public function test_get_unread_count_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -784,7 +786,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_latest_posts_for_discussion_ids
      */
-    public function test_get_latest_posts_for_discussion_ids() {
+    public function test_get_latest_posts_for_discussion_ids(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -846,7 +848,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_latest_posts_for_discussion_ids
      */
-    public function test_get_latest_posts_for_discussion_ids_empty() {
+    public function test_get_latest_posts_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -862,7 +864,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_first_post_for_discussion_ids
      */
-    public function test_get_first_post_for_discussion_ids() {
+    public function test_get_first_post_for_discussion_ids(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -909,7 +911,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_first_post_for_discussion_ids
      */
-    public function test_get_first_post_for_discussion_ids_empty() {
+    public function test_get_first_post_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -925,7 +927,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_filters
      */
-    public function test_get_from_filters() {
+    public function test_get_from_filters(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -986,7 +988,7 @@ class vaults_post_test extends \advanced_testcase {
         $this->assertEquals($post4->id, array_values($entities)[3]->get_id());
     }
 
-    public function test_get_from_filters_from_to_dates() {
+    public function test_get_from_filters_from_to_dates(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -1021,7 +1023,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_filters
      */
-    public function test_get_from_filters_empty() {
+    public function test_get_from_filters_empty(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -1038,7 +1040,7 @@ class vaults_post_test extends \advanced_testcase {
      *
      * @covers ::get_from_filters
      */
-    public function test_get_from_filters_private_replies() {
+    public function test_get_from_filters_private_replies(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

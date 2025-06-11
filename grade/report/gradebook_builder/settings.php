@@ -3,7 +3,7 @@
 defined('MOODLE_INTERNAL') or die();
 
 if ($ADMIN->fulltree) {
-    $mods = get_plugin_list('mod');
+    $mods = core_component::get_plugin_list('mod');
     $active_mods = array();
     foreach ($mods as $key => $mod) {
         $active_mods[$key] = get_string('pluginname', 'mod_' . $key);

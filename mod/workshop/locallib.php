@@ -208,13 +208,17 @@ class workshop {
      * @param stdClass $course Course record from {course} table
      * @param stdClass $context The context of the workshop instance
      */
-    public function __construct(stdclass $dbrecord, $cm, $course, stdclass $context=null) {
+    public function __construct(stdclass $dbrecord, $cm, $course, ?stdclass $context=null) {
         $this->dbrecord = $dbrecord;
         foreach ($this->dbrecord as $field => $value) {
             if (property_exists('workshop', $field)) {
                 $this->{$field} = $value;
             }
         }
+
+        $this->strategy = clean_param($this->strategy, PARAM_PLUGIN);
+        $this->evaluation = clean_param($this->evaluation, PARAM_PLUGIN);
+
         if (is_null($cm) || is_null($course)) {
             throw new coding_exception('Must specify $cm and $course');
         }
@@ -1556,6 +1560,9 @@ class workshop {
         global $CFG;    // because we require other libs here
 
         if (is_null($this->strategyinstance)) {
+            if (empty($this->strategy)) {
+                throw new coding_exception('Unknown grading strategy');
+            }
             $strategylib = __DIR__ . '/form/' . $this->strategy . '/lib.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
@@ -1581,6 +1588,7 @@ class workshop {
     public function set_grading_evaluation_method($method) {
         global $DB;
 
+        $method = clean_param($method, PARAM_PLUGIN);
         $evaluationlib = __DIR__ . '/eval/' . $method . '/lib.php';
 
         if (is_readable($evaluationlib)) {
@@ -1792,7 +1800,7 @@ class workshop {
      * @param bool $return true to return the arguments for add_to_log.
      * @return void|array array of arguments for add_to_log if $return is true
      */
-    public function log($action, moodle_url $url = null, $info = null, $return = false) {
+    public function log($action, ?moodle_url $url = null, $info = null, $return = false) {
         debugging('The log method is now deprecated, please use event classes instead', DEBUG_DEVELOPER);
 
         if (is_null($url)) {
@@ -3027,7 +3035,6 @@ class workshop {
         $params['other']['pathnamehashes'] = array_keys($files);
 
         $event = \mod_workshop\event\assessable_uploaded::create($params);
-        $event->set_legacy_logdata($logdata);
         $event->trigger();
 
         return $submission->id;

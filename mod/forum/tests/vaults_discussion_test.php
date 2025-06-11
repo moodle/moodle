@@ -29,7 +29,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class vaults_discussion_test extends \advanced_testcase {
+final class vaults_discussion_test extends \advanced_testcase {
     // Make use of the test generator trait.
     use mod_forum_tests_generator_trait;
 
@@ -40,6 +40,7 @@ class vaults_discussion_test extends \advanced_testcase {
      * Set up function for tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $this->vault = $vaultfactory->get_discussion_vault();
     }
@@ -47,7 +48,7 @@ class vaults_discussion_test extends \advanced_testcase {
     /**
      * Test get_from_id.
      */
-    public function test_get_from_id() {
+    public function test_get_from_id(): void {
         $this->resetAfterTest();
 
         $vault = $this->vault;
@@ -65,7 +66,7 @@ class vaults_discussion_test extends \advanced_testcase {
     /**
      * Test get_first_discussion_in_forum.
      */
-    public function test_get_first_discussion_in_forum() {
+    public function test_get_first_discussion_in_forum(): void {
         $this->resetAfterTest();
 
         $vault = $this->vault;
@@ -91,7 +92,7 @@ class vaults_discussion_test extends \advanced_testcase {
     /**
      * Test get_all_discussions_in_forum
      */
-    public function test_get_all_discussions_in_forum() {
+    public function test_get_all_discussions_in_forum(): void {
         $this->resetAfterTest();
 
         $vault = $this->vault;

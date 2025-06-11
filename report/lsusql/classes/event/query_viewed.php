@@ -51,9 +51,4 @@ class query_viewed extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/report/lsusql/view.php', array('id' => $this->objectid));
     }
-
-    public function get_legacy_logdata() {
-        $url = '../report/lsusql/view.php?id=' . $this->objectid;
-        return array(0, "report_lsusql", 'view query', $url, $this->objectid, $this->contextinstanceid);
-    }
 }

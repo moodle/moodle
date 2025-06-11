@@ -50,7 +50,9 @@ Feature: Rubrics can be created and edited
     Then I should see "Ready for use"
     # Grading two students.
     And I navigate to "Assignment" in current page administration
+    And I change window size to "large"
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
+    And I change window size to "medium"
     And I grade by filling the rubric with:
       | Criterion 1 | 50 | Very good |
     And I press "Save changes"
@@ -66,7 +68,9 @@ Feature: Rubrics can be created and edited
     And I should see "65" in the "Student 1" "table_row"
     # Updating the user grade.
     And I am on the "Test assignment 1 name" "assign activity" page
+    And I change window size to "large"
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
+    And I change window size to "medium"
     And I grade by filling the rubric with:
       | Criterion 1 | 20 | Bad, I changed my mind |
       | Criterion 2 | 10 | Mmmm, you can do it better |
@@ -118,7 +122,9 @@ Feature: Rubrics can be created and edited
     And I log out
     # Regrade student.
     And I am on the "Test assignment 1 name" "assign activity" page logged in as teacher1
+    And I change window size to "large"
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
+    And I change window size to "medium"
     And I should see "The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade."
     And I save the advanced grading form
     And I log out

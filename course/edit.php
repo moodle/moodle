@@ -129,12 +129,6 @@ if (!empty($course)) {
         file_prepare_standard_filemanager($course, 'overviewfiles', $overviewfilesoptions, $coursecontext, 'course', 'overviewfiles', 0);
     }
 
-    // Inject current aliases.
-    $aliases = $DB->get_records('role_names', array('contextid'=>$coursecontext->id));
-    foreach($aliases as $alias) {
-        $course->{'role_'.$alias->roleid} = $alias->name;
-    }
-
     // Populate course tags.
     $course->tags = core_tag_tag::get_item_tags_array('core', 'course', $course->id);
 

@@ -45,25 +45,25 @@ class lpmonitoring_competency_statistics_exporter extends exporter {
      * @return array other properties
      */
     public static function define_other_properties() {
-        return array(
-            'competencyid' => array(
-                'type' => PARAM_INT
-            ),
-            'nbuserrated' => array(
-                'type' => PARAM_INT
-            ),
-            'nbusertotal' => array(
-                'type' => PARAM_INT
-            ),
-            'scalecompetencyitems' => array(
+        return [
+            'competencyid' => [
+                'type' => PARAM_INT,
+            ],
+            'nbuserrated' => [
+                'type' => PARAM_INT,
+            ],
+            'nbusertotal' => [
+                'type' => PARAM_INT,
+            ],
+            'scalecompetencyitems' => [
                 'type' => scale_competency_item_statistics_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'totaluserlist' => array(
+                'multiple' => true,
+            ],
+            'totaluserlist' => [
                 'type' => competency_stats_user_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -83,7 +83,7 @@ class lpmonitoring_competency_statistics_exporter extends exporter {
         $usersrated = [];
 
         // Information for each scale value.
-        $result->scalecompetencyitems = array();
+        $result->scalecompetencyitems = [];
         foreach ($data->scale as $id => $scalename) {
             $scaleinfo = new \stdClass();
             $scaleinfo->value = $id;
@@ -91,7 +91,7 @@ class lpmonitoring_competency_statistics_exporter extends exporter {
             $scaleinfo->color = $data->reportscaleconfig[$id - 1]->color;
 
             $scalecompetencyitemexporter = new scale_competency_item_statistics_exporter($scaleinfo,
-                    array('users' => $data->listusers));
+                    ['users' => $data->listusers]);
             $scalecompetencyitem = $scalecompetencyitemexporter->export($output);
             $result->nbuserrated += $scalecompetencyitem->nbusers;
             $result->scalecompetencyitems[] = $scalecompetencyitem;
@@ -101,7 +101,7 @@ class lpmonitoring_competency_statistics_exporter extends exporter {
         }
 
         // List of rated and not rated users in the competency.
-        $result->totaluserlist = array();
+        $result->totaluserlist = [];
         foreach ($data->listusers as $user) {
             if (in_array($user->userinfo->id, $usersrated)) {
                 $user->userinfo->rateduser = true;

@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class a_links_dont_open_new_window_testcase
  */
-class a_links_dont_open_new_window_test extends all_checks {
+final class a_links_dont_open_new_window_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'a_links_dont_open_new_window';
 
@@ -103,7 +103,7 @@ EOD;
     /**
      * Test for links opening a new tab or window
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'a');
 

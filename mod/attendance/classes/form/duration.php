@@ -57,7 +57,7 @@ class duration extends moodleform {
         }
         $durselect[] =& $mform->createElement('select', 'hours', '', $hours);
         $durselect[] =& $mform->createElement('select', 'minutes', '', $minutes, false, true);
-        $mform->addGroup($durselect, 'durtime', get_string('newduration', 'attendance'), array(' '), true);
+        $mform->addGroup($durselect, 'durtime', get_string('newduration', 'attendance'), [' '], true);
 
         $mform->addElement('hidden', 'ids', $ids);
         $mform->setType('ids', PARAM_ALPHANUMEXT);
@@ -66,7 +66,7 @@ class duration extends moodleform {
         $mform->addElement('hidden', 'action', \mod_attendance_sessions_page_params::ACTION_CHANGE_DURATION);
         $mform->setType('action', PARAM_INT);
 
-        $mform->setDefaults(array('durtime' => array('hours' => 0, 'minutes' => 0)));
+        $mform->setDefaults(['durtime' => ['hours' => 0, 'minutes' => 0]]);
 
         $submitstring = get_string('update', 'attendance');
         $this->add_action_buttons(true, $submitstring);

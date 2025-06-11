@@ -27,22 +27,21 @@ require_once(__DIR__ . '/../../../lib/behat/behat_deprecated_base.php');
  *
  * @package    core_calendar
  * @category   test
- * @copyright  2022 Marina Glancy
+ * @copyright  2024 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_calendar_deprecated extends behat_deprecated_base {
-
     /**
-     * Hover over a specific day in the calendar.
+     * Hover over today in the calendar.
      *
-     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the calendar$/
-     * @param int $day The day of the current month
+     * @Given /^I hover over today in the calendar$/
      *
-     * @deprecated since 4.0 MDL-72810. This tested the three-month calendar pseudo block, which has been removed.
-     * @todo MDL-73117 This will be deleted in Moodle 4.4.
+     * @deprecated since 4.4 MDL-73117.
+     * @TODO MDL-79721: This will be deleted in Moodle 4.8.
      */
-    public function i_hover_over_day_of_this_month_in_calendar($day) {
-        $this->deprecated_message('behat_calendar::i_hover_over_day_of_this_month_in_mini_calendar_block');
+    public function i_hover_over_today_in_the_calendar() {
+        $this->deprecated_message('behat_calendar::i_hover_over_today_in_the_calendar');
+        $todaysday = date('j');
 
         $summarytitle = userdate(time(), get_string('strftimemonthyear'));
         // The current month table.
@@ -50,42 +49,11 @@ class behat_calendar_deprecated extends behat_deprecated_base {
 
         // Strings for the class cell match.
         $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
-        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$day} ')]";
+        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$todaysday} ')]";
         $daycell      = "td[{$cellclasses}]";
         $dayofmonth   = "a[{$daycontains}]";
 
         $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
         $this->execute("behat_general::i_hover", [$xpath, "xpath_element"]);
-    }
-
-    /**
-     * Click a specific day in the calendar.
-     *
-     * @Given /^I click day "(?P<dayofmonth>\d+)" of this month in the calendar$/
-     * @param int $day The day of the current month
-     *
-     * @deprecated since 4.0 MDL-72810. This tested the three-month calendar pseudo block, which has been removed.
-     * @todo MDL-73117 This will be deleted in Moodle 4.4.
-     */
-    public function i_click_day_of_this_month_in_calendar($day) {
-        $this->deprecated_message([
-            'behat_general::i_click_on',
-            'behat_caendar::i_hover_over_day_of_this_month_in_full_calendar_page',
-        ]);
-
-        $summarytitle = userdate(time(), get_string('strftimemonthyear'));
-        // The current month table.
-        $currentmonth = "table[descendant::*[self::caption[contains(concat(' ', normalize-space(.), ' '), ' {$summarytitle} ')]]]";
-
-        // Strings for the class cell match.
-        $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
-        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$day} ')]";
-        $daycell      = "td[{$cellclasses}]";
-        $dayofmonth   = "a[{$daycontains}]";
-
-        $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
-        $this->execute("behat_general::wait_until_the_page_is_ready");
-        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
-        $this->execute("behat_general::wait_until_the_page_is_ready");
     }
 }

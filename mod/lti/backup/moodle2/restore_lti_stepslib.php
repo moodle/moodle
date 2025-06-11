@@ -78,6 +78,8 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
             $paths[] = $submission;
         }
 
+        $paths[] = new restore_path_element('lticoursevisible', '/activity/lti/lticoursevisible');
+
         // Add support for subplugin structures.
         $this->add_subplugin_structure('ltisource', $lti);
         $this->add_subplugin_structure('ltiservice', $lti);
@@ -147,6 +149,23 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         // Add the typeid entry back to LTI module.
         $DB->update_record('lti', ['id' => $this->get_new_parentid('lti'), 'typeid' => $ltitypeid]);
+    }
+
+    /**
+     * Process an lti coursevisible restore
+     * @param mixed $data The data from backup XML file
+     * @return void
+     */
+    protected function process_lticoursevisible($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->typeid = $this->get_new_parentid('ltitype');
+        $data->courseid = $this->get_courseid();
+
+        if ($data->typeid) {
+            $DB->insert_record('lti_coursevisible', $data);
+        }
     }
 
     /**

@@ -23,6 +23,7 @@
  * @copyright (C) 2018 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:ignore moodle.Files.RequireLogin.Missing -- This file is called from Microsoft Teams tab.
 require_once(__DIR__ . '/../../config.php');
 
 echo "<script src=\"https://statics.teams.microsoft.com/sdk/v1.9.0/js/MicrosoftTeams.min.js\" crossorigin=\"anonymous\"></script>";

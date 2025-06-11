@@ -20,6 +20,7 @@ use file_info_context_course;
 use file_info_context_coursecat;
 use file_info_context_module;
 use file_info_stored;
+use stdClass;
 
 /**
  * Unit tests for file browser
@@ -28,7 +29,7 @@ use file_info_stored;
  * @copyright  2017 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class file_browser_test extends \advanced_testcase {
+final class file_browser_test extends \advanced_testcase {
 
     /** @var int */
     protected $initialnonempty;
@@ -46,7 +47,7 @@ class file_browser_test extends \advanced_testcase {
     protected $module1;
     /** @var stdClass */
     protected $module2;
-    /** @var stdClass */
+    /** @var array */
     protected $course1filerecord;
     /** @var stdClass */
     protected $teacher;
@@ -58,6 +59,7 @@ class file_browser_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -108,7 +110,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the system context
      */
-    public function test_file_info_context_system() {
+    public function test_file_info_context_system(): void {
 
         // There is one non-empty category child and two category children.
 
@@ -125,7 +127,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the system context, hide Misc category
      */
-    public function test_file_info_context_system_hidden() {
+    public function test_file_info_context_system_hidden(): void {
 
         // Hide the course category that contains our two courses. Teacher does not have cap to view hidden categories.
         \core_course_category::get($this->course1->category)->update(['visible' => 0]);
@@ -152,7 +154,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course category context
      */
-    public function test_file_info_context_coursecat() {
+    public function test_file_info_context_coursecat(): void {
 
         // There are two non-empty courses.
 
@@ -169,7 +171,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course category context, only look for .jpg
      */
-    public function test_file_info_context_coursecat_jpg() {
+    public function test_file_info_context_coursecat_jpg(): void {
 
         // There is one non-empty category child and two category children.
 
@@ -182,7 +184,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course context (course1)
      */
-    public function test_file_info_context_course_1() {
+    public function test_file_info_context_course_1(): void {
 
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(\context_course::instance($this->course1->id));
@@ -213,7 +215,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course context (course1)
      */
-    public function test_file_info_context_course_2() {
+    public function test_file_info_context_course_2(): void {
 
         // 2. Start from the course level.
         $browser = get_file_browser();
@@ -235,7 +237,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course context (module1)
      */
-    public function test_file_info_context_module_1() {
+    public function test_file_info_context_module_1(): void {
 
         $module1context = \context_module::instance($this->module1->cmid);
         $browser = get_file_browser();
@@ -251,7 +253,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course context (module1)
      */
-    public function test_file_info_context_module_2() {
+    public function test_file_info_context_module_2(): void {
 
         $module2context = \context_module::instance($this->module2->cmid);
         $browser = get_file_browser();

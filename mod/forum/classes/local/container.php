@@ -50,7 +50,7 @@ class container {
      *
      * @return renderer_factory
      */
-    public static function get_renderer_factory() : renderer_factory {
+    public static function get_renderer_factory(): renderer_factory {
         global $PAGE;
 
         return new renderer_factory(
@@ -70,7 +70,7 @@ class container {
      *
      * @return legacy_data_mapper_factory
      */
-    public static function get_legacy_data_mapper_factory() : legacy_data_mapper_factory {
+    public static function get_legacy_data_mapper_factory(): legacy_data_mapper_factory {
         return new legacy_data_mapper_factory();
     }
 
@@ -79,7 +79,7 @@ class container {
      *
      * @return exporter_factory
      */
-    public static function get_exporter_factory() : exporter_factory {
+    public static function get_exporter_factory(): exporter_factory {
         return new exporter_factory(
             self::get_legacy_data_mapper_factory(),
             self::get_manager_factory(),
@@ -93,7 +93,7 @@ class container {
      *
      * @return vault_factory
      */
-    public static function get_vault_factory() : vault_factory {
+    public static function get_vault_factory(): vault_factory {
         global $DB;
 
         return new vault_factory(
@@ -109,7 +109,7 @@ class container {
      *
      * @return manager_factory
      */
-    public static function get_manager_factory() : manager_factory {
+    public static function get_manager_factory(): manager_factory {
         return new manager_factory(
             self::get_legacy_data_mapper_factory()
         );
@@ -120,7 +120,7 @@ class container {
      *
      * @return entity_factory
      */
-    public static function get_entity_factory() : entity_factory {
+    public static function get_entity_factory(): entity_factory {
         return new entity_factory();
     }
 
@@ -129,7 +129,7 @@ class container {
      *
      * @return builder_factory
      */
-    public static function get_builder_factory() : builder_factory {
+    public static function get_builder_factory(): builder_factory {
         global $PAGE;
 
         return new builder_factory(
@@ -146,7 +146,7 @@ class container {
      *
      * @return url_factory
      */
-    public static function get_url_factory() : url_factory {
+    public static function get_url_factory(): url_factory {
         return new url_factory(
             self::get_legacy_data_mapper_factory()
         );

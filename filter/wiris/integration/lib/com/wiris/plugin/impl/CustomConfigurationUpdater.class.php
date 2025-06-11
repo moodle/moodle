@@ -31,12 +31,12 @@ class com_wiris_plugin_impl_CustomConfigurationUpdater implements com_wiris_plug
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->Â»dynamics[$m]) && is_callable($this->Â»dynamics[$m]))
-			return call_user_func_array($this->Â»dynamics[$m], $a);
+		else if(isset($this->Ã¯¿½dynamics[$m]) && is_callable($this->Ã¯¿½dynamics[$m]))
+			return call_user_func_array($this->Ã¯¿½dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call Â»'.$m.'Â»');
+			throw new HException('Unable to call Ã¯¿½'.$m.'Ã¯¿½');
 	}
 	function __toString() { return 'com.wiris.plugin.impl.CustomConfigurationUpdater'; }
 }

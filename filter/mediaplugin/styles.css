@@ -31,3 +31,8 @@
 .mod-indent-outer .mediaplugin {
     display: table-cell;
 }
+
+/* Make media plugin behave properly in Modal dialog. */
+.modal-dialog .mediaplugin {
+    width: 100vw;
+}

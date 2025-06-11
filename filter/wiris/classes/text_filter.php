@@ -45,7 +45,6 @@ require_once("$CFG->dirroot/filter/wiris/subfilters/php.php");
  * This class extends the moodle_text_filter and provides a method to filter text using the Wiris filter.
  */
 class text_filter extends \core_filters\text_filter {
-
     /**
      * Filters the given text using the Wiris filter.
      *

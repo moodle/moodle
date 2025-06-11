@@ -24,22 +24,52 @@
  */
 
 require_once(dirname(__FILE__) . '/../../../../../config.php');
-require_once(dirname(__FILE__) . '/lib/panopto_lti_utility.php');
-require_once(dirname(__FILE__) . '/../../../../../mod/lti/lib.php');
-require_once(dirname(__FILE__) . '/../../../../../mod/lti/locallib.php');
+require_once($CFG->dirroot . '/blocks/panopto/lib/lti/panoptoblock_lti_utility.php');
+require_once($CFG->dirroot . '/mod/lti/lib.php');
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 
-$id = required_param('id', PARAM_INT);
-$courseid = required_param('course', PARAM_INT);
-$callback = required_param('callback', PARAM_ALPHANUMEXT);
+$id         = required_param('id', PARAM_INT);
+$courseid   = required_param('course', PARAM_INT);
+$callback   = required_param('callback', PARAM_ALPHANUMEXT);
+
+/**
+ * LTI Atto path.
+ */
+const LTI_ATTO_PATH = '/lib/editor/atto/plugins/panoptoltibutton/contentitem_return.php';
 
 // Check access and capabilities.
 $course = get_course($courseid);
 require_login($course);
+
+// LTI 1.3 login request.
+$isthismoodle41 = empty($CFG->version) ? false : $CFG->version >= 2022112800.00;
+$config = lti_get_type_type_config($id);
+
+if ($config->lti_ltiversion === LTI_VERSION_1P3) {
+    $lti = null;
+    if ($isthismoodle41) {
+        // Moodle 4.1 needs LTI object.
+        $lti = new stdClass();
+
+        // Give it some random id, this is not used in the code but will create a PHP notice if not provided.
+        $ltiviewerurl = new moodle_url(LTI_ATTO_PATH);
+        $resourcelinkid = sha1($ltiviewerurl->out(false) .
+            '&' . $courseid .
+            '&' . $course->timecreated
+        );
+        $lti->id = $resourcelinkid;
+    }
+    if (!isset($SESSION->lti_initiatelogin_status)) {
+        echo lti_initiate_login($courseid, "atto_panoptoltibutton, {$callback}", $lti, $config);
+        exit;
+    }
+}
+
 $context = context_course::instance($courseid);
 
 // Students will access this tool for the student submission workflow. Assume student can submit an assignment?
-if (!\panopto_lti_utility::panoptoltibutton_is_active_user_enrolled($context)) {
+if (!\panoptoblock_lti_utility::is_active_user_enrolled($context)) {
     require_capability('moodle/course:manageactivities', $context);
     require_capability('mod/lti:addcoursetool', $context);
 }
@@ -52,12 +82,11 @@ $returnurlparams = [
     'sesskey' => sesskey(),
     'callback' => $callback,
 ];
-$returnurl = new \moodle_url('/lib/editor/atto/plugins/panoptoltibutton/contentitem_return.php', $returnurlparams);
+$returnurl = new \moodle_url(LTI_ATTO_PATH, $returnurlparams);
 
 // Prepare the request.
 $request = lti_build_content_item_selection_request(
-    $id, $course, $returnurl, '', '', [], [],
-    false, false, false, false, false
+    $id, $course, $returnurl, '', '', [], [], false, false, false, false, false
 );
 
 // Get the launch HTML.

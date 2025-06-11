@@ -38,7 +38,7 @@ abstract class restore_plugin {
     protected $plugintype;
     /** @var string */
     protected $pluginname;
-    /** @var string */
+    /** @var restore_path_element */
     protected $connectionpoint;
     /** @var restore_structure_step */
     protected $step;
@@ -129,7 +129,7 @@ abstract class restore_plugin {
      * method (when available), first in the main restore_xxxx_plugin class
      * and later on each of the available subclasses
      */
-    static public function get_restore_decode_contents($plugintype) {
+    public static function get_restore_decode_contents($plugintype) {
         $decodecontents = array();
         // Check the requested plugintype is a valid one
         if (!array_key_exists($plugintype, core_component::get_plugin_types($plugintype))) {
@@ -165,7 +165,7 @@ abstract class restore_plugin {
      * Define the contents in the plugin that must be
      * processed by the link decoder
      */
-    static public function define_plugin_decode_contents() {
+    public static function define_plugin_decode_contents() {
         throw new coding_exception('define_plugin_decode_contents() method needs to be overridden in each subclass of restore_plugin');
     }
 

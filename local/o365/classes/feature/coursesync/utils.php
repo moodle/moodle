@@ -27,10 +27,10 @@
 namespace local_o365\feature\coursesync;
 
 use context_course;
-use Exception;
 use local_o365\httpclient;
 use local_o365\oauth2\clientdata;
 use local_o365\rest\unified;
+use moodle_exception;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -46,7 +46,7 @@ class utils {
      *
      * @return bool True if group creation is enabled. False otherwise.
      */
-    public static function is_enabled() : bool {
+    public static function is_enabled(): bool {
         $coursesyncsetting = get_config('local_o365', 'coursesync');
         return $coursesyncsetting === 'oncustom' || $coursesyncsetting === 'onall';
     }
@@ -54,19 +54,46 @@ class utils {
     /**
      * Get an array of enabled courses.
      *
+     * @param bool $returnallids Whether to return all course IDs. If set to false and sync is on all courses, TRUE is returned.
      * @return bool|array Array of course IDs, or TRUE if all courses enabled.
      */
-    public static function get_enabled_courses() {
+    public static function get_enabled_courses(bool $returnallids = false) {
+        global $DB;
+
         $coursesyncsetting = get_config('local_o365', 'coursesync');
         if ($coursesyncsetting === 'onall') {
-            return true;
+            if ($returnallids) {
+                $courseids = $DB->get_fieldset_select('course', 'id', 'id != ?', [SITEID]);
+                return $courseids;
+            } else {
+                return true;
+            }
         } else if ($coursesyncsetting === 'oncustom') {
-            $coursesenabled = get_config('local_o365', 'coursesynccustom');
+            // Get the list of enabled courses from database rather than get_config() to avoid cache issues.
+            $coursesenabled = $DB->get_field('config_plugins', 'value', ['plugin' => 'local_o365', 'name' => 'coursesynccustom']);
+            if (!$coursesenabled) {
+                $coursesenabled = '';
+            }
+            $originalcoursesenabled = $coursesenabled;
             $coursesenabled = @json_decode($coursesenabled, true);
             if (!empty($coursesenabled) && is_array($coursesenabled)) {
+                $changed = false;
+                foreach ($coursesenabled as $courseid => $value) {
+                    if (!$DB->record_exists('course', ['id' => $courseid])) {
+                        unset($coursesenabled[$courseid]);
+                        $changed = true;
+                    }
+                }
+                if ($changed) {
+                    if ($originalcoursesenabled !== json_encode($coursesenabled)) {
+                        add_to_config_log('coursesynccustom', $originalcoursesenabled, json_encode($coursesenabled), 'local_o365');
+                        set_config('coursesynccustom', json_encode($coursesenabled), 'local_o365');
+                    }
+                }
                 return array_keys($coursesenabled);
             }
         }
+
         return [];
     }
 
@@ -76,7 +103,7 @@ class utils {
      * @param int $courseid The Moodle course ID to check.
      * @return bool Whether the course is enabled for sync.
      */
-    public static function is_course_sync_enabled(int $courseid) : bool {
+    public static function is_course_sync_enabled(int $courseid): bool {
         $coursesyncsetting = get_config('local_o365', 'coursesync');
         if ($coursesyncsetting === 'onall') {
             return true;
@@ -106,7 +133,7 @@ class utils {
         $httpclient = new httpclient();
         $clientdata = clientdata::instance_from_oidc();
         $tokenresource = unified::get_tokenresource();
-        $unifiedtoken = \local_o365\utils::get_app_or_system_token($tokenresource, $clientdata, $httpclient);
+        $unifiedtoken = \local_o365\utils::get_application_token($tokenresource, $clientdata, $httpclient);
 
         if (empty($unifiedtoken)) {
             return false;
@@ -143,7 +170,7 @@ class utils {
      * @param int $courseid
      * @return string[]|null
      */
-    public static function get_course_microsoft_365_urls(int $courseid) : ?array {
+    public static function get_course_microsoft_365_urls(int $courseid): ?array {
         $object = static::get_o365_object($courseid);
         if (empty($object->objectid)) {
             return null;
@@ -156,7 +183,7 @@ class utils {
             } else {
                 return null;
             }
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             \local_o365\utils::debug('Exception while retrieving group urls: groupid ' . $object->objectid . ' ' .
                 $e->getMessage(), __METHOD__);
             return null;
@@ -176,6 +203,10 @@ class utils {
         if (!empty($objectrec)) {
             $graphclient = unified::instance_for_user();
             $result = $graphclient->delete_group($objectrec->objectid);
+
+            // Delete course and team connection records.
+            $DB->delete_records_select('local_o365_objects',
+                "type = 'group' AND subtype IN ('courseteam', 'teamfromgroup') AND moodleid = ?", [$courseid]);
 
             if ($result === true) {
                 $metadata = (!empty($objectrec->metadata)) ? @json_decode($objectrec->metadata, true) : [];
@@ -198,7 +229,15 @@ class utils {
      * @param bool $enabled Whether to enable or disable.
      */
     public static function set_course_sync_enabled(int $courseid, bool $enabled = true) {
-        $customcoursesyncsetting = get_config('local_o365', 'coursesynccustom');
+        global $DB;
+
+        // Get the list of enabled courses from database rather than get_config() to avoid cache issues.
+        $customcoursesyncsetting = $DB->get_field('config_plugins', 'value',
+            ['plugin' => 'local_o365', 'name' => 'coursesynccustom']);
+        if ($customcoursesyncsetting === false) {
+            $customcoursesyncsetting = '';
+        }
+        $originalcustomcoursesyncsetting = $customcoursesyncsetting;
         $customcoursesyncsetting = @json_decode($customcoursesyncsetting, true);
         if (empty($customcoursesyncsetting) || !is_array($customcoursesyncsetting)) {
             $customcoursesyncsetting = [];
@@ -215,7 +254,11 @@ class utils {
             }
         }
 
-        set_config('coursesynccustom', json_encode($customcoursesyncsetting), 'local_o365');
+        if ($originalcustomcoursesyncsetting != json_encode($customcoursesyncsetting)) {
+            add_to_config_log('coursesynccustom', $originalcustomcoursesyncsetting, json_encode($customcoursesyncsetting),
+                'local_o365');
+            set_config('coursesynccustom', json_encode($customcoursesyncsetting), 'local_o365');
+        }
     }
 
     /**
@@ -224,7 +267,7 @@ class utils {
      * @param string $currentoid
      * @return array
      */
-    public static function get_matching_team_options(string $currentoid = '') : array {
+    public static function get_matching_team_options(string $currentoid = ''): array {
         global $DB;
 
         $teamsoptions = [];
@@ -273,11 +316,11 @@ class utils {
      *
      * @param stdClass $course
      * @param string $forcedprefix
-     * @param stdClass $group
+     * @param stdClass|null $group
      *
      * @return string
      */
-    public static function get_team_display_name(stdClass $course, string $forcedprefix = '', stdClass $group = null) {
+    public static function get_team_display_name(stdClass $course, string $forcedprefix = '', ?stdClass $group = null) {
         if ($forcedprefix) {
             $teamdisplayname = $forcedprefix;
         } else {
@@ -324,7 +367,7 @@ class utils {
      *
      * @return array
      */
-    public static function get_sample_team_group_names() : array {
+    public static function get_sample_team_group_names(): array {
         $teamgroupamesamplecourse = static::get_team_group_name_sample_course();
 
         return [static::get_team_display_name($teamgroupamesamplecourse), static::get_group_mail_alias($teamgroupamesamplecourse)];
@@ -337,7 +380,7 @@ class utils {
      *
      * @return string
      */
-    public static function get_group_mail_alias(stdClass $course) : string {
+    public static function get_group_mail_alias(stdClass $course): string {
         $groupmailaliasprefix = get_config('local_o365', 'group_mail_alias_prefix');
         if ($groupmailaliasprefix) {
             $groupmailaliasprefix = static::clean_up_group_mail_alias($groupmailaliasprefix);
@@ -384,8 +427,8 @@ class utils {
      */
     public static function clean_up_group_mail_alias(string $mailalias) {
         $notallowedbasicchars = ['@', '(', ')', "\\", '[', ']', '"', ';', ':', '.', '<', '>', ' '];
-        $chars = preg_split( '//u', $mailalias, null, PREG_SPLIT_NO_EMPTY);
-        foreach($chars as $key => $char){
+        $chars = preg_split( '//u', $mailalias, -1, PREG_SPLIT_NO_EMPTY);
+        foreach ($chars as $key => $char) {
             $charorder = ord($char);
             if ($charorder < 0 || $charorder > 127 || in_array($char, $notallowedbasicchars)) {
                 unset($chars[$key]);
@@ -400,7 +443,7 @@ class utils {
      *
      * @return stdClass
      */
-    public static function get_team_group_name_sample_course() : stdClass {
+    public static function get_team_group_name_sample_course(): stdClass {
         $samplecourse = new stdClass();
         $samplecourse->fullname = 'Sample course 15';
         $samplecourse->shortname = 'sample 15';
@@ -416,7 +459,7 @@ class utils {
      * @param array $userids
      * @return array
      */
-    public static function get_user_object_ids_by_user_ids(array $userids) : array {
+    public static function get_user_object_ids_by_user_ids(array $userids): array {
         global $DB;
 
         if ($userids) {
@@ -497,7 +540,7 @@ class utils {
      * @param int $courseid
      * @return array
      */
-    public static function get_team_owner_object_ids_by_course_id(int $courseid) : array {
+    public static function get_team_owner_object_ids_by_course_id(int $courseid): array {
         $teamownerobjectids = [];
         $teamowneruserids = static::get_team_owner_user_ids_by_course_id($courseid);
         if ($teamowneruserids) {
@@ -513,7 +556,7 @@ class utils {
      * @param int $courseid ID of Moodle course
      * @return array array containing IDs of teachers.
      */
-    public static function get_team_owner_user_ids_by_course_id(int $courseid) : array {
+    public static function get_team_owner_user_ids_by_course_id(int $courseid): array {
         $context = context_course::instance($courseid);
         $teamownerusers = get_enrolled_users($context, 'local/o365:teamowner', 0, 'u.*', null, 0, 0, true);
         $teamowneruserids = [];
@@ -533,7 +576,7 @@ class utils {
      * @param array $teamownerobjectids
      * @return array
      */
-    public static function get_team_member_object_ids_by_course_id(int $courseid, array $teamownerobjectids = []) : array {
+    public static function get_team_member_object_ids_by_course_id(int $courseid, array $teamownerobjectids = []): array {
         $teammemberobjectids = [];
         $teammemberuserids = static::get_team_member_user_ids_by_course_id($courseid);
         if ($teammemberuserids) {
@@ -551,7 +594,7 @@ class utils {
      * @param int $courseid ID of the Moodle course
      * @return array
      */
-    public static function get_team_member_user_ids_by_course_id(int $courseid) : array {
+    public static function get_team_member_user_ids_by_course_id(int $courseid): array {
         $context = context_course::instance($courseid);
         $teammemberusers = get_enrolled_users($context, 'local/o365:teammember', 0, 'u.*', null, 0, 0, true);
         $teammemberuserids = [];
@@ -571,7 +614,7 @@ class utils {
      * @param array $members
      * @return array
      */
-    public static function arrange_group_users_in_chunks(array $owners, array $members) : array {
+    public static function arrange_group_users_in_chunks(array $owners, array $members): array {
         $userchunks = [];
 
         $ownerchunks = array_chunk($owners, 20);
@@ -599,11 +642,11 @@ class utils {
         $clientdata = clientdata::instance_from_oidc();
         $httpclient = new httpclient();
         $tokenresource = unified::get_tokenresource();
-        $token = \local_o365\utils::get_app_or_system_token($tokenresource, $clientdata, $httpclient);
+        $token = \local_o365\utils::get_application_token($tokenresource, $clientdata, $httpclient);
         if (!empty($token)) {
             return new unified($token, $httpclient);
         } else {
-            $msg = 'Couldn\'t construct Microsoft Graph API client because we didn\'t have a system API user token.';
+            $msg = 'Couldn\'t construct Microsoft Graph API client because we don\'t have an application token.';
             \local_o365\utils::debug($msg, $caller);
             return false;
         }
@@ -623,7 +666,7 @@ class utils {
                 $coursesync = new main($graphclient);
                 if ($coursesync) {
                     if ($coursesync->has_education_license()) {
-                        $syncedcourses = static::get_enabled_courses();
+                        $syncedcourses = static::get_enabled_courses(true);
                         // Exclude SDS synced courses.
                         $sdscourseids = $DB->get_fieldset_select('local_o365_objects', 'moodleid',
                             'type = ? AND subtype = ?', ['sdssection', 'course']);
@@ -641,8 +684,9 @@ class utils {
                     }
                 }
             }
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             // Cannot get graph client, nothing to do.
+            return;
         }
     }
 
@@ -655,7 +699,7 @@ class utils {
      * @param int $excluderoleid
      * @return string
      */
-    public static function get_user_group_role_by_moodle_ids(int $userid, int $courseid, int $excluderoleid = 0) : string {
+    public static function get_user_group_role_by_moodle_ids(int $userid, int $courseid, int $excluderoleid = 0): string {
         $grouprole = '';
 
         $coursecontext = context_course::instance($courseid);
@@ -694,7 +738,7 @@ class utils {
      * @return bool
      */
     public static function sync_user_role_in_course_group(int $userid, int $courseid, int $userobjectrecordid = 0,
-        int $coursegroupobjectrecordid = 0, bool $sdscoursechecked = false, int $excluderoleid = 0) : bool {
+        int $coursegroupobjectrecordid = 0, bool $sdscoursechecked = false, int $excluderoleid = 0): bool {
         global $DB;
 
         if (empty($userid) || empty($courseid)) {
@@ -734,8 +778,8 @@ class utils {
         $grouprole = static::get_user_group_role_by_moodle_ids($userid, $courseid, $excluderoleid);
 
         // Get group and user object IDs.
-        $groupobjectid = utils::get_object_id_by_record_id($coursegroupobjectrecordid);
-        $userobjectid = utils::get_object_id_by_record_id($userobjectrecordid);
+        $groupobjectid = static::get_object_id_by_record_id($coursegroupobjectrecordid);
+        $userobjectid = static::get_object_id_by_record_id($userobjectrecordid);
 
         // If the user doesn't have any group role, remove the user from the connected group.
         if (!$grouprole) {
@@ -743,7 +787,7 @@ class utils {
                 // Remove owner and member from the Microsoft 365 group.
                 $coursesync->remove_member_from_group($groupobjectid, $userobjectid);
                 $coursesync->remove_owner_from_group($groupobjectid, $userobjectid);
-            } catch (Exception $e) {
+            } catch (moodle_exception $e) {
                 \local_o365\utils::debug('Exception: ' . $e->getMessage(), __METHOD__, $e);
                 return false;
             }
@@ -755,7 +799,7 @@ class utils {
                     // Remove user as owner and member from the Microsoft 365 group.
                     $coursesync->remove_member_from_group($groupobjectid, $userobjectid);
                     $coursesync->remove_owner_from_group($groupobjectid, $userobjectid);
-                } catch (Exception $e) {
+                } catch (moodle_exception $e) {
                     \local_o365\utils::debug('Exception: ' . $e->getMessage(), __METHOD__, $e);
                     return false;
                 }
@@ -769,11 +813,14 @@ class utils {
                             break;
                         case MICROSOFT365_GROUP_ROLE_MEMBER:
                             // Add user to the Microsoft 365 group as member.
-                            $coursesync->remove_owner_from_group($groupobjectid, $userobjectid);
+                            $groupowners = $coursesync->get_group_owners($groupobjectid);
+                            if (array_key_exists($userobjectid, $groupowners)) {
+                                $coursesync->remove_owner_from_group($groupobjectid, $userobjectid);
+                            }
                             $coursesync->add_member_to_group($groupobjectid, $userobjectid);
                             break;
                     }
-                } catch (Exception $e) {
+                } catch (moodle_exception $e) {
                     \local_o365\utils::debug('Exception: ' . $e->getMessage(), __METHOD__, $e);
                     return false;
                 }
@@ -789,7 +836,7 @@ class utils {
      * @param string $groupobjectid
      * @return bool
      */
-    public static function is_team_created_from_group(string $groupobjectid) : bool {
+    public static function is_team_created_from_group(string $groupobjectid): bool {
         global $DB;
 
         return $DB->record_exists('local_o365_objects',

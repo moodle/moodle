@@ -45,7 +45,7 @@ class scalecolorconfiguration_page implements renderable, templatable {
     protected $pagecontext;
 
     /** @var array $competencyframeworks List of competency frameworks. */
-    protected $competencyframeworks = array();
+    protected $competencyframeworks = [];
 
     /**
      * Construct this renderable.
@@ -66,7 +66,7 @@ class scalecolorconfiguration_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
-        $data->competencyframeworks = array();
+        $data->competencyframeworks = [];
         $data->pagecontextid = $this->pagecontext->id;
         foreach ($this->competencyframeworks as $framework) {
             $exporter = new competency_framework_exporter($framework);

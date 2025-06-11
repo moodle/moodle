@@ -274,7 +274,7 @@ class HTML_Common {
      * @param     string    $attr   Attribute name
      * @since     1.5
      * @access    public
-     * @return    void
+     * @return    mixed
      * @throws
      */
     function getAttribute($attr)

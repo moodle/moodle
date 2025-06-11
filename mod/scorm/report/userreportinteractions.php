@@ -69,8 +69,12 @@ $event->add_record_snapshot('course_modules', $cm);
 $event->add_record_snapshot('scorm', $scorm);
 $event->trigger();
 
-$trackdata = $DB->get_records('scorm_scoes_track', array('userid' => $user->id, 'scormid' => $scorm->id,
-    'attempt' => $attempt));
+$sql = "SELECT a.id, a.userid, a.scormid, v.scoid, a.attempt, v.value, v.timemodified, e.element
+          FROM {scorm_attempt} a
+          JOIN {scorm_scoes_value} v ON v.attemptid = a.id
+          JOIN {scorm_element} e ON e.id = v.elementid
+         WHERE a.userid = :userid AND a.scormid = :scormid AND a.attempt = :attempt";
+$trackdata = $DB->get_records_sql($sql, ['userid' => $userid, 'scormid' => $scorm->id, 'attempt' => $attempt]);
 $usertrack = scorm_format_interactions($trackdata);
 
 $questioncount = get_scorm_question_count($scorm->id);

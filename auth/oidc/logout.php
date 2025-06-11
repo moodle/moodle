@@ -23,6 +23,7 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:ignore moodle.Files.RequireLogin.Missing
 require_once(__DIR__ . '/../../config.php');
 
 $PAGE->set_url('/auth/oidc/logout.php');
@@ -31,14 +32,15 @@ $PAGE->set_context(context_system::instance());
 $sid = optional_param('sid', '', PARAM_TEXT);
 
 if ($sid) {
-    if ($authoidctokenrecord = $DB->get_record('auth_oidc_token', ['sid' => $sid])) {
-        if ($authoidctokenrecord->userid == $USER->id) {
-            $authsequence = get_enabled_auth_plugins(); // auths, in sequence
-            foreach($authsequence as $authname) {
+    if ($authoidcsidrecord = $DB->get_record('auth_oidc_sid', ['sid' => $sid])) {
+        if ($authoidcsidrecord->userid == $USER->id) {
+            $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
+            foreach ($authsequence as $authname) {
                 $authplugin = get_auth_plugin($authname);
                 $authplugin->logoutpage_hook();
             }
 
+            $DB->delete_records('auth_oidc_sid', ['sid' => $sid]);
             require_logout();
         }
     }

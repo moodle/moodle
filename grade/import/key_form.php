@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class key_form extends moodleform {
 
     // Define the form
-    function definition () {
+    function definition() {
         global $USER, $CFG, $COURSE;
 
         $mform =& $this->_form;

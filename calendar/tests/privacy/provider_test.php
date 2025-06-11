@@ -42,13 +42,15 @@ use core_privacy\local\request\approved_userlist;
  *
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core_calendar\privacy\provider
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /**
      * Overriding setUp() function to always reset after tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
@@ -57,7 +59,7 @@ class provider_test extends provider_testcase {
      *
      * @throws coding_exception
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         // Create test user to create Calendar Events and Subscriptions.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -129,7 +131,7 @@ class provider_test extends provider_testcase {
      *
      * @throws coding_exception
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
 
         // Create test user to create Calendar Events and Subscriptions with.
@@ -180,6 +182,7 @@ class provider_test extends provider_testcase {
         provider::export_user_data($approvedcontextlist);
 
         foreach ($contextlist as $context) {
+            /** @var \core_privacy\tests\request\content_writer $writer */
             $writer = writer::with_context($context);
             $this->assertTrue($writer->has_any_data());
 
@@ -272,7 +275,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::test_export_user_preferences().
      */
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         global $DB;
 
         // Test setup.
@@ -304,7 +307,7 @@ class provider_test extends provider_testcase {
      *
      * @throws dml_exception
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Create test user to create Calendar Events and Subscriptions with.
@@ -390,7 +393,7 @@ class provider_test extends provider_testcase {
      *
      * @throws dml_exception
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         // Create test user to create Calendar Events and Subscriptions with.
@@ -445,7 +448,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'core_calendar';
 
         // Create user1 to create Calendar Events and Subscriptions.
@@ -567,7 +570,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'core_calendar';
 
         // Create user1 to create Calendar Events and Subscriptions.

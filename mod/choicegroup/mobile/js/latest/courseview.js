@@ -201,11 +201,11 @@ this.doRefresh = (done) => {
 };
 
 this.moduleName = this.TranslateService.instant('plugin.mod_choicegroup.modulename');
-this.isOnline = this.CoreAppProvider.isOnline();
+this.isOnline = this.CoreNetwork.isOnline();
 
 // Refresh online status when changes.
-const onlineObserver = this.Network.onChange().subscribe(() => {
-    this.isOnline = this.CoreAppProvider.isOnline();
+const onlineObserver = this.CoreNetwork.onChange().subscribe(() => {
+    this.isOnline = this.CoreNetwork.isOnline();
 });
 
 let syncObserver;

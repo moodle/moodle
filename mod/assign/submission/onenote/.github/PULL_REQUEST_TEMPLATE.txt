@@ -1,0 +1,7 @@
+*** PLEASE DO NOT OPEN PULL REQUESTS IN THIS REPO ***
+
+This is a read-only repository for Moodle plugins directory release process. All developments are carried out in the main project repository at https://github.com/microsoft/o365-moodle. Please create your pull requests there.
+
+Thank you.
+
+--

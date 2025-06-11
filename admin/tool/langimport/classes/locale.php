@@ -42,7 +42,7 @@ class locale {
      * @return bool TRUE if the locale is available on OS.
      * @throws coding_exception when $langpackcode parameter is a non-empty string.
      */
-    public function check_locale_availability(string $langpackcode) : bool {
+    public function check_locale_availability(string $langpackcode): bool {
         global $CFG;
 
         if (empty($langpackcode)) {
@@ -57,7 +57,7 @@ class locale {
         }
 
         // Store current locale.
-        $currentlocale = $this->set_locale(LC_ALL, 0);
+        $currentlocale = $this->get_locale();
 
         $locale = get_string_manager()->get_string($stringtofetch, 'langconfig', $a = null, $langpackcode);
 
@@ -79,19 +79,16 @@ class locale {
      * @return string|false Returns the new current locale, or FALSE on error.
      */
     protected function set_locale(int $category = LC_ALL, string $locale = '0') {
-        if (strlen($locale) <= 255 || PHP_OS_FAMILY === 'BSD' || PHP_OS_FAMILY === 'Darwin') {
-            // We can set the whole locale all together.
-            return setlocale($category, $locale);
-        }
+        return \core\locale::set_locale($category, $locale);
+    }
 
-        // Too long locale with linux or windows, let's split it into known and supported categories.
-        $split = explode(';', $locale);
-        foreach ($split as $element) {
-            [$category, $value] = explode('=', $element);
-            if (defined($category)) { // Only if the category exists, there are OS differences.
-                setlocale(constant($category), $value);
-            }
-        }
-        return setlocale(LC_ALL, 0); // Finally, return the complete configured locale.
+    /**
+     * Get the current locale.
+     *
+     * @param int $category
+     * @return string|false
+     */
+    protected function get_locale(int $category = LC_ALL): string|false {
+        return \core\locale::get_locale($category);
     }
 }

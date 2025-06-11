@@ -66,10 +66,10 @@ Feature: Attempt a quiz
       |   2  | False    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     And I follow "Review"
-    Then I should see "Started on"
-    And I should see "State"
-    And I should see "Completed on"
-    And I should see "Time taken"
+    And I should see "Status"
+    Then I should see "Started"
+    And I should see "Completed"
+    And I should see "Duration"
     And I should see "Marks"
     And I should see "Grade"
     And I should see "25.00 out of 100.00"
@@ -144,15 +144,19 @@ Feature: Attempt a quiz
     And I should see "Once you submit your answers, you won’t be able to change them." in the "Submit all your answers and finish?" "dialogue"
     And I should see "Questions without a response: 2" in the "Submit all your answers and finish?" "dialogue"
     And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
+    And I should see "0.00 out of 100.00" in the "Grade" "table_row"
     And I should see "First question"
     And I should see "Second question"
     And I follow "Show one page at a time"
+    And I should see "0.00 out of 100.00" in the "Grade" "table_row"
     And I should see "First question"
     And I should not see "Second question"
     And I follow "Next page"
+    And "Grade" "table_row" should not exist
     And I should see "Second question"
     And I should not see "First question"
     And I follow "Previous page"
+    And I should see "0.00 out of 100.00" in the "Grade" "table_row"
     And I should see "First question"
     And I should not see "Second question"
 
@@ -210,3 +214,45 @@ Feature: Attempt a quiz
     And I follow "Finish review"
     And I should not see "Re-attempt quiz"
     And I should see "No more attempts are allowed"
+
+  @javascript
+  Scenario: Student still sees the same version after the question is edited.
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    And I should see "First question"
+    And I click on "False" "radio" in the "First question" "question"
+    And I press "Finish attempt ..."
+    And I log out
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "admin"
+    And I press "Preview quiz"
+    And I click on "Edit question" "link" in the "First question" "question"
+    And I set the field "Question text" to "First question version 2"
+    And I press "id_submitbutton"
+    And I should see "v2 (latest)" in the "First question" "question"
+    And I log out
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Continue your attempt"
+    Then I should see "First question"
+    And I should not see "First question version 2"
+
+  @javascript
+  Scenario: User image in the quiz navigation in normal mode.
+    Given I am on the "Quiz 1" "quiz activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    And I set the field "Show the user's picture" to "Large image"
+    And I press "Save and return to course"
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    Then "Student One" "link" should exist in the "Quiz navigation" "block"
+
+  @javascript
+  Scenario: User image in the quiz navigation in secure layout.
+    Given I am on the "Quiz 1" "quiz activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    And I set the field "Show the user's picture" to "Large image"
+    And I set the field "Browser security" to "Full screen pop-up with some JavaScript security"
+    And I press "Save and return to course"
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    And I switch to a second window
+    Then "Student One" "link" should not exist in the "Quiz navigation" "block"

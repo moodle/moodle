@@ -36,7 +36,7 @@ use qtype_numerical_answer_processor;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \qtype_numerical_answer_processor
  */
-class answerprocessor_test extends \advanced_testcase {
+final class answerprocessor_test extends \advanced_testcase {
     /**
      * Test setup.
      */
@@ -44,6 +44,7 @@ class answerprocessor_test extends \advanced_testcase {
         global $CFG;
 
         require_once("{$CFG->dirroot}/question/type/numerical/questiontype.php");
+        parent::setUp();
     }
 
     /**
@@ -62,7 +63,6 @@ class answerprocessor_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass($ap);
         $rcm = $rc->getMethod('parse_response');
-        $rcm->setAccessible(true);
 
         $this->assertEquals($expected, $rcm->invoke($ap, $args));
     }
@@ -72,7 +72,7 @@ class answerprocessor_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function parse_response_provider(): array {
+    public static function parse_response_provider(): array {
         return [
             [['3', '142', '', ''], '3.142'],
             [['', '2', '', ''], '.2'],
@@ -191,7 +191,7 @@ class answerprocessor_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function apply_units_provider(): array {
+    public static function apply_units_provider(): array {
         return [
             [3e8, 'm/s', 1, '3x10^8 m/s'],
             [3e8, '', null, '3x10^8'],
@@ -250,7 +250,7 @@ class answerprocessor_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function apply_units_provider_with_units(): array {
+    public static function apply_units_provider_with_units(): array {
         return [
             [3e8, 'm/s', 1, '3x10^8', 'm/s'],
             [3e8, '', null, '3x10^8', ''],
@@ -280,7 +280,7 @@ class answerprocessor_test extends \advanced_testcase {
      *
      * return array
      */
-    public function euro_provider(): array {
+    public static function euro_provider(): array {
         return [
             [[-1000, '', null], '-1 000'],
             [[3.14159, '', null], '3,14159'],
@@ -305,7 +305,7 @@ class answerprocessor_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function percent_provider(): array {
+    public static function percent_provider(): array {
         return [
             [['3', '%', 0.01], '3%'],
             [['1e-6', '%', 0.01], '1e-6 %'],
@@ -334,7 +334,7 @@ class answerprocessor_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function currency_provider(): array {
+    public static function currency_provider(): array {
         return [
             [['1234.56', '£', 1], '£1,234.56'],
             [['100', '$', 1], '$100'],

@@ -24,6 +24,9 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+
 $string['pluginname'] = 'OpenID Connect';
 $string['auth_oidcdescription'] = 'De OpenID Connect-plugin verschaft de mogelijkheid voor eenmalige aanmelding met configureerbare identiteitsproviders.';
 $string['cfg_authendpoint_key'] = 'Autorisatie-eindpunt';
@@ -125,3 +128,6 @@ $string['ucp_status_disabled'] = 'Uitgeschakeld';
 $string['ucp_disconnect_title'] = 'Verbinding met {$a} verbroken';
 $string['ucp_disconnect_details'] = 'Hiermee wordt de verbinding tussen je Moodle-account en {$a} verbroken. Je moet een gebruikersnaam en wachtwoord maken om je aan te melden bij Moodle.';
 $string['ucp_title'] = '{$a}-beheer';
+
+// phpcs:enable moodle.Files.LangFilesOrdering.IncorrectOrder
+// phpcs:enable moodle.Files.LangFilesOrdering.UnexpectedComment

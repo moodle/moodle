@@ -1,5 +1,43 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
+
+=== 4.4 ===
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `calendar_process_subscription_row`
+  - `calendar_import_icalendar_events`
+  - `fake_block_threemonths`
+  - `i_click_day_of_this_month_in_calendar`
+  - `i_hover_over_today_in_the_calendar`
+* The following previously deprecated files have been removed and can no longer be used:
+  - `calendar_threemonth.js`
+  - `calendar_threemonth.mustache`
+  - `threemonth_month.mustache`
+* The following have been deprecated:
+  - Behat step definition `i_hover_over_today_in_the_calendar`
+* The event_exporter_base class now returns a field called "branded" indicating whether the module is branded or not.
+  All the external functions using the exporter will now return the new field:
+  - core_calendar_get_action_events_by_course
+  - core_calendar_get_action_events_by_courses
+  - core_calendar_get_action_events_by_timesort
+  - core_calendar_get_calendar_day_view
+  - core_calendar_get_calendar_event_by_id
+  - core_calendar_get_calendar_monthly_view
+  - core_calendar_get_calendar_upcoming_view
+  - core_calendar_submit_create_update_form
+  - core_calendar_update_event_start_day
+
+=== 4.3 ===
+* The `navigation` property has been removed from `\core_calendar\external\day_exporter` as it is not being used by any of the
+  calendar templates.
+* The following functions have been deprecated and should no longer be used:
+  - calendar_top_controls()
+  - calendar_get_link_previous()
+  - calendar_get_link_next()
 
 === 4.1 ===
 * New method `calendar_format_event_location` which will format the location property of an event, converting any

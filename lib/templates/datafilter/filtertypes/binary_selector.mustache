@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/datafilter/filtertypes/binary_selector
+
+    Moodle template for hidden, questiontext and subcategories filter.
+
+    Context variables required for this template:
+    * filtertype - filter type name for dataset filterfield.
+    * textvalueone - text value for first selection.
+    * textvaluetwo - text value for second selection.
+    * optionone - boolen for first option selection.
+    * optiontwo - boolean for second option selection.
+
+    Example context (json):
+    {
+        "title": "Show hidden questions",
+        "filtertype": "hidden",
+        "textvalueone": "yes",
+        "textvaluetwo": "no",
+        "optionone": false,
+        "optiontwo": true
+    }
+}}
+<div class="d-flex flex-column flex-md-row align-items-md-center" data-required="{{required}}">
+    <label for="core-filter_row-binary-{{uniqid}}" class="sr-only">{{title}}</label>
+    <select {{!
+        }}class="custom-select mb-1 mb-md-0 me-md-2" {{!
+        }}name="{{filtertype}}" {{!
+        }}data-filterfield="{{filtertype}}" {{!
+        }}data-field-title="{{title}}" {{!
+        }}id="core-filter_row-binary-{{uniqid}}"{{!
+    }}>
+        {{#options}}
+            <option{{#selected}} selected{{/selected}} value="{{value}}">{{text}}</option>
+        {{/options}}
+    </select>
+</div>

@@ -21,14 +21,14 @@ Feature: Pass grade activity completion information in the LTI activity
       | activity | name           | course | gradepass | completion | completionview | completionusegrade | completionpassgrade |
       | lti      | Music history  | C1     | 50        | 2          | 1              | 1                  | 1                   |
 
-  Scenario: View automatic completion items as a teacher
+  Scenario: Verify that the LTI completion conditions are displayed to teachers
     Given I am on the "Music history" "lti activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Receive a grade" completion condition
     And "Music history" should have the "Receive a passing grade" completion condition
 
   @javascript
-  Scenario: View automatic completion items as a student
+  Scenario: Verify that students can complete an LTI activity by achieving a passing grade
     Given I am on the "Music history" "lti activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"

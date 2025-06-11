@@ -20,7 +20,7 @@ Feature: Check that formula is rendered when atto's draft is restored
     And I log in as "admin"
 
   @javascript 
-  # @4.x @4.x_tinymce6 - autosave options does not exist in tiny
+  # @4.x @4.x_tinymce6 @5.x @5.x_tinymce6 - autosave options does not exist in tiny
   Scenario: MTMOODLE-93 - Insert a formula and reload the page
     And I navigate to "Plugins > Text editors > TinyMCE editor" in site administration
     And I select seconds in autosave frequency option

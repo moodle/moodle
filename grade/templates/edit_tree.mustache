@@ -23,10 +23,10 @@
     * actionurl - string - Form action URL.
     * sesskey - string - The session key.
     * notification - object - Context data for the notification.
-    * showsave - boolean - Whether to show the save changes button.
-    * showbulkmove - boolean - Whether to show the bulk move select menu.
     * table - string - HTML content of the grade items table.
-    * bulkmoveoptions - array - Key-value pair array for the options of the the bulk move select menu element.
+    * movingmodeenabled - string - Whether moving mode is enabled.
+    * courseid - int - The course id.
+    * stickyfooter - string - HTML content of the sticky footer.
 
     Example context (json):
     {
@@ -34,37 +34,20 @@
         "sesskey": "fakesesskey",
         "notification": "",
         "table": "<table class='generaltable simple setup-grades' id='grade_edit_tree_table'><thead> <tr><th>Name</th><th>Weights</th><th>Max grade</th><th>Actions</th> </tr></thead><tbody></tbody></table>",
-        "showsave": "true",
-        "showbulkmove": "true",
-        "bulkmoveoptions": "{'value' : '1', 'name' : 'Test grade category'}",
-        "value": "1",
-        "name": "Test grade category"
+        "movingmodeenabled": "false",
+        "courseid": 1,
+        "stickyfooter": "<div id='gradetreesubmit'></div>"
     }
 }}
-
-<form id="gradetreeform" method="post" action="{{actionurl}}">
-    <div class="position-relative">
-        <input type="hidden" name="sesskey" value="{{sesskey}}">
-        {{#notification}}
-            {{>core/notification_info}}
-        {{/notification}}
-        {{{table}}}
-        <div id="gradetreesubmit">
-            {{#showsave}}
-                <input class="advanced btn btn-primary" type="submit" value="{{#cleanstr}}savechanges{{/cleanstr}}">
-            {{/showsave}}
-            {{#showbulkmove}}
-                <div class="form-inline mt-3">
-                    <input type="hidden" name="bulkmove" value="0" id="bulkmoveinput">
-                    <label for="menumoveafter">{{#str}}moveselectedto, grades{{/str}}</label>
-                    <select name="moveafter" id="menumoveafter" class="ignoredirty singleselect custom-select form-control"
-                            data-action="toggle" data-toggle="action" data-togglegroup="category" disabled>
-                        {{#bulkmoveoptions}}
-                            <option value="{{value}}">{{{name}}}</option>
-                        {{/bulkmoveoptions}}
-                    </select>
-                </div>
-            {{/showbulkmove}}
+{{#notification}}
+    {{>core/notification_info}}
+{{/notification}}
+<div class="gradetree-wrapper d-none">
+    <form id="gradetreeform" method="post" action="{{actionurl}}" >
+        <div class="position-relative">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            {{{table}}}
+            {{{stickyfooter}}}
         </div>
-    </div>
-</form>
+    </form>
+</div>

@@ -1,3 +1,52 @@
+6.7.5 (2024-04-20)
+	- Update GitHub actions
+	- fix: CSV-2024-22640 (#712)
+
+6.7.4 (2024-03-24)
+	- Upgrade tcpdf tag encryption algorithm.
+	- Fix regression issue #699.
+	- Fix security issue.
+	- [BREAKING CHANGE] The tcpdf HTML tag syntax has changed, see example_049.php.
+	- New K_ALLOWED_TCPDF_TAGS configuration constant to set the allowed methods for the tcdpf HTML tag.
+	- Raised minimum PHP version to PHP 5.5.0.
+
+6.6.5 (2023-09-02)
+	- Fix corrupted file.
+	- Fix GitHub automation tests.
+	- Fix SPDX license ID (#591)
+	- Fix warning "array offset on value of type null" (#620)
+	- Improve the README about the status of this library (#589)
+	- Fix deprecation warning with PHP 8.1 (#614)
+	- Fixes for PHP 8.2 in tcpdf_fonts.php (#632)
+	- Fix some php 8+ edge cases (#630)
+	- Fix composite glyph output (#581)
+	- Fix "access array offset on value of type bool" with PDF/A (#583)
+	- Fix non-numeric value warning (#627)
+	- Fix issues with S25 barcode (#611)
+	- Fix return type annotations (#613)
+	- Fix some inconsistencies in type hints (#598)
+
+6.6.2 (2022-12-17)
+	- Ensure pregSplit return type is always array.
+	- Add ability to run tests on various operating systems (#566)
+	- Avoid a deprecated error from PHP8.1 (#573)
+
+6.6.1 (2022-12-12)
+	- Add PHPStan and fix level 1 errors (#307)
+
+6.6.0 (2022-12-06)
+	- Multi-byte character support for filename during output (#561). (#562)
+	- Fix garbage collection (#509)
+	- FIX: PDF417 corrupt output problem, solution set bcmath scale parameter to zero (#534)
+	- Fix TypeError: count() in PHP8 (#556)
+	- Fix-getHTMLFontUnits (#547)
+	- Improved embedded image in HTML allowing src="data:..." format (#552)
+	- Fix image abscissa when in RTL (#510)
+	- fix: php 8.1 notices (#548)
+	- Optimize PNG files (#563)
+	- Update documentation for a known issue. (#569)
+	- Fix for PHP 8.1 (#571)
+
 6.5.0 (2022-08-12)
 	- encodeUrlQuery takes into account the port (#493)
 	- Fixing undefined offset error in writeHTML() when last DOM element ha…

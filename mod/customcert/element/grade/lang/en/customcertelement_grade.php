@@ -23,14 +23,13 @@
  */
 
 $string['coursegrade'] = 'Course grade';
-$string['gradeitem'] = 'Grade item';
-$string['gradeitem_help'] = 'The grade item you wish to display the grade of.';
 $string['gradeformat'] = 'Grade format';
 $string['gradeformat_help'] = 'The format you wish to use when displaying the grade.';
 $string['gradeitem'] = 'Grade item';
+$string['gradeitem_help'] = 'The grade item you wish to display the grade of.';
+$string['gradeletter'] = 'Letter';
 $string['gradepercent'] = 'Percentage';
 $string['gradepoints'] = 'Points';
-$string['gradeletter'] = 'Letter';
 $string['pluginname'] = 'Grade';
 $string['previewgrade'] = 'Preview grade';
 $string['privacy:metadata'] = 'The Grade plugin does not store any personal data.';

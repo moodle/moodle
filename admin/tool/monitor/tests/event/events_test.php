@@ -28,12 +28,13 @@ namespace tool_monitor\event;
 /**
  * Tests that the tool_monitor events are valid and triggered correctly.
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Tests set up.
      */
     public function setUp(): void {
+        parent::setUp();
         set_config('enablemonitor', 1, 'tool_monitor');
         $this->resetAfterTest();
     }
@@ -41,7 +42,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the rule created event.
      */
-    public function test_rule_created() {
+    public function test_rule_created(): void {
         // Create the items we need to create a rule.
         $course = $this->getDataGenerator()->create_course();
         $user = $this->getDataGenerator()->create_user();
@@ -90,7 +91,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the rule updated event.
      */
-    public function test_rule_updated() {
+    public function test_rule_updated(): void {
         // Create the items we need.
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $course = $this->getDataGenerator()->create_course();
@@ -136,7 +137,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the rule deleted event.
      */
-    public function test_rule_deleted() {
+    public function test_rule_deleted(): void {
         // Create the items we need.
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $course = $this->getDataGenerator()->create_course();
@@ -179,7 +180,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the subscription created event.
      */
-    public function test_subscription_created() {
+    public function test_subscription_created(): void {
         // Create the items we need to test this.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -216,7 +217,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the subscription deleted event.
      */
-    public function test_subscription_deleted() {
+    public function test_subscription_deleted(): void {
         // Create the items we need to test this.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -299,7 +300,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the subscription criteria met event.
      */
-    public function test_subscription_criteria_met() {
+    public function test_subscription_criteria_met(): void {
         // Create the items we need to test this.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();

@@ -46,8 +46,11 @@ if ($ADMIN->fulltree) {
         get_string('framesize', 'url'), get_string('configframesize', 'url'), 130, PARAM_INT));
     $settings->add(new admin_setting_configpasswordunmask('url/secretphrase', get_string('password'),
         get_string('configsecretphrase', 'url'), ''));
+    $settings->add(new admin_setting_configcheckbox('url/allowvariables',
+        get_string('allowvariables', 'url'), get_string('allowvariables_desc', 'url'), false));
     $settings->add(new admin_setting_configcheckbox('url/rolesinparams',
         get_string('rolesinparams', 'url'), get_string('configrolesinparams', 'url'), false));
+    $settings->hide_if('url/rolesinparams', 'url/allowvariables');
     $settings->add(new admin_setting_configmultiselect('url/displayoptions',
         get_string('displayoptions', 'url'), get_string('configdisplayoptions', 'url'),
         $defaultdisplayoptions, $displayoptions));

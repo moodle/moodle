@@ -147,7 +147,9 @@ class qtype_regexp_question extends question_graded_by_strategy
         }
         if (!$this->usecase) {
             $correctresponse = $this->get_correct_response();
-            if (strtoupper($response['answer']) == strtoupper($correctresponse['answer'])) {
+            $responseanswer = $response['answer'] ?? '';
+            $correctanswer = $correctresponse['answer'] ?? '';
+            if (strtoupper($responseanswer) == strtoupper($correctanswer)) {
                 return true;
             }
         }
@@ -179,6 +181,10 @@ class qtype_regexp_question extends question_graded_by_strategy
      * @return boolean
      */
     public static function compare_string_with_wildcard($string, $pattern, $grade, $ignorecase) {
+        // To avoid PHP warnings when using REGEXP inside a multianswer question.
+        if ($string == '') {
+            return;
+        }
         if (substr($pattern, 0, 2) != '--') {
             // Answers with a positive grade must be anchored for strict match.
             // Incorrect answers are not strictly matched.
@@ -223,7 +229,9 @@ class qtype_regexp_question extends question_graded_by_strategy
                     }
                 }
             } else {  // This is *not* a NOT (a OR b OR c etc.) request.
-                if (preg_match('/^'.$response1.'$/'.$ignorecase, $response0) == 0) {
+                $response0 = $response0 ?? '';
+                $response1 = $response1 ?? '';
+                if (preg_match('/^' . $response1 . '$/' . $ignorecase, $response0) == 0) {
                     return true;
                 }
             }

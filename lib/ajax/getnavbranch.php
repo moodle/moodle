@@ -49,6 +49,7 @@ try {
     // This identifies the block instance requesting AJAX extension
     $instanceid = optional_param('instance', null, PARAM_INT);
 
+    $PAGE->set_url(new moodle_url('/lib/ajax/getnavbranch.php'));
     $PAGE->set_context(context_system::instance());
 
     // Create a global nav object

@@ -263,23 +263,15 @@ $string['unreadnotifications'] = 'There are {$a} unread notifications';
 $string['unreadnewgroupconversationmessage'] = 'New message from {$a->name} in {$a->conversationname}';
 $string['unreadnewmessage'] = 'New message from {$a}';
 $string['useentertosend'] = 'Use enter to send';
-$string['usercantbemessaged'] = 'You can\'t message {$a} due to their message preferences. Try adding them as a contact.';
+$string['usercantbemessaged'] = 'You can\'t message this user due to their message preferences. Try adding them as a contact.';
 $string['userwouldliketocontactyou'] = '{$a} would like to contact you';
 $string['viewfullnotification'] = 'View full notification';
 $string['viewmessageswith'] = 'View messages with {$a}';
 $string['viewnotificationresource'] = 'Go to: {$a}';
 $string['viewunreadmessageswith'] = 'View unread messages with {$a}';
+$string['waitingforcontactaccept'] = 'Waiting to be added as contact';
 $string['writeamessage'] = 'Write a message...';
 $string['wouldliketocontactyou'] = 'Would like to contact you';
 $string['you'] = 'You:';
 $string['youhaveblockeduser'] = 'You have blocked this user.';
 $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a}';
-
-// Deprecated since Moodle 4.0.
-$string['defaults'] = 'Defaults';
-$string['loggedin_help'] = 'Configure how you would like to receive notifications when you are logged into Moodle';
-$string['loggedindescription'] = 'When you are logged into Moodle';
-$string['loggedoff_help'] = 'Configure how you would like to receive notifications when you are not logged into Moodle';
-$string['loggedoffdescription'] = 'When you are not logged into Moodle';
-$string['sendingvia'] = 'Sending "{$a->provider}" via "{$a->processor}"';
-$string['sendingviawhen'] = 'Sending "{$a->provider}" via "{$a->processor}" when {$a->state}';

@@ -20,20 +20,18 @@
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([], function() {
-    return {
-        created: 'calendar-events:created',
-        deleted: 'calendar-events:deleted',
-        deleteAll: 'calendar-events:delete_all',
-        updated: 'calendar-events:updated',
-        editEvent: 'calendar-events:edit_event',
-        editActionEvent: 'calendar-events:edit_action_event',
-        eventMoved: 'calendar-events:event_moved',
-        dayChanged: 'calendar-events:day_changed',
-        monthChanged: 'calendar-events:month_changed',
-        moveEvent: 'calendar-events:move_event',
-        filterChanged: 'calendar-events:filter_changed',
-        courseChanged: 'calendar-events:course_changed',
-        viewUpdated: 'calendar-events:view_updated',
-    };
-});
+export default {
+    created: 'calendar-events:created',
+    deleted: 'calendar-events:deleted',
+    deleteAll: 'calendar-events:delete_all',
+    updated: 'calendar-events:updated',
+    editEvent: 'calendar-events:edit_event',
+    editActionEvent: 'calendar-events:edit_action_event',
+    eventMoved: 'calendar-events:event_moved',
+    dayChanged: 'calendar-events:day_changed',
+    monthChanged: 'calendar-events:month_changed',
+    moveEvent: 'calendar-events:move_event',
+    filterChanged: 'calendar-events:filter_changed',
+    courseChanged: 'calendar-events:course_changed',
+    viewUpdated: 'calendar-events:view_updated',
+};

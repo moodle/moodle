@@ -131,6 +131,13 @@ class qtype_match_test_helper extends question_test_helper {
 
         $q->noanswers = 4;
 
+        $q->hint = [
+            [
+                'text' => 'Frog and newt are the same',
+                'format' => FORMAT_HTML,
+            ],
+        ];
+
         return $q;
     }
 

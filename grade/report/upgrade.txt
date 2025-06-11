@@ -1,5 +1,49 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
+
+=== 4.4 ===
+* Method grader_report_grader::get_right_avg_row() has been deprecated. Please use grade_report::calculate_average() instead.
+* The method grade_report::ungraded_counts() now has 2 parameters - group ID and includehidden. First is needed since
+  for grader report we calculate averages for overall and for a group at same time. Second is used to decide if we want
+  to include hidden items in the count or not (For grader and summary reports they are included, for user report - not).
+
+=== 4.3 ===
+* The load_users() method in the gradereport_singleview\local\screen class has been deprecated. Please use
+  grade_report::get_gradable_users() instead.
+* The \gradereport_singleview\local\screen\select has been deprecated. This class generates the output for the initial
+  view to select the single view item type (user or grade item) which is no longer actively used as we do not provide
+  direct links to it.
+* The following reports now use the combobox search PHP & JS rather than defining their own:
+  - gradereport_grader
+  - gradereport_singleview
+  - gradereport_user
+  Each of these reports extend the base user, grade or group JS class in either core or core_grades so that they can define how their clickable links are generated.
+  Any special handling of the search dropdowns should be done in the JS class "closest" to your plugin rather than in core_grades or the base search class itself.
+
+=== 4.2 ===
+* 'Show calculations' setting has been removed from grader report (link is moved to grade action menu)
+* 'Show activity icons' setting has been removed from grader report
+* The grade_report_grader:get_icons(), grade_report_grader:get_left_icons_row()
+  and grade_report_grader:get_right_icons_row() functions have been deprecated and are not used anymore.
+* 'Show grade analysis icon' setting has been removed from grader report (link is moved to grade action menu)
+* 'Show locks' setting has been removed from grader report (link is moved to grade action menu)
+* 'Show show/hide icons' setting has been removed from grader report (link is moved to grade action menu)
+* 'Enable AJAX' interface has been deprecated for grader report
+* 'Quick feedback' interface has been deprecated for grader report
+* A new method grade_report::get_additional_context() is created to obtain links to other grade plugins report pages.
+ It loops through all installed grade report plugins and checks if callback function gradereport_*_get_report_link
+ is implemented in for given grade report plugin in the corresponding lib.php
+* The setting $CFG->grade_report_studentsperpage has been completely removed because it's not required anymore. This setting
+  was used to set the default number of students displayed per page in the grader report. Now the default is set to
+  20.
+* The get_grade_item_id() function in behat_gradereport_grader.php has been deprecated. Please use
+  behat_grades::get_grade_item_id() instead.
+* The grade_report::get_lang_string() has been deprecated. Please use get_string() instead.
 
 === 3.6 ===
 * External function gradereport_user_external::get_grade_items now return the following information (only for course managers).

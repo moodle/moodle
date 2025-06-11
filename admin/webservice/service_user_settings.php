@@ -33,18 +33,17 @@ $userid = required_param('userid', PARAM_INT);
 admin_externalpage_setup('externalserviceusersettings');
 
 //define nav bar
-$PAGE->set_url('/' . $CFG->admin . '/webservice/service_user_settings.php',
-        array('id' => $serviceid, 'userid'  => $userid));
+$PAGE->set_url('/admin/webservice/service_user_settings.php', ['serviceid' => $serviceid, 'userid'  => $userid]);
 $node = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTING);
 if ($node) {
     $node->make_active();
 }
-$PAGE->navbar->add(get_string('serviceusers', 'webservice'),
-        new moodle_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $serviceid)));
+
+$returnurl = new moodle_url('/admin/webservice/service_users.php', ['id' => $serviceid]);
+$PAGE->navbar->add(get_string('serviceusers', 'webservice'), $returnurl);
 $PAGE->navbar->add(get_string('serviceusersettings', 'webservice'));
 
 $formaction = new moodle_url('', array('id' => $serviceid, 'userid' => $userid));
-$returnurl = new moodle_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $serviceid));
 
 $webservicemanager = new webservice();
 $serviceuser = $webservicemanager->get_ws_authorised_user($serviceid, $userid);

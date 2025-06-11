@@ -51,7 +51,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('user_private_key', [
                 'script' => 'privacy:metadata:user_private_key:script',
                 'value' => 'privacy:metadata:user_private_key:value',
@@ -74,7 +74,7 @@ class provider implements
      * @param int $instance The instance ID.
      */
     public static function get_user_contexts_with_script(userlist $userlist, \context $context, string $script,
-                                                         int $instance = null) {
+                                                         ?int $instance = null) {
         if (!$context instanceof \context_user) {
             return;
         }

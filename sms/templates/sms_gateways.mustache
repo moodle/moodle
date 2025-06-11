@@ -1,0 +1,40 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_sms/sms_gateways
+    Template for sms gateways table.
+    Context variables required for this template:
+    * createurl - URL of the create button
+    * tablehtml - HTML of the table of sms gateway
+    Example context (json):
+    {
+        "createurl": "www.example.com",
+        "tablehtml": "<table class='table'><tr><th scope='col'>Gateway</th><th scope='col'>Status</th><th scope='col'>Actions</th></tr></table>"
+    }
+}}
+
+<div class="d-flex mb-3">
+    {{#str}}sms_gateways_info, sms{{/str}}
+</div>
+<div class="d-flex flex-row-reverse">
+    <a href="{{createurl}}" title="{{#str}}createnewgateway, sms{{/str}}" class="btn btn-primary mb-3">
+        <i class="fa fa-plus"></i>&nbsp;{{#str}}createnewgateway, sms{{/str}}
+    </a>
+</div>
+<div data-region="core-sms-gateway-table">
+    {{{tablehtml}}}
+</div>

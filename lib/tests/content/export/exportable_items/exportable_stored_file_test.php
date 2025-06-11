@@ -32,9 +32,9 @@ use stored_file;
  * @category    test
  * @copyright   2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \core\content\exportable_items\exportable_stored_file
+ * @covers      \core\content\export\exportable_items\exportable_stored_file
  */
-class exportable_stored_file_test extends advanced_testcase {
+final class exportable_stored_file_test extends advanced_testcase {
 
     /**
      * Ensure that the create_from_area_params function returns an array.

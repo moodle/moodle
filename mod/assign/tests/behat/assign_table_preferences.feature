@@ -46,9 +46,14 @@ Feature: In an assignment, teachers can use table preferences.
   Scenario: As a teacher I can filter student submissions on the View all submission page
     When I log in as "teacher1"
     And I am on the "Test assignment" Activity page
-    And I follow "View all submissions"
-    And I click on "T" "link" in the ".lastinitial" "css_element"
-    And I click on "Grade" "link" in the "Student Two" "table_row"
+    And I navigate to "Submissions" in current page administration
+    And I click on "Filter by name" "combobox"
+    And I select "T" in the "Last name" "core_course > initials bar"
+    And I press "Apply"
+    And I change window size to "large"
+    And I click on "Grade actions" "actionmenu" in the "Student Two" "table_row"
+    And I choose "Grade" in the open action menu
+    And I change window size to "medium"
     And I should see "This is a submission for Student Two"
     And I should see "1 of 1"
     And I follow "Reset table preferences"

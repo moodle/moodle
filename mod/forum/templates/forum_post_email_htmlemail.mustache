@@ -78,15 +78,17 @@
     }
 }}
 <div class="navbar">
-    <a target="_blank" href="{{{ courselink }}}">{{{ coursename }}}</a>
-    &raquo;
-    <a target="_blank" href="{{{ forumindexlink }}}">{{# str }} forums, forum {{/ str }}</a>
-    &raquo;
-    <a target="_blank" href="{{{ forumviewlink }}}">{{{ forumname }}}</a>
-{{# showdiscussionname }}
-    &raquo;
-    <a target="_blank" href="{{{ discussionlink }}}">{{{ discussionname }}}</a>
-{{/ showdiscussionname }}
+    <div class="container-fluid p-0">
+        <a target="_blank" href="{{{ courselink }}}">{{{ coursename }}}</a>
+        &raquo;
+        <a target="_blank" href="{{{ forumindexlink }}}">{{# str }} forums, forum {{/ str }}</a>
+        &raquo;
+        <a target="_blank" href="{{{ forumviewlink }}}">{{{ forumname }}}</a>
+        {{# showdiscussionname }}
+        &raquo;
+        <a target="_blank" href="{{{ discussionlink }}}">{{{ discussionname }}}</a>
+        {{/ showdiscussionname }}
+    </div>
 </div>
 
 {{> mod_forum/forum_post_email_htmlemail_body }}

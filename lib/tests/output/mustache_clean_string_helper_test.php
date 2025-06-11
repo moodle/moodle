@@ -27,14 +27,14 @@ namespace core\output;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\output\mustache_clean_string_helper
  */
-class mustache_clean_string_helper_test extends \basic_testcase {
+final class mustache_clean_string_helper_test extends \basic_testcase {
 
     /**
      * Test the get_lang_menu
      *
      * @covers ::cleanstr
      */
-    function test_cleanstr() {
+    function test_cleanstr(): void {
         $engine = new \Mustache_Engine();
         $context = new \Mustache_Context();
         $lambdahelper = new \Mustache_LambdaHelper($engine, $context);

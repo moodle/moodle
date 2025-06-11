@@ -75,7 +75,11 @@ if ($movequestionselected && $confirm && confirm_sesskey()) {
     if ($confirm == md5($movequestionselected)) {
         \qbank_bulkmove\helper::bulk_move_questions($movequestionselected, $tocategory);
     }
-    redirect(new moodle_url($returnurl, ['category' => "{$tocategoryid},{$contextid}"]));
+    $returnfilters = \core_question\local\bank\filter_condition_manager::update_filter_param_to_category(
+        $returnurl->param('filter'),
+        $tocategoryid,
+    );
+    redirect(new moodle_url($returnurl, ['filter' => $returnfilters]));
 }
 
 echo $OUTPUT->header();

@@ -18,15 +18,18 @@ namespace customfield_select;
 
 use core_customfield_generator;
 use core_customfield_test_instance_form;
+use stdClass;
 
 /**
  * Functional test for customfield_select
  *
  * @package    customfield_select
+ * @covers     \customfield_select\data_controller
+ * @covers     \customfield_select\field_controller
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_test extends \advanced_testcase {
+final class plugin_test extends \advanced_testcase {
 
     /** @var stdClass[]  */
     private $courses = [];
@@ -41,6 +44,7 @@ class plugin_test extends \advanced_testcase {
      * Tests set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         $this->cfcat = $this->get_generator()->create_category();
@@ -69,14 +73,14 @@ class plugin_test extends \advanced_testcase {
      * Get generator
      * @return core_customfield_generator
      */
-    protected function get_generator() : core_customfield_generator {
+    protected function get_generator(): core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
     /**
      * Test for initialising field and data controllers
      */
-    public function test_initialise() {
+    public function test_initialise(): void {
         $f = \core_customfield\field_controller::create($this->cfields[1]->get('id'));
         $this->assertTrue($f instanceof field_controller);
 
@@ -95,7 +99,7 @@ class plugin_test extends \advanced_testcase {
      *
      * Create a configuration form and submit it with the same values as in the field
      */
-    public function test_config_form() {
+    public function test_config_form(): void {
         $this->setAdminUser();
         $submitdata = (array)$this->cfields[1]->to_record();
         $submitdata['configdata'] = $this->cfields[1]->get('configdata');
@@ -111,7 +115,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for instance form functions
      */
-    public function test_instance_form() {
+    public function test_instance_form(): void {
         global $CFG;
         require_once($CFG->dirroot . '/customfield/tests/fixtures/test_instance_form.php');
         $this->setAdminUser();
@@ -140,7 +144,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for data_controller::get_value and export_value
      */
-    public function test_get_export_value() {
+    public function test_get_export_value(): void {
         $this->assertEquals(1, $this->cfdata[1]->get_value());
         $this->assertEquals('a', $this->cfdata[1]->export_value());
 
@@ -151,11 +155,39 @@ class plugin_test extends \advanced_testcase {
     }
 
     /**
+     * Test getting field options, formatted
+     */
+    public function test_get_options(): void {
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        $field = $this->get_generator()->create_field([
+            'categoryid' => $this->cfcat->get('id'),
+            'type' => 'select',
+            'shortname' => 'myselect',
+            'configdata' => [
+                'options' => <<<EOF
+                    <span lang="en" class="multilang">Beginner</span><span lang="es" class="multilang">Novato</span>
+                    <span lang="en" class="multilang">Intermediate</span><span lang="es" class="multilang">Intermedio</span>
+                    <span lang="en" class="multilang">Advanced</span><span lang="es" class="multilang">Avanzado</span>
+                EOF,
+            ],
+        ]);
+
+        $this->assertEquals([
+            '',
+            'Beginner',
+            'Intermediate',
+            'Advanced',
+        ], $field->get_options());
+    }
+
+    /**
      * Data provider for {@see test_parse_value}
      *
      * @return array
      */
-    public function parse_value_provider() : array {
+    public static function parse_value_provider(): array {
         return [
             ['Red', 1],
             ['Blue', 2],
@@ -169,11 +201,10 @@ class plugin_test extends \advanced_testcase {
      *
      * @param string $value
      * @param int $expected
-     * @return void
      *
      * @dataProvider parse_value_provider
      */
-    public function test_parse_value(string $value, int $expected) {
+    public function test_parse_value(string $value, int $expected): void {
         $field = $this->get_generator()->create_field([
             'categoryid' => $this->cfcat->get('id'),
             'type' => 'select',
@@ -189,7 +220,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Deleting fields and data
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->cfcat->get_handler()->delete_all();
     }
 }

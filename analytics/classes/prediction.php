@@ -187,7 +187,7 @@ class prediction {
      * @param int $userid the user id. Current user by default.
      * @return array of actions.
      */
-    public function get_executed_actions(array $actionnamefilter = null, int $userid = 0): array {
+    public function get_executed_actions(?array $actionnamefilter = null, int $userid = 0): array {
         global $USER, $DB;
 
         $conditions[] = "predictionid = :predictionid";

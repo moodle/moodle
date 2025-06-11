@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_GroupsMigration extends Google_Service
 {
   /** Manage messages in groups on your domain. */
@@ -82,6 +83,7 @@ class Google_Service_GroupsMigration extends Google_Service
  *   $archive = $groupsmigrationService->archive;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_GroupsMigration_Archive_Resource extends Google_Service_Resource
 {
 
@@ -103,6 +105,7 @@ class Google_Service_GroupsMigration_Archive_Resource extends Google_Service_Res
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_GroupsMigration_Groups extends Google_Model
 {
   protected $internal_gapi_mappings = array(

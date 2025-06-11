@@ -24,33 +24,52 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$messageproviders = array(
+$messageproviders = [
     // Notify teacher that a student has submitted a quiz attempt.
-    'submission' => array(
-        'capability' => 'mod/quiz:emailnotifysubmission'
-    ),
+    'submission' => [
+        'capability' => 'mod/quiz:emailnotifysubmission',
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 
     // Confirm a student's quiz attempt.
-    'confirmation' => array(
+    'confirmation' => [
         'capability' => 'mod/quiz:emailconfirmsubmission',
-        'defaults' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ),
-    ),
+        ],
+    ],
 
     // Warning to the student that their quiz attempt is now overdue, if the quiz
     // has a grace period.
-    'attempt_overdue' => array(
+    'attempt_overdue' => [
         'capability' => 'mod/quiz:emailwarnoverdue',
-        'defaults' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ),
-    ),
+        ],
+    ],
 
     'attempt_grading_complete' => [
         'capability' => 'mod/quiz:emailnotifyattemptgraded',
         'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
     ],
-);
+
+    // Notify of a quiz opening soon.
+    'quiz_open_soon' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
+];

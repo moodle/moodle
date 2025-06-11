@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/course_format/frontpagesection
+    @template core_courseformat/local/content/frontpagesection
 
     Displays the frontpage section 1 (site home).
 
@@ -31,8 +31,8 @@
 <div class="course-content">
     {{#showsettings}}
     <div class="mb-2">
-        <a href="{{{settingsurl}}}" title="{{#str}} editsummary {{/str}}" aria-label="{{#str}} editsummary {{/str}}">
-            {{#pix}} t/edit, moodle {{/pix}}
+        <a href="{{{settingsurl}}}" title="{{#str}} edit {{/str}}" aria-label="{{#str}} edit {{/str}}">
+            {{#pix}} i/settings, moodle {{/pix}}
         </a>
     </div>
     {{/showsettings}}

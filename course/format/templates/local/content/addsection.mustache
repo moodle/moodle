@@ -39,7 +39,7 @@
     }
 }}
 {{#showaddsection}}
-<div class="mdl-left py-2 changenumsections">
+<div id="course-addsection" class="changenumsections bulk-hidden mt-5">
     {{#increase}}
     <a href="{{{url}}}" class="increase-sections">
         {{#pix}}t/switch_plus, moodle, {{#str}} increasesections, moodle {{/str}}{{/pix}}
@@ -51,16 +51,24 @@
     </a>
     {{/decrease}}
     {{#addsections}}
-    <a
-        href="{{{url}}}"
-        class="add-sections"
-        data-add-sections="{{title}}"
-        data-new-sections="{{newsection}}"
-        data-action="addSection"
-        {{#insertafter}} data-id="{{id}}" {{/insertafter}}
-    >
-        {{title}}
-    </a>
+        <a href="{{{url}}}"
+           class="w-100 btn add-section justify-content-center align-items-center p-3"
+           data-add-sections="{{title}}"
+           data-new-sections="{{newsection}}"
+           data-action="addSection"
+            {{#insertafter}} data-id="{{id}}" {{/insertafter}}
+        >
+            {{#pix}} t/add, core {{/pix}}
+            {{title}}
+        </a>
+        <div class="d-none p-3 max-section-alert" data-region="max-sections-warning">
+            <div class="w-100 text-center">
+                {{#pix}}t/block, moodle{{/pix}}
+            </div>
+            <div class="w-100 font-italic text-center">
+                {{#str}}maxsectionaddmessage, core_courseformat{{/str}}
+            </div>
+        </div>
     {{/addsections}}
 </div>
 {{/showaddsection}}

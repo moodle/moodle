@@ -33,17 +33,17 @@ require_once($CFG->dirroot . '/backup/util/helper/backup_general_helper.class.ph
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_test extends \basic_testcase {
+final class helper_test extends \basic_testcase {
 
     /*
      * test backup_helper class
      */
-    function test_backup_helper() {
+    function test_backup_helper(): void {
     }
 
     /*
      * test backup_general_helper class
      */
-    function test_backup_general_helper() {
+    function test_backup_general_helper(): void {
     }
 }

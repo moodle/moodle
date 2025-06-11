@@ -85,7 +85,10 @@ class sqlsrv_native_moodle_recordset extends moodle_recordset {
             return false;
         }
         if (!$row = sqlsrv_fetch_array($this->rsrc, SQLSRV_FETCH_ASSOC)) {
-            sqlsrv_free_stmt($this->rsrc);
+            if (is_resource($this->rsrc)) {
+                // We need to make sure that the statement resource is in the correct type before freeing it.
+                sqlsrv_free_stmt($this->rsrc);
+            }
             $this->rsrc = null;
             $this->unregister();
             return false;
@@ -133,7 +136,10 @@ class sqlsrv_native_moodle_recordset extends moodle_recordset {
 
     public function close() {
         if ($this->rsrc) {
-            sqlsrv_free_stmt($this->rsrc);
+            if (is_resource($this->rsrc)) {
+                // We need to make sure that the statement resource is in the correct type before freeing it.
+                sqlsrv_free_stmt($this->rsrc);
+            }
             $this->rsrc  = null;
         }
         $this->current = null;

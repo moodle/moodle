@@ -1,0 +1,502 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Snap Table of contents.
+ *
+ * @package   theme_snap
+ * @copyright Copyright (c) 2017 Open LMS (https://www.openlms.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* stylelint-disable declaration-no-important*/
+
+// -------------------------
+// Course toc & appendicies.
+// -------------------------
+#course-toc {
+    z-index: 1;
+    /* TOC heading. */
+    #toc-desktop-menu-heading {
+        text-transform: uppercase;
+        font-size: 1em;
+    }
+
+    /* TOC list. */
+    #chapters {
+        padding: 0;
+
+        h3 {
+            font-size: 1em;
+            margin-bottom: initial;
+        }
+
+        li {
+            padding-bottom: 0.3em;
+            line-height: 1;
+            h3 {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Chapter link */
+        .chapter-title {
+            display: inline-block;
+            margin-bottom: -0.3em;
+            line-height: 1.75;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .snap-visible-section .chapter-title {
+            margin-bottom: 0;
+        }
+        span.text {
+            display: inline-block;
+        }
+    }
+
+    /* Section currently displayed. */
+    .snap-visible-section {
+        padding-left: 0.5em;
+        color: #fff;
+        .chapter-title {
+            border-radius: 0.5rem;
+            padding-right: 0.5rem;
+            padding-left: 0.5rem;
+        }
+        a,
+        span {
+            color: #fff;
+            text-decoration: none;
+        }
+        .completionstatus {
+            color: #666;
+        }
+    }
+
+    /* Completed section icon. */
+    .snap-section-complete {
+        width: 1.3em;
+        height: 1.3em;
+    }
+
+    .text small {
+        font-weight: 300;
+    }
+    .conditional .published-status {
+        color: $brand-warning;
+    }
+}
+
+div[data-flexitour="step-background"] {
+    margin: 0;
+}
+
+// -------------------------
+// Display when toc is part of page body.
+// -------------------------
+
+#snap-course-wrapper {
+    margin: 0 4%;
+}
+
+#snap-course-wrapper, div[data-flexitour="step-background"] {
+    #course-toc,
+    #region-main {
+        padding-top: 1em;
+        outline: none;
+    }
+
+    /* TOC heading. */
+    #toc-desktop-menu-heading {
+        padding: 1em 0;
+        border-bottom: 1px solid $gray-lighter;
+    }
+
+    /* TOC list. */
+    #chapters {
+        @include list-unstyled();
+        li {
+            margin-left: 0;
+            // Indicators for draft and current section.
+            &.draft::before,
+            &.current::before {
+                content: " ";
+                height: 14px;
+                width: 14px;
+                display: inline-block;
+                margin-right: .35em;
+                border-radius: 50%;
+                margin-bottom: 0.3rem;
+            }
+            &.draft.snap-visible-section::before,
+            &.current.snap-visible-section::before {
+                margin-bottom: 0.5rem;
+            }
+            &.current::before {
+                background-color: $brand-success;
+            }
+            &.draft::before {
+                background-color: $brand-warning;
+            }
+            &.draft span.text {
+                color: $brand-warning;
+                &.completionstatus {
+                    color: #666;
+                }
+            }
+            &.draft,
+            &.current {
+                .chapter-title {
+                    width: 92%;
+                    @media (min-width: 990px) {
+                        width: 85%;
+                    }
+                }
+            }
+        }
+
+    }
+
+    .toc-footer {
+        z-index: 1;
+        a {
+            display: block;
+            padding: 0.5em 0;
+
+            img {
+                width: 1.5em;
+                height: 1.5em;
+            }
+        }
+    }
+
+    /* Remove numbering of sections. */
+    .sectionname:before {
+        content: '';
+    }
+}
+
+// -------------------------
+// Display when toc is part of page header.
+// -------------------------
+#page-header {
+    #course-toc {
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+        margin: 2.5em auto -.5em;
+    }
+
+    .mast-image {
+        #course-toc {
+            margin-top: 6.6vh;
+        }
+    }
+
+    #chapters {
+        column-count: 2;
+        margin-bottom: 0;
+
+        &.list-large {
+            column-count: 3;
+        }
+        span {
+            .published-status {
+                color: $brand-warning;
+            }
+            &.completionstatus {
+                color: #666;
+            }
+            &.text {
+                margin-top: 0.3em;
+            }
+        }
+        /* Chapter link */
+        .chapter-title,
+        .snap-visible-section .chapter-title {
+            margin-bottom: -0.5em;
+        }
+    }
+
+    #toc-desktop-menu-heading {
+        padding: 1em 2em 0;
+        display: inline-block;
+        margin: 0;
+    }
+
+    // Specific styles for numbered chapters to improve readability.
+    ol#chapters {
+        list-style-position: outside;
+        margin-top: 2em;
+        li {
+            margin-left: 2em;
+            padding-right: 3em;
+        }
+    }
+
+    #chapters > :first-child {
+        list-style: none;
+    }
+
+    // Add new section and course tools links.
+    .toc-footer {
+        margin-right: 4%;
+        text-align: right;
+        @media (min-width: 990px) {
+            position: absolute;
+            top: 1em;
+            right: 0;
+            margin-right: 5%;
+        }
+        a {
+            margin-right: 0.5em;
+            margin-top: 1em;
+        }
+    }
+    .snap-visible-section::marker {
+        color: #565656;
+    }
+    @media (min-width: 990px) {
+        #toc-search {
+            z-index: 1;
+            #toc-search-input.state-active,
+            #toc-search-input:focus {
+                width: 600px;
+            }
+            #toc-search-results {
+                width: 585px;
+            }
+        }
+    }
+}
+
+// -------------------------
+// Course search.
+// -------------------------
+#toc-search {
+    position: absolute;
+    top: 1.25em;
+    right: 0;
+    max-width: 100%;
+
+    &:before {
+        content: '';
+        background: transparent url("[[pix:theme|search]]") no-repeat 50% 50%;
+        display: inline-block;
+        height: 1.5em;
+        width: 1.5em;
+
+        // Magin numbers for positioning
+        margin-right: -2.5em;
+        margin-bottom: -0.3em;
+    }
+}
+
+#toc-search-input {
+    border-radius: 50%;
+    width: 3em;
+    height: 3em;
+    padding: 0 1.5em;
+    background-color: transparent;
+    border: 1px solid transparent;
+    @include alakazam();
+
+    &.state-active,
+    &:focus {
+        border-radius: 0;
+        box-shadow: none;
+        width: 320px;
+        background-color: white;
+    }
+}
+
+label[for="toc-search-input"]{
+    display: none;
+}
+
+#toc-search-input.state-active ~ label[for="toc-search-input"] {
+    position: relative;
+    display: block;
+    top: -70px;
+    left: 15px;
+    background-color: white;
+    font-size: small;
+    padding:0 5px 0 5px;
+    width: fit-content;
+}
+
+// Hidden list - always.
+#toc-searchables {
+    display: none;
+}
+
+#toc-search-results {
+    display: none;
+    position: absolute;
+    width: 320px;
+    z-index: 3;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
+
+    li {
+        width: 300px;
+        padding: 0.1em 4%;
+        overflow: hidden;
+
+        img {
+            width: 24px;
+            height: 24px;
+            vertical-align: bottom;
+        }
+
+        &:first-child {
+            padding-top: 0.5em;
+        }
+
+        &:last-child {
+            padding-bottom: 1em;
+        }
+    }
+}
+
+#toc-search-input.state-active + #toc-search-results,
+#toc-search-input:focus + #toc-search-results {
+    display: block;
+}
+
+// -------------------------
+// Course search in page header.
+// -------------------------
+#page-header {
+    #course-toc {
+        position: relative;
+    }
+
+    #toc-search {
+        position: absolute;
+        top: 0.5em;
+        right: 0;
+    }
+
+    #toc-search-results {
+        right: 0.8em;
+    }
+}
+
+// -------------------------
+// Course search in left toc.
+// -------------------------
+#snap-course-wrapper {
+    #toc-search-results {
+        left: -0.7em;
+    }
+}
+
+// -------------------------
+// Mobile toc.
+// -------------------------
+#toc-mobile-menu-toggle {
+    display: none;
+}
+
+@include media-breakpoint-down(md) {
+    .theme-snap  a#toc-mobile-menu-toggle {
+        display: block;
+    }
+    #course-toc {
+        position: fixed !important;
+        padding: 3em 4%;
+        margin: 0;
+        z-index: 1052;
+        background-color: transparent !important;
+        @include alakazam();
+        outline: none;
+
+        #chapters,
+        .toc-footer,
+        #toc-search,
+        #toc-desktop-menu-heading {
+            display: none;
+        }
+    }
+
+    #course-toc.state-visible {
+        top: 0;
+        left: 0;
+        bottom: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding-top: 1em;
+        background-color: white !important;
+        overflow-y: scroll;
+
+        #chapters {
+            margin-top: 3rem;
+        }
+
+        #toc-search {
+            display: block;
+        }
+
+        #chapters,
+        .toc-footer {
+            display: block;
+            column-count: 1;
+            text-align: left;
+        }
+
+        #toc-mobile-menu-toggle.toc-mobile-menu-toggle-close{
+            position: fixed;
+            box-shadow: none;
+            top: 1.8em;
+            right: 2em;
+            width: 2em;
+            height: 2em;
+            background: white url("[[pix:theme|close_x]]") no-repeat 50% 50%;
+            background-size: 2em;
+        }
+    }
+
+    #toc-desktop-menu-heading {
+        display: none;
+    }
+    #toc-search {
+        display: block;
+        width: 100%;
+        padding-left: 2em;
+    }
+    // Small screen course tools and create new section links.
+    #page-header .toc-footer a {
+        display: block;
+    }
+
+    #snap-course-wrapper nav#course-toc {
+        padding-top: 4em;
+    }
+
+    #toc-search-results {
+        margin-left: 2em;
+    }
+}
+
+// -------------------------
+// Moving sections.
+// -------------------------
+#course-toc .section-moving {
+    border-left: 0.3em solid;
+    padding-left: 0.3em;
+}

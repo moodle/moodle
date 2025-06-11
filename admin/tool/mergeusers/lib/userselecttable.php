@@ -38,7 +38,6 @@ global $CFG;
 // require needed library files
 require_once($CFG->dirroot . '/lib/clilib.php');
 require_once(__DIR__ . '/autoload.php');
-require_once($CFG->dirroot . '/lib/outputcomponents.php');
 
 /**
  * Extend the html table to provide a build function inside for creating a table

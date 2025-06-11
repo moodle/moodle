@@ -25,25 +25,34 @@
 
 namespace local_o365\webservices;
 
+use context_course;
+use moodle_exception;
+
 defined('MOODLE_INTERNAL') || die();
+
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 global $CFG;
 
-require_once($CFG->dirroot.'/course/modlib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
 
 /**
  * Get a list of courses where the current user is a teacher.
  */
-class read_teachercourses extends \external_api {
+class read_teachercourses extends external_api {
     /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
      */
     public static function teachercourses_read_parameters() {
-        return new \external_function_parameters([
-            'courseids' => new \external_multiple_structure(
-                new \external_value(PARAM_INT, 'course id, empty to retrieve all courses'),
+        return new external_function_parameters([
+            'courseids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'course id, empty to retrieve all courses'),
                 '0 or more course ids',
                 VALUE_DEFAULT,
                 []
@@ -65,7 +74,7 @@ class read_teachercourses extends \external_api {
         $params = self::validate_parameters(
             self::teachercourses_read_parameters(),
             [
-                'courseids' => $courseids
+                'courseids' => $courseids,
             ]
         );
 
@@ -78,17 +87,16 @@ class read_teachercourses extends \external_api {
         $result = [];
 
         foreach ($courses as $course) {
-
             if (!empty($courseids) && !isset($courseids[$course->id])) {
                 continue;
             }
 
-            $context = \context_course::instance($course->id, IGNORE_MISSING);
+            $context = context_course::instance($course->id, IGNORE_MISSING);
 
             // Validate the user can execute functions in this course.
             try {
                 static::validate_context($context);
-            } catch (\Exception $e) {
+            } catch (moodle_exception $e) {
                 continue;
             }
 
@@ -106,7 +114,7 @@ class read_teachercourses extends \external_api {
                 'format' => $course->format,
                 'showgrades' => $course->showgrades,
                 'lang' => $course->lang,
-                'enablecompletion' => $course->enablecompletion
+                'enablecompletion' => $course->enablecompletion,
             ];
         }
 
@@ -116,21 +124,21 @@ class read_teachercourses extends \external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return external_multiple_structure
      */
     public static function teachercourses_read_returns() {
-        return new \external_multiple_structure(
-            new \external_single_structure(
+        return new external_multiple_structure(
+            new external_single_structure(
                 [
-                    'id' => new \external_value(PARAM_INT, 'id of course'),
-                    'shortname' => new \external_value(PARAM_RAW, 'short name of course'),
-                    'fullname' => new \external_value(PARAM_RAW, 'long name of course'),
-                    'idnumber' => new \external_value(PARAM_RAW, 'id number of course'),
-                    'visible' => new \external_value(PARAM_INT, '1 means visible, 0 means hidden course'),
-                    'format' => new \external_value(PARAM_PLUGIN, 'course format: weeks, topics, social, site', VALUE_OPTIONAL),
-                    'showgrades' => new \external_value(PARAM_BOOL, 'true if grades are shown, otherwise false', VALUE_OPTIONAL),
-                    'lang' => new \external_value(PARAM_LANG, 'forced course language', VALUE_OPTIONAL),
-                    'enablecompletion' => new \external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
+                    'id' => new external_value(PARAM_INT, 'id of course'),
+                    'shortname' => new external_value(PARAM_RAW, 'short name of course'),
+                    'fullname' => new external_value(PARAM_RAW, 'long name of course'),
+                    'idnumber' => new external_value(PARAM_RAW, 'id number of course'),
+                    'visible' => new external_value(PARAM_INT, '1 means visible, 0 means hidden course'),
+                    'format' => new external_value(PARAM_PLUGIN, 'course format: weeks, topics, social, site', VALUE_OPTIONAL),
+                    'showgrades' => new external_value(PARAM_BOOL, 'true if grades are shown, otherwise false', VALUE_OPTIONAL),
+                    'lang' => new external_value(PARAM_LANG, 'forced course language', VALUE_OPTIONAL),
+                    'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
                         VALUE_OPTIONAL),
                 ]
             )

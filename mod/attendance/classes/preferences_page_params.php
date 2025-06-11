@@ -55,7 +55,7 @@ class mod_attendance_preferences_page_params {
      * @return array
      */
     public function get_significant_params() {
-        $params = array();
+        $params = [];
 
         if (isset($this->action)) {
             $params['action'] = $this->action;

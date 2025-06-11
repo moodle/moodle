@@ -60,12 +60,14 @@
                 "title": "Email address",
                 "sortdirection": "4",
                 "sortenabled": true,
+                "sortenabledtitle": "Disable initial sorting for column 'Email address'",
                 "sortorder": 1,
                 "sorticon": [{
-                    "key": "t/uplong",
-                    "component": "core",
-                    "title": "Sort column 'Email address' ascending"
+                    "key": "t/sort_asc",
+                    "component": "moodle",
+                    "title": "Change initial sorting for column 'Email address' to descending"
                 }],
+                "movetitle": "Move sorting for column 'Email address'",
                 "heading": "Email address"
             }]
         }],
@@ -75,7 +77,7 @@
     }
 }}
 
-<div class="reportbuilder-sidebar-settings d-flex flex-column mt-3 mt-lg-0 mb-3 mb-lg-0 ml-lg-3">
+<div class="reportbuilder-sidebar-settings d-flex flex-column mt-3 mt-lg-0 mb-3 mb-lg-0 ms-lg-3">
 
             {{< core_reportbuilder/toggle_card }}
                 {{$collapsed}}collapsed{{/collapsed}}

@@ -20,11 +20,13 @@
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 namespace tool_ally;
 
 defined('MOODLE_INTERNAL') || die();
 
+use tool_ally\abstract_testcase;
 use tool_ally\local;
 use tool_ally\auto_config;
 use tool_ally\webservice\wspluginfile;
@@ -36,7 +38,10 @@ require_once(__DIR__.'/abstract_testcase.php');
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class wspluginfile_test extends abstract_testcase {
 
@@ -105,6 +110,7 @@ class wspluginfile_test extends abstract_testcase {
 
         $tokens = $this->webservice->get_user_ws_tokens($this->allywebuser->id);
         $wstoken = reset($tokens);
+        $wstoken = \tool_ally\local::add_token_to_wstoken($wstoken);
 
         $pathnamehash = sha1(uniqid());
         $iat = time();
@@ -119,6 +125,7 @@ class wspluginfile_test extends abstract_testcase {
 
         $tokens = $this->webservice->get_user_ws_tokens($this->allywebuser->id);
         $wstoken = reset($tokens);
+        $wstoken = \tool_ally\local::add_token_to_wstoken($wstoken);
 
         $this->setAdminUser(); // We need a user before we can create a file.
 

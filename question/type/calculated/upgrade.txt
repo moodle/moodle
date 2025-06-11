@@ -1,0 +1,11 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This file describes API changes in /question/type/calculated/*.
+
+=== 4.3 ===
+* \qtype_calculated answers are now of the type \qtype_calculated\qtype_calculated_answer which extends \qtype_numerical_answer.
+  Plugins extending \qtype_calculated and still reference \qtype_numerical_answer in their code (e.g. in test helper functions)
+  should update their code to reference \qtype_calculated\qtype_calculated_answer instead.

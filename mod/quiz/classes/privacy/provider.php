@@ -34,6 +34,7 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\manager;
+use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -62,7 +63,7 @@ class provider implements
      * @param   collection  $items  The collection to add metadata to.
      * @return  collection  The array of metadata
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         // The table 'quiz' stores a record for each quiz.
         // It does not contain user personal data, but data is returned from it for contextual requirements.
 
@@ -139,7 +140,7 @@ class provider implements
      * @param   int             $userid The user to search.
      * @return  contextlist     $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $resultset = new contextlist();
 
         // Users who attempted the quiz.
@@ -276,7 +277,7 @@ class provider implements
         $quizzes = $DB->get_recordset_sql($sql, $params);
         foreach ($quizzes as $quiz) {
             list($course, $cm) = get_course_and_cm_from_cmid($quiz->cmid, 'quiz');
-            $quizobj = new \quiz($quiz, $cm, $course);
+            $quizobj = new \mod_quiz\quiz_settings($quiz, $cm, $course);
             $context = $quizobj->get_context();
 
             $quizdata = \core_privacy\local\request\helper::get_context_data($context, $contextlist->get_user());
@@ -353,7 +354,7 @@ class provider implements
             return;
         }
 
-        $quizobj = \quiz::create($cm->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
         $quiz = $quizobj->get_quiz();
 
         // Handle the 'quizaccess' subplugin.
@@ -364,8 +365,8 @@ class provider implements
                 [$quizobj]
             );
 
-        // Delete all overrides - do not log.
-        quiz_delete_all_overrides($quiz, false);
+        // Delete all overrides.
+        $quizobj->get_override_manager()->delete_all_overrides(shouldlog: false);
 
         // This will delete all question attempts, quiz attempts, and quiz grades for this quiz.
         quiz_delete_all_attempts($quiz);
@@ -392,7 +393,7 @@ class provider implements
             }
 
             // Fetch the details of the data to be removed.
-            $quizobj = \quiz::create($cm->instance);
+            $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
             $quiz = $quizobj->get_quiz();
             $user = $contextlist->get_user();
 
@@ -410,9 +411,11 @@ class provider implements
                 'userid' => $user->id,
             ]);
 
-            foreach ($overrides as $override) {
-                quiz_delete_override($quiz, $override->id, false);
-            }
+            $manager = $quizobj->get_override_manager();
+            $manager->delete_overrides(
+                overrides: $overrides,
+                shouldlog: false,
+            );
 
             // This will delete all question attempts, quiz attempts, and quiz grades for this quiz.
             quiz_delete_user_attempts($quizobj, $user);
@@ -440,7 +443,7 @@ class provider implements
             return;
         }
 
-        $quizobj = \quiz::create($cm->instance);
+        $quizobj = \mod_quiz\quiz_settings::create($cm->instance);
         $quiz = $quizobj->get_quiz();
 
         $userids = $userlist->get_userids();
@@ -460,9 +463,11 @@ class provider implements
                 'userid' => $userid,
             ]);
 
-            foreach ($overrides as $override) {
-                quiz_delete_override($quiz, $override->id, false);
-            }
+            $manager = $quizobj->get_override_manager();
+            $manager->delete_overrides(
+                overrides: $overrides,
+                shouldlog: false,
+            );
 
             // This will delete all question attempts, quiz attempts, and quiz grades for this user in the given quiz.
             quiz_delete_user_attempts($quizobj, (object)['id' => $userid]);
@@ -479,31 +484,60 @@ class provider implements
 
         $userid = $contextlist->get_user()->id;
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user('rel', 'mod_quiz', 'qa.uniqueid', $userid);
+        $qubaid1 = \core_question\privacy\provider::get_related_question_usages_for_user(
+            'rel1',
+            'mod_quiz',
+            'qa.uniqueid',
+            $userid
+        );
+        $qubaid2 = \core_question\privacy\provider::get_related_question_usages_for_user(
+            'rel2',
+            'mod_quiz',
+            'qa.uniqueid',
+            $userid
+        );
+
+        // The layout column causes the union in the following query to fail on Oracle, it also appears to not be used.
+        // So we can filter the return values to be only those used to generate the data, this will have the benefit
+        // improving performance on all databases as we will no longer be returning a text field for each row.
+        $attemptfields = 'qa.id, qa.quiz, qa.userid, qa.attempt, qa.uniqueid, qa.preview, qa.state, qa.timestart, ' .
+            'qa.timefinish, qa.timemodified, qa.timemodifiedoffline, qa.timecheckstate, qa.sumgrades, ' .
+            'qa.gradednotificationsenttime';
 
         $sql = "SELECT
                     c.id AS contextid,
                     cm.id AS cmid,
-                    qa.*
+                    $attemptfields
                   FROM {context} c
-                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel1
                   JOIN {modules} m ON m.id = cm.module AND m.name = 'quiz'
                   JOIN {quiz} q ON q.id = cm.instance
                   JOIN {quiz_attempts} qa ON qa.quiz = q.id
-            " . $qubaid->from. "
-            WHERE (
-                qa.userid = :qauserid OR
-                " . $qubaid->where() . "
-            ) AND qa.preview = 0
+            " . $qubaid1->from. "
+                 WHERE qa.userid = :qauserid AND qa.preview = 0
+                 UNION
+                SELECT
+                    c.id AS contextid,
+                    cm.id AS cmid,
+                    $attemptfields
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel2
+                  JOIN {modules} m ON m.id = cm.module AND m.name = 'quiz'
+                  JOIN {quiz} q ON q.id = cm.instance
+                  JOIN {quiz_attempts} qa ON qa.quiz = q.id
+            " . $qubaid2->from. "
+                 WHERE " . $qubaid2->where() . " AND qa.preview = 0
         ";
 
         $params = array_merge(
-                [
-                    'contextlevel'      => CONTEXT_MODULE,
-                    'qauserid'          => $userid,
-                ],
-                $qubaid->from_where_params()
-            );
+            [
+                'contextlevel1'      => CONTEXT_MODULE,
+                'contextlevel2'      => CONTEXT_MODULE,
+                'qauserid'          => $userid,
+            ],
+            $qubaid1->from_where_params(),
+            $qubaid2->from_where_params(),
+        );
 
         $attempts = $DB->get_recordset_sql($sql, $params);
         foreach ($attempts as $attempt) {
@@ -526,7 +560,7 @@ class provider implements
 
                 // Store the quiz attempt data.
                 $data = (object) [
-                    'state' => \quiz_attempt::state_name($attempt->state),
+                    'state' => quiz_attempt::state_name($attempt->state),
                 ];
 
                 if (!empty($attempt->timestart)) {

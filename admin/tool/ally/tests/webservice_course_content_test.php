@@ -23,6 +23,7 @@
  */
 namespace tool_ally;
 
+use tool_ally\abstract_testcase;
 use tool_ally\webservice\course_content;
 use tool_ally\models\component;
 
@@ -35,9 +36,17 @@ require_once(__DIR__.'/abstract_testcase.php');
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class webservice_course_content_test extends abstract_testcase {
+    protected function setUp(): void {
+        parent::setUp();
+        global $CFG;
+        require_once($CFG->dirroot.'/lib/externallib.php');
+    }
 
     private function get_forum_expectations($course, $forumtype = 'forum') {
         global $USER;
@@ -162,7 +171,7 @@ class webservice_course_content_test extends abstract_testcase {
             $course->id,
             $section->timemodified,
             $section->summaryformat,
-            'Topic 0' // Default section name for section 0 where no section name set.
+            'Section 0' // Default section name for section 0 where no section name set.
         );
 
         $labelintro = '<p>My original intro content</p>';

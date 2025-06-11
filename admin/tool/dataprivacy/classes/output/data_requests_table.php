@@ -71,6 +71,9 @@ class data_requests_table extends table_sql {
     /** @var int[] The available options for the number of data request to be displayed per page. */
     protected $perpageoptions = [25, 50, 100, 250];
 
+    /** @var int[] The request creation method filters. */
+    protected array $creationmethods = [];
+
     /**
      * data_requests_table constructor.
      *
@@ -221,7 +224,11 @@ class data_requests_table extends table_sql {
 
         // View action.
         $actionurl = new moodle_url('#');
-        $actiondata = ['data-action' => 'view', 'data-requestid' => $requestid];
+        $actiondata = [
+            'data-action' => 'view',
+            'data-requestid' => $requestid,
+            'data-contextid' => \context_system::instance()->id,
+        ];
         $actiontext = get_string('viewrequest', 'tool_dataprivacy');
         $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
 
@@ -248,8 +255,20 @@ class data_requests_table extends table_sql {
                 }
                 // Approve.
                 $actiondata['data-action'] = 'approve';
-                $actiontext = get_string('approverequest', 'tool_dataprivacy');
-                $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+
+                if (get_config('tool_dataprivacy', 'allowfiltering') && $data->type == api::DATAREQUEST_TYPE_EXPORT) {
+                    $actiontext = get_string('approverequestall', 'tool_dataprivacy');
+                    $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+
+                    // Approve selected courses.
+                    $actiontext = get_string('filterexportdata', 'tool_dataprivacy');
+                    $actiondata = ['data-action' => 'approve-selected-courses', 'data-requestid' => $requestid,
+                        'data-contextid' => \context_system::instance()->id];
+                    $actions[] = new \action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+                } else {
+                    $actiontext = get_string('approverequest', 'tool_dataprivacy');
+                    $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
+                }
 
                 // Deny.
                 $actiondata['data-action'] = 'deny';
@@ -410,7 +429,7 @@ class data_requests_table extends table_sql {
      *
      * @return int The number of data request records.
      */
-    public function get_requests_per_page() : int {
+    public function get_requests_per_page(): int {
         return $this->perpage;
     }
 
@@ -428,7 +447,7 @@ class data_requests_table extends table_sql {
      *
      * @return array The available options for the number of data request to be displayed per page.
      */
-    public function get_requests_per_page_options() : array {
+    public function get_requests_per_page_options(): array {
         return $this->perpageoptions;
     }
 }

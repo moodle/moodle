@@ -37,7 +37,7 @@ Feature: Test creating a Numerical question
     Then I should see "Numerical-001"
 
   @javascript
-  Scenario: Create a Numerical question with units
+  Scenario: Create a Numerical question with required units
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Numerical" question filling the form with:
       | Question name                      | Numerical-002                               |
@@ -70,3 +70,31 @@ Feature: Test creating a Numerical question
       | id_unitgradingtypes                | as a fraction (0-1) of the question grade   |
       | id_multichoicedisplay              | a drop-down menu                            |
       | id_unitsleft                       | on the right, for example 1.00cm or 1.00km  |
+
+  Scenario: Create a Numerical question with optional units
+    Given I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    # Add the numerical question with optional units.
+    And I add a "Numerical" question filling the form with:
+      | Question name    | Numerical Question (optional)              |
+      | Question text    | How many meter is 1m + 20cm + 50mm?        |
+      | Default mark     | 1                                          |
+      | General feedback | The correct answer is 1.25m                |
+      | id_answer_0      | 1.25                                       |
+      | id_tolerance_0   | 0                                          |
+      | id_fraction_0    | 100%                                       |
+      | id_answer_1      | 125                                        |
+      | id_tolerance_1   | 0                                          |
+      | id_fraction_1    | 0%                                         |
+      | id_unitrole      | Units are optional.                        |
+      | id_unitsleft     | on the right, for example 1.00cm or 1.00km |
+      | id_unit_0        | m                                          |
+    # Confirm that the numerical question with optional units is added successfully.
+    When I choose "Edit question" action for "Numerical Question (optional)" in the question bank
+    Then the following fields match these values:
+      | Question name    | Numerical Question (optional)                                                                          |
+      | Question text    | How many meter is 1m + 20cm + 50mm?                                                                    |
+      | Default mark     | 1                                                                                                      |
+      | General feedback | The correct answer is 1.25m                                                                            |
+      | id_unitrole      | Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading. |
+      | id_unitsleft     | on the right, for example 1.00cm or 1.00km                                                             |
+      | id_unit_0        | m                                                                                                      |

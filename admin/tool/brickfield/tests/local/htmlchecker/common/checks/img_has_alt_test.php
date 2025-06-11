@@ -31,7 +31,7 @@ require_once('all_checks.php');
 /**
  * Class test_css_text_has_contrast_testcase
  */
-class img_has_alt_test extends all_checks {
+final class img_has_alt_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'img_has_alt';
 
@@ -76,7 +76,7 @@ EOD;
     /**
      * Test for missing image alt text.
      */
-    public function test_check_fail() {
+    public function test_check_fail(): void {
         $results = $this->get_checker_results($this->htmlfail1);
         $this->assertTrue($results[0]->element->tagName == 'img');
 
@@ -87,7 +87,7 @@ EOD;
     /**
      * Test for present image alt text.
      */
-    public function test_check_pass() {
+    public function test_check_pass(): void {
         $results = $this->get_checker_results($this->htmlpass);
         $this->assertTrue(count($results) == 0);
     }

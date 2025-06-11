@@ -389,19 +389,19 @@ function report_lsusql_contains_bad_word($string) {
 
 function report_lsusql_log_delete($id) {
     $event = \report_lsusql\event\query_deleted::create(
-            array('objectid' => $id, 'context' => context_system::instance()));
+            array('context' => context_system::instance(), 'objectid' => $id));
     $event->trigger();
 }
 
 function report_lsusql_log_edit($id) {
     $event = \report_lsusql\event\query_edited::create(
-            array('objectid' => $id, 'context' => context_system::instance()));
+            array('context' => context_system::instance(), 'objectid' => $id));
     $event->trigger();
 }
 
 function report_lsusql_log_view($id) {
     $event = \report_lsusql\event\query_viewed::create(
-            array('objectid' => $id, 'context' => context_system::instance()));
+            array('context' => context_system::instance(), 'objectid' => $id));
     $event->trigger();
 }
 

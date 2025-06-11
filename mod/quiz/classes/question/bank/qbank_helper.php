@@ -16,14 +16,17 @@
 
 namespace mod_quiz\question\bank;
 
+use context_module;
 use core_question\local\bank\question_version_status;
 use core_question\local\bank\random_question_loader;
+use core_question\question_reference_manager;
+use qbank_tagquestion\tag_condition;
 use qubaid_condition;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
+require_once($CFG->dirroot . '/question/engine/bank.php');
 
 /**
  * Helper class for question bank and its associated data.
@@ -40,7 +43,7 @@ class qbank_helper {
      * Get the available versions of a question where one of the version has the given question id.
      *
      * @param int $questionid id of a question.
-     * @return \stdClass[] other versions of this question. Each object has fields versionid,
+     * @return stdClass[] other versions of this question. Each object has fields versionid,
      *       version and questionid. Array is returned most recent version first.
      */
     public static function get_version_options(int $questionid): array {
@@ -77,12 +80,12 @@ class qbank_helper {
      *   randomtags, and note that these also have a ->name set and ->qtype set to 'random'.
      *
      * @param int $quizid the id of the quiz to load the data for.
-     * @param \context_module $quizcontext the context of this quiz.
+     * @param context_module $quizcontext the context of this quiz.
      * @param int|null $slotid optional, if passed only load the data for this one slot (if it is in this quiz).
      * @return array indexed by slot, with information about the content of each slot.
      */
-    public static function get_question_structure(int $quizid, \context_module $quizcontext,
-            int $slotid = null): array {
+    public static function get_question_structure(int $quizid, context_module $quizcontext,
+            ?int $slotid = null): array {
         global $DB;
 
         $params = [
@@ -107,9 +110,12 @@ class qbank_helper {
                 SELECT slot.slot,
                        slot.id AS slotid,
                        slot.page,
-                       slot.maxmark,
+                       slot.displaynumber,
                        slot.requireprevious,
+                       slot.maxmark,
+                       slot.quizgradeitemid,
                        qsr.filtercondition,
+                       qsr.usingcontextid,
                        qv.status,
                        qv.id AS versionid,
                        qv.version,
@@ -172,11 +178,12 @@ class qbank_helper {
 
             if ($slot->filtercondition) {
                 // Unpack the information about a random question.
-                $filtercondition = json_decode($slot->filtercondition);
                 $slot->questionid = 's' . $slot->id; // Sometimes this is used as an array key, so needs to be unique.
-                $slot->category = $filtercondition->questioncategoryid;
-                $slot->randomrecurse = (bool) $filtercondition->includingsubcategories;
-                $slot->randomtags = isset($filtercondition->tags) ? (array) $filtercondition->tags : [];
+                $filter = json_decode($slot->filtercondition, true);
+                $slot->filtercondition = question_reference_manager::convert_legacy_set_reference_filter_condition($filter);
+
+                $slot->category = $slot->filtercondition['filter']['category']['values'][0] ?? 0;
+
                 $slot->qtype = 'random';
                 $slot->name = get_string('random', 'quiz');
                 $slot->length = 1;
@@ -203,14 +210,17 @@ class qbank_helper {
     /**
      * Get this list of random selection tag ids from one of the slots returned by get_question_structure.
      *
-     * @param \stdClass $slotdata one of the array elements returned by get_question_structure.
+     * @param stdClass $slotdata one of the array elements returned by get_question_structure.
      * @return array list of tag ids.
      */
-    public static function get_tag_ids_for_slot(\stdClass $slotdata): array {
+    public static function get_tag_ids_for_slot(stdClass $slotdata): array {
         $tagids = [];
-        foreach ($slotdata->randomtags as $taginfo) {
-            [$id] = explode(',', $taginfo, 2);
-            $tagids[] = $id;
+        if (!isset($slotdata->filtercondition['filter'])) {
+            return $tagids;
+        }
+        $filter = $slotdata->filtercondition['filter'];
+        if (isset($filter['qtagids'])) {
+            $tagids = $filter['qtagids']['values'];
         }
         return $tagids;
     }
@@ -218,26 +228,35 @@ class qbank_helper {
     /**
      * Given a slot from the array returned by get_question_structure, describe the random question it represents.
      *
-     * @param \stdClass $slotdata one of the array elements returned by get_question_structure.
+     * @param stdClass $slotdata one of the array elements returned by get_question_structure.
      * @return string that can be used to display the random slot.
      */
-    public static function describe_random_question(\stdClass $slotdata): string {
-        global $DB;
-        $category = $DB->get_record('question_categories', ['id' => $slotdata->category]);
-        return \question_bank::get_qtype('random')->question_name(
-               $category, $slotdata->randomrecurse, $slotdata->randomtags);
+    public static function describe_random_question(stdClass $slotdata): string {
+        $qtagids = self::get_tag_ids_for_slot($slotdata);
+
+        if ($qtagids) {
+            $tagnames = [];
+            $tags = \core_tag_tag::get_bulk($qtagids, 'id, name');
+            foreach ($tags as $tag) {
+                $tagnames[] = $tag->name;
+            }
+            $description = get_string('randomqnametags', 'mod_quiz', implode(",", $tagnames));
+        } else {
+            $description = get_string('randomqname', 'mod_quiz');
+        }
+        return shorten_text($description, 255);
     }
 
     /**
      * Choose question for redo in a particular slot.
      *
      * @param int $quizid the id of the quiz to load the data for.
-     * @param \context_module $quizcontext the context of this quiz.
+     * @param context_module $quizcontext the context of this quiz.
      * @param int $slotid optional, if passed only load the data for this one slot (if it is in this quiz).
      * @param qubaid_condition $qubaids attempts to consider when avoiding picking repeats of random questions.
      * @return int the id of the question to use.
      */
-    public static function choose_question_for_redo(int $quizid, \context_module $quizcontext,
+    public static function choose_question_for_redo(int $quizid, context_module $quizcontext,
             int $slotid, qubaid_condition $qubaids): int {
         $slotdata = self::get_question_structure($quizid, $quizcontext, $slotid);
         $slotdata = reset($slotdata);
@@ -249,12 +268,108 @@ class qbank_helper {
 
         // Random question.
         $randomloader = new random_question_loader($qubaids, []);
-        $newqusetionid = $randomloader->get_next_question_id($slotdata->category,
-                $slotdata->randomrecurse, self::get_tag_ids_for_slot($slotdata));
+        $fitlercondition = $slotdata->filtercondition;
+        $filter = $fitlercondition['filter'] ?? [];
+        $newqusetionid = $randomloader->get_next_filtered_question_id($filter);
 
         if ($newqusetionid === null) {
             throw new \moodle_exception('notenoughrandomquestions', 'quiz');
         }
         return $newqusetionid;
+    }
+
+    /**
+     * Check all the questions in an attempt and return information about their versions.
+     *
+     * Once a quiz attempt has been started, it continues to use the version of each question
+     * it was started with. This checks the version used for each question, against the
+     * quiz settings for that slot, and returns which version would be used if the quiz
+     * attempt was being started now.
+     *
+     * There are several cases for each slot:
+     * - If this slot is currently set to use version 'Always latest' (which includes
+     *   random slots) and if there is now a newer version than the one in the attempt,
+     *   use that.
+     * - If the slot is currently set to use a fixed version of the question, and that
+     *   is different from the version currently in the attempt, use that.
+     * - Otherwise, use the same version.
+     *
+     * This is used in places like the re-grade code.
+     *
+     * The returned data probably contains a bit more information than is strictly needed,
+     * (see the SQL for details) but returning a few extra ints is fast, and this could
+     * prove invaluable when debugging. The key information is probably:
+     * - questionattemptslot <-- array key
+     * - questionattemptid
+     * - currentversion
+     * - currentquestionid
+     * - newversion
+     * - newquestionid
+     *
+     * @param stdClass $attempt a quiz_attempt database row.
+     * @param context_module $quizcontext the quiz context for the quiz the attempt belongs to.
+     * @return array for each question_attempt in the quiz attempt, information about whether it is using
+     *      the latest version of the question. Array indexed by questionattemptslot.
+     */
+    public static function get_version_information_for_questions_in_attempt(
+        stdClass $attempt,
+        context_module $quizcontext,
+    ): array {
+        global $DB;
+
+        return $DB->get_records_sql("
+            SELECT qa.slot AS questionattemptslot,
+                   qa.id AS questionattemptid,
+                   slot.slot AS quizslot,
+                   slot.id AS quizslotid,
+                   qr.id AS questionreferenceid,
+                   currentqv.version AS currentversion,
+                   currentqv.questionid AS currentquestionid,
+                   newqv.version AS newversion,
+                   newqv.questionid AS newquestionid
+
+              -- Start with the question currently used in the attempt.
+              FROM {question_attempts} qa
+              JOIN {question_versions} currentqv ON currentqv.questionid = qa.questionid
+
+              -- Join in the question metadata which says if this is a qa from a 'Try another question like this one'.
+              JOIN {question_attempt_steps} firststep ON firststep.questionattemptid = qa.id
+                           AND firststep.sequencenumber = 0
+         LEFT JOIN {question_attempt_step_data} otherslotinfo ON otherslotinfo.attemptstepid = firststep.id
+                           AND otherslotinfo.name = :otherslotmetadataname
+
+              -- Join in the quiz slot information, and hence for non-random slots, the questino_reference.
+              JOIN {quiz_slots} slot ON slot.quizid = :quizid
+                           AND slot.slot = COALESCE({$DB->sql_cast_char2int('otherslotinfo.value', true)}, qa.slot)
+         LEFT JOIN {question_references} qr ON qr.usingcontextid = :quizcontextid
+                           AND qr.component = 'mod_quiz'
+                           AND qr.questionarea = 'slot'
+                           AND qr.itemid = slot.id
+
+              -- Finally, get the new version for this slot.
+              JOIN {question_versions} newqv ON newqv.questionbankentryid = currentqv.questionbankentryid
+                           AND newqv.version = COALESCE(
+                               -- If the quiz setting say use a particular version, use that.
+                               qr.version,
+                               -- Otherwise, we need the latest non-draft version of the current questions.
+                               (SELECT MAX(version)
+                                  FROM {question_versions}
+                                 WHERE questionbankentryid = currentqv.questionbankentryid AND status <> :draft),
+                                -- Otherwise, there is not a suitable other version, so stick with the current one.
+                                currentqv.version
+                            )
+
+             -- We want this for questions in the current attempt.
+             WHERE qa.questionusageid = :questionusageid
+
+          -- Order not essential, but fast and good for debugging.
+          ORDER BY qa.slot
+        ", [
+            'otherslotmetadataname' => ':_originalslot',
+            'quizid' => $attempt->quiz,
+            'quizcontextid' => $quizcontext->id,
+            'draft' => question_version_status::QUESTION_STATUS_DRAFT,
+            'questionusageid' => $attempt->uniqueid,
+        ]);
     }
 }

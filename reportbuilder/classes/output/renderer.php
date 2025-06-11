@@ -125,7 +125,7 @@ class renderer extends plugin_renderer_base {
     public function render_fullpage_editor_header(report $report): string {
         $reportname = $report->get_formatted_name();
         $editdetailsbutton = html_writer::tag('button', get_string('editdetails', 'core_reportbuilder'), [
-            'class' => 'btn btn-outline-secondary mr-2',
+            'class' => 'btn btn-outline-secondary me-2',
             'data-action' => 'report-edit',
             'data-report-id' => $report->get('id')
         ]);

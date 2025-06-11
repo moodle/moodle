@@ -16,10 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web services wrapper library script
- *
- * Since Moodle 2.0 we rely only on native PHP Soap extension,
- * the original name of this file was lib/soap/phpsoap.php
+ * Web services wrapper library script.
  *
  * @package    core
  * @subpackage lib
@@ -27,9 +24,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *             {@link http://maths.york.ac.uk/serving_maths}
  *             and others
+ * @deprecated Moodle 4.5
+ * @todo MDL-82194 Remove this file.
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+debugging(
+    'The soaplib.php file is deprecated and should not be used any more. ',
+    DEBUG_DEVELOPER,
+);
 
 /**
 * Create a new SoapClient object

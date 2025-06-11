@@ -4,7 +4,7 @@
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
+ * @copyright Copyright (c) 2023 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -13,7 +13,7 @@ namespace setasign\Fpdi;
 /**
  * Trait FpdfTplTrait
  *
- * This class adds a templating feature to tFPDF.
+ * This trait adds a templating feature to FPDF and tFPDF.
  */
 trait FpdfTplTrait
 {
@@ -234,7 +234,9 @@ trait FpdfTplTrait
                 'lMargin' => $this->lMargin,
                 'rMargin' => $this->rMargin,
                 'h' => $this->h,
+                'hPt' => $this->hPt,
                 'w' => $this->w,
+                'wPt' => $this->wPt,
                 'FontFamily' => $this->FontFamily,
                 'FontStyle' => $this->FontStyle,
                 'FontSizePt' => $this->FontSizePt,
@@ -251,7 +253,9 @@ trait FpdfTplTrait
         $this->currentTemplateId = $templateId;
 
         $this->h = $height;
+        $this->hPt = $height / $this->k;
         $this->w = $width;
+        $this->wPt = $width / $this->k;
 
         $this->SetXY($this->lMargin, $this->tMargin);
         $this->SetRightMargin($this->w - $width + $this->rMargin);
@@ -279,7 +283,9 @@ trait FpdfTplTrait
         $this->lMargin = $state['lMargin'];
         $this->rMargin = $state['rMargin'];
         $this->h = $state['h'];
+        $this->hPt = $state['hPt'];
         $this->w = $state['w'];
+        $this->wPt = $state['wPt'];
         $this->SetAutoPageBreak($state['AutoPageBreak'], $state['bMargin']);
 
         $this->FontFamily = $state['FontFamily'];
@@ -406,9 +412,6 @@ trait FpdfTplTrait
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     protected function _putimages()
     {
         parent::_putimages();

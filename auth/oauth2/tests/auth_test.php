@@ -23,11 +23,11 @@ namespace auth_oauth2;
  * @category   test
  * @copyright  2019 Shamim Rezaie
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \auth_oauth2\auth
+ * @covers \auth_oauth2\auth
  */
-class auth_test extends \advanced_testcase {
+final class auth_test extends \advanced_testcase {
 
-    public function test_get_password_change_info() {
+    public function test_get_password_change_info(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user(['auth' => 'oauth2']);
@@ -88,5 +88,16 @@ class auth_test extends \advanced_testcase {
         // Make sure the extra record is in the user_loggedin event.
         $extrauserinfo = $event->other['extrauserinfo'];
         $this->assertEquals($info, $extrauserinfo);
+    }
+
+    /**
+     *  Test case for checking the email greetings in the password change information email.
+     */
+    public function test_email_greetings(): void {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user(['auth' => 'oauth2']);
+        $auth = get_auth_plugin($user->auth);
+        $info = $auth->get_password_change_info($user);
+        $this->assertStringContainsString('Hi ' . $user->firstname, quoted_printable_decode($info['message']));
     }
 }

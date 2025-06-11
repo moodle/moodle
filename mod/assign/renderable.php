@@ -69,6 +69,8 @@ class assign_gradingmessage implements renderable {
     public $coursemoduleid = 0;
     /** @var int $gradingerror should be set true if there was a problem grading */
     public $gradingerror = null;
+    /** @var int the grading page. */
+    public $page;
 
     /**
      * Constructor
@@ -293,6 +295,8 @@ class assign_feedback_status implements renderable {
     public $canviewfullnames = false;
     /** @var string gradingcontrollergrade The grade information rendered by a grade controller */
     public $gradingcontrollergrade;
+    /** @var array information for the given plugins. */
+    public $plugins = [];
 
     /**
      * Constructor
@@ -424,6 +428,8 @@ class assign_attempt_history_chooser implements renderable, templatable {
     public $coursemoduleid = 0;
     /** @var int userid - The current userid */
     public $userid = 0;
+    /** @var int submission count */
+    public $submissioncount;
 
     /**
      * Constructor
@@ -593,7 +599,7 @@ class assign_grading_summary implements renderable {
                                 $coursestartdate,
                                 $cangrade = true,
                                 $isvisible = true,
-                                cm_info $cm = null) {
+                                ?cm_info $cm = null) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;
@@ -728,10 +734,7 @@ class assign_files implements renderable {
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
             }
-
         }
-
-        $this->preprocess($this->dir, $filearea, $component);
     }
 
     /**
@@ -740,49 +743,40 @@ class assign_files implements renderable {
      * @param array $dir
      * @param string $filearea
      * @param string $component
-     * @return void
+     * @deprecated since Moodle 4.3
      */
     public function preprocess($dir, $filearea, $component) {
-        global $CFG;
+        // Nothing to do here any more.
+        debugging('The preprocess method has been deprecated since Moodle 4.3.', DEBUG_DEVELOPER);
+    }
 
-        foreach ($dir['subdirs'] as $subdir) {
-            $this->preprocess($subdir, $filearea, $component);
-        }
-        foreach ($dir['files'] as $file) {
-            $file->portfoliobutton = '';
+    /**
+     * Get the modified time of the specified file.
+     * @param stored_file $file
+     * @return string
+     */
+    public function get_modified_time(stored_file $file): string {
+        return userdate(
+            $file->get_timemodified(),
+            get_string('strftimedatetime', 'langconfig'),
+        );
+    }
 
-            $file->timemodified = userdate(
-                $file->get_timemodified(),
-                get_string('strftimedatetime', 'langconfig')
-            );
-
-            if (!empty($CFG->enableportfolios)) {
-                require_once($CFG->libdir . '/portfoliolib.php');
-                $button = new portfolio_add_button();
-                if (has_capability('mod/assign:exportownsubmission', $this->context)) {
-                    $portfolioparams = array('cmid' => $this->cm->id, 'fileid' => $file->get_id());
-                    $button->set_callback_options('assign_portfolio_caller',
-                                                  $portfolioparams,
-                                                  'mod_assign');
-                    $button->set_format_by_file($file);
-                    $file->portfoliobutton = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
-                }
-            }
-            $path = '/' .
-                    $this->context->id .
-                    '/' .
-                    $component .
-                    '/' .
-                    $filearea .
-                    '/' .
-                    $file->get_itemid() .
-                    $file->get_filepath() .
-                    $file->get_filename();
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", $path, true);
-            $filename = $file->get_filename();
-            $file->fileurl = html_writer::link($url, $filename, [
-                    'target' => '_blank',
-                ]);
-        }
+    /**
+     * Get the URL used to view the file.
+     *
+     * @param stored_file
+     * @return moodle_url
+     */
+    public function get_file_url(stored_file $file): moodle_url {
+        return \moodle_url::make_pluginfile_url(
+            $this->context->id,
+            $file->get_component(),
+            $file->get_filearea(),
+            $file->get_itemid(),
+            $file->get_filepath(),
+            $file->get_filename(),
+            true,
+        );
     }
 }

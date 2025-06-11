@@ -278,6 +278,11 @@ class core_upgrade_time {
 function upgrade_set_timeout($max_execution_time=300) {
     global $CFG;
 
+    // Support outageless upgrades.
+    if (defined('CLI_UPGRADE_RUNNING') && CLI_UPGRADE_RUNNING) {
+        return;
+    }
+
     if (!isset($CFG->upgraderunning) or $CFG->upgraderunning < time()) {
         $upgraderunning = get_config(null, 'upgraderunning');
     } else {
@@ -368,43 +373,12 @@ function upgrade_main_savepoint($result, $version, $allowabort=true) {
  *
  * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
- * @param string or float $version main version
+ * @param string|float $version main version
  * @param string $modname name of module
  * @param bool $allowabort allow user to abort script execution here
- * @return void
  */
 function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
-    global $DB;
-
-    $component = 'mod_'.$modname;
-
-    if (!$result) {
-        throw new upgrade_exception($component, $version);
-    }
-
-    $dbversion = $DB->get_field('config_plugins', 'value', array('plugin'=>$component, 'name'=>'version'));
-
-    if (!$module = $DB->get_record('modules', array('name'=>$modname))) {
-        throw new \moodle_exception('modulenotexist', 'debug', '', $modname);
-    }
-
-    if ($dbversion >= $version) {
-        // something really wrong is going on in upgrade script
-        throw new downgrade_exception($component, $dbversion, $version);
-    }
-    set_config('version', $version, $component);
-
-    upgrade_log(UPGRADE_LOG_NORMAL, $component, 'Upgrade savepoint reached');
-
-    // reset upgrade timeout to default
-    upgrade_set_timeout();
-
-    core_upgrade_time::record_savepoint($version);
-
-    // this is a safe place to stop upgrades if user aborts page loading
-    if ($allowabort and connection_aborted()) {
-        die;
-    }
+    upgrade_plugin_savepoint($result, $version, 'mod', $modname, $allowabort);
 }
 
 /**
@@ -414,57 +388,25 @@ function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
  *
  * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
- * @param string or float $version main version
+ * @param string|float $version main version
  * @param string $blockname name of block
  * @param bool $allowabort allow user to abort script execution here
- * @return void
  */
 function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true) {
-    global $DB;
-
-    $component = 'block_'.$blockname;
-
-    if (!$result) {
-        throw new upgrade_exception($component, $version);
-    }
-
-    $dbversion = $DB->get_field('config_plugins', 'value', array('plugin'=>$component, 'name'=>'version'));
-
-    if (!$block = $DB->get_record('block', array('name'=>$blockname))) {
-        throw new \moodle_exception('blocknotexist', 'debug', '', $blockname);
-    }
-
-    if ($dbversion >= $version) {
-        // something really wrong is going on in upgrade script
-        throw new downgrade_exception($component, $dbversion, $version);
-    }
-    set_config('version', $version, $component);
-
-    upgrade_log(UPGRADE_LOG_NORMAL, $component, 'Upgrade savepoint reached');
-
-    // reset upgrade timeout to default
-    upgrade_set_timeout();
-
-    core_upgrade_time::record_savepoint($version);
-
-    // this is a safe place to stop upgrades if user aborts page loading
-    if ($allowabort and connection_aborted()) {
-        die;
-    }
+    upgrade_plugin_savepoint($result, $version, 'block', $blockname, $allowabort);
 }
 
 /**
- * Plugins upgrade savepoint, marks end of blocks upgrade blocks
+ * Plugins upgrade savepoint, marks end of plugin upgrade blocks
  * It stores plugin version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
  * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
- * @param string or float $version main version
+ * @param string|float $version main version
  * @param string $type The type of the plugin.
  * @param string $plugin The name of the plugin.
  * @param bool $allowabort allow user to abort script execution here
- * @return void
  */
 function upgrade_plugin_savepoint($result, $version, $type, $plugin, $allowabort=true) {
     global $DB;
@@ -473,6 +415,11 @@ function upgrade_plugin_savepoint($result, $version, $type, $plugin, $allowabort
 
     if (!$result) {
         throw new upgrade_exception($component, $version);
+    }
+
+    // Ensure we're dealing with a real component.
+    if (core_component::get_component_directory($component) === null) {
+        throw new moodle_exception('pluginnotexist', 'error', '', $component);
     }
 
     $dbversion = $DB->get_field('config_plugins', 'value', array('plugin'=>$component, 'name'=>'version'));
@@ -508,6 +455,33 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
+        // Removed in 4.5.
+        '/backup/util/ui/classes/copy/copy.php',
+        '/backup/util/ui/yui/build/moodle-backup-backupselectall/moodle-backup-backupselectall.js',
+        '/cache/classes/interfaces.php',
+        '/cache/disabledlib.php',
+        '/cache/lib.php',
+        // Removed in 4.4.
+        '/README.txt',
+        '/lib/dataformatlib.php',
+        '/lib/horde/readme_moodle.txt',
+        '/lib/yui/src/formchangechecker/js/formchangechecker.js',
+        '/mod/forum/pix/monologo.png',
+        '/question/tests/behat/behat_question.php',
+        // Removed in 4.3.
+        '/badges/ajax.php',
+        '/course/editdefaultcompletion.php',
+        '/grade/amd/src/searchwidget/group.js',
+        '/lib/behat/extension/Moodle/BehatExtension/Locator/FilesystemSkipPassedListLocator.php',
+        '/lib/classes/task/legacy_plugin_cron_task.php',
+        '/mod/lti/ajax.php',
+        '/pix/f/archive.png',
+        '/user/repository.php',
+        // Removed in 4.2.
+        '/admin/auth_config.php',
+        '/auth/yui/passwordunmask/passwordunmask.js',
+        '/lib/spout/readme_moodle.txt',
+        '/lib/yui/src/tooltip/js/tooltip.js',
         // Removed in 4.1.
         '/mod/forum/classes/task/refresh_forum_post_counts.php',
         '/user/amd/build/participantsfilter.min.js',
@@ -1156,7 +1130,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 /**
  * Log_display description function used during install and upgrade.
  *
- * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @param string $component name of component (moodle, etc.)
  * @return void
  */
 function log_update_descriptions($component) {
@@ -1213,7 +1187,7 @@ function log_update_descriptions($component) {
 
 /**
  * Web service discovery function used during install and upgrade.
- * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @param string $component name of component (moodle, etc.)
  * @return void
  */
 function external_update_descriptions($component) {
@@ -1222,8 +1196,7 @@ function external_update_descriptions($component) {
     $defpath = core_component::get_component_directory($component).'/db/services.php';
 
     if (!file_exists($defpath)) {
-        require_once($CFG->dirroot.'/lib/externallib.php');
-        external_delete_descriptions($component);
+        \core_external\util::delete_service_descriptions($component);
         return;
     }
 
@@ -1278,7 +1251,9 @@ function external_update_descriptions($component) {
 
         if ($dbfunction->services != $functionservices) {
             // Now, we need to check if services were removed, in that case we need to remove the function from them.
-            $servicesremoved = array_diff(explode(",", $dbfunction->services), explode(",", $functionservices));
+            $oldservices = $dbfunction->services ? explode(',', $dbfunction->services) : [];
+            $newservices = $functionservices ? explode(',', $functionservices) : [];
+            $servicesremoved = array_diff($oldservices, $newservices);
             foreach ($servicesremoved as $removedshortname) {
                 if ($externalserviceid = $DB->get_field('external_services', 'id', array("shortname" => $removedshortname))) {
                     $DB->delete_records('external_services_functions', array('functionname' => $dbfunction->name,
@@ -1585,7 +1560,10 @@ function upgrade_started($preinstall=false) {
         ignore_user_abort(true);
         core_shutdown_manager::register_function('upgrade_finished_handler');
         upgrade_setup_debug(true);
-        set_config('upgraderunning', time()+300);
+        // Support no-maintenance upgrades.
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            set_config('upgraderunning', time() + 300);
+        }
         $started = true;
     }
 }
@@ -1869,9 +1847,11 @@ function upgrade_core($version, $verbose) {
     require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
 
     try {
-        // Reset caches before any output.
-        cache_helper::purge_all(true);
-        purge_all_caches();
+        // If we are in maintenance, we can purge all our caches here.
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            purge_all_caches();
+        }
 
         // Upgrade current language pack if we can
         upgrade_language_pack();
@@ -1906,10 +1886,12 @@ function upgrade_core($version, $verbose) {
         core_upgrade_time::record_detail('cache_helper::update_definitions');
 
         // Purge caches again, just to be sure we arn't holding onto old stuff now.
-        cache_helper::purge_all(true);
-        core_upgrade_time::record_detail('cache_helper::purge_all');
-        purge_all_caches();
-        core_upgrade_time::record_detail('purge_all_caches');
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            core_upgrade_time::record_detail('cache_helper::purge_all');
+            purge_all_caches();
+            core_upgrade_time::record_detail('purge_all_caches');
+        }
 
         // Clean up contexts - more and more stuff depends on existence of paths and contexts
         context_helper::cleanup_instances();
@@ -1943,9 +1925,11 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
-        // Reset caches before any output.
-        cache_helper::purge_all(true);
-        purge_all_caches();
+        // Reset caches before any output, unless we are not in maintenance.
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            purge_all_caches();
+        }
 
         $plugintypes = core_component::get_plugin_types();
         upgrade_started();
@@ -1969,12 +1953,20 @@ function upgrade_noncore($verbose) {
         // Mark the site as upgraded.
         set_config('allversionshash', core_component::get_all_versions_hash());
         core_upgrade_time::record_detail('core_component::get_all_versions_hash');
+        set_config('allcomponenthash', core_component::get_all_component_hash());
+        core_upgrade_time::record_detail('core_component::get_all_component_hash');
+
+        // Prompt admin to register site. Reminder flow handles sites already registered, so admin won't be prompted if registered.
+        // Defining for non-core upgrades also covers core upgrades.
+        set_config('registrationpending', true);
 
         // Purge caches again, just to be sure we arn't holding onto old stuff now.
-        cache_helper::purge_all(true);
-        core_upgrade_time::record_detail('cache_helper::purge_all');
-        purge_all_caches();
-        core_upgrade_time::record_detail('purge_all_caches');
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            core_upgrade_time::record_detail('cache_helper::purge_all');
+            purge_all_caches();
+            core_upgrade_time::record_detail('purge_all_caches');
+        }
 
         // Only display the final 'Success' if we also showed the heading.
         core_upgrade_time::record_end($CFG->debugdeveloper);
@@ -2525,7 +2517,7 @@ function check_igbinary322_version(environment_results $result) {
 }
 
 /**
- * This function checks that the database prefix ($CFG->prefix) is <= 10
+ * This function checks that the database prefix ($CFG->prefix) is <= xmldb_table::PREFIX_MAX_LENGTH
  *
  * @param environment_results $result
  * @return environment_results|null updated results object, or null if the prefix check is passing ok.
@@ -2533,9 +2525,10 @@ function check_igbinary322_version(environment_results $result) {
 function check_db_prefix_length(environment_results $result) {
     global $CFG;
 
+    require_once($CFG->libdir.'/ddllib.php');
     $prefixlen = strlen($CFG->prefix) ?? 0;
-    if ($prefixlen > 10) {
-        $parameters = (object)['current' => $prefixlen, 'maximum' => 10];
+    if ($prefixlen > xmldb_table::PREFIX_MAX_LENGTH) {
+        $parameters = (object)['current' => $prefixlen, 'maximum' => xmldb_table::PREFIX_MAX_LENGTH];
         $result->setFeedbackStr(['dbprefixtoolong', 'admin', $parameters]);
         $result->setInfo('db prefix too long');
         $result->setStatus(false);
@@ -2562,6 +2555,9 @@ function check_upgrade_key($upgradekeyhash) {
         if ($upgradekeyhash === null or $upgradekeyhash !== sha1($CFG->config_php_settings['upgradekey'])) {
             if (!$PAGE->headerprinted) {
                 $PAGE->set_title(get_string('upgradekeyreq', 'admin'));
+                $PAGE->requires->js_call_amd('core/togglesensitive', 'init', ['upgradekey']);
+
+                /** @var core_admin_renderer $output */
                 $output = $PAGE->get_renderer('core', 'admin');
                 echo $output->upgradekey_form_page(new moodle_url('/admin/index.php', array('cache' => 0)));
                 die();
@@ -2817,19 +2813,62 @@ function check_xmlrpc_usage(environment_results $result): ?environment_results {
  * @return environment_results|null
  */
 function check_mod_assignment(environment_results $result): ?environment_results {
-    global $DB, $CFG;
+    global $CFG, $DB;
 
-    // Check the number of records.
-    if ($DB->get_manager()->table_exists('assignment') && $DB->count_records('assignment') > 0) {
-        $result->setInfo('Assignment 2.2 is in use');
-        $result->setFeedbackStr('modassignmentinuse');
+    if (!file_exists("{$CFG->dirroot}/mod/assignment/version.php")) {
+        // Check for mod_assignment instances.
+        if ($DB->get_manager()->table_exists('assignment') && $DB->count_records('assignment') > 0) {
+            $result->setInfo('Assignment 2.2 is in use');
+            $result->setFeedbackStr('modassignmentinuse');
+            return $result;
+        }
+
+        // Check for mod_assignment subplugins.
+        if (is_dir($CFG->dirroot . '/mod/assignment/type')) {
+            $result->setInfo('Assignment 2.2 subplugins present');
+            $result->setFeedbackStr('modassignmentsubpluginsexist');
+            return $result;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Check whether the Oracle database is currently being used and warn if so.
+ *
+ * The Oracle database support will be removed in a future version (4.5) as it is no longer supported by PHP.
+ *
+ * @param environment_results $result object to update, if relevant
+ * @return environment_results|null updated results or null if the current database is not Oracle.
+ *
+ * @see https://tracker.moodle.org/browse/MDL-80166 for further information.
+ */
+function check_oracle_usage(environment_results $result): ?environment_results {
+    global $CFG;
+
+    // Checking database type.
+    if ($CFG->dbtype === 'oci') {
+        $result->setInfo('oracle_database_usage');
+        $result->setFeedbackStr('oracledatabaseinuse');
         return $result;
     }
 
-    // Check for mod_assignment subplugins.
-    if (is_dir($CFG->dirroot . '/mod/assignment/type')) {
-        $result->setInfo('Assignment 2.2 subplugins present');
-        $result->setFeedbackStr('modassignmentsubpluginsexist');
+    return null;
+}
+
+/**
+ * Check if asynchronous backups are enabled.
+ *
+ * @param environment_results $result
+ * @return environment_results|null
+ */
+function check_async_backup(environment_results $result): ?environment_results {
+    global $CFG;
+
+    if (!during_initial_install() && empty($CFG->enableasyncbackup)) { // Have to use $CFG as config table may not be available.
+        $result->setInfo('Asynchronous backups disabled');
+        $result->setFeedbackStr('asyncbackupdisabled');
         return $result;
     }
 

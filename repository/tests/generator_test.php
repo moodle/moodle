@@ -35,14 +35,14 @@ use repository_exception;
  * @copyright 2013 Frédéric Massart
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /**
      * Basic test of creation of repository types.
      *
      * @return void
      */
-    public function test_create_type() {
+    public function test_create_type(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -83,7 +83,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_create_type_custom_options() {
+    public function test_create_type_custom_options(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -153,7 +153,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest(true);
 

@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 /** @var stdClass $plugin */
-$plugin->version      = 2023100400;
-$plugin->requires     = 2016120500;
+$plugin->version      = 2025011000;
+$plugin->requires     = 2024042200;
 $plugin->component    = 'tool_s3_fs';
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->dependencies = ['local_aws_sdk' => ANY_VERSION];

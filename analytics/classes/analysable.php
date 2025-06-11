@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Any element analysers can analyse.
- *
- * @package   core_analytics
- * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_analytics;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Any element analysers can analyse.
@@ -37,9 +27,8 @@ interface analysable {
 
     /**
      * Max timestamp.
-     * We are limited by both PHP's max int value and DB (cross-db) max int allowed. Use the smallest one.
      */
-    const MAX_TIME = PHP_INT_MAX < 9999999999 ? PHP_MAX_INT : 9999999999;
+    const MAX_TIME = SQL_INT_MAX;
 
     /**
      * The analysable unique identifier in the site.

@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/availability
+
+    Displays the availability contents with excerpt version if needed.
+
+    Example context (json):
+    {
+        "text": "Not available unless: <ul><li>It is on or after <strong>8 June 2012</strong></li><li>You achieve higher than a certain score in <strong>Course total</strong></li></ul>",
+        "excerpt": "Not available unless: It is on or after <strong>8 June 2012</strong>",
+        "editing": true,
+        "editurl": "/course/editsection.php?id=81&showonly=availabilityconditions"
+    }
+}}
+{{^excerpt}}
+    <div{{#editing}} class="mt-2"{{/editing}}>
+        {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+    </div>
+{{/excerpt}}
+{{#excerpt}}
+    {{< core/showmore }}
+        {{$collapsedcontent}}
+            {{#pix}}t/unlock, core{{/pix}} <span class="availability-excerpt"> {{{excerpt}}} ... </span>
+        {{/collapsedcontent}}
+        {{$expandedcontent}}
+            {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+        {{/expandedcontent}}
+        {{$buttonextraclasses}}font-weight-bold{{/buttonextraclasses}}
+        {{$collapsedextraclasses}}text-truncate pe-2 {{#editing}}mt-2{{/editing}}{{/collapsedextraclasses}}
+        {{$expandedextraclasses}}
+            {{^editing}}py-2{{/editing}}
+            {{#editing}}mt-2 pb-2{{/editing}}
+        {{/expandedextraclasses}}
+    {{/core/showmore }}
+{{/excerpt}}
+{{#editing}}
+    {{#editurl}}
+        <div class="editavailability border-top mt-2 py-2">
+            <a href="{{editurl}}" class="btn btn-sm py-0">{{#pix}} i/edit, core {{/pix}}{{#str}}editsettings, availability{{/str}}</a>
+        </div>
+    {{/editurl}}
+{{/editing}}

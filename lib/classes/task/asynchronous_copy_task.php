@@ -26,13 +26,13 @@
 namespace core\task;
 
 use async_helper;
+use cache_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
-require_once($CFG->libdir . '/externallib.php');
 
 /**
  * Adhoc task that performs asynchronous course copies.
@@ -207,6 +207,9 @@ class asynchronous_copy_task extends adhoc_task {
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backupbasepath);
         }
+
+        rebuild_course_cache($restorerecord->itemid, true);
+        cache_helper::purge_by_event('changesincourse');
 
         $duration = time() - $started;
         mtrace('Course copy: Copy completed in: ' . $duration . ' seconds');

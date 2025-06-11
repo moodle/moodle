@@ -28,12 +28,13 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
  * @copyright  2021 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_cleanup_task_test extends \advanced_testcase {
+final class backup_cleanup_task_test extends \advanced_testcase {
 
     /**
      * Set up tasks for all tests.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
@@ -62,7 +63,7 @@ class backup_cleanup_task_test extends \advanced_testcase {
     /**
      * Test the task idle run. Nothing should explode.
      */
-    public function test_backup_cleanup_task_idle() {
+    public function test_backup_cleanup_task_idle(): void {
         $task = new \core\task\backup_cleanup_task();
         $task->execute();
     }
@@ -70,7 +71,7 @@ class backup_cleanup_task_test extends \advanced_testcase {
     /**
      * Test the task exits when backup | loglifetime setting is not set.
      */
-    public function test_backup_cleanup_task_exits() {
+    public function test_backup_cleanup_task_exits(): void {
         set_config('loglifetime', 0, 'backup');
         $task = new \core\task\backup_cleanup_task();
         ob_start();
@@ -83,7 +84,7 @@ class backup_cleanup_task_test extends \advanced_testcase {
     /**
      * Test the task deletes records from DB.
      */
-    public function test_backup_cleanup_task_deletes_records() {
+    public function test_backup_cleanup_task_deletes_records(): void {
         global $DB;
 
         // Create a course.
@@ -115,7 +116,7 @@ class backup_cleanup_task_test extends \advanced_testcase {
     /**
      * Test the task deletes files from file system.
      */
-    public function test_backup_cleanup_task_deletes_files() {
+    public function test_backup_cleanup_task_deletes_files(): void {
         global $CFG;
 
         // Create a course.

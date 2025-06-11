@@ -44,7 +44,7 @@ abstract class restore_ui_stage extends base_ui_stage {
      * @param restore_ui $ui
      * @param array $params
      */
-    public function __construct(restore_ui $ui, array $params = null) {
+    public function __construct(restore_ui $ui, ?array $params = null) {
         $this->ui = $ui;
         $this->params = $params;
     }
@@ -463,7 +463,12 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
             'filepath' => $this->filepath,
             'contextid' => $this->contextid,
             'stage' => restore_ui::STAGE_DESTINATION));
-        $this->coursesearch = new restore_course_search(array('url' => $url), context::instance_by_id($contextid)->instanceid);
+        // The context level can be course category, course or module. We need to make sure that we always use correct one.
+        $context = context::instance_by_id($contextid);
+        if ($context->contextlevel != CONTEXT_COURSE && $coursecontext = $context->get_course_context(false)) {
+            $context = $coursecontext;
+        }
+        $this->coursesearch = new restore_course_search(array('url' => $url), $context->instanceid);
         $this->categorysearch = new restore_category_search(array('url' => $url));
     }
 
@@ -596,7 +601,7 @@ class restore_ui_stage_settings extends restore_ui_stage {
      * @param restore_ui $ui
      * @param array $params
      */
-    public function __construct(restore_ui $ui, array $params = null) {
+    public function __construct(restore_ui $ui, ?array $params = null) {
         $this->stage = restore_ui::STAGE_SETTINGS;
         parent::__construct($ui, $params);
     }
@@ -607,7 +612,7 @@ class restore_ui_stage_settings extends restore_ui_stage {
      * @param base_moodleform $form
      * @return bool|int
      */
-    public function process(base_moodleform $form = null) {
+    public function process(?base_moodleform $form = null) {
         $form = $this->initialise_stage_form();
 
         if ($form->is_cancelled()) {
@@ -708,7 +713,7 @@ class restore_ui_stage_schema extends restore_ui_stage {
      * @param restore_ui $ui
      * @param array $params
      */
-    public function __construct(restore_ui $ui, array $params = null) {
+    public function __construct(restore_ui $ui, ?array $params = null) {
         $this->stage = restore_ui::STAGE_SCHEMA;
         parent::__construct($ui, $params);
     }
@@ -719,7 +724,7 @@ class restore_ui_stage_schema extends restore_ui_stage {
      * @param base_moodleform $form
      * @return int The number of changes the user made
      */
-    public function process(base_moodleform $form = null) {
+    public function process(?base_moodleform $form = null) {
         $form = $this->initialise_stage_form();
         // Check it wasn't cancelled.
         if ($form->is_cancelled()) {
@@ -856,7 +861,7 @@ class restore_ui_stage_review extends restore_ui_stage {
      * @param restore_ui $ui
      * @param array $params
      */
-    public function __construct($ui, array $params = null) {
+    public function __construct($ui, ?array $params = null) {
         $this->stage = restore_ui::STAGE_REVIEW;
         parent::__construct($ui, $params);
     }
@@ -867,7 +872,7 @@ class restore_ui_stage_review extends restore_ui_stage {
      * @param base_moodleform $form
      * @return int The number of changes the user made
      */
-    public function process(base_moodleform $form = null) {
+    public function process(?base_moodleform $form = null) {
         $form = $this->initialise_stage_form();
         // Check it hasn't been cancelled.
         if ($form->is_cancelled()) {
@@ -963,7 +968,7 @@ class restore_ui_stage_process extends restore_ui_stage {
      * @param base_ui $ui
      * @param array $params
      */
-    public function __construct(base_ui $ui, array $params = null) {
+    public function __construct(base_ui $ui, ?array $params = null) {
         $this->stage = restore_ui::STAGE_PROCESS;
         parent::__construct($ui, $params);
     }
@@ -977,7 +982,7 @@ class restore_ui_stage_process extends restore_ui_stage {
      *
      * @param base_moodleform $form
      */
-    public function process(base_moodleform $form = null) {
+    public function process(?base_moodleform $form = null) {
         if (optional_param('cancel', false, PARAM_BOOL)) {
             redirect(new moodle_url('/course/view.php', array('id' => $this->get_ui()->get_controller()->get_courseid())));
         }
@@ -1124,7 +1129,7 @@ class restore_ui_stage_complete extends restore_ui_stage_process {
      * @param array $params
      * @param array $results
      */
-    public function __construct(restore_ui $ui, array $params = null, array $results = null) {
+    public function __construct(restore_ui $ui, ?array $params = null, ?array $results = null) {
         $this->results = $results;
         parent::__construct($ui, $params);
         $this->stage = restore_ui::STAGE_COMPLETE;

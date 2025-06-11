@@ -111,7 +111,6 @@ if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 
         $grade->feedback  = '';
     } else {
         $options = new stdClass();
-        $options->smiley  = false;
         $options->filter  = false;
         $options->noclean = false;
         $options->para    = false;
@@ -169,7 +168,7 @@ if ($mform->is_cancelled()) {
 
     if (isset($data->feedback) && is_array($data->feedback)) {
         $data->feedbackformat = $data->feedback['format'];
-        $data->feedback = $data->feedback['text'];
+        $data->feedback = $data->feedback['text'] ?? null;
     }
 
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet

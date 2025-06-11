@@ -97,28 +97,28 @@ if ($onlycli === false) {
 switch ($action) {
 
     case 'enable':
-        confirm_sesskey();
+        require_sesskey();
 
         $model->enable();
         redirect($returnurl);
         break;
 
     case 'disable':
-        confirm_sesskey();
+        require_sesskey();
 
         $model->update(0, false, false);
         redirect($returnurl);
         break;
 
     case 'delete':
-        confirm_sesskey();
+        require_sesskey();
 
         $model->delete();
         redirect($returnurl);
         break;
 
     case 'edit':
-        confirm_sesskey();
+        require_sesskey();
 
         $invalidcurrenttimesplitting = $model->invalid_timesplitting_selected();
         $potentialtimesplittings = $model->get_potential_timesplittings();
@@ -183,7 +183,7 @@ switch ($action) {
         break;
 
     case 'evaluate':
-        confirm_sesskey();
+        require_sesskey();
 
         if ($model->is_static()) {
             throw new moodle_exception('errornostaticevaluate', 'tool_analytics');
@@ -226,7 +226,7 @@ switch ($action) {
         break;
 
     case 'scheduledanalysis':
-        confirm_sesskey();
+        require_sesskey();
 
         if ($onlycli) {
             throw new moodle_exception('erroronlycli', 'tool_analytics');
@@ -292,7 +292,7 @@ switch ($action) {
         break;
 
     case 'clear':
-        confirm_sesskey();
+        require_sesskey();
 
         $model->clear();
         redirect($returnurl);

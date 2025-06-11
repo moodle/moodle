@@ -24,12 +24,12 @@ namespace tool_moodlenet;
  * @copyright  2020 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class import_backup_helper_test extends \advanced_testcase {
+final class import_backup_helper_test extends \advanced_testcase {
 
     /**
      * Test that the first available context with the capability to upload backup files is returned.
      */
-    public function test_get_context_for_user() {
+    public function test_get_context_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();

@@ -877,7 +877,9 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             case 'me':
                 $outinfo = $message->strtime;
                 $text = '*** <b>'.$sender->firstname.' '.substr($rawtext, 4).'</b>';
-                $outmain = format_text($text, FORMAT_MOODLE, $options, $courseid);
+                $outmain = format_text($text, FORMAT_MOODLE, array_merge((array) $options, [
+                    'context' => \core\context\course::instance($courseid),
+                ]));
                 break;
             default:
                 // Error, we set special back to false to use the classic message output.
@@ -889,7 +891,9 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $matches = array();
         preg_match($patternto, $rawtext, $matches);
         if (isset($matches[1]) && isset($matches[2])) {
-            $text = format_text($matches[2], FORMAT_MOODLE, $options, $courseid);
+            $text = format_text($matches[2], FORMAT_MOODLE, array_merge((array) $options, [
+                'context' => \core\context\course::instance($courseid),
+            ]));
             $outinfo = $message->strtime;
             $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$text;
         } else {
@@ -899,7 +903,9 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     }
 
     if (!$special) {
-        $text = format_text($rawtext, FORMAT_MOODLE, $options, $courseid);
+        $text = format_text($rawtext, FORMAT_MOODLE, array_merge((array) $options, [
+            'context' => \core\context\course::instance($courseid),
+        ]));
         $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
@@ -1019,9 +1025,10 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     // It cannot be called here as HTML-isation interferes with special case
     // recognition, but *must* be called on any user-sourced text to be inserted
     // into $outmain.
-    $options = new stdClass();
-    $options->para = false;
-    $options->blanktarget = true;
+    $options = [
+        'para' => false,
+        'blanktarget' => true,
+    ];
 
     // And now check for special cases.
     $special = false;
@@ -1064,7 +1071,9 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
         switch ($command) {
             case 'me':
                 $text = '*** <b>'.$sender->firstname.' '.substr($rawtext, 4).'</b>';
-                $outmain = format_text($text, FORMAT_MOODLE, $options, $courseid);
+                $outmain = format_text($text, FORMAT_MOODLE, array_merge($options, [
+                    'context' => \core\context\course::instance($courseid),
+                ]));
                 break;
             default:
                 // Error, we set special back to false to use the classic message output.
@@ -1077,7 +1086,9 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
         $matches = array();
         preg_match($patternto, $rawtext, $matches);
         if (isset($matches[1]) && isset($matches[2])) {
-            $text = format_text($matches[2], FORMAT_MOODLE, $options, $courseid);
+            $text = format_text($matches[2], FORMAT_MOODLE, array_merge($options, [
+                'context' => \core\context\course::instance($courseid),
+            ]));
             $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$text;
         } else {
             // Error, we set special back to false to use the classic message output.
@@ -1086,7 +1097,9 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     }
 
     if (!$special) {
-        $text = format_text($rawtext, FORMAT_MOODLE, $options, $courseid);
+        $text = format_text($rawtext, FORMAT_MOODLE, array_merge($options, [
+            'context' => \core\context\course::instance($courseid),
+        ]));
         $outmain = $text;
     }
 
@@ -1191,10 +1204,11 @@ function chat_print_overview() {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the chat.
  *
- * @param object $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function chat_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'chatheader', get_string('modulenameplural', 'chat'));
+    $mform->addElement('static', 'chatdelete', get_string('delete'));
     $mform->addElement('advcheckbox', 'reset_chat', get_string('removemessages', 'chat'));
 }
 
@@ -1221,26 +1235,34 @@ function chat_reset_userdata($data) {
     global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'chat');
-    $status = array();
+    $status = [];
 
     if (!empty($data->reset_chat)) {
         $chatessql = "SELECT ch.id
                         FROM {chat} ch
                        WHERE ch.course=?";
-        $params = array($data->courseid);
+        $params = [$data->courseid];
 
         $DB->delete_records_select('chat_messages', "chatid IN ($chatessql)", $params);
         $DB->delete_records_select('chat_messages_current', "chatid IN ($chatessql)", $params);
         $DB->delete_records_select('chat_users', "chatid IN ($chatessql)", $params);
-        $status[] = array('component' => $componentstr, 'item' => get_string('removemessages', 'chat'), 'error' => false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('removemessages', 'chat'),
+            'error' => false,
+        ];
     }
 
     // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates('chat', array('chattime'), $data->timeshift, $data->courseid);
-        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+        shift_course_mod_dates('chat', ['chattime'], $data->timeshift, $data->courseid);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('date'),
+            'error' => false,
+        ];
     }
 
     return $status;

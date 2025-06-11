@@ -31,6 +31,10 @@ $string['addtocourse'] = 'Add to course';
 $string['addtogradebook'] = 'Add to gradebook';
 $string['allowframeembedding'] = 'Note: It is recommended that the site administration setting \'Allow frame embedding\' is enabled, so that tools are displayed within a frame rather than in a new window.';
 $string['authltimustbeenabled'] = 'Note: This plugin requires the LTI authentication plugin to be enabled too.';
+$string['cookiesarerequired'] = 'Cookies are blocked by your browser';
+$string['cookiesarerequiredinfo'] = 'This tool can\'t be launched because your browser seems to be blocking third-party cookies.
+<br><br>
+To use this tool, try changing your browser cookie settings or using a different browser.';
 $string['copiedtoclipboard'] = '{$a} copied to clipboard';
 $string['copytoclipboard'] = 'Copy to clipboard';
 $string['couldnotestablishproxy'] = 'Could not establish proxy with consumer.';

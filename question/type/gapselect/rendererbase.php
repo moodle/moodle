@@ -106,7 +106,7 @@ abstract class qtype_elements_embedded_in_question_text_renderer
         return str_replace(':', '_', $qa->get_qt_field_name(''));
     }
 
-    protected abstract function embedded_element(question_attempt $qa, $place,
+    abstract protected function embedded_element(question_attempt $qa, $place,
             question_display_options $options);
 
     protected function post_qtext_elements(question_attempt $qa,

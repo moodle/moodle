@@ -19,13 +19,11 @@
  *
  * @package   local_redislock
  * @author    Sam Chaffee
- * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_redislock\lock;
-
-defined('MOODLE_INTERNAL') || die();
 
 use core\lock\lock_factory;
 use core\lock\lock;
@@ -36,7 +34,7 @@ use local_redislock\api\shared_redis_connection;
  *
  * @package   local_redislock
  * @author    Sam Chaffee
- * @copyright Copyright (c) 2015 Blackboard Inc. (http://www.blackboard.com)
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -102,10 +100,10 @@ class redis_lock_factory implements lock_factory {
             $this->shareconnection = false;
         }
         if (is_null($logging)) {
+            // Logging enabled only for CLI, web gets damaged by lock logs.
+            $logging = (CLI_SCRIPT && debugging() && !PHPUNIT_TEST);
             if (isset($CFG->local_redislock_logging)) {
-                $logging = (bool) $CFG->local_redislock_logging;
-            } else {
-                $logging = (CLI_SCRIPT && debugging() && !PHPUNIT_TEST);
+                $logging = $this->logging && ((bool) $CFG->local_redislock_logging);
             }
         }
         $this->redis   = $redis;
@@ -149,9 +147,12 @@ class redis_lock_factory implements lock_factory {
     /**
      * Supports recursion.
      *
+     * @deprecated since Moodle 3.10.
      * @return boolean True if attempting to get 2 locks on the same resource will "stack"
      */
     public function supports_recursion() {
+        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         return false;
     }
 
@@ -298,11 +299,14 @@ class redis_lock_factory implements lock_factory {
     /**
      * Extend the timeout on a held lock.
      *
+     * @deprecated since Moodle 3.10.
      * @param lock $lock lock obtained from this factory.
      * @param int  $maxlifetime new max time to hold the lock.
      * @return boolean True if the lock was extended.
      */
     public function extend_lock(lock $lock, $maxlifetime = 86400) {
+        debugging('The function extend_lock() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         return false;
     }
 
@@ -420,6 +424,6 @@ class redis_lock_factory implements lock_factory {
         return http_build_query(array(
             'hostname' => $this->get_hostname(),
             'processid' => getmypid(),
-        ), null, '&');
+        ), '', '&');
     }
 }

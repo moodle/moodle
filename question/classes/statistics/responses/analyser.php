@@ -41,7 +41,11 @@ class analyser {
      */
     const MAX_TRY_COUNTED = 5;
 
-    /** @var int No longer used. Previously the time after which statistics are automatically recomputed. */
+    /**
+     * @var int previously, the time after which statistics are automatically recomputed.
+     * @deprecated since Moodle 4.3. Use of pre-computed stats is no longer time-limited.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
+     */
     const TIME_TO_CACHE = 900; // 15 minutes.
 
     /** @var object full question data from db. */

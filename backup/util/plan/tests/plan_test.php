@@ -34,7 +34,7 @@ require_once(__DIR__.'/fixtures/plan_fixtures.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plan_test extends \advanced_testcase {
+final class plan_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -66,7 +66,7 @@ class plan_test extends \advanced_testcase {
     /**
      * test base_plan class
      */
-    function test_base_plan() {
+    function test_base_plan(): void {
 
         // Instantiate
         $bp = new \mock_base_plan('name');
@@ -81,7 +81,7 @@ class plan_test extends \advanced_testcase {
     /**
      * test backup_plan class
      */
-    function test_backup_plan() {
+    function test_backup_plan(): void {
 
         // We need one (non interactive) controller for instantiating plan
         $bc = new backup_controller(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
@@ -101,7 +101,7 @@ class plan_test extends \advanced_testcase {
     /**
      * wrong base_plan class tests
      */
-    function test_base_plan_wrong() {
+    function test_base_plan_wrong(): void {
 
         // We need one (non interactive) controller for instantiating plan
         $bc = new backup_controller(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
@@ -121,7 +121,7 @@ class plan_test extends \advanced_testcase {
     /**
      * wrong backup_plan class tests
      */
-    function test_backup_plan_wrong() {
+    function test_backup_plan_wrong(): void {
 
         // Try to pass one wrong controller
         try {

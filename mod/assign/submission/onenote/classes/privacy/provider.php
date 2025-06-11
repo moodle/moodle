@@ -29,13 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\metadata\provider as metadataprovider;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\metadata\provider as metadataprovider;
 use core_privacy\local\request\userlist;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\contextlist;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\contextlist;
 use local_onenote\api\base;
-use \mod_assign\privacy\assign_plugin_request_data;
+use mod_assign\privacy\assign_plugin_request_data;
 use mod_assign\privacy\assignsubmission_provider;
 use mod_assign\privacy\assignsubmission_user_provider;
 use mod_assign\privacy\useridlist;
@@ -57,11 +57,11 @@ class provider implements
      * @param  collection $collection A list of information to add to.
      * @return collection Return the collection after adding to it.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $detail = [
             'assignment' => 'privacy:metadata:assignmentid',
             'submission' => 'privacy:metadata:submissionpurpose',
-            'numfiles' => 'privacy:metadata:numfiles'
+            'numfiles' => 'privacy:metadata:numfiles',
         ];
         $collection->add_database_table('assignsubmission_onenote', $detail, 'privacy:metadata:tablepurpose');
         return $collection;

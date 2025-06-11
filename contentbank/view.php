@@ -37,8 +37,11 @@ $record = $DB->get_record('contentbank_content', ['id' => $id], '*', MUST_EXIST)
 $context = context::instance_by_id($record->contextid, MUST_EXIST);
 require_capability('moodle/contentbank:access', $context);
 
-$statusmsg = optional_param('statusmsg', '', PARAM_ALPHANUMEXT);
-$errormsg = optional_param('errormsg', '', PARAM_ALPHANUMEXT);
+// If notifications had been sent we don't pay attention to message parameter.
+if (empty($SESSION->notifications)) {
+    $statusmsg = optional_param('statusmsg', '', PARAM_ALPHANUMEXT);
+    $errormsg = optional_param('errormsg', '', PARAM_ALPHANUMEXT);
+}
 
 $returnurl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
 $plugin = core_plugin_manager::instance()->get_plugin_info($record->contenttype);
@@ -81,10 +84,10 @@ $PAGE->set_secondary_active_tab('contentbank');
 echo $OUTPUT->header();
 
 // If needed, display notifications.
-if ($errormsg !== '' && get_string_manager()->string_exists($errormsg, 'core_contentbank')) {
+if (!empty($errormsg) && get_string_manager()->string_exists($errormsg, 'core_contentbank')) {
     $errormsg = get_string($errormsg, 'core_contentbank');
     echo $OUTPUT->notification($errormsg);
-} else if ($statusmsg !== '' && get_string_manager()->string_exists($statusmsg, 'core_contentbank')) {
+} else if (!empty($statusmsg) && get_string_manager()->string_exists($statusmsg, 'core_contentbank')) {
     if ($statusmsg == 'contentvisibilitychanged') {
         switch ($content->get_visibility()) {
             case content::VISIBILITY_PUBLIC:

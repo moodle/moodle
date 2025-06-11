@@ -48,7 +48,7 @@ class scale_competency_incoursemodule_statistics_exporter extends exporter {
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
     protected static function define_related() {
-        return array('ratings' => '\\tool_cmcompetency\user_competency_coursemodule[]');
+        return ['ratings' => '\\tool_cmcompetency\user_competency_coursemodule[]'];
     }
 
     /**
@@ -57,17 +57,17 @@ class scale_competency_incoursemodule_statistics_exporter extends exporter {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'value' => array(
-                'type' => PARAM_INT
-            ),
-            'name' => array(
-                'type' => PARAM_RAW
-            ),
-            'color' => array(
-                'type' => PARAM_RAW
-            )
-        );
+        return [
+            'value' => [
+                'type' => PARAM_INT,
+            ],
+            'name' => [
+                'type' => PARAM_RAW,
+            ],
+            'color' => [
+                'type' => PARAM_RAW,
+            ],
+        ];
     }
 
     /**
@@ -76,11 +76,11 @@ class scale_competency_incoursemodule_statistics_exporter extends exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'nbratings' => array(
-                'type' => PARAM_INT
-            )
-        );
+        return [
+            'nbratings' => [
+                'type' => PARAM_INT,
+            ],
+        ];
     }
 
     /**

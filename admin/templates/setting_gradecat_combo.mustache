@@ -24,7 +24,6 @@
     * id - element id
     * options - list of options containing name, value and selected
     * forced - is it forced
-    * advanced - is it advanced
 
     Example context (json):
     {
@@ -33,14 +32,13 @@
         "options": [
             { "name": "Option name", "value": "Value", "selected": true }
         ],
-        "forced": true,
-        "advanced": true
+        "forced": true
     }
 }}
 {{!
     Setting configselect.
 }}
-<div class="form-group">
+<div class="mb-3">
     <select id="{{id}}" name="{{name}}[value]" class="form-select custom-select">
         {{#options}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
@@ -48,7 +46,5 @@
     </select>
     <input type="checkbox" id="{{id}}force" name="{{name}}[forced]" value="1" {{#forced}}checked{{/forced}}>
     <label for="{{id}}force">{{#str}}force{{/str}}</label>
-    <input type="checkbox" id="{{id}}adv" name="{{name}}[adv]" value="1" {{#advanced}}checked{{/advanced}}>
-    <label for="{{id}}adv">{{#str}}advanced{{/str}}</label>
 </div>
 

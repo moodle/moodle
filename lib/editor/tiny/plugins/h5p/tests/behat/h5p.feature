@@ -1,4 +1,4 @@
-@editor @editor_tiny @tiny_h5p @javascript @_file_upload
+@editor @editor_tiny @tiny_h5p @javascript
 Feature: Use the TinyMCE editor to upload an h5p package
     In order to work with h5p
     As a content creator
@@ -20,15 +20,12 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And the "displayh5p" filter is "on"
     And the following config values are set as admin:
       | allowedsources | https://moodle.h5p.com/content/[id] | filter_displayh5p |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript @external
   Scenario: TinyMCE can be used to embed an H5P activity
     Given I change window size to "large"
     And I am on the PageName1 "page activity editing" page logged in as admin
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I set the field "H5P URL or file upload" to "https://moodle.h5p.com/content/1290772960722742119"
     And I click on "Insert H5P content" "button" in the "Insert H5P content" "dialogue"
     When I click on "Save and display" "button"
@@ -38,13 +35,12 @@ Feature: Use the TinyMCE editor to upload an h5p package
 
   @javascript
   Scenario: TinyMCE can be used to upload and embed an H5P activity
-    Given I log in as "admin"
+    Given the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
     And I change window size to "large"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the "PageName1" "page activity editing" page
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "guess-the-answer.h5p" "link"
@@ -59,7 +55,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
       | capability        | permission | role           | contextlevel | reference |
       | tiny/h5p:addembed | Prohibit   | editingteacher | Course       | C1        |
     When I am on the PageName1 "page activity editing" page logged in as teacher1
-    Then "Configure H5P content" "button" should not exist
+    Then "Insert H5P content" "button" should not exist
 
   @javascript
   Scenario: When a user does not have the Upload H5P capability, they can embed but not upload H5P content with TinyMCE
@@ -67,19 +63,18 @@ Feature: Use the TinyMCE editor to upload an h5p package
       | capability        | permission | role           | contextlevel | reference |
       | moodle/h5p:deploy | Prohibit   | editingteacher | Course       | C1        |
     When I am on the PageName1 "page activity editing" page logged in as teacher1
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     Then I should not see "H5P file upload" in the "Insert H5P content" "dialogue"
     And I should see "H5P URL" in the "Insert H5P content" "dialogue"
     And I should not see "H5P options" in the "Insert H5P content" "dialogue"
 
   @javascript @external
   Scenario: A user can edit H5P content embedding with TinyMCE
-    Given I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "lib/editor/atto/tests/fixtures/drag.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the PageName1 "page activity editing" page
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    Given the following "user private file" exists:
+      | user     | admin                       |
+      | filepath | h5p/tests/fixtures/drag.h5p |
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "drag" "link"
@@ -93,7 +88,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I switch to the main frame
     And I navigate to "Settings" in current page administration
     And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I set the field "H5P URL or file upload" to "https://moodle.h5p.com/content/1290772960722742119"
     And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I wait "1" seconds
@@ -103,13 +98,12 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I should not see "Cloudberries"
 
   @javascript
-  Scenario: Enable/disable H5P options
-    Given I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the PageName1 "page activity editing" page
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+  Scenario: Enable/disable H5P options tiny
+    Given the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "guess-the-answer.h5p" "link"
@@ -118,13 +112,11 @@ Feature: Use the TinyMCE editor to upload an h5p package
     When I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    Then I should not see "Reuse"
-    And I should not see "Embed"
-    And I should not see "Rights of use"
+    Then ".h5p-actions" "css_element" should not exist
     And I switch to the main frame
     And I navigate to "Settings" in current page administration
     And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "H5P options" "link"
     And I click on "Allow download" "checkbox"
     And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
@@ -132,13 +124,13 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    And I should see "Reuse"
+    And "Reuse" "text" should exist in the ".h5p-actions" "css_element"
     And I should not see "Embed"
     And I should not see "Rights of use"
     And I switch to the main frame
     And I navigate to "Settings" in current page administration
     And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "Allow download" "checkbox"
     And I click on "Embed button" "checkbox"
     And I click on "Copyright button" "checkbox"
@@ -147,7 +139,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    And I should not see "Reuse"
+    And "Reuse" "text" should not exist in the ".h5p-actions" "css_element"
     And I should see "Embed"
     And I should see "Rights of use"
 
@@ -155,7 +147,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
   Scenario: H5P options are ignored for H5P URLs
     Given I change window size to "large"
     And I am on the PageName1 "page activity editing" page logged in as admin
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I set the field "H5P URL or file upload" to "https://moodle.h5p.com/content/1291366510035871129"
     And I click on "H5P options" "link"
     And I click on "Embed button" "checkbox"
@@ -168,7 +160,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I switch to the main frame
     And I navigate to "Settings" in current page administration
     And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "H5P options" "link"
     And "input[aria-label=\"Embed button\"]:not([checked=checked])" "css_element" should exist
 
@@ -180,12 +172,11 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And the following "course enrolments" exist:
       | user     | course | role    |
       | student1 | C1     | student |
-    And I log in as "admin"
-    And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    And I am on the PageName1 "page activity editing" page
-    And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
+    And the following "user private file" exists:
+      | user     | admin                                   |
+      | filepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    And I am on the "PageName1" "page activity editing" page logged in as "admin"
+    And I click on the "Insert H5P content" button for the "Page content" TinyMCE editor
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "guess-the-answer.h5p" "link"

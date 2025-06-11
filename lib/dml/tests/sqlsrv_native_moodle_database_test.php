@@ -40,8 +40,7 @@ require_once($CFG->dirroot.'/lib/dml/sqlsrv_native_moodle_database.php');
  * @copyright  2017 John Okely
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sqlsrv_native_moodle_database_test extends \advanced_testcase {
-
+final class sqlsrv_native_moodle_database_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
@@ -51,7 +50,7 @@ class sqlsrv_native_moodle_database_test extends \advanced_testcase {
      * Dataprovider for test_add_no_lock_to_temp_tables
      * @return array Data for test_add_no_lock_to_temp_tables
      */
-    public function add_no_lock_to_temp_tables_provider() {
+    public static function add_no_lock_to_temp_tables_provider(): array {
         return [
             "Basic temp table, nothing following" => [
                 'input' => 'SELECT * FROM {table_temp}',
@@ -119,16 +118,14 @@ class sqlsrv_native_moodle_database_test extends \advanced_testcase {
      * @param string $expected The expected resultant query
      * @dataProvider add_no_lock_to_temp_tables_provider
      */
-    public function test_add_no_lock_to_temp_tables($input, $expected) {
+    public function test_add_no_lock_to_temp_tables($input, $expected): void {
         $sqlsrv = new sqlsrv_native_moodle_database();
 
         $reflector = new \ReflectionObject($sqlsrv);
 
         $method = $reflector->getMethod('add_no_lock_to_temp_tables');
-        $method->setAccessible(true);
 
         $temptablesproperty = $reflector->getProperty('temptables');
-        $temptablesproperty->setAccessible(true);
         $temptables = new temptables_tester();
 
         $temptablesproperty->setValue($sqlsrv, $temptables);
@@ -144,7 +141,7 @@ class sqlsrv_native_moodle_database_test extends \advanced_testcase {
      *
      * @return array data for test_has_query_order_by
      */
-    public function has_query_order_by_provider() {
+    public static function has_query_order_by_provider(): array {
         // Fixtures taken from https://docs.moodle.org/en/ad-hoc_contributed_reports.
 
         return [
@@ -246,13 +243,12 @@ EOT
      * @param string $expectedmainquery the expected main query
      * @param bool $expectedresult the expected result
      */
-    public function test_has_query_order_by(string $sql, string $expectedmainquery, bool $expectedresult) {
+    public function test_has_query_order_by(string $sql, string $expectedmainquery, bool $expectedresult): void {
         $mainquery = preg_replace('/\(((?>[^()]+)|(?R))*\)/', '()', $sql);
         $this->assertSame($expectedmainquery, $mainquery);
 
         // The has_query_order_by static method is protected. Use Reflection to call the method.
         $method = new \ReflectionMethod('sqlsrv_native_moodle_database', 'has_query_order_by');
-        $method->setAccessible(true);
         $result = $method->invoke(null, $sql);
         $this->assertSame($expectedresult, $result);
     }

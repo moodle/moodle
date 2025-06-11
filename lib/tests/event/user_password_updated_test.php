@@ -24,11 +24,11 @@ namespace core\event;
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_password_updated_test extends \advanced_testcase {
+final class user_password_updated_test extends \advanced_testcase {
     /**
      * Test the event.
      */
-    public function test_event() {
+    public function test_event(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -43,7 +43,6 @@ class user_password_updated_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertEquals($user1->id, $event->relateduserid);
         $this->assertSame($context1, $event->get_context());
-        $this->assertEventLegacyLogData(null, $event);
         $this->assertFalse($event->other['forgottenreset']);
         $event->trigger();
 
@@ -52,7 +51,6 @@ class user_password_updated_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertEquals($user2->id, $event->relateduserid);
         $this->assertSame($context2, $event->get_context());
-        $this->assertEventLegacyLogData(null, $event);
         $this->assertFalse($event->other['forgottenreset']);
         $event->trigger();
 
@@ -61,7 +59,6 @@ class user_password_updated_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertEquals($user1->id, $event->relateduserid);
         $this->assertSame($context1, $event->get_context());
-        $this->assertEventLegacyLogData(array(SITEID, 'user', 'set password', 'profile.php?id='.$user1->id, $user1->id), $event);
         $this->assertTrue($event->other['forgottenreset']);
         $event->trigger();
     }

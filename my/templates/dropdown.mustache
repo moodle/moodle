@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template my/dropdown
+    @template core_my/dropdown
 
-    Simple dropdown for the my/courses page
+    Simple dropdown for the my/courses page.
 
     Example context (json):
     {
@@ -27,19 +27,21 @@
     }
 }}
 <div class="btn-group{{#manageurl}} course-manage{{/manageurl}}{{#courserequesturl}} course-request{{/courserequesturl}}">
-    <!-- Set as a link to appease Goutte behat. -->
-    <a href="#" class="btn btn-link btn-icon icon-size-3 rounded-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{#str}}coursemanagementoptions, my{{/str}}">
-        <i class="fa fa-ellipsis-v text-dark  py-2" aria-hidden="true"></i>
-    </a>
-    <div class="dropdown-menu dropdown-menu-right">
-        {{#newcourseurl}}
-            <a class="dropdown-item" href="{{newcourseurl}}">{{#str}}newcourse, core{{/str}}</a>
-        {{/newcourseurl}}
+    <div class="my-action-buttons my-action-buttons-right">
         {{#manageurl}}
-            <a class="dropdown-item" href="{{manageurl}}">{{#str}}managecourses, core{{/str}}</a>
+            <form action="{{manageurl}}" method="post" id="managecoursesform">
+                <button type="submit" class="btn btn-outline-primary m-1 w-100">{{#str}} managecourses {{/str}}</button>
+            </form>
         {{/manageurl}}
+        {{#newcourseurl}}
+            <form action="{{newcourseurl}}" method="post" id="newcourseform">
+                <button type="submit" class="btn btn-primary m-1 w-100">{{#str}} createcourse, block_myoverview {{/str}}</button>
+            </form>
+        {{/newcourseurl}}
         {{#courserequesturl}}
-            <a class="dropdown-item" href="{{courserequesturl}}">{{#str}}requestcourse, core{{/str}}</a>
+            <form action="{{courserequesturl}}" method="post" id="courserequestform">
+                <button type="submit" class="btn btn-primary m-1 w-100">{{#str}} requestcourse {{/str}}</button>
+            </form>
         {{/courserequesturl}}
     </div>
 </div>

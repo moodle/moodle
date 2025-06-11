@@ -38,8 +38,6 @@ use Behat\Mink\Exception\ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_wiris_formula extends behat_wiris_base {
-
-
     /**
      * Transform /^(\d+)$/
      */
@@ -161,9 +159,9 @@ class behat_wiris_formula extends behat_wiris_base {
      */
     public function a_wirisformula_containing_should_not_exist($value) {
         $session = $this->getSession();
-        $formula = $session->getPage()->find('xpath', '//img[contains(@alt, \''.$value.'\')]');
+        $formula = $session->getPage()->find('xpath', '//img[contains(@alt, \'' . $value . '\')]');
         if (!empty($formula)) {
-            throw new ExpectationException('Wirisformula with value '.$value.' found.', $this->getSession());
+            throw new ExpectationException('Wirisformula with value ' . $value . ' found.', $this->getSession());
         }
     }
 

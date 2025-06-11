@@ -1,0 +1,700 @@
+{
+    "standard": {
+        "aiplacement": [
+            "courseassist",
+            "editor"
+        ],
+        "aiprovider": [
+            "openai",
+            "azureai"
+        ],
+        "antivirus": [
+            "clamav"
+        ],
+        "assignfeedback": [
+            "comments",
+            "editpdf",
+            "file",
+            "offline"
+        ],
+        "assignsubmission": [
+            "comments",
+            "file",
+            "onlinetext"
+        ],
+        "atto": [
+            "accessibilitychecker",
+            "accessibilityhelper",
+            "align",
+            "backcolor",
+            "bold",
+            "charmap",
+            "clear",
+            "collapse",
+            "emojipicker",
+            "emoticon",
+            "equation",
+            "fontcolor",
+            "h5p",
+            "html",
+            "image",
+            "indent",
+            "italic",
+            "link",
+            "managefiles",
+            "media",
+            "noautolink",
+            "orderedlist",
+            "recordrtc",
+            "rtl",
+            "strike",
+            "subscript",
+            "superscript",
+            "table",
+            "title",
+            "underline",
+            "undo",
+            "unorderedlist"
+        ],
+        "auth": [
+            "cas",
+            "db",
+            "email",
+            "ldap",
+            "lti",
+            "manual",
+            "mnet",
+            "nologin",
+            "none",
+            "oauth2",
+            "shibboleth",
+            "webservice"
+        ],
+        "availability": [
+            "completion",
+            "date",
+            "grade",
+            "group",
+            "grouping",
+            "profile"
+        ],
+        "block": [
+            "accessreview",
+            "activity_modules",
+            "activity_results",
+            "admin_bookmarks",
+            "badges",
+            "blog_menu",
+            "blog_recent",
+            "blog_tags",
+            "calendar_month",
+            "calendar_upcoming",
+            "comments",
+            "completionstatus",
+            "course_list",
+            "course_summary",
+            "feedback",
+            "globalsearch",
+            "glossary_random",
+            "html",
+            "login",
+            "lp",
+            "mentees",
+            "mnet_hosts",
+            "myoverview",
+            "myprofile",
+            "navigation",
+            "news_items",
+            "online_users",
+            "private_files",
+            "recent_activity",
+            "recentlyaccessedcourses",
+            "recentlyaccesseditems",
+            "rss_client",
+            "search_forums",
+            "section_links",
+            "selfcompletion",
+            "settings",
+            "site_main_menu",
+            "social_activities",
+            "starredcourses",
+            "tag_flickr",
+            "tag_youtube",
+            "tags",
+            "timeline"
+        ],
+        "booktool": [
+            "exportimscp",
+            "importhtml",
+            "print"
+        ],
+        "cachelock": [
+            "file"
+        ],
+        "cachestore": [
+            "apcu",
+            "file",
+            "redis",
+            "session",
+            "static"
+        ],
+        "calendartype": [
+            "gregorian"
+        ],
+        "communication": [
+            "customlink",
+            "matrix"
+        ],
+        "contenttype": [
+            "h5p"
+        ],
+        "coursereport": [],
+        "customfield": [
+            "checkbox",
+            "date",
+            "number",
+            "select",
+            "text",
+            "textarea"
+        ],
+        "datafield": [
+            "checkbox",
+            "date",
+            "file",
+            "latlong",
+            "menu",
+            "multimenu",
+            "number",
+            "picture",
+            "radiobutton",
+            "text",
+            "textarea",
+            "url"
+        ],
+        "dataformat": [
+            "csv",
+            "excel",
+            "html",
+            "json",
+            "ods",
+            "pdf"
+        ],
+        "datapreset": [
+            "imagegallery",
+            "journal",
+            "proposals",
+            "resources"
+        ],
+        "editor": [
+            "atto",
+            "textarea",
+            "tiny"
+        ],
+        "enrol": [
+            "category",
+            "cohort",
+            "database",
+            "fee",
+            "flatfile",
+            "guest",
+            "imsenterprise",
+            "ldap",
+            "lti",
+            "manual",
+            "meta",
+            "mnet",
+            "paypal",
+            "self"
+        ],
+        "factor": [
+            "admin",
+            "auth",
+            "capability",
+            "cohort",
+            "email",
+            "grace",
+            "iprange",
+            "nosetup",
+            "role",
+            "sms",
+            "token",
+            "totp",
+            "webauthn"
+        ],
+        "fileconverter": [
+            "googledrive",
+            "unoconv"
+        ],
+        "filter": [
+            "activitynames",
+            "algebra",
+            "codehighlighter",
+            "data",
+            "displayh5p",
+            "emailprotect",
+            "emoticon",
+            "glossary",
+            "mathjaxloader",
+            "mediaplugin",
+            "multilang",
+            "tex",
+            "urltolink"
+        ],
+        "format": [
+            "singleactivity",
+            "social",
+            "topics",
+            "weeks"
+        ],
+        "forumreport": [
+            "summary"
+        ],
+        "gradeexport": [
+            "ods",
+            "txt",
+            "xls",
+            "xml"
+        ],
+        "gradeimport": [
+            "csv",
+            "direct",
+            "xml"
+        ],
+        "gradereport": [
+            "grader",
+            "history",
+            "outcomes",
+            "overview",
+            "singleview",
+            "summary",
+            "user"
+        ],
+        "gradingform": [
+            "guide",
+            "rubric"
+        ],
+        "h5plib": [
+            "v127"
+        ],
+        "local": [],
+        "logstore": [
+            "database",
+            "standard"
+        ],
+        "ltiservice": [
+            "basicoutcomes",
+            "gradebookservices",
+            "memberships",
+            "profile",
+            "toolproxy",
+            "toolsettings"
+        ],
+        "media": [
+            "html5audio",
+            "html5video",
+            "videojs",
+            "vimeo",
+            "youtube"
+        ],
+        "message": [
+            "airnotifier",
+            "email",
+            "popup"
+        ],
+        "mlbackend": [
+            "php",
+            "python"
+        ],
+        "mnetservice": [
+            "enrol"
+        ],
+        "mod": [
+            "assign",
+            "bigbluebuttonbn",
+            "book",
+            "chat",
+            "choice",
+            "data",
+            "feedback",
+            "folder",
+            "forum",
+            "glossary",
+            "h5pactivity",
+            "imscp",
+            "label",
+            "lesson",
+            "lti",
+            "page",
+            "quiz",
+            "resource",
+            "scorm",
+            "subsection",
+            "survey",
+            "url",
+            "wiki",
+            "workshop"
+        ],
+        "paygw": [
+            "paypal"
+        ],
+        "plagiarism": [],
+        "portfolio": [
+            "download",
+            "flickr",
+            "googledocs",
+            "mahara"
+        ],
+        "profilefield": [
+            "checkbox",
+            "datetime",
+            "menu",
+            "social",
+            "text",
+            "textarea"
+        ],
+        "qbank": [
+            "bulkmove",
+            "columnsortorder",
+            "comment",
+            "customfields",
+            "deletequestion",
+            "editquestion",
+            "exportquestions",
+            "exporttoxml",
+            "history",
+            "importquestions",
+            "managecategories",
+            "previewquestion",
+            "statistics",
+            "tagquestion",
+            "usage",
+            "viewcreator",
+            "viewquestionname",
+            "viewquestiontext",
+            "viewquestiontype"
+        ],
+        "qbehaviour": [
+            "adaptive",
+            "adaptivenopenalty",
+            "deferredcbm",
+            "deferredfeedback",
+            "immediatecbm",
+            "immediatefeedback",
+            "informationitem",
+            "interactive",
+            "interactivecountback",
+            "manualgraded",
+            "missing"
+        ],
+        "qformat": [
+            "aiken",
+            "blackboard_six",
+            "gift",
+            "missingword",
+            "multianswer",
+            "xhtml",
+            "xml"
+        ],
+        "qtype": [
+            "calculated",
+            "calculatedmulti",
+            "calculatedsimple",
+            "ddimageortext",
+            "ddmarker",
+            "ddwtos",
+            "description",
+            "essay",
+            "gapselect",
+            "match",
+            "missingtype",
+            "multianswer",
+            "multichoice",
+            "numerical",
+            "ordering",
+            "random",
+            "randomsamatch",
+            "shortanswer",
+            "truefalse"
+        ],
+        "quiz": [
+            "grading",
+            "overview",
+            "responses",
+            "statistics"
+        ],
+        "quizaccess": [
+            "delaybetweenattempts",
+            "ipaddress",
+            "numattempts",
+            "offlineattempts",
+            "openclosedate",
+            "password",
+            "seb",
+            "securewindow",
+            "timelimit"
+        ],
+        "report": [
+            "backups",
+            "competency",
+            "completion",
+            "configlog",
+            "courseoverview",
+            "eventlist",
+            "infectedfiles",
+            "insights",
+            "log",
+            "loglive",
+            "outline",
+            "participation",
+            "performance",
+            "progress",
+            "questioninstances",
+            "security",
+            "stats",
+            "status",
+            "themeusage",
+            "usersessions"
+        ],
+        "repository": [
+            "areafiles",
+            "contentbank",
+            "coursefiles",
+            "dropbox",
+            "equella",
+            "filesystem",
+            "flickr",
+            "flickr_public",
+            "googledocs",
+            "local",
+            "merlot",
+            "nextcloud",
+            "onedrive",
+            "recent",
+            "s3",
+            "upload",
+            "url",
+            "user",
+            "webdav",
+            "wikimedia",
+            "youtube"
+        ],
+        "scormreport": [
+            "basic",
+            "graphs",
+            "interactions",
+            "objectives"
+        ],
+        "search": [
+            "simpledb",
+            "solr"
+        ],
+        "smsgateway": [
+            "aws"
+        ],
+        "theme": [
+            "boost",
+            "classic"
+        ],
+        "tiny": [
+            "accessibilitychecker",
+            "aiplacement",
+            "autosave",
+            "equation",
+            "h5p",
+            "html",
+            "link",
+            "media",
+            "noautolink",
+            "premium",
+            "recordrtc"
+        ],
+        "tool": [
+            "admin_presets",
+            "analytics",
+            "availabilityconditions",
+            "behat",
+            "brickfield",
+            "capability",
+            "cohortroles",
+            "componentlibrary",
+            "customlang",
+            "dataprivacy",
+            "dbtransfer",
+            "filetypes",
+            "generator",
+            "httpsreplace",
+            "installaddon",
+            "langimport",
+            "licensemanager",
+            "log",
+            "lp",
+            "lpimportcsv",
+            "lpmigrate",
+            "messageinbound",
+            "mfa",
+            "mobile",
+            "monitor",
+            "moodlenet",
+            "multilangupgrade",
+            "oauth2",
+            "phpunit",
+            "policy",
+            "profiling",
+            "recyclebin",
+            "replace",
+            "spamcleaner",
+            "task",
+            "templatelibrary",
+            "unsuproles",
+            "uploadcourse",
+            "uploaduser",
+            "usertours",
+            "xmldb"
+        ],
+        "webservice": [
+            "rest",
+            "soap"
+        ],
+        "workshopallocation": [
+            "manual",
+            "random",
+            "scheduled"
+        ],
+        "workshopeval": [
+            "best"
+        ],
+        "workshopform": [
+            "accumulative",
+            "comments",
+            "numerrors",
+            "rubric"
+        ]
+    },
+    "deleted": {
+        "assignment": [
+            "offline",
+            "online",
+            "upload",
+            "uploadsingle"
+        ],
+        "auth": [
+            "fc",
+            "imap",
+            "nntp",
+            "pam",
+            "pop3",
+            "radius"
+        ],
+        "block": [
+            "community",
+            "course_overview",
+            "messages",
+            "participants",
+            "quiz_results"
+        ],
+        "cachestore": [
+            "memcache",
+            "memcached",
+            "mongodb"
+        ],
+        "editor": [
+            "tinymce"
+        ],
+        "enrol": [
+            "authorize"
+        ],
+        "filter": [
+            "censor",
+            "tidy"
+        ],
+        "h5plib": [
+            "v124",
+            "v126"
+        ],
+        "logstore": [
+            "legacy"
+        ],
+        "media": [
+            "swf"
+        ],
+        "message": [
+            "jabber"
+        ],
+        "mod": [
+            "assignment"
+        ],
+        "portfolio": [
+            "boxnet",
+            "picasa"
+        ],
+        "qformat": [
+            "blackboard",
+            "examview",
+            "learnwise",
+            "webct"
+        ],
+        "quizaccess": [
+            "safebrowser"
+        ],
+        "report": [
+            "search"
+        ],
+        "repository": [
+            "alfresco",
+            "boxnet",
+            "picasa",
+            "skydrive"
+        ],
+        "theme": [
+            "afterburner",
+            "anomaly",
+            "arialist",
+            "base",
+            "binarius",
+            "bootstrapbase",
+            "boxxie",
+            "brick",
+            "canvas",
+            "clean",
+            "formal_white",
+            "formfactor",
+            "fusion",
+            "leatherbound",
+            "magazine",
+            "more",
+            "mymobile",
+            "nimble",
+            "nonzero",
+            "overlay",
+            "serenity",
+            "sky_high",
+            "splash",
+            "standard",
+            "standardold"
+        ],
+        "tinymce": [
+            "ctrlhelp",
+            "dragmath",
+            "managefiles",
+            "moodleemoticon",
+            "moodleimage",
+            "moodlemedia",
+            "moodlenolink",
+            "pdw",
+            "spellchecker",
+            "wrap"
+        ],
+        "tool": [
+            "assignmentupgrade",
+            "bloglevelupgrade",
+            "health",
+            "innodb",
+            "qeupgradehelper",
+            "timezoneimport"
+        ],
+        "webservice": [
+            "amf",
+            "xmlrpc"
+        ]
+    }
+}

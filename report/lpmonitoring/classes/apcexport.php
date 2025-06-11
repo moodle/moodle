@@ -43,13 +43,13 @@ use report_lpmonitoring\external as report_lpmonitoring_external;
 class apcexport {
 
     /** @var array errors when processing export */
-    protected $errors = array();
+    protected $errors = [];
 
     /** @var array of options */
-    protected $params = array();
+    protected $params = [];
 
-    /** @var progress_trace trace */
-    protected $formatteddata = array();
+    /** @var array trace */
+    protected $formatteddata = [];
 
     /** @var progress_trace trace */
     protected $trace = null;
@@ -128,7 +128,7 @@ class apcexport {
      * @param progress_trace $trace
      * @param array $params Options for processing file
      */
-    public function __construct($trace, $params = array()) {
+    public function __construct($trace, $params = []) {
         global $DB;
 
         $this->trace = $trace;
@@ -137,12 +137,12 @@ class apcexport {
         if (!isset($params['templateid']) || empty($params['templateid'])) {
             $this->errors[] = "Missing template id";
         } else {
-            if (!$DB->get_record('competency_template', array('id' => $params['templateid']))) {
+            if (!$DB->get_record('competency_template', ['id' => $params['templateid']])) {
                 $this->errors[] = "Template with id '". $params['templateid']. "' does not exist. \n";
             }
         }
 
-        if (!empty($params['userid']) && !$DB->get_record('user', array('id' => $params['userid']))) {
+        if (!empty($params['userid']) && !$DB->get_record('user', ['id' => $params['userid']])) {
             $this->errors[] = "User with id '". $params['userid']. "' does not exist. \n";
         }
 
@@ -172,7 +172,7 @@ class apcexport {
         }
 
         // Get the employeid field.
-        $userinfofield = $DB->get_record('user_info_field', array('shortname' => 'emplid'));
+        $userinfofield = $DB->get_record('user_info_field', ['shortname' => 'emplid']);
         if (!$userinfofield) {
             $this->errors[] = "Missing emplid in user_info_field";
         } else {
@@ -201,10 +201,10 @@ class apcexport {
                  WHERE p.templateid = :templateid
                    AND ui.fieldid = :emplid";
 
-        $params = array('templateid' => $this->params['templateid'], 'emplid' => $this->emplid);
+        $params = ['templateid' => $this->params['templateid'], 'emplid' => $this->emplid];
         if (!empty($this->params['userid'])) {
             $sql .= " AND p.userid = :userid";
-            $params += array('userid' => $this->params['userid']);
+            $params += ['userid' => $this->params['userid']];
         }
         $sql .= " ORDER BY p.userid";
 
@@ -259,7 +259,7 @@ class apcexport {
 
                     // Add evaluation done in each course.
                     foreach ($listcourses as $course => $value) {
-                        $this->formatteddata[] = array_merge($row, array($course) , $value);
+                        $this->formatteddata[] = array_merge($row, [$course] , $value);
                     }
                 }
             }

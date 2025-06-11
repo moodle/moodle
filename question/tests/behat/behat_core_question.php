@@ -68,8 +68,12 @@ class behat_core_question extends behat_question_base {
     protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
         switch (strtolower($type)) {
             case 'course question bank':
-                return new moodle_url('/question/edit.php',
-                        ['courseid' => $this->get_course_id($identifier)]);
+                // The question bank does not handle fields at the edge of the viewport well.
+                // Increase the size to avoid this.
+                $this->execute('behat_general::i_change_window_size_to', ['window', 'large']);
+                return new moodle_url('/question/edit.php', [
+                    'courseid' => $this->get_course_id($identifier),
+                ]);
 
             case 'course question categories':
                 return new moodle_url('/question/bank/managecategories/category.php',
@@ -174,12 +178,24 @@ class behat_core_question extends behat_question_base {
      * @param string $questionname the question name.
      */
     public function i_action_the_question($action, $questionname) {
-        $this->execute('behat_action_menu::i_choose_in_the_named_menu_in_container', [
-            $action,
-            get_string('edit', 'core'),
-            $questionname,
-            'table_row',
-        ]);
+        if ($this->running_javascript()) {
+            // This method isn't allowed unless Javascript is running.
+            $this->execute('behat_action_menu::i_open_the_action_menu_in', [
+                $questionname,
+                'table_row',
+            ]);
+            $this->execute('behat_action_menu::i_choose_in_the_open_action_menu', [
+                $action
+            ]);
+        } else {
+            // This method doesn't open the menu correctly when Javascript is running.
+            $this->execute('behat_action_menu::i_choose_in_the_named_menu_in_container', [
+                $action,
+                get_string('edit', 'core'),
+                $questionname,
+                'table_row',
+            ]);
+        }
     }
 
     /**
@@ -298,5 +314,54 @@ class behat_core_question extends behat_question_base {
         [$id] = $this->find_question_by_name($questionname);
         $DB->delete_records('question', ['id' => $id]);
         question_bank::notify_question_edited($id);
+    }
+
+    /**
+     * Add a question bank filter
+     *
+     * This will add the filter if it does not exist, but leave the value empty.
+     *
+     * @When I add question bank filter :filtertype
+     * @param string $filtertype The filter we are adding
+     */
+    public function i_add_question_bank_filter(string $filtertype) {
+        $filter = $this->getSession()->getPage()->find('css',
+                '[data-filterregion=filter] [data-field-title="' . $filtertype . '"]');
+        if ($filter === null) {
+            $this->execute('behat_forms::press_button', [get_string('addcondition')]);
+            $this->execute('behat_forms::i_set_the_field_in_container_to', [
+                    "type",
+                    "[data-filterregion=filter]:last-child fieldset",
+                    "css_element",
+                    $filtertype
+            ]);
+        }
+    }
+
+    /**
+     * Apply question bank filter.
+     *
+     * This will change the existing value of the specified filter, or add the filter and set its value if it doesn't already
+     * exist.
+     *
+     * @When I apply question bank filter :filtertype with value :value
+     * @param string $filtertype The filter to apply. This should match the get_title() return value from the
+     *        filter's condition class.
+     * @param string $value The value to set for the condition.
+     */
+    public function i_apply_question_bank_filter(string $filtertype, string $value) {
+        // Add the filter if needed.
+        $this->execute('behat_core_question::i_add_question_bank_filter', [
+            $filtertype,
+        ]);
+
+        // Set the filter value.
+        $this->execute('behat_forms::i_set_the_field_to', [
+            $filtertype,
+            $value
+        ]);
+
+        // Apply filters.
+        $this->execute("behat_forms::press_button", [get_string('applyfilters')]);
     }
 }

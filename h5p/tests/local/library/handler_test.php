@@ -34,7 +34,7 @@ use advanced_testcase;
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class handler_test extends advanced_testcase {
+final class handler_test extends advanced_testcase {
 
     /**
      * Test the behaviour of get_h5p_string().
@@ -54,7 +54,7 @@ class handler_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_h5p_string_provider(): array {
+    public static function get_h5p_string_provider(): array {
         return [
             'Existing string in h5plib plugin' => [
                 'editor:add',

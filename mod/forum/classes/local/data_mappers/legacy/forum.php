@@ -42,7 +42,7 @@ class forum {
      * @param forum_entity[] $forums The forums to convert.
      * @return stdClass[]
      */
-    public function to_legacy_objects(array $forums) : array {
+    public function to_legacy_objects(array $forums): array {
         return array_map(function(forum_entity $forum) {
             return (object) [
                 'id' => $forum->get_id(),
@@ -84,7 +84,7 @@ class forum {
      * @param forum_entity $forum The forum to convert.
      * @return stdClass
      */
-    public function to_legacy_object(forum_entity $forum) : stdClass {
+    public function to_legacy_object(forum_entity $forum): stdClass {
         return $this->to_legacy_objects([$forum])[0];
     }
 }

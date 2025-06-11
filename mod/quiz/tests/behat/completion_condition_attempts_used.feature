@@ -1,4 +1,4 @@
-@mod @mod_quiz @core_completion
+@mod @mod_quiz @core_completion @javascript
 Feature: Set a quiz to be marked complete when the student uses all attempts allowed
   In order to ensure a student has learned the material before being marked complete
   As a teacher
@@ -16,8 +16,6 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following config values are set as admin:
-      | grade_item_advanced | hiddenuntil |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
@@ -35,8 +33,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       |   1  | False    |
 
   Scenario Outline: Student attempts the quiz - pass and fails
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
@@ -45,18 +42,17 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And I set the field "<answer>" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I am on "Course 1" course homepage
     Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "<passcompletionexpected>"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
-    And I follow "Test quiz name"
+    And I click on "Test quiz name" "link" in the "region-main" "region"
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "<passcompletionexpected>"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz name"
+    And I am on the "Test quiz name" "quiz activity" page logged in as teacher1
     And "Test quiz name" should have the "Receive a pass grade or complete all available attempts" completion condition
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration

@@ -44,21 +44,21 @@ class lpmonitoring_competency_statistics_incourse_exporter extends exporter {
      * @return array other properties
      */
     public static function define_other_properties() {
-        return array(
-            'competencyid' => array(
-                'type' => PARAM_INT
-            ),
-            'nbratingtotal' => array(
-                'type' => PARAM_INT
-            ),
-            'nbratings' => array(
-                'type' => PARAM_INT
-            ),
-            'scalecompetencyitems' => array(
+        return [
+            'competencyid' => [
+                'type' => PARAM_INT,
+            ],
+            'nbratingtotal' => [
+                'type' => PARAM_INT,
+            ],
+            'nbratings' => [
+                'type' => PARAM_INT,
+            ],
+            'scalecompetencyitems' => [
                 'type' => scale_competency_incourse_statistics_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -76,7 +76,7 @@ class lpmonitoring_competency_statistics_incourse_exporter extends exporter {
         $result->nbratingtotal = count($data->listratings);
 
         // Information for each scale value.
-        $result->scalecompetencyitems = array();
+        $result->scalecompetencyitems = [];
         $result->nbratings = 0;
         foreach ($data->scale as $id => $scalename) {
             $scaleinfo = new \stdClass();
@@ -85,7 +85,7 @@ class lpmonitoring_competency_statistics_incourse_exporter extends exporter {
             $scaleinfo->color = $data->reportscaleconfig[$id - 1]->color;
 
             $scalecompetencyitemexporter = new scale_competency_incourse_statistics_exporter($scaleinfo,
-                    array('ratings' => $data->listratings));
+                    ['ratings' => $data->listratings]);
             $scalecompetencyitem = $scalecompetencyitemexporter->export($output);
             $result->nbratings += $scalecompetencyitem->nbratings;
             $result->scalecompetencyitems[] = $scalecompetencyitem;

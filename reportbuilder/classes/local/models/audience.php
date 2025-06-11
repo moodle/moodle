@@ -43,7 +43,7 @@ class audience extends persistent {
      *
      * @return array
      */
-    protected static function define_properties() : array {
+    protected static function define_properties(): array {
         return [
             'reportid' => [
                 'type' => PARAM_INT,

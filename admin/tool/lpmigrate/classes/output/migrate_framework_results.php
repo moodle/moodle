@@ -51,6 +51,14 @@ class migrate_framework_results implements renderable, templatable {
     protected $pagecontext;
     /** @var framework_processor The processor. */
     protected $processor;
+    /** @var array $unmappedfrom Competencies from unmapped. */
+    protected array $unmappedfrom = [];
+    /** @var array $unmappedto competencies to unmapped. */
+    protected array $unmappedto = [];
+    /* @var competency_framework|null $frameworkfrom Framework from. */
+    protected $frameworkfrom = null;
+    /* @var competency_framework|null $frameworkto Framework to. */
+    protected $frameworkto = null;
 
     /**
      * Construct.

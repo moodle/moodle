@@ -26,6 +26,7 @@ namespace mod_forum\local\vaults;
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_forum\local\container;
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\entities\discussion as discussion_entity;
 
@@ -49,7 +50,7 @@ class discussion extends db_table_vault {
      *
      * @return string
      */
-    protected function get_table_alias() : string {
+    protected function get_table_alias(): string {
         return 'd';
     }
 
@@ -61,7 +62,7 @@ class discussion extends db_table_vault {
      * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
+    protected function generate_get_records_sql(?string $wheresql = null, ?string $sortsql = null, ?int $userid = null): string {
         $selectsql = 'SELECT * FROM {' . self::TABLE . '} ' . $this->get_table_alias();
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
         $selectsql .= $sortsql ? ' ORDER BY ' . $sortsql : '';
@@ -92,10 +93,24 @@ class discussion extends db_table_vault {
      * @param   forum_entity $forum
      * @return  array
      */
-    public function get_all_discussions_in_forum(forum_entity $forum, string $sort = null): ?array {
-        $records = $this->get_db()->get_records(self::TABLE, [
-            'forum' => $forum->get_id(),
-        ], $sort ?? '');
+    public function get_all_discussions_in_forum(forum_entity $forum, ?string $sort = null): ?array {
+        global $USER;
+        $options = ['forum' => $forum->get_id()];
+
+        $managerfactory = container::get_manager_factory();
+        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+
+        $select = "forum = :forum";
+
+        if ($forum->is_in_group_mode() && !$capabilitymanager->can_access_all_groups($USER)) {
+            $allowedgroups = groups_get_activity_allowed_groups($forum->get_course_module_record());
+            $allowedgroups = implode(",", array_keys($allowedgroups));
+            if (!$allowedgroups) {
+                return [];
+            }
+            $select .= " AND groupid IN ($allowedgroups)";
+        }
+        $records = $this->get_db()->get_records_select(self::TABLE, $select, $options, $sort ?? '');
 
         return $this->transform_db_records_to_entities($records);
     }
@@ -106,7 +121,7 @@ class discussion extends db_table_vault {
      * @param   forum_entity $forum
      * @return  discussion_entity|null
      */
-    public function get_first_discussion_in_forum(forum_entity $forum) : ?discussion_entity {
+    public function get_first_discussion_in_forum(forum_entity $forum): ?discussion_entity {
         $records = $this->get_db()->get_records(self::TABLE, [
             'forum' => $forum->get_id(),
         ], 'timemodified ASC', '*', 0, 1);
@@ -121,7 +136,7 @@ class discussion extends db_table_vault {
      * @param   forum_entity $forum
      * @return  discussion_entity|null
      */
-    public function get_last_discussion_in_forum(forum_entity $forum) : ?discussion_entity {
+    public function get_last_discussion_in_forum(forum_entity $forum): ?discussion_entity {
         $records = $this->get_db()->get_records(self::TABLE, [
             'forum' => $forum->get_id(),
         ], 'timemodified DESC', '*', 0, 1);
@@ -136,7 +151,7 @@ class discussion extends db_table_vault {
      * @param   forum_entity $forum
      * @return  int
      */
-    public function get_count_discussions_in_forum(forum_entity $forum) : ?int {
+    public function get_count_discussions_in_forum(forum_entity $forum): ?int {
         return $this->get_db()->count_records(self::TABLE, [
             'forum' => $forum->get_id()]);
     }
@@ -147,7 +162,7 @@ class discussion extends db_table_vault {
      * @param discussion_entity $discussion
      * @return discussion_entity|null
      */
-    public function update_discussion(discussion_entity $discussion) : ?discussion_entity {
+    public function update_discussion(discussion_entity $discussion): ?discussion_entity {
         $discussionrecord = $this->get_legacy_factory()->to_legacy_object($discussion);
         if ($this->get_db()->update_record('forum_discussions', $discussionrecord)) {
             $records = $this->transform_db_records_to_entities([$discussionrecord]);

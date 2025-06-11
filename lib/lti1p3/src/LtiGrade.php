@@ -2,8 +2,11 @@
 
 namespace Packback\Lti1p3;
 
+use Packback\Lti1p3\Concerns\JsonStringable;
+
 class LtiGrade
 {
+    use JsonStringable;
     private $score_given;
     private $score_maximum;
     private $comment;
@@ -12,8 +15,9 @@ class LtiGrade
     private $timestamp;
     private $user_id;
     private $submission_review;
+    private $canvas_extension;
 
-    public function __construct(array $grade = null)
+    public function __construct(?array $grade = null)
     {
         $this->score_given = $grade['scoreGiven'] ?? null;
         $this->score_maximum = $grade['scoreMaximum'] ?? null;
@@ -26,10 +30,9 @@ class LtiGrade
         $this->canvas_extension = $grade['https://canvas.instructure.com/lti/submission'] ?? null;
     }
 
-    public function __toString()
+    public function getArray(): array
     {
-        // Additionally, includes the call back to filter out only NULL values
-        $request = array_filter([
+        return [
             'scoreGiven' => $this->score_given,
             'scoreMaximum' => $this->score_maximum,
             'comment' => $this->comment,
@@ -39,15 +42,13 @@ class LtiGrade
             'userId' => $this->user_id,
             'submissionReview' => $this->submission_review,
             'https://canvas.instructure.com/lti/submission' => $this->canvas_extension,
-        ], '\Packback\Lti1p3\Helpers\Helpers::checkIfNullValue');
-
-        return json_encode($request);
+        ];
     }
 
     /**
      * Static function to allow for method chaining without having to assign to a variable first.
      */
-    public static function new()
+    public static function new(): self
     {
         return new LtiGrade();
     }
@@ -57,7 +58,7 @@ class LtiGrade
         return $this->score_given;
     }
 
-    public function setScoreGiven($value)
+    public function setScoreGiven($value): self
     {
         $this->score_given = $value;
 
@@ -69,7 +70,7 @@ class LtiGrade
         return $this->score_maximum;
     }
 
-    public function setScoreMaximum($value)
+    public function setScoreMaximum($value): self
     {
         $this->score_maximum = $value;
 
@@ -81,7 +82,7 @@ class LtiGrade
         return $this->comment;
     }
 
-    public function setComment($comment)
+    public function setComment($comment): self
     {
         $this->comment = $comment;
 
@@ -93,7 +94,7 @@ class LtiGrade
         return $this->activity_progress;
     }
 
-    public function setActivityProgress($value)
+    public function setActivityProgress($value): self
     {
         $this->activity_progress = $value;
 
@@ -105,7 +106,7 @@ class LtiGrade
         return $this->grading_progress;
     }
 
-    public function setGradingProgress($value)
+    public function setGradingProgress($value): self
     {
         $this->grading_progress = $value;
 
@@ -117,7 +118,7 @@ class LtiGrade
         return $this->timestamp;
     }
 
-    public function setTimestamp($value)
+    public function setTimestamp($value): self
     {
         $this->timestamp = $value;
 
@@ -129,7 +130,7 @@ class LtiGrade
         return $this->user_id;
     }
 
-    public function setUserId($value)
+    public function setUserId($value): self
     {
         $this->user_id = $value;
 
@@ -141,7 +142,7 @@ class LtiGrade
         return $this->submission_review;
     }
 
-    public function setSubmissionReview($value)
+    public function setSubmissionReview($value): self
     {
         $this->submission_review = $value;
 
@@ -153,9 +154,16 @@ class LtiGrade
         return $this->canvas_extension;
     }
 
-    // Custom Extension for Canvas.
-    // https://documentation.instructure.com/doc/api/score.html
-    public function setCanvasExtension($value)
+    /**
+     * Add custom extensions for Canvas.
+     *
+     * Disclaimer: You should only set this if your LMS is Canvas.
+     *             Some LMS (e.g. Schoology) include validation logic that will throw if there
+     *             is unexpected data. And, the type of LMS cannot simply be inferred by their URL.
+     *
+     * @see https://documentation.instructure.com/doc/api/score.html
+     */
+    public function setCanvasExtension($value): self
     {
         $this->canvas_extension = $value;
 

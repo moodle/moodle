@@ -24,14 +24,14 @@ namespace core\output;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \core\output\mustache_helper_collection
  */
-class mustache_helper_collection_test extends \advanced_testcase {
+final class mustache_helper_collection_test extends \advanced_testcase {
 
     /**
      * Test cases to confirm that disallowed helpers are stripped from the source
      * text by the helper before being passed to other another helper. This prevents
      * nested calls to helpers.
      */
-    public function get_strip_disallowed_helpers_testcases() {
+    public static function get_strip_disallowed_helpers_testcases(): array {
         return [
             'no disallowed' => [
                 'disallowed' => [],
@@ -123,12 +123,12 @@ class mustache_helper_collection_test extends \advanced_testcase {
 
     /**
      * Test that the mustache_helper_collection class correctly strips
-     * @dataProvider get_strip_disallowed_helpers_testcases()
+     * @dataProvider get_strip_disallowed_helpers_testcases
      * @param string[] $disallowed The list of helpers to strip
      * @param string $input The input string for the helper
      * @param string $expected The expected output of the string after disallowed strip
      */
-    public function test_strip_disallowed_helpers($disallowed, $input, $expected) {
+    public function test_strip_disallowed_helpers($disallowed, $input, $expected): void {
         $collection = new mustache_helper_collection(null, $disallowed);
         $this->assertEquals($expected, $collection->strip_disallowed_helpers($disallowed, $input));
     }
@@ -140,7 +140,7 @@ class mustache_helper_collection_test extends \advanced_testcase {
      * Any allowed helper should still be available to call during the
      * execution of a helper.
      */
-    public function test_disallowed_helpers_disabled_during_execution() {
+    public function test_disallowed_helpers_disabled_during_execution(): void {
         $engine = new \Mustache_Engine();
         $context = new \Mustache_Context();
         $lambdahelper = new \Mustache_LambdaHelper($engine, $context);
@@ -170,17 +170,5 @@ class mustache_helper_collection_test extends \advanced_testcase {
         $this->assertEquals('success output', $collection->get('test')('success output', $lambdahelper));
         $this->assertTrue($goodcalled);
         $this->assertFalse($badcalled);
-    }
-
-    /**
-     * Test that calling deprecated method strip_blacklisted_helpers() still works and shows developer debugging.
-     */
-    public function test_deprecated_strip_blacklisted_helpers() {
-
-        $collection = new mustache_helper_collection(null, ['js']);
-        $stripped = $collection->strip_blacklisted_helpers(['js'], '{{#js}} JS {{/js}}');
-        $this->assertEquals('{{}}', $stripped);
-        $this->assertDebuggingCalled('mustache_helper_collection::strip_blacklisted_helpers() is deprecated. ' .
-            'Please use mustache_helper_collection::strip_disallowed_helpers() instead.', DEBUG_DEVELOPER);
     }
 }

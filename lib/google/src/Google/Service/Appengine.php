@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Appengine extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -314,6 +315,7 @@ class Google_Service_Appengine extends Google_Service
  *   $apps = $appengineService->apps;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Apps_Resource extends Google_Service_Resource
 {
 
@@ -346,6 +348,7 @@ class Google_Service_Appengine_Apps_Resource extends Google_Service_Resource
  *   $modules = $appengineService->modules;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Appengine_AppsModules_Resource extends Google_Service_Resource
 {
 
@@ -432,6 +435,7 @@ class Google_Service_Appengine_AppsModules_Resource extends Google_Service_Resou
  *   $versions = $appengineService->versions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Appengine_AppsModulesVersions_Resource extends Google_Service_Resource
 {
 
@@ -519,6 +523,7 @@ class Google_Service_Appengine_AppsModulesVersions_Resource extends Google_Servi
  *   $operations = $appengineService->operations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Appengine_AppsOperations_Resource extends Google_Service_Resource
 {
 
@@ -565,6 +570,7 @@ class Google_Service_Appengine_AppsOperations_Resource extends Google_Service_Re
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ApiConfigHandler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -618,6 +624,7 @@ class Google_Service_Appengine_ApiConfigHandler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ApiEndpointHandler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -635,6 +642,7 @@ class Google_Service_Appengine_ApiEndpointHandler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Application extends Google_Collection
 {
   protected $collection_key = 'dispatchRules';
@@ -690,6 +698,7 @@ class Google_Service_Appengine_Application extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_AutomaticScaling extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -780,6 +789,7 @@ class Google_Service_Appengine_AutomaticScaling extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_BasicScaling extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -806,6 +816,7 @@ class Google_Service_Appengine_BasicScaling extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ContainerInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -823,6 +834,7 @@ class Google_Service_Appengine_ContainerInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_CpuUtilization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -849,6 +861,7 @@ class Google_Service_Appengine_CpuUtilization extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Deployment extends Google_Collection
 {
   protected $collection_key = 'sourceReferences';
@@ -888,10 +901,12 @@ class Google_Service_Appengine_Deployment extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_DeploymentFiles extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ErrorHandler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -927,6 +942,7 @@ class Google_Service_Appengine_ErrorHandler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_FileInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -962,6 +978,7 @@ class Google_Service_Appengine_FileInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_HealthCheck extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1033,6 +1050,7 @@ class Google_Service_Appengine_HealthCheck extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Library extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1059,6 +1077,7 @@ class Google_Service_Appengine_Library extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ListModulesResponse extends Google_Collection
 {
   protected $collection_key = 'modules';
@@ -1087,6 +1106,7 @@ class Google_Service_Appengine_ListModulesResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ListOperationsResponse extends Google_Collection
 {
   protected $collection_key = 'operations';
@@ -1115,6 +1135,7 @@ class Google_Service_Appengine_ListOperationsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ListVersionsResponse extends Google_Collection
 {
   protected $collection_key = 'versions';
@@ -1143,6 +1164,7 @@ class Google_Service_Appengine_ListVersionsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ManualScaling extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1160,6 +1182,7 @@ class Google_Service_Appengine_ManualScaling extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Module extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1196,6 +1219,7 @@ class Google_Service_Appengine_Module extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Network extends Google_Collection
 {
   protected $collection_key = 'forwardedPorts';
@@ -1232,6 +1256,7 @@ class Google_Service_Appengine_Network extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Operation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1286,6 +1311,7 @@ class Google_Service_Appengine_Operation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_OperationMetadata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1348,10 +1374,12 @@ class Google_Service_Appengine_OperationMetadata extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_OperationResponse extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Resources extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1387,6 +1415,7 @@ class Google_Service_Appengine_Resources extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_ScriptHandler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1404,6 +1433,7 @@ class Google_Service_Appengine_ScriptHandler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_SourceReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1430,6 +1460,7 @@ class Google_Service_Appengine_SourceReference extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_StaticDirectoryHandler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1492,10 +1523,12 @@ class Google_Service_Appengine_StaticDirectoryHandler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_StaticDirectoryHandlerHttpHeaders extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_StaticFilesHandler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1567,10 +1600,12 @@ class Google_Service_Appengine_StaticFilesHandler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_StaticFilesHandlerHttpHeaders extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Status extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -1607,10 +1642,12 @@ class Google_Service_Appengine_Status extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_StatusDetails extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_TrafficSplit extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1637,10 +1674,12 @@ class Google_Service_Appengine_TrafficSplit extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_TrafficSplitAllocations extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_UrlDispatchRule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1676,6 +1715,7 @@ class Google_Service_Appengine_UrlDispatchRule extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_UrlMap extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1769,6 +1809,7 @@ class Google_Service_Appengine_UrlMap extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_Version extends Google_Collection
 {
   protected $collection_key = 'libraries';
@@ -2023,10 +2064,12 @@ class Google_Service_Appengine_Version extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_VersionBetaSettings extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Appengine_VersionEnvVariables extends Google_Model
 {
 }

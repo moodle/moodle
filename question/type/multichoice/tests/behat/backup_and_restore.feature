@@ -19,6 +19,8 @@ Feature: Test duplicating a quiz containing a Multiple choice question
       | quiz       | Test quiz | C1     | quiz1    |
     And quiz "Test quiz" contains the following questions:
       | Multi-choice-001 | 1 |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   @javascript
   Scenario: Backup and restore a course containing a Multiple choice question

@@ -58,7 +58,7 @@ class post extends db_table_vault {
      *
      * @return string
      */
-    protected function get_table_alias() : string {
+    protected function get_table_alias(): string {
         return 'p';
     }
 
@@ -70,7 +70,7 @@ class post extends db_table_vault {
      * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
+    protected function generate_get_records_sql(?string $wheresql = null, ?string $sortsql = null, ?int $userid = null): string {
         $table = self::TABLE;
         $alias = $this->get_table_alias();
         $fields = $alias . '.*';
@@ -111,8 +111,8 @@ class post extends db_table_vault {
         stdClass $user,
         int $discussionid,
         bool $canseeprivatereplies,
-        string $orderby = 'created ASC'
-    ) : array {
+        string $orderby = 'created ASC, id ASC'
+    ): array {
         return $this->get_from_discussion_ids($user, [$discussionid], $canseeprivatereplies, $orderby);
     }
 
@@ -130,7 +130,7 @@ class post extends db_table_vault {
         array $discussionids,
         bool $canseeprivatereplies,
         string $orderby = ''
-    ) : array {
+    ): array {
         if (empty($discussionids)) {
             return [];
         }
@@ -232,8 +232,8 @@ class post extends db_table_vault {
         stdClass $user,
         post_entity $post,
         bool $canseeprivatereplies,
-        string $orderby = 'created ASC'
-    ) : array {
+        string $orderby = 'created ASC, id ASC'
+    ): array {
         $alias = $this->get_table_alias();
 
         [
@@ -306,7 +306,7 @@ class post extends db_table_vault {
      * @param   bool        $canseeprivatereplies Whether this user can see all private replies or not
      * @return  int[]       The number of replies for each discussion returned in an associative array
      */
-    public function get_reply_count_for_discussion_ids(stdClass $user, array $discussionids, bool $canseeprivatereplies) : array {
+    public function get_reply_count_for_discussion_ids(stdClass $user, array $discussionids, bool $canseeprivatereplies): array {
         if (empty($discussionids)) {
             return [];
         }
@@ -336,7 +336,7 @@ class post extends db_table_vault {
      * @return  int         The number of replies for each discussion returned in an associative array
      */
     public function get_reply_count_for_post_id_in_discussion_id(
-            stdClass $user, int $postid, int $discussionid, bool $canseeprivatereplies) : int {
+            stdClass $user, int $postid, int $discussionid, bool $canseeprivatereplies): int {
         [
             'where' => $privatewhere,
             'params' => $privateparams,
@@ -363,7 +363,7 @@ class post extends db_table_vault {
      * @param   int     $postid The ID to check for
      * @return  int     $count
      */
-    private function count_children_from_parent_recursively(array $postparents, int $postid) : int {
+    private function count_children_from_parent_recursively(array $postparents, int $postid): int {
         if (!isset($postparents[$postid])) {
             // Post not found at all.
             return 0;
@@ -387,7 +387,7 @@ class post extends db_table_vault {
      * @param   bool        $canseeprivatereplies Whether this user can see all private replies or not
      * @return  int[]       The count of unread posts for each discussion returned in an associative array
      */
-    public function get_unread_count_for_discussion_ids(stdClass $user, array $discussionids, bool $canseeprivatereplies) : array {
+    public function get_unread_count_for_discussion_ids(stdClass $user, array $discussionids, bool $canseeprivatereplies): array {
         global $CFG;
 
         if (empty($discussionids)) {
@@ -425,7 +425,7 @@ class post extends db_table_vault {
      * @throws \dml_exception
      */
     public function get_latest_posts_for_discussion_ids(
-        stdClass $user, array $discussionids, bool $canseeprivatereplies) : array {
+        stdClass $user, array $discussionids, bool $canseeprivatereplies): array {
 
         if (empty($discussionids)) {
             return [];
@@ -439,19 +439,15 @@ class post extends db_table_vault {
         ] = $this->get_private_reply_sql($user, $canseeprivatereplies, "mp");
 
         $sql = "
-            SELECT posts.*
-            FROM {" . self::TABLE . "} posts
+            SELECT p.*
+            FROM {" . self::TABLE . "} p
             JOIN (
-                SELECT p.discussion, MAX(p.id) as latestpostid
-                FROM {" . self::TABLE . "} p
-                JOIN (
-                    SELECT mp.discussion, MAX(mp.created) AS created
-                      FROM {" . self::TABLE . "} mp
-                     WHERE mp.discussion {$insql} {$privatewhere}
-                  GROUP BY mp.discussion
-                ) lp ON lp.discussion = p.discussion AND lp.created = p.created
-            GROUP BY p.discussion
-          ) plp on plp.discussion = posts.discussion AND plp.latestpostid = posts.id";
+                SELECT mp.discussion, mp.created, MAX(mp.id) AS latestpostid
+                FROM {" . self::TABLE . "} mp
+                WHERE mp.discussion {$insql} {$privatewhere}
+                GROUP BY mp.discussion, mp.created
+                HAVING mp.created = MAX(mp.created)
+            ) lp on lp.discussion = p.discussion AND lp.latestpostid = p.id";
 
         $records = $this->get_db()->get_records_sql($sql, array_merge($params, $privateparams));
         $entities = $this->transform_db_records_to_entities($records);
@@ -491,7 +487,7 @@ class post extends db_table_vault {
      * @param   int[]         $discussionids The list of discussions to fetch counts for
      * @return  post_entity[] The post object of the first post for each discussions returned in an associative array
      */
-    public function get_first_post_for_discussion_ids(array $discussionids) : array {
+    public function get_first_post_for_discussion_ids(array $discussionids): array {
 
         if (empty($discussionids)) {
             return [];
@@ -501,13 +497,14 @@ class post extends db_table_vault {
 
         $sql = "
             SELECT p.*
-              FROM {" . self::TABLE . "} p
-              JOIN (
-                SELECT mp.discussion, MIN(mp.created) AS created
-                  FROM {" . self::TABLE . "} mp
-                 WHERE mp.discussion {$insql}
-              GROUP BY mp.discussion
-              ) lp ON lp.discussion = p.discussion AND lp.created = p.created";
+            FROM {" . self::TABLE . "} p
+            JOIN (
+                SELECT mp.discussion, mp.created, MIN(mp.id) AS firstpostid
+                FROM {" . self::TABLE . "} mp
+                WHERE mp.discussion {$insql}
+                GROUP BY mp.discussion, mp.created
+                HAVING mp.created = MIN(mp.created)
+            ) fp ON fp.discussion = p.discussion AND fp.firstpostid = p.id";
 
         $records = $this->get_db()->get_records_sql($sql, $params);
         return $this->transform_db_records_to_entities($records);
@@ -526,7 +523,7 @@ class post extends db_table_vault {
         int $discussionid,
         int $userid,
         bool $canseeprivatereplies,
-        string $orderby = 'created ASC'
+        string $orderby = 'created ASC, id ASC'
     ): array {
         $user = $this->get_db()->get_record('user', ['id' => (int)$userid], '*', IGNORE_MISSING);
 

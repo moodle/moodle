@@ -58,6 +58,11 @@ if ($slashargument = min_get_slash_argument()) {
     $usesvg    = (bool)min_optional_param('svg', '1', 'INT');
 }
 
+if (!min_is_revision_valid_and_current($rev)) {
+    // If the rev is invalid, normalise it to -1 to disable all caching.
+    $rev = -1;
+}
+
 if (empty($component) or $component === 'moodle' or $component === 'core') {
     $component = 'core';
 }

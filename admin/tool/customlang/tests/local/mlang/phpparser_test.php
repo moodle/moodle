@@ -34,7 +34,7 @@ use moodle_exception;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class phpparser_test extends advanced_testcase {
+final class phpparser_test extends advanced_testcase {
 
 
     /**
@@ -79,7 +79,7 @@ class phpparser_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function parse_provider() : array {
+    public static function parse_provider(): array {
         return [
             'Invalid PHP code' => [
                 'No PHP code', [], false

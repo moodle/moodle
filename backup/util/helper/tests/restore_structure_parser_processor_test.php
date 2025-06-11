@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/backup/util/helper/restore_structure_parser_proce
  * @copyright 2017 Dmitrii Metelkin (dmitriim@catalyst-au.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_structure_parser_processor_test extends advanced_testcase {
+final class restore_structure_parser_processor_test extends advanced_testcase {
 
     /**
      * Initial set up.
@@ -53,7 +53,7 @@ class restore_structure_parser_processor_test extends advanced_testcase {
      *
      * @return array
      */
-    public function process_cdata_data_provider() {
+    public static function process_cdata_data_provider(): array {
         return array(
             array(null, null, true),
             array("$@NULL@$", null, true),
@@ -123,7 +123,7 @@ class restore_structure_parser_processor_test extends advanced_testcase {
      * @param string $expected Expected result.
      * @param bool $slasharguments A value for $CFG->slasharguments setting.
      */
-    public function test_process_cdata($content, $expected, $slasharguments) {
+    public function test_process_cdata($content, $expected, $slasharguments): void {
         global $CFG;
 
         $CFG->slasharguments = $slasharguments;

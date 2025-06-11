@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright 2019 Université de Montréal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_test extends \externallib_advanced_testcase {
+final class task_test extends \externallib_advanced_testcase {
 
     /** @var stdClass $appreciator User with enough permissions to access lpmonitoring report in category context. */
     protected $appreciatorforcategory = null;
@@ -67,80 +67,92 @@ class task_test extends \externallib_advanced_testcase {
     protected $comp2 = null;
 
     protected function setUp(): void {
-
+        parent::setUp();
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $cpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $this->setAdminUser();
         // Create category.
-        $this->category = $dg->create_category(array('name' => 'Cat test 1'));
+        $this->category = $dg->create_category(['name' => 'Cat test 1']);
         $cat1ctx = \context_coursecat::instance($this->category->id);
 
         // Create templates in category.
-        $this->templateincategory = $cpg->create_template(array('shortname' => 'Medicine Year 1', 'contextid' => $cat1ctx->id));
+        $this->templateincategory = $cpg->create_template(['shortname' => 'Medicine Year 1', 'contextid' => $cat1ctx->id]);
 
         // Create scales.
-        $scale = $dg->create_scale(array("name" => "Scale default", "scale" => "not good, good"));
+        $scale = $dg->create_scale(["name" => "Scale default", "scale" => "not good, good"]);
 
         $scaleconfiguration = '[{"scaleid":"'.$scale->id.'"},' .
                 '{"name":"not good","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"good","id":2,"scaledefault":0,"proficient":1}]';
 
         // Create the framework competency.
-        $framework = array(
+        $framework = [
             'shortname' => 'Framework Medicine',
             'idnumber' => 'fr-medicine',
             'scaleid' => $scale->id,
             'scaleconfiguration' => $scaleconfiguration,
             'visible' => true,
-            'contextid' => $cat1ctx->id
-        );
+            'contextid' => $cat1ctx->id,
+        ];
         $this->frameworkincategory = $cpg->create_framework($framework);
-        $this->comp1 = $cpg->create_competency(array(
-            'competencyframeworkid' => $this->frameworkincategory->get('id'),
-            'shortname' => 'Competency A')
+        $this->comp1 = $cpg->create_competency(
+            [
+                'competencyframeworkid' => $this->frameworkincategory->get('id'),
+                'shortname' => 'Competency A',
+            ]
         );
 
-        $this->comp2 = $cpg->create_competency(array(
-            'competencyframeworkid' => $this->frameworkincategory->get('id'),
-            'shortname' => 'Competency B')
+        $this->comp2 = $cpg->create_competency(
+            [
+                'competencyframeworkid' => $this->frameworkincategory->get('id'),
+                'shortname' => 'Competency B',
+            ]
         );
         // Create template competency.
-        $cpg->create_template_competency(array('templateid' => $this->templateincategory->get('id'),
-            'competencyid' => $this->comp1->get('id')));
-        $cpg->create_template_competency(array('templateid' => $this->templateincategory->get('id'),
-            'competencyid' => $this->comp2->get('id')));
+        $cpg->create_template_competency([
+            'templateid' => $this->templateincategory->get('id'),
+            'competencyid' => $this->comp1->get('id'),
+        ]);
+        $cpg->create_template_competency([
+            'templateid' => $this->templateincategory->get('id'),
+            'competencyid' => $this->comp2->get('id'),
+        ]);
 
-        $this->user1 = $dg->create_user(array(
-            'firstname' => 'Rebecca',
-            'lastname' => 'Armenta',
-            'email' => 'user11test@nomail.com',
-            'phone1' => 1111111111,
-            'phone2' => 2222222222,
-            'institution' => 'Institution Name',
-            'department' => 'Dep Name')
+        $this->user1 = $dg->create_user(
+            [
+                'firstname' => 'Rebecca',
+                'lastname' => 'Armenta',
+                'email' => 'user11test@nomail.com',
+                'phone1' => 1111111111,
+                'phone2' => 2222222222,
+                'institution' => 'Institution Name',
+                'department' => 'Dep Name',
+            ]
         );
-        $this->user2 = $dg->create_user(array(
-            'firstname' => 'Donald',
-            'lastname' => 'Fletcher',
-            'email' => 'user12test@nomail.com',
-            'phone1' => 1111111111,
-            'phone2' => 2222222222,
-            'institution' => 'Institution Name',
-            'department' => 'Dep Name')
+        $this->user2 = $dg->create_user(
+            [
+                'firstname' => 'Donald',
+                'lastname' => 'Fletcher',
+                'email' => 'user12test@nomail.com',
+                'phone1' => 1111111111,
+                'phone2' => 2222222222,
+                'institution' => 'Institution Name',
+                'department' => 'Dep Name',
+            ]
         );
 
         $appreciatorforcategory = $dg->create_user(
-                array(
+                [
                     'firstname' => 'Appreciator',
                     'lastname' => 'Test',
                     'username' => 'appreciator',
-                    'password' => 'appreciator'
-                )
+                    'password' => 'appreciator',
+                ]
         );
 
-        $cohort = $dg->create_cohort(array('contextid' => $cat1ctx->id));
+        $cohort = $dg->create_cohort(['contextid' => $cat1ctx->id]);
         cohort_add_member($cohort->id, $this->user1->id);
         cohort_add_member($cohort->id, $this->user2->id);
 
@@ -163,11 +175,11 @@ class task_test extends \externallib_advanced_testcase {
         assign_capability('moodle/site:viewuseridentity', CAP_ALLOW, $roleid, $syscontext->id);
 
         role_assign($roleid, $appreciatorforcategory->id, $cat1ctx->id);
-        $params = (object) array(
+        $params = (object) [
             'userid' => $appreciatorforcategory->id,
             'roleid' => $roleid,
-            'cohortid' => $cohort->id
-        );
+            'cohortid' => $cohort->id,
+        ];
         tool_cohortroles_api::create_cohort_role_assignment($params);
         tool_cohortroles_api::sync_all_cohort_roles();
         $this->appreciatorforcategory = $appreciatorforcategory;
@@ -176,7 +188,7 @@ class task_test extends \externallib_advanced_testcase {
     /*
      * Test execute_rate_users_in_template_task.
      */
-    public function test_execute_rate_users_in_template_task() {
+    public function test_execute_rate_users_in_template_task(): void {
         $datascales = [];
         $datascales = [['compid' => $this->comp1->get('id'), 'value' => 1], ['compid' => $this->comp2->get('id'), 'value' => 2]];
         $datascales = json_encode($datascales);
@@ -288,6 +300,6 @@ class task_test extends \externallib_advanced_testcase {
         $this->setAdminUser();
         $tasks = \core\task\manager::get_adhoc_tasks($tasknamespace);
         $task = reset($tasks);
-        $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
+        $DB->delete_records('task_adhoc', ['id' => $task->get_id()]);
     }
 }

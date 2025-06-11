@@ -211,7 +211,7 @@ function kalvidassign_email_teachers($cm, $name, $submission, $context) {
             $info->username = fullname($user, true);
             $info->assignment = format_string($name, true);
             $info->url = $CFG->wwwroot.'/mod/kalvidassign/grade_submissions.php?cmid='.$cm->id;
-            $info->timeupdated = core_date::strftime('%c', $submission->timemodified);
+            $info->timeupdated = strftime('%c', $submission->timemodified);
             $info->courseid = $cm->course;
             $info->cmid     = $cm->id;
 

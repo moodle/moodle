@@ -47,7 +47,7 @@ class data extends persistent {
      *
      * @return array
      */
-    protected static function define_properties() : array {
+    protected static function define_properties(): array {
         return array(
                 'fieldid'        => [
                         'type' => PARAM_INT,
@@ -95,6 +95,12 @@ class data extends persistent {
                         'null'    => NULL_NOT_ALLOWED,
                         'default' => FORMAT_MOODLE,
                         'optional' => true
+                ],
+                'valuetrust' => [
+                    'type' => PARAM_BOOL,
+                    'null' => NULL_NOT_ALLOWED,
+                    'default' => false,
+                    'optional' => true,
                 ],
                 'contextid'      => [
                         'type'     => PARAM_INT,

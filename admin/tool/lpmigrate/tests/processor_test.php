@@ -26,7 +26,34 @@ use core_competency\course_module_competency;
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class processor_test extends \advanced_testcase {
+final class processor_test extends \advanced_testcase {
+
+    /** @var \core_competency\competency_framework|null $f1  */
+    protected $f1 = null;
+
+    /** @var \core_competency\competency_framework|null $f2 */
+    protected $f2 = null;
+
+    /** @var object|null $c1 course instance. */
+    protected ?object $c1 = null;
+
+    /** @var object|null $c2 course instance. */
+    protected ?object $c2 = null;
+
+    /** @var array $f1comps */
+    protected array $f1comps = [];
+
+    /** @var array $f2comps */
+    protected array $f2comps = [];
+
+    /** @var array $cms */
+    protected array $cms = [];
+
+    /** @var array $ccs */
+    protected array $ccs = [];
+
+    /** @var array $cmcs */
+    protected array $cmcs = [];
 
     /**
      * This sets up a few things, and assign class variables.
@@ -36,6 +63,7 @@ class processor_test extends \advanced_testcase {
      * Then we attach some competencies from the first framework to courses and CM.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
@@ -139,7 +167,7 @@ class processor_test extends \advanced_testcase {
         $this->cmcs = $cmcs;
     }
 
-    public function test_simple_migration() {
+    public function test_simple_migration(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -175,7 +203,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyExists($this->cms[$this->c1->id]['F1'], $this->f1comps['X1']);
     }
 
-    public function test_remove_when_missing() {
+    public function test_remove_when_missing(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -201,7 +229,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotExists($this->cms[$this->c1->id]['F1'], $this->f1comps['X1']);
     }
 
-    public function test_allowed_courses() {
+    public function test_allowed_courses(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -234,7 +262,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A3']);
     }
 
-    public function test_disallowed_courses() {
+    public function test_disallowed_courses(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -267,7 +295,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A3']);
     }
 
-    public function test_course_start_date_from() {
+    public function test_course_start_date_from(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -300,7 +328,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A3']);
     }
 
-    public function test_destination_competency_exists() {
+    public function test_destination_competency_exists(): void {
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
@@ -348,7 +376,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyExists($this->cms[$this->c2->id]['F1'], $this->f1comps['A2']);
     }
 
-    public function test_destination_competency_exists_remove_original() {
+    public function test_destination_competency_exists_remove_original(): void {
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
@@ -384,7 +412,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotExists($this->cms[$this->c2->id]['F1'], $this->f1comps['A2']);
     }
 
-    public function test_permission_exception() {
+    public function test_permission_exception(): void {
 
         $this->preventResetByRollback(); // Test uses transactions, so we cannot use them for speedy reset.
 

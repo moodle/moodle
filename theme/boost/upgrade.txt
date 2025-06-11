@@ -1,5 +1,35 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes in /theme/boost
 information provided here is intended especially for theme designers.
+
+=== 4.4 ===
+* Bootstrap badge color helper clases (badge-[primary|secondary|...]) are no longer used, use bg-[primary|secondary|...] instead.
+* Bootstrap badge-pill is no longer used, use rounded-pill instead.
+* The bootstrap ´.media´ helper class has been replaced with utility classes (´d-flex´, ´flex-shrink-´, ´flex-grow-´, ...)
+* The following bootstrap mixins that will be deprecated in BS5 have been replaced with their CSS code:
+  - hover, hover-focus, plain-hover-focus and hover-focus-active
+  - float-left, float-right and float-none
+  - nav-divider
+  - img-retina
+  - text-hide
+  - invisible
+  - form-control-focus
+  - text-emphasis-variant
+  - size
+  - make-container-max-widths
+  - g-variant and bg-gradient-variant
+* Bootstrap `.form-group` helper class is no longer used, use margin utilities instead (´mb-3´, ...).
+* Bootstrap `.form-inline` helper class is no longer used, use display utilities instead (`.d-flex.flex-wrap.align-items-center`).
+* The `.dashboard-card` class has been removed in favour of `.course-card` and `theme-card`.
+* Bootstrap `.card-deck` helper class is no longer used, use grid utility classes (row, row-cols, ...) instead.
+
+=== 4.3 ===
+* The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.
+* New SCSS mixin optional_animate to animate an element unless if the user has reduced motion in their preferences.
 
 === 4.0 ===
 * Following the adopted standards, breadcrumbs have been removed for pages that reside on the 1st level within a course

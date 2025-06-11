@@ -108,6 +108,6 @@ abstract class module_area_base extends area_base {
      * @return \moodle_url
      */
     public static function get_edit_url(\stdClass $componentinfo): \moodle_url {
-        return new \moodle_url('/course/mod.php', ['update' => $componentinfo->cmid, 'sr' => 0, 'sesskey' => sesskey()]);
+        return new \moodle_url('/course/mod.php', ['update' => $componentinfo->cmid, 'sr' => null, 'sesskey' => sesskey()]);
     }
 }

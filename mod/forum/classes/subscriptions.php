@@ -176,11 +176,32 @@ class subscriptions {
      *
      * @param \stdClass $forum The record of the forum to set
      * @param int $status The new subscription state
-     * @return bool
+     * @return bool true
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public static function set_subscription_mode($forumid, $status = 1) {
+    public static function set_subscription_mode($forum, $status = FORUM_FORCESUBSCRIBE): bool {
         global $DB;
-        return $DB->set_field("forum", "forcesubscribe", $status, array("id" => $forumid));
+
+        if (is_numeric($forum)) {
+            debugging(__METHOD__.': Argument #1 ($forum) must be a stdClass record of a forum', DEBUG_DEVELOPER);
+
+            $forum = $DB->get_record("forum", ["id" => $forum], '*', MUST_EXIST);
+        }
+
+        $DB->set_field("forum", "forcesubscribe", $status, ["id" => $forum->id]);
+
+        if ($forum->forcesubscribe != $status) {
+            // Trigger event if subscription mode has been changed.
+            $event = \mod_forum\event\subscription_mode_updated::create([
+                "context" => forum_get_context($forum->id),
+                "objectid" => $forum->id,
+                "other" => ["oldvalue" => $forum->forcesubscribe, "newvalue" => $status],
+            ]);
+            $event->add_record_snapshot("forum", $forum);
+            $event->trigger();
+        }
+
+        return true;
     }
 
     /**
@@ -418,14 +439,16 @@ class subscriptions {
 
         // Retrieve the forum context if it wasn't specified.
         $context = forum_get_context($forum->id, $context);
-
         if (self::is_forcesubscribed($forum)) {
-            $results = \mod_forum\subscriptions::get_potential_subscribers($context, $groupid, $fields, "u.email ASC");
+            $results = self::get_potential_subscribers($context, $groupid, $fields);
 
         } else {
             // Only active enrolled users or everybody on the frontpage.
             list($esql, $params) = get_enrolled_sql($context, '', $groupid, true);
             $params['forumid'] = $forum->id;
+
+            list($sort, $sortparams) = users_order_by_sql('u');
+            $params = array_merge($params, $sortparams);
 
             if ($includediscussionsubscriptions) {
                 $params['sforumid'] = $forum->id;
@@ -445,7 +468,7 @@ class subscriptions {
                         JOIN {user} u ON u.id = subscriptions.userid
                         JOIN ($esql) je ON je.id = u.id
                         WHERE u.auth <> 'nologin' AND u.suspended = 0 AND u.confirmed = 1
-                        ORDER BY u.email ASC";
+                        ORDER BY $sort";
 
             } else {
                 $sql = "SELECT $fields
@@ -454,7 +477,7 @@ class subscriptions {
                         JOIN {forum_subscriptions} s ON s.userid = u.id
                         WHERE
                           s.forum = :forumid AND u.auth <> 'nologin' AND u.suspended = 0 AND u.confirmed = 1
-                        ORDER BY u.email ASC";
+                        ORDER BY $sort";
             }
             $results = $DB->get_records_sql($sql, $params);
         }

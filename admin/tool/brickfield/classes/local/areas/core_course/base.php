@@ -108,7 +108,7 @@ abstract class base extends area_base {
      */
     public static function get_edit_url(\stdClass $componentinfo): \moodle_url {
         if ($componentinfo->tablename == 'course_sections') {
-            return new \moodle_url('/course/editsection.php', ['id' => $componentinfo->itemid, 'sr' => '']);
+            return new \moodle_url('/course/editsection.php', ['id' => $componentinfo->itemid]);
         } else if ($componentinfo->tablename == 'course_categories') {
             return new \moodle_url('/course/editcategory.php', ['id' => $componentinfo->itemid]);
         } else {

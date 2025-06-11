@@ -161,6 +161,12 @@ class grade_category extends grade_object {
     protected $canapplylimitrules;
 
     /**
+     * e.g. 'category', 'course' and 'mod', 'blocks', 'import', etc...
+     * @var string $itemtype
+     */
+    public $itemtype;
+
+    /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
      * or when a new parent is added or changed. It is a recursive function: once the calling
@@ -288,59 +294,63 @@ class grade_category extends grade_object {
     public function delete($source=null) {
         global $DB;
 
-        $transaction = $DB->start_delegated_transaction();
-        $grade_item = $this->load_grade_item();
+        try {
+            $transaction = $DB->start_delegated_transaction();
+            $grade_item = $this->load_grade_item();
 
-        if ($this->is_course_category()) {
+            if ($this->is_course_category()) {
 
-            if ($categories = grade_category::fetch_all(array('courseid'=>$this->courseid))) {
+                if ($categories = self::fetch_all(['courseid' => $this->courseid])) {
 
-                foreach ($categories as $category) {
+                    foreach ($categories as $category) {
 
-                    if ($category->id == $this->id) {
-                        continue; // do not delete course category yet
+                        if ($category->id == $this->id) {
+                            continue; // Do not delete course category yet.
+                        }
+                        $category->delete($source);
                     }
-                    $category->delete($source);
                 }
-            }
 
-            if ($items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
+                if ($items = grade_item::fetch_all(['courseid' => $this->courseid])) {
 
-                foreach ($items as $item) {
+                    foreach ($items as $item) {
 
-                    if ($item->id == $grade_item->id) {
-                        continue; // do not delete course item yet
+                        if ($item->id == $grade_item->id) {
+                            continue; // Do not delete course item yet.
+                        }
+                        $item->delete($source);
                     }
-                    $item->delete($source);
+                }
+
+            } else {
+                $this->force_regrading();
+
+                $parent = $this->load_parent_category();
+
+                // Update children's categoryid/parent field first.
+                if ($children = grade_item::fetch_all(['categoryid' => $this->id])) {
+                    foreach ($children as $child) {
+                        $child->set_parent($parent->id);
+                    }
+                }
+
+                if ($children = self::fetch_all(['parent' => $this->id])) {
+                    foreach ($children as $child) {
+                        $child->set_parent($parent->id);
+                    }
                 }
             }
 
-        } else {
-            $this->force_regrading();
+            // First delete the attached grade item and grades.
+            $grade_item->delete($source);
 
-            $parent = $this->load_parent_category();
+            // Delete category itself.
+            $success = parent::delete($source);
 
-            // Update children's categoryid/parent field first
-            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
-                foreach ($children as $child) {
-                    $child->set_parent($parent->id);
-                }
-            }
-
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
-                foreach ($children as $child) {
-                    $child->set_parent($parent->id);
-                }
-            }
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
-
-        // first delete the attached grade item and grades
-        $grade_item->delete($source);
-
-        // delete category itself
-        $success = parent::delete($source);
-
-        $transaction->allow_commit();
         return $success;
     }
 
@@ -528,28 +538,23 @@ class grade_category extends grade_object {
             }
         }
 
-        $grade_inst = new grade_grade();
-        $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
+        $gradeinst = new grade_grade();
+        $fields = implode(',', $gradeinst->required_fields);
 
         // where to look for final grades - include grade of this item too, we will store the results there
         $gis = array_merge($depends_on, array($this->grade_item->id));
         list($usql, $params) = $DB->get_in_or_equal($gis);
 
         if ($userid) {
-            $usersql = "AND g.userid=?";
+            $usersql = "AND userid=?";
             $params[] = $userid;
 
         } else {
             $usersql = "";
         }
 
-        $sql = "SELECT $fields
-                  FROM {grade_grades} g, {grade_items} gi
-                 WHERE gi.id = g.itemid AND gi.id $usql $usersql
-              ORDER BY g.userid";
-
         // group the results by userid and aggregate the grades for this user
-        $rs = $DB->get_recordset_sql($sql, $params);
+        $rs = $DB->get_recordset_select('grade_grades', "itemid $usql $usersql", $params, 'userid', $fields);
         if ($rs->valid()) {
             $prevuser = 0;
             $grade_values = array();
@@ -743,6 +748,16 @@ class grade_category extends grade_object {
 
         }
 
+        // First, check if all grades are null, because the final grade will be null
+        // even when aggreateonlygraded is true.
+        $allnull = true;
+        foreach ($grade_values as $v) {
+            if (!is_null($v)) {
+                $allnull = false;
+                break;
+            }
+        }
+
         // For items with no value, and not excluded - either set their grade to 0 or exclude them.
         foreach ($items as $itemid=>$value) {
             if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
@@ -810,9 +825,13 @@ class grade_category extends grade_object {
             $result['grademin'] = 0;
         }
 
-        // Recalculate the grade back to requested range.
-        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
-        $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
+        if ($allnull) {
+            $grade->finalgrade = null;
+        } else {
+            // Recalculate the grade back to requested range.
+            $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
+            $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
+        }
 
         $oldrawgrademin = $grade->rawgrademin;
         $oldrawgrademax = $grade->rawgrademax;
@@ -1118,7 +1137,7 @@ class grade_category extends grade_object {
                 $freq = array_count_values($converted_grade_values);
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
-                $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
+                $modes = moodle_array_keys_filter($freq, $top);  // Search for all modes (have the same highest count).
                 rsort($modes, SORT_NUMERIC);       // get highest mode
                 $agg_grade = reset($modes);
                 // Record the weights as used.
@@ -1751,7 +1770,7 @@ class grade_category extends grade_object {
                 // An extra credit grade item doesn't contribute to $totaloverriddengrademax.
                 continue;
             } else if ($gradeitem->weightoverride > 0 && $gradeitem->aggregationcoef2 <= 0) {
-                // An overriden item that defines a weight of 0 does not contribute to $totaloverriddengrademax.
+                // An overridden item that defines a weight of 0 does not contribute to $totaloverriddengrademax.
                 continue;
             }
 
@@ -1767,8 +1786,6 @@ class grade_category extends grade_object {
         // Keep a record of how much the override total is to see if it is above 100. It it is then we need to set the
         // other weights to zero and normalise the others.
         $overriddentotal = 0;
-        // If the overridden weight total is higher than 1 then set the other untouched weights to zero.
-        $setotherweightstozero = false;
         // Total up all of the weights.
         foreach ($overridearray as $gradeitemdetail) {
             // If the grade item has extra credit, then don't add it to the normalisetotal.
@@ -1968,8 +1985,8 @@ class grade_category extends grade_object {
             foreach ($grade_values as $itemid=>$value) {
                 // BEGIN LSU Weighted Mean Extra Credit
                 if ($this->is_item_extra_credit($items[$itemid])) {
+                // if ($extraused and $items[$itemid]->aggregationcoef > 0) {
                 // END LSU Weighted Mean Extra Credit
-
                     // we keep all extra credits
 
                 } else if ($kept < $this->keephigh) {
@@ -2195,7 +2212,7 @@ class grade_category extends grade_object {
      * @param int   $sortorder The current sortorder
      * @return array An array containing 'object', 'type', 'depth' and optionally 'children'
      */
-    static private function _fetch_course_tree_recursion($category_array, &$sortorder) {
+    private static function _fetch_course_tree_recursion($category_array, &$sortorder) {
         if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype==GRADE_TYPE_NONE) {
             return null;
         }
@@ -2686,25 +2703,21 @@ class grade_category extends grade_object {
 
         $result = $this->grade_item->set_locked($lockedstate, $cascade, true);
 
-        if ($cascade) {
-            //process all children - items and categories
-            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+        // Process all children - items and categories.
+        if ($children = grade_item::fetch_all(['categoryid' => $this->id])) {
+            foreach ($children as $child) {
+                $child->set_locked($lockedstate, $cascade, false);
 
-                foreach ($children as $child) {
-                    $child->set_locked($lockedstate, true, false);
-
-                    if (empty($lockedstate) and $refresh) {
-                        //refresh when unlocking
-                        $child->refresh_grades();
-                    }
+                if (empty($lockedstate) && $refresh) {
+                    // Refresh when unlocking.
+                    $child->refresh_grades();
                 }
             }
+        }
 
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
-
-                foreach ($children as $child) {
-                    $child->set_locked($lockedstate, true, true);
-                }
+        if ($children = static::fetch_all(['parent' => $this->id])) {
+            foreach ($children as $child) {
+                $child->set_locked($lockedstate, $cascade, true);
             }
         }
 
@@ -2714,7 +2727,7 @@ class grade_category extends grade_object {
     /**
      * Overrides grade_object::set_properties() to add special handling for changes to category aggregation types
      *
-     * @param stdClass $instance the object to set the properties on
+     * @param grade_category $instance the object to set the properties on
      * @param array|stdClass $params Either an associative array or an object containing property name, property value pairs
      */
     public static function set_properties(&$instance, $params) {

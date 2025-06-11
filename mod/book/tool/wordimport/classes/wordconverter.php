@@ -60,7 +60,7 @@ class wordconverter {
         global $CFG, $USER, $COURSE;
 
         // Set common parameters for all XSLT transformations. Note that the XSLT processor doesn't support $arguments.
-        $this->xsltparameters = array(
+        $this->xsltparameters = [
             'course_id' => $COURSE->id,
             'course_name' => $COURSE->fullname,
             'author_name' => $USER->firstname . ' ' . $USER->lastname,
@@ -74,8 +74,8 @@ class wordconverter {
             'imagehandling' => 'referenced', // Atto, Books and Lessons are referenced, Glossaries and Question are embedded.
             'heading1stylelevel' => 3, // Atto, Books and Lessons are 3, Glossaries and Question banks should be overridden to 1.
             'pluginname' => $plugin,
-            'debug_flag' => (debugging(null, DEBUG_DEVELOPER)) ? '1' : '0'
-            );
+            'debug_flag' => (debugging(null, DEBUG_DEVELOPER)) ? '1' : '0',
+            ];
     }
 
     /**
@@ -86,7 +86,7 @@ class wordconverter {
      * @param array $parameters Extra XSLT parameters, if any
      * @return string Processed XML content
      */
-    public function xsltransform(string $xmldata, string $xslfile, array $parameters = array()) {
+    public function xsltransform(string $xmldata, string $xslfile, array $parameters = []) {
         global $CFG;
 
         // Set common parameters for all XSLT transformations. Note that the XSLT processor doesn't support $arguments.
@@ -150,8 +150,8 @@ class wordconverter {
         $xmldeclaration = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
         $wordmldata = $xmldeclaration . "\n<pass1Container>\n";
         $imagestring = "";
-        $gifimagefilenames = array();
-        $pngimagefilenames = array();
+        $gifimagefilenames = [];
+        $pngimagefilenames = [];
 
         $filecount = $zipfile->numFiles;
         for ($idx = 0; $idx < $filecount; $idx++) {
@@ -278,10 +278,10 @@ class wordconverter {
         $cleancontent = $this->clean_html_text($xhtmldata);
 
         // Set parameters for XSLT transformation. Note that we cannot use $arguments though.
-        $parameters = array (
+        $parameters = [
             'pluginname' => $module,
-            'exportimagehandling' => $imagehandling // Embedded or appended images.
-        );
+            'exportimagehandling' => $imagehandling, // Embedded or appended images.
+        ];
 
         // Append the Moodle text labels with the local ones for error and warning messages.
         $moodlelabels = str_ireplace('</moodlelabels>', $this->get_text_labels() . "\n</moodlelabels>", $moodlelabels);
@@ -320,7 +320,7 @@ class wordconverter {
             'xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">';
         // Grab title and contents of each 'Heading 1' section, which is mapped to h3.
         $chaptermatches = preg_split('#<h3>.*</h3>#isU', $htmlcontent);
-        $langmatches = array();
+        $langmatches = [];
         preg_match('#<meta name="moodleLanguage" content="(.*)"/>#i', $htmlcontent, $langmatches);
         preg_match_all('#<h3>(.*)</h3>#i', $htmlcontent, $h3matches);
 
@@ -387,14 +387,14 @@ class wordconverter {
 
         // Create a record for the file store.
         $fs = get_file_storage();
-        $zipfilerecord = array(
+        $zipfilerecord = [
             'contextid' => $context->id,
             'component' => 'user',
             'filearea' => 'draft',
             'itemid' => 0,
             'filepath' => "/",
-            'filename' => basename($zipfilename)
-            );
+            'filename' => basename($zipfilename),
+            ];
         // Copy the temporary Zip file into the store, and then delete it.
         $zipfile = $fs->create_file_from_pathname($zipfilerecord, $zipfilename);
         return $zipfile;
@@ -525,7 +525,7 @@ class wordconverter {
         unlink($pngfile);
         // Change "pngXXXX.tmp" into "XXXX.png" for appending to the original GIF file name.
         $pngfilename = substr(basename($pngfile, ".tmp"), 3) . ".png";
-        return array($pngfilename, $imagedata);
+        return [$pngfilename, $imagedata];
     }
 
     /**
@@ -600,9 +600,9 @@ class wordconverter {
     private function get_text_labels() {
 
         // Release-independent list of all strings required in the XSLT stylesheets for labels etc.
-        $textstrings = array(
-            'booktool_wordimport' => array('transformationfailed', 'embeddedimageswarning', 'encodedimageswarning')
-            );
+        $textstrings = [
+            'booktool_wordimport' => ['transformationfailed', 'embeddedimageswarning', 'encodedimageswarning'],
+            ];
 
         $expout = "";
         foreach ($textstrings as $typegroup => $grouparray) {

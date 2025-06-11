@@ -83,9 +83,9 @@ class completion_info_exporter extends \core\external\exporter {
             'hascompletion'    => $cmcompletion->has_completion(),
             'isautomatic'      => $cmcompletion->is_automatic(),
             'istrackeduser'    => $cmcompletion->is_tracked_user(),
-            'overallstatus'    => $cmcompletion->get_overall_completion(),
             'uservisible'      => $this->cminfo->uservisible,
             'details'          => $details,
+            'isoverallcomplete' => $cmcompletion->is_overall_complete(),
         ];
     }
 
@@ -147,6 +147,11 @@ class completion_info_exporter extends \core\external\exporter {
                         ]
                     ]
                 ]
+            ],
+            'isoverallcomplete' => [
+                'type' => PARAM_BOOL,
+                'description' => 'Whether the overall completion state of this course module should be marked as complete or not.',
+                'optional' => true,
             ],
         ];
     }

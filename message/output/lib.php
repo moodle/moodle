@@ -36,7 +36,7 @@ abstract class message_output {
      * @see message_send()
      * @param stdClass $message The event data submitted by the message provider to message_send() plus $eventdata->savedmessageid
      */
-    public abstract function send_message($message);
+    abstract public function send_message($message);
 
     /**
      * Load the config data from database to put on the config form on the messaging preferences page
@@ -44,14 +44,14 @@ abstract class message_output {
      * @param array $preferences Array of user preferences
      * @param int $userid The user ID
      */
-    public abstract function load_data(&$preferences, $userid);
+    abstract public function load_data(&$preferences, $userid);
 
     /**
      * Create necessary fields in the config form on the messaging preferences page
      *
      * @param array $preferences An array of user preferences
      */
-    public abstract function config_form($preferences);
+    abstract public function config_form($preferences);
 
     /**
      * Parse the submitted form and save data into an array of user preferences
@@ -59,7 +59,7 @@ abstract class message_output {
      * @param stdClass $form preferences form class
      * @param array $preferences preferences array
      */
-    public abstract function process_form($form, &$preferences);
+    abstract public function process_form($form, &$preferences);
 
     /**
      * Are the message processor's system settings configured?

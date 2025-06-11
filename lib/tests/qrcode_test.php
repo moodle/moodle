@@ -26,12 +26,12 @@ use core_qrcode;
  * @author     <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qrcode_test extends \basic_testcase {
+final class qrcode_test extends \basic_testcase {
 
     /**
      * Basic test to generate a QR code and check that the library is not broken.
      */
-    public function test_generate_basic_qr() {
+    public function test_generate_basic_qr(): void {
         // The QR code generator library apply masks by random order, this is why everytime a QR code is generated the resultant
         // binary file can be different. This is why tests are limited.
 

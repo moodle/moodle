@@ -75,7 +75,7 @@ class application_registration {
      * @param int|null $id the id of the object instance, if being created from an existing store item.
      */
     private function __construct(string $name, string $uniqueid, ?\moodle_url $platformid, ?string $clientid,
-            ?\moodle_url $authenticationrequesturl, ?\moodle_url $jwksurl, ?\moodle_url $accesstokenurl, int $id = null) {
+            ?\moodle_url $authenticationrequesturl, ?\moodle_url $jwksurl, ?\moodle_url $accesstokenurl, ?int $id = null) {
 
         if (empty($name)) {
             throw new \coding_exception("Invalid 'name' arg. Cannot be an empty string.");
@@ -115,7 +115,7 @@ class application_registration {
      */
     public static function create(string $name, string $uniqueid, \moodle_url $platformid, string $clientid,
             \moodle_url $authenticationrequesturl, \moodle_url $jwksurl, \moodle_url $accesstokenurl,
-            int $id = null): application_registration {
+            ?int $id = null): application_registration {
 
         if (empty($clientid)) {
             throw new \coding_exception("Invalid 'clientid' arg. Cannot be an empty string.");
@@ -132,7 +132,7 @@ class application_registration {
      * @param int|null $id the id of the object instance, if being created from an existing store item.
      * @return application_registration the application_registration instance.
      */
-    public static function create_draft(string $name, string $uniqueid, int $id = null): application_registration {
+    public static function create_draft(string $name, string $uniqueid, ?int $id = null): application_registration {
         return new self($name, $uniqueid, null, null, null, null, null, $id);
     }
 

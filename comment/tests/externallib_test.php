@@ -18,6 +18,7 @@ namespace core_comment;
 
 use comment_exception;
 use core_comment_external;
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -35,12 +36,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 2.9
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Tests set up
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
@@ -96,7 +98,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_comments
      */
-    public function test_get_comments() {
+    public function test_get_comments(): void {
         global $CFG;
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
@@ -121,7 +123,7 @@ class externallib_test extends externallib_advanced_testcase {
             ]
         ];
         $result = core_comment_external::add_comments($inputdata);
-        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
         $ids = array_column($result, 'id');
 
         // Verify we can get the comments.
@@ -132,7 +134,7 @@ class externallib_test extends externallib_advanced_testcase {
         $area = 'database_entry';
         $page = 0;
         $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page);
-        $result = \external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['comments']);
@@ -149,7 +151,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Test sort direction and pagination.
         $CFG->commentsperpage = 1;
         $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page, 'ASC');
-        $result = \external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['comments']); // Only one per page.
@@ -159,7 +161,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Next page.
         $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page + 1, 'ASC');
-        $result = \external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['comments']);
@@ -171,7 +173,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments not enabled site level
      */
-    public function test_add_comments_not_enabled_site_level() {
+    public function test_add_comments_not_enabled_site_level(): void {
         global $CFG;
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
@@ -195,7 +197,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments not enabled module level
      */
-    public function test_add_comments_not_enabled_module_level() {
+    public function test_add_comments_not_enabled_module_level(): void {
         global $DB;
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
@@ -220,7 +222,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments
      */
-    public function test_add_comments_single() {
+    public function test_add_comments_single(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Add a comment as student 1.
@@ -235,7 +237,7 @@ class externallib_test extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Verify the result contains 1 result having the correct structure.
         $this->assertCount(1, $result);
@@ -263,7 +265,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * This simply verifies that the entire operation fails.
      */
-    public function test_add_comments_multiple_contains_invalid() {
+    public function test_add_comments_multiple_contains_invalid(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Try to create some comments as student 1, but provide a bad area for the second comment.
@@ -294,7 +296,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * This simply verifies that the entire operation fails.
      */
-    public function test_add_comments_multiple_all_valid() {
+    public function test_add_comments_multiple_all_valid(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Try to create some comments as student 1.
@@ -318,7 +320,7 @@ class externallib_test extends externallib_advanced_testcase {
             ]
         ];
         $result = core_comment_external::add_comments($inputdata);
-        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Two comments should have been created.
         $this->assertCount(2, $result);
@@ -334,7 +336,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_comments invalid area
      */
-    public function test_add_comments_invalid_area() {
+    public function test_add_comments_invalid_area(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Try to create a comment with an invalid area, verifying failure.
@@ -356,7 +358,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_comment invalid comment.
      */
-    public function test_delete_comments_invalid_comment_id() {
+    public function test_delete_comments_invalid_comment_id(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
         $this->setUser($student1);
 
@@ -367,7 +369,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_comment own user.
      */
-    public function test_delete_comments_own_user() {
+    public function test_delete_comments_own_user(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Create a few comments as student 1.
@@ -390,21 +392,21 @@ class externallib_test extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Delete those comments we just created.
         $result = core_comment_external::delete_comments([
             $result[0]['id'],
             $result[1]['id']
         ]);
-        $result = \external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
         $this->assertEquals([], $result);
     }
 
     /**
      * Test delete_comment other student.
      */
-    public function test_delete_comment_other_student() {
+    public function test_delete_comment_other_student(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Create a comment as the student.
@@ -419,7 +421,7 @@ class externallib_test extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Now, as student 2, try to delete the comment made by student 1. Verify we can't.
         $this->setUser($student2);
@@ -430,7 +432,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_comment as teacher.
      */
-    public function test_delete_comments_as_teacher() {
+    public function test_delete_comments_as_teacher(): void {
         [$module1, $recordid, $teacher1, $student1, $student2] = $this->setup_course_and_users_basic();
 
         // Create a comment as the student.
@@ -445,12 +447,12 @@ class externallib_test extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Verify teachers can delete the comment.
         $this->setUser($teacher1);
         $result = core_comment_external::delete_comments([$result[0]['id']]);
-        $result = \external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
+        $result = external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
         $this->assertEquals([], $result);
     }
 }

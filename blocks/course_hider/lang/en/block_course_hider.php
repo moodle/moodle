@@ -33,7 +33,7 @@ $string['settings'] = 'Settings';
 $string['course_hider:admin'] = 'Configure the Course Hider plugin';
 
 // Settings.
-$string['formoptionsheader'] = 'Form Options.';
+$string['formoptionsheader'] = 'Form Options';
 
 // Section Titles.
 $string['coursehidetitle'] = 'Course Hider Tool';
@@ -59,16 +59,16 @@ $string['formeerror'] = 'Error: Something went terribly wrong!';
 
 // Form Stuff.
 $string['years'] = 'Range of Years.';
-$string['yearsdesc'] = 'This is the range of years to show in the drop down box, for ex: 2020-2030';
+$string['yearsdesc'] = 'This is the range of years to show in the drop down box, for ex: 2020-2030.';
 
 $string['semestertype'] = 'Type Of Semester.';
-$string['semestertypedesc'] = 'Comma seperated list of the different types of semester types. Ex: First,Second';
+$string['semestertypedesc'] = 'Comma seperated list of the different types of semester types. Ex: First,Second.';
 
 $string['semester'] = 'Choose A Semester.';
-$string['semesterdesc'] = 'Comma seperated list of the different semesters. Ex: Spring,Summer,Fall';
+$string['semesterdesc'] = 'Comma seperated list of the different semesters. Ex: Spring,Summer,Fall.';
 
 $string['semestersection'] = 'Semester Section.';
-$string['semestersectiondesc'] = 'Comma seperated list of the different types of semester sections. Ex: Spring,Summer,Fall';
+$string['semestersectiondesc'] = 'Comma seperated list of the different types of semester sections. Ex: Spring,Summer,Fall.';
 
 $string['hiddenonly'] = 'Preview Hidden';
 $string['lockedonly'] = 'Preview Locked';
@@ -90,3 +90,8 @@ $string['executequery'] = 'Execute';
 
 $string['previewsettings'] = 'Search Settings';
 $string['updatesettings'] = 'Update Settings';
+
+// Settings.
+$string['sisoptionsheader'] = 'SIS System';
+$string['sis_system_wds'] = 'Search Workday';
+$string['sis_system_wds_desc'] = 'Use this option if querying courses generated from Workday.';

@@ -16,6 +16,8 @@
 
 namespace qbank_usage;
 
+use mod_quiz\quiz_attempt;
+
 /**
  * Tests for the data of question usage from differnet areas like helper or usage table.
  *
@@ -26,12 +28,12 @@ namespace qbank_usage;
  * @coversDefaultClass \qbank_usage\tables\question_usage_table
  * @covers \qbank_usage_output_fragment_question_usage
  */
-class question_usage_test extends \advanced_testcase {
+final class question_usage_test extends \advanced_testcase {
 
     /**
      * Test question usage data.
      */
-    public function test_question_usage() {
+    public function test_question_usage(): void {
         global $PAGE;
         $this->resetAfterTest(true);
         $layout = '1,2,0';
@@ -43,7 +45,7 @@ class question_usage_test extends \advanced_testcase {
         $quiz = $quizgenerator->create_instance(['course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout]);
 
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
@@ -61,14 +63,14 @@ class question_usage_test extends \advanced_testcase {
 
             $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
             quiz_add_quiz_question($question->id, $quiz, $page);
-            $questions [] = $question;
+            $questions[] = $question;
         }
 
         $timenow = time();
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
-        $attemptdata = \quiz_attempt::create($attempt->id);
+        $attemptdata = quiz_attempt::create($attempt->id);
 
         $this->setAdminUser();
         $PAGE->set_url(new \moodle_url('/'));

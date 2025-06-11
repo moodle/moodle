@@ -19,60 +19,26 @@ Feature: In a lesson activity, teachers can review student attempts
     And the following "activities" exist:
       | activity   | name             | course | idnumber    | retake |
       | lesson     | Test lesson name | C1     | lesson1     | 1      |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
 
   Scenario: View student attempts in a lesson containing both content and question pages
-    Given I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 2 |
-      | Page contents | Kermit is a frog |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 1 |
-      | Page contents | Paper is made from trees. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Third page name |
-      | Page contents | Third page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | Second page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title                 | content                   |
+      | Test lesson name | content   | First page name       | First page contents       |
+      | Test lesson name | content   | Second page name      | Second page contents      |
+      | Test lesson name | content   | Third page name       | Third page contents       |
+      | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
+      | Test lesson name | truefalse | True/false question 2 | Kermit is a frog          |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer        | response | jumpto        | score |
+      | First page name       | Next page     |          | Next page     | 0     |
+      | Second page name      | Previous page |          | Previous page | 0     |
+      | Second page name      | Next page     |          | Next page     | 0     |
+      | Third page name       | Previous page |          | Previous page | 0     |
+      | Third page name       | Next page     |          | Next page     | 0     |
+      | True/false question 1 | True          | Correct  | Next page     | 1     |
+      | True/false question 1 | False         | Wrong    | This page     | 0     |
+      | True/false question 2 | True          | Correct  | Next page     | 1     |
+      | True/false question 2 | False         | Wrong    | This page     | 0     |
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
@@ -100,40 +66,21 @@ Feature: In a lesson activity, teachers can review student attempts
     And I should see "Low score"
 
   Scenario: View student attempts in a lesson containing only content pages
-    Given I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Fourth page name |
-      | Page contents | Fourth page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | End of lesson |
-      | id_jumpto_1 | End of lesson |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Third page name |
-      | Page contents | Third page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | Second page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title            | content              |
+      | Test lesson name | content   | First page name  | First page contents  |
+      | Test lesson name | content   | Second page name | Second page contents |
+      | Test lesson name | content   | Third page name  | Third page contents  |
+      | Test lesson name | content   | Fourth page name | Fourth page contents |
+    And the following "mod_lesson > answers" exist:
+      | page             | answer        | jumpto        |
+      | First page name  | Next page     | Next page     |
+      | Second page name | Previous page | Previous page |
+      | Second page name | Next page     | Next page     |
+      | Third page name  | Previous page | Previous page |
+      | Third page name  | Next page     | Next page     |
+      | Fourth page name | Previous page | Previous page |
+      | Fourth page name | End of lesson | End of lesson |
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"

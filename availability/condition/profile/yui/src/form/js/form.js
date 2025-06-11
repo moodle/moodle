@@ -33,7 +33,7 @@ M.availability_profile.form.initInner = function(standardFields, customFields) {
 
 M.availability_profile.form.getNode = function(json) {
     // Create HTML structure.
-    var html = '<span class="availability-group"><label><span class="pr-3">' +
+    var html = '<span class="availability-group"><label><span class="pe-3">' +
             M.util.get_string('conditiontitle', 'availability_profile') + '</span> ' +
             '<select name="field" class="custom-select">' +
             '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>';
@@ -60,7 +60,7 @@ M.availability_profile.form.getNode = function(json) {
     html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_value', 'availability_profile') +
             '</span><input name="value" type="text" class="form-control" style="width: 10em" title="' +
             M.util.get_string('label_value', 'availability_profile') + '"/></label></span>';
-    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
+    var node = Y.Node.create('<span class="d-flex flex-wrap align-items-center">' + html + '</span>');
 
     // Set initial values if specified.
     if (json.sf !== undefined &&

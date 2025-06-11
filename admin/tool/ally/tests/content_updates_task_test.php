@@ -19,6 +19,8 @@
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_ally;
@@ -28,19 +30,24 @@ use \core\event\course_module_updated;
 use tool_ally\push_config;
 use tool_ally\push_content_updates;
 use tool_ally\task\content_updates_task;
+use tool_ally\prophesize_deprecation_workaround_mixin;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/abstract_testcase.php');
+require_once(__DIR__.'/prophesize_deprecation_workaround_mixin.php');
 
 /**
  * Tests for content updates task.
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class content_updates_task_test extends abstract_testcase {
+    use prophesize_deprecation_workaround_mixin;
 
     /**
      * First run should set the timestamp then exit.
@@ -52,7 +59,7 @@ class content_updates_task_test extends abstract_testcase {
 
         $task          = new content_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $task->updates = $this->prophesize(push_content_updates::class)->reveal();
+        $task->updates = $this->createMock(push_content_updates::class);
 
         $expected = time();
         $task->execute();
@@ -65,7 +72,7 @@ class content_updates_task_test extends abstract_testcase {
      */
     public function test_invalid_config() {
         $task          = new content_updates_task();
-        $task->updates = $this->prophesize(push_content_updates::class)->reveal();
+        $task->updates = $this->createMock(push_content_updates::class);
 
         $task->execute();
 
@@ -97,12 +104,13 @@ class content_updates_task_test extends abstract_testcase {
 
         $task          = new content_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $updates = $this->prophesize(push_content_updates::class);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(1);
-        $task->updates = $updates->reveal();
+        $updates = $this->createMock(push_content_updates::class);
+        $updates->expects($this->once())
+            ->method('send')
+            ->with($this->isType('array'));
+        $task->updates = $updates;
 
         $task->execute();
-        $updates->checkProphecyMethodsPredictions();
     }
 
     /**
@@ -127,16 +135,16 @@ class content_updates_task_test extends abstract_testcase {
                     ['introformat' => FORMAT_HTML, 'course' => $course->id]);
         }
 
-        $updates = $this->prophesize(push_content_updates::class);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(3);
+        $updates = $this->createMock(push_content_updates::class);
+        $updates->expects($this->exactly(3))
+            ->method('send')
+            ->with($this->isType('array'));
 
         $task          = new content_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret', 2);
-        $task->updates = $updates->reveal();
+        $task->updates = $updates;
 
         $task->execute();
-
-        $updates->checkProphecyMethodsPredictions();
     }
 
     /**
@@ -152,16 +160,16 @@ class content_updates_task_test extends abstract_testcase {
 
         $this->dataset_from_array(include(__DIR__.'/fixtures/deleted_content.php'))->to_database();
 
-        $updates = $this->prophesize(push_content_updates::class);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(3);
+        $updates = $this->createMock(push_content_updates::class);
+        $updates->expects($this->exactly(3))
+            ->method('send')
+            ->with($this->isType('array'));
 
         $task          = new content_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret', 2);
-        $task->updates = $updates->reveal();
+        $task->updates = $updates;
 
         $task->execute();
-
-        $updates->checkProphecyMethodsPredictions();
 
         // The deleted content queue should still be populated at this point.
         $this->assertNotEmpty($DB->get_records('tool_ally_deleted_content'));
@@ -214,9 +222,11 @@ class content_updates_task_test extends abstract_testcase {
 
         $task          = new content_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $updates = $this->prophesize(push_content_updates::class);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(1);
-        $task->updates = $updates->reveal();
+        $updates = $this->createMock(push_content_updates::class);
+        $updates->expects($this->once())
+            ->method('send')
+            ->with($this->isType('array'));
+        $task->updates = $updates;
 
         $task->execute();
 
@@ -230,8 +240,6 @@ class content_updates_task_test extends abstract_testcase {
         $this->assertCount(0, $deleted);
 
         $task->execute();
-
-        $updates->checkProphecyMethodsPredictions();
 
         // Make sure we have some deletion queue records and all of them are processed.
         $deleted = $DB->get_records_select('tool_ally_deleted_content', 'timeprocessed IS NOT NULL');
@@ -285,9 +293,11 @@ class content_updates_task_test extends abstract_testcase {
 
         $task          = new content_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $updates = $this->prophesize(push_content_updates::class);
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes(1);
-        $task->updates = $updates->reveal();
+        $updates = $this->createMock(push_content_updates::class);
+        $updates->expects($this->once())
+            ->method('send')
+            ->with($this->isType('array'));
+        $task->updates = $updates;
 
         $task->execute();
 
@@ -301,8 +311,6 @@ class content_updates_task_test extends abstract_testcase {
         $this->assert_deletion_queue_contains('glossary', 'glossary_entries', 'definition', $entry->id);
 
         $task->execute();
-
-        $updates->checkProphecyMethodsPredictions();
 
         // Make sure we have some deletion queue records and all of them are processed.
         $deleted = $DB->get_records_select('tool_ally_deleted_content', 'timeprocessed IS NOT NULL');
@@ -355,10 +363,12 @@ class content_updates_task_test extends abstract_testcase {
         fwrite(STDOUT, "\nGlossary deletion took " . (microtime(true) - $start));
         $task          = new content_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');
-        $updates = $this->prophesize(push_content_updates::class);
+        $updates = $this->createMock(push_content_updates::class);
         $sendcount = ceil($pushcount / $task->config->get_batch_size());
-        $updates->send(Argument::type('array'))->shouldBeCalledTimes($sendcount);
-        $task->updates = $updates->reveal();
+        $updates->expects($this->exactly($sendcount))
+            ->method('send')
+            ->with($this->isType('array'));
+        $task->updates = $updates;
 
         $start = microtime(true);
         $task->execute();
@@ -377,8 +387,6 @@ class content_updates_task_test extends abstract_testcase {
         $task->execute();
         $execution = (microtime(true) - $start);
         fwrite(STDOUT, "\n2nd task execution took " . $execution . ' seconds');
-
-        $updates->checkProphecyMethodsPredictions();
 
         // Make sure we have some deletion queue records and all of them are processed.
         $deleted = $DB->get_records_select('tool_ally_deleted_content', 'timeprocessed IS NOT NULL');

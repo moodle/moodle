@@ -1,0 +1,129 @@
+// -------------------------
+// Course management page.
+// -------------------------
+
+#page-course-management {
+    // View selector.
+    .view-mode-selector {
+        float: right;
+        font-family: $font-family-system;
+        &.action-menu {
+            display: inline-block;
+            padding-left: 0.5em;
+        }
+    }
+
+    // Links inside the course management page with unnecessary box shadow added by core in 3.9.
+    a {
+        box-shadow: none;
+    }
+
+    // We need to specify the exact elements that needs to have a transparent background,
+    // since core create some buttons as anchors and that may cause a problem.
+    // Had to separate this in two otherwise it won't work.
+    #category-listing ul.ms-1.list-unstyled a.categoryname {
+        &:hover,
+        &:active,
+        &:focus {
+            background-color: transparent !important;
+        }
+    }
+    #course-listing ul.ml.course-list a.coursename {
+        &:hover,
+        &:active,
+        &:focus {
+            background-color: transparent !important;
+        }
+    }
+
+    #course-category-listings .listitem[data-visible="0"] > div > a {
+        color: var(--gray);
+    }
+    .list-group-item-action:hover {
+        z-index: inherit;
+    }
+}
+
+// Wrapper around the 3 colums of data.
+#course-category-listings {
+    @extend .row;
+    padding-top: 1em;
+
+    .categoryname {
+        margin: 0 0.5rem;
+    }
+    // Two or three cols of data.
+    .category-listing,
+    .course-listing {
+        .listing-actions {
+            padding: 0.5em 0;
+        }
+        // Lists of content.
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        li ul {
+            padding-left: 4%;
+        }
+        li.collapsed ul {
+            display: none;
+        }
+        // Hide and show eye icons.
+        .listitem[data-visible="1"] {
+            > div {
+                .item-actions {
+                    .action-show {
+                        display: none;
+                    }
+                    .action-hide {
+                        display: inline;
+                    }
+                }
+            }
+        }
+        .listitem[data-visible="0"] {
+            > div {
+                .item-actions {
+                    .action-show {
+                        display: inline;
+                    }
+                    .action-hide {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        // Hide move up/down actions on first/last iteams.
+        .listitem:last-child > div .item-actions .action-movedown,
+        .listitem:first-child > div .item-actions .action-moveup {
+            display: none;
+        }
+        // Actions for catagory.
+        .category-item-actions {
+            float: left;
+            padding-right: 0.5em;
+        }
+        // Dropdown edit menu.
+        .dropdown-menu-right {
+            right: auto;
+            left: 0;
+        }
+        // Number of courses in catagory.
+        .course-count {
+            width: 3em;
+            float: right;
+            text-align: right;
+        }
+
+    }
+
+    // Course listing section.
+    #course-listing {
+        // Sort/filer options.
+        .moodle-actionmenu {
+            display: inline-block;
+        }
+    }
+}

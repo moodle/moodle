@@ -130,6 +130,7 @@ class block_backadel extends block_list {
         $items = array();
         $params = array('class' => 'icon');
 
+/*
         // Build the icon list.
         $icons[] = $OUTPUT->pix_icon('i/backup', '', 'moodle', $params);
         $icons[] = $OUTPUT->pix_icon('i/delete', '', 'moodle', $params);
@@ -141,6 +142,17 @@ class block_backadel extends block_list {
         $items[] = $this->build_link('delete') . "($numpending)";
         $items[] = $this->build_link('failed') . "($numfailed)";
         $items[] = $statustext;
+*/
+
+        // Build the list of items with icons and links on the same line.
+        $items[] = $OUTPUT->pix_icon('i/backup', '', 'moodle', $params) .
+            '' . $this->build_link('index');
+        $items[] = $OUTPUT->pix_icon('i/delete', '', 'moodle', $params) .
+            '' . $this->build_link('delete') . " ($numpending)";
+        $items[] = $OUTPUT->pix_icon('i/risk_xss', '', 'moodle', $params) .
+            '' . $this->build_link('failed') . " ($numfailed)";
+        $items[] = $OUTPUT->pix_icon('i/calendareventtime', '', 'moodle', $params) .
+            '' . $statustext;
 
         // Bring it all together.
         $this->content = new stdClass;

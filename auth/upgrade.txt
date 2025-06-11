@@ -1,5 +1,19 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
+
+=== 4.4 ===
+
+* A sesskey is no longer passed to the auth/test_settings.php page so it can no longer be required in test_settings().
+* Auth plugins can now attempt to identify users running CLI scripts using a new method find_cli_user()
+
+=== 4.2 ===
+* Support for configuration with the deprecated auth_config.php file has been removed.
+* The moodle-auth-passwordunmask YUI module has been removed. Any uses should be replaced with core_form/passwordunmask.
 
 === 3.9 ===
 

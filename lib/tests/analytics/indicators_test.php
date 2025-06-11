@@ -30,7 +30,7 @@ require_once(__DIR__ . '/../../../lib/enrollib.php');
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class indicators_test extends \advanced_testcase {
+final class indicators_test extends \advanced_testcase {
 
     /**
      * Test all core indicators.
@@ -40,7 +40,7 @@ class indicators_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_core_indicators() {
+    public function test_core_indicators(): void {
         global $DB;
 
         $this->preventResetByRollback();
@@ -86,8 +86,8 @@ class indicators_test extends \advanced_testcase {
 
         // Test any access before start.
         $params = array(
-            'startdate' => 9999999998,
-            'enddate' => 9999999999
+            'startdate' => SQL_INT_MAX - 1,
+            'enddate' => SQL_INT_MAX,
         );
         // Resetting $course var.
         $course = $this->getDataGenerator()->create_course($params);

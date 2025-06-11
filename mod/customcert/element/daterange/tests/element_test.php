@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/mod/customcert/element/daterange/tests/fixtures/f
  * @copyright  2018 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element_test extends advanced_testcase {
+final class element_test extends advanced_testcase {
 
     /**
      * Helper function to build element data.
@@ -128,7 +128,7 @@ class element_test extends advanced_testcase {
      * @param string $date Date to test.
      * @param string $expected Expected result.
      */
-    public function test_get_daterange_string_for_recurring_ranges($date, $expected) {
+    public function test_get_daterange_string_for_recurring_ranges($date, $expected): void {
         $dateranges = [
             (object)[
                 'startdate' => strtotime('01.04.2017'),
@@ -154,7 +154,7 @@ class element_test extends advanced_testcase {
      *
      * @covers \element::get_daterange_string
      */
-    public function test_that_first_matched_range_applied_first() {
+    public function test_that_first_matched_range_applied_first(): void {
         $dateranges = [
             (object)[
                 'startdate' => strtotime('01.04.2017'),
@@ -180,7 +180,7 @@ class element_test extends advanced_testcase {
      *
      * @covers \element::get_daterange_string
      */
-    public function test_placeholders_and_fall_back_string() {
+    public function test_placeholders_and_fall_back_string(): void {
         $dateranges = [
             (object)[
                 'startdate' => strtotime('01.04.2017'),
@@ -207,7 +207,7 @@ class element_test extends advanced_testcase {
      *
      * @covers \element::get_daterange_string
      */
-    public function test_nothing_will_be_displayed_if_empty_fallback_string() {
+    public function test_nothing_will_be_displayed_if_empty_fallback_string(): void {
         $dateranges = [
             (object)[
                 'startdate' => strtotime('01.04.2017'),
@@ -229,7 +229,7 @@ class element_test extends advanced_testcase {
      *
      * @covers \element::get_daterange_string
      */
-    public function test_recurring_range_first_year_and_recurring_range_last_year_placeholders() {
+    public function test_recurring_range_first_year_and_recurring_range_last_year_placeholders(): void {
         $datestring = '{{range_first_year}}-{{range_last_year}}-{{recurring_range_first_year}}-{{recurring_range_last_year}}';
         $dateranges = [
             (object) [

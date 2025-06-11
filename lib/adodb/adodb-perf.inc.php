@@ -237,6 +237,9 @@ class adodb_perf {
 	var $createTableSQL = false;
 	var $maxLength = 2000;
 
+	/** @var array Settings data. */
+	var $settings = [];
+
     // Sets the tablename to be used
     static function table($newtable = false)
     {
@@ -1014,7 +1017,7 @@ Committed_AS:   348732 kB
      *      <code>ADODB_OPT_LOW</code> for CPU-less optimization
      *      Default is LOW <code>ADODB_OPT_LOW</code>
      * @author Markus Staab
-     * @return Returns <code>true</code> on success and <code>false</code> on error
+     * @return bool true on success, false on error
      */
     function OptimizeTables()
     {
@@ -1045,7 +1048,7 @@ Committed_AS:   348732 kB
      *      <code>ADODB_OPT_LOW</code> for CPU-less optimization
      *      Default is LOW <code>ADODB_OPT_LOW</code>
      * @author Markus Staab
-     * @return Returns <code>true</code> on success and <code>false</code> on error
+	 * @return bool true on success, false on error
      */
     function OptimizeTable( $table, $mode = ADODB_OPT_LOW)
     {
@@ -1059,7 +1062,7 @@ Committed_AS:   348732 kB
      * optimize each using <code>optmizeTable()</code>
      *
      * @author Markus Staab
-     * @return Returns <code>true</code> on success and <code>false</code> on error
+	 * @return bool true on success, false on error
      */
     function optimizeDatabase()
     {

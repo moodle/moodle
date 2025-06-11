@@ -52,7 +52,7 @@ class backup_label_activity_task extends backup_activity_task {
      * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
      * @return string the same content with no changes
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content) {
         return $content;
     }
 }

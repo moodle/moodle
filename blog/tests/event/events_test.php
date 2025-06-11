@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/blog/lib.php');
  * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /** @var $courseid */
     private $courseid;
@@ -109,7 +109,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test various blog related events.
      */
-    public function test_blog_entry_created_event() {
+    public function test_blog_entry_created_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -137,17 +137,13 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
-        $arr = array(SITEID, 'blog', 'add', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id, $blog->subject);
-        $this->assertEventLegacyLogData($arr, $event);
-        $this->assertEquals("blog_entry_added", $event->get_legacy_eventname());
-        $this->assertEventLegacyData($blog, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Tests for event blog_entry_updated.
      */
-    public function test_blog_entry_updated_event() {
+    public function test_blog_entry_updated_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -172,17 +168,13 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
-        $this->assertEquals("blog_entry_edited", $event->get_legacy_eventname());
-        $this->assertEventLegacyData($blog, $event);
-        $arr = array (SITEID, 'blog', 'update', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id, $blog->subject);
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Tests for event blog_entry_deleted.
      */
-    public function test_blog_entry_deleted_event() {
+    public function test_blog_entry_deleted_event(): void {
         global $USER, $DB;
 
         $this->setAdminUser();
@@ -207,18 +199,13 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
         $this->assertEquals($record, $event->get_record_snapshot("post", $blog->id));
-        $this->assertSame('blog_entry_deleted', $event->get_legacy_eventname());
-        $arr = array(SITEID, 'blog', 'delete', 'index.php?userid=' . $blog->userid, 'deleted blog entry with entry id# ' .
-                $blog->id);
-        $this->assertEventLegacyLogData($arr, $event);
-        $this->assertEventLegacyData($blog, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Tests for event blog_association_deleted.
      */
-    public function test_blog_association_deleted_event() {
+    public function test_blog_association_deleted_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -263,7 +250,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_association_created.
      */
-    public function test_blog_association_created_event() {
+    public function test_blog_association_created_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -292,9 +279,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals('blog_association', $event->objecttable);
-        $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
-                     $blog->subject, 0, $this->userid);
-        $this->assertEventLegacyLogData($arr, $event);
 
         // Add blog associations with a module.
         $blog = new \blog_entry($this->postid);
@@ -308,16 +292,13 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($blog->id, $event->other['blogid']);
         $this->assertEquals($this->cmid, $event->other['associateid']);
         $this->assertEquals('coursemodule', $event->other['associatetype']);
-        $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
-                     $blog->subject, $this->cmid, $this->userid);
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Tests for event blog_association_created validations.
      */
-    public function test_blog_association_created_event_validations() {
+    public function test_blog_association_created_event_validations(): void {
 
         $this->resetAfterTest();
 
@@ -375,7 +356,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event blog_entries_viewed.
      */
-    public function test_blog_entries_viewed_event() {
+    public function test_blog_entries_viewed_event(): void {
 
         $this->setAdminUser();
 
@@ -393,17 +374,14 @@ class events_test extends \advanced_testcase {
 
         // Validate event data.
         $url = new \moodle_url('/blog/index.php', $other);
-        $url2 = new \moodle_url('index.php', $other);
         $this->assertEquals($url, $event->get_url());
-        $arr = array(SITEID, 'blog', 'view', $url2->out(), 'view blog entry');
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
     /**
      * Test comment_created event.
      */
-    public function test_blog_comment_created_event() {
+    public function test_blog_comment_created_event(): void {
         global $USER, $CFG;
 
         $this->setAdminUser();
@@ -439,7 +417,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_deleted event.
      */
-    public function test_blog_comment_deleted_event() {
+    public function test_blog_comment_deleted_event(): void {
         global $USER, $CFG;
 
         $this->setAdminUser();
@@ -479,7 +457,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blog_added_event() {
+    public function test_external_blog_added_event(): void {
 
         // Trigger an event: external blog added.
         $eventparams = array(
@@ -508,7 +486,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blog_updated_event() {
+    public function test_external_blog_updated_event(): void {
 
         // Trigger an event: external blog updated.
         $eventparams = array(
@@ -537,7 +515,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blog_removed_event() {
+    public function test_external_blog_removed_event(): void {
 
         // Trigger an event: external blog removed.
         $eventparams = array(
@@ -564,7 +542,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_external_blogs_viewed_event() {
+    public function test_external_blogs_viewed_event(): void {
 
         // Trigger an event: external blogs viewed.
         $eventparams = array(

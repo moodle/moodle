@@ -18,7 +18,7 @@
  * Date condition.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,12 +33,11 @@ use stdClass;
  * relativedate from course start condition.
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class condition extends \core_availability\condition {
-
     /** @var int relativenumber (how many relative) for condition. */
     private $relativenumber;
 
@@ -73,13 +72,13 @@ class condition extends \core_availability\condition {
     /**
      * Constructor.
      *
-     * @param stdClass $structure Data structure from JSON decode
+     * @param stdClass $structure Data structure from JSON decode.
      */
     public function __construct($structure) {
-        $this->relativenumber = property_exists($structure, 'n') ? (int)$structure->n : 1;
-        $this->relativedwm = property_exists($structure, 'd') ? (int)$structure->d : 2;
-        $this->relativestart = property_exists($structure, 's') ? (int)$structure->s : 1;
-        $this->relativecoursemodule = property_exists($structure, 'm') ? (int)$structure->m : 0;
+        $this->relativenumber = property_exists($structure, 'n') ? intval($structure->n) : 1;
+        $this->relativedwm = property_exists($structure, 'd') ? intval($structure->d) : 2;
+        $this->relativestart = property_exists($structure, 's') ? intval($structure->s) : 1;
+        $this->relativecoursemodule = property_exists($structure, 'm') ? intval($structure->m) : 0;
     }
 
     /**
@@ -112,7 +111,7 @@ class condition extends \core_availability\condition {
             // Always not available if for some reason the value could not be calculated.
             return false;
         }
-        $allow = time() >= $calc;
+        $allow = time() > $calc;
         if ($not) {
             $allow = !$allow;
         }
@@ -131,7 +130,7 @@ class condition extends \core_availability\condition {
         global $USER;
         $course = $info->get_course();
         $capability = has_capability('moodle/course:manageactivities', context_course::instance($course->id));
-        $relative = (int)$this->relativestart;
+        $relative = $this->relativestart;
         if ($relative === 2 || $relative === 5) {
             if ((!isset($course->enddate) || (int)$course->enddate === 0) && $capability) {
                 return get_string('noenddate', 'availability_relativedate');
@@ -144,11 +143,11 @@ class condition extends \core_availability\condition {
         }
         $calc = $this->calc($course, $USER->id);
         if ($calc === 0) {
-            return '('. trim($this->get_debug_string()) . ')';
+            return '(' . trim($this->get_debug_string()) . ')';
         }
         $a = new stdClass();
         $a->rnumber = userdate($calc, get_string('strftimedatetime', 'langconfig'));
-        $a->rtime = ($capability && $full) ? '('. trim($this->get_debug_string()) . ')' : '';
+        $a->rtime = ($capability && $full) ? '(' . trim($this->get_debug_string()) . ')' : '';
         $a->rela = '';
         return trim(get_string($frut, 'availability_relativedate', $a));
     }
@@ -159,10 +158,11 @@ class condition extends \core_availability\condition {
      * @return string Text representation of parameters
      */
     protected function get_debug_string() {
+        // TODO: remove concat.
         $modname = '';
-        if ((int)$this->relativestart === 7) {
+        if ($this->relativestart === 7) {
             $modname = ' ';
-            if ($this->relativecoursemodule != -1 && get_coursemodule_from_id('', $this->relativecoursemodule)) {
+            if (get_coursemodule_from_id('', $this->relativecoursemodule)) {
                 $modname .= \core_availability\condition::description_cm_name($this->relativecoursemodule);
             } else {
                 $modname .= \html_writer::span(get_string('missing', 'availability_relativedate'), 'alert alert-danger');
@@ -204,7 +204,7 @@ class condition extends \core_availability\condition {
      * @param int $number
      * @return array
      */
-    public static function options_dwm($number = 2) {
+    public static function options_dwm($number = 1) {
         $s = $number === 1 ? '' : 's';
         return [
             0 => get_string('minute' . $s, 'availability_relativedate'),
@@ -245,7 +245,9 @@ class condition extends \core_availability\condition {
      * @return int relative date.
      */
     private function calc($course, $userid): int {
-        $x = $this->relativenumber . ' '. $this->option_dwm($this->relativedwm);
+        $a = $this->relativenumber;
+        $b = $this->option_dwm($this->relativedwm);
+        $x = "$a $b";
         switch ($this->relativestart) {
             case 6:
                 // Before course start date.
@@ -290,7 +292,7 @@ class condition extends \core_availability\condition {
                     return 0;
                 }
 
-                $cm = new stdClass;
+                $cm = new stdClass();
                 $cm->id = $this->relativecoursemodule;
                 $cm->course = $course->id;
                 try {
@@ -315,7 +317,7 @@ class condition extends \core_availability\condition {
     private function getlowest($sql, $parameters): int {
         global $DB;
         if ($lowestrec = $DB->get_record_sql($sql, $parameters, IGNORE_MULTIPLE)) {
-            $recs = array_values(get_object_vars($lowestrec));
+            $recs = get_object_vars($lowestrec);
             foreach ($recs as $value) {
                 return $value;
             }
@@ -362,7 +364,7 @@ class condition extends \core_availability\condition {
             $ci = new \core_availability\info_module($othercm);
             $tree = $ci->get_availability_tree();
             foreach ($tree->get_all_children('availability_relativedate\condition') as $cond) {
-                if ((int)$cond->relativestart === 7 && (int)$cond->relativecoursemodule === (int)$cmid) {
+                if ($cond->relativestart === 7 && $cond->relativecoursemodule === $cmid) {
                     return true;
                 }
             }
@@ -382,11 +384,13 @@ class condition extends \core_availability\condition {
      * @return bool
      */
     public function update_dependency_id($table, $oldid, $newid) {
-        if (($table === 'course_modules' || $table === 'course_sections') &&
-            (int)$this->relativestart === 7 &&
-            (int)$this->relativecoursemodule === (int)$oldid) {
-            $this->relativecoursemodule = $newid;
-            return true;
+        if ($this->relativestart === 7) {
+            if (in_array($table, ['course_modules', 'course_sections'])) {
+                if ($this->relativecoursemodule === $oldid) {
+                    $this->relativecoursemodule = $newid;
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -401,19 +405,20 @@ class condition extends \core_availability\condition {
      * @return bool True if there was any change
      */
     public function update_after_restore($restoreid, $courseid, \base_logger $logger, $name): bool {
-        global $DB;
         $rec = \restore_dbops::get_backup_ids_record($restoreid, 'course_module', $this->relativecoursemodule);
-        if (!$rec || !$rec->newitemid) {
+        if (!($rec && $rec->newitemid)) {
             // If we are on the same course (e.g. duplicate) then we can just use the existing one.
-            if (!$DB->record_exists('course_modules', ['id' => $this->relativecoursemodule, 'course' => $courseid])) {
+            if (!get_coursemodule_from_id('', $this->relativecoursemodule, $courseid)) {
                 $this->relativecoursemodule = 0;
-                $logger->process("Restored item ($name has availability condition on module that was not restored",
-                \backup::LOG_WARNING);
+                $logger->process(
+                    "Restored item ($name has availability condition on module that was not restored",
+                    \backup::LOG_WARNING
+                );
+                return false;
             }
         } else {
-            $this->relativecoursemodule = (int)$rec->newitemid;
+            $this->relativecoursemodule = $rec->newitemid;
         }
         return true;
     }
-
 }

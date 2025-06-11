@@ -7,6 +7,11 @@
     font-size: 120%;
 }
 
+.path-mod-workshop .collapsibleregioncaption img {
+    max-width: 16px;
+    max-height: 16px;
+}
+
 .path-mod-workshop div.singlebutton {
     text-align: center;
     margin: 0.75em auto;
@@ -243,15 +248,16 @@
 .path-mod-workshop .userplan dt {
     vertical-align: bottom;
     white-space: normal;
-    color: #999;
-    border-bottom: 1px solid #ddd;
+    color: #495057;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ced4da;
     padding: 3px;
 }
 
 .path-mod-workshop .userplan dt.active {
     vertical-align: top;
-    color: black;
-    border: 1px solid #ddd;
+    color: #212529;
+    border: 1px solid #ced4da;
     border-bottom: 0;
     border-top: 0;
     background: #e7f1c3;
@@ -322,7 +328,7 @@
 
 .path-mod-workshop .userplan dd {
     vertical-align: top;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid #ced4da;
     background-color: #f5f5f5;
     margin: 0;
     min-height: 180px;
@@ -335,7 +341,7 @@
 .path-mod-workshop .userplan dd a:hover,
 .path-mod-workshop .userplan dd a:visited,
 .path-mod-workshop .userplan dd a:active {
-    color: #999;
+    color: #495057;
 }
 
 .path-mod-workshop .userplan dd.active,
@@ -344,7 +350,7 @@
 .path-mod-workshop .userplan dd.active a:hover,
 .path-mod-workshop .userplan dd.active a:visited,
 .path-mod-workshop .userplan dd.active a:active {
-    color: black;
+    color: #212529;
 }
 
 .path-mod-workshop .userplan dd.lastcol {
@@ -366,8 +372,9 @@
     background-position: top left;
     background-repeat: no-repeat;
     list-style-type: none;
-    min-height: 16px;
-    margin: .3em 0;
+    min-height: 20px;
+    margin: .2em 0;
+    background-size: 15px;
 }
 
 .dir-rtl.path-mod-workshop .userplan dd.phasetasks li {
@@ -674,11 +681,6 @@
 
 .path-mod-workshop .lastmodified {
     line-height: 1.0em;
-}
-
-.path-mod-workshop .nothingfound {
-    font-size: 150%;
-    color: #ff4500;
 }
 
 .path-mod-workshop .workshop-risk-dataloss {

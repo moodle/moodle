@@ -23,11 +23,11 @@ namespace core_user;
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userroleseditable_test extends \advanced_testcase {
+final class userroleseditable_test extends \advanced_testcase {
     /**
      * Test user roles editable.
      */
-    public function test_update() {
+    public function test_update(): void {
         global $DB;
 
         $this->resetAfterTest();

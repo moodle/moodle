@@ -93,7 +93,7 @@ class context {
      * @param int|null $id local id of this object instance, nullable for new objects.
      * @return context the context instance.
      */
-    public static function create(int $deploymentid, string $contextid, array $types, int $id = null): context {
+    public static function create(int $deploymentid, string $contextid, array $types, ?int $id = null): context {
         return new self($deploymentid, $contextid, $types, $id);
     }
 

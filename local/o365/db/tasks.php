@@ -27,22 +27,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = [
     [
-        'classname' => 'local_o365\task\refreshsystemrefreshtoken',
-        'blocking' => 0,
-        'minute' => '1',
-        'hour' => '1',
-        'day' => '*',
-        'dayofweek' => '3',
-        'month' => '*'
-    ],
-    [
         'classname' => 'local_o365\task\usersync',
         'blocking' => 0,
         'minute' => '0',
         'hour' => '1',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
+        'month' => '*',
     ],
     [
         'classname' => 'local_o365\task\coursesync',
@@ -51,7 +42,7 @@ $tasks = [
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
+        'month' => '*',
     ],
     [
         'classname' => 'local_o365\feature\calsync\task\importfromoutlook',
@@ -60,7 +51,7 @@ $tasks = [
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
+        'month' => '*',
     ],
     [
         'classname' => 'local_o365\task\processmatchqueue',
@@ -69,7 +60,7 @@ $tasks = [
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
+        'month' => '*',
     ],
     [
         'classname' => 'local_o365\feature\sds\task\sync',
@@ -78,22 +69,40 @@ $tasks = [
         'hour' => '3',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
-    ],
-    [
-        'classname' => 'local_o365\task\bot',
-        'blocking' => 0,
-        'minute' => '3',
-        'hour' => '*',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
+        'month' => '*',
     ],
     [
         'classname' => 'local_o365\task\notifysecretexpiry',
         'blocking' => 0,
         'minute' => 0,
         'hour' => '3',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
+    [
+        'classname' => 'local_o365\task\cohortsync',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
+    [
+        'classname' => 'local_o365\task\updatecourserequeststatus',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
+    [
+        'classname' => 'local_o365\task\coursemembershipsync',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*',

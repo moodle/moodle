@@ -1,0 +1,59 @@
+{
+    "name": "spomky-labs/otphp",
+    "type": "library",
+    "description": "A PHP library for generating one time passwords according to RFC 4226 (HOTP Algorithm) and the RFC 6238 (TOTP Algorithm) and compatible with Google Authenticator",
+    "license": "MIT",
+    "keywords": ["otp", "hotp", "totp", "RFC 4226", "RFC 6238", "Google Authenticator", "FreeOTP"],
+    "homepage": "https://github.com/Spomky-Labs/otphp",
+    "authors": [
+        {
+            "name": "Florent Morselli",
+            "homepage": "https://github.com/Spomky"
+        },
+        {
+            "name": "All contributors",
+            "homepage": "https://github.com/Spomky-Labs/otphp/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "ext-mbstring": "*",
+        "paragonie/constant_time_encoding": "^2.0 || ^3.0",
+        "psr/clock": "^1.0",
+        "symfony/deprecation-contracts": "^3.2"
+    },
+    "require-dev": {
+        "ekino/phpstan-banned-code": "^1.0",
+        "infection/infection": "^0.26|^0.27|^0.28|^0.29",
+        "php-parallel-lint/php-parallel-lint": "^1.3",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpstan/phpstan-strict-rules": "^1.0",
+        "phpunit/phpunit": "^9.5.26|^10.0|^11.0",
+        "qossmic/deptrac-shim": "^1.0",
+        "rector/rector": "^1.0",
+        "symfony/phpunit-bridge": "^6.1|^7.0",
+        "symplify/easy-coding-standard": "^12.0"
+    },
+    "autoload": {
+        "psr-4": { "OTPHP\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "OTPHP\\Test\\": "tests/" }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "infection/extension-installer": true,
+            "composer/package-versions-deprecated": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    }
+}

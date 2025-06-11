@@ -24,7 +24,7 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\nrps_info
  */
-class nrps_info_test extends \advanced_testcase {
+final class nrps_info_test extends \advanced_testcase {
 
     /**
      * Test creation of the object instances.
@@ -34,7 +34,7 @@ class nrps_info_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create
      */
-    public function test_create(array $args, array $expectations) {
+    public function test_create(array $args, array $expectations): void {
         if (!$expectations['valid']) {
             $this->expectException($expectations['exception']);
             $this->expectExceptionMessage($expectations['exceptionmessage']);
@@ -52,7 +52,7 @@ class nrps_info_test extends \advanced_testcase {
      * Data provider for testing object instantiation.
      * @return array the data for testing.
      */
-    public function instantiation_data_provider(): array {
+    public static function instantiation_data_provider(): array {
         return [
             'Valid creation' => [
                 'args' => [
@@ -98,4 +98,21 @@ class nrps_info_test extends \advanced_testcase {
             ]
         ];
     }
+
+    /**
+     * Verify that the contextmembershipurl property can be gotten and is immutable.
+     *
+     * @covers ::get_context_memberships_url
+     */
+    public function test_get_context_memberships_url(): void {
+        $nrpsendpoint = 'https://lms.example.com/45/memberships';
+        $nrpsinfo = nrps_info::create(new \moodle_url($nrpsendpoint));
+        $membershipsurlcopy = $nrpsinfo->get_context_memberships_url();
+        $this->assertEquals($nrpsendpoint, $membershipsurlcopy->out(false));
+        $rlid = '01234567-1234-5678-90ab-123456789abc';
+        $membershipsurlcopy->param('rlid', $rlid);
+        $this->assertEquals($nrpsendpoint . '?rlid=' . $rlid, $membershipsurlcopy->out(false));
+        $this->assertEquals($nrpsendpoint, $nrpsinfo->get_context_memberships_url()->out(false));
+    }
+
 }

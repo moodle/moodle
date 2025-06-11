@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package tool
- * @subpackage mergeusers
+ * @package tool_mergeusers
  * @author Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
- * @copyright 2013 Servei de Recursos Educatius (http://www.sre.urv.cat)
+ * @copyright 2013 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Take actions on upgrading mergeusers tool.
+ *
  * @package tool_mergeusers
  * @global moodle_database $DB
  * @param int $oldversion old plugin version.
@@ -31,15 +31,16 @@
  */
 function xmldb_tool_mergeusers_upgrade ($oldversion) {
     global $DB;
+    require_once(__DIR__ . '/upgradelib.php');
 
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013112912) {
 
-        // Define table tool_mergeusers to be created
+        // Define table tool_mergeusers to be created.
         $table = new xmldb_table('tool_mergeusers');
 
-        // Adding fields to table tool_mergeusers
+        // Adding fields to table tool_mergeusers.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('touserid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('fromuserid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
@@ -47,21 +48,21 @@ function xmldb_tool_mergeusers_upgrade ($oldversion) {
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('log', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
 
-        // Adding keys to table tool_mergeusers
+        // Adding keys to table tool_mergeusers.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // Adding indexes to table tool_mergeusers
+        // Adding indexes to table tool_mergeusers.
         $table->add_index('mdl_toolmerg_tou_ix', XMLDB_INDEX_NOTUNIQUE, array('touserid'));
         $table->add_index('mdl_toolmerg_fru_ix', XMLDB_INDEX_NOTUNIQUE, array('fromuserid'));
         $table->add_index('mdl_toolmerg_suc_ix', XMLDB_INDEX_NOTUNIQUE, array('success'));
         $table->add_index('mdl_toolmerg_tfs_ix', XMLDB_INDEX_NOTUNIQUE, array('touserid', 'fromuserid', 'success'));
 
-        // Conditionally launch create table for tool_mergeusersr
+        // Conditionally launch create table for tool_mergeusers.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
-        // mergeusers savepoint reached
+        // Savepoint reached.
         upgrade_plugin_savepoint(true, 2013112912, 'tool', 'mergeusers');
     }
 
@@ -76,8 +77,24 @@ function xmldb_tool_mergeusers_upgrade ($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Mergeusers savepoint reached.
+        // Savepoint reached.
         upgrade_plugin_savepoint(true, 2023040401, 'tool', 'mergeusers');
+    }
+
+    if ($oldversion < 2025020300) {
+        // Try to create custom fields.
+        tool_mergeusers_define_user_profile_fields();
+
+        // Savepoint reached.
+        upgrade_plugin_savepoint(true, 2025020300, 'tool', 'mergeusers');
+    }
+
+    if ($oldversion < 2025020503) {
+        // Force update custom fields.
+        tool_mergeusers_define_user_profile_fields();
+
+        // Savepoint reached.
+        upgrade_plugin_savepoint(true, 2025020503, 'tool', 'mergeusers');
     }
 
     return true;

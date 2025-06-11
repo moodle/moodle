@@ -177,7 +177,7 @@ Feature: Expand the courses nodes within the navigation block
   Scenario: As guest I expand the courses and category nodes to see courses.
     When I log in as "guest"
     And I am on site homepage
-    And I should see "Home" in the "Navigation" "block"
+    And I should see "Site home" in the "Navigation" "block"
     And I should see "Courses" in the "Navigation" "block"
     And I expand "Courses" node
     And I should see "cat1" in the "Navigation" "block"

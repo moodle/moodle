@@ -87,10 +87,10 @@ class question_attempt_step {
      */
     private $fraction = null;
 
-    /** @var integer the timestamp when this step was created. */
+    /** @var int the timestamp when this step was created. */
     private $timecreated;
 
-    /** @var integer the id of the user resonsible for creating this step. */
+    /** @var int the id of the user responsible for creating this step. */
     private $userid;
 
     /** @var array name => value pairs. The submitted data. */
@@ -99,7 +99,7 @@ class question_attempt_step {
     /** @var array name => array of {@see stored_file}s. Caches the contents of file areas. */
     private $files = array();
 
-    /** @var stdClass User information. */
+    /** @var stdClass|null User information. */
     private $user = null;
 
     /**
@@ -107,12 +107,12 @@ class question_attempt_step {
      * normally created by {@see question_attempt} methods like
      * {@see question_attempt::process_action()}.
      * @param array $data the submitted data that defines this step.
-     * @param int $timestamp the time to record for the action. (If not given, use now.)
-     * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
-     * @param int $existingstepid if this step is going to replace an existing step
+     * @param int|null $timecreated the time to record for the action. (If not given, use now.)
+     * @param int|null $userid the user to attribute the aciton to. (If not given, use the current user.)
+     * @param int|null $existingstepid if this step is going to replace an existing step
      *      (for example, during a regrade) this is the id of the previous step we are replacing.
      */
-    public function __construct($data = array(), $timecreated = null, $userid = null,
+    public function __construct($data = [], $timecreated = null, $userid = null,
             $existingstepid = null) {
         global $USER;
 
@@ -196,9 +196,13 @@ class question_attempt_step {
     /**
      * Return the full user object.
      *
-     * @return stdClass Get full user object.
+     * @return null|stdClass Get full user object.
      */
-    public function get_user(): stdClass {
+    public function get_user(): ?stdClass {
+        if ($this->user === null) {
+            debugging('Attempt to access the step user before it was initialised. ' .
+                'Did you forget to call question_usage_by_activity::preload_all_step_users() or similar?', DEBUG_DEVELOPER);
+        }
         return $this->user;
     }
 
@@ -208,7 +212,7 @@ class question_attempt_step {
      * @return string full name of user.
      */
     public function get_user_fullname(): string {
-        return fullname($this->user);
+        return fullname($this->get_user());
     }
 
     /** @return int the timestamp when this step was created. */
@@ -267,8 +271,9 @@ class question_attempt_step {
         }
 
         $fs = get_file_storage();
+        $filearea = question_file_saver::clean_file_area_name('response_' . $name);
         $this->files[$name] = $fs->get_area_files($contextid, 'question',
-                'response_' . $name, $this->id, 'sortorder', false);
+                $filearea, $this->id, 'sortorder', false);
 
         return $this->files[$name];
     }
@@ -293,13 +298,14 @@ class question_attempt_step {
      *
      * @param string $name the variable name the files belong to.
      * @param int $contextid the id of the context the quba belongs to.
-     * @param string $text the text to update the URLs in.
+     * @param string|null $text the text to update the URLs in.
      * @return array(int, string) the draft itemid and the text with URLs rewritten.
      */
     public function prepare_response_files_draft_itemid_with_text($name, $contextid, $text) {
+        $filearea = question_file_saver::clean_file_area_name('response_' . $name);
         $draftid = 0; // Will be filled in by file_prepare_draft_area.
         $newtext = file_prepare_draft_area($draftid, $contextid, 'question',
-                'response_' . $name, $this->id, null, $text);
+                $filearea, $this->id, null, $text);
         return array($draftid, $newtext);
     }
 
@@ -312,12 +318,13 @@ class question_attempt_step {
      * @param string $text the text to update the URLs in.
      * @param int $contextid the id of the context the quba belongs to.
      * @param string $name the variable name the files belong to.
-     * @param array $extra extra file path components.
+     * @param array $extras extra file path components.
      * @return string the rewritten text.
      */
     public function rewrite_response_pluginfile_urls($text, $contextid, $name, $extras) {
+        $filearea = question_file_saver::clean_file_area_name('response_' . $name);
         return question_rewrite_question_urls($text, 'pluginfile.php', $contextid,
-                'question', 'response_' . $name, $extras, $this->id);
+                'question', $filearea, $extras, $this->id);
     }
 
     /**
@@ -649,12 +656,12 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
 
     /**
      * Constructor.
-     * @param question_attempt_step $realqas the step to wrap. (Can be null if you
+     * @param question_attempt_step $realstep the step to wrap. (Can be null if you
      *      just want to call add/remove.prefix.)
      * @param string $extraprefix the extra prefix that is used for date fields.
      */
-    public function __construct($realqas, $extraprefix) {
-        $this->realqas = $realqas;
+    public function __construct($realstep, $extraprefix) {
+        $this->realstep = $realstep;
         $this->extraprefix = $extraprefix;
     }
 
@@ -706,7 +713,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function get_state() {
-        return $this->realqas->get_state();
+        return $this->realstep->get_state();
     }
 
     public function set_state($state) {
@@ -714,7 +721,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function get_fraction() {
-        return $this->realqas->get_fraction();
+        return $this->realstep->get_fraction();
     }
 
     public function set_fraction($fraction) {
@@ -722,51 +729,51 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function get_user_id() {
-        return $this->realqas->get_user_id();
+        return $this->realstep->get_user_id();
     }
 
     public function get_timecreated() {
-        return $this->realqas->get_timecreated();
+        return $this->realstep->get_timecreated();
     }
 
     public function has_qt_var($name) {
-        return $this->realqas->has_qt_var($this->add_prefix($name));
+        return $this->realstep->has_qt_var($this->add_prefix($name));
     }
 
     public function get_qt_var($name) {
-        return $this->realqas->get_qt_var($this->add_prefix($name));
+        return $this->realstep->get_qt_var($this->add_prefix($name));
     }
 
     public function set_qt_var($name, $value) {
-        $this->realqas->set_qt_var($this->add_prefix($name), $value);
+        $this->realstep->set_qt_var($this->add_prefix($name), $value);
     }
 
     public function get_qt_data() {
-        return $this->filter_array($this->realqas->get_qt_data());
+        return $this->filter_array($this->realstep->get_qt_data());
     }
 
     public function has_behaviour_var($name) {
-        return $this->realqas->has_behaviour_var($this->add_prefix($name));
+        return $this->realstep->has_behaviour_var($this->add_prefix($name));
     }
 
     public function get_behaviour_var($name) {
-        return $this->realqas->get_behaviour_var($this->add_prefix($name));
+        return $this->realstep->get_behaviour_var($this->add_prefix($name));
     }
 
     public function set_behaviour_var($name, $value) {
-        return $this->realqas->set_behaviour_var($this->add_prefix($name), $value);
+        return $this->realstep->set_behaviour_var($this->add_prefix($name), $value);
     }
 
     public function get_behaviour_data() {
-        return $this->filter_array($this->realqas->get_behaviour_data());
+        return $this->filter_array($this->realstep->get_behaviour_data());
     }
 
     public function get_submitted_data() {
-        return $this->filter_array($this->realqas->get_submitted_data());
+        return $this->filter_array($this->realstep->get_submitted_data());
     }
 
     public function get_all_data() {
-        return $this->filter_array($this->realqas->get_all_data());
+        return $this->filter_array($this->realstep->get_all_data());
     }
 
     public function get_qt_files($name, $contextid) {

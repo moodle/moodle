@@ -44,8 +44,10 @@ $string['excludenonegrades'] = 'Exclude none';
 $string['eventgradereportviewed'] = 'Grade single view report viewed.';
 $string['feedbackfor'] = 'Feedback for {$a}';
 $string['gradefor'] = 'Grade for {$a}';
-$string['gradeitem'] = 'Grade item: {$a}';
-$string['gradeuser'] = 'Grade user: {$a}';
+$string['gradeitem'] = 'Viewing grades for {$a}';
+$string['gradeitemedit'] = 'Editing grades for {$a}';
+$string['gradeuser'] = 'Viewing {$a}\'s grades';
+$string['gradeuseredit'] = 'Editing {$a}\'s grades';
 $string['gotonextreport'] = 'Go to next user report';
 $string['gotopreviousreport'] = 'Go to previous user report';
 $string['noscreens'] = 'Could not find a suitable single view screen.';
@@ -67,6 +69,8 @@ $string['savegrades'] = 'Saving grades';
 $string['save'] = 'Save';
 $string['savegradessuccess'] = 'Grades were set for {$a} items';
 $string['singleview:view'] = 'View single view';
+$string['singleviewreport_user'] = 'Single view for this user';
+$string['singleviewreport_gradeitem'] = 'Single view for this item';
 $string['summarygrade'] = 'A table of users, with columns for range, grade, feedback, and whether to override or exclude a particular grade.';
 $string['summaryuser'] = 'A table of grade items, with columns for grade category, range, grade, feedback, and whether to override or exclude a particular grade.';
 $string['unsavedataalert'] = 'If you have unsaved changes on the page, you will lose them if you proceed with bulk insert grades.';
@@ -75,14 +79,12 @@ $string['userselect'] = 'Select activity';
 
 $string['ariareporttype'] = 'Select a report type to view';
 $string['viewby'] = 'View by';
-$string['viewsingleuser'] = 'Select a user above to view all their grades';
+$string['viewsingleuser'] = 'Search for a user to view all their grades';
 $string['viewsinglegradeitem'] = 'Select a grade item above';
-$string['viewsingleuserorgradeitem'] = 'View all the grades of a single user or grade item.';
-$string['searchgrades'] = 'Search grade items';
 $string['selectagrade'] = 'Select a grade item';
 $string['selectgradeitemlink'] = 'Select a grade item';
 $string['singleviewdescription'] = 'In single view you can override or exclude selected grades and bulk insert grades.';
 $string['unsaveddatawarning'] = 'Unsaved data warning';
 
-// Deprecated since Moodle 4.1.
-$string['filtergrades'] = 'Show grades for {$a}.';
+// Deprecated since Moodle 4.3.
+$string['viewsingleuserorgradeitem'] = 'View all the grades of a single user or grade item.';

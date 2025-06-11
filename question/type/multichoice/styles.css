@@ -64,3 +64,12 @@ body#page-question-type-multichoice div[id^=fitem_id_][id*=feedback_] {
     border: 1px solid #bbb;
     border-top: 0;
 }
+
+/* stylelint-disable declaration-no-important  */
+
+div[id^="fitem_id_answer_"].mb-3,
+div[id^="fitem_id_fraction_"].mb-3 {
+    margin-bottom: 0 !important;
+}
+/* stylelint-enable declaration-no-important  */
+

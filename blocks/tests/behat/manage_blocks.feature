@@ -15,9 +15,9 @@ Feature: Block appearances
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | name             | course | idnumber | template |
-      | survey   | Test survey name | C1     | survey1  | 4        |
-      | book     | Test book name   | C1     | book1    |          |
+      | activity | name             | course | idnumber |
+      | assign   | Test assign name | C1     | assign1  |
+      | book     | Test book name   | C1     | book1    |
     And the following "mod_book > chapter" exists:
       | book    | Test book name         |
       | title   | Book title             |
@@ -33,7 +33,7 @@ Feature: Block appearances
     And I press "Save changes"
 
   Scenario: Block settings can be modified so that a block apprears on any page
-    When I click on "Test survey name" "link" in the "region-main" "region"
+    When I click on "Test assign name" "link" in the "region-main" "region"
     Then I should see "Comments" in the "Comments" "block"
     And I am on "Course 1" course homepage
     And I configure the "Comments" block
@@ -41,7 +41,7 @@ Feature: Block appearances
       | Display on page types | Any course page |
     And I press "Save changes"
     And I turn editing mode off
-    And I click on "Test survey name" "link" in the "region-main" "region"
+    And I click on "Test assign name" "link" in the "region-main" "region"
     And I should not see "Comments"
 
   Scenario: Block settings can be modified so that a block can be hidden

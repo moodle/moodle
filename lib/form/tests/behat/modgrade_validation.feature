@@ -88,8 +88,7 @@ Feature: Using the activity grade form element
       | grade[modgrade_scale] | ABCDEF |
     And I press "Save and display"
     And I am on the "Test assignment name" "assign activity" page
-    And I follow "View all submissions"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I set the field "Grade" to "C"
     And I press "Save changes"
     And I follow "Edit settings"
@@ -120,8 +119,7 @@ Feature: Using the activity grade form element
   @javascript
   Scenario: Attempting to change the maximum grade when no rescaling option has been chosen
     Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I follow "View all submissions"
-    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
     And I set the field "Grade out of 100" to "50"
     And I press "Save changes"
     And I follow "Edit settings"

@@ -38,11 +38,11 @@
                 <div class="fitemtitle col-md-3" id="optionfilter">
                     <label class="col-form-label d-inline">{{#str}}filterby, report_lpmonitoring{{/str}}</label>
                 </div>
-                <div class="felement col-md-9 form-inline">
+                <div class="felement col-md-9">
 
                     <div class="radio radio-primary">
                         <span>
-                            <input class="form-control" type="radio" name="optionfilter" id="template" value="template" checked disabled="disabled" aria-labelledby="optionfilter">
+                            <input type="radio" name="optionfilter" id="template" value="template" checked disabled="disabled" aria-labelledby="optionfilter">
                             <label for="template">{{#str}}template, tool_lp{{/str}}</label>
                         </span>
                     </div>
@@ -65,7 +65,7 @@
                     <div class="fitemtitle col-md-3">
                         <label class="col-form-label d-inline" for="templateSelectorReport">{{#str}}template, tool_lp{{/str}}</label>
                     </div>
-                    <div class="felement fautocomplete col-md-9 form-inline">
+                    <div class="felement fautocomplete col-md-9">
                         <select id="templateSelectorReport" class="form-control custom-select">
                             <option value="">{{#str}}selectlearningplantemplate, report_lpmonitoring{{/str}}</option>
                             {{#templates}}
@@ -78,7 +78,7 @@
                     <div class="fitemtitle col-md-3">
                         <label class="col-form-label d-inline" for="learningplanSelectorReport">{{#str}}usersfromtemplate, report_lpmonitoring{{/str}}</label>
                     </div>
-                    <div class="felement fautocomplete col-md-9 form-inline  ">
+                    <div class="felement fautocomplete col-md-9">
                         <select style="display: none" data-scalesortorder="" data-scalefilter="" id="learningplanSelectorReport" data-templateid="" data-scalefilterapply="" data-withcomments="" class="form-control">
                         </select>
                     </div>
@@ -88,7 +88,7 @@
                         <div class="fitemtitle col-md-3">
                             <label>{{#str}}comments{{/str}}</label>
                         </div>
-                        <div class="felement col-md-9 form-inline">
+                        <div class="felement col-md-9">
                             <div class="checkbox checkbox-primary">
                                 <input id="filter-comment" type="checkbox" class="radio">
                                 <label for="filter-comment">{{#str}}atleastonecomment, report_lpmonitoring{{/str}}</label>
@@ -99,7 +99,7 @@
                         <div class="fitemtitle col-md-3">
                             <label>{{#str}}learningplans, tool_lp{{/str}}</label>
                         </div>
-                        <div class="felement col-md-9 form-inline">
+                        <div class="felement col-md-9">
                             <div class="checkbox checkbox-primary">
                                 <input id="filter-plan" type="checkbox" class="radio">
                                 <label for="filter-plan">{{#str}}atleasttwoplans, report_lpmonitoring{{/str}}</label>
@@ -110,7 +110,7 @@
                         <div class="fitemtitle col-md-3">
                             <label>{{#str}}scalesfortemplate, report_lpmonitoring{{/str}}</label>
                         </div>
-                        <div class="felement col-md-9 form-inline">
+                        <div class="felement col-md-9">
                             <div id="scale"></div>
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                         <div class="fitemtitle col-md-3" id="scalefilterapply">
                             <label>{{#str}}scalefilterby, report_lpmonitoring{{/str}}</label>
                         </div>
-                        <div class="felement fscalefilter col-md-9 form-inline">
+                        <div class="felement fscalefilter col-md-9">
                             <div id="scalefilter"></div>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                         <div class="fitemtitle col-md-3" id="scalesortorderlabel">
                             <label >{{#str}}sort{{/str}}</label>
                         </div>
-                        <div class="felement col-md-9 form-inline">
+                        <div class="felement col-md-9">
                             <div id="scalesortorder"></div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                 <div class="moreless-actions hidden">
                     <div class="fitem form-group row">
                         <div class="fitemtitle col-md-3"></div>
-                        <div class="felement col-md-9 form-inline">
+                        <div class="felement col-md-9">
                             <a href="#" title="{{#str}}showmore, form{{/str}}" class="moreless-toggler show-toggler" role="button">{{#str}}showmore, form{{/str}}</a>
                             <a href="#" title="{{#str}}showless, form{{/str}}" class="moreless-toggler less-toggler hidden" role="button">{{#str}}showless, form{{/str}}</a>
                         </div>
@@ -155,7 +155,7 @@
                     <div class="fitemtitle col-md-3">
                         <label for="studentPlansSelectorReport">{{#str}}learningplans, tool_lp{{/str}}</label>
                     </div>
-                    <div class="felement col-md-9 form-inline">
+                    <div class="felement col-md-9">
                         <select id="studentPlansSelectorReport" class="form-control custom-select" disabled="disabled">
                             <option>{{#str}}nolearningplanavailable, report_lpmonitoring{{/str}}</option>
                         </select>
@@ -167,7 +167,7 @@
                     <div class="fitemtitle col-md-3">
                         <label class="col-form-label d-inline" for="tagSelectorReport">{{#str}}tag, report_lpmonitoring{{/str}}</label>
                     </div>
-                    <div class="felement fautocomplete col-md-9 form-inline">
+                    <div class="felement fautocomplete col-md-9">
                         <select id="tagSelectorReport" class="form-control custom-select">
                             <option value="">{{#str}}selecttag, report_lpmonitoring{{/str}}</option>
                         </select>
@@ -177,7 +177,7 @@
                     <div class="fitemtitle col-md-3">
                             <label>{{#str}}comments{{/str}}</label>
                     </div>
-                    <div class="felement col-md-9 form-inline">
+                    <div class="felement col-md-9">
                         <div class="checkbox checkbox-primary">
                                 <input id="filter-comments" type="checkbox" class="radio">
                                 <label for="filter-comments">{{#str}}atleastonecomment, report_lpmonitoring{{/str}}</label>
@@ -188,7 +188,7 @@
                     <div class="fitemtitle col-md-3">
                         <label for="learningplanTagSelectorReport">{{#str}}learningplanswithtag, report_lpmonitoring{{/str}}</label>
                     </div>
-                    <div class="felement col-md-9 form-inline">
+                    <div class="felement col-md-9">
                         <select id="learningplanTagSelectorReport" class="form-control custom-select" disabled="disabled">
                             <option>{{#str}}nolearningplanavailable, report_lpmonitoring{{/str}}</option>
                         </select>

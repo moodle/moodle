@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author     Brent Boghosian (brent.boghosian@remote-learner.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customcontext_test extends \advanced_testcase {
+final class customcontext_test extends \advanced_testcase {
 
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
@@ -54,7 +54,7 @@ class customcontext_test extends \advanced_testcase {
     /**
      * Test case for custom context classes
      */
-    public function test_customcontexts() {
+    public function test_customcontexts(): void {
         global $CFG;
         static $customcontexts = array(
             11 => 'context_bogus1',
@@ -85,9 +85,18 @@ class customcontext_test extends \advanced_testcase {
  */
 class context_bogus1 extends context {
     /**
+     * Returns context shortname.
+     *
+     * @return string
+     */
+    public static function get_short_name(): string {
+        return 'bogus1';
+    }
+
+    /**
      * Returns the most relevant URL for this context.
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function get_url() {
         global $ME;
@@ -109,9 +118,18 @@ class context_bogus1 extends context {
  */
 class context_bogus2 extends context {
     /**
+     * Returns context shortname.
+     *
+     * @return string
+     */
+    public static function get_short_name(): string {
+        return 'bogus2';
+    }
+
+    /**
      * Returns the most relevant URL for this context.
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function get_url() {
         global $ME;
@@ -133,9 +151,18 @@ class context_bogus2 extends context {
  */
 class context_bogus3 extends context {
     /**
+     * Returns context shortname.
+     *
+     * @return string
+     */
+    public static function get_short_name(): string {
+        return 'bogus3';
+    }
+
+    /**
      * Returns the most relevant URL for this context.
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function get_url() {
         global $ME;

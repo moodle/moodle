@@ -21,8 +21,8 @@ Feature: Manage plearning plan templates
     And I should see "Science template"
 
   Scenario: Read a learning plan template
-    Given the following lp "templates" exist:
-      | shortname | description |
+    Given the following "core_competency > templates" exist:
+      | shortname               | description                  |
       | Science template Year-2 | science template description |
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I should see "Science template Year-2"
@@ -31,8 +31,8 @@ Feature: Manage plearning plan templates
     And I should see "Learning plan template competencies"
 
   Scenario: Edit a learning plan template
-    Given the following lp "templates" exist:
-      | shortname | description |
+    Given the following "core_competency > templates" exist:
+      | shortname               | description                  |
       | Science template Year-3 | science template description |
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I should see "Science template Year-3"
@@ -44,8 +44,8 @@ Feature: Manage plearning plan templates
     And I should see "Science template Year-3 Edited"
 
   Scenario: Delete a learning plan template
-    Given the following lp "templates" exist:
-      | shortname | description |
+    Given the following "core_competency > templates" exist:
+      | shortname               | description                  |
       | Science template Year-4 | science template description |
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I should see "Science template Year-4"

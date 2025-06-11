@@ -58,12 +58,12 @@ require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class settings_test extends \basic_testcase {
+final class settings_test extends \basic_testcase {
 
     /**
      * test base_setting class
      */
-    public function test_base_setting() {
+    public function test_base_setting(): void {
         // Instantiate base_setting and check everything
         $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN);
         $this->assertTrue($bs instanceof base_setting);
@@ -312,7 +312,7 @@ class settings_test extends \basic_testcase {
      * Test that locked and unlocked states on dependent backup settings at the same level
      * correctly do not flow from the parent to the child setting when the setting is locked by permissions.
      */
-    public function test_dependency_empty_locked_by_permission_child_is_not_unlocked() {
+    public function test_dependency_empty_locked_by_permission_child_is_not_unlocked(): void {
         // Check dependencies are working ok.
         $bs1 = new mock_backup_setting('test1', base_setting::IS_INTEGER, 2);
         $bs1->set_level(1);
@@ -336,7 +336,7 @@ class settings_test extends \basic_testcase {
      * Test that locked and unlocked states on dependent backup settings at the same level
      * correctly do flow from the parent to the child setting when the setting is locked by config.
      */
-    public function test_dependency_not_empty_locked_by_config_parent_is_unlocked() {
+    public function test_dependency_not_empty_locked_by_config_parent_is_unlocked(): void {
         $bs1 = new mock_backup_setting('test1', base_setting::IS_INTEGER, 0);
         $bs1->set_level(1);
         $bs2 = new mock_backup_setting('test2', base_setting::IS_INTEGER, 0);
@@ -355,7 +355,7 @@ class settings_test extends \basic_testcase {
     /**
      * test backup_setting class
      */
-    public function test_backup_setting() {
+    public function test_backup_setting(): void {
         // Instantiate backup_setting class and set level
         $bs = new mock_backup_setting('test', base_setting::IS_INTEGER, null);
         $bs->set_level(1);
@@ -402,7 +402,7 @@ class settings_test extends \basic_testcase {
     /**
      * test activity_backup_setting class
      */
-    public function test_activity_backup_setting() {
+    public function test_activity_backup_setting(): void {
         $bs = new mock_activity_backup_setting('test', base_setting::IS_INTEGER, null);
         $this->assertEquals($bs->get_level(), backup_setting::ACTIVITY_LEVEL);
 
@@ -417,7 +417,7 @@ class settings_test extends \basic_testcase {
     /**
      * test section_backup_setting class
      */
-    public function test_section_backup_setting() {
+    public function test_section_backup_setting(): void {
         $bs = new mock_section_backup_setting('test', base_setting::IS_INTEGER, null);
         $this->assertEquals($bs->get_level(), backup_setting::SECTION_LEVEL);
 
@@ -432,7 +432,7 @@ class settings_test extends \basic_testcase {
     /**
      * test course_backup_setting class
      */
-    public function test_course_backup_setting() {
+    public function test_course_backup_setting(): void {
         $bs = new mock_course_backup_setting('test', base_setting::IS_INTEGER, null);
         $this->assertEquals($bs->get_level(), backup_setting::COURSE_LEVEL);
 
@@ -458,11 +458,6 @@ class mock_base_setting extends base_setting {
         $this->set_value($setting->get_value());
         $this->set_visibility($setting->get_visibility());
         $this->set_status($setting->get_status());
-    }
-
-    public function get_ui_info() {
-        // Return an array with all the ui info to be tested
-        return array($this->ui_type, $this->ui_label, $this->ui_values, $this->ui_options);
     }
 }
 

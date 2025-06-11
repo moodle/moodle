@@ -55,11 +55,11 @@ abstract class edit_content extends moodleform {
      * @param array $customdata Data to set during instance creation.
      * @param string $method Form method.
      */
-    public function __construct(string $action = null, array $customdata = null, string $method = 'post') {
-        parent::__construct($action, $customdata, $method);
+    public function __construct(?string $action = null, ?array $customdata = null, string $method = 'post') {
         $this->contextid = $customdata['contextid'];
         $this->plugin = $customdata['plugin'];
-        $this->id = $customdata['id'];
+        $this->id = $customdata['id'] ?? 0;
+        parent::__construct($action, $customdata, $method);
 
         $mform =& $this->_form;
         $mform->addElement('hidden', 'contextid', $this->contextid);
@@ -70,6 +70,21 @@ abstract class edit_content extends moodleform {
 
         $mform->addElement('hidden', 'id', $this->id);
         $this->_form->setType('id', PARAM_INT);
+    }
+
+    /**
+     * Add elements to form
+     */
+    protected function definition() {
+        global $DB;
+        // Add custom fields to the form.
+        $content = $DB->get_record('contentbank_content', ['id' => $this->id]);
+        $handler = \core_contentbank\customfield\content_handler::create();
+        $handler->instance_form_definition($this->_form, $this->id);
+        if ($content) {
+            $handler->instance_form_before_set_data($content);
+        }
+        $this->set_data($content);
     }
 
     /**

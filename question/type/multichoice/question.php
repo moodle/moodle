@@ -139,9 +139,9 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
         }
     }
 
-    public abstract function get_response(question_attempt $qa);
+    abstract public function get_response(question_attempt $qa);
 
-    public abstract function is_choice_selected($response, $value);
+    abstract public function is_choice_selected($response, $value);
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question' && in_array($filearea,
@@ -162,10 +162,9 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
                     break;
                 }
             }
-            // Param $options->suppresschoicefeedback is a hack specific to the
-            // oumultiresponse question type. It would be good to refactor to
-            // avoid refering to it here.
-            return $options->feedback && empty($options->suppresschoicefeedback) &&
+            qtype_multichoice::support_legacy_review_options_hack($options);
+            return $options->feedback &&
+                    $options->feedback !== qtype_multichoice::COMBINED_BUT_NOT_CHOICE_FEEDBACK &&
                     $isselected;
 
         } else if ($component == 'question' && $filearea == 'hint') {

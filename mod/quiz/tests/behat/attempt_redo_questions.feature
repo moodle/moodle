@@ -51,12 +51,14 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
     And I am on the "Quiz 1" "mod_quiz > Grades report" page logged in as "teacher"
-    And I press "Regrade all"
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
     Then I should see "Finished regrading (1/1)"
     And I should see "Regrade completed"
     And I press "Continue"
     # Regrade a second time, to ensure the first regrade did not corrupt any data.
-    And I press "Regrade all"
+    And I press "Regrade attempts..."
+    And I click on "Regrade now" "button" in the "Regrade" "dialogue"
     And I should see "Finished regrading (1/1)"
     And I should see "Regrade completed"
 

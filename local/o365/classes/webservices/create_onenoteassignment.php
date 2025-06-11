@@ -27,29 +27,35 @@ namespace local_o365\webservices;
 
 defined('MOODLE_INTERNAL') || die();
 
+use context_course;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 global $CFG;
 
-require_once($CFG->dirroot.'/course/modlib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
 
 /**
  * Create assignment API class.
  */
-class create_onenoteassignment extends \external_api {
+class create_onenoteassignment extends external_api {
     /**
      * Returns description of method parameters.
      *
      * @return external_function_parameters The parameters object for this webservice method.
      */
     public static function assignment_create_parameters() {
-        return new \external_function_parameters([
-            'data' => new \external_single_structure([
-                'name' => new \external_value(PARAM_TEXT, 'name'),
-                'course' => new \external_value(PARAM_INT, 'course id'),
-                'intro' => new \external_value(PARAM_TEXT, 'intro', VALUE_DEFAULT, ''),
-                'section' => new \external_value(PARAM_INT, 'section', VALUE_DEFAULT, 0),
-                'visible' => new \external_value(PARAM_BOOL, 'visible', VALUE_DEFAULT, false),
-                'duedate' => new \external_value(PARAM_INT, 'duedate', VALUE_DEFAULT, 0),
-            ])
+        return new external_function_parameters([
+            'data' => new external_single_structure([
+                'name' => new external_value(PARAM_TEXT, 'name'),
+                'course' => new external_value(PARAM_INT, 'course id'),
+                'intro' => new external_value(PARAM_TEXT, 'intro', VALUE_DEFAULT, ''),
+                'section' => new external_value(PARAM_INT, 'section', VALUE_DEFAULT, 0),
+                'visible' => new external_value(PARAM_BOOL, 'visible', VALUE_DEFAULT, false),
+                'duedate' => new external_value(PARAM_INT, 'duedate', VALUE_DEFAULT, 0),
+            ]),
         ]);
     }
 
@@ -60,12 +66,12 @@ class create_onenoteassignment extends \external_api {
      * @return array An array of parameters, if successful.
      */
     public static function assignment_create($data) {
-        global $DB, $CFG;
+        global $CFG;
 
         $params = self::validate_parameters(self::assignment_create_parameters(), ['data' => $data]);
         $params = $params['data'];
 
-        $context = \context_course::instance($params['course']);
+        $context = context_course::instance($params['course']);
         self::validate_context($context);
 
         $defaults = [
@@ -76,7 +82,6 @@ class create_onenoteassignment extends \external_api {
             'duedate' => 0,
             'cutoffdate' => 0,
             'allowsubmissionsfromdate' => 0,
-            'grade' => 0,
             'gradingduedate' => 0,
             'completionsubmit' => 0,
             'teamsubmission' => 0,
@@ -93,8 +98,8 @@ class create_onenoteassignment extends \external_api {
             'modulename' => 'assign',
             'course' => $course->id,
             'section' => $params['section'],
-            'visible' => (int)$params['visible'],
-            'duedate' => (int)$params['duedate'],
+            'visible' => (int) $params['visible'],
+            'duedate' => (int) $params['duedate'],
             'name' => $params['name'],
             'cmidnumber' => '',
             'introeditor' => ['text' => $params['intro'], 'format' => FORMAT_HTML, 'itemid' => null],
@@ -104,9 +109,10 @@ class create_onenoteassignment extends \external_api {
         ];
 
         $modinfo = array_merge($defaults, $modinfo);
-        $modinfo = create_module((object)$modinfo, $course);
+        $modinfo = create_module((object) $modinfo, $course);
 
-        $modinfo = \local_o365\webservices\utils::get_assignment_return_info($modinfo->coursemodule, $modinfo->course);
+        $modinfo = utils::get_assignment_return_info($modinfo->coursemodule, $modinfo->course);
+
         return ['data' => [$modinfo]];
     }
 
@@ -116,6 +122,6 @@ class create_onenoteassignment extends \external_api {
      * @return external_single_structure Object describing return parameters for this webservice method.
      */
     public static function assignment_create_returns() {
-        return \local_o365\webservices\utils::get_assignment_return_info_schema();
+        return utils::get_assignment_return_info_schema();
     }
 }

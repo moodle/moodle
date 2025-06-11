@@ -64,12 +64,12 @@
         <table id="presets-list" class="generaltable fullwidth">
             <thead>
             <tr>
-                <th class="pl-4 border-top-0" scope="col" style="width: 3%">
+                <th class="ps-4 border-top-0" scope="col" style="width: 3%">
                     <span class="sr-only">{{#str}}select{{/str}}</span>
                 </th>
-                <th class="pl-4 border-top-0" scope="col" style="width:30%">{{#str}} name {{/str}}</th>
-                <th class="pl-4 border-top-0" scope="col">{{#str}} description {{/str}}</th>
-                <th class="pl-4 border-top-0" scope="col" style="width: 3%">
+                <th class="ps-4 border-top-0" scope="col" style="width:30%">{{#str}} name {{/str}}</th>
+                <th class="ps-4 border-top-0" scope="col">{{#str}} description {{/str}}</th>
+                <th class="ps-4 border-top-0" scope="col" style="width: 3%">
                     <span class="sr-only">{{#str}}actions{{/str}}</span>
                 </th>
             </tr>
@@ -77,7 +77,7 @@
             <tbody>
             {{#presets}}
                 <tr>
-                    <td class="p-4 border-right">
+                    <td class="p-4 border-end">
                         <input type="radio" name="fullname" value="{{userid}}/{{shortname}}" data-cmid="{{cmid}}" aria-labelledby="preset-name-{{presetindex}}" >
                     </td>
                     <td class="p-4">
@@ -86,7 +86,7 @@
                     <td class="p-4">{{description}}</td>
                     <td class="p-4 preset_action_menu">
                         {{#actions}}
-                            <div class="float-right">
+                            <div class="float-end">
                                 {{>core/action_menu}}
                             </div>
                         {{/actions}}
@@ -102,6 +102,7 @@
             <input
                 type="submit"
                 name="selectpreset"
+                data-action="selectpreset"
                 value="{{#str}}usepreset, mod_data{{/str}}"
                 class="btn btn-secondary"
                 disabled

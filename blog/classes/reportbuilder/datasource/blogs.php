@@ -22,6 +22,8 @@ use lang_string;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\{course, user};
 use core_blog\reportbuilder\local\entities\blog;
+use core_files\reportbuilder\local\entities\file;
+use core_comment\reportbuilder\local\entities\comment;
 use core_tag\reportbuilder\local\entities\tag;
 
 /**
@@ -54,6 +56,18 @@ class blogs extends datasource {
 
         $this->add_entity($blogentity);
 
+        // Join the files entity.
+        $fileentity = (new file())
+            ->set_entity_title(new lang_string('blogattachment', 'core_blog'));
+        $filesalias = $fileentity->get_table_alias('files');
+        $this->add_entity($fileentity
+            ->add_join("LEFT JOIN {files} {$filesalias}
+                ON {$filesalias}.contextid = " . SYSCONTEXTID . "
+               AND {$filesalias}.component = 'blog'
+               AND {$filesalias}.filearea = 'attachment'
+               AND {$filesalias}.itemid = {$postalias}.id
+               AND {$filesalias}.filename != '.'"));
+
         // Join the tag entity.
         $tagentity = (new tag())
             ->set_entity_title(new lang_string('blogtags', 'core_blog'))
@@ -62,10 +76,11 @@ class blogs extends datasource {
             ->add_joins($blogentity->get_tag_joins()));
 
         // Join the user entity to represent the blog author.
-        $userentity = new user();
-        $useralias = $userentity->get_table_alias('user');
-        $this->add_entity($userentity
-            ->add_join("LEFT JOIN {user} {$useralias} ON {$useralias}.id = {$postalias}.userid"));
+        $authorentity = (new user())
+            ->set_entity_title(new lang_string('author', 'core_blog'));
+        $authoralias = $authorentity->get_table_alias('user');
+        $this->add_entity($authorentity
+            ->add_join("LEFT JOIN {user} {$authoralias} ON {$authoralias}.id = {$postalias}.userid"));
 
         // Join the course entity for course blogs.
         $courseentity = new course();
@@ -73,16 +88,43 @@ class blogs extends datasource {
         $this->add_entity($courseentity
             ->add_join("LEFT JOIN {course} {$coursealias} ON {$coursealias}.id = {$postalias}.courseid"));
 
+        // Join the comment entity.
+        $commententity = new comment();
+        $commentalias = $commententity->get_table_alias('comments');
+        $this->add_entity($commententity
+            ->add_join("LEFT JOIN {comments} {$commentalias} ON {$commentalias}.component = 'blog'
+                AND {$commentalias}.itemid = {$postalias}.id"));
+
+        // Join the user entity to represent the comment author.
+        $commenterentity = (new user())
+            ->set_entity_name('commenter')
+            ->set_entity_title(new lang_string('commenter', 'core_comment'));
+        $commenteralias = $commenterentity->get_table_alias('user');
+        $this->add_entity($commenterentity
+            ->add_joins($commententity->get_joins())
+            ->add_join("LEFT JOIN {user} {$commenteralias} ON {$commenteralias}.id = {$commentalias}.userid"));
+
         // Add report elements from each of the entities we added to the report.
         $this->add_all_from_entity($blogentity->get_entity_name());
 
-        // Add specific tag entity elements.
+        // Add specific file/tag entity elements.
+        $this->add_columns_from_entity($fileentity->get_entity_name(), ['name', 'size', 'type', 'timecreated']);
+        $this->add_filters_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
+        $this->add_conditions_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
+
         $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
         $this->add_filter($tagentity->get_filter('name'));
         $this->add_condition($tagentity->get_condition('name'));
 
-        $this->add_all_from_entity($userentity->get_entity_name());
+        $this->add_all_from_entity($authorentity->get_entity_name());
         $this->add_all_from_entity($courseentity->get_entity_name());
+
+        // Add specific comment entity elements.
+        $this->add_columns_from_entity($commententity->get_entity_name(), ['content', 'timecreated']);
+        $this->add_filter($commententity->get_filter('timecreated'));
+        $this->add_condition($commententity->get_filter('timecreated'));
+
+        $this->add_all_from_entity($commenterentity->get_entity_name());
     }
 
     /**
@@ -96,6 +138,18 @@ class blogs extends datasource {
             'course:fullname',
             'blog:title',
             'blog:timecreated',
+        ];
+    }
+
+    /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'user:fullname' => SORT_ASC,
+            'blog:timecreated' => SORT_ASC,
         ];
     }
 

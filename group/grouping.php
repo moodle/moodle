@@ -108,7 +108,7 @@ if (!empty($grouping->id)) {
 }
 
 /// First create the form
-$editform = new grouping_form(null, compact('editoroptions'));
+$editform = new grouping_form(null, compact('editoroptions', 'grouping'));
 $editform->set_data($grouping);
 
 if ($editform->is_cancelled()) {

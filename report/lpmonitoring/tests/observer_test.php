@@ -38,7 +38,7 @@ use report_lpmonitoring\report_competency_config;
  * @copyright  2016 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class observer_test extends \advanced_testcase {
+final class observer_test extends \advanced_testcase {
 
     /** @var stdClass $appreciator User with enough permissions to access lpmonitoring report in system context. */
     protected $appreciator = null;
@@ -59,13 +59,13 @@ class observer_test extends \advanced_testcase {
     protected $contextcreator = null;
 
     protected function setUp(): void {
-
+        parent::setUp();
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $cpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
-        $creator = $dg->create_user(array('firstname' => 'Creator'));
-        $appreciator = $dg->create_user(array('firstname' => 'Appreciator'));
+        $creator = $dg->create_user(['firstname' => 'Creator']);
+        $appreciator = $dg->create_user(['firstname' => 'Appreciator']);
 
         $this->contextcreator = \context_user::instance($creator->id);
         $this->contextappreciator = \context_user::instance($appreciator->id);
@@ -88,7 +88,7 @@ class observer_test extends \advanced_testcase {
     /**
      * Test all color configurations associated to a framework are removed when framework is deleted.
      */
-    public function test_framework_deleted() {
+    public function test_framework_deleted(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -98,67 +98,77 @@ class observer_test extends \advanced_testcase {
         $rpg = $dg->get_plugin_generator('report_lpmonitoring');
 
         // Create scales.
-        $scale1 = $dg->create_scale(array('scale' => 'A,B,C,D'));
-        $scale2 = $dg->create_scale(array('scale' => 'W,X,Y,Z'));
-        $scale3 = $dg->create_scale(array('scale' => 'M,N,O,P'));
+        $scale1 = $dg->create_scale(['scale' => 'A,B,C,D']);
+        $scale2 = $dg->create_scale(['scale' => 'W,X,Y,Z']);
+        $scale3 = $dg->create_scale(['scale' => 'M,N,O,P']);
 
         // Change scale configuration to assign to comp2.
-        $scaleconfig = array();
-        $scaleconfig[] = array('scaleid' => $scale2->id);
-        $scaleconfig[] = array('id' => 1, 'proficient' => 1);
-        $scaleconfig[] = array('id' => 2, 'scaledefault' => 1, 'proficient' => 1);
+        $scaleconfig = [];
+        $scaleconfig[] = ['scaleid' => $scale2->id];
+        $scaleconfig[] = ['id' => 1, 'proficient' => 1];
+        $scaleconfig[] = ['id' => 2, 'scaledefault' => 1, 'proficient' => 1];
 
         // Create framework with competencies.
-        $framework = $lpg->create_framework(array('scaleid' => $scale1->id));
-        $comp0 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'),
-                'parentid' => $comp0->get('id'), 'path' => '0/'. $comp0->get('id')));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'),
-            'scaleid' => $scale2->id, 'scaleconfiguration' => json_encode($scaleconfig)));
+        $framework = $lpg->create_framework(['scaleid' => $scale1->id]);
+        $comp0 = $lpg->create_competency(['competencyframeworkid' => $framework->get('id')]);
+                $comp1 = $lpg->create_competency([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'parentid' => $comp0->get('id'),
+                        'path' => '0/' . $comp0->get('id'),
+                ]);
+                $comp2 = $lpg->create_competency([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'scaleid' => $scale2->id,
+                        'scaleconfiguration' => json_encode($scaleconfig),
+                ]);
 
         // Create scale color configuration for framework.
-        $scaleconfig = array();
-        $scaleconfig[] = array('id' => 1, 'color' => '#AAAAA');
-        $scaleconfig[] = array('id' => 2, 'color' => '#BBBBB');
-        $scaleconfig[] = array('id' => 3, 'color' => '#CCCCC');
-        $scaleconfig[] = array('id' => 4, 'color' => '#DDDDD');
+        $scaleconfig = [];
+        $scaleconfig[] = ['id' => 1, 'color' => '#AAAAA'];
+        $scaleconfig[] = ['id' => 2, 'color' => '#BBBBB'];
+        $scaleconfig[] = ['id' => 3, 'color' => '#CCCCC'];
+        $scaleconfig[] = ['id' => 4, 'color' => '#DDDDD'];
 
-        $reportconfig1 = $rpg->create_report_competency_config(array('competencyframeworkid' => $framework->get('id'),
-                'scaleid' => $scale1->id,
-                'scaleconfiguration' => $scaleconfig));
+                $reportconfig1 = $rpg->create_report_competency_config([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'scaleid' => $scale1->id,
+                        'scaleconfiguration' => $scaleconfig,
+                ]);
 
         // Create scale color configuration for competency comp2.
-        $scaleconfig = array();
-        $scaleconfig[] = array('id' => 1, 'color' => '#WWWWW');
-        $scaleconfig[] = array('id' => 2, 'color' => '#XXXXX');
-        $scaleconfig[] = array('id' => 3, 'color' => '#YYYYY');
-        $scaleconfig[] = array('id' => 4, 'color' => '#ZZZZZ');
+        $scaleconfig = [];
+        $scaleconfig[] = ['id' => 1, 'color' => '#WWWWW'];
+        $scaleconfig[] = ['id' => 2, 'color' => '#XXXXX'];
+        $scaleconfig[] = ['id' => 3, 'color' => '#YYYYY'];
+        $scaleconfig[] = ['id' => 4, 'color' => '#ZZZZZ'];
 
-        $reportconfig2 = $rpg->create_report_competency_config(array('competencyframeworkid' => $framework->get('id'),
-                'scaleid' => $scale2->id,
-                'scaleconfiguration' => $scaleconfig));
+                $reportconfig2 = $rpg->create_report_competency_config([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'scaleid' => $scale2->id,
+                        'scaleconfiguration' => $scaleconfig,
+                ]);
 
         // Check we have both colors configuration.
         $this->assertTrue($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id]));
         $this->assertTrue($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id]));
 
         $result = core_competency_api::delete_framework($framework->get('id'));
 
         // Check all color configuration associated to the framework is deleted.
         $this->assertTrue($result);
         $this->assertFalse($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id]));
          $this->assertFalse($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id]));
     }
 
     /**
      * Test color configuration associated to 2 competencies in framework is kept
      * when scale is changed in one of the competencies.
      */
-    public function test_color_config_used_by_other_competency() {
+    public function test_color_config_used_by_other_competency(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -168,60 +178,73 @@ class observer_test extends \advanced_testcase {
         $rpg = $dg->get_plugin_generator('report_lpmonitoring');
 
         // Create scales.
-        $scale1 = $dg->create_scale(array('scale' => 'A,B,C,D'));
-        $scale2 = $dg->create_scale(array('scale' => 'W,X,Y,Z'));
-        $scale3 = $dg->create_scale(array('scale' => 'M,N,O,P'));
+        $scale1 = $dg->create_scale(['scale' => 'A,B,C,D']);
+        $scale2 = $dg->create_scale(['scale' => 'W,X,Y,Z']);
+        $scale3 = $dg->create_scale(['scale' => 'M,N,O,P']);
 
         // Define scale configuration to assign to comp0 and comp2.
-        $scaleconfig = array();
-        $scaleconfig[] = array('scaleid' => $scale2->id);
-        $scaleconfig[] = array('id' => 1, 'proficient' => 1);
-        $scaleconfig[] = array('id' => 2, 'scaledefault' => 1, 'proficient' => 1);
+        $scaleconfig = [];
+        $scaleconfig[] = ['scaleid' => $scale2->id];
+        $scaleconfig[] = ['id' => 1, 'proficient' => 1];
+        $scaleconfig[] = ['id' => 2, 'scaledefault' => 1, 'proficient' => 1];
 
         // Create framework with competencies.
-        $framework = $lpg->create_framework(array('scaleid' => $scale1->id));
-        $comp0 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'),
-            'scaleid' => $scale2->id, 'scaleconfiguration' => json_encode($scaleconfig)));
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'),
-                'parentid' => $comp0->get('id'), 'path' => '0/'. $comp0->get('id')));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'),
-            'scaleid' => $scale2->id, 'scaleconfiguration' => json_encode($scaleconfig)));
+        $framework = $lpg->create_framework(['scaleid' => $scale1->id]);
+                $comp0 = $lpg->create_competency([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'scaleid' => $scale2->id,
+                        'scaleconfiguration' => json_encode($scaleconfig),
+                ]);
+                $comp1 = $lpg->create_competency([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'parentid' => $comp0->get('id'),
+                        'path' => '0/' . $comp0->get('id'),
+                ]);
+                $comp2 = $lpg->create_competency([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'scaleid' => $scale2->id,
+                        'scaleconfiguration' => json_encode($scaleconfig),
+                ]);
 
         // Create scale color configuration for framework.
-        $scaleconfig = array();
-        $scaleconfig[] = array('id' => 1, 'color' => '#AAAAA');
-        $scaleconfig[] = array('id' => 2, 'color' => '#BBBBB');
-        $scaleconfig[] = array('id' => 3, 'color' => '#CCCCC');
-        $scaleconfig[] = array('id' => 4, 'color' => '#DDDDD');
+        $scaleconfig = [];
+        $scaleconfig[] = ['id' => 1, 'color' => '#AAAAA'];
+        $scaleconfig[] = ['id' => 2, 'color' => '#BBBBB'];
+        $scaleconfig[] = ['id' => 3, 'color' => '#CCCCC'];
+        $scaleconfig[] = ['id' => 4, 'color' => '#DDDDD'];
 
-        $reportconfig1 = $rpg->create_report_competency_config(array('competencyframeworkid' => $framework->get('id'),
-                'scaleid' => $scale1->id,
-                'scaleconfiguration' => $scaleconfig));
+                $reportconfig1 = $rpg->create_report_competency_config([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'scaleid' => $scale1->id,
+                        'scaleconfiguration' => $scaleconfig,
+                ]);
 
         // Create scale color configuration for competency comp2.
-        $scaleconfig = array();
-        $scaleconfig[] = array('id' => 1, 'color' => '#WWWWW');
-        $scaleconfig[] = array('id' => 2, 'color' => '#XXXXX');
-        $scaleconfig[] = array('id' => 3, 'color' => '#YYYYY');
-        $scaleconfig[] = array('id' => 4, 'color' => '#ZZZZZ');
+        $scaleconfig = [];
+        $scaleconfig[] = ['id' => 1, 'color' => '#WWWWW'];
+        $scaleconfig[] = ['id' => 2, 'color' => '#XXXXX'];
+        $scaleconfig[] = ['id' => 3, 'color' => '#YYYYY'];
+        $scaleconfig[] = ['id' => 4, 'color' => '#ZZZZZ'];
 
-        $reportconfig2 = $rpg->create_report_competency_config(array('competencyframeworkid' => $framework->get('id'),
-                'scaleid' => $scale2->id,
-                'scaleconfiguration' => $scaleconfig));
+                $reportconfig2 = $rpg->create_report_competency_config([
+                        'competencyframeworkid' => $framework->get('id'),
+                        'scaleid' => $scale2->id,
+                        'scaleconfiguration' => $scaleconfig,
+                ]);
 
         // Check we have both colors configuration.
         $this->assertTrue($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id]));
         $this->assertTrue($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id]));
 
         $comp2record = $comp2->to_record();
 
         // Change configuration for comp2.
-        $scaleconfig = array();
-        $scaleconfig[] = array('scaleid' => $scale3->id);
-        $scaleconfig[] = array('id' => 1, 'proficient' => 1);
-        $scaleconfig[] = array('id' => 2, 'scaledefault' => 1, 'proficient' => 1);
+        $scaleconfig = [];
+        $scaleconfig[] = ['scaleid' => $scale3->id];
+        $scaleconfig[] = ['id' => 1, 'proficient' => 1];
+        $scaleconfig[] = ['id' => 2, 'scaledefault' => 1, 'proficient' => 1];
         $comp2record->scaleid = $scale3->id;
         $comp2record->scaleconfiguration = json_encode($scaleconfig);
         $result = core_competency_api::update_competency($comp2record);
@@ -229,9 +252,9 @@ class observer_test extends \advanced_testcase {
         // Check both color configuration associated to the framework and comp0 still exist.
         $this->assertTrue($result);
         $this->assertTrue($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale1->id]));
          $this->assertTrue($DB->record_exists(report_competency_config::TABLE,
-                array('competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id)));
+                ['competencyframeworkid' => $framework->get('id'), 'scaleid' => $scale2->id]));
     }
 
 }

@@ -323,7 +323,7 @@ class engine extends \core_search\engine {
      * @return int
      */
     public function get_query_total_count() {
-        if (!is_null($this->totalresults)) {
+        if (is_null($this->totalresults)) {
             // This is a just in case as we count total results in execute_query.
             return \core_search\manager::MAX_RESULTS;
         }

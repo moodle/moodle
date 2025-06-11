@@ -28,6 +28,7 @@ namespace core_auth\external;
 
 use auth_email_external;
 use core_auth_external;
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,7 +45,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.2
  */
-class external_test extends externallib_advanced_testcase {
+final class external_test extends externallib_advanced_testcase {
 
     /** @var string Original error log */
     protected $oldlog;
@@ -54,6 +55,7 @@ class external_test extends externallib_advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         $this->resetAfterTest(true);
         $CFG->registerauth = 'email';
@@ -74,7 +76,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test confirm_user
      */
-    public function test_confirm_user() {
+    public function test_confirm_user(): void {
         global $DB;
 
         $username = 'pepe';
@@ -85,14 +87,14 @@ class external_test extends externallib_advanced_testcase {
 
         // Create new user.
         $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
-        $result = \external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['warnings']);
         $secret = $DB->get_field('user', 'secret', array('username' => $username));
 
         // Confirm the user.
         $result = core_auth_external::confirm_user($username, $secret);
-        $result = \external_api::clean_returnvalue(core_auth_external::confirm_user_returns(), $result);
+        $result = external_api::clean_returnvalue(core_auth_external::confirm_user_returns(), $result);
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['warnings']);
         $confirmed = $DB->get_field('user', 'confirmed', array('username' => $username));
@@ -100,7 +102,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Try to confirm the user again.
         $result = core_auth_external::confirm_user($username, $secret);
-        $result = \external_api::clean_returnvalue(core_auth_external::confirm_user_returns(), $result);
+        $result = external_api::clean_returnvalue(core_auth_external::confirm_user_returns(), $result);
         $this->assertFalse($result['success']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('alreadyconfirmed', $result['warnings'][0]['warningcode']);
@@ -114,12 +116,12 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test age digital consent not enabled.
      */
-    public function test_age_digital_consent_verification_is_not_enabled() {
+    public function test_age_digital_consent_verification_is_not_enabled(): void {
         global $CFG;
 
         $CFG->agedigitalconsentverification = 0;
         $result = core_auth_external::is_age_digital_consent_verification_enabled();
-        $result = \external_api::clean_returnvalue(
+        $result = external_api::clean_returnvalue(
             core_auth_external::is_age_digital_consent_verification_enabled_returns(), $result);
         $this->assertFalse($result['status']);
     }
@@ -127,12 +129,12 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test age digital consent is enabled.
      */
-    public function test_age_digital_consent_verification_is_enabled() {
+    public function test_age_digital_consent_verification_is_enabled(): void {
         global $CFG;
 
         $CFG->agedigitalconsentverification = 1;
         $result = core_auth_external::is_age_digital_consent_verification_enabled();
-        $result = \external_api::clean_returnvalue(
+        $result = external_api::clean_returnvalue(
             core_auth_external::is_age_digital_consent_verification_enabled_returns(), $result);
         $this->assertTrue($result['status']);
     }
@@ -140,7 +142,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test resend_confirmation_email.
      */
-    public function test_resend_confirmation_email() {
+    public function test_resend_confirmation_email(): void {
         global $DB;
 
         $username = 'pepe';
@@ -151,12 +153,12 @@ class external_test extends externallib_advanced_testcase {
 
         // Create new user.
         $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
-        $result = \external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['warnings']);
 
         $result = core_auth_external::resend_confirmation_email($username, $password);
-        $result = \external_api::clean_returnvalue(core_auth_external::resend_confirmation_email_returns(), $result);
+        $result = external_api::clean_returnvalue(core_auth_external::resend_confirmation_email_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertEmpty($result['warnings']);
         $confirmed = $DB->get_field('user', 'confirmed', array('username' => $username));
@@ -166,7 +168,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test resend_confirmation_email invalid username.
      */
-    public function test_resend_confirmation_email_invalid_username() {
+    public function test_resend_confirmation_email_invalid_username(): void {
 
         $username = 'pepe';
         $password = 'abcdefAª.ªª!!3';
@@ -176,7 +178,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Create new user.
         $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
-        $result = \external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['warnings']);
 
@@ -189,7 +191,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test resend_confirmation_email invalid password.
      */
-    public function test_resend_confirmation_email_invalid_password() {
+    public function test_resend_confirmation_email_invalid_password(): void {
 
         $username = 'pepe';
         $password = 'abcdefAª.ªª!!3';
@@ -199,7 +201,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Create new user.
         $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
-        $result = \external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['warnings']);
 
@@ -212,7 +214,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test resend_confirmation_email already confirmed user.
      */
-    public function test_resend_confirmation_email_already_confirmed_user() {
+    public function test_resend_confirmation_email_already_confirmed_user(): void {
         global $DB;
 
         $username = 'pepe';
@@ -223,14 +225,14 @@ class external_test extends externallib_advanced_testcase {
 
         // Create new user.
         $result = auth_email_external::signup_user($username, $password, $firstname, $lastname, $email);
-        $result = \external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
+        $result = external_api::clean_returnvalue(auth_email_external::signup_user_returns(), $result);
         $this->assertTrue($result['success']);
         $this->assertEmpty($result['warnings']);
         $secret = $DB->get_field('user', 'secret', array('username' => $username));
 
         // Confirm the user.
         $result = core_auth_external::confirm_user($username, $secret);
-        $result = \external_api::clean_returnvalue(core_auth_external::confirm_user_returns(), $result);
+        $result = external_api::clean_returnvalue(core_auth_external::confirm_user_returns(), $result);
         $this->assertTrue($result['success']);
 
         $this->expectException('\moodle_exception');

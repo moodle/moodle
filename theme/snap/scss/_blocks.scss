@@ -1,0 +1,725 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Moodle blocks.
+ *
+ * @package   theme_snap
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* stylelint-disable declaration-no-important*/
+
+@include media-breakpoint-up(md) {
+    #moodle-blocks > aside {
+        column-count: 2;
+        column-gap: 5%;
+        column-width: 45%;
+    }
+
+    #moodle-blocks .block:not(.block_settings) {
+        display: inline-block;
+        width: 100%;
+        // Added for yui overlays which use position absolute, so parent needs to be relative.
+        position: relative;
+    }
+}
+
+.block .header .title h2 {
+    font-size: $h5-font-size;
+}
+
+.block h3 {
+    font-size: $h6-font-size;
+}
+
+/* remove block actions, always display blocks when displayed */
+.block_action {
+    display: none;
+}
+
+.block.hidden .content {
+    display: block;
+}
+
+/* hide blocks by default */
+/* workaround for participant list pretending to be course view MDL-50492 */
+#moodle-blocks,
+.path-user.path-course.path-course-view.editing #moodle-blocks {
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+}
+
+/* show blocks on front page, quiz, book, cal etc and when clicked */
+#page-admin-index #moodle-blocks,
+#page-mod-quiz-attempt #moodle-blocks,
+#page-mod-quiz-review #moodle-blocks,
+#page-mod-book-view #moodle-blocks,
+#page-mod-lesson-view #moodle-blocks,
+#page-site-index #moodle-blocks,
+#page-user-profile #moodle-blocks,
+#page-my-index #moodle-blocks,
+#page-calendar-view #moodle-blocks,
+#page-mod-assign-editsubmission #moodle-blocks,
+#moodle-blocks.state-visible {
+    visibility: visible;
+    height: auto;
+    overflow: visible;
+}
+
+/* Some mods have faux blocks - but we want to hide all the other blocks */
+#page-mod-lesson-view,
+#page-mod-book-view,
+#page-mod-quiz-review,
+#page-mod-quiz-attempt {
+    #moodle-blocks > aside {
+        -webkit-column-count: 1;
+        -moz-column-count: 1;
+        column-count: 1;
+
+        .block {
+            display: none;
+        }
+
+        .block__fake,
+        .block_fake,
+        .block_settings {
+            display: block;
+        }
+
+        .block__fake,
+        .block_fake {
+            margin-top: 1rem;
+        }
+    }
+}
+
+.block.block_settings,
+body.path-site .block.block_settings {
+    margin-top: 0;
+    margin-bottom: 1em;
+}
+
+/* Reset margin on setting block. */
+.block_settings {
+    > .card-body {
+        padding-left: 0;
+        padding-right: 0;
+        @media (max-width: 996px) {
+            padding-top: 3rem;
+        }
+        @media (max-width: 762px) {
+            padding-top: 3.5rem;
+        }
+        @media (max-width: 560px) {
+            padding-top: 6.3rem;
+        }
+
+
+        // This is inside card-body for specificity resasons.
+        .block_tree [aria-expanded="false"].loading {
+            background: none;
+
+            :after {
+                content: '';
+                margin-left: 0.5em;
+                @include ajaxing(inline-block, relative, 16px, 4px);
+            }
+        }
+    }
+    .footer {
+        padding: 0 1em 1em 1em;
+    }
+    .block_tree {
+        ul {
+            margin-left: 0;
+            padding-left: 20px;
+        }
+    }
+}
+
+#snap_feeds_side_menu {
+    background-color: #EEF0F6;
+    visibility: hidden;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 13;
+    right: -100%;
+    transition: right 0.4s ease-in-out, top 0.3s ease, height 0.3s ease;
+    width: 320px;
+    position: fixed;
+    top: 0em;
+    &.state-visible {
+        visibility: visible;
+        right: 0;
+    }
+    .snap-feeds {
+        h5, hr {
+            display: none;
+        }
+        li {
+            list-style-type: none;
+        }
+        section {
+            background-color: #fff;
+            margin: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            .snap-sidebar-menu-more {
+                pointer-events: none;
+                margin-top: 1em;
+                margin-right: -0.8rem;
+                .snap-feeds-refresh-icon,
+                .snap-feeds-more-icon {
+                    display: block;
+                    margin-right: 0.8em;
+                }
+                small {
+                    display: none;
+                }
+                :before {
+                    pointer-events: all;
+                }
+            }
+            h2 {
+                clear: both;
+                font-size: 1rem;
+                font-weight: 700;
+                line-height: 1;
+                padding: 0.5em 0;
+                margin: 0.5em 0;
+            }
+            .snap-feeds-menu-more {
+                display: block;
+                text-align: right;
+                pointer-events: none;
+
+                small {
+                    display: none;
+                }
+                svg {
+                    pointer-events: all;
+                }
+            }
+            #snap-feeds-menu-messages,
+            #snap-feeds-menu-forumposts {
+                .userinitials {
+                    float: left;
+                    width: 40px;
+                    height: 40px;
+                    font-size: unset;
+                    margin: 0.3em 1em 0 0.3em;
+                }
+            }
+            #snap-feeds-menu-messages .snap-media-body p {
+                font-size: 0.75rem;
+            }
+            h3 {
+                font-size: 0.85rem;
+                small {
+                    display: block;
+                    br {
+                        display: none;
+                    }
+                }
+            }
+            span {
+                font-size: .7rem;
+            }
+            #snap-feeds-menu-intellicart,
+            #snap-feeds-menu-intelliboard {
+                a {
+                    font-size: .85rem;
+                }
+            }
+        }
+    }
+
+    .snap-feeds-mobile-menu  {
+        #snap-feeds-section-messages,
+        #snap-feeds-section-forumposts {
+            .userinitials {
+                float: left;
+                width: 40px;
+                height: 40px;
+                font-size: unset;
+                margin: 0.3em 1em 0 0.3em;
+            }
+        }
+    }
+
+    .snap-feeds-mobile-menu {
+        display: none;
+    }
+
+    // Snap Feeds Mobile Menu
+    @media screen and (max-width: 992px) {
+        &.state-visible {
+            width: 100%;
+            z-index: 1030;
+        }
+
+        .snap-feeds {
+            display: none;
+        }
+
+        .snap-feeds-mobile-menu {
+            display: block;
+            height: 100vh;
+            background: #eef0f6;
+
+            li {
+                list-style-type: none;
+            }
+        
+            .nav {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                background: white;
+                flex-wrap: nowrap;
+
+                .nav-item {
+                    opacity: 0.4;
+                    min-width: 64px;
+                    padding-top: 4px;
+
+                    .nav-link {
+                        mask-repeat: no-repeat !important;
+                        mask-position: center !important;
+                        mask-size: 50px !important;
+
+                        padding-bottom: 0;
+
+                        &.ib {
+                            mask-size: 30px !important;
+                        }
+
+                        img {
+                            opacity: 0;
+                            width: 0;
+                            height: 0;
+                        }
+                    }
+
+                    small {
+                        visibility: hidden;
+                    }
+
+                    &.active {
+                        opacity: 1;
+                        padding-top: 0;
+
+                        small {
+                            visibility: visible;
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+
+            .snap-feeds-mobile-sections > .feed-section {
+                display: none;
+
+                &.active {
+                    display: block;
+                    margin-bottom: 2em;
+                }
+
+                background: white;
+                padding: 2rem;
+                border-radius: 0.5rem;
+
+                h2 {
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                }
+
+                .snap-feeds-refresh-icon {
+                    display: inline-block;
+                    margin-left: 8px;
+                }
+
+                .snap-feeds-menu-more {
+                    display: block;
+                    text-align: right;
+                }
+
+                .snap-feeds-menu-more, .snap-sidebar-menu-more {
+                    * {
+                        display: inline-block;
+                        transform: translate(8px, 16px);
+                    }
+
+                    i, svg {
+                        width: 34px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.snap-sidebar-menu-more svg {
+    width: 16px;
+    margin-left: 4px;
+}
+
+.snap-feeds-menu-more svg, .snap-feeds-mobile-sections svg {
+    width: 1.8em;
+    margin-right: -8px;
+}
+
+// Admin block link.
+#snap_feeds_side_menu_trigger {
+    text-align: center;
+    width: 2.35em;
+
+    .hover-visible {
+        opacity: 0;
+    }
+
+    svg:hover {
+        @extend .fa-bounce;
+        --fa-animation-duration: 1s;
+        --fa-animation-iteration-count: 1;
+
+        .hover-visible {
+            opacity: 1;
+        }
+    }
+
+    svg {
+        path {
+            stroke: currentColor;
+        }
+    }
+}
+
+// Edit mode toggle.
+.editmode-switch-form {
+    .input-group {
+        padding-bottom: 0.4em;
+        @include media-breakpoint-down(md) {
+            padding-bottom: 0;
+        }
+        label {
+            color: $brand-primary !important;
+            margin-top: .1rem;
+        }
+    }
+    .custom-control-input {
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        opacity: 0;
+    }
+    .custom-control-input:checked~.custom-control-label::before {
+        background-color: $brand-primary;
+        border-color: $brand-primary;
+    }
+    @include media-breakpoint-down(sm) {
+        .input-group label {
+            display: none;
+        }
+    }
+}
+
+.snap_line_separator {
+    border-left: 2px solid $icons-color;
+    height: 25px;
+    margin: 0.5rem 0.5rem 0 0.5rem
+}
+
+/* icons in blocks */
+.block_navigation .block_tree .tree_item.branch,
+.block_settings .block_tree .tree_item.branch {
+    margin-left: 0;
+}
+
+.block_navigation .block_tree li.item_with_icon > p img,
+.block_settings .block_tree li.item_with_icon > p img {
+    top: 0.15em;
+    position: relative;
+}
+
+.block_navigation .block_tree li:first-of-type > ul {
+    padding-left: 0px;
+    p {
+        font-size: 0.9em;
+    }
+}
+
+.block .icon.column {
+    width: 21px;
+
+    img {
+        vertical-align: baseline;
+    }
+}
+
+.eventcontent .smallicon {
+    width: 50px;
+    margin-right: 2%;
+}
+
+/* Calandar */
+.eventtitle {
+    font-size: 1em;
+}
+
+.calendar-event-panel .eventcontent {
+    text-align: left;
+    padding: 0.5em;
+}
+
+.block .minicalendar {
+    max-width: 100%;
+}
+
+.block_calendar_month, body#page-calendar-view div.maincalendar {
+    .calendarwrapper {
+        .calendar-controls {
+            padding-bottom: 21pt;
+            a.arrow_link, h4.current {
+                font-size: 1rem;
+            }
+            a.previous {
+                width: 30%;
+            }
+            h4.current {
+                line-height: 1.5;
+                width: 40%;
+            }
+            h2.current {
+                width: 40%;
+            }
+            a.next {
+                width: 30%;
+            }
+        }
+        .calendarmonth.calendartable {
+            th, td {
+                border: none;
+                text-align: center !important; // !important needed because of Bootstrap.
+            }
+            td {
+                font-size: .9rem;
+                height: 3.2em;
+                &.today span.day-number-circle {
+                    background-color: $brand-primary;
+                }
+                li[data-action='view-more-events'] {
+                    a:focus {
+                        outline: none;
+                        display: inherit;
+                        background-color: inherit;
+                        box-shadow: initial;
+                        border-radius: initial;
+                        text-decoration: underline;
+                    }
+                }
+            }
+            th {
+                font-size: .8rem;
+                font-weight: normal;
+                padding-left: initial;
+            }
+            .day .day {
+                border: initial;
+            }
+        }
+    }
+    & + .footer {
+        font-size: 1rem;
+    }
+}
+
+// hide this stuff from blocks when not viewing full page cal
+.eventskey,
+.block_calendar_month .calendar_filters {
+    display: none;
+}
+
+.block_myoverview div[role="search"] .row.no-gutters {
+    margin-left: inherit;
+    margin-right: inherit;
+}
+
+/* ADMIN BLOCK */
+#page-content .block_settings {
+    width: 320px;
+    height: 0;
+    visibility: hidden;
+    position: fixed;
+    background-color: #EEF0F6 !important;
+    top: 0em;
+    right: -100%;
+    padding: 0;
+
+    .moodle-core-dragdrop-draghandle {
+        display: none;
+    }
+
+    & > .card-block {
+        padding-left: 2%;
+        padding-right: 2%;
+    }
+
+    .card-title {
+        visibility: hidden;
+        position: absolute;
+    }
+
+    // Hide a possible second gear menu
+    .block-controls {
+        visibility: hidden;
+    }
+
+    .block_tree.list {
+        @include media-breakpoint-down(md) {
+            margin-top: 0;
+        }
+    }
+    // Hide the Turn editing on button from the block settings.
+    a[href*="edit=on"],
+    a[href*="edit=off"],
+    a[href*="edit=1"],
+    a[href*="edit=0"] {
+        display: none;
+    }
+
+    #settingsnav {
+        padding-top: 0!important;
+    }
+}
+
+.block_settings .contains_branch[aria-expanded="true"] #frontpagesettings_group {
+    display: grid;
+
+    .type_custom:has(.conduit-frontpage) {
+        order: 99;
+    }
+}
+
+#page-content .block_settings.state-visible,
+.block_settings:target {
+    visibility: visible;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 13;
+    right: 0;
+    border-left: 1px solid #eee;
+    transition: right 0.4s ease-in-out, top 0.3s ease, height 0.3s ease;
+}
+
+.block .header .title .commands {
+    width: 100%;
+    font-size: $font-size-sm;
+}
+
+.block_rss_client ul.list li {
+    border: 0;
+    margin: 1em 0;
+
+    .description {
+        font-size: small;
+    }
+}
+
+/* BLOCKS EDITING */
+.block .moodle-actionmenu[data-enhanced].show .menu,
+.block .moodle-actionmenu[data-enhanced].show .menu[style] {
+    left: 0 !important; // overwrite moodle js
+}
+
+.block .commands.show .moodle-core-dragdrop-draghandle {
+    display: none;
+}
+
+/* Hide header when editing front page block. */
+#page-site-index.pagelayout-admin {
+    #page-header {
+        display: none;
+    }
+    @media (min-width: 768px) {
+        #region-main {
+            padding-top: 3.5em;
+        }
+    }
+    #region-main {
+        padding-top: 4.25em;
+    }
+}
+
+#page-mod-assign-editsubmission #mod_assign_timelimit_block {
+    width: inherit;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
+    position: fixed;
+    right: 4%;
+    top: 46%;
+}
+
+body:not(#page-my-index) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td.hasevent [data-region="day-content"] {
+    display: none;
+}
+
+.drawer-toggler {
+    position: fixed;
+    top: 170px;
+    z-index: 23;
+    right: 0;
+       &.drawer-right-toggle .btn {
+        background-color: #dee2e6;
+        border-radius: 15px 0 0 15px;
+        width: 55px;
+        text-align: left;
+        margin-right: -20px;
+        transition: transform 200ms ease-in-out;
+        &:hover {
+            transform: translateX(-10px);
+        }
+        i.icon {
+            color: #1d2125;
+        }
+    }
+}
+
+.drawer.drawer-right {
+    background-color: #EEF0F6;
+    transition: right 0.3s ease, bottom 0.3s ease, top 0.3s ease, height 0.3s ease, visibility 0.3s ease, transform 0.5s ease;
+    .card {
+        border-radius: 0.5rem;
+    }
+}
+
+body.notloggedin .drawer.drawer-right {
+    margin-top: 0;
+    height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .drawer.drawer-right {
+      transition: none;
+    }
+}
+
+.block_grade_me .grademe-mod-name {
+    max-width: 8rem;
+}

@@ -29,29 +29,29 @@ use single_button;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class standard_action_bar extends base_action_bar {
-    /** @var bool $showmanage Whether or not to show the manage badges button. */
-    protected $showmanage;
-
-    /** @var bool $showaddbadge Whether or not to show the add badges button. */
-    protected $showaddbadge;
-
-    /** @var moodle_url $backurl BackURL to be used when the back button is required. */
-    protected $backurl;
-
     /**
-     * standard_action_bar constructor
+     * The constructor.
      *
-     * @param moodle_page $page The page object
-     * @param int $type The type of badge we are operating with
-     * @param bool $showmanage Whether or not to show the manage badges button
-     * @param bool $showaddbadge Whether or not to show the add badges button
-     * @param moodle_url|null $backurl The backurl to be used
      */
-    public function __construct(moodle_page $page, int $type, bool $showmanage = true,
-            $showaddbadge = true, ?moodle_url $backurl = null) {
+    public function __construct(
+        moodle_page $page,
+        int $type,
+        /** @var null|bool $showmanage This parameter has been deprecated since 4.5 and should not be used anymore. */
+        ?bool $showmanage = null,
+        /** @var bool $showaddbadge Whether or not to show the add badges button. */
+        protected bool $showaddbadge = true,
+        /** @var moodle_url $backurl BackURL to be used when the back button is required. */
+        protected ?moodle_url $backurl = null,
+    ) {
         parent::__construct($page, $type);
 
-        $this->showmanage = $showmanage;
+        if ($showmanage !== null) {
+            debugging(
+                'The showmanage argument has been deprecated. Please remove it from your method calls.',
+                DEBUG_DEVELOPER,
+            );
+        }
+
         $this->showaddbadge = $showaddbadge;
         $this->backurl = $backurl;
     }
@@ -82,14 +82,20 @@ class standard_action_bar extends base_action_bar {
             $params['id'] = $this->page->context->instanceid;
         }
 
-        if ($this->showmanage) {
-            $buttons[] = new single_button(new moodle_url('/badges/index.php', $params),
-                get_string('managebadges', 'core_badges'), 'get');
-        }
-
         if ($this->showaddbadge && has_capability('moodle/badges:createbadge', $this->page->context)) {
-            $buttons[] = new single_button(new moodle_url('/badges/newbadge.php', $params),
-                get_string('newbadge', 'core_badges'), 'post', true);
+            $editparams = ['action' => 'new'];
+            if (array_key_exists('id', $params)) {
+                $editparams['courseid'] = $params['id'];
+            }
+            $buttons[] = new single_button(
+                new moodle_url(
+                    '/badges/edit.php',
+                    $editparams,
+                ),
+                get_string('newbadge', 'core_badges'),
+                'post',
+                single_button::BUTTON_PRIMARY,
+            );
         }
 
         foreach ($buttons as $key => $button) {

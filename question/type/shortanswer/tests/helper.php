@@ -110,7 +110,12 @@ class qtype_shortanswer_test_helper extends question_test_helper {
             array('text' => 'That is a bad answer.', 'format' => FORMAT_HTML),
         );
         $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
-
+        $form->hint = [
+            [
+                'text' => 'Rhymes with dog',
+                'format' => FORMAT_HTML,
+            ],
+        ];
         return $form;
     }
 

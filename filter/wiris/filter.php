@@ -25,9 +25,6 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-// For backwards compatibility with Moodle 4.4 and below.
-if ($CFG->branch < 405) {
-    class_alias('\moodle_text_filter', '\core_filters\text_filter');
-    require_once(__DIR__ . '/classes/text_filter.php');
-    class_alias('filter_wiris\text_filter', '\filter_wiris');
-}
+class_alias(\moodle_text_filter::class, \core_filters\text_filter::class);
+require_once(__DIR__ . '/classes/text_filter.php');
+class_alias(\filter_wiris\text_filter::class, \filter_wiris::class);

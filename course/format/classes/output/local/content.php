@@ -14,19 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the main course format out class.
- *
- * @package   core_courseformat
- * @copyright 2020 Ferran Recio <ferran@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_courseformat\output\local;
 
 use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use course_modinfo;
+use section_info;
 use renderable;
 
 /**
@@ -39,7 +32,7 @@ use renderable;
 class content implements named_templatable, renderable {
     use courseformat_named_templatable;
 
-    /** @var core_courseformat\base the course format class */
+    /** @var \core_courseformat\base the course format class */
     protected $format;
 
     /** @var string the section format class */
@@ -53,6 +46,12 @@ class content implements named_templatable, renderable {
 
     /** @var string section selector class name */
     protected $sectionselectorclass;
+
+    /** @var string the section control menu class */
+    protected $sectioncontrolmenuclass;
+
+    /** @var string bulk editor bar toolbox */
+    protected $bulkedittoolsclass;
 
     /** @var bool if uses add section */
     protected $hasaddsection = true;
@@ -70,38 +69,36 @@ class content implements named_templatable, renderable {
         $this->addsectionclass = $format->get_output_classname('content\\addsection');
         $this->sectionnavigationclass = $format->get_output_classname('content\\sectionnavigation');
         $this->sectionselectorclass = $format->get_output_classname('content\\sectionselector');
+        $this->bulkedittoolsclass = $format->get_output_classname('content\\bulkedittools');
+        $this->sectioncontrolmenuclass = $format->get_output_classname('content\\section\\controlmenu');
     }
 
     /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return \stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
         global $PAGE;
         $format = $this->format;
 
-        // Most formats uses section 0 as a separate section so we remove from the list.
         $sections = $this->export_sections($output);
         $initialsection = '';
-        if (!empty($sections)) {
-            $initialsection = array_shift($sections);
-        }
 
         $data = (object)[
             'title' => $format->page_title(), // This method should be in the course_format class.
             'initialsection' => $initialsection,
             'sections' => $sections,
             'format' => $format->get_format(),
-            'sectionreturn' => 0,
+            'sectionreturn' => null,
         ];
 
         // The single section format has extra navigation.
-        $singlesection = $this->format->get_section_number();
-        if ($singlesection) {
+        if ($this->format->get_sectionid()) {
+            $singlesectionnum = $this->format->get_sectionnum();
             if (!$PAGE->theme->usescourseindex) {
-                $sectionnavigation = new $this->sectionnavigationclass($format, $singlesection);
+                $sectionnavigation = new $this->sectionnavigationclass($format, $singlesectionnum);
                 $data->sectionnavigation = $sectionnavigation->export_for_template($output);
 
                 $sectionselector = new $this->sectionselectorclass($format, $sectionnavigation);
@@ -109,7 +106,7 @@ class content implements named_templatable, renderable {
             }
             $data->hasnavigation = true;
             $data->singlesection = array_shift($data->sections);
-            $data->sectionreturn = $singlesection;
+            $data->sectionreturn = $singlesectionnum;
         }
 
         if ($this->hasaddsection) {
@@ -117,13 +114,36 @@ class content implements named_templatable, renderable {
             $data->numsections = $addsection->export_for_template($output);
         }
 
+        if ($format->show_editor()) {
+            $bulkedittools = new $this->bulkedittoolsclass($format);
+            $data->bulkedittools = $bulkedittools->export_for_template($output);
+        }
+
         return $data;
+    }
+
+    /**
+     * Retrieves the action menu for the page header of the local content section.
+     *
+     * @param \renderer_base $output The renderer object used for rendering the action menu.
+     * @return string|null The rendered action menu HTML, null if page no action menu is available.
+     */
+    public function get_page_header_action(\renderer_base $output): ?string {
+        $sectionid = $this->format->get_sectionid();
+        if ($sectionid !== null) {
+            $modinfo = $this->format->get_modinfo();
+            $sectioninfo = $modinfo->get_section_info_by_id($sectionid);
+            /** @var \core_courseformat\output\local\content\section\controlmenu */
+            $controlmenu = new $this->sectioncontrolmenuclass($this->format, $sectioninfo);
+            return $output->render($controlmenu->get_action_menu($output));
+        }
+        return null;
     }
 
     /**
      * Export sections array data.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return array data context for a mustache template
      */
     protected function export_sections(\renderer_base $output): array {
@@ -135,7 +155,6 @@ class content implements named_templatable, renderable {
         // Generate section list.
         $sections = [];
         $stealthsections = [];
-        $numsections = $format->get_last_section_number();
         foreach ($this->get_sections_to_display($modinfo) as $sectionnum => $thissection) {
             // The course/view.php check the section existence but the output can be called
             // from other parts so we need to check it.
@@ -144,17 +163,18 @@ class content implements named_templatable, renderable {
                     format_string($course->fullname));
             }
 
+            if (!$format->is_section_visible($thissection)) {
+                continue;
+            }
+
+            /** @var \core_courseformat\output\local\content\section $section */
             $section = new $this->sectionclass($format, $thissection);
 
-            if ($sectionnum > $numsections) {
+            if ($section->is_stealth()) {
                 // Activities inside this section are 'orphaned', this section will be printed as 'stealth' below.
                 if (!empty($modinfo->sections[$sectionnum])) {
                     $stealthsections[] = $section->export_for_template($output);
                 }
-                continue;
-            }
-
-            if (!$format->is_section_visible($thissection)) {
                 continue;
             }
 
@@ -176,14 +196,12 @@ class content implements named_templatable, renderable {
      * @return section_info[] an array of section_info to display
      */
     private function get_sections_to_display(course_modinfo $modinfo): array {
-        $singlesection = $this->format->get_section_number();
-        if ($singlesection) {
+        $singlesectionid = $this->format->get_sectionid();
+        if ($singlesectionid) {
             return [
-                $modinfo->get_section_info(0),
-                $modinfo->get_section_info($singlesection),
+                $modinfo->get_section_info_by_id($singlesectionid),
             ];
         }
-
-        return $modinfo->get_section_info_all();
+        return $modinfo->get_listed_section_info_all();
     }
 }

@@ -1,0 +1,12 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This files describes API changes for code that uses MFA.
+
+=== 4.4 ===
+* The method tool_mfa\output\renderer::setup_factor() has been deprecated. The HTML derived from this method is no longer needed.
+  Similar HTML is now achieved as part of available_factors() from MFA renderer.
+* The class tool_mfa\local\form\revoke_factor_form is renamed to factor_action_confirmation_form to better suit the other actions
+  it is performing (replace and revoke).

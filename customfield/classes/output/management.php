@@ -108,7 +108,7 @@ class management implements renderable, templatable {
                         'data-typename' => $fieldname]);
                 $menu->add($action);
             }
-            $menu->attributes['class'] .= ' float-left mr-1';
+            $menu->attributes['class'] .= ' float-start me-1';
 
             $categoryarray['addfieldmenu'] = $output->render($menu);
 

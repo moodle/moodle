@@ -41,15 +41,15 @@ class linked_course_and_modules_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'course' => array(
-                'type' => linked_course_exporter::read_properties_definition()
-            ),
-            'modules' => array(
+        return [
+            'course' => [
+                'type' => linked_course_exporter::read_properties_definition(),
+            ],
+            'modules' => [
                 'type' => linked_cm_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -65,7 +65,7 @@ class linked_course_and_modules_exporter extends \core\external\exporter {
      */
     protected static function define_related() {
         // We cache the plan so it does not need to be retrieved every time.
-        return array('plan' => 'core_competency\\plan');
+        return ['plan' => 'core_competency\\plan'];
     }
 
     /**
@@ -78,11 +78,11 @@ class linked_course_and_modules_exporter extends \core\external\exporter {
         $plan = $this->related['plan'];
 
         $result = new \stdClass();
-        $result->modules = array();
+        $result->modules = [];
 
         $relatedinfo = new \stdClass();
         $relatedinfo->userid = $plan->get('userid');
-        $exporter = new linked_course_exporter($this->data['courseinfo'], array('relatedinfo' => $relatedinfo));
+        $exporter = new linked_course_exporter($this->data['courseinfo'], ['relatedinfo' => $relatedinfo]);
         $result->course = $exporter->export($output);
 
         foreach ($this->data['modulesinfo'] as $cmid) {
@@ -90,7 +90,7 @@ class linked_course_and_modules_exporter extends \core\external\exporter {
             $cmdata->cmid = $cmid;
             $relatedinfo = new \stdClass();
             $relatedinfo->userid = $plan->get('userid');
-            $exporter = new linked_cm_exporter($cmdata, array('relatedinfo' => $relatedinfo));
+            $exporter = new linked_cm_exporter($cmdata, ['relatedinfo' => $relatedinfo]);
             $result->modules[] = $exporter->export($output);
         }
 

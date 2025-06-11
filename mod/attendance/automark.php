@@ -30,9 +30,9 @@ $sessionid  = required_param('sessionid', PARAM_INT);
 $grouptype  = required_param('grouptype', PARAM_INT);
 
 $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att            = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
-$session        = $DB->get_record('attendance_sessions', array('id' => $sessionid, 'attendanceid' => $att->id),
+$course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att            = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
+$session        = $DB->get_record('attendance_sessions', ['id' => $sessionid, 'attendanceid' => $att->id],
                                   '*', MUST_EXIST);
 
 require_login($course, true, $cm);
@@ -45,6 +45,7 @@ if (empty($session->automark)) {
 if ($session->automark == ATTENDANCE_AUTOMARK_CLOSE && ($session->sessdate + $session->duration) > time() ) {
     throw new moodle_exception('automarkingnotavailableyet', 'attendance');
 }
+// phpcs:disable moodle.Commenting.TodoComment
 // TODO Check Get session unmarked value for statusset used by this session.
 $errors = \mod_attendance\local\automark::session($session, $course, $cm, $att, true);
 $url = new moodle_url('/mod/attendance/take.php', ['id' => $id, 'sessionid' => $session->id, 'grouptype' => $grouptype]);

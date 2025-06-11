@@ -73,7 +73,7 @@ $xlsformats->head1 = $workbook->add_format(['bold' => 1, 'size' => 12]);
 $xlsformats->head2 = $workbook->add_format(['align' => 'left', 'bold' => 1, 'bottum' => 2]);
 $xlsformats->default = $workbook->add_format(['align' => 'left', 'v_align' => 'top']);
 $xlsformats->value_bold = $workbook->add_format(['align' => 'left', 'bold' => 1, 'v_align' => 'top']);
-$xlsformats->procent = $workbook->add_format(['align' => 'left', 'bold' => 1, 'v_align' => 'top', 'num_format' => '#,##0.00%']);
+$xlsformats->procent = $workbook->add_format(['align' => 'left', 'bold' => 1, 'v_align' => 'top', 'num_format' => '#,##0.00']);
 
 // Writing the table header.
 $rowoffset1 = 0;

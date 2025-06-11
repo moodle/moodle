@@ -66,14 +66,35 @@ $CFG->dboptions = array(
     'dbcollation' => 'utf8mb4_unicode_ci', // MySQL has partial and full UTF-8
                                 // support. If you wish to use partial UTF-8
                                 // (three bytes) then set this option to
-                                // 'utf8_unicode_ci', otherwise this option
-                                // can be removed for MySQL (by default it will
-                                // use 'utf8mb4_unicode_ci'. This option should
-                                // be removed for all other databases.
+                                // 'utf8_unicode_ci'. If using the recommended
+                                // settings with full UTF-8 support this should
+                                // be set to 'utf8mb4_unicode_ci'. This option
+                                // should be removed for all other databases.
+    // 'versionfromdb' => false,   // On MySQL and MariaDB, this can force
+                                // the DB version to be evaluated using
+                                // the VERSION function instead of the version
+                                // provided by the PHP client which could be
+                                // wrong based on the DB server infrastructure,
+                                // e.g. PaaS on Azure. Default is false/unset.
+                                // Uncomment and set to true to force MySQL and
+                                // MariaDB to use 'SELECT VERSION();'.
     // 'extrainfo' => [],       // Extra information for the DB driver, e.g. SQL Server,
                                 // has additional configuration according to its environment,
                                 // which the administrator can specify to alter and
                                 // override any connection options.
+    // 'ssl' => '',             // A connection mode string from the list below.
+                                // Not supported by all drivers.
+                                //   prefer       Use SSL if available - postgres default  Postgres only
+                                //   disable      Force non secure connection              Postgres only
+                                //   require      Force SSL                                Postgres and MySQL
+                                //   verify-full  Force SSL and verify root CA             Postgres and MySQL
+                                // All mode names are adopted from Postgres
+                                // and other databases align where possible:
+                                //   Postgres: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE
+                                //   MySql:    https://www.php.net/manual/en/mysqli.real-connect.php
+                                // It is worth noting that for MySQL require and verify-full are the same - in both cases
+                                // verification will take place if you specify hostname as a name,
+                                // and it will be omitted if you put an IP address.
     // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
                                 // on the number of rows that are fetched into
                                 // memory when doing a large recordset query
@@ -83,6 +104,10 @@ $CFG->dboptions = array(
                                 // set to zero if you are using pg_bouncer in
                                 // 'transaction' mode (it is fine in 'session'
                                 // mode).
+    // 'clientcompress' => true // Use compression protocol to communicate with the database server.
+                                // Decreases traffic from the database server.
+                                // Not needed if the databse is on the same host.
+                                // Currently supported only with mysqli, mariadb, and aurora drivers.
     /*
     'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
     'readonly' => [          // Set to read-only slave details, to get safe reads
@@ -155,6 +180,14 @@ $CFG->wwwroot   = 'http://example.com/moodle';
 
 $CFG->dataroot  = '/home/example/moodledata';
 
+// Whether the Moodle router is fully configured.
+//
+// From Moodle 4.5 this is set to false.
+// The default value will change in a future release.
+//
+// When not configured on the web server it must be accessed via https://example.com/moodle/r.php
+// When configured the on the web server the 'r.php' may be removed.
+$CFG->routerconfigured = false;
 
 //=========================================================================
 // 4. DATA FILES PERMISSIONS
@@ -293,6 +326,8 @@ $CFG->admin = 'admin';
 //         '/tempdir/'  => '/var/www/moodle/temp',     // for custom $CFG->tempdir locations
 //         '/filedir'   => '/var/www/moodle/filedir',  // for custom $CFG->filedir locations
 //     );
+// Please note: It is *not* possible to use X-Sendfile with the per-request directory.
+// The directory is highly likely to have been deleted by the time the web server sends the file.
 //
 // YUI caching may be sometimes improved by slasharguments:
 //     $CFG->yuislasharguments = 1;
@@ -301,7 +336,7 @@ $CFG->admin = 'admin';
 //
 //
 // Following settings may be used to select session driver, uncomment only one of the handlers.
-//   Database session handler (not compatible with MyISAM):
+//   Database session handler:
 //      $CFG->session_handler_class = '\core\session\database';
 //      $CFG->session_database_acquire_lock_timeout = 120;
 //
@@ -320,7 +355,12 @@ $CFG->admin = 'admin';
 //
 //   Redis session handler (requires redis server and redis extension):
 //      $CFG->session_handler_class = '\core\session\redis';
-//      $CFG->session_redis_host = '127.0.0.1';
+//      $CFG->session_redis_host = '127.0.0.1';  or...              // If there is only one host, use the single Redis connection.
+//      $CFG->session_redis_host = '127.0.0.1:7000,127.0.0.1:7001'; // If there are multiple hosts (separated by a comma),
+//                                                                  // use the Redis cluster connection.
+//      Use TLS to connect to Redis. An array of SSL context options. Usually:
+//      $CFG->session_redis_encrypt = ['cafile' => '/path/to/ca.crt']; or...
+//      $CFG->session_redis_encrypt = ['verify_peer' => false, 'verify_peer_name' => false];
 //      $CFG->session_redis_port = 6379;                     // Optional.
 //      $CFG->session_redis_database = 0;                    // Optional, default is db 0.
 //      $CFG->session_redis_auth = '';                       // Optional, default is don't set one.
@@ -330,6 +370,8 @@ $CFG->admin = 'admin';
 //      $CFG->session_redis_lock_expire = 7200;              // Optional, defaults to session timeout.
 //      $CFG->session_redis_lock_retry = 100;                // Optional wait between lock attempts in ms, default is 100.
 //                                                           // After 5 seconds it will throttle down to once per second.
+//      $CFG->session_redis_connection_timeout = 3;          // Optional, default is 3.
+//      $CFG->session_redis_maxretries = 3;                  // Optional, default is 3.
 //
 //      Use the igbinary serializer instead of the php default one. Note that phpredis must be compiled with
 //      igbinary support to make the setting to work. Also, if you change the serializer you have to flush the database!
@@ -409,9 +451,6 @@ $CFG->admin = 'admin';
 //
 //   Capture performance profiling data
 //   define('MDL_PERF'  , true);
-//
-//   Capture additional data from DB
-//   define('MDL_PERFDB'  , true);
 //
 //   Print to log (for passive profiling of production servers)
 //   define('MDL_PERFTOLOG'  , true);
@@ -552,18 +591,6 @@ $CFG->admin = 'admin';
 //
 //      $CFG->preventscheduledtaskchanges = true;
 //
-// As of version 2.4 Moodle serves icons as SVG images if the users browser appears
-// to support SVG.
-// For those wanting to control the serving of SVG images the following setting can
-// be defined in your config.php.
-// If it is not defined then the default (browser detection) will occur.
-//
-// To ensure they are always used when available:
-//      $CFG->svgicons = true;
-//
-// To ensure they are never used even when available:
-//      $CFG->svgicons = false;
-//
 // Some administration options allow setting the path to executable files. This can
 // potentially cause a security risk. Set this option to true to disable editing
 // those config settings via the web. They will need to be set explicitly in the
@@ -647,8 +674,12 @@ $CFG->admin = 'admin';
 // Font used in exported PDF files. When generating a PDF, Moodle embeds a subset of
 // the font in the PDF file so it will be readable on the widest range of devices.
 // The default font is 'freesans' which is part of the GNU FreeFont collection.
+// The font used to export can be set per-course - a drop down list in the course
+// settings shows all the options specified in the array here. The key must be the
+// font name (e.g., "kozminproregular") and the value is a friendly name, (e.g.,
+// "Kozmin Pro Regular").
 //
-//      $CFG->pdfexportfont = 'freesans';
+//      $CFG->pdfexportfont = ['freesans' => 'FreeSans'];
 //
 // Use the following flag to enable messagingallusers and set the default preference
 // value for existing users to allow them to be contacted by other site users.
@@ -672,6 +703,15 @@ $CFG->admin = 'admin';
 //      $CFG->adhoctaskagewarn = 10 * 60;
 //      $CFG->adhoctaskageerror = 4 * 60 * 60;
 //
+// Moodle 4.2+ checks how long tasks have been running for at warns at 12 hours
+// and errors at 24 hours. Set these to override these limits:
+//
+// $CFG->taskruntimewarn = 12 * 60 * 60;
+// $CFG->taskruntimeerror = 24 * 60 * 60;
+//
+// This is not to be confused with $CFG->task_adhoc_max_runtime which is how long the
+// php process should be allowed to run for, not each specific task.
+//
 // Session lock warning threshold. Long running pages should release the session using \core\session\manager::write_close().
 // Set this threshold to any value greater than 0 to add developer warnings when a page locks the session for too long.
 // The session should rarely be locked for more than 1 second. The input should be in seconds and may be a float.
@@ -680,8 +720,7 @@ $CFG->admin = 'admin';
 //
 // There are times when a session lock is not required during a request. For a page/service to opt-in whether or not a
 // session lock is required this setting must first be set to 'true'.
-// This is an experimental issue. The session store can not be in the session, please
-// see https://docs.moodle.org/en/Session_handling#Read_only_sessions.
+// The session store can not be in the session, please see https://docs.moodle.org/en/Session_handling#Read_only_sessions.
 //
 //      $CFG->enable_read_only_sessions = true;
 //
@@ -692,7 +731,7 @@ $CFG->admin = 'admin';
 //
 // Uninstall plugins from CLI only. This stops admins from uninstalling plugins from the graphical admin
 // user interface, and forces plugins to be uninstalled from the Command Line tool only, found at
-// admin/cli/plugin_uninstall.php.
+// admin/cli/uninstall_plugins.php.
 //
 //      $CFG->uninstallclionly = true;
 //
@@ -744,7 +783,22 @@ $CFG->admin = 'admin';
 // Defaults to 60 minutes.
 //
 //      $CFG->enrolments_sync_interval = 3600
-
+//
+// Stored progress polling interval
+//
+// Stored progress bars which can be polled for updates via AJAX can be controlled by the
+// `progresspollinterval` config setting, to determine the interval (in seconds) at which the
+// polling should be done and latest update retrieved.
+// If no value is set, then it will default to 5 seconds.
+//
+//      $CFG->progresspollinterval = 5;
+//
+// Set limit for grade items that can be shown on a single page of the grader
+// report. Browsers struggle when the number of grade items is very large and
+// one tries to view all students.
+//
+//      $CFG->maxgradesperpage = 200000;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
@@ -754,6 +808,28 @@ $CFG->admin = 'admin';
 // @ini_set('display_errors', '1');    // NOT FOR PRODUCTION SERVERS!
 // $CFG->debug = (E_ALL | E_STRICT);   // === DEBUG_DEVELOPER - NOT FOR PRODUCTION SERVERS!
 // $CFG->debugdisplay = 1;             // NOT FOR PRODUCTION SERVERS!
+//
+// Display exceptions using the 'pretty' Whoops! utility.
+// This is only used when the following conditions are met:
+// - Composer dependencies are installed
+// - $CFG->debug and $CFG->debugdisplay are set
+// - the request is not a CLI, or AJAX request
+//
+// To further control this, the debug_developer_use_pretty_exceptions setting can be set to false.
+// $CFG->debug_developer_use_pretty_exceptions = true;
+//
+// In many development situations it is desirable to have debugging() calls treated as errors rather than
+// as exceptions.
+// If this property is not specified then it will be true if pretty exceptions are usable.
+// $CFG->debug_developer_debugging_as_error = true;
+//
+// The Whoops! UI can also provide a link to open files in  your preferred editor.
+// You can set your preferred editor by setting:
+// $CFG->debug_developer_editor = 'vscode';
+//
+// See https://github.com/filp/whoops/blob/master/docs/Open%20Files%20In%20An%20Editor.md for more information on
+// supported editors.
+// If your editor is not listed you can provide a callback as documented.
 //
 // You can specify a comma separated list of user ids that that always see
 // debug messages, this overrides the debug flag in $CFG->debug and $CFG->debugdisplay
@@ -1174,6 +1250,54 @@ $CFG->admin = 'admin';
 // you just need to set showservicesandsupportcontent setting to false.
 //
 //      $CFG->showservicesandsupportcontent = false;
+//
+//=========================================================================
+// 20. NON HTTP ONLY COOKIES
+//=========================================================================
+//
+//  Cookies in Moodle now default to HTTP only cookies. This means that they cannot be accessed by JavaScript.
+//  Upgraded sites will keep the behaviour they had before the upgrade. New sites will have HTTP only cookies enabled.
+//  To enable HTTP only cookies set the following:
+//
+//      $CFG->cookiehttponly = true;
+//
+//  To disable HTTP only cookies set the following:
+//
+//      $CFG->cookiehttponly = false;
+//
+// 21. SECRET PASSWORD PEPPER
+//=========================================================================
+// A pepper is a component of the salt, but stored separately.
+// By splitting them it means that if the db is compromised the partial hashes are useless.
+// Unlike a salt, the pepper is not unique and is shared for all users, and MUST be kept secret.
+//
+// A pepper needs to have at least 112 bits of entropy,
+// so the pepper itself cannot be easily brute forced if you have a known password + hash combo.
+//
+// Once a pepper is set, existing passwords will be updated on next user login.
+// Once set there is no going back without resetting all user passwords.
+// To set peppers for your site, the following setting must be set in config.php:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z'
+//      ];
+//
+// The 'passwordpeppers' array must be numerically indexed with a positive number.
+// New peppers can be added by adding a new element to the array with a higher numerical index.
+// Upon next login a users password will be rehashed with the new pepper:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+//          2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$'
+//      ];
+//
+// Peppers can be progressively removed by setting the latest pepper to an empty string:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+//          2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$',
+//          3 => ''
+//      ];
 //
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

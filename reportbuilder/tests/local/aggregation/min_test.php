@@ -18,14 +18,9 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\aggregation;
 
-use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder\tests\core_reportbuilder_testcase;
 use core_user\reportbuilder\datasource\users;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
  * Unit tests for min aggregation
@@ -36,7 +31,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class min_test extends core_reportbuilder_testcase {
+final class min_test extends core_reportbuilder_testcase {
 
     /**
      * Test aggregation when applied to column
@@ -45,31 +40,27 @@ class min_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         // Test subjects.
+        $this->getDataGenerator()->create_user(['firstname' => 'Admin', 'suspended' => 1]);
         $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 1]);
-        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 0]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
-        // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
-
-        // This is the column we'll aggregate.
+        // Report columns, aggregated/sorted by user suspended.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);
         $generator->create_column([
-            'reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended', 'aggregation' => min::get_class_name()]
-        );
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:suspended',
+            'aggregation' => min::get_class_name(),
+            'sortenabled' => 1,
+            'sortdirection' => SORT_DESC,
+        ]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            [
-                'c0_firstname' => 'Admin',
-                'c1_suspended' => 'No',
-            ],
-            [
-                'c0_firstname' => 'Bob',
-                'c1_suspended' => 'No',
-            ],
-        ], $content);
+            ['Bob', 'Yes'],
+            ['Admin', 'No'],
+        ], array_map('array_values', $content));
     }
 }

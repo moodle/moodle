@@ -75,13 +75,17 @@ class core_text {
     }
 
     /**
-     * Reset internal textlib caches.
-     * @static
      * @deprecated since Moodle 4.0. See MDL-53544.
-     * @todo To be removed in Moodle 4.4 - MDL-71748
      */
-    public static function reset_caches() {
-        debugging("reset_caches() is deprecated. Typo3 has been removed and caches aren't used anymore.", DEBUG_DEVELOPER);
+    #[\core\attribute\deprecated(
+        'core_text::reset_caches',
+        since: '4.0',
+        reason:'Typo3 has been removed and caches aren\'t used anymore.',
+        mdl: 'MDL-53544',
+        final: true,
+    )]
+    public static function reset_caches(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**

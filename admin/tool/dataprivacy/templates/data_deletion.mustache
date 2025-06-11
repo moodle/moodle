@@ -58,13 +58,13 @@
         <div class="alert alert-info">
             {{#str}}datadeletionpagehelp, tool_dataprivacy{{/str}}
         </div>
-        <div class="float-left">
+        <div class="float-start">
             {{#filter}}
                 {{> core/single_select}}
             {{/filter}}
         </div>
         {{#existingcontexts}}
-            <div class="float-right">
+            <div class="float-end">
                 <button data-action="markfordeletion" class="btn btn-secondary">{{#str}}deleteselected, moodle{{/str}}</button>
             </div>
         {{/existingcontexts}}
@@ -74,7 +74,7 @@
     </div>
     <div class="row" data-region="bottom-nav">
         {{#existingcontexts}}
-            <div class="float-right">
+            <div class="float-end">
                 <button data-action="markfordeletion" class="btn btn-secondary">{{#str}}deleteselected, moodle{{/str}}</button>
             </div>
         {{/existingcontexts}}

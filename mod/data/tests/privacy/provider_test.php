@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
     /** @var stdClass The student object. */
     protected $student;
     /** @var stdClass The student object. */
@@ -54,6 +54,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * {@inheritdoc}
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         global $DB;
@@ -161,7 +162,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_metadata().
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('mod_data');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -177,7 +178,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid().
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
 
         $contextlist = provider::get_contexts_for_userid($this->student->id);
@@ -190,7 +191,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context().
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'mod_data';
         $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
         $cmcontext = \context_module::instance($cm->id);
@@ -221,7 +222,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context() {
+    public function test_export_for_context(): void {
         global $DB;
         $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
         $cmcontext = \context_module::instance($cm->id);
@@ -247,7 +248,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
         $cmcontext = \context_module::instance($cm->id);
 
@@ -261,7 +262,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
         $cmcontext = \context_module::instance($cm->id);
 
@@ -275,7 +276,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $cm = get_coursemodule_from_instance('data', $this->datamodule->id);
         $cmcontext = \context_module::instance($cm->id);
         $userstodelete = [$this->student->id, $this->student2->id];

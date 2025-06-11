@@ -16,13 +16,14 @@ Feature: Chat reset
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I enable "chat" "mod" plugin
     And the following "activities" exist:
       | activity | name           | Description           | course | idnumber |
       | chat     | Test chat name | Test chat description | C1     | chat1    |
 
+  @javascript
   Scenario: Use course reset to update chat start date
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I am on the "Course 1" "course" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | startdate[day]       | 1 |
@@ -39,16 +40,17 @@ Feature: Chat reset
       | chattime[minute]    | 00 |
     And I press "Save and display"
     And I am on the "Course 1" "reset" page
+    And I press "Deselect all"
     And I set the following fields to these values:
       | reset_start_date[enabled] | 1  |
       | reset_start_date[day]       | 1 |
       | reset_start_date[month]     | January |
       | reset_start_date[year]      | 2030 |
     And I press "Reset course"
-    And I should see "Date changed" in the "Chats" "table_row"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
+    And I should see "Date" in the "Chats" "table_row"
     And I press "Continue"
-    Then I am on "Course 1" course homepage
-    And I follow "Test chat name"
+    Then I follow "Test chat name"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the "chattime[year]" select box should contain "2030"

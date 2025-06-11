@@ -1,0 +1,88 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_mfa/mfa_selector
+
+    This template renders the cards view for displaying available authentications to a user.
+
+    Example context (json):
+    {
+        "factors": [
+            {
+                "label": "SMS Mobile phone",
+                "name": "sms",
+                "info": "Have a verification number sent to the mobile number you choose.",
+                "icon": "fa-commenting-o",
+                "active": true,
+                "button": {
+                    "id": "single_button123",
+                    "method": "post",
+                    "action": "action.php",
+                    "label": "Setup",
+                    "params": [
+                        {
+                            "name": "sesskey",
+                            "value": "123XYZ"
+                        },
+                        {
+                            "name": "factor",
+                            "value": "sms"
+                        },
+                        {
+                            "name": "action",
+                            "value": "manage"
+                        }
+                    ]
+                }
+            },
+            {
+                "label": "Authenticator app",
+                "name": "totp",
+                "info": "Use an authenticator app on your mobile phone.",
+                "icon": "fa-mobile-screen",
+                "active": false,
+                "button": {
+                    "id": "single_button456",
+                    "method": "post",
+                    "action": "action.php",
+                    "label": "Setup",
+                    "params": [
+                        {
+                            "name": "sesskey",
+                            "value": "123XYZ"
+                        },
+                        {
+                            "name": "factor",
+                            "value": "totp"
+                        },
+                        {
+                            "name": "action",
+                            "value": "setup"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}}
+<h2>{{#str}}mfa, tool_mfa{{/str}}</h2>
+<p>{{#str}}mfa:intro, tool_mfa{{/str}}</p>
+<div class="card-deck dashboard-card-deck" id="mfalist" data-region="card-deck" role="list">
+    {{#factors}}
+        {{>tool_mfa/mfa_card}}
+    {{/factors}}
+</div>

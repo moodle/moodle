@@ -55,3 +55,32 @@ Feature: Test editing a Numerical question
     Then the following fields match these values:
       | id_answer_0    | 0.00000123456789 |
       | id_tolerance_1 | 0.0000123456789  |
+
+  Scenario: Edit a Numerical question with optional units
+    Given I am on the "Numerical for editing" "core_question > edit" page logged in as teacher
+    # Edit the existing numerical question, changing the unit to optional.
+    And I set the following fields to these values:
+      | Question name    | Numerical Question (optional)              |
+      | Question text    | How many meter is 1m + 20cm + 50mm?        |
+      | Default mark     | 1                                          |
+      | General feedback | The correct answer is 1.25m                |
+      | id_answer_0      | 1.25                                       |
+      | id_tolerance_0   | 0                                          |
+      | id_fraction_0    | 100%                                       |
+      | id_answer_1      | 125                                        |
+      | id_tolerance_1   | 0                                          |
+      | id_fraction_1    | 0%                                         |
+      | id_unitrole      | Units are optional.                        |
+      | id_unitsleft     | on the right, for example 1.00cm or 1.00km |
+      | id_unit_0        | m                                          |
+    And I press "submitbutton"
+    When I choose "Edit question" action for "Numerical Question (optional)" in the question bank
+    # Confirm that the numerical question with optional unit is updated accordingly.
+    Then the following fields match these values:
+      | Question name    | Numerical Question (optional)                                                                          |
+      | Question text    | How many meter is 1m + 20cm + 50mm?                                                                    |
+      | Default mark     | 1                                                                                                      |
+      | General feedback | The correct answer is 1.25m                                                                            |
+      | id_unitrole      | Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading. |
+      | id_unitsleft     | on the right, for example 1.00cm or 1.00km                                                             |
+      | id_unit_0        | m                                                                                                      |

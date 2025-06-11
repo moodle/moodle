@@ -20,7 +20,7 @@ namespace availability_relativedate;
  * Autoupdate for handling deleted course modules
  *
  * @package   availability_relativedate
- * @copyright 2022 eWallah.net
+ * @copyright eWallah (www.eWallah.net)
  * @author    Stefan Hanauska <stefan.hanauska@altmuehlnet.de>
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,13 +36,13 @@ class autoupdate {
     public static function update_from_event(\core\event\base $event): void {
         $data = $event->get_data();
         $courseid = $data['courseid'];
-        if (isset($courseid) && $courseid > 0) {
+        if ($course = get_course($courseid)) {
             $modid = $data['objectid'];
-            if (condition::completion_value_used($courseid, $modid)) {
-                \core_availability\info::update_dependency_id_across_course($courseid, 'course_modules', $modid, -1);
+            if (condition::completion_value_used($course, $modid)) {
+                \core_availability\info::update_dependency_id_across_course($course, 'course_modules', $modid, -1);
                 // Added to be sure no errors are thrown (issue #22).
-                rebuild_course_cache($courseid, true);
-                get_fast_modinfo(0, 0, true);
+                rebuild_course_cache($course->id, true);
+                // Perhaps this is also needed get_fast_modinfo(0, 0, true).
             }
         }
     }

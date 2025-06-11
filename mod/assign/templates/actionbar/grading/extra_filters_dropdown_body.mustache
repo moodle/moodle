@@ -1,0 +1,110 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_assign/actionbar/grading/extra_filters_dropdown_body
+
+    Template for the body of the extra filters dropdown menu.
+
+    Context variables required for this template:
+    * actionurl - Form action URL
+    * id - Course module id
+    * filters - Array of filter options
+        * markingworkflow
+            * workflowfilteroptions - Array of workflow filter options
+                * key - The key of the workflow filter option
+                * name - The name of the workflow filter option
+                * active - Whether the workflow filter option is currently active
+        * markingallocation
+            * markingallocationoptions - Array of marking allocation filter options
+                * key - The key of the marking allocation filter option
+                * name - The name of the marking allocation filter option
+                * active - Whether the marking allocation filter option is currently active
+        * suspendedparticipants
+            * active - Whether the suspended participants filter is currently active
+
+    Example context (json):
+    {
+        "actionurl": "http://moodlesite/mod/assign/view.php",
+        "id": 3,
+        "action": "grading",
+        "filters": [
+            {
+                "markingworkflow": {
+                    "workflowfilteroptions": [
+                        {
+                            "key": "notmarked",
+                            "name": "Not marked",
+                            "active": true
+                        }
+                    ]
+                },
+                "markingallocation": {
+                    "markingallocationoptions": [
+                        {
+                            "key": "-1",
+                            "name": "No marker",
+                            "active": true
+                        }
+                    ]
+                },
+                "suspendedparticipants": {
+                    "active": true
+                }
+            }
+        ]
+    }
+}}
+<div class="flex-column h-100 w-100 p-1">
+    <form action="{{{actionurl}}}" method="GET">
+        <input type="hidden" name="id" value="{{id}}">
+        <input type="hidden" name="action" value="{{action}}">
+        {{#filters}}
+            {{#markingworkflow}}
+                <div class="row m-0 pb-3">
+                    <label class="w-100" for="filter-workflow-{{uniqid}}">
+                        {{#str}}markingstate, mod_assign{{/str}}
+                    </label>
+                    <select name="workflowfilter" id="filter-workflow-{{uniqid}}" class="custom-select w-100">
+                    {{#workflowfilteroptions}}
+                        <option value="{{key}}" {{#active}}selected="selected"{{/active}}>{{name}}</option>
+                    {{/workflowfilteroptions}}
+                    </select>
+                </div>
+            {{/markingworkflow}}
+            {{#markingallocation}}
+                <div class="row m-0 pb-3">
+                    <label class="w-100" for="filter-marking-allocation-{{uniqid}}">
+                        {{#str}}marker, mod_assign{{/str}}
+                    </label>
+                    <select name="markingallocationfilter" id="filter-marking-allocation-{{uniqid}}" class="custom-select w-100">
+                    {{#markingallocationoptions}}
+                        <option value="{{key}}" {{#active}}selected="selected"{{/active}}>{{name}}</option>
+                    {{/markingallocationoptions}}
+                    </select>
+                </div>
+            {{/markingallocation}}
+            {{#suspendedparticipants}}
+                <div class="row m-0 pb-3 pt-2 mx-1 align-items-center">
+                    <input type="hidden" name="suspendedparticipantsfilter" value="0" {{#active}}disabled{{/active}}>
+                    <input type="checkbox" id="filter-suspended-participants-{{uniqid}}" name="suspendedparticipantsfilter" value="1" {{#active}}checked{{/active}}>
+                    <label for="filter-suspended-participants-{{uniqid}}" class='m-0' >{{#str}} includesuspendedparticipants, mod_assign {{/str}}</label>
+                </div>
+            {{/suspendedparticipants}}
+        {{/filters}}
+        <div class="d-flex flex-row justify-content-end align-items-center pt-2">
+            <a href="#" class="pull-right mx-3 text-decoration-none text-dark" data-action="close">{{#str}}closebuttontitle{{/str}}</a>
+            <input class="btn btn-primary pull-right" type="submit" value="{{#str}}apply{{/str}}">
+        </div>
+    </form>
+</div>

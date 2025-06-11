@@ -26,11 +26,9 @@
 
 namespace local_o365\rest;
 
-use coding_exception;
 use core_date;
 use core_text;
 use DateTime;
-use Exception;
 use local_o365\oauth2\clientdata;
 use local_o365\obj\o365user;
 use local_o365\utils;
@@ -55,7 +53,7 @@ class unified extends o365api {
      *
      * @return bool Whether the API client is configured.
      */
-    public static function is_configured() : bool {
+    public static function is_configured(): bool {
         // Since legacy APIs are removed, unified is always configured.
         return true;
     }
@@ -65,7 +63,7 @@ class unified extends o365api {
      *
      * @return string The resource for oauth2 tokens.
      */
-    public static function get_tokenresource() : string {
+    public static function get_tokenresource(): string {
         $oidcresource = get_config('auth_oidc', 'oidcresource');
         if (!empty($oidcresource)) {
             return $oidcresource;
@@ -94,7 +92,7 @@ class unified extends o365api {
      * @param string $apimethod The API method being called.
      * @return string a simplified api area string.
      */
-    protected function generate_apiarea(string $apimethod) : string {
+    protected function generate_apiarea(string $apimethod): string {
         $apimethod = explode('/', $apimethod);
         foreach ($apimethod as $apicomponent) {
             $validareas = ['applications', 'groups', 'calendars', 'events', 'trendingaround', 'users'];
@@ -149,14 +147,98 @@ class unified extends o365api {
     }
 
     /**
+     * Make paginated API call.
+     *
+     * @param string $httpmethod The HTTP method to use. get/post/patch/merge/delete.
+     * @param string $apimethod The API endpoint/method to call.
+     * @param array $odataqueries The OData queries to use.
+     * @param array $expectedstructure The expected structure of the response.
+     * @param bool $betaapi Whether to use the beta API.
+     * @param string $params Additional parameters to include.
+     * @param array $options Additional options for the request.
+     * @param string $skipparam The name of the skip parameter to use.
+     * @param string $deltalink The parameter name of an additional parameter to return.
+     * @param string $deltatokenparam The name of the additional parameter to return.
+     * @return array The result of the API call.
+     * @throws moodle_exception
+     */
+    public function paginatedapicall($httpmethod, $apimethod, $odataqueries = [], $expectedstructure = ['value' => null],
+        $betaapi = false, $params = '', $options = [], $skipparam = '$skiptoken', $deltalink = '', $deltatokenparam = '') {
+        $content = [];
+
+        $originalapimethod = $apimethod;
+
+        $deltatokenvalue = null;
+
+        $continue = true;
+        $skiptoken = null;
+
+        while ($continue) {
+            if (!empty($skiptoken)) {
+                $odataqueries[$skipparam] = $skiptoken;
+                // Cannot send a delta token and a skip token at the same time.
+                if (isset($odataqueries['$deltatoken'])) {
+                    unset($odataqueries['$deltatoken']);
+                }
+            }
+
+            $odataquerystring = '';
+            if ($odataqueries) {
+                foreach ($odataqueries as $odataqueryname => $odataqueryvalue) {
+                    $odataquerystring .= $odataqueryname . '=' . $odataqueryvalue . '&';
+                }
+            }
+
+            if ($odataquerystring) {
+                $apimethod = $originalapimethod . '?' . rtrim($odataquerystring, '&');
+            }
+
+            if ($betaapi) {
+                $response = self::betaapicall($httpmethod, $apimethod, $params, $options);
+            } else {
+                $response = self::apicall($httpmethod, $apimethod, $params, $options);
+            }
+
+            $result = $this->process_apicall_response($response, $expectedstructure);
+
+            if (!empty($result) && is_array($result)) {
+                if (!empty($result['value']) && is_array($result['value'])) {
+                    $content = array_merge($content, $result['value']);
+                }
+
+                if (isset($result['odata.nextLink'])) {
+                    $skiptoken = $this->extract_param_from_link($result['odata.nextLink'], $skipparam);
+                } else if (isset($result['@odata.nextLink'])) {
+                    $skiptoken = $this->extract_param_from_link($result['@odata.nextLink'], $skipparam);
+                } else {
+                    $skiptoken = null;
+                }
+
+                if ($deltalink && $deltatokenparam && isset($result[$deltalink])) {
+                    $deltatokenvalue = $this->extract_param_from_link($result[$deltalink], $deltatokenparam);
+                }
+            }
+
+            $continue = (!empty($skiptoken));
+        }
+
+        if ($deltatokenvalue) {
+            return [$content, $deltatokenvalue];
+        } else {
+            return $content;
+        }
+    }
+
+    /**
      * Test a tenant value.
      *
      * @param string $tenant A tenant string to test.
      * @return bool True if tenant succeeded, false if not.
+     * @throws moodle_exception
      */
-    public function test_tenant(string $tenant) : bool {
+    public function test_tenant(string $tenant): bool {
         if (!is_string($tenant)) {
-            throw new coding_exception('tenant value must be a string');
+            throw new moodle_exception('errortenantvaluenotstring', 'local_o365');
         }
         $oidcconfig = get_config('auth_oidc');
         $appinfo = $this->get_application_info();
@@ -172,7 +254,7 @@ class unified extends o365api {
      * @return string
      * @throws moodle_exception
      */
-    public function get_default_domain_name_in_tenant() : string {
+    public function get_default_domain_name_in_tenant(): string {
         $response = $this->apicall('get', '/domains');
         $response = $this->process_apicall_response($response, ['value' => null]);
         foreach ($response['value'] as $domain) {
@@ -187,7 +269,7 @@ class unified extends o365api {
      * Get the names of the all domains in the tenant associated with the current account, with the default domain being the first.
      *
      * @return array
-     * @throws \moodle_exception
+     * @throws moodle_exception
      */
     public function get_all_domain_names_in_tenant() {
         $response = $this->apicall('get', '/domains');
@@ -217,8 +299,9 @@ class unified extends o365api {
      * Get the OneDrive URL associated with the current account.
      *
      * @return string The OneDrive URL string.
+     * @throws moodle_exception
      */
-    public function get_odburl() : string {
+    public function get_odburl(): string {
         $tenant = $this->get_default_domain_name_in_tenant();
         $suffix = '.onmicrosoft.com';
         $sufflen = strlen($suffix);
@@ -236,13 +319,13 @@ class unified extends o365api {
      * @param clientdata $clientdata oAuth2 Credentials
      * @return bool Whether the received resource is valid or not.
      */
-    public function validate_resource(string $tokenresource, clientdata $clientdata) : bool {
+    public function validate_resource(string $tokenresource, clientdata $clientdata): bool {
         $cleanresource = clean_param($tokenresource, PARAM_URL);
         if ($cleanresource !== $tokenresource) {
             return false;
         }
         $fullcleanresource = 'https://' . $cleanresource;
-        $token = utils::get_app_or_system_token($fullcleanresource, $clientdata, $this->httpclient);
+        $token = utils::get_application_token($fullcleanresource, $clientdata, $this->httpclient);
         return !empty($token);
     }
 
@@ -254,13 +337,13 @@ class unified extends o365api {
      * @param string $appobjectid
      * @return string|null
      */
-    public function assign_user(int $muserid, string $userobjectid, string $appobjectid) : ?string {
+    public function assign_user(int $muserid, string $userobjectid, string $appobjectid): ?string {
         global $DB;
         $record = $DB->get_record('local_o365_appassign', ['muserid' => $muserid]);
         if (empty($record) || $record->assigned == 0) {
             $roleid = '00000000-0000-0000-0000-000000000000';
             $endpoint = '/users/' . $userobjectid . '/appRoleAssignments/';
-            $params = ['id' => $roleid, 'resourceId' => $appobjectid, 'principalId' => $userobjectid,];
+            $params = ['id' => $roleid, 'resourceId' => $appobjectid, 'principalId' => $userobjectid];
             $response = $this->betaapicall('post', $endpoint, json_encode($params));
             if (empty($record)) {
                 $record = new stdClass();
@@ -279,24 +362,13 @@ class unified extends o365api {
     /**
      * Get a list of groups.
      *
-     * @param string $skiptoken Skip token.
      * @return array List of groups.
+     * @throws moodle_exception
      */
-    public function get_groups(string $skiptoken = '') : array {
+    public function get_groups(): array {
         $endpoint = '/groups';
-        $odataqueries = [];
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-        $response = $this->apicall('get', $endpoint);
-        $expectedparams = ['value' => null];
-        return $this->process_apicall_response($response, $expectedparams);
+
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
@@ -308,7 +380,7 @@ class unified extends o365api {
      * @return array|null
      * @throws moodle_exception
      */
-    public function create_group(string $name, string $mailnickname = null, array $extra = null) : ?array {
+    public function create_group(string $name, ?string $mailnickname = null, ?array $extra = null): ?array {
         if (empty($mailnickname)) {
             $mailnickname = $name;
         }
@@ -350,7 +422,7 @@ class unified extends o365api {
         $expectedparams = ['id' => null];
         try {
             $response = $this->process_apicall_response($response, $expectedparams);
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             $expectedexception = 'Another object with the same value for property mailNickname already exists.';
             if ($e->a == $expectedexception) {
                 $mailnickname .= '_ ' . sprintf('%04d', random_int(0, 9999));
@@ -369,8 +441,9 @@ class unified extends o365api {
      *
      * @param array $groupdata Array containing parameters for update.
      * @return string Null string on success, json string on failure.
+     * @throws moodle_exception
      */
-    public function update_group(array $groupdata) : string {
+    public function update_group(array $groupdata): string {
         // Check for required parameters.
         if (empty($groupdata['id'])) {
             throw new moodle_exception('invalidgroupdata', 'local_o365');
@@ -399,8 +472,9 @@ class unified extends o365api {
      *
      * @param string $objectid The object ID of the group.
      * @return array Array of returned o365 group data.
+     * @throws moodle_exception
      */
-    public function get_group(string $objectid) : array {
+    public function get_group(string $objectid): array {
         $response = $this->apicall('get', '/groups/' . $objectid);
         $expectedparams = ['id' => null];
         return $this->process_apicall_response($response, $expectedparams);
@@ -410,30 +484,38 @@ class unified extends o365api {
      * Get group urls.
      *
      * @param string $objectid The object ID of the group.
-     * @return array Array of returned o365 group urls, null on no group data found.
+     * @return array|null Array of returned o365 group urls, null on no group data found.
+     * @throws \dml_exception
+     * @throws moodle_exception
      */
-    public function get_group_urls(string $objectid) : ?array {
+    public function get_group_urls(string $objectid): ?array {
         $group = $this->get_group($objectid);
         if (empty($group['mailNickname'])) {
             return null;
         }
         $config = get_config('local_o365');
+        $o365urls = [];
         $url = preg_replace("/-my.sharepoint.com/", ".sharepoint.com", $config->odburl);
         // First time visiting the onedrive or notebook urls will result in a "please wait while we provision onedrive" message.
-        $o365urls = [
-            'onedrive' => 'https://' . $url . '/_layouts/groupstatus.aspx?id=' . $objectid . '&target=documents',
-            'notebook' => 'https://' . $url . '/_layouts/groupstatus.aspx?id=' . $objectid . '&target=notebook',
+        if ($url) {
+            $o365urls = [
+                'onedrive' => 'https://' . $url . '/_layouts/groupstatus.aspx?id=' . $objectid . '&target=documents',
+                'notebook' => 'https://' . $url . '/_layouts/groupstatus.aspx?id=' . $objectid . '&target=notebook',
+            ];
+        }
+        $o365urls += [
             'conversations' => 'https://outlook.office.com/owa/?path=/group/' . $group['mail'] . '/mail',
             'calendar' => 'https://outlook.office365.com/owa/?path=/group/' . $group['mail'] . '/calendar',
         ];
         try {
             [$rawteam, $teamurl, $lockstatus] = $this->get_team($objectid);
-            if ($teamurl) {
-                $o365urls['team'] = $teamurl;
-            }
-        } catch (Exception $e) {
-            // Do nothing.
+        } catch (moodle_exception $e) {
+            $teamurl = null;
         }
+        if ($teamurl) {
+            $o365urls['team'] = $teamurl;
+        }
+
         return $o365urls;
     }
 
@@ -442,6 +524,7 @@ class unified extends o365api {
      *
      * @param string $objectid
      * @return array
+     * @throws moodle_exception
      */
     public function get_team(string $objectid) {
         $response = $this->apicall('get', '/teams/' . $objectid);
@@ -469,9 +552,10 @@ class unified extends o365api {
      * Get a group by its displayName
      *
      * @param string $name The group name,
-     * @return array Array of group information, or null if group not found.
+     * @return array|null Array of group information, or null if group not found.
+     * @throws moodle_exception
      */
-    public function get_group_by_name(string $name) : ?array {
+    public function get_group_by_name(string $name): ?array {
         $response = $this->apicall('get', '/groups?$filter=displayName' . rawurlencode(' eq \'' . $name . '\''));
         $expectedparams = ['value' => null];
         $groups = $this->process_apicall_response($response, $expectedparams);
@@ -495,25 +579,13 @@ class unified extends o365api {
     /**
      * Get a list of recently deleted groups.
      *
-     * @param string $skiptoken
      * @return array Array of returned information.
+     * @throws moodle_exception
      */
-    public function list_deleted_groups(string $skiptoken = '') : array {
+    public function list_deleted_groups(): array {
         $endpoint = '/directory/deleteditems/Microsoft.Graph.Group';
 
-        $odataqueries = [];
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->betaapicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint, [], ['value' => null], true);
     }
 
     /**
@@ -521,8 +593,9 @@ class unified extends o365api {
      *
      * @param string $objectid The Object ID of the group to be restored.
      * @return array Array of returned information.
+     * @throws moodle_exception
      */
-    public function restore_deleted_group(string $objectid) : array {
+    public function restore_deleted_group(string $objectid): array {
         $response = $this->betaapicall('post', '/directory/deleteditems/' . $objectid . '/restore');
         return $this->process_apicall_response($response);
     }
@@ -531,54 +604,26 @@ class unified extends o365api {
      * Get a list of group members.
      *
      * @param string $groupobjectid The object ID of the group.
-     * @param string $skiptoken
      * @return array Array of returned members.
+     * @throws moodle_exception
      */
-    public function get_group_members(string $groupobjectid, string $skiptoken = '') : array {
+    public function get_group_members(string $groupobjectid): array {
         $endpoint = '/groups/' . $groupobjectid . '/members';
-        $odataqueries = [];
 
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        $expectedparams = ['value' => null];
-
-        return $this->process_apicall_response($response, $expectedparams);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
      * Get a list of group owners.
      *
      * @param string $groupobjectid The object ID of the group.
-     * @param string $skiptoken
-     * @return array|null
+     * @return array|null Array of returned owners.
+     * @throws moodle_exception
      */
-    public function get_group_owners(string $groupobjectid, string $skiptoken = '') : ?array {
+    public function get_group_owners(string $groupobjectid): ?array {
         $endpoint = '/groups/' . $groupobjectid . '/owners';
 
-        $odataqueries = [];
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        $expectedparams = ['value' => null];
-
-        return $this->process_apicall_response($response, $expectedparams);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
@@ -588,8 +633,9 @@ class unified extends o365api {
      * @param string $parentid The parent id to use.
      * @param string $skiptoken
      * @return array|null Returned response, or null if error.
+     * @throws moodle_exception
      */
-    public function get_group_files(string $groupid, string $parentid = '', string $skiptoken = '') : ?array {
+    public function get_group_files(string $groupid, string $parentid = '', string $skiptoken = ''): ?array {
         if (!empty($parentid) && $parentid !== '/') {
             $endpoint = "/groups/$groupid/drive/items/$parentid/children";
         } else {
@@ -618,8 +664,9 @@ class unified extends o365api {
      * @param string $groupid
      * @param string $fileid The file's ID.
      * @return array|null The file's content.
+     * @throws moodle_exception
      */
-    public function get_group_file_metadata(string $groupid, string $fileid) : ?array {
+    public function get_group_file_metadata(string $groupid, string $fileid): ?array {
         $response = $this->apicall('get', "/groups/$groupid/drive/items/$fileid");
         $expectedparams = ['id' => null];
         return $this->process_apicall_response($response, $expectedparams);
@@ -631,8 +678,9 @@ class unified extends o365api {
      * @param string $groupid
      * @param string $fileid OneDrive file id.
      * @return string Sharing link url.
+     * @throws moodle_exception
      */
-    public function get_group_file_sharing_link(string $groupid, string $fileid) : string {
+    public function get_group_file_sharing_link(string $groupid, string $fileid): string {
         $params = ['type' => 'view', 'scope' => 'organization'];
         $apiresponse = $this->apicall('post', "/groups/$groupid/drive/items/$fileid/createLink", json_encode($params));
         $response = $this->process_apicall_response($apiresponse);
@@ -640,13 +688,13 @@ class unified extends o365api {
     }
 
     /**
-     * Get a file's content by it's file id.
+     * Get a file's content by its file id.
      *
      * @param string $groupid
      * @param string $fileid The file's ID.
      * @return string The file's content.
      */
-    public function get_group_file_by_id(string $groupid, string $fileid) : string {
+    public function get_group_file_by_id(string $groupid, string $fileid): string {
         return $this->apicall('get', "/groups/$groupid/drive/items/$fileid/content");
     }
 
@@ -687,7 +735,7 @@ class unified extends o365api {
      * @param string $memberobjectid The object ID of the item to remove (can be group object id or user object id).
      * @return bool
      */
-    public function remove_member_from_group_using_group_api(string $groupobjectid, string $memberobjectid) : bool {
+    public function remove_member_from_group_using_group_api(string $groupobjectid, string $memberobjectid): bool {
         $endpoint = '/groups/' . $groupobjectid . '/members/' . $memberobjectid . '/$ref';
         $this->betaapicall('delete', $endpoint);
         if ($this->check_expected_http_code(['204'])) {
@@ -704,7 +752,7 @@ class unified extends o365api {
      * @param string $ownerobjectid The object ID of the item to remove (can be group object id or user object id).
      * @return bool
      */
-    public function remove_owner_from_group_using_group_api(string $groupobjectid, string $ownerobjectid) : bool {
+    public function remove_owner_from_group_using_group_api(string $groupobjectid, string $ownerobjectid): bool {
         $endpoint = '/groups/' . $groupobjectid . '/owners/' . $ownerobjectid . '/$ref';
         $this->betaapicall('delete', $endpoint);
         if ($this->check_expected_http_code(['204'])) {
@@ -722,7 +770,7 @@ class unified extends o365api {
      * @return array|null
      * @throws moodle_exception
      */
-    public function add_member_to_group_using_teams_api(string $groupobjectid, string $userobjectid) : ?array {
+    public function add_member_to_group_using_teams_api(string $groupobjectid, string $userobjectid): ?array {
         $endpoint = '/teams/' . $groupobjectid . '/members';
         $data = [
             '@odata.type' => '#microsoft.graph.aadUserConversationMember',
@@ -742,7 +790,7 @@ class unified extends o365api {
      * @return array|null
      * @throws moodle_exception
      */
-    public function add_owner_to_group_using_teams_api(string $groupobjectid, string $userobjectid) : ?array {
+    public function add_owner_to_group_using_teams_api(string $groupobjectid, string $userobjectid): ?array {
         $endpoint = '/teams/' . $groupobjectid . '/members';
         $data = [
             '@odata.type' => '#microsoft.graph.aadUserConversationMember',
@@ -762,7 +810,7 @@ class unified extends o365api {
      * @return string
      * @throws moodle_exception
      */
-    public function get_aad_user_conversation_member_id(string $groupobjectid, string $userobjectid) : string {
+    public function get_aad_user_conversation_member_id(string $groupobjectid, string $userobjectid): string {
         $endpoint = '/teams/' . $groupobjectid . '/members/?$filter=microsoft.graph.aadUserConversationMember/userId%20in%20("' .
             $userobjectid . '")';
 
@@ -786,7 +834,7 @@ class unified extends o365api {
      * @throws moodle_exception
      */
     public function remove_owner_and_member_from_group_using_teams_api(string $groupobjectid,
-        string $aaduserconversationmemberid) : ?array {
+        string $aaduserconversationmemberid): ?array {
         $endpoint = '/teams/' . $groupobjectid . '/members/' . $aaduserconversationmemberid;
 
         $response = $this->apicall('delete', $endpoint);
@@ -801,9 +849,10 @@ class unified extends o365api {
      * @param string $content The file's content.
      * @param string $contenttype
      * @return array|null file upload response.
+     * @throws moodle_exception
      */
     public function create_group_file(string $groupid, string $filename, string $content,
-        string $contenttype = 'text/plain') : ?array {
+        string $contenttype = 'text/plain'): ?array {
         $filename = rawurlencode($filename);
         $endpoint = "/groups/$groupid/drive/root:/$filename:/content";
         $fileresponse = $this->apicall('put', $endpoint, ['file' => $content], ['contenttype' => $contenttype]);
@@ -817,12 +866,12 @@ class unified extends o365api {
      * @param bool $guestuser if the fields are for a guest user.
      * @return array Array of user fields.
      */
-    protected function get_default_user_fields(bool $guestuser = false) : array {
+    protected function get_default_user_fields(bool $guestuser = false): array {
         $defaultfields =
             ['id', 'userPrincipalName', 'displayName', 'givenName', 'surname', 'mail', 'streetAddress', 'city', 'postalCode',
                 'state', 'country', 'jobTitle', 'department', 'companyName', 'preferredLanguage', 'employeeId', 'businessPhones',
                 'faxNumber', 'mobilePhone', 'officeLocation', 'manager', 'teams', 'roles', 'groups', 'accountEnabled',
-                'onPremisesExtensionAttributes', 'onPremisesSamAccountName',];
+                'onPremisesExtensionAttributes', 'onPremisesSamAccountName'];
         if (!$guestuser) {
             $defaultfields[] = 'preferredName';
         }
@@ -834,10 +883,10 @@ class unified extends o365api {
      * Get all users in the configured directory.
      *
      * @param string|array $params Requested user parameters.
-     * @param string $skiptoken A skiptoken param from a previous get_users query. For pagination.
      * @return array|null Array of user information, or null if failure.
+     * @throws moodle_exception
      */
-    public function get_users($params = 'default', string $skiptoken = '') : ?array {
+    public function get_users($params = 'default'): ?array {
         $endpoint = "/users";
         $odataqueries = [];
 
@@ -852,35 +901,26 @@ class unified extends o365api {
                     unset($params[$key]);
                 }
             }
-            $odataqueries[] = '$select=' . implode(',', $params);
+            $odataqueries['$select'] = implode(',', $params);
         }
 
-        // Skip token.
-        if (!empty($skiptoken) && is_string($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-
-        // Process and append odata params.
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint, $odataqueries);
     }
 
     /**
      * Return users delta.
      *
      * @param array|string $params
-     * @param string|null $skiptoken
      * @param string|null $deltatoken
      * @return array
-     * @throws moodle_exception
      */
-    public function get_users_delta($params, string $skiptoken = null, string $deltatoken = null) : array {
+    public function get_users_delta($params, ?string $deltatoken = null): array {
         $endpoint = "/users/delta";
         $odataqueries = [];
+
+        if (!empty($deltatoken)) {
+            $odataqueries['$deltatoken'] = $deltatoken;
+        }
 
         // Select params.
         if ($params === 'default') {
@@ -893,43 +933,28 @@ class unified extends o365api {
                     unset($params[$key]);
                 }
             }
-            $odataqueries[] = '$select=' . implode(',', $params);
+            $odataqueries['$select'] = implode(',', $params);
         }
-        // Delta/skip tokens.
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        } else {
-            if (!empty($deltatoken)) {
-                $odataqueries[] = '$deltatoken=' . $deltatoken;
+
+        [$users, $deltatoken] = $this->paginatedapicall('get', $endpoint, $odataqueries, ['value' => null], false, '', [],
+            '$skiptoken', '@odata.deltaLink', '$deltatoken');
+
+        $knownids = [];
+        foreach ($users as $key => $user) {
+            // There is a known issue in delta queries where the same user can be returned multiple times in the initial run.
+            if (in_array($user['id'], $knownids)) {
+                unset($users[$key]);
+            } else {
+                $knownids[] = $user['id'];
+            }
+
+            // Remove deleted users.
+            if (isset($user['@removed'])) {
+                unset($users[$key]);
             }
         }
 
-        // Process and append odata params.
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        $result = $this->process_apicall_response($response, ['value' => null]);
-        $users = [];
-        $skiptoken = null;
-        $deltatoken = null;
-
-        if (!empty($result) && is_array($result)) {
-            if (!empty($result['value']) && is_array($result['value'])) {
-                $users = $result['value'];
-            }
-
-            if (isset($result['@odata.nextLink'])) {
-                $skiptoken = $this->extract_param_from_link($result['@odata.nextLink'], '$skiptoken');
-            }
-
-            if (isset($result['@odata.deltaLink'])) {
-                $deltatoken = $this->extract_param_from_link($result['@odata.deltaLink'], '$deltatoken');
-            }
-        }
-
-        return [$users, $skiptoken, $deltatoken];
+        return [$users, $deltatoken];
     }
 
     /**
@@ -938,12 +963,12 @@ class unified extends o365api {
      * @param string $userobjectid - user AD id
      * @return array|null
      */
-    public function get_user_manager(string $userobjectid) : ?array {
+    public function get_user_manager(string $userobjectid): ?array {
         $endpoint = "users/$userobjectid/manager";
         $response = $this->apicall('get', $endpoint);
         try {
             $result = $this->process_apicall_response($response);
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             return null;
         }
 
@@ -954,41 +979,37 @@ class unified extends o365api {
      * Get Microsoft 365 groups by passing user AD id.
      *
      * @param string $userobjectid - user AD id
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_user_groups(string $userobjectid) : ?array {
+    public function get_user_groups(string $userobjectid): array {
         $endpoint = "users/$userobjectid/transitiveMemberOf/microsoft.graph.group";
-
-        $response = $this->apicall('get', $endpoint);
-        if ($this->check_expected_http_code(['200'])) {
-            return $this->process_apicall_response($response, ['value' => null]);
-        } else {
-            return ['value' => []];
-        }
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
      * Get Microsoft 365 groups, including transitive groups, by passing user AD ID.
      *
      * @param string $userobjectid
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_user_transitive_groups(string $userobjectid) : ?array {
+    public function get_user_transitive_groups(string $userobjectid): ?array {
         $endpoint = "users/$userobjectid/getMemberGroups";
-        $response = $this->apicall('post', $endpoint, json_encode(['securityEnabledOnly' => false]));
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('post', $endpoint, [], ['value' => null], false,
+            json_encode(['securityEnabledOnly' => false]));
     }
 
     /**
      * Get user teams by passing user AD id
      *
      * @param string $userobjectid - user AD id
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_user_teams(string $userobjectid) : ?array {
+    public function get_user_teams(string $userobjectid): array {
         $endpoint = "users/$userobjectid/joinedTeams";
-        $response = $this->apicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
@@ -996,14 +1017,13 @@ class unified extends o365api {
      *
      * @param string $userobjectid - user AD id
      * @param bool $securityenabledonly - return only secure groups
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_user_objects(string $userobjectid, bool $securityenabledonly = true) : ?array {
+    public function get_user_objects(string $userobjectid, bool $securityenabledonly = true): array {
         $endpoint = "users/$userobjectid/getMemberObjects";
         $data = ['securityEnabledOnly' => $securityenabledonly];
-        $response = $this->apicall('post', $endpoint, json_encode($data));
-        $result = $this->process_apicall_response($response, ['value' => null]);
-        return $result['value'];
+        return $this->paginatedapicall('post', $endpoint, [], ['value' => null], false, json_encode($data));
     }
 
     /**
@@ -1012,8 +1032,9 @@ class unified extends o365api {
      * @param array $ids - objects ids which data should be returned
      * @param string|null $types - collection of resource types that specifies the set of resource collections to search (optional).
      * @return array|null
+     * @throws moodle_exception
      */
-    public function get_directory_objects(array $ids, string $types = null) : ?array {
+    public function get_directory_objects(array $ids, ?string $types = null): ?array {
         $endpoint = "directoryObjects/getByIds";
         $data = ['ids' => $ids];
         if (!empty($types)) {
@@ -1031,7 +1052,7 @@ class unified extends o365api {
      * @param string $param Parameter name.
      * @return string|null The extracted deltalink value, or null if none found.
      */
-    protected function extract_param_from_link(string $link, string $param) : ?string {
+    protected function extract_param_from_link(string $link, string $param): ?string {
         $link = parse_url($link);
         if (isset($link['query'])) {
             $output = [];
@@ -1046,25 +1067,13 @@ class unified extends o365api {
     /**
      * Get a list of recently deleted users in the last 30 days.
      *
-     * @param string $skiptoken
      * @return array Array of returned information.
+     * @throws moodle_exception
      */
-    public function list_deleted_users(string $skiptoken = '') : array {
+    public function list_deleted_users(): array {
         $endpoint = '/directory/deleteditems/Microsoft.Graph.User';
 
-        $odataqueries = [];
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->betaapicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint, [], ['value' => null], true);
     }
 
     /**
@@ -1072,8 +1081,9 @@ class unified extends o365api {
      *
      * @param string $upn The user's userPrincipalName
      * @return array Array of user data.
+     * @throws moodle_exception
      */
-    public function get_user_by_upn(string $upn) : array {
+    public function get_user_by_upn(string $upn): array {
         $endpoint = '/users/' . rawurlencode($upn);
         $response = $this->apicall('get', $endpoint);
         $expectedparams = ['id' => null, 'userPrincipalName' => null];
@@ -1084,36 +1094,13 @@ class unified extends o365api {
      * Get a list of the user's o365 calendars.
      *
      * @param string $upn The user's userPrincipalName
-     * @param string $skip
-     * @return array|null Returned response, or null if error.
+     * @return array|null Returned response
+     * @throws moodle_exception
      */
-    public function get_calendars(string $upn, string $skip = '') : ?array {
+    public function get_calendars(string $upn): ?array {
         $endpoint = '/users/' . $upn . '/calendars';
 
-        $odataqueries = [];
-        if (empty($skip) || !is_string($skip)) {
-            $skip = '';
-        }
-        if (!empty($skip)) {
-            $odataqueries[] = '$skip=' . $skip;
-        }
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        $expectedparams = ['value' => null];
-        $return = $this->process_apicall_response($response, $expectedparams);
-        foreach ($return['value'] as $i => $calendar) {
-            // Set legacy values.
-            if (!isset($calendar['Id']) && isset($calendar['id'])) {
-                $return['value'][$i]['Id'] = $calendar['id'];
-            }
-            if (!isset($calendar['Name']) && isset($calendar['name'])) {
-                $return['value'][$i]['Name'] = $calendar['name'];
-            }
-        }
-        return $return;
+        return $this->paginatedapicall('get', $endpoint, [], ['value' => null], false, '', [], '$skip');
     }
 
     /**
@@ -1122,8 +1109,9 @@ class unified extends o365api {
      * @param string $name The calendar's title.
      * @param string $upn User's userPrincipalName
      * @return array|null Returned response, or null if error.
+     * @throws moodle_exception
      */
-    public function create_calendar(string $name, string $upn) : ?array {
+    public function create_calendar(string $name, string $upn): ?array {
         $calendardata = json_encode(['name' => $name]);
         $response = $this->apicall('post', '/users/' . $upn . '/calendars', $calendardata);
         $expectedparams = ['id' => null];
@@ -1144,8 +1132,9 @@ class unified extends o365api {
      * @param array $updated Array of updated information. Keys are 'name'.
      * @param string $upn user's userPrincipalName
      * @return array|null Returned response, or null if error.
+     * @throws moodle_exception
      */
-    public function update_calendar(string $calendearid, array $updated, string $upn) : ?array {
+    public function update_calendar(string $calendearid, array $updated, string $upn): ?array {
         if (empty($calendearid) || empty($updated)) {
             return [];
         }
@@ -1171,9 +1160,10 @@ class unified extends o365api {
      * @param string|null $calendarid The o365 ID of the calendar to create the event in.
      * @param string $upn user's userPrincipalName
      * @return array|null Returned response, or null if error.
+     * @throws moodle_exception
      */
     public function create_event(string $subject, string $body, int $starttime, int $endtime, array $attendees, array $other,
-        ?string $calendarid, string $upn) : ?array {
+        ?string $calendarid, string $upn): ?array {
         $eventdata = [
             'subject' => $subject,
             'body' => [
@@ -1197,7 +1187,7 @@ class unified extends o365api {
                     'Address' => $attendee->email,
                     'Name' => $attendee->firstname.' '.$attendee->lastname,
                 ],
-                'type' => 'Resource'
+                'type' => 'Resource',
             ];
         }
         $eventdata = array_merge($eventdata, $other);
@@ -1224,6 +1214,7 @@ class unified extends o365api {
      * @param array $other Other parameters to include.
      * @param string $calendarid The o365 ID of the calendar to create the event in.
      * @return array|null Returned response, or null if error.
+     * @throws moodle_exception
      */
     public function create_group_event(string $subject, string $body, int $starttime, int $endtime, array $attendees,
         array $other = [], $calendarid = null) {
@@ -1249,7 +1240,7 @@ class unified extends o365api {
                     'Address' => $attendee->email,
                     'Name' => $attendee->firstname.' '.$attendee->lastname,
                 ],
-                'type' => 'Resource'
+                'type' => 'Resource',
             ];
         }
         $eventdata = array_merge($eventdata, $other);
@@ -1270,65 +1261,23 @@ class unified extends o365api {
      * @param string $calendarid The calendar ID to get events from. If empty, primary calendar used.
      * @param string $since datetime date('c') to get events since.
      * @param string $upn user's userPrincipalName
-     * @param string $skip
      * @return array Array of events.
+     * @throws moodle_exception
      */
-    public function get_events(string $calendarid, string $since, string $upn, string $skip = '') : array {
+    public function get_events(string $calendarid, string $since, string $upn): array {
         core_date::set_default_server_timezone();
         $endpoint = (!empty($calendarid)) ? '/users/' . $upn . '/calendars/' . $calendarid . '/events' :
             '/users/' . $upn . '/calendar/events';
 
         $odataqueries = [];
-        if (empty($skip) || !is_string($skip)) {
-            $skip = '';
-        }
-        if (!empty($skip)) {
-            $odataqueries[] = '$skip=' . $skip;
-        }
         if (!empty($since)) {
             // Pass datetime in UTC, regardless of Moodle timezone setting.
             $sincedt = new DateTime('@' . $since);
             $since = urlencode($sincedt->format('Y-m-d\TH:i:s\Z'));
-            $odataqueries[] = '$filter=CreatedDateTime%20ge%20' . $since;
+            $odataqueries['$filter'] = 'CreatedDateTime%20ge%20' . $since;
         }
 
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        $expectedparams = ['value' => null];
-        $return = $this->process_apicall_response($response, $expectedparams);
-        foreach ($return['value'] as $i => $event) {
-            // Converts params to the old legacy parameter used by the rest of the code from the new unified parameter.
-            if (!isset($event['Id']) && isset($event['id'])) {
-                $return['value'][$i]['Id'] = $event['id'];
-            }
-            if (!isset($event['Subject']) && isset($event['subject'])) {
-                $return['value'][$i]['Subject'] = $event['subject'];
-            }
-            if (!isset($event['Body']) && isset($event['body'])) {
-                $return['value'][$i]['Body'] = $event['body'];
-                if (!isset($return['value'][$i]['Body']['Content']) && isset($return['value'][$i]['body']['content'])) {
-                    $return['value'][$i]['Body']['Content'] = $return['value'][$i]['body']['content'];
-                }
-            }
-            if (!isset($event['Start']) && isset($event['start'])) {
-                if (is_array($event['start'])) {
-                    $return['value'][$i]['Start'] = $event['start']['dateTime'] . ' ' . $event['start']['timeZone'];
-                } else {
-                    $return['value'][$i]['Start'] = $event['start'];
-                }
-            }
-            if (!isset($event['End']) && isset($event['end'])) {
-                if (is_array($event['end'])) {
-                    $return['value'][$i]['End'] = $event['end']['dateTime'] . ' ' . $event['end']['timeZone'];
-                } else {
-                    $return['value'][$i]['End'] = $event['end'];
-                }
-            }
-        }
-        return $return;
+        return $this->paginatedapicall('get', $endpoint, $odataqueries, ['value' => null], false, '', [], '$skip');
     }
 
     /**
@@ -1340,7 +1289,7 @@ class unified extends o365api {
      * @return array|null Returned response, or null if error.
      * @throws moodle_exception
      */
-    public function update_event(string $outlookeventid, array $updated, string $upn) : ?array {
+    public function update_event(string $outlookeventid, array $updated, string $upn): ?array {
         if (empty($outlookeventid) || empty($updated)) {
             return [];
         }
@@ -1353,10 +1302,10 @@ class unified extends o365api {
         }
         if (!empty($updated['starttime'])) {
             $updateddata['start'] =
-                ['dateTime' => date('c', $updated['starttime']), 'timeZone' => date('T', $updated['starttime']),];
+                ['dateTime' => date('c', $updated['starttime']), 'timeZone' => date('T', $updated['starttime'])];
         }
         if (!empty($updated['endtime'])) {
-            $updateddata['end'] = ['dateTime' => date('c', $updated['endtime']), 'timeZone' => date('T', $updated['endtime']),];
+            $updateddata['end'] = ['dateTime' => date('c', $updated['endtime']), 'timeZone' => date('T', $updated['endtime'])];
         }
         if (!empty($updated['responseRequested'])) {
             $updateddata['responseRequested'] = $updated['responseRequested'];
@@ -1365,7 +1314,7 @@ class unified extends o365api {
             $updateddata['attendees'] = [];
             foreach ($updated['attendees'] as $attendee) {
                 $updateddata['attendees'][] =
-                    ['emailAddress' => ['address' => $attendee->email, 'name' => $attendee->firstname . ' ' . $attendee->lastname,],
+                    ['emailAddress' => ['address' => $attendee->email, 'name' => $attendee->firstname . ' ' . $attendee->lastname],
                         'type' => 'resource'];
             }
         }
@@ -1382,7 +1331,7 @@ class unified extends o365api {
      * @param string $upn user's userPrincipalName
      * @return bool Success/Failure.
      */
-    public function delete_event(string $outlookeventid, string $upn) : bool {
+    public function delete_event(string $outlookeventid, string $upn): bool {
         if (!empty($outlookeventid)) {
             $this->apicall('delete', '/users/' . $upn . '/events/' . $outlookeventid);
         }
@@ -1398,9 +1347,10 @@ class unified extends o365api {
      * @param string $contenttype
      * @param string $o365userid
      * @return array|null
+     * @throws moodle_exception
      */
     public function create_file(string $parentid, string $filename, string $content, string $contenttype,
-        string $o365userid) : ?array {
+        string $o365userid): ?array {
         $filename = rawurlencode($filename);
         if (!empty($parentid)) {
             $endpoint = "/users/$o365userid/drive/items/$parentid:/$filename:/content";
@@ -1419,8 +1369,9 @@ class unified extends o365api {
      * @param string $o365userid user's Office 365 account object ID
      * @param string $skiptoken
      * @return array|null Returned response, or null if error.
+     * @throws moodle_exception
      */
-    public function get_user_files(string $parentid, string $o365userid, string $skiptoken = '') : ?array {
+    public function get_user_files(string $parentid, string $o365userid, string $skiptoken = ''): ?array {
         if (!empty($parentid) && $parentid !== '/') {
             $endpoint = "/users/$o365userid/drive/items/$parentid/children";
         } else {
@@ -1450,8 +1401,9 @@ class unified extends o365api {
      * @param string $upn user's userPrincipalName
      * @param string $skiptoken
      * @return array|null Returned response, or null if error.
+     * @throws moodle_exception
      */
-    public function get_trending_files(string $upn, string $skiptoken = '') : ?array {
+    public function get_trending_files(string $upn, string $skiptoken = ''): ?array {
         $endpoint = '/users/' . $upn . '/trendingAround';
 
         $odataqueries = [];
@@ -1476,8 +1428,9 @@ class unified extends o365api {
      *
      * @param string $fileinfo The file's drive id and file id.
      * @return array|null The file's content.
+     * @throws moodle_exception
      */
-    public function get_file_data(string $fileinfo) : ?array {
+    public function get_file_data(string $fileinfo): ?array {
         $response = $this->apicall('get', "/$fileinfo");
         $expectedparams = ['id' => null];
         return $this->process_apicall_response($response, $expectedparams);
@@ -1489,7 +1442,7 @@ class unified extends o365api {
      * @param string $url The file's URL.
      * @return string The file's content.
      */
-    public function get_file_by_url(string $url) : string {
+    public function get_file_by_url(string $url): string {
         return $this->httpclient->download_file($url);
     }
 
@@ -1499,21 +1452,22 @@ class unified extends o365api {
      * @param string $fileid The file's ID.
      * @param string $o365userid user's Microsoft 365 account object ID
      * @return array|null The file's metadata.
+     * @throws moodle_exception
      */
-    public function get_file_metadata(string $fileid, string $o365userid) : ?array {
+    public function get_file_metadata(string $fileid, string $o365userid): ?array {
         $response = $this->apicall('get', "/users/$o365userid/drive/items/$fileid");
         $expectedparams = ['id' => null];
         return $this->process_apicall_response($response, $expectedparams);
     }
 
     /**
-     * Get a file's content by it's file id.
+     * Get a file's content by its file id.
      *
      * @param string $fileid The file's ID.
      * @param string $o365userid user's Microsoft 365 account object ID
      * @return string The file's content.
      */
-    public function get_file_by_id(string $fileid, string $o365userid) : string {
+    public function get_file_by_id(string $fileid, string $o365userid): string {
         return $this->apicall('get', "/users/$o365userid/drive/items/$fileid/content");
     }
 
@@ -1521,8 +1475,9 @@ class unified extends o365api {
      * Get information on the current application.
      *
      * @return array|null Array of application information, or null if failure.
+     * @throws moodle_exception
      */
-    public function get_application_info() : ?array {
+    public function get_application_info(): ?array {
         $oidcconfig = get_config('auth_oidc');
         $endpoint = '/applications/?$filter=appId%20eq%20\'' . $oidcconfig->clientid . '\'';
         $response = $this->betaapicall('get', $endpoint);
@@ -1534,8 +1489,9 @@ class unified extends o365api {
      * Get information on the current application.
      *
      * @return array|null Array of application information, or null if failure.
+     * @throws moodle_exception
      */
-    public function get_application_serviceprincipal_info() : ?array {
+    public function get_application_serviceprincipal_info(): ?array {
         $oidcconfig = get_config('auth_oidc');
         $endpoint = '/servicePrincipals/?$filter=appId%20eq%20\'' . $oidcconfig->clientid . '\'';
         $response = $this->betaapicall('get', $endpoint);
@@ -1546,9 +1502,10 @@ class unified extends o365api {
     /**
      * Get the service principal object for the Microsoft Graph API.
      *
-     * @return array Array representing service principal object.
+     * @return array|null Array representing service principal object.
+     * @throws moodle_exception
      */
-    public function get_unified_api_serviceprincipal_info() : ?array {
+    public function get_unified_api_serviceprincipal_info(): ?array {
         static $response = null;
         if (empty($response)) {
             $graphperms = $this->get_required_permissions('graph');
@@ -1563,9 +1520,9 @@ class unified extends o365api {
     /**
      * Get all available permissions for the Microsoft Graph API.
      *
-     * @return array Array of available permissions, include descriptions and keys.
+     * @return array|null Array of available permissions, include descriptions and keys.
      */
-    public function get_available_permissions() : ?array {
+    public function get_available_permissions(): ?array {
         $svc = $this->get_unified_api_serviceprincipal_info();
         if (empty($svc) || !is_array($svc)) {
             return null;
@@ -1587,7 +1544,7 @@ class unified extends o365api {
      *
      * @return array Array of available app-only permissions, indexed by permission name.
      */
-    public function get_graph_available_apponly_permissions() : array {
+    public function get_graph_available_apponly_permissions(): array {
         // Get list of permissions and associated IDs.
         $graphsp = $this->get_unified_api_serviceprincipal_info();
         $graphsp = $graphsp['value'][0];
@@ -1602,8 +1559,9 @@ class unified extends o365api {
      * Get currently configured app-only permissions for the graph api.
      *
      * @return array Array of current app-only permissions, indexed by permission name.
+     * @throws moodle_exception
      */
-    public function get_graph_current_apponly_permissions() : array {
+    public function get_graph_current_apponly_permissions(): array {
         // Get available permissions.
         $graphsp = $this->get_unified_api_serviceprincipal_info();
         $graphsp = $graphsp['value'][0];
@@ -1624,7 +1582,7 @@ class unified extends o365api {
             }
         }
         if (empty($graphresource)) {
-            throw new Exception('Unable to find graph api in application.');
+            throw new moodle_exception('errorunabletofindgraphapi', 'local_o365');;
         }
 
         // Translate to permission information.
@@ -1645,8 +1603,9 @@ class unified extends o365api {
      *
      * @param string $resourceid
      * @return array|null Array of application information, or null if failure.
+     * @throws moodle_exception
      */
-    public function get_permission_grants(string $resourceid = '') : ?array {
+    public function get_permission_grants(string $resourceid = ''): ?array {
         $appinfo = $this->get_application_serviceprincipal_info();
         if (empty($appinfo) || !is_array($appinfo)) {
             return null;
@@ -1666,9 +1625,9 @@ class unified extends o365api {
     /**
      * Get currently assigned permissions for the Microsoft Graph API.
      *
-     * @return array Array of permission keys.
+     * @return array|null Array of permission keys.
      */
-    public function get_unified_api_permissions() : ?array {
+    public function get_unified_api_permissions(): ?array {
         $apiinfo = $this->get_unified_api_serviceprincipal_info();
         if (empty($apiinfo) || !is_array($apiinfo)) {
             return null;
@@ -1688,11 +1647,11 @@ class unified extends o365api {
     }
 
     /**
-     * Get an array of the current required permissions for the graph api.
+     * Get an array of the required delegated permissions for the graph api.
      *
-     * @return array Array of required Azure AD permissions.
+     * @return array Array of required delegated permissions.
      */
-    public function get_graph_required_permissions() : array {
+    public function get_graph_required_permissions(): array {
         $allperms = $this->get_required_permissions();
         if (isset($allperms['graph'])) {
             return $allperms['graph']['requiredDelegatedPermissionsUsingAppPermissions'];
@@ -1704,9 +1663,9 @@ class unified extends o365api {
     /**
      * Get required app-only permissions for the graph api.
      *
-     * @return array Array of required Azure AD application permissions.
+     * @return array Array of required application permissions.
      */
-    public function get_graph_required_apponly_permissions() : array {
+    public function get_graph_required_apponly_permissions(): array {
         $allperms = $this->get_required_permissions();
         if (isset($allperms['graph'])) {
             return $allperms['graph']['requiredAppPermissions'];
@@ -1720,7 +1679,7 @@ class unified extends o365api {
      *
      * @return array
      */
-    public function check_graph_apponly_permissions() : array {
+    public function check_graph_apponly_permissions(): array {
         $this->token->refresh();
         $requiredperms = $this->get_graph_required_apponly_permissions();
         $currentperms = $this->get_graph_current_apponly_permissions();
@@ -1770,9 +1729,9 @@ class unified extends o365api {
     /**
      * Check whether all required permissions are present.
      *
-     * @return array Array of missing permissions, permission key as array key, human-readable name as values.
+     * @return array|null Array of missing permissions, permission key as array key, human-readable name as values.
      */
-    public function check_graph_delegated_permissions() : ?array {
+    public function check_graph_delegated_permissions(): ?array {
         $this->token->refresh();
         $currentperms = $this->get_unified_api_permissions();
         $requiredperms = $this->get_graph_required_permissions();
@@ -1827,16 +1786,32 @@ class unified extends o365api {
      * Get a users photo.
      *
      * @param string $user User to retrieve photo.
-     * @return string|false Returned binary photo data, false if there is no photo.
+     * @return string Returned binary photo data.
+     * @throws moodle_exception
      */
     public function get_photo(string $user) {
         $photo = $this->apicall('get', "/users/$user/photo/\$value");
 
-        // Check if response is binary.
-        if (preg_match('~[^\x20-\x7E\t\r\n]~', $photo) > 0) {
-            return $photo;
+        // Process responses.
+        if ($this->check_expected_http_code(['200'])) {
+            // Successful response.
+            // Return value needs to be binary.
+            if (preg_match('~[^\x20-\x7E\t\r\n]~', $photo) > 0) {
+                // Return value is a valid photo.
+                return $photo;
+            } else {
+                // Return value isn't a valid photo.
+                utils::debug('Invalid photo received', __METHOD__, $photo);
+                throw new moodle_exception('erroro365badphoto', 'local_o365');
+            }
+        } else if ($this->check_expected_http_code(['404'])) {
+            // No photo found.
+            utils::debug('No photo found', __METHOD__, $photo);
+            throw new moodle_exception('erroro365nophoto', 'local_o365');
         } else {
-            return false;
+            // Unexpected response.
+            utils::debug('Unexpected response', __METHOD__, $photo);
+            throw new moodle_exception('erroro365apibadcall', 'local_o365');
         }
     }
 
@@ -1846,8 +1821,9 @@ class unified extends o365api {
      * @param string $fileid onedrive file id.
      * @param string $o365userid
      * @return string Readonly file url.
+     * @throws moodle_exception
      */
-    public function get_sharing_link(string $fileid, string $o365userid) : string {
+    public function get_sharing_link(string $fileid, string $o365userid): string {
         $params = ['type' => 'view', 'scope' => 'organization'];
         $apiresponse = $this->apicall('post', "/users/$o365userid/drive/items/$fileid/createLink", json_encode($params));
         $response = $this->process_apicall_response($apiresponse);
@@ -1860,8 +1836,9 @@ class unified extends o365api {
      * @param string $oid The user's object id.
      * @param bool $guestuser if the user is a guest user.
      * @return array|null Array of user information, or null if failure.
+     * @throws moodle_exception
      */
-    public function get_user(string $oid, bool $guestuser = false) : ?array {
+    public function get_user(string $oid, bool $guestuser = false): ?array {
         $endpoint = "/users/$oid";
         $odataqueries = [];
 
@@ -1874,67 +1851,18 @@ class unified extends o365api {
             $endpoint .= '?' . implode('&', $odataqueries);
         }
 
-        $response = $this->apicall('get', $endpoint);
-        $expectedparams = ['@odata.context' => $context, 'id' => null, 'userPrincipalName' => null,];
+        try {
+            $response = $this->apicall('get', $endpoint);
+            $expectedparams = ['@odata.context' => $context, 'id' => null, 'userPrincipalName' => null];
 
-        $result = $this->process_apicall_response($response, $expectedparams);
-        if (!empty($result['id'])) {
-            $result['objectId'] = $result['id'];
+            $result = $this->process_apicall_response($response, $expectedparams);
+            if (!empty($result['id'])) {
+                $result['objectId'] = $result['id'];
+            }
+            return $result;
+        } catch (moodle_exception $e) {
+            return null;
         }
-        return $result;
-    }
-
-    /**
-     * Get the Azure AD UPN of a connected Moodle user.
-     *
-     * @param stdClass|int $user The Moodle user.
-     * @return string|bool The user's Azure AD UPN, or false if failure.
-     */
-    public static function get_muser_upn($user) {
-        global $DB;
-        $now = time();
-
-        if (is_numeric($user)) {
-            $user = $DB->get_record('user', ['id' => $user]);
-            if (empty($user)) {
-                utils::debug('User not found', __METHOD__, $user);
-                return false;
-            }
-        }
-
-        // Get user UPN.
-        $userobjectdata = $DB->get_record('local_o365_objects', ['type' => 'user', 'moodleid' => $user->id]);
-        if (empty($userobjectdata)) {
-            // Get user data.
-            $o365user = o365user::instance_from_muserid($user->id);
-            if (empty($o365user)) {
-                // No o365 user data for the user is available.
-                utils::debug('Could not construct o365user class for user.', __METHOD__, $user->username);
-                return false;
-            }
-            try {
-                $apiclient = utils::get_api();
-            } catch (Exception $e) {
-                utils::debug($e->getMessage(), __METHOD__, $e);
-                return false;
-            }
-
-            $isguestuser = false;
-            if (stripos($user->username, '_ext_') !== false) {
-                $isguestuser = true;
-            }
-            $userdata = $apiclient->get_user($o365user->objectid, $isguestuser);
-
-            if (static::is_configured() && empty($userdata['objectId']) && !empty($userdata['id'])) {
-                $userdata['objectId'] = $userdata['id'];
-            }
-            $userobjectdata = (object) ['type' => 'user', 'subtype' => '', 'objectid' => $userdata['objectId'],
-                'o365name' => $userdata['userPrincipalName'], 'moodleid' => $user->id, 'timecreated' => $now,
-                'timemodified' => $now,];
-            $userobjectdata->id = $DB->insert_record('local_o365_objects', $userobjectdata);
-        }
-
-        return $userobjectdata->o365name;
     }
 
     /**
@@ -1943,10 +1871,11 @@ class unified extends o365api {
      * @param string $groupobjectid
      * @param string $appid
      * @return bool
+     * @throws moodle_exception
      */
-    public function provision_app(string $groupobjectid, string $appid) : bool {
+    public function provision_app(string $groupobjectid, string $appid): bool {
         $endpoint = '/teams/' . $groupobjectid . '/installedApps';
-        $data = ['teamsApp@odata.bind' => $this->get_apiuri() . '/beta/appCatalogs/teamsApps/' . $appid,];
+        $data = ['teamsApp@odata.bind' => $this->get_apiuri() . '/beta/appCatalogs/teamsApps/' . $appid];
         $this->betaapicall('post', $endpoint, json_encode($data));
 
         // If the request was successful, it would return 201; otherwise, if the request failed with "duplicate",
@@ -1965,20 +1894,16 @@ class unified extends o365api {
      * @return string|null
      * @throws moodle_exception
      */
-    public function get_catalog_app_id(string $externalappid) : ?string {
+    public function get_catalog_app_id(string $externalappid): ?string {
         $moodleappid = null;
 
         $endpoint = '/appCatalogs/teamsApps?$filter=externalId' . rawurlencode(' eq \'' . $externalappid . '\'');
         $response = $this->betaapicall('get', $endpoint);
         $expectedparams = ['value' => null];
-        try {
-            $response = $this->process_apicall_response($response, $expectedparams);
-            if (count($response['value']) > 0) {
-                $moodleapp = array_shift($response['value']);
-                $moodleappid = $moodleapp['id'];
-            }
-        } catch (Exception $e) {
-            throw $e;
+        $response = $this->process_apicall_response($response, $expectedparams);
+        if (count($response['value']) > 0) {
+            $moodleapp = array_shift($response['value']);
+            $moodleappid = $moodleapp['id'];
         }
 
         return $moodleappid;
@@ -1989,8 +1914,9 @@ class unified extends o365api {
      *
      * @param string $groupobjectid
      * @return string|null
+     * @throws moodle_exception
      */
-    public function get_general_channel_id(string $groupobjectid) : ?string {
+    public function get_general_channel_id(string $groupobjectid): ?string {
         $generalchannelid = null;
 
         $endpoint = '/teams/' . $groupobjectid . '/channels?$filter=displayName' . rawurlencode(' eq \'General\'');
@@ -2014,11 +1940,16 @@ class unified extends o365api {
      * @param array $tabconfiguration
      * @return string
      */
-    public function add_tab_to_channel(string $groupobjectid, string $channelid, string $appid, array $tabconfiguration) : string {
+    public function add_tab_to_channel(string $groupobjectid, string $channelid, string $appid, array $tabconfiguration): string {
         $endpoint = '/teams/' . $groupobjectid . '/channels/' . $channelid . '/tabs';
-        $requestparams = ['displayName' => get_string('tab_moodle', 'local_o365'),
+        $tabname = get_config('local_o365', 'teams_moodle_tab_name');
+        if (!$tabname) {
+            $tabname = 'Moodle';
+        }
+        $requestparams = ['displayName' => $tabname,
             'teamsApp@odata.bind' => $this->get_apiuri() . '/beta/appCatalogs/teamsApps/' . $appid,
-            'configuration' => $tabconfiguration,];
+            'configuration' => $tabconfiguration,
+        ];
 
         return $this->betaapicall('post', $endpoint, json_encode($requestparams));
     }
@@ -2030,10 +1961,10 @@ class unified extends o365api {
      * @param string $displayname
      * @return string
      */
-    public function update_team_name(string $objectid, string $displayname) : string {
+    public function update_team_name(string $objectid, string $displayname): string {
         $endpoint = '/teams/' . $objectid;
 
-        $teamdata = ['displayName' => $displayname,];
+        $teamdata = ['displayName' => $displayname];
 
         return $this->betaapicall('patch', $endpoint, json_encode($teamdata));
     }
@@ -2043,6 +1974,7 @@ class unified extends o365api {
      *
      * @param string $objectid
      * @return array|bool|null
+     * @throws moodle_exception
      */
     public function archive_team(string $objectid) {
         $endpoint = '/teams/' . $objectid . '/archive';
@@ -2061,13 +1993,13 @@ class unified extends o365api {
      * @param string $upn
      * @return array|null|false
      */
-    public function get_user_timezone_by_upn(string $upn) {
+    public function get_timezone(string $upn) {
         $endpoint = '/users/' . $upn . '/mailboxSettings/timeZone';
         try {
             $response = $this->betaapicall('get', $endpoint);
             $expectedparams = ['value' => null];
-            return $this->process_apicall_response($response, $expectedparams);
-        } catch (Exception $e) {
+            return $this->process_apicall_response($response, $expectedparams, true);
+        } catch (moodle_exception $e) {
             return false;
         }
     }
@@ -2075,154 +2007,80 @@ class unified extends o365api {
     /**
      * Get a list of teams.
      *
-     * @param string $skiptoken
      * @return array|null
+     * @throws moodle_exception
      */
-    public function get_teams(string $skiptoken = '') : ?array {
-        $endpoint = '/groups?$filter=resourceProvisioningOptions/Any(x:x%20eq%20\'Team\')';
-        $odataqueries = [];
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-        if (!empty($odataqueries)) {
-            $endpoint .= '&' . implode('&', $odataqueries);
-        }
-        $response = $this->betaapicall('get', $endpoint);
-        $expectedparams = ['value' => null];
+    public function get_teams(): ?array {
+        $endpoint = '/groups';
+        $odataqueries = [
+            '$filter' => 'resourceProvisioningOptions/Any(x:x%20eq%20\'Team\')',
+        ];
 
-        return $this->process_apicall_response($response, $expectedparams);
+        return $this->paginatedapicall('get', $endpoint, $odataqueries, ['value' => null], true);
     }
 
     /**
      * Return the list of SDS schools.
      *
-     * @param string $skiptoken
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_schools(string $skiptoken = '') : ?array {
+    public function get_schools(): ?array {
         $endpoint = '/education/schools';
-        $odataqueries = [];
 
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
      * Return the list of classes in the SDS school with the given object ID.
      *
      * @param string $schoolobjectid
-     * @param string $skiptoken
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_school_classes(string $schoolobjectid, string $skiptoken = '') : ?array {
+    public function get_school_classes(string $schoolobjectid): ?array {
         $endpoint = '/education/schools/' . $schoolobjectid . '/classes';
-        $odataquries = [];
 
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataquries[] = '$skiptoken=' . $skiptoken;
-        }
-
-        if (!empty($odataquries)) {
-            $endpoint .= '?' . implode('&', $odataquries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
      * Return the list of teachers in the class with the given object ID.
      *
      * @param string $classobjectid
-     * @param string $skiptoken
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_school_class_teachers(string $classobjectid, string $skiptoken = '') : ?array {
+    public function get_school_class_teachers(string $classobjectid): ?array {
         $endpoint = '/education/classes/' . $classobjectid . '/teachers';
-        $odataqueries = [];
 
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
      * Return the list of members in the class with the given object ID.
      *
      * @param string $classobjectid
-     * @param string $skiptoken
      * @return array|null
+     * @throws moodle_exception
      */
-    public function get_school_class_members(string $classobjectid, string $skiptoken = '') : ?array {
+    public function get_school_class_members(string $classobjectid): ?array {
         $endpoint = '/education/classes/' . $classobjectid . '/members';
-        $odataqueries = [];
 
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
      * Return the list of users in the SDS school with the given object ID.
      *
      * @param string $schoolobjectid
-     * @param string $skiptoken
-     * @return array|null
+     * @return array
+     * @throws moodle_exception
      */
-    public function get_school_users(string $schoolobjectid, string $skiptoken = '') : ?array {
+    public function get_school_users(string $schoolobjectid): ?array {
         $endpoint = '/education/schools/' . $schoolobjectid . '/users';
-        $odataqueries = [];
 
-        if (empty($skiptoken) || !is_string($skiptoken)) {
-            $skiptoken = '';
-        }
-        if (!empty($skiptoken)) {
-            $odataqueries[] = '$skiptoken=' . $skiptoken;
-        }
-
-        if (!empty($odataqueries)) {
-            $endpoint .= '?' . implode('&', $odataqueries);
-        }
-
-        $response = $this->apicall('get', $endpoint);
-        return $this->process_apicall_response($response, ['value' => null]);
+        return $this->paginatedapicall('get', $endpoint);
     }
 
     /**
@@ -2230,7 +2088,7 @@ class unified extends o365api {
      *
      * @return bool
      */
-    public function has_education_license() : bool {
+    public function has_education_license(): bool {
         $endpoint = '/organization';
         $odataqueries = [];
         $odataqueries[] = '$select=assignedPlans';
@@ -2248,7 +2106,7 @@ class unified extends o365api {
                     }
                 }
             }
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             // Failed to get assigned plans.
             utils::debug($e->getMessage(), __METHOD__, $e);
         }
@@ -2268,9 +2126,7 @@ class unified extends o365api {
      * @throws moodle_exception
      */
     public function create_educationclass_group(string $displayname, string $mailnickname, string $description, string $externalid,
-        string $externalname) : ?array {
-        global $SITE;
-
+        string $externalname): ?array {
         if (!empty($mailnickname)) {
             $mailnickname = core_text::strtolower($mailnickname);
             $mailnickname = preg_replace('/[^a-z0-9_]+/iu', '', $mailnickname);
@@ -2303,7 +2159,7 @@ class unified extends o365api {
 
         try {
             $response = $this->process_apicall_response($response, $expectedparams);
-        } catch (Exception $e) {
+        } catch (moodle_exception $e) {
             $expectedexception = 'Another object with the same value for property mailNickname already exists.';
             if ($e->a == $expectedexception) {
                 $mailnickname .= '_' . sprintf('%04d', random_int(0, 9999));
@@ -2345,7 +2201,7 @@ class unified extends o365api {
      * @return bool
      * @throws moodle_exception
      */
-    public function add_chunk_users_to_group(string $groupobjectid, string $role, array $userobjectids) : bool {
+    public function add_chunk_users_to_group(string $groupobjectid, string $role, array $userobjectids): bool {
         $endpoint = '/groups/' . $groupobjectid;
 
         if ($role == 'owner') {
@@ -2426,7 +2282,7 @@ class unified extends o365api {
      * @param array $expectedhttpcodes
      * @return bool
      */
-    private function check_expected_http_code(array $expectedhttpcodes) : bool {
+    private function check_expected_http_code(array $expectedhttpcodes): bool {
         $httpclientinfo = (array) $this->httpclient->info;
 
         return in_array($httpclientinfo['http_code'], $expectedhttpcodes);

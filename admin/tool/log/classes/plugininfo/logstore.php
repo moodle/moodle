@@ -23,14 +23,19 @@
  */
 namespace tool_log\plugininfo;
 
-use core\plugininfo\base, moodle_url, part_of_admin_tree, admin_settingpage;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use core\plugininfo\base;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Plugin info class for logging store plugins.
  */
 class logstore extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
 
     public function is_enabled() {
         $enabled = get_config('tool_log', 'enabled_stores');
@@ -75,6 +80,7 @@ class logstore extends base {
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $section = $this->get_settings_section_name();
 

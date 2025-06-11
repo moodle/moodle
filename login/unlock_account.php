@@ -43,7 +43,7 @@ if (!$user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'suspend
 $usersecret = get_user_preferences('login_lockout_secret', false, $user);
 
 if ($secret === $usersecret) {
-    login_unlock_account($user);
+    login_unlock_account($user, true);
     if ($USER->id == $user->id) {
         redirect("$CFG->wwwroot/");
     } else {

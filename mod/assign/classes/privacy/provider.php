@@ -69,7 +69,7 @@ class provider implements
      * @param  collection $collection A collection of meta data items to be added to.
      * @return  collection Returns the collection of metadata.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $assigngrades = [
                 'userid' => 'privacy:metadata:userid',
                 'timecreated' => 'privacy:metadata:timecreated',
@@ -134,7 +134,7 @@ class provider implements
      * @param  int $userid The user ID.
      * @return contextlist an object with the contexts related to a userid.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $params = ['modulename' => 'assign',
                    'contextlevel' => CONTEXT_MODULE,
                    'userid' => $userid,
@@ -487,7 +487,7 @@ class provider implements
      * Find out if this user has graded any users.
      *
      * @param  int $userid The user ID (potential teacher).
-     * @param  assign $assign The assignment object.
+     * @param  \assign $assign The assignment object.
      * @return array If successful an array of objects with userids that this user graded, otherwise false.
      */
     protected static function get_graded_users(int $userid, \assign $assign) {

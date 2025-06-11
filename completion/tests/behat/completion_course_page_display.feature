@@ -1,4 +1,4 @@
-@core @core_completion
+@core @core_completion @javascript
 Feature: Show activity completion status or activity completion configuration on the course page
   In order to understand the configuration or status of an activity's completion
   As a user
@@ -6,8 +6,8 @@ Feature: Show activity completion status or activity completion configuration on
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher   | First    | teacher1@example.com |
@@ -18,12 +18,6 @@ Feature: Show activity completion status or activity completion configuration on
       | teacher1 | C1 | editingteacher |
       | teacher2 | C1 | teacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
     And the following "activities" exist:
       | activity | course | idnumber | name                 | intro                       | completion | completionview | completionexpected |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 2          | 1              | 0                  |
@@ -38,16 +32,16 @@ Feature: Show activity completion status or activity completion configuration on
 
   Scenario: Show completion configuration to editing teachers
     Given I am on the "Course 1" course page logged in as teacher1
-    And the manual completion button for "Test forum name" should be disabled
+    And "Test forum name" should have the "Mark as done" completion condition
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"
     And I am on "Course 1" course homepage with editing mode on
-    And the manual completion button for "Test forum name" should be disabled
+    And "Test forum name" should have the "Mark as done" completion condition
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"
 
   Scenario: Show completion configuration to non-editing teachers
     Given I am on the "Course 1" course page logged in as teacher2
-    And the manual completion button for "Test forum name" should be disabled
+    And "Test forum name" should have the "Mark as done" completion condition
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"

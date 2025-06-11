@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class structure_test extends \advanced_testcase {
+final class structure_test extends \advanced_testcase {
 
     /** @var int Store the inserted forum->id for use in test functions */
     protected $forumid;
@@ -147,7 +147,7 @@ class structure_test extends \advanced_testcase {
     /**
      * Backup structures tests (construction, definition and execution)
      */
-    function test_backup_structure_construct() {
+    function test_backup_structure_construct(): void {
         global $DB;
 
         $backupid = 'Testing Backup ID'; // Official backupid for these tests
@@ -471,7 +471,7 @@ class structure_test extends \advanced_testcase {
     /**
      * Backup structures wrong tests (trying to do things the wrong way)
      */
-    function test_backup_structure_wrong() {
+    function test_backup_structure_wrong(): void {
 
         // Instantiate the backup processor
         $processor = new backup_structure_processor(new xml_writer(new memory_xml_output()));

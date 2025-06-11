@@ -35,12 +35,12 @@ use core_xapi\xapi_exception;
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_score_test extends advanced_testcase {
+final class item_score_test extends advanced_testcase {
 
     /**
      * Test item creation.
      */
-    public function test_create() {
+    public function test_create(): void {
 
         $data = (object) [
             'scaled' => 0.5,

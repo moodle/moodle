@@ -76,7 +76,7 @@ class backup_ui extends base_ui {
      * @param array $params
      * @return backup_ui_stage_initial|backup_ui_stage_schema|backup_ui_stage_confirmation|backup_ui_stage_final
      */
-    protected function initialise_stage($stage = null, array $params = null) {
+    protected function initialise_stage($stage = null, ?array $params = null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_INITIAL, PARAM_INT);
         }

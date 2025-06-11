@@ -62,9 +62,18 @@ class css_text_has_contrast extends brickfield_accessibility_color_test {
         foreach ($entries as $element) {
             $style = $this->css->get_style($element);
 
-            if (isset($style['background-color']) || isset($style['color'])) {
+            if (isset($style['background-color']) || isset($style['color']) || isset($style['background'])) {
                 if (!isset($style['background-color'])) {
-                    $style['background-color'] = $this->defaultbackground;
+                    if (isset($style['background'])) {
+                        // Parsing background-color from CSS background shortcut string.
+                        $style['background-color'] = '#' . $this->convert_color($style['background']);
+                        // If value is empty after hash, then use defaultbackground.
+                        if ($style['background-color'] == '#') {
+                            $style['background-color'] = $this->defaultbackground;
+                        }
+                    } else {
+                        $style['background-color'] = $this->defaultbackground;
+                    }
                 }
 
                 if (!isset($style['color'])) {
@@ -82,18 +91,13 @@ class css_text_has_contrast extends brickfield_accessibility_color_test {
                     $style['color'] = '#' . $this->convert_color($style['color']);
                     $style['background-color'] = '#' . $this->convert_color($background);
 
-                    if (substr($background, 0, 3) == "rgb") {
-                        $background = '#' . $this->convert_color($background);
-                    }
-
-                    $luminosity = $this->get_luminosity($style['color'], $background);
+                    $luminosity = $this->get_luminosity($style['color'], $style['background-color']);
                     $fontsize = 0;
                     $bold = false;
                     $italic = false;
 
                     if (isset($style['font-size'])) {
-                        preg_match_all('!\d+!', $style['font-size'], $matches);
-                        $fontsize = $matches[0][0];
+                        $fontsize = $this->get_fontsize($style['font-size']);
                     }
 
                     if (isset($style['font-weight'])) {

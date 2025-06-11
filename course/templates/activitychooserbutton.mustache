@@ -19,20 +19,41 @@
 
     Displays a add activity or resource button.
 
-    Context variables required for this template:
-    * sectionid - Relative section number (field course_sections.section).
-    * sectionreturn - The section to link back to.
-
     Example context (json):
     {
-        "sectionid": 1,
+        "hasactionlinks": false,
+        "sectionnum": 0,
+        "modid": 1,
+        "activityname": "Activity example",
         "sectionreturn": 0
     }
 }}
-<button class="btn btn-link text-decoration-none section-modchooser section-modchooser-link activity-add d-flex align-items-center p-3 mb-3"
-     data-action="open-chooser" data-sectionid="{{sectionid}}" data-sectionreturnid="{{sectionreturn}}">
-    <span class="pluscontainer icon-no-margin icon-size-3 d-flex p-2 mr-3">
+
+{{! Single button to add a new activity or resource. }}
+{{^hasactionlinks}}
+    {{> core_course/addresourceoractivitybutton }}
+{{/hasactionlinks}}
+
+{{! Dropdown with "add a new activity or resource" item and any other action links. }}
+{{#hasactionlinks}}
+<div class="dropdown">
+    <button class="btn add-content d-flex justify-content-center align-items-center p-1 icon-no-margin"
+            type="button"
+            id="dropdownMenuButton-{{#modid}}{{modid}}{{/modid}}{{^modid}}{{uniqid}}{{/modid}}"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="{{#str}}insertcontentbefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
+            tabindex="0"
+            title="{{#str}}addcontent, core{{/str}}"
+    >
         {{#pix}} t/add, core {{/pix}}
-    </span>
-    <span class="activity-add-text">{{#str}}addresourceoractivity, core{{/str}}</span>
-</button>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{#modid}}{{modid}}{{/modid}}{{^modid}}{{uniqid}}{{/modid}}">
+        {{> core_course/addresourceoractivitybutton }}
+        {{#actionlinks}}
+            {{> core/action_link}}
+        {{/actionlinks}}
+    </div>
+</div>
+{{/hasactionlinks}}

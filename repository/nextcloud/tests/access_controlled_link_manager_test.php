@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/repository/nextcloud/tests/fixtures/testable_acce
  * @copyright  2017 Project seminar (Learnweb, University of Münster)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class access_controlled_link_manager_test extends \advanced_testcase {
+final class access_controlled_link_manager_test extends \advanced_testcase {
 
     /** @var null|testable_access_controlled_link_manager a malleable variant of the access_controlled_link_manager. */
     public $linkmanager = null;
@@ -46,10 +46,14 @@ class access_controlled_link_manager_test extends \advanced_testcase {
     /** @var null|\core\oauth2\issuer which belongs to the repository_nextcloud object. */
     public $issuer = null;
 
+    /** @var string system account username. */
+    public $systemaccountusername;
+
     /**
      * SetUp to create an repository instance.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
 
         // Admin is necessary to create issuer object.
@@ -89,7 +93,7 @@ class access_controlled_link_manager_test extends \advanced_testcase {
     /**
      * Function to test the private function create_share_user_sysaccount.
      */
-    public function test_create_share_user_sysaccount_user_shares() {
+    public function test_create_share_user_sysaccount_user_shares(): void {
         $params = [
             'path' => "/ambient.txt",
             'shareType' => \repository_nextcloud\ocs_client::SHARE_TYPE_USER,
@@ -147,7 +151,7 @@ XML;
      * Test the delete_share_function. In case the request fails, the function throws an exception, however this
      * can not be tested in phpUnit since it is javascript.
      */
-    public function test_delete_share_dataowner_sysaccount() {
+    public function test_delete_share_dataowner_sysaccount(): void {
         $shareid = 5;
         $deleteshareparams = [
             'share_id' => $shareid
@@ -173,7 +177,7 @@ XML;
      * Function which test that create folder path does return the adequate results (path and success).
      * Additionally mock checks whether the right params are passed to the corresponding functions.
      */
-    public function test_create_folder_path_folders_are_not_created() {
+    public function test_create_folder_path_folders_are_not_created(): void {
 
         $mocks = $this->set_up_mocks_for_create_folder_path(true, 'somename');
         $this->set_private_property($mocks['mockclient'], 'systemwebdavclient', $this->linkmanager);
@@ -185,7 +189,7 @@ XML;
      * Function which test that create folder path does return the adequate results (path and success).
      * Additionally mock checks whether the right params are passed to the corresponding functions.
      */
-    public function test_create_folder_path_folders_are_created() {
+    public function test_create_folder_path_folders_are_created(): void {
 
         // In Context is okay, number of context counts for number of iterations.
         $mocks = $this->set_up_mocks_for_create_folder_path(false, 'somename/withslash', true, 201);
@@ -197,7 +201,7 @@ XML;
     /**
      * Test whether the create_folder_path methode throws exception.
      */
-    public function test_create_folder_path_folder_creation_fails() {
+    public function test_create_folder_path_folder_creation_fails(): void {
 
         $mocks = $this->set_up_mocks_for_create_folder_path(false, 'somename', true, 400);
         $this->set_private_property($mocks['mockclient'], 'systemwebdavclient', $this->linkmanager);
@@ -240,7 +244,7 @@ XML;
      * Test whether the right methods from the webdavclient are called when the storage_folder is created.
      * 1. Directory already exist -> no further action needed.
      */
-    public function test_create_storage_folder_success() {
+    public function test_create_storage_folder_success(): void {
         $mockwebdavclient = $this->createMock(\webdav_client::class);
         $url = $this->issuer->get_endpoint_url('webdav');
         $parsedwebdavurl = parse_url($url);
@@ -256,7 +260,7 @@ XML;
      * 2. Directory does not exist. It is created with mkcol and returns a success.
      *
      */
-    public function test_create_storage_folder_success_mkcol() {
+    public function test_create_storage_folder_success_mkcol(): void {
         $mockwebdavclient = $this->createMock(\webdav_client::class);
         $url = $this->issuer->get_endpoint_url('webdav');
         $parsedwebdavurl = parse_url($url);
@@ -272,7 +276,7 @@ XML;
      * Test whether the right methods from the webdavclient are called when the storage_folder is created.
      * 3. Request to create Folder fails.
      */
-    public function test_create_storage_folder_failure() {
+    public function test_create_storage_folder_failure(): void {
         $mockwebdavclient = $this->createMock(\webdav_client::class);
         $url = $this->issuer->get_endpoint_url('webdav');
         $parsedwebdavurl = parse_url($url);
@@ -287,7 +291,7 @@ XML;
     /**
      * Test whether the webdav client gets the right params and whether function differentiates between move and copy.
      */
-    public function test_transfer_file_to_path_copyfile() {
+    public function test_transfer_file_to_path_copyfile(): void {
         // Initialize params.
         $parsedwebdavurl = parse_url($this->issuer->get_endpoint_url('webdav'));
         $webdavprefix = $parsedwebdavurl['path'];
@@ -311,7 +315,7 @@ XML;
      *
      * @covers \repository_nextcloud\access_controlled_link_manager::transfer_file_to_path
      */
-    public function test_transfer_file_to_path_overwritefile() {
+    public function test_transfer_file_to_path_overwritefile(): void {
         // Initialize params.
         $parsedwebdavurl = parse_url($this->issuer->get_endpoint_url('webdav'));
         $webdavprefix = $parsedwebdavurl['path'];
@@ -335,7 +339,7 @@ XML;
      * It tests whether the webdav_client gets the right parameter and whether function distinguishes between move and copy.
      *
      */
-    public function test_transfer_file_to_path_copyfile_movefile() {
+    public function test_transfer_file_to_path_copyfile_movefile(): void {
         // Initialize params.
         $parsedwebdavurl = parse_url($this->issuer->get_endpoint_url('webdav'));
         $webdavprefix = $parsedwebdavurl['path'];
@@ -360,7 +364,7 @@ XML;
      * for user1 is extracted then for user2 and last but least whether an error is thrown if the user does not have a share.
      * @throws moodle_exception
      */
-    public function test_get_shares_from_path() {
+    public function test_get_shares_from_path(): void {
         $params = [
             'path' => '/Kernsystem/Kursbereich Miscellaneous/Kurs Example Course/Datei zet/mod_resource/content/0/picture.png',
             'reshares' => true
@@ -453,7 +457,7 @@ XML;
      * @throws \repository_nextcloud\configuration_exception
      * @throws coding_exception
      */
-    public function test_create_system_dav() {
+    public function test_create_system_dav(): void {
         // Initialize mock and params.
         $fakeaccesstoken = new \stdClass();
         $fakeaccesstoken->token = "fake access token";
@@ -509,7 +513,7 @@ XML;
      * @throws \repository_nextcloud\request_exception
      * @throws coding_exception
      */
-    public function test_get_share_information_from_shareid() {
+    public function test_get_share_information_from_shareid(): void {
         $params303 = [
             'share_id' => 303,
         ];
@@ -609,7 +613,6 @@ XML;
     protected function set_private_property($value, $propertyname, $class) {
         $refclient = new \ReflectionClass($class);
         $private = $refclient->getProperty($propertyname);
-        $private->setAccessible(true);
         $private->setValue($class, $value);
         return $private;
     }
@@ -623,7 +626,6 @@ XML;
     protected function get_private_property($propertyname, $class) {
         $refclient = new \ReflectionClass($class);
         $private = $refclient->getProperty($propertyname);
-        $private->setAccessible(true);
         $property = $private->getValue($private);
         return $property;
     }

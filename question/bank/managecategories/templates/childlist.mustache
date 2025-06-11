@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_managecategories/childlist
+
+    This template a sub-list of children within a category.
+
+    Context variables required for this template:
+    * categoryid - The parent category of the child categories.
+    * children - Children category item to curent category (same variables as qbank_managecategories/category).
+
+    Example context (json):
+    {
+        "categoryid": "1",
+        "children": [
+            {
+                "categoryid": "2",
+                "questionbankurl": "question/edit.php?cmid=123",
+                "categoryname": "Default for Miscellaneous",
+                "idnumber": "1",
+                "questioncount": " 1",
+                "categorydesc": "The default category for questions shared in context Miscellaneous",
+                "editactionmenu": "<div class='action-menu moodle-actionmenu'>...</div>",
+                "draghandle": true
+            }
+        ]
+    }
+}}
+<ul class="qbank_managecategories-categorylist row mt-1 col-12" data-categoryid="{{categoryid}}">
+    {{#children}}
+        {{> qbank_managecategories/category }}
+    {{/children}}
+</ul>
+{{#js}}
+    require(['qbank_managecategories/categorylist'], function(component) {
+        component.init('.qbank_managecategories-categorylist[data-categoryid="{{categoryid}}"]');
+    });
+{{/js}}

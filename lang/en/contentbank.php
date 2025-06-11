@@ -25,7 +25,9 @@
 $string['author'] = 'Author';
 $string['contentbank'] = 'Content bank';
 $string['choosecontext'] = 'Choose course or category...';
+$string['contentbankcustomfields'] = 'Content bank custom fields';
 $string['contentbankpreferences'] = 'Content bank preferences';
+$string['contentcopied'] = 'Content copied.';
 $string['contentdeleted'] = 'Content deleted.';
 $string['contentname'] = 'Content name';
 $string['contentnotdeleted'] = 'An error was encountered while trying to delete the content.';
@@ -36,7 +38,12 @@ $string['contenttypenoaccess'] = 'You cannot view this {$a} instance.';
 $string['contenttypenoedit'] = 'You can not edit this content';
 $string['contentvisibilitychanged'] = 'Content is now {$a}.';
 $string['contentvisibilitynotset'] = 'An error was encountered while trying to set the content visibility.';
+$string['contentcreated'] = 'Content created.';
+$string['contentupdated'] = 'Content updated.';
 $string['contextnotallowed'] = 'You are not allowed to access the content bank in this context.';
+$string['copycontent'] = 'Copy content';
+$string['copyof'] = 'Copy of {$a}';
+$string['displayunlisted'] = 'Show unlisted content';
 $string['emptynamenotallowed'] = 'Empty name is not allowed';
 $string['eventcontentcreated'] = 'Content created';
 $string['eventcontentdeleted'] = 'Content deleted';
@@ -61,6 +68,7 @@ $string['name'] = 'Content';
 $string['nocontentavailable'] = 'No content available';
 $string['nocontenttypes'] = 'No content types available';
 $string['notavailable'] = 'Sorry, this content is not available.';
+$string['nopermissiontocopy'] = 'You do not have permission to copy content.';
 $string['nopermissiontodelete'] = 'You do not have permission to delete content.';
 $string['nopermissiontomanage'] = 'You do not have permission to manage content.';
 $string['notvalidpackage'] = 'Sorry, this file is not valid.';
@@ -92,6 +100,3 @@ $string['visibilitypref_help'] = 'Content you create in the content bank will us
 $string['visibilitysetpublic'] = 'Make public';
 $string['visibilitysetunlisted'] = 'Make unlisted';
 $string['visibilitytitleunlisted'] = '{$a} (Unlisted)';
-
-// Deprecated since 4.0.
-$string['close'] = 'Close';

@@ -37,12 +37,12 @@ defined('MOODLE_INTERNAL') || die();
 class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_interface {
 
     public function get_raw_events(
-        array $usersfilter = null,
-        array $groupsfilter = null,
-        array $coursesfilter = null,
-        array $categoriesfilter = null,
-        array $whereconditions = null,
-        array $whereparams = null,
+        ?array $usersfilter = null,
+        ?array $groupsfilter = null,
+        ?array $coursesfilter = null,
+        ?array $categoriesfilter = null,
+        ?array $whereconditions = null,
+        ?array $whereparams = null,
         $ordersql = null,
         $offset = null,
         $limitnum = null,
@@ -68,7 +68,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
      * @param array|int|boolean $users array of users, user id or boolean for all/no user events
      * @param array|int|boolean $groups array of groups, group id or boolean for all/no group events
      * @param array|int|boolean $courses array of courses, course id or boolean for all/no course events
-     * @param string $whereconditions The conditions in the WHERE clause.
+     * @param array $whereconditions The conditions in the WHERE clause.
      * @param array $whereparams The parameters for the WHERE clause.
      * @param string $ordersql The ORDER BY clause.
      * @param int $offset Offset.

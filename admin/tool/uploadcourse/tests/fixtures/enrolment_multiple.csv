@@ -1,0 +1,2 @@
+shortname,fullname,category_idnumber,enrolment_1,enrolment_1_role,enrolment_2,enrolment_2_role,enrolment_2_cohortidnumber,enrolment_3,enrolment_4,enrolment_4_role,enrolment_5,enrolment_5_metacoursename
+C2,Course 2,CAT1,self,student,cohort,student,Cohort1,guest,manual,student,meta,C1

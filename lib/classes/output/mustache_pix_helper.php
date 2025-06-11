@@ -14,29 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Mustache helper render pix icons.
- *
- * @package    core
- * @category   output
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\output;
 
 use Mustache_LambdaHelper;
-use renderer_base;
 
 /**
  * This class will call pix_icon with the section content.
  *
+ * @package core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      2.9
  */
 class mustache_pix_helper {
-
     /** @var renderer_base $renderer A reference to the renderer in use */
     private $renderer;
 
@@ -80,4 +69,3 @@ class mustache_pix_helper {
         return trim($this->renderer->pix_icon($key, $text, $component));
     }
 }
-

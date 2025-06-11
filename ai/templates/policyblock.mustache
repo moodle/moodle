@@ -1,0 +1,46 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_ai/policyblock
+
+    Template to display AI policy in the block drawer.
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<section class="card mb-3">
+    <div class="card-body p-3 ai-policy-block">
+        <h3 id="instance-9-header" class="h5 card-title d-inline">
+            {{#str}} aiusagepolicy, core_ai {{/str}}
+        </h3>
+        <div class="card-text content mt-3">
+            {{#str}} userpolicy, core_ai {{/str}}
+            <div class="d-block pt-3">
+                <button class="btn btn-sm btn-secondary" data-action="decline">
+                    {{#str}} declineaipolicy, core_ai {{/str}}
+                </button>
+                <button class="btn btn-sm btn-primary" data-action="accept">
+                    {{#str}} acceptai, core_ai {{/str}}
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

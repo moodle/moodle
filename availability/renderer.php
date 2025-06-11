@@ -14,13 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Renderer for availability display.
- *
- * @package core_availability
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+use core\output\plugin_renderer_base;
+use core_availability\output\availability_info;
 
 /**
  * Renderer for availability display.
@@ -30,43 +25,12 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_availability_renderer extends plugin_renderer_base {
+
     /**
-     * Renders HTML for the result of two or more availability restriction
-     * messages being combined in a list.
-     *
-     * The supplied messages should already take account of the 'not' option,
-     * e.g. an example message could be 'User profile field Department must
-     * not be set to Maths'.
-     *
-     * This function will not be called unless there are at least two messages.
-     *
-     * @deprecated since Moodle 4.0 MDL-716916 - please do not use this function any more.
-     * @param core_availability_multiple_messages $renderable Multiple messages
-     * @return string Combined HTML
+     * @deprecated since Moodle 4.0 MDL-71691 - please do not use this function any more.
      */
-    public function render_core_availability_multiple_messages(
-            core_availability_multiple_messages $renderable) {
-
-        debugging(
-            'render_core_availability_multiple_messages is deprecated. Use core_availability\\output\\multiple_messages instead',
-            DEBUG_DEVELOPER
-        );
-        // Get initial message.
-        $out = get_string('list_' . ($renderable->root ? 'root_' : '') .
-                ($renderable->andoperator ? 'and' : 'or') . ($renderable->treehidden ? '_hidden' : ''),
-                'availability');
-
-        // Make the list.
-        $out .= html_writer::start_tag('ul');
-        foreach ($renderable->items as $item) {
-            if (is_string($item)) {
-                $str = $item;
-            } else {
-                $str = $this->render($item);
-            }
-            $out .= html_writer::tag('li', $str);
-        }
-        $out .= html_writer::end_tag('ul');
-        return $out;
+    #[\core\attribute\deprecated(availability_info::class, since: '4.0', mdl: 'MDL-71691', final: true)]
+    public function render_core_availability_multiple_messages(): void {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 }

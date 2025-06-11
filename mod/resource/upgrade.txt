@@ -1,4 +1,14 @@
-This files describes API changes in the quiz code.
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This file describes API changes in the resource code.
+
+=== 4.3 ===
+
+* Function resource_get_optional_details() has now one new parameter, $showtype, to decide whether the file type should be
+  displayed or not (regardless the display option is enabled).
 
 === 4.0 ===
 

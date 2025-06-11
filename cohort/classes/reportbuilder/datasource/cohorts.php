@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_cohort\reportbuilder\datasource;
 
 use core_cohort\reportbuilder\local\entities\{cohort, cohort_member};
+use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 
@@ -103,7 +104,20 @@ class cohorts extends datasource {
      * @return string[]
      */
     public function get_default_conditions(): array {
-        return [];
+        return [
+            'cohort:visible',
+        ];
+    }
+
+    /**
+     * Return the condition values that will be set for the report upon creation
+     *
+     * @return array
+     */
+    public function get_default_condition_values(): array {
+        return [
+            'cohort:visible_operator' => boolean_select::CHECKED,
+        ];
     }
 
     /**

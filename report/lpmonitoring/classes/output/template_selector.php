@@ -69,7 +69,7 @@ class template_selector implements renderable, templatable {
         $url = new \moodle_url('/report/lpmonitoring/bulkrating.php', ['pagecontextid' => $this->pagecontext->id]);
         $data = new stdClass();
         $data->pagecontextid = $this->pagecontext->id;
-        $data->templates = array();
+        $data->templates = [];
         $data->urlbulkrating = $url->out(true);
         foreach ($this->learningplantemplates as $template) {
             $temp = new stdClass();

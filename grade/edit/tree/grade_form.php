@@ -106,6 +106,7 @@ class edit_grade_form extends moodleform {
         $mform->addElement('editor', 'feedback', get_string('feedback', 'grades'), null, $feedbackoptions);
         $mform->addHelpButton('feedback', 'feedback', 'grades');
         $mform->setType('text', PARAM_RAW); // to be cleaned before display, no XSS risk
+        $mform->disabledIf('feedback', 'overridden');
 
         // hidden params
         $mform->addElement('hidden', 'oldgrade');

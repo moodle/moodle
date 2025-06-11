@@ -24,7 +24,7 @@
 
 namespace core_message\tests;
 
-defined('MOODLE_INTERNAL') || die();
+use stdClass;
 
 /**
  * The helper class providing util methods for testing.
@@ -33,6 +33,80 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper {
+    /**
+     * Send a fake message.
+     *
+     * {@see message_send()} does not support transaction, this function will simulate a message
+     * sent from a user to another. We should stop using it once {@see message_send()} will support
+     * transactions. This is not clean at all, this is just used to add rows to the table.
+     *
+     * @param \stdClass $userfrom user object of the one sending the message.
+     * @param \stdClass $userto user object of the one receiving the message.
+     * @param string $message message to send.
+     * @param int $notification if the message is a notification.
+     * @param int $time the time the message was sent
+     * @return int the id of the message
+     */
+    public static function send_fake_message(
+        stdClass $userfrom,
+        stdClass $userto,
+        string $message = 'Hello world!',
+        int $notification = 0,
+        int $time = 0,
+    ): int {
+        global $DB;
+
+        if (empty($time)) {
+            $time = time();
+        }
+
+        if ($notification) {
+            $record = new \stdClass();
+            $record->useridfrom = $userfrom->id;
+            $record->useridto = $userto->id;
+            $record->subject = 'No subject';
+            $record->fullmessage = $message;
+            $record->smallmessage = $message;
+            $record->timecreated = $time;
+
+            return $DB->insert_record('notifications', $record);
+        }
+
+        if ($userfrom->id == $userto->id) {
+            // It's a self conversation.
+            $conversation = \core_message\api::get_self_conversation($userfrom->id);
+            if (empty($conversation)) {
+                $conversation = \core_message\api::create_conversation(
+                    \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+                    [$userfrom->id],
+                );
+            }
+            $conversationid = $conversation->id;
+        } else if (!$conversationid = \core_message\api::get_conversation_between_users([$userfrom->id, $userto->id])) {
+            // It's an individual conversation between two different users.
+            $conversation = \core_message\api::create_conversation(
+                \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+                [
+                    $userfrom->id,
+                    $userto->id,
+                ]
+            );
+            $conversationid = $conversation->id;
+        }
+
+        // Ok, send the message.
+        $record = (object) [
+            'useridfrom' => $userfrom->id,
+            'conversationid' => $conversationid,
+            'subject' => 'No subject',
+            'fullmessage' => $message,
+            'smallmessage' => $message,
+            'timecreated' => $time,
+        ];
+
+        return $DB->insert_record('messages', $record);
+    }
+
     /**
      * Sends a message to a conversation.
      *
@@ -44,7 +118,7 @@ class helper {
      * @throws \dml_exception if the conversation doesn't exist.
      */
     public static function send_fake_message_to_conversation(\stdClass $userfrom, int $convid, string $message = 'Hello world!',
-            int $time = null) : int {
+            ?int $time = null): int {
         global $DB;
         $conversationrec = $DB->get_record('message_conversations', ['id' => $convid], 'id', MUST_EXIST);
         $conversationid = $conversationrec->id;

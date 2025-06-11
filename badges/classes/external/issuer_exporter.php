@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class for displaying a issuer.
- *
- * @package   core_badges
- * @copyright 2019 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_badges\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -38,17 +30,13 @@ use core\external\exporter;
 class issuer_exporter extends exporter {
 
     /**
-     * Either map version 1 data to version 2 or return it untouched.
+     * Map data depending on the version.
      *
-     * @param stdClass $data The remote data.
+     * @param \stdClass $data The remote data.
      * @param string $apiversion The backpack version used to communicate remotely.
-     * @return stdClass
+     * @return \stdClass
      */
     public static function map_external_data($data, $apiversion) {
-        if ($apiversion == OPEN_BADGES_V1) {
-            $result = new \stdClass();
-            return $result;
-        }
         $mapped = new \stdClass();
         if (isset($data->entityType)) {
             $mapped->type = $data->entityType;

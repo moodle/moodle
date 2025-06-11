@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class cc11_quiz extends entities11 {
 
-    public function generate_node_question_categories () {
+    public function generate_node_question_categories() {
 
         $instances = $this->generate_instances();
 
@@ -36,7 +36,7 @@ class cc11_quiz extends entities11 {
 
     }
 
-    public function generate_node_course_modules_mod () {
+    public function generate_node_course_modules_mod() {
 
         cc112moodle::log_action('Creating Quiz mods');
 
@@ -55,14 +55,14 @@ class cc11_quiz extends entities11 {
 
     }
 
-    private function create_node_course_modules_mod_quiz_feedback () {
+    private function create_node_course_modules_mod_quiz_feedback() {
 
         $sheet_question_mod_feedback = cc112moodle::loadsheet(SHEET_COURSE_SECTIONS_SECTION_MODS_MOD_QUIZ_FEEDBACK);
 
         return $sheet_question_mod_feedback;
     }
 
-    private function generate_instances () {
+    private function generate_instances() {
 
         $last_instance_id = 0;
         $last_question_id = 0;
@@ -118,7 +118,7 @@ class cc11_quiz extends entities11 {
     }
 
 
-    private function create_node_course_modules_mod ($instance) {
+    private function create_node_course_modules_mod($instance) {
 
         $sheet_question_mod = cc112moodle::loadsheet(SHEET_COURSE_SECTIONS_SECTION_MODS_MOD_QUIZ);
 
@@ -155,7 +155,7 @@ class cc11_quiz extends entities11 {
         return $node_question_mod;
     }
 
-    private function get_global_config ($assessment, $option, $default_value, $replace_values = '') {
+    private function get_global_config($assessment, $option, $default_value, $replace_values = '') {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
         $metadata = $xpath->query('/xmlns:questestinterop/xmlns:assessment/xmlns:qtimetadata/xmlns:qtimetadatafield');
@@ -183,7 +183,7 @@ class cc11_quiz extends entities11 {
         return $response;
     }
 
-    private function create_node_course_modules_mod_quiz_question_instances ($instance) {
+    private function create_node_course_modules_mod_quiz_question_instances($instance) {
 
         $node_course_module_mod_quiz_questions_instances = '';
         $sheet_question_mod_instance = cc112moodle::loadsheet(SHEET_COURSE_SECTIONS_SECTION_MODS_MOD_QUIZ_QUESTION_INSTANCE);
@@ -203,7 +203,7 @@ class cc11_quiz extends entities11 {
         return $node_course_module_mod_quiz_questions_instances;
     }
 
-    private function get_questions_string ($instance) {
+    private function get_questions_string($instance) {
 
         $questions_string = '';
 
@@ -218,7 +218,7 @@ class cc11_quiz extends entities11 {
         return $questions_string;
     }
 
-    private function create_node_course_question_categories ($instances) {
+    private function create_node_course_question_categories($instances) {
 
         $sheet_question_categories = cc112moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES);
 
@@ -241,7 +241,7 @@ class cc11_quiz extends entities11 {
         return $node_course_question_categories;
     }
 
-    private function create_node_course_question_categories_question_category ($instance) {
+    private function create_node_course_question_categories_question_category($instance) {
 
         $sheet_question_categories_quetion_category = cc112moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY);
 
@@ -265,7 +265,7 @@ class cc11_quiz extends entities11 {
         return $node_question_categories;
     }
 
-    private function create_node_course_question_categories_question_category_question ($instance) {
+    private function create_node_course_question_categories_question_category_question($instance) {
 
         global $USER;
 
@@ -326,7 +326,7 @@ class cc11_quiz extends entities11 {
         return $node_course_question_categories_question;
     }
 
-    private function get_questions ($assessment, &$last_question_id, &$last_answer_id, $root_path, $is_question_bank) {
+    private function get_questions($assessment, &$last_question_id, &$last_answer_id, $root_path, $is_question_bank) {
 
         $questions = array();
 
@@ -388,7 +388,7 @@ class cc11_quiz extends entities11 {
         return $questions;
     }
 
-    private function str_replace_once ($search, $replace, $subject) {
+    private function str_replace_once($search, $replace, $subject) {
 
         $first_char = strpos($subject, $search);
 
@@ -419,7 +419,7 @@ class cc11_quiz extends entities11 {
         return $result;
     }
 
-    private function get_general_feedback ($assessment, $question_identifier) {
+    private function get_general_feedback($assessment, $question_identifier) {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
 
@@ -464,7 +464,7 @@ class cc11_quiz extends entities11 {
         return $feedback;
     }
 
-    private function get_feedback ($assessment, $identifier, $item_identifier, $question_type) {
+    private function get_feedback($assessment, $identifier, $item_identifier, $question_type) {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
 
@@ -509,7 +509,7 @@ class cc11_quiz extends entities11 {
         return $feedback;
     }
 
-    private function get_answers_fib ($question_identifier, $identifier, $assessment, &$last_answer_id) {
+    private function get_answers_fib($question_identifier, $identifier, $assessment, &$last_answer_id) {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
 
@@ -602,7 +602,7 @@ class cc11_quiz extends entities11 {
         return $answers_fib;
     }
 
-    private function get_answers_pattern_match ($question_identifier, $identifier, $assessment, &$last_answer_id) {
+    private function get_answers_pattern_match($question_identifier, $identifier, $assessment, &$last_answer_id) {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
 
@@ -678,7 +678,7 @@ class cc11_quiz extends entities11 {
     }
 
 
-    private function get_answers ($identifier, $assessment, &$last_answer_id) {
+    private function get_answers($identifier, $assessment, &$last_answer_id) {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
 
@@ -786,7 +786,7 @@ class cc11_quiz extends entities11 {
 
     }
 
-    private function get_score ($assessment, $identifier, $question_identifier) {
+    private function get_score($assessment, $identifier, $question_identifier) {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
 
@@ -815,7 +815,7 @@ class cc11_quiz extends entities11 {
         return $score;
     }
 
-    private function create_node_course_question_categories_question_category_question_multiple_choice ($question) {
+    private function create_node_course_question_categories_question_category_question_multiple_choice($question) {
 
         $node_course_question_categories_question_answer = '';
         $sheet_question_categories_question = cc112moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_MULTIPLE_CHOICE);
@@ -843,7 +843,7 @@ class cc11_quiz extends entities11 {
         return $node_question_categories_question;
     }
 
-    private function create_node_course_question_categories_question_category_question_eesay ($question) {
+    private function create_node_course_question_categories_question_category_question_eesay($question) {
 
         $node_course_question_categories_question_answer = '';
 
@@ -863,7 +863,7 @@ class cc11_quiz extends entities11 {
         return $node_question_categories_question;
     }
 
-    private function create_node_course_question_categories_question_category_question_shortanswer ($question) { //, &$fib_questions) {
+    private function create_node_course_question_categories_question_category_question_shortanswer($question) { //, &$fib_questions) {
 
         $sheet_question_categories_question = cc112moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_SHORTANSWER);
         $node_course_question_categories_question_answer = '';
@@ -902,7 +902,7 @@ class cc11_quiz extends entities11 {
 
     }
 
-    private function create_node_course_question_categories_question_category_question_true_false ($question) {
+    private function create_node_course_question_categories_question_category_question_true_false($question) {
 
         $node_course_question_categories_question_answer = '';
 
@@ -948,7 +948,7 @@ class cc11_quiz extends entities11 {
         return $node_question_categories_question;
     }
 
-    private function get_answers_string ($answers) {
+    private function get_answers_string($answers) {
 
         $answer_string = '';
 
@@ -964,7 +964,7 @@ class cc11_quiz extends entities11 {
 
     }
 
-    private function create_node_course_question_categories_question_category_question_answer ($answer) {
+    private function create_node_course_question_categories_question_category_question_answer($answer) {
 
         $sheet_question_categories_question_answer = cc112moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_ANSWER);
 
@@ -983,7 +983,7 @@ class cc11_quiz extends entities11 {
         return $node_question_categories_question_answer;
     }
 
-    private function get_question_type ($identifier, $assessment) {
+    private function get_question_type($identifier, $assessment) {
 
         $xpath = cc112moodle::newx_path($assessment, cc112moodle::getquizns());
 

@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 use core_component;
 use core_course\local\entity\content_item;
 use core_course\local\entity\lang_string_title;
-use core_course\local\entity\string_title;
 
 /**
  * The class content_item_repository, for reading content_items.
@@ -133,6 +132,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             $help = $this->get_core_module_help_string($mod->name);
             $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $purpose = plugin_supports('mod', $mod->name, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
+            $isbranded = component_callback('mod_' . $mod->name, 'is_branded', [], false);
 
             $contentitem = new content_item(
                 $mod->id,
@@ -144,6 +144,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 $archetype,
                 'mod_' . $mod->name,
                 $purpose,
+                $isbranded,
             );
 
             $modcontentitemreference = clone($contentitem);
@@ -195,6 +196,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             $help = $this->get_core_module_help_string($mod->name);
             $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $purpose = plugin_supports('mod', $mod->name, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
+            $isbranded = component_callback('mod_' . $mod->name, 'is_branded', [], false);
 
             $icon = 'monologo';
             // Quick check for monologo icons.
@@ -214,6 +216,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 $archetype,
                 'mod_' . $mod->name,
                 $purpose,
+                $isbranded,
             );
 
             $modcontentitemreference = clone($contentitem);

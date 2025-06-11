@@ -52,20 +52,4 @@ abstract class user_merged extends \core\event\base {
         $this->data['level'] = self::LEVEL_OTHER; // fixing backwards compatibility
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
-
-    /**
-     * It will allow legacy plugins to continue to listen user_merged events
-     * without upgrading their listeners.
-     *
-     * @return \stdClass legacy object
-     */
-    protected function get_legacy_eventdata() {
-        $data = new \stdClass();
-        $userinvolded = $this->other['usersinvolved'];
-        $data->newid = $userinvolded['toid'];
-        $data->oldid = $userinvolded['fromid'];
-        $data->log = $this->other['log'];
-        $data->timemodified = $this->timecreated;
-        return $data;
-    }
 }

@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class cc11_basiclti extends entities11 {
 
-    public function generate_node () {
+    public function generate_node() {
 
         cc2moodle::log_action('Creating BasicLTI mods');
 
@@ -40,7 +40,7 @@ class cc11_basiclti extends entities11 {
         return $response;
     }
 
-    private function create_node_course_modules_mod_basiclti ($instance) {
+    private function create_node_course_modules_mod_basiclti($instance) {
 
         $sheet_mod_basiclti = cc112moodle::loadsheet(SHEET_COURSE_SECTIONS_SECTION_MODS_MOD_BASICLTI);
 

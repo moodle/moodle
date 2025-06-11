@@ -62,6 +62,8 @@ use tool_ally\local_content;
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class event_handlers_test extends abstract_testcase {
@@ -436,11 +438,11 @@ MSG;
 
         // Get content for section 0 and check it contains default section name 'General' as title for intro section.
         $content = local_content::get_html_content_by_entity_id($entityid0);
-        $this->assertEquals('Topic 0', $content->title);
+        $this->assertEquals('Section 0', $content->title);
 
         // Get content for section 1 and check it contains default section name 'Topic 1' as title for section 1.
         $content = local_content::get_html_content_by_entity_id($entityid1);
-        $this->assertEquals('Topic 1', $content->title);
+        $this->assertEquals('Section 1', $content->title);
 
         // Update section1's title and content.
         $section1->name = 'Altered section name';

@@ -37,16 +37,18 @@ require_once($CFG->dirroot . '/question/type/match/edit_match_form.php');
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_type_test extends \advanced_testcase {
+final class question_type_test extends \advanced_testcase {
     /** @var qtype_match instance of the question type class to test. */
     protected $qtype;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->qtype = new qtype_match();
     }
 
     protected function tearDown(): void {
         $this->qtype = null;
+        parent::tearDown();
     }
 
     protected function get_test_question_data() {
@@ -105,15 +107,15 @@ class question_type_test extends \advanced_testcase {
         return $q;
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'match');
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_make_question_instance() {
+    public function test_make_question_instance(): void {
         $questiondata = \test_question_maker::get_question_data('match', 'trickynums');
         $question = question_bank::make_question($questiondata);
         $this->assertEquals($questiondata->name, $question->name);
@@ -133,12 +135,12 @@ class question_type_test extends \advanced_testcase {
         $this->assertEquals([14 => 14, 15 => 15], $question->right);
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $q = $this->get_test_question_data();
         $this->assertEqualsWithDelta(0.3333333, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
-    public function test_get_possible_responses() {
+    public function test_get_possible_responses(): void {
         $q = $this->get_test_question_data();
 
         $this->assertEquals(array(
@@ -161,7 +163,7 @@ class question_type_test extends \advanced_testcase {
     }
 
 
-    public function test_question_saving_foursubq() {
+    public function test_question_saving_foursubq(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -188,7 +190,7 @@ class question_type_test extends \advanced_testcase {
 
         foreach ($questiondata as $property => $value) {
             if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'stamp',
-                'versionid', 'questionbankentryid'])) {
+                'versionid', 'questionbankentryid', 'hints'])) {
                 if (!empty($actualquestiondata)) {
                     $this->assertEquals($value, $actualquestiondata->$property);
                 }
@@ -201,7 +203,12 @@ class question_type_test extends \advanced_testcase {
             }
         }
 
-        $this->assertObjectHasAttribute('subquestions', $actualquestiondata->options);
+        $this->assertCount(1, $actualquestiondata->hints);
+        $hint = array_pop($actualquestiondata->hints);
+        $this->assertEquals($formdata->hint[0]['text'], $hint->hint);
+        $this->assertEquals($formdata->hint[0]['format'], $hint->hintformat);
+
+        $this->assertObjectHasProperty('subquestions', $actualquestiondata->options);
 
         $subqpropstoignore = array('id');
         foreach ($questiondata->options->subquestions as $subq) {

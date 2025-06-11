@@ -26,7 +26,7 @@ if (!defined('ADODB_DIR')) die();
 
 /*
  * These constants are used to set define MetaColumns() method's behavior.
- * - METACOLUMNS_RETURNS_ACTUAL makes the driver return the actual type, 
+ * - METACOLUMNS_RETURNS_ACTUAL makes the driver return the actual type,
  *   like all other drivers do (default)
  * - METACOLUMNS_RETURNS_META is provided for legacy compatibility (makes
  *   driver behave as it did prior to v5.21)
@@ -35,7 +35,7 @@ if (!defined('ADODB_DIR')) die();
  */
 DEFINE('METACOLUMNS_RETURNS_ACTUAL', 0);
 DEFINE('METACOLUMNS_RETURNS_META', 1);
-	
+
 /*--------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------*/
 
@@ -57,7 +57,7 @@ class ADODB_odbc extends ADOConnection {
 	var $_autocommit = true;
 	var $_lastAffectedRows = 0;
 	var $uCaseTables = true; // for meta* functions, uppercase table names
-	
+
 	/*
 	 * Tells the metaColumns feature whether to return actual or meta type
 	 */
@@ -81,7 +81,9 @@ class ADODB_odbc extends ADOConnection {
 		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		else $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword,$this->curmode);
 		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
-		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
+		if ($this->connectStmt) {
+			$this->Execute($this->connectStmt);
+		}
 
 		return $this->_connectionID != false;
 	}
@@ -102,7 +104,9 @@ class ADODB_odbc extends ADOConnection {
 
 		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
 		if ($this->_connectionID && $this->autoRollback) @odbc_rollback($this->_connectionID);
-		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
+		if ($this->connectStmt) {
+			$this->Execute($this->connectStmt);
+		}
 
 		return $this->_connectionID != false;
 	}
@@ -469,7 +473,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[3];
 				if ($this->metaColumnsReturnType == METACOLUMNS_RETURNS_META)
-					/* 
+					/*
 				    * This is the broken, original value
 					*/
 					$fld->type = $this->ODBCTypes($rs->fields[4]);
@@ -514,7 +518,6 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 		return array($sql,$stmt,false);
 	}
 
-	/* returns queryID or false */
 	function _query($sql,$inputarr=false)
 	{
 		$last_php_error = $this->resetLastError();

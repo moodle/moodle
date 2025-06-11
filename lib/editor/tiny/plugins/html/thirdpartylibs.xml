@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror</name>
+    <description>CodeMirror is a versatile text editor implemented in JavaScript for the browser.</description>
+    <version>6.0.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/autocomplete</name>
+    <description>Autocompletion for the CodeMirror code editor.</description>
+    <version>6.16.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/autocomplete</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/commands</name>
+    <description>Collection of editing commands for the CodeMirror code editor.</description>
+    <version>6.5.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/commands</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/lang-css</name>
+    <description>CSS language support for the CodeMirror code editor.</description>
+    <version>6.2.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/lang-css</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/lang-html</name>
+    <description>HTML language support for the CodeMirror code editor.</description>
+    <version>6.4.9</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/lang-html</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/lang-javascript</name>
+    <description>JavaScript language support for the CodeMirror code editor.</description>
+    <version>6.2.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/lang-javascript</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/lang-xml</name>
+    <description>XML language support for the CodeMirror code editor.</description>
+    <version>6.1.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/lang-xml</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/language</name>
+    <description>Language support infrastructure for the CodeMirror code editor.</description>
+    <version>6.10.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/language</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/lint</name>
+    <description>Linting support for the CodeMirror code editor.</description>
+    <version>6.7.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/lint</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/search</name>
+    <description>Search functionality for the CodeMirror code editor.</description>
+    <version>6.5.6</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/search</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/state</name>
+    <description>Editor state data structures for the CodeMirror code editor.</description>
+    <version>6.4.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/state</repository>
+  </library>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror/view</name>
+    <description>DOM view component for the CodeMirror code editor.</description>
+    <version>6.26.3</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/view</repository>
+  </library>
+  <library>
+    <location>amd/src/beautify</location>
+    <name>js-beautify</name>
+    <description>Beautifier for javascript.</description>
+    <version>1.15.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/beautifier/js-beautify/</repository>
+  </library>
+</libraries>

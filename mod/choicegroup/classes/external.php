@@ -44,10 +44,10 @@ class mod_choicegroup_external extends external_api {
      */
     public static function get_choicegroup_options_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'choicegroupid' => new external_value(PARAM_INT, 'Choice group instance id'),
-                'userid' => new external_value(PARAM_INT, 'User id')
-            )
+                'userid' => new external_value(PARAM_INT, 'User id'),
+            ]
         );
     }
 
@@ -56,20 +56,21 @@ class mod_choicegroup_external extends external_api {
      *
      * @param int $choicegroupid The choice group id.
      * @param int $userid The user id.
-     * @param boolean $alloptionsdisabled True when all the options should be disabled, because activity is not open or a limit has been reached.
+     * @param boolean $alloptionsdisabled True when all the options should be disabled,
+     * because activity is not open or a limit has been reached.
      * @return array The choice group options.
      */
     public static function get_choicegroup_options($choicegroupid, $userid, $alloptionsdisabled = false) {
-        global $CFG, $choicegroup_groups;
+        global $CFG, $choicegroupgroups;
 
-        $result = array();
-        $returnedoptions = array();
-        $warnings = array();
+        $result = [];
+        $returnedoptions = [];
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'choicegroupid' => $choicegroupid,
-            'userid' => $userid
-        );
+            'userid' => $userid,
+        ];
         $params = self::validate_parameters(self::get_choicegroup_options_parameters(), $params);
         $choicegroup = choicegroup_get_choicegroup($choicegroupid);
         $cm = get_coursemodule_from_instance('choicegroup', $choicegroupid);
@@ -84,10 +85,10 @@ class mod_choicegroup_external extends external_api {
 
         foreach ($choicegroup->option as $optionid => $text) {
             if (isset($text)) {
-                $option = array();
+                $option = [];
                 $option['id'] = $optionid;
                 $option['groupid'] = $text;
-                $option['name'] = $choicegroup_groups[$text]->name;
+                $option['name'] = $choicegroupgroups[$text]->name;
                 $option['maxanswers'] = $choicegroup->maxanswers[$optionid];
                 $option['displaylayout'] = $choicegroup->display;
 
@@ -99,7 +100,7 @@ class mod_choicegroup_external extends external_api {
                 // Check if the option has been answered previously by the user.
                 $option['checked'] = false;
                 if (is_array($answers)) {
-                    foreach($answers as $answer) {
+                    foreach ($answers as $answer) {
                         if ($answer && $text == $answer->id) {
                             $option['checked'] = true;
                         }
@@ -118,7 +119,7 @@ class mod_choicegroup_external extends external_api {
             }
         }
 
-        $result = array();
+        $result = [];
         $result['options'] = $returnedoptions;
         $result['warnings'] = $warnings;
         return $result;
@@ -132,10 +133,10 @@ class mod_choicegroup_external extends external_api {
     public static function get_choicegroup_options_returns() {
 
         return new external_single_structure(
-            array(
+            [
                 'options' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'id' => new external_value(PARAM_INT, 'Option id'),
                             'groupid' => new external_value(PARAM_INT, 'Group id'),
                             'name' => new external_value(PARAM_RAW, 'Group choice name'),
@@ -144,11 +145,11 @@ class mod_choicegroup_external extends external_api {
                             'countanswers' => new external_value(PARAM_INT, 'Current number of answers', VALUE_OPTIONAL),
                             'checked' => new external_value(PARAM_BOOL, 'Checked', VALUE_OPTIONAL),
                             'disabled' => new external_value(PARAM_BOOL, 'Disabled', VALUE_OPTIONAL),
-                        )
+                        ]
                     )
                 ),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -159,9 +160,9 @@ class mod_choicegroup_external extends external_api {
      */
     public static function view_choicegroup_parameters() {
         return new external_function_parameters(
-            array(
-                'choicegroupid' => new external_value(PARAM_INT, 'Choice group instance id')
-            )
+            [
+                'choicegroupid' => new external_value(PARAM_INT, 'Choice group instance id'),
+            ]
         );
     }
 
@@ -175,24 +176,24 @@ class mod_choicegroup_external extends external_api {
     public static function view_choicegroup($choicegroupid) {
         global $DB;
 
-        $params = array(
-            'choicegroupid' => $choicegroupid
-        );
+        $params = [
+            'choicegroupid' => $choicegroupid,
+        ];
         $params = self::validate_parameters(self::view_choicegroup_parameters(), $params);
-        $warnings = array();
+        $warnings = [];
 
         // Request and permission validation.
-        $choicegroup = $DB->get_record('choicegroup', array('id' => $params['choicegroupid']), '*', MUST_EXIST);
+        $choicegroup = $DB->get_record('choicegroup', ['id' => $params['choicegroupid']], '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($choicegroup, 'choicegroup');
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
         require_capability('mod/choicegroup:choose', $context);
 
-        $event = \mod_choicegroup\event\course_module_viewed::create(array(
+        $event = \mod_choicegroup\event\course_module_viewed::create([
             'objectid' => $choicegroup->id,
             'context' => $context,
-        ));
+        ]);
         $event->add_record_snapshot('course', $course);
         $event->add_record_snapshot('choicegroup', $choicegroup);
         $event->trigger();
@@ -200,7 +201,7 @@ class mod_choicegroup_external extends external_api {
         $completion = new completion_info($course);
         $completion->set_module_viewed($cm);
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -213,10 +214,10 @@ class mod_choicegroup_external extends external_api {
      */
     public static function view_choicegroup_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'Status: true if success'),
-                'warnings' => new external_warnings()
-            )
+                'warnings' => new external_warnings(),
+            ]
         );
     }
 
@@ -227,20 +228,20 @@ class mod_choicegroup_external extends external_api {
      */
     public static function submit_choicegroup_response_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'choicegroupid' => new external_value(PARAM_INT, 'Choice group instance id'),
                 'data' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name' => new external_value(PARAM_RAW, 'Data name'),
                             'value' => new external_value(PARAM_RAW, 'Data value'),
-                        )
+                        ]
                     ),
                     'The data to be saved',
                     VALUE_DEFAULT,
-                    array()
-                )
-            )
+                    []
+                ),
+            ]
         );
     }
 
@@ -254,12 +255,12 @@ class mod_choicegroup_external extends external_api {
     public static function submit_choicegroup_response($choicegroupid, $data) {
         global $CFG, $DB, $USER;
 
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
+        $params = [
             'choicegroupid' => $choicegroupid,
-            'data' => $data
-        );
+            'data' => $data,
+        ];
 
         $params = self::validate_parameters(self::submit_choicegroup_response_parameters(), $params);
 
@@ -283,7 +284,7 @@ class mod_choicegroup_external extends external_api {
             $choicegroup->multipleenrollmentspossible
         );
         if (empty($responses)) {
-            // Update completion state
+            // Update completion state.
             $completion = new completion_info($course);
             if ($completion->is_enabled($cm) && $choicegroup->completionsubmit) {
                 $completion->update_state($cm, COMPLETION_INCOMPLETE);
@@ -292,18 +293,18 @@ class mod_choicegroup_external extends external_api {
 
         if (!choicegroup_get_user_answer($choicegroup, $USER) || $choicegroup->allowupdate) {
             if ($choicegroup->multipleenrollmentspossible) {
-                foreach($choicegroup->option as $optionid => $text) {
+                foreach ($choicegroup->option as $optionid => $text) {
                     if (in_array($optionid, $responses)) {
                         choicegroup_user_submit_response($optionid, $choicegroup, $USER->id, $course, $cm);
                     } else {
                         // Remove group selection if selected.
                         if (groups_is_member($text, $USER->id)) {
-                            $answer_value_group = $DB->get_record('groups', array('id' => $text), 'id, name', MUST_EXIST);
-                            groups_remove_member($answer_value_group->id, $USER->id);
-                            $eventparams = array(
+                            $answervaluegroup = $DB->get_record('groups', ['id' => $text], 'id, name', MUST_EXIST);
+                            groups_remove_member($answervaluegroup->id, $USER->id);
+                            $eventparams = [
                                 'context' => $context,
-                                'objectid' => $choicegroup->id
-                            );
+                                'objectid' => $choicegroup->id,
+                            ];
                             $event = \mod_choicegroup\event\choice_removed::create($eventparams);
                             $event->add_record_snapshot('course_modules', $cm);
                             $event->add_record_snapshot('course', $course);
@@ -312,7 +313,7 @@ class mod_choicegroup_external extends external_api {
                         }
                     }
                 }
-            } else { // !multipleenrollmentspossible
+            } else { // When !multipleenrollmentspossible.
                 if (count($responses) == 1) {
                     $responses = reset($responses);
                     choicegroup_user_submit_response($responses, $choicegroup, $USER->id, $course, $cm);
@@ -322,7 +323,7 @@ class mod_choicegroup_external extends external_api {
             throw new moodle_exception('missingrequiredcapability', 'webservice', '', 'allowupdate');
         }
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -336,10 +337,10 @@ class mod_choicegroup_external extends external_api {
     public static function submit_choicegroup_response_returns() {
 
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'Status: true if success'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
@@ -350,13 +351,13 @@ class mod_choicegroup_external extends external_api {
      * @return array The optionid from the selected responses.
      */
     protected static function parse_data_to_responses($data, $allowmultiple) {
-        $responses = array();
-        foreach($data as $index => $datavalue) {
+        $responses = [];
+        foreach ($data as $index => $datavalue) {
             $name = $datavalue['name'];
             $value = $datavalue['value'];
             if ($allowmultiple) {
                 if ($name != 'responses' && $value === 'true') {
-                    $responses[] = substr($name, strrpos($name, '_')+1);
+                    $responses[] = substr($name, strrpos($name, '_') + 1);
                 }
             } else if ($name === 'responses') {
                 $responses[] = $value;
@@ -374,9 +375,9 @@ class mod_choicegroup_external extends external_api {
      */
     public static function delete_choicegroup_responses_parameters() {
         return new external_function_parameters (
-            array(
+            [
                 'choicegroupid' => new external_value(PARAM_INT, 'Choice group instance id'),
-            )
+            ]
         );
     }
 
@@ -391,11 +392,11 @@ class mod_choicegroup_external extends external_api {
         global $USER, $DB;
 
         $status = false;
-        $warnings = array();
+        $warnings = [];
 
-        $params = array(
-            'choicegroupid' => $choicegroupid
-        );
+        $params = [
+            'choicegroupid' => $choicegroupid,
+        ];
 
         $params = self::validate_parameters(self::submit_choicegroup_response_parameters(), $params);
 
@@ -417,7 +418,7 @@ class mod_choicegroup_external extends external_api {
         $answergiven = choicegroup_get_user_answer($choicegroup, $USER, true);
         if (!empty($answergiven)) {
             if ($choicegroup->allowupdate && !$choicegroup->multipleenrollmentspossible) {
-                $params = array('groupid' => reset($answergiven)->id, 'userid' => $USER->id);
+                $params = ['groupid' => reset($answergiven)->id, 'userid' => $USER->id];
                 $groupmember = $DB->get_record('groups_members', $params, 'id', MUST_EXIST);
                 $status = choicegroup_delete_responses([$groupmember->id], $choicegroup, $cm, $course);
             } else {
@@ -428,10 +429,10 @@ class mod_choicegroup_external extends external_api {
             $status = true;
         }
 
-        $result = array(
+        $result = [
             'status' => $status,
-            'warnings' => $warnings
-        );
+            'warnings' => $warnings,
+        ];
         return $result;
     }
 
@@ -442,10 +443,10 @@ class mod_choicegroup_external extends external_api {
      */
     public static function delete_choicegroup_responses_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status, True if everything went right'),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 

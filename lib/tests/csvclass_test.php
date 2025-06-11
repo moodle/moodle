@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/lib/csvlib.class.php');
  * @copyright  2012 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class csvclass_test extends \advanced_testcase {
+final class csvclass_test extends \advanced_testcase {
 
     protected $testdata = array();
     protected $teststring = '';
@@ -41,6 +41,7 @@ class csvclass_test extends \advanced_testcase {
     protected $teststring4 = '';
 
     protected function setUp(): void {
+        parent::setUp();
 
         $this->resetAfterTest();
 
@@ -82,7 +83,7 @@ class csvclass_test extends \advanced_testcase {
 ';
     }
 
-    public function test_csv_functions() {
+    public function test_csv_functions(): void {
         global $CFG;
         $csvexport = new csv_export_writer();
         $csvexport->set_filename('unittest');

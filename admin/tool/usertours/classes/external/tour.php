@@ -14,23 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Web Service functions for steps.
- *
- * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_multiple_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use tool_usertours\tour as tourinstance;
 use tool_usertours\step;
 
@@ -53,10 +43,10 @@ class tour extends external_api {
         global $PAGE;
 
         $params = self::validate_parameters(self::fetch_and_start_tour_parameters(), [
-                'tourid'    => $tourid,
-                'context'   => $context,
-                'pageurl'   => $pageurl,
-            ]);
+            'tourid' => $tourid,
+            'context' => $context,
+            'pageurl' => $pageurl,
+        ]);
 
         $context = \context_helper::instance_by_id($params['context']);
         self::validate_context($context);
@@ -70,8 +60,8 @@ class tour extends external_api {
 
         \tool_usertours\event\tour_started::create([
             'contextid' => $context->id,
-            'objectid'  => $tour->get_id(),
-            'other'     => [
+            'objectid' => $tour->get_id(),
+            'other' => [
                 'pageurl' => $params['pageurl'],
             ],
         ])->trigger();
@@ -88,9 +78,9 @@ class tour extends external_api {
      */
     public static function fetch_and_start_tour_parameters() {
         return new external_function_parameters([
-            'tourid'    => new external_value(PARAM_INT, 'Tour ID'),
-            'context'   => new external_value(PARAM_INT, 'Context ID'),
-            'pageurl'   => new external_value(PARAM_URL, 'Page URL'),
+            'tourid' => new external_value(PARAM_INT, 'Tour ID'),
+            'context' => new external_value(PARAM_INT, 'Context ID'),
+            'pageurl' => new external_value(PARAM_URL, 'Page URL'),
         ]);
     }
 
@@ -101,12 +91,12 @@ class tour extends external_api {
      */
     public static function fetch_and_start_tour_returns() {
         return new external_single_structure([
-            'tourconfig'        => new external_single_structure([
-                'name'          => new external_value(PARAM_RAW, 'Tour Name'),
-                'steps'         => new external_multiple_structure(self::step_structure_returns()),
-                'endtourlabel'  => new external_value(PARAM_RAW, 'Label of the end tour button'),
+            'tourconfig' => new external_single_structure([
+                'name' => new external_value(PARAM_RAW, 'Tour Name'),
+                'steps' => new external_multiple_structure(self::step_structure_returns()),
+                'endtourlabel' => new external_value(PARAM_RAW, 'Label of the end tour button'),
                 'displaystepnumbers' => new external_value(PARAM_BOOL, 'display step number'),
-            ], 'Tour config', VALUE_OPTIONAL)
+            ], 'Tour config', VALUE_OPTIONAL),
         ]);
     }
 
@@ -120,10 +110,10 @@ class tour extends external_api {
      */
     public static function reset_tour($tourid, $context, $pageurl) {
         $params = self::validate_parameters(self::reset_tour_parameters(), [
-                'tourid'    => $tourid,
-                'context'   => $context,
-                'pageurl'   => $pageurl,
-            ]);
+            'tourid' => $tourid,
+            'context' => $context,
+            'pageurl' => $pageurl,
+        ]);
 
         $context = \context_helper::instance_by_id($params['context']);
         self::validate_context($context);
@@ -140,9 +130,9 @@ class tour extends external_api {
 
                 \tool_usertours\event\tour_reset::create([
                     'contextid' => $context->id,
-                    'objectid'  => $params['tourid'],
-                    'other'     => [
-                        'pageurl'   => $params['pageurl'],
+                    'objectid' => $params['tourid'],
+                    'other' => [
+                        'pageurl' => $params['pageurl'],
                     ],
                 ])->trigger();
                 break;
@@ -159,9 +149,9 @@ class tour extends external_api {
      */
     public static function reset_tour_parameters() {
         return new external_function_parameters([
-            'tourid'    => new external_value(PARAM_INT, 'Tour ID'),
-            'context'   => new external_value(PARAM_INT, 'Context ID'),
-            'pageurl'   => new external_value(PARAM_URL, 'Current page location'),
+            'tourid' => new external_value(PARAM_INT, 'Tour ID'),
+            'context' => new external_value(PARAM_INT, 'Context ID'),
+            'pageurl' => new external_value(PARAM_URL, 'Current page location'),
         ]);
     }
 
@@ -172,7 +162,7 @@ class tour extends external_api {
      */
     public static function reset_tour_returns() {
         return new external_single_structure([
-            'startTour'     => new external_value(PARAM_INT, 'Tour ID', VALUE_OPTIONAL),
+            'startTour' => new external_value(PARAM_INT, 'Tour ID', VALUE_OPTIONAL),
         ]);
     }
 
@@ -188,25 +178,26 @@ class tour extends external_api {
      */
     public static function complete_tour($tourid, $context, $pageurl, $stepid, $stepindex) {
         $params = self::validate_parameters(self::complete_tour_parameters(), [
-                'tourid'    => $tourid,
-                'context'   => $context,
-                'pageurl'   => $pageurl,
-                'stepid'    => $stepid,
-                'stepindex' => $stepindex,
-            ]);
+            'tourid' => $tourid,
+            'context' => $context,
+            'pageurl' => $pageurl,
+            'stepid' => $stepid,
+            'stepindex' => $stepindex,
+        ]);
 
         $context = \context_helper::instance_by_id($params['context']);
         self::validate_context($context);
 
         $tour = tourinstance::instance($params['tourid']);
+
         $tour->mark_user_completed();
 
         \tool_usertours\event\tour_ended::create([
             'contextid' => $context->id,
-            'objectid'  => $params['tourid'],
-            'other'     => [
-                'pageurl'   => $params['pageurl'],
-                'stepid'    => $params['stepid'],
+            'objectid' => $params['tourid'],
+            'other' => [
+                'pageurl' => $params['pageurl'],
+                'stepid' => $params['stepid'],
                 'stepindex' => $params['stepindex'],
             ],
         ])->trigger();
@@ -221,10 +212,10 @@ class tour extends external_api {
      */
     public static function complete_tour_parameters() {
         return new external_function_parameters([
-            'tourid'    => new external_value(PARAM_INT, 'Tour ID'),
-            'context'   => new external_value(PARAM_INT, 'Context ID'),
-            'pageurl'   => new external_value(PARAM_LOCALURL, 'Page URL'),
-            'stepid'    => new external_value(PARAM_INT, 'Step ID'),
+            'tourid' => new external_value(PARAM_INT, 'Tour ID'),
+            'context' => new external_value(PARAM_INT, 'Context ID'),
+            'pageurl' => new external_value(PARAM_LOCALURL, 'Page URL'),
+            'stepid' => new external_value(PARAM_INT, 'Step ID'),
             'stepindex' => new external_value(PARAM_INT, 'Step Number'),
         ]);
     }
@@ -250,12 +241,12 @@ class tour extends external_api {
      */
     public static function step_shown($tourid, $context, $pageurl, $stepid, $stepindex) {
         $params = self::validate_parameters(self::step_shown_parameters(), [
-                'tourid'    => $tourid,
-                'context'   => $context,
-                'pageurl'   => $pageurl,
-                'stepid'    => $stepid,
-                'stepindex' => $stepindex,
-            ]);
+            'tourid' => $tourid,
+            'context' => $context,
+            'pageurl' => $pageurl,
+            'stepid' => $stepid,
+            'stepindex' => $stepindex,
+        ]);
 
         $context = \context_helper::instance_by_id($params['context']);
         self::validate_context($context);
@@ -267,11 +258,11 @@ class tour extends external_api {
 
         \tool_usertours\event\step_shown::create([
             'contextid' => $context->id,
-            'objectid'  => $params['stepid'],
+            'objectid' => $params['stepid'],
 
-            'other'     => [
-                'pageurl'   => $params['pageurl'],
-                'tourid'    => $params['tourid'],
+            'other' => [
+                'pageurl' => $params['pageurl'],
+                'tourid' => $params['tourid'],
                 'stepindex' => $params['stepindex'],
             ],
         ])->trigger();
@@ -286,10 +277,10 @@ class tour extends external_api {
      */
     public static function step_shown_parameters() {
         return new external_function_parameters([
-            'tourid'    => new external_value(PARAM_INT, 'Tour ID'),
-            'context'   => new external_value(PARAM_INT, 'Context ID'),
-            'pageurl'   => new external_value(PARAM_URL, 'Page URL'),
-            'stepid'    => new external_value(PARAM_INT, 'Step ID'),
+            'tourid' => new external_value(PARAM_INT, 'Tour ID'),
+            'context' => new external_value(PARAM_INT, 'Context ID'),
+            'pageurl' => new external_value(PARAM_URL, 'Page URL'),
+            'stepid' => new external_value(PARAM_INT, 'Step ID'),
             'stepindex' => new external_value(PARAM_INT, 'Step Number'),
         ]);
     }
@@ -310,24 +301,47 @@ class tour extends external_api {
      */
     public static function step_structure_returns() {
         return new external_single_structure([
-            'title'             => new external_value(PARAM_RAW,
-                    'Step Title'),
-            'content'           => new external_value(PARAM_RAW,
-                    'Step Content'),
-            'element'           => new external_value(PARAM_TEXT,
-                    'Step Target'),
-            'placement'         => new external_value(PARAM_TEXT,
-                    'Step Placement'),
-            'delay'             => new external_value(PARAM_INT,
-                    'Delay before showing the step (ms)', VALUE_OPTIONAL),
-            'backdrop'          => new external_value(PARAM_BOOL,
-                    'Whether a backdrop should be used', VALUE_OPTIONAL),
-            'reflex'            => new external_value(PARAM_BOOL,
-                    'Whether to move to the next step when the target element is clicked', VALUE_OPTIONAL),
-            'orphan'            => new external_value(PARAM_BOOL,
-                    'Whether to display the step even if it could not be found', VALUE_OPTIONAL),
-            'stepid'            => new external_value(PARAM_INT,
-                    'The actual ID of the step', VALUE_OPTIONAL),
+            'title' => new external_value(
+                PARAM_RAW,
+                'Step Title'
+            ),
+            'content' => new external_value(
+                PARAM_RAW,
+                'Step Content'
+            ),
+            'element' => new external_value(
+                PARAM_TEXT,
+                'Step Target'
+            ),
+            'placement' => new external_value(
+                PARAM_TEXT,
+                'Step Placement'
+            ),
+            'delay' => new external_value(
+                PARAM_INT,
+                'Delay before showing the step (ms)',
+                VALUE_OPTIONAL
+            ),
+            'backdrop' => new external_value(
+                PARAM_BOOL,
+                'Whether a backdrop should be used',
+                VALUE_OPTIONAL
+            ),
+            'reflex' => new external_value(
+                PARAM_BOOL,
+                'Whether to move to the next step when the target element is clicked',
+                VALUE_OPTIONAL
+            ),
+            'orphan' => new external_value(
+                PARAM_BOOL,
+                'Whether to display the step even if it could not be found',
+                VALUE_OPTIONAL
+            ),
+            'stepid' => new external_value(
+                PARAM_INT,
+                'The actual ID of the step',
+                VALUE_OPTIONAL
+            ),
         ]);
     }
 }

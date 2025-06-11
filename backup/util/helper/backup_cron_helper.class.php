@@ -17,20 +17,15 @@
 /**
  * Utility helper for automated backups run through cron.
  *
+ * This class is an abstract class with methods that can be called to aid the
+ * running of automated backups over cron.
+ *
  * @package    core
  * @subpackage backup
  * @copyright  2010 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * This class is an abstract class with methods that can be called to aid the
- * running of automated backups over cron.
- */
 abstract class backup_cron_automated_helper {
-
     /** Automated backups are active and ready to run */
     const STATE_OK = 0;
     /** Automated backups are disabled and will not be run */
@@ -123,7 +118,7 @@ abstract class backup_cron_automated_helper {
             mtrace("Skipping deleted courses", '...');
             mtrace(sprintf("%d courses", self::remove_deleted_courses_from_schedule()));
             mtrace('Running required automated backups...');
-            cron_trace_time_and_memory();
+            \core\cron::trace_time_and_memory();
 
             mtrace("Getting admin info");
             $admin = get_admin();
@@ -137,9 +132,11 @@ abstract class backup_cron_automated_helper {
             $rs->close();
 
             // Send email to admin if necessary.
-            if ($emailpending) {
-                self::send_backup_status_to_admin($admin);
-            }
+            set_config(
+                'backup_auto_emailpending',
+                $emailpending ? 1 : 0,
+                'backup',
+            );
         } finally {
             // Everything is finished release lock.
             $lock->release();
@@ -188,7 +185,7 @@ abstract class backup_cron_automated_helper {
      * @param stdClass $admin
      * @return array
      */
-    private static function send_backup_status_to_admin($admin) {
+    public static function send_backup_status_to_admin($admin) {
         global $DB, $CFG;
 
         mtrace("Sending email to admin");
@@ -381,12 +378,26 @@ abstract class backup_cron_automated_helper {
         global $DB;
 
         $asynctask = new \core\task\course_backup_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(array(
             'courseid' => $backupcourse->courseid,
             'adminid' => $admin->id
         ));
-        \core\task\manager::queue_adhoc_task($asynctask);
+        $taskid = \core\task\manager::queue_adhoc_task($asynctask);
+
+        // Get the queued tasks.
+        $queuedtasks = [];
+        if ($value = get_config('backup', 'backup_auto_adhoctasks')) {
+            $queuedtasks = explode(',', $value);
+        }
+        if ($taskid) {
+            $queuedtasks[] = (int) $taskid;
+        }
+        // Save the queued tasks.
+        set_config(
+            'backup_auto_adhoctasks',
+            implode(',', $queuedtasks),
+            'backup',
+        );
 
         $backupcourse->laststatus = self::BACKUP_STATUS_QUEUED;
         $DB->update_record('backup_courses', $backupcourse);
@@ -778,18 +789,33 @@ abstract class backup_cron_automated_helper {
      * intentional, since we cannot reliably determine if any modification was made or not.
      */
     protected static function is_course_modified($courseid, $since) {
-        $logmang = get_log_manager();
-        $readers = $logmang->get_readers('core\log\sql_reader');
-        $params = array('courseid' => $courseid, 'since' => $since);
+        global $DB;
+
+        /** @var \core\log\sql_reader[] */
+        $readers = get_log_manager()->get_readers('core\log\sql_reader');
+
+        // Exclude events defined by hook.
+        $hook = new \core_backup\hook\before_course_modified_check();
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
         foreach ($readers as $readerpluginname => $reader) {
+            $params = [
+                'courseid' => $courseid,
+                'since' => $since,
+            ];
             $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
 
-            // Prevent logs of prevous backups causing a false positive.
-            if ($readerpluginname != 'logstore_legacy') {
-                $where .= " and target <> 'course_backup'";
+            $excludeevents = $hook->get_excluded_events();
+            // Prevent logs of previous backups causing a false positive.
+            if ($readerpluginname !== 'logstore_legacy') {
+                $excludeevents[] = '\core\event\course_backup_created';
             }
 
+            if ($excludeevents) {
+                [$notinsql, $notinparams] = $DB->get_in_or_equal($excludeevents, SQL_PARAMS_NAMED, 'eventname', false);
+                $where .= 'AND eventname ' . $notinsql;
+                $params = array_merge($params, $notinparams);
+            }
             if ($reader->get_events_select_exists($where, $params)) {
                 return true;
             }

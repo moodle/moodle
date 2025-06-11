@@ -30,19 +30,20 @@ require_once($CFG->libdir . '/mathslib.php');
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_graded_test extends \advanced_testcase {
+final class user_graded_test extends \advanced_testcase {
 
     /**
      * Tests set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
     /**
      * Tests the event details.
      */
-    public function test_event() {
+    public function test_event(): void {
         global $CFG;
         require_once("$CFG->libdir/gradelib.php");
 
@@ -61,10 +62,6 @@ class user_graded_test extends \advanced_testcase {
 
         $event = \core\event\user_graded::create_from_grade($grade_grade);
 
-        $this->assertEventLegacyLogData(
-            array($course->id, 'grade', 'update', '/report/grader/index.php?id=' . $course->id, $grade_item->itemname . ': ' . fullname($user)),
-            $event
-        );
         $this->assertEquals(\context_course::instance($course->id), $event->get_context());
         $this->assertSame($event->objecttable, 'grade_grades');
         $this->assertEquals($event->objectid, $grade_grade->id);
@@ -91,7 +88,7 @@ class user_graded_test extends \advanced_testcase {
     /**
      * Tests that the event is fired in the correct locations in core.
      */
-    public function test_event_is_triggered() {
+    public function test_event_is_triggered(): void {
         global $DB;
 
         // Create the items we need to test with.

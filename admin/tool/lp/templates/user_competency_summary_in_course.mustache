@@ -49,7 +49,7 @@
         <p>
         <ul class="inline list-inline">
         {{#coursemodules}}
-            <li class="list-inline-item"><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
+            <li class="list-inline-item"><a href="{{url}}"><img class="icon" src="{{iconurl}}" alt=""> {{name}} </a></li>
         {{/coursemodules}}
         {{^coursemodules}}
             <li class="list-inline-item"><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
@@ -81,7 +81,7 @@
         {{#usercompetencycourse}}
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>
-            <span class="badge {{#proficiency}}badge-success{{/proficiency}}{{^proficiency}}badge-danger{{/proficiency}} float-left">
+            <span class="badge {{#proficiency}}bg-success{{/proficiency}}{{^proficiency}}bg-danger{{/proficiency}} text-white float-start">
                 {{proficiencyname}}
             </span>
         </dd>

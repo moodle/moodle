@@ -30,9 +30,9 @@ require_once($CFG->dirroot.'/grade/querylib.php');
  * @copyright 2011 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class querylib_test extends \advanced_testcase {
+final class querylib_test extends \advanced_testcase {
 
-    public function test_grade_get_gradable_activities() {
+    public function test_grade_get_gradable_activities(): void {
         $this->resetAfterTest(true);
 
         $course = $this->getDataGenerator()->create_course();
@@ -51,7 +51,7 @@ class querylib_test extends \advanced_testcase {
         $this->assertTrue(isset($cms[$forum1->cmid]));
     }
 
-    public function test_grade_get_grade_items_for_activity() {
+    public function test_grade_get_grade_items_for_activity(): void {
         $this->resetAfterTest(true);
 
         $course = $this->getDataGenerator()->create_course();

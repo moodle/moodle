@@ -64,16 +64,6 @@ class assessment_reevaluated extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'workshop', 'update aggregate grade', 'view.php?id=' . $this->contextinstanceid,
-                $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

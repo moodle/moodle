@@ -28,10 +28,7 @@ Feature: In a essay question, limit submittable file types
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
-    And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
-    Given I am on the "Quiz 1" "mod_quiz > edit" page logged in as teacher
+    And I am on the "Quiz 1" "mod_quiz > edit" page logged in as teacher
     And I click on "Edit question TF1" "link"
     And I set the field "Allow attachments" to "1"
     And I set the field "Response format" to "No online text"
@@ -42,13 +39,12 @@ Feature: In a essay question, limit submittable file types
     And I set the field "version" to "Always latest"
     Then I log out
 
-  @javascript @_file_upload
+  @javascript
   Scenario: Preview an Essay question and submit a response with a correct filetype.
-    When I log in as "student"
-    And I follow "Manage private files"
-    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
-    And I press "Save changes"
-    And I am on the "Quiz 1" "quiz activity" page
+    Given the following "user private file" exists:
+      | user     | student                      |
+      | filepath | lib/tests/fixtures/empty.txt |
+    When I am on the "Quiz 1" "quiz activity" page logged in as "student"
     And I press "Attempt quiz"
     And I should see "First question"
     And I should see "You can drag and drop files here to add them."
@@ -60,13 +56,12 @@ Feature: In a essay question, limit submittable file types
     And I wait until the page is ready
     Then I should not see "These file types are not allowed here:"
 
-  @javascript @_file_upload
+  @javascript
   Scenario: Preview an Essay question and try to submit a response with an incorrect filetype.
-    When I log in as "student"
-    And I follow "Manage private files"
-    And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
-    And I press "Save changes"
-    And I am on the "Quiz 1" "quiz activity" page
+    Given the following "user private file" exists:
+      | user     | student                             |
+      | filepath | lib/tests/fixtures/upload_users.csv |
+    When I am on the "Quiz 1" "quiz activity" page logged in as "student"
     And I press "Attempt quiz"
     And I should see "First question"
     And I should see "You can drag and drop files here to add them."

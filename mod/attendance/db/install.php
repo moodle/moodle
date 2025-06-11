@@ -29,7 +29,7 @@ function xmldb_attendance_install() {
     global $DB;
 
     $result = true;
-    $arr = array('P' => 2, 'A' => 0, 'L' => 1, 'E' => 1);
+    $arr = ['P' => 2, 'A' => 0, 'L' => 1, 'E' => 1];
     foreach ($arr as $k => $v) {
         $rec = new stdClass;
         $rec->attendanceid = 0;
@@ -42,7 +42,7 @@ function xmldb_attendance_install() {
         $rec->grade = $v;
         $rec->visible = 1;
         $rec->deleted = 0;
-        if (!$DB->record_exists('attendance_statuses', array('attendanceid' => 0, 'acronym' => $rec->acronym))) {
+        if (!$DB->record_exists('attendance_statuses', ['attendanceid' => 0, 'acronym' => $rec->acronym])) {
             $result = $result && $DB->insert_record('attendance_statuses', $rec);
         }
     }

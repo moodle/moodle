@@ -44,7 +44,18 @@ class restore_decode_rule {
 
     protected $cregexp;     // Calculated regular expresion we'll be looking for matches
 
-    public function __construct($linkname, $urltemplate, $mappings) {
+    /** @var bool $urlencoded Whether to use urlencode() on the final URL. */
+    protected bool $urlencoded;
+
+    /**
+     * Constructor
+     *
+     * @param string $linkname How the link has been encoded in backup (CHOICEVIEWBYID, COURSEVIEWBYID...)
+     * @param string $urltemplate How the original URL looks like, with dollar placeholders
+     * @param array|string $mappings Which backup_ids mappings do we need to apply for replacing the placeholders
+     * @param bool $urlencoded Whether to use urlencode() on the final URL (defaults to false)
+     */
+    public function __construct(string $linkname, string $urltemplate, $mappings, bool $urlencoded = false) {
         // Validate all the params are ok
         $this->mappings = $this->validate_params($linkname, $urltemplate, $mappings);
         $this->linkname = $linkname;
@@ -52,6 +63,7 @@ class restore_decode_rule {
         $this->restoreid = 0;
         $this->sourcewwwroot = '';
         $this->targetwwwroot = ''; // yes, uses to be $CFG->wwwroot, and? ;-)
+        $this->urlencoded = $urlencoded;
         $this->cregexp = $this->get_calculated_regexp();
     }
 
@@ -95,6 +107,9 @@ class restore_decode_rule {
 
             } else {            // All mappings found, apply target values to the template
                 $toreplace = str_replace($placeholdersarr, $mappingstargetarr, $toreplace);
+            }
+            if ($this->urlencoded) {
+                $toreplace = urlencode($toreplace);
             }
             // Finally, perform the replacement in original content
             $content = str_replace($tosearch, $toreplace, $content);

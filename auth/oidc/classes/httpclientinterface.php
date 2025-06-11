@@ -25,8 +25,6 @@
 
 namespace auth_oidc;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Interface defining an HTTP client.
  */
@@ -39,5 +37,5 @@ interface httpclientinterface {
      * @param array $options
      * @return bool
      */
-    public function post($url, $params = '', $options = array());
+    public function post($url, $params = '', $options = []);
 }

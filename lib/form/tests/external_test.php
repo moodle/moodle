@@ -26,7 +26,7 @@
 namespace core_form;
 
 use advanced_testcase;
-use external_api;
+use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,12 +38,12 @@ global $CFG;
  * @copyright 2017 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends advanced_testcase {
+final class external_test extends advanced_testcase {
 
     /**
      * Test the core_form_get_filetypes_browser_data external function
      */
-    public function test_get_filetypes_browser_data() {
+    public function test_get_filetypes_browser_data(): void {
 
         $data = external::get_filetypes_browser_data('', true, '');
         $data = external_api::clean_returnvalue(external::get_filetypes_browser_data_returns(), $data);

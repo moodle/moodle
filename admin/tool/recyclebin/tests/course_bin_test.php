@@ -16,6 +16,9 @@
 
 namespace tool_recyclebin;
 
+use mod_quiz\quiz_attempt;
+use stdClass;
+
 /**
  * Recycle bin course tests.
  *
@@ -23,7 +26,7 @@ namespace tool_recyclebin;
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_bin_test extends \advanced_testcase {
+final class course_bin_test extends \advanced_testcase {
 
     /**
      * @var \stdClass $course
@@ -39,6 +42,7 @@ class course_bin_test extends \advanced_testcase {
      * Setup for each test.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -54,7 +58,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Check that our hook is called when an activity is deleted.
      */
-    public function test_pre_course_module_delete_hook() {
+    public function test_pre_course_module_delete_hook(): void {
         global $DB;
 
         // Should have nothing in the recycle bin.
@@ -77,7 +81,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Test that we can restore recycle bin items.
      */
-    public function test_restore() {
+    public function test_restore(): void {
         global $DB;
 
         $startcount = $DB->count_records('course_modules');
@@ -99,7 +103,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Test that we can delete recycle bin items.
      */
-    public function test_delete() {
+    public function test_delete(): void {
         global $DB;
 
         $startcount = $DB->count_records('course_modules');
@@ -124,7 +128,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Test the cleanup task.
      */
-    public function test_cleanup_task() {
+    public function test_cleanup_task(): void {
         global $DB;
 
         set_config('coursebinexpiry', WEEKSECS, 'tool_recyclebin');
@@ -172,7 +176,7 @@ class course_bin_test extends \advanced_testcase {
      * Used to verify that recycle bin is immune to various settings. Provides plugin, name, value for
      * direct usage with set_config()
      */
-    public function recycle_bin_settings_provider() {
+    public static function recycle_bin_settings_provider(): array {
         return [
             'backup/backup_auto_storage moodle' => [[
                 (object)['plugin' => 'backup', 'name' => 'backup_auto_storage', 'value' => 0],
@@ -201,7 +205,7 @@ class course_bin_test extends \advanced_testcase {
      * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
-    public function test_coursemodule_restore_with_userdata($settings) {
+    public function test_coursemodule_restore_with_userdata($settings): void {
         // Force configuration changes from provider.
         foreach ($settings as $setting) {
             // Need to create a directory for backup_auto_destination.
@@ -237,7 +241,7 @@ class course_bin_test extends \advanced_testcase {
         $attempts = quiz_get_user_attempts($cm->instance, $student->id);
         $this->assertEquals(1, count($attempts));
         $attempt = array_pop($attempts);
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertEquals($student->id, $attemptobj->get_userid());
         $this->assertEquals(true, $attemptobj->is_finished());
     }
@@ -249,7 +253,7 @@ class course_bin_test extends \advanced_testcase {
      * @dataProvider recycle_bin_settings_provider
      * @covers ::store_item
      */
-    public function test_coursemodule_restore_with_activity_setting_disabled() {
+    public function test_coursemodule_restore_with_activity_setting_disabled(): void {
 
         // Set the configuration to not include activities in the automated backup.
         set_config('backup_auto_activities', false, 'backup');
@@ -271,7 +275,7 @@ class course_bin_test extends \advanced_testcase {
      * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
-    public function test_coursemodule_restore_without_userdata($settings) {
+    public function test_coursemodule_restore_without_userdata($settings): void {
         // Force configuration changes from provider.
         foreach ($settings as $setting) {
             // Need to create a directory for backup_auto_destination.
@@ -323,17 +327,17 @@ class course_bin_test extends \advanced_testcase {
         quiz_add_quiz_question($numq->id, $quiz);
 
         // Create quiz attempt.
-        $quizobj = \quiz::create($quiz->id, $student->id);
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $student->id);
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $student->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $tosubmit = array(1 => array('answer' => '0'));
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
     }
 }

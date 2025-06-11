@@ -62,7 +62,7 @@
     <div class="row">
         <div class="col align-self-end">
             {{#usescategories}}
-            <a tabindex="0" role="button" class="btn btn-secondary float-right" data-role="addnewcategory">{{#str}}addnewcategory, core_customfield{{/str}}</a>
+            <a tabindex="0" role="button" class="btn btn-secondary float-end" data-role="addnewcategory">{{#str}}addnewcategory, core_customfield{{/str}}</a>
             {{/usescategories}}
         </div>
     </div>
@@ -78,14 +78,15 @@
             <div class="col-6 categoryinstance">
                 {{#usescategories}}
                     <h3>
-                        <span class="movecategory">
-                        {{> core/drag_handle}}</span>{{{nameeditable}}}
-                        <a href="#" data-role="deletecategory" data-id="{{id}}">{{#pix}}
-                            t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}</a>
+                        <span class="movecategory icon-size-3">{{> core/drag_handle}}</span>
+                        {{{nameeditable}}}
+                        <a class="icon-size-3" href="#" data-role="deletecategory" data-id="{{id}}">
+                            {{#pix}} t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}
+                        </a>
                     </h3>
                 {{/usescategories}}
             </div>
-            <div class="col-auto text-right">
+            <div class="col-auto text-end">
                 {{{addfieldmenu}}}
             </div>
         </div>
@@ -96,7 +97,7 @@
                     <th scope="col" class="col-5">{{#str}} customfield, core_customfield {{/str}}</th>
                     <th scope="col" class="col-3">{{#str}} shortname, core_customfield {{/str}}</th>
                     <th scope="col" class="col-2">{{#str}} type, core_customfield {{/str}}</th>
-                    <th scope="col" class="col-2 text-right">{{#str}} action, core_customfield {{/str}}</th>
+                    <th scope="col" class="col-2 text-end">{{#str}} action, core_customfield {{/str}}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -105,7 +106,7 @@
                         <td class="col-5"><span class="movefield">{{> core/drag_handle}}</span>{{{name}}}</td>
                         <td class="col-3">{{{shortname}}}</td>
                         <td class="col-2">{{{type}}}</td>
-                        <td class="col-2 text-right">
+                        <td class="col-2 text-end">
                             <a href="#" data-role="editfield" data-name="{{name}}" data-id="{{id}}">{{#pix}}
                                 t/edit, core, {{#str}} edit, moodle {{/str}} {{/pix}}</a>
                             <a href="#" data-id="{{id}}" data-role="deletefield">{{#pix}}

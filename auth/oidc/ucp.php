@@ -37,7 +37,7 @@ $oidcconnected = (!empty($oidctoken)) ? true : false;
 $oidcloginconnected = ($USER->auth === 'oidc') ? true : false;
 
 if (!is_enabled_auth('oidc')) {
-    throw new \moodle_exception('erroroidcnotenabled', 'auth_oidc');
+    throw new moodle_exception('erroroidcnotenabled', 'auth_oidc');
 }
 
 if (!empty($action)) {
@@ -55,7 +55,7 @@ if (!empty($action)) {
             $auth->disconnect();
         }
     } else {
-        throw new \moodle_exception('errorucpinvalidaction', 'auth_oidc');
+        throw new moodle_exception('errorucpinvalidaction', 'auth_oidc');
     }
 } else {
     $PAGE->set_url('/auth/oidc/ucp.php');

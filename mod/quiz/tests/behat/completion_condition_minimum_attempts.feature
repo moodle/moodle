@@ -1,4 +1,4 @@
-@mod @mod_quiz @core_completion
+@mod @mod_quiz @core_completion @javascript
 Feature: Set a quiz to be marked complete when the student completes a minimum amount of attempts
   In order to ensure a student has completed the quiz before being marked complete
   As a teacher
@@ -16,8 +16,6 @@ Feature: Set a quiz to be marked complete when the student completes a minimum a
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following config values are set as admin:
-      | grade_item_advanced | hiddenuntil |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
@@ -35,26 +33,24 @@ Feature: Set a quiz to be marked complete when the student completes a minimum a
       |   1  | False    |
 
   Scenario: student1 uses up both attempts without passing
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as teacher1
     And "Completed: Test quiz name" "icon" should not exist in the "Test quiz name" "list_item"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And the "Make attempts: 2" completion condition of "Test quiz name" is displayed as "todo"
-    And I follow "Test quiz name"
+    And I click on "Test quiz name" "link" in the "region-main" "region"
     And I press "Re-attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I am on "Course 1" course homepage
     Then the "Make attempts: 2" completion condition of "Test quiz name" is displayed as "done"
-    And I follow "Test quiz name"
+    And I click on "Test quiz name" "link" in the "region-main" "region"
     And the "Make attempts: 2" completion condition of "Test quiz name" is displayed as "done"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz name"
+    And I am on the "Course 1" course page logged in as teacher1
+    And I click on "Test quiz name" "link" in the "region-main" "region"
     And "Test quiz name" should have the "Make attempts: 2" completion condition
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration

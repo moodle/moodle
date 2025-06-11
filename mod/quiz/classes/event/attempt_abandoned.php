@@ -70,43 +70,12 @@ class attempt_abandoned extends \core\event\base {
     }
 
     /**
-     * Does this event replace a legacy event?
-     *
-     * @return string legacy event name
-     */
-    static public function get_legacy_eventname() {
-        return 'quiz_attempt_abandoned';
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/review.php', array('attempt' => $this->objectid));
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $attempt = $this->get_record_snapshot('quiz_attempts', $this->objectid);
-
-        $legacyeventdata = new \stdClass();
-        $legacyeventdata->component = 'mod_quiz';
-        $legacyeventdata->attemptid = $this->objectid;
-        $legacyeventdata->timestamp = $attempt->timemodified;
-        $legacyeventdata->userid = $this->relateduserid;
-        $legacyeventdata->quizid = $attempt->quiz;
-        $legacyeventdata->cmid = $this->contextinstanceid;
-        $legacyeventdata->courseid = $this->courseid;
-        $legacyeventdata->submitterid = $this->other['submitterid'];
-
-        return $legacyeventdata;
-
+        return new \moodle_url('/mod/quiz/review.php', ['attempt' => $this->objectid]);
     }
 
     /**
@@ -128,13 +97,13 @@ class attempt_abandoned extends \core\event\base {
     }
 
     public static function get_objectid_mapping() {
-        return array('db' => 'quiz_attempts', 'restore' => 'quiz_attempt');
+        return ['db' => 'quiz_attempts', 'restore' => 'quiz_attempt'];
     }
 
     public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['submitterid'] = array('db' => 'user', 'restore' => 'user');
-        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+        $othermapped = [];
+        $othermapped['submitterid'] = ['db' => 'user', 'restore' => 'user'];
+        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
 
         return $othermapped;
     }

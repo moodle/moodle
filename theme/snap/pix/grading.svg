@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    .st0{display:none;} .st1{display:inline;} .st2{fill:#FFFFFF;stroke:#999999;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} .st3{fill:none;stroke:#999999;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} .st4{fill:none;stroke:#999999;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} .st5{fill:none;stroke:#FFFFFF;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+  </style>
+  <g id="Layer_2" class="st0">
+    <g class="st1">
+      <path d="M74.1 61.7V32.1L57.3 16H30.5c-1.9 0-3.5 1.6-3.5 3.5v55.8c0 1.9 1.6 3.5 3.5 3.5h28.8" class="st2"/>
+      <path d="M74.1 32.1H60.7c-1.9 0-3.5-1.6-3.5-3.5V16M32.8 41.8h34m-34 6.9h34m-34 6.9h17.7" class="st3"/>
+    </g>
+    <g class="st1">
+      <circle cx="70.6" cy="73.6" r="12.4" class="st2"/>
+      <path d="M70.6 66.1l2.1 4.8 5.1.4-3.7 3.7 1 4.8-4.5-2.3-4.5 2.3 1-4.8-3.7-3.7 5-.4z" class="st4"/>
+    </g>
+  </g>
+  <g id="Layer_3">
+    <path d="M24.9 46.3l21.3 20.6m-.3 0L75 29.1" class="st3"/>
+    <ellipse cx="50.2" cy="50" transform="rotate(-45 50.247 49.978)" class="st5" rx="48" ry="48"/>
+  </g>
+</svg>

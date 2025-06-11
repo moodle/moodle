@@ -102,6 +102,8 @@ if ($hassiteconfig) {
         new lang_string('limitconcurrentlogins_desc', 'core_auth'), 0, $options));
     $temp->add(new admin_setting_configtext('alternateloginurl', new lang_string('alternateloginurl', 'auth'),
                                             new lang_string('alternatelogin', 'auth', htmlspecialchars(get_login_url(), ENT_COMPAT)), ''));
+    $temp->add(new admin_setting_configcheckbox('showloginform', new lang_string('showloginform', 'core_auth'),
+                                                new lang_string('showloginform_desc', 'core_auth'), 1));
     $temp->add(new admin_setting_configtext('forgottenpasswordurl', new lang_string('forgottenpasswordurl', 'auth'),
                                             new lang_string('forgottenpassword', 'auth'), '', PARAM_URL));
     $temp->add(new admin_setting_confightmleditor('auth_instructions', new lang_string('instructions', 'auth'),
@@ -116,6 +118,17 @@ if ($hassiteconfig) {
     $temp->add($setting);
     $temp->add(new admin_setting_configcheckbox('verifychangedemail', new lang_string('verifychangedemail', 'admin'), new lang_string('configverifychangedemail', 'admin'), 1));
 
+    // ReCaptcha.
+    $temp->add(new admin_setting_configselect('enableloginrecaptcha',
+        new lang_string('auth_loginrecaptcha', 'auth'),
+        new lang_string('auth_loginrecaptcha_desc', 'auth'),
+        0,
+        [
+            new lang_string('no'),
+            new lang_string('yes'),
+        ],
+    ));
+
     $setting = new admin_setting_configtext('recaptchapublickey', new lang_string('recaptchapublickey', 'admin'), new lang_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS);
     $setting->set_force_ltr(true);
     $temp->add($setting);
@@ -123,6 +136,18 @@ if ($hassiteconfig) {
     $setting->set_force_ltr(true);
     $temp->add($setting);
     $ADMIN->add('authsettings', $temp);
+
+    // Toggle password visiblity icon.
+    $temp->add(new admin_setting_configselect('loginpasswordtoggle',
+        new lang_string('auth_loginpasswordtoggle', 'auth'),
+        new lang_string('auth_loginpasswordtoggle_desc', 'auth'),
+        TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY,
+        [
+            TOGGLE_SENSITIVE_DISABLED => get_string('disabled', 'admin'),
+            TOGGLE_SENSITIVE_ENABLED => get_string('enabled', 'admin'),
+            TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY => get_string('smallscreensonly', 'admin'),
+        ],
+    ));
 
     $temp = new admin_externalpage('authtestsettings', get_string('testsettings', 'core_auth'), new moodle_url("/auth/test_settings.php"), 'moodle/site:config', true);
     $ADMIN->add('authsettings', $temp);
@@ -154,7 +179,12 @@ if ($hassiteconfig) {
 /// Editor plugins
     $ADMIN->add('modules', new admin_category('editorsettings', new lang_string('editors', 'editor')));
     $temp = new admin_settingpage('manageeditors', new lang_string('editorsettings', 'editor'));
-    $temp->add(new admin_setting_manageeditors());
+    $temp->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'editor',
+        \core_admin\table\editor_management_table::class,
+        'editorsui',
+        get_string('editorsettings', 'editor'),
+    ));
     $ADMIN->add('editorsettings', $temp);
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('editor');
     core_collator::asort_objects_by_property($plugins, 'displayname');
@@ -167,6 +197,10 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('antivirussettings', new lang_string('antiviruses', 'antivirus')));
     $temp = new admin_settingpage('manageantiviruses', new lang_string('antivirussettings', 'antivirus'));
     $temp->add(new admin_setting_manageantiviruses());
+
+    // Status check.
+    $temp->add(new admin_setting_heading('antivirus/statuschecks', new lang_string('statuschecks'), ''));
+    $temp->add(new admin_setting_check('antivirus/checkantivirus', new \core\check\environment\antivirus()));
 
     // Common settings.
     $temp->add(new admin_setting_heading('antiviruscommonsettings', new lang_string('antiviruscommonsettings', 'antivirus'), ''));
@@ -253,7 +287,7 @@ if ($hassiteconfig) {
         $items[] = new admin_setting_configcheckbox('filtermatchonepertext', new lang_string('filtermatchonepertext', 'admin'), new lang_string('configfiltermatchonepertext', 'admin'), 0);
         $items[] = new admin_setting_configcheckbox('filternavigationwithsystemcontext',
                 new lang_string('filternavigationwithsystemcontext', 'admin'),
-                new lang_string('configfilternavigationwithsystemcontext', 'admin'), 0);
+                new lang_string('configfilternavigationwithsystemcontext', 'admin'), 1);
         foreach ($items as $item) {
             $item->set_updatedcallback('reset_text_filters_cache');
             $temp->add($item);
@@ -273,7 +307,12 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('managemediaplayers', new lang_string('managemediaplayers', 'media'));
     $temp->add(new admin_setting_heading('mediaformats', get_string('mediaformats', 'core_media'),
         format_text(get_string('mediaformats_desc', 'core_media'), FORMAT_MARKDOWN)));
-    $temp->add(new admin_setting_managemediaplayers());
+    $temp->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'media',
+        \core_admin\table\media_management_table::class,
+        'managemediaplayers',
+        new lang_string('managemediaplayers', 'core_media'),
+    ));
     $temp->add(new admin_setting_heading('managemediaplayerscommonheading', new lang_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_configtext('media_default_width',
         new lang_string('defaultwidth', 'core_media'), new lang_string('defaultwidthdesc', 'core_media'),
@@ -505,6 +544,18 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $settings->add(new admin_setting_configselect('question_preview/history',
             get_string('responsehistory', 'question'), '', 0, $hiddenofvisible));
 
+    // Question editing settings.
+    $settings = new admin_settingpage('qediting',
+            get_string('questionediting', 'question'),
+            'moodle/question:config');
+    $ADMIN->add('qtypesettings', $settings);
+
+    $settings->add(new admin_setting_heading('qediting_options',
+            '', get_string('questionediting_desc', 'question')));
+
+    $settings->add(new admin_setting_configcheckbox('questiondefaultssave',
+            get_string('questiondefaultssave', 'question'), get_string('questiondefaultssave_desc', 'question'), 1));
+
     // Settings for particular question types.
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('qtype');
     core_collator::asort_objects_by_property($plugins, 'displayname');
@@ -723,8 +774,14 @@ if ($hassiteconfig) {
 /// Add all admin tools
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('tools', new lang_string('tools', 'admin')));
-    $ADMIN->add('tools', new admin_externalpage('managetools', new lang_string('toolsmanage', 'admin'),
-                                                     $CFG->wwwroot . '/' . $CFG->admin . '/tools.php'));
+    $settingspage = new admin_settingpage('toolsmanagement', new lang_string('toolsmanage', 'admin'));
+    $ADMIN->add('tools', $settingspage);
+    $settingspage->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'tool',
+        \core_admin\table\tool_plugin_management_table::class,
+        'managetools',
+        new lang_string('toolsmanage', 'admin')
+    ));
 }
 
 // Now add various admin tools.
@@ -765,12 +822,63 @@ if ($hassiteconfig) {
     }
 }
 
+// Communication plugins.
+if ($hassiteconfig && core_communication\api::is_available()) {
+    $ADMIN->add('modules', new admin_category('communicationsettings', new lang_string('communication', 'core_communication')));
+    $temp = new admin_settingpage('managecommunicationproviders',
+        new lang_string('managecommunicationproviders', 'core_communication'));
+    $temp->add(new \core_communication\admin\manage_communication_providers_page());
+    $ADMIN->add('communicationsettings', $temp);
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('communication');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\communication $plugin */
+        $plugin->load_settings($ADMIN, 'communicationsettings', $hassiteconfig);
+    }
+}
+
+// SMS plugins.
+if ($hassiteconfig) {
+    $ADMIN->add(
+        'modules',
+        new admin_category(
+            'sms',
+            new lang_string('sms', 'core_sms'),
+        ),
+    );
+    $ADMIN->add(
+        'sms',
+        new admin_externalpage(
+            'smsgateway',
+            new lang_string('manage_sms_gateways', 'core_sms'),
+            $CFG->wwwroot . '/sms/sms_gateways.php',
+        ),
+    );
+    foreach (core_component::get_plugin_list('smsgateway') as $plugin => $path) {
+        $settingspath = $path . '/settings.php';
+        if (file_exists($settingspath)) {
+            $settings = new admin_settingpage(
+                'smsgateway_' . $plugin . '_settings',
+                new lang_string('pluginname', 'smsgateway_' . $plugin),
+                'moodle/site:config',
+            );
+            include($settingspath);
+            $ADMIN->add('smsgateway', $settings);
+        }
+    }
+}
+
 // Content bank content types.
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('contentbanksettings', new lang_string('contentbank')));
     $temp = new admin_settingpage('managecontentbanktypes', new lang_string('managecontentbanktypes'));
     $temp->add(new admin_setting_managecontentbankcontenttypes());
     $ADMIN->add('contentbanksettings', $temp);
+    $ADMIN->add('contentbanksettings',
+        new admin_externalpage('contentbank', new lang_string('contentbankcustomfields', 'contentbank'),
+            $CFG->wwwroot . '/contentbank/customfield.php',
+            'moodle/contentbank:configurecustomfields'
+        )
+    );
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('contenttype');
     foreach ($plugins as $plugin) {
         /** @var \core\plugininfo\contentbank $plugin */

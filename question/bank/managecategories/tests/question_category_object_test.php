@@ -37,7 +37,7 @@ use stdClass;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_managecategories\question_category_object
  */
-class question_category_object_test extends \advanced_testcase {
+final class question_category_object_test extends \advanced_testcase {
 
     /**
      * @var question_category_object used in the tests.
@@ -91,11 +91,17 @@ class question_category_object_test extends \advanced_testcase {
         $this->context = context_course::instance(SITEID);
         $contexts = new question_edit_contexts($this->context);
         $this->topcat = question_get_top_category($this->context->id, true);
+        $this->resetDebugging();
         $this->qcobject = new question_category_object(null,
             new moodle_url('/question/bank/managecategories/category.php', ['courseid' => SITEID]),
             $contexts->having_one_edit_tab_cap('categories'), 0, null, 0,
             $contexts->having_cap('moodle/question:add'));
-
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::__construct has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \qbank_managecategories\question_categories or \core_question\category_manager instead. ' .
+                'See MDL-72397 for more information.',
+        );
         // Set up tests in a quiz context.
         $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
@@ -104,6 +110,7 @@ class question_category_object_test extends \advanced_testcase {
         $this->defaultcategoryobj = question_make_default_categories([$this->qcontexts->lowest()]);
         $this->defaultcategory = $this->defaultcategoryobj->id . ',' . $this->defaultcategoryobj->contextid;
 
+        $this->resetDebugging();
         $this->qcobjectquiz = new question_category_object(
             1,
             new moodle_url('/mod/quiz/edit.php', ['cmid' => $this->quiz->cmid]),
@@ -112,7 +119,12 @@ class question_category_object_test extends \advanced_testcase {
             $this->defaultcategory,
             null,
             $this->qcontexts->having_cap('moodle/question:add'));
-
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::__construct has been deprecated since 4.5. ' .
+            'API properly divided between qbank_managecategories and core_question. ' .
+            'Use \qbank_managecategories\question_categories or \core_question\category_manager instead. ' .
+            'See MDL-72397 for more information.',
+        );
     }
 
     /**
@@ -120,12 +132,18 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_add_category_no_idnumber() {
+    public function test_add_category_no_idnumber(): void {
         global $DB;
 
+        $this->resetDebugging();
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'New category', '', true, FORMAT_HTML, ''); // No idnumber passed as '' to match form data.
-
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+            'API properly divided between qbank_managecategories and core_question. ' .
+            'Use \core_question\category_manager::add_category instead. ' .
+            'See MDL-72397 for more information.',
+        );
         $newcat = $DB->get_record('question_categories', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame('New category', $newcat->name);
         $this->assertNull($newcat->idnumber);
@@ -136,12 +154,18 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_add_category_set_idnumber_0() {
+    public function test_add_category_set_idnumber_0(): void {
         global $DB;
 
+        $this->resetDebugging();
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'New category', '', true, FORMAT_HTML, '0');
-
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+            'API properly divided between qbank_managecategories and core_question. ' .
+            'Use \core_question\category_manager::add_category instead. ' .
+            'See MDL-72397 for more information.',
+        );
         $newcat = $DB->get_record('question_categories', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame('New category', $newcat->name);
         $this->assertSame('0', $newcat->idnumber);
@@ -153,15 +177,21 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_add_category_try_to_set_duplicate_idnumber() {
+    public function test_add_category_try_to_set_duplicate_idnumber(): void {
         global $DB;
 
+        $this->resetDebugging();
         $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'Existing category', '', true, FORMAT_HTML, 'frog');
 
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'New category', '', true, FORMAT_HTML, 'frog');
-
+        $deprecationmessage =
+            'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \core_question\category_manager::add_category instead. ' .
+                'See MDL-72397 for more information.';
+        $this->assertdebuggingcalledcount(2, [$deprecationmessage, $deprecationmessage]);
         $newcat = $DB->get_record('question_categories', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame('New category', $newcat->name);
         $this->assertNull($newcat->idnumber);
@@ -172,14 +202,31 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category() {
+    public function test_update_category(): void {
         global $DB;
-
+        $this->resetDebugging();
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'Old name', 'Description', true, FORMAT_HTML, 'frog');
 
         $this->qcobject->update_category($id, $this->topcat->id . ',' . $this->topcat->contextid,
             'New name', 'New description', FORMAT_HTML, '0', false);
+        $this->assertdebuggingcalledcount(
+            3,
+            [
+                'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::add_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\question_category_object::update_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::update_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\helper::question_is_only_child_of_top_category_in_context ' .
+                    'has been deprecated since 4.5. Moved to core namespace. ' .
+                    'Use core_question\category_manager::is_only_child_of_top_category_in_context instead. ' .
+                    'See MDL-72397 for more information.',
+            ],
+        );
 
         $newcat = $DB->get_record('question_categories', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame('New name', $newcat->name);
@@ -191,15 +238,32 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category_removing_idnumber() {
+    public function test_update_category_removing_idnumber(): void {
         global $DB;
 
+        $this->resetDebugging();
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'Old name', 'Description', true, FORMAT_HTML, 'frog');
 
         $this->qcobject->update_category($id, $this->topcat->id . ',' . $this->topcat->contextid,
             'New name', 'New description', FORMAT_HTML, '', false);
-
+        $this->assertdebuggingcalledcount(
+            3,
+            [
+                'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::add_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\question_category_object::update_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::update_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\helper::question_is_only_child_of_top_category_in_context ' .
+                    'has been deprecated since 4.5. Moved to core namespace. ' .
+                    'Use core_question\category_manager::is_only_child_of_top_category_in_context instead. ' .
+                    'See MDL-72397 for more information.',
+            ],
+        );
         $newcat = $DB->get_record('question_categories', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame('New name', $newcat->name);
         $this->assertNull($newcat->idnumber);
@@ -210,15 +274,32 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category_dont_change_idnumber() {
+    public function test_update_category_dont_change_idnumber(): void {
         global $DB;
 
+        $this->resetDebugging();
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'Old name', 'Description', true, FORMAT_HTML, 'frog');
 
         $this->qcobject->update_category($id, $this->topcat->id . ',' . $this->topcat->contextid,
             'New name', 'New description', FORMAT_HTML, 'frog', false);
-
+        $this->assertdebuggingcalledcount(
+            3,
+            [
+                'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::add_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\question_category_object::update_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::update_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\helper::question_is_only_child_of_top_category_in_context ' .
+                    'has been deprecated since 4.5. Moved to core namespace. ' .
+                    'Use core_question\category_manager::is_only_child_of_top_category_in_context instead. ' .
+                    'See MDL-72397 for more information.',
+            ],
+        );
         $newcat = $DB->get_record('question_categories', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame('New name', $newcat->name);
         $this->assertSame('frog', $newcat->idnumber);
@@ -230,9 +311,10 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_update_category_try_to_set_duplicate_idnumber() {
+    public function test_update_category_try_to_set_duplicate_idnumber(): void {
         global $DB;
 
+        $this->resetDebugging();
         $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
             'Existing category', '', true, FORMAT_HTML, 'toad');
         $id = $this->qcobject->add_category($this->topcat->id . ',' . $this->topcat->contextid,
@@ -240,6 +322,25 @@ class question_category_object_test extends \advanced_testcase {
 
         $this->qcobject->update_category($id, $this->topcat->id . ',' . $this->topcat->contextid,
             'New name', '', FORMAT_HTML, 'toad', false);
+        $addmsg = 'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+            'API properly divided between qbank_managecategories and core_question. ' .
+            'Use \core_question\category_manager::add_category instead. ' .
+            'See MDL-72397 for more information.';
+        $this->assertdebuggingcalledcount(
+            4,
+            [
+                $addmsg,
+                $addmsg,
+                'Deprecation: qbank_managecategories\question_category_object::update_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::update_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\helper::question_is_only_child_of_top_category_in_context ' .
+                    'has been deprecated since 4.5. Moved to core namespace. ' .
+                    'Use core_question\category_manager::is_only_child_of_top_category_in_context instead. ' .
+                    'See MDL-72397 for more information.',
+            ],
+        );
 
         $newcat = $DB->get_record('question_categories', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame('New name', $newcat->name);
@@ -251,18 +352,23 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_question_category_created() {
+    public function test_question_category_created(): void {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
+        $this->resetDebugging();
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \core_question\category_manager::add_category instead. ' .
+                'See MDL-72397 for more information.',
+        );
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\question_category_created', $event);
         $this->assertEquals(context_module::instance($this->quiz->cmid), $event->get_context());
-        $expected = [$this->course->id, 'quiz', 'addcategory', 'view.php?id=' . $this->quiz->cmid , $categoryid, $this->quiz->cmid];
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -271,13 +377,30 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::delete_category
      */
-    public function test_question_category_deleted() {
+    public function test_question_category_deleted(): void {
         // Create the category.
+        $this->resetDebugging();
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         $this->qcobjectquiz->delete_category($categoryid);
+        $this->assertdebuggingcalledcount(
+            3,
+            [
+                'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::add_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\question_category_object::delete_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::delete_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\helper::question_can_delete_cat has been deprecated since 4.5. ' .
+                    'Moved to core namespace. Use core_question\category_manager::can_delete_category instead. ' .
+                    'See MDL-72397 for more information.',
+            ],
+        );
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -285,7 +408,6 @@ class question_category_object_test extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\question_category_deleted', $event);
         $this->assertEquals(context_module::instance($this->quiz->cmid), $event->get_context());
         $this->assertEquals($categoryid, $event->objectid);
-        $this->assertDebuggingNotCalled();
     }
 
     /**
@@ -293,13 +415,31 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::update_category
      */
-    public function test_question_category_updated() {
+    public function test_question_category_updated(): void {
+        $this->resetDebugging();
         // Create the category.
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         $this->qcobjectquiz->update_category($categoryid, $this->defaultcategory, 'updatedcategory', '', FORMAT_HTML, '', false);
+        $this->assertdebuggingcalledcount(
+            3,
+            [
+                'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                   'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::add_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\question_category_object::update_category has been deprecated since 4.5. ' .
+                    'API properly divided between qbank_managecategories and core_question. ' .
+                    'Use \core_question\category_manager::update_category instead. ' .
+                    'See MDL-72397 for more information.',
+                'Deprecation: qbank_managecategories\helper::question_is_only_child_of_top_category_in_context ' .
+                    'has been deprecated since 4.5. Moved to core namespace. ' .
+                    'Use core_question\category_manager::is_only_child_of_top_category_in_context instead. ' .
+                    'See MDL-72397 for more information.',
+            ],
+        );
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -307,7 +447,6 @@ class question_category_object_test extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\question_category_updated', $event);
         $this->assertEquals(context_module::instance($this->quiz->cmid), $event->get_context());
         $this->assertEquals($categoryid, $event->objectid);
-        $this->assertDebuggingNotCalled();
     }
 
     /**
@@ -317,10 +456,16 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::add_category
      */
-    public function test_question_category_viewed() {
+    public function test_question_category_viewed(): void {
+        $this->resetDebugging();
         // Create the category.
         $categoryid = $this->qcobjectquiz->add_category($this->defaultcategory, 'newcategory', '', true);
-
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::add_category has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \core_question\category_manager::add_category instead. ' .
+                'See MDL-72397 for more information.',
+        );
         // Log the view of this category.
         $category = new stdClass();
         $category->id = $categoryid;
@@ -337,8 +482,6 @@ class question_category_object_test extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\question_category_viewed', $event);
         $this->assertEquals(context_module::instance($this->quiz->cmid), $event->get_context());
         $this->assertEquals($categoryid, $event->objectid);
-        $this->assertDebuggingNotCalled();
-
     }
 
     /**
@@ -347,13 +490,21 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_shortanswer() {
+    public function test_get_real_question_ids_in_category_shortanswer(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $categoryid = $this->defaultcategoryobj->id;
 
         // Short answer question is made of one question.
         $shortanswer = $generator->create_question('shortanswer', null, ['category' => $categoryid]);
+        $this->resetDebugging();
         $questionids = $this->qcobject->get_real_question_ids_in_category($categoryid);
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::get_real_question_ids_in_category ' .
+                'has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \core_question\category_manager::get_real_question_ids_in_category instead. ' .
+                'See MDL-72397 for more information.',
+        );
         $this->assertCount(1, $questionids);
         $this->assertContains($shortanswer->id, $questionids);
     }
@@ -364,7 +515,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_multianswer() {
+    public function test_get_real_question_ids_in_category_multianswer(): void {
         global $DB;
         $countq = $DB->count_records('question');
         $countqbe = $DB->count_records('question_bank_entries');
@@ -374,7 +525,15 @@ class question_category_object_test extends \advanced_testcase {
 
         // Multi answer question is made of one parent and two child questions.
         $multianswer = $generator->create_question('multianswer', null, ['category' => $categoryid]);
+        $this->resetDebugging();
         $questionids = $this->qcobject->get_real_question_ids_in_category($categoryid);
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::get_real_question_ids_in_category ' .
+               'has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \core_question\category_manager::get_real_question_ids_in_category instead. ' .
+                'See MDL-72397 for more information.',
+        );
         $this->assertCount(1, $questionids);
         $this->assertContains($multianswer->id, $questionids);
         $this->assertEquals(3, $DB->count_records('question') - $countq);
@@ -387,7 +546,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_multianswer_two_versions() {
+    public function test_get_real_question_ids_in_category_multianswer_two_versions(): void {
         global $DB;
         $countq = $DB->count_records('question');
         $countqv = $DB->count_records('question_versions');
@@ -400,7 +559,15 @@ class question_category_object_test extends \advanced_testcase {
         // 2 parents and 4 child questions in the question bank.
         $multianswer = $generator->create_question('multianswer', null, ['category' => $categoryid]);
         $multianswernew = $generator->update_question($multianswer, null, ['name' => 'This is a new version']);
+        $this->resetDebugging();
         $questionids = $this->qcobject->get_real_question_ids_in_category($categoryid);
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::get_real_question_ids_in_category ' .
+                'has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \core_question\category_manager::get_real_question_ids_in_category instead. ' .
+                'See MDL-72397 for more information.',
+        );
         $this->assertCount(2, $questionids);
         $this->assertContains($multianswer->id, $questionids);
         $this->assertContains($multianswernew->id, $questionids);
@@ -416,7 +583,7 @@ class question_category_object_test extends \advanced_testcase {
      *
      * @covers ::get_real_question_ids_in_category
      */
-    public function test_get_real_question_ids_in_category_multianswer_bad_data() {
+    public function test_get_real_question_ids_in_category_multianswer_bad_data(): void {
         global $DB;
         $countqbe = $DB->count_records('question_bank_entries');
 
@@ -431,7 +598,15 @@ class question_category_object_test extends \advanced_testcase {
         $DB->set_field_select('question_bank_entries', 'questioncategoryid',
             123456, 'id <> :id', ['id' => $qversion->questionbankentryid]);
 
+        $this->resetDebugging();
         $questionids = $this->qcobject->get_real_question_ids_in_category($categoryid);
+        $this->assertDebuggingCalled(
+            'Deprecation: qbank_managecategories\question_category_object::get_real_question_ids_in_category ' .
+                'has been deprecated since 4.5. ' .
+                'API properly divided between qbank_managecategories and core_question. ' .
+                'Use \core_question\category_manager::get_real_question_ids_in_category instead. ' .
+                'See MDL-72397 for more information.',
+        );
         $this->assertCount(1, $questionids);
         $this->assertContains($multianswer->id, $questionids);
         $this->assertEquals(3, $DB->count_records('question_bank_entries') - $countqbe);

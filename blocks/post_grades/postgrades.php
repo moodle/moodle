@@ -40,17 +40,17 @@ $validgroups = post_grades::valid_groups($course);
 $section = post_grades::find_section($group, $sections);
 
 if (empty($CFG->gradepublishing)) {
-    print_error('nopublishing', 'block_post_grades');
+    moodle_exception('nopublishing', 'block_post_grades');
 }
 
 // Not a valid group.
 if (!isset($validgroups[$groupid]) or empty($section)) {
-    print_error('notvalidgroup', 'block_post_grades', '', $group->name);
+    moodle_exception('notvalidgroup', 'block_post_grades', '', $group->name);
 }
 
 // Not a valid posting period.
 if (!in_array($period, post_grades::active_periods($course))) {
-    print_error('notactive', 'block_post_grades');
+    moodle_exception('notactive', 'block_post_grades');
 }
 
 $uescourse = $section->course()->fill_meta();

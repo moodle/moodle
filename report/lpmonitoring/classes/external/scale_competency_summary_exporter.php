@@ -43,15 +43,15 @@ class scale_competency_summary_exporter extends exporter {
      * @return array other properties
      */
     public static function define_other_properties() {
-        return array(
-            'iscmcompetencygradingenabled' => array(
-                'type' => PARAM_BOOL
-            ),
-            'scale_competency' => array(
+        return [
+            'iscmcompetencygradingenabled' => [
+                'type' => PARAM_BOOL,
+            ],
+            'scale_competency' => [
                 'type' => list_plan_competency_summary_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -67,7 +67,7 @@ class scale_competency_summary_exporter extends exporter {
      */
     protected static function define_related() {
         // We cache the plan so it does not need to be retrieved every time.
-        return array('plan' => 'core_competency\\plan');
+        return ['plan' => 'core_competency\\plan'];
     }
 
     /**
@@ -80,9 +80,9 @@ class scale_competency_summary_exporter extends exporter {
         $resultcompetencies = $this->data;
         $plan = $this->related['plan'];
 
-        $result = array();
+        $result = [];
         $result['iscmcompetencygradingenabled'] = api::is_cm_comptency_grading_enabled();
-        $result['scale_competency'] = array();
+        $result['scale_competency'] = [];
         $helper = new \core_competency\external\performance_helper();
 
         $scales = [];
@@ -101,8 +101,11 @@ class scale_competency_summary_exporter extends exporter {
                     $scalevalues[] = $scaleinfo;
                 }
 
-                $exporter = new list_plan_competency_summary_exporter($this->data, ['plan' => $plan, 'scale' => $scale,
-                    'scalevalues' => $scalevalues]);
+                $exporter = new list_plan_competency_summary_exporter($this->data, [
+                    'plan' => $plan,
+                    'scale' => $scale,
+                    'scalevalues' => $scalevalues,
+                ]);
                 $exportedcompetency = $exporter->export($output);
                 $result['scale_competency'][] = $exportedcompetency;
                 $scales[] = $scale->id;

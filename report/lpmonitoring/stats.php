@@ -35,7 +35,7 @@ if (!\core_competency\template::can_read_context($context)) {
     throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
 }
 
-$urlparams = array('pagecontextid' => $pagecontextid);
+$urlparams = ['pagecontextid' => $pagecontextid];
 
 $url = new moodle_url('/report/lpmonitoring/stats.php', $urlparams);
 $title = get_string('statslearningplan', 'report_lpmonitoring');
@@ -48,8 +48,6 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
     throw new coding_exception('Unexpected context!');
 }
 
-// Set css.
-$PAGE->requires->css('/report/lpmonitoring/style/checkbox.css');
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_title($title);

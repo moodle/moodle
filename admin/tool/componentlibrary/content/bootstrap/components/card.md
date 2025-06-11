@@ -285,7 +285,7 @@ You can quickly change the text alignment of any card—in its entirety or speci
   </div>
 </div>
 
-<div class="card text-right" style="width: 18rem;">
+<div class="card text-end" style="width: 18rem;">
   <div class="card-body">
     <h5 class="card-title">Special title treatment</h5>
     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
@@ -392,11 +392,11 @@ Note that content should not be larger than the height of the image. If content 
 
 ## Horizontal
 
-Using a combination of grid and utility classes, cards can be made horizontal in a mobile-friendly and responsive way. In the example below, we remove the grid gutters with `.no-gutters` and use `.col-md-*` classes to make the card horizontal at the `md` breakpoint. Further adjustments may be needed depending on your card content.
+Using a combination of grid and utility classes, cards can be made horizontal in a mobile-friendly and responsive way. In the example below, we remove the grid gutters with `.g-0` and use `.col-md-*` classes to make the card horizontal at the `md` breakpoint. Further adjustments may be needed depending on your card content.
 
 {{< example >}}
 <div class="card mb-3" style="max-width: 540px;">
-  <div class="row no-gutters">
+  <div class="row g-0">
     <div class="col-md-4">
       {{< placeholder width="100%" height="250" class="" text="Image" >}}
     </div>
@@ -798,7 +798,7 @@ Cards can be organized into [Masonry](https://masonry.desandro.com/)-like column
   <div class="card">
     {{< placeholder width="100%" height="260" class="card-img" text="Card image" >}}
   </div>
-  <div class="card p-3 text-right">
+  <div class="card p-3 text-end">
     <blockquote class="blockquote mb-0">
       <p>A well-known quote, contained in a blockquote element.</p>
       <footer class="blockquote-footer">

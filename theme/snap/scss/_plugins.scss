@@ -1,0 +1,1834 @@
+/**
+ * Plugins css.
+ */
+
+/**
+ * Global search.
+ */
+
+/* stylelint-disable declaration-no-important*/
+
+#mr-nav .simplesearchform a.btn.btn-open i.fa-search {
+    font-size: 1.3rem;
+}
+
+/**
+ * Core notifications (bell) and popover.
+ */
+#nav-notification-popover-container {
+    display: inline-block;
+    float: none;
+    width: 2em;
+    // Bell icon.
+    .icon.fa-bell-o {
+        font-size: 24px;
+        width: auto;
+        height: auto;
+        color: $nav-color;
+
+        &:before {
+            content: "\f0a2";
+        }
+
+        &:hover {
+            @extend .fa-shake;
+            font-weight: bolder;
+
+            --fa-animation-duration: 1.5s;
+            --fa-animation-iteration-count: 1;
+        }
+    }
+
+    .popover-region-toggle {
+        padding: 0.5em;
+        // Hide arrow on the top of the popover.
+        &:before,
+        &:after {
+            display: none;
+        }
+    }
+
+    // Circle with a count on the bell.
+    .count-container {
+        background-color: darken($brand-primary, 8%);
+        height: 18px;
+        width: 18px;
+        text-align: center;
+        border-radius: 50%;
+        padding: 0;
+        line-height: inherit;
+        right: 0.2em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.hidden {
+            display: none;
+        }
+    }
+
+    .popover-region-container {
+        top: 2.5rem;
+        width: 300px;
+        text-align: left;
+    }
+
+    .popover-region-header-container {
+        height: auto;
+        border-bottom: none;
+        padding-right: 0;
+    }
+    .hover-tooltip {
+        display: none;
+    }
+
+    .popover-region-content-container {
+        max-height: 400px;
+        overflow-y: scroll;
+        a.context-link {
+            outline: none;
+        }
+    }
+
+    // Override core hover colours.
+    .content-item-container:hover {
+        background-color: white !important;
+        color: $body-color !important;
+    }
+
+    .content-item-footer .timestamp {
+        color: $body-color !important;
+    }
+
+    .popover-region-footer-container {
+        height: auto;
+    }
+
+}
+
+#nav-intellicart-popover-container,
+#nav-notification-popover-container {
+    @media (max-width: 600px) {
+        .popover-region-container {
+            position: fixed;
+            top: 6.5rem !important;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            width: auto;
+        }
+    }
+}
+
+/**
+ * Intellicart plugin shopping cart.
+ */
+#nav-intellicart-popover-container {
+    display: inline-block;
+    float: none;
+    width: 2.35em;
+    
+
+    .icon.fa-shopping-cart {
+        &:hover {
+            @extend .fa-beat;
+        }
+        font-size: 24px;
+        width: auto;
+        height: auto;
+        color: $nav-color;
+        margin: 0;
+    }
+
+    .popover-region-container {
+        top: 2.5rem;
+    }
+}
+
+#mr-nav .popover-region-container .intellicart-footer a {
+    color: white;
+}
+
+/**
+ * Video js filter.
+ */
+
+// Center play button.
+.video-js {
+    .vjs-big-play-button {
+        top: calc(50% - 2rem);
+        left: calc(50% - 2rem);
+        line-height: 4rem;
+        height: 4rem;
+        width: 4rem;
+        border-radius: 100%;
+        border-color: transparent;
+    }
+
+    &:hover {
+        .vjs-big-play-button {
+            border-color: transparent;
+        }
+    }
+}
+
+/**
+ * report : dates.
+ * https://moodle.org/plugins/report_editdates
+ */
+#page-report-editdates-index .activityicon {
+    @include svg-icon;
+}
+
+/**
+ * Coments block.
+ */
+.comment-list li {
+    color: $body-color !important; // Shame - overwrite inline style.
+}
+
+/**
+ * Mod certificate.
+ */
+#page-mod-certificate-view {
+    .snap-page-heading-button {
+        display: none;
+    }
+}
+
+/**
+ * Mod h5p.
+ */
+#page-mod-hvp-mod.theme-snap iframe.h5p-editor-iframe {
+    z-index: 21 !important; // Overwrite inline style.
+}
+
+/**
+ * Mod assignment.
+ */
+#page-mod-assign-view {
+
+    .assign-grading-summary {
+        .btn-primary,
+        .btn-secondary,
+        #view_all_submissions_snap {
+            margin-right: 0.5em;
+        }
+    }
+
+    .duedata {
+        font-family: $font-family-system;
+    }
+    // Rubric tables for grading criteria.
+    .gradingmethodpreview {
+        clear: both;
+    }
+
+    .gradingform_rubric {
+        max-width: 100%;
+    }
+    // Grading feedback checklist.
+    .gradingform_checklist .group {
+        .items .item.checked {
+            background: #eee;
+            border: none;
+            border-left: .25em solid $brand-success;
+        }
+
+        .description {
+            font-family: $font-family-system;
+        }
+    }
+
+    .assign-submission-data .fileuploadsubmissiontime {
+        float: left;
+    }
+
+    // Larger screen layout.
+    @include media-breakpoint-up(md) {
+        .assign-intro,
+        .assign-feedback {
+            @include make-col(8);
+            padding-right: 4%;
+            min-height: 100px;
+        }
+
+        .assign-intro {
+            max-width: 100%;
+            padding-bottom: 2em;
+            word-wrap: break-word;
+        }
+
+        .groupselector,
+        .assign-grading-summary,
+        .assign-submission-data {
+            @include make-row();
+            @include make-col(4);
+            float: right;
+            // Undo make-col margins.
+            margin-left: 0;
+            margin-right: 0;
+            .plugincontentsummary {
+                width: 100%;
+            }
+        }
+        .assign-grading-summary,
+        .assign-submission-data,
+        .groupselector {
+            margin-top: 0;
+            margin-left: 1em;
+            width: calc(33.33% - 1em);
+        }
+    }
+
+    .groupselector,
+    .assign-grading-summary,
+    .assign-submission-data {
+        padding: 1em;
+        margin-bottom: .5em;
+        background-color: $gray-lighter;
+        font-family: $font-family-system;
+    }
+    .submissionsdata {
+        width: 100%;
+    }
+    // Add an indicator of progress for submissions.
+    .submissions-status {
+        border-bottom: .5em solid #999;
+        padding-bottom: 1em;
+        margin-bottom: 1em;
+    }
+
+    .submission-status-row {
+        display: flex;
+        span:nth-of-type(1) {
+            width: 76.66%;
+        }
+        span:nth-of-type(2) {
+            width: 33.33%;
+            text-align: right;
+        }
+    }
+
+    .submissions-line {
+        background-color: $brand-success;
+        height: .5em;
+        margin-bottom: -1.5em; // Height + submissions-status padding.
+    }
+
+    .plugin-submission-title {
+        width: 100%;
+    }
+
+    .statusdata,
+    .gradingdata,
+    .lastmodified {
+        font-size: 0.8em;
+        span {
+            margin-left: 0.5em;
+        }
+        margin-bottom: 1em;
+    }
+}
+
+.path-mod-assign {
+    .automatic-completion-conditions span.badge {
+        border-radius: 0.25rem !important; // Overwrite boost style.
+        padding: 0.4em;
+    }
+
+    .automatic-completion-conditions {
+        margin-top: 1em;
+    }
+
+    .badge-success {
+        @include tag-variant($tag-success-bg);
+    }
+}
+
+.assign-submission-data a.btn {
+    margin: 1em 1em;
+}
+
+#page-mod-assign-view .assign-submission-data .boxaligncenter {
+    word-break: break-all;
+}
+
+.needsgradingdata {
+    margin-right: 1em;
+    .badge {
+        margin-left: 0.25em;
+    }
+}
+
+/**
+ * Assign feedback PDF editor.
+ * Prevent PDF edit area from displaying outside of dialogs.
+ *
+ * Note - applies to joule grader which is why this is not nested within .path-mod-assign.
+ * Also, note - it's an issue with the editor being inside a dialog, so fix applied more widely than just to
+ * joule-grader.
+ */
+.moodle-dialogue-base .assignfeedback_editpdf_widget .drawingregion {
+    left: 0;
+    top: 0;
+}
+
+/* Drop down menus in the anotation bar */
+.moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdf_dropdown {
+    min-width: 1em;
+}
+
+.path-mod-assign {
+    [data-region="user-info"] {
+        h4 {
+            line-height: 1rem;
+        }
+        .img-rounded {
+            height: 40px;
+            border-radius: 100%;
+        }
+    }
+    [data-region="user-selector"] .alignment {
+        [data-region="input-field"] .form-control {
+            max-width: 255px;
+        }
+    }
+    #page-content [data-region="grade-panel"] .popout [data-region="popout-button"] img {
+        max-width: none;
+    }
+    [data-region="grade-panel"] .mform .fitem {
+        &:hover {
+            background-color: $modal-content-bg;
+        }
+        .felement {
+            float: none;
+            margin-top: .25rem;
+        }
+        &.has-popout {
+            padding: $spacer / 2;
+
+            &.popout {
+                // When actually popped out.
+                padding: $card-spacer-y $card-spacer-x;
+            }
+        }
+        div.form-inline.felement {
+            display: inline-block;
+        }
+    }
+    #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #fitem_id_grade.fitem .felement {
+        float: none;
+    }
+    .singlebutton {
+        margin-bottom: 20px;
+    }
+}
+
+#advancedgrading-criteria td.remark {
+    min-width: 150px;
+}
+
+/**
+ * Survey module.
+ * Fix black text on save.
+ */
+#page-mod-survey-save div[role="main"] h2 {
+    padding-top: 0.5em;
+    color: #fff;
+}
+
+/**
+ * Conduit.
+ */
+#page-blocks-conduit-view {
+    .mform {
+        .fitem .felement.fgroup span {
+            display: inline-block;
+        }
+        #fgroup_id_timestarted_grp,
+        #fgroup_id_timecompleted_grp {
+            .felement.fgroup span {
+                display: block;
+            }
+        }
+    }
+
+    /* This Shadow is causing problems in snap and has not purpose right now*/
+    #id_autocontainer_userid_autocompletetext .yui-ac-shadow {
+        display: none;
+    }
+}
+
+.path-blocks-conduit {
+    .yui-dt table td {
+        vertical-align: middle;
+        &.yui-dt-col-action {
+            padding-right: 0;
+            padding-left: 0;
+            a {
+                margin-right: 0;
+                margin-left: 0.1em;
+                i {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+
+    .widgets {
+        white-space: normal;
+
+        input {
+            display: inline-block;
+            margin: 8px 0 0 5px;
+        }
+    }
+}
+
+.edit_pages_box span.label {
+    color: $body-color;
+}
+
+/**
+ * Stop rubric mform from being positioned inefficiently in dialog.
+ */
+#local-joulegrader-gradepane-panel .mform {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/**
+ * Mod book.
+ */
+.path-mod-book {
+
+    .book_toc_numbered {
+        font-size: 1em;
+        ul {
+            list-style-type: none;
+            padding: 0;
+            ul {
+                padding-left: 4%;
+            }
+        }
+    }
+
+    // Hide next/previous image when not a link.
+    .navimages {
+        img {
+            visibility: hidden;
+        }
+        a img {
+            visibility: visible;
+        }
+        .bookprev:after,
+        .booknext:before {
+            content: attr(title);
+            font-family: $font-family-base;
+        }
+    }
+    // Style next and previous navigation.
+    .navtop {
+        display: none;
+    }
+    .bookprev,
+    .booknext {
+        display: inline-block;
+        width: 50%;
+    }
+    .bookprev {
+        text-align: left;
+    }
+}
+#page-mod-book-mod.path-mod-book #id_general .fcontainer .checkbox {
+    display: none;
+}
+
+// Book mod grid.
+@include media-breakpoint-up(sm) {
+    #page-mod-book-view {
+
+        #region-main {
+            width: 70%;
+            float: right;
+        }
+
+        #moodle-blocks {
+            clear: none;
+            width: 30%;
+            float: left;
+        }
+    }
+}
+
+#page-mod-book-view.editing .book_toc .d-flex {
+    display: block !important;
+}
+
+#page-mod-book-view.editing .book_toc .text-truncate {
+    white-space: normal;
+}
+
+// Print options for book resource.
+#page-mod-book-view {
+    // Hide the Customize this page button because we already have the edition toggle here.
+    .snap-page-heading-button .singlebutton:nth-of-type(1) {
+        display: none;
+    }
+    .snap-page-heading-button > .action-menu {
+        float: right;
+    }
+    &.path-mod .activity-header:not(:empty),
+    .block_book_toc,
+    .action-menu-trigger .dropdown-menu {
+        border-radius: 0.5rem;
+    }
+    .dropdown-menu .dropdown-item {
+        padding-left: 1rem;
+        a {
+            &:focus,
+            &:hover {
+                text-decoration: none;
+                color: white;
+            }
+            img:first-child {
+                display: none;
+            }
+        }
+    }
+    #moodle-blocks .block_book_toc {
+        padding: 1rem;
+    }
+}
+
+// Print style guide for book.
+#page-mod-book-print {
+    font-size: 18px !important;
+    p, div.book_chapter {
+        margin-right: 3em;
+    }
+}
+
+/**
+ * Mod lesson.
+ */
+
+.path-mod-lesson {
+    // Remove duplicate page edit button.
+    &#page-mod-lesson-edit,
+    &#page-mod-lesson-view {
+        .tertiary-navigation .navitem {
+            margin-bottom: 25px;
+        }
+        .tertiary-navigation .navitem:not(:last-child) {
+            margin-right: 20px;
+        }
+
+        .form-check > .text-nowrap {
+            white-space: normal !important;
+        }
+    }
+    // Unstyle secondary navtabs.
+    .nav.nav-tabs + .nav-tabs {
+        border: none;
+        text-align: right;
+        li {
+            display: inline-block;
+            margin-right: 0.5em;
+        }
+        * {
+            border: none;
+            margin: 0;
+            padding: 0;
+            float: none;
+        }
+    }
+    // Unset inline height and width of slideshow.
+    .slideshow {
+        height: auto !important;
+        width: auto !important;
+        padding-bottom: 1em;
+    }
+    // Improve edit pages form - tables for layout :(
+    // NOTE - lots of inline styles in lesson, so !important needed.
+    .edit_pages_box {
+        // Remove striping.
+        tr {
+            background-color: white !important;
+        }
+        // Make page headings obvious.
+        th.header {
+            text-align: left !important;
+            border-bottom: none !important;
+            font-size: 1.5em;
+            font-weight: 500;
+            // Float actions right.
+            a {
+                float: right;
+                padding: 0.3em;
+            }
+        }
+        // Fix none bs label class.
+        span.label {
+            color: white;
+        }
+    }
+}
+
+/* Radio button and checkbox inputs. */
+#page-mod-lesson-view.path-mod-lesson {
+    .answeroptiongroup,
+    .answeroption {
+
+        input[type="radio"],
+        input[type="checkbox"] {
+
+            + label {
+                padding-left: 1.5em;
+            }
+        }
+
+        /* Put options on seperate lines. */
+        .fgroup > span {
+            display: table; // SHAME - hack for lessons css/html display of radio buttons.
+            label p {
+                display: inline; // SHAME - fix for p tag in each label.
+            }
+        }
+    }
+}
+
+/**
+ * Styling for mod_choicegroup.
+ */
+#page-mod-choicegroup-report .response table.results td.data .user {
+    float: left;
+
+    .attemptaction {
+        margin-right: 1em;
+    }
+}
+
+/**
+ * Styling for admin tool templatelibrary.
+ */
+
+#page-admin-tool-templatelibrary-index [data-region="searchresults"] {
+    overflow: auto;
+}
+
+/**
+ * Course competency report.
+ */
+
+.gradingform_guide_comment_chooser {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.gradingform_guide_comment_chooser > ul > li button {
+    text-align: left;
+    white-space: normal;
+}
+
+/**
+* Course prorgess report.
+*/
+
+.completion-progresscell {
+    text-align: center;
+}
+
+body.pagelayout-admin.path-mod {
+    // Hide mod forms until js kicks in.
+    .mform {
+        opacity: 0;
+    }
+    &.snap-js-loaded {
+        .mform {
+            opacity: 1;
+        }
+    }
+    &:not(.snap-js-loaded) #region-main:before {
+        @include ajaxing(block, relative, 200px, 20px);
+        background-image: none !important;
+        margin: 2em auto;
+    }
+}
+
+.path-mod-page {
+    #id_appearancehdr {
+        input[readonly] {
+            pointer-events: none;
+            filter: grayscale(100%) opacity(0.5);
+        }
+    }
+}
+
+section#snap-add-new-section #summary-editor_ifr {
+    height: 100%;
+}
+
+section#snap-add-new-section #summary-editor_parent #summary-editor_tbl {
+    display: table;
+    flex-flow: row wrap;
+    align-items: center;
+    border-collapse: collapse;
+}
+
+/**
+ * Styling for atto_htmlplus and atto_fullscreen.
+ */
+.snap-form-required .editor_atto_wrap {
+    .CodeMirror.cm-s-default.CodeMirror-wrap,
+    .editor_atto {
+        z-index: 2;
+        &[style*="position: fixed"] .editor_atto_toolbar {
+            background: #f2f2f2;
+        }
+    }
+}
+
+.theme-snap .editor_atto_wrap .CodeMirror.cm-s-default.CodeMirror-wrap {
+    width: 100% !important; // Fix the fullscreen mode for INT-18111
+}
+
+/**
+ * Styling for atto_title.
+ */
+.theme-snap .atto_menu .dropdown-menu>li>a:hover,
+.theme-snap .atto_menu .dropdown-menu>li>a:focus {
+    background-color: unset;
+}
+
+// Margin to fix the border cut out when PLD tabs are getting focused.
+#page-local-pld-view {
+    div#pld_main a.tabLink.yui3-tab-label.yui3-tab-content,
+    div#rule_edit_main div#rule_edit_tabs a.yui3-tab-label.yui3-tab-content,
+    div#actionEmailEditor div#actionEmailRecipientTabs ul li a.yui3-tab-label.yui3-tab-content {
+        margin-right: 0.17em;
+    }
+    overflow-x: hidden;
+
+    .modal-dialog .content.role-check {
+        .row .col:not(.modal-footer) {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .form-item {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        @media (min-width: 768px) {
+            #roleSelector {
+                max-width: 9rem;
+            }
+        }
+
+        @media (min-width: 576px) {
+            .row .col:not(.modal-footer) {
+                align-items: center;
+                flex-direction: row;
+            }
+
+            label {
+                flex-shrink: 0;
+            }
+
+            .form-item {
+                margin-top: 1em;
+                margin-bottom: 1em;
+            }
+        }
+
+    }
+
+    .boxwidthwide .alert {
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+
+    ngb-modal-window {
+        overflow-y: auto;
+    }
+
+}
+
+#page-mod-choice-report.theme-snap {
+    .responseaction {
+        margin: 1em;
+        label {
+            margin-left: 1em;
+            margin-right: 1em;
+        }
+    }
+
+    .downloadreport ul li {
+        list-style: none;
+        padding: 0 20px;
+        display: inline;
+        float: left;
+    }
+}
+
+#page-mod-data-view form#portfolio-add-button {
+    display: block;
+}
+
+
+/**
+ * CCM Plugin.
+ */
+#page-local-ccm-view {
+    #ccm-nav .nav-link.active {
+        border-bottom: 4px solid $brand-primary;
+    }
+
+    .local_ccm-item.selected {
+        border: 1px solid $brand-primary;
+    }
+
+    i.icon,
+    p.tree_item {
+        color: $brand-primary;
+
+        &:focus,
+        &:focus-visible {
+            outline: 2px solid $brand-primary;
+        }
+    }
+
+    i.icon:before {
+        display: grid;
+    }
+
+    .dropdown ul.dropdown-menu li button {
+        &:focus,
+        &:hover {
+            background-color: $brand-primary;
+            color: white;
+        }
+    }
+
+    // Although this looks too general, we need to apply these to all of the following elements in the #page-local-ccm-view page.
+    small,
+    strong,
+    button,
+    p,
+    a,
+    span,
+    span div {
+        font-family: $font-family-system;
+    }
+
+    .ccm-step-indicator {
+        background-color: $brand-primary;
+        color: white;
+    }
+}
+
+// Drag and drop text question fix for Snap.
+.que.ddwtos .draghome,
+.que.ddwtos .drop.active {
+    max-width: 80%;
+    overflow-wrap: anywhere;
+    height: fit-content !important;
+    hyphens: auto;
+    line-height: unset !important;
+}
+
+/**
+ * My Account plugin.
+ */
+#page-local-myaccount-view,
+#page-admin-local-myaccount-view {
+    div.mr_html_tabs > ul > li.nav-item a.nav-link.active {
+        background-color: $brand-primary;
+    }
+
+    #myaccount-general-links {
+        gap: 1rem;
+    }
+
+    .myaccount-iconlinks {
+        max-width: 11em;
+        width: 11em;
+        height: 100%;
+        margin: 0;
+        &:hover,
+        &:focus-within {
+            background-color: $brand-primary;
+            a {
+                color: white;
+            }
+        }
+    }
+
+    // Change font for My Account view.
+    #myaccount-general-information,
+    #myaccount-servicedata-information,
+    #myaccount-accessibility-information {
+        p,
+        a,
+        small,
+        span {
+            font-family: $font-family-system;
+        }
+    }
+
+    #mr-nav #snap-header {
+        padding-bottom: 0.4em;
+    }
+
+    #myaccount-mobilemenu {
+        a:not(.state-active) i.icon {
+            color: $brand-primary;
+            font-size: 30px;
+            opacity: 0.4;
+        }
+        a.state-active i.icon {
+            color: $brand-primary;
+            line-height: 1.7;
+            border: 2px solid $brand-primary;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 20px;
+        }
+    }
+}
+
+/**
+ * Styling for block_accessibility.
+ * The colors come directly from the block styles.
+ */
+.theme-snap {
+    .summary.block_accessreview {
+        background-color: #fff;
+    }
+
+    .block_accessreview_success,
+    .block_accessreview_danger {
+        p,
+        a {
+            font-weight: 400; // By default the block will change the texts to a bold text, this avoid that change.
+        }
+    }
+
+    // We need to override the default values for Snap when these classes exists.
+    .block_accessreview_success .block_accessreview_view {
+        color: #1e451e;
+        background-color: #d7e6d7 !important;
+    }
+
+    .block_accessreview_danger .block_accessreview_view {
+        color: #6e211e;
+        background-color: #f6d9d8 !important;
+    }
+
+    .block_accessreview_view {
+        margin-bottom: 1.5em;
+        font-size: 15px;
+        padding-left: 2em !important;
+    }
+}
+
+/**
+ * Open reports.
+ */
+#page-blocks-reports-view {
+    .dropdown ul.dropdown-menu li button {
+        &:focus,
+        &:hover {
+            background-color: $brand-primary;
+            color: white;
+        }
+    }
+    input[type="checkbox"] {
+        accent-color: $brand-primary;
+    }
+}
+#report-content #id_filterheader .d-flex .ftoggler {
+    width: unset;
+}
+/**
+ * Tiles course format.
+ */
+#page-course-edit.format-tiles #tilesinfo .col-md-9 {
+    flex: none;
+    max-width: 100%;
+}
+.theme-snap.format-tiles #section-zero-container.format-tiles-no-js {
+    min-height: unset;
+}
+body.format-tiles.editing {
+    li.activity-wrapper {
+        .editing_move {
+            float: left;
+        }
+        .description {
+            margin-left: 10%;
+        }
+        .activity-info {
+            margin-left: auto;
+            margin-right: 3rem;
+        }
+        .my-1 {
+            margin-left: 10%;
+        }
+    }
+
+    li.subtile {
+        .activitytype {
+            max-width: none !important;
+        }
+        .inplaceeditable a:nth-of-type(1) {
+            white-space: nowrap;
+            width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+    }
+
+
+}
+#page-course-view-tiles {
+    // Styles for Dashboard, progress indicator, filter buttons and edit course content link.
+    #headerabovetiles {
+        margin-top: 3em;
+        margin-bottom: 1em;
+        & > div:nth-child(1) {
+            float: left;
+        }
+        & > div:nth-child(2) {
+            width: fit-content;
+            .btn-group {
+                right: 0;
+                position: absolute;
+                margin-right: 3rem;
+            }
+            .tiles-top-button {
+                right: 0;
+                position: absolute;
+            }
+        }
+        & > div:nth-child(3) {
+            width: fit-content;
+            .btn-group {
+                right: 0;
+                position: absolute;
+                margin-right: 3rem;
+            }
+            .tiles-top-button {
+                right: 0;
+                position: absolute;
+            }
+        }
+        @media (max-width: 600px) and (min-width: 377px) {
+            #snap-editmode-header {
+                float: none;
+            }
+            div.progress-indic {
+                padding-top: 1.5em;
+            }
+        }
+        #filterbuttons {
+            top: 3em;
+            @media (max-width: 600px) {
+                top: 7em;
+                display: flex;
+            }
+        }
+    }
+
+    #snap-editmode {
+        clear: both;
+    }
+
+    #snap-tiles-with-filter-buttons {
+        min-height: 110px;
+        @media (max-width: 600px) {
+            min-height: 145px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        #abovetiles {
+            min-height: 90px;
+        }
+    }
+
+    @media (max-width: 376px) {
+        #snap-course-dashboard {
+            padding-left: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        #snap-editmode-header {
+            float: left;
+        }
+        div.progress-indic {
+            padding-top: 0;
+        }
+        div.progress-indic > div:nth-child(1) {
+            display: none;
+        }
+    }
+
+    .edit-course-content {
+        float: right;
+        i.icon:before {
+            color: white;
+        }
+    }
+
+    #abovetiles .expand-collapse-all-btns {
+
+    }
+
+    // Dashboard styles.
+    #coursetools-header-tiles {
+        display: flex;
+        justify-content: space-between;
+        i.fa-home {
+            color: $brand-primary;
+        }
+    }
+
+    // Sections styles.
+    #changenumsections a.pull-right, #changenumsections a.float-end {
+        color: #fff;
+        background-color: $brand-primary;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        margin-top: 0 !important;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        i.fa-plus {
+            color: white;
+        }
+        &:hover {
+            text-decoration: none;
+            background-color: darken($brand-primary, 10%);
+            border-color: darken($brand-primary, 10%);
+            outline: 3px auto $brand-primary;
+        }
+    }
+
+    #single_section_tiles {
+        i.fa-chevron-left,
+        i.fa-chevron-right,
+        i.fa-home {
+            color: $brand-primary;
+        }
+    }
+
+    li.section .inplaceeditable  .quickeditlink {
+        &:focus,
+        &:active {
+            background-color: transparent;
+            box-shadow: none;
+        }
+    }
+
+    // List view.
+    .course-content ul.section.nosubtiles {
+        li.activity {
+            padding-bottom: 1.3em;
+            .mod-indent-outer {
+                @include media-breakpoint-up(lg) {
+                    a:first-of-type {
+                        max-width: 500px;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        display: block;
+                    }
+                }
+                @include media-breakpoint-down(md) {
+                    .inplaceeditable img.activityicon {
+                        height: 24px;
+                        width: 24px;
+                    }
+                }
+                .label_content a {
+                    display: contents;
+                }
+                a {
+                    &:focus,
+                    &:active {
+                        background-color: transparent;
+                        box-shadow: none;
+                    }
+                }
+                .contentafterlink {
+                    padding-top: 3em;
+                }
+            }
+            .actions {
+                min-width: 30px;
+                position: absolute;
+                display: flex;
+                right: 0;
+                top: 0;
+            }
+            .activity-information {
+                float: left;
+                margin-top: 1em;
+            }
+        }
+    }
+
+    // While on editing mode for list view.
+    &.editing {
+        ul.section.nosubtiles {
+            li.activity {
+                @media (max-width: 390px) {
+                    .mod-indent-outer a:first-of-type {
+                        max-width: 80px;
+                    }
+                }
+                .actions {
+                    background-color: transparent;
+                    margin-top: 0;
+                    .moodle-actionmenu {
+                        margin-right: 0.8em;
+                    }
+                    .completioncheckbox span.completion-icon {
+                        top: 2px;
+                    }
+                    @media (max-width: 768px) {
+                        .completioncheckbox .completion-icon {
+                            top: 0 !important;
+                            width: 20px;
+                            height: 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Editing mode for general items.
+    &.editing {
+        .section-modchooser-link.btn.btn-link {
+            color: #fff;
+            background-color: $brand-primary;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            margin-bottom: 1em !important;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            i.fa-plus {
+                color: white;
+            }
+            &:hover {
+                text-decoration: none;
+                background-color: darken($brand-primary, 10%);
+                border-color: darken($brand-primary, 10%);
+                outline: 3px auto $brand-primary;
+            }
+        }
+        li[id^="section-"] {
+            padding-bottom: 1em !important;
+        }
+    }
+
+    // Card view.
+    .course-content ul.section.subtiles {
+        .subtile_inner {
+            position: relative;
+            padding: 0 16px 0 0;
+        }
+        .actions {
+            right: 0;
+            display: flex;
+        }
+    }
+
+    // While on editing mode for card view.
+    &.editing {
+        ul.section.subtiles {
+            li.activity.fullwidth div.completioncheckbox {
+                position: relative;
+            }
+            .subtile_inner {
+                .editing_move {
+                    top: 5px;
+                }
+                .activitytype {
+                    margin-top: 1em;
+                }
+            }
+            .actions {
+                background-color: transparent;
+                .action-menu {
+                    margin-right: 0.5em;
+                }
+            }
+        }
+    }
+
+    // Fix label content elements.
+    .modtype_label {
+        margin: 1em 1%;
+        &.activity-wrapper {
+            .my-1 {
+                margin-left: 5%;
+            }
+        }
+        .mod-indent {
+            float: none;
+        }
+        .mod-indent-outer {
+            margin-right: 2rem;
+        }
+        .activity-information [data-action="toggle-manual-completion"] {
+            margin-bottom: 1rem;
+        }
+        &.dimmed {
+            opacity: 1;
+        }
+        span.label_content.dimmed {
+            opacity: 0.7;
+        }
+    }
+
+    // Prevent section buttons to overlap activities.
+    .sectionbuttons {
+        top: 0 !important;
+    }
+
+    // Prevent Tile and section to overlap header in Snap.
+    .tile-clickable,
+    .moveablesection {
+        z-index: 11;
+    }
+
+    // Show modal in the back of the header.
+    .modal-backdrop.fade.in {
+        z-index: 10;
+    }
+    #abovetiles {
+        display: block;
+    }
+    #snap-course-dashboard {
+        margin-bottom: 1rem;
+    }
+    .alert-block {
+        display: inline-block;
+        margin-left: 2em;
+    }
+    .activityicon {
+        min-height: 32px;
+        min-width: 32px;
+    }
+}
+
+// Styles on section Actions for format Tiles.
+body.format-tiles .section .snap-asset .actions {
+    width: unset;
+    left: unset;
+}
+body.format-tiles.editing .section .snap-asset .actions {
+    overflow: unset;
+    .dropdown-menu {
+        visibility: unset;
+        width: unset;
+        height: unset;
+        border: 1px solid $dropdown-border-color;
+        &:not(.show) {
+            display: none;
+        }
+    }
+}
+
+// Course catalogue styles.
+#page-local-catalogue-index {
+    .mform > .form-group {
+        margin-left: 0;
+    }
+
+    .filters {
+        // Make buttons inline
+        + div, + div + div {
+            display: inline-block;
+        }
+
+        // Align vertically
+        + div div {
+            margin-bottom: 2px !important;
+            margin-left: 0 !important;
+        }
+
+        // Align filters form to te left
+        .form-group {
+            margin-left: 0 !important;
+        }
+    }
+
+    // Center sorting direction icon
+    .course-sorting .sort-direction .icon {
+        &.fa-sort-desc {
+            transform: translateY(-4px);
+        }
+
+        &.fa-sort-asc {
+            transform: translateY(4px);
+        }
+    }
+
+    // Fix course box height
+    .local-catalogue-courses {
+        .coursebox .content {
+            overflow: auto;
+        }
+
+        .pagination {
+            @extend .mt-2;
+        }
+    }
+
+    #page-header {
+        padding-top: 6em;
+    }
+
+    &.contains-snap-custom_menu-spacer #page-header {
+        padding-top: 8em;
+    }
+}
+
+body#page-admin-plugins {
+    .pluginicon { // Default for all plugins
+        background: transparent;
+    }
+
+    .name-mod_forum,
+    .name-mod_chat,
+    .name-mod_hsuforum {
+        .pluginicon {
+            filter: $communication-filter;
+        }
+    }
+
+    .name-mod_assign,
+    .name-mod_workshop,
+    .name-mod_journal,
+    .name-mod_attendance {
+        .pluginicon {
+            filter: $assignment-filter;
+        }
+    }
+
+    .name-mod_choice,
+    .name-mod_feedback,,
+    .name-mod_quiz,
+    .name-mod_survey,
+    .name-mod_lesson,
+    .name-mod_facetoface {
+        .pluginicon {
+            filter: $content-filter;
+        }
+    }
+
+    .name-mod_data,
+    .name-mod_glossary,
+    .name-mod_wiki,
+    .name-mod_choicegroup {
+        .pluginicon {
+            filter: $information-filter;
+        }
+    }
+
+    .name-mod_collaborate .pluginicon {
+        filter: $collab-filter;
+    }
+
+    .name-mod_hvp .pluginicon {
+            filter: $hvp-filter;
+    }
+
+    .name-mod_lightboxgallery {
+        .pluginicon {
+            filter: $lightbox-filter;
+        }
+    }
+
+
+    .name-mod_resource {
+        .pluginicon {
+            filter: $resource-filter;
+        }
+    }
+
+    .name-mod_book {
+        .pluginicon {
+            filter: $book-filter;
+        }
+    }
+
+    .name-mod_folder {
+        .pluginicon {
+            filter: $folder-filter;
+        }
+    }
+
+    .name-mod_questionnaire {
+        .pluginicon {
+            filter: $questionnaire-filter;
+        }
+    }
+
+    .name-mod_url {
+        .pluginicon {
+            filter: $url-filter;
+        }
+    }
+
+    .name-mod_label {
+        .pluginicon {
+            filter: $label-filter;
+        }
+    }
+
+    .name-mod_page {
+        .pluginicon {
+            filter: $page-filter;
+        }
+    }
+
+    .name-mod_lti {
+        .pluginicon {
+            filter: $resource-filter;
+        }
+    }
+
+    .name-mod_certificate,
+    .name-mod_customcert,
+    .name-mod_coursecertificate {
+        .pluginicon {
+            filter: $certificate-filter;
+        }
+    }
+
+    .name-mod_customquiz {
+        .pluginicon {
+            filter: $customquiz-filter;
+        }
+    }
+
+    .name-mod_livepoll {
+        .pluginicon {
+            filter: $livepoll-filter;
+        }
+    }
+
+    .name-mod_checklist,
+    .name-mod_dialogue {
+        .pluginicon {
+            filter: $checklist-filter;
+        }
+    }
+
+    .name-mod_quizgame,
+    .name-mod_adaptivequiz {
+        .pluginicon {
+            filter: $quizlms-filter;
+        }
+    }
+
+    .name-mod_zoom {
+        .pluginicon {
+            filter: $zoom-filter;
+        }
+    }
+
+    .name-mod_goone {
+        .pluginicon {
+            filter: $go1-filter;
+        }
+    }
+}
+
+// -------------------------
+//  Activity icons.
+// -------------------------
+.path-course .block-region, // Activities icons in Course page blocks.
+.path-my .block-region, // Activities icons in dashboard page blocks.
+.layout-incourse .page-header-image .activityiconcontainer, // Activities icons in secondary course pages.
+.path-grade-report, .path-grade-edit, // Activities icons in grader pages.
+#page-site-index .block-region, // Activities icons in home page blocks.
+#snap_feeds_side_menu .snap-feeds .snap-media-object, // Activities icons in Snap feeds.
+#snap_feeds_side_menu .snap-feeds-mobile-menu .snap-media-object, // Activities icons in Snap feeds mobile version.
+#page-course-view-tiles .activity, // Activities icons in courses with Tiles format.
+#page-course-view-section-tiles .activityiconcontainer,
+#page-course-recent #region-main,
+#page-admin-modules #modules { // Activities icons "Manage activities" administration page.
+    img[src*="snap"] {
+        &[src*="forum"][src*="icon"], &[src*="forum"][src*="monologo"],
+        &[src*="chat"][src*="icon"], &[src*="chat"][src*="monologo"],
+        &[src*="hsuforum"][src*="icon"], &[src*="hsuforum"][src*="monologo"] {
+            filter: $communication-filter;
+        }
+
+        &[src*="hsuforum"][src*="icon"], &[src*="hsuforum"][src*="monologo"] {
+            height: 25px;
+        }
+
+        &[src*="assign"][src*="icon"], &[src*="assign"][src*="monologo"],
+        &[src*="workshop"][src*="icon"], &[src*="workshop"][src*="monologo"],
+        &[src*="journal"][src*="icon"], &[src*="journal"][src*="monologo"],
+        &[src*="attendance"][src*="icon"], &[src*="attendance"][src*="monologo"] {
+            filter: $assignment-filter;
+        }
+
+        &[src*="choice"][src*="icon"], &[src*="choice"][src*="monologo"],
+        &[src*="feedback"][src*="icon"], &[src*="feedback"][src*="monologo"],
+        &[src*="quiz"][src*="icon"], &[src*="quiz"][src*="monologo"],
+        &[src*="survey"][src*="icon"], &[src*="survey"][src*="monologo"],
+        &[src*="lesson"][src*="icon"], &[src*="lesson"][src*="monologo"],
+        &[src*="facetoface"][src*="icon"], &[src*="facetoface"][src*="monologo"] {
+            filter: $content-filter;
+        }
+
+        &[src*="data"][src*="icon"], &[src*="data"][src*="monologo"],
+        &[src*="glossary"][src*="icon"], &[src*="glossary"][src*="monologo"],
+        &[src*="wiki"][src*="icon"], &[src*="wiki"][src*="monologo"],
+        &[src*="choicegroup"][src*="icon"], &[src*="choicegroup"][src*="monologo"] {
+            filter: $information-filter;
+        }
+
+        &[src*="collaborate"][src*="icon"], &[src*="collaborate"][src*="monologo"] {
+            filter: $collab-filter;
+            height: 30px;
+        }
+
+        &[src*="hvp"][src*="icon"], &[src*="hvp"][src*="monologo"] {
+            filter: $hvp-filter;
+        }
+
+        &[src*="lightboxgallery"][src*="icon"], &[src*="lightboxgallery"][src*="monologo"] {
+            filter: $lightbox-filter;
+        }
+
+        &[src*="resource"][src*="icon"], &[src*="resource"][src*="monologo"],
+        &[src*="lti"][src*="icon"], &[src*="lti"][src*="monologo"] {
+            filter: $resource-filter;
+        }
+
+        &[src*="url"][src*="icon"], &[src*="url"][src*="monologo"] {
+            filter: $scheduler-filter;
+        }
+
+        &[src*="book"][src*="icon"], &[src*="book"][src*="monologo"] {
+            filter: $book-filter;
+        }
+
+        &[src*="folder"][src*="icon"], &[src*="folder"][src*="monologo"] {
+            filter: $folder-filter;
+        }
+
+        &[src*="questionnaire"][src*="icon"], &[src*="questionnaire"][src*="monologo"] {
+            filter: $questionnaire-filter;
+        }
+
+        &[src*="url"][src*="icon"], &[src*="url"][src*="monologo"],
+        &[src*="snap/core"], &[src*="snap/format_tiles"] {
+            filter: $url-filter;
+        }
+
+        &[src*="label"][src*="icon"], &[src*="label"][src*="monologo"] {
+            filter: $label-filter;
+        }
+
+        &[src*="page"][src*="icon"], &[src*="page"][src*="monologo"] {
+            filter: $page-filter;
+        }
+
+        &[src*="certificate"][src*="icon"], &[src*="certificate"][src*="monologo"],
+        &[src*="customcert"][src*="icon"], &[src*="customcert"][src*="monologo"],
+        &[src*="coursecertificate"][src*="icon"], &[src*="coursecertificate"][src*="monologo"] {
+            filter: $certificate-filter;
+        }
+
+        &[src*="customquiz"][src*="icon"], &[src*="customquiz"][src*="monologo"] {
+            filter: $customquiz-filter;
+        }
+
+        &[src*="livepoll"][src*="icon"], &[src*="livepoll"][src*="monologo"] {
+            filter: $livepoll-filter;
+        }
+
+        &[src*="checklist"][src*="icon"], &[src*="checklist"][src*="monologo"],
+        &[src*="dialogue"][src*="icon"], &[src*="dialogue"][src*="monologo"] {
+            filter: $checklist-filter;
+        }
+
+        &[src*="quizgame"][src*="icon"], &[src*="quizgame"][src*="monologo"],
+        &[src*="adaptivequiz"][src*="icon"], &[src*="adaptivequiz"][src*="monologo"] {
+            filter: $quizlms-filter;
+        }
+
+        &[src*="zoom"][src*="icon"], &[src*="zoom"][src*="monologo"] {
+            filter: $zoom-filter;
+        }
+
+        &[src*="goone"][src*="icon"], &[src*="goone"][src*="monologo"] {
+            filter: $go1-filter;
+        }
+
+        &[src*="andrescosearch"][src*="icon"], &[src*="andrescosearch"][src*="monologo"],
+        &[src*="kalvidres"][src*="icon"], &[src*="kalvidres"][src*="monologo"] {
+            filter: $url-filter;
+        }
+
+        &[src*="ebcwep"][src*="icon"], &[src*="ebcwep"][src*="monologo"] {
+            filter: $ebcwep-filter;
+        }
+
+        &[src*="groupselect"][src*="icon"], &[src*="groupselect"][src*="monologo"] {
+            filter: $groupselect-filter;
+        }
+
+        &[src*="imscp"][src*="icon"], &[src*="imscp"][src*="monologo"],
+        &[src*="scorm"][src*="icon"], &[src*="scorm"][src*="monologo"] {
+            filter: $imscp-filter;
+        }
+
+        &[src*="scheduler"][src*="icon"], &[src*="scheduler"][src*="monologo"] {
+            filter: $scheduler-filter;
+        }
+    }
+}
+
+#page-course-view-tiles #multi_section_tiles,
+#page-course-view-tiles.format-tiles-single-sec  {
+    .activityiconcontainer img {
+        &[src*="hsuforum"][src*="icon"], &[src*="hsuforum"][src*="monologo"] {
+            filter: none;
+            height: 55px;
+        }
+
+        &[src*="livepoll"][src*="icon"], &[src*="livepoll"][src*="monologo"],
+        &[src*="collaborate"][src*="icon"], &[src*="collaborate"][src*="monologo"] {
+            height: 55px;
+        }
+    }
+}
+#page-course-view-section-tiles.editing,
+#page-course-view-section-tiles.single-section-page,
+#page-course-view-tiles.editing,
+#page-course-view-tiles #section-zero-container,
+#page-course-view-tiles.format-tiles-single-sec.editing {
+    .activityiconcontainer img:not(.modchooser img) {
+        &[src*="hsuforum"][src*="icon"], &[src*="hsuforum"][src*="monologo"],
+        &[src*="livepoll"][src*="icon"], &[src*="livepoll"][src*="monologo"] {
+            filter: none;
+        }
+    }
+}

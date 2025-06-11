@@ -14,19 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Class representing a lock
- *
- * The methods available for a specific lock type are only known by it's factory.
- *
- * @package    core
- * @copyright  Damyon Wiese 2013
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\lock;
 
-defined('MOODLE_INTERNAL') || die();
+use coding_exception;
 
 /**
  * Class representing a lock
@@ -92,20 +82,10 @@ class lock {
     }
 
     /**
-     * Extend the lifetime of this lock. Not supported by all factories.
-     *
      * @deprecated since Moodle 3.10.
-     * @param int $maxlifetime - the new lifetime for the lock (in seconds).
-     * @return bool
      */
-    public function extend($maxlifetime = 86400) {
-        debugging('The function extend() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-
-        if ($this->factory) {
-            return $this->factory->extend_lock($this, $maxlifetime);
-        }
-        return false;
+    public function extend() {
+        throw new coding_exception('The function extend() has been removed, please do not use it anymore.');
     }
 
     /**

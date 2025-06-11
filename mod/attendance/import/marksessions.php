@@ -38,11 +38,11 @@ $pageparams->page       = optional_param('page', 1, PARAM_INT);
 $importid               = optional_param('importid', null, PARAM_INT);
 
 $cm                     = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course                 = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att                    = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course                 = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att                    = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 // Check this is a valid session for this attendance.
-$session                = $DB->get_record('attendance_sessions', array('id' => $pageparams->sessionid, 'attendanceid' => $att->id),
+$session                = $DB->get_record('attendance_sessions', ['id' => $pageparams->sessionid, 'attendanceid' => $att->id],
                                   '*', MUST_EXIST);
 
 require_login($course, true, $cm);
@@ -52,7 +52,7 @@ require_capability('mod/attendance:takeattendances', $context);
 $pageparams->init($course->id);
 
 $PAGE->set_context($context);
-$url = new moodle_url('/mod/attendance/import/marksessions.php');
+$url = new moodle_url('/mod/attendance/import/marksessions.php', ['id' => $id, 'sessionid' => $pageparams->sessionid]);
 $PAGE->set_url($url);
 $PAGE->set_title($course->shortname. ": ".$att->name);
 $PAGE->set_heading($course->fullname);
@@ -66,12 +66,12 @@ $output = $PAGE->get_renderer('mod_attendance');
 
 $formparams = ['id' => $cm->id,
                'sessionid' => $pageparams->sessionid,
-               'grouptype' => $pageparams->grouptype];
+               'grouptype' => $pageparams->grouptype, ];
 $form = null;
 if (optional_param('needsconfirm', 0, PARAM_BOOL)) {
     $form = new \mod_attendance\form\import\marksessions($url->out(false), $formparams);
 } else if (optional_param('confirm', 0, PARAM_BOOL)) {
-    $importer = new \mod_attendance\import\marksessions(null, $att, null, null, $importid);
+    $importer = new \mod_attendance\import\marksessions($att, null, null, null, $importid);
     $formparams['importer'] = $importer;
     $form = new \mod_attendance\form\import\marksessions_confirm(null, $formparams);
 } else {
@@ -80,14 +80,14 @@ if (optional_param('needsconfirm', 0, PARAM_BOOL)) {
 
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/attendance/take.php',
-             array('id' => $cm->id,
+             ['id' => $cm->id,
              'sessionid' => $pageparams->sessionid,
-             'grouptype' => $pageparams->grouptype)));
+             'grouptype' => $pageparams->grouptype, ]));
     return;
 } else if ($data = $form->get_data()) {
     if ($data->confirm) {
         $importid = $data->importid;
-        $importer = new \mod_attendance\import\marksessions(null, $att, null, null, $importid, $data, true);
+        $importer = new \mod_attendance\import\marksessions($att, null, null, null, $importid, $data, true);
         $error = $importer->get_error();
         if ($error) {
             $form = new \mod_attendance\form\import\marksessions($url->out(false), $formparams);
@@ -96,7 +96,7 @@ if ($form->is_cancelled()) {
             echo $output->header();
             $sessions = $importer->import();
             mod_attendance_notifyqueue::show();
-            $url = new moodle_url('/mod/attendance/manage.php', array('id' => $att->cmid));
+            $url = new moodle_url('/mod/attendance/manage.php', ['id' => $att->cmid]);
             echo $output->continue_button($url);
             echo $output->footer();
             die();
@@ -105,7 +105,7 @@ if ($form->is_cancelled()) {
         $text = $form->get_file_content('attendancefile');
         $encoding = $data->encoding;
         $delimiter = $data->separator;
-        $importer = new \mod_attendance\import\marksessions($text, $att, $encoding, $delimiter, 0, null, true);
+        $importer = new \mod_attendance\import\marksessions($att, $text, $encoding, $delimiter, 0, null, true);
         $formparams['importer'] = $importer;
         $confirmform = new \mod_attendance\form\import\marksessions_confirm(null, $formparams);
         $form = $confirmform;

@@ -14,116 +14,82 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A widget to search users within the gradebook.
+ * Allow the user to search for learners within the user report.
  *
  * @module    gradereport_user/user
- * @copyright 2022 Mathew May <mathew.solutions>
+ * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-import Pending from 'core/pending';
-import * as Templates from 'core/templates';
+import UserSearch from 'core_user/comboboxsearch/user';
+import {renderForPromise, replaceNodeContents} from 'core/templates';
 import * as Repository from 'core_grades/searchwidget/repository';
-import * as WidgetBase from 'core_grades/searchwidget/basewidget';
-import {get_string as getString} from 'core/str';
-import Url from 'core/url';
-import $ from 'jquery';
-import * as Selectors from 'core_grades/searchwidget/selectors';
 
-/**
- * Our entry point into starting to build the search widget.
- * It'll eventually, based upon the listeners, open the search widget and allow filtering.
- *
- * @method init
- */
-export const init = () => {
-    const pendingPromise = new Pending();
-    registerListenerEvents();
-    pendingPromise.resolve();
-};
+export default class User extends UserSearch {
 
-/**
- * Register user search widget related event listeners.
- *
- * @method registerListenerEvents
- */
-const registerListenerEvents = () => {
-    let {bodyPromiseResolver, bodyPromise} = WidgetBase.promisesAndResolvers();
-    const dropdownMenuContainer = document.querySelector(Selectors.elements.getSearchWidgetDropdownSelector('user'));
+    /**
+     * Construct the class.
+     *
+     * @param {string} baseUrl The base URL for the page.
+     */
+    constructor(baseUrl) {
+        super();
+        this.baseUrl = baseUrl;
+    }
 
-    // Handle the 'shown.bs.dropdown' event (Fired when the dropdown menu is fully displayed).
-    $(Selectors.elements.getSearchWidgetSelector('user')).on('show.bs.dropdown', async(e) => {
-        const courseID = e.relatedTarget.dataset.courseid;
-        const groupId = e.relatedTarget.dataset.groupid;
-        const actionBaseUrl = Url.relativeUrl('/grade/report/user/index.php', {}, false);
-        // Display a loading icon in the dropdown menu container until the body promise is resolved.
-        await WidgetBase.showLoader(dropdownMenuContainer);
+    static init(baseUrl) {
+        return new User(baseUrl);
+    }
 
-        // If an error occurs while fetching the data, display the error within the dropdown menu.
-        const data = await Repository.userFetch(courseID, actionBaseUrl, groupId).catch(async(e) => {
-            const errorTemplateData = {
-                'errormessage': e.message
-            };
-            bodyPromiseResolver(
-                await Templates.render('core_grades/searchwidget/error', errorTemplateData)
-            );
+    /**
+     * Build the content then replace the node.
+     */
+    async renderDropdown() {
+        const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
+            users: this.getMatchedResults().slice(0, 5),
+            hasresults: this.getMatchedResults().length > 0,
+            instance: this.instance,
+            matches: this.getDatasetSize(),
+            searchterm: this.getSearchTerm(),
+            selectall: this.selectAllResultsLink(),
         });
+        replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+        // Remove aria-activedescendant when the available options change.
+        this.searchInput.removeAttribute('aria-activedescendant');
+    }
 
-        // Early return if there is no module data.
-        if (data === []) {
-            return;
-        }
+    /**
+     * Build up the view all link.
+     *
+     * @returns {string|*}
+     */
+    selectAllResultsLink() {
+        const url = new URL(this.baseUrl);
+        url.searchParams.set('userid', 0);
+        url.searchParams.set('searchvalue', this.getSearchTerm());
+        return url.toString();
+    }
 
-        // The HTML for the 'All users' option which will be rendered in the non-searchable content are of the widget.
-        const allUsersOptionName = await getString('allusersnum', 'gradereport_user', data.users.length);
-        const allUsersOption = await Templates.render('gradereport_user/all_users_item', {
-            id: 0,
-            name: allUsersOptionName,
-            url: Url.relativeUrl('/grade/report/user/index.php', {id: courseID, userid: 0}, false),
-        });
+    /**
+     * Build up the link that is dedicated to a particular result.
+     *
+     * @param {Number} userID The ID of the user selected.
+     * @returns {string|*}
+     */
+    selectOneLink(userID) {
+        const url = new URL(this.baseUrl);
+        url.searchParams.set('userid', userID);
+        url.searchParams.set('searchvalue', this.getSearchTerm());
+        return url.toString();
+    }
 
-        await WidgetBase.init(
-            dropdownMenuContainer,
-            bodyPromise,
-            data.users,
-            searchUsers(),
-            allUsersOption
-        );
-
-        // Resolvers for passed functions in the dropdown menu creation.
-        bodyPromiseResolver(Templates.render(
-            'core_grades/searchwidget/user/usersearch_body', {displayunsearchablecontent: true}
-        ));
-    });
-
-    // Handle the 'hide.bs.dropdown' event (Fired when the dropdown menu is being closed).
-    $(Selectors.elements.getSearchWidgetSelector('user')).on('hide.bs.dropdown', () => {
-        // Reset the state once the user menu dropdown is closed.
-        dropdownMenuContainer.innerHTML = '';
-    });
-};
-
-/**
- * Define how we want to search and filter users when the user decides to input a search value.
- *
- * @method registerListenerEvents
- * @returns {function(): function(*, *): (*)}
- */
-const searchUsers = () => {
-    return () => {
-        return (users, searchTerm) => {
-            if (searchTerm === '') {
-                return users;
-            }
-            searchTerm = searchTerm.toLowerCase();
-            const searchResults = [];
-            users.forEach((user) => {
-                const userName = user.fullname.toLowerCase();
-                if (userName.includes(searchTerm)) {
-                    searchResults.push(user);
-                }
-            });
-            return searchResults;
-        };
-    };
-};
+    /**
+     * Get the data we will be searching against in this component.
+     *
+     * @returns {Promise<*>}
+     */
+    fetchDataset() {
+        // Small typing checks as sometimes groups don't exist therefore the element returns a empty string.
+        const gts = typeof (this.groupID) === "string" && this.groupID === '' ? 0 : this.groupID;
+        return Repository.userFetch(this.courseID, gts).then((r) => r.users);
+    }
+}

@@ -1,11 +1,3 @@
-unsupportedexport,mod_data
-buttons,mod_data
-nosingletemplate,mod_data
-nolisttemplate,mod_data
-pleaseaddsome,mod_data
-blank,mod_data
-savetemplate,mod_data
-addedby,mod_data
-addentries,mod_data
-todatabase,mod_data
-
+fieldids,mod_data
+completionentries,mod_data
+tagsdeleted,mod_data

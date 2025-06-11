@@ -331,7 +331,6 @@ class ADODB_sqlite3 extends ADOConnection {
 		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
 	}
 
-	// returns query ID if successful, otherwise false
 	function _query($sql,$inputarr=false)
 	{
 		$rez = $this->_connectionID->query($sql);

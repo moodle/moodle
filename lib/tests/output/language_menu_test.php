@@ -26,12 +26,13 @@ use ReflectionMethod;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class language_menu_test extends \advanced_testcase {
+final class language_menu_test extends \advanced_testcase {
     /**
      * Basic setup to make sure the nav objects gets generated without any issues.
      */
     public function setUp(): void {
         global $PAGE;
+        parent::setUp();
         $this->resetAfterTest();
         $PAGE->set_url('/');
     }
@@ -43,7 +44,7 @@ class language_menu_test extends \advanced_testcase {
      * @param string $language
      * @param array $expected
      */
-    public function test_get_lang_menu(bool $withadditionallangs, string $language, array $expected) {
+    public function test_get_lang_menu(bool $withadditionallangs, string $language, array $expected): void {
         global $CFG, $PAGE;
 
         // Mimic multiple langs installed. To trigger responses 'get_list_of_translations'.
@@ -61,7 +62,6 @@ class language_menu_test extends \advanced_testcase {
 
         $output = new language_menu($PAGE);
         $method = new ReflectionMethod('\core\output\language_menu', 'export_for_template');
-        $method->setAccessible(true);
         $renderer = $PAGE->get_renderer('core');
 
         $response = $method->invoke($output, $renderer);
@@ -101,7 +101,7 @@ class language_menu_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_lang_menu_provider(): array {
+    public static function get_lang_menu_provider(): array {
         return [
             'Lang menu with only the current language' => [
                 false, 'en', []

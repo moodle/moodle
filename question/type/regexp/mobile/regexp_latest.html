@@ -8,10 +8,10 @@
         </core-format-text>
     </ion-item>
     <ion-item *ngIf="!question.input.isInline" class="ion-text-wrap core-{{question.input.correctIconColor}}-item">
-        <ion-label position="stacked">{{ 'addon.mod_quiz.answercolon' | translate }}</ion-label>
         <ion-input type="text" [placeholder]="question.input.readOnly ? '' : 'core.question.answer' | translate"
             [attr.name]="question.input.name"
-            [value]="question.input.value" autocorrect="off" [disabled]="question.input.readOnly">
+            [value]="question.input.value" autocorrect="off" [disabled]="question.input.readOnly"
+            labelPlacement="stacked" [label]="'addon.mod_quiz.answercolon' | translate">
         </ion-input>
         <ion-icon *ngIf="question.input.correctIcon"
             class="core-correct-icon" slot="end" [name]="question.input.correctIcon"

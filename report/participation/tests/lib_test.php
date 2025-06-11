@@ -32,17 +32,16 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Test report_log_supports_logstore.
      */
-    public function test_report_participation_supports_logstore() {
+    public function test_report_participation_supports_logstore(): void {
         $logmanager = get_log_manager();
         $allstores = \core_component::get_plugin_list_with_class('logstore', 'log\store');
 
         $supportedstores = array(
-            'logstore_legacy' => '\logstore_legacy\log\store',
             'logstore_standard' => '\logstore_standard\log\store'
         );
 

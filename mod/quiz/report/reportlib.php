@@ -26,9 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
+
+use mod_quiz\question\display_options;
 
 /**
  * Takes an array of objects and constructs a multidimensional array keyed by
@@ -45,10 +45,10 @@ require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
  */
 function quiz_report_index_by_keys($datum, $keys, $keysunique = true) {
     if (!$datum) {
-        return array();
+        return [];
     }
     $key = array_shift($keys);
-    $datumkeyed = array();
+    $datumkeyed = [];
     foreach ($datum as $data) {
         if ($keys || !$keysunique) {
             $datumkeyed[$data->{$key}][]= $data;
@@ -68,7 +68,7 @@ function quiz_report_unindex($datum) {
     if (!$datum) {
         return $datum;
     }
-    $datumunkeyed = array();
+    $datumunkeyed = [];
     foreach ($datum as $value) {
         if (is_array($value)) {
             $datumunkeyed = array_merge($datumunkeyed, quiz_report_unindex($value));
@@ -85,17 +85,17 @@ function quiz_report_unindex($datum) {
  */
 function quiz_has_questions($quizid) {
     global $DB;
-    return $DB->record_exists('quiz_slots', array('quizid' => $quizid));
+    return $DB->record_exists('quiz_slots', ['quizid' => $quizid]);
 }
 
 /**
  * Get the slots of real questions (not descriptions) in this quiz, in order.
- * @param object $quiz the quiz.
+ * @param stdClass $quiz the quiz.
  * @return array of slot => objects with fields
  *      ->slot, ->id, ->qtype, ->length, ->number, ->maxmark, ->category (for random questions).
  */
 function quiz_report_get_significant_questions($quiz) {
-    $quizobj = \quiz::create($quiz->id);
+    $quizobj = mod_quiz\quiz_settings::create($quiz->id);
     $structure = \mod_quiz\structure::create_for_quiz($quizobj);
     $slots = $structure->get_slots();
 
@@ -113,6 +113,7 @@ function quiz_report_get_significant_questions($quiz) {
         $slotreport->qtype = $slot->qtype;
         $slotreport->length = $slot->length;
         $slotreport->number = $number;
+        $slotreport->displaynumber = $slot->displaynumber ?? $number;
         $number += $slot->length;
         $slotreport->maxmark = $slot->maxmark;
         $slotreport->category = $slot->category;
@@ -124,7 +125,7 @@ function quiz_report_get_significant_questions($quiz) {
 }
 
 /**
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @return bool whether, for this quiz, it is possible to filter attempts to show
  *      only those that gave the final grade.
  */
@@ -136,7 +137,7 @@ function quiz_report_can_filter_only_graded($quiz) {
  * This is a wrapper for {@link quiz_report_grade_method_sql} that takes the whole quiz object instead of just the grading method
  * as a param. See definition for {@link quiz_report_grade_method_sql} below.
  *
- * @param object $quiz
+ * @param stdClass $quiz
  * @param string $quizattemptsalias sql alias for 'quiz_attempts' table
  * @return string sql to test if this is an attempt that will contribute towards the grade of the user
  */
@@ -199,7 +200,7 @@ function quiz_report_grade_method_sql($grademethod, $quizattemptsalias = 'quiza'
  * @param \core\dml\sql_join $usersjoins (joins, wheres, params) to get enrolled users
  * @return array band number => number of users with scores in that band.
  */
-function quiz_report_grade_bands($bandwidth, $bands, $quizid, \core\dml\sql_join $usersjoins = null) {
+function quiz_report_grade_bands($bandwidth, $bands, $quizid, ?\core\dml\sql_join $usersjoins = null) {
     global $DB;
     if (!is_int($bands)) {
         debugging('$bands passed to quiz_report_grade_bands must be an integer. (' .
@@ -215,7 +216,7 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, \core\dml\sql_join
     } else {
         $userjoin = '';
         $usertest = '1=1';
-        $params = array();
+        $params = [];
     }
     $sql = "
 SELECT band, COUNT(1)
@@ -287,10 +288,10 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
 function quiz_report_feedback_for_grade($grade, $quizid, $context) {
     global $DB;
 
-    static $feedbackcache = array();
+    static $feedbackcache = [];
 
     if (!isset($feedbackcache[$quizid])) {
-        $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', array('quizid' => $quizid));
+        $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', ['quizid' => $quizid]);
     }
 
     // With CBM etc, it is possible to get -ve grades, which would then not match
@@ -323,7 +324,7 @@ function quiz_report_feedback_for_grade($grade, $quizid, $context) {
 /**
  * Format a number as a percentage out of $quiz->sumgrades
  * @param number $rawgrade the mark to format.
- * @param object $quiz the quiz settings
+ * @param stdClass $quiz the quiz settings
  * @param bool $round whether to round the results ot $quiz->decimalpoints.
  */
 function quiz_report_scale_summarks_as_percentage($rawmark, $quiz, $round = true) {
@@ -357,7 +358,7 @@ function quiz_report_list($context) {
     $reportdirs = core_component::get_plugin_list('quiz');
 
     // Order the reports tab in descending order of displayorder.
-    $reportcaps = array();
+    $reportcaps = [];
     foreach ($reports as $key => $report) {
         if (array_key_exists($report->name, $reportdirs)) {
             $reportcaps[$report->name] = $report->capability;
@@ -370,7 +371,7 @@ function quiz_report_list($context) {
             $reportcaps[$reportname] = null;
         }
     }
-    $reportlist = array();
+    $reportlist = [];
     foreach ($reportcaps as $name => $capability) {
         if (empty($capability)) {
             $capability = 'mod/quiz:viewreports';
@@ -397,7 +398,7 @@ function quiz_report_download_filename($report, $courseshortname, $quizname) {
 
 /**
  * Get the default report for the current user.
- * @param object $context the quiz context.
+ * @param stdClass $context the quiz context.
  */
 function quiz_report_default_report($context) {
     $reports = quiz_report_list($context);
@@ -407,9 +408,9 @@ function quiz_report_default_report($context) {
 /**
  * Generate a message saying that this quiz has no questions, with a button to
  * go to the edit page, if the user has the right capability.
- * @param object $quiz the quiz settings.
- * @param object $cm the course_module object.
- * @param object $context the quiz context.
+ * @param stdClass $quiz the quiz settings.
+ * @param stdClass $cm the course_module object.
+ * @param stdClass $context the quiz context.
  * @return string HTML to output.
  */
 function quiz_no_questions_message($quiz, $cm, $context) {
@@ -419,7 +420,7 @@ function quiz_no_questions_message($quiz, $cm, $context) {
     $output .= $OUTPUT->notification(get_string('noquestions', 'quiz'));
     if (has_capability('mod/quiz:manage', $context)) {
         $output .= $OUTPUT->single_button(new moodle_url('/mod/quiz/edit.php',
-        array('cmid' => $cm->id)), get_string('editquiz', 'quiz'), 'get');
+        ['cmid' => $cm->id]), get_string('editquiz', 'quiz'), 'get');
     }
 
     return $output;
@@ -428,17 +429,17 @@ function quiz_no_questions_message($quiz, $cm, $context) {
 /**
  * Should the grades be displayed in this report. That depends on the quiz
  * display options, and whether the quiz is graded.
- * @param object $quiz the quiz settings.
+ * @param stdClass $quiz the quiz settings.
  * @param context $context the quiz context.
  * @return bool
  */
 function quiz_report_should_show_grades($quiz, context $context) {
     if ($quiz->timeclose && time() > $quiz->timeclose) {
-        $when = mod_quiz_display_options::AFTER_CLOSE;
+        $when = display_options::AFTER_CLOSE;
     } else {
-        $when = mod_quiz_display_options::LATER_WHILE_OPEN;
+        $when = display_options::LATER_WHILE_OPEN;
     }
-    $reviewoptions = mod_quiz_display_options::make_from_quiz($quiz, $when);
+    $reviewoptions = display_options::make_from_quiz($quiz, $when);
 
     return quiz_has_grades($quiz) &&
             ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||

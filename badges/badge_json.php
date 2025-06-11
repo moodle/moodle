@@ -80,6 +80,10 @@ if ($badge->status != BADGE_STATUS_INACTIVE) {
         if (!empty($badge->language)) {
             $json['@language'] = $badge->language;
         }
+        $badgetags = $badge->get_badge_tags();
+        if ($badgetags) {
+            $json['tags'] = $badgetags;
+        }
 
         $relatedbadges = $badge->get_related_badges(true);
         if (!empty($relatedbadges)) {
@@ -89,12 +93,6 @@ if ($badge->status != BADGE_STATUS_INACTIVE) {
                     'version' => $related->version, '@language' => $related->language);
             }
              $json['related'] = $relateds;
-        }
-
-        $endorsement = $badge->get_endorsement();
-        if (!empty($endorsement)) {
-            $endorsementurl = new moodle_url('/badges/endorsement_json.php', array('id' => $badge->id));
-            $json['endorsement'] = $endorsementurl->out(false);
         }
 
         $alignments = $badge->get_alignments();

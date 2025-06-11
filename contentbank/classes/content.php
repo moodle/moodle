@@ -296,7 +296,6 @@ abstract class content {
      * as parent::import_file in case any plugin want to store the file in the public area
      * and also parse it.
      *
-     * @throws file_exception If file operations fail
      * @param stored_file $file File to store in the content file area.
      * @return stored_file|null the stored content file or null if the file is discarted.
      */
@@ -306,7 +305,6 @@ abstract class content {
             $originalfile->replace_file_with($file);
             return $originalfile;
         } else {
-            $itemid = $this->get_id();
             $fs = get_file_storage();
             $filerecord = [
                 'contextid' => $this->get_contextid(),
@@ -395,8 +393,24 @@ abstract class content {
         global $USER;
         $context = \context::instance_by_id($this->get_contextid());
 
+        $displaypreference = get_user_preferences('core_contentbank_displayunlisted', 1);
+
+        if (($this->get_visibility() == self::VISIBILITY_UNLISTED) && !$displaypreference) {
+            return false;
+        }
+
         return $USER->id == $this->content->usercreated ||
             $this->get_visibility() == self::VISIBILITY_PUBLIC ||
             has_capability('moodle/contentbank:viewunlistedcontent', $context);
+    }
+
+    /**
+     * Checks if there are any custom field related to this content.
+     *
+     * @return bool     True if there is at least one populated field.
+     */
+    public function has_custom_fields(): bool {
+        $handler = \core_contentbank\customfield\content_handler::create();
+        return !empty($handler->get_instance_data($this->get_id()));
     }
 }

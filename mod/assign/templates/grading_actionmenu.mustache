@@ -23,24 +23,140 @@
     * none
 
     Context variables required for this template:
-    * see mod/lesson/classes/output/grading_actionmenu.php
+    * userselector - HTML that outputs the user selector
+    * groupselector - (optional) HTML that outputs the group selector
+    * statusselector - (optional) The data object containing the required properties to render the status selector
+    * extrafiltersdropdown - HTML that outputs the extra filters dropdown
+    * pagereset - (optional) URL to reset the page
+    * graderurl - (optional) URL to the grader page
+    * quickgrading - (optional) Includes the baseurl and enabled properties for the quick grading checkbox
+    * downloadasfolders - (optional) Includes the baseurl and enabled properties for the download as folders checkbox
+    * actions - (optional) HTML that outputs the bulk action menu
 
     Example context (json):
     {
-        "back": "https://moodle.org",
-        "downloadall": "https://moodle.org"
+        "userselector": {"user selector": "context here"},
+        "groupselector": {"group selector": "context here"},
+        "initialselector": {"initial selector": "context here"},
+        "statusselector": {
+            "name": "filter",
+            "value": "submitted",
+            "baseid": "select-menu56789",
+            "label": "Status",
+            "inlinelabel": true,
+            "selectedoption": "Not submitted",
+            "options": [
+                {"name": "All", "value": "", "selected": false, "id": "select-menu-option56789a"},
+                {"name": "Not submitted", "value": "notsubmitted", "selected": true, "id": "select-menu-option56789b"},
+                {"isdivider": true},
+                {"name": "granted extention", "value": "grantedextension", "selected": false, "id": "select-menu-option56789d"}
+            ]
+        },
+        "extrafiltersdropdown": "<div class='dropdown extrafilters'></div>",
+        "pagereset": "http://moodle.local/mod/assign/view.php?id=2&action=grading&group=0",
+        "graderurl": "http://moodle.local/mod/assign/view.php?id=2&action=grader",
+        "quickgrading": {
+            "baseurl": "http://moodle.local/mod/assign/view.php?id=2&action=grading",
+            "enabled": true
+        },
+        "downloadasfolders": {
+            "baseurl": "http://moodle.local/mod/assign/view.php?id=2&action=grading",
+            "enabled": true
+        },
+        "actions": "<div class='action-menu'></div>"
     }
 
 }}
-<div class="container-fluid tertiary-navigation">
+<div class="container-fluid tertiary-navigation full-width-bottom-border mb-2">
     <div class="row">
         <div class="navitem">
-            <a class="btn btn-secondary" href="{{back}}">{{#str}}back, mod_assign{{/str}}</a>
+            <h2>{{#str}}gradeitem:submissions, mod_assign{{/str}}</h2>
         </div>
-        {{#downloadall}}
-        <div class="navitem ml-sm-auto">
-            <a class="btn btn-secondary" href="{{downloadall}}">{{#str}}downloadall, mod_assign{{/str}}</a>
+        <div class="navitem-divider d-none d-sm-flex"></div>
+        {{#userselector}}
+            <div class="navitem">
+                {{>core/comboboxsearch}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+        {{/userselector}}
+        {{#groupselector}}
+            <div class="navitem">
+                {{>core/comboboxsearch}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+        {{/groupselector}}
+        {{#initialselector}}
+            <div class="navitem d-flex flex-column align-self-center">
+                {{>core/comboboxsearch}}
+            </div>
+            <div class="navitem-divider"></div>
+        {{/initialselector}}
+        {{#statusselector}}
+            <div class="navitem">
+                {{>core/select_menu}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+            {{#js}}
+                document.querySelector('#{{baseid}}').addEventListener('change', function(e) {
+                    window.location.href = e.target.value;
+                });
+            {{/js}}
+        {{/statusselector}}
+        {{#extrafiltersdropdown}}
+            <div class="navitem">
+            {{>core/local/dropdown/dialog}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+        {{/extrafiltersdropdown}}
+        {{#pagereset}}
+            <div class="navitem align-self-center">
+                <a href="{{{.}}}" class="btn btn-link">{{#str}}clearall, core{{/str}}</a>
+            </div>
+            <div class="navitem-divider"></div>
+        {{/pagereset}}
+        {{#graderurl}}
+        <div class="navitem ms-sm-auto align-self-center">
+            <a class="btn btn-primary" href="{{graderurl}}">{{#str}}gradeverb, core{{/str}}</a>
         </div>
-        {{/downloadall}}
+        {{/graderurl}}
+    </div>
+</div>
+<div class="container-fluid tertiary-navigation pt-0">
+    <div class="row pb-2">
+        {{#quickgrading}}
+            <div class="navitem m-0 ml-auto">
+                <div class="form-check align-self-center">
+                    <input class="form-check-input" type="checkbox" id="quickgrading-{{uniqid}}" {{#enabled}}checked{{/enabled}}/>
+                    <label class="form-check-label" for="quickgrading-{{uniqid}}" >{{#str}}quickgrading, mod_assign{{/str}}</label>
+                </div>
+            </div>
+            <div class="navitem-divider m-0"></div>
+            {{#js}}
+                document.querySelector('#quickgrading-{{uniqid}}').addEventListener('change', function(e) {
+                    var url = new URL('{{{baseurl}}}');
+                    url.searchParams.set('quickgrading', e.target.checked ? 1 : 0);
+                    window.location.href = url;
+                });
+            {{/js}}
+        {{/quickgrading}}
+        {{#downloadasfolders}}
+            <div class="navitem m-0">
+                <div class="form-check align-self-center">
+                    <input class="form-check-input" type="checkbox" id="downloadasfolders-{{uniqid}}" {{#enabled}}checked{{/enabled}}/>
+                    <label class="form-check-label" for="downloadasfolders-{{uniqid}}">{{#str}}downloadasfolders, mod_assign{{/str}}</label>
+                </div>
+            </div>
+            <div class="navitem-divider m-0"></div>
+            {{#js}}
+                document.querySelector('#downloadasfolders-{{uniqid}}').addEventListener('change', function(e) {
+                    var url = new URL('{{{baseurl}}}');
+                    url.searchParams.set('downloadasfolders', e.target.checked ? 1 : 0);
+                    window.location.href = url;
+                });
+            {{/js}}
+        {{/downloadasfolders}}
+        {{#actions}}
+            <div class="navitem m-0">{{{actions}}}</div>
+        {{/actions}}
     </div>
 </div>

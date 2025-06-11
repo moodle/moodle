@@ -46,7 +46,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     /**
      * Default values of the SELECT
      * 
-     * @var       string
+     * @var       array
      * @since     1.0
      * @access    private
      */

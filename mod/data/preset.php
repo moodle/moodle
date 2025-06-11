@@ -72,7 +72,12 @@ $url = new moodle_url('/mod/data/preset.php', array('d' => $data->id));
 
 $PAGE->add_body_class('mediumwidth');
 $PAGE->set_url($url);
-$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+$titleparts = [
+    get_string('presets', 'data'),
+    format_string($cm->name),
+    format_string($course->fullname),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->activityheader->disable();
@@ -142,6 +147,17 @@ if ($action === 'preview') {
     }
     $preview = new preset_preview($manager, $preset, $templatename);
     $preview->prepare_page($PAGE);
+    $url->params([
+        'fullname' => $fullname,
+        'template' => $templatename,
+    ]);
+    $PAGE->set_url($url);
+    $titleparts = [
+        get_string('preview', 'data', $preset->name),
+        format_string($cm->name),
+        format_string($course->fullname),
+    ];
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
     // Print the preview screen.
     echo $OUTPUT->header();
     $actionbar = new action_bar($data->id, $url);

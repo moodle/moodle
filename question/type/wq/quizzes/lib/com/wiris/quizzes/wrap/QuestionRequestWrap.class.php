@@ -6,6 +6,20 @@ class com_wiris_quizzes_wrap_QuestionRequestWrap implements com_wiris_quizzes_ap
 		$this->impl = $impl;
 		$this->wrapper = com_wiris_system_CallWrapper::getInstance();
 	}}
+	public function prefixVariables($prefix, $variablesToPrefix) {
+		try {
+			$this->wrapper->start();
+			$this->impl->prefixVariables($prefix, $variablesToPrefix);
+			$this->wrapper->stop();
+		}catch(Exception $»e) {
+			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+			$e = $_ex_;
+			{
+				$this->wrapper->stop();
+				throw new HException($e);
+			}
+		}
+	}
 	public function serialize() {
 		try {
 			$this->wrapper->start();

@@ -33,8 +33,8 @@ require_once($CFG->libdir . '/formslib.php');
 
 $id = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 
@@ -50,7 +50,7 @@ $PAGE->force_settings_menu(true);
 $PAGE->set_cacheable(true);
 $PAGE->navbar->add(get_string('import', 'attendance'));
 
-$formparams = array('course' => $course, 'cm' => $cm, 'modcontext' => $context);
+$formparams = ['course' => $course, 'cm' => $cm, 'modcontext' => $context];
 
 $form = null;
 if (optional_param('confirm', 0, PARAM_BOOL)) {

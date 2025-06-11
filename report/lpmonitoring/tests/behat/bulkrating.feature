@@ -17,6 +17,7 @@ Feature: Bulk rating
     And I click on "Pablo Menendez" item in the autocomplete list
     And I press "Apply"
     And I toggle the "Competency A" detail
+    And I wait "1" seconds
     And I click on "rate-competency" of the competency "Competency A"
     And "Rate" "dialogue" should be visible
     And I set the field with xpath "//select[@name='rating']" to "not good"

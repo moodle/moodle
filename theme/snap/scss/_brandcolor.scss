@@ -1,0 +1,1451 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Snap user swatch.
+ *
+ * @package   theme_snap
+ * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// Everything affected by brand-color choice to allow per category customisation.
+// Wrap in a .theme-snap class so that it can be replaced with .category-x later.
+
+$darker-grey-btn: #999;
+$dark-grey-btn: #adadad;
+$light-grey-btn: #ccc;
+$lighter-grey-btn: #e6e6e6;
+$custom-menu-text-color: rgb(255, 255, 255) !default; // Need to define this with rgb or the variable won't work.
+
+.theme-snap {
+    .badge-primary {
+        background-color: $brand-primary !important;
+        color: #fff;
+    }
+
+    #snap-modchooser-modal,
+    #snap-pm-accessible-tab {
+        ul.nav.nav-tabs {
+            li.tab {
+                margin-right: 0.3em;
+                border: 0.06em solid #ddd;
+            }
+
+            li.tab.active a.nav-link {
+                background-color: darken($brand-primary, 8%);
+                color: #fff;
+            }
+
+            .nav-link.active.show {
+                border: none;
+                color: #000;
+            }
+
+            a.nav-link {
+                color: #000;
+                padding: .5em 1.5em;
+                text-decoration: none;
+                border: none;
+            }
+        }
+    }
+
+    div.moodle-dialogue.filepicker a.nav-link.active {
+        color: #fff;
+        background-color: $brand-primary;
+
+        &:hover {
+            background-color: darken($brand-primary, 8%);
+            color: #fff;
+        }
+    }
+
+    a:not(.btn):not(.dropdown-item):not(.badge-info):not(._blanktarget):not(.snap-due-date, .snap-open-date, .snap-opened-date):not(.yui3-button):not(.mast-breadcrumb):not(.active):not(.disabled):not(.dimmed),
+    .btn-link,
+    .fake-link {
+        color: $brand-primary;
+
+        &:focus,
+        &:hover {
+            color: darken($brand-primary, 8%);
+        }
+    }
+
+    #snap-pm-courses .nav-tabs a.nav-link.active {
+        color: darken($brand-primary, 8%);
+    }
+
+    .nav-pills a.nav-link.active {
+        background: $brand-primary;
+        color: #fff !important;
+    }
+
+    .snap-dropzone-label:hover .fake-link {
+        color: darken($brand-primary, 8%);
+    }
+
+    .snap-dropzone .activityiconcontainer {
+        background-color: transparent;
+        img.activityicon {
+            filter: $resource-filter;
+        }
+    }
+
+    // Focus outline for keyboard tab users
+    a,
+    .dropdown-toggle {
+        &:focus {
+            outline: 3px solid $brand-primary;
+        }
+
+        &:active,
+        &:hover {
+            outline: 0;
+        }
+    }
+
+    .js-snap-asset-move:focus + label .svg-icon {
+        outline: 3px auto $brand-primary;
+    }
+
+    .iconhelp {
+        &:focus > img,
+        & > img:hover {
+            background-color: $brand-primary;
+        }
+    }
+
+    #snap-collapse-help {
+        border-left: .25em solid $brand-primary;
+    }
+
+    // General toggle icons.
+    button.snap-icon-toggle {
+        &,
+        &:hover,
+        &:link,
+        &:active,
+        &:focus {
+            color: $brand-primary;
+        }
+
+        &:focus {
+            border: 2px solid $brand-primary;
+        }
+    }
+
+    #admin-menu-trigger {
+        &:focus {
+            outline: 3px solid $brand-primary;
+            border-color: $brand-primary;
+        }
+    }
+
+    .blockquote {
+        border-left-color: $brand-primary;
+    }
+
+    .blockquote-reverse {
+        border-right-color: $brand-primary;
+    }
+
+    .section li.snap-native .activityinstance .snap-asset-link a {
+        color: $brand-primary;
+
+        &:focus,
+        &:hover {
+            color: darken($brand-primary, 8%);
+        }
+    }
+
+    .snap-asset-link a {
+        &:focus,
+        &:hover {
+            color: darken($brand-primary, 8%);
+        }
+    }
+
+    hr {
+        background-color: $brand-primary;
+    }
+
+    // Calendar
+    #dateselector-calendar-panel {
+        .yui3-calendar-day {
+            color: $brand-primary;
+        }
+
+        .yui3-calendar-day:hover {
+            color: darken($brand-primary, 8%);
+        }
+
+        .yui3-calendar-day-selected,
+        .yui3-calendar-day:hover {
+            color: #fff;
+            background-color: $brand-primary;
+        }
+    }
+
+    // Snap Feeds
+    .snap-sidebar-menu-more, .snap-feeds-menu-more {
+        svg path{
+            fill: $brand-primary !important; // !important needed to override svg fills.
+        }
+    }
+
+    // Pills
+    // -------------------------
+
+    .nav-pills {
+        > li {
+
+            // Links rendered as pills
+            // Active state
+
+            &.active > a {
+                &,
+                &:hover,
+                &:focus {
+                    background-color: $brand-primary;
+                }
+            }
+        }
+    }
+
+    // Elements
+    // -------------------------
+
+    #snap-pm-header {
+        background-color: $brand-primary;
+
+        .userpicture {
+            box-shadow: 0 0 5em lighten($brand-primary, 8%);
+        }
+        // This is to improve the accessibility on the links in the personal menu.
+        a:focus {
+            outline: 3px solid darken($brand-primary, 20%);
+        }
+    }
+
+    .courseinfo-teachers-more {
+        &:hover {
+            border-color: $brand-primary;
+        }
+    }
+
+    .snap-progress-circle {
+        .progressbar-text {
+            a,
+            a:visited {
+                color: $brand-primary;
+            }
+
+            a:focus,
+            a:hover {
+                color: darken($brand-primary, 8%);
+            }
+        }
+    }
+
+    .snap-unread-marker {
+        color: $brand-primary;
+    }
+
+    .button-group > button.default,
+    .btn.btn-primary,
+    .btn.btn-outline-dark {
+        color: #fff;
+        background-color: $brand-primary;
+        border-color: $brand-primary;
+
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: darken($brand-primary, 10%);
+            border-color: darken($brand-primary, 10%);
+            outline: 3px auto $brand-primary;
+        }
+    }
+
+    .btn-outline-dark:focus {
+        box-shadow: inset 0 0 0 2px #fff;
+    }
+
+    .btn-outline-dark:not(:disabled):not(.disabled):active:focus {
+        box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5);
+    }
+
+    .btn.btn-default,
+    .btn.btn-secondary,
+    .btn.btn-outline-primary,
+    .btn.btn-outline-secondary,
+    .button-group > button,
+    input.form-submit,
+    .atto_form button,
+    .gradingform_checklist.editor .addgroup input,
+    .gradingform_checklist.editor .additem input,
+    .gradingform_rubric.editor .addlevel input,
+    .gradingform_rubric.editor .addcriterion input,
+    .paging.paging-morelink a,
+    a.yui3-button,
+    .yui-button button,
+    .header-button-group .btn,
+    &#page-site-index .section-modchooser-link .section-modchooser-text,
+    button[data-favourited="true"] i.fa-star {
+
+        // Imitate btn.btn-secondary CSS for buttons without proper
+        // Bootstrap classes applied to them, and override colors for
+        // btn-secondary, btn-default.
+        color: $brand-primary;
+        border-color: $brand-primary;
+        background: transparent;
+
+        &:hover:not(:disabled),
+        &:focus:not(:disabled),
+        &:active:not(:disabled),
+        &.active:not(:disabled) {
+            background-color: $brand-primary;
+            border-color: $brand-primary;
+            color: #fff;
+            outline: 3px auto $brand-primary;
+        }
+    }
+
+    .modtype_page .btn.btn-outline-primary {
+        &:hover:not(:disabled),
+        &:focus:not(:disabled),
+        &:active:not(:disabled) {
+            background-color: transparent;
+        }
+    }
+
+    .btn.btn-secondary {
+        .icon {
+            color: $brand-primary;
+        }
+
+        &:hover:not(:disabled),
+        &:focus:not(:disabled),
+        &:active:not(:disabled),
+        &.active:not(:disabled),
+        &.checked {
+            .icon {
+                color: #fff;
+            }
+        }
+    }
+
+    #id_cancel {
+        color: $brand-primary;
+
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: $brand-primary;
+            color: #fff;
+        }
+    }
+
+    #show-toc {
+        color: $brand-primary;
+    }
+
+    &#page-site-index #page-header,
+    &#page-login-index #page,
+    .news-article-image,
+    .news-article-preview,
+    #snap-footer-alert {
+        background-image: none;
+        background-color: $brand-primary;
+    }
+
+    #course-toc .snap-visible-section .chapter-title {
+        background-color: $brand-primary;
+        opacity: 0.8;
+    }
+
+    .mast-image {
+        .breadcrumb {
+            li,
+            li:before,
+            > li + li:before,
+            a {
+                color: $brand-primary;
+            }
+        }
+    }
+
+    #snap-pm-mobilemenu {
+        a {
+            &.state-active {
+                .svg-icon {
+                    border: 2px solid $brand-primary;
+                }
+            }
+        }
+    }
+
+    .coursecard {
+        background-color: $brand-primary;
+    }
+
+    .video-js {
+        .vjs-big-play-button {
+            background-color: rgba($brand-primary, .7);
+
+            &:focus {
+                background-color: $brand-primary;
+            }
+        }
+
+        &:hover {
+            .vjs-big-play-button {
+                background-color: $brand-primary;
+            }
+        }
+    }
+
+    #notice,
+    #toc-search:before {
+        color: $brand-primary;
+    }
+
+    #toc-search-input {
+
+        &:hover {
+            border-color: $brand-primary;
+        }
+
+        &:focus {
+            border-bottom: 1px solid $brand-primary;
+            outline: 3px auto $brand-primary;
+        }
+    }
+
+    // workaround for #notices with buttons outside the div#notice
+    &#page-course-loginas,
+    &#page-mod-survey-save {
+        #region-main {
+            background-color: $brand-primary;
+        }
+    }
+
+    /* highlight selected menu item logic */
+    /* default */
+    a[href="#sections"] {
+        border-bottom: 0.3em solid $brand-primary;
+    }
+
+    /* moodle edit menus */
+    .moodle-actionmenu[data-enhanced].show .menu a:hover,
+    .moodle-actionmenu[data-enhanced].show .menu a:focus {
+        color: $brand-primary;
+        background-color: transparent;
+    }
+
+    // Catch all for mods we do not have colours for.
+    li.snap-resource,
+    li.snap-activity {
+        border-top-color: $brand-primary;
+    }
+
+    // yui-bs overrides
+    &.yui-skin-sam,
+    &.yui-bootstrapped {
+
+        .yui-calcontainer {
+            .yui-calendar {
+                td.calcell {
+                    a {
+                        color: $brand-primary;
+                    }
+
+                    &.selected {
+                        background-color: $brand-primary;
+                    }
+
+                    &.calcellhover,
+                    &.calcellhover a {
+                        background: $brand-primary;
+                    }
+                }
+            }
+        }
+
+        .yui-dt-paginator {
+            a {
+                &.yui-pg-previous,
+                &.yui-pg-first,
+                &.yui-pg-next,
+                &.yui-pg-last,
+                &.yui-pg-page {
+                    color: $brand-primary;
+
+                    &:hover,
+                    &:focus {
+                        color: darken($brand-primary, 8%);
+                    }
+                }
+            }
+
+            span.yui-pg-current-page {
+                &,
+                &:hover,
+                &:focus {
+                    color: #fff;
+                    background-color: $brand-primary;
+                    border-color: $brand-primary;
+                }
+            }
+        }
+    }
+
+    &.path-blocks-reports {
+
+        .yui3-widget-stdmod {
+
+            div.report-nav-item-left,
+            div.report-nav-item-right {
+
+                a.nav-paginate {
+
+                    &:hover,
+                    &:focus {
+                        background-color: $brand-primary;
+                    }
+                }
+            }
+        }
+    }
+
+    // Use & since these need to connect to body tag when used in categories
+    // where all this code is wrapped in body.category-X {};
+    &.yui-bootstrapped,
+    &.yui-skin-sam {
+        .yui3-tabview-list {
+            .yui3-tab-label {
+                color: $brand-primary;
+
+                &:hover,
+                &:focus {
+                    color: darken($brand-primary, 8%);
+                }
+            }
+        }
+
+        .yui-navset {
+            .yui-nav {
+                li > a {
+                    color: $brand-primary;
+
+                    &:hover,
+                    &:focus {
+                        color: darken($brand-primary, 8%);
+                    }
+                }
+            }
+        }
+    }
+
+    .progress .bar,
+    .progress-bar:not(.progress-bar-info):not(.progress-bar-success):not(.progress-bar-warning):not(.progress-bar-danger) {
+        background-color: $brand-primary;
+    }
+
+    .dropdown-menu:not(.asset-edit-menu) > li > a {
+        display: block;
+
+        &:hover,
+        &:focus {
+            background-color: $brand-primary;
+            color: white;
+        }
+    }
+
+    // AJAX spinner.
+    .spinner-three-quarters:not(:required).spinner-dark {
+        border-color: $brand-primary;
+        border-right-color: transparent;
+    }
+
+    .page-item.active .page-link {
+
+        &,
+        &:focus,
+        &:hover {
+            background-color: $brand-primary;
+            border-color: $brand-primary;
+            color: #fff !important;
+        }
+    }
+
+
+    // -------------------------
+    //  Moodle mods
+    // -------------------------
+    // -------------------------
+    // Quiz
+    // -------------------------
+
+    #mod_quiz_navblock .qnbutton:hover,
+    #mod_quiz_navblock .qnbutton:focus {
+        background-color: $brand-primary;
+        border: 1px solid $brand-primary;
+        color: #fff;
+    }
+
+    .que {
+        border-bottom: 1px solid $brand-primary;
+    }
+
+    #snap-changecoverimageconfirmation.disabled .ok {
+        &,
+        &:hover,
+        &:active,
+        &:focus {
+            color: #fff;
+            border-color: #fff;
+            background-color: $brand-primary;
+        }
+    }
+
+    // -------------------------
+    // Messaging
+    // -------------------------
+    .messaging-area-container .messaging-area {
+        .contacts-area {
+            // Hoverable divs.
+            .contacts .contact,
+            .contacts .contact.selected,
+            .searcharea .course {
+
+                &:hover {
+                    background-color: rgba($brand-primary, .5);
+                }
+            }
+
+            // contact.selected large screen only, media query copied from message.scss
+            @media (min-width: 979px) {
+                .contacts .contact.selected {
+                    background-color: $brand-primary;
+                }
+            }
+
+            // Tabs to change from messages to contacts.
+            .tabs .tab:hover {
+                color: darken($brand-primary, 8%);
+            }
+        }
+
+        // Users own messages.
+        .messages-area .messages .message .right .text {
+            background-color: $brand-primary;
+        }
+
+        // Link and button colours.
+        .contacts-area .tabs .tab.selected,
+        .btn.btn-link {
+            color: $brand-primary;
+
+            &:hover,
+            &:focus {
+                color: darken($brand-primary, 8%);
+            }
+        }
+    }
+
+    // This background color helps to know when the delete-messages-for-all-users input checkbox is checked.
+    .message-app .view-conversation .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+        background-color: $brand-primary;
+    }
+
+    #frontpage-course-list .paging-morelink .btn {
+            color: #fff !important;
+            background-color: $brand-primary !important;
+            border-color: $brand-primary !important;
+    }
+
+
+    // -------------------------
+    // Navigation bar
+    // -------------------------
+    #mr-nav {
+        a {
+            color: $nav-color;
+
+            &:hover,
+            &:focus {
+                color: darken($nav-color, 8%);
+            }
+        }
+
+        a.snap-login-button {
+            color: $nav-login-color;
+            background-color: $nav-login-bg;
+            border-color: $nav-login-bg;
+        }
+
+        .icon.fa-search {
+            color: $nav-color;
+            
+            &:hover {
+                --fa-animation-duration: 0.5s;
+                --fa-animation-iteration-count: 1;
+
+                -webkit-text-stroke-width: 1px;
+            }
+        }
+
+        .popover-region-notifications > div > .icon {
+            color: $nav-color;
+
+            &:hover {
+                color: darken($nav-color, 8%);
+            }
+        }
+
+        #snap-my-courses-trigger {
+            color: $nav-button-color;
+        }
+
+        // Edit mode toggle.
+        .editmode-switch-form {
+            margin-bottom: 0;
+            .input-group {
+                label {
+                    color: $brand-primary !important;
+                }
+            }
+            .custom-control-input:checked~.custom-control-label::before {
+                background-color: $brand-primary;
+                border-color: $brand-primary;
+            }
+        }
+
+        #nav-notification-popover-container .count-container {
+            background-color: $nav-color;
+        }
+
+        #nav-notification-popover-container {
+            // Bell icon.
+            .icon.fa-bell {
+                color: $nav-color;
+            }
+        }
+
+        
+
+        #nav-intellicart-popover-container {
+            // Intellicart shopping icon.
+            .icon.fa-shopping-cart {
+                color: transparent;
+                -webkit-text-stroke-width: 2px;
+                -webkit-text-stroke-color: $nav-color;
+                &:hover {
+                    --fa-animation-duration: 0.5s;
+                    --fa-animation-iteration-count: 1;
+
+                    font-size: 24px;
+                    color: $nav-color;
+                    -webkit-text-stroke-width: 1px;
+                }
+            }
+            // Keyboard header Intellicart icon animation (Tab key).
+            .popover-region-toggle.nav-link.icon-no-margin:focus-visible {
+                .icon.fa-shopping-cart {
+                    color: $nav-color;
+                    -webkit-text-stroke-width: 1px;
+                }
+            }
+        }
+    }
+
+    [id^="message-drawer-toggle-"] {
+        .count-container {
+            background-color: $nav-color;
+        }
+    }
+
+    // -------------------------
+    // Calendar color
+    // -------------------------
+    .block_calendar_month, &#page-calendar-view div.maincalendar {
+        .calendarwrapper {
+            .calendarmonth.calendartable {
+                td.today span.day-number-circle {
+                    background-color: $brand-primary;
+                }
+            }
+        }
+    }
+
+
+    // -------------------------
+    // Grader Report
+    // -------------------------
+    span.letter.active,
+    .initialbar .letter.active {
+        background-color: $brand-primary;
+        border-color: $brand-primary;
+    }
+
+    // -------------------------
+    // Extra focus options
+    // -------------------------
+    #snap-coverimagecontrol > .btn-secondary,
+    div[tabindex],
+    .btn.btn-link,
+    .custom-select,
+    .form-control,
+    .categoryname,
+    .summary > p,
+    .atto_group > button,
+    .snap-dropzone > .snap-dropzone-label {
+        &:focus {
+            outline: 3px auto $brand-primary;
+        }
+    }
+
+    #snap-coverimagecontrol > label.btn-outline-primary.btn-sm {
+        background-color: white !important;
+        &:hover,
+        &:focus {
+            box-shadow: none;
+            background-color: $brand-primary !important;
+            color: #fff !important;
+        }
+    }
+
+    .fp-toolbar div button.btn.btn-secondary.btn-sm,
+    .fp-viewbar > button.btn.btn-secondary.btn-sm {
+        color: $darker-grey-btn;
+        border-color: $light-grey-btn;
+
+        .icon {
+            color: $dark-grey-btn;
+            text-align: right;
+        }
+
+        &.checked .icon {
+            color: #fff;
+        }
+
+        &:hover {
+            border-color: $dark-grey-btn;
+            color: $dark-grey-btn;
+            background-color: $lighter-grey-btn;
+        }
+    }
+
+    .fp-viewbar > a.btn.btn-secondary.btn-sm.checked,
+    .fp-viewbar > button.btn.btn-secondary.btn-sm.checked {
+        background-color: $brand-primary;
+        border-color: $brand-primary;
+        outline-color: $brand-primary;
+    }
+
+    #snap-coverimagecontrol > .btn.btn-secondary.btn-sm:hover {
+        background-color: $lighter-grey-btn;
+    }
+
+    .visibleifjs a.btn {
+        color: $brand-primary;
+
+        &:hover {
+            color: darken($brand-primary, 8%);
+        }
+    }
+
+    &#page-course-view-topics,
+    &#page-course-view-weeks {
+        .sk-fading-circle {
+            margin: 100px auto;
+            width: 5em;
+            height: 5em;
+            position: relative;
+        }
+
+        .sk-fading-circle .sk-circle {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .sk-fading-circle .sk-circle:before {
+            content: '';
+            display: block;
+            margin: 0 auto;
+            width: 15%;
+            height: 15%;
+            background-color: $brand-primary;
+            border-radius: 100%;
+            -webkit-animation: sk-circleFadeDelay 1.2s infinite ease-in-out both;
+            animation: sk-circleFadeDelay 1.2s infinite ease-in-out both;
+        }
+
+        .sk-fading-circle .sk-circle2 {
+            -webkit-transform: rotate(30deg);
+            -ms-transform: rotate(30deg);
+            transform: rotate(30deg);
+        }
+
+        .sk-fading-circle .sk-circle3 {
+            -webkit-transform: rotate(60deg);
+            -ms-transform: rotate(60deg);
+            transform: rotate(60deg);
+        }
+
+        .sk-fading-circle .sk-circle4 {
+            -webkit-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+            transform: rotate(90deg);
+        }
+
+        .sk-fading-circle .sk-circle5 {
+            -webkit-transform: rotate(120deg);
+            -ms-transform: rotate(120deg);
+            transform: rotate(120deg);
+        }
+
+        .sk-fading-circle .sk-circle6 {
+            -webkit-transform: rotate(150deg);
+            -ms-transform: rotate(150deg);
+            transform: rotate(150deg);
+        }
+
+        .sk-fading-circle .sk-circle7 {
+            -webkit-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            transform: rotate(180deg);
+        }
+
+        .sk-fading-circle .sk-circle8 {
+            -webkit-transform: rotate(210deg);
+            -ms-transform: rotate(210deg);
+            transform: rotate(210deg);
+        }
+
+        .sk-fading-circle .sk-circle9 {
+            -webkit-transform: rotate(240deg);
+            -ms-transform: rotate(240deg);
+            transform: rotate(240deg);
+        }
+
+        .sk-fading-circle .sk-circle10 {
+            -webkit-transform: rotate(270deg);
+            -ms-transform: rotate(270deg);
+            transform: rotate(270deg);
+        }
+
+        .sk-fading-circle .sk-circle11 {
+            -webkit-transform: rotate(300deg);
+            -ms-transform: rotate(300deg);
+            transform: rotate(300deg);
+        }
+
+        .sk-fading-circle .sk-circle12 {
+            -webkit-transform: rotate(330deg);
+            -ms-transform: rotate(330deg);
+            transform: rotate(330deg);
+        }
+
+        .sk-fading-circle .sk-circle2:before {
+            -webkit-animation-delay: -1.1s;
+            animation-delay: -1.1s;
+        }
+
+        .sk-fading-circle .sk-circle3:before {
+            -webkit-animation-delay: -1s;
+            animation-delay: -1s;
+        }
+
+        .sk-fading-circle .sk-circle4:before {
+            -webkit-animation-delay: -0.9s;
+            animation-delay: -0.9s;
+        }
+
+        .sk-fading-circle .sk-circle5:before {
+            -webkit-animation-delay: -0.8s;
+            animation-delay: -0.8s;
+        }
+
+        .sk-fading-circle .sk-circle6:before {
+            -webkit-animation-delay: -0.7s;
+            animation-delay: -0.7s;
+        }
+
+        .sk-fading-circle .sk-circle7:before {
+            -webkit-animation-delay: -0.6s;
+            animation-delay: -0.6s;
+        }
+
+        .sk-fading-circle .sk-circle8:before {
+            -webkit-animation-delay: -0.5s;
+            animation-delay: -0.5s;
+        }
+
+        .sk-fading-circle .sk-circle9:before {
+            -webkit-animation-delay: -0.4s;
+            animation-delay: -0.4s;
+        }
+
+        .sk-fading-circle .sk-circle10:before {
+            -webkit-animation-delay: -0.3s;
+            animation-delay: -0.3s;
+        }
+
+        .sk-fading-circle .sk-circle11:before {
+            -webkit-animation-delay: -0.2s;
+            animation-delay: -0.2s;
+        }
+
+        .sk-fading-circle .sk-circle12:before {
+            -webkit-animation-delay: -0.1s;
+            animation-delay: -0.1s;
+        }
+
+        @-webkit-keyframes sk-circleFadeDelay {
+            0%,
+            39%,
+            100% {
+                opacity: 0;
+            }
+            40% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes sk-circleFadeDelay {
+            0%,
+            39%,
+            100% {
+                opacity: 0;
+            }
+            40% {
+                opacity: 1;
+            }
+        }
+    }
+
+    .atto_morefontcolors_button > .dropdown-menu > li > a {
+        outline: none;
+        background: none;
+
+        &:hover,
+        &:focus {
+            div {
+                &:hover,
+                &:focus {
+                    outline: 3px solid $brand-primary;
+                }
+            }
+        }
+    }
+
+    // -------------------------
+    // Custom menu.
+    // -------------------------
+    header#mr-nav {
+        #snap-custom-menu-header nav.navbar {
+            background-color: rgba($brand-primary, 0.8);
+
+            ul.snap-navbar-content {
+                li.nav-item {
+                    div.dropdown-menu {
+                        background-color: rgba($brand-primary, 0.8);
+                    }
+
+                    a {
+                        color: $custom-menu-text-color;
+
+                        &:focus,
+                        &:hover {
+                            background-color: darken(rgba($brand-primary, 0.9), 10%);
+                            outline: darken($brand-primary, 10%);
+                        }
+                    }
+                }
+
+                li.nav-item.dropdown.show {
+                    background-color: darken(rgba($brand-primary, 0.9), 10%);
+                }
+            }
+        }
+    }
+ 
+    .snap-pm-section {
+        .vertical-divider {
+            width: 2px;
+            margin: 6px 0;
+            background: $brand-primary;
+        }
+    }
+
+    #action-menu-toggle-0 > i[title="Actions menu"] {
+        color: $brand-primary;
+    }
+
+    #moodle-footer #page-footer a:focus {
+        outline: 3px solid $brand-primary !important;
+        box-shadow: none;
+        background-color: transparent;
+        color: white;
+    }
+
+    .section_footer {
+        .previous_section,
+        .next_section {
+            .nav_guide {
+                color: $brand-primary;
+            }
+        }
+    }
+    .btn.btn-secondary.dropdown-toggle.dropdown-toggle-split {
+        background-color: $brand-primary;
+        border-color: $brand-primary;
+        color: white;
+    }
+
+    .openlms-custom-elements {
+        ul#pld_tab {
+            border: none;
+            .nav-item .nav-link {
+                color: #405057;
+                &.active {
+                    color: $brand-primary;
+                }
+                &:focus {
+                    outline: 3px solid $brand-primary;
+                }
+            }
+        }
+
+        i.icon-actions {
+            color: $brand-primary;
+        }
+
+        a.btn-link.help-icon-btn.notifications {
+            color: #ddd;
+        }
+
+        a.btn-link.help-icon-btn.notifications:hover {
+            color: $brand-primary;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            text-transform: uppercase;
+            font-size: medium;
+            border-radius: 5px;
+        }
+
+        .nav-tabs .nav-link.active {
+            border-bottom: 5px $brand-primary solid ;
+        }
+
+        select.custom-select {
+            border: none;
+            border-radius: 5px;
+        }
+
+        .activity-filter .btn-group button.btn.btn-secondary {
+            margin: 0;
+            box-shadow: none;
+        }
+        .dropdown-menu.dropdown-menu-right.show {
+            border-color: $brand-primary;
+        }
+
+        .activity-filter .btn-group button.btn.btn-secondary.btn-left {
+            color: $gray-light;
+            background: white !important;
+            border: none;
+        }
+
+        #history-filters .btn-group button.btn.btn-secondary.btn-left {
+            background: white !important;
+            border: none;
+        }
+
+        .btn.btn-secondary.btn-ins {
+            background: $brand-primary;
+            color: white;
+        }
+
+        .btn.btn-secondary:hover, .btn.btn-secondary:focus, .btn.btn-secondary.dropdown-toggle.dropdown-toggle-split {
+            background-color: $brand-primary;
+            border-color: $brand-primary;
+            color: white;
+        }
+        .btn.btn-secondary.dropdown-toggle.dropdown-toggle-split {
+            min-width: 0;
+        }
+        .btn.btn-secondary {
+            color: $brand-primary;
+            background: white;
+            font-size: medium;
+            min-height: 2.5em;
+            min-width: 9em;
+        }
+
+        .dropdown-toggle:focus,
+        select.custom-select:focus, select.custom-select, .nav-link:focus,
+        .btn.btn-secondary, .btn-group  {
+            outline: transparent;
+            box-shadow: -1px 3px 7px 2px rgb(223 223 223);
+        }
+
+        .dropdown-toggle:focus,
+        select.custom-select:focus, select.custom-select, .nav-link:focus,
+        .btn.btn-secondary.dropdown-toggle.dropdown-toggle-split {
+            box-shadow: none;
+        }
+
+        ol.pld-edit-panels {
+            list-style-type: none;
+            margin-left: 0;
+
+            &:first-child {
+                counter-reset: edit-panel-counter;
+            }
+
+            & > li.pld-edit-step {
+                counter-increment: edit-panel-counter;
+                position: relative;
+                &:before {
+                    content: counter(edit-panel-counter);
+                    color: white;
+                    background-color: $brand-primary;
+                    border-radius: 50%;
+                    position: absolute;
+                    left: -1.9em;
+                    top: 0.2em;
+                    display: inline-block;
+                    width: 1.5em;
+                    padding-left: 0.5em;
+                }
+            }
+        }
+    }
+
+
+    // VPAT PLD dropdowns styles.
+    .openlms-custom-elements,
+    .modal.show {
+        .btn.btn-secondary.btn-left.text-filter {
+            color: $brand-primary;
+            background: transparent;
+            &:hover,
+            &:focus,
+            &:active {
+                .dropdown-toggle {
+                    background-color: $brand-primary;
+                    border-color: $brand-primary;
+                    color: white;
+                }
+            }
+        }
+    }
+
+    li.dropdown-item,
+    .snap-section-editing .extra-actions-menu .dropdown-item[aria-pressed="true"] {
+        &.active,
+        &:active,
+        &:hover,
+        &.selected,
+        &:focus,
+        &:focus-within {
+            background-color: $brand-primary;
+            border-color: $brand-primary;
+            color: white;
+        }
+    }
+
+    .bordered-div {
+        border-color: $brand-primary;
+    }
+
+    ngb-modal-window.modal {
+        z-index: 1055;
+        .form-item:hover {
+            background: none;
+        }
+    }
+
+    #coursetools-list li {
+        &:hover,
+        &:focus {
+            background-color: $brand-primary;
+            a {
+                color: white;
+            }
+        }
+    }
+
+    &#page-mod-hsuforum-view .floating-label textarea:focus-visible {
+        outline-color: $brand-primary;
+    }
+
+    form.mform {
+        .snap-form-advanced fieldset .ftoggler,
+        fieldset.clearfix .ftoggler {
+            h3,
+            a.btn i.icon {
+                color: $brand-primary;
+            }
+        }
+    }
+
+    .snap-asset-actions {
+        .snap-asset-move {
+            &:focus-within {
+                outline: 3px solid $brand-primary;
+            }
+        }
+        .snap-edit-asset-more:focus {
+            outline: 3px solid $brand-primary;
+        }
+    }
+
+    .dropdown-item {
+        &.groups-dropdown::before,
+        &.availability-dropdown::before {
+            opacity: (0.5);
+        }
+        &.active,
+        &:active,
+        &:hover,
+        &:focus,
+        &:focus-within {
+            background-color: $brand-primary;
+            color: white;
+            i {
+                color: white;
+            }
+            img {
+                filter: brightness(0) invert(1);
+            }
+            &::before {
+                opacity: unset;
+                color: white;
+            }
+            a {
+                color: white !important;
+            }
+        }
+    }
+
+    div.bg-color-primary {
+        background-color: $brand-primary !important;
+    }
+
+    .text-primary-hover {
+        color: grey !important;
+        &:hover {
+            color: $brand-primary !important;
+        }
+    }
+
+    .border-color-primary {
+        border-color: $brand-primary;
+        color: $brand-primary;
+    }
+
+    // Styles for Snap user menu.
+    #snap-header .usermenu {
+        .dropdown-item {
+            &:hover,
+            &:focus {
+                background-color: $brand-primary;
+                color: white;
+            }
+        }
+    }
+
+    .snap-asset-content {
+        .fa-chevron-down {
+            color: $brand-primary;
+        }
+        .fa-chevron-up {
+            color: $brand-primary;
+        }
+    }
+
+    @media screen and (max-width: 992px) {
+        .snap-feeds-mobile-menu {
+            .snap-feeds-header {
+                background-color: $brand-primary;
+                padding: 0.5rem 1rem;
+            }
+            .nav .nav-item {
+                .nav-link {
+                    background: $brand-primary;
+                }
+                &.active{
+                    border-top: 4px solid $brand-primary;
+                    small{
+                        color: $brand-primary;}
+                }
+            }
+        }
+    }
+
+    #tertiary-navigation {
+        width: calc(100% + 1rem + 30px);
+        margin-left: calc(-0.5rem - 15px);
+        margin-right: calc(-0.5rem - 15px);
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 25px;
+    }
+
+    .tertiary-navigation-selector .btn.dropdown-toggle {
+        padding: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+
+    /* 
+        Sidebar Menu
+    */
+    .snap-sidebar-menu {
+        background-color: #eff0f6; // Light color when closed
+        
+        &.show {
+            background-color: rgba($brand-primary, 0.8);
+        }
+    }
+}
+
+/*
+    Defining brand category color for mod_data
+*/
+#page-mod-data-view.theme-snap {
+    &.path-mod .whitebutton .btn.btn-secondary {
+        color: $brand-primary;
+        border-color: $brand-primary;
+        background: transparent;
+    }
+}
+
+/*
+    Defining brand primary color accesible from css
+*/
+:root {
+    --brand-primary: #{$brand-primary};
+}

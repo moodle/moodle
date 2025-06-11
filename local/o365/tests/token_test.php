@@ -23,28 +23,31 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_o365;
+
+use advanced_testcase;
 
 /**
  * Tests \local_o365\oauth2\token
  *
  * @group local_o365
  * @group office365
- * @codeCoverageIgnore
  */
-class local_o365_oauth2_token_testcase extends \advanced_testcase {
+final class token_test extends advanced_testcase {
     /**
      * Perform setup before every test. This tells Moodle's phpunit to reset the database after every test.
      */
-    protected function setUp() : void {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
 
     /**
      * Test refresh method.
+     *
+     * @covers \local_o365\oauth2\token::refresh
      */
-    public function test_refresh() {
+    public function test_refresh(): void {
         global $USER, $DB;
         $this->setAdminUser();
         $now = time();
@@ -64,7 +67,7 @@ class local_o365_oauth2_token_testcase extends \advanced_testcase {
             'clientid' => 'clientid',
             'clientsecret' => 'clientsecret',
             'authendpoint' => 'http://example.com/auth',
-            'tokenendpoint' => 'http://example.com/token'
+            'tokenendpoint' => 'http://example.com/token',
         ];
 
         $tokenrec = (object)[

@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class collator_test extends \advanced_testcase {
+final class collator_test extends \advanced_testcase {
 
     /**
      * @var string The initial lang, stored because we change it during testing
@@ -83,7 +83,7 @@ class collator_test extends \advanced_testcase {
     /**
      * Tests the static asort method.
      */
-    public function test_asort() {
+    public function test_asort(): void {
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         $result = core_collator::asort($arr);
         $this->assertSame(array('aa', 'ab', 'cc'), array_values($arr));
@@ -155,7 +155,7 @@ class collator_test extends \advanced_testcase {
     /**
      * Tests the static asort_objects_by_method method.
      */
-    public function test_asort_objects_by_method() {
+    public function test_asort_objects_by_method(): void {
         $objects = array(
             'b' => new string_test_class('ab'),
             1 => new string_test_class('aa'),
@@ -180,7 +180,7 @@ class collator_test extends \advanced_testcase {
     /**
      * Tests the static asort_objects_by_method method.
      */
-    public function test_asort_objects_by_property() {
+    public function test_asort_objects_by_property(): void {
         $objects = array(
             'b' => new string_test_class('ab'),
             1 => new string_test_class('aa'),
@@ -205,7 +205,7 @@ class collator_test extends \advanced_testcase {
     /**
      * Tests the sorting of an array of arrays by key.
      */
-    public function test_asort_array_of_arrays_by_key() {
+    public function test_asort_array_of_arrays_by_key(): void {
         $array = array(
             'a' => array('name' => 'bravo'),
             'b' => array('name' => 'charlie'),
@@ -265,7 +265,7 @@ class collator_test extends \advanced_testcase {
     /**
      * Tests the static ksort method.
      */
-    public function test_ksort() {
+    public function test_ksort(): void {
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         $result = core_collator::ksort($arr);
         $this->assertSame(array(0, 1, 'b'), array_keys($arr));

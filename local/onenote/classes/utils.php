@@ -25,8 +25,6 @@
 
 namespace local_onenote;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * General purpose utility class.
  */
@@ -47,7 +45,7 @@ class utils {
         } else if (is_null($val)) {
             return '(null)';
         } else {
-            return print_r($val, true);
+            return json_encode($val, JSON_PRETTY_PRINT);
         }
     }
 

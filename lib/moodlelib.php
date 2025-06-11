@@ -28,6 +28,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\di;
+use core\hook;
+
 defined('MOODLE_INTERNAL') || die();
 
 // CONSTANTS (Encased in phpdoc proper comments).
@@ -71,47 +74,52 @@ define('HOURMINS', 60);
 // Parameter constants - every call to optional_param(), required_param()
 // or clean_param() should have a specified type of parameter.
 
+// We currently include \core\param manually here to avoid broken upgrades.
+// This may change after the next LTS release as LTS releases require the previous LTS release.
+require_once(__DIR__ . '/classes/deprecation.php');
+require_once(__DIR__ . '/classes/param.php');
+
 /**
  * PARAM_ALPHA - contains only English ascii letters [a-zA-Z].
  */
-define('PARAM_ALPHA',    'alpha');
+define('PARAM_ALPHA', \core\param::ALPHA->value);
 
 /**
  * PARAM_ALPHAEXT the same contents as PARAM_ALPHA (English ascii letters [a-zA-Z]) plus the chars in quotes: "_-" allowed
  * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
  */
-define('PARAM_ALPHAEXT', 'alphaext');
+define('PARAM_ALPHAEXT', \core\param::ALPHAEXT->value);
 
 /**
  * PARAM_ALPHANUM - expected numbers 0-9 and English ascii letters [a-zA-Z] only.
  */
-define('PARAM_ALPHANUM', 'alphanum');
+define('PARAM_ALPHANUM', \core\param::ALPHANUM->value);
 
 /**
  * PARAM_ALPHANUMEXT - expected numbers 0-9, letters (English ascii letters [a-zA-Z]) and _- only.
  */
-define('PARAM_ALPHANUMEXT', 'alphanumext');
+define('PARAM_ALPHANUMEXT', \core\param::ALPHANUMEXT->value);
 
 /**
  * PARAM_AUTH - actually checks to make sure the string is a valid auth plugin
  */
-define('PARAM_AUTH',  'auth');
+define('PARAM_AUTH', \core\param::AUTH->value);
 
 /**
  * PARAM_BASE64 - Base 64 encoded format
  */
-define('PARAM_BASE64',   'base64');
+define('PARAM_BASE64', \core\param::BASE64->value);
 
 /**
  * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
  */
-define('PARAM_BOOL',     'bool');
+define('PARAM_BOOL', \core\param::BOOL->value);
 
 /**
  * PARAM_CAPABILITY - A capability name, like 'moodle/role:manage'. Actually
  * checked against the list of capabilities in the database.
  */
-define('PARAM_CAPABILITY',   'capability');
+define('PARAM_CAPABILITY', \core\param::CAPABILITY->value);
 
 /**
  * PARAM_CLEANHTML - cleans submitted HTML code. Note that you almost never want
@@ -120,17 +128,17 @@ define('PARAM_CAPABILITY',   'capability');
  * using format_text on output. This is for the rare cases when you want to
  * sanitise the HTML on input. This cleaning may also fix xhtml strictness.
  */
-define('PARAM_CLEANHTML', 'cleanhtml');
+define('PARAM_CLEANHTML', \core\param::CLEANHTML->value);
 
 /**
  * PARAM_EMAIL - an email address following the RFC
  */
-define('PARAM_EMAIL',   'email');
+define('PARAM_EMAIL', \core\param::EMAIL->value);
 
 /**
  * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  */
-define('PARAM_FILE',   'file');
+define('PARAM_FILE', \core\param::FILE->value);
 
 /**
  * PARAM_FLOAT - a real/floating point number.
@@ -139,71 +147,71 @@ define('PARAM_FILE',   'file');
  * It does not work for languages that use , as a decimal separator.
  * Use PARAM_LOCALISEDFLOAT instead.
  */
-define('PARAM_FLOAT',  'float');
+define('PARAM_FLOAT', \core\param::FLOAT->value);
 
 /**
  * PARAM_LOCALISEDFLOAT - a localised real/floating point number.
  * This is preferred over PARAM_FLOAT for numbers typed in by the user.
  * Cleans localised numbers to computer readable numbers; false for invalid numbers.
  */
-define('PARAM_LOCALISEDFLOAT',  'localisedfloat');
+define('PARAM_LOCALISEDFLOAT', \core\param::LOCALISEDFLOAT->value);
 
 /**
  * PARAM_HOST - expected fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
  */
-define('PARAM_HOST',     'host');
+define('PARAM_HOST', \core\param::HOST->value);
 
 /**
  * PARAM_INT - integers only, use when expecting only numbers.
  */
-define('PARAM_INT',      'int');
+define('PARAM_INT', \core\param::INT->value);
 
 /**
  * PARAM_LANG - checks to see if the string is a valid installed language in the current site.
  */
-define('PARAM_LANG',  'lang');
+define('PARAM_LANG', \core\param::LANG->value);
 
 /**
  * PARAM_LOCALURL - expected properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the
  * others! Implies PARAM_URL!)
  */
-define('PARAM_LOCALURL', 'localurl');
+define('PARAM_LOCALURL', \core\param::LOCALURL->value);
 
 /**
  * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
  */
-define('PARAM_NOTAGS',   'notags');
+define('PARAM_NOTAGS', \core\param::NOTAGS->value);
 
 /**
  * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory
  * traversals note: the leading slash is not removed, window drive letter is not allowed
  */
-define('PARAM_PATH',     'path');
+define('PARAM_PATH', \core\param::PATH->value);
 
 /**
  * PARAM_PEM - Privacy Enhanced Mail format
  */
-define('PARAM_PEM',      'pem');
+define('PARAM_PEM', \core\param::PEM->value);
 
 /**
  * PARAM_PERMISSION - A permission, one of CAP_INHERIT, CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT.
  */
-define('PARAM_PERMISSION',   'permission');
+define('PARAM_PERMISSION', \core\param::PERMISSION->value);
 
 /**
  * PARAM_RAW specifies a parameter that is not cleaned/processed in any way except the discarding of the invalid utf-8 characters
  */
-define('PARAM_RAW', 'raw');
+define('PARAM_RAW', \core\param::RAW->value);
 
 /**
  * PARAM_RAW_TRIMMED like PARAM_RAW but leading and trailing whitespace is stripped.
  */
-define('PARAM_RAW_TRIMMED', 'raw_trimmed');
+define('PARAM_RAW_TRIMMED', \core\param::RAW_TRIMMED->value);
 
 /**
  * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
  */
-define('PARAM_SAFEDIR',  'safedir');
+define('PARAM_SAFEDIR', \core\param::SAFEDIR->value);
 
 /**
  * PARAM_SAFEPATH - several PARAM_SAFEDIR joined by "/", suitable for include() and require(), plugin paths
@@ -211,49 +219,49 @@ define('PARAM_SAFEDIR',  'safedir');
  *
  * This is NOT intended to be used for absolute paths or any user uploaded files.
  */
-define('PARAM_SAFEPATH',  'safepath');
+define('PARAM_SAFEPATH', \core\param::SAFEPATH->value);
 
 /**
  * PARAM_SEQUENCE - expects a sequence of numbers like 8 to 1,5,6,4,6,8,9.  Numbers and comma only.
  */
-define('PARAM_SEQUENCE',  'sequence');
+define('PARAM_SEQUENCE', \core\param::SEQUENCE->value);
 
 /**
  * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international characters and space, <> not supported
  */
-define('PARAM_TAG',   'tag');
+define('PARAM_TAG', \core\param::TAG->value);
 
 /**
  * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
  */
-define('PARAM_TAGLIST',   'taglist');
+define('PARAM_TAGLIST', \core\param::TAGLIST->value);
 
 /**
  * PARAM_TEXT - general plain text compatible with multilang filter, no other html tags. Please note '<', or '>' are allowed here.
  */
-define('PARAM_TEXT',  'text');
+define('PARAM_TEXT', \core\param::TEXT->value);
 
 /**
  * PARAM_THEME - Checks to see if the string is a valid theme name in the current site
  */
-define('PARAM_THEME',  'theme');
+define('PARAM_THEME', \core\param::THEME->value);
 
 /**
  * PARAM_URL - expected properly formatted URL. Please note that domain part is required, http://localhost/ is not accepted but
  * http://localhost.localdomain/ is ok.
  */
-define('PARAM_URL',      'url');
+define('PARAM_URL', \core\param::URL->value);
 
 /**
  * PARAM_USERNAME - Clean username to only contains allowed characters. This is to be used ONLY when manually creating user
  * accounts, do NOT use when syncing with external systems!!
  */
-define('PARAM_USERNAME',    'username');
+define('PARAM_USERNAME', \core\param::USERNAME->value);
 
 /**
  * PARAM_STRINGID - used to check if the given string is valid string identifier for get_string()
  */
-define('PARAM_STRINGID',    'stringid');
+define('PARAM_STRINGID', \core\param::STRINGID->value);
 
 // DEPRECATED PARAM TYPES OR ALIASES - DO NOT USE FOR NEW CODE.
 /**
@@ -261,51 +269,52 @@ define('PARAM_STRINGID',    'stringid');
  * It was one of the first types, that is why it is abused so much ;-)
  * @deprecated since 2.0
  */
-define('PARAM_CLEAN',    'clean');
+define('PARAM_CLEAN', \core\param::CLEAN->value);
 
 /**
  * PARAM_INTEGER - deprecated alias for PARAM_INT
  * @deprecated since 2.0
  */
-define('PARAM_INTEGER',  'int');
+define('PARAM_INTEGER', \core\param::INT->value);
 
 /**
  * PARAM_NUMBER - deprecated alias of PARAM_FLOAT
  * @deprecated since 2.0
  */
-define('PARAM_NUMBER',  'float');
+define('PARAM_NUMBER', \core\param::FLOAT->value);
 
 /**
  * PARAM_ACTION - deprecated alias for PARAM_ALPHANUMEXT, use for various actions in forms and urls
  * NOTE: originally alias for PARAM_APLHA
  * @deprecated since 2.0
  */
-define('PARAM_ACTION',   'alphanumext');
+define('PARAM_ACTION', \core\param::ALPHANUMEXT->value);
 
 /**
  * PARAM_FORMAT - deprecated alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
  * NOTE: originally alias for PARAM_APLHA
  * @deprecated since 2.0
  */
-define('PARAM_FORMAT',   'alphanumext');
+define('PARAM_FORMAT', \core\param::ALPHANUMEXT->value);
 
 /**
  * PARAM_MULTILANG - deprecated alias of PARAM_TEXT.
  * @deprecated since 2.0
  */
-define('PARAM_MULTILANG',  'text');
+define('PARAM_MULTILANG', \core\param::TEXT->value);
 
 /**
  * PARAM_TIMEZONE - expected timezone. Timezone can be int +-(0-13) or float +-(0.5-12.5) or
  * string separated by '/' and can have '-' &/ '_' (eg. America/North_Dakota/New_Salem
  * America/Port-au-Prince)
  */
-define('PARAM_TIMEZONE', 'timezone');
+define('PARAM_TIMEZONE', \core\param::TIMEZONE->value);
 
 /**
  * PARAM_CLEANFILE - deprecated alias of PARAM_FILE; originally was removing regional chars too
+ * @deprecated since 2.0
  */
-define('PARAM_CLEANFILE', 'file');
+define('PARAM_CLEANFILE', \core\param::CLEANFILE->value);
 
 /**
  * PARAM_COMPONENT is used for full component names (aka frankenstyle) such as 'mod_forum', 'core_rating', 'auth_ldap'.
@@ -313,21 +322,21 @@ define('PARAM_CLEANFILE', 'file');
  * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
  * NOTE: numbers and underscores are strongly discouraged in plugin names!
  */
-define('PARAM_COMPONENT', 'component');
+define('PARAM_COMPONENT', \core\param::COMPONENT->value);
 
 /**
  * PARAM_AREA is a name of area used when addressing files, comments, ratings, etc.
  * It is usually used together with context id and component.
  * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
  */
-define('PARAM_AREA', 'area');
+define('PARAM_AREA', \core\param::AREA->value);
 
 /**
  * PARAM_PLUGIN is used for plugin names such as 'forum', 'glossary', 'ldap', 'paypal', 'completionstatus'.
  * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
  * NOTE: numbers and underscores are strongly discouraged in plugin names! Underscores are forbidden in module names.
  */
-define('PARAM_PLUGIN', 'plugin');
+define('PARAM_PLUGIN', \core\param::PLUGIN->value);
 
 
 // Web Services.
@@ -380,22 +389,19 @@ define ('BLOG_COURSE_LEVEL', 3);
 define ('BLOG_SITE_LEVEL', 4);
 define ('BLOG_GLOBAL_LEVEL', 5);
 
-
-// Tag constants.
-/**
- * To prevent problems with multibytes strings,Flag updating in nav not working on the review page. this should not exceed the
- * length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
- * TODO: this is not correct, varchar(255) are 255 unicode chars ;-)
- *
- * @todo define(TAG_MAX_LENGTH) this is not correct, varchar(255) are 255 unicode chars ;-)
- */
-define('TAG_MAX_LENGTH', 50);
+/** The maximum length of a tag */
+define('TAG_MAX_LENGTH', 255);
 
 // Password policy constants.
 define ('PASSWORD_LOWER', 'abcdefghijklmnopqrstuvwxyz');
 define ('PASSWORD_UPPER', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 define ('PASSWORD_DIGITS', '0123456789');
 define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
+
+/**
+ * Required password pepper entropy.
+ */
+define ('PEPPER_ENTROPY', 112);
 
 // Feature constants.
 // Used for plugin_supports() to report features that are, or are not, supported by a module.
@@ -411,6 +417,8 @@ define('FEATURE_CONTROLS_GRADE_VISIBILITY', 'controlsgradevisbility');
 /** True if module supports plagiarism plugins */
 define('FEATURE_PLAGIARISM', 'plagiarism');
 
+/** True if module supports completion (true by default) */
+define('FEATURE_COMPLETION', 'completion_enabled');
 /** True if module has code to track whether somebody viewed it */
 define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
 /** True if module has custom completion rules */
@@ -475,11 +483,19 @@ define('MOD_PURPOSE_COLLABORATION', 'collaboration');
 define('MOD_PURPOSE_COMMUNICATION', 'communication');
 /** Module purpose content */
 define('MOD_PURPOSE_CONTENT', 'content');
-/** Module purpose interface */
-define('MOD_PURPOSE_INTERFACE', 'interface');
+/** Module purpose interactive content */
+define('MOD_PURPOSE_INTERACTIVECONTENT', 'interactivecontent');
 /** Module purpose other */
 define('MOD_PURPOSE_OTHER', 'other');
+/**
+ * Module purpose interface
+ * @deprecated since Moodle 4.4
+ * @todo MDL-80701 Remove in Moodle 4.8
+*/
+define('MOD_PURPOSE_INTERFACE', 'interface');
 
+/** True if module can be quickly created without filling a previous form. */
+define('FEATURE_QUICKCREATE', 'quickcreate');
 /**
  * Security token used for allowing access
  * from external application such as web services.
@@ -513,11 +529,20 @@ define('HOMEPAGE_USER', 2);
  * The home page should be the users my courses page
  */
 define('HOMEPAGE_MYCOURSES', 3);
+/**
+ * The home page is defined as a URL
+ */
+define('HOMEPAGE_URL', 4);
 
 /**
  * URL of the Moodle sites registration portal.
  */
 defined('HUB_MOODLEORGHUBURL') || define('HUB_MOODLEORGHUBURL', 'https://stats.moodle.org');
+
+/**
+ * URL of main Moodle site for marketing, products and services.
+ */
+defined('MOODLE_PRODUCTURL') || define('MOODLE_PRODUCTURL', 'https://moodle.com');
 
 /**
  * URL of the statistic server public key.
@@ -578,6 +603,26 @@ define('CONTACT_SUPPORT_AUTHENTICATED', 1);
  */
 define('CONTACT_SUPPORT_ANYONE', 2);
 
+/**
+ * Maximum number of characters for password.
+ */
+define('MAX_PASSWORD_CHARACTERS', 128);
+
+/**
+ * Toggle sensitive feature is disabled. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_DISABLED', 0);
+
+/**
+ * Toggle sensitive feature is enabled. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_ENABLED', 1);
+
+/**
+ * Toggle sensitive feature is enabled for small screens only. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY', 2);
+
 // PARAMETER HANDLING.
 
 /**
@@ -598,25 +643,7 @@ define('CONTACT_SUPPORT_ANYONE', 2);
  * @throws coding_exception
  */
 function required_param($parname, $type) {
-    if (func_num_args() != 2 or empty($parname) or empty($type)) {
-        throw new coding_exception('required_param() requires $parname and $type to be specified (parameter: '.$parname.')');
-    }
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        throw new \moodle_exception('missingparam', '', '', $parname);
-    }
-
-    if (is_array($param)) {
-        debugging('Invalid array parameter detected in required_param(): '.$parname);
-        // TODO: switch to fatal error in Moodle 2.3.
-        return required_param_array($parname, $type);
-    }
-
-    return clean_param($param, $type);
+    return \core\param::from_type($type)->required_param($parname);
 }
 
 /**
@@ -637,31 +664,7 @@ function required_param($parname, $type) {
  * @throws coding_exception
  */
 function required_param_array($parname, $type) {
-    if (func_num_args() != 2 or empty($parname) or empty($type)) {
-        throw new coding_exception('required_param_array() requires $parname and $type to be specified (parameter: '.$parname.')');
-    }
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        throw new \moodle_exception('missingparam', '', '', $parname);
-    }
-    if (!is_array($param)) {
-        throw new \moodle_exception('missingparam', '', '', $parname);
-    }
-
-    $result = array();
-    foreach ($param as $key => $value) {
-        if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
-            debugging('Invalid key name in required_param_array() detected: '.$key.', parameter: '.$parname);
-            continue;
-        }
-        $result[$key] = clean_param($value, $type);
-    }
-
-    return $result;
+    return \core\param::from_type($type)->required_param_array($parname);
 }
 
 /**
@@ -682,26 +685,10 @@ function required_param_array($parname, $type) {
  * @throws coding_exception
  */
 function optional_param($parname, $default, $type) {
-    if (func_num_args() != 3 or empty($parname) or empty($type)) {
-        throw new coding_exception('optional_param requires $parname, $default + $type to be specified (parameter: '.$parname.')');
-    }
-
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        return $default;
-    }
-
-    if (is_array($param)) {
-        debugging('Invalid array parameter detected in required_param(): '.$parname);
-        // TODO: switch to $default in Moodle 2.3.
-        return optional_param_array($parname, $default, $type);
-    }
-
-    return clean_param($param, $type);
+    return \core\param::from_type($type)->optional_param(
+        paramname: $parname,
+        default: $default,
+    );
 }
 
 /**
@@ -722,33 +709,10 @@ function optional_param($parname, $default, $type) {
  * @throws coding_exception
  */
 function optional_param_array($parname, $default, $type) {
-    if (func_num_args() != 3 or empty($parname) or empty($type)) {
-        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: '.$parname.')');
-    }
-
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        return $default;
-    }
-    if (!is_array($param)) {
-        debugging('optional_param_array() expects array parameters only: '.$parname);
-        return $default;
-    }
-
-    $result = array();
-    foreach ($param as $key => $value) {
-        if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
-            debugging('Invalid key name in optional_param_array() detected: '.$key.', parameter: '.$parname);
-            continue;
-        }
-        $result[$key] = clean_param($value, $type);
-    }
-
-    return $result;
+    return \core\param::from_type($type)->optional_param_array(
+        paramname: $parname,
+        default: $default,
+    );
 }
 
 /**
@@ -765,33 +729,12 @@ function optional_param_array($parname, $default, $type) {
  * @return mixed the $param value converted to PHP type
  * @throws invalid_parameter_exception if $param is not of given type
  */
-function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='') {
-    if (is_null($param)) {
-        if ($allownull == NULL_ALLOWED) {
-            return null;
-        } else {
-            throw new invalid_parameter_exception($debuginfo);
-        }
-    }
-    if (is_array($param) or is_object($param)) {
-        throw new invalid_parameter_exception($debuginfo);
-    }
-
-    $cleaned = clean_param($param, $type);
-
-    if ($type == PARAM_FLOAT) {
-        // Do not detect precision loss here.
-        if (is_float($param) or is_int($param)) {
-            // These always fit.
-        } else if (!is_numeric($param) or !preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', (string)$param)) {
-            throw new invalid_parameter_exception($debuginfo);
-        }
-    } else if ((string)$param !== (string)$cleaned) {
-        // Conversion to string is usually lossless.
-        throw new invalid_parameter_exception($debuginfo);
-    }
-
-    return $cleaned;
+function validate_param($param, $type, $allownull = NULL_NOT_ALLOWED, $debuginfo = '') {
+    return \core\param::from_type($type)->validate_param(
+        param: $param,
+        allownull: $allownull,
+        debuginfo: $debuginfo,
+    );
 }
 
 /**
@@ -808,20 +751,10 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * @throws coding_exception
  */
 function clean_param_array(?array $param, $type, $recursive = false) {
-    // Convert null to empty array.
-    $param = (array)$param;
-    foreach ($param as $key => $value) {
-        if (is_array($value)) {
-            if ($recursive) {
-                $param[$key] = clean_param_array($value, $type, true);
-            } else {
-                throw new coding_exception('clean_param_array can not process multidimensional arrays when $recursive is false.');
-            }
-        } else {
-            $param[$key] = clean_param($value, $type);
-        }
-    }
-    return $param;
+    return \core\param::from_type($type)->clean_param_array(
+        param: $param,
+        recursive: $recursive,
+    );
 }
 
 /**
@@ -839,447 +772,7 @@ function clean_param_array(?array $param, $type, $recursive = false) {
  * @throws coding_exception
  */
 function clean_param($param, $type) {
-    global $CFG;
-
-    if (is_array($param)) {
-        throw new coding_exception('clean_param() can not process arrays, please use clean_param_array() instead.');
-    } else if (is_object($param)) {
-        if (method_exists($param, '__toString')) {
-            $param = $param->__toString();
-        } else {
-            throw new coding_exception('clean_param() can not process objects, please use clean_param_array() instead.');
-        }
-    }
-
-    switch ($type) {
-        case PARAM_RAW:
-            // No cleaning at all.
-            $param = fix_utf8($param);
-            return $param;
-
-        case PARAM_RAW_TRIMMED:
-            // No cleaning, but strip leading and trailing whitespace.
-            $param = (string)fix_utf8($param);
-            return trim($param);
-
-        case PARAM_CLEAN:
-            // General HTML cleaning, try to use more specific type if possible this is deprecated!
-            // Please use more specific type instead.
-            if (is_numeric($param)) {
-                return $param;
-            }
-            $param = fix_utf8($param);
-            // Sweep for scripts, etc.
-            return clean_text($param);
-
-        case PARAM_CLEANHTML:
-            // Clean html fragment.
-            $param = (string)fix_utf8($param);
-            // Sweep for scripts, etc.
-            $param = clean_text($param, FORMAT_HTML);
-            return trim($param);
-
-        case PARAM_INT:
-            // Convert to integer.
-            return (int)$param;
-
-        case PARAM_FLOAT:
-            // Convert to float.
-            return (float)$param;
-
-        case PARAM_LOCALISEDFLOAT:
-            // Convert to float.
-            return unformat_float($param, true);
-
-        case PARAM_ALPHA:
-            // Remove everything not `a-z`.
-            return preg_replace('/[^a-zA-Z]/i', '', (string)$param);
-
-        case PARAM_ALPHAEXT:
-            // Remove everything not `a-zA-Z_-` (originally allowed "/" too).
-            return preg_replace('/[^a-zA-Z_-]/i', '', (string)$param);
-
-        case PARAM_ALPHANUM:
-            // Remove everything not `a-zA-Z0-9`.
-            return preg_replace('/[^A-Za-z0-9]/i', '', (string)$param);
-
-        case PARAM_ALPHANUMEXT:
-            // Remove everything not `a-zA-Z0-9_-`.
-            return preg_replace('/[^A-Za-z0-9_-]/i', '', (string)$param);
-
-        case PARAM_SEQUENCE:
-            // Remove everything not `0-9,`.
-            return preg_replace('/[^0-9,]/i', '', (string)$param);
-
-        case PARAM_BOOL:
-            // Convert to 1 or 0.
-            $tempstr = strtolower((string)$param);
-            if ($tempstr === 'on' or $tempstr === 'yes' or $tempstr === 'true') {
-                $param = 1;
-            } else if ($tempstr === 'off' or $tempstr === 'no'  or $tempstr === 'false') {
-                $param = 0;
-            } else {
-                $param = empty($param) ? 0 : 1;
-            }
-            return $param;
-
-        case PARAM_NOTAGS:
-            // Strip all tags.
-            $param = fix_utf8($param);
-            return strip_tags((string)$param);
-
-        case PARAM_TEXT:
-            // Leave only tags needed for multilang.
-            $param = fix_utf8($param);
-            // If the multilang syntax is not correct we strip all tags because it would break xhtml strict which is required
-            // for accessibility standards please note this cleaning does not strip unbalanced '>' for BC compatibility reasons.
-            do {
-                if (strpos((string)$param, '</lang>') !== false) {
-                    // Old and future mutilang syntax.
-                    $param = strip_tags($param, '<lang>');
-                    if (!preg_match_all('/<.*>/suU', $param, $matches)) {
-                        break;
-                    }
-                    $open = false;
-                    foreach ($matches[0] as $match) {
-                        if ($match === '</lang>') {
-                            if ($open) {
-                                $open = false;
-                                continue;
-                            } else {
-                                break 2;
-                            }
-                        }
-                        if (!preg_match('/^<lang lang="[a-zA-Z0-9_-]+"\s*>$/u', $match)) {
-                            break 2;
-                        } else {
-                            $open = true;
-                        }
-                    }
-                    if ($open) {
-                        break;
-                    }
-                    return $param;
-
-                } else if (strpos((string)$param, '</span>') !== false) {
-                    // Current problematic multilang syntax.
-                    $param = strip_tags($param, '<span>');
-                    if (!preg_match_all('/<.*>/suU', $param, $matches)) {
-                        break;
-                    }
-                    $open = false;
-                    foreach ($matches[0] as $match) {
-                        if ($match === '</span>') {
-                            if ($open) {
-                                $open = false;
-                                continue;
-                            } else {
-                                break 2;
-                            }
-                        }
-                        if (!preg_match('/^<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>$/u', $match)) {
-                            break 2;
-                        } else {
-                            $open = true;
-                        }
-                    }
-                    if ($open) {
-                        break;
-                    }
-                    return $param;
-                }
-            } while (false);
-            // Easy, just strip all tags, if we ever want to fix orphaned '&' we have to do that in format_string().
-            return strip_tags((string)$param);
-
-        case PARAM_COMPONENT:
-            // We do not want any guessing here, either the name is correct or not
-            // please note only normalised component names are accepted.
-            $param = (string)$param;
-            if (!preg_match('/^[a-z][a-z0-9]*(_[a-z][a-z0-9_]*)?[a-z0-9]+$/', $param)) {
-                return '';
-            }
-            if (strpos($param, '__') !== false) {
-                return '';
-            }
-            if (strpos($param, 'mod_') === 0) {
-                // Module names must not contain underscores because we need to differentiate them from invalid plugin types.
-                if (substr_count($param, '_') != 1) {
-                    return '';
-                }
-            }
-            return $param;
-
-        case PARAM_PLUGIN:
-        case PARAM_AREA:
-            // We do not want any guessing here, either the name is correct or not.
-            if (!is_valid_plugin_name($param)) {
-                return '';
-            }
-            return $param;
-
-        case PARAM_SAFEDIR:
-            // Remove everything not a-zA-Z0-9_- .
-            return preg_replace('/[^a-zA-Z0-9_-]/i', '', (string)$param);
-
-        case PARAM_SAFEPATH:
-            // Remove everything not a-zA-Z0-9/_- .
-            return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', (string)$param);
-
-        case PARAM_FILE:
-            // Strip all suspicious characters from filename.
-            $param = (string)fix_utf8($param);
-            $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\\\/]~u', '', $param);
-            if ($param === '.' || $param === '..') {
-                $param = '';
-            }
-            return $param;
-
-        case PARAM_PATH:
-            // Strip all suspicious characters from file path.
-            $param = (string)fix_utf8($param);
-            $param = str_replace('\\', '/', $param);
-
-            // Explode the path and clean each element using the PARAM_FILE rules.
-            $breadcrumb = explode('/', $param);
-            foreach ($breadcrumb as $key => $crumb) {
-                if ($crumb === '.' && $key === 0) {
-                    // Special condition to allow for relative current path such as ./currentdirfile.txt.
-                } else {
-                    $crumb = clean_param($crumb, PARAM_FILE);
-                }
-                $breadcrumb[$key] = $crumb;
-            }
-            $param = implode('/', $breadcrumb);
-
-            // Remove multiple current path (./././) and multiple slashes (///).
-            $param = preg_replace('~//+~', '/', $param);
-            $param = preg_replace('~/(\./)+~', '/', $param);
-            return $param;
-
-        case PARAM_HOST:
-            // Allow FQDN or IPv4 dotted quad.
-            $param = preg_replace('/[^\.\d\w-]/', '', (string)$param );
-            // Match ipv4 dotted quad.
-            if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/', $param, $match)) {
-                // Confirm values are ok.
-                if ( $match[0] > 255
-                     || $match[1] > 255
-                     || $match[3] > 255
-                     || $match[4] > 255 ) {
-                    // Hmmm, what kind of dotted quad is this?
-                    $param = '';
-                }
-            } else if ( preg_match('/^[\w\d\.-]+$/', $param) // Dots, hyphens, numbers.
-                       && !preg_match('/^[\.-]/',  $param) // No leading dots/hyphens.
-                       && !preg_match('/[\.-]$/',  $param) // No trailing dots/hyphens.
-                       ) {
-                // All is ok - $param is respected.
-            } else {
-                // All is not ok...
-                $param='';
-            }
-            return $param;
-
-        case PARAM_URL:
-            // Allow safe urls.
-            $param = (string)fix_utf8($param);
-            include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
-            if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E-u-P-a?I?p?f?q?r?')) {
-                // All is ok, param is respected.
-            } else {
-                // Not really ok.
-                $param ='';
-            }
-            return $param;
-
-        case PARAM_LOCALURL:
-            // Allow http absolute, root relative and relative URLs within wwwroot.
-            $param = clean_param($param, PARAM_URL);
-            if (!empty($param)) {
-
-                if ($param === $CFG->wwwroot) {
-                    // Exact match;
-                } else if (preg_match(':^/:', $param)) {
-                    // Root-relative, ok!
-                } else if (preg_match('/^' . preg_quote($CFG->wwwroot . '/', '/') . '/i', $param)) {
-                    // Absolute, and matches our wwwroot.
-                } else {
-
-                    // Relative - let's make sure there are no tricks.
-                    if (validateUrlSyntax('/' . $param, 's-u-P-a-p-f+q?r?') && !preg_match('/javascript:/i', $param)) {
-                        // Looks ok.
-                    } else {
-                        $param = '';
-                    }
-                }
-            }
-            return $param;
-
-        case PARAM_PEM:
-            $param = trim((string)$param);
-            // PEM formatted strings may contain letters/numbers and the symbols:
-            //   forward slash: /
-            //   plus sign:     +
-            //   equal sign:    =
-            //   , surrounded by BEGIN and END CERTIFICATE prefix and suffixes.
-            if (preg_match('/^-----BEGIN CERTIFICATE-----([\s\w\/\+=]+)-----END CERTIFICATE-----$/', trim($param), $matches)) {
-                list($wholething, $body) = $matches;
-                unset($wholething, $matches);
-                $b64 = clean_param($body, PARAM_BASE64);
-                if (!empty($b64)) {
-                    return "-----BEGIN CERTIFICATE-----\n$b64\n-----END CERTIFICATE-----\n";
-                } else {
-                    return '';
-                }
-            }
-            return '';
-
-        case PARAM_BASE64:
-            if (!empty($param)) {
-                // PEM formatted strings may contain letters/numbers and the symbols
-                //   forward slash: /
-                //   plus sign:     +
-                //   equal sign:    =.
-                if (0 >= preg_match('/^([\s\w\/\+=]+)$/', trim($param))) {
-                    return '';
-                }
-                $lines = preg_split('/[\s]+/', $param, -1, PREG_SPLIT_NO_EMPTY);
-                // Each line of base64 encoded data must be 64 characters in length, except for the last line which may be less
-                // than (or equal to) 64 characters long.
-                for ($i=0, $j=count($lines); $i < $j; $i++) {
-                    if ($i + 1 == $j) {
-                        if (64 < strlen($lines[$i])) {
-                            return '';
-                        }
-                        continue;
-                    }
-
-                    if (64 != strlen($lines[$i])) {
-                        return '';
-                    }
-                }
-                return implode("\n", $lines);
-            } else {
-                return '';
-            }
-
-        case PARAM_TAG:
-            $param = (string)fix_utf8($param);
-            // Please note it is not safe to use the tag name directly anywhere,
-            // it must be processed with s(), urlencode() before embedding anywhere.
-            // Remove some nasties.
-            $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
-            // Convert many whitespace chars into one.
-            $param = preg_replace('/\s+/u', ' ', $param);
-            $param = core_text::substr(trim($param), 0, TAG_MAX_LENGTH);
-            return $param;
-
-        case PARAM_TAGLIST:
-            $param = (string)fix_utf8($param);
-            $tags = explode(',', $param);
-            $result = array();
-            foreach ($tags as $tag) {
-                $res = clean_param($tag, PARAM_TAG);
-                if ($res !== '') {
-                    $result[] = $res;
-                }
-            }
-            if ($result) {
-                return implode(',', $result);
-            } else {
-                return '';
-            }
-
-        case PARAM_CAPABILITY:
-            if (get_capability_info($param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_PERMISSION:
-            $param = (int)$param;
-            if (in_array($param, array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT))) {
-                return $param;
-            } else {
-                return CAP_INHERIT;
-            }
-
-        case PARAM_AUTH:
-            $param = clean_param($param, PARAM_PLUGIN);
-            if (empty($param)) {
-                return '';
-            } else if (exists_auth_plugin($param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_LANG:
-            $param = clean_param($param, PARAM_SAFEDIR);
-            if (get_string_manager()->translation_exists($param)) {
-                return $param;
-            } else {
-                // Specified language is not installed or param malformed.
-                return '';
-            }
-
-        case PARAM_THEME:
-            $param = clean_param($param, PARAM_PLUGIN);
-            if (empty($param)) {
-                return '';
-            } else if (file_exists("$CFG->dirroot/theme/$param/config.php")) {
-                return $param;
-            } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$param/config.php")) {
-                return $param;
-            } else {
-                // Specified theme is not installed.
-                return '';
-            }
-
-        case PARAM_USERNAME:
-            $param = (string)fix_utf8($param);
-            $param = trim($param);
-            // Convert uppercase to lowercase MDL-16919.
-            $param = core_text::strtolower($param);
-            if (empty($CFG->extendedusernamechars)) {
-                $param = str_replace(" " , "", $param);
-                // Regular expression, eliminate all chars EXCEPT:
-                // alphanum, dash (-), underscore (_), at sign (@) and period (.) characters.
-                $param = preg_replace('/[^-\.@_a-z0-9]/', '', $param);
-            }
-            return $param;
-
-        case PARAM_EMAIL:
-            $param = fix_utf8($param);
-            if (validate_email($param ?? '')) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_STRINGID:
-            if (preg_match('|^[a-zA-Z][a-zA-Z0-9\.:/_-]*$|', (string)$param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_TIMEZONE:
-            // Can be int, float(with .5 or .0) or string seperated by '/' and can have '-_'.
-            $param = (string)fix_utf8($param);
-            $timezonepattern = '/^(([+-]?(0?[0-9](\.[5|0])?|1[0-3](\.0)?|1[0-2]\.5))|(99)|[[:alnum:]]+(\/?[[:alpha:]_-])+)$/';
-            if (preg_match($timezonepattern, $param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        default:
-            // Doh! throw error, switched parameters in optional_param or another serious problem.
-            throw new \moodle_exception("unknownparamtype", '', '', $type);
-    }
+    return \core\param::from_type($type)->clean($param);
 }
 
 /**
@@ -1425,7 +918,8 @@ function html_is_blank($string) {
  * NOTE: this function is called from lib/db/upgrade.php
  *
  * @param string $name the key to set
- * @param string $value the value to set (without magic quotes)
+ * @param string|int|bool|null $value the value to set (without magic quotes),
+ *               null to unset the value
  * @param string $plugin (optional) the plugin scope, default null
  * @return bool true or exception
  */
@@ -1691,6 +1185,7 @@ function purge_all_caches() {
  *
  * @param bool[] $options Specific parts of the cache to purge. Valid options are:
  *        'muc'    Purge MUC caches?
+ *        'courses' Purge all course caches, or specific course caches (CLI only)
  *        'theme'  Purge theme cache?
  *        'lang'   Purge language string cache?
  *        'js'     Purge javascript cache?
@@ -1698,7 +1193,7 @@ function purge_all_caches() {
  *        'other'  Purge all other caches?
  */
 function purge_caches($options = []) {
-    $defaults = array_fill_keys(['muc', 'theme', 'lang', 'js', 'template', 'filter', 'other'], false);
+    $defaults = array_fill_keys(['muc', 'courses', 'theme', 'lang', 'js', 'template', 'filter', 'other'], false);
     if (empty(array_filter($options))) {
         $options = array_fill_keys(array_keys($defaults), true); // Set all options to true.
     } else {
@@ -1706,6 +1201,13 @@ function purge_caches($options = []) {
     }
     if ($options['muc']) {
         cache_helper::purge_all();
+    } else if ($options['courses']) {
+        if ($options['courses'] === true) {
+            $courseids = [];
+        } else {
+            $courseids = preg_split('/\s*,\s*/', $options['courses'], -1, PREG_SPLIT_NO_EMPTY);
+        }
+        course_modinfo::purge_course_caches($courseids);
     }
     if ($options['theme']) {
         theme_reset_all_caches();
@@ -1760,6 +1262,9 @@ function purge_other_caches() {
     remove_dir($CFG->localcachedir, true);
     set_config('localcachedirpurged', time());
     make_localcache_directory('', true);
+
+    // Rewarm the bootstrap.php files so the siteid is always present after a purge.
+    initialise_local_config_cache();
     \core\task\manager::clear_static_caches();
 }
 
@@ -1964,7 +1469,7 @@ function mark_user_preferences_changed($userid) {
  * @category preference
  * @access   public
  * @param    string            $name  The key to set as preference for the specified user
- * @param    string            $value The value to set for the $name key in the specified user's
+ * @param    string|int|bool|null $value The value to set for the $name key in the specified user's
  *                                    record, null means delete current value.
  * @param    stdClass|int|null $user  A moodle user object or id, null means current user
  * @throws   coding_exception
@@ -2441,15 +1946,50 @@ function usertime($date, $timezone=99) {
  * @param int $time1 unix timestamp
  * @param int $time2 unix timestamp
  * @param string $format string (can be lang string) containing format chars: https://www.php.net/manual/en/dateinterval.format.php.
+ * @param bool $dropzeroes If format is not provided and this is set to true, do not include zero time units.
+ *                         e.g. a duration of 3 days and 2 hours will be displayed as '3d 2h' instead of '3d 2h 0s'
+ * @param bool $fullformat If format is not provided and this is set to true, display time units in full format.
+ *                         e.g. instead of showing "3d", "3 days" will be returned.
  * @return string the formatted string describing the time difference, e.g. '10d 11h 45m'.
  */
-function get_time_interval_string(int $time1, int $time2, string $format = ''): string {
+function get_time_interval_string(int $time1, int $time2, string $format = '',
+        bool $dropzeroes = false, bool $fullformat = false): string {
     $dtdate = new DateTime();
     $dtdate->setTimeStamp($time1);
     $dtdate2 = new DateTime();
     $dtdate2->setTimeStamp($time2);
     $interval = $dtdate2->diff($dtdate);
-    $format = empty($format) ? get_string('dateintervaldayshoursmins', 'langconfig') : $format;
+
+    if (empty(trim($format))) {
+        // Default to this key.
+        $formatkey = 'dateintervaldayhrmin';
+
+        if ($dropzeroes) {
+            $units = [
+                'y' => 'yr',
+                'm' => 'mo',
+                'd' => 'day',
+                'h' => 'hr',
+                'i' => 'min',
+                's' => 'sec',
+            ];
+            $formatunits = [];
+            foreach ($units as $key => $unit) {
+                if (empty($interval->$key)) {
+                    continue;
+                }
+                $formatunits[] = $unit;
+            }
+            if (!empty($formatunits)) {
+                $formatkey = 'dateinterval' . implode("", $formatunits);
+            }
+        }
+
+        if ($fullformat) {
+            $formatkey .= 'full';
+        }
+        $format = get_string($formatkey, 'langconfig');
+    }
     return $interval->format($format);
 }
 
@@ -3145,7 +2685,8 @@ function require_logout() {
             'other' => array('sessionid' => $sid),
         )
     );
-    if ($session = $DB->get_record('sessions', array('sid'=>$sid))) {
+    $session = \core\session\manager::get_session_by_sid($sid);
+    if (isset($session->id)) {
         $event->add_record_snapshot('sessions', $session);
     }
 
@@ -3596,103 +3137,16 @@ function ismoving($courseid) {
  * @return string
  */
 function fullname($user, $override=false) {
-    global $CFG, $SESSION;
+    // Note: We do not intend to deprecate this function any time soon as it is too widely used at this time.
+    // Uses of it should be updated to use the new API and pass updated arguments.
 
-    if (!isset($user->firstname) and !isset($user->lastname)) {
+    // Return an empty string if there is no user.
+    if (empty($user)) {
         return '';
     }
 
-    // Get all of the name fields.
-    $allnames = \core_user\fields::get_name_fields();
-    if ($CFG->debugdeveloper) {
-        foreach ($allnames as $allname) {
-            if (!property_exists($user, $allname)) {
-                // If all the user name fields are not set in the user object, then notify the programmer that it needs to be fixed.
-                debugging('You need to update your sql to include additional name fields in the user object.', DEBUG_DEVELOPER);
-                // Message has been sent, no point in sending the message multiple times.
-                break;
-            }
-        }
-    }
-
-    if (!$override) {
-        if (!empty($CFG->forcefirstname)) {
-            $user->firstname = $CFG->forcefirstname;
-        }
-        if (!empty($CFG->forcelastname)) {
-            $user->lastname = $CFG->forcelastname;
-        }
-    }
-
-    if (!empty($SESSION->fullnamedisplay)) {
-        $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
-    }
-
-    $template = null;
-    // If the fullnamedisplay setting is available, set the template to that.
-    if (isset($CFG->fullnamedisplay)) {
-        $template = $CFG->fullnamedisplay;
-    }
-    // If the template is empty, or set to language, return the language string.
-    if ((empty($template) || $template == 'language') && !$override) {
-        return get_string('fullnamedisplay', null, $user);
-    }
-
-    // Check to see if we are displaying according to the alternative full name format.
-    if ($override) {
-        if (empty($CFG->alternativefullnameformat) || $CFG->alternativefullnameformat == 'language') {
-            // Default to show just the user names according to the fullnamedisplay string.
-            return get_string('fullnamedisplay', null, $user);
-        } else {
-            // If the override is true, then change the template to use the complete name.
-            $template = $CFG->alternativefullnameformat;
-        }
-    }
-
-    $requirednames = array();
-    // With each name, see if it is in the display name template, and add it to the required names array if it is.
-    foreach ($allnames as $allname) {
-        if (strpos($template, $allname) !== false) {
-            $requirednames[] = $allname;
-        }
-    }
-
-    $displayname = $template;
-    // Switch in the actual data into the template.
-    foreach ($requirednames as $altname) {
-        if (isset($user->$altname)) {
-            // Using empty() on the below if statement causes breakages.
-            if ((string)$user->$altname == '') {
-                $displayname = str_replace($altname, 'EMPTY', $displayname);
-            } else {
-                $displayname = str_replace($altname, $user->$altname, $displayname);
-            }
-        } else {
-            $displayname = str_replace($altname, 'EMPTY', $displayname);
-        }
-    }
-    // Tidy up any misc. characters (Not perfect, but gets most characters).
-    // Don't remove the "u" at the end of the first expression unless you want garbled characters when combining hiragana or
-    // katakana and parenthesis.
-    $patterns = array();
-    // This regular expression replacement is to fix problems such as 'James () Kirk' Where 'Tiberius' (middlename) has not been
-    // filled in by a user.
-    // The special characters are Japanese brackets that are common enough to make allowances for them (not covered by :punct:).
-    $patterns[] = '/[[:punct:]「」]*EMPTY[[:punct:]「」]*/u';
-    // This regular expression is to remove any double spaces in the display name.
-    $patterns[] = '/\s{2,}/u';
-    foreach ($patterns as $pattern) {
-        $displayname = preg_replace($pattern, ' ', $displayname);
-    }
-
-    // Trimming $displayname will help the next check to ensure that we don't have a display name with spaces.
-    $displayname = trim($displayname);
-    if (empty($displayname)) {
-        // Going with just the first name if no alternate fields are filled out. May be changed later depending on what
-        // people in general feel is a good setting to fall back on.
-        $displayname = $user->firstname;
-    }
-    return $displayname;
+    $options = ['override' => $override];
+    return core_user::get_fullname($user, null, $options);
 }
 
 /**
@@ -4130,7 +3584,6 @@ function delete_user(stdClass $user) {
         debugging('Local administrator accounts can not be deleted.');
         return false;
     }
-
     // Allow plugins to use this user object before we completely delete it.
     if ($pluginsfunction = get_plugins_with_function('pre_user_delete')) {
         foreach ($pluginsfunction as $plugintype => $plugins) {
@@ -4139,6 +3592,12 @@ function delete_user(stdClass $user) {
             }
         }
     }
+
+    // Dispatch the hook for pre user update actions.
+    $hook = new \core_user\hook\before_user_deleted(
+        user: $user,
+    );
+    di::get(hook\manager::class)->dispatch($hook);
 
     // Keep user record before updating it, as we have to pass this to user_deleted event.
     $olduser = clone $user;
@@ -4213,22 +3672,33 @@ function delete_user(stdClass $user) {
     }
 
     // Force logout - may fail if file based sessions used, sorry.
-    \core\session\manager::kill_user_sessions($user->id);
+    \core\session\manager::destroy_user_sessions($user->id);
 
     // Generate username from email address, or a fake email.
     $delemail = !empty($user->email) ? $user->email : $user->username . '.' . $user->id . '@unknownemail.invalid';
 
     $deltime = time();
-    $deltimelength = core_text::strlen((string) $deltime);
 
     // Max username length is 100 chars. Select up to limit - (length of current time + 1 [period character]) from users email.
-    $delname = clean_param($delemail, PARAM_USERNAME);
-    $delname = core_text::substr($delname, 0, 100 - ($deltimelength + 1)) . ".{$deltime}";
+    $delnameprefix = clean_param($delemail, PARAM_USERNAME);
+    $delnamesuffix = $deltime;
+    $delnamesuffixlength = 10;
+    do {
+        // Workaround for bulk deletes of users with the same email address.
+        $delname = sprintf(
+            "%s.%10d",
+            core_text::substr(
+                $delnameprefix,
+                0,
+                // 100 Character maximum, with a '.' character, and a 10-digit timestamp.
+                100 - 1 - $delnamesuffixlength,
+            ),
+            $delnamesuffix,
+        );
+        $delnamesuffix++;
 
-    // Workaround for bulk deletes of users with the same email address.
-    while ($DB->record_exists('user', array('username' => $delname))) { // No need to use mnethostid here.
-        $delname++;
-    }
+        // No need to use mnethostid here.
+    } while ($DB->record_exists('user', ['username' => $delname]));
 
     // Mark internal user record as "deleted".
     $updateuser = new stdClass();
@@ -4316,11 +3786,19 @@ function guest_user() {
  * @param string $password  User's password
  * @param bool $ignorelockout useful when guessing is prevented by other mechanism such as captcha or SSO
  * @param int $failurereason login failure reason, can be used in renderers (it may disclose if account exists)
- * @param mixed logintoken If this is set to a string it is validated against the login token for the session.
+ * @param string|bool $logintoken If this is set to a string it is validated against the login token for the session.
+ * @param string|bool $loginrecaptcha If this is set to a string it is validated against Google reCaptcha.
  * @return stdClass|false A {@link $USER} object or false if error
  */
-function authenticate_user_login($username, $password, $ignorelockout=false, &$failurereason=null, $logintoken=false) {
-    global $CFG, $DB, $PAGE;
+function authenticate_user_login(
+    $username,
+    $password,
+    $ignorelockout = false,
+    &$failurereason = null,
+    $logintoken = false,
+    string|bool $loginrecaptcha = false,
+) {
+    global $CFG, $DB, $PAGE, $SESSION;
     require_once("$CFG->libdir/authlib.php");
 
     if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
@@ -4355,6 +3833,20 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
         ])->trigger();
 
         error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Invalid Login Token:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+        return false;
+    }
+
+    // Login reCaptcha.
+    if (login_captcha_enabled() && !validate_login_captcha($loginrecaptcha)) {
+        $failurereason = AUTH_LOGIN_FAILED_RECAPTCHA;
+        // Trigger login failed event (specifying the ID of the found user, if available).
+        \core\event\user_login_failed::create([
+            'userid' => ($user->id ?? 0),
+            'other' => [
+                'username' => $username,
+                'reason' => $failurereason,
+            ],
+        ])->trigger();
         return false;
     }
 
@@ -4425,6 +3917,8 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
             $event->trigger();
 
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Login lockout:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $SESSION->loginerrormsg = get_string('accountlocked', 'admin');
+
             return false;
         }
     } else {
@@ -4606,6 +4100,9 @@ function complete_user_login($user, array $extrauserinfo = []) {
     );
     $event->trigger();
 
+    // Allow plugins to callback as soon possible after user has completed login.
+    di::get(\core\hook\manager::class)->dispatch(new \core_user\hook\after_login_completed());
+
     // Check if the user is using a new browser or session (a new MoodleSession cookie is set in that case).
     // If the user is accessing from the same IP, ignore everything (most of the time will be a new session in the same browser).
     // Skip Web Service requests, CLI scripts, AJAX scripts, and request from the mobile app itself.
@@ -4619,12 +4116,26 @@ function complete_user_login($user, array $extrauserinfo = []) {
         $ismoodleapp = false;
         $useragent = \core_useragent::get_user_agent_string();
 
-        // Schedule adhoc task to sent a login notification to the user.
-        $task = new \core\task\send_login_notifications();
-        $task->set_userid($USER->id);
-        $task->set_custom_data(compact('ismoodleapp', 'useragent', 'loginip', 'logintime'));
-        $task->set_component('core');
-        \core\task\manager::queue_adhoc_task($task);
+        $sitepreferences = get_message_output_default_preferences();
+        // Check if new login notification is disabled at system level.
+        $newlogindisabled = $sitepreferences->moodle_newlogin_disable ?? 0;
+        // Check if message providers (web, email, mobile) are enabled at system level.
+        $msgproviderenabled = isset($sitepreferences->message_provider_moodle_newlogin_enabled);
+        // Get message providers enabled for a user.
+        $userpreferences = get_user_preferences('message_provider_moodle_newlogin_enabled');
+        // Check if notification processor plugins (web, email, mobile) are enabled at system level.
+        $msgprocessorsready = !empty(get_message_processors(true));
+        // If new login notification is enabled at system level then go for other conditions check.
+        $newloginenabled = $newlogindisabled ? 0 : ($userpreferences != 'none' && $msgproviderenabled);
+
+        if ($newloginenabled && $msgprocessorsready) {
+            // Schedule adhoc task to send a login notification to the user.
+            $task = new \core\task\send_login_notifications();
+            $task->set_userid($USER->id);
+            $task->set_custom_data(compact('ismoodleapp', 'useragent', 'loginip', 'logintime'));
+            $task->set_component('core');
+            \core\task\manager::queue_adhoc_task($task);
+        }
     }
 
     // Queue migrating the messaging data, if we need to.
@@ -4668,13 +4179,75 @@ function complete_user_login($user, array $extrauserinfo = []) {
 }
 
 /**
- * Check a password hash to see if it was hashed using the legacy hash algorithm (md5).
+ * Check a password hash to see if it was hashed using the legacy hash algorithm (bcrypt).
  *
  * @param string $password String to check.
- * @return boolean True if the $password matches the format of an md5 sum.
+ * @return bool True if the $password matches the format of a bcrypt hash.
  */
-function password_is_legacy_hash($password) {
-    return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
+function password_is_legacy_hash(#[\SensitiveParameter] string $password): bool {
+    return (bool) preg_match('/^\$2y\$[\d]{2}\$[A-Za-z0-9\.\/]{53}$/', $password);
+}
+
+/**
+ * Calculate the Shannon entropy of a string.
+ *
+ * @param string $pepper The pepper to calculate the entropy of.
+ * @return float The Shannon entropy of the string.
+ */
+function calculate_entropy(#[\SensitiveParameter] string $pepper): float {
+    // Initialize entropy.
+    $h = 0;
+
+    // Calculate the length of the string.
+    $size = strlen($pepper);
+
+    // For each unique character in the string.
+    foreach (count_chars($pepper, 1) as $v) {
+        // Calculate the probability of the character.
+        $p = $v / $size;
+
+        // Add the character's contribution to the total entropy.
+        // This uses the formula for the entropy of a discrete random variable.
+        $h -= $p * log($p) / log(2);
+    }
+
+    // Instead of returning the average entropy per symbol (Shannon entropy),
+    // we multiply by the length of the string to get total entropy.
+    return $h * $size;
+}
+
+/**
+ * Get the available password peppers.
+ * The latest pepper is checked for minimum entropy as part of this function.
+ * We only calculate the entropy of the most recent pepper,
+ * because passwords are always updated to the latest pepper,
+ * and in the past we may have enforced a lower minimum entropy.
+ * Also, we allow the latest pepper to be empty, to allow admins to migrate off peppers.
+ *
+ * @return array The password peppers.
+ * @throws coding_exception If the entropy of the password pepper is less than the recommended minimum.
+ */
+function get_password_peppers(): array {
+    global $CFG;
+
+    // Get all available peppers.
+    if (isset($CFG->passwordpeppers) && is_array($CFG->passwordpeppers)) {
+        // Sort the array in descending order of keys (numerical).
+        $peppers = $CFG->passwordpeppers;
+        krsort($peppers, SORT_NUMERIC);
+    } else {
+        $peppers = [];  // Set an empty array if no peppers are found.
+    }
+
+    // Check if the entropy of the most recent pepper is less than the minimum.
+    // Also, we allow the most recent pepper to be empty, to allow admins to migrate off peppers.
+    $lastpepper = reset($peppers);
+    if (!empty($peppers) && $lastpepper !== '' && calculate_entropy($lastpepper) < PEPPER_ENTROPY) {
+        throw new coding_exception(
+                'password pepper below minimum',
+                'The entropy of the password pepper is less than the recommended minimum.');
+    }
+    return $peppers;
 }
 
 /**
@@ -4686,73 +4259,83 @@ function password_is_legacy_hash($password) {
  * @param string $password Plain text password.
  * @return bool True if password is valid.
  */
-function validate_internal_user_password($user, $password) {
-    global $CFG;
+function validate_internal_user_password(stdClass $user, #[\SensitiveParameter] string $password): bool {
+
+    if (exceeds_password_length($password)) {
+        // Password cannot be more than MAX_PASSWORD_CHARACTERS characters.
+        return false;
+    }
 
     if ($user->password === AUTH_PASSWORD_NOT_CACHED) {
         // Internal password is not used at all, it can not validate.
         return false;
     }
 
-    // If hash isn't a legacy (md5) hash, validate using the library function.
-    if (!password_is_legacy_hash($user->password)) {
-        return password_verify($password, $user->password);
+    $peppers = get_password_peppers(); // Get the array of available peppers.
+    $islegacy = password_is_legacy_hash($user->password); // Check if the password is a legacy bcrypt hash.
+
+    // If the password is a legacy hash, no peppers were used, so verify and update directly.
+    if ($islegacy && password_verify($password, $user->password)) {
+        update_internal_user_password($user, $password);
+        return true;
     }
 
-    // Otherwise we need to check for a legacy (md5) hash instead. If the hash
-    // is valid we can then update it to the new algorithm.
+    // If the password is not a legacy hash, iterate through the peppers.
+    $latestpepper = reset($peppers);
+    // Add an empty pepper to the beginning of the array. To make it easier to check if the password matches without any pepper.
+    $peppers = [-1 => ''] + $peppers;
+    foreach ($peppers as $pepper) {
+        $pepperedpassword = $password . $pepper;
 
-    $sitesalt = isset($CFG->passwordsaltmain) ? $CFG->passwordsaltmain : '';
-    $validated = false;
-
-    if ($user->password === md5($password.$sitesalt)
-            or $user->password === md5($password)
-            or $user->password === md5(addslashes($password).$sitesalt)
-            or $user->password === md5(addslashes($password))) {
-        // Note: we are intentionally using the addslashes() here because we
-        //       need to accept old password hashes of passwords with magic quotes.
-        $validated = true;
-
-    } else {
-        for ($i=1; $i<=20; $i++) { // 20 alternative salts should be enough, right?
-            $alt = 'passwordsaltalt'.$i;
-            if (!empty($CFG->$alt)) {
-                if ($user->password === md5($password.$CFG->$alt) or $user->password === md5(addslashes($password).$CFG->$alt)) {
-                    $validated = true;
-                    break;
-                }
+        // If the peppered password is correct, update (if necessary) and return true.
+        if (password_verify($pepperedpassword, $user->password)) {
+            // If the pepper used is not the latest one, update the password.
+            if ($pepper !== $latestpepper) {
+                update_internal_user_password($user, $password);
             }
+            return true;
         }
     }
 
-    if ($validated) {
-        // If the password matches the existing md5 hash, update to the
-        // current hash algorithm while we have access to the user's password.
-        update_internal_user_password($user, $password);
-    }
-
-    return $validated;
+    // If no peppered password was correct, the password is wrong.
+    return false;
 }
 
 /**
  * Calculate hash for a plain text password.
  *
  * @param string $password Plain text password to be hashed.
- * @param bool $fasthash If true, use a low cost factor when generating the hash
- *                       This is much faster to generate but makes the hash
- *                       less secure. It is used when lots of hashes need to
- *                       be generated quickly.
+ * @param bool $fasthash If true, use a low number of rounds when generating the hash
+ *                       This is faster to generate but makes the hash less secure.
+ *                       It is used when lots of hashes need to be generated quickly.
+ * @param int $pepperlength Lenght of the peppers
  * @return string The hashed password.
  *
  * @throws moodle_exception If a problem occurs while generating the hash.
  */
-function hash_internal_user_password($password, $fasthash = false) {
-    global $CFG;
+function hash_internal_user_password(#[\SensitiveParameter] string $password, $fasthash = false, $pepperlength = 0): string {
+    if (exceeds_password_length($password, $pepperlength)) {
+        // Password cannot be more than MAX_PASSWORD_CHARACTERS.
+        throw new \moodle_exception(get_string("passwordexceeded", 'error', MAX_PASSWORD_CHARACTERS));
+    }
 
-    // Set the cost factor to 4 for fast hashing, otherwise use default cost.
-    $options = ($fasthash) ? array('cost' => 4) : array();
+    // Set the cost factor to 5000 for fast hashing, otherwise use default cost.
+    $rounds = $fasthash ? 5000 : 10000;
 
-    $generatedhash = password_hash($password, PASSWORD_DEFAULT, $options);
+    // First generate a cryptographically suitable salt.
+    $randombytes = random_bytes(16);
+    $salt = substr(strtr(base64_encode($randombytes), '+', '.'), 0, 16);
+
+    // Now construct the password string with the salt and number of rounds.
+    // The password string is in the format $algorithm$rounds$salt$hash. ($6 is the SHA512 algorithm).
+    $generatedhash = crypt($password, implode('$', [
+        '',
+        // The SHA512 Algorithm
+        '6',
+        "rounds={$rounds}",
+        $salt,
+        '',
+    ]));
 
     if ($generatedhash === false || $generatedhash === null) {
         throw new moodle_exception('Failed to generate password hash.');
@@ -4770,20 +4353,32 @@ function hash_internal_user_password($password, $fasthash = false) {
  * 2. The existing hash is using an out-of-date algorithm (or the legacy
  *    md5 algorithm).
  *
+ * The password is peppered with the latest pepper before hashing,
+ * if peppers are available.
  * Updating the password will modify the $user object and the database
  * record to use the current hashing algorithm.
  * It will remove Web Services user tokens too.
  *
  * @param stdClass $user User object (password property may be updated).
- * @param string $password Plain text password.
+ * @param string|null $password Plain text password.
  * @param bool $fasthash If true, use a low cost factor when generating the hash
  *                       This is much faster to generate but makes the hash
  *                       less secure. It is used when lots of hashes need to
  *                       be generated quickly.
  * @return bool Always returns true.
  */
-function update_internal_user_password($user, $password, $fasthash = false) {
+function update_internal_user_password(
+        stdClass $user,
+        #[\SensitiveParameter] ?string $password,
+        bool $fasthash = false
+): bool {
     global $CFG, $DB;
+
+    // Add the latest password pepper to the password before further processing.
+    $peppers = get_password_peppers();
+    if (!empty($peppers)) {
+        $password = $password . reset($peppers);
+    }
 
     // Figure out what the hashed password should be.
     if (!isset($user->auth)) {
@@ -4807,7 +4402,7 @@ function update_internal_user_password($user, $password, $fasthash = false) {
     } else if (isset($user->password)) {
         // If verification fails then it means the password has changed.
         $passwordchanged = !password_verify($password, $user->password);
-        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+        $algorithmchanged = password_is_legacy_hash($user->password);
     } else {
         // While creating new user, password in unset in $user object, to avoid
         // saving it with user_create()
@@ -4958,55 +4553,71 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
  * Validate a password against the configured password policy
  *
  * @param string $password the password to be checked against the password policy
- * @param string $errmsg the error message to display when the password doesn't comply with the policy.
- * @param stdClass $user the user object to perform password validation against. Defaults to null if not provided.
+ * @param string|null $errmsg the error message to display when the password doesn't comply with the policy.
+ * @param stdClass|null $user the user object to perform password validation against. Defaults to null if not provided.
  *
  * @return bool true if the password is valid according to the policy. false otherwise.
  */
-function check_password_policy($password, &$errmsg, $user = null) {
+function check_password_policy(string $password, ?string &$errmsg, ?stdClass $user = null) {
+    global $CFG;
+    if (!empty($CFG->passwordpolicy) && !isguestuser($user)) {
+        $errors = get_password_policy_errors($password, $user);
+
+        foreach ($errors as $error) {
+            $errmsg .= '<div>' . $error . '</div>';
+        }
+    }
+
+    return $errmsg == '';
+}
+
+/**
+ * Validate a password against the configured password policy.
+ * Note: This function is unaffected by whether the password policy is enabled or not.
+ *
+ * @param string $password the password to be checked against the password policy
+ * @param stdClass|null $user the user object to perform password validation against. Defaults to null if not provided.
+ *
+ * @return string[] Array of error messages.
+ */
+function get_password_policy_errors(string $password, ?stdClass $user = null) : array {
     global $CFG;
 
-    if (!empty($CFG->passwordpolicy)) {
-        $errmsg = '';
-        if (core_text::strlen($password) < $CFG->minpasswordlength) {
-            $errmsg .= '<div>'. get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength) .'</div>';
-        }
-        if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
-            $errmsg .= '<div>'. get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits) .'</div>';
-        }
-        if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
-            $errmsg .= '<div>'. get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower) .'</div>';
-        }
-        if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
-            $errmsg .= '<div>'. get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper) .'</div>';
-        }
-        if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
-            $errmsg .= '<div>'. get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum) .'</div>';
-        }
-        if (!check_consecutive_identical_characters($password, $CFG->maxconsecutiveidentchars)) {
-            $errmsg .= '<div>'. get_string('errormaxconsecutiveidentchars', 'auth', $CFG->maxconsecutiveidentchars) .'</div>';
-        }
+    $errors = [];
 
-        // Fire any additional password policy functions from plugins.
-        // Plugin functions should output an error message string or empty string for success.
-        $pluginsfunction = get_plugins_with_function('check_password_policy');
-        foreach ($pluginsfunction as $plugintype => $plugins) {
-            foreach ($plugins as $pluginfunction) {
-                $pluginerr = $pluginfunction($password, $user);
-                if ($pluginerr) {
-                    $errmsg .= '<div>'. $pluginerr .'</div>';
-                }
+    if (core_text::strlen($password) < $CFG->minpasswordlength) {
+        $errors[] = get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength);
+    }
+    if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
+        $errors[] = get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits);
+    }
+    if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
+        $errors[] = get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower);
+    }
+    if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
+        $errors[] = get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper);
+    }
+    if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
+        $errors[] = get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
+    }
+    if (!check_consecutive_identical_characters($password, $CFG->maxconsecutiveidentchars)) {
+        $errors[] = get_string('errormaxconsecutiveidentchars', 'auth', $CFG->maxconsecutiveidentchars);
+    }
+
+    // Fire any additional password policy functions from plugins.
+    // Plugin functions should output an error message string or empty string for success.
+    $pluginsfunction = get_plugins_with_function('check_password_policy');
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginerr = $pluginfunction($password, $user);
+            if ($pluginerr) {
+                $errors[] = $pluginerr;
             }
         }
     }
 
-    if ($errmsg == '') {
-        return true;
-    } else {
-        return false;
-    }
+    return $errors;
 }
-
 
 /**
  * When logging in, this function is run to set certain preferences for the current SESSION.
@@ -5032,7 +4643,7 @@ function set_login_session_preferences() {
  *             failed, but you have no way of knowing which.
  */
 function delete_course($courseorid, $showfeedback = true) {
-    global $DB;
+    global $DB, $CFG;
 
     if (is_object($courseorid)) {
         $courseid = $courseorid->id;
@@ -5058,6 +4669,12 @@ function delete_course($courseorid, $showfeedback = true) {
             }
         }
     }
+
+    // Dispatch the hook for pre course delete actions.
+    $hook = new \core_course\hook\before_course_deleted(
+        course: $course,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
     // Tell the search manager we are about to delete a course. This prevents us sending updates
     // for each individual context being deleted.
@@ -5116,7 +4733,7 @@ function delete_course($courseorid, $showfeedback = true) {
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function remove_course_contents($courseid, $showfeedback = true, array $options = null) {
+function remove_course_contents($courseid, $showfeedback = true, ?array $options = null) {
     global $CFG, $DB, $OUTPUT;
 
     require_once($CFG->libdir.'/badgeslib.php');
@@ -5345,10 +4962,11 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $fs->delete_area_files($coursecontext->id, 'backup');
 
     // Cleanup course record - remove links to deleted stuff.
+    // Do not wipe cacherev, as this course might be reused and we need to ensure that it keeps
+    // increasing.
     $oldcourse = new stdClass();
     $oldcourse->id               = $course->id;
     $oldcourse->summary          = '';
-    $oldcourse->cacherev         = 0;
     $oldcourse->legacyfiles      = 0;
     if (!empty($options['keep_groups_and_groupings'])) {
         $oldcourse->defaultgroupingid = 0;
@@ -5451,8 +5069,7 @@ function reset_course_userdata($data) {
 
     // Calculate the time shift of dates.
     if (!empty($data->reset_start_date)) {
-        // Time part of course startdate should be zero.
-        $data->timeshift = $data->reset_start_date - usergetmidnight($data->reset_start_date_old);
+        $data->timeshift = $data->reset_start_date - $data->reset_start_date_old;
     } else {
         $data->timeshift = 0;
     }
@@ -5499,7 +5116,7 @@ function reset_course_userdata($data) {
             \completion_criteria_date::update_date($data->courseid, $data->timeshift);
         }
 
-        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+        $status[] = ['component' => $componentstr, 'item' => get_string('date'), 'error' => false];
     }
 
     if (!empty($data->reset_end_date)) {
@@ -5910,7 +5527,7 @@ function email_should_be_diverted($email) {
 
     $patterns = array_map('trim', preg_split("/[\s,]+/", $CFG->divertallemailsexcept, -1, PREG_SPLIT_NO_EMPTY));
     foreach ($patterns as $pattern) {
-        if (preg_match("/$pattern/", $email)) {
+        if (preg_match("/{$pattern}/i", $email)) {
             return false;
         }
     }
@@ -6421,7 +6038,10 @@ function setnew_password_and_mail($user, $fasthash = false) {
     update_internal_user_password($user, $newpassword, $fasthash);
 
     $a = new stdClass();
-    $a->firstname   = fullname($user, true);
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $a->{$field} = $value;
+    }
     $a->sitename    = format_string($site->fullname);
     $a->username    = $user->username;
     $a->newpassword = $newpassword;
@@ -6435,49 +6055,6 @@ function setnew_password_and_mail($user, $fasthash = false) {
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
     return email_to_user($user, $supportuser, $subject, $message);
 
-}
-
-/**
- * Resets specified user's password and send the new password to the user via email.
- *
- * @param stdClass $user A {@link $USER} object
- * @return bool Returns true if mail was sent OK and false if there was an error.
- */
-function reset_password_and_mail($user) {
-    global $CFG;
-
-    $site  = get_site();
-    $supportuser = core_user::get_support_user();
-
-    $userauth = get_auth_plugin($user->auth);
-    if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
-        trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
-        return false;
-    }
-
-    $newpassword = generate_password();
-
-    if (!$userauth->user_update_password($user, $newpassword)) {
-        throw new \moodle_exception("cannotsetpassword");
-    }
-
-    $a = new stdClass();
-    $a->firstname   = $user->firstname;
-    $a->lastname    = $user->lastname;
-    $a->sitename    = format_string($site->fullname);
-    $a->username    = $user->username;
-    $a->newpassword = $newpassword;
-    $a->link        = $CFG->wwwroot .'/login/change_password.php';
-    $a->signoff     = generate_email_signoff();
-
-    $message = get_string('newpasswordtext', '', $a);
-
-    $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
-
-    unset_user_preference('create_password', $user); // Prevent cron from generating the password.
-
-    // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-    return email_to_user($user, $supportuser, $subject, $message);
 }
 
 /**
@@ -6496,6 +6073,11 @@ function send_confirmation_email($user, $confirmationurl = null) {
     $data = new stdClass();
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();
+    // Add user name fields to $data based on $user.
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $data->{$field} = $value;
+    }
 
     $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
@@ -6541,8 +6123,10 @@ function send_password_change_confirmation_email($user, $resetrecord) {
     $pwresetmins = isset($CFG->pwresettime) ? floor($CFG->pwresettime / MINSECS) : 30;
 
     $data = new stdClass();
-    $data->firstname = $user->firstname;
-    $data->lastname  = $user->lastname;
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $data->{$field} = $value;
+    }
     $data->username  = $user->username;
     $data->sitename  = format_string($site->fullname);
     $data->link      = $CFG->wwwroot .'/login/forgot_password.php?token='. $resetrecord->token;
@@ -6568,8 +6152,10 @@ function send_password_change_info($user) {
     $supportuser = core_user::get_support_user();
 
     $data = new stdClass();
-    $data->firstname = $user->firstname;
-    $data->lastname  = $user->lastname;
+    $placeholders = \core_user::get_name_placeholders($user);
+    foreach ($placeholders as $field => $value) {
+        $data->{$field} = $value;
+    }
     $data->username  = $user->username;
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();
@@ -6645,7 +6231,7 @@ function email_is_not_allowed($email) {
 /**
  * Returns local file storage instance
  *
- * @return file_storage
+ * @return ?file_storage
  */
 function get_file_storage($reset = false) {
     global $CFG;
@@ -6693,7 +6279,7 @@ function get_file_browser() {
  * Returns file packer
  *
  * @param string $mimetype default application/zip
- * @return file_packer
+ * @return file_packer|false
  */
 function get_file_packer($mimetype='application/zip') {
     global $CFG;
@@ -6807,7 +6393,7 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0, 
  * @param int $sitebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
- * @param stdClass $user The user
+ * @param stdClass|int|null $user The user
  * @param bool $unused This parameter has been deprecated and is not used any more.
  * @return int The maximum size for uploading files.
  */
@@ -7358,7 +6944,7 @@ function get_string_manager($forcereload=false) {
  *      usually expressed as the filename in the language pack without the
  *      .php on the end but can also be written as mod/forum or grade/export/xls.
  *      If none is specified then moodle.php is used.
- * @param string|object|array $a An object, string or number that can be used
+ * @param string|object|array|int $a An object, string or number that can be used
  *      within translation strings
  * @param bool $lazyload If set to true a string object is returned instead of
  *      the string itself. The string then isn't calculated until it is first used.
@@ -7514,251 +7100,18 @@ function get_list_of_themes() {
 }
 
 /**
- * Factory function for emoticon_manager
+ * Factory function for {@see \core\emoticon_manager}
  *
- * @return emoticon_manager singleton
+ * @return \core\emoticon_manager singleton
  */
-function get_emoticon_manager() {
+function get_emoticon_manager(): \core\emoticon_manager {
     static $singleton = null;
 
     if (is_null($singleton)) {
-        $singleton = new emoticon_manager();
+        $singleton = new \core\emoticon_manager();
     }
 
     return $singleton;
-}
-
-/**
- * Provides core support for plugins that have to deal with emoticons (like HTML editor or emoticon filter).
- *
- * Whenever this manager mentiones 'emoticon object', the following data
- * structure is expected: stdClass with properties text, imagename, imagecomponent,
- * altidentifier and altcomponent
- *
- * @see admin_setting_emoticons
- *
- * @copyright 2010 David Mudrak
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class emoticon_manager {
-
-    /**
-     * Returns the currently enabled emoticons
-     *
-     * @param boolean $selectable - If true, only return emoticons that should be selectable from a list.
-     * @return array of emoticon objects
-     */
-    public function get_emoticons($selectable = false) {
-        global $CFG;
-        $notselectable = ['martin', 'egg'];
-
-        if (empty($CFG->emoticons)) {
-            return array();
-        }
-
-        $emoticons = $this->decode_stored_config($CFG->emoticons);
-
-        if (!is_array($emoticons)) {
-            // Something is wrong with the format of stored setting.
-            debugging('Invalid format of emoticons setting, please resave the emoticons settings form', DEBUG_NORMAL);
-            return array();
-        }
-        if ($selectable) {
-            foreach ($emoticons as $index => $emote) {
-                if (in_array($emote->altidentifier, $notselectable)) {
-                    // Skip this one.
-                    unset($emoticons[$index]);
-                }
-            }
-        }
-
-        return $emoticons;
-    }
-
-    /**
-     * Converts emoticon object into renderable pix_emoticon object
-     *
-     * @param stdClass $emoticon emoticon object
-     * @param array $attributes explicit HTML attributes to set
-     * @return pix_emoticon
-     */
-    public function prepare_renderable_emoticon(stdClass $emoticon, array $attributes = array()) {
-        $stringmanager = get_string_manager();
-        if ($stringmanager->string_exists($emoticon->altidentifier, $emoticon->altcomponent)) {
-            $alt = get_string($emoticon->altidentifier, $emoticon->altcomponent);
-        } else {
-            $alt = s($emoticon->text);
-        }
-        return new pix_emoticon($emoticon->imagename, $alt, $emoticon->imagecomponent, $attributes);
-    }
-
-    /**
-     * Encodes the array of emoticon objects into a string storable in config table
-     *
-     * @see self::decode_stored_config()
-     * @param array $emoticons array of emtocion objects
-     * @return string
-     */
-    public function encode_stored_config(array $emoticons) {
-        return json_encode($emoticons);
-    }
-
-    /**
-     * Decodes the string into an array of emoticon objects
-     *
-     * @see self::encode_stored_config()
-     * @param string $encoded
-     * @return string|null
-     */
-    public function decode_stored_config($encoded) {
-        $decoded = json_decode($encoded);
-        if (!is_array($decoded)) {
-            return null;
-        }
-        return $decoded;
-    }
-
-    /**
-     * Returns default set of emoticons supported by Moodle
-     *
-     * @return array of sdtClasses
-     */
-    public function default_emoticons() {
-        return array(
-            $this->prepare_emoticon_object(":-)", 's/smiley', 'smiley'),
-            $this->prepare_emoticon_object(":)", 's/smiley', 'smiley'),
-            $this->prepare_emoticon_object(":-D", 's/biggrin', 'biggrin'),
-            $this->prepare_emoticon_object(";-)", 's/wink', 'wink'),
-            $this->prepare_emoticon_object(":-/", 's/mixed', 'mixed'),
-            $this->prepare_emoticon_object("V-.", 's/thoughtful', 'thoughtful'),
-            $this->prepare_emoticon_object(":-P", 's/tongueout', 'tongueout'),
-            $this->prepare_emoticon_object(":-p", 's/tongueout', 'tongueout'),
-            $this->prepare_emoticon_object("B-)", 's/cool', 'cool'),
-            $this->prepare_emoticon_object("^-)", 's/approve', 'approve'),
-            $this->prepare_emoticon_object("8-)", 's/wideeyes', 'wideeyes'),
-            $this->prepare_emoticon_object(":o)", 's/clown', 'clown'),
-            $this->prepare_emoticon_object(":-(", 's/sad', 'sad'),
-            $this->prepare_emoticon_object(":(", 's/sad', 'sad'),
-            $this->prepare_emoticon_object("8-.", 's/shy', 'shy'),
-            $this->prepare_emoticon_object(":-I", 's/blush', 'blush'),
-            $this->prepare_emoticon_object(":-X", 's/kiss', 'kiss'),
-            $this->prepare_emoticon_object("8-o", 's/surprise', 'surprise'),
-            $this->prepare_emoticon_object("P-|", 's/blackeye', 'blackeye'),
-            $this->prepare_emoticon_object("8-[", 's/angry', 'angry'),
-            $this->prepare_emoticon_object("(grr)", 's/angry', 'angry'),
-            $this->prepare_emoticon_object("xx-P", 's/dead', 'dead'),
-            $this->prepare_emoticon_object("|-.", 's/sleepy', 'sleepy'),
-            $this->prepare_emoticon_object("}-]", 's/evil', 'evil'),
-            $this->prepare_emoticon_object("(h)", 's/heart', 'heart'),
-            $this->prepare_emoticon_object("(heart)", 's/heart', 'heart'),
-            $this->prepare_emoticon_object("(y)", 's/yes', 'yes', 'core'),
-            $this->prepare_emoticon_object("(n)", 's/no', 'no', 'core'),
-            $this->prepare_emoticon_object("(martin)", 's/martin', 'martin'),
-            $this->prepare_emoticon_object("( )", 's/egg', 'egg'),
-        );
-    }
-
-    /**
-     * Helper method preparing the stdClass with the emoticon properties
-     *
-     * @param string|array $text or array of strings
-     * @param string $imagename to be used by {@link pix_emoticon}
-     * @param string $altidentifier alternative string identifier, null for no alt
-     * @param string $altcomponent where the alternative string is defined
-     * @param string $imagecomponent to be used by {@link pix_emoticon}
-     * @return stdClass
-     */
-    protected function prepare_emoticon_object($text, $imagename, $altidentifier = null,
-                                               $altcomponent = 'core_pix', $imagecomponent = 'core') {
-        return (object)array(
-            'text'           => $text,
-            'imagename'      => $imagename,
-            'imagecomponent' => $imagecomponent,
-            'altidentifier'  => $altidentifier,
-            'altcomponent'   => $altcomponent,
-        );
-    }
-}
-
-// ENCRYPTION.
-
-/**
- * rc4encrypt
- *
- * @param string $data        Data to encrypt.
- * @return string             The now encrypted data.
- */
-function rc4encrypt($data) {
-    return endecrypt(get_site_identifier(), $data, '');
-}
-
-/**
- * rc4decrypt
- *
- * @param string $data        Data to decrypt.
- * @return string             The now decrypted data.
- */
-function rc4decrypt($data) {
-    return endecrypt(get_site_identifier(), $data, 'de');
-}
-
-/**
- * Based on a class by Mukul Sabharwal [mukulsabharwal @ yahoo.com]
- *
- * @todo Finish documenting this function
- *
- * @param string $pwd The password to use when encrypting or decrypting
- * @param string $data The data to be decrypted/encrypted
- * @param string $case Either 'de' for decrypt or '' for encrypt
- * @return string
- */
-function endecrypt ($pwd, $data, $case) {
-
-    if ($case == 'de') {
-        $data = urldecode($data);
-    }
-
-    $key[] = '';
-    $box[] = '';
-    $pwdlength = strlen($pwd);
-
-    for ($i = 0; $i <= 255; $i++) {
-        $key[$i] = ord(substr($pwd, ($i % $pwdlength), 1));
-        $box[$i] = $i;
-    }
-
-    $x = 0;
-
-    for ($i = 0; $i <= 255; $i++) {
-        $x = ($x + $box[$i] + $key[$i]) % 256;
-        $tempswap = $box[$i];
-        $box[$i] = $box[$x];
-        $box[$x] = $tempswap;
-    }
-
-    $cipher = '';
-
-    $a = 0;
-    $j = 0;
-
-    for ($i = 0; $i < strlen($data); $i++) {
-        $a = ($a + 1) % 256;
-        $j = ($j + $box[$a]) % 256;
-        $temp = $box[$a];
-        $box[$a] = $box[$j];
-        $box[$j] = $temp;
-        $k = $box[(($box[$a] + $box[$j]) % 256)];
-        $cipherby = ord(substr($data, $i, 1)) ^ $k;
-        $cipher .= chr($cipherby);
-    }
-
-    if ($case == 'de') {
-        $cipher = urldecode(urlencode($cipher));
-    } else {
-        $cipher = urlencode($cipher);
-    }
-
-    return $cipher;
 }
 
 // ENVIRONMENT CHECKING.
@@ -7833,9 +7186,10 @@ function get_plugin_list_with_function($plugintype, $function, $file = 'lib.php'
  * @param string $file the name of file within the plugin that defines the
  *      function. Defaults to lib.php.
  * @param bool $include Whether to include the files that contain the functions or not.
+ * @param bool $migratedtohook if true this is a deprecated lib.php callback, if hook callback is present then do nothing
  * @return array with [plugintype][plugin] = functionname
  */
-function get_plugins_with_function($function, $file = 'lib.php', $include = true) {
+function get_plugins_with_function($function, $file = 'lib.php', $include = true, bool $migratedtohook = false) {
     global $CFG;
 
     if (during_initial_install() || isset($CFG->upgraderunning)) {
@@ -7843,12 +7197,39 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
         return [];
     }
 
+    $plugincallback = $function;
+    $filtermigrated = function($plugincallback, $pluginfunctions): array {
+        foreach ($pluginfunctions as $plugintype => $plugins) {
+            foreach ($plugins as $plugin => $unusedfunction) {
+                $component = $plugintype . '_' . $plugin;
+                $hookmanager = di::get(hook\manager::class);
+                if ($hooks = $hookmanager->get_hooks_deprecating_plugin_callback($plugincallback)) {
+                    if ($hookmanager->is_deprecating_hook_present($component, $plugincallback)) {
+                        // Ignore the old callback, it is there only for older Moodle versions.
+                        unset($pluginfunctions[$plugintype][$plugin]);
+                    } else if ($hookmanager->warn_on_unmigrated_legacy_hooks()) {
+                        $hookmessage = count($hooks) == 1 ? reset($hooks) : 'one of  ' . implode(', ', $hooks);
+                        debugging(
+                            "Callback $plugincallback in $component component should be migrated to new " .
+                                "hook callback for $hookmessage",
+                            DEBUG_DEVELOPER
+                        );
+                    }
+                }
+            }
+        }
+        return $pluginfunctions;
+    };
+
     $cache = \cache::make('core', 'plugin_functions');
 
     // Including both although I doubt that we will find two functions definitions with the same name.
-    // Clearning the filename as cache_helper::hash_key only allows a-zA-Z0-9_.
-    $key = $function . '_' . clean_param($file, PARAM_ALPHA);
-    $pluginfunctions = $cache->get($key);
+    // Clean the filename as cache_helper::hash_key only allows a-zA-Z0-9_.
+    $pluginfunctions = false;
+    if (!empty($CFG->allversionshash)) {
+        $key = $CFG->allversionshash . '_' . $function . '_' . clean_param($file, PARAM_ALPHA);
+        $pluginfunctions = $cache->get($key);
+    }
     $dirty = false;
 
     // Use the plugin manager to check that plugins are currently installed.
@@ -7894,6 +7275,9 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
 
         // If the cache is dirty, we should fall through and let it rebuild.
         if (!$dirty) {
+            if ($migratedtohook && $file === 'lib.php') {
+                $pluginfunctions = $filtermigrated($plugincallback, $pluginfunctions);
+            }
             return $pluginfunctions;
         }
     }
@@ -7937,7 +7321,13 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
 
         }
     }
-    $cache->set($key, $pluginfunctions);
+    if (!empty($CFG->allversionshash)) {
+        $cache->set($key, $pluginfunctions);
+    }
+
+    if ($migratedtohook && $file === 'lib.php') {
+        $pluginfunctions = $filtermigrated($plugincallback, $pluginfunctions);
+    }
 
     return $pluginfunctions;
 
@@ -8028,12 +7418,13 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
  * @param string $action feature's action
  * @param array $params parameters of callback function, should be an array
  * @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
+ * @param bool $migratedtohook if true this is a deprecated callback, if hook callback is present then do nothing
  * @return mixed
  *
  * @todo Decide about to deprecate and drop plugin_callback() - MDL-30743
  */
-function plugin_callback($type, $name, $feature, $action, $params = null, $default = null) {
-    return component_callback($type . '_' . $name, $feature . '_' . $action, (array) $params, $default);
+function plugin_callback($type, $name, $feature, $action, $params = null, $default = null, bool $migratedtohook = false) {
+    return component_callback($type . '_' . $name, $feature . '_' . $action, (array) $params, $default, $migratedtohook);
 }
 
 /**
@@ -8043,23 +7434,29 @@ function plugin_callback($type, $name, $feature, $action, $params = null, $defau
  * @param string $function the rest of the function name, e.g. 'cron' will end up calling 'mod_quiz_cron'
  * @param array $params parameters of callback function
  * @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
+ * @param bool $migratedtohook if true this is a deprecated callback, if hook callback is present then do nothing
  * @return mixed
  */
-function component_callback($component, $function, array $params = array(), $default = null) {
-
+function component_callback($component, $function, array $params = array(), $default = null, bool $migratedtohook = false) {
     $functionname = component_callback_exists($component, $function);
 
-    if ($params && (array_keys($params) !== range(0, count($params) - 1))) {
-        // PHP 8 allows to have associative arrays in the call_user_func_array() parameters but
-        // PHP 7 does not. Using associative arrays can result in different behavior in different PHP versions.
-        // See https://php.watch/versions/8.0/named-parameters#named-params-call_user_func_array
-        // This check can be removed when minimum PHP version for Moodle is raised to 8.
-        debugging('Parameters array can not be an associative array while Moodle supports both PHP 7 and PHP 8.',
-            DEBUG_DEVELOPER);
-        $params = array_values($params);
-    }
-
     if ($functionname) {
+        if ($migratedtohook) {
+            $hookmanager = di::get(hook\manager::class);
+            if ($hooks = $hookmanager->get_hooks_deprecating_plugin_callback($function)) {
+                if ($hookmanager->is_deprecating_hook_present($component, $function)) {
+                    // Do not call the old lib.php callback,
+                    // it is there for compatibility with older Moodle versions only.
+                    return null;
+                } else if ($hookmanager->warn_on_unmigrated_legacy_hooks()) {
+                    $hookmessage = count($hooks) == 1 ? reset($hooks) : 'one of  ' . implode(', ', $hooks);
+                    debugging(
+                        "Callback $function in $component component should be migrated to new hook callback for $hookmessage",
+                        DEBUG_DEVELOPER);
+                }
+            }
+        }
+
         // Function exists, so just return function result.
         $ret = call_user_func_array($functionname, $params);
         if (is_null($ret)) {
@@ -8129,9 +7526,10 @@ function component_callback_exists($component, $function) {
  * @param   string      $methodname The name of the staticically defined method on the class.
  * @param   array       $params The arguments to pass into the method.
  * @param   mixed       $default The default value.
+ * @param   bool        $migratedtohook True if the callback has been migrated to a hook.
  * @return  mixed       The return value.
  */
-function component_class_callback($classname, $methodname, array $params, $default = null) {
+function component_class_callback($classname, $methodname, array $params, $default = null, bool $migratedtohook = false) {
     if (!class_exists($classname)) {
         return $default;
     }
@@ -8141,6 +7539,25 @@ function component_class_callback($classname, $methodname, array $params, $defau
     }
 
     $fullfunction = $classname . '::' . $methodname;
+
+    if ($migratedtohook) {
+        $functionparts = explode('\\', trim($fullfunction, '\\'));
+        $component = $functionparts[0];
+        $callback = end($functionparts);
+        $hookmanager = di::get(hook\manager::class);
+        if ($hooks = $hookmanager->get_hooks_deprecating_plugin_callback($callback)) {
+            if ($hookmanager->is_deprecating_hook_present($component, $callback)) {
+                // Do not call the old class callback,
+                // it is there for compatibility with older Moodle versions only.
+                return null;
+            } else if ($hookmanager->warn_on_unmigrated_legacy_hooks()) {
+                $hookmessage = count($hooks) == 1 ? reset($hooks) : 'one of  ' . implode(', ', $hooks);
+                debugging("Callback $callback in $component component should be migrated to new hook callback for $hookmessage",
+                        DEBUG_DEVELOPER);
+            }
+        }
+    }
+
     $result = call_user_func_array($fullfunction, $params);
 
     if (null === $result) {
@@ -8231,10 +7648,23 @@ function check_php_version($version='5.2.4') {
  * Checks version numbers of main code and all plugins to see
  * if there are any mismatches.
  *
+ * @param bool $checkupgradeflag check the outagelessupgrade flag to see if an upgrade is running.
  * @return bool
  */
-function moodle_needs_upgrading() {
-    global $CFG;
+function moodle_needs_upgrading($checkupgradeflag = true) {
+    global $CFG, $DB;
+
+    // Say no if there is already an upgrade running.
+    if ($checkupgradeflag) {
+        $lock = $DB->get_field('config', 'value', ['name' => 'outagelessupgrade']);
+        $currentprocessrunningupgrade = (defined('CLI_UPGRADE_RUNNING') && CLI_UPGRADE_RUNNING);
+        // If we ARE locked, but this PHP process is NOT the process running the upgrade,
+        // We should always return false.
+        // This means the upgrade is running from CLI somewhere, or about to.
+        if (!empty($lock) && !$currentprocessrunningupgrade) {
+            return false;
+        }
+    }
 
     if (empty($CFG->version)) {
         return true;
@@ -8450,7 +7880,7 @@ function count_letters($string, $format = null) {
  * @return string
  */
 function random_string($length=15) {
-    $randombytes = random_bytes_emulate($length);
+    $randombytes = random_bytes($length);
     $pool  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $pool .= 'abcdefghijklmnopqrstuvwxyz';
     $pool .= '0123456789';
@@ -8479,55 +7909,13 @@ function complex_random_string($length=null) {
     if ($length===null) {
         $length = floor(rand(24, 32));
     }
-    $randombytes = random_bytes_emulate($length);
+    $randombytes = random_bytes($length);
     $string = '';
     for ($i = 0; $i < $length; $i++) {
         $rand = ord($randombytes[$i]);
         $string .= $pool[($rand%$poollen)];
     }
     return $string;
-}
-
-/**
- * Try to generates cryptographically secure pseudo-random bytes.
- *
- * Note this is achieved by fallbacking between:
- *  - PHP 7 random_bytes().
- *  - OpenSSL openssl_random_pseudo_bytes().
- *  - In house random generator getting its entropy from various, hard to guess, pseudo-random sources.
- *
- * @param int $length requested length in bytes
- * @return string binary data
- */
-function random_bytes_emulate($length) {
-    global $CFG;
-    if ($length <= 0) {
-        debugging('Invalid random bytes length', DEBUG_DEVELOPER);
-        return '';
-    }
-    if (function_exists('random_bytes')) {
-        // Use PHP 7 goodness.
-        $hash = @random_bytes($length);
-        if ($hash !== false) {
-            return $hash;
-        }
-    }
-    if (function_exists('openssl_random_pseudo_bytes')) {
-        // If you have the openssl extension enabled.
-        $hash = openssl_random_pseudo_bytes($length);
-        if ($hash !== false) {
-            return $hash;
-        }
-    }
-
-    // Bad luck, there is no reliable random generator, let's just slowly hash some unique stuff that is hard to guess.
-    $staticdata = serialize($CFG) . serialize($_SERVER);
-    $hash = '';
-    do {
-        $hash .= sha1($staticdata . microtime(true) . uniqid('', true), true);
-    } while (strlen($hash) < $length);
-
-    return substr($hash, 0, $length);
 }
 
 /**
@@ -9648,13 +9036,7 @@ function get_performance_info() {
         }
     }
 
-    if (!empty($PERF->logwrites)) {
-        $info['logwrites'] = $PERF->logwrites;
-        $info['html'] .= '<li class="logwrites col-sm-4">Log DB writes '.$info['logwrites'].'</li> ';
-        $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
-    }
-
-    $info['dbqueries'] = $DB->perf_get_reads().'/'.($DB->perf_get_writes() - $PERF->logwrites);
+    $info['dbqueries'] = $DB->perf_get_reads().'/'.$DB->perf_get_writes();
     $info['html'] .= '<li class="dbqueries col-sm-4">DB reads/writes: '.$info['dbqueries'].'</li> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
@@ -10083,7 +9465,7 @@ function remove_dir($dir, $contentonly=false) {
  * Detect if an object or a class contains a given property
  * will take an actual object or the name of a class
  *
- * @param mix $obj Name of class or real object to test
+ * @param mixed $obj Name of class or real object to test
  * @param string $property name of property to find
  * @return bool true if property exists
  */
@@ -10390,9 +9772,11 @@ function check_consecutive_identical_characters($password, $maxchars) {
 
 /**
  * Helper function to do partial function binding.
- * so we can use it for preg_replace_callback, for example
- * this works with php functions, user functions, static methods and class methods
- * it returns you a callback that you can pass on like so:
+ *
+ * This is useful for cases such as preg_replace_callback where you may want to partially bind values.
+ *
+ * The use of named arguments is recommended for clarity.
+ * Please note that providing arguments in a different order may have mixed results for built-in functions.
  *
  * $callback = partial('somefunction', $arg1, $arg2);
  *     or
@@ -10403,45 +9787,12 @@ function check_consecutive_identical_characters($password, $maxchars) {
  *
  * and then the arguments that are passed through at calltime are appended to the argument list.
  *
- * @param mixed $function a php callback
- * @param mixed $arg1,... $argv arguments to partially bind with
- * @return array Array callback
+ * @param callable $function a php callback
+ * @param mixed ...$initialargs The arguments to provide for the initial bind
+ * @return callable
  */
-function partial() {
-    if (!class_exists('partial')) {
-        /**
-         * Used to manage function binding.
-         * @copyright  2009 Penny Leach
-         * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-         */
-        class partial{
-            /** @var array */
-            public $values = array();
-            /** @var string The function to call as a callback. */
-            public $func;
-            /**
-             * Constructor
-             * @param string $func
-             * @param array $args
-             */
-            public function __construct($func, $args) {
-                $this->values = $args;
-                $this->func = $func;
-            }
-            /**
-             * Calls the callback function.
-             * @return mixed
-             */
-            public function method() {
-                $args = func_get_args();
-                return call_user_func_array($this->func, array_merge($this->values, $args));
-            }
-        }
-    }
-    $args = func_get_args();
-    $func = array_shift($args);
-    $p = new partial($func, $args);
-    return array($p, 'method');
+function partial(callable $callable, ...$initialargs): callable {
+    return fn (...$args) => $callable(...$initialargs, ...$args);
 }
 
 /**
@@ -10465,7 +9816,7 @@ function get_mnet_environment() {
  * during xmlrpc server code execution, any code wishing to access
  * information about the remote peer must use this to get it.
  *
- * @return mnet_remote_client the equivalent of old $MNETREMOTE_CLIENT global
+ * @return mnet_remote_client|false the equivalent of old $MNETREMOTE_CLIENT global
  */
 function get_mnet_remote_client() {
     if (!defined('MNET_SERVER')) {
@@ -10520,24 +9871,28 @@ function mnet_get_idp_jump_url($user) {
 function get_home_page() {
     global $CFG;
 
-    if (isloggedin() && !isguestuser() && !empty($CFG->defaulthomepage)) {
+    if (isloggedin() && !empty($CFG->defaulthomepage)) {
         // If dashboard is disabled, home will be set to default page.
         $defaultpage = get_default_home_page();
-        if ($CFG->defaulthomepage == HOMEPAGE_MY) {
+        if ($CFG->defaulthomepage == HOMEPAGE_MY && (!isguestuser() || !empty($CFG->allowguestmymoodle))) {
             if (!empty($CFG->enabledashboard)) {
                 return HOMEPAGE_MY;
             } else {
                 return $defaultpage;
             }
-        } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) {
+        } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES && !isguestuser()) {
             return HOMEPAGE_MYCOURSES;
-        } else {
-            $userhomepage = (int) get_user_preferences('user_home_page_preference', $defaultpage);
+        } else if ($CFG->defaulthomepage == HOMEPAGE_USER && !isguestuser()) {
+            $userhomepage = get_user_preferences('user_home_page_preference', $defaultpage);
             if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
                 // If the user was using the dashboard but it's disabled, return the default home page.
                 $userhomepage = $defaultpage;
+            } else if (get_default_home_page_url()) {
+                return HOMEPAGE_URL;
             }
-            return $userhomepage;
+            return (int) $userhomepage;
+        } else if (get_default_home_page_url()) {
+            return HOMEPAGE_URL;
         }
     }
     return HOMEPAGE_SITE;
@@ -10552,7 +9907,34 @@ function get_home_page() {
 function get_default_home_page(): int {
     global $CFG;
 
-    return !empty($CFG->enabledashboard) ? HOMEPAGE_MY : HOMEPAGE_MYCOURSES;
+    return (!isset($CFG->enabledashboard) || $CFG->enabledashboard) ? HOMEPAGE_MY : HOMEPAGE_MYCOURSES;
+}
+
+/**
+ * Get the default home page as a URL where it has been configured as one via site configuration or user preference
+ *
+ * It is assumed that callers have already checked that {@see get_home_page} returns {@see HOMEPAGE_URL} prior to
+ * calling this method
+ *
+ * @return \core\url|null
+ */
+function get_default_home_page_url(): ?\core\url {
+    global $CFG;
+
+    if (substr((string)$CFG->defaulthomepage, 0, 1) === '/' &&
+            ($defaulthomepage = clean_param($CFG->wwwroot . $CFG->defaulthomepage, PARAM_LOCALURL))) {
+        return new \core\url($defaulthomepage);
+    }
+
+    if ($CFG->defaulthomepage == HOMEPAGE_USER) {
+        $userhomepage = get_user_preferences('user_home_page_preference');
+        if (substr((string)$userhomepage, 0, 1) === '/' &&
+                ($userhomepage = clean_param($CFG->wwwroot . $userhomepage, PARAM_LOCALURL))) {
+            return new \core\url($userhomepage);
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -10623,256 +10005,6 @@ function unserialize_object(string $input): stdClass {
 }
 
 /**
- * The lang_string class
- *
- * This special class is used to create an object representation of a string request.
- * It is special because processing doesn't occur until the object is first used.
- * The class was created especially to aid performance in areas where strings were
- * required to be generated but were not necessarily used.
- * As an example the admin tree when generated uses over 1500 strings, of which
- * normally only 1/3 are ever actually printed at any time.
- * The performance advantage is achieved by not actually processing strings that
- * arn't being used, as such reducing the processing required for the page.
- *
- * How to use the lang_string class?
- *     There are two methods of using the lang_string class, first through the
- *     forth argument of the get_string function, and secondly directly.
- *     The following are examples of both.
- * 1. Through get_string calls e.g.
- *     $string = get_string($identifier, $component, $a, true);
- *     $string = get_string('yes', 'moodle', null, true);
- * 2. Direct instantiation
- *     $string = new lang_string($identifier, $component, $a, $lang);
- *     $string = new lang_string('yes');
- *
- * How do I use a lang_string object?
- *     The lang_string object makes use of a magic __toString method so that you
- *     are able to use the object exactly as you would use a string in most cases.
- *     This means you are able to collect it into a variable and then directly
- *     echo it, or concatenate it into another string, or similar.
- *     The other thing you can do is manually get the string by calling the
- *     lang_strings out method e.g.
- *         $string = new lang_string('yes');
- *         $string->out();
- *     Also worth noting is that the out method can take one argument, $lang which
- *     allows the developer to change the language on the fly.
- *
- * When should I use a lang_string object?
- *     The lang_string object is designed to be used in any situation where a
- *     string may not be needed, but needs to be generated.
- *     The admin tree is a good example of where lang_string objects should be
- *     used.
- *     A more practical example would be any class that requries strings that may
- *     not be printed (after all classes get renderer by renderers and who knows
- *     what they will do ;))
- *
- * When should I not use a lang_string object?
- *     Don't use lang_strings when you are going to use a string immediately.
- *     There is no need as it will be processed immediately and there will be no
- *     advantage, and in fact perhaps a negative hit as a class has to be
- *     instantiated for a lang_string object, however get_string won't require
- *     that.
- *
- * Limitations:
- * 1. You cannot use a lang_string object as an array offset. Doing so will
- *     result in PHP throwing an error. (You can use it as an object property!)
- *
- * @package    core
- * @category   string
- * @copyright  2011 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class lang_string {
-
-    /** @var string The strings identifier */
-    protected $identifier;
-    /** @var string The strings component. Default '' */
-    protected $component = '';
-    /** @var array|stdClass Any arguments required for the string. Default null */
-    protected $a = null;
-    /** @var string The language to use when processing the string. Default null */
-    protected $lang = null;
-
-    /** @var string The processed string (once processed) */
-    protected $string = null;
-
-    /**
-     * A special boolean. If set to true then the object has been woken up and
-     * cannot be regenerated. If this is set then $this->string MUST be used.
-     * @var bool
-     */
-    protected $forcedstring = false;
-
-    /**
-     * Constructs a lang_string object
-     *
-     * This function should do as little processing as possible to ensure the best
-     * performance for strings that won't be used.
-     *
-     * @param string $identifier The strings identifier
-     * @param string $component The strings component
-     * @param stdClass|array $a Any arguments the string requires
-     * @param string $lang The language to use when processing the string.
-     * @throws coding_exception
-     */
-    public function __construct($identifier, $component = '', $a = null, $lang = null) {
-        if (empty($component)) {
-            $component = 'moodle';
-        }
-
-        $this->identifier = $identifier;
-        $this->component = $component;
-        $this->lang = $lang;
-
-        // We MUST duplicate $a to ensure that it if it changes by reference those
-        // changes are not carried across.
-        // To do this we always ensure $a or its properties/values are strings
-        // and that any properties/values that arn't convertable are forgotten.
-        if ($a !== null) {
-            if (is_scalar($a)) {
-                $this->a = $a;
-            } else if ($a instanceof lang_string) {
-                $this->a = $a->out();
-            } else if (is_object($a) or is_array($a)) {
-                $a = (array)$a;
-                $this->a = array();
-                foreach ($a as $key => $value) {
-                    // Make sure conversion errors don't get displayed (results in '').
-                    if (is_array($value)) {
-                        $this->a[$key] = '';
-                    } else if (is_object($value)) {
-                        if (method_exists($value, '__toString')) {
-                            $this->a[$key] = $value->__toString();
-                        } else {
-                            $this->a[$key] = '';
-                        }
-                    } else {
-                        $this->a[$key] = (string)$value;
-                    }
-                }
-            }
-        }
-
-        if (debugging(false, DEBUG_DEVELOPER)) {
-            if (clean_param($this->identifier, PARAM_STRINGID) == '') {
-                throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition');
-            }
-            if (!empty($this->component) && clean_param($this->component, PARAM_COMPONENT) == '') {
-                throw new coding_exception('Invalid string compontent. Please check your string definition');
-            }
-            if (!get_string_manager()->string_exists($this->identifier, $this->component)) {
-                debugging('String does not exist. Please check your string definition for '.$this->identifier.'/'.$this->component, DEBUG_DEVELOPER);
-            }
-        }
-    }
-
-    /**
-     * Processes the string.
-     *
-     * This function actually processes the string, stores it in the string property
-     * and then returns it.
-     * You will notice that this function is VERY similar to the get_string method.
-     * That is because it is pretty much doing the same thing.
-     * However as this function is an upgrade it isn't as tolerant to backwards
-     * compatibility.
-     *
-     * @return string
-     * @throws coding_exception
-     */
-    protected function get_string() {
-        global $CFG;
-
-        // Check if we need to process the string.
-        if ($this->string === null) {
-            // Check the quality of the identifier.
-            if ($CFG->debugdeveloper && clean_param($this->identifier, PARAM_STRINGID) === '') {
-                throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition', DEBUG_DEVELOPER);
-            }
-
-            // Process the string.
-            $this->string = get_string_manager()->get_string($this->identifier, $this->component, $this->a, $this->lang);
-            // Debugging feature lets you display string identifier and component.
-            if (isset($CFG->debugstringids) && $CFG->debugstringids && optional_param('strings', 0, PARAM_INT)) {
-                $this->string .= ' {' . $this->identifier . '/' . $this->component . '}';
-            }
-        }
-        // Return the string.
-        return $this->string;
-    }
-
-    /**
-     * Returns the string
-     *
-     * @param string $lang The langauge to use when processing the string
-     * @return string
-     */
-    public function out($lang = null) {
-        if ($lang !== null && $lang != $this->lang && ($this->lang == null && $lang != current_language())) {
-            if ($this->forcedstring) {
-                debugging('lang_string objects that have been used cannot be printed in another language. ('.$this->lang.' used)', DEBUG_DEVELOPER);
-                return $this->get_string();
-            }
-            $translatedstring = new lang_string($this->identifier, $this->component, $this->a, $lang);
-            return $translatedstring->out();
-        }
-        return $this->get_string();
-    }
-
-    /**
-     * Magic __toString method for printing a string
-     *
-     * @return string
-     */
-    public function __toString() {
-        return $this->get_string();
-    }
-
-    /**
-     * Magic __set_state method used for var_export
-     *
-     * @param array $array
-     * @return self
-     */
-    public static function __set_state(array $array): self {
-        $tmp = new lang_string($array['identifier'], $array['component'], $array['a'], $array['lang']);
-        $tmp->string = $array['string'];
-        $tmp->forcedstring = $array['forcedstring'];
-        return $tmp;
-    }
-
-    /**
-     * Prepares the lang_string for sleep and stores only the forcedstring and
-     * string properties... the string cannot be regenerated so we need to ensure
-     * it is generated for this.
-     *
-     * @return string
-     */
-    public function __sleep() {
-        $this->get_string();
-        $this->forcedstring = true;
-        return array('forcedstring', 'string', 'lang');
-    }
-
-    /**
-     * Returns the identifier.
-     *
-     * @return string
-     */
-    public function get_identifier() {
-        return $this->identifier;
-    }
-
-    /**
-     * Returns the component.
-     *
-     * @return string
-     */
-    public function get_component() {
-        return $this->component;
-    }
-}
-
-/**
  * Get human readable name describing the given callable.
  *
  * This performs syntax check only to see if the given param looks like a valid function, method or closure.
@@ -10922,4 +10054,42 @@ function site_is_public() {
     }
 
     return $ispublic;
+}
+
+/**
+ * Validates user's password length.
+ *
+ * @param string $password
+ * @param int $pepperlength The length of the used peppers
+ * @return bool
+ */
+function exceeds_password_length(string $password, int $pepperlength = 0): bool {
+    return (strlen($password) > (MAX_PASSWORD_CHARACTERS + $pepperlength));
+}
+
+/**
+ * A helper to replace PHP 8.3 usage of array_keys with two args.
+ *
+ * There is an indication that this will become a new method in PHP 8.4, but that has not happened yet.
+ * Therefore this non-polyfill has been created with a different naming convention.
+ * In the future it can be deprecated if a core PHP method is created.
+ *
+ * https://wiki.php.net/rfc/deprecate_functions_with_overloaded_signatures#array_keys
+ *
+ * @param array $array
+ * @param mixed $filter The value to filter on
+ * @param bool $strict Whether to apply a strit test with the filter
+ * @return array
+ */
+function moodle_array_keys_filter(array $array, mixed $filter, bool $strict = false): array {
+    return array_keys(array_filter(
+        $array,
+        function($value, $key) use ($filter, $strict): bool {
+            if ($strict) {
+                return $value === $filter;
+            }
+            return $value == $filter;
+        },
+        ARRAY_FILTER_USE_BOTH,
+    ));
 }

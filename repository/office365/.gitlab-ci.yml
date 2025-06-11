@@ -1,0 +1,87 @@
+services:
+  - name: selenium/standalone-chrome:3
+    alias: behat
+  - name: mysql:8.0
+    alias: db
+    command:
+      - '--character-set-server=utf8mb4'
+      - '--collation-server=utf8mb4_unicode_ci'
+      - '--innodb_file_per_table=On'
+      - '--wait-timeout=28800'
+      - '--skip-log-bin'
+
+cache:
+  paths:
+    - .cache
+
+variables:
+  DEBIAN_FRONTEND: 'noninteractive'
+  COMPOSER_ALLOW_SUPERUSER: 1
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.cache/composer"
+  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.cache/npm"
+  CI_BUILD_DIR: '/tmp/plugin'
+  MOODLE_BRANCH: 'MOODLE_405_STABLE'
+  MOODLE_BEHAT_WWWROOT: 'http://localhost:8000'
+  MOODLE_BEHAT_WDHOST: 'http://behat:4444/wd/hub'
+  MOODLE_START_BEHAT_SERVERS: 'no'
+  MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+  DB: 'mysqli'
+
+stages:
+  - moodle-plugin-ci
+
+.setupandruncheck: &setupandruncheck
+  stage: moodle-plugin-ci
+  before_script:
+    - mkdir -pv "$CI_BUILD_DIR"
+    - cp -ru "$CI_PROJECT_DIR/"* "$CI_BUILD_DIR"
+    - mkdir -p /usr/share/man/man1 /usr/share/man/man3 /usr/share/man/man7
+    - apt-get -qq update
+    - apt-get -yqq install --no-install-suggests default-jre-headless default-mysql-client
+    - 'curl -sS https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash'
+    - . ~/.bashrc
+    - nvm install --default --latest-npm lts/gallium
+    - 'curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer'
+    - composer create-project -n --no-dev --no-progress --no-ansi moodlehq/moodle-plugin-ci /opt/mci ^4
+    - export PATH="/opt/mci/bin:/opt/mci/vendor/bin:$PATH"
+    - moodle-plugin-ci add-plugin --clone https://github.com/microsoft/moodle-auth_oidc.git --branch $MOODLE_BRANCH
+    - moodle-plugin-ci add-plugin --clone https://github.com/microsoft/moodle-local_o365.git --branch $MOODLE_BRANCH
+    - moodle-plugin-ci install --db-host db --db-name moodle
+    - '{ php -S 0.0.0.0:8000 -t "$CI_PROJECT_DIR/moodle" >/dev/null 2>&1 & }'
+    - TXT_RED="\e[31m"
+
+  script:
+    - errors=()
+    - moodle-plugin-ci phplint || errors+=("phplint")
+    - moodle-plugin-ci phpmd || errors+=("phpmd")
+    - moodle-plugin-ci codechecker --max-warnings 0 || errors+=("codechecker")
+    - moodle-plugin-ci phpdoc --max-warnings 0 || errors+=("phpdoc")
+    - moodle-plugin-ci validate || errors+=("validate")
+    - moodle-plugin-ci savepoints || errors+=("savepoints")
+    - moodle-plugin-ci mustache || errors+=("mustache")
+    - moodle-plugin-ci grunt --max-lint-warnings 0 || errors+=("grunt")
+    - moodle-plugin-ci phpunit || errors+=("phpunit")
+    - moodle-plugin-ci behat --auto-rerun 0 --profile chrome || errors+=("behat")
+    - |-
+      if [ ${#errors[@]} -ne 0 ]; then
+        echo -e "${TXT_RED}Check errors: ${errors[@]}";
+        exit 1;
+      fi
+
+php81:
+  tags:
+    - docker
+  image: moodlehq/moodle-php-apache:8.1
+  <<: *setupandruncheck
+
+php82:
+  tags:
+    - docker
+  image: moodlehq/moodle-php-apache:8.2
+  <<: *setupandruncheck
+
+php83:
+  tags:
+    - docker
+  image: moodlehq/moodle-php-apache:8.3
+  <<: *setupandruncheck

@@ -123,10 +123,10 @@ class table extends \table_sql {
             'u.alternatename AS useralternatename',
             'u.auth AS userauth',
             'aotok.oidcusername AS toko365username',
-            'o365match.aadupn AS matchedo365username',
+            'o365match.entraidupn AS matchedo365username',
             'o365match.uselogin AS matcheduselogin',
             'objects.o365name AS objectso365name',
-            'COALESCE(aotok.oidcusername, o365match.aadupn, objects.o365name) AS o365username',
+            'COALESCE(aotok.oidcusername, o365match.entraidupn, objects.o365name) AS o365username',
         ];
         $sql = 'SELECT ' . implode(',', $columns) . '
                   FROM {user} u

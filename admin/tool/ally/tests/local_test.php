@@ -23,6 +23,7 @@
  */
 namespace tool_ally;
 
+use advanced_testcase;
 use tool_ally\local;
 use tool_ally\auto_config;
 
@@ -31,9 +32,12 @@ use tool_ally\auto_config;
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2016 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
-class local_test extends \advanced_testcase {
+class local_test extends advanced_testcase {
     /**
      * Test get role IDs.
      */

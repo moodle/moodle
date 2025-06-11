@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/calendar/tests/externallib_test.php');
  * @copyright 2014 Ankit Agarwal <ankit.agrr@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * The test user.
@@ -54,6 +54,7 @@ class events_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $USER;
+        parent::setUp();
         // The user we are going to test this on.
         $this->setAdminUser();
         $this->user = $USER;
@@ -63,7 +64,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_event_created event.
      */
-    public function test_calendar_event_created() {
+    public function test_calendar_event_created(): void {
 
         $this->resetAfterTest();
 
@@ -87,10 +88,8 @@ class events_test extends \advanced_testcase {
         $this->assertEquals('event', $event->objecttable);
         $this->assertEquals(0, $event->courseid);
         $this->assertEquals($calevent->context, $event->get_context());
-        $expectedlog = array(0, 'calendar', 'add', 'event.php?action=edit&amp;id=' . $calevent->id , $calevent->name);
         $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'event');
         $this->assertEquals($other, $event->other);
-        $this->assertEventLegacyLogData($expectedlog, $event);
         $this->assertEventContextNotUsed($event);
 
         // Now we create a repeated course event.
@@ -113,7 +112,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event validations related to calendar_event_created event.
      */
-    public function test_calendar_event_created_validations() {
+    public function test_calendar_event_created_validations(): void {
         $this->resetAfterTest();
         $context = \context_user::instance($this->user->id);
 
@@ -169,7 +168,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_event_updated event.
      */
-    public function test_calendar_event_updated() {
+    public function test_calendar_event_updated(): void {
 
         $this->resetAfterTest();
 
@@ -194,8 +193,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals('event', $event->objecttable);
         $this->assertEquals(0, $event->courseid);
         $this->assertEquals($calevent->context, $event->get_context());
-        $expectedlog = array(0, 'calendar', 'edit', 'event.php?action=edit&amp;id=' . $calevent->id , $calevent->name);
-        $this->assertEventLegacyLogData($expectedlog, $event);
         $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'new event');
         $this->assertEquals($other, $event->other);
         $this->assertEventContextNotUsed($event);
@@ -226,7 +223,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_event_updated event.
      */
-    public function test_calendar_event_updated_toggle_visibility() {
+    public function test_calendar_event_updated_toggle_visibility(): void {
         global $DB;
         $siteid = 0;
 
@@ -249,8 +246,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals('event', $event->objecttable);
         $this->assertEquals($siteid, $event->courseid);
         $this->assertEquals($calevent->context, $event->get_context());
-        $expectedlog = [$siteid, 'calendar', 'edit', 'event.php?action=edit&amp;id=' . $calevent->id , $calevent->name];
-        $this->assertEventLegacyLogData($expectedlog, $event);
         $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'Some wickedly awesome event yo!');
         $this->assertEquals($other, $event->other);
         $this->assertEventContextNotUsed($event);
@@ -261,7 +256,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event validations related to calendar_event_created event.
      */
-    public function test_calendar_event_updated_validations() {
+    public function test_calendar_event_updated_validations(): void {
         $this->resetAfterTest();
         $context = \context_user::instance($this->user->id);
 
@@ -317,7 +312,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_event_deleted event.
      */
-    public function test_calendar_event_deleted() {
+    public function test_calendar_event_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -373,7 +368,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for event validations related to calendar_event_deleted event.
      */
-    public function test_calendar_event_deleted_validations() {
+    public function test_calendar_event_deleted_validations(): void {
         $this->resetAfterTest();
         $context = \context_user::instance($this->user->id);
 
@@ -429,7 +424,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_added event for a site subscription.
      */
-    public function test_calendar_subscription_created_site() {
+    public function test_calendar_subscription_created_site(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -460,7 +455,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_added event for a category subscription.
      */
-    public function test_calendar_subscription_created_category() {
+    public function test_calendar_subscription_created_category(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -493,7 +488,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_added event for a course subscription.
      */
-    public function test_calendar_subscription_created_course() {
+    public function test_calendar_subscription_created_course(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -525,7 +520,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_added event for a group subscription.
      */
-    public function test_calendar_subscription_created_group() {
+    public function test_calendar_subscription_created_group(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -560,7 +555,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_updated event for a site subscription.
      */
-    public function test_calendar_subscription_updated_site() {
+    public function test_calendar_subscription_updated_site(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -593,7 +588,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_updated event for a category subscription.
      */
-    public function test_calendar_subscription_updated_category() {
+    public function test_calendar_subscription_updated_category(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -628,7 +623,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_updated event for a group subscription.
      */
-    public function test_calendar_subscription_updated_course() {
+    public function test_calendar_subscription_updated_course(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -661,7 +656,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_updated event for a course subscription.
      */
-    public function test_calendar_subscription_updated_group() {
+    public function test_calendar_subscription_updated_group(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -699,7 +694,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_deleted event for a site subscription.
      */
-    public function test_calendar_subscription_deleted_site() {
+    public function test_calendar_subscription_deleted_site(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -728,7 +723,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_deleted event for a category subscription.
      */
-    public function test_calendar_subscription_deleted_category() {
+    public function test_calendar_subscription_deleted_category(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -761,7 +756,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_deleted event for a course.
      */
-    public function test_calendar_subscription_deleted_course() {
+    public function test_calendar_subscription_deleted_course(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);
@@ -792,7 +787,7 @@ class events_test extends \advanced_testcase {
     /**
      * Tests for calendar_subscription_deleted event for a group.
      */
-    public function test_calendar_subscription_deleted_group() {
+    public function test_calendar_subscription_deleted_group(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
         $this->resetAfterTest(true);

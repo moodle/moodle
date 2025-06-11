@@ -7,18 +7,14 @@ use Packback\Lti1p3\Interfaces\ILtiRegistration;
 
 class LtiDeepLink
 {
-    private $registration;
-    private $deployment_id;
-    private $deep_link_settings;
-
-    public function __construct(ILtiRegistration $registration, string $deployment_id, array $deep_link_settings)
-    {
-        $this->registration = $registration;
-        $this->deployment_id = $deployment_id;
-        $this->deep_link_settings = $deep_link_settings;
+    public function __construct(
+        private ILtiRegistration $registration,
+        private string $deployment_id,
+        private array $deep_link_settings
+    ) {
     }
 
-    public function getResponseJwt($resources)
+    public function getResponseJwt(array $resources): string
     {
         $message_jwt = [
             'iss' => $this->registration->getClientId(),
@@ -27,9 +23,11 @@ class LtiDeepLink
             'iat' => time(),
             'nonce' => LtiOidcLogin::secureRandomString('nonce-'),
             LtiConstants::DEPLOYMENT_ID => $this->deployment_id,
-            LtiConstants::MESSAGE_TYPE => 'LtiDeepLinkingResponse',
+            LtiConstants::MESSAGE_TYPE => LtiConstants::MESSAGE_TYPE_DEEPLINK_RESPONSE,
             LtiConstants::VERSION => LtiConstants::V1_3,
-            LtiConstants::DL_CONTENT_ITEMS => array_map(function ($resource) { return $resource->toArray(); }, $resources),
+            LtiConstants::DL_CONTENT_ITEMS => array_map(function ($resource) {
+                return $resource->toArray();
+            }, $resources),
         ];
 
         // https://www.imsglobal.org/spec/lti-dl/v2p0/#deep-linking-request-message
@@ -39,21 +37,5 @@ class LtiDeepLink
         }
 
         return JWT::encode($message_jwt, $this->registration->getToolPrivateKey(), 'RS256', $this->registration->getKid());
-    }
-
-    public function outputResponseForm($resources)
-    {
-        $jwt = $this->getResponseJwt($resources);
-        /*
-         * @todo Fix this
-         */ ?>
-        <form id="auto_submit" action="<?php echo $this->deep_link_settings['deep_link_return_url']; ?>" method="POST">
-            <input type="hidden" name="JWT" value="<?php echo $jwt; ?>" />
-            <input type="submit" name="Go" />
-        </form>
-        <script>
-            document.getElementById('auto_submit').submit();
-        </script>
-        <?php
     }
 }

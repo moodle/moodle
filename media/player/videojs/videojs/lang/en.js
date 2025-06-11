@@ -16,7 +16,7 @@ videojs.addLanguage('en', {
   "Progress Bar": "Progress Bar",
   "progress bar timing: currentTime={1} duration={2}": "{1} of {2}",
   "Fullscreen": "Fullscreen",
-  "Non-Fullscreen": "Exit Fullscreen",
+  "Exit Fullscreen": "Exit Fullscreen",
   "Mute": "Mute",
   "Unmute": "Unmute",
   "Playback Rate": "Playback Rate",
@@ -68,7 +68,7 @@ videojs.addLanguage('en', {
   "Raised": "Raised",
   "Depressed": "Depressed",
   "Uniform": "Uniform",
-  "Dropshadow": "Dropshadow",
+  "Drop shadow": "Drop shadow",
   "Font Family": "Font Family",
   "Proportional Sans-Serif": "Proportional Sans-Serif",
   "Monospace Sans-Serif": "Monospace Sans-Serif",
@@ -85,5 +85,13 @@ videojs.addLanguage('en', {
   "End of dialog window.": "End of dialog window.",
   "{1} is loading.": "{1} is loading.",
   "Exit Picture-in-Picture": "Exit Picture-in-Picture",
-  "Picture-in-Picture": "Picture-in-Picture"
+  "Picture-in-Picture": "Picture-in-Picture",
+  "No content": "No content",
+  "Color": "Color",
+  "Opacity": "Opacity",
+  "Text Background": "Text Background",
+  "Caption Area Background": "Caption Area Background",
+  "Playing in Picture-in-Picture": "Playing in Picture-in-Picture",
+  "Skip backward {1} seconds": "Skip backward {1} seconds",
+  "Skip forward {1} seconds": "Skip forward {1} seconds"
 });

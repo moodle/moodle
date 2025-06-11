@@ -17,8 +17,6 @@
 namespace core\output;
 
 use moodle_page;
-use renderer_base;
-use url_select;
 
 /**
  * Data structure representing standard components displayed on the activity header.
@@ -31,7 +29,7 @@ use url_select;
  * @package core
  * @category output
  */
-class activity_header implements \renderable, \templatable {
+class activity_header implements renderable, templatable {
     /** @var moodle_page $page The current page we are looking at */
     protected $page;
     /** @var string $title The title to be displayed in the header. Defaults to activityrecord name. */
@@ -58,16 +56,17 @@ class activity_header implements \renderable, \templatable {
     public function __construct(moodle_page $page, \stdClass $user) {
         $this->page = $page;
         $this->user = $user;
-        $pageoptions = $this->page->theme->activityheaderconfig ?? [];
         $layoutoptions = $this->page->layout_options['activityheader'] ?? [];
         // Do a basic setup for the header based on theme/page options.
         if ($page->activityrecord) {
-            if (empty($pageoptions['notitle']) && empty($layoutoptions['notitle'])) {
+            if ($this->is_title_allowed()) {
                 $this->title = format_string($page->activityrecord->name);
             }
 
-            if (empty($layoutoptions['nodescription']) && !empty($page->activityrecord->intro) &&
-                    trim($page->activityrecord->intro)) {
+            if (
+                empty($layoutoptions['nodescription']) && !empty($page->activityrecord->intro) &&
+                    trim($page->activityrecord->intro)
+            ) {
                 $this->description = format_module_intro($this->page->activityname, $page->activityrecord, $page->cm->id);
             }
         }
@@ -79,10 +78,22 @@ class activity_header implements \renderable, \templatable {
     /**
      * Checks if the theme has specified titles to be displayed.
      *
+     * First checks if the current layout has the notitle option set. If it is, uses that option to decide whether the title is
+     * displayed. If not, then checks whether the theme has the notitle option set and uses that. If neither is set, the title
+     * is allowed by default.
+     *
      * @return bool
      */
     public function is_title_allowed(): bool {
-        return empty($this->page->theme->activityheaderconfig['notitle']);
+        $layoutoptions = $this->page->layout_options['activityheader'] ?? [];
+        $themeoptions = $this->page->theme->activityheaderconfig;
+        if (isset($layoutoptions['notitle'])) {
+            return !$layoutoptions['notitle'];
+        } else if (isset($themeoptions['notitle'])) {
+            return !$themeoptions['notitle'];
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -175,11 +186,18 @@ class activity_header implements \renderable, \templatable {
             return ['title' => ''];
         }
 
-        $completion = null;
+        $activityinfo = null;
         if (!$this->hidecompletion) {
             $completiondetails = \core_completion\cm_completion_details::get_instance($this->page->cm, $this->user->id);
             $activitydates = \core\activity_dates::get_dates_for_module($this->page->cm, $this->user->id);
-            $completion = $output->activity_information($this->page->cm, $completiondetails, $activitydates);
+
+            $activitycompletion = new \core_course\output\activity_completion($this->page->cm, $completiondetails);
+            $activitycompletiondata = (array) $activitycompletion->export_for_template($output);
+            $activitydates = new \core_course\output\activity_dates($activitydates);
+            $activitydatesdata = (array) $activitydates->export_for_template($output);
+            $data = array_merge($activitycompletiondata, $activitydatesdata);
+
+            $activityinfo = $output->render_from_template('core_course/activity_info', $data);
         }
 
         $format = course_get_format($this->page->course);
@@ -193,7 +211,7 @@ class activity_header implements \renderable, \templatable {
         return [
             'title' => $this->title,
             'description' => $this->description,
-            'completion' => $completion,
+            'completion' => $activityinfo,
             'additional_items' => $this->hideoverflow ? '' : $this->additionalnavitems,
         ];
     }

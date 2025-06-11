@@ -29,8 +29,8 @@ require_once($CFG->dirroot.'/mod/attendance/locallib.php');
 $id = required_param('id', PARAM_INT);
 
 $cm = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$att = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$att = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 $att = new mod_attendance_structure($att, $cm, $course);
 $PAGE->set_url($att->url_managetemp());
@@ -47,9 +47,9 @@ $PAGE->navbar->add(get_string('tempusers', 'attendance'));
 
 $output = $PAGE->get_renderer('mod_attendance');
 
-$formdata = (object)array(
+$formdata = (object)[
     'id' => $cm->id,
-);
+];
 $mform = new mod_attendance\form\tempuser();
 $mform->set_data($formdata);
 
@@ -81,7 +81,7 @@ if ($data = $mform->get_data()) {
 echo $output->header();
 $mform->display();
 
-$tempusers = $DB->get_records('attendance_tempusers', array('courseid' => $course->id), 'fullname, email');
+$tempusers = $DB->get_records('attendance_tempusers', ['courseid' => $course->id], 'fullname, email');
 
 echo '<div>';
 echo '<p style="margin-left:10%;">'.get_string('tempuserslist', 'attendance').'</p>';
@@ -118,7 +118,7 @@ function attendance_print_tempusers($tempusers, mod_attendance_structure $att) {
         echo '<td>'.format_string($tempuser->fullname).'</td>';
         echo '<td>'.format_string($tempuser->email).'</td>';
         echo '<td>'.userdate($tempuser->created, get_string('strftimedatetime')).'</td>';
-        $params = array('userid' => $tempuser->id);
+        $params = ['userid' => $tempuser->id];
         $editlink = html_writer::link($att->url_tempedit($params), get_string('edituser', 'attendance'));
         $deletelink = html_writer::link($att->url_tempdelete($params), get_string('deleteuser', 'attendance'));
         $mergelink = html_writer::link($att->url_tempmerge($params), get_string('mergeuser', 'attendance'));

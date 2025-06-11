@@ -163,7 +163,7 @@ abstract class behat_generator_base {
      *
      * @return array entity name => information about how to generate.
      */
-    protected abstract function get_creatable_entities(): array;
+    abstract protected function get_creatable_entities(): array;
 
     /**
      * Get the list of available generators for this class.
@@ -278,6 +278,17 @@ abstract class behat_generator_base {
                 throw new PendingException($this->name_for_errors($generatortype) .
                         ' data generator is not implemented');
             }
+        }
+
+        // Notify that the all the elements have been generated.
+        if (method_exists($this->componentdatagenerator, 'finish_generate_' . $generatortype)) {
+            // Using the component's own data generator if it exists.
+            $this->componentdatagenerator->{'finish_generate_' . $generatortype}();
+
+        } else if (method_exists($this->datagenerator, 'finish_generate_' . $generatortype)) {
+            // Use a method on the core data geneator, if there is one.
+            $this->datagenerator->{'finish_generate_' . $generatortype}();
+
         }
     }
 

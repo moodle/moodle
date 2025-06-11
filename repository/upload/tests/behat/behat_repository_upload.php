@@ -175,7 +175,6 @@ class behat_repository_upload extends behat_base {
 
         if ($overwriteaction !== false) {
             $overwritebutton = $this->find_button($overwriteaction);
-            $this->ensure_node_is_visible($overwritebutton);
             $overwritebutton->click();
 
             // We wait for all the JS to finish.

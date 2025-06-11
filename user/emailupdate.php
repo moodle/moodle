@@ -44,6 +44,14 @@ $stremailupdate = get_string('emailupdate', 'auth', $a);
 
 $PAGE->set_title($stremailupdate);
 $PAGE->set_heading(format_string($SITE->fullname) . ": $stremailupdate");
+// Validate the key.
+$errormessage = get_string('auth_invalidnewemailkey', 'auth');
+try {
+    $userkey = validate_user_key($key, 'core_user/email_change', null);
+} catch (moodle_exception $e) {
+    $userkey = null;
+    $errormessage = $e->getMessage();
+}
 
 if (empty($preferences['newemailattemptsleft'])) {
     redirect("$CFG->wwwroot/user/view.php?id=$user->id");
@@ -54,7 +62,8 @@ if (empty($preferences['newemailattemptsleft'])) {
     echo $OUTPUT->header();
     echo $OUTPUT->box(get_string('auth_outofnewemailupdateattempts', 'auth'), 'center');
     echo $OUTPUT->footer();
-} else if ($key == $preferences['newemailkey']) {
+} else if ($userkey && $userkey->userid == $user->id) {
+    // Key validated, continue with email update.
     $olduser = clone($user);
     cancel_email_update($user->id);
     $user->email = $preferences['newemail'];
@@ -90,6 +99,6 @@ if (empty($preferences['newemailattemptsleft'])) {
     $preferences['newemailattemptsleft']--;
     set_user_preference('newemailattemptsleft', $preferences['newemailattemptsleft'], $user->id);
     echo $OUTPUT->header();
-    echo $OUTPUT->box(get_string('auth_invalidnewemailkey', 'auth'), 'center');
+    echo $OUTPUT->box($errormessage, 'center');
     echo $OUTPUT->footer();
 }

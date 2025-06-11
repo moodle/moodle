@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import Popper from 'core/popper';
+import {createPopper} from 'core/popper2';
 import CustomEvents from 'core/custom_interaction_events';
 import Selectors from 'forumreport_summary/selectors';
 import Ajax from 'core/ajax';
@@ -146,7 +146,7 @@ export const init = (root) => {
             popperContent = document.querySelector(Selectors.filters.date.calendar);
 
         popperContent.style.removeProperty("z-index");
-        new Popper(referenceElement, popperContent, {placement: 'bottom'});
+        createPopper(referenceElement, popperContent, {placement: 'bottom-end'});
     };
 
     // Close the relevant filter.
@@ -184,7 +184,7 @@ export const init = (root) => {
         let referenceElement = root.querySelector(Selectors.filters.group.trigger),
             popperContent = root.querySelector(Selectors.filters.group.popover);
 
-        new Popper(referenceElement, popperContent, {placement: 'bottom'});
+        createPopper(referenceElement, popperContent, {placement: 'bottom-end'});
 
         // Show popover.
         popperContent.classList.remove('hidden');
@@ -257,7 +257,7 @@ export const init = (root) => {
         let referenceElement = root.querySelector(Selectors.filters.date.trigger),
             popperContent = root.querySelector(Selectors.filters.date.popover);
 
-        new Popper(referenceElement, popperContent, {placement: 'bottom'});
+        createPopper(referenceElement, popperContent, {placement: 'bottom-end'});
 
         // Show popover and move focus.
         popperContent.classList.remove('hidden');

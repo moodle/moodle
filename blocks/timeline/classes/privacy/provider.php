@@ -41,7 +41,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @param  \core_privacy\local\metadata\collection $collection A collection of meta-data.
      * @return \core_privacy\local\metadata\collection Return the collection of meta-data.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_user_preference('block_timeline_user_sort_preference', 'privacy:metadata:timelinesortpreference');
         $collection->add_user_preference('block_timeline_user_filter_preference', 'privacy:metadata:timelinefilterpreference');
         $collection->add_user_preference('block_timeline_user_limit_preference', 'privacy:metadata:timelinelimitpreference');

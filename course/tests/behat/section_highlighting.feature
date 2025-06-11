@@ -5,7 +5,7 @@ Feature: Topic's course sections highlighting
   I need to highlight one specific section
 
   @javascript
-  Scenario Outline: Highlight a topic's course section with course paged mode and without it
+  Scenario Outline: Highlight a course section with course paged mode and without it
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |

@@ -378,10 +378,21 @@ class qtype_multianswerwiris_question extends qtype_wq_question implements quest
         // subquestions are not of class question_graded_automatically and
         // therefore the renderer overriding function subquestion doesn't have
         // a compatible type hinting.
-        $errors = error_reporting();
-        error_reporting($errors & ~E_STRICT);
+        $old = error_reporting();
+
+        if (PHP_VERSION_ID < 70400) {
+            // pre‑7.4: suppress E_STRICT
+            error_reporting($old & ~E_STRICT);
+        } else {
+            // PHP 7.4+: suppress the incompatible signature warnings
+            error_reporting($old & ~E_WARNING);
+        }
+
         $result = parent::get_renderer($page);
-        error_reporting($errors);
+
+        // restore original reporting level
+        error_reporting($old);
+
         return $result;
     }
 

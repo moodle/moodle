@@ -24,29 +24,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
+$tasks = [
+    [
         'classname' => 'mod_attendance\task\auto_mark',
         'blocking' => 0,
         'minute' => '8',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'),
-    array(
+        'month' => '*', ],
+    [
         'classname' => 'mod_attendance\task\notify',
         'blocking' => 0,
         'minute' => '30',
         'hour' => '1',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'),
-        array(
+        'month' => '*', ],
+        [
         'classname' => 'mod_attendance\task\clear_temporary_passwords',
         'blocking' => 0,
         'minute' => '0',
         'hour' => '1',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*')
-);
+        'month' => '*', ],
+];

@@ -1,0 +1,52 @@
+{
+  "name": "snap-custom-elements",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "test": "ng test",
+    "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
+    "lint": "ng lint",
+    "test-and-build": "npm run test-headless && npm run build && npm run package",
+    "build": "ng build --configuration production --output-hashing=none",
+    "package": "bash build-ce.sh"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "~17.0.3",
+    "@angular/common": "~17.0.3",
+    "@angular/compiler": "~17.0.3",
+    "@angular/core": "~17.0.3",
+    "@angular/elements": "^17.0.3",
+    "@angular/forms": "~17.0.3",
+    "@angular/platform-browser": "~17.0.3",
+    "@angular/platform-browser-dynamic": "~17.0.3",
+    "@angular/router": "~17.0.3",
+    "document-register-element": "^1.7.2",
+    "rxjs": "~7.8.1",
+    "tslib": "^2.6.2",
+    "zone.js": "~0.14.2"
+  },
+  "devDependencies": {
+    "@angular-builders/custom-webpack": "^17.0.0",
+    "@angular-devkit/build-angular": "^17.0.1",
+    "@angular/cli": "~17.0.1",
+    "@angular/compiler-cli": "~17.0.3",
+    "@angular/language-service": "~17.0.3",
+    "@types/jasmine": "~5.1.2",
+    "@types/jasminewd2": "~2.0.13",
+    "@types/node": "^20.9.1",
+    "codelyzer": "^6.0.2",
+    "jasmine-core": "~5.1.1",
+    "jasmine-spec-reporter": "~7.0.0",
+    "karma": "~6.4.2",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage-istanbul-reporter": "~3.0.3",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "karma-junit-reporter": "^2.0.1",
+    "ts-node": "~10.9.1",
+    "tslint": "~5.20.1",
+    "typescript": "~5.2.2"
+  }
+}

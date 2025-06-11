@@ -68,7 +68,7 @@ class helper {
             'datemodified' => '',
             'datecreated' => '',
             'path' => $path,
-            'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false),
+            'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
             'children' => []
         ];
     }

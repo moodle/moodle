@@ -338,7 +338,7 @@ function blog_is_enabled_for_user() {
  * @param stdClass $userid Load for a specific user
  * @return array An array of options organised by type.
  */
-function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
+function blog_get_all_options(moodle_page $page, ?stdClass $userid = null) {
     global $CFG, $DB, $USER;
 
     $options = array();
@@ -400,7 +400,7 @@ function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
  * @param stdClass $user
  * @return array The array of options for the requested user
  */
-function blog_get_options_for_user(stdClass $user=null) {
+function blog_get_options_for_user(?stdClass $user=null) {
     global $CFG, $USER;
     // Cache.
     static $useroptions = array();
@@ -471,7 +471,7 @@ function blog_get_options_for_user(stdClass $user=null) {
  * @param stdClass $user The user to load options for null == current user
  * @return array The array of options
  */
-function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
+function blog_get_options_for_course(stdClass $course, ?stdClass $user=null) {
     global $CFG, $USER;
     // Cache.
     static $courseoptions = array();
@@ -1220,7 +1220,7 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
             throw new \moodle_exception('courseblogdisable', 'blog');
         }
         if (!$mod = $DB->get_record('course_modules', array('id' => $modid))) {
-            throw new \moodle_exception('invalidmoduleid', 'error', $modid);
+            throw new \moodle_exception('invalidmoduleid', 'error', '', $modid);
         }
         $courseid = $mod->course;
     }
@@ -1305,4 +1305,27 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
         }
     }
     return array($courseid, $userid);
+}
+
+/**
+ * Get blog editor and attachment options for when creating or updating an entry
+ *
+ * @param mixed $entry The entry object (can be null)
+ * @return array editor and attachment options
+ */
+function blog_get_editor_options(mixed $entry = null): array {
+    global $CFG;
+
+    if (is_null($entry)) {
+        $entry = new stdClass();
+        $entry->id = null;
+    }
+
+    $sitecontext = context_system::instance();
+
+    $summaryoptions = ['maxfiles' => 99, 'maxbytes' => $CFG->maxbytes, 'trusttext' => true, 'context' => $sitecontext,
+        'subdirs' => file_area_contains_subdirs($sitecontext, 'blog', 'post', $entry->id)];
+    $attachmentoptions = ['subdirs' => false, 'maxfiles' => 99, 'maxbytes' => $CFG->maxbytes];
+
+    return [$summaryoptions, $attachmentoptions];
 }

@@ -68,6 +68,9 @@ class template_competencies_page implements renderable, templatable {
     /** @var template_statistics $templatestatistics The generated summary statistics for this template. */
     protected $templatestatistics = null;
 
+    /** @var bool true if the user has this capability. Otherwise false. */
+    protected bool $canmanagetemplatecompetencies = false;
+
     /**
      * Construct this renderable.
      *

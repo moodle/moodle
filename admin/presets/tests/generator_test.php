@@ -25,7 +25,7 @@ namespace core_adminpresets;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass core_adminpresets_generator
  */
-class generator_test extends \advanced_testcase {
+final class generator_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of create_preset() method.
@@ -180,7 +180,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_preset_provider(): array {
+    public static function create_preset_provider(): array {
         return [
             'Default values' => [
             ],

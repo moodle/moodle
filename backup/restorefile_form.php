@@ -29,7 +29,7 @@ class course_restore_form extends moodleform {
         $contextid = $this->_customdata['contextid'];
         $mform->addElement('hidden', 'contextid', $contextid);
         $mform->setType('contextid', PARAM_INT);
-        $mform->addElement('filepicker', 'backupfile', get_string('files'));
+        $mform->addElement('filepicker', 'backupfile', get_string('backupfile', 'backup'));
         $mform->addRule('backupfile', get_string('required'), 'required');
         $submit_string = get_string('restore');
         $this->add_action_buttons(false, $submit_string);

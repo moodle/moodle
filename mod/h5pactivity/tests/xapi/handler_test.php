@@ -14,25 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * mod_h5pactivity generator tests
- *
- * @package    mod_h5pactivity
- * @category   test
- * @copyright  2020 Ferran Recio <ferran@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_h5pactivity\xapi;
 
 use \core_xapi\local\statement;
-use \core_xapi\local\statement\item;
 use \core_xapi\local\statement\item_agent;
 use \core_xapi\local\statement\item_activity;
 use \core_xapi\local\statement\item_definition;
 use \core_xapi\local\statement\item_verb;
 use \core_xapi\local\statement\item_result;
 use context_module;
+use core_xapi\test_helper;
 use stdClass;
 
 /**
@@ -42,8 +33,18 @@ use stdClass;
  * @category   test
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \mod_h5pactivity\xapi\handler
  */
-class handler_test extends \advanced_testcase {
+final class handler_test extends \advanced_testcase {
+
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot.'/lib/xapi/tests/helper.php');
+        parent::setUpBeforeClass();
+    }
 
     /**
      * Generate a valid scenario for each tests.
@@ -79,7 +80,7 @@ class handler_test extends \advanced_testcase {
     /**
      * Test for xapi_handler with valid statements.
      */
-    public function test_xapi_handler() {
+    public function test_xapi_handler(): void {
         global $DB;
 
         $data = $this->generate_testing_scenario();
@@ -141,7 +142,7 @@ class handler_test extends \advanced_testcase {
      * @param bool $generateattempt if generates an empty attempt
      */
     public function test_xapi_handler_errors(bool $hasverb, bool $hasdefinition, bool $hasresult,
-            bool $hascontext, bool $hasuser, bool $generateattempt) {
+            bool $hascontext, bool $hasuser, bool $generateattempt): void {
         global $DB, $CFG;
 
         $data = $this->generate_testing_scenario();
@@ -202,7 +203,7 @@ class handler_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function xapi_handler_errors_data(): array {
+    public static function xapi_handler_errors_data(): array {
         return [
             // Invalid Definitions and results possibilities.
             'Invalid definition and result' => [
@@ -221,17 +222,17 @@ class handler_test extends \advanced_testcase {
             'Invalid verb and result' => [
                 false, true, false, true, true, false
             ],
-            'Invalid verb and result' => [
+            'Invalid verb and definition' => [
                 false, false, true, true, true, false
             ],
             // Invalid context possibilities.
             'Invalid definition, result and context' => [
                 true, false, false, false, true, false
             ],
-            'Invalid result' => [
+            'Invalid result and context' => [
                 true, true, false, false, true, false
             ],
-            'Invalid result and context' => [
+            'Invalid definition and context' => [
                 true, false, true, false, true, false
             ],
             'Invalid verb, definition result and context' => [
@@ -240,7 +241,7 @@ class handler_test extends \advanced_testcase {
             'Invalid verb, result and context' => [
                 false, true, false, false, true, false
             ],
-            'Invalid verb, result and context' => [
+            'Invalid verb, definition and context' => [
                 false, false, true, false, true, false
             ],
             // Invalid user possibilities.
@@ -259,7 +260,7 @@ class handler_test extends \advanced_testcase {
             'Invalid verb, result and user' => [
                 false, true, false, true, false, false
             ],
-            'Invalid verb, result and user' => [
+            'Invalid verb, definition and user' => [
                 false, false, true, true, false, false
             ],
             'Invalid definition, result, context and user' => [
@@ -277,7 +278,7 @@ class handler_test extends \advanced_testcase {
             'Invalid verb, result, context and user' => [
                 false, true, false, false, false, false
             ],
-            'Invalid verb, result, context and user' => [
+            'Invalid verb, definition, context and user' => [
                 false, false, true, false, false, false
             ],
         ];
@@ -286,7 +287,7 @@ class handler_test extends \advanced_testcase {
     /**
      * Test xapi_handler stored statements.
      */
-    public function test_stored_statements() {
+    public function test_stored_statements(): void {
         global $DB;
 
         $data = $this->generate_testing_scenario();
@@ -386,5 +387,89 @@ class handler_test extends \advanced_testcase {
         $statements[] = $statement;
 
         return $statements;
+    }
+
+    /**
+     * Test validate_state method.
+     */
+    public function test_validate_state(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        /** @var \core_h5p_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+
+        // Create a valid H5P activity with a valid xAPI state.
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->setUser($user);
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $coursecontext = \context_course::instance($course->id);
+        $activitycontext = \context_module::instance($activity->cmid);
+        $component = 'mod_h5pactivity';
+        $filerecord = [
+            'contextid' => $activitycontext->id,
+            'component' => $component,
+            'filearea' => 'package',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'dummy.h5p',
+            'addxapistate' => true,
+        ];
+        $generator->generate_h5p_data(false, $filerecord);
+
+        $handler = handler::create($component);
+        // Change the method visibility for validate_state in order to test it.
+        $method = new \ReflectionMethod(handler::class, 'validate_state');
+
+        // The activity id should be numeric.
+        $state = test_helper::create_state(['activity' => item_activity::create_from_id('AA')]);
+        $result = $method->invoke($handler, $state);
+        $this->assertFalse($result);
+
+        // The activity id should exist.
+        $state = test_helper::create_state();
+        $result = $method->invoke($handler, $state);
+        $this->assertFalse($result);
+
+        // The given activity should be H5P activity.
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course]);
+        $state = test_helper::create_state([
+            'activity' => item_activity::create_from_id($forum->cmid),
+        ]);
+        $result = $method->invoke($handler, $state);
+        $this->assertFalse($result);
+
+        // Tracking should be enabled for the H5P activity.
+        $state = test_helper::create_state([
+            'activity' => item_activity::create_from_id($activitycontext->id),
+            'component' => $component,
+        ]);
+        $result = $method->invoke($handler, $state);
+        $this->assertTrue($result);
+
+        // So, when tracking is disabled, the state won't be considered valid.
+        $activity2 = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course, 'enabletracking' => 0]);
+        $activitycontext2 = \context_module::instance($activity2->cmid);
+        $state = test_helper::create_state([
+            'activity' => item_activity::create_from_id($activitycontext2->id),
+            'component' => $component,
+        ]);
+        $result = $method->invoke($handler, $state);
+        $this->assertFalse($result);
+
+        // The user should have permission to submit.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        assign_capability('mod/h5pactivity:submit', CAP_PROHIBIT, $studentrole->id, $coursecontext->id);
+        // Empty all the caches that may be affected by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        \course_modinfo::clear_instance_cache();
+        $state = test_helper::create_state([
+            'activity' => item_activity::create_from_id($activitycontext->id),
+            'component' => $component,
+        ]);
+        $result = $method->invoke($handler, $state);
+        $this->assertFalse($result);
     }
 }

@@ -106,7 +106,7 @@ class managesubscriptions extends \moodleform {
         $courseid = (!empty($data[$coursekey])) ? $data[$coursekey] : null;
         $eventtypes = calendar_get_allowed_event_types($courseid);
 
-        if (empty($eventtype) || !isset($eventtypes[$eventtype])) {
+        if (empty($eventtype) || !isset($eventtypes[$eventtype]) || $eventtypes[$eventtype] == false) {
             $errors['eventtype'] = get_string('invalideventtype', 'calendar');
         }
 

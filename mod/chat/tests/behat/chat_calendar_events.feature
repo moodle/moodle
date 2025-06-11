@@ -16,19 +16,21 @@ Feature: Chat calendar entries
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I enable "chat" "mod" plugin
 
-  Scenario: Create a chat activity and do not publish the start date to the calendar
+  Scenario Outline: Create a chat activity with repeated chat times set
+    # Create an activity with repeated chat times
     Given the following "activities" exist:
-      | activity | name           | intro                 | course | idnumber | schedule |
-      | chat     | Test chat name | Test chat description | C1     | chat1    | 0 |
+      | activity | course | name   | schedule      |
+      | chat     | C1     | Chat 1 | <scheduleset> |
     And I log in as "teacher1"
-    When I follow "Calendar" in the user menu
-    Then I should not see "Test chat name"
+    # Confirm Chat activity visibility based on schedule
+    When I am viewing calendar in "upcoming" view
+    Then I <chatvisibility> see "Chat 1"
 
-  Scenario: Create a chat activity and publish the start date to the calendar
-    Given the following "activities" exist:
-      | activity | name           | intro                 | course | idnumber | schedule |
-      | chat     | Test chat name | Test chat description | C1     | chat1    | 1 |
-    And I log in as "teacher1"
-    When I follow "Calendar" in the user menu
-    Then I should see "Test chat name"
+    Examples:
+      | scheduleset | chatvisibility |
+      | 0           | should not     |
+      | 1           | should         |
+      | 2           | should         |
+      | 3           | should         |

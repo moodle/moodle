@@ -21,12 +21,14 @@
     <h2>
         {{{plan.name}}}
         {{#plan.canbeedited}}
-            <a href="{{pluginbaseurl}}/editplan.php?id={{plan.id}}&amp;userid={{plan.userid}}">{{#pix}}t/edit, core, {{#str}}editplan, tool_lp{{/str}}{{/pix}}</a>
+            <a href="{{pluginbaseurl}}/editplan.php?id={{plan.id}}&amp;userid={{plan.userid}}">
+                {{#pix}}i/settings, core, {{#str}}editplan, tool_lp{{/str}}{{/pix}}
+            </a>
         {{/plan.canbeedited}}
     </h2>
     {{#plan.canbeedited}}
     <div data-region="actions" class="clearfix">
-        <div class="float-left">
+        <div class="float-start">
             <!-- Button to add competencies to the plan -->
             <button class="btn btn-secondary" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
         </div>
@@ -129,13 +131,13 @@
                         data-userid="{{plan.userid}}">
                     <td>
                         {{#plan.canbeedited}}
-                        <span class="drag-handlecontainer float-left"></span>
+                        <span class="drag-handlecontainer float-start"></span>
                         {{/plan.canbeedited}}
                         <a data-usercompetency="true" href="#">{{{competency.shortname}}}</a>
                         <em>{{competency.idnumber}}</em>
                         {{#comppath}}
                             <br>
-                            <span class="float-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
+                            <span class="float-start">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
                         {{/comppath}}
                     </td>
                     {{#plan.iscompleted}}
@@ -201,4 +203,3 @@ require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency
     ucw.on('error-occured', planActions.refresh.bind(planActions, '[data-region="plan-summary"]'));
 });
 {{/js}}
-

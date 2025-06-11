@@ -53,6 +53,7 @@ class groups_import_form extends moodleform {
         $filepickeroptions['filetypes'] = '*';
         $filepickeroptions['maxbytes'] = get_max_upload_file_size();
         $mform->addElement('filepicker', 'userfile', get_string('import'), null, $filepickeroptions);
+        $mform->addRule('userfile', null, 'required');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

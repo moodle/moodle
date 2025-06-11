@@ -38,13 +38,13 @@
 }}
 <div role="list">
 {{#courses}}
-    <div class="course-summaryitem list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" role="listitem"
+    <div class="course-summaryitem list-group-item course-listitem border-start-0 border-end-0 border-top-0 px-2 rounded-0" role="listitem"
         data-region="course-content"
         data-course-id="{{{id}}}">
         <div class="row">
             <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
                 <a href="{{viewurl}}" tabindex="-1" class="mw-100 w-100">
-                    <div class="summaryimage card-img dashboard-list-img mw-100" style='background-image: url("{{{courseimage}}}");'>
+                    <div class="summary-image rounded mw-100" style='background-image: url("{{{courseimage}}}");'>
                         <span class="sr-only">{{fullname}}</span>
                     </div>
                 </a>
@@ -53,7 +53,7 @@
                 {{#showshortname}}
                     <div class="text-muted muted d-flex flex-wrap">
                         {{#showcoursecategory}}
-                            <div class="pl-1 pr-1">|</div>
+                            <div class="px-1">|</div>
                         {{/showcoursecategory}}
                         <span class="sr-only">
                             {{#str}}aria:courseshortname, core_course{{/str}}
@@ -82,7 +82,7 @@
                 {{/coursecategory}}
                 {{^visible}}
                     <div class="d-flex flex-wrap">
-                        <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                        <span class="badge bg-info text-white">{{#str}} hiddenfromstudents {{/str}}</span>
                     </div>
                 {{/visible}}
                 <div class="summary">

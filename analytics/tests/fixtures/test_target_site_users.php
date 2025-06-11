@@ -44,7 +44,7 @@ class test_target_site_users extends \core_analytics\local\target\binary {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         // Using a string that exists and contains a corresponding '_help' string.
         return new \lang_string('adminhelplogs');
     }

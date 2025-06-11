@@ -37,6 +37,12 @@ class qtype_randomsamatch_question extends qtype_match_question {
     /** @var qtype_randomsamatch_question_loader helper for loading the shortanswer questions. */
     public $questionsloader;
 
+    /** @var int the number of subquestions to randomly create. */
+    public $choose;
+
+    /** @var bool whether to include questions from subactegories when making the random selection. */
+    public $subcats;
+
     public function start_attempt(question_attempt_step $step, $variant) {
         $saquestions = $this->questionsloader->load_questions();
         foreach ($saquestions as $wrappedquestion) {

@@ -84,7 +84,7 @@ function filter_tex_sanitize_formula(string $texexp): string {
         '\afterassignment', '\expandafter', '\noexpand', '\special',
         '\let', '\futurelet', '\else', '\fi', '\chardef', '\makeatletter', '\afterground',
         '\noexpand', '\line', '\mathcode', '\item', '\section', '\mbox', '\declarerobustcommand',
-        '\ExplSyntaxOn',
+        '\ExplSyntaxOn', '\pdffiledump',
     ];
 
     $allowlist = ['inputenc'];
@@ -102,7 +102,9 @@ function filter_tex_sanitize_formula(string $texexp): string {
     // First, mangle all denied words.
     $texexp = preg_replace_callback($denylist,
         function($matches) {
-            return 'forbiddenkeyword_' . $matches[0];
+            // Remove backslashes to make commands impotent.
+            $noslashes = str_replace('\\', '', $matches[0]);
+            return 'forbiddenkeyword_' . $noslashes;
         },
         $texexp
     );

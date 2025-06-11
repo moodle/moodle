@@ -1,3 +1,12 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+=== 4.4 ===
+* The following previously deprecated methods have been removed and can no longer be used:
+  - block_calendar_upcoming::get_upcoming_content
+
 === 3.4 ===
 
 * block_calendar_upcoming::get_upcoming_content has been deprecated. Please

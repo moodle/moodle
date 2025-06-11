@@ -31,7 +31,7 @@ use core_reportbuilder\local\filters\text;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_test extends advanced_testcase {
+final class filter_test extends advanced_testcase {
 
     /**
      * Test getting filter class
@@ -118,32 +118,6 @@ class filter_test extends advanced_testcase {
         [$sql, $params] = $filter->get_field_sql_and_params(1);
         $this->assertEquals('u.username = :username_1 AND u.idnumber = :idnumber_1', $sql);
         $this->assertEquals(['username_1' => 'test', 'idnumber_1' => 'bar'], $params);
-    }
-
-    /**
-     * Test adding single join
-     */
-    public function test_add_join(): void {
-        $filter = $this->create_filter('username', 'u.username');
-        $this->assertEquals([], $filter->get_joins());
-
-        $filter->add_join('JOIN {user} u ON u.id = table.userid');
-        $this->assertEquals(['JOIN {user} u ON u.id = table.userid'], $filter->get_joins());
-    }
-
-    /**
-     * Test adding multiple joins
-     */
-    public function test_add_joins(): void {
-        $tablejoins = [
-            "JOIN {course} c2 ON c2.id = c1.id",
-            "JOIN {course} c3 ON c3.id = c1.id",
-        ];
-
-        $filter = $this->create_filter('username', 'u.username')
-            ->add_joins($tablejoins);
-
-        $this->assertEquals($tablejoins, $filter->get_joins());
     }
 
     /**

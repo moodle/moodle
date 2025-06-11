@@ -43,9 +43,52 @@ require_once(__DIR__ . '/../fixtures/test_target_course_users.php');
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
+
+    /** @var \core_analytics\model Store Model 1. */
+    protected $model1;
+
+    /** @var \core_analytics\model Store Model 2. */
+    protected $model2;
+
+    /** @var \stdClass $modelobj1 Store Model 1 object. */
+    protected $modelobj1;
+
+    /** @var \stdClass $modelobj2 Store Model 2 object. */
+    protected $modelobj2;
+
+    /** @var \stdClass $u1 User 1 record. */
+    protected $u1;
+
+    /** @var \stdClass $u2 User 2 record. */
+    protected $u2;
+
+    /** @var \stdClass $u3 User 3 record. */
+    protected $u3;
+
+    /** @var \stdClass $u4 User 4 record. */
+    protected $u4;
+
+    /** @var \stdClass $u5 User 5 record. */
+    protected $u5;
+
+    /** @var \stdClass $u6 User 6 record. */
+    protected $u6;
+
+    /** @var \stdClass $u7 User 7 record. */
+    protected $u7;
+
+    /** @var \stdClass $u8 User 8 record. */
+    protected $u8;
+
+    /** @var \stdClass $c1 Course 1 record. */
+    protected $c1;
+
+    /** @var \stdClass $c2 Course 2 record. */
+    protected $c2;
 
     public function setUp(): void {
+        parent::setUp();
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -117,7 +160,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test fetching users within a context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $CFG;
 
         $component = 'core_analytics';
@@ -156,7 +199,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return null
      */
-    public function test_delete_context_data() {
+    public function test_delete_context_data(): void {
         global $DB;
 
         // We have 4 predictions for model1 and 8 predictions for model2.
@@ -186,7 +229,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return null
      */
-    public function test_delete_user_data() {
+    public function test_delete_user_data(): void {
         global $DB;
 
         $usercontexts = provider::get_contexts_for_userid($this->u3->id);
@@ -215,7 +258,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting multiple users in a context.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $component = 'core_analytics';
@@ -370,7 +413,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return null
      */
-    public function test_export_data() {
+    public function test_export_data(): void {
         global $DB;
 
         $system = \context_system::instance();

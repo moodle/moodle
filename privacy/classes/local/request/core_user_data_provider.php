@@ -44,7 +44,7 @@ interface core_user_data_provider extends core_data_provider {
      * @param   int         $userid     The user to search.
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist;
+    public static function get_contexts_for_userid(int $userid): contextlist;
 
     /**
      * Export all user data for the specified user, in the specified contexts.

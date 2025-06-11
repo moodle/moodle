@@ -41,8 +41,8 @@
                 <div class="drag-samenode" data-id="{{competency.id}}">
                     <div class="border p-2 mb-2">
                         {{#canmanagetemplatecompetencies}}
-                        <span class="drag-handlecontainer float-left"></span>
-                        <div class="float-sm-right">
+                        <span class="drag-handlecontainer float-start"></span>
+                        <div class="float-sm-end">
                             <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                         </div>
                         {{/canmanagetemplatecompetencies}}
@@ -58,7 +58,7 @@
                         </ul>
                         {{/hascourses}}
                         {{^hascourses}}
-                        <span class="badge badge-info">{{#str}}nolinkedcourses, tool_lp{{/str}}</span>
+                        <span class="badge bg-info text-white">{{#str}}nolinkedcourses, tool_lp{{/str}}</span>
                         {{/hascourses}}
                     </div>
                 </div>

@@ -24,167 +24,127 @@
  * @since      3.9
  */
 
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
-        'core/ajax', 'core/fragment', 'core/notification', 'core/config'],
-        function($, Str, ModalFactory, ModalEvents, ajax, Fragment, Notification, Config) {
+import {get_string as getString} from 'core/str';
+import Modal from 'core/modal';
+import * as ajax from 'core/ajax';
+import * as Fragment from 'core/fragment';
+import Notification from 'core/notification';
+import * as Config from 'core/config';
 
-    /**
-     * Module level variables.
-     */
-    var CopyModal = {};
-    var contextid;
-    var course;
-    var modalObj;
-    var spinner = '<p class="text-center">'
-        + '<i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>'
-        + '</p>';
+export default class CopyModal {
+    static init(context) {
+        return new CopyModal(context);
+    }
 
-    /**
-     * Creates the modal for the course copy form
-     *
-     * @private
-     */
-    function createModal() {
-        // Get the Title String.
-        Str.get_string('loading').then(function(title) {
-            // Create the Modal.
-            ModalFactory.create({
-                type: ModalFactory.types.DEFAULT,
-                title: title,
-                body: spinner,
-                large: true
-            })
-            .done(function(modal) {
-                modalObj = modal;
-                // Explicitly handle form click events.
-                modalObj.getRoot().on('click', '#id_submitreturn', processModalForm);
-                modalObj.getRoot().on('click', '#id_submitdisplay', function(e) {
-                    e.formredirect = true;
-                    processModalForm(e);
+    constructor(context) {
+        this.contextid = context;
 
-                });
-                modalObj.getRoot().on('click', '#id_cancel', function(e) {
-                    e.preventDefault();
-                    modalObj.setBody(spinner);
-                    modalObj.hide();
-                });
-            });
-            return;
-        }).catch(function() {
-            Notification.exception(new Error('Failed to load string: loading'));
+        this.registerEventListeners();
+    }
+
+    registerEventListeners() {
+        document.addEventListener('click', (e) => {
+            const copyAction = e.target.closest('.action-copy');
+            if (!copyAction) {
+                return;
+            }
+            e.preventDefault(); // Stop. Hammer time.
+
+            const url = new URL(copyAction.href);
+            const params = new URLSearchParams(url.search);
+
+            this.fetchCourseData(params.get('id'))
+            .then(([course]) => this.createModal(course))
+            .catch((error) => Notification.exception(error));
         });
     }
 
-    /**
-     * Updates the body of the modal window.
-     *
-     * @param {Object} formdata
-     * @private
-     */
-    function updateModalBody(formdata) {
-        if (typeof formdata === "undefined") {
-            formdata = {};
-        }
+    fetchCourseData(courseid) {
+        return ajax.call([{
+            methodname: 'core_course_get_courses',
+            args: {
+                options: {
+                    ids: [courseid],
+                },
+            },
+        }])[0];
+    }
 
-        var params = {
-                'jsonformdata': JSON.stringify(formdata),
-                'courseid': course.id
+    submitBackupRequest(jsonformdata) {
+        return ajax.call([{
+            methodname: 'core_backup_submit_copy_form',
+            args: {
+                jsonformdata,
+            },
+        }])[0];
+    }
+
+    createModal(
+        course,
+        formdata = {},
+    ) {
+        const params = {
+            jsonformdata: JSON.stringify(formdata),
+            courseid: course.id,
         };
 
-        modalObj.setBody(spinner);
-        Str.get_string('copycoursetitle', 'backup', course.shortname).then(function(title) {
-            modalObj.setTitle(title);
-            modalObj.setBody(Fragment.loadFragment('course', 'new_base_form', contextid, params));
-            return;
-        }).catch(function() {
-            Notification.exception(new Error('Failed to load string: copycoursetitle'));
+        // Create the Modal.
+        return Modal.create({
+            title: getString('copycoursetitle', 'backup', course.shortname),
+            body: Fragment.loadFragment('course', 'new_base_form', this.contextid, params),
+            large: true,
+            show: true,
+            removeOnClose: true,
+        })
+        .then((modal) => {
+            // Explicitly handle form click events.
+            modal.getRoot().on('click', '#id_submitreturn', (e) => {
+                this.processModalForm(course, modal, e);
+            });
+            modal.getRoot().on('click', '#id_cancel', (e) => {
+                e.preventDefault();
+                modal.destroy();
+            });
+            modal.getRoot().on('click', '#id_submitdisplay', (e) => {
+                e.formredirect = true;
+                this.processModalForm(course, modal, e);
+
+            });
+
+            return modal;
         });
     }
 
-    /**
-     * Updates Moodle form with selected information.
-     *
-     * @param {Object} e
-     * @private
-     */
-    function processModalForm(e) {
+    processModalForm(course, modal, e) {
         e.preventDefault(); // Stop modal from closing.
 
         // Form data.
-        var copyform = modalObj.getRoot().find('form').serialize();
-        var formjson = JSON.stringify(copyform);
+        const copyform = modal.getRoot().find('form').serialize();
+        const formjson = JSON.stringify(copyform);
 
         // Handle invalid form fields for better UX.
-        var invalid = $.merge(
-                modalObj.getRoot().find('[aria-invalid="true"]'),
-                modalObj.getRoot().find('.error')
-        );
-
+        const invalid = modal.getRoot()[0].querySelectorAll('[aria-invalid="true"], .error');
         if (invalid.length) {
-            invalid.first().focus();
+            invalid[0].focus();
             return;
         }
 
-        // Submit form via ajax.
-        ajax.call([{
-            methodname: 'core_backup_submit_copy_form',
-            args: {
-                jsonformdata: formjson
-            },
-        }])[0].done(function() {
-            // For submission succeeded.
-            modalObj.setBody(spinner);
-            modalObj.hide();
+        modal.destroy();
 
+        // Submit form via ajax.
+        this.submitBackupRequest(formjson)
+        .then(() => {
             if (e.formredirect == true) {
                 // We are redirecting to copy progress display.
-                let redirect = Config.wwwroot + "/backup/copyprogress.php?id=" + course.id;
+                const redirect = `${Config.wwwroot}/backup/copyprogress.php?id=${course.id}`;
                 window.location.assign(redirect);
             }
 
-        }).fail(function() {
+            return;
+        })
+        .catch(() => {
             // Form submission failed server side, redisplay with errors.
-            updateModalBody(copyform);
+            this.createModal(course, copyform);
         });
     }
-
-    /**
-     * Initialise the class.
-     *
-     * @method
-     * @param {Object} context
-     * @public
-     */
-    CopyModal.init = function(context) {
-        contextid = context;
-        // Setup the initial Modal.
-        createModal();
-
-        // Setup the click handlers on the copy buttons.
-        $('.action-copy').on('click', function(e) {
-            e.preventDefault(); // Stop. Hammer time.
-            let url = new URL(this.getAttribute('href'));
-            let params = new URLSearchParams(url.search);
-            let courseid = params.get('id');
-
-            ajax.call([{ // Get the course information.
-                methodname: 'core_course_get_courses',
-                args: {
-                    'options': {'ids': [courseid]},
-                },
-            }])[0].done(function(response) {
-                // We have the course info get the modal content.
-                course = response[0];
-                updateModalBody();
-
-            }).fail(function() {
-                Notification.exception(new Error('Failed to load course'));
-            });
-
-            modalObj.show();
-        });
-
-    };
-
-    return CopyModal;
-});
+}

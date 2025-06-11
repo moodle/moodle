@@ -54,7 +54,7 @@ class completion_criteria_date extends completion_criteria {
     /**
      * Add appropriate form elements to the critieria form
      *
-     * @param moodleform $mform Moodle forms object
+     * @param MoodleQuickForm $mform Moodle forms object
      * @param stdClass $data not used
      */
     public function config_form_display(&$mform, $data = null) {
@@ -118,7 +118,7 @@ class completion_criteria_date extends completion_criteria {
      * @return string
      */
     public function get_title_detailed() {
-        return userdate($this->timeend, '%d-%h-%y');
+        return userdate($this->timeend, get_string('strftimedatemonthabbr', 'core_langconfig'));
     }
 
     /**
@@ -138,7 +138,10 @@ class completion_criteria_date extends completion_criteria {
      * @return string
      */
     public function get_status($completion) {
-        return $completion->is_complete() ? get_string('yes') : userdate($this->timeend, '%d-%h-%y');
+        return $completion->is_complete() ? get_string('yes') : userdate(
+            $this->timeend,
+            get_string('strftimedatemonthabbr', 'core_langconfig')
+        );
     }
 
     /**
@@ -197,7 +200,7 @@ class completion_criteria_date extends completion_criteria {
         $details = array();
         $details['type'] = get_string('datepassed', 'completion');
         $details['criteria'] = get_string('remainingenroleduntildate', 'completion');
-        $details['requirement'] = userdate($this->timeend, '%d %B %Y');
+        $details['requirement'] = userdate($this->timeend, get_string('strftimedatemonthabbr', 'core_langconfig'));
         $details['status'] = '';
 
         return $details;
@@ -210,7 +213,7 @@ class completion_criteria_date extends completion_criteria {
      * @param array $attributes html attributes
      * @return pix_icon
      */
-    public function get_icon($alt, array $attributes = null) {
+    public function get_icon($alt, ?array $attributes = null) {
         return new pix_icon('i/calendar', $alt, 'moodle', $attributes);
     }
 

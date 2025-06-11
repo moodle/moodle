@@ -84,7 +84,7 @@ class badge_listing_viewed extends base {
         } else {
             $params = array('id' => $this->other['courseid'], 'type' => $this->other['badgetype']);
         }
-        return new \moodle_url('/badges/view.php', $params );
+        return new \moodle_url('/badges/index.php', $params );
     }
 
     /**

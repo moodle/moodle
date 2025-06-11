@@ -24,14 +24,14 @@ namespace core;
  * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class recordset_walk_test extends \advanced_testcase {
+final class recordset_walk_test extends \advanced_testcase {
 
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
 
-    public function test_no_data() {
+    public function test_no_data(): void {
         global $DB;
 
         $recordset = $DB->get_recordset('assign');
@@ -47,9 +47,10 @@ class recordset_walk_test extends \advanced_testcase {
         $walker->close();
     }
 
-    public function test_simple_callback() {
+    public function test_simple_callback(): void {
         global $DB;
 
+        /** @var \mod_assign_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $courses = array();
         for ($i = 0; $i < 10; $i++) {
@@ -71,9 +72,10 @@ class recordset_walk_test extends \advanced_testcase {
         $walker->close();
     }
 
-    public function test_extra_params_callback() {
+    public function test_extra_params_callback(): void {
         global $DB;
 
+        /** @var \mod_assign_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $courses = array();
         for ($i = 0; $i < 10; $i++) {

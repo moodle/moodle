@@ -20,7 +20,7 @@ Feature: When a teacher configures a password restriction a student cannot acces
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
-    And I add a "page" to section "1"
+    And I add a page to section "1" using the activity chooser
     And I set the following fields to these values:
       | Name         | Restricted page          |
       | Description  | Need to enter a password |
@@ -38,23 +38,19 @@ Feature: When a teacher configures a password restriction a student cannot acces
     Then I should see "Restricted page"
     And I should see "Not available unless: You enter the correct password"
 
-# This scenario broke on Moodle 4.0 for unknown reasons.
-# However, when tested manually, clicking the activity link works without problems.
-# The scenario is left commented out until the reason for this misbehaviour is found.
-#
-# Scenario: A student attempts to access the page activity with the activity link, but cancels the popup
-#   When I log in as "student1"
-#   And I am on "Course 1" course homepage
-#   And I click on "Restricted page" "text"
-#   Then I should not see "Some page content"
-#   And I should see "is protected with a password"
-#   And I click on "Cancel" "button" in the "Password protection" "dialogue"
-#   And I should see "Not available unless: You enter the correct password"
+  Scenario: A student attempts to access the page activity with the activity link, but cancels the popup
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I click on "Restricted page" "text" in the ".modtype_page .activity-name-area" "css_element"
+    Then I should not see "Some page content"
+    And I should see "is protected with a password"
+    And I click on "Cancel" "button" in the "Password protection" "dialogue"
+    And I should see "Not available unless: You enter the correct password"
 
   Scenario: A student attempts to access the page activity with the availability link, but cancels the popup
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And I click on "You enter the correct password" "text"
+    And I click on "You enter the correct password" "text" in the ".modtype_page .activity-availability" "css_element"
     Then I should not see "Some page content"
     And I should see "is protected with a password"
     And I click on "Cancel" "button" in the "Password protection" "dialogue"
@@ -63,7 +59,7 @@ Feature: When a teacher configures a password restriction a student cannot acces
   Scenario: A student attempts to access the page activity and enters a wrong password
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And I click on "You enter the correct password" "text"
+    And I click on "You enter the correct password" "text" in the ".modtype_page .activity-availability" "css_element"
     And I set the field "availability_password_input" to "Guess 1"
     And I press "Submit"
     Then I should see "Password incorrect"
@@ -76,7 +72,7 @@ Feature: When a teacher configures a password restriction a student cannot acces
       | remember | db    | availability_password |
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And I click on "You enter the correct password" "text"
+    And I click on "You enter the correct password" "text" in the ".modtype_page .activity-availability" "css_element"
     And I set the field "availability_password_input" to "Testing123"
     And I press "Submit"
     And I wait to be redirected
@@ -95,7 +91,7 @@ Feature: When a teacher configures a password restriction a student cannot acces
       | remember | session   | availability_password |
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And I click on "You enter the correct password" "text"
+    And I click on "You enter the correct password" "text" in the ".modtype_page .activity-availability" "css_element"
     And I set the field "availability_password_input" to "Testing123"
     And I press "Submit"
     And I wait to be redirected

@@ -21,6 +21,7 @@
  * @copyright  2015 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace auth_ldap\task;
 
 /**
@@ -30,6 +31,9 @@ namespace auth_ldap\task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sync_task extends \core\task\scheduled_task {
+
+    /** @var string Message prefix for mtrace */
+    protected const MTRACE_MSG = 'Synced ldap users';
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -44,11 +48,22 @@ class sync_task extends \core\task\scheduled_task {
      * Run users sync.
      */
     public function execute() {
-        global $CFG;
         if (is_enabled_auth('ldap')) {
+            /** @var auth_plugin_ldap $auth */
             $auth = get_auth_plugin('ldap');
-            $auth->sync_users(true);
+            $count = 0;
+            $auth->sync_users_update_callback(function ($users, $updatekeys) use (&$count) {
+                $asynctask = new asynchronous_sync_task();
+                $asynctask->set_custom_data([
+                    'users' => $users,
+                    'updatekeys' => $updatekeys,
+                ]);
+                \core\task\manager::queue_adhoc_task($asynctask);
+
+                $count++;
+                mtrace(sprintf(" %s (%d)", self::MTRACE_MSG, $count));
+                sleep(1);
+            });
         }
     }
-
 }

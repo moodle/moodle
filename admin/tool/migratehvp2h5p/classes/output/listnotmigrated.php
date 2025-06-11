@@ -40,13 +40,13 @@ use templatable;
  */
 class listnotmigrated implements renderable, templatable {
 
-    /** @var data_requests_table $table The data requests table. */
+    /** @var \tool_migratehvp2h5p\output\hvpactivities_table $table The data requests table. */
     protected $table;
 
     /**
      * Contructor.
      *
-     * @param hvpactivities_table $table The data requests table.
+     * @param \tool_migratehvp2h5p\output\hvpactivities_table $table The data requests table.
      */
     public function __construct(\tool_migratehvp2h5p\output\hvpactivities_table $table) {
         $this->table = $table;

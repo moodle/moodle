@@ -36,7 +36,7 @@ class tool_customlang_utils {
      * Rough number of strings that are being processed during a full checkout.
      * This is used to estimate the progress of the checkout.
      */
-    const ROUGH_NUMBER_OF_STRINGS = 32000;
+    const ROUGH_NUMBER_OF_STRINGS = 33000;
 
     /** @var array cache of {@link self::list_components()} results */
     private static $components = null;
@@ -88,7 +88,7 @@ class tool_customlang_utils {
      * @param string $lang language code to checkout
      * @param progress_bar $progressbar optionally, the given progress bar can be updated
      */
-    public static function checkout($lang, progress_bar $progressbar = null) {
+    public static function checkout($lang, ?progress_bar $progressbar = null) {
         global $DB, $CFG;
 
         require_once("{$CFG->libdir}/adminlib.php");
@@ -469,7 +469,7 @@ class tool_customlang_menu implements renderable {
  */
 class tool_customlang_translator implements renderable {
 
-    /** @const int number of rows per page */
+    /** @var int number of rows per page */
     const PERPAGE = 100;
 
     /** @var int total number of the rows int the table */
@@ -506,7 +506,6 @@ class tool_customlang_translator implements renderable {
 
         list($insql, $inparams) = $DB->get_in_or_equal($filter->component, SQL_PARAMS_NAMED);
 
-        $csql = "SELECT COUNT(*)";
         $fsql = "SELECT s.*, c.name AS component";
         $sql  = "  FROM {tool_customlang_components} c
                    JOIN {tool_customlang} s ON s.componentid = c.id
@@ -545,9 +544,16 @@ class tool_customlang_translator implements renderable {
             $params['link'] = '%\_link';
         }
 
-        $osql = " ORDER BY c.name, s.stringid";
+        $osql = "component, stringid";
 
-        $this->numofrows = $DB->count_records_sql($csql.$sql, $params);
-        $this->strings = $DB->get_records_sql($fsql.$sql.$osql, $params, ($this->currentpage) * self::PERPAGE, self::PERPAGE);
+        $this->strings = $DB->get_counted_records_sql(
+            sql: $fsql.$sql,
+            fullcountcolumn: 'fullcount',
+            sort: $osql,
+            params: $params,
+            limitfrom: ($this->currentpage) * self::PERPAGE,
+            limitnum: self::PERPAGE,
+        );
+        $this->numofrows = reset($this->strings)->fullcount ?? 0;
     }
 }

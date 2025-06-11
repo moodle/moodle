@@ -26,8 +26,10 @@ Feature: In an assignment, the administrator can edit students' submissions
       | Test assignment name  | student1  | I'm the student1 submission  |
 
     And I am on the "Test assignment name" Activity page logged in as admin
-    And I follow "View all submissions"
+    And I navigate to "Submissions" in current page administration
+    And I change window size to "large"
     And I open the action menu in "Student 1" "table_row"
+    And I change window size to "medium"
     And I choose "Edit submission" in the open action menu
     And I set the following fields to these values:
       | Online text | Have you seen the movie Chef? |

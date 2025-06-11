@@ -25,7 +25,7 @@ namespace core\output;
  * @copyright 2021 Peter
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_header_test extends \advanced_testcase {
+final class activity_header_test extends \advanced_testcase {
 
     /**
      * Test the title setter
@@ -60,7 +60,7 @@ class activity_header_test extends \advanced_testcase {
      * Provider for the test_set_title unit test.
      * @return array
      */
-    public function set_title_provider(): array {
+    public static function set_title_provider(): array {
         return [
             "Set the title with a plain text" => [
                 "Activity title", "Activity title"
@@ -129,7 +129,7 @@ class activity_header_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_heading_level_provider(): array {
+    public static function get_heading_level_provider(): array {
         return [
             'Title not allowed' => [false, '', 2],
             'Title allowed, no title' => [true, '', 2],
@@ -155,5 +155,58 @@ class activity_header_test extends \advanced_testcase {
         $activityheaderstub->method('is_title_allowed')->willReturn($allowtitle);
         $activityheaderstub->set_title($title);
         $this->assertEquals($expectedheadinglevel, $activityheaderstub->get_heading_level());
+    }
+
+    /**
+     * Tests that is_title_allowed returns correctly based on the theme default and current layout options.
+     *
+     * The current layout has precedence, if the notitle option is set, otherwise the theme default is used if set.
+     *
+     * @param array $themeoptions The activityheader options array set in the theme.
+     * @param array $layoutoptions The activitityheader options array set in the layout.
+     * @param bool $allowed The expected return value of is_title_allowed.
+     * @covers ::is_title_allowed
+     * @dataProvider get_title_options
+     * @return void
+     */
+    public function test_is_title_allowed(array $themeoptions, array $layoutoptions, bool $allowed): void {
+        $themeconfig = $this->getMockBuilder(\theme_config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $themeconfig->activityheaderconfig = $themeoptions;
+        $page = $this->getMockBuilder(\moodle_page::class)
+            ->getMock();
+        // Mocking the magic_get_layout_options() and magic_get_theme() methods directly doesn't work,
+        // so mock the whole magic __get() method and just return the test values for those properties.
+        $page->expects($this->any())->method('__get')->willReturnCallback(fn($name) => match($name) {
+            'layout_options' => ['activityheader' => $layoutoptions],
+            'theme' => $themeconfig,
+            default => null
+        });
+        $user = new \stdClass();
+
+        $activityheader = new activity_header($page, $user);
+        $this->assertEquals($allowed, $activityheader->is_title_allowed());
+    }
+
+    /**
+     * Return scenarios for test_is_title_allowed.
+     *
+     * Test each combination of the 'notitle' option being unset, true and false in each of the theme and layout options.
+     *
+     * @return array[]
+     */
+    public static function get_title_options(): array {
+        return [
+            'Undefined in theme, undefined in layout' => [[], [], true],
+            'Undefined in theme, disallowed in layout' => [[], ['notitle' => true], false],
+            'Undefined in theme, allowed in layout' => [[], ['notitle' => false], true],
+            'Disallowed in theme, undefined in layout' => [['notitle' => true], [], false],
+            'Disallowed in theme, disallowed in layout' => [['notitle' => true], ['notitle' => true], false],
+            'Disallowed in theme, allowed in layout' => [['notitle' => true], ['notitle' => false], true],
+            'Allowed in theme, undefined in layout' => [['notitle' => false], [], true],
+            'Allowed in theme, disallowed in layout' => [['notitle' => false], ['notitle' => true], false],
+            'Allowed in theme, allowed in layout' => [['notitle' => false], ['notitle' => false], true],
+        ];
     }
 }

@@ -6,37 +6,38 @@ Feature: Restore Moodle 2 course backups with different user data settings
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@example.com |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | username | firstname | lastname | email                |
+      | student1 | Student   | 1        | student1@example.com |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
     And the following "activities" exist:
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I add a "Short text" field to "Test database name" database and I fill the form with:
-      | Field name | Test field name |
-      | Field description | Test field description |
-    And I navigate to "Templates" in current page administration
-    And I wait until the page is ready
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student entry |
-    And I press "Save"
-    And I log out
+    And the following "mod_data > fields" exist:
+      | database | type | name            | description            |
+      | data1    | text | Test field name | Test field description |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
+    And the following "mod_data > entries" exist:
+      | database | user     | Test field name |
+      | data1    | student1 | Student entry   |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
     And I backup "Course 1" course using this options:
-      | Initial |  Include enrolled users | 1 |
-      | Confirmation | Filename | test_backup.mbz |
+      | Initial      | Include enrolled users | 1               |
+      | Confirmation | Filename               | test_backup.mbz |
 
   @javascript
   Scenario: Restore a backup with user data

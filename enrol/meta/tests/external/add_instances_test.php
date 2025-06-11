@@ -16,9 +16,10 @@
 
 namespace enrol_meta\external;
 
+use core_external\external_api;
+
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
@@ -30,12 +31,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2021 WKS KV Bildung
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_instances_test extends \externallib_advanced_testcase {
+final class add_instances_test extends \externallib_advanced_testcase {
 
     /**
      * Test setup
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
@@ -43,7 +45,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances no instances.
      */
-    public function test_add_instances_no_instances() {
+    public function test_add_instances_no_instances(): void {
         $this->expectException(\invalid_parameter_exception::class);
         add_instances::execute([]);
     }
@@ -51,7 +53,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances missing courses.
      */
-    public function test_add_instances_missing_courses() {
+    public function test_add_instances_missing_courses(): void {
         $course = self::getDataGenerator()->create_course();
 
         // Missing meta course.
@@ -74,7 +76,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances missing capabilities.
      */
-    public function test_add_instances_missing_capabilities() {
+    public function test_add_instances_missing_capabilities(): void {
         $metacourse = self::getDataGenerator()->create_course();
         $course = self::getDataGenerator()->create_course();
         $user = self::getDataGenerator()->create_user();
@@ -114,7 +116,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances.
      */
-    public function test_add_instances() {
+    public function test_add_instances(): void {
         global $DB;
         $metacourse = self::getDataGenerator()->create_course();
         $course = self::getDataGenerator()->create_course();
@@ -126,7 +128,7 @@ class add_instances_test extends \externallib_advanced_testcase {
 
         // Add instance.
         $result = add_instances::execute([['metacourseid' => $metacourse->id, 'courseid' => $course->id]]);
-        $result = \external_api::clean_returnvalue(add_instances::execute_returns(), $result);
+        $result = external_api::clean_returnvalue(add_instances::execute_returns(), $result);
         $this->assertEquals($result[0]['metacourseid'], $metacourse->id);
         $this->assertEquals($result[0]['courseid'], $course->id);
         $this->assertEquals($result[0]['status'], 1);
@@ -138,7 +140,7 @@ class add_instances_test extends \externallib_advanced_testcase {
 
         // Add same instance.
         $result = add_instances::execute([['metacourseid' => $metacourse->id, 'courseid' => $course->id]]);
-        $result = \external_api::clean_returnvalue(add_instances::execute_returns(), $result);
+        $result = external_api::clean_returnvalue(add_instances::execute_returns(), $result);
         $this->assertEquals($result[0]['metacourseid'], $metacourse->id);
         $this->assertEquals($result[0]['courseid'], $course->id);
         $this->assertEquals($result[0]['status'], 0);

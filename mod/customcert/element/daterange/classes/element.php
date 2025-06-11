@@ -727,7 +727,7 @@ class element extends \mod_customcert\element {
 
         $isgradeitem = false;
         $oldid = $dateinfo->dateitem;
-        if (strpos($dateinfo->dateitem, 'gradeitem:') === 0) {
+        if (str_starts_with($dateinfo->dateitem, 'gradeitem:')) {
             $isgradeitem = true;
             $oldid = str_replace('gradeitem:', '', $dateinfo->dateitem);
         }

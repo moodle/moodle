@@ -17,7 +17,7 @@ Feature: Verify the breadcrumbs in different event monitor site administration p
     Then "Add a new rule" "text" should exist in the ".breadcrumb" "css_element"
     And "Event monitoring rules" "link" should exist in the ".breadcrumb" "css_element"
     And I set the field "Rule name" to "Testing1"
-    And I set the field "Area to monitor" to "Core"
+    And I set the field "Area to monitor" to "Subsystem (core)"
     And I set the field "Event" to "Allow role override"
     And I press "Save changes"
     And I click on "Edit rule" "link"

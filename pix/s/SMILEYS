@@ -1,1 +1,31 @@
-All these icon are 15x15 and saved using adaptive color tables
+Steps to update the smileys:
+
+1. From the emoji-data catalog, https://projects.iamcal.com/emoji-data/table.htm, choose the proper icon from img-google column:
+- s/smiley - :blush:
+- s/biggrin - :grin:
+- s/wink - :wink:
+- s/mixed - :confused:
+- s/thoughtful - :face_with_raised_eyebrow:
+- s/tongueout - :stuck_out_tongue_winking_eye:
+- s/cool - :sunglasses:
+- s/approve - :slightly_smiling_face:
+- s/wideeyes - :open_mouth:
+- s/clown - :clown_face:
+- s/sad - :white_frowning_face:
+- s/shy - :flushed:
+- s/blush - :face_with_hand_over_mouth:
+- s/kiss - :kissing_heart:
+- s/surprise - :astonished:
+- s/blackeye - :face_with_head_bandage:
+- s/angry - :rage:
+- s/dead - :skull_and_crossbones:
+- s/sleepy - :sleeping:
+- s/evil - :smiling_imp:
+- s/heart - :heart:
+- s/yes - :+1:
+- s/no - :-1:
+- s/egg - :egg:
+
+2. Download each of them into the pix/s folder.
+
+3. Crop the content (if required).

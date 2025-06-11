@@ -23,14 +23,13 @@
     {}
 }}
 <div data-region="loading-placeholder-content" aria-hidden="true">
-    {{#cards}}
-        <div class="card-deck dashboard-card-deck one-row" style="height: 13rem">
-            {{> core_course/placeholder-course }}
-            {{> core_course/placeholder-course }}
-            {{> core_course/placeholder-course }}
-            {{> core_course/placeholder-course }}
+    {{#card}}
+        <div class="card-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 mx-0 flex-nowrap overflow-hidden" style="height: 13rem">
+            <div class="col d-flex px-1">{{> core_course/placeholder-course }}</div>
+            <div class="col d-flex px-1">{{> core_course/placeholder-course }}</div>
+            <div class="col d-flex px-1">{{> core_course/placeholder-course }}</div>
         </div>
-    {{/cards}}
+    {{/card}}
     {{#list}}
         <ul class="list-group">
             {{> block_myoverview/placeholder-course-list-item }}

@@ -70,28 +70,6 @@ class course_content_deleted extends base {
     }
 
     /**
-     * Returns the name of the legacy event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'course_content_removed';
-    }
-
-    /**
-     * Returns the legacy event data.
-     *
-     * @return \stdClass the course the content was deleted from
-     */
-    protected function get_legacy_eventdata() {
-        $course = $this->get_record_snapshot('course', $this->objectid);
-        $course->context = $this->context;
-        $course->options = $this->other['options'];
-
-        return $course;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

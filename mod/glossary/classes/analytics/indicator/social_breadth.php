@@ -42,7 +42,7 @@ class social_breadth extends activity_base {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('indicator:socialbreadth', 'mod_glossary');
     }
 

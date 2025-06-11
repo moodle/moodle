@@ -32,8 +32,15 @@ MDL-70457 - PHP 7.4 curly brackets string access fix.
 MDL-71126 - Quiz: Manual grading page size preference can get stuck at 0
             Including in this change:
              - New positiveint regex rule to check if the value is a positive integer
-MDL-76102 / MDL-77081
+MDL-76102 / MDL-77081 / MDL-83835
             PHP 8.1 passing null to a non-nullable argument of a built-in function is deprecated
+MDL-77164 - PHPdocs corrections
+MDL-78145 - PHP 8.2 compliance. Added a missing class property that still need to be declared
+            to avoid dynamic properties deprecated error warning.
+            And also remove the $_elementIdx because it is not needed in Moodle code.
+MDL-78527 - Adding a sixth parameter to allow groups to use attributes.
+MDL-80818 - Freezing all elements with the same name (e.g. radio buttons)
+MDL-80820 - PHPdocs corrections
 
 Pear
 ====

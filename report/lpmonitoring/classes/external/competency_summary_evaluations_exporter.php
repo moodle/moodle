@@ -43,31 +43,31 @@ class competency_summary_evaluations_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'competency' => array(
-                'type' => competency_exporter::read_properties_definition()
-            ),
-            'evaluationslist_total' => array(
+        return [
+            'competency' => [
+                'type' => competency_exporter::read_properties_definition(),
+            ],
+            'evaluationslist_total' => [
                 'type' => summary_evaluations_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'evaluationslist_course' => array(
+                'multiple' => true,
+            ],
+            'evaluationslist_course' => [
                 'type' => summary_evaluations_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'evaluationslist_cm' => array(
+                'multiple' => true,
+            ],
+            'evaluationslist_cm' => [
                 'type' => summary_evaluations_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'showasparent' => array(
+                'multiple' => true,
+            ],
+            'showasparent' => [
                 'type' => PARAM_BOOL,
-                'optional' => true
-            ),
-            'isassessable' => array(
+                'optional' => true,
+            ],
+            'isassessable' => [
                 'type' => PARAM_BOOL,
-                'optional' => true
-            ),
-        );
+                'optional' => true,
+            ],
+        ];
     }
 
     /**
@@ -83,8 +83,10 @@ class competency_summary_evaluations_exporter extends \core\external\exporter {
      */
     protected static function define_related() {
         // We cache the plan so it does not need to be retrieved every time.
-        return array('plan' => 'core_competency\\plan',
-                    'scalevalues' => '\\stdClass[]');
+        return [
+            'plan' => 'core_competency\\plan',
+            'scalevalues' => '\\stdClass[]',
+        ];
     }
 
     /**
@@ -98,11 +100,11 @@ class competency_summary_evaluations_exporter extends \core\external\exporter {
         $competencydetailinfos = $this->data->competencydetailinfos;
         $result = new \stdClass();
         $result->competency = $this->data->competencydetailinfos->competency;
-        $result->evaluationslist = array();
+        $result->evaluationslist = [];
 
-        $result->evaluationslist_course = array();
-        $result->evaluationslist_total = array();
-        $result->evaluationslist_cm = array();
+        $result->evaluationslist_course = [];
+        $result->evaluationslist_total = [];
+        $result->evaluationslist_cm = [];
 
         foreach ($scalevalues as $config) {
             $datacourse = new \stdClass();

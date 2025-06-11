@@ -10,11 +10,10 @@ on:
         default: ''
   push:
     branches:
-      - stable
       - main
   pull_request:
     branches:
-      - "*"
+      - "**"
   schedule:
     - cron: "15 6 * * *"
 
@@ -46,7 +45,6 @@ jobs:
             "MOODLE_403_STABLE",
             "MOODLE_404_STABLE",
             "MOODLE_405_STABLE",
-            "main",
           ]
         database: [pgsql]
         browser: ["chrome", "firefox"]
@@ -62,8 +60,6 @@ jobs:
             php: "7.4"
           - moodle-branch: "MOODLE_405_STABLE"
             php: "7.4"
-          - moodle-branch: "main"
-            php: "7.4"
 
           - moodle-branch: "MOODLE_38_STABLE"
             php: "8.0"
@@ -73,8 +69,6 @@ jobs:
             php: "8.0"
           - moodle-branch: "MOODLE_405_STABLE"
             php: "8.0"
-          - moodle-branch: "main"
-            php: "8.0"
 
           - moodle-branch: "MOODLE_38_STABLE"
             php: "8.1"
@@ -83,8 +77,6 @@ jobs:
           - moodle-branch: "MOODLE_311_STABLE"
             php: "8.1"
           - moodle-branch: "MOODLE_400_STABLE"
-            php: "8.1"
-          - moodle-branch: "main"
             php: "8.1"
 
 
@@ -97,8 +89,6 @@ jobs:
           - moodle-branch: "MOODLE_400_STABLE"
             php: "8.2"
           - moodle-branch: "MOODLE_401_STABLE"
-            php: "8.2"
-          - moodle-branch: "main"
             php: "8.2"
 
           - moodle-branch: "MOODLE_38_STABLE"
@@ -187,13 +177,13 @@ jobs:
       # 3.3 Install Tiny plugin
       - name: Add MathType plugin for TinyMCE
         id: install-plugin-tiny
-        if: contains(fromJson('["MOODLE_401_STABLE", "MOODLE_402_STABLE", "MOODLE_403_STABLE", "MOODLE_404_STABLE"]'), matrix.moodle-branch)
+        if:  ${{ !contains(fromJson('["MOODLE_38_STABLE", "MOODLE_39_STABLE", "MOODLE_311_STABLE", "MOODLE_400_STABLE"]'), matrix.moodle-branch) }}
 
         continue-on-error: true
         run: |
           moodle-plugin-ci add-plugin --branch ${{ env.BRANCH_NAME }} wiris/moodle-tiny_wiris
       - name: Add MathType plugin for TinyMCE using the main branch
-        if: contains(fromJson('["MOODLE_401_STABLE", "MOODLE_402_STABLE", "MOODLE_403_STABLE", "MOODLE_404_STABLE"]'), matrix.moodle-branch) && steps.install-plugin-tiny.outcome != 'success'
+        if: ${{ !contains(fromJson('["MOODLE_38_STABLE", "MOODLE_39_STABLE", "MOODLE_311_STABLE", "MOODLE_400_STABLE"]'), matrix.moodle-branch) && steps.install-plugin-tiny.outcome != 'success' }}
         run: |
           moodle-plugin-ci add-plugin --branch main wiris/moodle-tiny_wiris
 
@@ -247,7 +237,7 @@ jobs:
             "MOODLE_400_STABLE")
               TAG="@4.0_atto${{ github.event.inputs.tags }}"
               ;;
-            "MOODLE_401_STABLE"|"MOODLE_402_STABLE"|"MOODLE_403_STABLE"|"MOODLE_404_STABLE"|"MOODLE_405_STABLE"|"main")
+            "MOODLE_401_STABLE"|"MOODLE_402_STABLE"|"MOODLE_403_STABLE"|"MOODLE_404_STABLE"|"MOODLE_405_STABLE")
               TAG="@4.x_atto${{ github.event.inputs.tags }}"
               ;;
             *)

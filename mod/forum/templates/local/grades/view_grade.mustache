@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/local/grades/local/view_grade
+    @template mod_forum/local/grades/view_grade
 
     Classes required for JS:
     * none
@@ -41,11 +41,11 @@
     {{#grade}}
         <div class="row px-3">
             <h5 class="font-weight-bold description">{{#str}}gradenoun{{/str}}:</h5>
-            <p class="ml-auto">{{usergrade}}</p>
+            <p class="ms-auto">{{usergrade}}</p>
         </div>
         <div class="row px-3">
             <h5 class="font-weight-bold description">{{#str}}gradedby, forum{{/str}}:</h5>
-            <p class="ml-auto">
+            <p class="ms-auto">
                 {{#gradedby}}
                     {{gradedby}}
                 {{/gradedby}}
@@ -56,14 +56,14 @@
         </div>
         <div class="row px-3">
             <h5 class="font-weight-bold description">{{#str}}date{{/str}}:</h5>
-            <p class="ml-auto">{{#userdate}}{{timemodified}}, {{#str}} strftimedate, langconfig {{/str}}{{/userdate}}</p>
+            <p class="ms-auto">{{#userdate}}{{timemodified}}, {{#str}} strftimedate, langconfig {{/str}}{{/userdate}}</p>
         </div>
     {{/grade}}
     <div class="row px-3">
         <h5 class="font-weight-bold description">
             {{#str}}gradingstatus, forum{{/str}}
         </h5>
-        <p class="ml-auto">
+        <p class="ms-auto">
             {{#hasgrade}}
                 {{#str}}graded, forum{{/str}}
             {{/hasgrade}}

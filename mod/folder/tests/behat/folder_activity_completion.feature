@@ -19,7 +19,7 @@ Feature: View activity completion information in the folder activity
       | teacher1 | C1 | editingteacher |
       | student1 | C2 | student        |
 
-  Scenario: View automatic completion items
+  Scenario: A folder is automatically completed when a student views it
     Given the following "activity" exists:
       | activity       | folder        |
       | course         | C1            |
@@ -37,7 +37,7 @@ Feature: View activity completion information in the folder activity
     Then the "View" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion
+  Scenario: A student can manually mark the folder activity as done but a teacher cannot
     Given the following "activity" exists:
       | activity       | folder        |
       | course         | C1            |

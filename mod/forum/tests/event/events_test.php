@@ -33,12 +33,13 @@ namespace mod_forum\event;
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Tests set up.
      */
     public function setUp(): void {
+        parent::setUp();
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -50,12 +51,13 @@ class events_test extends \advanced_testcase {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
+        parent::tearDown();
     }
 
     /**
      * Ensure course_searched event validates that searchterm is set.
      */
-    public function test_course_searched_searchterm_validation() {
+    public function test_course_searched_searchterm_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $coursectx = \context_course::instance($course->id);
         $params = array(
@@ -70,7 +72,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure course_searched event validates that context is the correct level.
      */
-    public function test_course_searched_context_validation() {
+    public function test_course_searched_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $context = \context_module::instance($forum->cmid);
@@ -87,7 +89,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test course_searched event.
      */
-    public function test_course_searched() {
+    public function test_course_searched(): void {
 
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
@@ -112,8 +114,6 @@ class events_test extends \advanced_testcase {
          // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\course_searched', $event);
         $this->assertEquals($coursectx, $event->get_context());
-        $expected = array($course->id, 'forum', 'search', "search.php?id={$course->id}&amp;search={$searchterm}", $searchterm);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -122,7 +122,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_created event validates that forumid is set.
      */
-    public function test_discussion_created_forumid_validation() {
+    public function test_discussion_created_forumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $context = \context_module::instance($forum->cmid);
@@ -139,7 +139,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_created event validates that the context is the correct level.
      */
-    public function test_discussion_created_context_validation() {
+    public function test_discussion_created_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -156,7 +156,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion_created event.
      */
-    public function test_discussion_created() {
+    public function test_discussion_created(): void {
 
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
@@ -191,8 +191,6 @@ class events_test extends \advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'add discussion', "discuss.php?d={$discussion->id}", $discussion->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -201,7 +199,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_updated event validates that forumid is set.
      */
-    public function test_discussion_updated_forumid_validation() {
+    public function test_discussion_updated_forumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $context = \context_module::instance($forum->cmid);
@@ -218,7 +216,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_created event validates that the context is the correct level.
      */
-    public function test_discussion_updated_context_validation() {
+    public function test_discussion_updated_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -235,7 +233,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion_created event.
      */
-    public function test_discussion_updated() {
+    public function test_discussion_updated(): void {
 
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
@@ -278,7 +276,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_deleted event validates that forumid is set.
      */
-    public function test_discussion_deleted_forumid_validation() {
+    public function test_discussion_deleted_forumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $context = \context_module::instance($forum->cmid);
@@ -295,7 +293,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_deleted event validates that context is of the correct level.
      */
-    public function test_discussion_deleted_context_validation() {
+    public function test_discussion_deleted_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -312,7 +310,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion_deleted event.
      */
-    public function test_discussion_deleted() {
+    public function test_discussion_deleted(): void {
 
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
@@ -346,8 +344,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'delete discussion', "view.php?id={$forum->cmid}", $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -356,7 +352,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_moved event validates that fromforumid is set.
      */
-    public function test_discussion_moved_fromforumid_validation() {
+    public function test_discussion_moved_fromforumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $toforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -375,7 +371,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_moved event validates that toforumid is set.
      */
-    public function test_discussion_moved_toforumid_validation() {
+    public function test_discussion_moved_toforumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $fromforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $toforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -394,7 +390,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_moved event validates that the context level is correct.
      */
-    public function test_discussion_moved_context_validation() {
+    public function test_discussion_moved_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $fromforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $toforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -421,7 +417,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion_moved event.
      */
-    public function test_discussion_moved() {
+    public function test_discussion_moved(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $fromforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -455,9 +451,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_moved', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'move discussion', "discuss.php?d={$discussion->id}",
-            $discussion->id, $toforum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -467,7 +460,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure discussion_viewed event validates that the contextlevel is correct.
      */
-    public function test_discussion_viewed_context_validation() {
+    public function test_discussion_viewed_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -492,7 +485,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion_viewed event.
      */
-    public function test_discussion_viewed() {
+    public function test_discussion_viewed(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -524,9 +517,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'view discussion', "discuss.php?d={$discussion->id}",
-            $discussion->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -535,7 +525,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure course_module_viewed event validates that the contextlevel is correct.
      */
-    public function test_course_module_viewed_context_validation() {
+    public function test_course_module_viewed_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -552,7 +542,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the course_module_viewed event.
      */
-    public function test_course_module_viewed() {
+    public function test_course_module_viewed(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -576,8 +566,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\course_module_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'view forum', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -588,7 +576,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure subscription_created event validates that the forumid is set.
      */
-    public function test_subscription_created_forumid_validation() {
+    public function test_subscription_created_forumid_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -606,7 +594,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure subscription_created event validates that the relateduserid is set.
      */
-    public function test_subscription_created_relateduserid_validation() {
+    public function test_subscription_created_relateduserid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -623,7 +611,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure subscription_created event validates that the contextlevel is correct.
      */
-    public function test_subscription_created_contextlevel_validation() {
+    public function test_subscription_created_contextlevel_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -642,7 +630,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the subscription_created event.
      */
-    public function test_subscription_created() {
+    public function test_subscription_created(): void {
         // Setup test data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -676,8 +664,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\subscription_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'subscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/subscribers.php', array('id' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -688,7 +674,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure subscription_deleted event validates that the forumid is set.
      */
-    public function test_subscription_deleted_forumid_validation() {
+    public function test_subscription_deleted_forumid_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -706,7 +692,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure subscription_deleted event validates that the relateduserid is set.
      */
-    public function test_subscription_deleted_relateduserid_validation() {
+    public function test_subscription_deleted_relateduserid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -723,7 +709,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure subscription_deleted event validates that the contextlevel is correct.
      */
-    public function test_subscription_deleted_contextlevel_validation() {
+    public function test_subscription_deleted_contextlevel_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -742,7 +728,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the subscription_deleted event.
      */
-    public function test_subscription_deleted() {
+    public function test_subscription_deleted(): void {
         // Setup test data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -776,8 +762,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\subscription_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'unsubscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/subscribers.php', array('id' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -788,7 +772,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure readtracking_enabled event validates that the forumid is set.
      */
-    public function test_readtracking_enabled_forumid_validation() {
+    public function test_readtracking_enabled_forumid_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -806,7 +790,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure readtracking_enabled event validates that the relateduserid is set.
      */
-    public function test_readtracking_enabled_relateduserid_validation() {
+    public function test_readtracking_enabled_relateduserid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -823,7 +807,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure readtracking_enabled event validates that the contextlevel is correct.
      */
-    public function test_readtracking_enabled_contextlevel_validation() {
+    public function test_readtracking_enabled_contextlevel_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -842,7 +826,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the readtracking_enabled event.
      */
-    public function test_readtracking_enabled() {
+    public function test_readtracking_enabled(): void {
         // Setup test data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -867,8 +851,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\readtracking_enabled', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'start tracking', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -879,7 +861,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure readtracking_disabled event validates that the forumid is set.
      */
-    public function test_readtracking_disabled_forumid_validation() {
+    public function test_readtracking_disabled_forumid_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -897,7 +879,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure readtracking_disabled event validates that the relateduserid is set.
      */
-    public function test_readtracking_disabled_relateduserid_validation() {
+    public function test_readtracking_disabled_relateduserid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -914,7 +896,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure readtracking_disabled event validates that the contextlevel is correct
      */
-    public function test_readtracking_disabled_contextlevel_validation() {
+    public function test_readtracking_disabled_contextlevel_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -933,7 +915,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Test the readtracking_disabled event.
      */
-    public function test_readtracking_disabled() {
+    public function test_readtracking_disabled(): void {
         // Setup test data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -958,8 +940,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\readtracking_disabled', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'stop tracking', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -970,7 +950,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure subscribers_viewed event validates that the forumid is set.
      */
-    public function test_subscribers_viewed_forumid_validation() {
+    public function test_subscribers_viewed_forumid_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -988,7 +968,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure subscribers_viewed event validates that the contextlevel is correct.
      */
-    public function test_subscribers_viewed_contextlevel_validation() {
+    public function test_subscribers_viewed_contextlevel_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -1007,7 +987,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Test the subscribers_viewed event.
      */
-    public function test_subscribers_viewed() {
+    public function test_subscribers_viewed(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -1030,8 +1010,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\subscribers_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'view subscribers', "subscribers.php?id={$forum->id}", $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -1040,7 +1018,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure user_report_viewed event validates that the reportmode is set.
      */
-    public function test_user_report_viewed_reportmode_validation() {
+    public function test_user_report_viewed_reportmode_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
 
@@ -1057,7 +1035,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure user_report_viewed event validates that the contextlevel is correct.
      */
-    public function test_user_report_viewed_contextlevel_validation() {
+    public function test_user_report_viewed_contextlevel_validation(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -1076,7 +1054,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure user_report_viewed event validates that the relateduserid is set.
      */
-    public function test_user_report_viewed_relateduserid_validation() {
+    public function test_user_report_viewed_relateduserid_validation(): void {
 
         $params = array(
             'context' => \context_system::instance(),
@@ -1091,7 +1069,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the user_report_viewed event.
      */
-    public function test_user_report_viewed() {
+    public function test_user_report_viewed(): void {
         // Setup test data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -1115,9 +1093,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\user_report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'user report',
-            "user.php?id={$user->id}&amp;mode=discussions&amp;course={$course->id}", $user->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -1126,7 +1101,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure post_created event validates that the postid is set.
      */
-    public function test_post_created_postid_validation() {
+    public function test_post_created_postid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1149,7 +1124,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure post_created event validates that the discussionid is set.
      */
-    public function test_post_created_discussionid_validation() {
+    public function test_post_created_discussionid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1181,7 +1156,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure post_created event validates that the forumid is set.
      */
-    public function test_post_created_forumid_validation() {
+    public function test_post_created_forumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1213,7 +1188,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure post_created event validates that the forumtype is set.
      */
-    public function test_post_created_forumtype_validation() {
+    public function test_post_created_forumtype_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1245,7 +1220,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure post_created event validates that the contextlevel is correct.
      */
-    public function test_post_created_context_validation() {
+    public function test_post_created_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1277,7 +1252,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the post_created event.
      */
-    public function test_post_created() {
+    public function test_post_created(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -1316,9 +1291,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'add post', "discuss.php?d={$discussion->id}#p{$post->id}",
-            $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $url->set_anchor('p'.$event->objectid);
         $this->assertEquals($url, $event->get_url());
@@ -1330,7 +1302,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the post_created event for a single discussion forum.
      */
-    public function test_post_created_single() {
+    public function test_post_created_single(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'type' => 'single'));
@@ -1369,9 +1341,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'add post', "view.php?f={$forum->id}#p{$post->id}",
-            $forum->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $url->set_anchor('p'.$event->objectid);
         $this->assertEquals($url, $event->get_url());
@@ -1383,7 +1352,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure post_deleted event validates that the postid is set.
      */
-    public function test_post_deleted_postid_validation() {
+    public function test_post_deleted_postid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1406,7 +1375,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure post_deleted event validates that the discussionid is set.
      */
-    public function test_post_deleted_discussionid_validation() {
+    public function test_post_deleted_discussionid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1438,7 +1407,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure post_deleted event validates that the forumid is set.
      */
-    public function test_post_deleted_forumid_validation() {
+    public function test_post_deleted_forumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1470,7 +1439,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure post_deleted event validates that the forumtype is set.
      */
-    public function test_post_deleted_forumtype_validation() {
+    public function test_post_deleted_forumtype_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1502,7 +1471,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure post_deleted event validates that the contextlevel is correct.
      */
-    public function test_post_deleted_context_validation() {
+    public function test_post_deleted_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1534,7 +1503,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test post_deleted event.
      */
-    public function test_post_deleted() {
+    public function test_post_deleted(): void {
         global $DB;
 
         // Setup test data.
@@ -1577,8 +1546,6 @@ class events_test extends \advanced_testcase {
         // Check that the events contain the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
         $this->assertEquals(\context_module::instance($forum->cmid), $event->get_context());
-        $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $lastpost->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -1597,9 +1564,6 @@ class events_test extends \advanced_testcase {
                 // Check that the event contains the expected values.
                 $this->assertEquals($event->objectid, $discussion->id);
                 $this->assertEquals(\context_module::instance($forum->cmid), $event->get_context());
-                $expected = array($course->id, 'forum', 'delete discussion', "view.php?id={$forum->cmid}",
-                    $forum->id, $forum->cmid);
-                $this->assertEventLegacyLogData($expected, $event);
                 $url = new \moodle_url('/mod/forum/view.php', array('id' => $forum->cmid));
                 $this->assertEquals($url, $event->get_url());
                 $this->assertEventContextNotUsed($event);
@@ -1610,8 +1574,6 @@ class events_test extends \advanced_testcase {
                 $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
                 $this->assertEquals($event->objectid, $post->id);
                 $this->assertEquals(\context_module::instance($forum->cmid), $event->get_context());
-                $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post->id, $forum->cmid);
-                $this->assertEventLegacyLogData($expected, $event);
                 $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
                 $this->assertEquals($url, $event->get_url());
                 $this->assertEventContextNotUsed($event);
@@ -1623,7 +1585,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test post_deleted event for a single discussion forum.
      */
-    public function test_post_deleted_single() {
+    public function test_post_deleted_single(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'type' => 'single'));
@@ -1662,8 +1624,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'delete post', "view.php?f={$forum->id}", $post->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -1674,7 +1634,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure post_updated event validates that the discussionid is set.
      */
-    public function test_post_updated_discussionid_validation() {
+    public function test_post_updated_discussionid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1706,7 +1666,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure post_updated event validates that the forumid is set.
      */
-    public function test_post_updated_forumid_validation() {
+    public function test_post_updated_forumid_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1738,7 +1698,7 @@ class events_test extends \advanced_testcase {
     /**
      * Ensure post_updated event validates that the forumtype is set.
      */
-    public function test_post_updated_forumtype_validation() {
+    public function test_post_updated_forumtype_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1770,7 +1730,7 @@ class events_test extends \advanced_testcase {
     /**
      *  Ensure post_updated event validates that the contextlevel is correct.
      */
-    public function test_post_updated_context_validation() {
+    public function test_post_updated_context_validation(): void {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
@@ -1802,7 +1762,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test post_updated event.
      */
-    public function test_post_updated() {
+    public function test_post_updated(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -1841,9 +1801,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_updated', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'update post', "discuss.php?d={$discussion->id}#p{$post->id}",
-            $post->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $url->set_anchor('p'.$event->objectid);
         $this->assertEquals($url, $event->get_url());
@@ -1855,7 +1812,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test post_updated event.
      */
-    public function test_post_updated_single() {
+    public function test_post_updated_single(): void {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'type' => 'single'));
@@ -1894,9 +1851,6 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_updated', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'update post', "view.php?f={$forum->id}#p{$post->id}",
-            $post->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $url->set_anchor('p'.$post->id);
         $this->assertEquals($url, $event->get_url());
@@ -1908,7 +1862,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion_subscription_created event.
      */
-    public function test_discussion_subscription_created() {
+    public function test_discussion_subscription_created(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -1963,7 +1917,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test validation of discussion_subscription_created event.
      */
-    public function test_discussion_subscription_created_validation() {
+    public function test_discussion_subscription_created_validation(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2022,7 +1976,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test contextlevel validation of discussion_subscription_created event.
      */
-    public function test_discussion_subscription_created_validation_contextlevel() {
+    public function test_discussion_subscription_created_validation_contextlevel(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2077,7 +2031,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion validation of discussion_subscription_created event.
      */
-    public function test_discussion_subscription_created_validation_discussion() {
+    public function test_discussion_subscription_created_validation_discussion(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2129,7 +2083,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test forumid validation of discussion_subscription_created event.
      */
-    public function test_discussion_subscription_created_validation_forumid() {
+    public function test_discussion_subscription_created_validation_forumid(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2181,7 +2135,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test relateduserid validation of discussion_subscription_created event.
      */
-    public function test_discussion_subscription_created_validation_relateduserid() {
+    public function test_discussion_subscription_created_validation_relateduserid(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2235,7 +2189,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion_subscription_deleted event.
      */
-    public function test_discussion_subscription_deleted() {
+    public function test_discussion_subscription_deleted(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2290,7 +2244,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test validation of discussion_subscription_deleted event.
      */
-    public function test_discussion_subscription_deleted_validation() {
+    public function test_discussion_subscription_deleted_validation(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2373,7 +2327,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test contextlevel validation of discussion_subscription_deleted event.
      */
-    public function test_discussion_subscription_deleted_validation_contextlevel() {
+    public function test_discussion_subscription_deleted_validation_contextlevel(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2428,7 +2382,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test discussion validation of discussion_subscription_deleted event.
      */
-    public function test_discussion_subscription_deleted_validation_discussion() {
+    public function test_discussion_subscription_deleted_validation_discussion(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2480,7 +2434,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test forumid validation of discussion_subscription_deleted event.
      */
-    public function test_discussion_subscription_deleted_validation_forumid() {
+    public function test_discussion_subscription_deleted_validation_forumid(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2532,7 +2486,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test relateduserid validation of discussion_subscription_deleted event.
      */
-    public function test_discussion_subscription_deleted_validation_relateduserid() {
+    public function test_discussion_subscription_deleted_validation_relateduserid(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2587,7 +2541,7 @@ class events_test extends \advanced_testcase {
      * Test that the correct context is used in the events when subscribing
      * users.
      */
-    public function test_forum_subscription_page_context_valid() {
+    public function test_forum_subscription_page_context_valid(): void {
         global $CFG, $PAGE;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -2787,7 +2741,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test mod_forum_observer methods.
      */
-    public function test_observers() {
+    public function test_observers(): void {
         global $DB, $CFG;
 
         require_once($CFG->dirroot . '/mod/forum/lib.php');

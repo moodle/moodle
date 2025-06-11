@@ -41,12 +41,12 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class decode_test extends \basic_testcase {
+final class decode_test extends \basic_testcase {
 
     /**
      * test restore_decode_rule class
      */
-    function test_restore_decode_rule() {
+    function test_restore_decode_rule(): void {
 
         // Test various incorrect constructors
         try {
@@ -160,14 +160,14 @@ class decode_test extends \basic_testcase {
     /**
      * test restore_decode_content class
      */
-    function test_restore_decode_content() {
+    function test_restore_decode_content(): void {
         // TODO: restore_decode_content tests
     }
 
     /**
      * test restore_decode_processor class
      */
-    function test_restore_decode_processor() {
+    function test_restore_decode_processor(): void {
         // TODO: restore_decode_processor tests
     }
 }

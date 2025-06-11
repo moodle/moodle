@@ -669,17 +669,24 @@ class enrol_database_plugin extends enrol_plugin {
             return 1;
         }
 
+        $courseconfig = get_config('moodlecourse');
+
         $table     = $this->get_config('newcoursetable');
         $fullname  = trim($this->get_config('newcoursefullname'));
         $shortname = trim($this->get_config('newcourseshortname'));
         $idnumber  = trim($this->get_config('newcourseidnumber'));
         $category  = trim($this->get_config('newcoursecategory'));
 
+        $startdate = trim($this->get_config('newcoursestartdate'));
+        $enddate   = trim($this->get_config('newcourseenddate'));
+
         // Lowercased versions - necessary because we normalise the resultset with array_change_key_case().
         $fullname_l  = strtolower($fullname);
         $shortname_l = strtolower($shortname);
         $idnumber_l  = strtolower($idnumber);
         $category_l  = strtolower($category);
+        $startdatelowercased = strtolower($startdate);
+        $enddatelowercased   = strtolower($enddate);
 
         $localcategoryfield = $this->get_config('localcategoryfield', 'id');
         $defaultcategory    = $this->get_config('defaultcategory');
@@ -698,6 +705,13 @@ class enrol_database_plugin extends enrol_plugin {
         if ($idnumber) {
             $sqlfields[] = $idnumber;
         }
+        if ($startdate) {
+            $sqlfields[] = $startdate;
+        }
+        if ($enddate) {
+            $sqlfields[] = $enddate;
+        }
+
         $sql = $this->db_get_sql($table, array(), $sqlfields, true);
         $createcourses = array();
         if ($rs = $extdb->Execute($sql)) {
@@ -722,6 +736,7 @@ class enrol_database_plugin extends enrol_plugin {
                     $course->fullname  = $fields[$fullname_l];
                     $course->shortname = $fields[$shortname_l];
                     $course->idnumber  = $idnumber ? $fields[$idnumber_l] : '';
+
                     if ($category) {
                         if (empty($fields[$category_l])) {
                             // Empty category means use default.
@@ -738,6 +753,35 @@ class enrol_database_plugin extends enrol_plugin {
                     } else {
                         $course->category = $defaultcategory;
                     }
+
+                    if ($startdate) {
+                        if (!empty($fields[$startdatelowercased])) {
+                            $course->startdate = is_number($fields[$startdatelowercased])
+                                ? $fields[$startdatelowercased]
+                                : strtotime($fields[$startdatelowercased]);
+
+                            // Broken start date. Stop syncing this course.
+                            if ($course->startdate === false) {
+                                $trace->output('error: invalid external course start date value: ' . json_encode($fields), 1);
+                                continue;
+                            }
+                        }
+                    }
+
+                    if ($enddate) {
+                        if (!empty($fields[$enddatelowercased])) {
+                            $course->enddate = is_number($fields[$enddatelowercased])
+                                ? $fields[$enddatelowercased]
+                                : strtotime($fields[$enddatelowercased]);
+
+                            // Broken end date. Stop syncing this course.
+                            if ($course->enddate === false) {
+                                $trace->output('error: invalid external course end date value: ' . json_encode($fields), 1);
+                                continue;
+                            }
+                        }
+                    }
+
                     $createcourses[] = $course;
                 }
             }
@@ -769,7 +813,6 @@ class enrol_database_plugin extends enrol_plugin {
                 }
             }
             if (!$template) {
-                $courseconfig = get_config('moodlecourse');
                 $template = new stdClass();
                 $template->summary        = '';
                 $template->summaryformat  = FORMAT_HTML;
@@ -797,6 +840,25 @@ class enrol_database_plugin extends enrol_plugin {
                 $newcourse->shortname = $fields->shortname;
                 $newcourse->idnumber  = $fields->idnumber;
                 $newcourse->category  = $fields->category;
+
+                if (isset($fields->startdate)) {
+                    $newcourse->startdate = $fields->startdate;
+                }
+
+                if (isset($fields->enddate)) {
+                    // Validating end date.
+                    if ($fields->enddate > 0 && $newcourse->startdate > $fields->enddate) {
+                        $trace->output(
+                            "can not insert new course, the end date must be after the start date: " . $newcourse->shortname, 1
+                        );
+                        continue;
+                    }
+                    $newcourse->enddate = $fields->enddate;
+                } else {
+                    if ($courseconfig->courseenddateenabled) {
+                        $newcourse->enddate = $newcourse->startdate + $courseconfig->courseduration;
+                    }
+                }
 
                 // Detect duplicate data once again, above we can not find duplicates
                 // in external data using DB collation rules...
@@ -1042,9 +1104,7 @@ class enrol_database_plugin extends enrol_plugin {
                 $rs->Close();
 
             } else {
-                $fields_obj = $rs->FetchObj();
-                $columns = array_keys((array)$fields_obj);
-
+                $columns = array_keys($rs->fetchRow());
                 echo $OUTPUT->notification('External enrolment table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
                 $rs->Close();
             }
@@ -1061,9 +1121,7 @@ class enrol_database_plugin extends enrol_plugin {
                 $rs->Close();
 
             } else {
-                $fields_obj = $rs->FetchObj();
-                $columns = array_keys((array)$fields_obj);
-
+                $columns = array_keys($rs->fetchRow());
                 echo $OUTPUT->notification('External course table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
                 $rs->Close();
             }

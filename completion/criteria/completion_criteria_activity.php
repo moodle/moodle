@@ -155,8 +155,8 @@ class completion_criteria_activity extends completion_criteria {
 
         $data = $info->get_data($cm, false, $completion->userid);
 
-        // If the activity is complete
-        if (in_array($data->completionstate, array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL))) {
+        // If the activity is complete.
+        if (in_array($data->completionstate, [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS])) {
             if ($mark) {
                 $completion->mark_complete();
             }
@@ -260,7 +260,7 @@ class completion_criteria_activity extends completion_criteria {
      * @param array $attributes html attributes
      * @return pix_icon
      */
-    public function get_icon($alt, array $attributes = null) {
+    public function get_icon($alt, ?array $attributes = null) {
         return new pix_icon('monologo', $alt, "mod_{$this->module}", $attributes);
     }
 }

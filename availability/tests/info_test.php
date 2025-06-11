@@ -23,16 +23,17 @@ namespace core_availability;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class info_test extends \advanced_testcase {
+final class info_test extends \advanced_testcase {
     public function setUp(): void {
         // Load the mock condition so that it can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');
+        parent::setUp();
     }
 
     /**
      * Tests the info_module class (is_available, get_full_information).
      */
-    public function test_info_module() {
+    public function test_info_module(): void {
         global $DB, $CFG;
 
         // Create a course and pages.
@@ -91,7 +92,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the info_section class (is_available, get_full_information).
      */
-    public function test_info_section() {
+    public function test_info_section(): void {
         global $DB;
 
         // Create a course.
@@ -145,7 +146,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the is_user_visible() static function in info_module.
      */
-    public function test_is_user_visible() {
+    public function test_is_user_visible(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/course/lib.php');
         $this->resetAfterTest();
@@ -243,7 +244,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the convert_legacy_fields function used in restore.
      */
-    public function test_convert_legacy_fields() {
+    public function test_convert_legacy_fields(): void {
         // Check with no availability conditions first.
         $rec = (object)array('availablefrom' => 0, 'availableuntil' => 0,
                 'groupingid' => 7, 'showavailability' => 1);
@@ -310,7 +311,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the add_legacy_availability_condition function used in restore.
      */
-    public function test_add_legacy_availability_condition() {
+    public function test_add_legacy_availability_condition(): void {
         // Completion condition tests.
         $rec = (object)array('sourcecmid' => 7, 'requiredcompletion' => 1);
         // No previous availability, show = true.
@@ -354,7 +355,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the add_legacy_availability_field_condition function used in restore.
      */
-    public function test_add_legacy_availability_field_condition() {
+    public function test_add_legacy_availability_field_condition(): void {
         // User field, normal operator.
         $rec = (object)array('userfield' => 'email', 'shortname' => null,
                 'operator' => 'contains', 'value' => '@');
@@ -383,7 +384,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the filter_user_list() and get_user_list_sql() functions.
      */
-    public function test_filter_user_list() {
+    public function test_filter_user_list(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/course/lib.php');
         $this->resetAfterTest();
@@ -503,7 +504,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the info_module class when involved in a recursive call to $cm->name.
      */
-    public function test_info_recursive_name_call() {
+    public function test_info_recursive_name_call(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -533,7 +534,7 @@ class info_test extends \advanced_testcase {
      * Test for the is_available_for_all() method of the info base class.
      * @covers \core_availability\info_module::is_available_for_all
      */
-    public function test_is_available_for_all() {
+    public function test_is_available_for_all(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
         $CFG->enableavailability = 0;
@@ -557,5 +558,63 @@ class info_test extends \advanced_testcase {
         // This time, we expect it to return false, because of the access restriction.
         $CFG->enableavailability = 1;
         $this->assertFalse($info->is_available_for_all());
+    }
+
+    /**
+     * Test update_display_mode function.
+     *
+     * @covers \core\plugininfo\availability::update_display_mode
+     * @dataProvider update_display_mode_provider
+     *
+     * @param string $plugin The plugin name.
+     * @param string $expected The expected data.
+     */
+    public function test_update_display_mode(string $plugin, string $expected): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Get default value for default display mode.
+        $availabilityvalue = $DB->get_field('config_plugins', 'value',
+            ['name' => 'defaultdisplaymode', 'plugin' => "availability_$plugin"]);
+        $updatedisplaymode = \core\plugininfo\availability::update_display_mode($plugin, true);
+
+        // The default value is not inserted into the table.
+        // Or the display is updated but the display mode is the same value as the default.
+        $this->assertFalse($availabilityvalue);
+        $this->assertFalse($updatedisplaymode);
+
+        // Update display mode for plugins.
+        $updatedisplaymode = \core\plugininfo\availability::update_display_mode($plugin, false);
+
+        // The function should return true because the display mode value has changed.
+        $this->assertTrue($updatedisplaymode);
+
+        // Get the updated value for the default display mode.
+        $availabilityvalue = $DB->get_field('config_plugins', 'value',
+            ['name' => 'defaultdisplaymode', 'plugin' => "availability_$plugin"]);
+        $this->assertEquals($expected, $availabilityvalue);
+    }
+
+    /**
+     * Data provider for test_update_display_mode().
+     *
+     * @return array
+     */
+    public static function update_display_mode_provider(): array {
+        return [
+            'Update display mode for completion' => [
+                'completion',
+                '1',
+            ],
+            'Update display mode for grade' => [
+                'grade',
+                '1',
+            ],
+            'Update display mode for group' => [
+                'group',
+                '1',
+            ],
+        ];
     }
 }

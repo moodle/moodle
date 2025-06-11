@@ -41,12 +41,13 @@ class grouping_form extends moodleform {
     /**
      * Form definition
      */
-    function definition () {
+    function definition() {
         global $USER, $CFG, $COURSE;
         $coursecontext = context_course::instance($COURSE->id);
 
         $mform =& $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
+        $grouping = $this->_customdata['grouping'];
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -63,6 +64,10 @@ class grouping_form extends moodleform {
 
         $mform->addElement('editor', 'description_editor', get_string('groupingdescription', 'group'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
+
+        $handler = \core_group\customfield\grouping_handler::create();
+        $handler->instance_form_definition($mform, empty($grouping->id) ? 0 : $grouping->id);
+        $handler->instance_form_before_set_data($grouping);
 
         $mform->addElement('hidden','id');
         $mform->setType('id', PARAM_INT);
@@ -109,7 +114,18 @@ class grouping_form extends moodleform {
             $errors['idnumber']= get_string('idnumbertaken');
         }
 
+        $handler = \core_group\customfield\grouping_handler::create();
+        $errors = array_merge($errors, $handler->instance_form_validation($data, $files));
+
         return $errors;
     }
 
+    /**
+     *  Apply a logic after data is set.
+     */
+    public function definition_after_data() {
+        $groupid = $this->_form->getElementValue('id');
+        $handler = \core_group\customfield\grouping_handler::create();
+        $handler->instance_form_definition_after_data($this->_form, empty($groupid) ? 0 : $groupid);
+    }
 }

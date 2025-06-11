@@ -59,7 +59,11 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         $texexample = '$$\pi$$';
         // Format a string with the active filter set.
         // If it is modified - we assume that some sort of text filter is working in this context.
-        $result = format_text($texexample, true, $options);
+        $formatoptions = [
+            'context' => $context,
+        ];
+
+        $result = format_text($texexample, true, $formatoptions);
         $texfilteractive = ($texexample !== $result);
 
         if (isset($options['context'])) {

@@ -20,6 +20,7 @@ namespace core_reportbuilder;
 
 use context;
 use context_system;
+use core_reportbuilder\exception\report_access_exception;
 use core_reportbuilder\local\helpers\audience;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
@@ -61,9 +62,10 @@ class permission {
         }
 
         return !empty($CFG->enablecustomreports) && has_any_capability([
-            'moodle/reportbuilder:editall',
             'moodle/reportbuilder:edit',
+            'moodle/reportbuilder:editall',
             'moodle/reportbuilder:view',
+            'moodle/reportbuilder:viewall',
         ], $context, $userid);
     }
 
@@ -90,6 +92,10 @@ class permission {
     public static function can_view_report(report $report, ?int $userid = null): bool {
         if (!static::can_view_reports_list($userid, $report->get_context())) {
             return false;
+        }
+
+        if (has_capability('moodle/reportbuilder:viewall', $report->get_context(), $userid)) {
+            return true;
         }
 
         if (self::can_edit_report($report, $userid)) {

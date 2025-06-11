@@ -14,22 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Task to get the latest content types from the official H5P repository.
- *
- * @package    core
- * @copyright  2019 Victor Deniz <victor@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core\task;
 
 use core_h5p\factory;
-
-defined('MOODLE_INTERNAL') || die();
+use invalid_response_exception;
 
 /**
  * A task to get the latest content types from the official H5P repository.
  *
+ * @package    core
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,6 +50,8 @@ class h5p_get_content_types_task extends scheduled_task {
 
     /**
      * Execute the task.
+     *
+     * @throws invalid_response_exception If request to get the latest content types fails (usually due to a transient error)
      */
     public function execute() {
         // MDL-68579, avoid execute the task through behat tests.
@@ -69,7 +64,7 @@ class h5p_get_content_types_task extends scheduled_task {
         $result = $core->fetch_latest_content_types();
 
         if (!empty($result->error)) {
-            mtrace($result->error);
+            throw new invalid_response_exception($result->error);
         } else {
             $numtypesinstalled = count($result->typesinstalled);
             mtrace("{$numtypesinstalled} new content types installed");

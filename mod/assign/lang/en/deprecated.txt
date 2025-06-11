@@ -1,4 +1,10 @@
-allowsubmissionsfromdatesummary,mod_assign
-allowsubmissionsanddescriptionfromdatesummary,mod_assign
-relativedatessubmissionduedateafter,mod_assign
-relativedatessubmissionduedatebefore,mod_assign
+attemptreopenmethod_none,mod_assign
+groupoverridesdeleted,mod_assign
+useroverridesdeleted,mod_assign
+choosegradingaction,mod_assign
+updategrade,mod_assign
+viewgrader,mod_assign
+downloadasfolders_help,mod_assign
+editaction,mod_assign
+saveallquickgradingchanges,mod_assign
+gradingoptions,mod_assign

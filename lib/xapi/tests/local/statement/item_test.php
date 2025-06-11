@@ -37,12 +37,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_test extends advanced_testcase {
+final class item_test extends advanced_testcase {
 
     /**
      * Test item creation.
      */
-    public function test_create() {
+    public function test_create(): void {
 
         // This is a generic item so check that it can create and item and json encode later.
         $data = (object) [

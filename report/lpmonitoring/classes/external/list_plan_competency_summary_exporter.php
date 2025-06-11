@@ -44,22 +44,22 @@ class list_plan_competency_summary_exporter extends exporter {
      * @return array other properties
      */
     public static function define_other_properties() {
-        return array(
-            'competencies_list' => array(
+        return [
+            'competencies_list' => [
                 'type' => competency_summary_evaluations_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'scale' => array(
+                'multiple' => true,
+            ],
+            'scale' => [
                 'type' => scale_competency_item_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'scaleid' => array(
-                'type' => PARAM_INT
-            ),
-            'scalename' => array(
-                'type' => PARAM_TEXT
-            )
-        );
+                'multiple' => true,
+            ],
+            'scaleid' => [
+                'type' => PARAM_INT,
+            ],
+            'scalename' => [
+                'type' => PARAM_TEXT,
+            ],
+        ];
     }
 
     /**
@@ -75,9 +75,11 @@ class list_plan_competency_summary_exporter extends exporter {
      */
     protected static function define_related() {
         // We cache the plan so it does not need to be retrieved every time.
-        return array('plan' => 'core_competency\\plan',
-                    'scalevalues' => '\\stdClass[]',
-                    'scale' => 'grade_scale');
+        return [
+            'plan' => 'core_competency\\plan',
+            'scalevalues' => '\\stdClass[]',
+            'scale' => 'grade_scale',
+        ];
     }
 
     /**
@@ -92,17 +94,20 @@ class list_plan_competency_summary_exporter extends exporter {
         $scale = $this->related['scale'];
         $scalevalues = $this->related['scalevalues'];
 
-        $result = array();
+        $result = [];
         $result['scaleid'] = $scale->id;
         $result['scalename'] = $scale->name;
 
         $relatedinfo = new \stdClass();
         foreach ($scalevalues as $scalevalue) {
-            $scalecompetencyitemexporter = new scale_competency_item_exporter($scalevalue, array('courses' => array(),
-                    'relatedinfo' => $relatedinfo, 'cms' => array()));
+            $scalecompetencyitemexporter = new scale_competency_item_exporter($scalevalue, [
+                'courses' => [],
+                'relatedinfo' => $relatedinfo,
+                'cms' => [],
+            ]);
             $result['scale'][] = $scalecompetencyitemexporter->export($output);
         }
-        $result['competencies_list'] = array();
+        $result['competencies_list'] = [];
         $helper = new \core_competency\external\performance_helper();
         $parents = [];
         foreach ($resultcompetencies as $key => $r) {
@@ -122,7 +127,7 @@ class list_plan_competency_summary_exporter extends exporter {
             }
 
             $data = new \stdClass();
-            $data->allcourses = array();
+            $data->allcourses = [];
             $data->competencydetailinfos = $r;
 
             $data->isassessable = (isset($r->isassessable) && $r->isassessable) ? $r->isassessable : false;
@@ -134,8 +139,14 @@ class list_plan_competency_summary_exporter extends exporter {
             if (empty($r->isparent)) {
                 if (!empty($r->competency->firstlevelparentid)) {
                     if (empty($parents[$r->competency->firstlevelparentid])) {
-                        $parents[$r->competency->firstlevelparentid] = ['total' => [], 'cm' => [], 'course' => [],
-                            'total_self' => [], 'cm_self' => [], 'course_self' => []];
+                        $parents[$r->competency->firstlevelparentid] = [
+                            'total' => [],
+                            'cm' => [],
+                            'course' => [],
+                            'total_self' => [],
+                            'cm_self' => [],
+                            'course_self' => [],
+                        ];
                     }
 
                     foreach ($exportedcompetency->evaluationslist_total as $key => $value) {
@@ -163,8 +174,14 @@ class list_plan_competency_summary_exporter extends exporter {
             } else {
                 // If this is a parent.
                 if (empty($parents[$r->competency->id])) {
-                    $parents[$r->competency->id] = ['total' => [], 'cm' => [], 'course' => [],
-                        'total_self' => [], 'cm_self' => [], 'course_self' => []];
+                    $parents[$r->competency->id] = [
+                        'total' => [],
+                        'cm' => [],
+                        'course' => [],
+                        'total_self' => [],
+                        'cm_self' => [],
+                        'course_self' => [],
+                    ];
                 }
                 $isgoodscale = ($scalecmp->id == $scale->id);
                 foreach ($exportedcompetency->evaluationslist_total as $key => $value) {

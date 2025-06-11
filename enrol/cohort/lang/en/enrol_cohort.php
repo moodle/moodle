@@ -34,3 +34,6 @@ $string['pluginname_desc'] = 'Cohort enrolment plugin synchronises cohort member
 $string['status'] = 'Active';
 $string['creategroup'] = 'Create new group';
 $string['privacy:metadata:core_group'] = 'Enrol cohort plugin can create a new group or use an existing group to add all the members of the cohort.';
+
+// Deprecated since Moodle 4.5.
+$string['plugindisabled'] = 'Cohort sync plugin is disabled';

@@ -27,8 +27,6 @@ require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_wiris_base extends behat_base {
-
-
     /**
      * Transforms a string to a number.
      *

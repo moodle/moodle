@@ -16,12 +16,12 @@
 
 /**
  * This file contains the restore code for the feedback_file plugin.
+ *
  * @package   assignfeedback_onenote
  * @author Vinayak (Vin) Bhalerao (v-vibhal@microsoft.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  Microsoft, Inc. (based on files by NetSpot {@link http://www.netspot.com.au})
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Restore subplugin class.
@@ -35,11 +35,12 @@ class restore_assignfeedback_onenote_subplugin extends restore_subplugin {
 
     /**
      * Returns the paths to be handled by the subplugin at assignment level
+     *
      * @return array
      */
     protected function define_grade_subplugin_structure() {
 
-        $paths = array();
+        $paths = [];
 
         $elename = $this->get_namefor('grade');
         // We used get_recommended_name() so this works.
@@ -51,12 +52,13 @@ class restore_assignfeedback_onenote_subplugin extends restore_subplugin {
 
     /**
      * Processes one feedback_onenote element
+     *
      * @param mixed $data
      */
     public function process_assignfeedback_onenote_grade($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $data->assignment = $this->get_new_parentid('assign');
         $oldgradeid = $data->grade;
         // The mapping is set in the restore for the core assign activity
@@ -67,5 +69,4 @@ class restore_assignfeedback_onenote_subplugin extends restore_subplugin {
 
         $this->add_related_files('assignfeedback_onenote', 'feedback_files', 'grade', null, $oldgradeid);
     }
-
 }

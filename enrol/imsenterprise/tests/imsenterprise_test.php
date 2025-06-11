@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/enrol/imsenterprise/lib.php');
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class imsenterprise_test extends \advanced_testcase {
+final class imsenterprise_test extends \advanced_testcase {
 
     /**
      * @var $imsplugin enrol_imsenterprise_plugin IMS plugin instance.
@@ -44,6 +44,7 @@ class imsenterprise_test extends \advanced_testcase {
      * Setup required for all tests.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->imsplugin = enrol_get_plugin('imsenterprise');
         $this->set_test_config();
@@ -52,7 +53,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * With an empty IMS enterprise file
      */
-    public function test_emptyfile() {
+    public function test_emptyfile(): void {
         global $DB;
 
         $prevncourses = $DB->count_records('course');
@@ -68,7 +69,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Existing users are not created again
      */
-    public function test_users_existing() {
+    public function test_users_existing(): void {
         global $DB;
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -86,7 +87,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Add new users
      */
-    public function test_users_add() {
+    public function test_users_add(): void {
         global $DB;
 
         $prevnusers = $DB->count_records('user');
@@ -108,7 +109,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Add new users and set an auth type
      */
-    public function test_users_add_with_auth() {
+    public function test_users_add_with_auth(): void {
         global $DB;
 
         $prevnusers = $DB->count_records('user');
@@ -138,7 +139,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Update user
      */
-    public function test_user_update() {
+    public function test_user_update(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user(array('idnumber' => 'test-update-user'));
@@ -159,7 +160,7 @@ class imsenterprise_test extends \advanced_testcase {
         $this->assertEquals($imsuser->lastname, $dbuser->lastname);
     }
 
-    public function test_user_update_disabled() {
+    public function test_user_update_disabled(): void {
         global $DB;
 
         $this->imsplugin->set_config('imsupdateusers', false);
@@ -187,7 +188,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Delete user
      */
-    public function test_user_delete() {
+    public function test_user_delete(): void {
         global $DB;
 
         $this->imsplugin->set_config('imsdeleteusers', true);
@@ -208,7 +209,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Delete user disabled
      */
-    public function test_user_delete_disabled() {
+    public function test_user_delete_disabled(): void {
         global $DB;
 
         $this->imsplugin->set_config('imsdeleteusers', false);
@@ -229,7 +230,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Existing courses are not created again
      */
-    public function test_courses_existing() {
+    public function test_courses_existing(): void {
         global $DB;
 
         $course1 = $this->getDataGenerator()->create_course(array('idnumber' => 'id1'));
@@ -253,7 +254,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Add new courses
      */
-    public function test_courses_add() {
+    public function test_courses_add(): void {
         global $DB;
 
         $prevncourses = $DB->count_records('course');
@@ -283,7 +284,7 @@ class imsenterprise_test extends \advanced_testcase {
      * Verify that courses are not created when createnewcourses
      * option is diabled.
      */
-    public function test_courses_add_createnewcourses_disabled() {
+    public function test_courses_add_createnewcourses_disabled(): void {
         global $DB;
 
         $this->imsplugin->set_config('createnewcourses', false);
@@ -318,7 +319,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Test adding a course with no idnumber.
      */
-    public function test_courses_no_idnumber() {
+    public function test_courses_no_idnumber(): void {
         global $DB;
 
         $prevncourses = $DB->count_records('course');
@@ -339,7 +340,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Add new course with the truncateidnumber setting.
      */
-    public function test_courses_add_truncate_idnumber() {
+    public function test_courses_add_truncate_idnumber(): void {
         global $DB;
 
         $truncatelength = 4;
@@ -367,7 +368,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Add new course without a category.
      */
-    public function test_course_add_default_category() {
+    public function test_course_add_default_category(): void {
         global $DB;
 
         $this->imsplugin->set_config('createnewcategories', false);
@@ -393,7 +394,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Course attributes mapping to IMS enterprise group description tags
      */
-    public function test_courses_attrmapping() {
+    public function test_courses_attrmapping(): void {
         global $DB;
 
         // Setting a all = coursecode (idnumber) mapping.
@@ -465,7 +466,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Course updates
      */
-    public function test_course_update() {
+    public function test_course_update(): void {
         global $DB;
 
         $course4 = new \stdClass();
@@ -497,7 +498,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Course delete. Make it hidden.
      */
-    public function test_course_delete() {
+    public function test_course_delete(): void {
         global $DB;
 
         $course8 = new \stdClass();
@@ -528,7 +529,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Nested categories with name during course creation
      */
-    public function test_nested_categories() {
+    public function test_nested_categories(): void {
         global $DB;
 
         $this->imsplugin->set_config('nestedcategories', true);
@@ -582,7 +583,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Test that duplicate nested categories with name are not created
      */
-    public function test_nested_categories_for_dups() {
+    public function test_nested_categories_for_dups(): void {
         global $DB;
 
         $this->imsplugin->set_config('nestedcategories', true);
@@ -622,7 +623,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Nested categories with idnumber during course creation
      */
-    public function test_nested_categories_idnumber() {
+    public function test_nested_categories_idnumber(): void {
         global $DB;
 
         $this->imsplugin->set_config('nestedcategories', true);
@@ -692,7 +693,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Test that duplicate nested categories with idnumber are not created
      */
-    public function test_nested_categories_idnumber_for_dups() {
+    public function test_nested_categories_idnumber_for_dups(): void {
         global $DB;
 
         $this->imsplugin->set_config('nestedcategories', true);
@@ -741,7 +742,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Test that nested categories with idnumber is not created if name is missing
      */
-    public function test_categories_idnumber_missing_name() {
+    public function test_categories_idnumber_missing_name(): void {
         global $DB, $CFG;
 
         $this->imsplugin->set_config('nestedcategories', true);
@@ -785,7 +786,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Create category with name (nested categories not activated).
      */
-    public function test_create_category_name_no_nested() {
+    public function test_create_category_name_no_nested(): void {
         global $DB;
 
         $course = new \stdClass();
@@ -812,7 +813,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Find a category with name (nested categories not activated).
      */
-    public function test_find_category_name_no_nested() {
+    public function test_find_category_name_no_nested(): void {
         global $DB;
 
         $cattop = $this->getDataGenerator()->create_category(array('name' => 'CAT-TOP'));
@@ -845,7 +846,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Create category with idnumber (nested categories not activated).
      */
-    public function test_create_category_idnumber_no_nested() {
+    public function test_create_category_idnumber_no_nested(): void {
         global $DB;
 
         $this->imsplugin->set_config('categoryidnumber', true);
@@ -877,7 +878,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Find a category with idnumber (nested categories not activated).
      */
-    public function test_find_category_idnumber_no_nested() {
+    public function test_find_category_idnumber_no_nested(): void {
         global $DB;
 
         $this->imsplugin->set_config('categoryidnumber', true);
@@ -919,7 +920,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * Test that category with idnumber is not created if name is missing (nested categories not activated).
      */
-    public function test_category_idnumber_missing_name_no_nested() {
+    public function test_category_idnumber_missing_name_no_nested(): void {
         global $DB;
 
         $this->imsplugin->set_config('categoryidnumber', true);
@@ -1084,7 +1085,7 @@ class imsenterprise_test extends \advanced_testcase {
     /**
      * IMS Enterprise enrolment task test.
      */
-    public function test_imsenterprise_cron_task() {
+    public function test_imsenterprise_cron_task(): void {
         global $DB;
         $prevnusers = $DB->count_records('user');
 

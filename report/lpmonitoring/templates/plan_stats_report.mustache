@@ -137,36 +137,31 @@
     <div class="report-stats-competencies displayratings">
         <div class="space-block-stats"><span></div>
         <div>
-            <div class="switcher-container">
-                <label class="switch">
-                <input type="checkbox"
-                       data-displayrating-plan="{{plan.id}}"
-                        {{#plan.displayrating}}checked{{/plan.displayrating}} />
-                <div class="slider round">
-                    <span class="on">{{#str}}yes{{/str}}{{displayrating}}</span>
-                    <span class="off">{{#str}}no{{/str}}{{displayrating}}</span>
-                </div>
-                </label>
-            </div>
             <div class="stats-display-rating">
                 <div class="resetdisplayrating {{^plan.canresetdisplayrating}}hidden{{/plan.canresetdisplayrating}}">
                     <a href="#" title="{{#str}}resetoneplandisplayrating, tool_lp{{/str}}" data-canresetdisplayrating-plan="{{plan.id}}">{{#str}}reset, core{{/str}}</a>
-                    <button class="icon fa fa-question-circle text-info fa-fw button-dispayratinghelp"
+                    <button class="fa fa-question-circle text-info fa-fw button-displayratinghelp"
                             data-container="body"
                             data-trigger="focus"
                             data-toggle="popover"
                             data-placement="left"
                             data-content="{{#str}}resetoneplandisplayrating, tool_lp{{/str}}">
                     </button>
-                </div> 
-                {{#str}}ratingsdisplay, tool_lp{{/str}}
+                </div>
+            </div>
+            <div class="switcher-container custom-control custom-switch">                
+                <input class="custom-control-input" id="customSwitch1" type="checkbox" role="switch"
+                    data-displayrating-plan="{{plan.id}}"
+                    {{#plan.displayrating}}checked{{/plan.displayrating}} />
+                <label class="switch custom-control-label" for="customSwitch1">
+                    {{#str}}ratingsdisplay, tool_lp{{/str}}
+                </label>
             </div>
         </div>
     </div>
     {{/plan.isdisplayratingenabled}}
     {{/plan.isactive}}
 {{/plan.cangrade}}
-
 
 {{#js}}
     require(['report_lpmonitoring/tags_popup'], function(TagsPopup) {

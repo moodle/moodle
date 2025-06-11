@@ -23,7 +23,7 @@ namespace tool_dataprivacy;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filtered_userlist_test extends \advanced_testcase {
+final class filtered_userlist_test extends \advanced_testcase {
     /**
      * Test the apply_expired_contexts_filters function with arange of options.
      *
@@ -33,7 +33,7 @@ class filtered_userlist_test extends \advanced_testcase {
      * @param   array   $unexpired The set of userids considered as unexpired.
      * @param   array   $expected The expected values.
      */
-    public function test_apply_expired_contexts_filters(array $initial, array $expired, array $unexpired, array $expected) {
+    public function test_apply_expired_contexts_filters(array $initial, array $expired, array $unexpired, array $expected): void {
         $userlist = $this->getMockBuilder(\tool_dataprivacy\filtered_userlist::class)
             ->disableOriginalConstructor()
             ->onlyMethods([])
@@ -41,7 +41,6 @@ class filtered_userlist_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_dataprivacy\filtered_userlist::class);
         $rcm = $rc->getMethod('set_userids');
-        $rcm->setAccessible(true);
         $rcm->invoke($userlist, $initial);
 
 
@@ -58,7 +57,7 @@ class filtered_userlist_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function apply_expired_contexts_filters_provider() : array {
+    public static function apply_expired_contexts_filters_provider(): array {
         return [
             // Entire list should be preserved.
             'No overrides' => [

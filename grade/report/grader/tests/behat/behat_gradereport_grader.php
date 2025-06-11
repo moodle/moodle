@@ -37,139 +37,6 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_gradereport_grader extends behat_base {
-    /**
-     * Click a given user grade cell.
-     *
-     * @Given /^I click on student "([^"]*)" for grade item "([^"]*)"$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_click_on_student_and_grade_item($student, $itemname) {
-        $xpath = $this->get_student_and_grade_cell_selector($student, $itemname);
-
-        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
-    }
-
-    /**
-     * Remove focus for a grade value cell.
-     *
-     * @Given /^I click away from student "([^"]*)" and grade item "([^"]*)" value$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_click_away_from_student_and_grade_value($student, $itemname) {
-        $xpath = $this->get_student_and_grade_value_selector($student, $itemname);
-
-        $this->execute('behat_general::i_take_focus_off_field', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
-     * Remove focus for a grade value cell.
-     *
-     * @Given /^I click away from student "([^"]*)" and grade item "([^"]*)" feedback$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_click_away_from_student_and_grade_feedback($student, $itemname) {
-        $xpath = $this->get_student_and_grade_feedback_selector($student, $itemname);
-
-        $this->execute('behat_general::i_take_focus_off_field', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
-     * Checks grade values with or without a edit box.
-     *
-     * @Then /^the grade for "([^"]*)" in grade item "([^"]*)" should match "([^"]*)"$/
-     * @throws Exception
-     * @throws ElementNotFoundException
-     * @param string $student
-     * @param string $itemname
-     * @param string $value
-     */
-    public function the_grade_should_match($student, $itemname, $value) {
-        $xpath = $this->get_student_and_grade_value_selector($student, $itemname);
-
-        $gradefield = $this->getSession()->getPage()->find('xpath', $xpath);
-        if (!empty($gradefield)) {
-            // Get the field.
-            $fieldtype = behat_field_manager::guess_field_type($gradefield, $this->getSession());
-            if (!$fieldtype) {
-                throw new Exception('Could not get field type for grade field "' . $itemname . '"');
-            }
-            $field = behat_field_manager::get_field_instance($fieldtype, $gradefield, $this->getSession());
-            if (!$field->matches($value)) {
-                $fieldvalue = $field->get_value();
-                throw new ExpectationException(
-                    'The "' . $student . '" and "' . $itemname . '" grade is "' . $fieldvalue . '", "' . $value . '" expected' ,
-                    $this->getSession()
-                );
-            }
-        } else {
-            // If there isn't a form field, just search for contents.
-            $valueliteral = behat_context_helper::escape($value);
-
-            $xpath = $this->get_student_and_grade_cell_selector($student, $itemname);
-            $xpath .= "[contains(normalize-space(.)," . $valueliteral . ")]";
-
-            $node = $this->getSession()->getDriver()->find($xpath);
-            if (empty($node)) {
-                $locatorexceptionmsg = 'Cell for "' . $student . '" and "' . $itemname . '" with value "' . $value . '"';
-                throw new ElementNotFoundException($this->getSession(), $locatorexceptionmsg, null, $xpath);
-            }
-        }
-    }
-
-    /**
-     * Look for a grade editing field.
-     *
-     * @Then /^I should see a grade field for "([^"]*)" and grade item "([^"]*)"$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_should_see_grade_field($student, $itemname) {
-        $xpath = $this->get_student_and_grade_value_selector($student, $itemname);
-
-        $this->execute('behat_general::should_be_visible', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
-     * Look for a feedback editing field.
-     *
-     * @Then /^I should see a feedback field for "([^"]*)" and grade item "([^"]*)"$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_should_see_feedback_field($student, $itemname) {
-        $xpath = $this->get_student_and_grade_feedback_selector($student, $itemname);
-
-        $this->execute('behat_general::should_be_visible', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
-     * Look for a lack of the grade editing field.
-     *
-     * @Then /^I should not see a grade field for "([^"]*)" and grade item "([^"]*)"$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_should_not_see_grade_field($student, $itemname) {
-        $xpath = $this->get_student_and_grade_value_selector($student, $itemname);
-
-        $this->execute('behat_general::should_not_exist', array($this->escape($xpath), 'xpath_element'));
-    }
-
-    /**
-     * Look for a lack of the feedback editing field.
-     *
-     * @Then /^I should not see a feedback field for "([^"]*)" and grade item "([^"]*)"$/
-     * @param string $student
-     * @param string $itemname
-     */
-    public function i_should_not_see_feedback_field($student, $itemname) {
-        $xpath = $this->get_student_and_grade_feedback_selector($student, $itemname);
-
-        $this->execute('behat_general::should_not_exist', array($this->escape($xpath), 'xpath_element'));
-    }
 
     /**
      * Gets the user id from its name.
@@ -191,12 +58,18 @@ class behat_gradereport_grader extends behat_base {
     /**
      * Gets the grade item id from its name.
      *
+     * @deprecated since 4.2
+     * @todo MDL-77107 This will be deleted in Moodle 4.6.
      * @throws Exception
      * @param string $itemname
      * @return int
      */
     protected function get_grade_item_id($itemname) {
+
         global $DB;
+
+        debugging('behat_gradereport_grader::get_grade_item_id() is deprecated, please use' .
+            ' behat_grades::get_grade_item_id() instead.', DEBUG_DEVELOPER);
 
         if ($id = $DB->get_field('grade_items', 'id', array('itemname' => $itemname))) {
             return $id;
@@ -221,42 +94,54 @@ class behat_gradereport_grader extends behat_base {
     }
 
     /**
-     * Gets unique xpath selector for a student/grade item combo.
+     * Clicks on given user menu.
      *
-     * @throws Exception
+     * @Given /^I click on user menu "([^"]*)"$/
      * @param string $student
-     * @param string $itemname
-     * @return string
      */
-    protected function get_student_and_grade_cell_selector($student, $itemname) {
-        $itemid = 'u' . $this->get_user_id($student) . 'i' . $this->get_grade_item_id($itemname);
-        return "//table[@id='user-grades']//td[@id='" . $itemid . "']";
+    public function i_click_on_user_menu(string $student) {
+
+        $xpath = $this->get_user_selector($student);
+
+        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
     }
 
     /**
-     * Gets xpath for a particular student/grade item grade value cell.
+     * Gets unique xpath selector for a user.
      *
      * @throws Exception
      * @param string $student
-     * @param string $itemname
      * @return string
      */
-    protected function get_student_and_grade_value_selector($student, $itemname) {
-        $cell = $this->get_student_and_grade_cell_selector($student, $itemname);
-        return $cell . "//*[contains(@id, 'grade_') or @name='ajaxgrade']";
+    protected function get_user_selector(string $student): string {
+
+        $userid = $this->get_user_id($student);
+        return "//table[@id='user-grades']//*[@data-type='user'][@data-id='" . $userid . "']";
     }
 
     /**
-     * Gets xpath for a particular student/grade item feedback cell.
+     * Clicks on given user profile field menu.
      *
-     * @throws Exception
-     * @param string $student
-     * @param string $itemname
-     * @return string
+     * @Given /^I click on user profile field menu "([^"]*)"$/
+     * @param string $field
      */
-    protected function get_student_and_grade_feedback_selector($student, $itemname) {
-        $cell = $this->get_student_and_grade_cell_selector($student, $itemname);
-        return $cell . "//input[contains(@id, 'feedback_') or @name='ajaxfeedback']";
+    public function i_click_on_user_profile_field_menu(string $field) {
+
+        $xpath = "//table[@id='user-grades']//*[@data-type='" . mb_strtolower($field) . "']";
+        $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
     }
 
+    /**
+     * Return the list of partial named selectors.
+     *
+     * @return array
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector(
+                'collapse search',
+                [".//*[contains(concat(' ', @class, ' '), ' collapsecolumndropdown ')]"]
+            ),
+        ];
+    }
 }

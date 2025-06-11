@@ -45,7 +45,7 @@ class favourite_repository implements favourite_repository_interface {
      * @param \stdClass $record the record we wish to hydrate.
      * @return favourite the favourite record.
      */
-    protected function get_favourite_from_record(\stdClass $record) : favourite {
+    protected function get_favourite_from_record(\stdClass $record): favourite {
         $favourite = new favourite(
             $record->component,
             $record->itemtype,
@@ -95,7 +95,8 @@ class favourite_repository implements favourite_repository_interface {
             'ordering' => false,
             'timecreated' => false,
             'timemodified' => false,
-            'id' => false
+            'id' => false,
+            'uniquekey' => false
         ];
 
         $requiredfields = array_filter($allowedfields, function($field) {
@@ -120,7 +121,7 @@ class favourite_repository implements favourite_repository_interface {
      * @throws \dml_exception if any database errors are encountered.
      * @throws \moodle_exception if the favourite has missing or invalid properties.
      */
-    public function add(favourite $favourite) : favourite {
+    public function add(favourite $favourite): favourite {
         global $DB;
         $this->validate($favourite);
         $favourite = (array)$favourite;
@@ -139,7 +140,7 @@ class favourite_repository implements favourite_repository_interface {
      * @throws \dml_exception if any database errors are encountered.
      * @throws \moodle_exception if any of the favourites have missing or invalid properties.
      */
-    public function add_all(array $items) : array {
+    public function add_all(array $items): array {
         global $DB;
         $time = time();
         foreach ($items as $item) {
@@ -161,7 +162,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return favourite the favourite.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function find(int $id) : favourite {
+    public function find(int $id): favourite {
         global $DB;
         $record = $DB->get_record($this->favouritetable, ['id' => $id], '*', MUST_EXIST);
         return $this->get_favourite_from_record($record);
@@ -175,7 +176,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return array the list of all favourites stored within this repository.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function find_all(int $limitfrom = 0, int $limitnum = 0) : array {
+    public function find_all(int $limitfrom = 0, int $limitnum = 0): array {
         global $DB;
         $records = $DB->get_records($this->favouritetable, null, '', '*', $limitfrom, $limitnum);
         return $this->get_list_of_favourites_from_records($records);
@@ -190,7 +191,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return array the list of favourites matching the criteria.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0) : array {
+    public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0): array {
         global $DB;
         $conditions = [];
         $params = [];
@@ -224,7 +225,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return favourite the favourite.
      * @throws \dml_exception if any database errors are encountered or if the record could not be found.
      */
-    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid) : favourite {
+    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid): favourite {
         global $DB;
         // Favourites model: We know that only one favourite can exist based on these properties.
         $record = $DB->get_record($this->favouritetable, [
@@ -244,7 +245,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return bool true if the favourite exists, false otherwise.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function exists(int $id) : bool {
+    public function exists(int $id): bool {
         global $DB;
         return $DB->record_exists($this->favouritetable, ['id' => $id]);
     }
@@ -256,7 +257,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return bool true if the favourite exists, false otherwise.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function exists_by(array $criteria) : bool {
+    public function exists_by(array $criteria): bool {
         global $DB;
         return $DB->record_exists($this->favouritetable, $criteria);
     }
@@ -268,7 +269,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return favourite the updated favourite.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function update(favourite $favourite) : favourite {
+    public function update(favourite $favourite): favourite {
         global $DB;
         $time = time();
         $favourite->timemodified = $time;
@@ -304,7 +305,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return int the total number of items.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function count() : int {
+    public function count(): int {
         global $DB;
         return $DB->count_records($this->favouritetable);
     }
@@ -316,7 +317,7 @@ class favourite_repository implements favourite_repository_interface {
      * @return int the number of favourites matching the criteria.
      * @throws \dml_exception if any database errors are encountered.
      */
-    public function count_by(array $criteria) : int {
+    public function count_by(array $criteria): int {
         global $DB;
         return $DB->count_records($this->favouritetable, $criteria);
     }

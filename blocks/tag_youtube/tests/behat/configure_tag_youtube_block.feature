@@ -1,13 +1,13 @@
 @block @block_tag_youtube
 Feature: Adding and configuring YouTube block
-  In order to have the YouTube block used
-  As a admin
-  I need to add the YouTube block to the tags site page
+    In order to have the YouTube block used
+    As a admin
+    I need to add the YouTube block to the tags site page
 
   Background:
     Given I log in as "admin"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And I click on "Show" "icon" in the "YouTube" "table_row"
+    And I toggle the "Enable YouTube" admin switch "on"
 
   @javascript
   Scenario: Category options are not available (except default) in the block settings if the YouTube API key is not set.
@@ -16,7 +16,7 @@ Feature: Adding and configuring YouTube block
     And I follow "Dashboard"
     And I turn editing mode on
     And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
+      | unaddableblocks |  | theme_boost |
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -38,7 +38,7 @@ Feature: Adding and configuring YouTube block
     And I follow "Dashboard"
     And I turn editing mode on
     And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
+      | unaddableblocks |  | theme_boost |
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Tags" "link" in the "Navigation" "block"

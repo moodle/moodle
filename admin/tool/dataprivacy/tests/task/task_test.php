@@ -16,6 +16,7 @@
 
 namespace tool_dataprivacy\task;
 
+use core\task\task_trait;
 use tool_dataprivacy\api;
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,13 +29,16 @@ require_once(__DIR__ . '/../data_privacy_testcase.php');
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_test extends \data_privacy_testcase {
+final class task_test extends \data_privacy_testcase {
+
+    use task_trait;
 
     /**
      * Test tearDown.
      */
     public function tearDown(): void {
         \core_privacy\local\request\writer::reset();
+        parent::tearDown();
     }
 
     /**
@@ -42,7 +46,7 @@ class task_test extends \data_privacy_testcase {
      * is created when there are not any existing data requests
      * for that particular user.
      */
-    public function test_delete_existing_deleted_users_task_no_previous_requests() {
+    public function test_delete_existing_deleted_users_task_no_previous_requests(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -71,7 +75,7 @@ class task_test extends \data_privacy_testcase {
      * Ensure that a delete data request for pre-existing deleted users
      * is not being created when automatic creation of delete data requests is disabled.
      */
-    public function test_delete_existing_deleted_users_task_automatic_creation_disabled() {
+    public function test_delete_existing_deleted_users_task_automatic_creation_disabled(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -101,7 +105,7 @@ class task_test extends \data_privacy_testcase {
      * is created when there are existing non-delete data requests
      * for that particular user.
      */
-    public function test_delete_existing_deleted_users_task_existing_export_data_requests() {
+    public function test_delete_existing_deleted_users_task_existing_export_data_requests(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -136,7 +140,7 @@ class task_test extends \data_privacy_testcase {
      * is not created when there are existing ongoing delete data requests
      * for that particular user.
      */
-    public function test_delete_existing_deleted_users_task_existing_ongoing_delete_data_requests() {
+    public function test_delete_existing_deleted_users_task_existing_ongoing_delete_data_requests(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -176,7 +180,7 @@ class task_test extends \data_privacy_testcase {
      * is not created when there are existing finished delete data requests
      * for that particular user.
      */
-    public function test_delete_existing_deleted_users_task_existing_finished_delete_data_requests() {
+    public function test_delete_existing_deleted_users_task_existing_finished_delete_data_requests(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -214,18 +218,5 @@ class task_test extends \data_privacy_testcase {
         // The user should only have the existing cancelled delete data request.
         $this->assertCount(1, \tool_dataprivacy\api::get_data_requests($user->id,
                 [api::DATAREQUEST_STATUS_CANCELLED], [api::DATAREQUEST_TYPE_DELETE]));
-    }
-
-    /**
-     * Helper to execute a particular task.
-     *
-     * @param string $task The task.
-     */
-    private function execute_task($task) {
-        // Run the scheduled task.
-        ob_start();
-        $task = \core\task\manager::get_scheduled_task($task);
-        $task->execute();
-        ob_end_clean();
     }
 }

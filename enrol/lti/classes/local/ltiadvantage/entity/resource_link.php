@@ -59,7 +59,7 @@ class resource_link {
      * @throws \coding_exception if the instance is unable to be created.
      */
     private function __construct(string $resourcelinkid, int $deploymentid, int $resourceid, ?int $contextid = null,
-            int $id = null) {
+            ?int $id = null) {
 
         if (empty($resourcelinkid)) {
             throw new \coding_exception('Error: resourcelinkid cannot be an empty string');
@@ -84,7 +84,7 @@ class resource_link {
      * @return resource_link the newly created instance.
      */
     public static function create(string $resourcelinkid, int $deploymentid, int $resourceid, ?int $contextid = null,
-            int $id = null): resource_link {
+            ?int $id = null): resource_link {
 
         return new self($resourcelinkid, $deploymentid, $resourceid, $contextid, $id);
     }

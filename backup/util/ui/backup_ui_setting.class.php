@@ -47,6 +47,11 @@ class base_setting_ui {
      */
     protected $label;
     /**
+     * The optional accessible label for the setting.
+     * @var string
+     */
+    protected string $altlabel = '';
+    /**
      * An array of HTML attributes to apply to this setting
      * @var array
      */
@@ -97,6 +102,20 @@ class base_setting_ui {
      */
     public function get_label() {
         return $this->label;
+    }
+
+    /**
+     * Get the visually hidden label for the UI setting.
+     *
+     * @return string
+     */
+    public function get_visually_hidden_label(): ?string {
+        global $PAGE;
+        if ($this->altlabel === '') {
+            return null;
+        }
+        $renderer = $PAGE->get_renderer('core_backup');
+        return $renderer->sr_text($this->altlabel);
     }
 
     /**
@@ -162,6 +181,20 @@ class base_setting_ui {
     }
 
     /**
+     * Adds a visually hidden label to the UI setting.
+     *
+     * Some backup fields labels have unaccessible labels for screen readers. For example,
+     * all schema activity user data uses '-' as label. This method adds extra information
+     * for screen readers.
+     *
+     * @param string $label The accessible label to be added.
+     * @return void
+     */
+    public function set_visually_hidden_label(string $label): void {
+        $this->altlabel = clean_param($label, PARAM_CLEANHTML);
+    }
+
+    /**
      * Disables the UI for this element
      */
     public function disable() {
@@ -212,7 +245,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @param array $attributes Array of HTML attributes to apply to the element
      * @param array $options Array of options to apply to the setting ui object
      */
-    public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
+    public function __construct(backup_setting $setting, $label = null, ?array $attributes = null, ?array $options = null) {
         parent::__construct($setting);
         // Improve the inputs name by appending the level to the name.
         switch ($setting->get_level()) {
@@ -223,9 +256,11 @@ abstract class backup_setting_ui extends base_setting_ui {
                 $this->name = 'course_'.$setting->get_name();
                 break;
             case backup_setting::SECTION_LEVEL :
+            case backup_setting::SUBSECTION_LEVEL:
                 $this->name = 'section_'.$setting->get_name();
                 break;
             case backup_setting::ACTIVITY_LEVEL :
+            case backup_setting::SUBACTIVITY_LEVEL:
                 $this->name = 'activity_'.$setting->get_name();
                 break;
         }
@@ -249,7 +284,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @param array $options Array of options to apply to the setting ui object
      * @return backup_setting_ui_text|backup_setting_ui_checkbox|backup_setting_ui_select|backup_setting_ui_radio
      */
-    final public static function make(backup_setting $setting, $type, $label, array $attributes = null, array $options = null) {
+    final public static function make(backup_setting $setting, $type, $label, ?array $attributes = null, ?array $options = null) {
         // Base the decision we make on the type that was sent.
         switch ($type) {
             case backup_setting::UI_HTML_CHECKBOX :
@@ -272,7 +307,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @param renderer_base $output
      * @return array
      */
-    abstract public function get_element_properties(base_task $task = null, renderer_base $output = null);
+    abstract public function get_element_properties(?base_task $task = null, ?renderer_base $output = null);
 
     /**
      * Applies config options to a given properties array and then returns it
@@ -292,13 +327,14 @@ abstract class backup_setting_ui extends base_setting_ui {
      *          $task is used to set the setting label
      * @return string
      */
-    public function get_label(base_task $task = null) {
+    public function get_label(?base_task $task = null) {
         // If a task has been provided and the label is not already set meaningfully
         // we will attempt to improve it.
         if (!is_null($task) && $this->label == $this->setting->get_name() && strpos($this->setting->get_name(), '_include') !== false) {
-            if ($this->setting->get_level() == backup_setting::SECTION_LEVEL) {
+            $level = $this->setting->get_level();
+            if ($level == backup_setting::SECTION_LEVEL || $level == backup_setting::SUBSECTION_LEVEL) {
                 $this->label = get_string('includesection', 'backup', $task->get_name());
-            } else if ($this->setting->get_level() == backup_setting::ACTIVITY_LEVEL) {
+            } else if ($level == backup_setting::ACTIVITY_LEVEL || $level == backup_setting::SUBACTIVITY_LEVEL) {
                 $this->label = $task->get_name();
             }
         }
@@ -365,7 +401,7 @@ class backup_setting_ui_text extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
         $label = format_string($this->get_label($task), true, array('context' => $context));
@@ -428,13 +464,17 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, text, attributes);
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         // Name, label, text, attributes.
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
         $label = format_string($this->get_label($task), true, array('context' => $context));
         if (!empty($icon)) {
             $label .= $output->render($icon);
+        }
+        $altlabel = $this->get_visually_hidden_label();
+        if (!empty($altlabel)) {
+            $label = $altlabel . $label;
         }
         return $this->apply_options(array(
             'element' => 'checkbox',
@@ -540,7 +580,7 @@ class backup_setting_ui_radio extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, text, value, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
         $label = format_string($this->get_label($task), true, array('context' => $context));
@@ -618,7 +658,7 @@ class backup_setting_ui_select extends backup_setting_ui {
      * @param renderer_base $output
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         $icon = $this->get_icon();
         $context = context_course::instance($task->get_courseid());
         $label = format_string($this->get_label($task), true, array('context' => $context));
@@ -691,7 +731,7 @@ class backup_setting_ui_dateselector extends backup_setting_ui_text {
      * @param renderer_base $output
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         if (!array_key_exists('optional', $this->attributes)) {
             $this->attributes['optional'] = false;
         }
@@ -730,7 +770,7 @@ class backup_setting_ui_defaultcustom extends backup_setting_ui_text {
      * @param array $attributes Array of HTML attributes to apply to the element
      * @param array $options Array of options to apply to the setting ui object
      */
-    public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
+    public function __construct(backup_setting $setting, $label = null, ?array $attributes = null, ?array $options = null) {
         if (!is_array($attributes)) {
             $attributes = [];
         }
@@ -745,7 +785,7 @@ class backup_setting_ui_defaultcustom extends backup_setting_ui_text {
      * @param renderer_base $output
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+    public function get_element_properties(?base_task $task = null, ?renderer_base $output = null) {
         return ['element' => 'defaultcustom'] + parent::get_element_properties($task, $output);
     }
 

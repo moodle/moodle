@@ -861,8 +861,9 @@ class crawler {
             } while ($walk);
 
             $text = self::clean_html_node_content($e);
+            $text = trim($text);
             if ($verbose > 1) {
-                printf (" - Found link to: %-20s / %-50s => %-50s\n", $text, $e->href, $href);
+                printf (" - Found link to: %-30s -> %s\n", "'$text'", $href);
             }
             $this->link_from_node_to_url($node, $href, $text, $idattr);
         }
@@ -1089,7 +1090,12 @@ class crawler {
     public function scrape($url) {
 
         global $CFG;
-        $cookiefilelocation = $CFG->dataroot . '/tool_crawler_cookies.txt';
+
+        static $cookiefilelocaion = '';
+        if (!$cookiefilelocation) {
+            $cookiefilelocation = make_request_directory() . '/tool_crawler_cookies.txt';
+        }
+
         $config = self::get_config();
 
         $version = moodle_major_version();

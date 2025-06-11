@@ -21,9 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/notification',
+define(['jquery', 'core/ajax', 'core/str', 'core/modal_save_cancel', 'core/modal_events', 'core/notification',
         'core/custom_interaction_events', 'core/templates', 'core/pending'],
-    function($, Ajax, Str, ModalFactory, ModalEvents, Notification, CustomEvents, Templates, Pending) {
+    function($, Ajax, Str, ModalSaveCancel, ModalEvents, Notification, CustomEvents, Templates, Pending) {
 
         /**
          * @var {String} the full name of the current user.
@@ -131,10 +131,11 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
                 ]);
             }).then(function(strings) {
                 // Create a save/cancel modal.
-                return ModalFactory.create({
-                    type: ModalFactory.types.SAVE_CANCEL,
+                return ModalSaveCancel.create({
                     title: strings[0],
                     body: strings[1],
+                    show: true,
+                    removeOnClose: true,
                 });
             }).then(function(modal) {
                 // Now set up the handlers for the confirmation or cancellation of the modal, and show it.
@@ -144,15 +145,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
                     setOverride(override);
                 });
 
-                // Confirming, closing, or cancelling will destroy the modal and return focus to the trigger element.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    triggerElement.focus();
-                    modal.destroy();
-                });
-
-                // Display.
-                modal.show();
-                return;
+                return modal;
             }).catch(Notification.exception);
         };
 

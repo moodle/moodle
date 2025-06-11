@@ -26,9 +26,9 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @category test
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\task\scheduled_task
+ * @covers \core\task\scheduled_task
  */
-class scheduled_task_test extends \advanced_testcase {
+final class scheduled_task_test extends \advanced_testcase {
 
     /**
      * Data provider for {@see test_eval_cron_field}
@@ -65,8 +65,6 @@ class scheduled_task_test extends \advanced_testcase {
      * @param int[] $expected
      *
      * @dataProvider eval_cron_provider
-     *
-     * @covers ::eval_cron_field
      */
     public function test_eval_cron_field(string $field, int $min, int $max, array $expected): void {
         $testclass = new scheduled_test_task();
@@ -74,7 +72,7 @@ class scheduled_task_test extends \advanced_testcase {
         $this->assertEquals($expected, $testclass->eval_cron_field($field, $min, $max));
     }
 
-    public function test_get_next_scheduled_time() {
+    public function test_get_next_scheduled_time(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -165,7 +163,151 @@ class scheduled_task_test extends \advanced_testcase {
         $this->assertEquals(1, date('j', $nexttime));
     }
 
-    public function test_timezones() {
+    /**
+     * Data provider for get_next_scheduled_time_detail.
+     *
+     * Note all times in here are in default Australia/Perth time zone.
+     *
+     * @return array[] Function parameters for each run
+     */
+    public static function get_next_scheduled_time_detail_provider(): array {
+        return [
+            // Every minute = next minute.
+            ['2023-11-01 15:15', '*', '*', '*', '*', '*', '2023-11-01 15:16'],
+            // Specified minute (coming up) = same hour, that minute.
+            ['2023-11-01 15:15', '18', '*', '*', '*', '*', '2023-11-01 15:18'],
+            // Specified minute (passed) = next hour, that minute.
+            ['2023-11-01 15:15', '11', '*', '*', '*', '*', '2023-11-01 16:11'],
+            // Range of minutes = same hour, next matching value.
+            ['2023-11-01 15:15', '*/15', '*', '*', '*', '*', '2023-11-01 15:30'],
+            // Specified hour, any minute = first minute that hour.
+            ['2023-11-01 15:15', '*', '20', '*', '*', '*', '2023-11-01 20:00'],
+            // Specified hour, specified minute = that time.
+            ['2023-11-01 15:15', '13', '20', '*', '*', '*', '2023-11-01 20:13'],
+            // Any minute, range of hours = next hour in range, 00:00.
+            ['2023-11-01 15:15', '*', '*/6', '*', '*', '*', '2023-11-01 18:00'],
+            // Specified minute, range of hours = next hour where minute not passed, that minute.
+            ['2023-11-01 18:15', '10', '*/6', '*', '*', '*', '2023-11-02 00:10'],
+            // Specified day, any hour/minute.
+            ['2023-11-01 15:15', '*', '*', '3', '*', '*', '2023-11-03 00:00'],
+            // Specified day (next month), any hour/minute.
+            ['2023-11-05 15:15', '*', '*', '3', '*', '*', '2023-12-03 00:00'],
+            // Specified day, specified hour.
+            ['2023-11-01 15:15', '*', '17', '3', '*', '*', '2023-11-03 17:00'],
+            // Specified day, specified minute.
+            ['2023-11-01 15:15', '17', '*', '3', '*', '*', '2023-11-03 00:17'],
+            // 30th of every month, February.
+            ['2023-01-31 15:15', '15', '10', '30', '*', '*', '2023-03-30 10:15'],
+            // Friday, any time. 2023-11-01 is a Wednesday, so it will run in 2 days.
+            ['2023-11-01 15:15', '*', '*', '*', '5', '*', '2023-11-03 00:00'],
+            // Friday, any time (but it's already Friday).
+            ['2023-11-03 15:15', '*', '*', '*', '5', '*', '2023-11-03 15:16'],
+            // Sunday (week rollover).
+            ['2023-11-01 15:15', '*', '*', '*', '0', '*', '2023-11-05 00:00'],
+            // Specified days and day of week (days come first).
+            ['2023-11-01 15:15', '*', '*', '2,4,6', '5', '*', '2023-11-02 00:00'],
+            // Specified days and day of week (day of week comes first).
+            ['2023-11-01 15:15', '*', '*', '4,6,8', '5', '*', '2023-11-03 00:00'],
+            // Specified months.
+            ['2023-11-01 15:15', '*', '*', '*', '*', '6,8,10,12', '2023-12-01 00:00'],
+            // Specified months (crossing year).
+            ['2023-11-01 15:15', '*', '*', '*', '*', '6,8,10', '2024-06-01 00:00'],
+            // Specified months and day of week (i.e. first Sunday in December).
+            ['2023-11-01 15:15', '*', '*', '*', '0', '6,8,10,12', '2023-12-03 00:00'],
+            // It's already December, but the next Friday is not until next month.
+            ['2023-12-30 15:15', '*', '*', '*', '5', '6,8,10,12', '2024-06-07 00:00'],
+            // Around end of year.
+            ['2023-12-31 23:00', '10', '3', '*', '*', '*', '2024-01-01 03:10'],
+            // Some impossible requirements...
+            ['2023-12-31 23:00', '*', '*', '30', '*', '2', scheduled_task::NEVER_RUN_TIME],
+            ['2023-12-31 23:00', '*', '*', '31', '*', '9,4,6,11', scheduled_task::NEVER_RUN_TIME],
+            // Normal years and leap years.
+            ['2021-01-01 23:00', '*', '*', '28', '*', '2', '2021-02-28 00:00'],
+            ['2021-01-01 23:00', '*', '*', '29', '*', '2', '2024-02-29 00:00'],
+            // Missing leap year over century. Longest possible gap between runs.
+            ['2096-03-01 00:00', '59', '23', '29', '*', '2', '2104-02-29 23:59'],
+        ];
+    }
+
+    /**
+     * Tests get_next_scheduled_time using a large number of example scenarios.
+     *
+     * @param string $now Current time (strtotime format)
+     * @param string $minute Minute restriction list for task
+     * @param string $hour Hour restriction list for task
+     * @param string $day Day restriction list for task
+     * @param string $dayofweek Day of week restriction list for task
+     * @param string $month Month restriction list for task
+     * @param string|int $expected Expected run time (strtotime format or time int)
+     * @dataProvider get_next_scheduled_time_detail_provider
+     */
+    public function test_get_next_scheduled_time_detail(string $now, string $minute, string $hour,
+            string $day, string $dayofweek, string $month, string|int $expected): void {
+        // Create test task with specified times.
+        $task = new scheduled_test_task();
+        $task->set_minute($minute);
+        $task->set_hour($hour);
+        $task->set_day($day);
+        $task->set_day_of_week($dayofweek);
+        $task->set_month($month);
+
+        // Check function results.
+        $nowtime = strtotime($now);
+        if (is_int($expected)) {
+            $expectedtime = $expected;
+        } else {
+            $expectedtime = strtotime($expected);
+        }
+        $actualtime = $task->get_next_scheduled_time($nowtime);
+        $this->assertEquals($expectedtime, $actualtime, 'Expected ' . $expected . ', actual ' . date('Y-m-d H:i', $actualtime));
+    }
+
+    /**
+     * Tests get_next_scheduled_time around DST changes, with regard to the continuity of frequent
+     * tasks.
+     *
+     * We want frequent tasks to keep progressing as normal and not randomly stop for an hour, or
+     * suddenly decide they need to happen in the past.
+     */
+    public function test_get_next_scheduled_time_dst_continuity(): void {
+        $this->resetAfterTest();
+        $this->setTimezone('Europe/London');
+
+        // Test task is set to run every 20 minutes (:00, :20, :40).
+        $task = new scheduled_test_task();
+        $task->set_minute('*/20');
+
+        // DST change forwards. Check times in GMT to ensure it progresses as normal.
+        $before = strtotime('2023-03-26 00:59 GMT');
+        $this->assertEquals(strtotime('2023-03-26 00:59 Europe/London'), $before);
+        $one = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2023-03-26 01:00 GMT'), $one);
+        $this->assertEquals(strtotime('2023-03-26 02:00 Europe/London'), $one);
+        $two = $task->get_next_scheduled_time($one);
+        $this->assertEquals(strtotime('2023-03-26 01:20 GMT'), $two);
+        $three = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2023-03-26 01:40 GMT'), $three);
+        $four = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2023-03-26 02:00 GMT'), $four);
+
+        // DST change backwards.
+        $before = strtotime('2023-10-29 00:59 GMT');
+        // The 'before' time is 01:59 Europe/London, but we won't explicitly test that because
+        // there are two 01:59s so it might fail depending on implementation.
+        $one = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2023-10-29 01:00 GMT'), $one);
+        // We cannot compare against the Eerope/London time (01:00) because there are two 01:00s.
+        $two = $task->get_next_scheduled_time($one);
+        $this->assertEquals(strtotime('2023-10-29 01:20 GMT'), $two);
+        $three = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2023-10-29 01:40 GMT'), $three);
+        $four = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2023-10-29 02:00 GMT'), $four);
+        // This time is now unambiguous in Europe/London.
+        $this->assertEquals(strtotime('2023-10-29 02:00 Europe/London'), $four);
+    }
+
+    public function test_timezones(): void {
         global $CFG, $USER;
 
         // The timezones used in this test are chosen because they do not use DST - that would break the test.
@@ -278,7 +420,7 @@ class scheduled_task_test extends \advanced_testcase {
     /**
      * Tests that the reset function deletes old tasks.
      */
-    public function test_reset_scheduled_tasks_for_component_delete() {
+    public function test_reset_scheduled_tasks_for_component_delete(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -316,7 +458,7 @@ class scheduled_task_test extends \advanced_testcase {
             'component' => 'moodle')));
     }
 
-    public function test_get_next_scheduled_task() {
+    public function test_get_next_scheduled_task(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -401,7 +543,7 @@ class scheduled_task_test extends \advanced_testcase {
         $this->assertNull($task);
     }
 
-    public function test_get_broken_scheduled_task() {
+    public function test_get_broken_scheduled_task(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -433,7 +575,7 @@ class scheduled_task_test extends \advanced_testcase {
      * Tests the use of 'R' syntax in time fields of tasks to get
      * tasks be configured with a non-uniform time.
      */
-    public function test_random_time_specification() {
+    public function test_random_time_specification(): void {
 
         // Testing non-deterministic things in a unit test is not really
         // wise, so we just test the values have changed within allowed bounds.
@@ -471,7 +613,7 @@ class scheduled_task_test extends \advanced_testcase {
      * Test that the file_temp_cleanup_task removes directories and
      * files as expected.
      */
-    public function test_file_temp_cleanup_task() {
+    public function test_file_temp_cleanup_task(): void {
         global $CFG;
         $backuptempdir = make_backup_temp_directory('');
 
@@ -530,7 +672,7 @@ class scheduled_task_test extends \advanced_testcase {
     /**
      * Test that the function to clear the fail delay from a task works correctly.
      */
-    public function test_clear_fail_delay() {
+    public function test_clear_fail_delay(): void {
 
         $this->resetAfterTest();
 
@@ -802,7 +944,7 @@ class scheduled_task_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function is_component_enabled_provider(): array {
+    public static function is_component_enabled_provider(): array {
         return [
             'Enabled component' => ['auth_cas', true],
             'Disabled component' => ['auth_ldap', false],
@@ -836,5 +978,118 @@ class scheduled_task_test extends \advanced_testcase {
     public function test_is_component_enabled_core(): void {
         $task = new scheduled_test_task();
         $this->assertTrue($task->is_component_enabled());
+    }
+
+    /**
+     * Test disabling and enabling individual tasks.
+     */
+    public function test_disable_and_enable_task(): void {
+        $this->resetAfterTest();
+
+        // We use a real task because the manager doesn't know about the test tasks.
+        $taskname = '\core\task\send_new_user_passwords_task';
+
+        $task = manager::get_scheduled_task($taskname);
+        $defaulttask = manager::get_default_scheduled_task($taskname);
+        $this->assertTaskEquals($task, $defaulttask);
+
+        // Disable task and verify drift.
+        $task->disable();
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(1, $task->get_disabled());
+        $this->assertEquals(false, $task->has_default_configuration());
+
+        // Enable task and verify not drifted.
+        $task->enable();
+        $this->assertTaskEquals($task, $defaulttask);
+        $this->assertEquals(0, $task->get_disabled());
+        $this->assertEquals(true, $task->has_default_configuration());
+
+        // Modify task and verify drift.
+        $task->set_hour(1);
+        \core\task\manager::configure_scheduled_task($task);
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(1, $task->get_hour());
+        $this->assertEquals(false, $task->has_default_configuration());
+
+        // Disable task and verify drift.
+        $task->disable();
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(1, $task->get_disabled());
+        $this->assertEquals(1, $task->get_hour());
+        $this->assertEquals(false, $task->has_default_configuration());
+
+        // Enable task and verify drift.
+        $task->enable();
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(0, $task->get_disabled());
+        $this->assertEquals(1, $task->get_hour());
+        $this->assertEquals(false, $task->has_default_configuration());
+    }
+
+    /**
+     * Test send messages when a task reaches the max fail delay time.
+     */
+    public function test_message_max_fail_delay(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Redirect messages.
+        $messagesink = $this->redirectMessages();
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+
+        // Get an example task to use for testing. Task is set to run every minute by default.
+        $taskname = '\core\task\send_new_user_passwords_task';
+        $task = manager::get_scheduled_task($taskname);
+        $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
+        $task->set_lock($lock);
+        // Catch the message.
+        manager::scheduled_task_failed($task);
+        $messages = $messagesink->get_messages();
+        $this->assertCount(0, $messages);
+
+        // Set the max fail delay time.
+        $task = manager::get_scheduled_task($taskname);
+        $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
+        $task->set_lock($lock);
+        $task->set_fail_delay(86400);
+        $task->execute();
+        // Catch the message.
+        manager::scheduled_task_failed($task);
+        $messages = $messagesink->get_messages();
+        $this->assertCount(1, $messages);
+
+        // Get the task and execute it second time.
+        $task = manager::get_scheduled_task($taskname);
+        $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
+        $task->set_lock($lock);
+        // Set the fail delay to 12 hours.
+        $task->set_fail_delay(43200);
+        $task->execute();
+        manager::scheduled_task_failed($task);
+        // Catch the message.
+        $messages = $messagesink->get_messages();
+        $this->assertCount(2, $messages);
+
+        // Get the task and execute it third time.
+        $task = manager::get_scheduled_task($taskname);
+        $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
+        $task->set_lock($lock);
+        // Set the fail delay to 48 hours.
+        $task->set_fail_delay(172800);
+        $task->execute();
+        manager::scheduled_task_failed($task);
+        // Catch the message.
+        $messages = $messagesink->get_messages();
+        $this->assertCount(3, $messages);
+
+        // Check first message information.
+        $this->assertStringContainsString('Task failed: Send new user passwords', $messages[0]->subject);
+        $this->assertEquals('failedtaskmaxdelay', $messages[0]->eventtype);
+        $this->assertEquals('-10', $messages[0]->useridfrom);
+        $this->assertEquals('2', $messages[0]->useridto);
+
+        // Close sink.
+        $messagesink->close();
     }
 }

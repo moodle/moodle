@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * External backup API.
  *
@@ -24,9 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
@@ -101,7 +105,7 @@ class core_backup_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.7
      */
     public static function get_async_backup_progress_returns() {
@@ -183,7 +187,7 @@ class core_backup_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.7
      */
     public static function get_async_backup_links_backup_returns() {
@@ -249,7 +253,7 @@ class core_backup_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.7
      */
     public static function get_async_backup_links_restore_returns() {
@@ -332,7 +336,7 @@ class core_backup_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.9
      */
     public static function get_copy_progress_returns() {
@@ -411,7 +415,7 @@ class core_backup_external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.9
      */
     public static function submit_copy_form_returns() {

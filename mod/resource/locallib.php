@@ -291,6 +291,7 @@ function resource_get_file_details($resource, $cm) {
             if ($mainfile) {
                 $filedetails['type'] = get_mimetype_description($mainfile);
                 $filedetails['mimetype'] = $mainfile->get_mimetype();
+                $filedetails['extension'] = strtoupper(resourcelib_get_extension($mainfile->get_filename()));
                 // Only show type if it is not unknown.
                 if ($filedetails['type'] === get_mimetype_description('document/unknown')) {
                     $filedetails['type'] = '';
@@ -328,15 +329,16 @@ function resource_get_file_details($resource, $cm) {
  *
  * @param object $resource Resource table row (only property 'displayoptions' is used here)
  * @param object $cm Course-module table row
+ * @param bool $showtype Whether the file type should be displayed or not (regardless the display option is enabled).
  * @return string Size and type or empty string if show options are not enabled
  */
-function resource_get_optional_details($resource, $cm) {
+function resource_get_optional_details($resource, $cm, bool $showtype = true) {
     global $DB;
 
     $details = '';
 
     $options = empty($resource->displayoptions) ? [] : (array) unserialize_array($resource->displayoptions);
-    if (!empty($options['showsize']) || !empty($options['showtype']) || !empty($options['showdate'])) {
+    if (!empty($options['showsize']) || ($showtype && !empty($options['showtype'])) || !empty($options['showdate'])) {
         if (!array_key_exists('filedetails', $options)) {
             $filedetails = resource_get_file_details($resource, $cm);
         } else {
@@ -354,9 +356,9 @@ function resource_get_optional_details($resource, $cm) {
                 $infodisplayed += 1;
             }
         }
-        if (!empty($options['showtype'])) {
+        if ($showtype && !empty($options['showtype'])) {
             if (!empty($filedetails['type'])) {
-                $type = $filedetails['type'];
+                $type = $filedetails['extension'];
                 $langstring .= 'type';
                 $infodisplayed += 1;
             }
@@ -386,6 +388,34 @@ function resource_get_optional_details($resource, $cm) {
 }
 
 /**
+ * Gets optional file type extension for a resource, depending on resource settings.
+ *
+ * @param object $resource Resource table row (only property 'displayoptions' is used here)
+ * @param object $cm Course-module table row
+ * @return string File extension or null if showtype option is not enabled
+ */
+function resource_get_optional_filetype($resource, $cm): ?string {
+    $filetype = null;
+
+    $options = empty($resource->displayoptions) ? [] : (array) unserialize_array($resource->displayoptions);
+    if (empty($options['showtype'])) {
+        // Show type option is disabled; early return null filetype.
+        return $filetype;
+    }
+
+    if (!array_key_exists('filedetails', $options)) {
+        $filedetails = resource_get_file_details($resource, $cm);
+    } else {
+        $filedetails = $options['filedetails'];
+    }
+    if (!empty($filedetails['type'])) {
+        $filetype = $filedetails['extension'];
+    }
+
+    return $filetype;
+}
+
+/**
  * Get resource introduction.
  *
  * @param object $resource
@@ -404,11 +434,13 @@ function resource_get_intro(object $resource, object $cm, bool $ignoresettings =
 
     $content = "";
     if ($ignoresettings || !empty($options['printintro']) || $extraintro) {
-        $gotintro = !html_is_blank($resource->intro);
-        if ($gotintro || $extraintro) {
-            if ($gotintro) {
-                $content = format_module_intro('resource', $resource, $cm->id);
-            }
+        $resourceintro = !empty($options['printintro']) && !html_is_blank($resource->intro);
+
+        if ($resourceintro) {
+            $content .= format_module_intro('resource', $resource, $cm->id);
+        }
+
+        if ($extraintro) {
             $content .= $extraintro;
         }
     }

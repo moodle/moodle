@@ -24,17 +24,18 @@ namespace mod_label;
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
 
-    public function test_label_core_calendar_provide_event_action() {
+    public function test_label_core_calendar_provide_event_action(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id));
@@ -57,7 +58,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_label_core_calendar_provide_event_action_as_non_user() {
+    public function test_label_core_calendar_provide_event_action_as_non_user(): void {
         global $CFG;
 
         // Create the activity.
@@ -82,7 +83,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_label_core_calendar_provide_event_action_in_hidden_section() {
+    public function test_label_core_calendar_provide_event_action_in_hidden_section(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id));
@@ -107,7 +108,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_label_core_calendar_provide_event_action_for_user() {
+    public function test_label_core_calendar_provide_event_action_for_user(): void {
         global $CFG;
 
         // Create the activity.
@@ -139,7 +140,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_label_core_calendar_provide_event_action_already_completed() {
+    public function test_label_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -170,7 +171,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_label_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_label_core_calendar_provide_event_action_already_completed_for_user(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -207,23 +208,26 @@ class lib_test extends \advanced_testcase {
     /**
      * Check label name with different content inserted in the label intro.
      *
-     * @param string $labelcontent
-     * @param string $labelformat
-     * @param string $expectedlabelname
+     * @param string $name
+     * @param string $content
+     * @param string $format
+     * @param string $expectedname
      * @return void
      * @covers       \get_label_name
      * @dataProvider label_get_name_data_provider
      */
-    public function test_label_get_label_name(string $labelcontent, string $labelformat, string $expectedlabelname): void {
+    public function test_label_get_label_name(string $name, string $content, string $format, string $expectedname): void {
         $course = $this->getDataGenerator()->create_course();
         // When creating the module, get_label_name is called and fills label->name.
         $label = $this->getDataGenerator()->create_module('label', [
+                'name' => $name,
                 'course' => $course->id,
-                'intro' => $labelcontent,
-                'introformat' => $labelformat
+                'intro' => $content,
+                'introformat' => $format
             ]
         );
-        $this->assertEquals($expectedlabelname, $label->name);
+
+        $this->assertEquals($expectedname, $label->name);
     }
 
     /**
@@ -231,19 +235,28 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function label_get_name_data_provider(): array {
+    public static function label_get_name_data_provider(): array {
         return [
+            'withlabelname' => [
+                'name' => 'Test label 1',
+                'content' => '<p>Simple textual content<p>',
+                'format' => FORMAT_HTML,
+                'expected' => 'Test label 1'
+            ],
             'simple' => [
+                'name' => '',
                 'content' => '<p>Simple textual content<p>',
                 'format' => FORMAT_HTML,
                 'expected' => 'Simple textual content'
             ],
             'empty' => [
+                'name' => '',
                 'content' => '',
                 'format' => FORMAT_HTML,
                 'expected' => 'Test label 1'
             ],
             'withaudiocontent' => [
+                'name' => '',
                 'content' => '<p>Test with audio</p>
 <p>&nbsp; &nbsp;<audio controls="controls">
 <source src="@@PLUGINFILE@@/moodle-hit-song.mp3">
@@ -253,6 +266,7 @@ class lib_test extends \advanced_testcase {
                 'expected' => 'Test with audio'
             ],
             'withvideo' => [
+                'name' => '',
                 'content' => '<p>Test video</p>
 <p>&nbsp;<video controls="controls">
         <source src="https://www.youtube.com/watch?v=xxxyy">
@@ -262,6 +276,7 @@ class lib_test extends \advanced_testcase {
                 'expected' => 'Test video https://www.youtube.com/watch?v=xxxyy'
             ],
             'with video trimming' => [
+                'name' => '',
                 'content' => '<p>Test with video to be trimmed</p>
 <p>&nbsp;<video controls="controls">
         <source src="https://www.youtube.com/watch?v=xxxyy">
@@ -271,46 +286,55 @@ class lib_test extends \advanced_testcase {
                 'expected' => 'Test with video to be trimmed https://www.youtube....'
             ],
             'with plain text' => [
+                'name' => '',
                 'content' => 'Content with @@PLUGINFILE@@/moodle-hit-song.mp3 nothing',
                 'format' => FORMAT_HTML,
                 'expected' => 'Content with nothing'
             ],
             'with several spaces' => [
+                'name' => '',
                 'content' => "Content with @@PLUGINFILE@@/moodle-hit-song.mp3 \r &nbsp; several spaces",
                 'format' => FORMAT_HTML,
                 'expected' => 'Content with several spaces'
             ],
             'empty spaces' => [
+                'name' => '',
                 'content' => ' &nbsp; ',
                 'format' => FORMAT_HTML,
                 'expected' => 'Text and media area'
             ],
             'only html' => [
+                'name' => '',
                 'content' => '<audio controls="controls"><source src=""></audio>',
                 'format' => FORMAT_HTML,
                 'expected' => 'Text and media area'
             ],
             'markdown' => [
+                'name' => '',
                 'content' => "##Simple Title\n simple markdown format",
                 'format' => FORMAT_MARKDOWN,
                 'expected' => 'Simple Title simple markdown format'
             ],
             'markdown with pluginfile' => [
+                'name' => '',
                 'content' => "##Simple Title\n simple markdown format @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_MARKDOWN,
                 'expected' => 'Simple Title simple markdown format'
             ],
             'plain text' => [
+                'name' => '',
                 'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_PLAIN,
                 'expected' => 'Simple plain text'
             ],
             'moodle format text' => [
+                'name' => '',
                 'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_MOODLE,
                 'expected' => 'Simple plain text'
             ],
             'html format text' => [
+                'name' => '',
                 'content' => "<h1>Simple plain title</h1><p> with plain text</p> @@PLUGINFILE@@/moodle-hit-song.mp3",
                 'format' => FORMAT_HTML,
                 'expected' => 'Simple plain title with plain text'

@@ -65,8 +65,8 @@ class site_registration_form extends \moodleform {
             'geolocation' => '',
             'emailalert' => 0,
             'commnews' => 0,
-            'policyagreed' => 0
-
+            'policyagreed' => 0,
+            'organisationtype' => '',
         ]);
 
         // Fields that need to be highlighted.
@@ -78,6 +78,14 @@ class site_registration_form extends \moodleform {
             array('class' => 'registration_textfield', 'maxlength' => 255));
         $mform->setType('name', PARAM_TEXT);
         $mform->addHelpButton('name', 'sitename', 'hub');
+
+        $organisationtypes = registration::get_site_organisation_type_options();
+        \core_collator::asort($organisationtypes);
+        // Prepend the empty/default value here. We are not using array_merge to preserve keys.
+        $organisationtypes = ['' => get_string('siteorganisationtype:donotshare', 'hub')] + $organisationtypes;
+        $mform->addElement('select', 'organisationtype', get_string('siteorganisationtype', 'hub'), $organisationtypes);
+        $mform->setType('organisationtype', PARAM_ALPHANUM);
+        $mform->addHelpButton('organisationtype', 'siteorganisationtype', 'hub');
 
         $mform->addElement('select', 'privacy', get_string('siteprivacy', 'hub'), registration::site_privacy_options());
         $mform->setType('privacy', PARAM_ALPHA);
@@ -128,15 +136,6 @@ class site_registration_form extends \moodleform {
         $mform->addRule('contactemail', $strrequired, 'required', null, 'client');
         $mform->setType('contactemail', PARAM_EMAIL);
         $mform->addHelpButton('contactemail', 'siteemail', 'hub');
-
-        $options = array();
-        $options[0] = get_string("registrationcontactno");
-        $options[1] = get_string("registrationcontactyes");
-        $mform->addElement('select', 'contactable', get_string('siteregistrationcontact', 'hub'), $options);
-        $mform->setType('contactable', PARAM_INT);
-        $mform->addHelpButton('contactable', 'siteregistrationcontact', 'hub');
-        $mform->hideIf('contactable', 'privacy', 'eq', registration::HUB_SITENOTPUBLISHED);
-        unset($options);
 
         $this->add_checkbox_with_email('emailalert', 'siteregistrationemail', false, get_string('registrationyes'));
 
@@ -300,8 +299,6 @@ class site_registration_form extends \moodleform {
                 $data->commnewsemail = null;
             }
             unset($data->commnewsnewemail);
-            // Always return 'contactable'.
-            $data->contactable = empty($data->contactable) ? 0 : 1;
 
             if (debugging('', DEBUG_DEVELOPER)) {
                 // Display debugging message for developers who added fields to the form and forgot to add them to registration::FORM_FIELDS.

@@ -30,6 +30,35 @@ use question_bank;
 class comment_count_column extends column_base {
 
     /**
+     * @var bool Comments enabled or not from config.
+     */
+    protected $commentsenabled = true;
+
+    /**
+     * Load javascript module if enabled.
+     *
+     * @return void
+     */
+    public function init(): void {
+        parent::init();
+        $this->check_comments_status();
+        if ($this->commentsenabled) {
+            global $PAGE;
+            $PAGE->requires->js_call_amd('qbank_comment/comment', 'init');
+        }
+    }
+
+    /**
+     * Check if comments is turned on in the system or not.
+     */
+    protected function check_comments_status(): void {
+        global $CFG;
+        if (!$CFG->usecomments) {
+            $this->commentsenabled = false;
+        }
+    }
+
+    /**
      * Get the name of the column, used internally.
      *
      * @return string
@@ -54,20 +83,31 @@ class comment_count_column extends column_base {
      * @param string $rowclasses Classes that can be added.
      */
     protected function display_content($question, $rowclasses): void {
-        global $DB, $PAGE;
+        global $DB;
+
         $syscontext = \context_system::instance();
-        $args = [
-            'component' => 'qbank_comment',
-            'commentarea' => 'question',
-            'itemid' => $question->id,
-            'contextid' => $syscontext->id,
+
+        $args = new \stdClass;
+        $args->contextid = $syscontext->id;
+        $args->courseid  = $this->qbank->course->id;
+        $args->area      = 'question';
+        $args->itemid    = $question->id;
+        $args->component = 'qbank_comment';
+
+        $params = [
+            'component' => $args->component,
+            'commentarea' => $args->area,
+            'itemid' => $args->itemid,
+            'contextid' => $args->contextid,
         ];
-        $commentcount = $DB->count_records('comments', $args);
+        $commentcount = $DB->count_records('comments', $params);
         $attributes = [];
-        if (question_has_capability_on($question, 'comment')) {
+
+        // Build up the comment object to see if we have correct permissions to post.
+        $comment = new \comment($args);
+        if (question_has_capability_on($question, 'comment') && $comment->can_post()) {
+            $tag = 'a';
             $target = 'questioncommentpreview_' . $question->id;
-            $datatarget = '[data-target="' . $target . '"]';
-            $PAGE->requires->js_call_amd('qbank_comment/comment', 'init', [$datatarget]);
             $attributes = [
                 'href' => '#',
                 'data-target' => $target,
@@ -75,12 +115,17 @@ class comment_count_column extends column_base {
                 'data-courseid' => $this->qbank->course->id,
                 'data-contextid' => $syscontext->id,
             ];
+        } else {
+            $tag = 'span';
         }
-        echo \html_writer::tag('a', $commentcount, $attributes);
+        echo \html_writer::tag($tag, $commentcount, $attributes);
     }
 
     public function get_extra_classes(): array {
-        return ['pr-3'];
+        return ['pe-3'];
     }
 
+    public function get_default_width(): int {
+        return 150;
+    }
 }

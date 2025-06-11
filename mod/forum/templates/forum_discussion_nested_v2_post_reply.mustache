@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/forum_discussion_post
+    @template mod_forum/forum_discussion_nested_v2_post_reply
 
     Template to render a single post from a discussion.
 
@@ -58,14 +58,14 @@
     {{/footer}}
     {{$replies}}
         <div class="indent my-4" data-region="replies-visibility-toggle-container" style="display: none">
-            <button class="btn btn-link pl-0" data-action="show-replies">
+            <button class="btn btn-link ps-0" data-action="show-replies">
                 {{#str}}
                     showpreviousrepliescount,
                     mod_forum,
                     <span data-region="reply-count">{{#totalreplycount}}{{.}}{{/totalreplycount}}{{^totalreplycount}}0{{/totalreplycount}}</span>
                 {{/str}}
             </button>
-            <button class="btn btn-link hidden pl-0" data-action="hide-replies">
+            <button class="btn btn-link hidden ps-0" data-action="hide-replies">
                 {{#str}}
                     hidepreviousrepliescount,
                     mod_forum,

@@ -24,6 +24,7 @@ use core\external\persistent_exporter;
 use core_reportbuilder\datasource;
 use core_reportbuilder\manager;
 use core_reportbuilder\local\models\report;
+use core_tag\external\{tag_item_exporter, util};
 use core_user\external\user_summary_exporter;
 
 /**
@@ -58,6 +59,10 @@ class custom_report_details_exporter extends persistent_exporter {
                 'type' => PARAM_RAW,
                 'null' => NULL_ALLOWED,
             ],
+            'tags' => [
+                'type' => tag_item_exporter::read_properties_definition(),
+                'multiple' => true,
+            ],
             'modifiedby' => ['type' => user_summary_exporter::read_properties_definition()],
         ];
     }
@@ -74,6 +79,7 @@ class custom_report_details_exporter extends persistent_exporter {
 
         return [
             'sourcename' => manager::report_source_exists($source, datasource::class) ? $source::get_name() : null,
+            'tags' => util::get_item_tags('core_reportbuilder', 'reportbuilder_report', $this->persistent->get('id')),
             'modifiedby' => (new user_summary_exporter($usermodified))->export($output),
         ];
     }

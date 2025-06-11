@@ -40,7 +40,9 @@ class rule_form extends \moodleform {
      * Mform class definition
      *
      */
-    public function definition () {
+    public function definition() {
+        global $PAGE;
+
         $mform = $this->_form;
         $eventlist = $this->_customdata['eventlist'];
         $pluginlist = $this->_customdata['pluginlist'];
@@ -91,12 +93,20 @@ class rule_form extends \moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         // Plugin field.
-        $mform->addElement('select', 'plugin', get_string('areatomonitor', 'tool_monitor'), $pluginlist);
+        $mform->addElement('selectgroups', 'plugin', get_string('areatomonitor', 'tool_monitor'), $pluginlist, [
+            'data-field' => 'component',
+        ]);
         $mform->addRule('plugin', get_string('required'), 'required');
 
         // Event field.
-        $mform->addElement('select', 'eventname', get_string('event', 'tool_monitor'), $eventlist);
+        $mform->addElement('select', 'eventname', get_string('event', 'tool_monitor'), $eventlist, [
+            'data-field' => 'eventname',
+            'data-eventlist' => json_encode($eventlist),
+        ]);
         $mform->addRule('eventname', get_string('required'), 'required');
+
+        // Set up the client-side dropdown handler.
+        $PAGE->requires->js_call_amd('tool_monitor/dropdown', 'init');
 
         // Freeze plugin and event fields for editing if there's a subscription for this rule.
         if ($subscriptioncount > 0) {

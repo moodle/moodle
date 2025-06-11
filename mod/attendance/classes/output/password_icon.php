@@ -50,6 +50,16 @@ class password_icon implements renderable, templatable {
     public $linktext = null;
 
     /**
+     * @var int Session id.
+     */
+    public $sessionid;
+
+    /**
+     * @var int - should qr code be displayed.
+     */
+    public $includeqrcode;
+
+    /**
      * Constructor
      *
      * @param string $text string for help page title,
@@ -87,7 +97,7 @@ class password_icon implements renderable, templatable {
         $data->linktext = '';
         $data->title = $title;
         $data->url = (new moodle_url('/mod/attendance/password.php', [
-            'session' => $this->sessionid]))->out(false);
+            'session' => $this->sessionid, ]))->out(false);
 
         $data->ltr = !right_to_left();
         return $data;

@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradereport_grader/collapse/collapsebody
+
+    The body of the column collapsing dropdown that contains the form and subsequent results from the search.
+
+    Example context (json):
+    {
+        "instance": 25,
+        "results": [
+            {
+                "name": "42",
+                "displayName": "The meaning of life",
+                "category": "Hitchhikers grade category"
+            }
+        ],
+        "searchTerm": "Meaning of",
+        "userid": "42"
+    }
+}}
+<div class="flex-column h-100 w-100">
+    <span class="d-none" data-region="userid" data-userid="{{userid}}" aria-hidden="true"></span>
+
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchcollapsedcolumns, core_grades
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            searchcollapsedcolumns, core_grades
+        {{/str}}{{/placeholder}}
+    {{/ core/search_input_auto }}
+    <form class="columnsdropdownform flex-column h-100">
+        <fieldset>
+            <legend class="sr-only">{{#str}} aria:dropdowncolumns, gradereport_grader {{/str}}</legend>
+            <ul id="collapse-{{instance}}-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" data-region="search-result-items-container">
+                {{>gradereport_grader/collapse/collapseresults}}
+            </ul>
+        </fieldset>
+        <div class="d-flex mt-2">
+            <div class="d-flex align-items-center form-check">
+                <label id="check-all" class="selected-option-info text-truncate form-check-label d-block">
+                    <input disabled class="form-check-input" type="checkbox" data-action="selectall">
+                    {{#str}}selectall, core{{/str}}
+                </label>
+            </div>
+            <div class="flex-row ms-auto">
+                <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
+                <input disabled class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}expand{{/str}}">
+            </div>
+        </div>
+    </form>
+</div>

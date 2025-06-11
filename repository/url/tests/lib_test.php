@@ -35,12 +35,12 @@ require_once($CFG->dirroot . '/repository/url/lib.php');
  * @copyright 2014 John Okely
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     /**
      * Check that the url escaper performs as expected
      */
-    public function test_escape_url() {
+    public function test_escape_url(): void {
         $this->resetAfterTest();
 
         $repoid = $this->getDataGenerator()->create_repository('url')->id;

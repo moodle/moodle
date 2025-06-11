@@ -23,17 +23,10 @@
  */
 
 namespace core\output;
-defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
-
-use coding_exception;
-use context;
-use pix_icon;
-use renderer_base;
-use renderable;
+use core\exception\coding_exception;
+use core\context;
 use stdClass;
-use templatable;
 
 /**
  * The chooser_item renderable class.
@@ -43,7 +36,6 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class chooser_item implements renderable, templatable {
-
     /** @var string An identifier for the item. */
     public $id;
     /** @var string The label of this item. */
@@ -60,7 +52,7 @@ class chooser_item implements renderable, templatable {
     /**
      * Constructor.
      */
-    public function __construct($id, $label, $value, pix_icon $icon, $description = null, context $context = null) {
+    public function __construct($id, $label, $value, pix_icon $icon, $description = null, ?context $context = null) {
         $this->id = $id;
         $this->label = $label;
         $this->value = $value;
@@ -89,7 +81,6 @@ class chooser_item implements renderable, templatable {
         $options = new stdClass();
         $options->trusted = false;
         $options->noclean = false;
-        $options->smiley = false;
         $options->filter = false;
         $options->para = true;
         $options->newlines = false;
@@ -97,11 +88,17 @@ class chooser_item implements renderable, templatable {
 
         $data->description = '';
         if (!empty($this->description)) {
-            list($data->description) = external_format_text((string) $this->description, FORMAT_MARKDOWN,
-                $this->context->id, null, null, null, $options);
+            [$data->description] = \core_external\util::format_text(
+                (string) $this->description,
+                FORMAT_MARKDOWN,
+                $this->context->id,
+                null,
+                null,
+                null,
+                $options
+            );
         }
 
         return $data;
     }
-
 }

@@ -41,7 +41,7 @@ class xmldb_index extends xmldb_object {
      * Note:
      *  - MySQL: MyISAM has a limit of 1000 bytes for any key including composed, InnoDB has limit 3500 bytes.
      *
-     * @const max length of composed indexes, one utf-8 char is 3 bytes in the worst case
+     * @var max length of composed indexes, one utf-8 char is 3 bytes in the worst case
      */
     const INDEX_COMPOSED_MAX_BYTES = 999;
 
@@ -49,7 +49,7 @@ class xmldb_index extends xmldb_object {
      * Note:
      *  - MySQL: InnoDB limits size of index on single column to 767bytes (256 chars)
      *
-     * @const single column index length limit, one utf-8 char is 3 bytes in the worst case
+     * @var single column index length limit, one utf-8 char is 3 bytes in the worst case
      */
     const INDEX_MAX_BYTES = 765;
 
@@ -336,7 +336,7 @@ class xmldb_index extends xmldb_object {
      * @param xmldb_table $xmldb_table optional when object is table
      * @return string null if ok, error message if problem found
      */
-    public function validateDefinition(xmldb_table $xmldb_table=null) {
+    public function validateDefinition(?xmldb_table $xmldb_table=null) {
         if (!$xmldb_table) {
             return 'Invalid xmldb_index->validateDefinition() call, $xmldb_table is required.';
         }

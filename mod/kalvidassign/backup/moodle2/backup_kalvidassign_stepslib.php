@@ -52,7 +52,8 @@ class backup_kalvidassign_activity_structure_step extends backup_activity_struct
                 'emailteachers',
                 'grade',
                 'timecreated',
-                'timemodified'
+                'timemodified',
+                'completionsubmit'
         );
         $kalvidassign = new backup_nested_element('kalvidassign', array('id'), $columns);
 

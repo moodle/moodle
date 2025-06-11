@@ -1,8 +1,8 @@
 @mod @mod_data
 Feature: Users can view and manage data presets
-    In order to use presets
-    As a user
-    I need to view, manage and use presets
+  In order to use presets
+  As a user
+  I need to view, manage and use presets
 
   Background:
     Given the following "users" exist:
@@ -291,7 +291,6 @@ Feature: Users can view and manage data presets
     And I should see "This is a short text"
     Then "Use this preset" "button" should exist
 
-  @javascript
   Scenario: Teachers can export any saved preset
     Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     When I follow "Presets"
@@ -300,10 +299,12 @@ Feature: Users can view and manage data presets
     # The teacher should be able to export any saved preset.
     And I open the action menu in "Saved preset by teacher1" "table_row"
     Then I should see "Export"
-    And following "Export" "link" in the "Saved preset by teacher1" "table_row" should download between "1" and "5000" bytes
+    And following "Export" in the "Saved preset by teacher1" "table_row" should download a file that:
+      | Contains file in zip | preset.xml |
     And I open the action menu in "Saved preset 1" "table_row"
     And I should see "Export"
-    And following "Export" "link" in the "Saved preset 1" "table_row" should download between "1" and "5000" bytes
+    And following "Export" in the "Saved preset 1" "table_row" should download a file that:
+      | Contains file in zip | preset.xml |
 
   @javascript @_file_upload
   Scenario Outline: Admins and Teachers can load a preset from a file
@@ -322,3 +323,31 @@ Feature: Users can view and manage data presets
       | user     |
       | admin    |
       | teacher1 |
+
+  @javascript
+  Scenario Outline: Teachers can use "Use this preset" actions menu next to each preset.
+    Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
+    And I follow "Presets"
+    And I open the action menu in "<Preset Name>" "table_row"
+    When I click on "Use this preset" "link" in the "<Preset Name>" "table_row"
+    Then I should see "Preset applied"
+
+    Examples:
+      | Preset Name                          |
+      | Image gallery                        |
+      | Saved preset 1 (Admin User)          |
+      | Saved preset by teacher1 (Teacher 1) |
+
+  @javascript
+  Scenario Outline: Teachers can use "Preview" actions menu next to each preset.
+    Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
+    And I follow "Presets"
+    And I open the action menu in "<Preset Name>" "table_row"
+    When I click on "Preview" "link" in the "<Preset Name>" "table_row"
+    Then I should see "Preview of <Preset preview name>"
+
+    Examples:
+      | Preset Name                          | Preset preview name      |
+      | Image gallery                        | Image gallery            |
+      | Saved preset 1 (Admin User)          | Saved preset 1           |
+      | Saved preset by teacher1 (Teacher 1) | Saved preset by teacher1 |

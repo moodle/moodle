@@ -56,20 +56,6 @@ class behat_context_helper {
     protected static $nonexistingcontexts = array();
 
     /**
-     * Sets the browser session.
-     *
-     * @param Environment $environment
-     * @return void
-     * @deprecated since 3.2 MDL-55072 - please use behat_context_helper::set_environment()
-     * @todo MDL-55365 This will be deleted in Moodle 3.6.
-     */
-    public static function set_session(Environment $environment) {
-        debugging('set_session is deprecated. Please use set_environment instead.', DEBUG_DEVELOPER);
-
-        self::set_environment($environment);
-    }
-
-    /**
      * Sets behat environment.
      *
      * @param Environment $environment
@@ -160,6 +146,23 @@ class behat_context_helper {
         $overrideclassname = "behat_theme_{$suitename}_{$classname}";
         if (self::$environment->hasContextClass($overrideclassname)) {
             return $overrideclassname;
+        }
+
+        try {
+            $themeconfig = theme_config::load($suitename);
+        } catch (Exception $e) {
+            // This theme has no theme config.
+            return null;
+        }
+
+        // The theme will use all core contexts, except the one overridden by theme or its parent.
+        if (isset($themeconfig->parents)) {
+            foreach ($themeconfig->parents as $parent) {
+                $overrideclassname = "behat_theme_{$parent}_{$classname}";
+                if (self::$environment->hasContextClass($overrideclassname)) {
+                    return $overrideclassname;
+                }
+            }
         }
 
         if (self::$environment->hasContextClass($classname)) {

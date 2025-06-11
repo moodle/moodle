@@ -48,22 +48,10 @@ abstract class base_moodleform extends moodleform {
     protected $uistage = null;
 
     /**
-     * True if we have a course div open, false otherwise
-     * @var bool
+     * Group stack to control open and closed div groups.
+     * @var array
      */
-    protected $coursediv = false;
-
-    /**
-     * True if we have a section div open, false otherwise
-     * @var bool
-     */
-    protected $sectiondiv = false;
-
-    /**
-     * True if we have an activity div open, false otherwise
-     * @var bool
-     */
-    protected $activitydiv = false;
+    protected array $groupstack = [];
 
     /**
      * Creates the form
@@ -134,7 +122,36 @@ abstract class base_moodleform extends moodleform {
             $buttonarray[] = $this->_form->createElement('submit', 'oneclickbackup', get_string('jumptofinalstep', 'backup'),
                 array('class' => 'oneclickbackup'));
         }
-        $buttonarray[] = $this->_form->createElement('cancel', 'cancel', get_string('cancel'), array('class' => 'confirmcancel'));
+
+        $cancelparams = [
+            'data-modal' => 'confirmation',
+            'data-modal-content-str' => json_encode([
+                'confirmcancelquestion',
+                'backup',
+            ]),
+            'data-modal-yes-button-str' => json_encode([
+                'yes',
+                'moodle',
+            ]),
+        ];
+        if ($this->uistage->get_ui() instanceof import_ui) {
+            $cancelparams['data-modal-title-str'] = json_encode([
+                'confirmcancelimport',
+                'backup',
+            ]);
+        } else if ($this->uistage->get_ui() instanceof restore_ui) {
+            $cancelparams['data-modal-title-str'] = json_encode([
+                'confirmcancelrestore',
+                'backup',
+            ]);
+        } else {
+            $cancelparams['data-modal-title-str'] = json_encode([
+                'confirmcancel',
+                'backup',
+            ]);
+        }
+
+        $buttonarray[] = $this->_form->createElement('cancel', 'cancel', get_string('cancel'), $cancelparams);
         $buttonarray[] = $this->_form->createElement(
             'submit',
             'submitbutton',
@@ -148,20 +165,12 @@ abstract class base_moodleform extends moodleform {
     }
 
     /**
-     * Closes any open divs
+     * Closes any open divs.
      */
     public function close_task_divs() {
-        if ($this->activitydiv) {
+        while (!empty($this->groupstack)) {
             $this->_form->addElement('html', html_writer::end_tag('div'));
-            $this->activitydiv = false;
-        }
-        if ($this->sectiondiv) {
-            $this->_form->addElement('html', html_writer::end_tag('div'));
-            $this->sectiondiv = false;
-        }
-        if ($this->coursediv) {
-            $this->_form->addElement('html', html_writer::end_tag('div'));
-            $this->coursediv = false;
+            array_pop($this->groupstack);
         }
     }
 
@@ -171,7 +180,7 @@ abstract class base_moodleform extends moodleform {
      * @param base_task $task
      * @return bool
      */
-    public function add_setting(backup_setting $setting, base_task $task = null) {
+    public function add_setting(backup_setting $setting, ?base_task $task = null) {
         return $this->add_settings(array(array($setting, $task)));
     }
 
@@ -215,7 +224,7 @@ abstract class base_moodleform extends moodleform {
                 list($identifier, $component) = $setting->get_help();
                 $this->_form->addHelpButton($setting->get_ui_name(), $identifier, $component);
             }
-            $this->_form->addElement('html', html_writer::end_tag('div'));
+            $this->pop_group();
         }
         $this->_form->setDefaults($defaults);
         return true;
@@ -236,54 +245,42 @@ abstract class base_moodleform extends moodleform {
      * @param backup_setting $setting
      */
     protected function add_html_formatting(backup_setting $setting) {
-        $mform = $this->_form;
         $isincludesetting = (strpos($setting->get_name(), '_include') !== false);
         if ($isincludesetting && $setting->get_level() != backup_setting::ROOT_LEVEL) {
             switch ($setting->get_level()) {
                 case backup_setting::COURSE_LEVEL:
-                    if ($this->activitydiv) {
-                        $this->_form->addElement('html', html_writer::end_tag('div'));
-                        $this->activitydiv = false;
-                    }
-                    if ($this->sectiondiv) {
-                        $this->_form->addElement('html', html_writer::end_tag('div'));
-                        $this->sectiondiv = false;
-                    }
-                    if ($this->coursediv) {
-                        $this->_form->addElement('html', html_writer::end_tag('div'));
-                    }
-                    $mform->addElement('html', html_writer::start_tag('div', array('class' => 'grouped_settings course_level')));
-                    $mform->addElement('html', html_writer::start_tag('div', array('class' => 'include_setting course_level')));
-                    $this->coursediv = true;
+                    $this->pop_groups_to('course');
+                    $this->push_group_start('course', 'grouped_settings course_level');
+                    $this->push_group_start(null, 'include_setting course_level');
                     break;
                 case backup_setting::SECTION_LEVEL:
-                    if ($this->activitydiv) {
-                        $this->_form->addElement('html', html_writer::end_tag('div'));
-                        $this->activitydiv = false;
-                    }
-                    if ($this->sectiondiv) {
-                        $this->_form->addElement('html', html_writer::end_tag('div'));
-                    }
-                    $mform->addElement('html', html_writer::start_tag('div', array('class' => 'grouped_settings section_level')));
-                    $mform->addElement('html', html_writer::start_tag('div', array('class' => 'include_setting section_level')));
-                    $this->sectiondiv = true;
+                    $this->pop_groups_to('course');
+                    $this->push_group_start('section', 'grouped_settings section_level');
+                    $this->push_group_start(null, 'include_setting section_level');
                     break;
                 case backup_setting::ACTIVITY_LEVEL:
-                    if ($this->activitydiv) {
-                        $this->_form->addElement('html', html_writer::end_tag('div'));
-                    }
-                    $mform->addElement('html', html_writer::start_tag('div', array('class' => 'grouped_settings activity_level')));
-                    $mform->addElement('html', html_writer::start_tag('div', array('class' => 'include_setting activity_level')));
-                    $this->activitydiv = true;
+                    $this->pop_groups_to('section');
+                    $this->push_group_start('activity', 'grouped_settings activity_level');
+                    $this->push_group_start(null, 'include_setting activity_level');
+                    break;
+                case backup_setting::SUBSECTION_LEVEL:
+                    $this->pop_groups_to('section');
+                    $this->push_group_start('subsection', 'grouped_settings subsection_level');
+                    $this->push_group_start(null, 'normal_setting');
+                    break;
+                case backup_setting::SUBACTIVITY_LEVEL:
+                    $this->pop_groups_to('subsection');
+                    $this->push_group_start('subactivity', 'grouped_settings activity_level');
+                    $this->push_group_start(null, 'include_setting activity_level');
                     break;
                 default:
-                    $mform->addElement('html', html_writer::start_tag('div', array('class' => 'normal_setting')));
+                    $this->push_group_start(null, 'normal_setting');
                     break;
             }
         } else if ($setting->get_level() == backup_setting::ROOT_LEVEL) {
-            $mform->addElement('html', html_writer::start_tag('div', array('class' => 'root_setting')));
+            $this->push_group_start('root', 'root_setting');
         } else {
-            $mform->addElement('html', html_writer::start_tag('div', array('class' => 'normal_setting')));
+            $this->push_group_start(null, 'normal_setting');
         }
     }
 
@@ -321,10 +318,53 @@ abstract class base_moodleform extends moodleform {
                 $label .= $OUTPUT->render($labelicon);
             }
             $this->_form->addElement('static', 'static_'.$settingui->get_name(), $label, $settingui->get_static_value().$icon);
-            $this->_form->addElement('html', html_writer::end_tag('div'));
+            $this->pop_group();
         }
         $this->_form->addElement('hidden', $settingui->get_name(), $settingui->get_value());
         $this->_form->setType($settingui->get_name(), $settingui->get_param_validation());
+    }
+
+    /**
+     * Pushes a group start to the form.
+     *
+     * This method will create a new group div in the form and add it to the group stack.
+     * The name can be used to close all stacked groups up to a certain group.
+     *
+     * @param string|null $name The name of the group, if any.
+     * @param string $classes The classes to add to the div.
+     */
+    protected function push_group_start(?string $name, string $classes) {
+        $mform = $this->_form;
+        $this->groupstack[] = $name;
+        $mform->addElement('html', html_writer::start_tag('div', ['class' => $classes]));
+    }
+
+    /**
+     * Pops groups from the stack until the given group name is reached.
+     *
+     * @param string $name The name of the group to pop to.
+     */
+    protected function pop_groups_to(string $name) {
+        if (empty($this->groupstack)) {
+            return;
+        }
+        while (!empty($this->groupstack) && end($this->groupstack) !== $name) {
+            $this->pop_group();
+        }
+    }
+
+    /**
+     * Pops a group from the stack and closes the div.
+     *
+     * @return string|null The name of the group that was popped, or null if the stack is empty.
+     */
+    protected function pop_group(): ?string {
+        if (empty($this->groupstack)) {
+            return null;
+        }
+        $mform = $this->_form;
+        $mform->addElement('html', html_writer::end_tag('div'));
+        return array_pop($this->groupstack);
     }
 
     /**
@@ -383,30 +423,11 @@ abstract class base_moodleform extends moodleform {
 
         $this->require_definition_after_data();
 
-        $config = new stdClass;
-        if ($this->uistage->get_ui() instanceof import_ui) {
-            $config->title = get_string('confirmcancelimport', 'backup');
-        } else if ($this->uistage->get_ui() instanceof restore_ui) {
-            $config->title = get_string('confirmcancelrestore', 'backup');
-        } else {
-            $config->title = get_string('confirmcancel', 'backup');
-        }
-        $config->question = get_string('confirmcancelquestion', 'backup');
-        $config->yesLabel = $config->title;
-        $config->noLabel = get_string('confirmcancelno', 'backup');
-        $config->closeButtonTitle = get_string('close', 'editor');
-        $PAGE->requires->yui_module(
-            'moodle-backup-confirmcancel',
-            'M.core_backup.confirmcancel.watch_cancel_buttons',
-            array($config)
-        );
-
         // Get list of module types on course.
         $modinfo = get_fast_modinfo($COURSE);
         $modnames = array_map('strval', $modinfo->get_used_module_names(true));
         core_collator::asort($modnames);
-        $PAGE->requires->yui_module('moodle-backup-backupselectall', 'M.core_backup.backupselectall',
-                array($modnames));
+        $PAGE->requires->js_call_amd('core_backup/schema_backup_form', 'init', [$modnames]);
         $PAGE->requires->strings_for_js(array('select', 'all', 'none'), 'moodle');
         $PAGE->requires->strings_for_js(array('showtypes', 'hidetypes'), 'backup');
 

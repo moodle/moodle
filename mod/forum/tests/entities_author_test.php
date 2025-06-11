@@ -25,11 +25,11 @@ use mod_forum\local\entities\author as author_entity;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entities_author_test extends \advanced_testcase {
+final class entities_author_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */
-    public function test_entity() {
+    public function test_entity(): void {
         $this->resetAfterTest();
 
         $author = new author_entity(

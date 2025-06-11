@@ -30,12 +30,13 @@ require_once(__DIR__ . '/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_calendar\local\api
  */
-class local_api_test extends \advanced_testcase {
+final class local_api_test extends \advanced_testcase {
 
     /**
      * Tests set up
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 
@@ -78,7 +79,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events on or after the given time then an empty result set should
      * be returned.
      */
-    public function test_get_calendar_action_events_by_timesort_after_time() {
+    public function test_get_calendar_action_events_by_timesort_after_time(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -134,7 +135,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events before the given time then an empty result set should be
      * returned.
      */
-    public function test_get_calendar_action_events_by_timesort_before_time() {
+    public function test_get_calendar_action_events_by_timesort_before_time(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -185,7 +186,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events in the given time range then an empty result set should be
      * returned.
      */
-    public function test_get_calendar_action_events_by_timesort_time_range() {
+    public function test_get_calendar_action_events_by_timesort_time_range(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -237,7 +238,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events in the given time range then an empty result set should be
      * returned.
      */
-    public function test_get_calendar_action_events_by_timesort_time_limit_offset() {
+    public function test_get_calendar_action_events_by_timesort_time_limit_offset(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -289,7 +290,7 @@ class local_api_test extends \advanced_testcase {
      * Test get_calendar_action_events_by_timesort with search feature.
      * @covers ::get_action_events_by_timesort
      */
-    public function test_get_calendar_action_events_by_timesort_with_search() {
+    public function test_get_calendar_action_events_by_timesort_with_search(): void {
         // Generate data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -366,7 +367,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events on or after the given time then an empty result set should
      * be returned.
      */
-    public function test_get_calendar_action_events_by_course_after_time() {
+    public function test_get_calendar_action_events_by_course_after_time(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -431,7 +432,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events before the given time then an empty result set should be
      * returned.
      */
-    public function test_get_calendar_action_events_by_course_before_time() {
+    public function test_get_calendar_action_events_by_course_before_time(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -496,7 +497,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events in the given time range then an empty result set should be
      * returned.
      */
-    public function test_get_calendar_action_events_by_course_time_range() {
+    public function test_get_calendar_action_events_by_course_time_range(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -562,7 +563,7 @@ class local_api_test extends \advanced_testcase {
      * If there are no events in the given time range then an empty result set should be
      * returned.
      */
-    public function test_get_calendar_action_events_by_course_time_limit_offset() {
+    public function test_get_calendar_action_events_by_course_time_limit_offset(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -627,7 +628,7 @@ class local_api_test extends \advanced_testcase {
      * Test that get_action_events_by_courses will return a list of events for each
      * course you provided as long as the user is enrolled in the course.
      */
-    public function test_get_action_events_by_courses() {
+    public function test_get_action_events_by_courses(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -716,7 +717,7 @@ class local_api_test extends \advanced_testcase {
      * Test get_action_events_by_courses with search feature.
      * @covers ::get_action_events_by_courses
      */
-    public function test_get_action_events_by_courses_with_search() {
+    public function test_get_action_events_by_courses_with_search(): void {
         // Generate data.
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course with advanced name']);
@@ -787,7 +788,7 @@ class local_api_test extends \advanced_testcase {
     /**
      * Test that the get_legacy_events() function only returns activity events that are enabled.
      */
-    public function test_get_legacy_events_with_disabled_module() {
+    public function test_get_legacy_events_with_disabled_module(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -858,7 +859,7 @@ class local_api_test extends \advanced_testcase {
     /**
      * Test for \core_calendar\local\api::get_legacy_events() when there are user and group overrides.
      */
-    public function test_get_legacy_events_with_overrides() {
+    public function test_get_legacy_events_with_overrides(): void {
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
@@ -1048,7 +1049,7 @@ class local_api_test extends \advanced_testcase {
      * Setting the start date on the calendar event should update the date
      * of the event but should leave the time of day unchanged.
      */
-    public function test_update_event_start_day_updates_date() {
+    public function test_update_event_start_day_updates_date(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $roleid = $generator->create_role();
@@ -1083,7 +1084,7 @@ class local_api_test extends \advanced_testcase {
      * A user should not be able to update the start date of the event
      * that they don't have the capabilities to modify.
      */
-    public function test_update_event_start_day_no_permission() {
+    public function test_update_event_start_day_no_permission(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $roleid = $generator->create_role();
@@ -1119,7 +1120,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_no_max() {
+    public function test_update_event_start_day_activity_event_no_max(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1154,7 +1155,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_less_than_max() {
+    public function test_update_event_start_day_activity_event_less_than_max(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1191,7 +1192,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_equal_to_max() {
+    public function test_update_event_start_day_activity_event_equal_to_max(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1227,7 +1228,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_after_max() {
+    public function test_update_event_start_day_activity_event_after_max(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1258,7 +1259,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_no_min() {
+    public function test_update_event_start_day_activity_event_no_min(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1294,7 +1295,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_greater_than_min() {
+    public function test_update_event_start_day_activity_event_greater_than_min(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1331,7 +1332,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_equal_to_min() {
+    public function test_update_event_start_day_activity_event_equal_to_min(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1368,7 +1369,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the feedback activity because it requires
      * module callbacks to be in place to test.
      */
-    public function test_update_event_start_day_activity_event_before_min() {
+    public function test_update_event_start_day_activity_event_before_min(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
@@ -1400,7 +1401,7 @@ class local_api_test extends \advanced_testcase {
      * Note: This test uses the quiz activity because it requires
      * module callbacks to be in place and override event support to test.
      */
-    public function test_update_event_start_day_activity_event_override() {
+    public function test_update_event_start_day_activity_event_override(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/calendar/lib.php');
         require_once($CFG->dirroot . '/mod/quiz/lib.php');

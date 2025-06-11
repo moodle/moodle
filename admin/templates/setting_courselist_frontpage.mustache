@@ -40,9 +40,9 @@
 {{!
     Setting courselist_frontpage.
 }}
-<div class="form-group">
+<div class="mb-3">
     {{#selects}}
-        <select id="{{id}}{{key}}" name="{{name}}[]" class="custom-select">
+        <select id="{{id}}{{key}}" name="{{name}}[]" class="custom-select mb-1">
             {{#options}}
                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
             {{/options}}

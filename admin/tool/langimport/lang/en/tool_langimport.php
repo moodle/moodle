@@ -45,6 +45,7 @@ $string['langunsupported'] = '<p>Your server does not seem to fully support the 
 $string['langupdatecomplete'] = 'Language pack update completed';
 $string['missingcfglangotherroot'] = 'Missing configuration value $CFG->langotherroot';
 $string['missinglangparent'] = 'Missing parent language <em>{$a->parent}</em> of <em>{$a->lang}</em>.';
+$string['noenglishuninstalltitle'] = 'Unable to uninstall';
 $string['noenglishuninstall'] = 'The English language pack cannot be uninstalled.';
 $string['nolangupdateneeded'] = 'All your language packs are up to date, no update is needed';
 $string['pluginname'] = 'Language packs';

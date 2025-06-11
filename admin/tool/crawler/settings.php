@@ -209,5 +209,16 @@ useridlistid
                                                         new lang_string('disablebot',         'tool_crawler'),
                                                         new lang_string('disablebotdesc',     'tool_crawler'),
                                                         '0' ));
+
+        $options = [
+            0 => new lang_string('debugoff', 'tool_crawler'),
+            1 => new lang_string('debugnormal', 'tool_crawler'),
+            2 => new lang_string('debugverbose', 'tool_crawler'),
+        ];
+        $settings->add(new admin_setting_configselect('tool_crawler/debugging',
+                                                    new lang_string('debugging',              'tool_crawler'),
+                                                    new lang_string('debuggingdesc',          'tool_crawler'),
+                                                    0,
+                                                    $options));
     }
 }

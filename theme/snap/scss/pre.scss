@@ -1,0 +1,222 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Snap variables.
+ *
+ * @package   theme_snap
+ * @copyright Copyright (c) 2015 Open LMS (https://www.openlms.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// Snap specific overrides to Boost settings from
+// theme/boost/scss/bootstrap/variables.scss
+
+$font-size-root: 18px;
+$font-size-lg:   1.25rem;
+$font-size-sm:   .75rem;
+$font-size-xs:   .6rem;
+$navbar-height: 60px !default;
+
+// -------------------------
+// Course cards size in the user dashboard.
+// -------------------------
+$grid-gutter-width:     1.7 * $font-size-root !default; // Original: 1.7rem (changed to comply with scssphp 1.4.1)
+$card-group-margin:     ($grid-gutter-width / 2) !default;
+$card-deck-margin:      $card-group-margin !default;
+$card-gutter:           $card-deck-margin * 2;
+
+
+// This needs some investigation of issues around IE11 and Moodle's autoprefixer implementaion.
+//$enable-flex:               true;
+
+$brand-primary:         #82009e !default;
+$brand-success:         #3d5c1f;
+$brand-warning:         #b55600;
+$brand-danger:          #990f3d;
+$brand-info:            #02567e;
+
+$body-bg:               #fff;
+$body-color:            #565656;
+
+// Color for the icons to improve accessibility with a darker gray color.
+$icons-color:            #6c757d;
+
+$font-family-system:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-family-sans-serif:  "Roboto", $font-family-system;
+$font-family-feature:     "Roboto", $font-family-system;
+$font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
+
+$headings-font-weight:    400;
+$headings-color:          $body-color;
+
+$modal-backdrop-bg:           #fff;
+$modal-backdrop-opacity:      .8;
+
+$breadcrumb-divider: "/";
+$breadcrumb-divider-rtl: "\005C";
+
+$state-success-text:             $brand-success;
+$state-success-bg:               fade-out($brand-success, 0.9);
+$state-success-border:           fade-out($brand-success, 0.9);
+
+$state-info-text:                $brand-info;
+$state-info-bg:                  fade-out($brand-info, 0.9);
+$state-info-border:              fade-out($brand-info, 0.9);
+
+$state-warning-text:             $brand-warning;
+$state-warning-bg:               fade-out($brand-warning, 0.9);
+$state-warning-border:           fade-out($brand-warning, 0.9);
+
+$state-danger-text:              $brand-danger;
+$state-danger-bg:                fade-out($brand-danger, 0.9);
+$state-danger-border:            fade-out($brand-danger, 0.9);
+
+$footer-color-bg:                #f1f0ee;
+
+$user-content-max-width:         60em;
+
+// -------------------------
+// Button customisations
+// -------------------------
+
+$btn-secondary-color:           $brand-primary;
+
+$border-radius:          0;
+$border-radius-lg:       0;
+$border-radius-sm:       0;
+
+$btn-border-radius:          .25rem;
+$btn-border-radius-lg:       .3rem;
+$btn-border-radius-sm:       .2rem;
+
+// Activity icons
+$color-communication:                #689F38; // Forums, Chat, Open forum
+$color-assignment:                   #008CBA; // Assignment, Workshop, Attendance, Journal
+$color-content:                      #C68B24; // Quiz, choice, feedback
+$color-information:                  #009B87; // Wiki, glossary, Database, Choice Group
+$color-collab:                       #A0308A; // Collaborate
+$hvp-interactive-content:            #000000; // HVP
+
+// Coloring activity icons using filter.
+$communication-filter: invert(55%) sepia(61%) saturate(423%) hue-rotate(49deg) brightness(89%) contrast(92%);; // Forums, Chat, Open forum
+$assignment-filter:    invert(32%) sepia(48%) saturate(3787%) hue-rotate(173deg) brightness(97%) contrast(101%); // Assignment, Workshop, Attendance, H5P, Journal
+$content-filter:       invert(85%) sepia(40%) saturate(5001%) hue-rotate(348deg) brightness(84%) contrast(82%); // Quiz, choice, feedback
+$information-filter:   invert(33%) sepia(97%) saturate(3270%) hue-rotate(155deg) brightness(100%) contrast(101%); // Wiki, glossary, Database, Choice Group
+$collab-filter:        invert(25%) sepia(52%) saturate(2509%) hue-rotate(285deg) brightness(88%) contrast(88%); // Collaborate
+$hvp-filter:           brightness(0%) contrast(100%); // HVP
+
+// Resource icons
+$color-lightbox:                     #008C5E; // Lightbox gallery
+$color-resource:                     #3279B2; // Resources lTI
+$color-book:                         #2B4F9E; // Book
+$color-folder:                       #D4A934; // Folder
+$color-questionnaire:                #D4780F; // Questionnaire, IMSCP, SCORM, Survey, Lesson
+$color-url:                          #2C5DAC; // URL
+$color-label:                        #2E448D; // Label
+$color-page:                         #4232AA; // Page
+$color-bk-resource:                  #f8f9fa; // For resources description background.
+
+// Coloring resource icons using filter.
+$lightbox-filter:      invert(36%) sepia(66%) saturate(5372%) hue-rotate(148deg) brightness(90%) contrast(101%); // Lightbox gallery
+$resource-filter:      invert(40%) sepia(7%) saturate(6564%) hue-rotate(168deg) brightness(99%) contrast(75%); // Resources lTI
+$book-filter:          invert(24%) sepia(91%) saturate(1089%) hue-rotate(200deg) brightness(90%) contrast(90%); // Book
+$folder-filter:         invert(78%) sepia(36%) saturate(870%) hue-rotate(353deg) brightness(87%) contrast(90%); // Folder
+$questionnaire-filter: invert(51%) sepia(96%) saturate(615%) hue-rotate(353deg) brightness(84%) contrast(96%); // Questionnaire, IMSCP, SCORM, Survey, Lesson
+$url-filter:           invert(31%) sepia(50%) saturate(1389%) hue-rotate(189deg) brightness(91%) contrast(90%); // URL
+$label-filter:         invert(21%) sepia(56%) saturate(1129%) hue-rotate(197deg) brightness(104%) contrast(95%); // Label
+$page-filter:          invert(14%) sepia(88%) saturate(5109%) hue-rotate(251deg) brightness(70%) contrast(83%); // Page
+
+
+// -------------------------
+// Colour variables for resources and activities.
+// -------------------------
+// TODO: file extension are MIME in ticket.
+$color-word:                         $color-resource; // Blue.
+$color-powerpoint:                   $color-resource; // Orange.
+$color-excel:                        $color-resource; // Green.
+$color-pdf:                          $color-resource; // Red.
+$color-audio:                        $color-resource; // Green.
+$color-video:                        $color-resource; // Blue.
+$color-code:                         $color-resource; // Orange.
+
+// Open LMS
+$color-certificate:                  #9832A7; // Course certificate
+$color-customcertificate:            #9832A7; // Custom certificate
+$color-customquiz:                   #C14A81; // Custom Quiz
+$color-livepoll:                     #A03F3F; // Livepoll
+$color-checklist:                    #2E9467; // Checklist Dialogue
+$color-quizlms:                      $color-content; // Adaptive quiz, Quiz game
+$color-zoom:                         #7C2D8F; // Zoom
+$color-go1:                          #3A7E98; // GO1 content item
+
+$certificate-filter: invert(26%) sepia(32%) saturate(4543%) hue-rotate(274deg) brightness(86%) contrast(89%); // Course certificate
+$customquiz-filter: invert(39%) sepia(84%) saturate(431%) hue-rotate(280deg) brightness(87%) contrast(96%); // Custom Quiz
+$livepoll-filter: invert(31%) sepia(14%) saturate(2379%) hue-rotate(314deg) brightness(102%) contrast(92%); // Livepoll
+$checklist-filter: invert(48%) sepia(82%) saturate(346%) hue-rotate(101deg) brightness(85%) contrast(87%); // Checklist Dialogue
+$quizlms-filter: $content-filter; // Adaptive quiz, Quiz game
+$zoom-filter: invert(21%) sepia(52%) saturate(2247%) hue-rotate(265deg) brightness(95%) contrast(94%); // Zoom
+$go1-filter: invert(40%) sepia(35%) saturate(400%) hue-rotate(180deg) brightness(90%) contrast(85%); // GO1 content item
+$url-filter: invert(49%) sepia(52%) saturate(4675%) hue-rotate(156deg) brightness(89%) contrast(102%); // Andresco
+$ebcwep-filter: invert(36%) sepia(98%) saturate(6969%) hue-rotate(315deg) brightness(90%) contrast(119%); // EBC Wooclap Event Participation
+$groupselect-filter: invert(25%) sepia(54%) saturate(6226%) hue-rotate(245deg) brightness(100%) contrast(102%); // Group self-selection
+$imscp-filter: invert(25%) sepia(63%) saturate(1152%) hue-rotate(344deg) brightness(94%) contrast(91%); // IMS content package
+$scheduler-filter: invert(45%) sepia(46%) saturate(3819%) hue-rotate(260deg) brightness(101%) contrast(87%); // Scheduler
+
+// -------------------------
+// Colour variables for the customisable mr_nav.
+// -------------------------
+
+$nav-bg:                            rgba(255, 255, 255, .95) !default;
+$nav-color:                         $brand-primary !default;
+$nav-color-hover:                   darken($nav-color, 8%);
+
+$nav-button-bg:                     rgba(255, 255, 255, 0) !default;
+$nav-button-color:                  $nav-color !default;
+
+$nav-login-bg:                      $nav-button-bg;
+$nav-login-color:                   $nav-button-color;
+
+@if (alpha($nav-button-bg) == 0) {
+    $nav-login-color:               $nav-bg;
+    $nav-login-bg:                  $nav-button-color;
+}
+
+// -------------------------
+// Colour variables for snap home page.
+// -------------------------
+
+$snap-featured-cards-bg: #eef0f6;
+$snap-carousel-buttons: $icons-color;
+
+/* https://github.com/twbs/bootstrap/issues/22222#issuecomment-292819959 */
+$cursor-disabled: not-allowed;
+
+$h5p-content-maxwidth: 960px !default;
+
+// -------------------------
+// Colour variables for snap feature spots.
+// -------------------------
+
+$feature-spot-background-color: #ffffff !default;
+$feature-spot-title-color: #ff7f41 !default;
+$feature-spot-description-color: #565656 !default;
+
+// -------------------------
+// Colour variables for snap footer colors.
+// -------------------------
+
+$snap-footer-bg-color: #474747 !default;
+$snap-footer-txt-color: #ffffff !default;

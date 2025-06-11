@@ -49,7 +49,7 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php')
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\contentbank
  */
-class contentbank_test extends advanced_testcase {
+final class contentbank_test extends advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -65,7 +65,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function get_extension_provider() {
+    public static function get_extension_provider(): array {
         return [
             'H5P file' => ['something.h5p', '.h5p'],
             'PDF file' => ['something.pdf', '.pdf']
@@ -81,7 +81,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::get_extension
      */
-    public function test_get_extension(string $filename, string $expected) {
+    public function test_get_extension(string $filename, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -95,7 +95,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function get_extension_supporters_provider() {
+    public static function get_extension_supporters_provider(): array {
         return [
             'H5P first' => [['.h5p' => ['h5p', 'testable']], '.h5p', 'h5p'],
             'Testable first (but upload not implemented)' => [['.h5p' => ['testable', 'h5p']], '.h5p', 'h5p'],
@@ -112,7 +112,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::load_context_supported_extensions
      */
-    public function test_get_extension_supporter_for_admins(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter_for_admins(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -136,7 +136,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::load_context_supported_extensions
      */
-    public function test_get_extension_supporter_for_users(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter_for_users(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -161,7 +161,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::load_context_supported_extensions
      */
-    public function test_get_extension_supporter_for_teachers(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter_for_teachers(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -187,7 +187,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::get_extension_supporter
      */
-    public function test_get_extension_supporter(array $supporters, string $extension, string $expected) {
+    public function test_get_extension_supporter(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
         $cb = new contentbank();
@@ -208,7 +208,7 @@ class contentbank_test extends advanced_testcase {
      * @param  array $contexts List of contexts where to create content.
      */
     public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = [],
-            array $contenttypes = null): void {
+            ?array $contenttypes = null): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -259,7 +259,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return array
      */
-    public function search_contents_provider(): array {
+    public static function search_contents_provider(): array {
 
         return [
             'Search all content in all contexts' => [
@@ -361,7 +361,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers ::create_content_from_file
      */
-    public function test_create_content_from_file() {
+    public function test_create_content_from_file(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest();
@@ -395,7 +395,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::delete_contents
      */
-    public function test_delete_contents() {
+    public function test_delete_contents(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -444,7 +444,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::delete_contents
      */
-    public function test_delete_contents_for_empty_contentbank() {
+    public function test_delete_contents_for_empty_contentbank(): void {
 
         $this->resetAfterTest();
         $cb = new \core_contentbank\contentbank();
@@ -467,7 +467,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::move_contents
      */
-    public function test_move_contents() {
+    public function test_move_contents(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -500,7 +500,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::move_contents
      */
-    public function test_move_contents_for_empty_contentbank() {
+    public function test_move_contents_for_empty_contentbank(): void {
 
         $this->resetAfterTest();
         $cb = new \core_contentbank\contentbank();
@@ -519,7 +519,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function get_contenttypes_with_capability_feature_provider(): array {
+    public static function get_contenttypes_with_capability_feature_provider(): array {
         return [
             'no-contenttypes_enabled' => [
                 'contenttypesenabled' => [],
@@ -568,7 +568,6 @@ class contentbank_test extends advanced_testcase {
 
             // Replace protected singletoninstance reference (core_plugin_manager property) with mock object.
             $ref = new \ReflectionProperty(\core_plugin_manager::class, 'singletoninstance');
-            $ref->setAccessible(true);
             $ref->setValue(null, $pluginmanager);
 
             // Return values of get_plugins_of_type method.
@@ -592,7 +591,6 @@ class contentbank_test extends advanced_testcase {
             // Get access to private property enabledcontenttypes.
             $rc = new \ReflectionClass(\core_contentbank\contentbank::class);
             $rcp = $rc->getProperty('enabledcontenttypes');
-            $rcp->setAccessible(true);
 
             foreach ($contenttypesenabled as $contenttypename) {
                 $plugins["\\contenttype_$contenttypename\\contenttype"] = $contenttypename;
@@ -615,7 +613,7 @@ class contentbank_test extends advanced_testcase {
      *
      * @covers  ::get_content_from_id
      */
-    public function test_get_content_from_id() {
+    public function test_get_content_from_id(): void {
 
         $this->resetAfterTest();
         $cb = new \core_contentbank\contentbank();

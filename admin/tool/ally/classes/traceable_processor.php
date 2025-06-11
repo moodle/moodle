@@ -98,7 +98,7 @@ abstract class traceable_processor {
             static::$pushtrace[$eventname][] = $payload;
 
             // If we aren't using a mock version of $updates service then return now.
-            if ($updates instanceof \Prophecy\Prophecy\ProphecySubjectInterface) {
+            if ($updates instanceof \PHPUnit\Framework\MockObject\MockObject) {
                 $updates->send($payload);
             }
             return true; // Return true always for PHPUNIT_TEST.

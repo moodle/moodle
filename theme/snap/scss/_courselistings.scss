@@ -1,0 +1,187 @@
+// -------------------------
+//  Course listings - front page and course/catagory listings page.
+// -------------------------
+
+// Reset core styles.
+.course_category_tree .category > .info,
+.coursebox .info,
+.coursebox {
+    background-color: transparent;
+    border: none;
+    border-color: transparent;
+    box-shadow: none;
+    margin: 0;
+}
+
+// A course and it's details.
+.coursebox {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid $gray-lighter;
+
+    .coursename {
+        display: inline;
+    }
+    .info .coursename {
+        font-size: $h6-font-size;
+    }
+    .info {
+        padding: 0;
+    }
+    .enrolmenticons {
+        display: inline-block;
+        margin: 0 0.5rem;
+    }
+    .moreinfo {
+        float: right;
+        margin-left: auto;
+    }
+    &.loaded {
+        .moreinfo {
+            display: none;
+        }
+    }
+    .content .courseimage {
+        flex: none;
+        overflow: hidden;
+        width: 100%;
+        max-width: max-content;
+        margin-right: 1.5rem;
+
+        img {
+            max-width: initial;
+            height: initial;
+            width: 300px;
+            border-radius: 0.5rem;
+            max-height: initial;
+        }
+    }
+    .teachers {
+        list-style: none;
+    }
+}
+
+@include media-breakpoint-up(md) {
+    // Two colum layout for Avaiable Courses on front page.
+    .courses.frontpage-course-list-all {
+        .coursebox {
+            width: 50%;
+            border: 0;
+            padding: 0.5rem;
+            display: inline-block;
+            vertical-align: top;
+
+            .coursename {
+                font-size: $h4-font-size;
+            }
+        }
+    }
+    // Grid for coursebox content.
+    .coursebox .content {
+
+        .summary,
+        .teachers {
+            width: 62%;
+            float: left;
+        }
+
+        .courseimage {
+            float: right;
+        }
+    }
+}
+
+// Indent child content.
+.category.loaded.with_children .content {
+    padding-left: 4%;
+}
+
+// Layout for course/cat listing pages.
+#page-course-index-category,
+#page-course-index {
+    #region-main {
+        max-width: 100%;
+        .row {
+            display: block;
+        }
+    }
+    // Catagory descriptions.
+    .snap-category-description {
+        max-width: 43.5em;
+        padding: 2%;
+        background-color: white;
+        border-radius: 0.5rem;
+    }
+    // Layout for search, select cat and expand/collapse.
+    #switchcategory select {
+        max-width: 75%;
+    }
+    .collapsible-actions,
+    .course_category_tree {
+        clear: both;
+    }
+    @media (max-width: 575px) {
+        #region-main .row .col-sm-8.text-right {
+            text-align: center !important;
+            padding-top: 1em;
+        }
+        .course_category_tree {
+            padding: 1.25rem;
+        }
+    }
+    .paging.paging-morelink {
+        padding-top: 2em;
+        a:hover,
+        a:focus,
+        a:active {
+            color: #fff;
+        }
+    }
+}
+
+// Catagory expand/collapse & associated icons.
+.snap-js-loaded .course_category_tree {
+    .category.collapsed > .content {
+        display: none;
+    }
+    .category > .info > .categoryname {
+        background-image: url([[pix:theme|collapsed_empty]]);
+        background-repeat: no-repeat;
+        padding: 2px 18px;
+        margin: 3px;
+        background-position: center left;
+        font-size: 1.3em;
+        background-size: 16px 16px;
+    }
+
+    .category.with_children > .info > .categoryname {
+        background-image: url([[pix:moodle|t/expanded]]);
+        cursor: pointer;
+    }
+
+    .category.with_children.collapsed > .info > .categoryname {
+        background-image: url([[pix:moodle|t/collapsed]]);
+    }
+}
+// Hide js actions until js loaded.
+.course_category_tree .collapsible-actions {
+    visibility: hidden;
+}
+.snap-js-loaded .course_category_tree .collapsible-actions {
+    visibility: visible;
+}
+
+// Course listings page - info is output in the header.
+#page-course-index-category .generalbox.info {
+    display: none;
+}
+
+// Paging.
+.paging.paging-morelink {
+    text-align: center;
+}
+
+.course_category_tree {
+    .category .numberofcourse {
+        font-size: $font-size-sm;
+    }
+}

@@ -39,12 +39,22 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends \core_privacy\tests\provider_testcase {
+final class provider_test extends \core_privacy\tests\provider_testcase {
+
+    /**
+     * Setup.
+     */
+    protected function setUp(): void {
+        parent::setUp();
+        // Turn off the course welcome message, so we can easily test other messages.
+        set_config('sendcoursewelcomemessage', 0, 'enrol_manual');
+    }
 
     /**
      * Test for provider::get_metadata().
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
+        $this->resetAfterTest();
         $collection = new collection('core_message');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -145,7 +155,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_preferences().
      */
-    public function test_export_user_preferences_no_pref() {
+    public function test_export_user_preferences_no_pref(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -159,7 +169,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_preferences().
      */
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -209,7 +219,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when there is no message or notification.
      */
-    public function test_get_contexts_for_userid_no_data() {
+    public function test_get_contexts_for_userid_no_data(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -226,7 +236,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when there is a private message between users.
      */
-    public function test_get_contexts_for_userid_with_private_messages() {
+    public function test_get_contexts_for_userid_with_private_messages(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -271,7 +281,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when there is several messages (private and group).
      */
-    public function test_get_contexts_for_userid_with_messages() {
+    public function test_get_contexts_for_userid_with_messages(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -372,7 +382,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when there is a notification between users.
      */
-    public function test_get_contexts_for_userid_with_notification() {
+    public function test_get_contexts_for_userid_with_notification(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -410,7 +420,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when a users has a contact.
      */
-    public function test_get_contexts_for_userid_with_contact() {
+    public function test_get_contexts_for_userid_with_contact(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -448,7 +458,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when a user makes a contact request.
      */
-    public function test_get_contexts_for_userid_with_contact_request() {
+    public function test_get_contexts_for_userid_with_contact_request(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -486,7 +496,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid() when a user is blocked.
      */
-    public function test_get_contexts_for_userid_with_blocked_contact() {
+    public function test_get_contexts_for_userid_with_blocked_contact(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -524,7 +534,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context_with_contacts() {
+    public function test_export_for_context_with_contacts(): void {
         $this->resetAfterTest();
 
         // Create users to test with.
@@ -550,7 +560,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = writer::with_context($user1context);
 
         $contacts = (array) $writer->get_data([get_string('contacts', 'core_message')]);
-        usort($contacts, ['static', 'sort_contacts']);
+        usort($contacts, [static::class, 'sort_contacts']);
 
         $this->assertCount(3, $contacts);
 
@@ -567,7 +577,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context_with_contact_requests() {
+    public function test_export_for_context_with_contact_requests(): void {
         $this->resetAfterTest();
 
         // Create users to test with.
@@ -612,7 +622,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context_with_blocked_users() {
+    public function test_export_for_context_with_blocked_users(): void {
         $this->resetAfterTest();
 
         // Create users to test with.
@@ -654,7 +664,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context_with_private_messages() {
+    public function test_export_for_context_with_private_messages(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -706,7 +716,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $dbm2 = $DB->get_record('messages', ['id' => $m2]);
         $dbm3 = $DB->get_record('messages', ['id' => $m3]);
 
-        usort($messages, ['static', 'sort_messages']);
+        usort($messages, [static::class, 'sort_messages']);
         $m1 = array_shift($messages);
         $m2 = array_shift($messages);
         $m3 = array_shift($messages);
@@ -736,7 +746,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $dbm5 = $DB->get_record('messages', ['id' => $m5]);
         $dbm6 = $DB->get_record('messages', ['id' => $m6]);
 
-        usort($messages, ['static', 'sort_messages']);
+        usort($messages, [static::class, 'sort_messages']);
         $m4 = array_shift($messages);
         $m5 = array_shift($messages);
         $m6 = array_shift($messages);
@@ -762,7 +772,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context_with_messages() {
+    public function test_export_for_context_with_messages(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -869,7 +879,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context_with_notifications() {
+    public function test_export_for_context_with_notifications(): void {
         $this->resetAfterTest();
 
         // Create users to test with.
@@ -917,7 +927,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1038,7 +1048,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1151,7 +1161,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when there is no message or notification.
      */
-    public function test_get_users_in_context_no_data() {
+    public function test_get_users_in_context_no_data(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -1167,7 +1177,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when there is a message between users.
      */
-    public function test_get_users_in_context_with_message() {
+    public function test_get_users_in_context_with_message(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -1208,7 +1218,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when there is a notification between users.
      */
-    public function test_get_users_in_context_with_notification() {
+    public function test_get_users_in_context_with_notification(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -1249,7 +1259,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when a users has a contact.
      */
-    public function test_get_users_in_context_with_contact() {
+    public function test_get_users_in_context_with_contact(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -1290,7 +1300,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when a user makes a contact request.
      */
-    public function test_get_users_in_context_with_contact_request() {
+    public function test_get_users_in_context_with_contact_request(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -1331,7 +1341,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_users_in_context() when a user is blocked.
      */
-    public function test_get_users_in_context_with_blocked_contact() {
+    public function test_get_users_in_context_with_blocked_contact(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -1372,7 +1382,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1487,7 +1497,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::add_contexts_for_conversations().
      */
-    public function test_add_contexts_for_conversations() {
+    public function test_add_contexts_for_conversations(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $component = 'core_group';
@@ -1576,7 +1586,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::add_conversations_in_context().
      */
-    public function test_add_conversations_in_context() {
+    public function test_add_conversations_in_context(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $component = 'core_group';
@@ -1647,7 +1657,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_conversations().
      */
-    public function test_export_conversations() {
+    public function test_export_conversations(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1740,7 +1750,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         ]);
         $this->assertCount(3, $messages);
 
-        usort($messages, ['static', 'sort_messages']);
+        usort($messages, [static::class, 'sort_messages']);
         $m1 = array_shift($messages);
         $m2 = array_shift($messages);
         $m3 = array_shift($messages);
@@ -1810,7 +1820,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         ]);
         $this->assertCount(3, $messages);
 
-        usort($messages, ['static', 'sort_messages']);
+        usort($messages, [static::class, 'sort_messages']);
         $m1 = array_shift($messages);
         $m2 = array_shift($messages);
         $m3 = array_shift($messages);
@@ -1856,7 +1866,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_all_users().
      */
-    public function test_delete_conversations_for_all_users() {
+    public function test_delete_conversations_for_all_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -2044,7 +2054,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_all_users() in the system context.
      */
-    public function test_delete_conversations_for_all_users_systemcontext() {
+    public function test_delete_conversations_for_all_users_systemcontext(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -2212,7 +2222,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_all_users() in the user context.
      */
-    public function test_delete_conversations_for_all_users_usercontext() {
+    public function test_delete_conversations_for_all_users_usercontext(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -2381,7 +2391,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_user().
      */
-    public function test_delete_conversations_for_user() {
+    public function test_delete_conversations_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -2579,7 +2589,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_users().
      */
-    public function test_delete_conversations_for_users() {
+    public function test_delete_conversations_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -2823,7 +2833,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @return int The id of the message
      * @throws dml_exception
      */
-    private function create_message(int $useridfrom, int $useridto, int $timecreated = null, bool $read = false) {
+    private function create_message(int $useridfrom, int $useridto, ?int $timecreated = null, bool $read = false) {
         global $DB;
 
         static $i = 1;
@@ -2874,7 +2884,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @return int The id of the notification
      * @throws dml_exception
      */
-    private function create_notification(int $useridfrom, int $useridto, int $timecreated = null, int $timeread = null) {
+    private function create_notification(int $useridfrom, int $useridto, ?int $timecreated = null, ?int $timeread = null) {
         global $DB;
 
         static $i = 1;

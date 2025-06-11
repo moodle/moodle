@@ -77,23 +77,13 @@ class session_report_viewed extends \core\event\base {
         $mode = empty($this->other['mode']) ? "" : $this->other['mode'];
         $groupby = empty($this->other['groupby']) ? "" : $this->other['groupby'];
         $sesscourses = empty($this->other['sesscourses']) ? "" : $this->other['sesscourses'];
-        return new \moodle_url('/mod/attendance/view.php', array('id' => $this->contextinstanceid,
+        return new \moodle_url('/mod/attendance/view.php', ['id' => $this->contextinstanceid,
                                                                  'studentid' => $this->relateduserid,
                                                                  'mode' => $mode,
                                                                  'view' => $this->other['view'],
                                                                  'groupby' => $groupby,
                                                                  'sesscourses' => $sesscourses,
-                                                                 'curdate' => $this->other['curdate']));
-    }
-
-    /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'attendance', 'student sessions ' . $this->action, $this->get_url(),
-            'student id ' . $this->relateduserid, $this->contextinstanceid);
+                                                                 'curdate' => $this->other['curdate']]);
     }
 
     /**
@@ -102,7 +92,7 @@ class session_report_viewed extends \core\event\base {
      * @return array of parameters for object mapping.
      */
     public static function get_objectid_mapping() {
-        return array();
+        return [];
     }
 
     /**
@@ -111,7 +101,7 @@ class session_report_viewed extends \core\event\base {
      * @return array of parameters for object mapping for objects referenced in 'other' property.
      */
     public static function get_other_mapping() {
-        return array();
+        return [];
     }
 
     /**

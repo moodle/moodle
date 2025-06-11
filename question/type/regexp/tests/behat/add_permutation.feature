@@ -16,7 +16,7 @@ Feature: Test creating Regexp questions with the 'permutation' feature
       | teacher | C1     | editingteacher |
 
   @javascript
-  Scenario: Create a Regexp question with the 'permutation' feature
+  Scenario: Create a Regexp question with the permutation feature French flag
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Regular expression short answer" question filling the form with:
       | Question name        | regexp-001                    |
@@ -34,7 +34,6 @@ Feature: Test creating Regexp questions with the 'permutation' feature
     And I click on "Show/Hide alternate answers" "link"
     And I click on "id_showalternate" "button"
     Then I should see "Answer 2 (100%)"
-    And I should see "it's (blue, white(,| and) red|blue, red(,| and) white|white, red(,| and) blue|white, blue(,| and) red|red, blue(,| and) white|red, white(,| and) blue)"
     And I should see "it's blue, white, red"
     And I should see "it's blue, white and red"
     And I should see "it's blue, red, white"
@@ -51,7 +50,7 @@ Feature: Test creating Regexp questions with the 'permutation' feature
     Then I should see "regexp-001"
 
   @javascript
-  Scenario: Create a Regexp question with the 'permutation' feature
+  Scenario: Create a Regexp question with the permutation feature Proverb
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Regular expression short answer" question filling the form with:
       | Question name        | regexp-001                    |
@@ -69,7 +68,6 @@ Feature: Test creating Regexp questions with the 'permutation' feature
     And I click on "Show/Hide alternate answers" "link"
     And I click on "id_showalternate" "button"
     Then I should see "Answer 2 (100%)"
-    And I should see "Early to (bed and early to rise|rise and early to bed), makes a man (healthy, wealthy and wise|healthy, wise and wealthy|wealthy, wise and healthy|wealthy, healthy and wise|wise, healthy and wealthy|wise, wealthy and healthy)"
     And I should see "Early to bed and early to rise, makes a man healthy, wealthy and wise"
     And I should see "Early to bed and early to rise, makes a man healthy, wise and wealthy"
     And I should see "Early to bed and early to rise, makes a man wealthy, wise and healthy"

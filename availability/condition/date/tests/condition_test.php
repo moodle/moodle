@@ -25,7 +25,7 @@ use core_availability\tree;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class condition_test extends \advanced_testcase {
+final class condition_test extends \advanced_testcase {
     /**
      * Load required classes.
      */
@@ -33,12 +33,13 @@ class condition_test extends \advanced_testcase {
         // Load the mock info class so that it can be used.
         global $CFG;
         require_once($CFG->dirroot . '/availability/tests/fixtures/mock_info.php');
+        parent::setUp();
     }
 
     /**
      * Tests constructing and using date condition as part of tree.
      */
-    public function test_in_tree() {
+    public function test_in_tree(): void {
         global $SITE, $USER, $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -80,7 +81,7 @@ class condition_test extends \advanced_testcase {
      * Tests the constructor including error conditions. Also tests the
      * string conversion feature (intended for debugging only).
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         // No parameters.
         $structure = (object)array();
         try {
@@ -129,7 +130,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the save() function.
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object)array('d' => '>=', 't' => 12345);
         $cond = new condition($structure);
         $structure->type = 'date';
@@ -139,7 +140,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the is_available() and is_available_to_all() functions.
      */
-    public function test_is_available() {
+    public function test_is_available(): void {
         global $SITE, $USER;
 
         $time = strtotime('2014-02-18 14:50:10 GMT');
@@ -170,7 +171,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the get_description and get_standalone_description functions.
      */
-    public function test_get_description() {
+    public function test_get_description(): void {
         global $SITE, $CFG;
 
         $this->resetAfterTest();
@@ -232,7 +233,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the update_all_dates function.
      */
-    public function test_update_all_dates() {
+    public function test_update_all_dates(): void {
         global $DB;
         $this->resetAfterTest();
 

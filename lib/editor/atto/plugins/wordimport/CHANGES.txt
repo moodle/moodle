@@ -2,6 +2,7 @@ Release notes
 -------------
 
 Date          Version   Comment
+2025/04/28    1.4.4     Clean up code styles.
 2023/11/06    1.4.3     Insert imported contents at original insertion point, contributed by Kevin Pham.
 2021/08/31    1.4.2     Update for Book Word import plugin compatibility.
 2021/07/14    1.4.1     Require latest version of Book Word import plugin.

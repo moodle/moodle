@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/workshop/classes/portfolio_caller.php');
  * @copyright  2016 An Pham Van <an.phamvan@harveynash.vn>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class portfolio_caller_test extends \advanced_testcase {
+final class portfolio_caller_test extends \advanced_testcase {
 
     /** @var \stdClass $workshop Basic workshop data stored in an object. */
     protected $workshop;
@@ -64,7 +64,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::load_data()
      */
-    public function test_load_data() {
+    public function test_load_data(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -81,7 +81,6 @@ class portfolio_caller_test extends \advanced_testcase {
 
         $reflector = new \ReflectionObject($portfoliocaller);
         $propertysubmission = $reflector->getProperty('submission');
-        $propertysubmission->setAccessible(true);
         $submission = $propertysubmission->getValue($portfoliocaller);
 
         $this->assertEquals($subid1, $submission->id);
@@ -90,7 +89,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::get_return_url()
      */
-    public function test_get_return_url() {
+    public function test_get_return_url(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -110,7 +109,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::get_navigation()
      */
-    public function test_get_navigation() {
+    public function test_get_navigation(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -128,7 +127,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::check_permissions()
      */
-    public function test_check_permissions_exportownsubmissionassessment() {
+    public function test_check_permissions_exportownsubmissionassessment(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -155,7 +154,7 @@ class portfolio_caller_test extends \advanced_testcase {
     /**
      * Test the method mod_workshop_portfolio_caller::get_sha1()
      */
-    public function test_get_sha1() {
+    public function test_get_sha1(): void {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -177,7 +176,7 @@ class portfolio_caller_test extends \advanced_testcase {
      * Test function display_name()
      * Assert that this function can return the name of the module ('Workshop').
      */
-    public function test_display_name() {
+    public function test_display_name(): void {
         $this->resetAfterTest(true);
 
         $name = \mod_workshop_portfolio_caller::display_name();

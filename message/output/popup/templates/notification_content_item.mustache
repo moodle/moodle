@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template message_output_popup/notification_content_item
+    @template message_popup/notification_content_item
 
     This template will render the notification content item for the
     navigation bar notification menu.
@@ -65,7 +65,7 @@
 
         <div class="content-item-body">
             <div class="notification-image">
-                <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
+                {{#pix}} e/text_highlight, core, {{#str}} notificationimage, message {{/str}} {{/pix}}
             </div>
             <div class="notification-message">{{shortenedsubject}}</div>
         </div>

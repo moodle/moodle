@@ -137,7 +137,7 @@ class tgz_extractor {
      * @return array Array from archive path => true of processed files
      * @throws moodle_exception If there is any error processing the archive
      */
-    public function extract(tgz_extractor_handler $handler, file_progress $progress = null) {
+    public function extract(tgz_extractor_handler $handler, ?file_progress $progress = null) {
         $this->mode = self::MODE_EXTRACT;
         $this->extract_or_list($handler, $progress);
         $results = $this->results;
@@ -152,7 +152,7 @@ class tgz_extractor {
      * @param file_progress $progress Optional progress reporting
      * @throws moodle_exception If there is any error processing the archive
      */
-    protected function extract_or_list(tgz_extractor_handler $handler = null, file_progress $progress = null) {
+    protected function extract_or_list(?tgz_extractor_handler $handler = null, ?file_progress $progress = null) {
         // Open archive.
         if ($this->storedfile) {
             $gz = $this->storedfile->get_content_file_handle(stored_file::FILE_HANDLE_GZOPEN);
@@ -181,25 +181,8 @@ class tgz_extractor {
         $done = 0;
         $beforeprogress = -1;
         while (true) {
-            if ($bufferpos == $bufferlength || $bufferlength - $bufferpos < tgz_packer::TAR_BLOCK_SIZE) {
-                if ($bufferpos == $bufferlength) {
-                    $buffer = gzread($gz, self::READ_BLOCK_SIZE);
-                } else {
-                    // We are not guaranteed to get a full READ_BLOCK_SIZE worth of
-                    // data from gzread, so if the buffer doesn't have enough data for
-                    // a TAR BLOCK, perform another read and realign the buffer.
-                    // A single read should be enough - but its possible to
-                    // still not have TAR_BLOCK_SIZE bytes. Hence the loop
-                    // until we either have enough, or hit EOF.
-                    $buffer = substr($buffer, $bufferpos - $bufferlength);
-                    while (strlen($buffer) < tgz_packer::TAR_BLOCK_SIZE) {
-                        $newbuffer = gzread($gz, self::READ_BLOCK_SIZE);
-                        if (strlen($newbuffer) == 0) {
-                            break;
-                        }
-                        $buffer .= $newbuffer;
-                    }
-                }
+            if ($bufferpos == $bufferlength) {
+                $buffer = gzread($gz, self::READ_BLOCK_SIZE);
                 $bufferpos = 0;
                 $bufferlength = strlen($buffer);
                 if ($bufferlength == 0) {
@@ -362,7 +345,7 @@ class tgz_extractor {
      * @param string $block Data block
      * @param tgz_extractor_handler $handler Will be called for extracted files
      */
-    protected function process_file_block($block, tgz_extractor_handler $handler = null) {
+    protected function process_file_block($block, ?tgz_extractor_handler $handler = null) {
         // Write block into buffer.
         $blocksize = tgz_packer::TAR_BLOCK_SIZE;
         if ($this->currentfileprocessed + tgz_packer::TAR_BLOCK_SIZE > $this->currentfilesize) {
@@ -406,7 +389,7 @@ class tgz_extractor {
      * @throws moodle_exception
      */
     protected function start_current_file($archivepath, $filesize, $mtime,
-            tgz_extractor_handler $handler = null) {
+            ?tgz_extractor_handler $handler = null) {
         global $CFG;
 
         $this->currentarchivepath = $archivepath;

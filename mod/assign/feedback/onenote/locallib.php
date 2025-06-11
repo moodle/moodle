@@ -25,8 +25,6 @@
 
 use local_onenote\api\base;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Library class for ONENOTE feedback plugin extending feedback plugin base class.
  *
@@ -91,7 +89,7 @@ class assign_feedback_onenote extends assign_feedback_plugin {
 
         if ($files = $fs->get_area_files($fromcontextid, $fromcomponent, $fromfilearea, $fromitemid)) {
             foreach ($files as $file) {
-                if ($file->is_directory() and $file->get_filepath() === '/') {
+                if ($file->is_directory() && $file->get_filepath() === '/') {
                     // We need a way to mark the age of each draft area.
                     // By not copying the root dir we force it to be created
                     // automatically with current timestamp.
@@ -124,7 +122,7 @@ class assign_feedback_onenote extends assign_feedback_plugin {
 
         try {
             $onenoteapi = base::getinstance();
-        } catch (\Exception $e) {
+        } catch (moodle_exception $e) {
             $html = '<div>' . $e->getMessage() . '</div>';
             $mform->addElement('html', $html);
             return false;
@@ -223,7 +221,7 @@ class assign_feedback_onenote extends assign_feedback_plugin {
 
         try {
             $onenoteapi = base::getinstance();
-        } catch (\Exception $e) {
+        } catch (moodle_exception $e) {
             // Display error.
             $this->set_error($e->getMessage());
             return false;
@@ -330,7 +328,7 @@ class assign_feedback_onenote extends assign_feedback_plugin {
 
         try {
             $onenoteapi = base::getinstance();
-        } catch (\Exception $e) {
+        } catch (moodle_exception $e) {
             return $e->getMessage();
         }
 

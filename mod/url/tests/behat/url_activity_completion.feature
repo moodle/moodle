@@ -19,7 +19,7 @@ Feature: View activity completion information in the URL resource
     And the following config values are set as admin:
       | displayoptions | 0,1,2,3,4,5,6 | url |
 
-  Scenario: View automatic completion items in automatic display mode as teacher
+  Scenario: URL resource module displays completion conditions to teachers
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -35,7 +35,7 @@ Feature: View activity completion information in the URL resource
     And I should see "Click on Music history to open the resource."
     And "Music history" should have the "View" completion condition
 
-  Scenario: View automatic completion items in automatic display mode as student
+  Scenario: A student can complete a URL activity by viewing it
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -49,7 +49,7 @@ Feature: View activity completion information in the URL resource
     When I am on the "Music history" "url activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
 
-  Scenario: View automatic completion items in embed display mode as teacher
+  Scenario: A teacher can view a URL activity completion conditions in embed display mode
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -63,7 +63,7 @@ Feature: View activity completion information in the URL resource
     When I am on the "Music history" "url activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
 
-  Scenario: View automatic completion items in embed display mode as student
+  Scenario: A student can complete a url resource by viewing it in embed display mode
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -77,7 +77,8 @@ Feature: View activity completion information in the URL resource
     When I am on the "Music history" "url activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
 
-  Scenario: View automatic completion items in open display mode as teacher
+  @javascript
+  Scenario: A teacher can view url resource automatic completion items in open display mode as teacher
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -92,7 +93,8 @@ Feature: View activity completion information in the URL resource
     And I am on the "Course 1" course page
     Then "Music history" should have the "View" completion condition
 
-  Scenario: View automatic completion items in open display mode as student
+  @javascript
+  Scenario: A student can view url resource automatic completion items in open display mode
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -107,7 +109,7 @@ Feature: View activity completion information in the URL resource
     And I am on the "Course 1" course page
     Then the "View" completion condition of "Music history" is displayed as "done"
 
-  Scenario: View automatic completion items in pop-up display mode as teacher
+  Scenario: An URL resource shows automatic completion conditions in pop-up display mode as teacher
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -123,7 +125,7 @@ Feature: View activity completion information in the URL resource
     When I am on the "Music history" "url activity" page logged in as student1
     Then "Music history" should have the "View" completion condition
 
-  Scenario: View automatic completion items in pop-up display mode as student
+  Scenario: View url resource automatic completion conditions in pop-up display mode as student
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -140,7 +142,7 @@ Feature: View activity completion information in the URL resource
     Then the "View" completion condition of "Music history" is displayed as "done"
 
   @javascript
-  Scenario: Use manual completion with automatic URL as teacher
+  Scenario: A teacher cannot manually mark the url activity as done
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -155,7 +157,7 @@ Feature: View activity completion information in the URL resource
     Then the manual completion button for "Music history" should be disabled
 
   @javascript
-  Scenario: Use manual completion with automatic URL as student
+  Scenario: A student can manually mark the url activity as done
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -172,7 +174,7 @@ Feature: View activity completion information in the URL resource
     And the manual completion button of "Music history" is displayed as "Done"
 
   @javascript
-  Scenario Outline: The manual completion button will be shown on the course page for Open, In pop-up and New window display mode if the Show activity completion conditions is set to No as teacher
+  Scenario Outline: The Mark as done completion condition will be shown on the course page for Open, In pop-up and New window display mode if the Show activity completion conditions is set to No as teacher
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -186,8 +188,7 @@ Feature: View activity completion information in the URL resource
       | popupwidth     | 620                 |
       | popupheight    | 450                 |
     When I am on the "Course 1" course page logged in as teacher1
-    Then the manual completion button for "Music history" should exist
-    And the manual completion button for "Music history" should be disabled
+    Then "Music history" should have the "Mark as done" completion condition
 
     Examples:
       | display | description |

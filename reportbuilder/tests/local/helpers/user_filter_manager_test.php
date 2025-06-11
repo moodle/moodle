@@ -28,7 +28,7 @@ use advanced_testcase;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_filter_manager_test extends advanced_testcase {
+final class user_filter_manager_test extends advanced_testcase {
 
     /**
      * Helper method to return all user preferences for filters - based on the current storage backend using the same
@@ -46,7 +46,7 @@ class user_filter_manager_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_provider(): array {
+    public static function get_provider(): array {
         return [
             'Small value' => ['foo'],
             'Large value' => [str_repeat('A', 4000)],
@@ -113,7 +113,7 @@ class user_filter_manager_test extends advanced_testcase {
      *
      * @return array
      */
-    public function reset_all_provider(): array {
+    public static function reset_all_provider(): array {
         return [
             'Small value' => ['foo'],
             'Large value' => [str_repeat('A', 4000)],

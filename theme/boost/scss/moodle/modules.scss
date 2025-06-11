@@ -245,15 +245,6 @@ select {
     }
 }
 
-#page-mod-forum-discuss .discussioncontrols {
-    width: auto;
-    margin: 0;
-
-    .form-inline input {
-        margin-top: -1px;
-    }
-}
-
 $author-image-width: 70px;
 $author-image-margin: 24px;
 $author-image-width-sm: 30px;
@@ -262,7 +253,7 @@ $author-image-margin-sm: 8px;
 /** Gently highlight the selected post by changing it's background to blue and then fading it out. */
 @keyframes background-highlight {
     from {
-        background-color: rgba(0, 123, 255, 0.5);
+        background-color: $modules-highlight-bg;
     }
     to {
         background-color: inherit;
@@ -300,14 +291,14 @@ $author-image-margin-sm: 8px;
     }
 
     .badge-light {
-        background-color: #f6f6f6;
-        color: #5b5b5b;
+        background-color: $modules-badge-bg;
+        color: $modules-badge-color;
     }
 
     /** Style the ratings like a badge. */
     .rating-aggregate-container {
-        background-color: #f6f6f6;
-        color: #5b5b5b;
+        background-color: $modules-rating-aggregate-bg;
+        color: $modules-rating-aggregate-color;
         padding: .25em .5em;
         line-height: 1;
         margin-right: .5rem;
@@ -343,7 +334,7 @@ $author-image-margin-sm: 8px;
     /** Fix muted text contrast ratios for accessibility. */
     .text-muted,
     .dimmed_text {
-        color: #707070 !important; /* stylelint-disable-line declaration-no-important */
+        color: $modules-forum-muted-color !important; /* stylelint-disable-line declaration-no-important */
     }
 
     .author-header {
@@ -369,7 +360,7 @@ $author-image-margin-sm: 8px;
     .forum-post-container {
         .replies-container {
             .forum-post-container {
-                border-top: 1px solid #dee2e6;
+                border-top: 1px solid $modules-forum-post-border-color;
                 padding-top: 1.5rem;
 
                 .replies-container .forum-post-container {
@@ -1020,9 +1011,6 @@ div#dock {
 .path-mod-lesson .answeroption .checkbox label p {
     display: inline;
 }
-.path-mod-lesson .form-inline label.form-check-label {
-    display: inline-block;
-}
 .path-mod-lesson .slideshow {
     overflow: auto;
     padding: 15px;
@@ -1177,6 +1165,10 @@ div#dock {
         width: 35px;
         height: 35px;
     }
+    &.size-50 {
+        width: 50px;
+        height: 50px;
+    }
     &.size-64 {
         width: 64px;
         height: 64px;
@@ -1199,17 +1191,13 @@ img.userpicture {
 }
 
 // Quiz module
-.path-mod-quiz .mod-quiz-edit-content {
-    // Force the quiz edit page to always be large enough to prevent scrolling when accessing the menu.
-    margin-bottom: 10rem;
-}
-
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
     width: auto;
     max-width: none;
 }
-#page-mod-quiz-mod #id_reviewoptionshdr .form-group {
+
+#page-mod-quiz-mod #id_reviewoptionshdr .fcontainer > .fitem {
     float: left;
     width: 20rem;
     display: inline-block;
@@ -1219,10 +1207,6 @@ img.userpicture {
 #page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
     line-height: 1.5;
     vertical-align: bottom;
-}
-#page-mod-quiz-mod #id_reviewoptionshdr .form-inline {
-    float: left;
-    clear: left;
 }
 #page-mod-quiz-mod #id_reviewoptionshdr .form-check {
     width: auto;
@@ -1248,7 +1232,8 @@ img.userpicture {
         width: 30px;
         border-radius: 3px;
         border: 0;
-        overflow: visible;
+        overflow: hidden;
+        white-space: nowrap;
         margin: 0 6px 6px 0;
     }
 
@@ -1290,6 +1275,44 @@ img.userpicture {
         border-radius: 0 0 3px 3px;
     }
 
+    .qnbutton.correct .thispageholder {
+        border-color: shift-color($success, 10%);
+    }
+
+    .qnbutton.incorrect .thispageholder {
+        border-color: shift-color($danger, 10%);
+    }
+
+    .qnbutton.partiallycorrect .thispageholder {
+        border-color: shift-color($warning, 40%);
+    }
+
+    .qnbutton.correct,
+    .qnbutton.correct .trafficlight {
+        background-color: #dff4d8; /* light green */
+    }
+
+    .qnbutton.incorrect,
+    .qnbutton.incorrect .trafficlight {
+        background-color: #fdd; /* light red */
+    }
+
+    .qnbutton.partiallycorrect,
+    .qnbutton.partiallycorrect .trafficlight {
+        background-color: #fcefdc; /* light yellow */
+    }
+
+    .qnbutton.blocked,
+    .qnbutton.blocked .trafficlight,
+    .qnbutton.complete,
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: $gray-300;
+    }
+
     .qnbutton.notyetanswered .trafficlight,
     .qnbutton.invalidanswer .trafficlight {
         background-color: $card-bg;
@@ -1300,29 +1323,32 @@ img.userpicture {
     }
 
     .qnbutton.correct .trafficlight {
-        background-image: url([[pix:theme|mod/quiz/checkmark]]);
-        background-color: $success;
+        background-image: url([[pix:core|i/grade_correct]]);
+        color: $success;
+        background-size: 14px;
     }
 
     .qnbutton.blocked .trafficlight {
         background-image: url([[pix:core|t/locked]]);
-        background-color: $input-disabled-bg;
     }
 
     .qnbutton.notanswered .trafficlight,
     .qnbutton.incorrect .trafficlight {
-        background-color: $danger;
+        background-image: url([[pix:core|i/grade_incorrect]]);
+        color: $danger;
+        background-size: 14px;
     }
 
     .qnbutton.partiallycorrect .trafficlight {
-        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
-        background-color: $warning;
+        background-image: url([[pix:core|i/grade_partiallycorrect]]);
+        color: $warning;
+        background-size: 14px;
     }
 
     .qnbutton.complete .trafficlight,
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-600;
+        background-color: $gray-300;
     }
 }
 
@@ -1332,8 +1358,22 @@ img.userpicture {
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
-    padding: 0;
-    margin: 0 0.4em;
+    padding: 0.5em 0 0.5em 0.1em;
+    margin: 2px;
+}
+
+/* Override the color of the quiz attempt icons for accessibility. */
+#attemptsform,
+.formulation .answer {
+    .icon.text-success {
+        color: shift-color($success, 10%) !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .icon.text-danger {
+        color: shift-color($danger, 10%) !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .icon.text-warning {
+        color: shift-color($warning, 40%) !important; /* stylelint-disable-line declaration-no-important */
+    }
 }
 
 /* Countdown timer. */
@@ -1490,7 +1530,7 @@ $popout-header-height: 4rem;
     margin-bottom: $alert-margin-bottom;
     border: $alert-border-width solid transparent;
     @include border-radius($alert-border-radius);
-    @include alert-variant(theme-color-level('info', $alert-bg-level), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level)); /* stylelint-disable-line max-line-length */
+    @include alert-variant(shift-color($info, $alert-bg-scale), shift-color($info, $alert-border-scale), shift-color($info, $alert-color-scale)); /* stylelint-disable-line max-line-length */
 }
 
 .assignfeedback_editpdf_menu {
@@ -1512,6 +1552,12 @@ $popout-header-height: 4rem;
     background-color: $card-bg;
 }
 
+.path-mod-assign .gradingtable thead tr {
+    position: sticky;
+    top: $navbar-height;
+    z-index: 1;
+}
+
 /**
  * Mod LTI.
  */
@@ -1519,5 +1565,150 @@ $popout-header-height: 4rem;
     .btn .loader img,
     #tool-list-loader-container .loader img {
         height: auto;
+    }
+}
+
+/**
+ * Mod Feedback.
+ */
+
+.path-mod-feedback {
+    span.feedback_info {
+        font-weight: bold;
+    }
+    div.feedback_is_dependent {
+        background: $gray-600;
+    }
+    span.feedback_depend {
+        color: $danger;
+    }
+    hr.feedback_pagebreak {
+        height: 4px;
+        color: $gray-600;
+        background-color: $gray-600;
+        border: 0;
+        margin: 0;
+    }
+    .drag_target_active {
+        opacity: .25;
+    }
+    .drag_item_active {
+        opacity: .5;
+    }
+    .feedback_bar_image {
+        height: 10px;
+    }
+    #analysis-form {
+        label {
+            display: inline;
+        }
+    }
+    .templateslist {
+        td.cell.action {
+            width: 10%;
+        }
+        th.header.action {
+            width: 10%;
+        }
+    }
+    .feedback_form {
+        .itemactions {
+            display: inline-block;
+            margin: 0 map-get($spacers, 2);
+        }
+    }
+    .feedback-item-label {
+        width: 100%;
+    }
+    // Feedback edit form.
+    #feedback_edit_form {
+        [id*=_feedback_item_].feedback_itemlist {
+            padding: map-get($spacers, 3);
+            border: $border-width solid $border-color;
+            @include border-radius();
+            .itemhandle {
+                position: absolute;
+                width: 32px;
+                height: 32px;
+                text-align: center;
+                align-content: center;
+            }
+            .action-menu {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+            .dropdown-toggle {
+                border-radius: .5rem;
+                width: 32px;
+                height: 32px;
+            }
+        }
+    }
+
+    // Analysis page.
+    table.analysis {
+        width: 100%;
+        border-top: $border-width solid $border-color;
+        margin-top: 10px;
+        &.itemtype_textarea td {
+            padding: 4px 0;
+        }
+        tr:first-child th {
+            padding-top: 10px;
+        }
+        tr:hover {
+            background: $gray-300;
+        }
+        td.singlevalue:before,
+        td.optionname:before {
+            content: '- ';
+        }
+        tr.isempty {
+            display: none;
+        }
+    }
+
+    // Responses list.
+    #showentrytable td.cell.completed_timemodified,
+    #showentryanontable td.cell.random_response {
+        font-weight: bold;
+    }
+
+    #showentrytable td.cell.userpic,
+    #showentrytable td.cell.deleteentry,
+    #showentryanontable td.cell.deleteentry {
+        width: 10px;
+    }
+
+    // Responses navigation.
+    .response_navigation {
+        margin: map-get($spacers, 2) 0;
+        a {
+            display: block;
+            &.back_to_list {
+                text-align: center;
+            }
+        }
+        .prev_response {
+            text-align: left;
+            &:before {
+                /*rtl:raw:
+                content: ' ► ';
+                */
+                /*rtl:remove*/
+                content: ' ◄ ';
+            }
+        }
+        .next_response {
+            text-align: right;
+            &:after {
+                /*rtl:raw:
+                content: ' ◄ ';
+                */
+                /*rtl:remove*/
+                content: ' ► ';
+            }
+        }
     }
 }

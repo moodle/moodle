@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2025010900;
-$plugin->release = '8.8.2';
+$plugin->version = 2025042200;
+$plugin->release = '8.9.1';
 $plugin->requires = 2012120300;
 $plugin->component = 'tiny_wiris';
-$plugin->dependencies = ['filter_wiris' => 2025010900];
+$plugin->dependencies = ['filter_wiris' => 2025042200];
 $plugin->maturity = MATURITY_STABLE;

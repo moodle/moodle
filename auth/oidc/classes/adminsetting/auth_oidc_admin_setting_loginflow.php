@@ -25,8 +25,6 @@
 
 namespace auth_oidc\adminsetting;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Displays the redirect URI for easier config.
  */
@@ -79,7 +77,7 @@ class auth_oidc_admin_setting_loginflow extends \admin_setting {
                 'type' => 'radio',
                 'name' => $inputname,
                 'id' => $flowtypeid,
-                'value' => $flowtype
+                'value' => $flowtype,
             ];
             if ($data === $flowtype || (empty($data) && $flowtype === $this->get_defaultsetting())) {
                 $radioattrs['checked'] = 'checked';

@@ -51,9 +51,4 @@ class query_deleted extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/report/lsusql/index.php');
     }
-
-    public function get_legacy_logdata() {
-        $url = '../report/lsusql/index.php';
-        return array(0, "report_lsusql", 'delete query', $url, $this->objectid, $this->contextinstanceid);
-    }
 }

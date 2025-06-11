@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/filestorage/file_storage.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
-use \booktool_wordimport\wordconverter;
+use booktool_wordimport\wordconverter;
 
 /**
  * Initialise the strings required for js
@@ -37,12 +37,12 @@ use \booktool_wordimport\wordconverter;
 function atto_wordimport_strings_for_js() {
     global $PAGE;
 
-    $strings = array(
+    $strings = [
         'uploading',
         'transformationfailed',
         'fileuploadfailed',
-        'fileconversionfailed'
-    );
+        'fileconversionfailed',
+    ];
 
     $PAGE->requires->strings_for_js($strings, 'atto_wordimport');
 }
@@ -67,11 +67,11 @@ function atto_wordimport_params_for_js($elementid, $options, $fpoptions) {
             (!isset($options['maxfiles']) || $options['maxfiles'] == 0) ||
             (isset($options['return_types']) && !($options['return_types'] & ~FILE_EXTERNAL));
 
-    $params = array('disabled' => $disabled, 'area' => array(), 'usercontext' => null);
+    $params = ['disabled' => $disabled, 'area' => [], 'usercontext' => null];
 
     if (!$disabled) {
         $params['usercontext'] = context_user::instance($USER->id)->id;
-        foreach (array('itemid', 'context', 'areamaxbytes', 'maxbytes', 'subdirs', 'return_types') as $key) {
+        foreach (['itemid', 'context', 'areamaxbytes', 'maxbytes', 'subdirs', 'return_types'] as $key) {
             if (isset($options[$key])) {
                 if ($key === 'context' && is_object($options[$key])) {
                     // Just context id is enough.
@@ -99,22 +99,22 @@ function atto_wordimport_convert_to_xhtml(string $wordfilename, int $usercontext
     global $CFG, $USER;
 
     // Convert the Word file content into XHTML and an array of images.
-    $imagesforzipping = array();
+    $imagesforzipping = [];
     $word2xml = new wordconverter();
     $word2xml->set_heading1styleoffset((int) get_config('atto_wordimport', 'heading1stylelevel'));
     $xsltoutput = $word2xml->import($wordfilename, $imagesforzipping);
     $htmlcontent = $word2xml->htmlbody($xsltoutput);
 
     // Prepare filerecord array to create each new image file in the user/draft file area for the current user.
-    $fileinfo = array(
+    $fileinfo = [
         'contextid' => $usercontextid,
         'component' => 'user',
         'filearea' => 'draft',
         'userid' => $USER->id,
         'itemid' => $draftitemid,
         'filepath' => '/',
-        'filename' => ''
-        );
+        'filename' => '',
+        ];
     $fs = get_file_storage();
 
     // Store the image files into the file area.

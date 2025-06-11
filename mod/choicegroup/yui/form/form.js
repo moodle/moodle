@@ -72,15 +72,13 @@ YUI.add('moodle-mod_choicegroup-form', function(Y) {
 
 				function cleanSelectedGroupsList() {
 					var optionsNodes = Y.all(SELECTORS.SELECTED_GRPS_SELECT + " option");
+					var availableOptionsNodes = Y.all(SELECTORS.AVAILABLE_GRPS_SELECT + " option");
 					optionsNodes.each(function(optNode) {
-						if (optNode.get('parentNode') != null) {
-						optNode.setContent(optNode.getContent().replace(/&nbsp;/gi,''));
-						optionsNodes.each(function(opt2Node){
-							if ((opt2Node != optNode) && (opt2Node.get('value') == optNode.get('value'))) {
-								opt2Node.remove();
+						availableOptionsNodes.each(function(availableOptNode) {
+							if ((optNode.get('value') === availableOptNode.get('value'))) {
+								availableOptNode.remove();
 							}
 						});
-					}
 					});
 				}
 
@@ -402,7 +400,7 @@ YUI.add('moodle-mod_choicegroup-form', function(Y) {
 					var selectedOptionsNodes = Y.all(SELECTORS.SELECTED_GRPS_SELECT + " option:checked");
 					selectedOptionsNodes.each(function(optNode) {
 							optNode.remove();
-
+							availableGroupsNode.append(optNode);
 					});
 				});
 

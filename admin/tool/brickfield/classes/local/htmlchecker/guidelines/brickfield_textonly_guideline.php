@@ -30,7 +30,7 @@ class brickfield_textonly_guideline extends brickfield_accessibility_guideline {
     /**
      * @var array An array of test class names which will be called for this guideline
      */
-    public $tests = array(
+    public array $tests = [
         'aSuspiciousLinkText',
         'cssTextHasContrast',
         'contentTooLong',
@@ -43,5 +43,5 @@ class brickfield_textonly_guideline extends brickfield_accessibility_guideline {
         'tableDataShouldHaveTh',
         'tableThShouldHaveScope',
         'tableTdShouldNotMerge',
-    );
+    ];
 }

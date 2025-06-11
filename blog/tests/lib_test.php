@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/blog/lib.php');
 /**
  * Test functions that rely on the DB tables
  */
-class lib_test extends \advanced_testcase {
+final class lib_test extends \advanced_testcase {
 
     private $courseid;
     private $cmid;
@@ -91,7 +91,7 @@ class lib_test extends \advanced_testcase {
     }
 
 
-    public function test_overrides() {
+    public function test_overrides(): void {
         global $SITE;
 
         // Try all the filters at once: Only the entry filter is active.
@@ -132,25 +132,25 @@ class lib_test extends \advanced_testcase {
     // The following series of 'test_blog..' functions correspond to the blog_get_headers() function within blog/lib.php.
     // Some cases are omitted due to the optional_param variables used.
 
-    public function test_blog_get_headers_case_1() {
+    public function test_blog_get_headers_case_1(): void {
         global $CFG, $PAGE, $OUTPUT;
         $blogheaders = blog_get_headers();
         $this->assertEquals($blogheaders['heading'], get_string('siteblogheading', 'blog'));
     }
 
-    public function test_blog_get_headers_case_6() {
+    public function test_blog_get_headers_case_6(): void {
         global $CFG, $PAGE, $OUTPUT;
         $blogheaders = blog_get_headers($this->courseid, null, $this->userid);
         $this->assertNotEquals($blogheaders['heading'], '');
     }
 
-    public function test_blog_get_headers_case_7() {
+    public function test_blog_get_headers_case_7(): void {
         global $CFG, $PAGE, $OUTPUT;
         $blogheaders = blog_get_headers(null, $this->groupid);
         $this->assertNotEquals($blogheaders['heading'], '');
     }
 
-    public function test_blog_get_headers_case_10() {
+    public function test_blog_get_headers_case_10(): void {
         global $CFG, $PAGE, $OUTPUT;
         $blogheaders = blog_get_headers($this->courseid);
         $this->assertNotEquals($blogheaders['heading'], '');
@@ -159,7 +159,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Tests the core_blog_myprofile_navigation() function.
      */
-    public function test_core_blog_myprofile_navigation() {
+    public function test_core_blog_myprofile_navigation(): void {
         global $USER;
 
         // Set up the test.
@@ -175,14 +175,13 @@ class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('blogs', $nodes->getValue($tree));
     }
 
     /**
      * Tests the core_blog_myprofile_navigation() function as a guest.
      */
-    public function test_core_blog_myprofile_navigation_as_guest() {
+    public function test_core_blog_myprofile_navigation_as_guest(): void {
         global $USER;
 
         // Set up the test.
@@ -197,14 +196,13 @@ class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
     }
 
     /**
      * Tests the core_blog_myprofile_navigation() function when blogs are disabled.
      */
-    public function test_core_blog_myprofile_navigation_blogs_disabled() {
+    public function test_core_blog_myprofile_navigation_blogs_disabled(): void {
         global $USER;
 
         // Set up the test.
@@ -220,11 +218,10 @@ class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
     }
 
-    public function test_blog_get_listing_course() {
+    public function test_blog_get_listing_course(): void {
         $this->setAdminUser();
         $coursecontext = \context_course::instance($this->courseid);
         $anothercourse = $this->getDataGenerator()->create_course();
@@ -254,7 +251,7 @@ class lib_test extends \advanced_testcase {
         $this->assertCount(1, $bloglisting->get_entries());
     }
 
-    public function test_blog_get_listing_module() {
+    public function test_blog_get_listing_module(): void {
         $this->setAdminUser();
         $coursecontext = \context_course::instance($this->courseid);
         $contextmodule = \context_module::instance($this->cmid);

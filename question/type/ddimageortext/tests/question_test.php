@@ -26,7 +26,6 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
 
-
 /**
  * Unit tests for the matching question definition class.
  *
@@ -35,9 +34,9 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers qtype_ddimageortext_question
  */
-class question_test extends \basic_testcase {
+final class question_test extends \basic_testcase {
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $this->assertEquals('The quick brown fox jumped over the lazy dog.; '.
                 '[[Drop zone 1]] -> {1. quick / 2. fox}; '.
@@ -47,7 +46,7 @@ class question_test extends \basic_testcase {
             $dd->get_question_summary());
     }
 
-    public function test_get_question_summary_maths() {
+    public function test_get_question_summary_maths(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $this->assertEquals('Fill in the operators to make this equation work: '.
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3; '.
@@ -58,7 +57,7 @@ class question_test extends \basic_testcase {
             $dd->get_question_summary());
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -70,7 +69,7 @@ class question_test extends \basic_testcase {
             $dd->summarise_response(array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
-    public function test_summarise_response_maths() {
+    public function test_summarise_response_maths(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -82,17 +81,17 @@ class question_test extends \basic_testcase {
             $dd->summarise_response(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $this->assertEquals(0.5, $dd->get_random_guess_score());
     }
 
-    public function test_get_random_guess_score_maths() {
+    public function test_get_random_guess_score_maths(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $this->assertEquals(0.5, $dd->get_random_guess_score());
     }
 
-    public function test_get_random_guess_score_broken_question() {
+    public function test_get_random_guess_score_broken_question(): void {
         // Before MDL-76298 was fixed, it was possible to create a question with
         // no drop zones, and that caused a fatal division by zero error. Because
         // people might have questions like that in their database, we need to
@@ -103,7 +102,7 @@ class question_test extends \basic_testcase {
         $this->assertNull($dd->get_random_guess_score());
     }
 
-    public function test_get_right_choice_for() {
+    public function test_get_right_choice_for(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -112,7 +111,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(2, $dd->get_right_choice_for(2));
     }
 
-    public function test_get_right_choice_for_maths() {
+    public function test_get_right_choice_for_maths(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -123,7 +122,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(2, $dd->get_right_choice_for(4));
     }
 
-    public function test_clear_wrong_from_response() {
+    public function test_clear_wrong_from_response(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -133,7 +132,7 @@ class question_test extends \basic_testcase {
             $dd->clear_wrong_from_response($initialresponse));
     }
 
-    public function test_get_num_parts_right() {
+    public function test_get_num_parts_right(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -144,7 +143,7 @@ class question_test extends \basic_testcase {
             $dd->get_num_parts_right(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
     }
 
-    public function test_get_num_parts_right_maths() {
+    public function test_get_num_parts_right_maths(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -154,7 +153,7 @@ class question_test extends \basic_testcase {
                 'p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
-    public function test_get_expected_data() {
+    public function test_get_expected_data(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -164,7 +163,7 @@ class question_test extends \basic_testcase {
         );
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -173,7 +172,7 @@ class question_test extends \basic_testcase {
             $dd->get_correct_response());
     }
 
-    public function test_get_correct_response_maths() {
+    public function test_get_correct_response_maths(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -182,7 +181,7 @@ class question_test extends \basic_testcase {
             $dd->get_correct_response());
     }
 
-    public function test_is_same_response() {
+    public function test_is_same_response(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -206,7 +205,7 @@ class question_test extends \basic_testcase {
             array('p1' => '1', 'p2' => '2', 'p3' => '3', 'p4' => '4'),
             array('p1' => '1', 'p2' => '2', 'p3' => '2', 'p4' => '4')));
     }
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -218,13 +217,13 @@ class question_test extends \basic_testcase {
             array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($dd->is_gradable_response(array()));
         $this->assertFalse($dd->is_gradable_response(
-            array('p1' => '', 'p2' => '', 'p3' => '', 'p3' => '')));
+            array('p1' => '', 'p2' => '', 'p3' => '')));
         $this->assertTrue($dd->is_gradable_response(
             array('p1' => '1', 'p2' => '1', 'p3' => '')));
         $this->assertTrue($dd->is_gradable_response(array('p1' => '1')));
@@ -232,7 +231,7 @@ class question_test extends \basic_testcase {
             array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -245,7 +244,7 @@ class question_test extends \basic_testcase {
             $dd->grade_response(array('p1' => '2', 'p2' => '1', 'p3' => '2', 'p4' => '1')));
     }
 
-    public function test_grading_maths() {
+    public function test_grading_maths(): void {
         $dd = \test_question_maker::make_question('ddimageortext', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -258,7 +257,7 @@ class question_test extends \basic_testcase {
             $dd->grade_response(array('p1' => '', 'p2' => '1', 'p3' => '2', 'p4' => '1')));
     }
 
-    public function test_classify_response() {
+    public function test_classify_response(): void {
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
@@ -277,7 +276,7 @@ class question_test extends \basic_testcase {
         ), $dd->classify_response(array('p1' => '', 'p2' => '1', 'p3' => '2', 'p4' => '2')));
     }
 
-    public function test_summarise_response_choice_deleted() {
+    public function test_summarise_response_choice_deleted(): void {
         /** @var qtype_ddtoimage_question_base $dd */
         $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;

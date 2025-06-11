@@ -76,7 +76,7 @@ switch ($action) {
             $optionsyes = array('action'=>'delete', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
             $a = new stdClass();
             $a->id = $roleid;
-            $a->name = $roles[$roleid]->name;
+            $a->name = $roles[$roleid]->localname;
             $a->shortname = $roles[$roleid]->shortname;
             $a->count = $DB->count_records_select('role_assignments',
                 'roleid = ?', array($roleid), 'COUNT(DISTINCT userid)');

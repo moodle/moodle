@@ -1,4 +1,4 @@
-# Microsoft 365 and Azure Active Directory Plugins for Moodle
+# Microsoft 365 and Microsoft Entra ID Plugins for Moodle
 
 ## OpenID Connect Authentication Plugin.
 

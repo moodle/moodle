@@ -40,8 +40,9 @@ require_once(__DIR__ . '/helpers.php');
  * @category  test
  * @copyright 2014 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \question_engine_data_mapper
  */
-class datalib_test extends \qbehaviour_walkthrough_test_base {
+final class datalib_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * We create two usages, each with two questions, a short-answer marked
@@ -53,7 +54,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
      * Then we change the max mark for the essay question in the other
      * usage to 2, using a qubaid_join, and verify.
      */
-    public function test_set_max_mark_in_attempts() {
+    public function test_set_max_mark_in_attempts(): void {
 
         // Set up some things the tests will need.
         $this->resetAfterTest();
@@ -126,7 +127,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEquals( 2, $quba2->get_question_max_mark(2));
     }
 
-    public function test_load_used_variants() {
+    public function test_load_used_variants(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
@@ -154,7 +155,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
                     new qubaid_list(array($quba->get_id()))));
     }
 
-    public function test_repeated_usage_saving_new_usage() {
+    public function test_repeated_usage_saving_new_usage(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -191,7 +192,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEquals(2, $DB->count_records('question_attempt_steps') - $initialqasrows);
     }
 
-    public function test_repeated_usage_saving_existing_usage() {
+    public function test_repeated_usage_saving_existing_usage(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -233,7 +234,7 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
     /**
      * Test that database operations on an empty usage work without errors.
      */
-    public function test_save_and_load_an_empty_usage() {
+    public function test_save_and_load_an_empty_usage(): void {
         $this->resetAfterTest();
 
         // Create a new usage.
@@ -249,5 +250,59 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
 
         // Delete it.
         question_engine::delete_questions_usage_by_activity($quba->get_id());
+    }
+
+    public function test_cannot_save_a_step_with_a_missing_state(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a question.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $questiondata = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
+
+        // Create a usage.
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
+        $quba->set_preferred_behaviour('deferredfeedback');
+        $slot = $quba->add_question(question_bank::load_question($questiondata->id));
+        $quba->start_all_questions();
+
+        // Add a step with a bad state.
+        $newstep = new \question_attempt_step();
+        $newstep->set_state(null);
+        $addstepmethod = new \ReflectionMethod('question_attempt', 'add_step');
+        $addstepmethod->invoke($quba->get_question_attempt($slot), $newstep);
+
+        // Verify that trying to save this throws an exception.
+        $this->expectException(\dml_write_exception::class);
+        question_engine::save_questions_usage_by_activity($quba);
+    }
+
+    /**
+     * Test cases for {@see test_get_file_area_name()}.
+     *
+     * @return array test cases
+     */
+    public static function get_file_area_name_cases(): array {
+        return [
+            'simple variable' => ['response_attachments', 'response_attachments'],
+            'behaviour variable' => ['response_5:answer', 'response_5answer'],
+            'variable with special character' => ['response_5:answer', 'response_5answer'],
+            'multiple underscores in different places' => ['response_weird____variable__name', 'response_weird_variable_name'],
+        ];
+    }
+
+    /**
+     * Test get_file_area_name.
+     *
+     * @covers \question_file_saver::clean_file_area_name
+     * @dataProvider get_file_area_name_cases
+     *
+     * @param string $uncleanedfilearea
+     * @param string $expectedfilearea
+     */
+    public function test_clean_file_area_name(string $uncleanedfilearea, string $expectedfilearea): void {
+        $this->assertEquals($expectedfilearea, \question_file_saver::clean_file_area_name($uncleanedfilearea));
     }
 }

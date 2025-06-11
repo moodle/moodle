@@ -33,15 +33,16 @@
                     <span class="nav-small">{{email}}</span>
                     <span class="nav-small">{{idnumber}}</span>
                 </span>
-                <span class="badge badge-info nav-small">{{planname}}</span>
+                <br />
+                <span class="nav-small">{{planname}}</span>
                 {{#nbrating}}
-                <span class="badge badge-info nav-small">{{#str}}ratingnumber, report_lpmonitoring, {{{nbrating}}}{{/str}}</span>
+                <span class="nav-small">{{#str}}ratingnumber, report_lpmonitoring, {{{nbrating}}}{{/str}}</span>
                 {{/nbrating}}
                 {{#nbcomments}}
-                <span class="badge badge-info nav-small">{{#str}}commentsnumber, report_lpmonitoring, {{{nbcomments}}}{{/str}}</span>
+                <span class="nav-small">{{#str}}commentsnumber, report_lpmonitoring, {{{nbcomments}}}{{/str}}</span>
                 {{/nbcomments}}
                 {{#nbplans}}
-                <span class="badge badge-info nav-small">{{#str}}plansnumber, report_lpmonitoring, {{{nbplans}}}{{/str}}</span>
+                <span class="nav-small">{{#str}}plansnumber, report_lpmonitoring, {{{nbplans}}}{{/str}}</span>
                 {{/nbplans}}
             </td>
         </tr>

@@ -33,12 +33,13 @@ namespace report_stats\event;
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class events_test extends \advanced_testcase {
+final class events_test extends \advanced_testcase {
 
     /**
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->setAdminUser();
         $this->resetAfterTest();
     }
@@ -49,7 +50,7 @@ class events_test extends \advanced_testcase {
      * It's not possible to use the moodle API to simulate the viewing of stats report, so here we
      * simply create the event and trigger it.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);
@@ -66,8 +67,6 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\report_stats\event\report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -77,7 +76,7 @@ class events_test extends \advanced_testcase {
      * It's not possible to use the moodle API to simulate the viewing of user stats report, so here we
      * simply create the event and trigger it.
      */
-    public function test_user_report_viewed() {
+    public function test_user_report_viewed(): void {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);
@@ -93,9 +92,6 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\report_stats\event\user_report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = $url = 'report/stats/user.php?id=' . $user->id . '&course=' . $course->id;
-        $expected = array($course->id, 'course', 'report stats', $url, $course->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }

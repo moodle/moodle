@@ -26,6 +26,7 @@
 namespace core_backup;
 
 use memory_xml_output;
+use phpunit_util;
 use xml_contenttransformer;
 use xml_output;
 use xml_writer;
@@ -48,12 +49,12 @@ require_once($CFG->dirroot . '/backup/util/xml/contenttransformer/xml_contenttra
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class writer_test extends \basic_testcase {
+final class writer_test extends \basic_testcase {
 
     /**
      * test xml_writer public methods
      */
-    function test_xml_writer_public_api() {
+    function test_xml_writer_public_api(): void {
         global $CFG;
         // Instantiate xml_output
         $xo = new memory_xml_output();
@@ -314,7 +315,7 @@ class writer_test extends \basic_testcase {
         $fcontents = file_get_contents($CFG->dirroot . '/backup/util/xml/tests/fixtures/test1.xml');
 
         // Normalise carriage return characters.
-        $fcontents = str_replace("\r\n", "\n", $fcontents);
+        $fcontents = phpunit_util::normalise_line_endings($fcontents);
         $this->assertEquals(trim($result), trim($fcontents));
     }
 }

@@ -66,7 +66,23 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 // Set the restore course node active in the settings navigation block.
 navigation_node::override_active_url(new moodle_url('/backup/restorefile.php', ['contextid' => $contextid]));
 
-$title = get_string('managefiles', 'backup');
+switch($filearea) {
+    case 'activity':
+        $title = get_string('managefiles_activity', 'backup');
+        break;
+    case 'course':
+        $title = get_string('managefiles_course', 'backup');
+        break;
+    case 'backup':
+        $title = get_string('managefiles_backup', 'backup');
+        break;
+    case 'automated':
+        $title = get_string('managefiles_automated', 'backup');
+        break;
+    default:
+        $title = get_string('managefiles', 'backup');
+}
+
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_pagelayout('admin');
@@ -88,9 +104,10 @@ if ($data) {
 }
 
 echo $OUTPUT->header();
+\backup_helper::print_coursereuse_selector('restore');
 
 echo $OUTPUT->container_start();
-echo $OUTPUT->heading($title);
+echo $OUTPUT->heading($title, 2, 'mt-4');
 $form->display();
 echo $OUTPUT->container_end();
 

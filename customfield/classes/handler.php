@@ -24,6 +24,7 @@
 
 namespace core_customfield;
 
+use backup_nested_element;
 use core_customfield\output\field_data;
 use stdClass;
 
@@ -82,7 +83,7 @@ abstract class handler {
      *
      * @param int $itemid
      */
-    protected final function __construct(int $itemid = 0) {
+    final protected function __construct(int $itemid = 0) {
         if (!preg_match('|^(\w+_[\w_]+)\\\\customfield\\\\([\w_]+)_handler$|', static::class, $matches)) {
             throw new \coding_exception('Handler class name must have format: <PLUGIN>\\customfield\\<AREA>_handler');
         }
@@ -99,7 +100,7 @@ abstract class handler {
      * @param int $itemid
      * @return handler
      */
-    public static function create(int $itemid = 0) : handler {
+    public static function create(int $itemid = 0): handler {
         return new static($itemid);
     }
 
@@ -111,7 +112,7 @@ abstract class handler {
      * @param int $itemid item id if the area uses them (usually not used)
      * @return handler
      */
-    public static function get_handler(string $component, string $area, int $itemid = 0) : handler {
+    public static function get_handler(string $component, string $area, int $itemid = 0): handler {
         $classname = $component . '\\customfield\\' . $area . '_handler';
         if (class_exists($classname) && is_subclass_of($classname, self::class)) {
             return $classname::create($itemid);
@@ -125,7 +126,7 @@ abstract class handler {
      *
      * @return string
      */
-    public function get_component() : string {
+    public function get_component(): string {
         return $this->component;
     }
 
@@ -134,7 +135,7 @@ abstract class handler {
      *
      * @return string
      */
-    public function get_area() : string {
+    public function get_area(): string {
         return $this->area;
     }
 
@@ -143,14 +144,14 @@ abstract class handler {
      *
      * @return \context
      */
-    abstract public function get_configuration_context() : \context;
+    abstract public function get_configuration_context(): \context;
 
     /**
      * URL for configuration of the fields on this handler.
      *
      * @return \moodle_url
      */
-    abstract public function get_configuration_url() : \moodle_url;
+    abstract public function get_configuration_url(): \moodle_url;
 
     /**
      * Context that should be used for data stored for the given record
@@ -158,14 +159,14 @@ abstract class handler {
      * @param int $instanceid id of the instance or 0 if the instance is being created
      * @return \context
      */
-    abstract public function get_instance_context(int $instanceid = 0) : \context;
+    abstract public function get_instance_context(int $instanceid = 0): \context;
 
     /**
      * Get itemid
      *
      * @return int|null
      */
-    public function get_itemid() : int {
+    public function get_itemid(): int {
         return $this->itemid;
     }
 
@@ -174,7 +175,7 @@ abstract class handler {
      *
      * @return bool
      */
-    public function uses_categories() : bool {
+    public function uses_categories(): bool {
         return true;
     }
 
@@ -184,7 +185,7 @@ abstract class handler {
      * @param int $suffix
      * @return string
      */
-    protected function generate_category_name($suffix = 0) : string {
+    protected function generate_category_name($suffix = 0): string {
         if ($suffix) {
             return get_string('otherfieldsn', 'core_customfield', $suffix);
         } else {
@@ -198,7 +199,7 @@ abstract class handler {
      * @param string $name name of the category, null to generate automatically
      * @return int id of the new category
      */
-    public function create_category(string $name = null) : int {
+    public function create_category(?string $name = null): int {
         global $DB;
         $params = ['component' => $this->get_component(), 'area' => $this->get_area(), 'itemid' => $this->get_itemid()];
 
@@ -224,7 +225,7 @@ abstract class handler {
      * @return category_controller
      * @throws \moodle_exception
      */
-    protected function validate_category(category_controller $category) : category_controller {
+    protected function validate_category(category_controller $category): category_controller {
         $categories = $this->get_categories_with_fields();
         if (!array_key_exists($category->get('id'), $categories)) {
             throw new \moodle_exception('categorynotfound', 'core_customfield');
@@ -239,7 +240,7 @@ abstract class handler {
      * @return field_controller
      * @throws \moodle_exception
      */
-    protected function validate_field(field_controller $field) : field_controller {
+    protected function validate_field(field_controller $field): field_controller {
         if (!array_key_exists($field->get('categoryid'), $this->get_categories_with_fields())) {
             throw new \moodle_exception('fieldnotfound', 'core_customfield');
         }
@@ -281,7 +282,7 @@ abstract class handler {
      * @param category_controller $category
      * @return bool
      */
-    public function delete_category(category_controller $category) : bool {
+    public function delete_category(category_controller $category): bool {
         $category = $this->validate_category($category);
         $result = api::delete_category($category);
         $this->clear_configuration_cache();
@@ -305,7 +306,7 @@ abstract class handler {
      * @param field_controller $field
      * @return bool
      */
-    public function delete_field_configuration(field_controller $field) : bool {
+    public function delete_field_configuration(field_controller $field): bool {
         $field = $this->validate_field($field);
         $result = api::delete_field_configuration($field);
         $this->clear_configuration_cache();
@@ -330,7 +331,7 @@ abstract class handler {
      *
      * @return bool
      */
-    abstract public function can_configure() : bool;
+    abstract public function can_configure(): bool;
 
     /**
      * The current user can edit given custom fields on the given instance
@@ -343,7 +344,7 @@ abstract class handler {
      * @param int $instanceid id of the instance or 0 if the instance is being created
      * @return bool
      */
-    abstract public function can_edit(field_controller $field, int $instanceid = 0) : bool;
+    abstract public function can_edit(field_controller $field, int $instanceid = 0): bool;
 
     /**
      * The current user can view the value of the custom field for a given custom field and instance
@@ -357,7 +358,7 @@ abstract class handler {
      * @param int $instanceid
      * @return bool
      */
-    abstract public function can_view(field_controller $field, int $instanceid) : bool;
+    abstract public function can_view(field_controller $field, int $instanceid): bool;
 
     /**
      * Returns the custom field values for an individual instance
@@ -372,7 +373,7 @@ abstract class handler {
      *     some data_controller objects may have 'id', some not
      *     In the last case data_controller::get_value() and export_value() functions will return default values.
      */
-    public function get_instance_data(int $instanceid, bool $returnall = false) : array {
+    public function get_instance_data(int $instanceid, bool $returnall = false): array {
         $fields = $returnall ? $this->get_fields() : $this->get_visible_fields($instanceid);
         return api::get_instance_fields_data($fields, $instanceid);
     }
@@ -390,7 +391,7 @@ abstract class handler {
      *     All instanceids and all fieldids are present, some data_controller objects may have 'id', some not.
      *     In the last case data_controller::get_value() and export_value() functions will return default values.
      */
-    public function get_instances_data(array $instanceids, bool $returnall = false) : array {
+    public function get_instances_data(array $instanceids, bool $returnall = false): array {
         $result = api::get_instances_fields_data($this->get_fields(), $instanceids);
 
         if (!$returnall) {
@@ -416,7 +417,7 @@ abstract class handler {
      * @param bool $returnall
      * @return \core_customfield\output\field_data[]
      */
-    public function export_instance_data(int $instanceid, bool $returnall = false) : array {
+    public function export_instance_data(int $instanceid, bool $returnall = false): array {
         return array_map(function($d) {
             return new field_data($d);
         }, $this->get_instance_data($instanceid, $returnall));
@@ -433,7 +434,7 @@ abstract class handler {
      * @param bool $returnall
      * @return stdClass
      */
-    public function export_instance_data_object(int $instanceid, bool $returnall = false) : stdClass {
+    public function export_instance_data_object(int $instanceid, bool $returnall = false): stdClass {
         $rv = new stdClass();
         foreach ($this->export_instance_data($instanceid, $returnall) as $d) {
             $rv->{$d->get_shortname()} = $d->get_value();
@@ -448,7 +449,7 @@ abstract class handler {
      * @param data_controller[] $fieldsdata
      * @return string
      */
-    public function display_custom_fields_data(array $fieldsdata) : string {
+    public function display_custom_fields_data(array $fieldsdata): string {
         global $PAGE;
         $output = $PAGE->get_renderer('core_customfield');
         $content = '';
@@ -465,7 +466,7 @@ abstract class handler {
      *
      * @return category_controller[]
      */
-    public function get_categories_with_fields() : array {
+    public function get_categories_with_fields(): array {
         if ($this->categories === null) {
             $this->categories = api::get_categories_with_fields($this->get_component(), $this->get_area(), $this->get_itemid());
         }
@@ -492,8 +493,42 @@ abstract class handler {
      * @param int $instanceid
      * @return bool
      */
-    protected function can_backup(field_controller $field, int $instanceid) : bool {
+    protected function can_backup(field_controller $field, int $instanceid): bool {
         return $this->can_view($field, $instanceid) || $this->can_edit($field, $instanceid);
+    }
+
+    /**
+     * Run the custom field backup callback for each controller.
+     *
+     * @param int $instanceid The instance ID.
+     * @param \backup_nested_element $customfieldselement The custom field element to be backed up.
+     */
+    public function backup_define_structure(int $instanceid, backup_nested_element $customfieldselement): void {
+        $datacontrollers = $this->get_instance_data($instanceid);
+
+        foreach ($datacontrollers as $controller) {
+            if ($this->can_backup($controller->get_field(), $instanceid)) {
+                $controller->backup_define_structure($customfieldselement);
+            }
+        }
+    }
+
+    /**
+     * Run the custom field restore callback for each controller.
+     *
+     * @param \restore_structure_step $step The restore step instance.
+     * @param int $newid The new ID for the custom field data after restore.
+     * @param int $oldid The original ID of the custom field data before backup.
+     */
+    public function restore_define_structure(\restore_structure_step $step, int $newid, int $oldid): void {
+
+        // Retrieve the 'instanceid' of the new custom field data.
+        $instanceid = (new data($newid))->get('instanceid');
+
+        $datacontrollers = $this->get_instance_data($instanceid);
+        foreach ($datacontrollers as $controller) {
+            $controller->restore_define_structure($step, $newid, $oldid);
+        }
     }
 
     /**
@@ -502,7 +537,7 @@ abstract class handler {
      * @param int $instanceid
      * @return array
      */
-    public function get_instance_data_for_backup(int $instanceid) : array {
+    public function get_instance_data_for_backup(int $instanceid): array {
         $finalfields = [];
         $data = $this->get_instance_data($instanceid, true);
         foreach ($data as $d) {
@@ -512,7 +547,9 @@ abstract class handler {
                     'shortname' => $d->get_field()->get('shortname'),
                     'type' => $d->get_field()->get('type'),
                     'value' => $d->get_value(),
-                    'valueformat' => $d->get('valueformat')];
+                    'valueformat' => $d->get('valueformat'),
+                    'valuetrust' => $d->get('valuetrust'),
+                ];
             }
         }
         return $finalfields;
@@ -650,7 +687,7 @@ abstract class handler {
             }
             $data->instance_form_definition($mform);
             $field = $data->get_field()->to_record();
-            if (strlen($field->description)) {
+            if (strlen((string)$field->description)) {
                 // Add field description.
                 $context = $this->get_configuration_context();
                 $value = file_rewrite_pluginfile_urls($field->description, 'pluginfile.php',
@@ -666,7 +703,7 @@ abstract class handler {
      *
      * @return array
      */
-    public function get_available_field_types() :array {
+    public function get_available_field_types(): array {
         return api::get_available_field_types();
     }
 
@@ -678,7 +715,7 @@ abstract class handler {
      *
      * @return array
      */
-    public function get_description_text_options() : array {
+    public function get_description_text_options(): array {
         global $CFG;
         require_once($CFG->libdir.'/formslib.php');
         return [
@@ -706,11 +743,12 @@ abstract class handler {
 
     /**
      * Creates or updates custom field data for a instanceid from backup data.
-     *
-     * The handlers have to override it if they support backup
+     * The handlers have to override it if they support backup.
      *
      * @param \restore_task $task
      * @param array $data
+     *
+     * @return int|void Implementations should conditionally return the ID of the created or updated record.
      */
     public function restore_instance_data_from_backup(\restore_task $task, array $data) {
         throw new \coding_exception('Must be implemented in the handler');
@@ -726,7 +764,7 @@ abstract class handler {
      *
      * @return field_controller[]
      */
-    public function get_fields() : array {
+    public function get_fields(): array {
         $categories = $this->get_categories_with_fields();
         $fields = [];
         foreach ($categories as $category) {
@@ -743,7 +781,7 @@ abstract class handler {
      * @param int $instanceid
      * @return field_controller[]
      */
-    protected function get_visible_fields(int $instanceid) : array {
+    protected function get_visible_fields(int $instanceid): array {
         $handler = $this;
         return array_filter($this->get_fields(),
             function($field) use($handler, $instanceid) {
@@ -758,7 +796,7 @@ abstract class handler {
      * @param int $instanceid
      * @return field_controller[]
      */
-    public function get_editable_fields(int $instanceid) : array {
+    public function get_editable_fields(int $instanceid): array {
         $handler = $this;
         return array_filter($this->get_fields(),
             function($field) use($handler, $instanceid) {

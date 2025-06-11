@@ -24,7 +24,7 @@
  */
 
 namespace report_lpmonitoring\task;
-use \report_lpmonitoring\api;
+use report_lpmonitoring\api;
 
 /**
  * Adhoc task handling rating users in learning plan templates.
@@ -44,7 +44,7 @@ class rate_users_in_templates extends \core\task\adhoc_task {
 
         // Set the proper user.
         $user = \core_user::get_user($this->get_userid(), '*', MUST_EXIST);
-        cron_setup_user($user);
+        \core\cron::setup_user($user);
 
         // Rate users in template.
         api::rate_users_in_template_with_defaultvalues($this->get_custom_data());

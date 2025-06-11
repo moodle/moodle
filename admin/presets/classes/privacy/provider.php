@@ -41,7 +41,7 @@ class provider implements
      * @param  collection $collection A list of information about this component
      * @return collection The collection object filled out with information about this component.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // These tables are really data about site configuration and not user data.
 
         // The adminpresets includes information about which user performed a configuration change using the admin_presets
@@ -74,7 +74,7 @@ class provider implements
      * @param   int $userid The user to search.
      * @return  contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         return new contextlist();
     }
 
@@ -99,7 +99,7 @@ class provider implements
     /**
      * Delete all data for all users in the specified context.
      *
-     * @param context $context The specific context to delete data for.
+     * @param \context $context The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         // None of the the data from these tables should be deleted.

@@ -44,7 +44,7 @@ class report_user_evidence_summary_exporter extends user_evidence_summary_export
      */
     protected static function define_other_properties() {
         $properties = parent::define_other_properties();
-        $properties['userevidenceurl'] = array('type' => PARAM_RAW);
+        $properties['userevidenceurl'] = ['type' => PARAM_RAW];
         return $properties;
     }
 

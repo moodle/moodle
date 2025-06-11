@@ -27,7 +27,7 @@ use core_adminpresets\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \tool_admin_presets\local\action\export
  */
-class export_test extends \advanced_testcase {
+final class export_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method.
@@ -156,7 +156,7 @@ class export_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function export_execute_provider(): array {
+    public static function export_execute_provider(): array {
         return [
             'Export settings and plugins, excluding sensible' => [
                 'includesensible' => false,

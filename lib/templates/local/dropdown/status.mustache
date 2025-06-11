@@ -1,0 +1,109 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/dropdown/status
+
+    Displays a dropdown status selector component.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * buttoncontent String - the dropdown trigger button content.
+    * choices Array - the status options.
+
+    Example context (json):
+    {
+        "buttonid" : "someinternalid",
+        "buttoncontent" : "Trigger button",
+        "choices" : {
+            "hasoptions": true,
+            "dialogcontent": "Dialog content",
+            "options": [
+                {
+                    "optionid": "option1",
+                    "value": "value1",
+                    "name": "First option",
+                    "description": "First option description",
+                    "hasicon": false,
+                    "first": true,
+                    "optionnumber": 1,
+                    "optionuniqid": "option1uniqid",
+                    "selected": true
+                },
+                {
+                    "optionid": "option2",
+                    "value": "value2",
+                    "name": "Second option",
+                    "description": "Second option description",
+                    "icon": {
+                        "extraclasses": "",
+                        "attributes": [
+                            {"name": "src", "value": "../../../pix/help.svg"},
+                            {"name": "alt", "value": "Help icon"}
+                        ]
+                    },
+                    "hasicon": true,
+                    "optionnumber": 2,
+                    "optionuniqid": "option2uniqid"
+                },
+                {
+                    "optionid": "option3",
+                    "value": "value3",
+                    "name": "Third option",
+                    "description": "Third option description",
+                    "icon": {
+                        "extraclasses": "",
+                        "attributes": [
+                            {"name": "src", "value": "../../../pix/help.svg"},
+                            {"name": "alt", "value": "Help icon"}
+                        ]
+                    },
+                    "hasicon": true,
+                    "disabled": true,
+                    "optionnumber": 3,
+                    "optionuniqid": "option3uniqid"
+                }
+            ]
+        },
+        "extras" : [
+            {
+                "attribute" : "data-example",
+                "value" : "stickyfooter"
+            }
+        ],
+        "buttonclasses" : "extraclasses"
+    }
+}}
+{{< core/local/dropdown/dialog }}
+    {{$ dialogcontent }}
+        {{#dialogcontent}}
+        <div class="pb-2 border-bottom">{{{dialogcontent}}}</div>
+        {{/dialogcontent}}
+        {{#choices}}
+            {{> core/local/choicelist }}
+        {{/choices}}
+    {{/ dialogcontent }}
+{{/ core/local/dropdown/dialog }}
+{{#js}}
+    require(['core/local/dropdown/status'], function(Module) {
+        Module.init('#' + '{{$ dropdownid }}{{!
+            }}{{#dropdownid}}{{dropdownid}}{{/dropdownid}}{{!
+            }}{{^dropdownid}}dropdownDialog_{{uniqid}}{{/dropdownid}}{{!
+        }}{{/ dropdownid }}');
+    });
+{{/js}}

@@ -1,0 +1,3 @@
+The Glyphicon fonts are open sourced as part of Bootstrap 3:
+
+https://github.com/twbs/bootstrap/tree/v3.3.5/fonts

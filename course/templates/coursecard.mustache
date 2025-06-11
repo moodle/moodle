@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template course_course/coursecard
+    @template core_course/coursecard
 
     This template renders the a card for the course cards.
 
@@ -34,15 +34,15 @@
         ]
     }
 }}
-<div class="card dashboard-card" role="listitem"
+<div class="card course-card mx-1" role="listitem"
     data-region="course-content"
     data-course-id="{{{id}}}">
     <a href="{{viewurl}}" tabindex="-1">
-        <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
+        <div class="card-img-top" style='background-image: url("{{{courseimage}}}");'>
             <span class="sr-only">{{fullname}}</span>
         </div>
     </a>
-    <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
+    <div class="card-body pe-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
         <div class="d-flex align-items-start">
             <div class="w-100 text-truncate">
                 {{#showshortname}}
@@ -55,7 +55,7 @@
                         </div>
                     </div>
                 {{/showshortname}}
-                <a href="{{viewurl}}" class="aalink coursename mr-2 mb-1">
+                <a href="{{viewurl}}" class="aalink coursename me-2 mb-1">
                     {{> core_course/favouriteicon }}
                     <span class="sr-only">
                         {{#str}}aria:coursename, core_course{{/str}}
@@ -67,7 +67,7 @@
                 </div>
                 {{^visible}}
                     <div class="d-flex flex-wrap">
-                        <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                        <span class="badge bg-info text-white">{{#str}} hiddenfromstudents {{/str}}</span>
                     </div>
                 {{/visible}}
             </div>

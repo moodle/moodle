@@ -24,14 +24,14 @@ namespace block_tag_youtube;
  * @copyright 2015 Jun Pataleta
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_tag_youtube_test extends \advanced_testcase {
+final class block_tag_youtube_test extends \advanced_testcase {
 
     /**
      * Testing the tag youtube block's initial state after a new installation.
      *
      * @return void
      */
-    public function test_after_install() {
+    public function test_after_install(): void {
         global $DB;
 
         $this->resetAfterTest(true);

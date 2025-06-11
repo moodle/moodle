@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/mod/book/lib.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 require_once($CFG->dirroot.'/mod/book/tool/importhtml/locallib.php');
 
-use \booktool_wordimport\wordconverter;
+use booktool_wordimport\wordconverter;
 
 /**
  * Import HTML pages from a Word file
@@ -47,7 +47,7 @@ function booktool_wordimport_import(string $wordfilename, stdClass $book, contex
     global $CFG;
 
     // Convert the Word file content into XHTML and an array of images.
-    $imagesforzipping = array();
+    $imagesforzipping = [];
     $word2xml = new wordconverter();
     $htmlcontent = $word2xml->import($wordfilename, $imagesforzipping);
 
@@ -76,15 +76,15 @@ function booktool_wordimport_export(stdClass $book, context_module $context, int
     global $DB;
 
     // Export a single chapter or the whole book into Word.
-    $allchapters = array();
+    $allchapters = [];
     $booktext = '';
     $word2xml = new wordconverter();
     if ($chapterid == 0) {
-        $allchapters = $DB->get_records('book_chapters', array('bookid' => $book->id), 'pagenum');
+        $allchapters = $DB->get_records('book_chapters', ['bookid' => $book->id], 'pagenum');
         // Read the title and introduction into a string, embedding images.
         $booktext .= '<p class="MsoTitle">' . $book->name . "</p>\n";
         // Grab the images, convert any GIFs to PNG, and return the list of converted images.
-        $giffilenames = array();
+        $giffilenames = [];
         $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'intro', $giffilenames, null);
 
         $introcontent = $book->intro;
@@ -93,7 +93,7 @@ function booktool_wordimport_export(stdClass $book, context_module $context, int
         }
         $booktext .= '<div class="chapter" id="intro">' . $introcontent . $imagestring . "</div>\n";
     } else {
-        $allchapters[0] = $DB->get_record('book_chapters', array('bookid' => $book->id, 'id' => $chapterid), '*', MUST_EXIST);
+        $allchapters[0] = $DB->get_record('book_chapters', ['bookid' => $book->id, 'id' => $chapterid], '*', MUST_EXIST);
     }
 
     // Append all the chapters to the end of the string, again embedding images.
@@ -109,7 +109,7 @@ function booktool_wordimport_export(stdClass $book, context_module $context, int
             }
 
             // Grab the images, convert any GIFs to PNG, and return the list of converted images.
-            $giffilenames = array();
+            $giffilenames = [];
             $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'chapter', $giffilenames, $chapter->id);
 
             // Grab the chapter text content, and update any GIF image names to the new PNG name.

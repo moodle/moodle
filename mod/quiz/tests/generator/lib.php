@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -25,13 +28,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_quiz_generator extends testing_module_generator {
 
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
 
         require_once($CFG->dirroot.'/mod/quiz/locallib.php');
         $record = (object)(array)$record;
 
-        $defaultquizsettings = array(
+        $defaultquizsettings = [
             'timeopen'               => 0,
             'timeclose'              => 0,
             'preferredbehaviour'     => 'deferredfeedback',
@@ -42,6 +45,7 @@ class mod_quiz_generator extends testing_module_generator {
             'questiondecimalpoints'  => -1,
             'attemptduring'          => 1,
             'correctnessduring'      => 1,
+            'maxmarksduring'         => 1,
             'marksduring'            => 1,
             'specificfeedbackduring' => 1,
             'generalfeedbackduring'  => 1,
@@ -49,6 +53,7 @@ class mod_quiz_generator extends testing_module_generator {
             'overallfeedbackduring'  => 0,
             'attemptimmediately'          => 1,
             'correctnessimmediately'      => 1,
+            'maxmarksimmediately'         => 1,
             'marksimmediately'            => 1,
             'specificfeedbackimmediately' => 1,
             'generalfeedbackimmediately'  => 1,
@@ -56,6 +61,7 @@ class mod_quiz_generator extends testing_module_generator {
             'overallfeedbackimmediately'  => 1,
             'attemptopen'            => 1,
             'correctnessopen'        => 1,
+            'maxmarksopen'           => 1,
             'marksopen'              => 1,
             'specificfeedbackopen'   => 1,
             'generalfeedbackopen'    => 1,
@@ -63,6 +69,7 @@ class mod_quiz_generator extends testing_module_generator {
             'overallfeedbackopen'    => 1,
             'attemptclosed'          => 1,
             'correctnessclosed'      => 1,
+            'maxmarksclosed'         => 1,
             'marksclosed'            => 1,
             'specificfeedbackclosed' => 1,
             'generalfeedbackclosed'  => 1,
@@ -85,7 +92,7 @@ class mod_quiz_generator extends testing_module_generator {
             'showuserpicture'        => 0,
             'showblocks'             => 0,
             'navmethod'              => QUIZ_NAVMETHOD_FREE,
-        );
+        ];
 
         foreach ($defaultquizsettings as $name => $value) {
             if (!isset($record->{$name})) {
@@ -115,7 +122,7 @@ class mod_quiz_generator extends testing_module_generator {
     public function create_attempt($quizid, $userid, array $forcedrandomquestions = [],
             array $forcedvariants = []) {
         // Build quiz object and load questions.
-        $quizobj = quiz::create($quizid, $userid);
+        $quizobj = quiz_settings::create($quizid, $userid);
 
         $attemptnumber = 1;
         $attempt = null;
@@ -204,5 +211,37 @@ class mod_quiz_generator extends testing_module_generator {
 
         // Update any associated calendar events, if necessary.
         quiz_update_events($DB->get_record('quiz', ['id' => $data['quiz']], '*', MUST_EXIST));
+    }
+
+    /**
+     * Create a quiz override (either user or group).
+     *
+     * @param array $data must specify quizid and a name.
+     * @return stdClass the newly created quiz_grade_items row.
+     */
+    public function create_grade_item(array $data): stdClass {
+        global $DB;
+
+        // Validate.
+        if (!isset($data['quizid'])) {
+            throw new coding_exception('Must specify quizid when creating a quiz grade item.');
+        }
+
+        if (!isset($data['name'])) {
+            throw new coding_exception('Must specify a name when creating a quiz grade item.');
+        }
+
+        if (clean_param($data['name'], PARAM_TEXT) !== $data['name']) {
+            throw new coding_exception('Grade item name must be PARAM_TEXT.');
+        }
+
+        $data['sortorder'] = $DB->get_field('quiz_grade_items',
+                'COALESCE(MAX(sortorder) + 1, 1)',
+                ['quizid' => $data['quizid']]);
+
+        // Create the grade item.
+        $gradeitem = (object) $data;
+        $gradeitem->id = $DB->insert_record('quiz_grade_items', $gradeitem);
+        return $gradeitem;
     }
 }

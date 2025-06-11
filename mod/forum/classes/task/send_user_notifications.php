@@ -94,6 +94,11 @@ class send_user_notifications extends \core\task\adhoc_task {
     protected $inboundmanager;
 
     /**
+     * @var array List of users.
+     */
+    protected $users = [];
+
+    /**
      * Send out messages.
      * @throws \moodle_exception
      */
@@ -480,6 +485,11 @@ class send_user_notifications extends \core\task\adhoc_task {
             } else {
                 $headers[] = "References: $parentid";
             }
+        } else {
+            // If the message IDs that Moodle creates are overwritten then referencing these
+            // IDs here will enable then to still thread correctly with the first email.
+            $headers[] = "In-Reply-To: $rootid";
+            $headers[] = "References: $rootid";
         }
 
         // MS Outlook / Office uses poorly documented and non standard headers, including

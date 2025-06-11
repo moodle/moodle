@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/process_monitor/process
+
+    Template to render a process inside the process monitor.
+
+    Example context (json):
+    {
+        "id": 42,
+        "name": "Sample",
+        "percentage": 30,
+        "error": "Something goes wrong"
+    }
+}}
+<div
+    class="queue-process d-flex flex-column p-2"
+    data-for="queue-process"
+    data-id="{{id}}"
+>
+    <div class="d-flex flex-row align-items-center">
+        <div class="p-2 uploadname text-truncate" data-for="name"> {{name}} </div>
+        <div class="ms-auto p-2 progressbar">
+            <progress value="{{percentage}}" max="100"></progress>
+            <button
+                type="button"
+                class="d-none btn-close"
+                data-action="closeProcess"
+                aria-label="{{#str}}closebuttontitle, core{{/str}}"
+            >
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+    </div>
+    <div class="d-none alert alert-danger" role="alert" data-for="error">
+        {{error}}
+    </div>
+</div>
+{{#js}}
+require(['core/local/process_monitor/process'], function(component) {
+    component.init('[data-for="queue-process"][data-id="{{id}}"]');
+});
+{{/js}}

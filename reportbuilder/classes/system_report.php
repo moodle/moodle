@@ -20,7 +20,10 @@ namespace core_reportbuilder;
 
 use action_menu_filler;
 use coding_exception;
+use core_reportbuilder\exception\report_access_exception;
+use html_writer;
 use stdClass;
+use core\output\checkbox_toggleall;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\local\report\base;
@@ -40,6 +43,9 @@ abstract class system_report extends base {
 
     /** @var string[] $basefields List of base fields */
     private $basefields = [];
+
+    /** @var callable $checkboxcallback */
+    private $checkboxcallback = null;
 
     /** @var bool $filterformdefault Whether to use the default filters form */
     private $filterformdefault = true;
@@ -66,10 +72,25 @@ abstract class system_report extends base {
     }
 
     /**
+     * Provide default implementation of the report name. Extending classes can implement this method to provide their own name
+     *
+     * @return string
+     */
+    public static function get_name(): string {
+        $classparts = explode('\\', get_called_class());
+        $classname = end($classparts);
+
+        // Try to make human readable, capitalized and with spaces.
+        return ucfirst(str_replace('_', ' ', $classname));
+    }
+
+    /**
      * Validates access to view this report
      *
      * This is necessary to implement independently of the page that would typically embed the report because
      * subsequent pages are requested via AJAX requests, and access should be validated each time
+     *
+     * Report parameters should also be considered when implementing this method
      *
      * @return bool
      */
@@ -106,8 +127,6 @@ abstract class system_report extends base {
     /**
      * Add list of fields that have to be always included in SQL query for actions and row classes
      *
-     * Base fields are only available in system reports because they are not compatible with aggregation
-     *
      * @param string $sql SQL clause for the list of fields that only uses main table or base joins
      */
     final protected function add_base_fields(string $sql): void {
@@ -121,6 +140,49 @@ abstract class system_report extends base {
      */
     final public function get_base_fields(): array {
         return $this->basefields;
+    }
+
+    /**
+     * Define toggle all checkbox for the report, required row data should be defined by calling {@see add_base_fields}
+     *
+     * @param callable $callback Callback to return value/label for each checkbox, implementing the following signature:
+     *      function(stdClass $row): ?array containing value/label pair, or null if the checkbox should not be shown for the row
+     */
+    final protected function set_checkbox_toggleall(callable $callback): void {
+        $this->checkboxcallback = $callback;
+    }
+
+    /**
+     * Return instance of toggle all checkbox, if previously defined by {@see set_checkbox_toggleall}
+     *
+     * @param bool $ismaster
+     * @param stdClass|null $row
+     * @return checkbox_toggleall|null
+     */
+    final public function get_checkbox_toggleall(bool $ismaster, ?stdClass $row = null): ?checkbox_toggleall {
+        if (!is_callable($this->checkboxcallback)) {
+            return null;
+        }
+
+        // Generic content for the master checkbox, execute callback for those belonging to each row.
+        if ($ismaster) {
+            $value = '';
+            $label = get_string('selectall');
+        } else {
+            $checkboxdata = ($this->checkboxcallback)($row);
+            if ($checkboxdata === null) {
+                return null;
+            }
+            [$value, $label] = $checkboxdata;
+        }
+
+        return new checkbox_toggleall('report-select-all', $ismaster, [
+            'id' => html_writer::random_id(),
+            'name' => 'report-select-row[]',
+            'value' => $value,
+            'label' => $label,
+            'labelclasses' => 'accesshide',
+        ]);
     }
 
     /**
@@ -200,6 +262,8 @@ abstract class system_report extends base {
 
     /**
      * Return specific report parameter
+     *
+     * Capability/permission checks relating to parameters retrieved here should also be considered in your {@see can_view} method
      *
      * @param string $param
      * @param mixed $default

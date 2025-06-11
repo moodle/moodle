@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides core\update\code_manager class.
- *
- * @package     core_plugin
- * @copyright   2012, 2013, 2015 David Mudrak <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\update;
 
+use core_collator;
 use core_component;
 use coding_exception;
 use moodle_exception;
@@ -44,7 +37,8 @@ require_once($CFG->libdir.'/filelib.php');
  * - archive existing version of the plugin source code
  * - move (deploy) the plugin source code into the $CFG->dirroot
  *
- * @copyright 2015 David Mudrak <david@moodle.com>
+ * @package   core
+ * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class code_manager {
@@ -539,6 +533,8 @@ class code_manager {
     protected function move_extracted_plugin_files($sourcedir, $targetdir, array $files) {
         global $CFG;
 
+        // Iterate sorted file list (to ensure directories precede files within them).
+        core_collator::ksort($files);
         foreach ($files as $file => $status) {
             if ($status !== true) {
                 throw new moodle_exception('corrupted_archive_structure', 'core_plugin', '', $file, $status);
@@ -548,12 +544,8 @@ class code_manager {
             $target = $targetdir.'/'.$file;
 
             if (is_dir($source)) {
-                continue;
-
+                mkdir($target, $CFG->directorypermissions, true);
             } else {
-                if (!is_dir(dirname($target))) {
-                    mkdir(dirname($target), $CFG->directorypermissions, true);
-                }
                 rename($source, $target);
             }
         }

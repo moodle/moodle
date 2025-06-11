@@ -62,7 +62,7 @@ class filesize extends \admin_setting {
      * @param int|null  $defaultunit    GB, MB, etc. (in bytes)
      */
     public function __construct(string $name, string $visiblename, string $description,
-            int $defaultvalue = null, int $defaultunit = null) {
+            ?int $defaultvalue = null, ?int $defaultunit = null) {
 
         $defaultsetting = self::parse_bytes($defaultvalue);
 

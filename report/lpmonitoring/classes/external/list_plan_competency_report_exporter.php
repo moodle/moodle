@@ -43,19 +43,19 @@ class list_plan_competency_report_exporter extends exporter {
      * @return array other properties
      */
     public static function define_other_properties() {
-        return array(
-            'iscmcompetencygradingenabled' => array(
-                'type' => PARAM_BOOL
-            ),
-            'competencies_list' => array(
+        return [
+            'iscmcompetencygradingenabled' => [
+                'type' => PARAM_BOOL,
+            ],
+            'competencies_list' => [
                 'type' => competency_evaluations_exporter::read_properties_definition(),
-                'multiple' => true
-            ),
-            'courses' => array(
+                'multiple' => true,
+            ],
+            'courses' => [
                 'type' => linked_course_and_modules_exporter::read_properties_definition(),
-                'multiple' => true
-            )
-        );
+                'multiple' => true,
+            ],
+        ];
     }
 
     /**
@@ -71,7 +71,7 @@ class list_plan_competency_report_exporter extends exporter {
      */
     protected static function define_related() {
         // We cache the plan so it does not need to be retrieved every time.
-        return array('plan' => 'core_competency\\plan');
+        return ['plan' => 'core_competency\\plan'];
     }
 
     /**
@@ -84,22 +84,22 @@ class list_plan_competency_report_exporter extends exporter {
         $resultcompetencies = $this->data;
         $plan = $this->related['plan'];
 
-        $result = array();
+        $result = [];
         $result['iscmcompetencygradingenabled'] = api::is_cm_comptency_grading_enabled();
-        $result['competencies_list'] = array();
+        $result['competencies_list'] = [];
 
-        $allcourses = array();
+        $allcourses = [];
         foreach ($resultcompetencies as $key => $r) {
             $usercomp = (isset($r->usercompetency)) ? $r->usercompetency : $r->usercompetencyplan;
             $r->competencydetail = api::get_competency_detail($plan->get('userid'), $usercomp->competencyid, $plan->get('id'));
 
-            $r->tmpevalincourse = array(); // Save the evaluation in courses information the further usage.
-            $r->tmpevalinmodule = array(); // Save the evaluation in modules information the further usage.
+            $r->tmpevalincourse = []; // Save the evaluation in courses information the further usage.
+            $r->tmpevalinmodule = []; // Save the evaluation in modules information the further usage.
             foreach ($r->competencydetail->courses as $courseinfo) {
                 // Add course to list of all courses.
                 if (!isset ($allcourses[$courseinfo->course->id]) ) {
                     $allcourses[$courseinfo->course->id]['courseinfo'] = $courseinfo;
-                    $allcourses[$courseinfo->course->id]['modulesinfo'] = array();
+                    $allcourses[$courseinfo->course->id]['modulesinfo'] = [];
                 }
                 if (api::is_cm_comptency_grading_enabled()) {
                     // Add module to list for course.
@@ -131,7 +131,7 @@ class list_plan_competency_report_exporter extends exporter {
         }
 
         // Export the courses data (course and modules infos).
-        $result['courses'] = array();
+        $result['courses'] = [];
         foreach ($allcourses as $course) {
             $exporter = new linked_course_and_modules_exporter($course, ['plan' => $plan]);
             $result['courses'][] = $exporter->export($output);

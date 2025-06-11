@@ -25,8 +25,8 @@ namespace core_blog\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
-use external_util;
-use external_files;
+use core_external\util as external_util;
+use core_external\external_files;
 use renderer_base;
 use context_system;
 use core_tag\external\tag_item_exporter;
@@ -178,10 +178,18 @@ class post_exporter extends exporter {
                 'multiple' => true,
                 'optional' => true,
             ),
+            'canedit' => array(
+                'type' => PARAM_BOOL,
+                'description' => 'Whether the user can edit the post.',
+                'optional' => true,
+            ),
         );
     }
 
     protected function get_other_values(renderer_base $output) {
+        global $CFG;
+        require_once($CFG->dirroot . '/blog/lib.php');
+
         $context = context_system::instance(); // Files always on site context.
 
         $values['summaryfiles'] = external_util::get_area_files($context->id, 'blog', 'post', $this->data->id);
@@ -192,6 +200,7 @@ class post_exporter extends exporter {
         } else {
             $values['tags'] = \core_tag\external\util::get_item_tags('core', 'post', $this->data->id);
         }
+        $values['canedit'] = blog_user_can_edit_entry($this->data);
 
         return $values;
     }

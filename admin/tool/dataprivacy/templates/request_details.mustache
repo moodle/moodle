@@ -49,32 +49,32 @@
             "profileurl": "#"
         },
         "statuslabel": "Pending",
-        "statuslabelclass": "badge-secondary",
+        "statuslabelclass": "bg-secondary text-dark",
         "messagehtml": "<p>Hello,</p><p>I would like to download all of my personal data.</p><p>Thanks!</p>"
     }
 }}
 <div class="container"  data-requestid="{{id}}">
-    <div class="media">
-        <div class="media-left">
+    <div class="d-flex">
+        <div class="flex-shrink-0">
             <img class="userpicture" src="{{foruser.profileimageurl}}"
                  alt="{{#str}}pictureof, moodle, {{foruser.fullname}}{{/str}}"
                  title="{{#str}}pictureof, moodle, {{foruser.fullname}}{{/str}}" />
         </div>
-        <div class="media-body">
+        <div class="flex-grow-1 ms-3">
             <h4 class="mt-0 mb-1">
                 <a href="{{foruser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{foruser.fullname}}</a>
             </h4>
             <a href="mailto:{{foruser.email}}">{{foruser.email}}</a>
             <div class="clearfix mt-1 mb-1">
-            <span class="float-left mr-1">
+            <span class="float-start me-1">
                 <strong>{{#str}}daterequesteddetail, tool_dataprivacy{{/str}}</strong>
                 {{#userdate}} {{timecreated}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}
             </span>
-                <span class="float-left mr-1">
+                <span class="float-start me-1">
                 <strong>{{#str}}statusdetail, tool_dataprivacy{{/str}}</strong>
                 <span class="badge {{statuslabelclass}}">{{statuslabel}}</span>
             </span>
-            <span class="float-left mr-1">
+            <span class="float-start me-1">
                 <strong>{{#str}}requestbydetail, tool_dataprivacy{{/str}}</strong>
                 <span><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></span>
             </span>

@@ -44,6 +44,9 @@ class repository_equella_generator extends testing_repository_generator {
         if (!isset($record['equella_url'])) {
             $record['equella_url'] = 'http://dummy.url.com';
         }
+        if (!isset($record['equella_userfield'])) {
+            $record['equella_userfield'] = 'default';
+        }
         if (!isset($record['equella_select_restriction'])) {
             $record['equella_select_restriction'] = 'none';
         }
@@ -53,8 +56,18 @@ class repository_equella_generator extends testing_repository_generator {
         if (!isset($record['equella_shareid'])) {
             $record['equella_shareid'] = 'id';
         }
-        if (!isset($record['equella_sharesecret'])) {
-            $record['equella_url'] = 'secret';
+        if (!isset($record['equella_sharedsecret'])) {
+            $record['equella_sharedsecret'] = 'secret';
+        }
+        // Set defaults for all generated options for each role with editing capabilities.
+        $editingroles = get_roles_with_capability('moodle/course:manageactivities', CAP_ALLOW);
+        foreach ($editingroles as $role) {
+            if (!isset($record["equella_{$role->shortname}_shareid"])) {
+                $record["equella_{$role->shortname}_shareid"] = '';
+            }
+            if (!isset($record["equella_{$role->shortname}_sharedsecret"])) {
+                $record["equella_{$role->shortname}_sharedsecret"] = '';
+            }
         }
         return $record;
     }

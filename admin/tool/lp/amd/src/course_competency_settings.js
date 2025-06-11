@@ -16,7 +16,7 @@
 /**
  * Change the course competency settings in a popup.
  *
- * @module     tool_lp/configurecoursecompetencysettings
+ * @module     tool_lp/course_competency_settings
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

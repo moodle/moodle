@@ -17,9 +17,7 @@
 namespace tool_admin_presets\local\action;
 
 use context_system;
-use moodle_url;
 use core_adminpresets\manager;
-use tool_admin_presets\output\presets_list;
 use tool_admin_presets\output\export_import;
 
 /**
@@ -41,7 +39,7 @@ class base {
         'preview' => 'preset_previewed',
         'load' => 'preset_loaded',
         'rollback' => 'preset_reverted',
-        'download_xml' => 'preset_downloaded'
+        'download_xml' => 'preset_downloaded',
     ];
 
     /** @var string The main action (delete, export, import, load...). **/
@@ -56,7 +54,7 @@ class base {
     /** @var int The output content to display in the page. **/
     protected $outputs;
 
-    /** @var int The moodle form to display in the page. **/
+    /** @var \moodleform The moodle form to display in the page. **/
     protected $moodleform;
 
     /** @var manager The manager helper class instance. **/
@@ -79,14 +77,19 @@ class base {
      * actions (preview, load, download, delete and rollback)
      */
     public function show(): void {
-        global $DB, $OUTPUT;
+        global $DB, $OUTPUT, $PAGE;
 
+        $this->outputs = $OUTPUT->container_start('d-flex flex-wrap justify-content-end');
         $options = new export_import();
-        $this->outputs = $OUTPUT->render($options);
+        $this->outputs .= $OUTPUT->render($options);
+        $this->outputs .= $OUTPUT->container_end();
 
-        $presets = $DB->get_records('adminpresets');
-        $list = new presets_list($presets, true);
-        $this->outputs .= $OUTPUT->render($list);
+        $PAGE->requires->js_call_amd('tool_admin_presets/admin_presets_list', 'init');
+
+        $report = \core_reportbuilder\system_report_factory::create(
+            \tool_admin_presets\reportbuilder\local\systemreports\admin_presets::class,
+            $PAGE->context, '', '', 0, []);
+        $this->outputs .= $report->output();
     }
 
     /**

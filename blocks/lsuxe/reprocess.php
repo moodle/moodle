@@ -67,8 +67,8 @@ echo $OUTPUT->heading($sectiontitle);
 
 $starttime = microtime(true);
 
-if (lsuxe_helpers::is_ues()) {
-    mtrace("Using LSU UES");
+if (lsuxe_helpers::is_wds()) {
+    mtrace("Using LSU WDS");
 } else {
     mtrace("Normal Moodle Enrollment");
 }

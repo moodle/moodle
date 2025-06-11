@@ -1,0 +1,164 @@
+/**
+ * Moodle file manager.
+ *
+ */
+
+/* stylelint-disable declaration-no-important*/
+
+.filemanager {
+    font-family: $font-family-system;
+    max-width: 40em;
+
+    .dndupload-message {
+        font-size: small;
+    }
+
+    .fp-pathbar {
+        display: block;
+        .fp-path-folder {
+            background-size: 1.5em 0.8em;
+            background-position: left center;
+            .fp-path-folder-name {
+                font-size: 0.8em;
+                margin-left: 2.2em;
+            }
+        }
+    }
+
+    // Hide :
+    // restrictions (max file size etc)
+    .fp-restrictions {
+        display: none;
+    }
+
+    .fp-content {
+        border: 2px dashed #bbb;
+    }
+
+    .fp-iconview .fp-filename-field {
+        padding-right: 1em;
+    }
+
+    .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {
+        float: right;
+    }
+
+    .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,
+    .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu,
+    .fp-iconview .fp-filename-field {
+        position: initial;
+    }
+}
+
+// We want to show this specific restriction in order to let the user know how many files they can upload.
+#themesnaplogin.active #admin-loginbgimg .filemanager {
+    max-width: 100%;
+    .fp-restrictions {
+        display: block;
+        span {
+            font-size: .9375rem;
+        }
+    }
+    .filemanager-toolbar {
+        padding: 1em 0;
+        height: auto;
+        width: auto;
+        position: unset;
+    }
+}
+
+// Make sure accepted file type information is on its own row and positioned nicely.
+div[data-fieldtype=filemanager] > p:nth-of-type(1) {
+    margin-top: 1em;
+    width: 100%;
+}
+
+// Make filenames more readable.
+.fp-filename {
+    font-size: small;
+    line-height: 1;
+}
+.fp-icon {
+    margin-top: 0;
+}
+
+// Code below moved from other scss files.
+.chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
+    background: $body-bg;
+}
+
+.jschooser .choosercontainer #chooseform .alloptions {
+    max-height: calc(100vh - 10rem) !important; // Overules JS caculated value.
+}
+
+.choosercontainer #chooseform {
+    .moduletypetitle,
+    .option,
+    .nonoption {
+        padding: 0 4%;
+    }
+
+    .option .icon {
+        padding: 0 .5rem;
+    }
+}
+
+.fitem_filepicker .fitemtitle label {
+    margin-bottom: 0;
+}
+
+.felement.ffilepicker {
+    margin-top: 0;
+}
+
+.filepicker-filelist,
+.filemanager-container {
+    border: none;
+}
+
+.filemanager .fp-navbar {
+    background-color: transparent;
+    border: none;
+}
+
+.filemanager-toolbar {
+    padding: 0 0 8px;
+}
+
+.theme-snap .dndupload-arrow {
+    cursor: pointer;
+    // The upload file icon in the file managers had a repeat bug as a background image.
+    // This prevents this for any file manager that uses this class in Snap.
+    background: url("[[pix:core|/f/folder]]") center no-repeat;
+    background-size: 45px 45px;
+    margin-top: 10px;
+    .fa-arrow-circle-o-down {
+        display: none; // Remove moodle core Drag and drop icon.
+    }
+}
+
+#page-badges-newbadge .dndupload-arrow {
+    cursor: default;
+}
+
+.filepicker-filelist .filepicker-container,
+.filemanager .filemanager-container .fm-empty-container,
+.filemanager-container.dndupload-over .dndupload-target,
+.filemanager-container .dndupload-target {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding-top: 100px;
+}
+
+.filemanager-loading {
+    border: 2px dashed #bbb;
+    padding-top: 45px;
+    min-height: 130px;
+    background-color: $body-bg;
+}
+
+.jsenabled .filemanager-loading {
+    margin-top: 0;
+}

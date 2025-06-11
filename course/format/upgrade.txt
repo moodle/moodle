@@ -1,6 +1,117 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes for course formats
 
 Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
+
+=== 4.4 ===
+* The core_courseformat\output\local\content\section::export_for_template() is not returning hiddenfromstudents and notavailable
+  directly in the data array anymore. Instead, it returns the visibility data in the 'visibility' key. It means that templates
+  derived from core should be adjusted to use $data->visibility->hiddenfromstudents and $data->visibility->notavailable instead
+  of $data->hiddenfromstudents and $data->notavailable.
+* The state mutations sectionMove is deprecated. From now on sectionMoveAfter is the only
+  valid section move mutation.
+* The state action core_courseformat\stateactions::section_move is deprecated and
+  replaced by core_courseformat\stateactions::section_move_after.
+* $CFG->linkcoursesections setting has been completely removed because it's not required anymore. From now on, sections will be
+always linked because a new page, section.php, has been created to display any single section.
+* Final deprecation for:
+  - core_courseformat\output\section_renderer::section_edit_control_menu
+  - core_courseformat\output\section_renderer::section_right_content
+  - core_courseformat\output\section_renderer::section_left_content
+  - core_courseformat\output\section_renderer::section_header
+  - core_courseformat\output\section_renderer::section_footer
+  - core_courseformat\output\section_renderer::start_section_list
+  - core_courseformat\output\section_renderer::end_section_list
+  - core_courseformat\output\section_renderer::section_edit_control_items
+  - core_courseformat\output\section_renderer::section_summary
+  - core_courseformat\output\section_renderer::section_activity_summary
+  - core_courseformat\output\section_renderer::section_availability_message
+  - core_courseformat\output\section_renderer::section_availability
+  - core_courseformat\output\section_renderer::course_activity_clipboard
+  - core_courseformat\output\section_renderer::get_nav_links
+  - core_courseformat\output\section_renderer::stealth_section_header
+  - core_courseformat\output\section_renderer::stealth_section_footer
+  - core_courseformat\output\section_renderer::section_nav_selection
+  - core_courseformat\output\section_renderer::print_single_section_page
+  - core_courseformat\output\section_renderer::print_multiple_section_page
+  - core_courseformat\output\section_renderer::change_number_sections
+  - core_courseformat\output\section_renderer::format_summary_text
+  - core_course_renderer::course_section_cm_edit_actions
+  - core_course_renderer::is_cm_conditionally_hidden
+  - core_course_renderer::course_section_cm_name
+  - core_course_renderer::course_section_cm_classes
+  - core_course_renderer::course_section_cm_name_title
+  - core_course_renderer::course_section_cm_text
+  - core_course_renderer::availability_info
+  - core_course_renderer::course_section_cm_availability
+  - core_course_renderer::course_section_cm_list_item
+  - core_course_renderer::course_section_cm
+  - core_course_renderer::course_section_cm_list
+  - core_course\output\course_module_name
+  - course/format/renderer.php
+  - course/format/topics/renderer.php
+  - course/format/weeks/renderer.php
+* New core_courseformat\sectiondelegate class. The class can be extended by plugins to take control of a course section.
+* The methods core_courseformat\base::set_section_number() and core_courseformat\base:: get_section_number() have been deprecated
+and replaced by core_courseformat\base::set_sectionnum() and core_courseformat\base::get_sectionnum(). The new methods use the null
+value when all the sections must be displayed (instead of 0). That way, section 0 (General), can be displayed on a single page too.
+* The course format setting has been updated to use a choice dropdown form element instead of a select element. Third-party
+plugins can now include the string 'plugin_description' to provide a description of the course format.
+* A new item, initsections, has been added to the testing_data_generator::create_course() function, to let the generator rename
+the sections to "Section X".
+* The core_courseformat\base::get_format_string last parameter has been removed because it was erroneous.
+* New core_courseformat\base::add_section_preference_ids() to add the section ids to course format preferences.
+* New core_courseformat\base::remove_section_preference_ids() to remove the section ids out of course format preferences.
+
+=== 4.3 ===
+* New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.
+The content of the afterlink feature has been moved to the end of the activity card so modules using it should check this new
+feature which might fit better.
+Some considerations about the activitybadge feature:
+  - The badge content is always plain text (no HTML).
+  - The badge style can be set (by default is initialized with badge-none, but it can be set by any module).
+  - An optional URL to redirect the user when the badge is clicked.
+  - An optional ID to add the element in case the module wants to add some JS to the badge events.
+  - Optionally, any other extra HTML attributes to the badge element (for example, data attributes).
+* Protected function `core_courseformat\output\local\content\section\availability::availability_info()` has been deprecated,
+`core_courseformat\output\local\content\section\availability::get_availability_data()` should be used instead.
+* New course format output classes:
+  - core_courseformat\output\local\content\cm\groupmode output class to display the groupmode icon in the activity card.
+
+=== 4.2 ===
+* New core_courseformat\base::get_context() to get the course context directly from the format instance.
+* New core_courseformat\base::delete_module() method. Now format plugins can extend the activity deletion logic
+  by overriding this method.
+* The reactive course editor now uses the standard fragment library to refresh an individual section or activity card
+  in the course content. Instead of using adhoc YUI methods and webservice, the new fragment methods are:
+    - core_courseformat_output_fragment_cmitem
+    - core_courseformat_output_fragment_section
+* New methods and outputs added for bulk editing (only available for formats compatible with reactive components):
+    - Mutations for editing the bulk data: bulkEnable, bulkReset, cmSelect, cmUnselect, sectionSelect and sectionUnselect.
+    - Output classes overridable by the plugins: content\bulkedittools, content\bulkedittoggler
+    - Renderer method: core_courseformat\output\section_renderer::bulk_editing_button
+    - New overridable checkboxes: content/cm/bulkselect.mustache and content/section/bulkselect.mustache
+* Plugins can use the CSS class "bulk-hidden" to hide elements when the bulk editing is enabled.
+* New core_courseformat\base::duplicate_section method to duplicate course sections and their modules within a course.
+* The section renderer will now respect the new course view parameter 'expandsection'. If the course's view page
+  is being called with this parameter set to a section number, this section will be shown expanded.
+* core_courseformat\base::get_view_url() now by default returns a url for the *expanded* section. This can be
+  changed by adding ['expanded' => false] to the options parameter of get_view_url().
+* The newly introduced protected method core_courseformat\output\local\content\section::is_section_collapsed() now
+  should be used by format plugins to determine if a section should be rendered collapsed or expanded at first.
+  This method can also be overwritten by course formats, but should respect the new 'expandsection' parameter when
+  doing so.
+* New core_courseformat\base::get_editor_custom_strings() method to customize course editor strings.
+  The returned string array is used to override section related strings in the frontend.
+* New core_courseformat\base::get_format_string() to get strings that can be overridden by the format plugin.
+  The method will check first the string in the format_PLUGINNAME.php lang file and, if not, it will return the
+  core_courseformat string instead.
+* New course format output classes:
+  - core_courseformat\output\local\content\cm\visibility to display the activity availability.
 
 === 4.1 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace

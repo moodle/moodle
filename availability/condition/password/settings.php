@@ -26,11 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
     $opts = [
-        'db' => new lang_string('permanently', 'availability_password'),
-        'session' => new lang_string('untillogout', 'availability_password'),
+        'db' => new \core\lang_string('permanently', 'availability_password'),
+        'session' => new \core\lang_string('untillogout', 'availability_password'),
     ];
     $setting = new admin_setting_configselect('availability_password/remember',
-            new lang_string('rememberpassword', 'availability_password'),
+            new \core\lang_string('rememberpassword', 'availability_password'),
             '',
             'db',
             $opts);

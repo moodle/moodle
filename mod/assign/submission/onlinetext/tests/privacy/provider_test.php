@@ -14,27 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for assignsubmission_onlinetext.
- *
- * @package    assignsubmission_onlinetext
- * @copyright  2018 Adrian Greeve <adrian@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace assignsubmission_onlinetext\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/assign/tests/privacy/provider_test.php');
-
 /**
- * Unit tests for mod/assign/submission/onlinetext/classes/privacy/
+ * Unit tests for mod/assign/submission/onlinetext/classes/privacy/provider.
  *
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    assignsubmission_onlinetext
+ * @covers \assignsubmission_onlinetext\privacy\provider
  */
-class provider_test extends \mod_assign\privacy\provider_test {
+final class provider_test extends \mod_assign\tests\provider_testcase {
 
     /**
      * Convenience function for creating feedback data.
@@ -67,7 +57,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Quick test to make sure that get_metadata returns something.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('assignsubmission_onlinetext');
         $collection = \assignsubmission_onlinetext\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -76,7 +66,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that submission files and text are exported for a user.
      */
-    public function test_export_submission_user_data() {
+    public function test_export_submission_user_data(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -103,7 +93,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that all submission files are deleted for this context.
      */
-    public function test_delete_submission_for_context() {
+    public function test_delete_submission_for_context(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -134,7 +124,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that the comments for a user are deleted.
      */
-    public function test_delete_submission_for_userid() {
+    public function test_delete_submission_for_userid(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -163,7 +153,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
         $this->assertFalse($plugin2->is_empty($submission2));
     }
 
-    public function test_delete_submissions() {
+    public function test_delete_submissions(): void {
         global $DB;
 
         $this->resetAfterTest();

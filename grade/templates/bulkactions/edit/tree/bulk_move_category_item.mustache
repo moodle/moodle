@@ -1,0 +1,93 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_grades/bulkactions/edit/tree/bulk_move_category_item
+
+    Recursively renders a grade category tree for the bulk move modal.
+
+    Context variables required for this template:
+    * id - The id of the category.
+    * name - The name of the category.
+    * children - An array of child categories.
+    * iscategory - Whether the item is a category or not.
+    * haschildcategories - Whether the item has child categories or not.
+
+    Example context (json):
+    {
+        "id": 1,
+        "name": "Category 1",
+        "children": [
+            {
+                "id": 2,
+                "name": "Category 2",
+                "children": [
+                    {
+                        "id": 3,
+                        "name": "Category 3",
+                        "children": [
+                            {
+                                "id": 4,
+                                "name": "Category 4",
+                                "children": [],
+                                "iscategory": true
+                            }
+                        ],
+                        "iscategory": true,
+                        "haschildcategories": true
+                    }
+                ],
+                "iscategory": true,
+                "haschildcategories": true
+            }
+        ],
+        "iscategory": true,
+        "haschildcategories": true
+    }
+}}
+
+{{#haschildcategories}}
+    <li data-for="sectionnode" role="treeitem" aria-owns="movemodalcollapse{{id}}" data-type="category" data-id="{{id}}" data-selected="false" aria-expanded="true" data-collapsible="true">
+        <div class="collapse-list-item d-flex" id="movemodalsection{{id}}">
+            <a role="button" href="#movemodalcollapse{{id}}" aria-controls="movemodalcollapse{{id}}" class="collapse-list-link btn" tabindex="-1">
+                <span class="expanded-icon text-nowrap" data-toggle="tooltip"  title="{{#str}} collapse, core {{/str}}">
+                    {{#pix}} t/expandedchevron, core, {{#str}} collapse, core {{/str}} {{/pix}}
+                </span>
+                <span class="collapsed-icon text-nowrap" data-toggle="tooltip"  title="{{#str}} expand, core {{/str}}">
+                    <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core, {{#str}} expand, core {{/str}} {{/pix}}</span>
+                    <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core, {{#str}} expand, core {{/str}} {{/pix}}</span>
+                </span>
+            </a>
+            <span class="collapse-list-item-name">{{name}}</span>
+        </div>
+        <div id="movemodalcollapse{{id}}" class="collapse-list-item-content">
+            <ul class="unlist" role="group" aria-labelledby="movemodalsection{{id}}">
+                {{#children}}
+                    {{#iscategory}}
+                        {{> core_grades/bulkactions/edit/tree/bulk_move_category_item }}
+                    {{/iscategory}}
+                {{/children}}
+            </ul>
+        </div>
+    </li>
+{{/haschildcategories}}
+{{^haschildcategories}}
+    <li data-for="sectionnode" role="treeitem" data-type="category" data-id="{{id}}" data-selected="false">
+        <div class="collapse-list-item d-flex">
+            <span class="collapse-list-item-name ms-2">{{name}}</span>
+        </div>
+    </li>
+{{/haschildcategories}}

@@ -30,6 +30,7 @@ use moodle_url;
 use context_system;
 use stdClass;
 use html_writer;
+use core_plugin_manager;
 
 /**
  * Methods to use when registering the site at the moodle sites directory.
@@ -43,10 +44,11 @@ class registration {
     /** @var array Fields used in a site registration form.
      * IMPORTANT: any new fields with non-empty defaults have to be added to CONFIRM_NEW_FIELDS */
     const FORM_FIELDS = ['policyagreed', 'language', 'countrycode', 'privacy',
-        'contactemail', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
-        'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode', 'geolocation', 'street'];
+        'contactemail', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
+        'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode',
+        'geolocation', 'street', 'organisationtype'];
 
-    /** @var List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
+    /** @var array List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
      * If site was already registered, admin will be promted to confirm new registration data manually. Until registration is manually confirmed,
      * the scheduled task updating registration will be paused.
      * Keys of this array are not important as long as they increment, use current date to avoid confusions.
@@ -60,15 +62,21 @@ class registration {
         2019022200 => ['analyticsenabledmodels', 'analyticspredictions', 'analyticsactions', 'analyticsactionsnotuseful'],
         // Active users stats added in Moodle 3.9.
         2020022600 => ['activeusers', 'activeparticipantnumberaverage'],
+        // Database type, course date info, site theme, primary auth type added in Moodle 4.2.
+        2023021700 => ['dbtype', 'coursesnodates', 'sitetheme', 'primaryauthtype'],
+        // Plugin usage added in Moodle 4.5.
+        2023072300 => ['pluginusage'],
+        // AI usage added in Moodle 4.5.
+        2023081200 => ['aiusage'],
     ];
 
-    /** @var Site privacy: not displayed */
+    /** @var string Site privacy: not displayed */
     const HUB_SITENOTPUBLISHED = 'notdisplayed';
 
-    /** @var Site privacy: public */
+    /** @var string Site privacy: public */
     const HUB_SITENAMEPUBLISHED = 'named';
 
-    /** @var Site privacy: public and global */
+    /** @var string Site privacy: public and global */
     const HUB_SITELINKPUBLISHED = 'linked';
 
     /** @var stdClass cached site registration information */
@@ -180,6 +188,18 @@ class registration {
         $siteinfo['participantnumberaverage'] = average_number_of_participants();
         $siteinfo['activeparticipantnumberaverage'] = average_number_of_participants(true, time() - DAYSECS * 30);
         $siteinfo['modulenumberaverage'] = average_number_of_courses_modules();
+        $siteinfo['dbtype'] = $CFG->dbtype;
+        $siteinfo['coursesnodates'] = $DB->count_records_select('course', 'enddate = ?', [0]) - 1;
+        $siteinfo['sitetheme'] = get_config('core', 'theme');
+        $siteinfo['pluginusage'] = json_encode(self::get_plugin_usage_data());
+
+        // AI usage data.
+        $aiusagedata = self::get_ai_usage_data();
+        $siteinfo['aiusage'] = !empty($aiusagedata) ? json_encode($aiusagedata) : '';
+
+        // Primary auth type.
+        $primaryauthsql = 'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC';
+        $siteinfo['primaryauthtype'] = $DB->get_field_sql($primaryauthsql, null, IGNORE_MULTIPLE);
 
         // Version and url.
         $siteinfo['moodlerelease'] = $CFG->release;
@@ -229,6 +249,11 @@ class registration {
         if (preg_match('/^(\d+\.\d.*?)[\. ]/', $moodlerelease, $matches)) {
             $moodlerelease = $matches[1];
         }
+        $pluginusagelinks = [
+            'overview' => new moodle_url('/admin/plugins.php'),
+            'activities' => new moodle_url('/admin/modules.php'),
+            'blocks' => new moodle_url('/admin/blocks.php'),
+        ];
         $senddata = [
             'moodlerelease' => get_string('sitereleasenum', 'hub', $moodlerelease),
             'courses' => get_string('coursesnumber', 'hub', $siteinfo['courses']),
@@ -254,6 +279,12 @@ class registration {
             'analyticspredictions' => get_string('analyticspredictions', 'hub', $siteinfo['analyticspredictions']),
             'analyticsactions' => get_string('analyticsactions', 'hub', $siteinfo['analyticsactions']),
             'analyticsactionsnotuseful' => get_string('analyticsactionsnotuseful', 'hub', $siteinfo['analyticsactionsnotuseful']),
+            'dbtype' => get_string('dbtype', 'hub', $siteinfo['dbtype']),
+            'coursesnodates' => get_string('coursesnodates', 'hub', $siteinfo['coursesnodates']),
+            'sitetheme' => get_string('sitetheme', 'hub', $siteinfo['sitetheme']),
+            'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
+            'pluginusage' => get_string('pluginusagedata', 'hub', $pluginusagelinks),
+            'aiusage' => get_string('aiusagestats', 'hub', self::get_ai_usage_time_range(true)),
         ];
 
         foreach ($senddata as $key => $str) {
@@ -381,6 +412,36 @@ class registration {
             self::HUB_SITENOTPUBLISHED => get_string('siteprivacynotpublished', 'hub'),
             self::HUB_SITENAMEPUBLISHED => get_string('siteprivacypublished', 'hub'),
             self::HUB_SITELINKPUBLISHED => get_string('siteprivacylinked', 'hub')
+        ];
+    }
+
+    /**
+     * Get the options for organisation type form element to use in registration form.
+     *
+     * Indexes reference Moodle internal ids and should not be changed.
+     *
+     * @return array
+     */
+    public static function get_site_organisation_type_options(): array {
+        return [
+            1 => get_string('siteorganisationtype:wholeuniversity', 'hub'),
+            2 => get_string('siteorganisationtype:universitydepartment', 'hub'),
+            3 => get_string('siteorganisationtype:college', 'hub'),
+            4 => get_string('siteorganisationtype:collegedepartment', 'hub'),
+            5 => get_string('siteorganisationtype:highschool', 'hub'),
+            6 => get_string('siteorganisationtype:highschooldepartment', 'hub'),
+            7 => get_string('siteorganisationtype:primaryschool', 'hub'),
+            8 => get_string('siteorganisationtype:independentteacher', 'hub'),
+            9 => get_string('siteorganisationtype:companyinternal', 'hub'),
+            10 => get_string('siteorganisationtype:companydepartment', 'hub'),
+            11 => get_string('siteorganisationtype:commercialcourseprovider', 'hub'),
+            12 => get_string('siteorganisationtype:other', 'hub'),
+            13 => get_string('siteorganisationtype:highschooldistrict', 'hub'),
+            14 => get_string('siteorganisationtype:government', 'hub'),
+            16 => get_string('siteorganisationtype:charityornotforprofit', 'hub'),
+            17 => get_string('siteorganisationtype:charterschool', 'hub'),
+            18 => get_string('siteorganisationtype:schooldistrict', 'hub'),
+            19 => get_string('siteorganisationtype:hospital', 'hub'),
         ];
     }
 
@@ -578,7 +639,7 @@ class registration {
     }
 
     /**
-     * Redirect to the site registration form if it's a new install or registration needs updating
+     * Redirect to the site registration form if it's a new install, upgrade or registration needs updating.
      *
      * @param string|moodle_url $url
      */
@@ -594,5 +655,155 @@ class registration {
             $returnurl = new moodle_url($url);
             redirect(new moodle_url('/admin/registration/index.php', ['returnurl' => $returnurl->out_as_local_url(false)]));
         }
+    }
+
+    /**
+     * Return a list of plugins.
+     *
+     * Only blocks and activities will include instance counts.
+     *
+     * @return array
+     */
+    public static function get_plugin_usage_data(): array {
+        global $DB;
+
+        $pluginman = core_plugin_manager::instance();
+        $plugininfo = $pluginman->get_plugins();
+        $data = [];
+
+        foreach ($plugininfo as $plugins) {
+            foreach ($plugins as $plugin) {
+                // Plugins are considered enabled if $plugin->is_enabled() returns true or null.
+                // Plugins that return null cannot be disabled.
+                $enabled = ($plugin->is_enabled() || is_null($plugin->is_enabled()));
+                $data[$plugin->type][$plugin->name]['enabled'] = $enabled ? 1 : 0;
+
+                if ($plugin->type === 'mod') {
+                    $mid = $DB->get_field('modules', 'id', ['name' => $plugin->name]);
+                    $count = $DB->count_records('course_modules', ['module' => $mid]);
+                    $data[$plugin->type][$plugin->name]['count'] = $count;
+
+                } else if ($plugin->type === 'block') {
+                    $count = $DB->count_records('block_instances', ['blockname' => $plugin->name]);
+                    $data[$plugin->type][$plugin->name]['count'] = $count;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get the time range to use in collected and reporting AI usage data.
+     *
+     * @param bool $format Use true to format timestamp.
+     * @return array
+     */
+    private static function get_ai_usage_time_range(bool $format = false): array {
+        global $DB;
+
+        // We will try and use the last time this site was last registered for our 'from' time.
+        // Otherwise, default to using one week's worth of data to roughly match the site rego scheduled task.
+        $timenow = \core\di::get(\core\clock::class)->time();
+        $defaultfrom = $timenow - WEEKSECS;
+        $timeto = $timenow;
+        $params = [
+            'huburl' => HUB_MOODLEORGHUBURL,
+            'confirmed' => 1,
+        ];
+        $lastregistered = $DB->get_field('registration_hubs', 'timemodified', $params);
+        $timefrom = $lastregistered ? (int)$lastregistered : $defaultfrom;
+
+        if ($format) {
+            $timefrom = userdate($timefrom);
+            $timeto = userdate($timeto);
+        }
+
+        return [
+            'timefrom' => $timefrom,
+            'timeto' => $timeto,
+        ];
+    }
+
+    /**
+     * Get AI usage data.
+     *
+     * @return array
+     */
+    public static function get_ai_usage_data(): array {
+        global $DB;
+
+        $params = self::get_ai_usage_time_range();
+
+        $sql = "SELECT aar.*
+                  FROM {ai_action_register} aar
+                 WHERE aar.timecompleted >= :timefrom
+                   AND aar.timecompleted <= :timeto";
+
+        $actions = $DB->get_records_sql($sql, $params);
+
+        // Build data for site info reporting.
+        $data = [];
+
+        foreach ($actions as $action) {
+            $provider = $action->provider;
+            $actionname = $action->actionname;
+
+            // Initialise data structure.
+            if (!isset($data[$provider][$actionname])) {
+                $data[$provider][$actionname] = [
+                    'success_count' => 0,
+                    'fail_count' => 0,
+                    'times' => [],
+                    'errors' => [],
+                ];
+            }
+
+            if ($action->success === '1') {
+                $data[$provider][$actionname]['success_count'] += 1;
+                // Collect AI processing times for averaging.
+                $data[$provider][$actionname]['times'][] = (int)$action->timecompleted - (int)$action->timecreated;
+
+            } else {
+                $data[$provider][$actionname]['fail_count'] += 1;
+                // Collect errors for determing the predominant one.
+                $data[$provider][$actionname]['errors'][] = $action->errorcode;
+            }
+        }
+
+        // Parse the errors and everage the times, then add them to the data.
+        foreach ($data as $p => $provider) {
+            foreach ($provider as $a => $actionname) {
+                if (isset($data[$p][$a]['errors'])) {
+                    // Create an array with the error codes counted.
+                    $errors = array_count_values($data[$p][$a]['errors']);
+                    if (!empty($errors)) {
+                        // Sort values descending and convert to an array of error codes (most predominant will be at start).
+                        arsort($errors);
+                        $errors = array_keys($errors);
+                        $data[$p][$a]['predominant_error'] = $errors[0];
+                    }
+                    unset($data[$p][$a]['errors']);
+                }
+
+                if (isset($data[$p][$a]['times'])) {
+                    $count = count($data[$p][$a]['times']);
+                    if ($count > 0) {
+                        // Average the time to perform the action (seconds).
+                        $totaltime = array_sum($data[$p][$a]['times']);
+                        $data[$p][$a]['average_time'] = round($totaltime / $count);
+
+                    }
+                }
+                unset($data[$p][$a]['times']);
+            }
+        }
+
+        // Include the time range used to help interpret the data.
+        if (!empty($data)) {
+            $data['time_range'] = $params;
+        }
+
+        return $data;
     }
 }

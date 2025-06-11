@@ -26,12 +26,12 @@ namespace block_html;
  *
  * @coversDefaultClass \block_html
  */
-class block_html_test extends \advanced_testcase {
+final class block_html_test extends \advanced_testcase {
     /**
      * Tests instance files copying.
      * @covers ::instance_copy
      */
-    public function test_instance_copy() {
+    public function test_instance_copy(): void {
         global $USER;
         $this->resetAfterTest();
 

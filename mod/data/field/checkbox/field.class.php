@@ -53,22 +53,20 @@ class data_field_checkbox extends data_field_base {
     }
 
     function display_add_field($recordid = 0, $formdata = null) {
-        global $CFG, $DB, $OUTPUT;
-
-        $content = array();
+        global $DB, $OUTPUT;
 
         if ($formdata) {
             $fieldname = 'field_' . $this->field->id;
-            $content = $formdata->$fieldname;
+            $content = $formdata->$fieldname ?? [];
         } else if ($recordid) {
-            $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
-            $content = explode('##', $content);
+            $content = $DB->get_field('data_content', 'content', ['fieldid' => $this->field->id, 'recordid' => $recordid]);
+            $content = explode('##', $content ?? '');
         } else {
-            $content = array();
+            $content = [];
         }
 
         $str = '<div title="' . s($this->field->description) . '">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+        $str .= '<fieldset><legend><span class="accesshide">'.s($this->field->name);
         if ($this->field->required) {
             $str .= '$nbsp;' . get_string('requiredelement', 'form');
             $str .= '</span></legend>';
@@ -86,7 +84,7 @@ class data_field_checkbox extends data_field_base {
             }
             $str .= '<input type="hidden" name="field_' . $this->field->id . '[]" value="" />';
             $str .= '<input type="checkbox" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '[]" ';
-            $str .= 'value="' . s($checkbox) . '" class="mod-data-input mr-1" ';
+            $str .= 'value="' . s($checkbox) . '" class="mod-data-input me-1" ';
 
             if (array_search($checkbox, $content) !== false) {
                 $str .= 'checked />';
@@ -114,7 +112,7 @@ class data_field_checkbox extends data_field_base {
 
         $str = '';
         $found = false;
-        $marginclass = ['class' => 'mr-1'];
+        $marginclass = ['class' => 'me-1'];
         foreach (explode("\n",$this->field->param1) as $checkbox) {
             $checkbox = trim($checkbox);
             if (in_array($checkbox, $content)) {

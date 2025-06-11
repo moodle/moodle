@@ -1,0 +1,116 @@
+// -------------------------
+//  Personal menu.
+// -------------------------
+
+/* stylelint-disable declaration-no-important*/
+
+#snap-pm {
+    background-color: #eee;
+    overflow-x: hidden; // Prevent scrollbars.
+    display: none;
+
+    @include media-breakpoint-up(md) {
+        min-height: 100vh;
+    }
+}
+
+#primary-nav {
+    display: none;
+}
+
+@keyframes slideFromLeft {
+    0% {
+        opacity: 0;
+        transform: translate3d(-1000px, 0, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slideFromRight {
+    0% {
+        opacity: 0;
+        transform: translate3d(1000px, 0, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+// -------------------------
+//  Personal menu tablet & mobile navigation.
+// -------------------------
+#snap-pm-mobilemenu {
+    display: none;
+
+    @include media-breakpoint-down(md) {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 60px;
+        padding: .5em 0;
+        display: flex;
+        background-color: white;
+        border-top: 1px solid $gray-lighter;
+
+        a {
+            flex: 1;
+            margin: 0 4%;
+            text-align: center;
+            outline: none;
+            @include alakazam();
+
+            .svg-icon {
+                border-radius: 50%;
+                height: 40px;
+                width: 40px;
+                background-color: white;
+                border: 1px solid $gray-light;
+            }
+
+            &.state-active {
+                transform: scale(1.5);
+                margin-top: -.5em;
+            }
+        }
+    }
+}
+
+.snap-sidebar-menu-more {
+    display: block;
+    text-align: right;
+    .snap-feeds-refresh-icon,
+    .snap-feeds-more-icon{
+        display: none;
+    }
+}
+
+.snap-sidebar-menu-feed-loading {
+    &:after {
+        @include ajaxing(inline-block, relative, 20px, 6px);
+    }
+}
+.snap-log-in-more {
+    padding: 1em;
+    display: block;
+    text-align: center;
+}
+.snap-log-in-loading-spinner {
+    &:after {
+        @include ajaxingwhite(inline-block, relative, 10em, 2em);
+    }
+}
+.snap-login-option {
+    display: none;
+}
+#snap-sidebar-menu-deadlines li,
+#snap-sidebar-menu-grading li {
+    list-style-type: none;
+}

@@ -164,7 +164,6 @@ class core_scss extends \ScssPhp\ScssPhp\Compiler {
 
                 // We need to find the import path relative to the directory of the currently processed file.
                 $currentdirectory = new ReflectionProperty(\ScssPhp\ScssPhp\Compiler::class, 'currentDirectory');
-                $currentdirectory->setAccessible(true);
 
                 if ($path = $this->findImport($path, $currentdirectory->getValue($this))) {
                     if ($this->is_valid_file($path)) {

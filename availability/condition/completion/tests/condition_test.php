@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class condition_test extends \advanced_testcase {
+final class condition_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -45,13 +45,14 @@ class condition_test extends \advanced_testcase {
      * Load required classes.
      */
     public function setUp(): void {
+        parent::setUp();
         condition::wipe_static_cache();
     }
 
     /**
      * Tests constructing and using condition as part of tree.
      */
-    public function test_in_tree() {
+    public function test_in_tree(): void {
         global $USER, $CFG;
         $this->resetAfterTest();
 
@@ -101,7 +102,7 @@ class condition_test extends \advanced_testcase {
      * Tests the constructor including error conditions. Also tests the
      * string conversion feature (intended for debugging only).
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         // No parameters.
         $structure = new \stdClass();
         try {
@@ -165,7 +166,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the save() function.
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object)['cm' => 42, 'e' => COMPLETION_COMPLETE];
         $cond = new condition($structure);
         $structure->type = 'completion';
@@ -175,7 +176,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the is_available and get_description functions.
      */
-    public function test_usage() {
+    public function test_usage(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
         $this->resetAfterTest();
@@ -301,14 +302,14 @@ class condition_test extends \advanced_testcase {
         $cond = new condition((object)[
             'cm' => (int)$assigncm->id, 'e' => COMPLETION_INCOMPLETE
         ]);
-        $this->assertFalse($cond->is_available(false, $info, true, $user->id));
-        $this->assertTrue($cond->is_available(true, $info, true, $user->id));
+        $this->assertTrue($cond->is_available(false, $info, true, $user->id));
+        $this->assertFalse($cond->is_available(true, $info, true, $user->id));
 
         $cond = new condition((object)[
             'cm' => (int)$assigncm->id, 'e' => COMPLETION_COMPLETE
         ]);
-        $this->assertTrue($cond->is_available(false, $info, true, $user->id));
-        $this->assertFalse($cond->is_available(true, $info, true, $user->id));
+        $this->assertFalse($cond->is_available(false, $info, true, $user->id));
+        $this->assertTrue($cond->is_available(true, $info, true, $user->id));
 
         $cond = new condition((object)[
             'cm' => (int)$assigncm->id, 'e' => COMPLETION_COMPLETE_PASS
@@ -469,7 +470,7 @@ class condition_test extends \advanced_testcase {
         $this->assertMatchesRegularExpression($description, $information);
     }
 
-    public function previous_activity_data(): array {
+    public static function previous_activity_data(): array {
         // Assign grade, condition, activity to complete, activity to test, result, resultnot, description.
         return [
             'Missing previous activity complete' => [
@@ -531,10 +532,10 @@ class condition_test extends \advanced_testcase {
             ],
             // Depending on assign with grade.
             'Previous complete condition with previous fail grade' => [
-                40, COMPLETION_COMPLETE, '', 'page3', true, false, '~Assign!.*is marked complete~'
+                40, COMPLETION_COMPLETE, '', 'page3', false, true, '~Assign!.*is marked complete~',
             ],
             'Previous incomplete condition with previous fail grade' => [
-                40, COMPLETION_INCOMPLETE, '', 'page3', false, true, '~Assign!.*is incomplete~'
+                40, COMPLETION_INCOMPLETE, '', 'page3', true, false, '~Assign!.*is incomplete~',
             ],
             'Previous complete pass condition with previous fail grade' => [
                 40, COMPLETION_COMPLETE_PASS, '', 'page3', false, true, '~Assign!.*is complete and passed~'
@@ -634,7 +635,7 @@ class condition_test extends \advanced_testcase {
 
     }
 
-    public function section_previous_activity_data(): array {
+    public static function section_previous_activity_data(): array {
         return [
             // Condition, Activity completion, section to test, result, resultnot, description.
             'Completion complete Section with no previous activity' => [
@@ -688,7 +689,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests completion_value_used static function.
      */
-    public function test_completion_value_used() {
+    public function test_completion_value_used(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
         $prevvalue = condition::OPTION_PREVIOUS;
@@ -768,7 +769,7 @@ class condition_test extends \advanced_testcase {
     /**
      * Tests the update_dependency_id() function.
      */
-    public function test_update_dependency_id() {
+    public function test_update_dependency_id(): void {
         $cond = new condition((object)[
             'cm' => 42, 'e' => COMPLETION_COMPLETE, 'selfid' => 43
         ]);

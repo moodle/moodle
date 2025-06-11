@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  * Otherwise it reimplements the same behaviour. See the PHP manual page for more info.
  *
  * @link http://php.net/manual/en/function.imagecopyresampled.php
- * @param resource $dst_img the destination GD image resource
- * @param resource $src_img the source GD image resource
+ * @param resource|\GdImage $dst_img the destination GD image resource
+ * @param resource|\GdImage $src_img the source GD image resource
  * @param int $dst_x vthe X coordinate of the upper left corner in the destination image
  * @param int $dst_y the Y coordinate of the upper left corner in the destination image
  * @param int $src_x the X coordinate of the upper left corner in the source image
@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $dst_h the height of the destination rectangle
  * @param int $src_w the width of the source rectangle
  * @param int $src_h the height of the source rectangle
- * @return bool tru on success, false otherwise
+ * @return ?bool tru on success, false otherwise
  */
 function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
     global $CFG;
@@ -312,7 +312,7 @@ function resize_image($filepath, $width, $height, $forcecanvas = false) {
 /**
  * Resize an image from an image object.
  *
- * @param resource $original The image to work on.
+ * @param resource|\GdImage $original The image to work on.
  * @param array $imageinfo Contains [0] => originalwidth, [1] => originalheight.
  * @param int|null $width The max width of the resized image, or null to only use the height.
  * @param int|null $height The max height of the resized image, or null to only use the width.
@@ -359,8 +359,8 @@ function resize_image_from_image($original, $imageinfo, $width, $height, $forcec
     }
 
     if ($ratio < 1) {
-        $targetwidth    = floor($originalwidth * $ratio);
-        $targetheight   = floor($originalheight * $ratio);
+        $targetwidth    = round($originalwidth * $ratio);
+        $targetheight   = round($originalheight * $ratio);
     } else {
         // Do not enlarge the original file if it is smaller than the requested thumbnail size.
         $targetwidth    = $originalwidth;

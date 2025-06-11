@@ -43,7 +43,7 @@ class restore_html_block_task extends restore_block_task {
         return array('text'); // We need to encode some attrs in configdata
     }
 
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
 
         $contents = array();
 
@@ -52,7 +52,7 @@ class restore_html_block_task extends restore_block_task {
         return $contents;
     }
 
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         return array();
     }
 }

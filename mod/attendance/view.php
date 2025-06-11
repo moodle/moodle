@@ -38,8 +38,8 @@ $pageparams->groupby    = optional_param('groupby', 'course', PARAM_ALPHA);
 $pageparams->sesscourses = optional_param('sesscourses', 'current', PARAM_ALPHA);
 
 $cm             = get_coursemodule_from_id('attendance', $id, 0, false, MUST_EXIST);
-$course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$attendance    = $DB->get_record('attendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$attendance    = $DB->get_record('attendance', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
@@ -51,11 +51,11 @@ $att = new mod_attendance_structure($attendance, $cm, $course, $context, $pagepa
 // Not specified studentid for displaying attendance?
 // Redirect to appropriate page if can.
 if (!$pageparams->studentid) {
-    $capabilities = array(
+    $capabilities = [
         'mod/attendance:manageattendances',
         'mod/attendance:takeattendances',
-        'mod/attendance:changeattendances'
-    );
+        'mod/attendance:changeattendances',
+    ];
     if (has_any_capability($capabilities, $context)) {
         redirect($att->url_manage());
     } else if (has_capability('mod/attendance:viewreports', $context)) {
@@ -76,7 +76,7 @@ $url = $att->url_view($pageparams->get_significant_params());
 $PAGE->set_url($url);
 
 $buttons = '';
-$capabilities = array('mod/attendance:takeattendances', 'mod/attendance:changeattendances');
+$capabilities = ['mod/attendance:takeattendances', 'mod/attendance:changeattendances'];
 if (has_any_capability($capabilities, $context) &&
     $pageparams->mode == mod_attendance_view_page_params::MODE_ALL_SESSIONS) {
 
@@ -105,12 +105,12 @@ if (has_any_capability($capabilities, $context) &&
 $userdata = new mod_attendance\output\user_data($att, $userid);
 
 // Create url for link in log screen.
-$filterparams = array(
+$filterparams = [
     'view' => $userdata->pageparams->view,
     'curdate' => $userdata->pageparams->curdate,
     'startdate' => $userdata->pageparams->startdate,
-    'enddate' => $userdata->pageparams->enddate
-);
+    'enddate' => $userdata->pageparams->enddate,
+];
 $params = array_merge($userdata->pageparams->get_significant_params(), $filterparams);
 
 
@@ -124,20 +124,20 @@ if (($formdata = data_submitted()) && !empty($formdata->sesskey) && confirm_sess
     $userdata->take_sessions_from_form_data($formdata);
 
     // Trigger updated event.
-    $event = \mod_attendance\event\session_report_updated::create(array(
+    $event = \mod_attendance\event\session_report_updated::create([
         'relateduserid' => $relateduserid,
         'context' => $context,
-        'other' => $params));
+        'other' => $params]);
     $event->add_record_snapshot('course_modules', $cm);
     $event->trigger();
 
     redirect($url, get_string('attendancesuccess', 'attendance'));
 } else {
     // Trigger viewed event.
-    $event = \mod_attendance\event\session_report_viewed::create(array(
+    $event = \mod_attendance\event\session_report_viewed::create([
         'relateduserid' => $relateduserid,
         'context' => $context,
-        'other' => $params));
+        'other' => $params]);
     $event->add_record_snapshot('course_modules', $cm);
     $event->trigger();
 }

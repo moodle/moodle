@@ -42,22 +42,22 @@ class summary_evaluations_exporter extends \core\external\exporter {
      * @return array other properties
      */
     protected static function define_other_properties() {
-        return array(
-            'number' => array(
+        return [
+            'number' => [
                 'type' => PARAM_INT,
-            ),
-            'number_self' => array(
+            ],
+            'number_self' => [
                 'type' => PARAM_INT,
-                'optional' => true
-            ),
-            'empty' => array(
+                'optional' => true,
+            ],
+            'empty' => [
                 'type' => PARAM_BOOL,
-                'optional' => true
-            ),
-            'color' => array(
-                'type' => PARAM_TEXT
-            )
-        );
+                'optional' => true,
+            ],
+            'color' => [
+                'type' => PARAM_TEXT,
+            ],
+        ];
     }
 
     /**

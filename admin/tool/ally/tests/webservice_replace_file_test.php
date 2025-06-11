@@ -23,8 +23,8 @@
  */
 namespace tool_ally;
 
+use tool_ally\abstract_testcase;
 use tool_ally\webservice\replace_file;
-use tool_ally\local;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +38,10 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2017 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally
+ * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class webservice_replace_file_test extends abstract_testcase {
 

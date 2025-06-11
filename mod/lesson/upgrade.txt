@@ -1,4 +1,13 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in the lesson code.
+
+=== 4.4 ===
+
+* The deprecated `lesson_add_header_buttons` method has been removed
 
 === 4.0 ===
 * Deprecated the function lesson_add_header_buttons in favour of tertiary navigation.

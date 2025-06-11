@@ -36,29 +36,38 @@ defined('MOODLE_INTERNAL') || die();
 $messageproviders = array (
 
     'newlogin' => array (
-        'defaults' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ),
+        ],
     ),
 
-    // Notices that an admin might be interested in
+    // Notices that an admin might be interested in.
     'notices' => array (
-         'capability'  => 'moodle/site:config'
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+        'capability'  => 'moodle/site:config',
     ),
 
-    // Important errors that an admin ought to know about
+    // Important errors that an admin ought to know about.
     'errors' => array (
-         'capability'  => 'moodle/site:config'
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+        'capability'  => 'moodle/site:config',
     ),
 
-    // cron-based notifications about available moodle and/or additional plugin updates
+    // Cron-based notifications about available moodle and/or additional plugin updates.
     'availableupdate' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
         'capability' => 'moodle/site:config',
-        'defaults' => array(
-            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED
-        ),
-
     ),
 
     'instantmessage' => array (
@@ -69,33 +78,47 @@ $messageproviders = array (
     ),
 
     'backup' => array (
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
         'capability'  => 'moodle/site:config'
     ),
 
     // Course creation request notification
     'courserequested' => array (
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
         'capability'  => 'moodle/site:approvecourse'
     ),
 
-    // Course request approval notification
+    // Course request approval notification.
     'courserequestapproved' => array (
-         'capability'  => 'moodle/course:request',
-         'defaults' => array(
+        'capability'  => 'moodle/course:request',
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ),
+        ],
     ),
 
-    // Course request rejection notification
+    // Course request rejection notification.
     'courserequestrejected' => array (
         'capability'  => 'moodle/course:request',
-        'defaults' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ),
+        ],
     ),
 
     // Course completed. Requires course completion configured at course level. It does not work with just activity progress.
     'coursecompleted' => [
         'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
     ],
@@ -121,16 +144,27 @@ $messageproviders = array (
 
     // Badge award notification to a badge creator (mostly cron-based).
     'badgecreatornotice' => array (
-        'defaults' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        )
+        ],
     ),
 
     // A comment was left on a plan.
-    'competencyplancomment' => array(),
+    'competencyplancomment' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 
     // A comment was left on a user competency.
-    'competencyusercompcomment' => array(),
+    'competencyusercompcomment' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 
     // User insights.
     'insights' => array (
@@ -168,13 +202,36 @@ $messageproviders = array (
 
     // Infected files.
     'infected' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
         'capability'  => 'moodle/site:config',
     ),
 
     // Report builder schedules.
     'reportbuilderschedule' => [
         'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_FORCED,
+        ],
+    ],
+
+    // Task has reached the maximum fail delay.
+    'failedtaskmaxdelay' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+        'capability'  => 'moodle/site:config',
+    ],
+
+    // Course welcome message.
+    'enrolcoursewelcomemessage' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
     ],
 );

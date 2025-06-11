@@ -39,7 +39,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var stdClass the mnet host we are using to test. */
     protected $mnethost;
@@ -54,6 +54,7 @@ class provider_test extends provider_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         // Add a mnet host.
         $this->mnethost = new \stdClass();
@@ -65,7 +66,7 @@ class provider_test extends provider_testcase {
     /**
      * Check that a user context is returned if there is any user data for this user.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
@@ -86,7 +87,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is exported correctly.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -120,7 +121,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting all user data for a specific context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -155,7 +156,7 @@ class provider_test extends provider_testcase {
     /**
      * This should work identical to the above test.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -194,7 +195,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users within a course context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'mnetservice_enrol';
@@ -232,7 +233,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'mnetservice_enrol';

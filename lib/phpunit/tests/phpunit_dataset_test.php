@@ -36,13 +36,13 @@ use org\bovigo\vfs\vfsStream;
  *
  * @coversDefaultClass \phpunit_dataset
  */
-class phpunit_dataset_test extends advanced_testcase {
+final class phpunit_dataset_test extends advanced_testcase {
 
 
     /**
      * @covers ::from_files
      */
-    public function test_from_files() {
+    public function test_from_files(): void {
 
         $ds = new phpunit_dataset();
 
@@ -54,11 +54,8 @@ class phpunit_dataset_test extends advanced_testcase {
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // Expectations.
         $exptables = ['user', 'user2'];
@@ -83,7 +80,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_from_file() data provider.
      */
-    public function from_file_provider() {
+    public static function from_file_provider(): array {
         // Create an unreadable file with vfsStream.
         $vfsfile = vfsStream::newFile('unreadable', 0222);
         vfsStream::setup('root')->addChild($vfsfile);
@@ -151,18 +148,15 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::from_file
      */
     public function test_from_file(string $fullpath, string $tablename, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -183,7 +177,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_from_string() data provider.
      */
-    public function from_string_provider() {
+    public static function from_string_provider(): array {
 
         return [
             'wrong type' => [
@@ -244,18 +238,15 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::from_string
      */
     public function test_from_string(string $content, string $type, string $tablename, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -276,7 +267,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_from_array() data provider.
      */
-    public function from_array_provider() {
+    public static function from_array_provider(): array {
         return [
             'repeated array table many structures' => [
                 'structure' => [
@@ -390,18 +381,15 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::from_array
      */
     public function test_from_array(array $structure, ?string $exception,
-        array $tables, array $columns, array $rows, ?bool $repeated = false) {
+        array $tables, array $columns, array $rows, ?bool $repeated = false): void {
 
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -425,7 +413,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_load_csv() data provider.
      */
-    public function load_csv_provider() {
+    public static function load_csv_provider(): array {
 
         return [
             'repeated csv table many files' => [
@@ -484,18 +472,15 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::load_csv
      */
     public function test_load_csv(array $files, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -516,7 +501,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_load_xml() data provider.
      */
-    public function load_xml_provider() {
+    public static function load_xml_provider(): array {
 
         return [
             'repeated xml table multiple files' => [
@@ -655,18 +640,15 @@ class phpunit_dataset_test extends advanced_testcase {
      * @covers ::load_xml
      */
     public function test_load_xml(array $files, ?string $exception,
-        array $tables, array $columns, array $rows) {
+        array $tables, array $columns, array $rows): void {
 
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -687,7 +669,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_to_database() data provider.
      */
-    public function to_database_provider() {
+    public static function to_database_provider(): array {
 
         return [
             'wrong table requested' => [
@@ -789,7 +771,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @dataProvider to_database_provider
      * @covers ::to_database
      */
-    public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows) {
+    public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -842,7 +824,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_get_rows() data provider.
      */
-    public function get_rows_provider() {
+    public static function get_rows_provider(): array {
 
         return [
             'wrong table requested' => [
@@ -926,7 +908,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @dataProvider get_rows_provider
      * @covers ::get_rows
      */
-    public function test_get_rows(array $files, array $filter, ?string $exception, array $rows) {
+    public function test_get_rows(array $files, array $filter, ?string $exception, array $rows): void {
 
         $ds = new phpunit_dataset();
 

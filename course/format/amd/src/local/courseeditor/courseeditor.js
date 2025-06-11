@@ -13,12 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+import {getString} from 'core/str';
 import {Reactive} from 'core/reactive';
 import notification from 'core/notification';
 import Exporter from 'core_courseformat/local/courseeditor/exporter';
 import log from 'core/log';
 import ajax from 'core/ajax';
 import * as Storage from 'core/sessionstorage';
+import {uploadFilesToCourse} from 'core_courseformat/local/courseeditor/fileuploader';
 
 /**
  * Main course editor module.
@@ -50,9 +52,9 @@ export default class extends Reactive {
      * The current page section return
      * @attribute sectionReturn
      * @type number
-     * @default 0
+     * @default null
      */
-    sectionReturn = 0;
+    sectionReturn = null;
 
     /**
      * Set up the course editor when the page is ready.
@@ -82,6 +84,7 @@ export default class extends Reactive {
         // Default view format setup.
         this._editing = false;
         this._supportscomponents = false;
+        this._fileHandlers = null;
 
         this.courseId = courseId;
 
@@ -103,6 +106,13 @@ export default class extends Reactive {
             return;
         }
 
+        // The bulk editing only applies to the frontend and the state data is not created in the backend.
+        stateData.bulk = {
+            enabled: false,
+            selectedType: '',
+            selection: [],
+        };
+
         this.setInitialState(stateData);
 
         // In editing mode, the session cache is considered dirty always.
@@ -118,6 +128,51 @@ export default class extends Reactive {
             }
             this.stateKey = Storage.get(`course/${courseId}/stateKey`);
         }
+
+        this._loadFileHandlers();
+
+        this._pageAnchorCmInfo = this._scanPageAnchorCmInfo();
+    }
+
+    /**
+     * Load the file hanlders promise.
+     */
+    _loadFileHandlers() {
+        // Load the course file extensions.
+        this._fileHandlersPromise = new Promise((resolve) => {
+            if (!this.isEditing) {
+                resolve([]);
+                return;
+            }
+            // Check the cache.
+            const handlersCacheKey = `course/${this.courseId}/fileHandlers`;
+
+            const cacheValue = Storage.get(handlersCacheKey);
+            if (cacheValue) {
+                try {
+                    const cachedHandlers = JSON.parse(cacheValue);
+                    resolve(cachedHandlers);
+                    return;
+                } catch (error) {
+                    log.error("ERROR PARSING CACHED FILE HANDLERS");
+                }
+            }
+            // Call file handlers webservice.
+            ajax.call([{
+                methodname: 'core_courseformat_file_handlers',
+                args: {
+                    courseid: this.courseId,
+                }
+            }])[0].then((handlers) => {
+                Storage.set(handlersCacheKey, JSON.stringify(handlers));
+                resolve(handlers);
+                return;
+            }).catch(error => {
+                log.error(error);
+                resolve([]);
+                return;
+            });
+        });
     }
 
     /**
@@ -127,10 +182,34 @@ export default class extends Reactive {
      * @param {boolean} setup.editing if the page is in edit mode
      * @param {boolean} setup.supportscomponents if the format supports components for content
      * @param {string} setup.cacherev the backend cached state revision
+     * @param {Array} setup.overriddenStrings optional overridden strings
      */
     setViewFormat(setup) {
         this._editing = setup.editing ?? false;
         this._supportscomponents = setup.supportscomponents ?? false;
+        const overriddenStrings = setup.overriddenStrings ?? [];
+        this._overriddenStrings = overriddenStrings.reduce(
+            (indexed, currentValue) => indexed.set(currentValue.key, currentValue),
+            new Map()
+        );
+    }
+
+    /**
+     * Execute a get string for a possible format overriden editor string.
+     *
+     * Return the proper getString promise for an editor string using the core_courseformat
+     * of the format_PLUGINNAME compoment depending on the current view format setup.
+     * @param {String} key the string key
+     * @param {string|undefined} param The param for variable expansion in the string.
+     * @returns {Promise<String>} a getString promise
+     */
+    getFormatString(key, param) {
+        if (this._overriddenStrings.has(key)) {
+            const override = this._overriddenStrings.get(key);
+            return getString(key, override.component ?? 'core_courseformat', param);
+        }
+        // All format overridable strings are from core_courseformat lang file.
+        return getString(key, 'core_courseformat', param);
     }
 
     /**
@@ -186,6 +265,28 @@ export default class extends Reactive {
     }
 
     /**
+     * Return the course file handlers promise.
+     * @returns {Promise} the promise for file handlers.
+     */
+    async getFileHandlersPromise() {
+        return this._fileHandlersPromise ?? [];
+    }
+
+    /**
+     * Upload a file list to the course.
+     *
+     * This method is a wrapper to the course file uploader.
+     *
+     * @param {number} sectionId the section id
+     * @param {number} sectionNum the section number
+     * @param {Array} files and array of files
+     * @return {Promise} the file queue promise
+     */
+    uploadFiles(sectionId, sectionNum, files) {
+        return uploadFilesToCourse(this.courseId, sectionId, sectionNum, files);
+    }
+
+    /**
      * Get a value from the course editor static storage if any.
      *
      * The course editor static storage uses the sessionStorage to store values from the
@@ -236,6 +337,16 @@ export default class extends Reactive {
     }
 
     /**
+     * Convert a file dragging event into a proper dragging file list.
+     * @param {DataTransfer} dataTransfer the event to convert
+     * @return {Array} of file list info.
+     */
+    getFilesDraggableData(dataTransfer) {
+        const exporter = this.getExporter();
+        return exporter.fileDraggableData(this.state, dataTransfer);
+    }
+
+    /**
      * Dispatch a change in the state.
      *
      * Usually reactive modules throw an error directly to the components when something
@@ -253,5 +364,27 @@ export default class extends Reactive {
             // Force unlock all elements.
             super.dispatch('unlockAll');
         }
+    }
+
+    /**
+     * Calculate the cm info from the current page anchor.
+     *
+     * @returns {Object|null} the cm info or null if not found.
+     */
+    _scanPageAnchorCmInfo() {
+        const anchor = new URL(window.location.href).hash;
+        if (!anchor.startsWith('#module-')) {
+            return null;
+        }
+        // The anchor is always #module-CMID.
+        const cmid = anchor.split('-')[1];
+        return this.stateManager.get('cm', parseInt(cmid));
+    }
+
+    /**
+     * Return the current page anchor cm info.
+     */
+    getPageAnchorCmInfo() {
+        return this._pageAnchorCmInfo;
     }
 }

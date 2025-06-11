@@ -25,41 +25,41 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$functions = array(
+$functions = [
 
-    'mod_choicegroup_get_choicegroup_options' => array(
+    'mod_choicegroup_get_choicegroup_options' => [
         'classname'     => 'mod_choicegroup_external',
         'methodname'    => 'get_choicegroup_options',
         'description'   => 'Retrieve options for a specific choicegroup.',
         'type'          => 'read',
         'capabilities'  => 'mod/choicegroup:choose',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile')
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+    ],
 
-    'mod_choicegroup_submit_choicegroup_response' => array(
+    'mod_choicegroup_submit_choicegroup_response' => [
         'classname'     => 'mod_choicegroup_external',
         'methodname'    => 'submit_choicegroup_response',
         'description'   => 'Submit responses to a specific choicegroup item.',
         'type'          => 'write',
         'capabilities'  => 'mod/choicegroup:choose',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile')
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+    ],
 
-    'mod_choicegroup_view_choicegroup' => array(
+    'mod_choicegroup_view_choicegroup' => [
         'classname'     => 'mod_choicegroup_external',
         'methodname'    => 'view_choicegroup',
         'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
         'capabilities'  => '',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile')
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+    ],
 
-    'mod_choicegroup_delete_choicegroup_responses' => array(
+    'mod_choicegroup_delete_choicegroup_responses' => [
         'classname'     => 'mod_choicegroup_external',
         'methodname'    => 'delete_choicegroup_responses',
         'description'   => 'Delete the given submitted responses in a choice group',
         'type'          => 'write',
         'capabilities'  => 'mod/choicegroup:choose',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile')
-    ),
-);
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+    ],
+];

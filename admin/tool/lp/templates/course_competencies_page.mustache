@@ -22,10 +22,38 @@
     For a full list of the context for this template see the course_competencies_page renderable.
 
     This template includes ajax functionality, so it cannot be shown in the template library.
+
+    Example context (json):
+    {
+        "canmanagecoursecompetencies": true,
+        "cangradecompetencies": true,
+        "settings": {
+            "pushratingstouserplans": true
+        },
+        "canconfigurecoursecompetencies": true,
+        "competencies": [{
+            "competency": {
+                "id": 2,
+                "shortname": "Competency1",
+                "idnumber": "COMP1",
+                "description": "Competency1 description"
+            },
+            "coursecompetency": {
+                "id": 1
+            },
+            "ruleoutcomeoptions": [{
+                "value": "1",
+                "text": "Mark as complete"
+            }, {
+                "value": "2",
+                "text": "Mark as complete and request review"
+            }]
+        }]
+    }
 }}
 <div data-region="coursecompetenciespage">
     <div data-region="actions" class="clearfix">
-        <div class="float-sm-left">
+        <div class="float-sm-start">
             {{#canmanagecoursecompetencies}}
                 <button class="btn btn-secondary" disabled>{{#str}}addcoursecompetencies, tool_lp{{/str}}</button>
             {{/canmanagecoursecompetencies}}
@@ -45,7 +73,7 @@
                data-action="configure-course-competency-settings"
                data-courseid="{{courseid}}"
                data-pushratingstouserplans="{{settings.pushratingstouserplans}}">
-                {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
+                {{#pix}}i/settings, core, {{#str}}edit{{/str}}{{/pix}}
             </a>
         {{/canconfigurecoursecompetencies}}
         </p>
@@ -61,8 +89,8 @@
     <tr class="drag-samenode" data-id="{{competency.id}}">
     <td>
         {{#canmanagecoursecompetencies}}
-        <span class="drag-handlecontainer float-sm-left"></span>
-        <div class="float-sm-right">
+        <span class="drag-handlecontainer float-sm-start"></span>
+        <div class="float-sm-end">
             <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">
                 {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
             </a>
@@ -78,11 +106,11 @@
             <p>{{{competency.description}}}</p>
         {{/competency}}
         {{#comppath}}
-            <span class="float-sm-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
+            <span class="float-sm-start">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
         {{/comppath}}
         {{#usercompetencycourse}}
             {{#grade}}
-            <span class="badge {{#proficiency}}badge-success{{/proficiency}}{{^proficiency}}badge-danger{{/proficiency}}">{{gradename}}</span>
+            <span class="badge {{#proficiency}}bg-success{{/proficiency}}{{^proficiency}}bg-danger{{/proficiency}} text-white">{{gradename}}</span>
             {{/grade}}
         {{/usercompetencycourse}}
         {{#canmanagecoursecompetencies}}
@@ -102,7 +130,7 @@
         <strong>{{#str}}activities{{/str}}</strong>
         <ul class="inline list-inline p-2">
         {{#coursemodules}}
-            <li class="list-inline-item"><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
+            <li class="list-inline-item"><a href="{{url}}"><img class="icon" src="{{iconurl}}"> {{name}} </a></li>
         {{/coursemodules}}
         {{^coursemodules}}
             <li class="list-inline-item">{{#str}}noactivities, tool_lp{{/str}}</li>

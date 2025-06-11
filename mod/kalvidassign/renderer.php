@@ -1034,7 +1034,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
             'class' => 'kaltura-player-iframe',
             'src' => ($url instanceof moodle_url) ? $url->out(false) : '',
             'allowfullscreen' => 'true',
-            'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *;',
+            'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
             'height' => '100%',
             'width' => !empty($submission->width) ? $submission->width : ''
         );

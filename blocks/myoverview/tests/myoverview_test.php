@@ -24,12 +24,12 @@ namespace block_myoverview;
  * @copyright  2019 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class myoverview_test extends \advanced_testcase {
+final class myoverview_test extends \advanced_testcase {
 
     /**
      * Test getting block configuration
      */
-    public function test_get_block_config_for_external() {
+    public function test_get_block_config_for_external(): void {
         global $PAGE, $CFG, $OUTPUT;
         require_once($CFG->dirroot . '/my/lib.php');
 

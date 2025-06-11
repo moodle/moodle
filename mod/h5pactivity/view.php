@@ -71,11 +71,36 @@ echo $OUTPUT->header();
 
 $instance = $manager->get_instance();
 
-if (!$manager->is_tracking_enabled()) {
+// Only non-guest users without permission to submit can see the warning messages (typically a teacher or a content creator).
+if (!$manager->can_submit() && !isguestuser()) {
+    // Show preview mode message.
     $message = get_string('previewmode', 'mod_h5pactivity');
-    echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
+    echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_INFO, false);
+
+    // If tracking is disabled, show a warning.
+    if (!$manager->is_tracking_enabled()) {
+        if (has_capability('moodle/course:manageactivities', $context)) {
+            $url = new moodle_url('/course/modedit.php', ['update' => $cm->id]);
+            $message = get_string('trackingdisabled_enable', 'mod_h5pactivity', $url->out());
+        } else {
+            $message = get_string('trackingdisabled', 'mod_h5pactivity');
+        }
+        echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
+    }
 }
 
-echo player::display($fileurl, $config, true, 'mod_h5pactivity', true);
+$extraactions = [];
+
+if ($manager->can_view_all_attempts() && $manager->is_tracking_enabled()) {
+    $extraactions[] = new action_link(
+        new moodle_url('/mod/h5pactivity/report.php', ['id' => $cm->id]),
+        get_string('viewattempts', 'mod_h5pactivity', $manager->count_attempts()),
+        null,
+        null,
+        new pix_icon('i/chartbar', '', 'core')
+    );
+}
+
+echo player::display($fileurl, $config, true, 'mod_h5pactivity', true, $extraactions);
 
 echo $OUTPUT->footer();

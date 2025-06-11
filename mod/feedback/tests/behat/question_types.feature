@@ -23,12 +23,12 @@ Feature: Test creating different types of feedback questions for anonymous feedb
       | activity   | name                | course | idnumber    |
       | feedback   | Learning experience | C1     | feedback0   |
     When I am on the "Learning experience" "feedback activity" page logged in as teacher1
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
       | Information type | Course                          |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | label text |
     And I add a "Longer text answer" question to the feedback with:
       | Question         | this is a longer text answer |

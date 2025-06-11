@@ -131,6 +131,7 @@ $string['check_unsecuredataroot_error'] = 'Your dataroot directory <code>{$a}</c
 $string['check_unsecuredataroot_name'] = 'Insecure dataroot';
 $string['check_unsecuredataroot_ok'] = 'Dataroot directory must not be accessible via the web.';
 $string['check_unsecuredataroot_warning'] = 'Your dataroot directory <code>{$a}</code> is in the wrong location and might be exposed to the web.';
+$string['check_upgradefile_info'] = 'Upgrade note files should not be public';
 $string['check_vendordir_details'] = '<p>The directory <code>{$a->path}</code> contains various third-party libraries and their dependencies, typically installed by the PHP Composer. These libraries may be needed for local Moodle development, such as for installing the PHPUnit framework. They are not needed to run a Moodle site in production and they can contain potentially dangerous code exposing your site to remote attacks.</p><p>It is strongly recommended to remove the directory if the site is available via a public URL, or at least prohibit web access to it in your webserver configuration.</p>';
 $string['check_vendordir_info'] = 'The vendor directory should not be present on public sites.';
 $string['check_vendordir_name'] = 'Vendor directory';
@@ -144,9 +145,3 @@ $string['pluginname'] = 'Security checks';
 $string['security:view'] = 'View security report';
 $string['timewarning'] = 'Data processing may take a long time, please be patient...';
 $string['privacy:metadata'] = 'The Security overview plugin does not store any personal data.';
-
-// Deprecated since Moodle 4.0.
-$string['check_mediafilterswf_details'] = '<p>Automatic swf embedding is very dangerous - any registered user may launch an XSS attack against other server users. Please disable it on production servers.</p>';
-$string['check_mediafilterswf_error'] = 'Flash media filter is enabled - this is very dangerous for the majority of servers.';
-$string['check_mediafilterswf_name'] = 'Enabled .swf media filter';
-$string['check_mediafilterswf_ok'] = 'Flash media filter is not enabled.';

@@ -37,13 +37,23 @@ namespace mod_survey\search;
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_test extends \advanced_testcase {
+final class search_test extends \advanced_testcase {
+
+    /**
+     * Setup testcase.
+     */
+    public function setUp(): void {
+        parent::setUp();
+        // Survey module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('survey', 1);
+    }
 
     /**
      * Test survey_view
      * @return void
      */
-    public function test_survey_indexing() {
+    public function test_survey_indexing(): void {
         global $CFG;
 
         $this->resetAfterTest();

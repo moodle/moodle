@@ -42,7 +42,7 @@ $mentor = (
 );
 
 if (!$mentor) {
-    print_error('no_permission', 'block_student_gradeviewer');
+    moodle_exception('no_permission', 'block_student_gradeviewer');
 }
 
 $baseurl = new moodle_url('/blocks/student_gradeviewer/viewgrades.php', array(

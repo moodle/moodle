@@ -139,21 +139,5 @@ $string['supportmessagealternative'] = 'Instead you can email {$a}.';
 $string['target:upcomingactivitiesdue'] = 'Upcoming activities due';
 $string['target:upcomingactivitiesdue_help'] = 'This target generates reminders for upcoming activities due.';
 $string['target:upcomingactivitiesdueinfo'] = 'All upcoming activities due insights are listed here. These students have received these insights directly.';
+$string['usergroupselectorcount'] = '{$a->fullname} ({$a->groupcount})';
 $string['userprofile'] = 'User profile';
-
-// Deprecated since Moodle 4.1.
-$string['addcondition'] = 'Add condition';
-$string['adverbfor_and'] = 'and';
-$string['adverbfor_andnot'] = 'and';
-$string['adverbfor_or'] = 'or';
-$string['applyfilters'] = 'Apply filters';
-$string['clearfilterrow'] = 'Remove filter row';
-$string['clearfilters'] = 'Clear filters';
-$string['filtersetmatchdescription'] = 'How multiple filters should be combined';
-$string['filterrowlegend'] = 'Filter {$a}';
-$string['filtertype'] = 'Filter type';
-$string['match'] = 'Match';
-$string['matchofthefollowing'] = 'of the following:';
-$string['selectfiltertype'] = 'Select';
-$string['placeholdertypeorselect'] = 'Type or select...';
-$string['clearfilterselection'] = 'Remove "{$a}" from filter';
