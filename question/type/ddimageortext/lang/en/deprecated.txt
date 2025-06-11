@@ -1,0 +1,1 @@
+dropzonevisibilitydesc,qtype_ddimageortext
