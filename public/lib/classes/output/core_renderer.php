@@ -211,7 +211,7 @@ class core_renderer extends renderer_base {
             $hook->add_html(
                 html_writer::empty_tag('meta', [
                     'http-equiv' => 'refresh',
-                    'content' => $this->page->periodicrefreshdelay . ';url=' . $this->page->url->out(),
+                    'content' => $this->page->periodicrefreshdelay . ';url=' . $this->page->url->out(false),
                 ]),
             );
         }
