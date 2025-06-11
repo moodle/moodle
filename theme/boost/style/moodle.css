@@ -29807,6 +29807,10 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
   padding-left: 5.55em;
 }
 
+.block_timeline .dropdown-menu .dropdown-item {
+  padding-left: 1.5rem;
+}
+
 .block_settings .block_tree [aria-expanded=true],
 .block_settings .block_tree [aria-expanded=true].emptybranch,
 .block_settings .block_tree [aria-expanded=false],
