@@ -76,7 +76,7 @@ class field_controller  extends \core_customfield\field_controller {
         $mform->setType('configdata[decimalplaces]', PARAM_INT);
 
         // Display format settings.
-        // TODO: Change this after MDL-82996 fixed.
+        // TODO: Change this after MDL-85825 fixed.
         $randelname = 'str_display_format';
         $mform->addGroup([], $randelname, html_writer::tag('h4', get_string('headerdisplaysettings', 'customfield_number')));
 

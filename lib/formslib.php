@@ -3187,7 +3187,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\"><div>";
 
     /** @var string Template used when opening a fieldset */
-    var $_openFieldsetTemplate = "\n\t<fieldset class=\"{classes}\" {id}>";
+    var $_openFieldsetTemplate = "\n\t<fieldset class=\"{classes}\" {id} {name}>";
 
     /** @var string Template used when closing a fieldset */
     var $_closeFieldsetTemplate = "\n\t\t</div></fieldset>";
@@ -3571,7 +3571,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         // Define collapsible classes for fieldsets.
         $arialive = '';
-        $fieldsetclasses = array('clearfix');
+        $fieldsetclasses = ['clearfix', 'fitem'];
         if (isset($this->_collapsibleElements[$header->getName()])) {
             $fieldsetclasses[] = 'collapsible';
             if ($this->_collapsibleElements[$header->getName()]) {
@@ -3589,6 +3589,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         $openFieldsetTemplate = str_replace('{id}', $id, $this->_openFieldsetTemplate);
+        $openFieldsetTemplate = str_replace('{name}', ' name="' . $name . '"', $openFieldsetTemplate);
         $openFieldsetTemplate = str_replace('{classes}', join(' ', $fieldsetclasses), $openFieldsetTemplate);
 
         $this->_html .= $openFieldsetTemplate . $headerhtml;
