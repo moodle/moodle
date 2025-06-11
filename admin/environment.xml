@@ -4716,6 +4716,7 @@
       <VENDOR name="mysql" version="8.4" />
       <VENDOR name="postgres" version="14" />
       <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="auroramysql" version="8.0" />
     </DATABASE>
     <PHP version="8.2.0" level="required">
     </PHP>
@@ -4895,6 +4896,8 @@
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_async_backup" level="recommended">
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_aurora_version" level="optional">
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="5.1" requires="4.2.3">
@@ -4908,6 +4911,7 @@
       <VENDOR name="mysql" version="8.4" />
       <VENDOR name="postgres" version="14" />
       <VENDOR name="mssql" version="14.0" />
+      <VENDOR name="auroramysql" version="8.0" />
     </DATABASE>
     <PHP version="8.2.0" level="required">
     </PHP>
@@ -5091,6 +5095,8 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_db_prefix_length" level="required">
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_async_backup" level="recommended">
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_aurora_version" level="optional">
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
