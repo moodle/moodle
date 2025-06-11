@@ -213,7 +213,8 @@ class create extends \moodleform {
         $group[] = $mform->createElement('radio', 'duration', null, get_string('durationuntil', 'calendar'), 1);
         $group[] = $mform->createElement('date_time_selector', 'timedurationuntil', '');
         $group[] = $mform->createElement('radio', 'duration', null, get_string('durationminutes', 'calendar'), 2);
-        $group[] = $mform->createElement('text', 'timedurationminutes', get_string('durationminutes', 'calendar'));
+        $group[] = $mform->createElement('text', 'timedurationminutes',
+                get_string('durationminutes', 'calendar'), 'maxlength="7" size="7"');
 
         $mform->addGroup($group, 'durationgroup', get_string('eventduration', 'calendar'), '<br />', false);
         $mform->setAdvanced('durationgroup');
@@ -227,6 +228,9 @@ class create extends \moodleform {
 
         $mform->setType('timedurationminutes', PARAM_INT);
         $mform->disabledIf('timedurationminutes', 'duration', 'noteq', 2);
+        $mform->addGroupRule('durationgroup', [
+            'timedurationminutes' => [[get_string('maximumchars', '', 7), 'maxlength', 7, 'server']],
+        ]);
 
         $mform->setDefault('duration', 0);
     }
@@ -238,11 +242,12 @@ class create extends \moodleform {
      */
     protected function add_event_repeat_elements($mform) {
         $mform->addElement('checkbox', 'repeat', get_string('repeatevent', 'calendar'), null);
-        $mform->addElement('text', 'repeats', get_string('repeatweeksl', 'calendar'), 'maxlength="10" size="10"');
+        $mform->addElement('text', 'repeats', get_string('repeatweeksl', 'calendar'), 'maxlength="3" size="3"');
         $mform->setType('repeats', PARAM_INT);
         $mform->setDefault('repeats', 1);
         $mform->disabledIf('repeats', 'repeat', 'notchecked');
         $mform->setAdvanced('repeat');
         $mform->setAdvanced('repeats');
+        $mform->addRule('repeats', get_string('maximumchars', '', 3), 'maxlength', 3, 'server');
     }
 }
