@@ -44,6 +44,7 @@ final class externallib_test extends externallib_advanced_testcase {
         global $DB, $FULLME;
 
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -77,6 +78,7 @@ final class externallib_test extends externallib_advanced_testcase {
         global $DB, $FULLME;
 
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $user = $this->getDataGenerator()->create_user();
 
@@ -141,6 +143,7 @@ final class externallib_test extends externallib_advanced_testcase {
         global $DB, $FULLME;
 
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -237,6 +240,7 @@ final class externallib_test extends externallib_advanced_testcase {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         // Enable MathJax filter in content and headings.
         $this->configure_filters([
@@ -362,6 +366,7 @@ final class externallib_test extends externallib_advanced_testcase {
     public function test_get_dashboard_blocks_default_dashboard_including_sticky_block(): void {
         global $PAGE, $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $user = $this->getDataGenerator()->create_user();
         $PAGE->set_url('/my/index.php');    // Need this because some internal API calls require the $PAGE url to be set.
@@ -410,6 +415,7 @@ final class externallib_test extends externallib_advanced_testcase {
     public function test_get_dashboard_blocks_custom_user_dashboard(): void {
         global $PAGE, $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $user = $this->getDataGenerator()->create_user();
         $PAGE->set_url('/my/index.php');    // Need this because some internal API calls require the $PAGE url to be set.
