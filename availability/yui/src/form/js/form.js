@@ -762,7 +762,7 @@ M.core_availability.List.prototype.clickAdd = function() {
     dialogRef.dialog = new M.core.dialogue(config);
     dialogRef.dialog.show();
     cancel.on('click', function() {
-        dialogRef.dialog.destroy();
+        dialogRef.dialog.hide();
         // Focus the button they clicked originally.
         this.inner.one('> .availability-button').one('button').focus();
     }, this);
@@ -799,7 +799,7 @@ M.core_availability.List.prototype.getAddHandler = function(type, dialogRef) {
         M.core_availability.form.rootList.renumber();
         this.updateHtml();
         // Hide dialog.
-        dialogRef.dialog.destroy();
+        dialogRef.dialog.hide();
         newItem.focusAfterAdd();
     };
 };
