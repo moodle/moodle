@@ -2798,3 +2798,23 @@ function check_async_backup(environment_results $result): ?environment_results {
 
     return null;
 }
+
+/**
+ * Checks if the current database vendor is Aurora MySQL.
+ *
+ * If the database vendor is 'auroramysql', this function sets additional information.
+ *
+ * @param environment_results $result The environment results object to update.
+ * @return environment_results|null The updated environment results object if Aurora is detected, or null otherwise.
+ */
+function check_aurora_version(environment_results $result): ?environment_results {
+    global $CFG;
+
+    if ($CFG->dbtype === 'auroramysql') {
+        $result->setInfo('Aurora compatibility');
+        $result->setFeedbackStr('ensureauroraversion');
+        return $result;
+    }
+
+    return null;
+}
