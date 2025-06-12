@@ -1,0 +1,8 @@
+issueNumber: MDL-72123
+notes:
+  core_message:
+    - message: >
+        The web service `core_message_get_member_info` additionally returns
+        `cancreatecontact` which is a boolean value for a user's permission to
+        add a contact.
+      type: improved
