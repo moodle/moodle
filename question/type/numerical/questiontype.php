@@ -64,22 +64,25 @@ class qtype_numerical extends question_type {
     }
 
     public function get_question_options($question) {
-        global $CFG, $DB, $OUTPUT;
+        global $DB;
         parent::get_question_options($question);
         // Get the question answers and their respective tolerances
         // Note: question_numerical is an extension of the answer table rather than
         //       the question table as is usually the case for qtype
         //       specific tables.
+        // If the numerical record is missing for some reason (e.g. MDL-85721), use a default tolerance.
         if (!$question->options->answers = $DB->get_records_sql(
-                                "SELECT a.*, n.tolerance " .
-                                "FROM {question_answers} a, " .
-                                "     {question_numerical} n " .
-                                "WHERE a.question = ? " .
-                                "    AND   a.id = n.answer " .
-                                "ORDER BY a.id ASC", array($question->id))) {
-            echo $OUTPUT->notification('Error: Missing question answer for numerical question ' .
+            "
+                SELECT a.*, COALESCE(n.tolerance, '0') AS tolerance
+                  FROM {question_answers} a
+             LEFT JOIN {question_numerical} n ON a.id = n.answer
+                 WHERE a.question = ?
+              ORDER BY a.id ASC
+            ",
+            [$question->id],
+        )) {
+            debugging('Error: Missing question answer for numerical question ' .
                     $question->id . '!');
-            return false;
         }
 
         $question->hints = $DB->get_records('question_hints',
