@@ -193,7 +193,8 @@ function(
             canmessage: null,
             canmessageevenifblocked: null,
             requirescontact: null,
-            contactrequests: []
+            contactrequests: [],
+            cancreatecontact: null,
         };
     };
 
