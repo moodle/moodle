@@ -4158,6 +4158,7 @@ EOD;
                     ];
 
                     if ($USER->id != $user->id) {
+                        $cancreatecontact = \core_message\api::can_create_contact($USER->id, $user->id);
                         $iscontact = \core_message\api::is_contact($USER->id, $user->id);
                         $isrequested = \core_message\api::get_contact_requests_between_users($USER->id, $user->id);
                         $contacturlaction = '';
@@ -4170,6 +4171,9 @@ EOD;
                         // If the user is not a contact.
                         if (!$iscontact) {
                             if ($isrequested) {
+                                // Set it to true if a request has been sent.
+                                $cancreatecontact = true;
+
                                 // We just need the first request.
                                 $requests = array_shift($isrequested);
                                 if ($requests->userid == $USER->id) {
@@ -4195,7 +4199,8 @@ EOD;
                             $contacturlaction = 'removecontact';
                             $contactimage = 't/removecontact';
                         }
-                        $userbuttons['togglecontact'] = [
+                        if ($cancreatecontact) {
+                            $userbuttons['togglecontact'] = [
                                 'buttontype' => 'togglecontact',
                                 'title' => get_string($contacttitle, 'message'),
                                 'url' => new moodle_url('/message/index.php', [
@@ -4208,6 +4213,7 @@ EOD;
                                 'linkattributes' => $linkattributes,
                                 'page' => $this->page,
                             ];
+                        }
                     }
                 }
             } else {

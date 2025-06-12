@@ -1069,6 +1069,7 @@ class core_message_external extends external_api {
                 'If the user can still message even if they get blocked'),
             'canmessage' => new external_value(PARAM_BOOL, 'If the user can be messaged'),
             'requirescontact' => new external_value(PARAM_BOOL, 'If the user requires to be contacts'),
+            'cancreatecontact' => new external_value(PARAM_BOOL, 'Is the user permitted to add a contact'),
         ];
 
         $result['contactrequests'] = new external_multiple_structure(
