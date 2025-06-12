@@ -142,6 +142,16 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('defaultsettings', get_string('announcementsettings', 'mod_forum'),
                         get_string('announcementsettings_help', 'mod_forum')));
 
+    // Default maximum attachment size allowed per post in announcement forums.
+    if (isset($CFG->maxbytes)) {
+        $maxbytes = 0;
+        if (isset($CFG->forum_announcementmaxbytes)) {
+            $maxbytes = $CFG->forum_announcementmaxbytes;
+        }
+        $settings->add(new admin_setting_configselect('forum_announcementmaxbytes', get_string('maxattachmentsize', 'forum'),
+                           get_string('configmaxbytes', 'forum'), 512000, get_max_upload_sizes($CFG->maxbytes, 0, 0, $maxbytes)));
+    }
+
     // Default number of attachments allowed per post in announcement forums.
     $settings->add(new admin_setting_configtext('forum_announcementmaxattachments', get_string('maxattachments', 'forum'),
                        get_string('configmaxattachments', 'forum'), 1, PARAM_INT));
