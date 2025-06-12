@@ -314,7 +314,8 @@ class question_category_selector implements renderable, templatable {
 
         // Recursively indent the children.
         foreach ($categories[$id]->childids as $childid) {
-            if ($childid != $nochildrenof) {
+            [$childcategory, ] = explode(',', $childid);
+            if ($childcategory != $nochildrenof) {
                 $newcategories = $newcategories + self::flatten_category_tree(
                         $categories,
                         $childid,
