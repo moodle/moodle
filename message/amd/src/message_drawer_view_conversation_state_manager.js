@@ -91,7 +91,8 @@ define(['jquery'], function($) {
                 canmessage: member.canmessage,
                 canmessageevenifblocked: member.canmessageevenifblocked,
                 requirescontact: member.requirescontact,
-                contactrequests: member.contactrequests || []
+                contactrequests: member.contactrequests || [],
+                cancreatecontact: member.cancreatecontact,
             };
         });
     };

@@ -479,6 +479,9 @@ class helper {
             // Set contact and blocked status indicators.
             $data->iscontact = ($member->contactid) ? true : false;
 
+            // Set permission to create a contact request.
+            $data->cancreatecontact = api::can_create_contact($referenceuserid, $member->id);
+
             // We don't want that a user has been blocked if they can message the user anyways.
             $canmessageifblocked = api::can_send_message($referenceuserid, $member->id, true);
             $data->isblocked = ($member->blockedid && !$canmessageifblocked) ? true : false;
