@@ -99,3 +99,23 @@ Feature: A teacher can reorder question categories
     And I choose "Move" in the open action menu
     And I click on "After Course category 1" "link" in the "Move Course category 2" "dialogue"
     And I should see "ID number already in use. Change it to move or update category."
+
+  Scenario: Teacher can move a category via the edit form
+    Given "Course category 1" "list_item" should appear before "Course category 2" "list_item"
+    And "Course category 2" "list_item" should appear before "Course category 3" "list_item"
+    When I open the action menu in "Course category 3" "list_item"
+    And I choose "Edit" in the open action menu
+    And I should see "Top for Course 1" in the "Parent category" "select"
+    And I should see "Course category 1" in the "Parent category" "field"
+    And I should see "Course category 2" in the "Parent category" "field"
+    And I should not see "Course category 3" in the "Parent category" "field"
+    And I set the field "Parent category" to "Course category 1"
+    And I press "Save changes"
+    Then "Course category 1" "list_item" should appear before "Course category 3" "list_item"
+    And "Course category 3" "list_item" should appear before "Course category 2" "list_item"
+    And I open the action menu in "Course category 1" "list_item"
+    And I choose "Edit" in the open action menu
+    And I should see "Top for Course 1" in the "Parent category" "select"
+    And I should not see "Course category 1" in the "Parent category" "field"
+    And I should see "Course category 2" in the "Parent category" "field"
+    And I should not see "Course category 3" in the "Parent category" "field"
