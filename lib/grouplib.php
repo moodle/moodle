@@ -805,7 +805,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         $output = $OUTPUT->render($select);
     }
 
-    $output = '<div class="groupselector">'.$output.'</div>';
+    $output = $OUTPUT->container($output, 'groupselector my-2 d-inline-block');
 
     if ($return) {
         return $output;
@@ -1004,7 +1004,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         $output = $OUTPUT->render($select);
     }
 
-    $output = '<div class="groupselector">'.$output.'</div>';
+    $output = $OUTPUT->container($output, 'groupselector my-2 d-inline-block');
 
     if ($return) {
         return $output;
