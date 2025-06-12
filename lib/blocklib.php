@@ -245,18 +245,18 @@ class block_manager {
      * @return boolean - is there one of these blocks in the current page?
      */
     public function is_block_present($blockname) {
-        if (empty($this->blockinstances)) {
+        if (empty($this->birecordsbyregion)) {
             return false;
         }
 
         $requiredbythemeblocks = $this->get_required_by_theme_block_types();
-        foreach ($this->blockinstances as $region) {
+        foreach ($this->birecordsbyregion as $region) {
             foreach ($region as $instance) {
-                if (empty($instance->instance->blockname)) {
+                if (empty($instance->blockname)) {
                     continue;
                 }
-                if ($instance->instance->blockname == $blockname) {
-                    if ($instance->instance->requiredbytheme) {
+                if ($instance->blockname == $blockname) {
+                    if ($instance->requiredbytheme) {
                         if (!in_array($blockname, $requiredbythemeblocks)) {
                             continue;
                         }
@@ -832,6 +832,14 @@ class block_manager {
 
         if (empty($pagetypepattern)) {
             $pagetypepattern = $this->page->pagetype;
+        }
+
+        if (!empty($this->birecordsbyregion)) {
+            $addableblocks = $this->get_addable_blocks();
+
+            if (!array_key_exists($blockname, $addableblocks)) {
+                throw new moodle_exception('blockcannotadd');
+            }
         }
 
         $blockinstance = new stdClass;

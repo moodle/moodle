@@ -31,6 +31,7 @@ $string['agelocationverificationdisabled'] = 'Age and location verification disa
 $string['authnotexisting'] = 'The autorization plugin doesn\'t exist';
 $string['backupcontainexternal'] = 'This backup file contains external Moodle Network Hosts that are not configured locally';
 $string['backuptablefail'] = 'Backup tables could NOT be set up successfully!';
+$string['blockcannotadd'] = 'Cannot add block';
 $string['blockcannotconfig'] = 'This block does not support global configuration';
 $string['blockcannotinistantiate'] = 'Problem in instantiating block object';
 $string['blockcannotread'] = 'Could not read data for blockid= {$a}';
