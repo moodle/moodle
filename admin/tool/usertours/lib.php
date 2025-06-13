@@ -72,6 +72,8 @@ function tool_usertours_extend_navigation_user() {
  */
 function tool_usertours_get_fontawesome_icon_map() {
     return [
+        'tool_usertours:t/export' => 'fa-upload',
+        'tool_usertours:i/tour-import' => 'fa-download',
         'tool_usertours:i/tour-new' => 'fa-file-circle-plus',
         'tool_usertours:i/tour-shared' => 'fa-share-from-square',
         'tool_usertours:i/reload' => 'fa-arrow-rotate-right',
