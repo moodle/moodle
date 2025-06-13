@@ -1,5 +1,13 @@
 # core_message (subsystem) Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- The web service `core_message_get_member_info` additionally returns `cancreatecontact` which is a boolean value for a user's permission to add a contact.
+
+  For more information see [MDL-72123](https://tracker.moodle.org/browse/MDL-72123)
+
 ## 4.5
 
 ### Changed
