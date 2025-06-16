@@ -179,7 +179,7 @@ Feature: Users can access the course activities overview page
       | folder          | C1     | Activity 2  | 0          | 0              |
       | imscp           | C1     | Activity 3  | 0          | 0              |
     When I am on the "Course 1" "course > activities > resource" page logged in as "student1"
-    Then I should not see "Completion status" in the "resource_overview_collapsible" "region"
+    Then I should not see "Status" in the "resource_overview_collapsible" "region"
 
   Scenario: The course overview name column informs about the activity and section
     Given the following "activities" exist:
@@ -275,13 +275,13 @@ Feature: Users can access the course activities overview page
       | choice   | C1     | Activity 4 | 0          | 0              |
     And I am on the "Activity 1" "activity" page logged in as "student1"
     When I am on the "Course 1" "course > activities > choice" page logged in as "student1"
-    Then I should see "Completion status" in the "choice_overview_collapsible" "region"
+    Then I should see "Status" in the "choice_overview_collapsible" "region"
     And I should see "Done" in the "Activity 1" "table_row"
     And I should see "To do" in the "Activity 2" "table_row"
     And I should see "Mark as done" in the "Activity 3" "table_row"
     And I should see "-" in the "Activity 4" "table_row"
     And I am on the "Course 1" "course > activities > choice" page logged in as "teacher1"
-    And I should not see "Completion status" in the "choice_overview_collapsible" "region"
+    And I should not see "Status" in the "choice_overview_collapsible" "region"
     And I should not see "To do" in the "Activity 2" "table_row"
     And I should not see "Mark as done" in the "Activity 3" "table_row"
     And I should not see "-" in the "Activity 4" "table_row"
