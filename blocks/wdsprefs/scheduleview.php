@@ -102,8 +102,9 @@ $sql = "SELECT
             AND c.idnumber != ''
         LEFT JOIN {enrol_wds_section_meta} secm
             ON secm.section_listing_id = sec.section_listing_id
-    WHERE per.start_date < UNIX_TIMESTAMP() + (60 * 86400)
-#        AND per.end_date > UNIX_TIMESTAMP()
+    WHERE stuenr.status = 'enrolled'
+        AND per.start_date < UNIX_TIMESTAMP() + (60 * 86400)
+        AND per.end_date > UNIX_TIMESTAMP()
         AND u.id = :userid
     GROUP BY sec.id, stuenr.id
     ORDER BY per.start_date DESC,
