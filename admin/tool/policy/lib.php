@@ -187,3 +187,16 @@ function tool_policy_output_fragment_accept_on_behalf($args) {
 
     return $mform->render();
 }
+
+/**
+ * Get the list of deprecated icons.
+ *
+ * @return array with the deprecated key icons.
+ * @todo Final deprecation on Moodle 6.0 MDL-83465.
+ */
+function tool_policy_get_deprecated_icons(): array {
+    return [
+        // Deprecated since Moodle 5.1.
+        'tool_policy/level',
+    ];
+}

@@ -522,6 +522,12 @@ class icon_system_fontawesome extends icon_system_font {
                 'theme:mod/quiz/flag-on',
                 'theme:mod/quiz/warningtriangle',
                 'theme:mod/quiz/whitecircle',
+                // Deprecated since Moodle 5.1.
+                'core:e/insert_col_after',
+                'core:e/insert_col_before',
+                'core:e/split_cells',
+                'core:e/text_color',
+                'core:t/locktime',
             ],
         );
     }
