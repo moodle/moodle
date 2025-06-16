@@ -136,6 +136,9 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
 
             mtrace("Starting Moodle Student enrollments for $section->section_listing_id..");
 
+            // Reprocess should first set all enrollments in the course to ToBeUpdated prior to reprocessing.
+            $reset = workdaystudent::reset_enrollments($section->section_listing_id);
+
             // Process wds enrollments.
             $cronstuenroll = wdscronhelper::cronstuenroll(
                 $section->course_section_definition_id
@@ -332,8 +335,7 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
  */
 function enrol_workdaystudent_extend_navigation_course($navigation, $course, $context) {
     // Make sure we can reprocess enrollments.
-    if (is_siteadmin()) {
-    // if (has_capability('enrol/workdaystudent:reprocess', $context)) {
+    if (has_capability('enrol/workdaystudent:reprocess', $context)) {
 
         // Set the url for the reprocesser.
         $url = new moodle_url('/enrol/workdaystudent/reprocess.php', array('courseid' => $course->id));

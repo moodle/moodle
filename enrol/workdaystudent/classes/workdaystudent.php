@@ -48,6 +48,30 @@ class workdaystudent {
     }
 
     /**
+     * Resets enrollments prior to pulling from WDS.
+     *
+     * @param @string $sectionlistingid The section listing id.
+     * @return @book $reset
+     */
+    public static function reset_enrollments($sectionlistingid) {
+        global $DB;
+
+        // Build out the parms.
+        $parms = ['slid' => $sectionlistingid];
+
+        // Build out the SQL to update the records.
+        $sql = "UPDATE {enrol_wds_student_enroll}
+             SET registration_status = 'ToBeUpdated',
+             status = 'tobeupdated'
+             WHERE section_listing_id = :slid";
+
+        // Do the nasty.
+        $reset = $DB->execute($sql, $parms);
+
+        return $reset;
+    }
+
+    /**
      * Retrieves faculty preferences for a given user.
      *
      * If personal preferences are missing, return the global settings or fallbacks.
@@ -920,7 +944,7 @@ class workdaystudent {
             mtrace("*** Grading basis not set for course: $enrollment->Section_Listing_ID and student: $enrollment->Universal_Id.");
         }
 
-        // Keep the id, section_listing_id, and $universal_id from $as and populate the rest from aenrollment.
+        // Keep the id, section_listing_id, and universal_id from $as and populate the rest from aenrollment.
         $as2->credit_hrs = $enrollment->Units;
         $as2->grading_scheme = isset($enrollment->Student_Grading_Scheme_ID)
                                ? $enrollment->Student_Grading_Scheme_ID
@@ -5288,7 +5312,7 @@ die();
 
             // Get the section details from Workday.
             $s = workdaystudent::get_settings();
-            $parms = ['Course_Section_Definition_ID' => $section->course_section_definition_id];
+            $parms = ['Section_Listing_ID' => $section->section_listing_id];
             $updatedsections = workdaystudent::get_sections($s, $parms);
 
             if (empty($updatedsections)) {

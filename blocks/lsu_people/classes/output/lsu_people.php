@@ -248,7 +248,8 @@ class lsu_people implements renderable {
         LEFT JOIN {enrol_wds_students_meta} sm
             ON sm.studentid = stu.id
             AND sm.academic_period_id = sec.academic_period_id
-        WHERE c.id = :courseid
+        WHERE stuenr.status = 'enrolled'
+            AND c.id = :courseid
             $groupsql
         GROUP BY stu.id
         $sortsql";

@@ -921,6 +921,7 @@ function grade_format_gradevalue_letter(?float $value, $grade_item, $decimals, $
     }
 
     $value = grade_grade::standardise_score($value, $grade_item->grademin, $grade_item->grademax, 0, 100);
+
     $value = bounded_number(0, $value, 100); // just in case
     // BEGIN LSU Better Letters.
     $value = format_float($value, $decimals, $localized);
