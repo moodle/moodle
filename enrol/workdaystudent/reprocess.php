@@ -35,19 +35,13 @@ $pageparams = [
 $courseid = $pageparams['courseid'];
 
 $coursecontext = \context_course::instance($courseid); 
-require_capability('enrol/workdaystudent:reprocess', $coursecontext);
 
 // Authentication.
 require_login();
 
-$url = new moodle_url('/');
+// Make sure we can access this.
+require_capability('enrol/workdaystudent:reprocess', $coursecontext);
 
-if (!is_siteadmin()) {
-    redirect($url, get_string('wds:access_error', 'enrol_workdaystudent'), null,
-        core\output\notification::NOTIFY_ERROR);
-}
-
-//$title = get_string('pluginname', 'enrol_workdaystudent') . ' > ' . get_string('reprocess', 'enrol_workdaystudent');
 $title = get_string('reprocess', 'enrol_workdaystudent');
 $pagetitle = $title;
 $url = new moodle_url('/enrol/workdaystudent/reprocess.php?courseid=' . $courseid);
