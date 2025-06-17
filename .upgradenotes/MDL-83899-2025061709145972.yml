@@ -1,0 +1,7 @@
+issueNumber: MDL-83899
+notes:
+  mod_scorm:
+    - message: >-
+        Create a manager class to regroup common functionalities for course
+        overview page
+      type: improved

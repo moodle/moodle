@@ -1,0 +1,5 @@
+issueNumber: MDL-83899
+notes:
+  mod_scorm:
+    - message: Add a new generator for scorm attempts to simulate user's attempt.
+      type: improved
