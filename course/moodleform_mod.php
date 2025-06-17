@@ -1009,8 +1009,7 @@ abstract class moodleform_mod extends moodleform {
         }
 
         // If the 'show description' feature is enabled, this checkbox appears below the intro.
-        // We want to hide that when using the singleactivity course format because it is confusing.
-        if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
+        if ($this->_features->showdescription) {
             $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
             $mform->addHelpButton('showdescription', 'showdescription');
         }
@@ -1043,8 +1042,7 @@ abstract class moodleform_mod extends moodleform {
         $buttonarray = array();
 
         // Label for the submit button to return to the course.
-        // Ignore this button in single activity format because it is confusing.
-        if ($submit2label !== false && $this->courseformat->has_view_page()) {
+        if ($submit2label !== false) {
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton2', $submit2label);
         }
 

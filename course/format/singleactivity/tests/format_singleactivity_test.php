@@ -38,7 +38,7 @@ final class format_singleactivity_test extends \advanced_testcase {
         // Generate a course with two sections (0 and 1) and two modules.
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['format' => 'singleactivity']);
-        course_create_sections_if_missing($course1, [0, 1]);
+        course_create_sections_if_missing($course1, [0]);
 
         $data = (object)['id' => $course1->id];
         $format = course_get_format($course1);

@@ -24,7 +24,7 @@
     Example context (json):
     {
         "cmlist": "Sample",
-        "siteid": 1,
+        "courseid": 1,
         "sectionid": 1,
         "sectionname": "Sample",
         "sectionnum": 1,
@@ -32,8 +32,8 @@
     }
 }}
 <div
-    id="block_site_main_menu_section"
-    class="course-content"
+    class="course-content block_site_main_menu_section"
+    data-courseid="{{courseid}}"
 >
     {{! The section list is used by the content module to init the sections.}}
     <div
@@ -66,19 +66,9 @@
 {{! The block should be fast to load, we only load the editor when needed.}}
 {{#editing}}
 require(
-    [
-        'core_courseformat/local/content',
-        'core_courseformat/courseeditor'
-    ],
-    function(
-        Component,
-        Courseeditor
-    ) {
-        {{! The block could be included static in other courses so we use Courseeditor.getCourseEditor. }}
-        new Component({
-            element: document.getElementById('block_site_main_menu_section'),
-            reactive: Courseeditor.getCourseEditor({{siteid}}),
-        });
+    ['block_site_main_menu/mainsection'],
+    function(Component) {
+        Component.init('.block_site_main_menu_section[data-courseid="{{courseid}}"]');
     }
 );
 {{/editing}}

@@ -110,8 +110,8 @@ final class get_state_test extends \externallib_advanced_testcase {
             // User won't see the hidden sections. Remove them from the total.
             $visiblesections = $visiblesections - count($hiddensections);
         }
-        if ($format == 'social') {
-            $visiblesections = 1; // But Social format has one section visible.
+        if ($format == 'social' || $format == 'singleactivity') {
+            $visiblesections = 1; // But Social and Single activity formats have only one section visible.
         }
 
         // Social course format automatically creates a forum activity.

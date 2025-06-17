@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_courseformat;
+
 /**
- * format.php - course format featuring single activity included from view.php
+ * Contains the interface that any course format plugin should implement
+ * when it wants to only display a single activity in the course page.
  *
- * if we are not redirected before this point this means we want to
- * either manage orphaned activities - i.e. display section 1,
- * or the activity is not setup, does not have url or is not accessible at the
- * moment
- *
- * @package    format_singleactivity
- * @copyright  2012 Marina Glancy
+ * @package    core_courseformat
+ * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+interface main_activity_interface {
 
-defined('MOODLE_INTERNAL') || die();
-
-include_course_ajax($course);
-
-$courserenderer = $PAGE->get_renderer('format_singleactivity');
-echo $courserenderer->display($course, $section != 0);
+    /**
+     * Get the main activity of the course.
+     *
+     * @return \cm_info|null The main activity object or null if main activity is not set.
+     */
+    public function get_main_activity(): ?\cm_info;
+}
