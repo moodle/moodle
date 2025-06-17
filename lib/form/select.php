@@ -232,6 +232,7 @@ class MoodleQuickForm_select extends HTML_QuickForm_select implements templatabl
         }
         $context['options'] = $options;
         $context['nameraw'] = $this->getName();
+        $context['staticlabel'] = $this->_flagFrozen;
 
         return $context;
     }
