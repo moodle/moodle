@@ -63,7 +63,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I set the following fields to these values:
       | Your answer | 2 |
     And I press "Submit"
-    And I should see "Maximum number of attempts reached - Moving to next page"
+    And I should see "You have reached the maximum number of tries for this question. The lesson will now move to the next page."
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 0 (out of 1)."

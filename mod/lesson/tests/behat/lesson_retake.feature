@@ -67,7 +67,7 @@ Feature: Retake lesson activity
     # Change handling of re-takes = use maximum
     And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Handling of re-takes | Use maximum |
+      | Grading method | Highest grade from all attempts |
     And I press "Save and display"
     # Confirm that lesson grade is the maximum of the 2 attempts (100)
     And I am on the "Course 1" "grades > user > View" page logged in as student1
@@ -75,7 +75,7 @@ Feature: Retake lesson activity
     # Disable lesson retake
     And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Re-takes allowed | No |
+      | Allow multiple attempts | No |
     And I press "Save and display"
     # Confirm lesson cannot be retaken
     And I am on the "Test lesson name" "lesson activity" page logged in as student1

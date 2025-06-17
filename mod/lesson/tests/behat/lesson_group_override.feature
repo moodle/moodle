@@ -90,16 +90,16 @@ Feature: Lesson group override
   Scenario: Allow a single group to have re-take the lesson
     Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Re-takes allowed | 0 |
+      | Allow multiple attempts | 0 |
     And I press "Save and display"
     And I navigate to "Overrides" in current page administration
     And I select "Group overrides" from the "jump" singleselect
     And I follow "Add group override"
     And I set the following fields to these values:
-      | Override group   | Group 1 |
-      | Re-takes allowed | 1 |
+      | Override group          | Group 1 |
+      | Allow multiple attempts | 1 |
     And I press "Save"
-    And I should see "Re-takes allowed"
+    And I should see "Allow multiple attempts"
     Given I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -220,16 +220,16 @@ Feature: Lesson group override
   Scenario: Allow a single group to have multiple attempts at each question
     Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Re-takes allowed | 1 |
+      | Allow multiple attempts | 1 |
     And I press "Save and display"
     And I navigate to "Overrides" in current page administration
     And I select "Group overrides" from the "jump" singleselect
     And I follow "Add group override"
     And I set the following fields to these values:
       | Override group             | Group 1 |
-      | Maximum number of attempts per question | 2 |
+      | Maximum number of tries per question | 2 |
     And I press "Save"
-    And I should see "Maximum number of attempts per question"
+    And I should see "Maximum number of tries per question"
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
