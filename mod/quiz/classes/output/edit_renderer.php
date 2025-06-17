@@ -1104,10 +1104,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function random_question(structure $structure, $slotnumber, $pageurl) {
         $question = $structure->get_question_in_slot($slotnumber);
-        $bankcontext = \context::instance_by_id($question->contextid);
         $slot = $structure->get_slot_by_number($slotnumber);
-        $editurl = new \moodle_url('/mod/quiz/editrandom.php',
-                ['returnurl' => $pageurl->out_as_local_url(), 'slotid' => $slot->id, 'bankcmid' => $bankcontext->instanceid]);
 
         $temp = clone($question);
         $temp->questiontext = '';
@@ -1138,8 +1135,17 @@ class edit_renderer extends \plugin_renderer_base {
         $qbanklink = ' ' . \html_writer::link($qbankurl,
                         get_string('seequestions', 'quiz'), ['class' => 'mod_quiz_random_qbank_link']);
 
-        return html_writer::link($editurl, $icon . $editicon, ['title' => $configuretitle]) .
-                ' ' . $instancename . ' ' . $qbanklink;
+        $editlink = html_writer::link(
+            $pageurl->out(),
+            $icon . $editicon,
+            [
+                'title' => $configuretitle,
+                'data-action' => 'editrandomquestion',
+                'data-slotid' => $slot->id,
+                'data-header' => get_string('randomediting', 'mod_quiz'),
+            ],
+        );
+        return $editlink . ' ' . $instancename . ' ' . $qbanklink;
     }
 
     /**

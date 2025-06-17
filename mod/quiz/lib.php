@@ -2386,7 +2386,26 @@ function mod_quiz_output_fragment_switch_question_bank($args): string {
  * @return string The rendered mform fragment.
  */
 function mod_quiz_output_fragment_add_random_question_form($args) {
-    global $PAGE, $OUTPUT;
+    global $PAGE, $OUTPUT, $DB;
+
+    $slotid = clean_param($args['slotid'] ?? 0, PARAM_INT);
+    if (empty($slotid)) {
+        $params = $args;
+    } else {
+        // Load the stored filters for the current slot.
+        $setreference = $DB->get_record('question_set_references',
+            ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+        $filterconditions = json_decode($setreference->filtercondition, true);
+        $filterconditions = \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition(
+            $filterconditions,
+        );
+        $params = \core_question\local\bank\filter_condition_manager::filter_invalid_values($filterconditions);
+    }
+
+    if (!empty($args['savedfiltercondition'])) {
+        $filtercondition = json_decode($args['savedfiltercondition'], true);
+        $params['filter'] = $filtercondition['filter'];
+    }
 
     $extraparams = [];
     $extraparams['quizcmid'] = clean_param($args['quizcmid'], PARAM_INT);
@@ -2394,7 +2413,7 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
 
     // Build required parameters.
     [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
-            build_required_parameters_for_custom_view($args, $extraparams);
+            build_required_parameters_for_custom_view($params, $extraparams);
 
     // Additional param to differentiate with other question bank view.
     $extraparams['view'] = mod_quiz\question\bank\random_question_view::class;
@@ -2432,6 +2451,9 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
         'randomoptions' => $randomcount,
         'questioncategoryoptions' => $catoptions,
     ];
+    if (!empty($slotid)) {
+        $data['slotid'] = $slotid;
+    }
 
     $helpicon = new \help_icon('parentcategory', 'question');
     $data['questioncategoryhelp'] = $helpicon->export_for_template($renderer);

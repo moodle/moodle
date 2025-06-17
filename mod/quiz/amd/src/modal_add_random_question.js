@@ -40,7 +40,9 @@ const SELECTORS = {
     ADD_ON_PAGE_FORM_ELEMENT: '[name="addonpage"]',
     ADD_RANDOM_BUTTON: 'input[type="submit"][name="addrandom"]',
     ADD_NEW_CATEGORY_BUTTON: 'input[type="submit"][name="newcategory"]',
-    SUBMIT_BUTTON_ELEMENT: 'input[type="submit"][name="addrandom"], input[type="submit"][name="newcategory"]',
+    SUBMIT_BUTTON_ELEMENT: 'input[type="submit"][name="addrandom"], '
+        + 'input[type="submit"][name="newcategory"], '
+        + 'input[type="submit"][name="update"]',
     FORM_HEADER: 'legend',
     SELECT_NUMBER_TO_ADD: '#menurandomcount',
     NEW_CATEGORY_ELEMENT: '#categoryname',
@@ -52,6 +54,7 @@ const SELECTORS = {
     NEW_BANKMOD_ID: 'data-newmodid',
     BANK_SEARCH: '#searchbanks',
     GO_BACK_BUTTON: 'button[data-action="go-back"]',
+    UPDATE_FILTER_BUTTON: 'input[type="submit"][name="update"]',
 };
 
 export default class ModalAddRandomQuestion extends Modal {
@@ -76,13 +79,17 @@ export default class ModalAddRandomQuestion extends Modal {
         quizCmId,
         showNewCategory = true
     ) {
-        const selector = '.menu [data-action="addarandomquestion"]';
+        const selector = '.menu [data-action="addarandomquestion"], [data-action="editrandomquestion"]';
         document.addEventListener('click', (e) => {
             const trigger = e.target.closest(selector);
             if (!trigger) {
                 return;
             }
             e.preventDefault();
+
+            if (trigger.dataset.slotid) {
+                showNewCategory = false;
+            }
 
             ModalAddRandomQuestion.create({
                 contextId,
@@ -93,7 +100,7 @@ export default class ModalAddRandomQuestion extends Modal {
                 showNewCategory,
                 title: trigger.dataset.header,
                 addOnPage: trigger.dataset.addonpage,
-
+                slotId: trigger.dataset.slotid,
                 templateContext: {
                     hidden: showNewCategory,
                 },
@@ -112,6 +119,8 @@ export default class ModalAddRandomQuestion extends Modal {
         this.returnUrl = null;
         this.quizCmId = null;
         this.loadedForm = false;
+        this.slotId = 0;
+        this.savedFilterCondition = null;
     }
 
     configure(modalConfig) {
@@ -120,6 +129,8 @@ export default class ModalAddRandomQuestion extends Modal {
         this.setCategory(modalConfig.category);
         this.setReturnUrl(modalConfig.returnUrl);
         this.showNewCategory = modalConfig.showNewCategory;
+        this.setSlotId(modalConfig.slotId ?? 0);
+        this.setSavedFilterCondition(modalConfig.savedFilterCondition ?? null);
 
         super.configure(modalConfig);
     }
@@ -175,6 +186,42 @@ export default class ModalAddRandomQuestion extends Modal {
      */
     getReturnUrl() {
         return this.returnUrl;
+    }
+
+    /**
+     * Set the ID of the quiz slot, if we are editing an existing random question.
+     *
+     * @param {Number} slotId
+     */
+    setSlotId(slotId) {
+        this.slotId = slotId;
+    }
+
+    /**
+     * Get the current slot ID.
+     *
+     * @return {Number}
+     */
+    getSlotId() {
+        return this.slotId;
+    }
+
+    /**
+     * Store the current filterCondition JSON string.
+     *
+     * @param {String} filterCondition
+     */
+    setSavedFilterCondition(filterCondition) {
+        this.savedFilterCondition = filterCondition;
+    }
+
+    /**
+     * Return the saved filterCondition JSON string.
+     *
+     * @return {String}
+     */
+    getSavedFilterCondition() {
+        return this.savedFilterCondition;
     }
 
     /**
@@ -239,29 +286,35 @@ export default class ModalAddRandomQuestion extends Modal {
         const returnurl = this.getReturnUrl();
         const quizcmid = this.quizCmId;
         const bankcmid = this.bankCmId;
+        const savedfiltercondition = this.getSavedFilterCondition();
+        this.setSavedFilterCondition(null);
 
         return Fragment.loadFragment(
             'mod_quiz',
             'add_random_question_form',
             this.getContextId(),
             {
-                addonpage,
+                addonpage: addonpage ?? null,
                 returnurl,
                 quizcmid,
                 bankcmid,
+                slotid: this.getSlotId(),
+                savedfiltercondition,
             }
         )
             .then((html, js) => {
                 const form = $(html);
-                const existingCategoryTabContent = form.find(SELECTORS.EXISTING_CATEGORY_TAB);
-                const existingCategoryTab = this.getBody().find(SELECTORS.EXISTING_CATEGORY_CONTAINER);
-                const newCategoryTabContent = form.find(SELECTORS.NEW_CATEGORY_TAB);
-                const newCategoryTab = this.getBody().find(SELECTORS.NEW_CATEGORY_CONTAINER);
+                if (!this.getSlotId()) {
+                    const existingCategoryTabContent = form.find(SELECTORS.EXISTING_CATEGORY_TAB);
+                    const existingCategoryTab = this.getBody().find(SELECTORS.EXISTING_CATEGORY_CONTAINER);
+                    const newCategoryTabContent = form.find(SELECTORS.NEW_CATEGORY_TAB);
+                    const newCategoryTab = this.getBody().find(SELECTORS.NEW_CATEGORY_CONTAINER);
 
-                // Transform the form into tabs for better rendering in the modal.
-                this.moveContentIntoTab(existingCategoryTabContent, existingCategoryTab);
-                this.moveContentIntoTab(newCategoryTabContent, newCategoryTab);
-                this.moveTabsIntoTabContent(form);
+                    // Transform the form into tabs for better rendering in the modal.
+                    this.moveContentIntoTab(existingCategoryTabContent, existingCategoryTab);
+                    this.moveContentIntoTab(newCategoryTabContent, newCategoryTab);
+                    this.moveTabsIntoTabContent(form);
+                }
 
                 Templates.replaceNode(this.getBody().find(SELECTORS.TAB_CONTENT), form, js);
                 return;
@@ -291,6 +344,13 @@ export default class ModalAddRandomQuestion extends Modal {
                         this.addQuestions(quizcmid, addonpage, randomcount, filtercondition, '', '');
                         return;
                     }
+                    // Update the filter condition for the slot if the update button was clicked.
+                    const updateFilterButton = e.target.closest(SELECTORS.UPDATE_FILTER_BUTTON);
+                    if (updateFilterButton) {
+                        const filtercondition = document.querySelector(SELECTORS.FILTER_CONDITION_ELEMENT).dataset?.filtercondition;
+                        this.updateFilterCondition(quizcmid, this.getSlotId(), filtercondition);
+                        return;
+                    }
                     // Add new category if the add category button was clicked.
                     const addCategoryButton = e.target.closest(SELECTORS.ADD_NEW_CATEGORY_BUTTON);
                     if (addCategoryButton) {
@@ -307,6 +367,9 @@ export default class ModalAddRandomQuestion extends Modal {
                 });
 
                 this.getModal().on('click', SELECTORS.SWITCH_TO_OTHER_BANK, () => {
+                    this.setSavedFilterCondition(
+                        document.querySelector(SELECTORS.FILTER_CONDITION_ELEMENT).dataset?.filtercondition
+                    );
                     this.handleSwitchBankContentReload(SELECTORS.BANK_SEARCH)
                         .then(function(ModalQuizQuestionBank) {
                             $(SELECTORS.BANK_SEARCH)?.on('change', (e) => {
@@ -323,6 +386,7 @@ export default class ModalAddRandomQuestion extends Modal {
                                         'addOnPage': ModalQuizQuestionBank.getAddOnPageId(),
                                         'templateContext': {hidden: ModalQuizQuestionBank.showNewCategory},
                                         'showNewCategory': ModalQuizQuestionBank.showNewCategory,
+                                        'slotId': ModalQuizQuestionBank.getSlotId(),
                                     })
                                     .then(ModalQuizQuestionBank.destroy())
                                     .catch(Notification.exception);
@@ -345,6 +409,8 @@ export default class ModalAddRandomQuestion extends Modal {
                         'addOnPage': this.getAddOnPageId(),
                         'templateContext': {hidden: this.showNewCategory},
                         'showNewCategory': this.showNewCategory,
+                        'savedFilterCondition': this.getSavedFilterCondition(),
+                        'slotId': this.getSlotId(),
                     }).then(this.destroy()).catch(Notification.exception);
                 });
 
@@ -362,6 +428,7 @@ export default class ModalAddRandomQuestion extends Modal {
                             'addOnPage': this.getAddOnPageId(),
                             'templateContext': {hidden: this.showNewCategory},
                             'showNewCategory': this.showNewCategory,
+                            'slotId': this.getSlotId(),
                         }).then(this.destroy()).catch(Notification.exception);
                     }
                 });
@@ -398,6 +465,39 @@ export default class ModalAddRandomQuestion extends Modal {
                 filtercondition,
                 newcategory,
                 parentcategory,
+            }
+        };
+        try {
+            const response = await fetchMany([call])[0];
+            const form = document.querySelector(SELECTORS.FORM_ELEMENT);
+            const messageInput = form.querySelector(SELECTORS.MESSAGE_INPUT);
+            messageInput.value = response.message;
+            form.submit();
+        } catch (e) {
+            Notification.exception(e);
+        }
+    }
+
+    /**
+     * Call web service function to update the filter condition for an existing slot.
+     *
+     * @param {number} quizcmid the course module id of the quiz.
+     * @param {number} slotid The slot the random question is in.
+     * @param {string} filtercondition The new filter condition.
+     */
+    async updateFilterCondition(
+        quizcmid,
+        slotid,
+        filtercondition,
+    ) {
+        // We do not need to resolve this Pending because the form submission will result in a page redirect.
+        new Pending('mod-quiz/modal_add_random_questions');
+        const call = {
+            methodname: 'mod_quiz_update_filter_condition',
+            args: {
+                cmid: quizcmid,
+                slotid,
+                filtercondition,
             }
         };
         try {
