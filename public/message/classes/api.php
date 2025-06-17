@@ -771,6 +771,7 @@ class api {
             $conv->unreadcount = isset($unreadcounts[$conv->id]) ? $unreadcounts[$conv->id]->unreadcount : null;
             $conv->ismuted = $conversation->ismuted ? true : false;
             $conv->members = $members[$conv->id];
+            $conv->cansendmessagetoconversation = self::can_send_message_to_conversation($userid, $conv->id);
 
             // Add the most recent message information.
             $conv->messages = [];
@@ -956,7 +957,8 @@ class api {
             'ismuted' => $ismuted,
             'members' => $members,
             'messages' => $messages['messages'],
-            'candeletemessagesforallusers' => has_capability('moodle/site:deleteanymessage', $deleteallcontext)
+            'candeletemessagesforallusers' => has_capability('moodle/site:deleteanymessage', $deleteallcontext),
+            'cansendmessagetoconversation' => self::can_send_message_to_conversation($userid, $conversation->id),
         ];
     }
 

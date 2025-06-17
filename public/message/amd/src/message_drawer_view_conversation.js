@@ -362,6 +362,7 @@ function(
         newState = StateManager.setIsMuted(newState, conversation.ismuted);
         newState = StateManager.addMessages(newState, conversation.messages);
         newState = StateManager.setCanDeleteMessagesForAllUsers(newState, conversation.candeletemessagesforallusers);
+        newState = StateManager.setCanSendMessageToConversation(newState, conversation.cansendmessagetoconversation);
         return newState;
     };
 

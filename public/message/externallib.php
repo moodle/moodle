@@ -1043,6 +1043,8 @@ class core_message_external extends external_api {
                 ),
                 'candeletemessagesforallusers' => new external_value(PARAM_BOOL,
                     'If the user can delete messages in the conversation for all users', VALUE_DEFAULT, false),
+                'cansendmessagetoconversation' => new external_value(PARAM_BOOL,
+                    'If the user can send messages in the conversation', VALUE_DEFAULT, true),
             )
         );
     }

@@ -374,7 +374,8 @@ function(
                 // Handle adding or removing whole days.
                 days: buildDaysPatch(current, daysDiff.missingFromB, daysDiff.missingFromA),
                 // Handle updating messages that don't require adding/removing a whole day.
-                messages: buildMessagesPatch(daysDiff.matches)
+                messages: buildMessagesPatch(daysDiff.matches),
+                unableToMessage: buildUnableToMessagePatch(state, newState),
             };
         } else {
             return null;
@@ -1125,30 +1126,30 @@ function(
      *
      * @param  {Object} state The current state.
      * @param  {Object} newState The new state.
-     * @return {Bool|Null}
+     * @return {Bool}
      */
-    var buildUnableToMessage = function(state, newState) {
-        var oldOtherUser = getOtherUserFromState(state);
-        var newOtherUser = getOtherUserFromState(newState);
-
+    const buildUnableToMessagePatch = (state, newState) => {
         if (newState.type == Constants.CONVERSATION_TYPES.SELF) {
             // Users always can send message themselves on self-conversations.
-            return null;
+            return false;
         }
 
+        const oldOtherUser = getOtherUserFromState(state);
+        const newOtherUser = getOtherUserFromState(newState);
+
         if (!oldOtherUser && !newOtherUser) {
-            return null;
+            return false;
         } else if (oldOtherUser && !newOtherUser) {
-            return oldOtherUser.canmessage ? null : true;
+            return !oldOtherUser.canmessage;
         } else if (!oldOtherUser && newOtherUser) {
-            return newOtherUser.canmessage ? null : true;
+            return !newOtherUser.canmessage;
         } else if (!oldOtherUser.canmessage && newOtherUser.canmessage) {
             return false;
         } else if (oldOtherUser.canmessage && !newOtherUser.canmessage) {
             return true;
         }
 
-        return null;
+        return !newState.canSendMessageToConversation;
     };
 
     /**
@@ -1163,7 +1164,6 @@ function(
         var inEditMode = buildInEditMode(state, newState);
         var requireAddContact = buildRequireAddContact(state, newState);
         var requireUnblock = buildRequireUnblock(state, newState);
-        var unableToMessage = buildUnableToMessage(state, newState);
         var showRequireAddContact = requireAddContact !== null ? requireAddContact.show && requireAddContact.hasMessages : null;
         var otherUser = getOtherUserFromState(newState);
         var generateReturnValue = function(checkValue, successReturn) {
@@ -1179,8 +1179,6 @@ function(
                         type: 'add-contact',
                         user: otherUser
                     };
-                } else if (!otherUser.canmessage && (otherUser.requirescontact && !otherUser.iscontact)) {
-                    return {type: 'unable-to-message'};
                 }
             }
 
@@ -1199,7 +1197,6 @@ function(
         var checks = [
             [loadingFirstMessages, {type: 'placeholder'}],
             [inEditMode, {type: 'edit-mode'}],
-            [unableToMessage, {type: 'unable-to-message'}],
             [requireUnblock, {type: 'unblock'}],
             [showRequireAddContact, {type: 'add-contact', user: otherUser}]
         ];
@@ -1365,7 +1362,8 @@ function(
                 isFavourite: buildIsFavourite,
                 isMuted: buildIsMuted,
                 showEmojiPicker: buildShowEmojiPicker,
-                showEmojiAutoComplete: buildShowEmojiAutoComplete
+                showEmojiAutoComplete: buildShowEmojiAutoComplete,
+                unableToMessage: buildUnableToMessagePatch
             }
         };
         // These build functions are only applicable to private conversations.

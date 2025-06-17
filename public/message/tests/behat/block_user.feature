@@ -33,7 +33,7 @@ Feature: To be able to block users that we are able to or to see a message if we
     When I log in as "student2"
     And I open messaging
     And I select "Student 1" user in messaging
-    Then I should see "You are unable to message this user"
+    Then I should see "Cannot send message"
 
   Scenario: Unable to block a user
     Given I log in as "student1"
@@ -58,7 +58,7 @@ Feature: To be able to block users that we are able to or to see a message if we
     And I log out
     And I log in as "student2"
     And I select "Student 1" user in messaging
-    And I should not see "You are unable to message this user"
+    And I should not see "Cannot send message"
     And I log out
     And I log in as "student1"
     And I select "Student 2" user in messaging

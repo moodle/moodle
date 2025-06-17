@@ -12,10 +12,12 @@ Feature: Message send messages
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "course enrolments" exist:
-      | user     | course | role |
-      | student1 | C1     | student |
-      | student2 | C1     | student |
+      | user     | course | role           |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | teacher1 | C1     | editingteacher |
     And the following "groups" exist:
       | name    | course | idnumber | enablemessaging |
       | Group 1 | C1     | G1       | 1               |
@@ -96,3 +98,19 @@ Feature: Message send messages
     Then I should see "You have an unsent message. It will be lost if you leave this page."
     And I press "Send message"
     And I should see "What you doing?" in the "Student 2" "core_message > Message conversation"
+
+  Scenario: Student cannot reply to a message from a teacher not in their course
+    Given I log in as "teacher1"
+    And I open messaging
+    And I send "Hi!" message to "Student 1" user
+    And I am on "C1" course homepage
+    And I navigate to course participants
+    And I click on "Unenrol" "link" in the "student1" "table_row"
+    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    And I log in as "student1"
+    When I open messaging
+    And I select "Teacher 1" conversation in messaging
+    Then I should see "Cannot send message"
+    And the "disabled" attribute of "textarea[data-region='send-message-txt']" "css_element" should contain "true"
+    And the "disabled" attribute of "button[data-action='send-message']" "css_element" should contain "true"
+    And the "disabled" attribute of "button[data-action='toggle-emoji-picker']" "css_element" should contain "true"

@@ -39,6 +39,7 @@ $string['blockuserconfirm'] = 'Are you sure you want to block {$a}?';
 $string['blockuserconfirmbutton'] = 'Block';
 $string['blocknoncontacts'] = 'Prevent non-contacts from messaging me';
 $string['cancelselection'] = 'Cancel message selection';
+$string['cannotsendmessages'] = 'Cannot send messages';
 $string['cantblockuser'] = 'You can\'t block {$a} because they have a role with permission to message all users.';
 $string['contactableprivacy'] = 'Accept messages from:';
 $string['contactableprivacy_onlycontacts'] = 'My contacts only';
@@ -128,6 +129,7 @@ $string['nocontactsgetstarted'] = 'No contacts';
 $string['nogroupconversations'] = 'No group conversations';
 $string['noindividualconversations'] = 'No private conversations';
 $string['nomessagesfound'] = 'No messages were found';
+$string['nopermissiontosend'] = 'You do not have permission to send messages in this conversation';
 $string['noreply'] = 'Do not reply to this message';
 $string['noncontacts'] = 'Non-contacts';
 $string['nonotifications'] = 'You have no notifications';
@@ -253,7 +255,6 @@ $string['successproviderupdate'] = '\'{$a}\' updated.';
 $string['togglemessagemenu'] = 'Toggle messaging drawer';
 $string['totalconversations'] = '{$a} total conversations';
 $string['touserdoesntexist'] = 'You cannot send a message to a user ID ({$a}) that doesn\'t exist.';
-$string['unabletomessage'] = 'You are unable to message this user';
 $string['unblock'] = 'Unblock';
 $string['unblockcontact'] = 'Unblock contact';
 $string['unblockuser'] = 'Unblock user';
@@ -283,3 +284,6 @@ $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a
 
 // Deprecated since Moodle 5.0.
 $string['togglenotificationmenu'] = 'Toggle notifications menu';
+
+// Deprecated since Moodle 5.1.
+$string['unabletomessage'] = 'You are unable to message this user';

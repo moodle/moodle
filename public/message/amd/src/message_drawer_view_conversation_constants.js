@@ -62,7 +62,6 @@ define([], function() {
         CONTENT_MESSAGES_FOOTER_EDIT_MODE_CONTAINER: '[data-region="content-messages-footer-edit-mode-container"]',
         CONTENT_MESSAGES_FOOTER_REQUIRE_CONTACT_CONTAINER: '[data-region="content-messages-footer-require-contact-container"]',
         CONTENT_MESSAGES_FOOTER_REQUIRE_UNBLOCK_CONTAINER: '[data-region="content-messages-footer-require-unblock-container"]',
-        CONTENT_MESSAGES_FOOTER_UNABLE_TO_MESSAGE_CONTAINER: '[data-region="content-messages-footer-unable-to-message"]',
         DAY_MESSAGES_CONTAINER: '[data-region="day-messages-container"]',
         DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE: '[data-region="delete-messages-for-all-users-toggle"]',
         DELETE_MESSAGES_FOR_ALL_USERS_TOGGLE_CONTAINER: '[data-region="delete-messages-for-all-users-toggle-container"]',
@@ -97,7 +96,9 @@ define([], function() {
         TEXT_CONTAINER: '[data-region="text-container"]',
         TIME_CREATED: '[data-region="time-created"]',
         TITLE: '[data-region="title"]',
-        TOGGLE_EMOJI_PICKER_BUTTON: '[data-action="toggle-emoji-picker"]'
+        TOGGLE_EMOJI_PICKER_BUTTON: '[data-action="toggle-emoji-picker"]',
+        DAY_MESSAGE_UNABLE_TO_SEND_CONTAINER: '[data-region="day-message-unable-to-send-container"]',
+        UNABLE_TO_MESSAGE_CONTAINER: '[data-region="unable-to-send-container"]',
     };
 
     var TEMPLATES = {
