@@ -50,6 +50,8 @@ class chart_base implements JsonSerializable, renderable {
     protected $yaxes = [];
     /** @var array Options for the chart legend. */
     protected $legendoptions = [];
+    /** @var array Options for the chart responsiveness. */
+    protected $responsiveoptions = [];
 
     /**
      * Constructor.
@@ -89,6 +91,7 @@ class chart_base implements JsonSerializable, renderable {
                 'y' => $this->yaxes,
             ],
             'legend_options' => !empty($this->legendoptions) ? $this->legendoptions : null,
+            'responsive_options' => !empty($this->responsiveoptions) ? $this->responsiveoptions : null,
             'config_colorset' => !empty($CFG->chart_colorset) ? $CFG->chart_colorset : null
         ];
     }
@@ -212,6 +215,15 @@ class chart_base implements JsonSerializable, renderable {
     }
 
     /**
+     * Get an array of responsive options for the chart.
+     *
+     * @return array
+     */
+    public function get_responsive_options() {
+        return $this->responsiveoptions;
+    }
+
+    /**
      * Set the defaults for this chart type.
      *
      * Child classes can extend this to set default values on instantiation.
@@ -280,6 +292,16 @@ class chart_base implements JsonSerializable, renderable {
     public function set_yaxis(chart_axis $axis, $index = 0) {
         $this->validate_axis('y', $axis, $index);
         return $this->yaxes[$index] = $axis;
+    }
+
+    /**
+     * Set responsive options for the chart.
+     * See https://www.chartjs.org/docs/latest/configuration/responsive.html for options.
+     *
+     * @param array $responsiveoptions Whether or not to display the chart extra options.
+     */
+    public function set_responsive_options(array $responsiveoptions) {
+        $this->responsiveoptions = $responsiveoptions;
     }
 
     /**
