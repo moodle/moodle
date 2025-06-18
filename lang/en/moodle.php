@@ -1297,6 +1297,7 @@ $string['maximumgradex'] = 'Maximum grade: {$a}';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Maximum upload size';
 $string['maximumupload_help'] = 'The maximum file size allowed for student uploads to the course. Additionally, you can further restrict the maximum upload size for each activity.';
+$string['maxlengthreached'] = 'Maximum character limit of {$a} has been reached';
 $string['maxnumberweeks'] = 'Maximum number of sections (deprecated)';
 $string['maxnumberweeks_desc'] = 'The maximum value in the number of sections drop-down menu (applies to certain course formats only). This setting is deprecated and will be removed in a future version of Moodle. Please use the course format settings instead.';
 $string['maxnumcoursesincombo'] = 'Browse <a href="{$a->link}">{$a->numberofcourses} courses</a>.';
