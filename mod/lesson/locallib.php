@@ -1963,7 +1963,6 @@ class lesson extends lesson_base {
         return $DB->get_records('lesson_attempts', $params, 'timeseen ASC');
     }
 
-
     /**
      * Get a list of content pages (formerly known as branch tables) viewed in the lesson for the given user during an attempt.
      *
@@ -3032,6 +3031,65 @@ class lesson extends lesson_base {
         global $DB;
 
         return $DB->count_records('lesson_grades', array("lessonid" => $this->properties->id, "userid" => $userid));
+    }
+
+    /**
+     * Count all submissions by all users in the lesson.
+     *
+     * @return int the number of submissions (grades table) by all users in the lesson
+     */
+    public function count_all_submissions(): int {
+        $db = \core\di::get(\moodle_database::class);
+
+        [$esql, $eparams] = get_enrolled_sql($this->get_context(), 'mod/lesson:view');
+        $sql = "SELECT COUNT(lg.id)
+                  FROM {lesson_grades} lg
+                  JOIN ($esql) e ON e.id = lg.userid
+                 WHERE lg.lessonid = :lessonid";
+
+        return $db->count_records_sql($sql, ["lessonid" => $this->properties->id] + $eparams);
+    }
+
+    /**
+     * Count the number of participants that have attempted the lesson.
+     *
+     * @return int the number of users that have attempted the lesson
+     */
+    public function count_submitted_participants(): int {
+        $db = \core\di::get(\moodle_database::class);
+        [$esql, $eparams] = get_enrolled_sql($this->get_context(), 'mod/lesson:view');
+        $sql = "SELECT COUNT(DISTINCT lg.userid)
+                  FROM {lesson_grades} lg
+                  JOIN ($esql) e ON e.id = lg.userid
+                 WHERE lg.lessonid = :lessonid";
+
+        return $db->count_records_sql($sql, ["lessonid" => $this->properties->id] + $eparams);
+    }
+
+    /**
+     * Count the number of participants that have access to the lesson.
+     *
+     * @return int the number of users that have access to view the lesson
+     */
+    public function count_all_participants(): int {
+        $db = \core\di::get(\moodle_database::class);
+
+        $join = get_enrolled_with_capabilities_join($this->get_context(), '', 'mod/lesson:view');
+        $managersjoin = get_with_capability_join($this->get_context(), 'mod/lesson:manage', 'u.id');
+        if (!$managersjoin->cannotmatchanyrows) {
+            $join = new \core\dml\sql_join(
+                $join->joins . "\n LEFT " . str_replace('ra', 'manager', $managersjoin->joins),
+                $join->wheres . " AND manager.userid IS NULL",
+                $join->params
+            );
+        }
+
+        $sql = "SELECT COUNT(DISTINCT u.id)
+                  FROM {user} u
+                 $join->joins
+                 WHERE $join->wheres";
+
+        return $db->count_records_sql($sql, $join->params);
     }
 
     /**

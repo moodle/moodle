@@ -1,0 +1,7 @@
+issueNumber: MDL-83896
+notes:
+  mod_lesson:
+    - message: >-
+        Added new 'count_all_submissions', 'count_submitted_participants' and
+        'count_all_participants' functions needed by the overview page.
+      type: improved
