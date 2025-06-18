@@ -109,7 +109,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'forum' => [
                 'resourcetype' => 'forum',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_forum\courseformat\overview::class,
             ],
             'glossary' => [
                 'resourcetype' => 'glossary',

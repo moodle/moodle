@@ -167,6 +167,7 @@ $string['digestmailprefs'] = 'your user profile';
 $string['digestmailsubject'] = '{$a}: forum digest';
 $string['digestmailtime'] = 'Hour to send digest emails';
 $string['digestsentusers'] = 'Email digests successfully sent to {$a} users.';
+$string['digesttype'] = 'Digest type';
 $string['disallowsubscribe'] = 'Subscriptions not allowed';
 $string['disallowsubscription'] = 'Subscription';
 $string['disallowsubscription_help'] = 'This forum has been configured so that you cannot subscribe to discussions.';
