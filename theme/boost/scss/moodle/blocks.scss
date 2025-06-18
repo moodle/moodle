@@ -285,6 +285,14 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
         padding-left: 5.55em;
     }
 }
+.block_timeline {
+    .dropdown-menu {
+        // Make space for active item indicator.
+        .dropdown-item {
+            padding-left: map-get($spacers, 4);
+        }
+    }
+}
 
 //
 // Blocks block_settings and block_navigation
