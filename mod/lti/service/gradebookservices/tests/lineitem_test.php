@@ -207,21 +207,23 @@ final class lineitem_test extends \advanced_testcase {
         $token = lti_new_access_token($typeid, ['https://purl.imsglobal.org/spec/lti-ags/scope/score']);
         $_SERVER['HTTP_Authorization'] = 'Bearer '.$token->token;
         $_GET['type_id'] = (string)$typeid;
-        $score->scoreGiven = "8.0";
-        $score->scoreMaximum = "10.0";
-        $score->activityProgress = "Completed";
-        $score->timestamp = "2024-08-07T18:54:36.736+00:00";
-        $score->gradingProgress = "FullyGraded";
-        $score->userId = $user->id;
+        $requestdata = [
+            'scoreGiven' => "8.0",
+            'scoreMaximum' => "10.0",
+            'activityProgress' => "Completed",
+            'timestamp' => "2024-08-07T18:54:36.736+00:00",
+            'gradingProgress' => "FullyGraded",
+            'userId' => $user->id,
+        ];
         $response = new \mod_lti\local\ltiservice\response();
         $response->set_content_type('application/vnd.ims.lis.v1.score+json');
-        $response->set_request_data(json_encode($score));
+        $response->set_request_data(json_encode($requestdata));
         $score->execute($response);
 
         // The grade in Moodle should reflect the score->timestamp, not the time of the score post.
         $grades = grade_get_grades($course->id, 'mod', 'lti', $modinstance->id, $user->id);
         $studentgrade = array_shift($grades->items[0]->grades);
-        $this->assertEquals(strtotime($score->timestamp), $studentgrade->dategraded);
+        $this->assertEquals(strtotime($requestdata['timestamp']), $studentgrade->dategraded);
 
         // Read the results via the service. This should also return the correct dategraded time (timemodified in LTI terms).
         $_SERVER['REQUEST_METHOD'] = \mod_lti\local\ltiservice\resource_base::HTTP_GET;
@@ -235,7 +237,7 @@ final class lineitem_test extends \advanced_testcase {
         $result->execute($response);
         $body = json_decode($response->get_body());
         $result = array_shift($body);
-        $this->assertEquals(strtotime($score->timestamp), strtotime($result->timestamp));
+        $this->assertEquals(strtotime($requestdata['timestamp']), strtotime($result->timestamp));
 
         // Now, try to post a newer score using a timestamp that is greater than the one originally sent, but less than the time at
         // which the score was last posted. This should be valid since the timestamp is greater than the original posted score.
@@ -244,11 +246,11 @@ final class lineitem_test extends \advanced_testcase {
         $token = lti_new_access_token($typeid, ['https://purl.imsglobal.org/spec/lti-ags/scope/score']);
         $_SERVER['HTTP_Authorization'] = 'Bearer '.$token->token;
         $_GET['type_id'] = (string)$typeid;
-        $score->scoreGiven = "14";
-        $score->timestamp = "2024-08-08T18:54:36.736+00:00";
+        $requestdata['scoreGiven'] = "14";
+        $requestdata['timestamp'] = "2024-08-08T18:54:36.736+00:00";
         $response = new \mod_lti\local\ltiservice\response();
         $response->set_content_type('application/vnd.ims.lis.v1.score+json');
-        $response->set_request_data(json_encode($score));
+        $response->set_request_data(json_encode($requestdata));
         $score->execute($response);
         $this->assertEquals(200, json_decode($response->get_code()));
 
@@ -258,11 +260,11 @@ final class lineitem_test extends \advanced_testcase {
         $token = lti_new_access_token($typeid, ['https://purl.imsglobal.org/spec/lti-ags/scope/score']);
         $_SERVER['HTTP_Authorization'] = 'Bearer '.$token->token;
         $_GET['type_id'] = (string)$typeid;
-        $score->scoreGiven = "15";
-        $score->timestamp = date('c', time());
+        $requestdata['scoreGiven'] = "15";
+        $requestdata['timestamp'] = date('c', time());
         $response = new \mod_lti\local\ltiservice\response();
         $response->set_content_type('application/vnd.ims.lis.v1.score+json');
-        $response->set_request_data(json_encode($score));
+        $response->set_request_data(json_encode($requestdata));
         $score->execute($response);
         $this->assertEquals(200, json_decode($response->get_code()));
     }
