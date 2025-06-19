@@ -56,6 +56,6 @@ Feature: disabledIf functionality in forms
     Examples:
       | selection          | enabledEq_ | enabledIn_ | enabledNeq_ | enabledEq1 | enabledIn1 | enabledNeq1 | enabledEq12 | enabledIn12 | enabledNeq12 |
       |                    | disabled   | disabled   | enabled     | enabled    | enabled    | disabled    | enabled     | enabled     | disabled     |
-      | Option 1           | enabled    | enabled    | disabled    | disabled   | disabled   | enabled     | enabled     | enabled     | disabled     |
-      | Option 2           | enabled    | enabled    | disabled    | enabled    | enabled    | disabled    | enabled     | enabled     | disabled     |
+      | Option 1           | enabled    | enabled    | disabled    | disabled   | disabled   | enabled     | enabled     | disabled    | disabled     |
+      | Option 2           | enabled    | enabled    | disabled    | enabled    | enabled    | disabled    | enabled     | disabled    | disabled     |
       | Option 1, Option 2 | enabled    | enabled    | disabled    | enabled    | enabled    | disabled    | disabled    | disabled    | enabled      |
