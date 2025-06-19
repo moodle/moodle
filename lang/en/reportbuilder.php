@@ -234,6 +234,7 @@ $string['privacy:metadata:user_filter:timemodified'] = 'The time when the user f
 $string['recurrence'] = 'Recurrence';
 $string['recurrenceannually'] = 'Annually';
 $string['recurrencedaily'] = 'Daily';
+$string['recurrencehourly'] = 'Hourly';
 $string['recurrencemonthly'] = 'Monthly';
 $string['recurrenceweekdays'] = 'Daily (weekdays only)';
 $string['recurrenceweekly'] = 'Weekly';
