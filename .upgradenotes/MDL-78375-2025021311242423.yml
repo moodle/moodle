@@ -1,0 +1,9 @@
+issueNumber: MDL-78375
+notes:
+  core:
+    - message: >
+        Final deprecation of device related theme methods. The following two methods have been
+        removed from the core_useragent class:
+          - core_useragent::get_device_type_theme
+          - core_useragent::get_device_type_cfg_var_name
+      type: removed

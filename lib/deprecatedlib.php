@@ -314,6 +314,7 @@ function badges_get_oauth2_service_options() {
  * @deprecated since 4.3.
  */
 #[\core\attribute\deprecated(
+    null,
     since: '4.3',
     reason: 'All functions associated with device specific themes are being removed',
     mdl: 'MDL-77793',
@@ -327,6 +328,7 @@ function theme_is_device_locked() {
  * @deprecated since 4.3.
  */
 #[\core\attribute\deprecated(
+    null,
     since: '4.3',
     reason: 'All functions associated with device specific themes are being removed',
     mdl: 'MDL-77793',
