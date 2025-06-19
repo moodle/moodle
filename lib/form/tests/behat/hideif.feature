@@ -68,6 +68,6 @@ Feature: hideIf functionality in forms
     Examples:
       | selection          | shouldSeeEq_ | shouldSeeIn_ | shouldSeeNeq_ | shouldSeeEq1 | shouldSeeIn1 | shouldSeeNeq1 | shouldSeeEq12 | shouldSeeIn12 | shouldSeeNeq12 |
       |                    | should not   | should not   | should        | should       | should       | should not    | should        | should        | should not     |
-      | Option 1           | should       | should       | should not    | should not   | should not   | should        | should        | should        | should not     |
-      | Option 2           | should       | should       | should not    | should       | should       | should not    | should        | should        | should not     |
+      | Option 1           | should       | should       | should not    | should not   | should not   | should        | should        | should not    | should not     |
+      | Option 2           | should       | should       | should not    | should       | should       | should not    | should        | should not    | should not     |
       | Option 1, Option 2 | should       | should       | should not    | should       | should       | should not    | should not    | should not    | should         |
