@@ -76,40 +76,33 @@ class user extends base {
     }
 
     /**
-     * Initialise the entity, add all user fields and all 'visible' user profile fields
+     * Initialise the entity
      *
      * @return base
      */
     public function initialise(): base {
-        $userprofilefields = $this->get_user_profile_fields();
+        $tablealias = $this->get_table_alias('user');
+
+        $userprofilefields = (new user_profile_fields(
+            "{$tablealias}.id",
+            $this->get_entity_name(),
+        ))
+            ->add_joins($this->get_joins());
 
         $columns = array_merge($this->get_all_columns(), $userprofilefields->get_columns());
         foreach ($columns as $column) {
             $this->add_column($column);
         }
 
+        // All the filters defined by the entity can also be used as conditions.
         $filters = array_merge($this->get_all_filters(), $userprofilefields->get_filters());
         foreach ($filters as $filter) {
-            $this->add_filter($filter);
-        }
-
-        $conditions = array_merge($this->get_all_filters(), $userprofilefields->get_filters());
-        foreach ($conditions as $condition) {
-            $this->add_condition($condition);
+            $this
+                ->add_condition($filter)
+                ->add_filter($filter);
         }
 
         return $this;
-    }
-
-    /**
-     * Get user profile fields helper instance
-     *
-     * @return user_profile_fields
-     */
-    protected function get_user_profile_fields(): user_profile_fields {
-        $userprofilefields = new user_profile_fields($this->get_table_alias('user') . '.id', $this->get_entity_name());
-        $userprofilefields->add_joins($this->get_joins());
-        return $userprofilefields;
     }
 
     /**
