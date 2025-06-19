@@ -207,26 +207,11 @@ class core_useragent {
     }
 
     /**
-     * Gets a list of known device types.
-     *
      * @deprecated Moodle 4.3 MDL-78468 - No longer used. Please use core_useragent::devicetypes instead.
-     * @todo Final deprecation on Moodle 4.7 MDL-79052
-     * @param bool $includecustomtypes If set to true we'll include types that have been added by the admin.
-     * @return array
      */
+    #[\core\attribute\deprecated('core_useragent::devicetypes', since: '4.3', mdl: 'MDL-78468', final: true)]
     public static function get_device_type_list($includecustomtypes = true) {
-        debugging(
-            __FUNCTION__ . '() is deprecated.' .
-                'All functions associated with devicedetectregex theme setting are being removed.
-                Please use core_useragent::devicetypes instead',
-            DEBUG_DEVELOPER
-        );
-        $types = self::$devicetypes;
-        if ($includecustomtypes) {
-            $instance = self::instance();
-            $types = array_merge($types, array_keys($instance->devicetypecustoms));
-        }
-        return $types;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
