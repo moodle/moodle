@@ -179,7 +179,7 @@ class HTML_QuickForm_RuleRegistry
             $js = $jsValue . "\n" . $jsPrefix .
                   "  if (" . str_replace('{jsVar}', 'value', $jsCheck) . " && !errFlag['{$jsField}']) {\n" .
                   "    errFlag['{$jsField}'] = true;\n" .
-                  "    _qfMsg = _qfMsg + '\\n - {$ruleData['message']}';\n" .
+                  "    _qfMsg = _qfMsg + '{$ruleData['message']}';\n" .
                   $jsReset .
                   "  }\n";
         } else {
@@ -192,7 +192,7 @@ class HTML_QuickForm_RuleRegistry
                   "  }\n" .
                   "  if (res < {$ruleData['howmany']} && !errFlag['{$jsField}']) {\n" .
                   "    errFlag['{$jsField}'] = true;\n" .
-                  "    _qfMsg = _qfMsg + '\\n - {$ruleData['message']}';\n" .
+                  "    _qfMsg = _qfMsg + '{$ruleData['message']}';\n" .
                   $jsReset .
                   "  }\n";
         }
