@@ -62,7 +62,7 @@ class mod_feedback_templates_table extends core_table\flexible_table {
         $this->cmid = $baseurl->param('id');
         $tablecolumns = [
             'template' => get_string('template', 'feedback'),
-            'actions' => '',
+            'actions' => html_writer::span(get_string('actions'), 'visually-hidden'),
         ];
 
         $this->set_attribute('class', 'templateslist');
