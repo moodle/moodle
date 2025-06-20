@@ -34,7 +34,7 @@ Feature: Add URL to Additional activities block
     And "Add an activity or resource" "button" should exist in the "Additional activities" "block"
 
   @javascript
-  Scenario: Add a URL in Additional activities block can appear in the entire site
+  Scenario: Add a URL in Additional activities block can appear in any site page
     When I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
@@ -57,7 +57,7 @@ Feature: Add URL to Additional activities block
     Then I click on "reference link" "link" in the "Additional activities" "block"
     And "reference link" "link" should exist in the "Additional activities" "block"
     And I am on the "C1" "Course" page
-    And "reference link" "link" should exist in the "Additional activities" "block"
+    And "reference link" "link" should not exist in the "Additional activities" "block"
     And I navigate to "Badges > Add a new badge" in site administration
     And "reference link" "link" should exist in the "Additional activities" "block"
 
@@ -99,18 +99,15 @@ Feature: Add URL to Additional activities block
     And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
-    When the following "activity" exists:
-      | activity        | url                   |
-      | course          | C2                    |
-      | name            | reference link        |
-      | intro           | mooooooooodle         |
-      | externalurl     | http://www.moodle.com |
-      | section         | 0                     |
-      | showdescription | 1                     |
-    And I am on the "reference link" "url activity editing" page
-    And I expand all fieldsets
+    When I am on the "C2" "Course" page
+    And I click on "Add content" "button" in the "Additional activities" "block"
+    And I click on "Activity or resource" "button" in the ".dropdown-menu.show" "css_element"
+    And I click on "Add a new URL" "link" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
-      | id_display | In pop-up |
+      | name            | reference link        |
+      | externalurl     | http://www.moodle.com |
     And I press "Save and return to course"
-    Then "reference link" "link" should not exist in the "Additional activities" "block"
-    And I should see "mooooooooodle" in the "region-main" "region"
+    Then "reference link" "link" should exist in the "Additional activities" "block"
+    And I should see "reference link" in the "region-main" "region"
+    And I am on site homepage
+    And "reference link" "link" should not exist in the "Additional activities" "block"
