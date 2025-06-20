@@ -102,6 +102,33 @@ class wdsprefs {
     }
 
     /**
+     * Builds a standardized idnumber for Moodle course shell.
+     *
+     * @package enrol_workdaystudent
+     * @param @object $mshell Shell information object
+     * @return @string Formatted idnumber for the course
+     */
+    public static function build_mshell_idnumber($s, $mshell, $pname) {
+
+        if ($s->course_grouping == 1) {
+            // Build out the idnumber.
+            $idnumber = $pname .
+                $mshell->course_subject_abbreviation .
+                $mshell->course_number . '-' .
+                $mshell->universal_id;
+        } else {
+            // Build out the idnumber.
+            $idnumber = $pname .
+                $mshell->course_subject_abbreviation .
+                $mshell->course_number . '-' .
+                $mshell->sections . '-' .
+                $mshell->universal_id;
+        }
+
+        return $idnumber;
+    }
+
+    /**
      * Undoes a crossspliting operation, reverting sections back to original course shells.
      *
      * @param @int $crosssplitid The crosssplit ID to undo.
@@ -195,10 +222,13 @@ class wdsprefs {
                 $pname = str_replace(' (Online)', 'Online', $pname);
 
                 // Create the idnumber format.
-                $idnumber = $pname .
-                    $course->course_subject_abbreviation .
-                    $course->course_number .
-                    '-' . $teacher->universal_id;
+                $mshell = new \stdClass();
+                $mshell->course_subject_abbreviation = $course->course_subject_abbreviation;
+                $mshell->course_number = $course->course_number;
+                $mshell->sections = $section->section_number;
+                $mshell->universal_id = $teacher->universal_id;
+
+                $idnumber = self::build_mshell_idnumber($s, $mshell, $pname);
 
                 // Check if course with this idnumber already exists.
                 $existingcourse = $DB->get_record('course', ['idnumber' => $idnumber]);
@@ -2031,6 +2061,27 @@ class wdsprefs {
         }
 
         return true;
+    }
+
+    /**
+     * Determines if the system is crosssplitable or not.
+     *
+     * @return @bool
+     */
+    public static function get_crosssplitable() : bool {
+        global $CFG;
+
+        // Require workdaystudent for settings.
+        require_once($CFG->dirroot . '/enrol/workdaystudent/classes/workdaystudent.php');
+
+        // Get settings.
+        $s = workdaystudent::get_settings();
+
+        if (isset($s->course_grouping) && $s->course_grouping == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

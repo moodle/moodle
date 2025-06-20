@@ -40,6 +40,9 @@ class block_wdsprefs extends block_base {
         // Is the user a student?
         $student = wdsprefs::get_student($USER);
 
+        // Is this a crosssplittable system?
+        $crosssplitable = wdsprefs::get_crosssplitable();
+
         if (is_siteadmin($USER->id)) {
             $student = true;
             $instructor = true;
@@ -79,40 +82,63 @@ class block_wdsprefs extends block_base {
 
 
         // Build out the list of items for faculty.
-        $facultyitems = [
-            [
-                'text' => get_string('wdsprefs:course', 'block_wdsprefs'),
-                'url' => new moodle_url('/blocks/wdsprefs/courseview.php'),
-                'icontype' => 'fontawesome',
-                'icon' => 'fa-landmark'
-            ],
-            [
-                'text' => get_string('wdsprefs:crosssplit', 'block_wdsprefs'),
-                'url' => new moodle_url('/blocks/wdsprefs/crosssplit.php'),
-                'icontype' => 'fontawesome',
-                'icon' => 'fa-folder-tree'
-            ],
+        if ($crosssplitable) {
+            $facultyitems = [
+                [
+                    'text' => get_string('wdsprefs:course', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/courseview.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-landmark'
+                ],
+                [
+                    'text' => get_string('wdsprefs:crosssplit', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/crosssplit.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-folder-tree'
+                ],
 /*
-            [
-                'text' => get_string('wdsprefs:teamteach', 'block_wdsprefs'),
-                'url' => new moodle_url('/blocks/wdsprefs/teamteachview.php'),
-                'icontype' => 'fontawesome',
-                'icon' => 'fa-user-plus'
-            ],
+                [
+                    'text' => get_string('wdsprefs:teamteach', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/teamteachview.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-user-plus'
+                ],
 */
-            [
-                'text' => get_string('wdsprefs:blueprint', 'block_wdsprefs'),
-                'url' => new moodle_url('/blocks/wdsprefs/blueprintview.php'),
-                'icontype' => 'fontawesome',
-                'icon' => 'fa-recycle'
-            ],
-            [
-                'text' => get_string('wdsprefs:unwant', 'block_wdsprefs'),
-                'url' => new moodle_url('/blocks/wdsprefs/unwantview.php'),
-                'icontype' => 'fontawesome',
-                'icon' => 'fa-ban'
-            ],
-        ];
+                [
+                    'text' => get_string('wdsprefs:blueprint', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/blueprintview.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-recycle'
+                ],
+                [
+                    'text' => get_string('wdsprefs:unwant', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/unwantview.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-ban'
+                ],
+            ];
+        } else {
+            $facultyitems = [
+                [
+                    'text' => get_string('wdsprefs:course', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/courseview.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-landmark'
+                ],
+                [
+                    'text' => get_string('wdsprefs:blueprint', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/blueprintview.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-recycle'
+                ],
+                [
+                    'text' => get_string('wdsprefs:unwant', 'block_wdsprefs'),
+                    'url' => new moodle_url('/blocks/wdsprefs/unwantview.php'),
+                    'icontype' => 'fontawesome',
+                    'icon' => 'fa-ban'
+                ],
+            ];
+        }
 
         // Set this up for later.
         $listitems = '';
