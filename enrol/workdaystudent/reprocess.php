@@ -34,27 +34,32 @@ $pageparams = [
 
 $courseid = $pageparams['courseid'];
 
-$coursecontext = \context_course::instance($courseid); 
-
 // Authentication.
-require_login();
+require_login($courseid);
+
+$coursecontext = \context_course::instance($courseid); 
 
 // Make sure we can access this.
 require_capability('enrol/workdaystudent:reprocess', $coursecontext);
 
+// Get the course.
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
 $title = get_string('reprocess', 'enrol_workdaystudent');
 $pagetitle = $title;
 $url = new moodle_url('/enrol/workdaystudent/reprocess.php?courseid=' . $courseid);
-$context = \context_system::instance();
+$context = \context_course::instance($course->id);
+// $context = \context_system::instance();
 
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->set_pagetype('course-view');
 $PAGE->set_pagelayout('admin');
 
 // Navbar Bread Crumbs
-$PAGE->navbar->add(get_string('back', 'moodle'), new moodle_url('/course/view.php?id=' . $courseid));
+$PAGE->navbar->add($course->fullname, new moodle_url('/course/view.php?id=' . $courseid));
 
 echo $OUTPUT->header();
 

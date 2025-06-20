@@ -152,3 +152,15 @@ $string['wds:massupdate_fsuccess'] = 'Successfully updated all faculty to match 
 $string['wds:massupdate_ffail'] = 'Faculty updates failed!';
 $string['wds:massupdate_dberror'] = 'Database Error!';
 $string['wds:access_error'] = 'You do not have access to do this.';
+
+// Add / Drop tracking strings.
+$string['enrollmenttracker'] = 'Enrollment Tracker';
+$string['enrollmentdata'] = 'Workday Student Enrollment Data';
+$string['studentname'] = 'Student Name';
+$string['adddatetime'] = 'Add Date/Time';
+$string['dropdatetime'] = 'Drop Date/Time';
+$string['enrolmentstatus'] = 'Enrollment Status';
+$string['enrolled'] = 'Enrolled';
+$string['section_number'] = 'Section Number';
+$string['noenrollmentdata'] = 'No enrollment data available for this course.';
+$string['unknownuser'] = 'Unknown User';

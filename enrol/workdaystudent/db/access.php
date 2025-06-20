@@ -50,5 +50,13 @@ $capabilities = array(
             'editingteacher' => CAP_PREVENT,
         )
     ),
+    'enrol/workdaystudent:viewenrollmenttracker' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW
+        )
+    ),
 );
-

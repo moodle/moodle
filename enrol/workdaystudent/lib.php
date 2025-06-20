@@ -334,15 +334,24 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
  * @return @object $navigation node
  */
 function enrol_workdaystudent_extend_navigation_course($navigation, $course, $context) {
-    // Make sure we can reprocess enrollments.
+    // Try to find the 'Users' node, then 'Enrolment methods' under it.
+    $usersnode = $navigation->get('users');
+
+    // Logic for 'Reprocess Enrollment' link.
     if (has_capability('enrol/workdaystudent:reprocess', $context)) {
 
         // Set the url for the reprocesser.
-        $url = new moodle_url('/enrol/workdaystudent/reprocess.php', array('courseid' => $course->id));
+        $url = new moodle_url('/enrol/workdaystudent/reprocess.php', ['courseid' => $course->id]);
 
         // Build the navigation node.
-        $workdaystudentenrolnode = navigation_node::create(get_string('reprocess', 'enrol_workdaystudent'), $url,
-                navigation_node::TYPE_SETTING, null, 'enrol_workdaystudent', new pix_icon('t/enrolusers', ''));
+        $workdaystudentenrolnode = navigation_node::create(
+            get_string('reprocess', 'enrol_workdaystudent'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            'enrol_workdaystudent',
+            new pix_icon('t/enrolusers', '')
+        );
 
         // Set the users' navigation node.
         $usersnode = $navigation->get('users');
@@ -352,6 +361,31 @@ function enrol_workdaystudent_extend_navigation_course($navigation, $course, $co
 
             // Actually add the node.
             $usersnode->add_node($workdaystudentenrolnode);
+        }
+    }
+
+    // Logic for 'Enrollment Tracker' link.
+    if (has_capability('enrol/workdaystudent:reprocess', $context)) {
+
+        // Set the url.
+        $url = new moodle_url('/enrol/workdaystudent/enrollment_tracker.php',  [
+            'courseid' => $course->id,
+            'tsort' => 'registered_date',
+            'tdir' => 3
+        ]);
+
+        $trackernode = navigation_node::create(
+            get_string('enrollmenttracker', 'enrol_workdaystudent'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            'enrollmenttracker', 
+            new pix_icon('i/report', get_string('enrollmenttracker', 'enrol_workdaystudent'))
+        );
+
+        // If we have an reprocess node, add it to the users' node.
+        if (isset($workdaystudentenrolnode) && !empty($usersnode)) {
+            $usersnode->add_node($trackernode);
         }
     }
 }
