@@ -217,6 +217,32 @@ class profile_field_base {
             $data->id = $dataid;
             $DB->update_record('user_info_data', $data);
         } else {
+
+            
+            //Patch by Aditya Dubay
+            if (!empty($this->field->unique)) {
+        $existing = $DB->get_record_sql("
+            SELECT uid.id
+            FROM {user_info_data} uid
+            WHERE uid.fieldid = :fieldid AND uid.data = :data AND uid.userid <> :userid",
+            [
+                'fieldid' => $data->fieldid,
+                'data' => $data->data,
+                'userid' => $data->userid
+            ]
+        );
+
+        if ($existing) {
+            debugging("⚠️ Skipping user '{$usernew->username}' — duplicate value '{$data->data}' in unique field '{$this->field->shortname}'.", DEBUG_DEVELOPER);
+            return;
+        }
+    }
+
+
+            //End of Patch by Aditya Dubay
+
+
+
             $DB->insert_record('user_info_data', $data);
         }
     }
