@@ -85,7 +85,7 @@
     <TABLE NAME="enrol_wds_sport" COMMENT="enrol_wds_sport table retrofitted from MySQL">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="19" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="code" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="code" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
@@ -157,7 +157,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="wds_sec_sli_uq" TYPE="unique" FIELDS="section_listing_id"/>
-        <KEY NAME="wds_sec_sdi_uq" TYPE="unique" FIELDS="course_section_definition_id"/>
+        <KEY NAME="wds_sec_sdi_uq" TYPE="unique" FIELDS="course_section_definition_id, course_listing_id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="wds_sec_cdi_idx" UNIQUE="false" FIELDS="course_definition_id"/>
