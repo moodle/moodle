@@ -2,6 +2,12 @@
 
 ## 5.1dev
 
+### Changed
+
+- The 'Show description' checkbox is now present in all course formats. Activity descriptions can be displayed via the Additional activities block (formerly the Main menu block), regardless of whether the course format's has_view_page() function returns false.
+
+  For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
+
 ### Deprecated
 
 - The duplicatesection param in course/view.php is deprecated. Use course/format/update.php with action section_duplicate instead.

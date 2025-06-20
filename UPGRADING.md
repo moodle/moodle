@@ -23,6 +23,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - There is a new `core/page_title` Javascript module for manipulating the current page title
 
   For more information see [MDL-84804](https://tracker.moodle.org/browse/MDL-84804)
+- Added support for configurable `aspectRatio` in charts rendered using Chart.js. This enables developers to control chart sizing more precisely via the `chart_base` API and the frontend renderer.
+
+  For more information see [MDL-85158](https://tracker.moodle.org/browse/MDL-85158)
 
 #### Changed
 
@@ -54,6 +57,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
 
+#### Removed
+
+- Final deprecation of device related theme methods. The following two methods have been removed from the core_useragent class:
+    - core_useragent::get_device_type_theme
+    - core_useragent::get_device_type_cfg_var_name
+
+  For more information see [MDL-78375](https://tracker.moodle.org/browse/MDL-78375)
+- Final deprecation of removing the legacy theme settings. The following method has been removed:
+    - core_useragent::get_device_type_list()
+  The following classes have been removed:
+    - core_adminpresets\local\setting\adminpresets_admin_setting_devicedetectregex
+    - admin_setting_devicedetectregex
+
+  For more information see [MDL-79052](https://tracker.moodle.org/browse/MDL-79052)
+
 ### core_auth
 
 #### Added
@@ -64,13 +82,33 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_badges
 
+#### Added
+
+- The class core_badges_observer in badges/classes/observer.php has been moved to  core_badges\event\observer in badges/classes/event/observer.php. A compatibility  layer has been added to maintain backward compatibility, but direct use of the old  class name is now deprecated. If you've extended or directly used the old class,  you should update your code to use the new namespaced class.
+
+  For more information see [MDL-83904](https://tracker.moodle.org/browse/MDL-83904)
+
 #### Removed
 
 - Final removal of core_badges_renderer::render_badge_collection() and core_badges_renderer::render_badge_recipients()
 
   For more information see [MDL-80455](https://tracker.moodle.org/browse/MDL-80455)
 
+### core_block
+
+#### Changed
+
+- Subcontext visibility is now turned on by default when adding blocks. This change makes it much easier to manage blocks, for example, in courses that lack a view page.
+
+  For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
+
 ### core_course
+
+#### Changed
+
+- The 'Show description' checkbox is now present in all course formats. Activity descriptions can be displayed via the Additional activities block (formerly the Main menu block), regardless of whether the course format's has_view_page() function returns false.
+
+  For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
 
 #### Deprecated
 
@@ -79,6 +117,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
 
 ### core_courseformat
+
+#### Added
+
+- A new interface, `main_activity_interface`, is now available. Course format plugins should implement it if they intend to display only a single activity in the course page.
+
+  For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
 
 #### Changed
 

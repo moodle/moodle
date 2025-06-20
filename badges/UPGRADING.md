@@ -2,6 +2,12 @@
 
 ## 5.1dev
 
+### Added
+
+- The class core_badges_observer in badges/classes/observer.php has been moved to  core_badges\event\observer in badges/classes/event/observer.php. A compatibility  layer has been added to maintain backward compatibility, but direct use of the old  class name is now deprecated. If you've extended or directly used the old class,  you should update your code to use the new namespaced class.
+
+  For more information see [MDL-83904](https://tracker.moodle.org/browse/MDL-83904)
+
 ### Removed
 
 - Final removal of core_badges_renderer::render_badge_collection() and core_badges_renderer::render_badge_recipients()

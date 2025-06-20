@@ -2,6 +2,12 @@
 
 ## 5.1dev
 
+### Added
+
+- A new interface, `main_activity_interface`, is now available. Course format plugins should implement it if they intend to display only a single activity in the course page.
+
+  For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
+
 ### Changed
 
 - The param $maxsections of get_num_sections_data in addsection output is not used anymore. If your format overrides this method, you should add a default value 0 to be consistent with the new implementation.

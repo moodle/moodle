@@ -15,6 +15,9 @@
 - There is a new `core/page_title` Javascript module for manipulating the current page title
 
   For more information see [MDL-84804](https://tracker.moodle.org/browse/MDL-84804)
+- Added support for configurable `aspectRatio` in charts rendered using Chart.js. This enables developers to control chart sizing more precisely via the `chart_base` API and the frontend renderer.
+
+  For more information see [MDL-85158](https://tracker.moodle.org/browse/MDL-85158)
 
 ### Changed
 
@@ -45,6 +48,21 @@
   The usage of these selectors will continue to be supported until they are removed by final deprecation. In the meantime, a deprecation warning in the JavaScript console will be shown if usage of these selectors is detected.
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
+
+### Removed
+
+- Final deprecation of device related theme methods. The following two methods have been removed from the core_useragent class:
+    - core_useragent::get_device_type_theme
+    - core_useragent::get_device_type_cfg_var_name
+
+  For more information see [MDL-78375](https://tracker.moodle.org/browse/MDL-78375)
+- Final deprecation of removing the legacy theme settings. The following method has been removed:
+    - core_useragent::get_device_type_list()
+  The following classes have been removed:
+    - core_adminpresets\local\setting\adminpresets_admin_setting_devicedetectregex
+    - admin_setting_devicedetectregex
+
+  For more information see [MDL-79052](https://tracker.moodle.org/browse/MDL-79052)
 
 ## 5.0
 
