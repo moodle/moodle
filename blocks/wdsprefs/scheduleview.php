@@ -110,7 +110,8 @@ $sql = "SELECT
     ORDER BY per.start_date DESC,
          cou.course_subject_abbreviation ASC,
          cou.course_number ASC,
-         sec.section_number ASC";
+         sec.section_number ASC,
+         secm.start_time ASC";
 
 // Some parms.
 $params = ['userid' => $userid];
@@ -154,7 +155,6 @@ if (empty($records)) {
             get_string('wdsprefs:instructorheading','block_wdsprefs'),
             get_string('wdsprefs:daysheading','block_wdsprefs'),
             get_string('wdsprefs:timesheading','block_wdsprefs'),
-            get_string('wdsprefs:wdstatusheading','block_wdsprefs'),
             get_string('wdsprefs:deliverymodeheading','block_wdsprefs')
         ];
 
@@ -216,7 +216,6 @@ if (empty($records)) {
 
                 // Show the cleaned-up times.
                 $timesdisplay,
-                s($records->workdaystatus),
                 s($records->delivery),
             ];
         }

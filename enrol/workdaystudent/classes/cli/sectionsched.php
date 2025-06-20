@@ -35,8 +35,8 @@ $s = workdaystudent::get_settings();
 $periods = workdaystudent::get_current_periods($s);
 
 $section = new stdClass();
-$section->Section_Listing_ID = "LSUAM_Listing_BADM7160_001-LEC-SMB_LSUAM_SUMMER_1_2025";
-$section->Meeting_Patterns = "Saturday | 8:00 AM - 5:00 PM; Friday | 1:00 PM - 5:00 PM";
+$section->Section_Listing_ID = "LSUAM_Listing_HIST1004_001-LEC-FA_LSUAM_FALL_2025";
+$section->Meeting_Patterns = "Tuesday Thursday | 10:30 AM - 11:50 AM; Tuesday | 4:30 PM - 5:20 PM";
 
                 // If we have section components, add / update the schedule data.
                 if (isset($section->Meeting_Patterns)) {

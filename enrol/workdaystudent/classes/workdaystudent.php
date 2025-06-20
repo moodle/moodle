@@ -1363,7 +1363,11 @@ class workdaystudent {
                     // Times differ, set them accordingly and update the record.
                     $existingrecord->start_time = $scheduleitem->start_time;
                     $existingrecord->end_time = $scheduleitem->end_time;
-                    $DB->update_record($table, $existingrecord);
+                    try {
+                        $DB->update_record($table, $existingrecord);
+                    } catch (dml_exception $e) {
+                        mtrace('Database update failed: ' . $e->getMessage());
+                    }
                 }
 
                 // Remove handled items from the existingmap.
