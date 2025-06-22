@@ -40,4 +40,14 @@ if ($hassiteconfig) {
         // Set individual Tiny Premium plugins.
         $settings->add(new \tiny_premium\local\admin_setting_tiny_premium_plugins());
     }
+
+    // Extra settings for on-premise plugins (hidden, accessed via direct link from the settings page).
+    $page = new admin_externalpage(
+        name: 'tiny_premium_plugin_settings',
+        visiblename: get_string('premiumplugins_settings', 'tiny_premium'),
+        url: new moodle_url('/lib/editor/tiny/plugins/premium/extrasettings.php'),
+        req_capability: 'moodle/site:config',
+        hidden: true,
+    );
+    $ADMIN->add('editortiny', $page);
 }

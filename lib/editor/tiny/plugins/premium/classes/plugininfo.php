@@ -21,7 +21,6 @@ use editor_tiny\editor;
 use editor_tiny\plugin;
 use editor_tiny\plugin_with_configuration;
 use editor_tiny\plugin_with_configuration_for_external;
-use tiny_premium\manager;
 
 /**
  * Tiny Premium plugin.
@@ -58,15 +57,22 @@ class plugininfo extends plugin implements plugin_with_configuration, plugin_wit
         ?editor $editor = null
     ): array {
         $allowedplugins = [];
+        $serviceurls = [];
+        $serverplugins = manager::get_server_side_plugins();
 
         foreach (manager::get_enabled_plugins() as $plugin) {
             if (has_capability("tiny/premium:use{$plugin}", $context)) {
                 $allowedplugins[] = $plugin;
             }
+            $serviceurl = get_config(manager::get_formatted_plugin_name($plugin), 'service_url');
+            if ($serviceurl && isset($serverplugins[$plugin])) {
+                $serviceurls[$serverplugins[$plugin]] = $serviceurl;
+            }
         }
 
         return [
             'premiumplugins' => implode(',', $allowedplugins),
+            'serviceurls' => $serviceurls,
         ];
     }
 
@@ -75,6 +81,7 @@ class plugininfo extends plugin implements plugin_with_configuration, plugin_wit
         $settings = self::get_plugin_configuration_for_context($context, [], []);
         return [
             'premiumplugins' => $settings['premiumplugins'],
+            'serviceurls' => $settings['serviceurls'],
         ];
     }
 }

@@ -55,9 +55,9 @@ final class plugininfo_test extends advanced_testcase {
         $context = \context_system::instance();
         $this->setUser($user);
 
-        $this->assertEquals(
-            ['premiumplugins' => implode(',', \tiny_premium\manager::get_plugins())],
-            plugininfo::get_plugin_configuration_for_external($context)
-        );
+        $configs = plugininfo::get_plugin_configuration_for_external($context);
+        $this->assertArrayHasKey('premiumplugins', $configs);
+        $this->assertArrayHasKey('serviceurls', $configs);
+        $this->assertEquals(implode(',', \tiny_premium\manager::get_plugins()), $configs['premiumplugins']);
     }
 }
