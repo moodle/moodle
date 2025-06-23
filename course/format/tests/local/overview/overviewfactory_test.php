@@ -117,7 +117,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'h5pactivity' => [
                 'resourcetype' => 'h5pactivity',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_h5pactivity\courseformat\overview::class,
             ],
             'lesson' => [
                 'resourcetype' => 'lesson',
