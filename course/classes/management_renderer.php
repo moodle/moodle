@@ -713,7 +713,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $menu->attributes['class'] .= ' courses-per-page';
         $menu->set_menu_trigger(get_string('perpagea', 'moodle', $perpage));
         $actions[] = $this->render($menu);
-        return html_writer::div(join(' ', $actions), 'listing-actions course-listing-actions');
+        return html_writer::div(join(' ', $actions), 'listing-actions course-listing-actions mb-3');
     }
 
     /**
