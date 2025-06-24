@@ -67,7 +67,7 @@ Feature: Testing overview integration in H5P activity
   Scenario: Students can see relevant columns in the H5P activity overview
     Given I am on the "Course 1" "course > activities > h5pactivity" page logged in as student1
     # Check columns.
-    When I should see "Completion status" in the "h5pactivity_overview_collapsible" "region"
+    When I should see "Status" in the "h5pactivity_overview_collapsible" "region"
     # Check column values.
     Then the following should exist in the "Table listing all H5P activities" table:
       | Name               | Attempts | Grade |
