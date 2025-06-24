@@ -1996,5 +1996,35 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025073100.01);
     }
 
+    if ($oldversion < 2025081900.01) {
+
+        // Define table shortlink to be created.
+        $table = new xmldb_table('shortlink');
+
+        // Adding fields to table shortlink.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('shortcode', XMLDB_TYPE_CHAR, '12', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('linktype', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('identifier', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table shortlink.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+
+        // Adding indexes to table shortlink.
+        $table->add_index('shortcode_userid', XMLDB_INDEX_UNIQUE, ['userid', 'shortcode']);
+        $table->add_index('shortcode', XMLDB_INDEX_NOTUNIQUE, ['shortcode']);
+
+        // Conditionally launch create table for shortlink.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025081900.01);
+    }
+
     return true;
 }
