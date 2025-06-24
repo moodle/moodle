@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['aidrawerlabel'] = 'AI-generated content drawer';
 $string['aiexplain'] = 'AI explain';
 $string['aifeatures'] = 'AI features';
 $string['aisummary'] = 'AI summary';
