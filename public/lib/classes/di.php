@@ -133,6 +133,8 @@ class di {
             },
             \Psr\Clock\ClockInterface::class => \DI\get(\core\clock::class),
 
+            \Symfony\Component\Console\CommandLoader\CommandLoaderInterface::class => \DI\get(\core\cli\command_loader::class),
+
             // Note: libphonenumber PhoneNumberUtil uses a singleton.
             \libphonenumber\PhoneNumberUtil::class => fn() => \libphonenumber\PhoneNumberUtil::getInstance(),
         ]);

@@ -90,6 +90,31 @@ class manager {
     }
 
     /**
+     * Disable the cron runner.
+     */
+    public static function disable_cron(): void {
+        set_config('cron_enabled', 0);
+        self::clear_static_caches();
+    }
+
+    /**
+     * Enable the cron runner system.
+     */
+    public static function enable_cron(): void {
+        set_config('cron_enabled', 1);
+    }
+
+    /**
+     * Check whether the cron runner is enabled.
+     *
+     * @return bool
+     */
+    public static function is_cron_enabled(): bool {
+        // Note: Perform a non-strict comparison here because the values from get_config() can be strings.
+        return get_config('core', 'cron_enabled') == 1;
+    }
+
+    /**
      * Given a component name, will load the list of tasks in the db/tasks.php file for that component.
      *
      * @param string $componentname - The name of the component to fetch the tasks for.

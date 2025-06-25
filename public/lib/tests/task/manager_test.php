@@ -702,4 +702,22 @@ final class manager_test extends \advanced_testcase {
         $this->assertNotNull($next);
         manager::scheduled_task_complete($next);
     }
+
+    /**
+     * Test enabling and disabling cron.
+     */
+    public function test_cron_enabled(): void {
+        $this->resetAfterTest();
+
+        // Check that cron is enabled by default.
+        $this->assertTrue(\core\task\manager::is_cron_enabled());
+
+        // Disable cron and check again.
+        \core\task\manager::disable_cron();
+        $this->assertFalse(\core\task\manager::is_cron_enabled());
+
+        // Enable cron and check again.
+        \core\task\manager::enable_cron();
+        $this->assertTrue(\core\task\manager::is_cron_enabled());
+    }
 }
