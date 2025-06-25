@@ -16,7 +16,11 @@
 
 namespace mod_forum;
 
-use mod_forum\local\entities\forum as forum_entity;
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/forum/lib.php');
+
 use mod_forum\local\exporters\forum as forum_exporter;
 
 /**
@@ -27,6 +31,23 @@ use mod_forum\local\exporters\forum as forum_exporter;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class exporters_forum_test extends \advanced_testcase {
+
+    #[\Override]
+    public function setUp(): void {
+        parent::setUp();
+        // We must clear the subscription caches.
+        // This has to be done both before each test, and after in case of other tests using these functions.
+        subscriptions::reset_forum_cache();
+    }
+
+    #[\Override]
+    public function tearDown(): void {
+        // We must clear the subscription caches.
+        // // This has to be done both before each test, and after in case of other tests using these functions.
+        subscriptions::reset_forum_cache();
+        parent::tearDown();
+    }
+
     /**
      * Test the export function returns expected values.
      */
@@ -40,7 +61,8 @@ final class exporters_forum_test extends \advanced_testcase {
         $course = $datagenerator->create_course();
         $forum = $datagenerator->create_module('forum', [
             'course' => $course->id,
-            'groupmode' => VISIBLEGROUPS
+            'groupmode' => VISIBLEGROUPS,
+            'forcesubscribe' => FORUM_FORCESUBSCRIBE,
         ]);
         $coursemodule = get_coursemodule_from_instance('forum', $forum->id);
         $context = \context_module::instance($coursemodule->id);
@@ -61,10 +83,17 @@ final class exporters_forum_test extends \advanced_testcase {
         $this->assertEquals($forum->get_id(), $exportedforum->id);
         $this->assertEquals(VISIBLEGROUPS, $exportedforum->state['groupmode']);
         $this->assertEquals(false, $exportedforum->userstate['tracked']);
+        $this->assertEquals(false, $exportedforum->userstate['subscribed']);
         $this->assertEquals(false, $exportedforum->capabilities['viewdiscussions']);
         $this->assertEquals(false, $exportedforum->capabilities['create']);
         $this->assertEquals(false, $exportedforum->capabilities['subscribe']);
         $this->assertNotEquals(null, $exportedforum->urls['create']);
         $this->assertNotEquals(null, $exportedforum->urls['markasread']);
+
+        // Enrol the user in the course and check the capabilities and user state.
+        $datagenerator->enrol_user($user->id, $course->id);
+        $exportedforum = $exporter->export($renderer);
+        $this->assertEquals(true, $exportedforum->userstate['subscribed']);
+        $this->assertEquals(true, $exportedforum->capabilities['viewdiscussions']);
     }
 }

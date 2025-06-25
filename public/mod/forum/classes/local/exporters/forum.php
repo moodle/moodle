@@ -71,6 +71,7 @@ class forum extends exporter {
             'userstate' => [
                 'type' => [
                     'tracked' => ['type' => PARAM_INT],
+                    'subscribed' => ['type' => PARAM_INT],
                 ],
             ],
             'capabilities' => [
@@ -125,7 +126,11 @@ class forum extends exporter {
                 'gradingenabled' => $this->forum->is_grading_enabled()
             ],
             'userstate' => [
-                'tracked' => forum_tp_is_tracked($this->get_forum_record(), $this->related['user']),
+                'tracked' => (int) forum_tp_is_tracked($this->get_forum_record(), $this->related['user']),
+                'subscribed' => (int) \mod_forum\subscriptions::is_subscribed(
+                    $this->related['user']->id,
+                    $this->get_forum_record(),
+                ),
             ],
             'capabilities' => [
                 'viewdiscussions' => $capabilitymanager->can_view_discussions($user),

@@ -4660,8 +4660,14 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
         $forum = $DB->get_record('forum', array('id' => $forum), '', 'id,trackingtype');
     }
 
-    $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
-    $forumforced = ($forum->trackingtype == FORUM_TRACKING_FORCED);
+    if (method_exists($forum, 'get_tracking_type')) {
+        $trackingtype = $forum->get_tracking_type();
+    } else {
+        $trackingtype = $forum->trackingtype;
+    }
+
+    $forumallows = ($trackingtype == FORUM_TRACKING_OPTIONAL);
+    $forumforced = ($trackingtype == FORUM_TRACKING_FORCED);
 
     if ($CFG->forum_allowforcedreadtracking) {
         // If we allow forcing, then forced forums takes procidence over user setting.

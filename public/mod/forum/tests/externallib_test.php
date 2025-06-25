@@ -195,6 +195,12 @@ final class externallib_test extends externallib_advanced_testcase {
         $expectedforums[$forum1->id] = (array) $forum1;
         $expectedforums[$forum2->id] = (array) $forum2;
 
+        // Reset static cache.
+        $forum1cm = get_coursemodule_from_id('forum', $forum1->cmid);
+        forum_tp_count_forum_unread_posts($forum1cm, $course1, true);
+        $forum2cm = get_coursemodule_from_id('forum', $forum2->cmid);
+        forum_tp_count_forum_unread_posts($forum2cm, $course2, true);
+
         // Call the external function passing course ids.
         $forums = mod_forum_external::get_forums_by_courses(array($course1->id, $course2->id));
         $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
