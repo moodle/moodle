@@ -164,6 +164,12 @@ $CFG->dboptions = array(
 
 $CFG->wwwroot   = 'http://example.com/moodle';
 
+// Generally it is not advisable to use a wwwroot that ends in 'public'.
+// This is because the 'public' directory is used to serve web-accessible content.
+// Moodle looks for any URL which ends in 'public' and assumes that it is a misconfiguration.
+// In the event that there is a need to have a wwwroot that ends in 'public', the
+// following setting can be used to override this check.
+$CFG->wwwrootendsinpublic = false;
 
 //=========================================================================
 // 3. DATA FILES LOCATION
