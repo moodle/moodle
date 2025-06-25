@@ -167,6 +167,14 @@ final class notification_helper_test extends \advanced_testcase {
         $user1 = $generator->create_user();
         $generator->enrol_user($user1->id, $course->id, 'student');
 
+        // Suspended user, should not receive notification.
+        $user2 = $generator->create_user(['suspended' => 1]);
+        $generator->enrol_user($user2->id, $course->id, 'student');
+
+        // Nologin user, should not receive notification.
+        $user3 = $generator->create_user(['auth' => 'nologin']);
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
         /** @var \mod_assign_generator $assignmentgenerator */
         $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
 
@@ -230,6 +238,27 @@ final class notification_helper_test extends \advanced_testcase {
         ];
         $expectedsubject = get_string('assignmentduesoonsubject', 'mod_assign', $stringparams);
         $this->assertEquals($expectedsubject, $message->subject);
+
+        // Clear sink.
+        $sink->clear();
+
+        // Let's update the assignment visibility.
+        $DB->set_field('course_modules', 'visible', 0, ['id' => $assigncm->id]);
+
+        // Update the duedate to force a new notification.
+        $updatedata = new \stdClass();
+        $updatedata->id = $assignment->id;
+        $updatedata->duedate = $duedate + HOURSECS * 3;
+        $DB->update_record('assign', $updatedata);
+
+        // Run the tasks again.
+        $this->run_due_soon_notification_helper_tasks();
+
+        // There should not be a new notification the assignmnet is not visible.
+        $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
+
+        // Update the visibility back to visible before the next assert.
+        $DB->set_field('course_modules', 'visible', 1, ['id' => $assigncm->id]);
 
         // Clear sink.
         $sink->clear();
@@ -410,6 +439,14 @@ final class notification_helper_test extends \advanced_testcase {
         $course = $generator->create_course();
         $user1 = $generator->create_and_enrol($course, 'student');
 
+        // Suspended user, should not receive notification.
+        $user2 = $generator->create_user(['suspended' => 1]);
+        $generator->enrol_user($user2->id, $course->id, 'student');
+
+        // Nologin user, should not receive notification.
+        $user3 = $generator->create_user(['auth' => 'nologin']);
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
         /** @var \mod_assign_generator $assignmentgenerator */
         $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
 
@@ -482,6 +519,28 @@ final class notification_helper_test extends \advanced_testcase {
         $message = reset($messages);
         $expectedsubject = get_string('assignmentoverduesubject', 'mod_assign', ['assignmentname' => $assignment->name]);
         $this->assertEquals($expectedsubject, $message->subject);
+
+        // Let's update the assignment visibility.
+        $cm = get_coursemodule_from_instance('assign', $assignment->id, $course->id);
+        $DB->set_field('course_modules', 'visible', 0, ['id' => $cm->id]);
+
+        // Update the duedate to force a new notification.
+        $updatedata = new \stdClass();
+        $updatedata->id = $assignment->id;
+        $updatedata->duedate = $duedate + (MINSECS * 3);
+        $DB->update_record('assign', $updatedata);
+
+        // Clear sink.
+        $sink->clear();
+
+        // Run the tasks again.
+        $this->run_overdue_notification_helper_tasks();
+
+        // There should not be a new notification because the assignment is not visible.
+        $this->assertEmpty($sink->get_messages_by_component('mod_assign'));
+
+        // Update the visibility back to visible before the next assert.
+        $DB->set_field('course_modules', 'visible', 1, ['id' => $cm->id]);
 
         // Let's modify the 'duedate' one more time.
         $updatedata = new \stdClass();
@@ -610,6 +669,14 @@ final class notification_helper_test extends \advanced_testcase {
         $user1 = $generator->create_user();
         $generator->enrol_user($user1->id, $course->id, 'student');
 
+        // Suspended user, should not receive notification.
+        $user2 = $generator->create_user(['suspended' => 1]);
+        $generator->enrol_user($user2->id, $course->id, 'student');
+
+        // Nologin user, should not receive notification.
+        $user3 = $generator->create_user(['auth' => 'nologin']);
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
         /** @var \mod_assign_generator $assignmentgenerator */
         $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
 
@@ -635,6 +702,15 @@ final class notification_helper_test extends \advanced_testcase {
             'submissiondrafts' => 0,
             'assignsubmission_onlinetext_enabled' => 1,
         ]);
+        // Create an assignment with a visibility restriction.
+        $duedate4 = $clock->time() + WEEKSECS;
+        $assignment4 = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate4,
+            'visible' => 0,
+            'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
         $clock->bump(5);
 
         // Run the tasks.
@@ -649,6 +725,7 @@ final class notification_helper_test extends \advanced_testcase {
         $this->assertStringContainsString($assignment1->name, $message->fullmessagehtml);
         $this->assertStringContainsString($assignment2->name, $message->fullmessagehtml);
         $this->assertStringNotContainsString($assignment3->name, $message->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment4->name, $message->fullmessagehtml);
 
         // Check the message contains the formatted due date.
         $formatteddate = userdate($duedate1, get_string('strftimedaydate', 'langconfig'));
@@ -676,6 +753,7 @@ final class notification_helper_test extends \advanced_testcase {
         $this->assertStringNotContainsString($assignment1->name, $message->fullmessagehtml);
         $this->assertStringContainsString($assignment2->name, $message->fullmessagehtml);
         $this->assertStringNotContainsString($assignment3->name, $message->fullmessagehtml);
+        $this->assertStringNotContainsString($assignment4->name, $message->fullmessagehtml);
 
         // Clear sink.
         $sink->clear();

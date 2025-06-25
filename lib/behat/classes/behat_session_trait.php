@@ -1744,4 +1744,19 @@ EOF;
 
         return $result ?: null;
     }
+
+    /**
+     * Prepare an xpath for insertion into Selenium JavaScript.
+     *
+     * @param string $xpath
+     * @return string
+     */
+    protected function prepare_xpath_for_javascript(string $xpath): string {
+        $newlines = [
+            "\r\n",
+            "\r",
+            "\n",
+        ];
+        return str_replace($newlines, ' ', $xpath);
+    }
 }

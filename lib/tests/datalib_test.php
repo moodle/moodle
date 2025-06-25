@@ -174,12 +174,11 @@ final class datalib_test extends \advanced_testcase {
 
         list($sort, $params) = users_order_by_sql('', 'search', \context_system::instance());
         $this->assert_same_sql('CASE WHEN
-                    ' . $DB->sql_fullname() . ' = :usersortexact1 OR
-                    LOWER(firstname) = LOWER(:usersortexact2) OR
-                    LOWER(lastname) = LOWER(:usersortexact3)
+                    ' . $DB->sql_fullname() . ' = :usersortexact OR
+                    LOWER(firstname) = LOWER(:usersortfield0) OR
+                    LOWER(lastname) = LOWER(:usersortfield1)
                 THEN 0 ELSE 1 END, lastname, firstname, id', $sort);
-        $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
-                'usersortexact3' => 'search'), $params);
+        $this->assertEquals(['usersortexact' => 'search', 'usersortfield0' => 'search', 'usersortfield1' => 'search'], $params);
     }
 
     public function test_users_order_by_sql_search_with_extra_fields_and_prefix(): void {
@@ -191,14 +190,14 @@ final class datalib_test extends \advanced_testcase {
 
         list($sort, $params) = users_order_by_sql('u', 'search', \context_system::instance());
         $this->assert_same_sql('CASE WHEN
-                    ' . $DB->sql_fullname('u.firstname', 'u.lastname') . ' = :usersortexact1 OR
-                    LOWER(u.firstname) = LOWER(:usersortexact2) OR
-                    LOWER(u.lastname) = LOWER(:usersortexact3) OR
-                    LOWER(u.email) = LOWER(:usersortexact4) OR
-                    LOWER(u.idnumber) = LOWER(:usersortexact5)
+                    ' . $DB->sql_fullname('u.firstname', 'u.lastname') . ' = :usersortexact OR
+                    LOWER(u.firstname) = LOWER(:usersortfield0) OR
+                    LOWER(u.lastname) = LOWER(:usersortfield1) OR
+                    LOWER(u.email) = LOWER(:usersortfield2) OR
+                    LOWER(u.idnumber) = LOWER(:usersortfield3)
                 THEN 0 ELSE 1 END, u.lastname, u.firstname, u.id', $sort);
-        $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
-                'usersortexact3' => 'search', 'usersortexact4' => 'search', 'usersortexact5' => 'search'), $params);
+        $this->assertEquals(['usersortexact' => 'search', 'usersortfield0' => 'search',
+                'usersortfield1' => 'search', 'usersortfield2' => 'search', 'usersortfield3' => 'search'], $params);
     }
 
     public function test_users_order_by_sql_search_with_custom_fields(): void {
@@ -211,13 +210,13 @@ final class datalib_test extends \advanced_testcase {
         list($sort, $params) =
                 users_order_by_sql('u', 'search', \context_system::instance(), ['profile_field_customfield' => 'x.customfield']);
         $this->assert_same_sql('CASE WHEN
-                    ' . $DB->sql_fullname('u.firstname', 'u.lastname') . ' = :usersortexact1 OR
-                    LOWER(u.firstname) = LOWER(:usersortexact2) OR
-                    LOWER(u.lastname) = LOWER(:usersortexact3) OR
-                    LOWER(x.customfield) = LOWER(:usersortexact4)
+                    ' . $DB->sql_fullname('u.firstname', 'u.lastname') . ' = :usersortexact OR
+                    LOWER(u.firstname) = LOWER(:usersortfield0) OR
+                    LOWER(u.lastname) = LOWER(:usersortfield1) OR
+                    LOWER(x.customfield) = LOWER(:usersortfield2)
                 THEN 0 ELSE 1 END, u.lastname, u.firstname, u.id', $sort);
-        $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
-                'usersortexact3' => 'search', 'usersortexact4' => 'search'), $params);
+        $this->assertEquals(['usersortexact' => 'search', 'usersortfield0' => 'search',
+                'usersortfield1' => 'search', 'usersortfield2' => 'search'], $params);
     }
 
     public function test_get_admin(): void {

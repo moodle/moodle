@@ -199,4 +199,19 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
         return implode(',', $resultarr);
     }
 
+    #[\Override]
+    public function define_excluded_identity_hash_fields(): array {
+        return [
+            '/options/sequence',
+            '/options/question',
+        ];
+    }
+
+    #[\Override]
+    public static function remove_excluded_question_data(stdClass $questiondata, array $excludefields = []): stdClass {
+        if (isset($questiondata->options->questions)) {
+            unset($questiondata->options->questions);
+        }
+        return parent::remove_excluded_question_data($questiondata, $excludefields);
+    }
 }

@@ -5,22 +5,22 @@ Feature: Manage competencies linked to evidence of prior learning
   I need to link and unlink competencies from evidence of prior learning
 
   Background:
-    Given the following lp "frameworks" exist:
-      | shortname | idnumber |
-      | Test-Framework | ID-FW1 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Test-Comp1 | ID-FW1 |
-      | Test-Comp2 | ID-FW1 |
-    And the following lp "plans" exist:
-      | name | user | description |
+    Given the following "core_competency > frameworks" exist:
+      | shortname      | idnumber |
+      | Test-Framework | ID-FW1   |
+    And the following "core_competency > competencies" exist:
+      | shortname  | competencyframework | idnumber   |
+      | Test-Comp1 | ID-FW1              | Test-Comp1 |
+      | Test-Comp2 | ID-FW1              | Test-Comp2 |
+    And the following "core_competency > plans" exist:
+      | name      | user  | description      |
       | Test-Plan | admin | Plan description |
-    And the following lp "plancompetencies" exist:
-      | plan | competency |
+    And the following "core_competency > plan_competency" exist:
+      | plan      | competency |
       | Test-Plan | Test-Comp1 |
       | Test-Plan | Test-Comp2 |
-    And the following lp "userevidence" exist:
-      | name | description | user |
+    And the following "core_competency > user_evidence" exist:
+      | name          | description          | user  |
       | Test-Evidence | Description evidence | admin |
     When I log in as "admin"
     And I follow "Profile" in the user menu
@@ -51,12 +51,12 @@ Feature: Manage competencies linked to evidence of prior learning
     Then "Test-Comp2" "table_row" should exist
 
   Scenario: Unlink competency from evidence of prior learning
-    Given the following lp "userevidencecompetencies" exist:
-      | userevidence | competency |
+    Given the following "core_competency > user_evidence_competency" exist:
+      | userevidence  | competency |
       | Test-Evidence | Test-Comp1 |
       | Test-Evidence | Test-Comp2 |
-    Given the following lp "usercompetencies" exist:
-      | user | competency |
+    And the following "core_competency > user_competency" exist:
+      | user  | competency |
       | admin | Test-Comp1 |
       | admin | Test-Comp2 |
     And I follow "Evidence of prior learning"

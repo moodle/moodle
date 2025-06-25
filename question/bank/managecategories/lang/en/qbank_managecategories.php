@@ -30,6 +30,7 @@ $string['categorymoved'] = 'The category has been moved successfully.';
 $string['confirmdelete'] = 'Delete category "{$a}"?. Any child categories will be moved to this category\'s parent.';
 $string['descriptionnotdisplayed'] = 'Categories description not displayed';
 $string['displaydescription'] = 'Categories description displayed';
+$string['error:category'] = 'You must select a valid category';
 $string['idnumberexists'] = 'ID number already in use. Change it to move or update category.';
 $string['lastcategoryinthiscontext'] = 'This category is the only one in this context. You need to add another category if this category is to be moved.';
 $string['movecategory'] = 'Move {$a}';

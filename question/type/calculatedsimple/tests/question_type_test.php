@@ -90,7 +90,7 @@ final class question_type_test extends \advanced_testcase {
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('id', 'timemodified', 'timecreated', 'options', 'idnumber'))) {
+            if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'idnumber', 'hints'])) {
                 $this->assertEquals($value, $actualquestiondata->$property);
             }
         }
@@ -109,6 +109,11 @@ final class question_type_test extends \advanced_testcase {
                 }
             }
         }
+
+        $this->assertCount(1, $actualquestiondata->hints);
+        $hint = array_pop($actualquestiondata->hints);
+        $this->assertEquals($formdata->hint[0]['text'], $hint->hint);
+        $this->assertEquals($formdata->hint[0]['format'], $hint->hintformat);
 
         $datasetloader = new qtype_calculated_dataset_loader($actualquestiondata->id);
 

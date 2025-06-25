@@ -40,6 +40,8 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: range');
+header('Access-Control-Expose-Headers: Content-Range');
 
 // Authenticate the user.
 $token = required_param('token', PARAM_ALPHANUM);

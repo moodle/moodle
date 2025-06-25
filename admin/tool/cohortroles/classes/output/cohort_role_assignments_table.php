@@ -175,7 +175,7 @@ class cohort_role_assignments_table extends table_sql {
      * @return array containing sql to use and an array of params.
      */
     protected function get_sql_and_params($count = false) {
-        $fields = 'uca.id, uca.cohortid, uca.userid, uca.roleid, ';
+        $fields = 'uca.id, uca.cohortid, uca.userid, uca.roleid, r.shortname AS rolename, ';
         $fields .= 'c.name as cohortname, c.idnumber as cohortidnumber, c.contextid as cohortcontextid, ';
         $fields .= 'c.visible as cohortvisible, c.description as cohortdescription, c.theme as cohorttheme';
 
@@ -193,6 +193,7 @@ class cohort_role_assignments_table extends table_sql {
         $sql = "SELECT $select
                    FROM {tool_cohortroles} uca
                    JOIN {user} u ON u.id = uca.userid
+                   JOIN {role} r ON r.id = uca.roleid
                    JOIN {cohort} c ON c.id = uca.cohortid";
 
         // Check if any additional filtering is required.

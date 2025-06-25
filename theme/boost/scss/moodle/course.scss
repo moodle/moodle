@@ -606,18 +606,6 @@ span.editinstructions {
     }
 }
 
-.subcategories,
-#frontpage-category-names,
-#frontpage-category-combo {
-    .coursebox > .info > .coursename a {
-        display: block;
-        background-image: url([[pix:moodle|i/course]]);
-        background-size: $icon-width $icon-height;
-        background-repeat: no-repeat;
-        padding-left: 21px;
-    }
-}
-
 .coursebox > .info > .coursename {
     font-size: $font-size-base;
     font-weight: normal;
@@ -1537,6 +1525,10 @@ $divider-hover-color: $primary !default;
             padding-top: map-get($spacers, 2);
             border-top: $border-width solid $border-color;
             @include font-size($small-font-size);
+            // Fix activity description bottom margin for first level-lists.
+            ul:not(.activity-description ul ul) {
+                margin-bottom: 1rem;
+            }
         }
         // Add rounded borders to images.
         img {

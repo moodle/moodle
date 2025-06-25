@@ -64,9 +64,18 @@ final class path_parameter_test extends route_testcase {
      */
     public static function is_required_provider(): array {
         return [
+            ['/is/not/found', false],
+            ['/is/not/found/{values}', false],
+            ['/is/not/found/{values:.*}', false],
+            ['/is/not/found/{values:.*?}', false],
             ['/is/required/{value}', true],
+            ['/is/required/{value:.*}', true],
+            ['/is/required/{value:.*?}/example', true],
             ['/is/optional/[{value}]', false],
             ['/is/[optional/[{value}]]', false],
+            ['/is/[optional/[{value:.*}]]', false],
+            ['/is/[optional/[{value:.*?}/example]]', false],
+            ['/is/required/{value}[/example]', true],
         ];
     }
 

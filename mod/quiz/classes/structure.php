@@ -43,6 +43,12 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class structure {
+
+    /**
+     * Placeholder string used when a question category is missing.
+     */
+    const MISSING_QUESTION_CATEGORY_PLACEHOLDER = 'missing_question_category';
+
     /** @var quiz_settings the quiz this is the structure of. */
     protected $quizobj = null;
 
@@ -1810,6 +1816,13 @@ class structure {
         // Now, put the data required for each slot into $this->randomslotcategories and $this->randomslottags.
         foreach ($randomcategoriesandtags as $slotid => $catandtags) {
             $qcategoryid = $catandtags['cat']['values'];
+
+            // If the category does not exist, replace with a temporary placeholder.
+            if (!array_key_exists($qcategoryid, $categories)) {
+                $this->randomslotcategories[$slotid] = self::MISSING_QUESTION_CATEGORY_PLACEHOLDER;
+                continue;
+            }
+
             $qcategory = $categories[$qcategoryid];
             $includesubcategories = $catandtags['cat']['includesubcategories'];
             $this->randomslotcategories[$slotid] = $this->get_used_category_description($qcategory, $includesubcategories);

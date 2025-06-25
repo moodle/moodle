@@ -36,7 +36,8 @@
                     }
                 ]
             }
-        ]
+        ],
+        "showallbutton": false
     }
 }}
 
@@ -52,7 +53,10 @@
         <button type="button" class="btn btn-link text-reset" data-filteraction="add">
             {{#pix}}t/add{{/pix}}<span class="ps-3">{{#str}}addcondition{{/str}}</span>
         </button>
-        <button data-filteraction="reset" type="button" class="btn btn-secondary ms-auto me-2">{{#str}}clearfilters{{/str}}</button>
+        {{#showallbutton}}
+            <button data-filteraction="showall" data-perpage="{{ perpage }}" data-status="0" type="button" class="btn btn-light ms-auto me-2">{{#str}}showall{{/str}}</button>
+        {{/showallbutton}}
+        <button data-filteraction="reset" type="button" class="btn btn-secondary {{^showallbutton}}ms-auto{{/showallbutton}} me-2">{{#str}}clearfilters{{/str}}</button>
         <button data-filteraction="apply" type="button" class="btn btn-primary">{{#str}}applyfilters{{/str}}</button>
     </div>
 

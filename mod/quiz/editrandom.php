@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\filter_condition_manager;
 use core_question\question_reference_manager;
 use mod_quiz\quiz_settings;
 use mod_quiz\question\bank\random_question_view;
@@ -58,6 +59,7 @@ $setreference = $DB->get_record('question_set_references',
     ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
 $filterconditions = json_decode($setreference->filtercondition, true);
 $filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
+$filterconditions = filter_condition_manager::filter_invalid_values($filterconditions);
 
 $params = $filterconditions;
 $params['cmid'] = $cm->id;
@@ -132,9 +134,10 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$PAGE->set_title('Random question');
+$heading = get_string('randomediting', 'mod_quiz');
+$PAGE->set_title($heading);
 $PAGE->set_heading($COURSE->fullname);
-$PAGE->navbar->add('Random question');
+$PAGE->navbar->add($heading);
 
 // Custom View.
 $questionbank = new random_question_view($contexts, $thispageurl, $course, $cm, $params, $extraparams);
@@ -151,7 +154,6 @@ $PAGE->requires->js_call_amd('mod_quiz/update_random_question_filter_condition',
 
 // Display a heading, question editing form.
 echo $OUTPUT->header();
-$heading = get_string('randomediting', 'mod_quiz');
 echo $OUTPUT->heading_with_help($heading, 'randomquestion', 'mod_quiz');
 echo $updateform;
 echo $OUTPUT->footer();

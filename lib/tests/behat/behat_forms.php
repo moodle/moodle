@@ -167,7 +167,7 @@ class behat_forms extends behat_base {
 
         // Different try & catch as we can have expanded fieldsets with advanced fields on them.
         try {
-
+            $this->wait_for_pending_js();
             // Expand all fields xpath.
             $showmorexpath = "//a[normalize-space(.)='" . get_string('showmore', 'form') . "']" .
                 "[contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]";
@@ -177,22 +177,23 @@ class behat_forms extends behat_base {
                 return;
             }
 
-            if ($this->getSession()->getDriver() instanceof \DMore\ChromeDriver\ChromeDriver) {
-                // Chrome Driver produces unique xpaths for each element.
-                foreach ($showmores as $showmore) {
-                    $showmore->click();
+            $js = <<<EOF
+            require(['core/pending'], function(Pending) {
+                const query = document.evaluate("{$showmorexpath}", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                if (query.snapshotLength > 0) {
+                    const pendingPromise = new Pending('showmore:expand');
+                    for (let i = 0, length = query.snapshotLength; i < length; ++i) {
+                        query.snapshotItem(i).click();
+                        if (i === length - 1) {
+                            pendingPromise.resolve();
+                        }
+                    }
                 }
-            } else {
-                // Funny thing about this, with findAll() we specify a pattern and each element matching the pattern
-                // is added to the array with of xpaths with a [0], [1]... sufix, but when we click on an element it
-                // does not matches the specified xpath anymore (now is a "Show less..." link) so [1] becomes [0],
-                // that's why we always click on the first XPath match, will be always the next one.
-                $iterations = count($showmores);
-                for ($i = 0; $i < $iterations; $i++) {
-                    $showmores[0]->click();
-                }
-            }
+            });
+            EOF;
 
+            $this->execute_script($js);
+            $this->wait_for_pending_js();
         } catch (ElementNotFoundException $e) {
             // We continue with the test.
         }
@@ -834,4 +835,79 @@ class behat_forms extends behat_base {
             );
         }
     }
+
+    /**
+     * Check that the validationMessage property on a form field element includes the given text.
+     *
+     * @Then the :field field validation message should contain :text
+     * @param string $field The css selector for the input field
+     * @param string $text The text which should be found in the validation message
+     */
+    public function the_field_validation_message_should_contain(string $field, string $text): void {
+
+        // We can't use this assertion if javascript is not running.
+        $this->require_javascript();
+
+        // Check that the element exists.
+        // This is fail and go no further, if the element does not exist.
+        $node = $this->get_selected_node('field', $field);
+
+        // Get the validity result.
+        $wdelement = $this->get_webdriver_element_from_node_element($node);
+        $webdriver = $this->getSession()->getDriver()->getWebDriver();
+        $message = $webdriver->executeScript("return arguments[0].validationMessage;", [$wdelement]);
+        if (strpos($message, $text) === false) {
+            throw new ExpectationException(
+                '"' . $field . '" validation message does not contain "' . $text . '"', $this->getSession()
+            );
+        }
+
+    }
+
+    /**
+     * Check that the result of calling the checkValidity API on a form field element matches the expected result.
+     *
+     * @Then the :field field validity check should return :result
+     * @param string $field The css selector for the input field
+     * @param string $expected "true" or "false"
+     */
+    public function the_field_validity_check_should_return(string $field, string $expected): void {
+
+        // We can't use this assertion if javascript is not running.
+        $this->require_javascript();
+
+        // Expected value can only be 'true' or 'false'.
+        $expected = strtolower($expected);
+        if (!in_array($expected, ['true', 'false'])) {
+            throw new ExpectationException(
+                'Invalid value for expected value "' . $expected . '". Should be "true" or "false".',
+                $this->getSession());
+        }
+
+        // Convert the expected result from a string to bool.
+        $expected = ($expected === "true");
+
+        // Check that the element exists.
+        // This is fail and go no further, if the element does not exist.
+        $node = $this->get_selected_node('field', $field);
+
+        // Get the validity result.
+        $wdelement = $this->get_webdriver_element_from_node_element($node);
+        $webdriver = $this->getSession()->getDriver()->getWebDriver();
+        $result = $webdriver->executeScript("return arguments[0].checkValidity();", [$wdelement]);
+        if ($result !== $expected) {
+
+            // Convert booleans to strings for the exception message.
+            $result = ($result) ? "true" : "false";
+            $expected = ($expected) ? "true" : "false";
+
+            throw new ExpectationException(
+                '"' . $field . '" validation check was "' . $result . '". Expected: "' .
+                $expected . '"', $this->getSession()
+            );
+
+        }
+
+    }
+
 }

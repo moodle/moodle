@@ -71,8 +71,8 @@ echo $OUTPUT->header();
 
 $instance = $manager->get_instance();
 
-// Only users without permission to submit can see the warning messages.
-if (!$manager->can_submit()) {
+// Only non-guest users without permission to submit can see the warning messages (typically a teacher or a content creator).
+if (!$manager->can_submit() && !isguestuser()) {
     // Show preview mode message.
     $message = get_string('previewmode', 'mod_h5pactivity');
     echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_INFO, false);

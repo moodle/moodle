@@ -69,4 +69,9 @@ class restore_qtype_calculatedmulti_plugin extends restore_qtype_calculated_plug
         }
         return $result ? $result : $answer;
     }
+
+    #[\Override]
+    protected function define_excluded_identity_hash_fields(): array {
+        return [];
+    }
 }

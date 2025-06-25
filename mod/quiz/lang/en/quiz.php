@@ -554,6 +554,7 @@ $string['maxmarks_help'] = 'The maximum mark available for each question.';
 
 $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';
+$string['missingcategory'] = 'Missing question category';
 $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingitemtypename'] = 'Missing name';
 $string['missingquestion'] = 'This question no longer seems to exist';
@@ -971,6 +972,7 @@ $string['saveandedit'] = 'Save changes and edit questions';
 $string['saveattemptfailed'] = 'Failed to save the current quiz attempt.';
 $string['savedfromdeletedcourse'] = 'Saved from deleted course "{$a}"';
 $string['savegrades'] = 'Save grades';
+$string['savemanualgradingfailed'] = 'Modification not saved. Please check the message below and try again.';
 $string['savemyanswers'] = 'Save my answers';
 $string['savenosubmit'] = 'Save without submitting';
 $string['saveoverrideandstay'] = 'Save and enter another override';

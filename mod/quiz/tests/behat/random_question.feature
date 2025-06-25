@@ -73,3 +73,20 @@ Feature: Moving a question to another category should not affect random question
     And I should see "I was edited" in the "Used category new" "list_item"
     And I am on the "Quiz 1" "mod_quiz > Edit" page
     And I should see "Random (Used category new) based on filter condition" on quiz page "1"
+
+  @javascript
+  Scenario: A random question with an invalid category should still be editable
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I apply question bank filter "Category" with value "Used category"
+    And I press "Add random question"
+    And I should see "Random (Used category) based on filter condition" on quiz page "1"
+    And I am on the "Course 1" "core_question > course question categories" page
+    And I open the action menu in "Used category" "list_item"
+    And I choose "Delete" in the open action menu
+    And I click on "Delete" "button" in the "Delete" "dialogue"
+    And I press "Save in category"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    Then I should not see "Random (Used category) based on filter condition" on quiz page "1"
+    And I should see "Missing question category" on quiz page "1"

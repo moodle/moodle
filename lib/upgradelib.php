@@ -2555,6 +2555,9 @@ function check_upgrade_key($upgradekeyhash) {
         if ($upgradekeyhash === null or $upgradekeyhash !== sha1($CFG->config_php_settings['upgradekey'])) {
             if (!$PAGE->headerprinted) {
                 $PAGE->set_title(get_string('upgradekeyreq', 'admin'));
+                $PAGE->requires->js_call_amd('core/togglesensitive', 'init', ['upgradekey']);
+
+                /** @var core_admin_renderer $output */
                 $output = $PAGE->get_renderer('core', 'admin');
                 echo $output->upgradekey_form_page(new moodle_url('/admin/index.php', array('cache' => 0)));
                 die();

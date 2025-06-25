@@ -48,6 +48,11 @@ abstract class restore_qtype_plugin extends restore_plugin {
     private $questionanswercacheid = null;
 
     /**
+     * @var array List of fields to exclude form hashing during restore.
+     */
+    protected array $excludedhashfields = [];
+
+    /**
      * Add to $paths the restore_path_elements needed
      * to handle question_answers for a given question
      * Used by various qtypes (calculated, essay, multianswer,
@@ -62,6 +67,10 @@ abstract class restore_qtype_plugin extends restore_plugin {
         $elename = 'question_answer';
         $elepath = $this->get_pathfor('/answers/answer'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
+        $this->exclude_identity_hash_fields([
+            '/options/answers/id',
+            '/options/answers/question',
+        ]);
     }
 
     /**
@@ -78,6 +87,10 @@ abstract class restore_qtype_plugin extends restore_plugin {
         $elename = 'question_numerical_unit';
         $elepath = $this->get_pathfor('/numerical_units/numerical_unit'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
+        $this->exclude_identity_hash_fields([
+            '/options/units/id',
+            '/options/units/question',
+        ]);
     }
 
     /**
@@ -94,6 +107,7 @@ abstract class restore_qtype_plugin extends restore_plugin {
         $elename = 'question_numerical_option';
         $elepath = $this->get_pathfor('/numerical_options/numerical_option'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
+        $this->exclude_identity_hash_fields(['/options/question']);
     }
 
     /**
@@ -114,6 +128,21 @@ abstract class restore_qtype_plugin extends restore_plugin {
         $elename = 'question_dataset_item';
         $elepath = $this->get_pathfor('/dataset_definitions/dataset_definition/dataset_items/dataset_item');
         $paths[] = new restore_path_element($elename, $elepath);
+        $this->exclude_identity_hash_fields([
+            '/options/datasets/id',
+            '/options/datasets/question',
+            '/options/datasets/category',
+            '/options/datasets/type',
+            '/options/datasets/items/id',
+            // The following fields aren't included in the backup or DB structure, but are parsed from the options field.
+            '/options/datasets/status',
+            '/options/datasets/distribution',
+            '/options/datasets/minimum',
+            '/options/datasets/maximum',
+            '/options/datasets/decimals',
+            // This field is set dynamically from the count of items in the dataset, it is not backed up.
+            '/options/datasets/number_of_items',
+        ]);
     }
 
     /**
@@ -394,5 +423,184 @@ abstract class restore_qtype_plugin extends restore_plugin {
         $contents[] = new restore_decode_content('question_hints', ['hint'], 'question_hint');
 
         return $contents;
+    }
+
+    /**
+     * Add fields to the list of fields excluded from hashing.
+     *
+     * This allows common methods to add fields to the exclusion list.
+     *
+     * @param array $fields
+     * @return void
+     */
+    private function exclude_identity_hash_fields(array $fields): void {
+        $this->excludedhashfields = array_merge($this->excludedhashfields, $fields);
+    }
+
+    /**
+     * Return fields to be excluded from hashing during restores.
+     *
+     * @return array
+     */
+    final public function get_excluded_identity_hash_fields(): array {
+        return array_unique(array_merge(
+            $this->excludedhashfields,
+            $this->define_excluded_identity_hash_fields(),
+        ));
+    }
+
+    /**
+     * Return a list of paths to fields to be removed from questiondata before creating an identity hash.
+     *
+     * Fields that should be excluded from common elements such as answers or numerical units that are used by the plugin will
+     * be excluded automatically. This method just needs to define any specific to this plugin, such as foreign keys used in the
+     * plugin's tables.
+     *
+     * The returned array should be a list of slash-delimited paths to locate the fields to be removed from the questiondata object.
+     * For example, if you want to remove the field `$questiondata->options->questionid`, the path would be '/options/questionid'.
+     * If a field in the path is an array, the rest of the path will be applied to each object in the array. So if you have
+     * `$questiondata->options->answers[]`, the path '/options/answers/id' will remove the 'id' field from each element of the
+     * 'answers' array.
+     *
+     * @return array
+     */
+    protected function define_excluded_identity_hash_fields(): array {
+        return [];
+    }
+
+    /**
+     * Convert the backup structure of this question type into a structure matching its question data
+     *
+     * This should take the hierarchical array of tags from the question's backup structure, and return a structure that matches
+     * that returned when calling {@see get_question_options()} for this question type.
+     * See https://docs.moodle.org/dev/Question_data_structures#Representation_1:_%24questiondata for an explanation of this
+     * structure.
+     *
+     * This data will then be used to produce an identity hash for comparison with questions in the database.
+     *
+     * This base implementation deals with all common backup elements created by the add_question_*_options() methods in this class,
+     * plus elements added by ::define_question_plugin_structure() named for the qtype. The question type will need to extend
+     * this function if ::define_question_plugin_structure() adds any other elements to the backup.
+     *
+     * @param array $backupdata The hierarchical array of tags from the backup.
+     * @return \stdClass The questiondata object.
+     */
+    public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+        // Create an object from the top-level fields.
+        $questiondata = (object) array_filter($backupdata, fn($tag) => !is_array($tag));
+        $qtype = $questiondata->qtype;
+        $questiondata->options = new stdClass();
+        if (isset($backupdata["plugin_qtype_{$qtype}_question"][$qtype])) {
+            $questiondata->options = (object) $backupdata["plugin_qtype_{$qtype}_question"][$qtype][0];
+        }
+        if (isset($backupdata["plugin_qtype_{$qtype}_question"]['answers'])) {
+            $questiondata->options->answers = array_map(
+                fn($answer) => (object) $answer,
+                $backupdata["plugin_qtype_{$qtype}_question"]['answers']['answer'],
+            );
+        }
+        if (isset($backupdata["plugin_qtype_{$qtype}_question"]['numerical_options'])) {
+            $questiondata->options = (object) array_merge(
+                (array) $questiondata->options,
+                $backupdata["plugin_qtype_{$qtype}_question"]['numerical_options']['numerical_option'][0],
+            );
+        }
+        if (isset($backupdata["plugin_qtype_{$qtype}_question"]['numerical_units'])) {
+            $questiondata->options->units = array_map(
+                fn($unit) => (object) $unit,
+                $backupdata["plugin_qtype_{$qtype}_question"]['numerical_units']['numerical_unit'],
+            );
+        }
+        if (isset($backupdata["plugin_qtype_{$qtype}_question"]['dataset_definitions'])) {
+            $questiondata->options->datasets = array_map(
+                fn($dataset) => (object) $dataset,
+                $backupdata["plugin_qtype_{$qtype}_question"]['dataset_definitions']['dataset_definition'],
+            );
+        }
+        if (isset($questiondata->options->datasets)) {
+            foreach ($questiondata->options->datasets as $dataset) {
+                if (isset($dataset->dataset_items)) {
+                    $dataset->items = array_map(
+                        fn($item) => (object) $item,
+                        $dataset->dataset_items['dataset_item'],
+                    );
+                    unset($dataset->dataset_items);
+                }
+            }
+        }
+        if (isset($backupdata['question_hints'])) {
+            $questiondata->hints = array_map(
+                fn($hint) => (object) $hint,
+                $backupdata['question_hints']['question_hint'],
+            );
+        }
+
+        return $questiondata;
+    }
+
+    /**
+     * Remove excluded fields from the questiondata structure.
+     *
+     * This removes fields that will not match or not be present in the question data structure produced by
+     * {@see self::convert_backup_to_questiondata()} and {@see get_question_options()} (such as IDs), so that the remaining data can
+     * be used to produce an identity hash for comparing the two.
+     *
+     * For plugins, it should be sufficient to override {@see self::define_excluded_identity_hash_fields()} with a list of paths
+     * specific to the plugin type. Overriding this method is only necessary if the plugin's
+     * {@see question_type::get_question_options()} method adds additional data to the question that is not included in the backup.
+     *
+     * @param stdClass $questiondata
+     * @param array $excludefields Paths to the fields to exclude.
+     * @return stdClass The $questiondata with excluded fields removed.
+     */
+    public static function remove_excluded_question_data(stdClass $questiondata, array $excludefields = []): stdClass {
+        // All questions will need to exclude 'id' (used by question and other tables), 'questionid' (used by hints and options),
+        // 'createdby' and 'modifiedby' (since they won't map between sites).
+        $defaultexcludes = [
+            '/id',
+            '/createdby',
+            '/modifiedby',
+            '/hints/id',
+            '/hints/questionid',
+            '/options/id',
+            '/options/questionid',
+        ];
+        $excludefields = array_unique(array_merge($excludefields, $defaultexcludes));
+
+        foreach ($excludefields as $excludefield) {
+            $pathparts = explode('/', ltrim($excludefield, '/'));
+            $data = $questiondata;
+            self::unset_excluded_fields($data, $pathparts);
+        }
+
+        return $questiondata;
+    }
+
+    /**
+     * Iterate through the elements of path to an excluded field, and unset the final element.
+     *
+     * If any of the elements in the path is an array, this is called recursively on each element in the array to unset fields
+     * in each child of the array.
+     *
+     * @param stdClass|array $data The questiondata object, or a subsection of it.
+     * @param array $pathparts The remaining elements in the path to the excluded field.
+     * @return void
+     */
+    private static function unset_excluded_fields(stdClass|array $data, array $pathparts): void {
+        $element = array_shift($pathparts);
+        if (!isset($data->{$element})) {
+            // This element is not present in the data structure, nothing to unset.
+            return;
+        }
+        if (is_object($data->{$element})) {
+            self::unset_excluded_fields($data->{$element}, $pathparts);
+        } else if (is_array($data->{$element})) {
+            foreach ($data->{$element} as $item) {
+                self::unset_excluded_fields($item, $pathparts);
+            }
+        } else if (empty($pathparts)) {
+            // This is the last element of the path and it's a scalar value, unset it.
+            unset($data->{$element});
+        }
     }
 }

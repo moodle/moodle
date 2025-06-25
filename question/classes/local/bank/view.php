@@ -235,6 +235,10 @@ class view {
         $this->cm = $cm;
         $this->extraparams = $extraparams;
 
+        // Add the default qperpage to extra params array so we can switch back and forth between it and "all".
+        $this->extraparams['defaultqperpage'] = $this->pagesize;
+        $this->extraparams['maxqperpage'] = MAXIMUM_QUESTIONS_PER_PAGE;
+
         // Default filter condition.
         if (!isset($params['filter']) && isset($params['cat'])) {
             $params['filter']  = [];
@@ -746,16 +750,16 @@ class view {
             [$colname, $subsort] = $this->parse_subsort($sortname);
             $sorts[] = $this->requiredcolumns[$colname]->sort_expression($sortorder == SORT_DESC, $subsort);
         }
-
-        // Build the where clause.
-        $latestversion = 'qv.version = (SELECT MAX(v.version)
-                                          FROM {question_versions} v
-                                          JOIN {question_bank_entries} be
-                                            ON be.id = v.questionbankentryid
-                                         WHERE be.id = qbe.id)';
         $this->sqlparams = [];
         $conditions = [];
+        $showhiddenquestion = true;
+        // Build the where clause.
         foreach ($this->searchconditions as $searchcondition) {
+            // TODO: Looking at the contents of params like this is not great. It is just a short-term fix.
+            // This will be solved properly when MDL-84433 is done.
+            if (array_key_exists('hidden_condition', $searchcondition->params())) {
+                $showhiddenquestion = false;
+            }
             if ($searchcondition->where()) {
                 $conditions[] = '((' . $searchcondition->where() .'))';
             }
@@ -763,6 +767,18 @@ class view {
                 $this->sqlparams = array_merge($this->sqlparams, $searchcondition->params());
             }
         }
+        $extracondition = '';
+        if (!$showhiddenquestion) {
+            // If Show hidden question option is off, then we need get the latest version that is not hidden.
+            $extracondition = ' AND v.status <> :hiddenstatus';
+            $this->sqlparams = array_merge($this->sqlparams, ['hiddenstatus' => question_version_status::QUESTION_STATUS_HIDDEN]);
+        }
+        $latestversion = "qv.version = (SELECT MAX(v.version)
+                                          FROM {question_versions} v
+                                          JOIN {question_bank_entries} be
+                                            ON be.id = v.questionbankentryid
+                                         WHERE be.id = qbe.id $extracondition)";
+
         // Get higher level filter condition.
         $jointype = isset($this->pagevars['jointype']) ? (int)$this->pagevars['jointype'] : condition::JOINTYPE_DEFAULT;
         $nonecondition = ($jointype === datafilter::JOINTYPE_NONE) ? ' NOT ' : '';
@@ -799,15 +815,18 @@ class view {
      */
     protected function load_page_questions(): \moodle_recordset {
         global $DB;
+
+        // Load the questions based on the page we are on.
         $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams,
-            (int)$this->pagevars['qpage'] * (int)$this->pagevars['qperpage'], $this->pagevars['qperpage']);
+            (int)$this->pagevars['qpage'] * (int)$this->pagevars['qperpage'], (int)$this->pagevars['qperpage']);
+
         if (!$questions->valid()) {
             $questions->close();
             // No questions on this page. Reset to the nearest page that contains questions.
             $this->pagevars['qpage'] = max(0,
-                ceil($this->totalcount / $this->pagevars['qperpage']) - 1);
+                ceil($this->totalcount / (int)$this->pagevars['qperpage']) - 1);
             $questions = $DB->get_recordset_sql($this->loadsql, $this->sqlparams,
-                $this->pagevars['qpage'] * (int) $this->pagevars['qperpage'], $this->pagevars['qperpage']);
+                (int)$this->pagevars['qpage'] * (int)$this->pagevars['qperpage'], (int)$this->pagevars['qperpage']);
         }
         return $questions;
     }
@@ -1143,6 +1162,7 @@ class view {
         // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
         // Note: We do not call this in the loop because quiz ob_ captures this function (see raise() PHP doc).
         \core_php_time_limit::raise(300);
+        raise_memory_limit(MEMORY_EXTRA);
 
         [$categoryid, $contextid] = category_condition::validate_category_param($this->pagevars['cat']);
         $catcontext = \context::instance_by_id($contextid);

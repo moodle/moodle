@@ -14,13 +14,13 @@ Feature: Award badges based on competency completion
     And the following "course enrolments" exist:
       | user | course | role |
       | user1 | C1 | student |
-    And the following lp "frameworks" exist:
-      | shortname | idnumber |
-      | Framework 1 | sc-y-2 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | comp1 | sc-y-2 |
-      | comp2 | sc-y-2 |
+    And the following "core_competency > frameworks" exist:
+      | shortname   | idnumber |
+      | Framework 1 | sc-y-2   |
+    And the following "core_competency > competencies" exist:
+      | shortname | competencyframework |
+      | comp1     | sc-y-2              |
+      | comp2     | sc-y-2              |
     And I log in as "admin"
 
   @javascript

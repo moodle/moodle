@@ -524,7 +524,7 @@ class user extends grade_report {
             $gradegrade->load_grade_item();
 
             // Hidden Items.
-            if ($gradegrade->grade_item->is_hidden()) {
+            if ($gradegrade->grade_item->is_hidden() && $this->canviewhidden) {
                 $hidden = ' dimmed_text';
             }
 
@@ -590,7 +590,7 @@ class user extends grade_report {
 
                 $itemicon = \html_writer::div(grade_helper::get_element_icon($element), 'me-1');
                 $elementtype = grade_helper::get_element_type_string($element);
-                $itemtype = \html_writer::span($elementtype, 'd-block text-uppercase small dimmed_text',
+                $itemtype = \html_writer::span($elementtype, 'd-block text-uppercase small ' . $hidden,
                     ['title' => $elementtype]);
 
                 if ($type == 'categoryitem' || $type == 'courseitem') {
@@ -694,10 +694,11 @@ class user extends grade_report {
                         );
                         $gradeitemdata['gradehiddenbydate'] = true;
                     } else if ($gradegrade->is_hidden()) {
-                        $data['grade']['class'] = $class.' dimmed_text';
+                        $data['grade']['class'] = $class;
                         $data['grade']['content'] = '-';
 
                         if ($this->canviewhidden) {
+                            $data['grade']['class'] .= ' dimmed_text';
                             $gradeitemdata['graderaw'] = $gradeval;
                             $data['grade']['content'] = grade_format_gradevalue($gradeval,
                                 $gradegrade->grade_item,
@@ -762,9 +763,10 @@ class user extends grade_report {
                         $data['percentage']['class'] = $class.' gradingerror';
                         $data['percentage']['content'] = get_string('error');
                     } else if ($gradegrade->is_hidden()) {
-                        $data['percentage']['class'] = $class.' dimmed_text';
+                        $data['percentage']['class'] = $class;
                         $data['percentage']['content'] = '-';
                         if ($this->canviewhidden) {
+                            $data['percentage']['class'] .= ' dimmed_text';
                             $data['percentage']['content'] = grade_format_gradevalue(
                                 $gradeval,
                                 $gradegrade->grade_item,
@@ -791,8 +793,9 @@ class user extends grade_report {
                         $data['lettergrade']['class'] = $class.' gradingerror';
                         $data['lettergrade']['content'] = get_string('error');
                     } else if ($gradegrade->is_hidden()) {
-                        $data['lettergrade']['class'] = $class.' dimmed_text';
+                        $data['lettergrade']['class'] = $class;
                         if (!$this->canviewhidden) {
+                            $data['lettergrade']['class'] .= ' dimmed_text';
                             $data['lettergrade']['content'] = '-';
                         } else {
                             $data['lettergrade']['content'] = grade_format_gradevalue(
@@ -822,8 +825,11 @@ class user extends grade_report {
                         $data['rank']['class'] = $class.' gradingerror';
                         $data['rank']['content'] = get_string('error');
                     } else if ($gradegrade->is_hidden()) {
-                        $data['rank']['class'] = $class.' dimmed_text';
+                        $data['rank']['class'] = $class;
                         $data['rank']['content'] = '-';
+                        if ($this->canviewhidden) {
+                            $data['rank']['class'] .= ' dimmed_text';
+                        }
                     } else if (is_null($gradeval)) {
                         // No grade, o rank.
                         $data['rank']['class'] = $class;

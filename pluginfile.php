@@ -41,4 +41,10 @@ $preview = optional_param('preview', null, PARAM_ALPHANUM);
 // The repository may have to export the file to an offline format.
 $offline = optional_param('offline', 0, PARAM_BOOL);
 $embed = optional_param('embed', 0, PARAM_BOOL);
+
+// We need to set the page URL here because there are cases where file_pluginfile may display an
+// error directly on the page instead of throwing an exception, and this will generate a server
+// error if $PAGE->url is not defined.
+$PAGE->set_url(new \moodle_url($FULLME));
+
 file_pluginfile($relativepath, $forcedownload, $preview, $offline, $embed);

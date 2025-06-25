@@ -4,13 +4,13 @@ Feature: See the competencies for an activity on the course competencies page.
   In order to see only the competencies for an activity in the course competencies page.
 
   Background:
-    Given the following lp "frameworks" exist:
-      | shortname | idnumber |
-      | Test-Framework | ID-FW1 |
-    And the following lp "competencies" exist:
-      | shortname | framework |
-      | Test-Comp1 | ID-FW1 |
-      | Test-Comp2 | ID-FW1 |
+    Given the following "core_competency > frameworks" exist:
+      | shortname      | idnumber |
+      | Test-Framework | ID-FW1   |
+    And the following "core_competency > competencies" exist:
+      | shortname  | competencyframework |
+      | Test-Comp1 | ID-FW1              |
+      | Test-Comp2 | ID-FW1              |
     Given the following "courses" exist:
       | shortname | fullname   | enablecompletion |
       | C1        | Course 1   | 1                |

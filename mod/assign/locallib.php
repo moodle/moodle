@@ -525,10 +525,6 @@ class assign {
             $nextpageparams['id'] = $this->get_course_module()->id;
         }
 
-        if (empty($action)) {
-            $PAGE->add_body_class('limitedwidth');
-        }
-
         // Handle form submissions first.
         if ($action == 'savesubmission') {
             $action = 'editsubmission';
@@ -2349,6 +2345,9 @@ class assign {
                     $params = array_merge($params, $keywordsparams);
                 }
             }
+
+            // Exclude suspended users from the list of participants.
+            $additionalfilters .= " AND u.suspended = 0 AND u.auth <> 'nologin'";
 
             $sql = "SELECT $fields
                       FROM {user} u

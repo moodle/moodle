@@ -466,19 +466,26 @@ function badges_prepare_badge_for_external(stdClass $badge, stdClass $user): obj
     // Create a badge instance to be able to get the endorsement and other info.
     $badgeinstance = new badge($badge->id);
     $endorsement   = $badgeinstance->get_endorsement();
-    $alignments    = $badgeinstance->get_alignments();
     $relatedbadges = $badgeinstance->get_related_badges();
+    $alignments    = [];
+    foreach ($badgeinstance->get_alignments() as $alignment) {
+        $alignmentobj = (object) [
+            'id' => $alignment->id,
+            'badgeid' => $alignment->badgeid,
+            'targetName' => $alignment->targetname,
+            'targetUrl' => $alignment->targeturl,
+        ];
+        // Include only the properties visible by the user.
+        if ($canconfiguredetails) {
+            $alignmentobj->targetDescription = $alignment->targetdescription;
+            $alignmentobj->targetFramework = $alignment->targetframework;
+            $alignmentobj->targetCode = $alignment->targetcode;
+        }
+        $alignments[] = $alignmentobj;
+    }
 
     if (!$canconfiguredetails) {
         // Return only the properties visible by the user.
-        if (!empty($alignments)) {
-            foreach ($alignments as $alignment) {
-                unset($alignment->targetdescription);
-                unset($alignment->targetframework);
-                unset($alignment->targetcode);
-            }
-        }
-
         if (!empty($relatedbadges)) {
             foreach ($relatedbadges as $relatedbadge) {
                 unset($relatedbadge->version);
@@ -534,21 +541,27 @@ function badges_prepare_badgeclass_for_external(core_badges\output\badgeclass $b
     // Create a badge instance to be able to get the endorsement and other info.
     $badgeinstance = new badge($badgeclass->badge->id);
     $endorsement   = $badgeinstance->get_endorsement();
-    $alignments    = $badgeinstance->get_alignments();
     $relatedbadges = $badgeinstance->get_related_badges();
-
     $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
+    $alignments = [];
+    foreach ($badgeinstance->get_alignments() as $alignment) {
+        $alignmentobj = (object) [
+            'id' => $alignment->id,
+            'badgeid' => $alignment->badgeid,
+            'targetName' => $alignment->targetname,
+            'targetUrl' => $alignment->targeturl,
+        ];
+        // Include only the properties visible by the user.
+        if ($canconfiguredetails) {
+            $alignmentobj->targetDescription = $alignment->targetdescription;
+            $alignmentobj->targetFramework = $alignment->targetframework;
+            $alignmentobj->targetCode = $alignment->targetcode;
+        }
+        $alignments[] = $alignmentobj;
+    }
 
     if (!$canconfiguredetails) {
         // Return only the properties visible by the user.
-        if (!empty($alignments)) {
-            foreach ($alignments as $alignment) {
-                unset($alignment->targetdescription);
-                unset($alignment->targetframework);
-                unset($alignment->targetcode);
-            }
-        }
-
         if (!empty($relatedbadges)) {
             foreach ($relatedbadges as $relatedbadge) {
                 unset($relatedbadge->version);
@@ -650,11 +663,6 @@ function badges_process_badge_image(badge $badge, $iconfile) {
     if (!empty($CFG->gdversion)) {
         process_new_icon($badge->get_context(), 'badges', 'badgeimage', $badge->id, $iconfile, true);
         @unlink($iconfile);
-
-        // Clean up file draft area after badge image has been saved.
-        $context = context_user::instance($USER->id, MUST_EXIST);
-        $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'user', 'draft');
     }
 }
 

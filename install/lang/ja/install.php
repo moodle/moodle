@@ -62,26 +62,22 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリ制限が {$a}
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧中にエラーが表示される場合、.htaccessファイルを削除してください。</p></li>
 </ol>';
 $string['paths'] = 'パス';
-$string['pathserrcreatedataroot'] = 'データディレクトリ ({$a->dataroot}) はインストーラで作成できません。';
+$string['pathserrcreatedataroot'] = 'データディレクトリ ({$a->dataroot}) をインストーラで作成できません。';
 $string['pathshead'] = 'パスを確認する';
 $string['pathsrodataroot'] = 'datarootディレクトリに書き込み権がありません。';
-$string['pathsroparentdataroot'] = '親ディレクトリ ({$a->parent}) に書き込み権がありません。データディレクトリ ({$a->dataroot}) はインストーラで作成できません。';
-$string['pathssubadmindir'] = 'まれに、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ですが、これはMoodle管理ページの標準的なロケーションと衝突します。あなたはインストール時にadminディレクトリをリネームすることができます。ここに新しいディレクトリ名を入力してください。例: <br /> <br /><b>moodleadmin</b><br /> <br />
-これでMoodleでのadminへのリンクを変更します。';
-$string['pathssubdataroot'] = '<p>ユーザによってアップロードされたファイルコンテンツすべてをMoodleが保存するディレクトリです。</p>
+$string['pathsroparentdataroot'] = '親ディレクトリ ({$a->parent}) に書き込み権がありません。データディレクトリ ({$a->dataroot}) をインストーラで作成できません。';
+$string['pathssubadmindir'] = 'ごく少数のウェブホストですが、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しています。残念ですが、これはMoodle管理ページの標準的なロケーションと衝突します。あなたはインストール時にadminディレクトリをリネームできます。ここに新しいディレクトリ名を入力してください。例: <b>moodleadmin</b> これでMoodleでのadminへのリンクを変更します。';
+$string['pathssubdataroot'] = '<p>ユーザがアップロードしたファイルコンテンツすべてをMoodleが保存するディレクトリです。</p>
 <p>このディレクトリはウェブサーバユーザ (通常「nobody」または「apache」) から読み込みおよび書き込みできる必要があります。</p>
 <p>ウェブからは直接アクセスできないようにしてください。</p>
 <p>現在ディレクトリが存在しない場合、インストレーションプロセスは作成を試みます。</p';
-$string['pathssubdirroot'] = '<p>Moodleコードを含むディレクトリに関するフルパスです。</p>';
-$string['pathssubwwwroot'] = '<p>Moodleにアクセスできるフルウェブアドレスです。例えばユーザがブラウザのアドレスバーに入力してMoodleにアクセスするためのアドレスです。</p>
-
+$string['pathssubdirroot'] = '<p>Moodleコードを含むディレクトリへのフルパスです。</p>';
+$string['pathssubwwwroot'] = '<p>Moodleにアクセスするための完全なウェブアドレスです。例えばユーザがブラウザのアドレスバーに入力してMoodleにアクセスするためのアドレスです。</p>
 <p>複数アドレスを使用したMoodleへのアクセスはできません。あなたのサイトに複数アドレスからアクセスできる場合、最も簡単なアドレスを選択して、すべてのアドレスにパーマネントリダイレクトを設定してください。</p>
-
-<p>あなたのサイトにインターネットおよび内部ネットワーク (イントラネットと呼ばれます) からアクセスできる場合、ここではパブリックアドレスを使用してください。</p>
-
-<p>現在のアドレスが正しくない場合、あなたのブラウザのURLを変更して、異なる値でインストレーションを再開してください。</p>';
-$string['pathsunsecuredataroot'] = 'dataroot ロケーションが安全ではありません。';
-$string['pathswrongadmindir'] = 'adminディレクトリがありません。';
+<p>あなたのサイトにインターネットおよび内部ネットワーク (イントラネットと呼ばれることもあります) からアクセスできる場合、ここではパブリックアドレスを使用してください。</p>
+<p>現在のアドレスが正しくない場合、あなたのブラウザのアドレスバーでURLを変更して、インストールをやり直してください。</p>';
+$string['pathsunsecuredataroot'] = 'datarootの場所が安全ではありません。';
+$string['pathswrongadmindir'] = 'adminディレクトリが存在しません。';
 $string['phpextension'] = '{$a} PHP拡張モジュール';
 $string['phpversion'] = 'PHPバージョン';
 $string['phpversionhelp'] = '<p>Moodleには少なくとも5.6.5または7.1のPHPバージョンが必要です (7.0.x にはエンジンの制限があります)。</p>

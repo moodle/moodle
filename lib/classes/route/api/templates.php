@@ -44,7 +44,7 @@ class templates {
      * @return payload_response
      */
     #[route(
-        path: '/templates/{themename}/{component}/{identifier}',
+        path: '/templates/{themename}/{component}/{identifier:.*}',
         method: ['GET'],
         title: 'Fetch a single template',
         description: 'Fetch a single template for a component in a theme',

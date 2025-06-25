@@ -2189,10 +2189,11 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output = '';
         $output .= $this->header();
-        $output .= $this->container_start('upgradekeyreq');
         $output .= $this->heading(get_string('upgradekeyreq', 'core_admin'));
+        $output .= $this->container_start('upgradekeyreq w-25');
         $output .= html_writer::start_tag('form', array('method' => 'POST', 'action' => $url));
         $output .= html_writer::empty_tag('input', [
+            'id' => 'upgradekey',
             'name' => 'upgradekey',
             'type' => 'password',
             'class' => 'form-control w-auto',

@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = '错误，将“{$a->option}”的值设为“{$a->value}”是不正确的';
+$string['cliincorrectvalueerror'] = '错误，将"{$a->option}"的值设为"{$a->value}"是不正确的';
 $string['cliincorrectvalueretry'] = '不正确的值，请重试';
 $string['clitypevalue'] = '输入值';
 $string['clitypevaluedefault'] = '输入值，按回车使用缺省值（{$a}）';

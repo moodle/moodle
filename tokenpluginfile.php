@@ -33,6 +33,8 @@ require_once('config.php');
 
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: range');
+header('Access-Control-Expose-Headers: Content-Range');
 
 $relativepath = get_file_argument();
 $token = optional_param('token', '', PARAM_ALPHANUM);

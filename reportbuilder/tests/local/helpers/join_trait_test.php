@@ -14,11 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Unit tests for the join trait
+ *
+ * @package     core_reportbuilder
+ * @copyright   2024 Paul Holden <paulh@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
 use advanced_testcase;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Unit tests for the join trait
@@ -34,9 +44,7 @@ final class join_trait_test extends advanced_testcase {
      * Test adding single join
      */
     public function test_add_join(): void {
-
-        /** @var join_trait $trait */
-        $trait = $this->getObjectForTrait(join_trait::class);
+        $trait = new join_trait_mock();
         $trait->add_join('JOIN {test} t ON t.id = a.id');
 
         $this->assertEquals(['JOIN {test} t ON t.id = a.id'], $trait->get_joins());
@@ -46,9 +54,7 @@ final class join_trait_test extends advanced_testcase {
      * Test adding single join multiple times
      */
     public function test_add_join_multiple(): void {
-
-        /** @var join_trait $trait */
-        $trait = $this->getObjectForTrait(join_trait::class);
+        $trait = new join_trait_mock();
 
         // Add multiple joins, two of which are duplicates.
         $trait->add_join('JOIN {test} t1 ON t1.id = a.id')
@@ -66,9 +72,7 @@ final class join_trait_test extends advanced_testcase {
      * Test adding multiple joins
      */
     public function test_add_joins(): void {
-
-        /** @var join_trait $trait */
-        $trait = $this->getObjectForTrait(join_trait::class);
+        $trait = new join_trait_mock();
 
         // Add multiple joins, two of which are duplicates.
         $trait->add_joins([
@@ -83,4 +87,11 @@ final class join_trait_test extends advanced_testcase {
             'JOIN {test} t2 ON t2.id = b.id',
         ], $trait->get_joins());
     }
+}
+
+/**
+ * Simple implementation of a class using the trait
+ */
+final class join_trait_mock {
+    use join_trait;
 }

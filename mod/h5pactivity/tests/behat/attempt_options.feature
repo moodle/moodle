@@ -11,9 +11,13 @@ Feature: Attempts review settings.
       | student2 | Student   | 2        | student2@example.com |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | teacher2 | Teacher   | 2        | teacher2@example.com |
+    And the following config values are set as admin:
+      | enrol_guest | Yes |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
+    And I am on the "Course 1" "enrolment methods" page logged in as admin
+    And I click on "Enable" "link" in the "Guest access" "table_row"
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
@@ -44,6 +48,9 @@ Feature: Attempts review settings.
 
     Examples:
       | user     | enabletracking | reviewmode | attemptsreportlink | previewmode | attempttracking | attempttrackingsettings | viewattempts |
+      | guest    | 1              | 1          | not exist          | not see     | not see         | not see                 | not see      |
+      | guest    | 1              | 0          | not exist          | not see     | not see         | not see                 | not see      |
+      | guest    | 0              | 1          | not exist          | not see     | not see         | not see                 | not see      |
       | student1 | 1              | 1          | exist              | not see     | not see         | not see                 | not see      |
       | student1 | 1              | 0          | not exist          | not see     | not see         | not see                 | not see      |
       | student1 | 0              | 1          | not exist          | not see     | not see         | not see                 | not see      |

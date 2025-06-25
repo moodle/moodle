@@ -280,9 +280,17 @@ class specification implements
         // Note: We use this helper because OpenAPI does not support optional parameters.
         // Therefore we must handle that in Moodle, adding path variants with and without each optional parameter.
         $addpath = function (string $path) use ($route, $component) {
-            // Remove the optional parameters delimiters from the path.
             $path = str_replace(
-                ['[', ']'],
+                [
+                    // Remove the optional parameters delimiters from the path.
+                    '[',
+                    ']',
+
+                    // Remove the greedy and non-greedy unlimited delimters from the path too.
+                    // These are a FastRoute feature not compatible with OpenAPI.
+                    ':.*?',
+                    ':.*',
+                ],
                 '',
                 $path,
             );

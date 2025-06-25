@@ -90,7 +90,7 @@ class summarise_text extends external_api {
         );
 
         // Send the action to the AI manager.
-        $manager = new \core_ai\manager();
+        $manager = \core\di::get(\core_ai\manager::class);
         $response = $manager->process_action($action);
         // Return the response.
         return [
@@ -133,7 +133,7 @@ class summarise_text extends external_api {
                 VALUE_DEFAULT,
             ),
             'finishreason' => new external_value(
-                PARAM_ALPHA,
+                PARAM_ALPHAEXT,
                 'The reason generation was stopped',
                 VALUE_DEFAULT,
                 'stop',

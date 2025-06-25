@@ -50,8 +50,7 @@ abstract class provider {
      * @return string The name of the provider.
      */
     public function get_name(): string {
-        $component = \core\component::get_component_from_classname(get_class($this));
-        return get_string('pluginname', $component);
+        return \core\component::get_component_from_classname(get_class($this));
     }
 
     /**

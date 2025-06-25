@@ -21,6 +21,12 @@ Feature: Duplicate activities
       | data     | Test database name | Test database description | C1     | database1  | 1       |
     And the following config values are set as admin:
       | backup_import_activities | 0 | backup |
+    And the following "core_badges > Badges" exist:
+      | name            | course | description       | image                        | status | type |
+      | My course badge | C1     | Badge description | badges/tests/behat/badge.png | active | 2    |
+    And the following "core_badges > Criterias" exist:
+      | badge             | role           |
+      | My course badge   | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I duplicate "Test database name" activity
@@ -38,3 +44,8 @@ Feature: Duplicate activities
     Then I should see "Original database name" in the "Section 1" "section"
     And I should see "Duplicated database name" in the "Section 1" "section"
     And "Original database name" "link" should appear before "Duplicated database name" "link"
+    # Check that badges are not duplicated. If they are duplicated, they will appear as "Not available".
+    And I navigate to "Badges" in current page administration
+    And the following should not exist in the "reportbuilder-table" table:
+      | Name             | Badge status  |
+      | My course badge  | Not available |

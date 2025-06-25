@@ -44,11 +44,14 @@ class notification_helper {
 
         $sql = "SELECT DISTINCT q.id
                   FROM {quiz} q
+                  JOIN {course} c ON q.course = c.id
                   JOIN {course_modules} cm ON q.id = cm.instance
                   JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
              LEFT JOIN {quiz_overrides} qo ON q.id = qo.quiz
                  WHERE (q.timeopen < :futuretime OR qo.timeopen < :qo_futuretime)
-                   AND (q.timeopen > :timenow OR qo.timeopen > :qo_timenow)";
+                   AND (q.timeopen > :timenow OR qo.timeopen > :qo_timenow)
+                   AND cm.visible = 1
+                   AND c.visible = 1";
 
         $params = [
             'timenow' => $timenow,
@@ -76,13 +79,21 @@ class notification_helper {
         $users = get_enrolled_users(
             context: \context_module::instance($quizobj->get_cm()->id),
             withcapability: 'mod/quiz:attempt',
-            userfields: 'u.id, u.firstname',
+            userfields: 'u.id, u.firstname, u.suspended, u.auth',
         );
+
+        // Filter a list of users who meet the availability conditions.
+        $info = new \core_availability\info_module($quizobj->get_cm());
+        $users = $info->filter_user_list($users);
 
         // Check for any override dates.
         $overrides = $quizobj->get_override_manager()->get_all_overrides();
 
         foreach ($users as $key => $user) {
+            if ($user->suspended || ($user->auth == 'nologin')) {
+                unset($users[$key]);
+                continue;
+            }
             // Time open and time close dates can be user specific with an override.
             // We begin by assuming it is the same as recorded in the quiz.
             $user->timeopen = $quiz->timeopen;

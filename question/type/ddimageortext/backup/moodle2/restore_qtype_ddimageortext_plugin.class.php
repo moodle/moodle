@@ -166,4 +166,29 @@ class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
 
         return $contents;
     }
+
+    #[\Override]
+    public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+        $questiondata = parent::convert_backup_to_questiondata($backupdata);
+        $questiondata->options->drags = array_map(
+            fn($drag) => (object) $drag,
+            $backupdata['plugin_qtype_ddimageortext_question']['drags']['drag'] ?? [],
+        );
+        $questiondata->options->drops = array_map(
+            fn($drop) => (object) $drop,
+            $backupdata['plugin_qtype_ddimageortext_question']['drops']['drop'] ?? [],
+        );
+        return $questiondata;
+    }
+
+    #[\Override]
+    protected function define_excluded_identity_hash_fields(): array {
+        return [
+            '/options/drags/id',
+            '/options/drags/questionid',
+            '/options/drops/id',
+            '/options/drops/questionid',
+
+        ];
+    }
 }

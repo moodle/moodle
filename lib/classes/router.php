@@ -91,7 +91,7 @@ class router {
 
         // Moodle is not guaranteed to exist at the domain root.
         // Strip out the current script.
-        $scriptroot = parse_url($CFG->wwwroot, PHP_URL_PATH);
+        $scriptroot = parse_url($CFG->wwwroot, PHP_URL_PATH) ?? '';
         $scriptfile = str_replace(
             realpath($CFG->dirroot),
             '',

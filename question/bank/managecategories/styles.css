@@ -80,11 +80,15 @@
     color: #dee2e6;
     font-weight: bold;
 }
+
+/* stylelint-disable max-line-length */
 .qbank_managecategories-newchild.qbank_managecategories-droptarget,
 /* Show the drop target if it's directly inside a highlighted category, but not if its inside a child of that category */
 .qbank_managecategories-droptarget-before > .container > .row > .qbank_managecategories-contentcontainer > :not(.qbank_managecategories-childlistcontainer) .qbank_managecategories-newchild {
     display: unset;
 }
+/* stylelint-enable max-line-length */
+
 /* Hidden descriptions */
 .qbank_managecategories-description {
     display: none;

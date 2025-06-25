@@ -567,7 +567,7 @@ abstract class restore_dbops {
      * @return array A separate list of all error and warnings detected
      */
     public static function prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, $contextlevel) {
-        global $DB;
+        global $DB, $CFG;
 
         // To return any errors and warnings found
         $errors   = array();
@@ -669,21 +669,37 @@ abstract class restore_dbops {
                 } else {
                     self::set_backup_ids_record($restoreid, 'question_category', $category->id, $matchcat->id, $targetcontext->id);
                     $questions = self::restore_get_questions($restoreid, $category->id);
+                    $transformer = self::get_backup_xml_transformer($courseid);
 
                     // Collect all the questions for this category into memory so we only talk to the DB once.
-                    $questioncache = $DB->get_records_sql_menu('SELECT q.stamp, q.id
-                                                                  FROM {question} q
-                                                                  JOIN {question_versions} qv
-                                                                    ON qv.questionid = q.id
-                                                                  JOIN {question_bank_entries} qbe
-                                                                    ON qbe.id = qv.questionbankentryid
-                                                                  JOIN {question_categories} qc
-                                                                    ON qc.id = qbe.questioncategoryid
-                                                                 WHERE qc.id = ?', array($matchcat->id));
+                    $recordset = $DB->get_recordset_sql(
+                        "SELECT q.*
+                           FROM {question} q
+                           JOIN {question_versions} qv ON qv.questionid = q.id
+                           JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                           JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                          WHERE qc.id = ?",
+                        [$matchcat->id],
+                    );
+
+                    // Compute a hash of question and answer fields to differentiate between identical stamp-version questions.
+                    $questioncache = [];
+                    foreach ($recordset as $question) {
+                        $question->export_process = true; // Include all question options required for export.
+                        get_question_options($question);
+                        unset($question->export_process);
+                        // Remove some additional properties from get_question_options() that isn't included in backups
+                        // before we produce the identity hash.
+                        unset($question->categoryobject);
+                        unset($question->questioncategoryid);
+                        $cachekey = restore_questions_parser_processor::generate_question_identity_hash($question, $transformer);
+                        $questioncache[$cachekey] = $question->id;
+                    }
+                    $recordset->close();
 
                     foreach ($questions as $question) {
-                        if (isset($questioncache[$question->stamp])) {
-                            $matchqid = $questioncache[$question->stamp];
+                        if (isset($questioncache[$question->questionhash])) {
+                            $matchqid = $questioncache[$question->questionhash];
                         } else {
                             $matchqid = false;
                         }
@@ -1917,6 +1933,22 @@ abstract class restore_dbops {
      */
     private static function password_should_be_discarded(#[\SensitiveParameter] string $password): bool {
         return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
+    }
+
+    /**
+     * Load required classes and return a backup XML transformer for the specified course.
+     *
+     * These classes may not have been loaded if we're only doing a restore in the current process,
+     * so make sure we have them here.
+     *
+     * @param int $courseid
+     * @return backup_xml_transformer
+     */
+    protected static function get_backup_xml_transformer(int $courseid): backup_xml_transformer {
+        global $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
+        return new backup_xml_transformer($courseid);
     }
 }
 

@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use Behat\Mink\Exception\{DriverException, ExpectationException};
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\ExpectationException;
+use Behat\Mink\Element\NodeElement;
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
@@ -29,7 +31,6 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_accessibility extends behat_base {
-
     /**
      * Run the axe-core accessibility tests.
      *
@@ -53,6 +54,37 @@ class behat_accessibility extends behat_base {
     }
 
     /**
+     * Run the axe-core accessibility tests for a page region.
+     *
+     * There are standard tags to ensure WCAG 2.1 A, WCAG 2.1 AA, and Section 508 compliance.
+     * It is also possible to specify any desired optional tags.
+     *
+     * See {@link https://github.com/dequelabs/axe-core/blob/v4.10.0/doc/rule-descriptions.md} for the list of available tags
+     *
+     * @Then the :element :selector should meet accessibility standards
+     * @Then the :element :selector should meet accessibility standards with :extratags extra tests
+     * @Then the :element :selector should meet :standardtags accessibility standards
+     * @param  string $element The element to run the tests on
+     * @param  string $selector The selector to use to find the element
+     * @param  string $standardtags Comma-separated list of standard tags to run
+     * @param  string $extratags Comma-separated list of tags to run in addition to the standard tags
+     */
+    public function run_axe_validation_for_tags_within_element(
+        string $element,
+        string $selector,
+        string $standardtags = '',
+        string $extratags = '',
+    ): void {
+        $node = $this->get_selected_node($selector, $element);
+        $this->run_axe_for_tags(
+            // Turn the comma-separated string into an array of trimmed values, filtering out empty values.
+            array_filter(array_map('trim', explode(',', $standardtags))),
+            array_filter(array_map('trim', explode(',', $extratags))),
+            $node,
+        );
+    }
+
+    /**
      * Run the Axe tests.
      *
      * See https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md for details of the supported
@@ -60,8 +92,13 @@ class behat_accessibility extends behat_base {
      *
      * @param   array $standardtags The list of standard tags to run
      * @param   array $extratags The list of tags, in addition to the standard tags, to run
+     * @param null|NodeElement $containerelement The element to run the tests on
      */
-    protected function run_axe_for_tags(array $standardtags = [], array $extratags = []): void {
+    protected function run_axe_for_tags(
+        array $standardtags = [],
+        array $extratags = [],
+        ?NodeElement $containerelement = null,
+    ): void {
         if (!behat_config_manager::get_behat_run_config_value('axe')) {
             return;
         }
@@ -76,13 +113,33 @@ class behat_accessibility extends behat_base {
 
         $axeurl = (new \moodle_url('/lib/behat/axe/axe.min.js'))->out(false);
         $axeconfig = $this->get_axe_config_for_tags($standardtags, $extratags);
+        $xpath = '';
+        if ($containerelement) {
+            $xpath = $this->prepare_xpath_for_javascript($containerelement->getXpath());
+        }
         $runaxe = <<<EOF
 (axeurl => {
     const runTests = () => {
         const axeTag = document.querySelector('script[data-purpose="axe"]');
         axeTag.dataset.results = null;
 
-        axe.run({$axeconfig})
+        const getRun = () => {
+            const xpath = "{$xpath}";
+            if (xpath.length) {
+                const targetElements = [];
+                const results = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+                let targetElement = results.iterateNext();
+                while (targetElement) {
+                    targetElements.push(targetElement);
+                    targetElement = results.iterateNext();
+                }
+                return axe.run(targetElements, {$axeconfig});
+            }
+
+            return axe.run({$axeconfig});
+        };
+
+        getRun()
         .then(results => {
             axeTag.dataset.results = JSON.stringify({
                 violations: results.violations,
@@ -157,12 +214,15 @@ EOF;
             }
 
             $violationdata .= sprintf(
-                "  %.03d violations of '%s' (severity: %s)\n%s\n",
+                "  %.03d violations of rule '%s' found (severity: %s)\n",
                 count($violation->nodes),
-                $violation->description,
+                $violation->id,
                 $violation->impact,
-                $nodedata
             );
+            $violationdata .= "  {$violation->help}\n";
+            $violationdata .= "  {$violation->description}\n";
+            $violationdata .= "  {$violation->helpUrl}\n";
+            $violationdata .= $nodedata;
         }
 
         throw new ExpectationException($violationdata, $this->getSession());
@@ -181,9 +241,13 @@ EOF;
         if (empty($standardtags)) {
             $standardtags = [
                 // Meet WCAG 2.2 Level A success criteria.
+                'wcag2a',
+                'wcag21a',
                 'wcag22a',
 
                 // Meet WCAG 2.2 Level AA success criteria.
+                'wcag2aa',
+                'wcag21aa',
                 'wcag22aa',
 
                 // Meet Section 508 requirements.
