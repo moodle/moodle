@@ -283,7 +283,7 @@ XPATH
         , 'form_row' => <<<XPATH
 .//*[contains(concat(' ', @class, ' '), ' col-form-label ')]
     [normalize-space(.)= %locator%]
-    /ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]
+    /ancestor::*[contains(concat(' ', @class, ' '), ' fitem ') and not(self::fieldset)]
 XPATH
         , 'autocomplete_selection' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-selection', ' '))]/span[@role='option'][contains(normalize-space(.), %locator%)]
