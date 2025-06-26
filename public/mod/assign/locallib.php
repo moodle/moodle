@@ -6869,7 +6869,8 @@ class assign {
      * Submit a submission for grading.
      *
      * @param stdClass $data - The form data
-     * @param array $notices - List of error messages to display on an error condition.
+     * @param array $notices - Not actually used. Was meant to be pass-by-reference to return errors,
+     *    but was not passed by reference, and changing this now causes errors because PHP.
      * @return bool Return false if the submission was not submitted.
      */
     public function submit_for_grading($data, $notices) {
@@ -6897,7 +6898,6 @@ class assign {
         }
 
         if (!$this->submissions_open($userid)) {
-            $notices[] = get_string('submissionsclosed', 'assign');
             return false;
         }
 
@@ -6944,7 +6944,6 @@ class assign {
 
             return true;
         }
-        $notices[] = get_string('submissionsclosed', 'assign');
         return false;
     }
 
