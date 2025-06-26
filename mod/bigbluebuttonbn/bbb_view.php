@@ -68,8 +68,6 @@ $context = $instance->get_context();
 
 require_login($course, true, $cm);
 
-require_sesskey();
-
 // Note : this uses the group optional_param as a value to decide which groupid.
 $groupid = groups_get_activity_group($cm, true) ?: null;
 if ($groupid) {
