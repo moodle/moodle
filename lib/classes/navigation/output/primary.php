@@ -96,6 +96,7 @@ class primary implements renderable, templatable {
                 'icon' => $node->icon,
                 'isactive' => $node->isactive || !empty($activechildren),
                 'key' => $node->key,
+                'sort' => $node->key,
                 'children' => $children,
                 'haschildren' => !empty($children) ? 1 : 0,
             ];
