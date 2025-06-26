@@ -144,8 +144,10 @@ $headingstr = get_string('calendar', 'core_calendar');
 // If the user is on the course page,
 // then make the course name linkable to ease the user's navigation to the course page.
 if ($iscoursecalendar) {
-    $url = new \moodle_url('/course/view.php', ['id' => $courseid]);
-    $linkcourse = html_writer::link($url, $course->shortname);
+    $linkcourse = html_writer::link(
+        course_get_url($course),
+        format_string($course->shortname, options: ['context' => $PAGE->context]),
+    );
     $headingstr = "{$headingstr}: {$linkcourse}";
 }
 $PAGE->set_heading($headingstr, false);
