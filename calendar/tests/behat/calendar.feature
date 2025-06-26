@@ -454,3 +454,37 @@ Feature: Perform basic calendar functionality
     And I press "Save"
     And I click on "type change test event" "link"
     And I should see "Category event"
+
+  @javascript
+  Scenario: Group multilang tags are respected on event forms
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "courses" exist:
+      | fullname | shortname | format | category |
+      | Course 5 | C5        | topics | cata     |
+    And the following "groups" exist:
+      | name                                                                                           | course | idnumber |
+      | <span lang="en" class="multilang">Group</span><span lang="es" class="multilang">Grupo</span> 2 | C5     | G2       |
+    And the following "blocks" exist:
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | calendar_month | Course       | C5        | course-view-*   | side-pre      |
+    And I am on the "Course 5" course page logged in as admin
+    And I follow "Course calendar"
+    # New event form.
+    And I press "New event"
+    When I set the following fields to these values:
+      | Event title   | Group 2 event |
+      | Type of event | Group         |
+    Then I should see "Group 2"
+    And I should not see "GroupGrupo 2"
+    And I press "Save"
+    And I am on "Course 5" course homepage
+    And I follow "Course calendar"
+    # Preview event modal.
+    And I click on "Group 2 event" "link"
+    And I should see "Group 2"
+    And I should not see "GroupGrupo 2"
+    # Edit event form.
+    And I press "Edit"
+    And I should see "Group 2"
+    And I should not see "GroupGrupo 2"
