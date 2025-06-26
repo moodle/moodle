@@ -531,7 +531,6 @@ function mod_bigbluebuttonbn_core_calendar_provide_event_action(
                 'id' => $cm->id,
                 'bn' => $bigbluebuttonbn->id,
                 'timeline' => 1,
-                'sesskey' => sesskey(),
                 ]
         );
     }
