@@ -351,12 +351,21 @@ class notification_helper {
         ];
         $url = new \moodle_url('/mod/assign/view.php', $urlparams);
 
+        // Shortlink for SMS.
+        $shortlink = \core_sms\manager::create_shortlink_for_users(
+            component: 'mod_assign',
+            linktype: 'view',
+            identifier: $assignmentobj->get_course_module()->id,
+            userids: [$userid],
+        );
+
         $stringparams = [
             'firstname' => $user->firstname,
             'assignmentname' => $assignmentobj->get_instance()->name,
             'coursename' => $assignmentobj->get_course()->fullname,
             'duedate' => userdate($duedate),
             'url' => $url,
+            'shortlink' => $shortlink,
         ];
 
         $messagedata = [
@@ -439,6 +448,14 @@ class notification_helper {
         ];
         $url = new \moodle_url('/mod/assign/view.php', $urlparams);
 
+        // Shortlink for SMS.
+        $shortlink = \core_sms\manager::create_shortlink_for_users(
+            component: 'mod_assign',
+            linktype: 'view',
+            identifier: $assignmentobj->get_course_module()->id,
+            userids: [$userid],
+        );
+
         // Prepare the cut-off date html string.
         $snippet = '';
         if (!empty($cutoffdate)) {
@@ -452,6 +469,7 @@ class notification_helper {
             'duedate' => userdate($duedate),
             'url' => $url,
             'cutoffsnippet' => $snippet,
+            'shortlink' => $shortlink,
         ];
 
         $messagedata = [
@@ -530,11 +548,22 @@ class notification_helper {
                 'id' => $assignmentobj->get_course_module()->id,
                 'action' => 'view',
             ];
+            $url = new \moodle_url('/mod/assign/view.php', $urlparams);
+
+            // Shortlink for SMS.
+            $shortlink = \core_sms\manager::create_shortlink_for_users(
+                component: 'mod_assign',
+                linktype: 'view',
+                identifier: $assignmentobj->get_course_module()->id,
+                userids: [$userid],
+            );
+
             $assignmentsfordigest[$assignment->id] = [
                 'assignmentname' => $assignmentobj->get_instance()->name,
                 'coursename' => $assignmentobj->get_course()->fullname,
                 'duetime' => userdate($duedate, get_string('strftimetime12', 'langconfig')),
-                'url' => new \moodle_url('/mod/assign/view.php', $urlparams),
+                'url' => $url,
+                'shortlink' => $shortlink,
             ];
         }
         $assignments->close();
