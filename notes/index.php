@@ -176,9 +176,11 @@ if ($courseid != SITEID) {
         $USER->id
     );
 
-} else {  // Normal course.
-    $view = has_capability('moodle/notes:view', context_system::instance());
-    note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, 0, $view, 0, $userid, NOTES_STATE_SITE, 0);
+} else {
+    // Site course.
+    $addid = has_capability('moodle/notes:manage', $systemcontext) ? SITEID : 0;
+    $view = has_capability('moodle/notes:view', $systemcontext);
+    note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, $addid, $view, 0, $userid, NOTES_STATE_SITE, 0);
     echo '<a name="coursenotes"></a>';
 
     if (!empty($userid)) {
