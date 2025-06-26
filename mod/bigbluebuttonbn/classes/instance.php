@@ -1035,7 +1035,6 @@ EOF;
             'action' => 'logout',
             'id' => $this->cm->id,
             'courseid' => $this->cm->course, // Used to find the course if ever the activity is deleted
-            'sesskey' => sesskey(),
             // while the meeting is running.
         ]);
     }
@@ -1074,7 +1073,6 @@ EOF;
             'action' => 'join',
             'id' => $this->cm->id,
             'bn' => $this->instancedata->id,
-            'sesskey' => sesskey(),
         ]);
     }
 
