@@ -27,8 +27,8 @@ Feature: Perform basic calendar functionality
       | teacher1 | C1 | teacher |
       | admin    | C1 | editingteacher |
     And the following "groups" exist:
-      | name | course | idnumber |
-      | Group 1 | C1 | G1 |
+      | name                                                                                           | course | idnumber |
+      | <span lang="en" class="multilang">Group</span><span lang="es" class="multilang">Grupo</span> 1 | C1     | G1       |
     And the following "group members" exist:
       | user | group |
       | student1 | G1 |
@@ -75,7 +75,9 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Create a group event
-    Given I log in as "teacher1"
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I log in as "teacher1"
     And I follow "Full calendar"
     And I set the field "course" to "Course 1"
     And I create a calendar event:
@@ -322,18 +324,23 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Changing the event type should clear previous data
-    Given I am on the "Course 1" course page logged in as admin
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "Course 1" course page logged in as admin
     And I follow "Course calendar"
     And I press "New event"
     And I set the following fields to these values:
       | Event title | Group 1 event |
       | Type of event | Group       |
+    And I should see "Group 1"
+    And I should not see "GroupGrupo 1"
     And I press "Save"
     And I am on "Course 1" course homepage
     And I follow "Course calendar"
     And I click on "Group 1 event" "link"
     And I should see "Group event"
     And I should see "Group 1"
+    And I should not see "GroupGrupo 1"
     When I click on "Edit" "button" in the "Group 1 event" "dialogue"
     And I set the following fields to these values:
       | Event title | My own user event |
@@ -369,7 +376,9 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Changing the event type from user to anything else should work
-    Given I log in as "teacher1"
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I log in as "teacher1"
     # We need this so we can see the groups.
     And the following "course enrolments" exist:
       | user     | course | role           |
