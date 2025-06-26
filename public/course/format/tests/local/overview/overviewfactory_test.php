@@ -136,7 +136,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'scorm' => [
                 'resourcetype' => 'scorm',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_scorm\courseformat\overview::class,
             ],
             'wiki' => [
                 'resourcetype' => 'wiki',
@@ -215,7 +215,7 @@ final class overviewfactory_test extends \advanced_testcase {
             'qbank' => ['modname' => 'qbank', 'hasintegration' => false],
             'quiz' => ['modname' => 'quiz', 'hasintegration' => false],
             'resource' => ['modname' => 'resource', 'hasintegration' => true],
-            'scorm' => ['modname' => 'scorm', 'hasintegration' => false],
+            'scorm' => ['modname' => 'scorm', 'hasintegration' => true],
             'url' => ['modname' => 'url', 'hasintegration' => false],
             'wiki' => ['modname' => 'wiki', 'hasintegration' => true],
             'workshop' => ['modname' => 'workshop', 'hasintegration' => true],
