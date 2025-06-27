@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/gapfill/tests/helper.php');
  * @copyright  2012 Marcus Green
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questiontype_test extends \advanced_testcase {
+final class questiontype_test extends \advanced_testcase {
 
     /**
      *
@@ -57,10 +57,12 @@ class questiontype_test extends \advanced_testcase {
     ];
 
     protected function setUp(): void {
+        parent::setUp();
         $this->qtype = new \qtype_gapfill();
     }
 
     protected function tearDown(): void {
+        parent::tearDown();
         $this->qtype = null;
     }
     /**
@@ -102,7 +104,7 @@ class questiontype_test extends \advanced_testcase {
      *
      * @covers ::save_question
      */
-    public function test_save_question() : void {
+    public function test_save_question(): void {
         $this->resetAfterTest();
         global $DB;
         $syscontext = \context_system::instance();
@@ -136,7 +138,7 @@ class questiontype_test extends \advanced_testcase {
       *
       * @covers ::name()
       */
-    public function test_name() :void {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'gapfill');
     }
 
@@ -149,7 +151,7 @@ class questiontype_test extends \advanced_testcase {
      *
      * @covers ::can_analyse_responses()
      */
-    public function test_can_analyse_responses() :void {
+    public function test_can_analyse_responses(): void {
         $this->assertFalse($this->qtype->can_analyse_responses());
     }
 
@@ -158,7 +160,7 @@ class questiontype_test extends \advanced_testcase {
      *
      * @covers ::questionid_column_name()
      */
-    public function test_questionid_column_name() : void {
+    public function test_questionid_column_name(): void {
         $this->assertEquals($this->qtype->questionid_column_name(), 'question');
     }
 
@@ -167,7 +169,7 @@ class questiontype_test extends \advanced_testcase {
      *
      * @covers ::extra_question_fields()
      */
-    public function test_extra_question_fields() :void {
+    public function test_extra_question_fields(): void {
         $extraquestionfields = ['question_gapfill', 'answerdisplay', 'delimitchars',
             'casesensitive', 'noduplicates', 'disableregex', 'fixedgapsize', 'optionsaftertext', 'letterhints', 'singleuse'];
         $this->assertEquals($this->qtype->extra_question_fields(), $extraquestionfields);

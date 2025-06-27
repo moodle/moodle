@@ -34,13 +34,13 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
      * responses that would be correct if submitted
      * @var array
      */
-    public $correctresponses = array();
+    public $correctresponses = [];
     /**
      * correct and distractor answers
      *
      * @var array
      */
-    public $allanswers = array();
+    public $allanswers = [];
     /**
      * Used to store the per-gap settings, e.g. feedback
      * @var array
@@ -104,7 +104,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         if ($qa->get_state() == question_state::$invalid) {
-            $output .= html_writer::nonempty_tag('div', $question->get_validation_error(array('answer' => $output)),
+            $output .= html_writer::nonempty_tag('div', $question->get_validation_error(['answer' => $output]),
              ['class' => 'validationerror']);
         }
         $output = html_writer::tag('div', $output, ['class' => 'qtext']);
@@ -116,7 +116,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_attempt $qa
      * @return string
      */
-    public function setup_answeroptions(question_attempt $qa) : string {
+    public function setup_answeroptions(question_attempt $qa): string {
         $question = $qa->get_question();
         $answeroptions = '';
 
@@ -135,7 +135,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
                     $potentialanswer . " </span>";
             }
         }
-        $answeroptions = html_writer::tag('div', $answeroptions, array('class' => 'answeroptions'));
+        $answeroptions = html_writer::tag('div', $answeroptions, ['class' => 'answeroptions']);
         return $answeroptions;
     }
     /**
@@ -146,7 +146,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
      * @param  string $questiontext
      * @return string
      */
-    public function app_connect(qtype_gapfill_question $question, string $questiontext) : string {
+    public function app_connect(qtype_gapfill_question $question, string $questiontext): string {
         if ($question->optionsaftertext == true) {
             $questiontext .= "<div id='gapfill_optionsaftertext'></div>";
         }
@@ -213,23 +213,23 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
         $qprefix = $qa->get_qt_field_name('');
         $inputname = $qprefix . 'p' . $place;
 
-        $inputattributes = array(
+        $inputattributes = [
             'type' => "text",
             'name' => $inputname,
             'value' => $currentanswer,
             'id' => $inputname,
-            'size' => $size
-        );
+            'size' => $size,
+        ];
         /* When previewing after a quiz is complete */
         if ($options->readonly) {
-            $readonly = array('disabled' => 'true');
+            $readonly = ['disabled' => 'true'];
             $inputattributes = array_merge($inputattributes, $readonly);
         }
         if ($question->answerdisplay == "dropdown") {
             $inputattributes = $this->get_dropdown_attributes($inputattributes, $inputclass, $currentanswer);
             $selectoptions = $this->get_dropdown_list();
             $selecthtml = html_writer::select($selectoptions, $inputname, $currentanswer,
-                array('' => ''), $inputattributes) . ' ' . $aftergaptext;
+                ['' => ''], $inputattributes) . ' ' . $aftergaptext;
             return $selecthtml;
         } else if ($question->answerdisplay == "gapfill") {
             /* it is a typetext (gapfill) question */
@@ -296,7 +296,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
      * @param string $currentanswer
      * @return array
      */
-    private function get_dropdown_attributes(array $inputattributes, string $inputclass, string $currentanswer) : array {
+    private function get_dropdown_attributes(array $inputattributes, string $inputclass, string $currentanswer): array {
         $inputattributes['class'] = $inputclass;
         $inputattributes['type'] = "select";
         $inputattributes['selected'] = $currentanswer;
@@ -316,7 +316,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
      * @param bool   $correctness
      * @return string
      */
-    protected function get_feedback($settings, bool $correctness) :string {
+    protected function get_feedback($settings, bool $correctness): string {
         if ($settings == null) {
             return "";
         }
