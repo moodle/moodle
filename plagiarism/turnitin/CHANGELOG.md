@@ -1,3 +1,25 @@
+### Date:       2025-May-29
+### Release:    v2025052901
+
+---
+
+#### Assignment Settings Error Fixed
+An issue was identified where when navigating the assignment settings an error message would appear. This has been resolved.
+
+#### Student Quiz Rubric Issue Fixed
+An issue was identified where the rubric would fail to open in the student quiz view. This has now been resolved.
+
+#### Unlink/Relink Table Fixed
+An issue was identified where trying to change the page on the unlink/relink users table would cause an infinite loading spinner. This has now been resolved.
+
+#### Stuck Submissions Fixed
+An issue was identified where submissions were getting stuck in the submission queue, which would eventually cause submissions to fail to be sent to turnitin. This has now been fixed.
+
+#### Assignment End Date Syncronization Issue Fixed
+An issue was identified where assignment end dates were sometimes not syncing correctly to Turnitin on Moodle versions 4.5+. This has now been fixed.
+
+---
+
 ### Date:       2025-March-05
 ### Release:    v2025030501
 

@@ -188,3 +188,17 @@
     text-align: center;
     margin:0 auto 8px;
 }
+
+@media screen and (max-width: 1400px) {
+    td.cell {
+        position: relative;
+    }
+    
+    .mod_turnitintooltwo_part_details .editable-click {
+        position: unset;
+        &:before {
+            top: 5px;
+            right: 5px; 
+        }
+    }
+}

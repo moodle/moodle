@@ -109,7 +109,7 @@ class v1migration {
      */
     public function migrate_modal($courseid, $turnitintoolid) {
         global $PAGE;
-        $cssurl = new moodle_url('/mod/turnitintooltwo/css/font-awesome.min.css');
+        $cssurl = new moodle_url('/mod/turnitintooltwo/css/fontawesome.min.css');
         $PAGE->requires->css($cssurl);
 
         $PAGE->requires->js_call_amd('mod_turnitintooltwo/migration_tool_launch', 'migration_tool_launch');
@@ -550,7 +550,7 @@ class v1migration {
     }
 
     /**
-     * Get assignments for migrated data table. Called from ajax.php via turnitintooltwo_extra-2024100901.min.js.
+     * Get assignments for migrated data table. Called from ajax.php via turnitintooltwo_extra-2024120301.min.js.
      *
      * @global type $DB
      * @return array return array of assignments to display

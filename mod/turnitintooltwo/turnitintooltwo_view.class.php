@@ -67,7 +67,7 @@ class turnitintooltwo_view {
         $PAGE->requires->css($cssurl);
         $cssurl = new moodle_url('/mod/turnitintooltwo/css/jquery-ui-1.8.4.custom.css');
         $PAGE->requires->css($cssurl);
-        $cssurl = new moodle_url('/mod/turnitintooltwo/css/font-awesome.min.css');
+        $cssurl = new moodle_url('/mod/turnitintooltwo/css/fontawesome.min.css');
         $PAGE->requires->css($cssurl);
         $cssurl = new moodle_url('/mod/turnitintooltwo/css/tii-icon-webfont.css');
         $PAGE->requires->css($cssurl);
@@ -2021,18 +2021,6 @@ class turnitintooltwo_view {
 
         $messageoutputs = get_config('message');
 
-        if ($CFG->branch >= 400) {
-            if (isset($messageoutputs->mod_turnitintooltwo_nonsubmitters_disable) && $messageoutputs->mod_turnitintooltwo_nonsubmitters_disable == "0") {
-                return true;
-            }
-        } else {
-            // Support for older versions.
-            foreach ($messageoutputs as $k => $v) {
-                if (strpos($k, '_mod_turnitintooltwo_nonsubmitters_loggedin') !== false) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        return !isset($messageoutputs->mod_turnitintooltwo_nonsubmitters_disable) || $messageoutputs->mod_turnitintooltwo_nonsubmitters_disable == "0";
     }
 }

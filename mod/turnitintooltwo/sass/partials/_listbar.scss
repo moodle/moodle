@@ -118,3 +118,83 @@
         float: left !important;
     }
 }
+
+@media screen and (max-width: 1500px) {
+    .dataTables_filter {
+        input[type="search"] {
+            max-width: 150px;
+        }
+    }
+}
+
+@media screen and (max-width: 1460px) {
+    .mod_turnitintooltwo_listbar {
+        font-size: 13px;
+    } 
+}
+
+@media screen and (max-width: 1350px) {
+    .dataTables_filter {
+        input[type="search"] {
+            max-width: 80px;
+        }
+    }
+
+    .mod_turnitintooltwo_listbar .mod_turnitintooltwo_messages_inbox,
+    .mod_turnitintooltwo_listbar .mod_turnitintooltwo_refresh_link {
+        margin-left: 5px;
+        width: auto;
+    }
+
+    .mod_turnitintooltwo_listbar .mod_turnitintooltwo_refresh_link {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .mod_turnitintooltwo_listbar {
+        #mod_turnitintooltwo_download_links {
+            margin-left: 5px;
+
+            .btn.dropdown-toggle {
+                padding-left: 6px;
+                padding-right: 6px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1260px) {
+    .mod_turnitintooltwo_listbar {
+        font-size: 12px;
+
+        .mod_turnitintooltwo_nonsubmitters_link {
+            width: auto;
+            margin-left: 0;
+            padding: 5px 5px;
+        }
+    }
+
+    .dataTables_filter {
+        input[type="search"] {
+            max-width: 95px;
+        }
+    }
+
+    .mod_turnitintooltwo_listbar {
+        #mod_turnitintooltwo_download_links {
+            .btn.dropdown-toggle {
+                padding-right: 0;
+            }
+        }
+    }
+}
+
+// do not support Firefox
+@media screen and (max-width: 1024px) and (min-resolution: 1.1dppx) {
+    .mod_turnitintooltwo_listbar {
+        font-size: 11px;
+    }
+    .dataTables_filter input[type=search] {
+        max-width: 45px;
+    }
+}

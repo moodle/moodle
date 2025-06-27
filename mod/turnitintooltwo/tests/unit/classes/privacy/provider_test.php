@@ -38,6 +38,14 @@ if (!class_exists('\core_privacy\tests\provider_testcase')) {
 
 class mod_turnitintooltwo_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
 
+    private $testcase;
+    private $turnitintooltwoassignment;
+    private $cm;
+    private $parts;
+    private $student1;
+    private $studentrole;
+    private $student2;
+
     public function setUp(): void {
         global $DB;
 

@@ -115,11 +115,11 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext_int_only('turnitintooltwo/accountid',
                                                     get_string("turnitinaccountid", "turnitintooltwo"),
-                                                    get_string("turnitinaccountid_desc", "turnitintooltwo"), ''));
+                                                    get_string("turnitinaccountid_desc", "turnitintooltwo"), 0));
 
     $settings->add(new admin_setting_config_tii_secret_key('turnitintooltwo/secretkey',
                                                         get_string("turnitinsecretkey", "turnitintooltwo"),
-                                                        get_string("turnitinsecretkey_desc", "turnitintooltwo"), '', 'PARAM_TEXT'));
+                                                        get_string("turnitinsecretkey_desc", "turnitintooltwo"), ''));
 
     $testoptions = array(
         'https://api.turnitin.com' => 'https://api.turnitin.com',
@@ -137,7 +137,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('turnitintooltwo/apiurl',
                                     get_string("turnitinapiurl", "turnitintooltwo"),
                                     get_string("turnitinapiurl_desc", "turnitintooltwo").$offlinecomment.$testconnection,
-                                    0, $testoptions));
+                                    'https://api.turnitin.com', $testoptions));
 
     // Miscellaneous settings.
     $settings->add(new admin_setting_heading('turnitintooltwo_debugginglogs',

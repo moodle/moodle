@@ -54,6 +54,11 @@ class admin_setting_configtext_int_only extends admin_setting_configtext {
     public function validate($data) {
         global $PAGE;
 
+        // Don't force the plugin to be fully set up when initializing PHPUNIT tests environment.
+        if (defined('PHPUNIT_UTIL') && strlen($data) === 0) {
+            return true;
+        }
+
         // Don't force the plugin to be fully set up when installing.
         if ($PAGE->pagelayout === 'maintenance' && strlen($data) === 0) {
             return true;
@@ -72,13 +77,18 @@ class admin_setting_config_tii_secret_key extends admin_setting_configpasswordun
     public function validate($data) {
         global $PAGE;
 
+        // Don't force the plugin to be fully set up when initializing PHPUNIT tests environment.
+        if (defined('PHPUNIT_UTIL') && strlen($data) === 0) {
+            return true;
+        }
+
         // Don't force the plugin to be fully set up when installing.
         if ($PAGE->pagelayout === 'maintenance' && strlen($data) === 0) {
             return true;
         }
 
         $cleaned = clean_param($data, $this->paramtype);
-        if ("$data" === "$cleaned" && strlen($data) > 0) { // Implicit conversion to string is needed to do exact comparison.
+        if ("$data" === "$cleaned") { // Implicit conversion to string is needed to do exact comparison.
             return true;
         } else {
             return get_string('validateerror', 'admin');

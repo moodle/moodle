@@ -339,7 +339,7 @@ class turnitintooltwo_assignment {
      * @param int $ownerid The owner of the course
      * @return object the turnitin course if created
      */
-    public function create_tii_course($course, $ownerid) {
+    public function create_tii_course($course, $ownerid, $workflowcontext = "site") {
         global $DB;
 
         $turnitincomms = new turnitintooltwo_comms();
@@ -418,7 +418,9 @@ class turnitintooltwo_assignment {
                 $course->enddate = strtotime('today');
             }
             $enddate = strtotime('+1 month', $course->enddate);
-            $class->setEndDate(gmdate("Y-m-d\TH:i:s\Z", $enddate));
+            if ($enddate > time()) {
+                $class->setEndDate(gmdate("Y-m-d\TH:i:s\Z", $enddate));
+            }
         }
 
         try {
@@ -860,7 +862,7 @@ class turnitintooltwo_assignment {
 
         $properties = new stdClass();
         $properties->name = $this->turnitintooltwo->name . ' - ' . $partname;
-        $intro = strip_pluginfile_content($this->turnitintooltwo->intro);
+        $intro = strip_pluginfile_content($this->turnitintooltwo->intro ?? '');
         $intro = preg_replace("/<img[^>]+\>/i", "", $intro);
         $properties->description = ($intro == null) ? '' : $intro;
         $properties->courseid = $this->turnitintooltwo->course;
@@ -1173,6 +1175,11 @@ class turnitintooltwo_assignment {
         $return["success"] = true;
         $partdetails = $this->get_part_details($partid);
         $return["partid"] = $partid;
+
+        // Delete existing events for this assignment part if title or due date changed.
+        if ($fieldname == "partname" || $fieldname == "dtdue") {
+            turnitintooltwo_delete_event($this->turnitintooltwo, $partdetails);
+        }
 
         // Update Turnitin Assignment.
         $assignment = new TiiAssignment();

@@ -564,41 +564,34 @@ class turnitin_user {
         global $DB;
 
         $config = plagiarism_plugin_turnitin::plagiarism_turnitin_admin_config();
-        $return = array();
-        $idisplaystart = optional_param('iDisplayStart', 0, PARAM_INT);
-        $idisplaylength = optional_param('iDisplayLength', 10, PARAM_INT);
-        $secho = optional_param('sEcho', 1, PARAM_INT);
+        parse_str($_SERVER["REQUEST_URI"], $params);
 
-        $displaycolumns = array('tu.userid', 'tu.turnitin_uid', 'mu.lastname', 'mu.firstname', 'mu.email');
-        $queryparams = array();
+        $return = [];
+
+        $idisplaystart = empty($params["start"]) ? "" : $params["start"];
+        $idisplaylength = empty($params["length"]) ? "" : $params["length"];
+        $secho = empty($params["draw"]) ? "" : $params["draw"];
+        $ssearch = empty($params["search"]["value"]) ? "" : $params["search"]["value"];
+
+        $return["params"] = $params;
+
+        $displaycolumns = ['tu.userid', 'tu.turnitin_uid', 'mu.lastname', 'mu.firstname', 'mu.email'];
+        $queryparams = [];
 
         // Add sort to query.
-        $isortcol[0] = optional_param('iSortCol_0', null, PARAM_INT);
-        $isortingcols = optional_param('iSortingCols', 0, PARAM_INT);
-        $queryorder = "";
-        if (!is_null( $isortcol[0])) {
-            $queryorder = " ORDER BY ";
-            $startorder = $queryorder;
-            for ($i = 0; $i < intval($isortingcols); $i++) {
-                $isortcol[$i] = optional_param('iSortCol_'.$i, null, PARAM_INT);
-                $bsortable[$i] = optional_param('bSortable_'.$isortcol[$i], null, PARAM_TEXT);
-                $ssortdir[$i] = optional_param('sSortDir_'.$i, null, PARAM_TEXT);
-                if ($bsortable[$i] == "true") {
-                    $queryorder .= $displaycolumns[$isortcol[$i]]." ".$ssortdir[$i].", ";
-                }
-            }
-            if ($queryorder == $startorder) {
-                $queryorder = "";
-            } else {
-                $queryorder = substr_replace($queryorder, "", -2);
-            }
+        if (!empty($params["order"][0]["column"])) {
+          $sortcolumn = $params["order"][0]["column"];
+          $sortdirection = $params["order"][0]["dir"];
+          $queryorder = " ORDER BY ".$sortcolumn." ".$sortdirection;
+        }
+        else {
+          $queryorder = "";
         }
 
         // Add search to query.
-        $ssearch = optional_param('sSearch', '', PARAM_TEXT);
         $querywhere = ' WHERE ( ';
         for ($i = 0; $i < count($displaycolumns); $i++) {
-            $bsearchable[$i] = optional_param('bSearchable_'.$i, null, PARAM_TEXT);
+            $bsearchable[$i] = $params["columns"][$i]["searchable"];
             if (!is_null($bsearchable[$i]) && $bsearchable[$i] == "true" && $ssearch != '') {
                 $include = true;
                 if ($i <= 1) {
@@ -623,12 +616,12 @@ class turnitin_user {
         $query = "SELECT tu.id AS id, tu.userid AS userid, tu.turnitin_uid AS turnitin_uid, tu.turnitin_utp AS turnitin_utp, ".
             "mu.firstname AS firstname, mu.lastname AS lastname, mu.email AS email ".
             "FROM {plagiarism_turnitin_users} tu ".
-            "LEFT JOIN {user} mu ON tu.userid = mu.id ".$querywhere.$queryorder;
+            "LEFT JOIN {user} mu ON tu.userid = mu.id ".$querywhere." ".$queryorder;
 
         $users = $DB->get_records_sql($query, $queryparams, $idisplaystart, $idisplaylength);
         $totalusers = count($DB->get_records_sql($query, $queryparams));
 
-        $return["aaData"] = array();
+        $return["aaData"] = [];
         foreach ($users as $user) {
             $checkbox = html_writer::checkbox('userids[]', $user->id, false, '', array("class" => "browser_checkbox"));
 
@@ -644,9 +637,9 @@ class turnitin_user {
             $userdetails = array($user->turnitin_uid, format_string($user->lastname), format_string($user->firstname), $pseudoemail);
             $return["aaData"][] = array_merge($aadata, $userdetails);
         }
-        $return["sEcho"] = $secho;
-        $return["iTotalRecords"] = count($users);
-        $return["iTotalDisplayRecords"] = $totalusers;
+        $return["draw"] = $secho;
+        $return["recordsTotal"] = count($users);
+        $return["recordsFiltered"] = $totalusers;
         return $return;
     }
 }

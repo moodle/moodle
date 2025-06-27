@@ -19,9 +19,9 @@ defined('MOODLE_INTERNAL') || die();
 $plugins = array(
     'turnitintooltwo-dataTables' => array('files' => array('jquery.dataTables.js', 'jquery.dataTables.css')),
     'turnitintooltwo-dataTables_plugins' => array('files' => array('jquery.dataTables.plugins.js')),
-    'turnitintooltwo-turnitintooltwo' => array('files' => array('turnitintooltwo-2024100901.min.js')),
-    'turnitintooltwo-turnitintooltwo_extra' => array('files' => array('turnitintooltwo_extra-2024100901.min.js')),
-    'turnitintooltwo-turnitintooltwo_settings' => array('files' => array('turnitintooltwo_settings-2024100901.min.js')),
+    'turnitintooltwo-turnitintooltwo' => array('files' => array('turnitintooltwo-2024120301.min.js')),
+    'turnitintooltwo-turnitintooltwo_extra' => array('files' => array('turnitintooltwo_extra-2024120301.min.js')),
+    'turnitintooltwo-turnitintooltwo_settings' => array('files' => array('turnitintooltwo_settings-2024120301.min.js')),
     'turnitintooltwo-datatables_columnfilter' => array('files' => array('jquery.dataTables.columnFilter.js')),
     'turnitintooltwo-cookie' => array('files' => array('jquery.cookie.js')),
     'turnitintooltwo-colorbox' => array('files' => array('jquery.colorbox.js', 'colorbox.css')),

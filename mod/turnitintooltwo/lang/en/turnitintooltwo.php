@@ -685,3 +685,4 @@ $string['privacy:metadata:turnitintooltwo_client:submission_content'] = 'Please 
 $string['max_marks_warning'] = 'Please be aware that changing the Marks Available after grading may affect the gradebook';
 $string['download_button_warning'] = 'A student must be selected for this feature to be available.';
 $string['noguests'] = 'Sorry, no guest users are allowed to access this plugin. Please login.';
+$string['usernotfound'] = 'Unable to process user (ID: {$a}). This error might be due to inconsistent course data, corrupted user records, or incorrect user mapping between Moodle and Turnitin.  Please contact your Moodle administrator for further investigation.';

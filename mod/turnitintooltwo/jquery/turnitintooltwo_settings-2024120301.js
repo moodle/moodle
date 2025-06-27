@@ -3,7 +3,7 @@
  * the settings page. They need to be removed from the settings form and placed
  * outside that containing fieldset.
  */
-jQuery(document).ready(function($) {
+$(document).ready(function($) {
     if ($('.settingsform fieldset div.formsettingheading').length > 0) {
         var tabmenu = $('.settingsform fieldset div.formsettingheading:first').html();
         if (tabmenu.indexOf("tabtree") >= 0) {

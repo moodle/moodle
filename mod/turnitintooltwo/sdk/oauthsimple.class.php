@@ -18,6 +18,11 @@ class OAuthSimple {
     protected $_default_signature_method;
     protected $_action;
     protected $_nonce_chars;
+    protected $_parameters;
+    protected $_path;
+    protected $oauth_body_hash;
+    protected $sbs;
+    protected $path;
 
     /**
      * Constructor

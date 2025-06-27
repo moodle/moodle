@@ -27,7 +27,6 @@ require_once($CFG->libdir."/form/datetimeselector.php");
 require_once($CFG->libdir."/form/hidden.php");
 require_once($CFG->libdir."/form/button.php");
 require_once($CFG->libdir."/form/submit.php");
-require_once($CFG->libdir."/uploadlib.php");
 
 // views
 require_once(__DIR__.'/classes/view/members.php');

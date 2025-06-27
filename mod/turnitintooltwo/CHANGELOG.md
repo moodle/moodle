@@ -1,3 +1,22 @@
+### Date:       2025-May-29
+### Release:    v2025052901
+
+---
+
+#### Duplicate Calendar Events No Longer Created
+Previously modifying the assignment name could cause duplicate calendar events to be created. This will now no longer occur.
+
+#### Icons Fixed
+An issue was found where icons in the assignment view would not display correctly. This has now been fixed.
+
+#### Temporary Courses Now Deleted Correctly
+An issue was identified where sometimes courses with names made of a random string of letters would be created in Turnitin. These are now being deleted appropriately.
+
+#### Course Copy Anonymous Marking Issue Fixed
+An issue was identified where when copying a course, the end date would be copied across. If the assignment had anonymous marking enabled and the due date had passed, this would result in the assingment being unanonymized. This has now been fixed.
+
+---
+
 ### Date:       2024-September-11
 ### Release:    v2024091101
 

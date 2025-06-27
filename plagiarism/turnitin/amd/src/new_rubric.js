@@ -43,7 +43,10 @@ define(['jquery',
                     }
                 });
 
-                ModalRubricManagerLaunch.refreshRubricSelect();
+                // If the rubric selector is present on the page, grab the list of instructor rubrics from TFS.
+                if ($('#id_plagiarism_rubric').length > 0) {
+                    ModalRubricManagerLaunch.refreshRubricSelect();
+                }
             },
             rubricCreateModal: function(modalType, courseid, cmid) {
                 return Modal.create({

@@ -1218,8 +1218,19 @@
             });
         }
 
+        function handleCloseModalMessage(event) {
+            // Check if the message type is 'CloseRubricsView'
+            // Emits by TFS when the user closes the rubrics view.
+            if (event.data.type === 'CloseRubricsView') {
+              $('#cboxClose').click();      
+              window.removeEventListener('message', handleCloseModalMessage);
+            }
+          }
+
         function lightBoxCloseButton() {
             $('body').append('<div id="tii_close_bar"><a href="#" onclick="jQuery(\'#cboxClose\').click(); return false;">' + M.str.turnitintooltwo.closebutton + '</a></div>');
+            
+            window.addEventListener("message", handleCloseModalMessage);
         }
 
         function initialiseDigitalReceipt() {

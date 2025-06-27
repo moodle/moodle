@@ -84,7 +84,16 @@ class turnitintooltwo_user {
     public function get_moodle_user($userid) {
         global $DB;
 
-        $user = $DB->get_record('user', array('id' => $userid));
+        $dbUser = $DB->get_record('user', array('id' => $userid));
+
+        $user = new TiiUser();
+
+        if ($dbUser) {
+            $user = (object) $dbUser;
+        } else {
+            \core\notification::add(get_string('usernotfound', 'turnitintooltwo', $userid), \core\output\notification::NOTIFY_ERROR);
+            return false;
+        }
 
         // Moodle 2.0 replaces email with a hash on deletion, moodle 1.9 deletes the email address check both.
         if (empty($user->email) || strpos($user->email, '@') === false) {
