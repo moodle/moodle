@@ -89,4 +89,27 @@ class restore_qtype_regexp_plugin extends restore_qtype_plugin {
             $this->set_mapping('qtype_regexp', $oldid, $newitemid);
         }
     }
+
+     /**
+     * Removes excluded question data fields from the given question data object.
+     *
+     * @param stdClass $questiondata     The question data object to be processed.
+     * @param array    $excludefields    Optional array of field names to be excluded.
+     *
+     * @return stdClass                  The modified question data object.
+    */
+    #[Override]
+    public static function remove_excluded_question_data(stdClass $questiondata, array $excludefields = []): stdClass {
+        if (isset($questiondata->options->studentshowalternate)) {
+            unset($questiondata->options->studentshowalternate);
+        }
+        if (isset($questiondata->options->usecase)) {
+            unset($questiondata->options->usecase);
+        }
+        if (isset($questiondata->options->usehint)) {
+            unset($questiondata->options->usehint);
+        }
+        return parent::remove_excluded_question_data($questiondata, $excludefields);
+    }
+
 }

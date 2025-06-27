@@ -213,7 +213,7 @@ class qtype_regexp_renderer extends qtype_renderer {
             $f = '<div><span class="correctword">'.$closest[1].'<strong>'.$closest[4].'</strong></span> '.$closest[3].'</div>';
         }
 
-        if ($closest[2] == 'complete') {
+        if ($answer && $closest[2] == 'complete') {
             $answer->feedback = '';
         }
         if ($answer && $answer->feedback || $closestcomplete == true) {
