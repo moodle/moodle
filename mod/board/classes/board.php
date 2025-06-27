@@ -994,7 +994,7 @@ class board {
                 'ownerid' => 0, 'content' => json_encode(array('id' => $id, 'columnid' => $columnid)),
                 'userid' => $USER->id, 'timecreated' => time()));
 
-            $sql = "UPDATE {board_notes} bn
+            $sql = "UPDATE {board_notes}
                        SET sortorder = sortorder - 1
                      WHERE sortorder > :sortorder AND columnid = :columnid";
             $DB->execute($sql, ['sortorder' => $sortorder, 'columnid' => $columnid]);
@@ -1116,15 +1116,15 @@ class board {
             if ($issamecolumn) {
                 $params = ['newsort' => $sortorder, 'oldsort' => $note->sortorder, 'columnid' => $columnid];
                 if ($ismovingup) {
-                    $sql = "UPDATE {board_notes} bn
-                               SET sortorder = bn.sortorder - 1
+                    $sql = "UPDATE {board_notes}
+                               SET sortorder = sortorder - 1
                              WHERE sortorder <= :newsort
                                    AND sortorder >= :oldsort
                                    AND columnid = :columnid";
                     $DB->execute($sql, $params);
                 } else if ($ismovingdown) {
-                    $sql = "UPDATE {board_notes} bn
-                               SET sortorder = bn.sortorder + 1
+                    $sql = "UPDATE {board_notes}
+                               SET sortorder = sortorder + 1
                              WHERE sortorder >= :newsort
                                    AND sortorder <= :oldsort
                                    AND columnid = :columnid";
@@ -1132,12 +1132,12 @@ class board {
                 }
             } else {
                 // Increment the new column notes to fit the moved note.
-                $sql = "UPDATE {board_notes} bn
-                           SET sortorder = bn.sortorder + 1
+                $sql = "UPDATE {board_notes}
+                           SET sortorder = sortorder + 1
                          WHERE sortorder >= :newsort AND columnid = :columnid";
                 $DB->execute($sql, ['newsort' => $sortorder, 'columnid' => $columnid]);
                 // Decrement the old column notes above where the moved note left.
-                $sql = "UPDATE {board_notes} bn
+                $sql = "UPDATE {board_notes}
                            SET sortorder = sortorder - 1
                          WHERE sortorder > :oldsort AND columnid = :columnid";
                 $DB->execute($sql, ['oldsort' => $note->sortorder, 'columnid' => $note->columnid]);

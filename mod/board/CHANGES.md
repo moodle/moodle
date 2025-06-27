@@ -1,6 +1,18 @@
 Release Notes
 
-_NOTE - This release will work on Moodle 4.04, & 4.05_
+_NOTE - This release will work on Moodle 4.04, 4.05, & 5.00_
+
+##### 1.404.03 (Build 2024102003)
+
+New features / improvements:
+
+* Adding support for 500.
+* Adding improved monologo icon for 404, and 405.
+
+Bug fixes:
+
+* Fix deprecated JS calls for 404.
+* Fix for MSSQL support.
 
 ##### 1.404.01 (Build 2024102001)
 

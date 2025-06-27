@@ -285,8 +285,7 @@ export default (function($, window) {
      * @param {Object|String} [opts] Either callback function or the string 'destroy' if wanting to remove the editor event
      * @return {jQuery|Boolean}
      */
-    $.fn.editable = function(opts) {
-
+    editable = function(opts) {
         if(typeof opts == 'string') {
 
             if( this.is(':editable') ) {
@@ -369,7 +368,7 @@ export default (function($, window) {
      * @param {Object} statement
      * @return {*}
      */
-    $.fn.is = function(statement) {
+    is = function(statement) {
         if( typeof statement == 'string' && statement.indexOf(':') === 0) {
             if( statement == ':editable' ) {
                 return this.attr(EVENT_ATTR) !== undefined;
@@ -381,6 +380,9 @@ export default (function($, window) {
         }
         return oldjQueryIs.apply(this, arguments);
     };
+
+    // Add functions to jQuery.
+    jQuery.fn.extend({ editable, is });
 
     // The latest element clicked
     var clickedElement;
