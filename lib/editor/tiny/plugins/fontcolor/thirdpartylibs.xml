@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>js/jscolor</location>
+    <name>jscolor Color Picker</name>
+    <license>GNU GPL v3</license>
+    <version>2.5.2</version>
+    <repository>https://jscolor.com/release/</repository>
+  </library>
+</libraries>

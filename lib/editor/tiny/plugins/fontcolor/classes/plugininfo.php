@@ -41,6 +41,11 @@ use editor_tiny\plugin_with_configuration;
 class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_buttons, plugin_with_configuration {
 
     /**
+     * Plugin name.
+     */
+    public const PLUGIN_NAME = 'tiny_fontcolor';
+
+    /**
      * Get a list of the menu items provided by this plugin.
      *
      * @return string[]
@@ -69,7 +74,17 @@ class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_bu
      * @return bool
      */
     public static function validatecolorcode(string $code): bool {
-        return (bool)preg_match('/^#?[0-9a-f]{6}$/i', $code);
+        return (bool)preg_match('/^#?[0-9a-f]{6}([0-9a-f]{2})?$/i', $code);
+    }
+
+    /**
+     * Return base directory of the plugin.
+     * @return string
+     */
+    public static function get_base_dir(): string {
+        global $CFG;
+        $dir = str_replace($CFG->dirroot, '', realpath(__DIR__));
+        return substr($dir, 0, strrpos($dir, DIRECTORY_SEPARATOR));
     }
 
     /**
@@ -85,26 +100,33 @@ class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_bu
     public static function get_plugin_configuration_for_context(context $context, array $options, array $fpoptions,
                                                                 ?editor $editor = null): array {
 
-        $config = [];
+        // Set the mode first, css classnames or style attributes with color codes.
+        $config = [
+            'usecssclassnames' => (bool)get_config('tiny_fontcolor', 'usecssclassnames'),
+        ];
+        // When css class names are used, we cannot use colors that are not defined, hence no color picker.
+        if ($config['usecssclassnames']) {
+            $config['textcolorpicker'] = $config['backgroundcolorpicker'] = false;
+        } else {
+            $config['textcolorpicker'] = (bool)get_config('tiny_fontcolor', 'textcolorpicker');
+            $config['backgroundcolorpicker'] = (bool)get_config('tiny_fontcolor', 'backgroundcolorpicker');
+        }
+
+        // Get the list of defined colors for text color and background color.
         foreach (['textcolors', 'backgroundcolors'] as $configfield) {
-            $data = json_decode(get_config('tiny_fontcolor', $configfield), true);
-            if (!\is_array($data)) {
-                $data = [];
-            }
+            $colors = color_list::load_from_json(get_config('tiny_fontcolor', $configfield));
             $array = [];
-            foreach ($data as $item) {
-                $name = trim($item['name']);
-                $value = trim($item['value']);
-                if (!empty($name) && static::validatecolorcode($value)) {
-                    $array[] = $value;
-                    $array[] = format_string($name, true, ['context' => $context]);
+            foreach ($colors->get_list() as $item) {
+                if ($item->is_valid()) {
+                    $array[] = $item->get_value();
+                    $array[] = format_string($item->get_name(), true, ['context' => $context]);
                 }
             }
             $config[$configfield] = $array;
+            if ($config['usecssclassnames']) {
+                $config[$configfield . '_classlist'] = $colors->get_css_class_list("tiny_fontcolor-$configfield-");
+            }
         }
-
-        $config['textcolorpicker'] = (bool)get_config('tiny_fontcolor', 'textcolorpicker');
-        $config['backgroundcolorpicker'] = (bool)get_config('tiny_fontcolor', 'backgroundcolorpicker');
 
         return $config;
     }

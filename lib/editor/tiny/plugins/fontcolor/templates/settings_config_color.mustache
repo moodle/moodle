@@ -47,6 +47,7 @@
         "id": "created_id_of_settings_field",
         "name": "created_name_of_settings_field",
         "readonly": false,
+        "plugindir": "/lib/editor/tiny/plugins/fontcolor",
         "size": 15,
         "colors": [
             {
@@ -84,6 +85,7 @@
 {{!
     Setting configtext.
 }}
+
 <div class="row">
     <div class="col-sm-5 d-none d-md-block">
         {{header.name}}
@@ -105,7 +107,8 @@
         <div class="form-text defaultsnext col-10 col-md-5">
             <label class="d-md-none" for="{{value.id}}">{{header.value}}</label>
             <input type="text" name="{{value.name}}" value="{{value.value}}" id="{{value.id}}"
-                   class="form-control {{#forceltr}}text-ltr{{/forceltr}}{{#value.invalid}} is-invalid{{/value.invalid}}" {{#readonly}}disabled{{/readonly}}>
+                   class="form-control {{#forceltr}}text-ltr{{/forceltr}}{{#value.invalid}} is-invalid{{/value.invalid}}" {{#readonly}}disabled{{/readonly}}
+                   data-jscolor="{format:'hexa', required:false, alphaChannel:true}">
         </div>
         {{#name.last}}
             <div class="form-text defaultsnext col-2">
@@ -120,6 +123,8 @@
     </div>
 {{/colors}}
 </div>
+
+<script src="{{ plugindir }}/js/jscolor/jscolor.min.js"></script>
 
 {{#js}}
 require(

@@ -1,1 +1,1 @@
-helplinktext
+helplinktext,tiny_fontcolor
