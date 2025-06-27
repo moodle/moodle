@@ -75,11 +75,11 @@ abstract class loggable_external_api extends external_api {
         $logstr = 'logger:servicefailure';
         $msg = get_string($logstr . '_exp', 'tool_ally', (object)[
             'class' => $classname,
-            'params' => var_export($params, true)
+            'params' => var_export($params, true),
         ]);
         logger::get()->error($logstr, [
             '_explanation' => $msg,
-            '_exception' => $ex
+            '_exception' => $ex,
         ]);
     }
 }

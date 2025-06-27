@@ -76,7 +76,7 @@ class text_filter extends \core_filters\text_filter {
      */
     protected function is_course_page() {
         $path = parse_url(qualified_me())['path'];
-        return (bool) preg_match('~/course/view.php$~', $path);
+        return preg_match('~/course/view.php$~', $path) || preg_match('~/course/section.php~', $path);
     }
 
     /**
@@ -499,7 +499,7 @@ class text_filter extends \core_filters\text_filter {
                     'courseid' => $COURSE->id,
                     'pagetype' => $PAGE->pagetype,
                     'pagelayout' => $PAGE->pagelayout,
-                    'stacktrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)
+                    'stacktrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS),
                 ];
                 logger::get()->info('logger:filtersetupdebugger', $log);
             }
@@ -536,7 +536,7 @@ class text_filter extends \core_filters\text_filter {
                 'forum_files' => $forummap,
                 'folder_files' => $foldermap,
                 'glossary_files' => $glossarymap,
-                'lesson_files' => $lessonmap
+                'lesson_files' => $lessonmap,
             ];
             $filejson = json_encode($modulemaps);
 
@@ -561,7 +561,7 @@ EOF;
                 'adminurl' => !empty($config->adminurl) ? $config->adminurl : null,
                 'pushurl' => !empty($config->pushurl) ? $config->pushurl : null,
                 'clientid' => !empty($config->clientid) ? $config->clientid : null,
-                'moodleversion' => $CFG->version
+                'moodleversion' => $CFG->version,
             ];
 
             $params = new stdClass();
@@ -652,29 +652,28 @@ EOF;
             return $text;
         }
 
-        $pattern = '/\>/mU';
-
         // Some modules will not send a single div node or have several nodes for filtering.
         // We need to add a parent div when such setup is found.
-        $doc = local_content::build_dom_doc($text);
+        $doc = local_content::build_dom_doc("<div class=\"temp-wrapper\">$text</div>");
         if (!$doc) {
             return $text;
         }
         $bodynode = $doc->getElementsByTagName('body')->item(0);
-        $shouldwrap = $bodynode->childNodes->length > 1;
-        if (!$shouldwrap && $bodynode->childNodes->length === 1) {
-            $node = $bodynode->childNodes->item(0);
-            $shouldwrap = $node->tagName !== 'div' ||
+        $tmpwrappernode = $bodynode->childNodes->item(0);
+        $shouldwrap = empty($tmpwrappernode) || $tmpwrappernode->childNodes->length > 1;
+        if (!$shouldwrap && $tmpwrappernode->childNodes->length === 1) {
+            $node = $tmpwrappernode->childNodes->item(0);
+            $shouldwrap = $node instanceof \DOMComment || $node instanceof \DOMText || $node->tagName !== 'div' ||
                 ($node->tagName === 'div' && strpos($node->getAttribute('class'), 'no-overflow') === false);
         }
 
         if ($shouldwrap) {
-            $text = "<div class=\"no-overflow\">{$text}</div>";
+            return "<div class=\"no-overflow\" data-ally-richcontent=\"$annotation\">{$text}</div>";
         }
 
-        $text = preg_replace ( $pattern , ' data-ally-richcontent = "'.$annotation.'" >' , $text , 1);
-
-        return $text;
+        $primarynode = $tmpwrappernode->childNodes->item(0);
+        $primarynode->setAttribute('data-ally-richcontent', $annotation);
+        return $doc->saveHTML($primarynode);
     }
 
     /**
@@ -728,7 +727,7 @@ EOF;
                 $elements[] = (object) [
                     'type' => 'a',
                     'url' => $href,
-                    'result' => $result
+                    'result' => $result,
                 ];
             }
         }
@@ -742,7 +741,7 @@ EOF;
                 $elements[] = (object) [
                     'type' => 'img',
                     'url' => $src,
-                    'result' => $result
+                    'result' => $result,
                 ];
             }
         }
@@ -775,7 +774,7 @@ EOF;
                 $blacklistedcontexts = [
                     CONTEXT_USER,
                     CONTEXT_COURSECAT,
-                    CONTEXT_SYSTEM
+                    CONTEXT_SYSTEM,
                 ];
                 if (in_array($context->contextlevel, $blacklistedcontexts)) {
                     continue;
@@ -889,7 +888,7 @@ EOF;
      * @param $courseid
      * @return bool
      */
-    public static function is_annotating($courseid) : bool {
+    public static function is_annotating($courseid): bool {
         return array_key_exists($courseid, self::$isannotating);
     }
 

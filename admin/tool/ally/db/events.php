@@ -35,110 +35,110 @@ $observers = [
     ],
     [
         'eventname' => \core\event\course_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::course_deleted'
+        'callback'  => '\tool_ally\event_handlers::course_deleted',
     ],
     [
         'eventname' => \core\event\course_restored::class,
-        'callback'  => '\tool_ally\event_handlers::course_restored'
+        'callback'  => '\tool_ally\event_handlers::course_restored',
     ],
     [
         'eventname' => \core\event\course_section_created::class,
-        'callback'  => '\tool_ally\event_handlers::course_section_created'
+        'callback'  => '\tool_ally\event_handlers::course_section_created',
     ],
     [
         'eventname' => \core\event\course_section_updated::class,
-        'callback'  => '\tool_ally\event_handlers::course_section_updated'
+        'callback'  => '\tool_ally\event_handlers::course_section_updated',
     ],
     [
         'eventname' => \core\event\course_section_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::course_section_deleted'
+        'callback'  => '\tool_ally\event_handlers::course_section_deleted',
     ],
     [
         'eventname' => \core\event\course_module_created::class,
-        'callback'  => '\tool_ally\event_handlers::course_module_created'
+        'callback'  => '\tool_ally\event_handlers::course_module_created',
     ],
     [
         'eventname' => \core\event\course_module_updated::class,
-        'callback'  => '\tool_ally\event_handlers::course_module_updated'
+        'callback'  => '\tool_ally\event_handlers::course_module_updated',
     ],
     [
         'eventname' => \core\event\course_module_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::course_module_deleted'
+        'callback'  => '\tool_ally\event_handlers::course_module_deleted',
     ],
     [
         'eventname' => \core\event\group_created::class,
-        'callback'  => '\tool_ally\event_handlers::group_created'
+        'callback'  => '\tool_ally\event_handlers::group_created',
     ],
     [
         'eventname' => \core\event\group_updated::class,
-        'callback'  => '\tool_ally\event_handlers::group_updated'
+        'callback'  => '\tool_ally\event_handlers::group_updated',
     ],
     [
         'eventname' => \mod_forum\event\discussion_created::class,
-        'callback'  => '\tool_ally\event_handlers::forum_discussion_created'
+        'callback'  => '\tool_ally\event_handlers::forum_discussion_created',
     ],
     [
         'eventname' => \mod_forum\event\discussion_updated::class,
-        'callback'  => '\tool_ally\event_handlers::forum_discussion_updated'
+        'callback'  => '\tool_ally\event_handlers::forum_discussion_updated',
     ],
     [
         'eventname' => \mod_forum\event\discussion_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::forum_discussion_deleted'
+        'callback'  => '\tool_ally\event_handlers::forum_discussion_deleted',
     ],
     [
         'eventname' => \mod_forum\event\post_updated::class,
-        'callback' => '\tool_ally\event_handlers::forum_post_updated'
+        'callback' => '\tool_ally\event_handlers::forum_post_updated',
     ],
     [
         'eventname' => \mod_hsuforum\event\discussion_created::class,
-        'callback'  => '\tool_ally\event_handlers::hsuforum_discussion_created'
+        'callback'  => '\tool_ally\event_handlers::hsuforum_discussion_created',
     ],
     [
         'eventname' => \mod_hsuforum\event\discussion_updated::class,
-        'callback'  => '\tool_ally\event_handlers::hsuforum_discussion_updated'
+        'callback'  => '\tool_ally\event_handlers::hsuforum_discussion_updated',
     ],
     [
         'eventname' => \mod_hsuforum\event\discussion_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::hsuforum_discussion_deleted'
+        'callback'  => '\tool_ally\event_handlers::hsuforum_discussion_deleted',
     ],
     [
         'eventname' => \mod_hsuforum\event\post_updated::class,
-        'callback' => '\tool_ally\event_handlers::hsuforum_post_updated'
+        'callback' => '\tool_ally\event_handlers::hsuforum_post_updated',
     ],
     [
         'eventname' => \mod_glossary\event\entry_created::class,
-        'callback'  => '\tool_ally\event_handlers::glossary_entry_created'
+        'callback'  => '\tool_ally\event_handlers::glossary_entry_created',
     ],
     [
         'eventname' => \mod_glossary\event\entry_updated::class,
-        'callback'  => '\tool_ally\event_handlers::glossary_entry_updated'
+        'callback'  => '\tool_ally\event_handlers::glossary_entry_updated',
     ],
     [
         'eventname' => \mod_glossary\event\entry_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::glossary_entry_deleted'
+        'callback'  => '\tool_ally\event_handlers::glossary_entry_deleted',
     ],
     [
         'eventname' => \mod_book\event\chapter_created::class,
-        'callback'  => '\tool_ally\event_handlers::book_chapter_created'
+        'callback'  => '\tool_ally\event_handlers::book_chapter_created',
     ],
     [
         'eventname' => \mod_book\event\chapter_updated::class,
-        'callback'  => '\tool_ally\event_handlers::book_chapter_updated'
+        'callback'  => '\tool_ally\event_handlers::book_chapter_updated',
     ],
     [
         'eventname' => \mod_book\event\chapter_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::book_chapter_deleted'
+        'callback'  => '\tool_ally\event_handlers::book_chapter_deleted',
     ],
     [
         'eventname' => \mod_lesson\event\page_created::class,
-        'callback'  => '\tool_ally\event_handlers::lesson_page_created'
+        'callback'  => '\tool_ally\event_handlers::lesson_page_created',
     ],
     [
         'eventname' => \mod_lesson\event\page_updated::class,
-        'callback'  => '\tool_ally\event_handlers::lesson_page_updated'
+        'callback'  => '\tool_ally\event_handlers::lesson_page_updated',
     ],
     [
         'eventname' => \mod_lesson\event\page_deleted::class,
-        'callback'  => '\tool_ally\event_handlers::lesson_page_deleted'
-    ]
+        'callback'  => '\tool_ally\event_handlers::lesson_page_deleted',
+    ],
 ];

@@ -40,7 +40,7 @@ class page_component extends component_base implements iface_html_content, annot
     use embedded_file_map;
 
     protected $tablefields = [
-        'page' => ['intro', 'content']
+        'page' => ['intro', 'content'],
     ];
 
     public static function component_type() {
@@ -67,7 +67,7 @@ class page_component extends component_base implements iface_html_content, annot
     public function get_all_html_content($id) {
         return [
             $this->get_html_content($id, 'page', 'intro'),
-            $this->get_html_content($id, 'page', 'content')
+            $this->get_html_content($id, 'page', 'content'),
         ];
     }
 

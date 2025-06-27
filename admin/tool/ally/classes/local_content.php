@@ -150,7 +150,7 @@ class local_content {
                     logger::get()->info('logger:annotationmoderror', [
                         'content' => $msg,
                         '_explanation' => 'logger:annotationmoderror_exp',
-                        '_exception' => $ex
+                        '_exception' => $ex,
                     ]);
                 }
             }
@@ -186,7 +186,7 @@ class local_content {
         if (isset($parts[4])) {
             $args[] = $parts[4];
         }
-        return call_user_func_array([local_content::class, 'get_html_content'], $args);
+        return call_user_func_array([self::class, 'get_html_content'], $args);
     }
 
     /**
@@ -333,7 +333,7 @@ class local_content {
                 logger::get()->info('logger:annotationmoderror', [
                     'content' => $msg,
                     '_explanation' => 'logger:annotationmoderror_exp',
-                    '_exception' => $ex
+                    '_exception' => $ex,
                 ]);
                 return '';
             }
@@ -356,7 +356,7 @@ class local_content {
             'context_id'   => (string) $componentcontent->get_courseid(),
             'event_name'   => $eventname,
             'event_time'   => local::iso_8601($componentcontent->timemodified),
-            'content_hash' => $componentcontent->contenthash
+            'content_hash' => $componentcontent->contenthash,
         ];
     }
 

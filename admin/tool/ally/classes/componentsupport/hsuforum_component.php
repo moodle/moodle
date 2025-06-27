@@ -37,7 +37,7 @@ class hsuforum_component extends forum_component {
 
     protected $tablefields = [
         'hsuforum' => ['intro'],
-        'hsuforum_posts' => ['message']
+        'hsuforum_posts' => ['message'],
     ];
 
 }

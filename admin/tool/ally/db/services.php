@@ -75,49 +75,49 @@ $functions = [
         'description'  => 'Mark a file resource as complete when viewed',
         'type'         => 'write',
         'capabilities' => 'moodle/course:view,  moodle/course:viewhiddenactivities, moodle/course:viewhiddencourses,
-                mod/resource:view'
+                mod/resource:view',
     ],
     'tool_ally_version_info' => [
         'classname'    => 'tool_ally\\webservice\\version_info',
         'methodname'   => 'service',
         'description'  => 'Return key version info for ally tool, filter and moodle',
         'type'         => 'read',
-        'capabilities' => 'moodle/site:configview'
+        'capabilities' => 'moodle/site:configview',
     ],
     'tool_ally_get_courses' => [
         'classname'    => 'tool_ally\\webservice\\courses',
         'methodname'   => 'service',
         'description'  => 'Lists all the courses on the site',
         'type'         => 'read',
-        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses'
+        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses',
     ],
     'tool_ally_list_content' => [
         'classname'    => 'tool_ally\\webservice\\course_content',
         'methodname'   => 'service',
         'description'  => 'Lists all instances of content',
         'type'         => 'read',
-        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses'
+        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses',
     ],
     'tool_ally_get_content' => [
         'classname'    => 'tool_ally\\webservice\\content',
         'methodname'   => 'service',
         'description'  => 'Get specific component instance content',
         'type'         => 'read',
-        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses'
+        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses',
     ],
     'tool_ally_replace_content' => [
         'classname'    => 'tool_ally\\webservice\\replace_content',
         'methodname'   => 'service',
         'description'  => 'Get specific component instance content',
         'type'         => 'read',
-        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses'
+        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses',
     ],
     'tool_ally_get_course_user_count' => [
         'classname'    => 'tool_ally\\webservice\\course_user_count',
         'methodname'   => 'service',
         'description'  => 'Gets the amount of students and instructors per course',
         'type'         => 'read',
-        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses'
+        'capabilities' => 'moodle/course:view, moodle/course:viewhiddencourses',
     ],
     'tool_ally_get_invalid_files' => [
         'classname'    => 'tool_ally\\webservice\\invalid_files',
@@ -140,7 +140,7 @@ $functions = [
         'type'         => 'read',
         'capabilities' => 'tool/ally:viewlogs',
         'ajax'          => true,
-        'loginrequired' => true
+        'loginrequired' => true,
     ],
     'tool_ally_processors_status' => [
         'classname'    => 'tool_ally\\webservice\\processors_status',
@@ -149,8 +149,8 @@ $functions = [
         'type'         => 'read',
         'capabilities' => '',
         'ajax'          => true,
-        'loginrequired' => true
-    ]
+        'loginrequired' => true,
+    ],
 ];
 
 $services = [
@@ -177,12 +177,12 @@ $services = [
             'tool_ally_get_invalid_files',
             'tool_ally_get_course_invalid_files',
             'tool_ally_get_logs',
-            'tool_ally_processors_status'
+            'tool_ally_processors_status',
         ],
         'enabled'         => 0,
         'restrictedusers' => 0,
         'shortname'       => 'tool_ally',
         'downloadfiles'   => 1,
-        'uploadfiles'     => 1
-    ]
+        'uploadfiles'     => 1,
+    ],
 ];

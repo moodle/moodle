@@ -98,10 +98,10 @@ class replace_file extends loggable_external_api {
         require_capability('moodle/course:managefiles', $context);
 
         $replaced = false;
-        $capabilities = array(
+        $capabilities = [
             'moodle/course:update',
             'moodle/course:managefiles',
-        );
+        ];
 
         if (!has_all_capabilities($capabilities, $context, $user)) {
             throw new \moodle_exception('usercapabilitymissing', 'tool_ally');

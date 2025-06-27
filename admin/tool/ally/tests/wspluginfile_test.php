@@ -67,7 +67,7 @@ class wspluginfile_test extends abstract_testcase {
         $this->webservice = new \webservice();
     }
 
-    public function test_validate_wspluginfile_signature_ally_webuser_exception() {
+    public function test_validate_wspluginfile_signature_ally_webuser_exception(): void {
         $pathnamehash = sha1(uniqid());
         $iat = time();
         $token = '123';
@@ -92,7 +92,7 @@ class wspluginfile_test extends abstract_testcase {
         $this->allywebuser = local::get_ally_web_user();;
     }
 
-    public function test_validate_wspluginfile_signature_signature_invalid_exception() {
+    public function test_validate_wspluginfile_signature_signature_invalid_exception(): void {
         $this->auto_config();
 
         $pathnamehash = sha1(uniqid());
@@ -105,7 +105,7 @@ class wspluginfile_test extends abstract_testcase {
         $this->wspluginfile->validate_wspluginfile_signature($signature, $iat, $pathnamehash);
     }
 
-    public function test_validate_wspluginfile_signature_signature() {
+    public function test_validate_wspluginfile_signature_signature(): void {
         $this->auto_config();
 
         $tokens = $this->webservice->get_user_ws_tokens($this->allywebuser->id);
@@ -139,7 +139,7 @@ class wspluginfile_test extends abstract_testcase {
         return [$wstoken, $iat, $pathnamehash, $file];
     }
 
-    public function test_get_file_by_signature() {
+    public function test_get_file_by_signature(): void {
         list ($wstoken, $iat, $pathnamehash, $file) = $this->prepare_get_file();
 
         $signature = hash('sha256', $wstoken->token . ':' . $iat . ':' . $pathnamehash);
@@ -148,7 +148,7 @@ class wspluginfile_test extends abstract_testcase {
         $this->assertEquals($file, $recoveredfile);
     }
 
-    public function test_get_file_by_token() {
+    public function test_get_file_by_token(): void {
         list ($wstoken, $iat, $pathnamehash, $file) = $this->prepare_get_file();
 
         $recoveredfile = $this->wspluginfile->get_file($pathnamehash, $wstoken->token, null, null);

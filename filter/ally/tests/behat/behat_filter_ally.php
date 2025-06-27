@@ -19,16 +19,17 @@
  * @author    Guy Thomas
  * @copyright Copyright (c) 2017 Open LMS / 2023 Anthology Inc. and its affiliates
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package filter_ally
  */
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use \Behat\Mink\Exception\ExpectationException;
-use \Behat\Mink\Element\NodeElement;
-use \Moodle\BehatExtension\Exception\SkippedException;
-use \tool_ally\local_content;
-use \tool_ally\models\component_content;
+use Behat\Mink\Exception\ExpectationException;
+use Behat\Mink\Element\NodeElement;
+use Moodle\BehatExtension\Exception\SkippedException;
+use tool_ally\local_content;
+use tool_ally\models\component_content;
 
 /**
  * Ally filter context
@@ -122,7 +123,7 @@ class behat_filter_ally extends behat_base {
             'course' => $course->id,
             'name' => 'test label',
             'intro' => 'pre file inserts',
-            'introformat' => FORMAT_HTML
+            'introformat' => FORMAT_HTML,
         ];
 
         $label = $gen->create_module('label', $data);
@@ -141,7 +142,7 @@ class behat_filter_ally extends behat_base {
             // Add actual file there.
             $filerecord = ['component' => 'mod_label', 'filearea' => 'intro',
                 'contextid' => context_module::instance($label->cmid)->id, 'itemid' => 0,
-                'filename' => $image, 'filepath' => '/'];
+                'filename' => $image, 'filepath' => '/', ];
             $fs = get_file_storage();
             $fs->create_file_from_pathname($filerecord, $fixturepath);
             $path = '@@PLUGINFILE@@/' . $image;
@@ -175,7 +176,7 @@ class behat_filter_ally extends behat_base {
             'course' => $course->id,
             'name' => 'test label',
             'intro' => 'pre file inserts',
-            'introformat' => FORMAT_HTML
+            'introformat' => FORMAT_HTML,
         ];
 
         $label = $gen->create_module('label', $data);
@@ -190,7 +191,7 @@ class behat_filter_ally extends behat_base {
             // Add actual file there.
             $filerecord = ['component' => 'mod_label', 'filearea' => 'intro',
                 'contextid' => context_module::instance($label->cmid)->id, 'itemid' => 0,
-                'filename' => $file, 'filepath' => '/'];
+                'filename' => $file, 'filepath' => '/', ];
             $fs = get_file_storage();
             $fs->create_file_from_string($filerecord, 'test file '.$i);
             $path = '@@PLUGINFILE@@/' . $file;
@@ -221,7 +222,7 @@ class behat_filter_ally extends behat_base {
             'intro' => $content,
             'introformat' => FORMAT_HTML,
             'section' => $section,
-            'showdescription' => $module === 'lesson' ? 1 : 0
+            'showdescription' => $module === 'lesson' ? 1 : 0,
         ];
 
         $mod = $gen->create_module($module, $data);
@@ -283,7 +284,7 @@ class behat_filter_ally extends behat_base {
         $blockconfig = (object) [
             'title' => $title,
             'format' => FORMAT_HTML,
-            'text' => $content
+            'text' => $content,
         ];
         $block->configdata = base64_encode(serialize($blockconfig));
         $DB->update_record('block_instances', $block);
@@ -326,7 +327,7 @@ XPATH;
                 'bookid' => $book->id,
                 'title' => $bookname.' chapter '.$chptitlenum ,
                 'content' => 'Test content '.$chptitlenum,
-                'contentformat' => FORMAT_HTML
+                'contentformat' => FORMAT_HTML,
             ];
 
             $bookgenerator->create_chapter($data);
@@ -405,14 +406,14 @@ XPATH;
 
             $record = [];
             // The lesson generator doesn't add response text by default so we need to do that here.
-            $record['response_editor'][0] = array(
+            $record['response_editor'][0] = [
                 'text' => 'TRUE response for '.$titlenum,
-                'format' => FORMAT_HTML
-            );
-            $record['response_editor'][1] = array(
+                'format' => FORMAT_HTML,
+            ];
+            $record['response_editor'][1] = [
                 'text' => 'FALSE response for '.$titlenum,
-                'format' => FORMAT_HTML
-            );
+                'format' => FORMAT_HTML,
+            ];
             $page = $lessongenerator->create_question_truefalse($lessonobj, $record);
             $page->contents = 'Test true false question '.$titlenum;
             $page->contentsformat = FORMAT_HTML;
@@ -427,10 +428,11 @@ XPATH;
      */
     public function book_current_chapter_is_annotated() {
         $xpath = <<<XPATH
+            //div[@id="mod_book-chapter"]/div[@class="no-overflow"]|
             //section[@id="region-main"]//div[@role="main"]/div/div[@class="no-overflow"]
 XPATH;
         $node = $this->find('xpath', $xpath);
-        $params = array('node' => $node);
+        $params = ['node' => $node];
         $timeout = false;
         $exception = new ExpectationException('Annotation not found', $this->getSession()->getDriver());
         $microsleep = false;
@@ -641,10 +643,12 @@ XPATH;
     }
 
     /**
-     * @Given /^I create file resources using fixtures "(?P<fixtures_string>[^"]*)"/
+     * @Given I create file resources using fixtures :fixtures_string
+     * @Given I create file resources using fixtures :fixtures_string in section :section
      * @param string $fixtures
+     * @param string|null $section
      */
-    public function i_create_file_resources_using_fixtures($fixtures) {
+    public function i_create_file_resources_using_fixtures(string $fixtures, ?string $section = null) {
         global $CFG;
 
         $gen = testing_util::get_data_generator();
@@ -664,7 +668,7 @@ XPATH;
             $data = (object) [
                 'course' => $course->id,
                 'name' => $file,
-                'section' => 1 // Section 1 so that it will also work on front page.
+                'section' => $section ? intval($section) : 1, // Default is section 1 so that it will also work on front page.
             ];
 
             $resource = $gen->create_module('resource', $data);
@@ -672,7 +676,7 @@ XPATH;
             // Add actual file there.
             $filerecord = ['component' => 'mod_resource', 'filearea' => 'content',
                 'contextid' => context_module::instance($resource->cmid)->id, 'itemid' => 0,
-                'filename' => $file, 'filepath' => '/'];
+                'filename' => $file, 'filepath' => '/', ];
             $fs = get_file_storage();
             $fs->create_file_from_pathname($filerecord, $fixturepath);
         }
@@ -702,7 +706,7 @@ XPATH;
             'assignsubmission_file_enabled' => 1,
             'assignsubmission_file_maxfiles' => 12,
             'assignsubmission_file_maxsizebytes' => 10000,
-            'assignsubmission_onlinetext_enabled' => 1
+            'assignsubmission_onlinetext_enabled' => 1,
         ];
 
         $assign = $assigngen->create_instance($data);
@@ -714,7 +718,7 @@ XPATH;
             // Add actual file there.
             $filerecord = ['component' => 'mod_assign', 'filearea' => 'introattachment',
                 'contextid' => context_module::instance($assign->cmid)->id, 'itemid' => 0,
-                'filename' => $file, 'filepath' => '/'];
+                'filename' => $file, 'filepath' => '/', ];
             $fs = get_file_storage();
             $fs->create_file_from_pathname($filerecord, $fixturepath);
         }
@@ -950,6 +954,21 @@ XPATH;
         $this->execute('behat_general::i_click_on', [$path, 'xpath_element']);
     }
 
+    private function get_course_and_section(string $shortname, int $section): array {
+        global $DB;
+
+        $course = $DB->get_field('course', 'id', ['shortname' => $shortname]);
+        if (!$course) {
+            throw new coding_exception('Invalid moodle course shortname', $shortname);
+        }
+        $coursesection = $DB->get_record('course_sections', ['course' => $course, 'section' => $section]);
+        if (!$coursesection) {
+            throw new coding_exception('Invalid moodle course section', $section);
+        }
+
+        return [$course, $coursesection];
+    }
+
     /**
      * @param string $shortname
      * @param int $section
@@ -959,8 +978,7 @@ XPATH;
      */
     private function section_has_summary($shortname, $section, $summary, $format) {
         global $DB;
-        $course = $DB->get_field('course', 'id', ['shortname' => $shortname]);
-        $coursesection = $DB->get_record('course_sections', ['course' => $course, 'section' => $section]);
+        [$course, $coursesection] = $this->get_course_and_section($shortname, $section);
         $coursesection->summaryformat = $format;
         $coursesection->summary = $summary;
         $DB->update_record('course_sections', $coursesection);
@@ -969,14 +987,31 @@ XPATH;
         // section is updated. This ensures caches are updated appropriately during testing just
         // as they are in normal use.
         $event = \core\event\course_section_updated::create(
-            array(
+            [
                 'objectid' => $coursesection->id,
                 'courseid' => $course,
                 'context' => context_course::instance($course),
-                'other' => array('sectionnum' => $coursesection->section)
-            )
+                'other' => ['sectionnum' => $coursesection->section],
+            ]
         );
         $event->trigger();
+    }
+
+    /**
+     * @Given I am on course :shortname section :section
+     *
+     * @param $shortname
+     * @param string|null $section
+     * @return void
+     * @throws \coding_exception
+     * @throws \core\exception\moodle_exception
+     */
+    public function on_course_section_page($shortname, ?string $section = null) {
+        [, $coursesection] = $this->get_course_and_section($shortname, $section);
+
+        $urlparams = ['id' => $coursesection->id];
+        $url = new moodle_url('/course/section.php', $urlparams);
+        $this->execute('behat_general::i_visit', [$url]);
     }
 
     /**

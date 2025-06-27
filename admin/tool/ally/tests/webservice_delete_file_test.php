@@ -45,7 +45,7 @@ class webservice_delete_file_test extends abstract_testcase {
      * Test the web service.
      *
      */
-    public function test_service() {
+    public function test_service(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -75,7 +75,7 @@ class webservice_delete_file_test extends abstract_testcase {
         $this->get_resource_file($resource);
     }
 
-    public function test_service_invalid_user() {
+    public function test_service_invalid_user(): void {
         $this->resetAfterTest();
 
         $roleid = $this->assignUserCapability('moodle/course:view', \context_system::instance()->id);
@@ -96,7 +96,7 @@ class webservice_delete_file_test extends abstract_testcase {
         $this->assertInstanceOf(\stored_file, $this->get_resource_file($resource));
     }
 
-    public function test_service_invalid_file() {
+    public function test_service_invalid_file(): void {
         global $DB;
 
         $this->resetAfterTest();

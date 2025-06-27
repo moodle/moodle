@@ -154,7 +154,7 @@ class auto_config {
             "webservice/rest:use",
             "mod/resource:view",
             "moodle/category:viewhiddencategories",
-            "tool/ally:viewlogs"
+            "tool/ally:viewlogs",
         ];
         foreach ($caps as $cap) {
             assign_capability($cap, CAP_ALLOW, $roleid, $contextid);
@@ -169,11 +169,11 @@ class auto_config {
                 $logstr = 'logger:autoconfigfailureteachercap';
                 $msg = get_string($logstr . '_exp', 'tool_ally', (object) [
                     'cap' => $cap,
-                    'permission' => $permission
+                    'permission' => $permission,
                 ]);
                 logger::get()->error($logstr, [
                     '_explanation' => $msg,
-                    '_exception' => $mex
+                    '_exception' => $mex,
                 ]);
             }
         }
@@ -196,7 +196,7 @@ class auto_config {
         // Enable REST protocol.
         $webservice = 'rest'; // We want to enable the rest web service protocol.
         $availablewebservices = \core_component::get_plugin_list('webservice');
-        $activewebservices = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+        $activewebservices = empty($CFG->webserviceprotocols) ? [] : explode(',', $CFG->webserviceprotocols);
         foreach ($activewebservices as $key => $active) {
             if (empty($availablewebservices[$active])) {
                 unset($activewebservices[$key]);
@@ -230,24 +230,24 @@ class auto_config {
             'restrictedusers' => 0,
             'enabled' => 1,
             'downloadfiles' => 1,
-            'uploadfiles' => 1
+            'uploadfiles' => 1,
         ];
 
         $row = $DB->get_record('external_services', ['component' => 'tool_ally']);
         if (!$row) {
             $servicedata->id = $webservicemanager->add_external_service($servicedata);
             $servicedata->timecreated = $row->timecreated;
-            $params = array(
-                'objectid' => $servicedata->id
-            );
+            $params = [
+                'objectid' => $servicedata->id,
+            ];
             $event = \core\event\webservice_service_created::create($params);
             $event->trigger();
         } else {
             $servicedata->id = $row->id;
             $webservicemanager->update_external_service($servicedata);
-            $params = array(
-                'objectid' => $servicedata->id
-            );
+            $params = [
+                'objectid' => $servicedata->id,
+            ];
             $event = \core\event\webservice_service_updated::create($params);
             $event->trigger();
         }
@@ -268,7 +268,7 @@ class auto_config {
         $existing = $DB->get_record('external_tokens', [
                 'userid' => $this->user->id,
                 'externalserviceid' => $service->id,
-                'contextid' => $context->id
+                'contextid' => $context->id,
             ]
         );
         if ($existing) {

@@ -25,10 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Ally';
-$string['filtername'] = 'Ally';
-$string['ally:viewfeedback'] = 'View Ally feedback';
 $string['ally:viewdownload'] = 'View Ally download button';
+$string['ally:viewfeedback'] = 'View Ally feedback';
+$string['filtername'] = 'Ally';
+$string['pluginname'] = 'Ally';
 $string['privacy:metadata:jwt:courseid'] = 'The ID of the course that the user is editing the file in.';
 $string['privacy:metadata:jwt:externalpurpose'] = 'Provide Ally with information to allow file editing to improve accessibility.';
 $string['privacy:metadata:jwt:locale'] = 'The user\'s locale so the Ally user interface is presented using the most appropriate language.';

@@ -45,7 +45,7 @@ class lib_test extends abstract_testcase {
     /**
      * Test file deletion callback.
      */
-    public function test_tool_ally_after_file_deleted() {
+    public function test_tool_ally_after_file_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -74,7 +74,7 @@ class lib_test extends abstract_testcase {
     /**
      * Test section deletion callback.
      */
-    public function test_tool_ally_after_section_deleted() {
+    public function test_tool_ally_after_section_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -89,14 +89,14 @@ class lib_test extends abstract_testcase {
         $filename = 'shouldbeanimage.jpg';
         $filecontents = 'image contents (not really)';
         // Add a fake inline image to the post.
-        $filerecordinline = array(
+        $filerecordinline = [
             'contextid' => $coursectx->id,
             'component' => 'course',
             'filearea'  => 'section',
             'itemid'    => $section->id,
             'filepath'  => '/',
             'filename'  => $filename,
-        );
+        ];
         $fs = get_file_storage();
         // This file should not appear in the service returned files if section is deleted.
         $file = $fs->create_file_from_string($filerecordinline, $filecontents);

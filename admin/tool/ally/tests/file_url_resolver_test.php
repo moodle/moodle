@@ -58,7 +58,7 @@ class file_url_resolver_test extends abstract_testcase {
     /**
      * Test default URL resolution.
      */
-    public function test_resolve_default() {
+    public function test_resolve_default(): void {
         global $CFG;
 
         $resource = $this->getDataGenerator()->create_module('resource', ['course' => $this->course->id]);
@@ -74,7 +74,7 @@ class file_url_resolver_test extends abstract_testcase {
     /**
      * Test forum post URL resolution.
      */
-    public function test_resolve_forum_post() {
+    public function test_resolve_forum_post(): void {
         global $USER, $DB;
 
         $forum      = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
@@ -87,7 +87,7 @@ class file_url_resolver_test extends abstract_testcase {
             'forum'  => $forum->id,
             'course' => $this->course->id,
             'userid' => $USER->id,
-            'itemid' => $draft->get_itemid()
+            'itemid' => $draft->get_itemid(),
         ]);
 
         $post = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
@@ -106,7 +106,7 @@ class file_url_resolver_test extends abstract_testcase {
     /**
      * Test question URL resolution.
      */
-    public function test_resolve_question() {
+    public function test_resolve_question(): void {
         $context = \context_course::instance($this->course->id);
         $draft   = $this->generator->create_draft_file();
 
@@ -118,8 +118,8 @@ class file_url_resolver_test extends abstract_testcase {
             'questiontext' => [
                 'text'   => 'Text.',
                 'format' => FORMAT_HTML,
-                'itemid' => $draft->get_itemid()
-            ]
+                'itemid' => $draft->get_itemid(),
+            ],
         ]);
 
         $file = get_file_storage()->get_file($context->id, 'question', 'questiontext', $question->id,

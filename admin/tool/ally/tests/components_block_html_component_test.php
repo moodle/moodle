@@ -97,7 +97,7 @@ class components_block_html_component_test extends abstract_testcase {
         $usercontext = \context_user::instance($USER->id);
         $fs->create_file_from_string(['component' => 'user', 'filearea' => 'draft',
             'contextid' => $usercontext->id, 'itemid' => $itemid, 'filepath' => '/',
-            'filename' => 'file.txt'], 'File content');
+            'filename' => 'file.txt', ], 'File content');
 
         if ($data === null) {
             $data = [
@@ -105,8 +105,8 @@ class components_block_html_component_test extends abstract_testcase {
                 'text' => [
                     'text' => '<div>Block html</div>',
                     'itemid' => $itemid,
-                    'format' => FORMAT_HTML
-                ]
+                    'format' => FORMAT_HTML,
+                ],
             ];
         } else if (isset($data['text']) && empty($data['text']['itemid'])) {
             $data['text']['itemid'] = $itemid;
@@ -118,7 +118,7 @@ class components_block_html_component_test extends abstract_testcase {
         return end($blocks);
     }
 
-    public function test_list_content() {
+    public function test_list_content(): void {
         $this->setAdminUser();
         $block = $this->add_block();
         $id = $block->context->instanceid;
@@ -130,7 +130,7 @@ class components_block_html_component_test extends abstract_testcase {
 
     }
 
-    public function test_get_all_html_content_items() {
+    public function test_get_all_html_content_items(): void {
         $block = $this->add_block();
         $contentitems = $this->component->get_all_html_content($block->context->instanceid);
 
@@ -138,7 +138,7 @@ class components_block_html_component_test extends abstract_testcase {
             $block->context->instanceid, 'block_html', 'block_instances', 'configdata');
     }
 
-    public function test_get_all_html_content() {
+    public function test_get_all_html_content(): void {
         $sctc = new search_content_test();
 
         // Create an empty unconfigured block.
@@ -164,8 +164,8 @@ class components_block_html_component_test extends abstract_testcase {
             'text' => [
                 'text' => $expectedtext,
                 'itemid' => $itemid,
-                'format' => $expectedformat
-            ]
+                'format' => $expectedformat,
+            ],
         ];
 
         // Reget the block.
@@ -180,7 +180,7 @@ class components_block_html_component_test extends abstract_testcase {
         $this->assertEquals($expectedformat, $content->contentformat);
     }
 
-    public function test_get_course_html_content_items() {
+    public function test_get_course_html_content_items(): void {
         $sctc = new search_content_test();
 
         // Create an empty unconfigured block.
@@ -206,8 +206,8 @@ class components_block_html_component_test extends abstract_testcase {
             'text' => [
                 'text' => $expectedtext,
                 'itemid' => $itemid,
-                'format' => $expectedformat
-            ]
+                'format' => $expectedformat,
+            ],
         ];
 
         // Reget the block.
@@ -223,7 +223,7 @@ class components_block_html_component_test extends abstract_testcase {
     /**
      * Test if file in use detection is working with this module.
      */
-    public function test_file_in_use() {
+    public function test_file_in_use(): void {
         global $USER;
 
         set_config('excludeunused', 1, 'tool_ally');
@@ -244,7 +244,7 @@ class components_block_html_component_test extends abstract_testcase {
                 'contextid' => $usercontext->id,
                 'component' => 'user',
                 'filearea'  => 'draft',
-                'itemid'    => $itemid
+                'itemid'    => $itemid,
         ];
 
         $htmlunusedfile = $generator->create_file($record);
@@ -266,8 +266,8 @@ class components_block_html_component_test extends abstract_testcase {
                         'text' => $generator->create_pluginfile_link_for_file($htmlusedfile1) .
                                 '<a href="' . $url->out() . '">Link</a>',
                         'itemid' => $itemid,
-                        'format' => FORMAT_HTML
-                ]
+                        'format' => FORMAT_HTML,
+                ],
         ];
         $htmlblock->instance_config_save((object) $data);
 

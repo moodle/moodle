@@ -42,7 +42,7 @@ class block_html_component extends component_base implements iface_html_content,
     use embedded_file_map;
 
     protected $tablefields = [
-        'block_instances' => ['configdata']
+        'block_instances' => ['configdata'],
     ];
 
     protected function unpack_configdata($configdata) {

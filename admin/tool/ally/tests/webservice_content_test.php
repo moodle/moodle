@@ -43,27 +43,27 @@ require_once(__DIR__.'/abstract_testcase.php');
  */
 class webservice_content_test extends abstract_testcase {
 
-    public function test_invalid_component() {
+    public function test_invalid_component(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $this->expectExceptionMessage('Invalid component identifier');
         content::service(1, 'aninvalidcomponent', 'anytable', 'anyfield');
     }
-    public function test_invalid_table() {
+    public function test_invalid_table(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $this->expectExceptionMessage('Invalid component identifier');
         content::service($course->id, 'course', 'invalidtable', 'summary');
     }
-    public function test_invalid_field() {
+    public function test_invalid_field(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $this->expectExceptionMessage('Invalid component identifier');
         content::service($course->id, 'course', 'course', 'invalidfield');
     }
-    public function test_invalid_id() {
+    public function test_invalid_id(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $invalidid = 999999;
@@ -74,7 +74,7 @@ class webservice_content_test extends abstract_testcase {
     /**
      * Test the web service when used to get a single course summary content item.
      */
-    public function test_service_course_summary() {
+    public function test_service_course_summary(): void {
 
         $this->resetAfterTest();
 
@@ -105,7 +105,7 @@ class webservice_content_test extends abstract_testcase {
     /**
      * Test the web service when used to get a single course section content item.
      */
-    public function test_service_course_section() {
+    public function test_service_course_section(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -120,7 +120,7 @@ class webservice_content_test extends abstract_testcase {
             ['section' => 0, 'course' => $course->id]);
         $DB->update_record('course_sections', (object) [
             'id' => $section->id,
-            'summary' => $section0summary
+            'summary' => $section0summary,
         ]);
         $section = $DB->get_record('course_sections', ['id' => $section->id]);
         $content = content::service($section->id, 'course', 'course_sections', 'summary');
@@ -202,14 +202,14 @@ class webservice_content_test extends abstract_testcase {
                 'filename' => rawurlencode($fileanchor->get_filename()),
                 'contenthash' => $fileanchor->get_contenthash(),
                 'pathnamehash' => $fileanchor->get_pathnamehash(),
-                'tag' => 'a'
+                'tag' => 'a',
             ],
             [
                 'filename' => rawurlencode($file->get_filename()),
                 'contenthash' => $file->get_contenthash(),
                 'pathnamehash' => $file->get_pathnamehash(),
-                'tag' => 'img'
-            ]
+                'tag' => 'img',
+            ],
         ];
         $this->assertEquals($expected, $content);
 
@@ -219,21 +219,21 @@ class webservice_content_test extends abstract_testcase {
     /**
      * Test the web service when used to get a label content item.
      */
-    public function test_service_label_content() {
+    public function test_service_label_content(): void {
         $this->main_module_content_test('label', 'label');
     }
 
     /**
      * Test the web service when used to get an assign content item.
      */
-    public function test_service_assign_content() {
+    public function test_service_assign_content(): void {
         $this->main_module_content_test('assign', 'assign');
     }
 
     /**
      * Test the web service when used to get forum content items.
      */
-    public function test_service_forum_content($forumtype = 'forum') {
+    public function test_service_forum_content($forumtype = 'forum'): void {
         $forum = $this->main_module_content_test($forumtype, $forumtype);
 
         $user = $this->getDataGenerator()->create_user();
@@ -275,19 +275,19 @@ class webservice_content_test extends abstract_testcase {
         $this->assertEquals($expected, $content);
     }
 
-    public function test_service_hsuforum_content() {
+    public function test_service_hsuforum_content(): void {
         global $CFG;
         if (file_exists($CFG->dirroot.'/mod/hsuforum')) {
             $this->test_service_forum_content('hsuforum');
         }
     }
 
-    public function test_service_page_content() {
+    public function test_service_page_content(): void {
         $this->main_module_content_test('page', 'page');
         $this->main_module_content_test('page', 'page', 'content');
     }
 
-    public function test_service_lesson_content() {
+    public function test_service_lesson_content(): void {
         global $DB;
 
         $lesson = $this->main_module_content_test('lesson', 'lesson');
@@ -321,7 +321,7 @@ class webservice_content_test extends abstract_testcase {
         $this->assertEquals($expected, $content);
     }
 
-    public function test_service_block_html_content() {
+    public function test_service_block_html_content(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -352,7 +352,7 @@ class webservice_content_test extends abstract_testcase {
         $this->assertEquals($expected, $content);
     }
 
-    public function test_service_module_wrong_course() {
+    public function test_service_module_wrong_course(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();

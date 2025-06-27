@@ -24,11 +24,11 @@
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use \Behat\Mink\Exception\ExpectationException;
-use \Behat\Mink\Element\NodeElement;
-use \Moodle\BehatExtension\Exception\SkippedException;
-use \tool_ally\local_content;
-use \tool_ally\models\component_content;
+use Behat\Mink\Exception\ExpectationException;
+use Behat\Mink\Element\NodeElement;
+use Moodle\BehatExtension\Exception\SkippedException;
+use tool_ally\local_content;
+use tool_ally\models\component_content;
 
 /**
  * Ally filter context

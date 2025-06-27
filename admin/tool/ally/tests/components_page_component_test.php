@@ -87,14 +87,14 @@ class components_page_component_test extends abstract_testcase {
                 'introformat' => FORMAT_HTML,
                 'intro' => 'Text in intro',
                 'contentformat' => FORMAT_HTML,
-                'content' => 'Text in content'
+                'content' => 'Text in content',
             ]
         );
 
         $this->component = local_content::component_instance('page');
     }
 
-    public function test_list_intro_and_content() {
+    public function test_list_intro_and_content(): void {
         $this->setAdminUser();
         $contentitems = course_content::service([$this->course->id]);
         $component = new component(0, 'page', 'page', 'intro', $this->course->id, 0, FORMAT_HTML, $this->page->name);
@@ -103,7 +103,7 @@ class components_page_component_test extends abstract_testcase {
         $this->assert_component_is_in_array($component, $contentitems);
     }
 
-    public function test_get_all_html_content() {
+    public function test_get_all_html_content(): void {
         $items = local_content::get_all_html_content($this->page->id, 'page');
         $componentcontent = new component_content(
                 $this->page->id, 'page', 'page', 'intro', $this->course->id, 0,
@@ -111,13 +111,13 @@ class components_page_component_test extends abstract_testcase {
         $this->assertTrue($this->component_content_is_in_array($componentcontent, $items));
     }
 
-    public function test_resolve_module_instance_id() {
+    public function test_resolve_module_instance_id(): void {
         $this->setAdminUser();
         $instanceid = $this->component->resolve_module_instance_id('page', $this->page->id);
         $this->assertEquals($this->page->id, $instanceid);
     }
 
-    public function test_get_all_course_annotation_maps() {
+    public function test_get_all_course_annotation_maps(): void {
         $cis = $this->component->get_annotation_maps($this->course->id);
         $this->assertEquals('page:page:intro:' . $this->page->id, reset($cis['intros']));
         $this->assertEquals('page:page:content:' . $this->page->id, reset($cis['content']));
@@ -141,7 +141,7 @@ class components_page_component_test extends abstract_testcase {
     /**
      * Test if file in use detection is working with this module.
      */
-    public function test_check_file_in_use() {
+    public function test_check_file_in_use(): void {
         $context = \context_module::instance($this->page->cmid);
 
         $usedfiles = [];

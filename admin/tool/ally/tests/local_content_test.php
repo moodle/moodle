@@ -45,7 +45,7 @@ require_once(__DIR__.'/abstract_testcase.php');
  */
 class local_content_test extends abstract_testcase {
 
-    public function test_component_supports_html_content() {
+    public function test_component_supports_html_content(): void {
 
         $supported = \phpunit_util::call_internal_method(
                 null, 'component_supports_html_content', ['label'],
@@ -60,13 +60,13 @@ class local_content_test extends abstract_testcase {
         $this->assertEquals(false, $supported);
     }
 
-    public function test_list_html_content_supported_components() {
+    public function test_list_html_content_supported_components(): void {
         $list = local_content::list_html_content_supported_components();
         $this->assertContains('course', $list);
         $this->assertContains('mod_label', $list);
     }
 
-    public function test_component_instance() {
+    public function test_component_instance(): void {
         $labelcomp = local_content::component_instance('label');
         $this->assertInstanceOf(label_component::class, $labelcomp);
 
@@ -74,7 +74,7 @@ class local_content_test extends abstract_testcase {
         $this->assertInstanceOf(course_component::class, $coursecomp);
     }
 
-    public function test_get_course_html_content_items() {
+    public function test_get_course_html_content_items(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -101,7 +101,7 @@ class local_content_test extends abstract_testcase {
         $DB->update_record('course_sections', (object) [
             'id' => $section->id,
             'summary' => $section0summary,
-            'summaryformat' => FORMAT_HTML
+            'summaryformat' => FORMAT_HTML,
         ]);
         $section = $DB->get_record('course_sections', ['id' => $section->id]);
         $expectedsection = new component(
@@ -162,7 +162,7 @@ class local_content_test extends abstract_testcase {
         $this->assertEquals($expectedtimemodified, $contents->timemodified);
     }
 
-    public function test_get_replace_html_content() {
+    public function test_get_replace_html_content(): void {
 
         $this->resetAfterTest();
 
@@ -201,7 +201,7 @@ class local_content_test extends abstract_testcase {
         $this->assertEquals($expectedcourse, $content);
     }
 
-    public function test_get_annotation() {
+    public function test_get_annotation(): void {
         $this->resetAfterTest();
 
         $coursesummary = '<p>My course summary</p>';
@@ -219,26 +219,26 @@ class local_content_test extends abstract_testcase {
         $this->assertEquals($expected, $annotation);
     }
 
-    public function test_get_null_content() {
+    public function test_get_null_content(): void {
         $this->resetAfterTest();
         // These components may add things to the generic html component_content object or null.
         // When it is null, it is converted to stdClass, this should be avoided.
         $compdata = [
             'assign' => (object) [
                 'table' => 'assign',
-                'area' => 'intro'
+                'area' => 'intro',
             ],
             'book' => (object) [
                 'table' => 'book',
-                'area' => 'intro'
+                'area' => 'intro',
             ],
             'label' => (object) [
                 'table' => 'label',
-                'area' => 'intro'
+                'area' => 'intro',
             ],
             'page' => (object) [
                 'table' => 'page',
-                'area' => 'intro'
+                'area' => 'intro',
             ],
         ];
 
@@ -251,7 +251,7 @@ class local_content_test extends abstract_testcase {
         }
     }
 
-    public function test_get_pluginfiles_in_html() {
+    public function test_get_pluginfiles_in_html(): void {
         global $CFG;
 
         // First, empty string will return null.

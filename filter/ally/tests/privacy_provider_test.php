@@ -36,11 +36,11 @@ use filter_ally\privacy\provider;
  * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class privacy_provider_test extends provider_testcase {
+final class privacy_provider_test extends provider_testcase {
     /**
      * Test for provider::get_metadata().
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection     = provider::get_metadata(new collection('filter_ally'));
         $itemcollection = $collection->get_collection();
         $this->assertCount(1, $itemcollection);

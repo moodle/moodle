@@ -52,12 +52,12 @@ class course_processor extends traceable_processor {
         logger::get()->info('logger:addingcourseevttoqueue', [
             'configvalid' => $config->is_valid(),
             'configclionly' => $config->is_cli_only(),
-            'event' => $event
+            'event' => $event,
         ]);
         $DB->insert_record_raw('tool_ally_course_event', (object) [
             'name' => $event->name,
             'time' => $event->time,
-            'courseid' => $event->courseid
+            'courseid' => $event->courseid,
         ]);
     }
 
@@ -76,7 +76,7 @@ class course_processor extends traceable_processor {
         $event = (object) [
             'name' => $name,
             'time' => $time,
-            'courseid' => $courseid
+            'courseid' => $courseid,
         ];
 
         if (isset($sourcecourseid)) {

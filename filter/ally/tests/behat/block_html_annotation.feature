@@ -21,7 +21,7 @@
 # @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 
-@filter @filter_ally
+@filter @filter_ally @suite_ally
 Feature: When the ally filter is enabled ally annotations are inserted when appropriate into block_html content.
 
   Background:

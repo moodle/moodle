@@ -21,7 +21,7 @@
 # @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 
-@filter @filter_ally
+@filter @filter_ally @suite_ally
 Feature: When the ally filter is enabled ally place holders and annotations are inserted when appropriate into user generated content.
 
   Background:
