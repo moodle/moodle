@@ -27,7 +27,8 @@ class edit_tag extends edit_base {
 
         $stradd = get_string('add');
 
-        $manualform = '<input type="text" name="tag" /><input type="submit" value="'.$stradd.'" />';
+        $manualform = '<div class="input-group mb-3"><input type="text" class="form-control" name="tag" />'.
+                      '<input type="submit" class="btn btn-secondary" value="'.$stradd.'" /></div>';
         $manualform = $this->enclose_in_form($manualform);
 
         $iptcform = '';
@@ -48,7 +49,7 @@ class edit_tag extends edit_base {
                     $iptcform .= '<label ' . ($exists ? 'class="tag-exists"' : '').
                         '><input type="checkbox" name="iptctags[]" value="' . $tag . '" />' . $tag . '</label><br />';
                 }
-                $iptcform .= '<input type="submit" value="' . $stradd . '" />';
+                $iptcform .= '<input type="submit" class="btn btn-secondary" value="' . $stradd . '" />';
                 $iptcform = '<span class="tag-head"> ' . get_string('tagsiptc', 'lightboxgallery').
                     '</span>' . $this->enclose_in_form($iptcform);
             }
@@ -63,7 +64,7 @@ class edit_tag extends edit_base {
                 $deleteform .= '<label><input type="checkbox" name="deletetags[]" value="'.$tag->id.'" /> '.
                                htmlentities($tag->description).'</label><br />';
             }
-            $deleteform .= '<input type="submit" value="' . get_string('remove') . '" />';
+            $deleteform .= '<input type="submit" class="btn btn-secondary" value="' . get_string('remove') . '" />';
             $deleteform = '<span class="tag-head"> ' . get_string('tagscurrent', 'lightboxgallery') . '</span>'
                           .$this->enclose_in_form($deleteform);
         }

@@ -27,9 +27,12 @@ class edit_flip extends edit_base {
 
     public function output() {
         $result = get_string('selectflipmode', 'lightboxgallery').'<br /><br />'.
-                  '<label><input type="radio" name="mode" value="'.FLIP_VERTICAL.'" /> Vertical</label><br />'.
-                  '<label><input type="radio" name="mode" value="'.FLIP_HORIZONTAL.'" /> Horizontal</label>'.
-                  '<br /><br /><input type="submit" value="'.get_string('edit_flip', 'lightboxgallery').'" />';
+                  '<label for="'.FLIP_VERTICAL.'"><input type="radio" class="form-check-input me-1" name="mode" value="'.
+                  FLIP_VERTICAL.'" /> Vertical</label><br />'.
+                  '<label for="'.FLIP_HORIZONTAL.'"><input type="radio" class="form-check-input me-1" name="mode" value="'.
+                  FLIP_HORIZONTAL.'" /> Horizontal</label>'.
+                  '<br /><br /><input type="submit" class="btn btn-secondary" value="'.
+                  get_string('edit_flip', 'lightboxgallery').'" />';
 
         return $this->enclose_in_form($result);
     }

@@ -151,7 +151,7 @@ $options = array();
 
 if (has_capability('mod/lightboxgallery:addimage', $context)) {
     $opturl = new moodle_url('/mod/lightboxgallery/imageadd.php', array('id' => $cm->id));
-    $options[] = html_writer::link($opturl, get_string('addimage', 'lightboxgallery'));
+    $options[] = html_writer::link($opturl, get_string('addimage', 'lightboxgallery'), ['class' => 'btn btn-primary']);
 }
 
 if ($gallery->comments && has_capability('mod/lightboxgallery:addcomment', $context)) {

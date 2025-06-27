@@ -26,7 +26,7 @@ class edit_delete extends edit_base {
         global $page;
         $result = get_string('deletecheck', '', $this->image).'<br /><br />';
         $result .= '<input type="hidden" name="page" value="'.$page.'" />';
-        $result .= '<input type="submit" value="'.get_string('yes').'" />';
+        $result .= '<input type="submit" class="btn btn-secondary" value="'.get_string('yes').'" />';
         return $this->enclose_in_form($result);
     }
 
