@@ -79,4 +79,54 @@ final class gateway_test extends \advanced_testcase {
         $this->expectException(\coding_exception::class);
         $othergw->update_message_status($message);
     }
+
+    /**
+     * Test truncation of messages.
+     *
+     * @dataProvider get_truncation_strings
+     * @param string $original
+     * @param string $truncated
+     */
+    public function test_truncate_message(
+        string $content,
+        string $expected,
+    ): void {
+        $this->resetAfterTest();
+
+        $manager = \core\di::get(\core_sms\manager::class);
+        $config = new \stdClass();
+        $config->api_key = 'test_api_key';
+
+        $gw = $manager->create_gateway_instance(
+            classname: \smsgateway_dummy\gateway::class,
+            name: 'dummy',
+            enabled: true,
+            config: $config,
+        );
+
+        $truncated = $gw->truncate_message($content);
+        $this->assertSame($expected, $truncated);
+    }
+
+    /**
+     * Data provider for test_truncate_message.
+     *
+     * @return array
+     */
+    public static function get_truncation_strings(): array {
+        return [
+            'Over limit with URL' => [
+                'content' => 'Moodle is a flexible, open-source learning platform designed to help educators deliver online courses and manage student progress effectively. Visit https://moodle.org',
+                'expected' => 'Moodle is a flexible, open-source learning platform designed to help educators deliver online courses and manage student progress effectively. Visit',
+            ],
+            'Over limit' => [
+                'content' => 'Moodle is a widely used open-source learning platform that empowers educators to build customizable online courses, track student performance, and foster collaborative digital learning.',
+                'expected' => 'Moodle is a widely used open-source learning platform that empowers educators to build customizable online courses, track student performance, and foster collab',
+            ],
+            'Under limit' => [
+                'content' => 'Moodle is a widely used open-source learning platform that empowers educators.',
+                'expected' => 'Moodle is a widely used open-source learning platform that empowers educators.',
+            ],
+        ];
+    }
 }
