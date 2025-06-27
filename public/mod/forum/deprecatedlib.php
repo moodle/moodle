@@ -22,7 +22,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * This function prints the overview of a discussion in the forum listing.
  * It needs some discussion information and some post information, these
@@ -33,4 +32,52 @@ defined('MOODLE_INTERNAL') || die();
  */
 function forum_print_discussion_header() {
     throw new \coding_exception('forum_print_discussion_header has been deprecated');
+}
+
+/**
+ * Get a list of forums not tracked by the user.
+ *
+ * @param int $userid The id of the user to use.
+ * @param int $courseid The id of the course being checked.
+ * @return mixed An array indexed by forum id, or false.
+ * @deprecated since Moodle 5.1
+ * @todo MDL-78076 This function will be deleted in Moodle 6.0.
+ */
+#[\core\attribute\deprecated(
+    replacement: null,
+    reason: 'It is no longer used',
+    since: '5.1',
+    mdl: 'MDL-83893',
+)]
+function forum_tp_get_untracked_forums($userid, $courseid) {
+    global $CFG, $DB;
+
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+
+    if ($CFG->forum_allowforcedreadtracking) {
+        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_OFF."
+                            OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND (ft.id IS NOT NULL
+                                OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
+    } else {
+        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_OFF."
+                            OR ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_FORCED.")
+                                AND (ft.id IS NOT NULL
+                                    OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
+    }
+
+    $sql = "SELECT f.id
+              FROM {forum} f
+                   LEFT JOIN {forum_track_prefs} ft ON (ft.forumid = f.id AND ft.userid = ?)
+             WHERE f.course = ?
+                   $trackingsql";
+
+    if ($forums = $DB->get_records_sql($sql, [$userid, $courseid, $userid])) {
+        foreach ($forums as $forum) {
+            $forums[$forum->id] = $forum;
+        }
+        return $forums;
+
+    } else {
+        return [];
+    }
 }
