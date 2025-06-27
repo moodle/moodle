@@ -1660,8 +1660,16 @@ class manager {
         $pathcomponents = [$CFG->dirroot, $CFG->admin, 'cli', 'adhoc_task.php'];
         $scriptpath = escapeshellarg(implode(DIRECTORY_SEPARATOR, $pathcomponents));
 
+        // BEGIN LSU LTG patch for tasks to run now.
+        $setconfig = '';
+        if (!empty($_SERVER['MR_CONFIG_FILENAME'])) {
+            $configfile = $_SERVER['MR_CONFIG_FILENAME'];
+            $setconfig = self::MR_CONFIG_FILE_VAR . "=" . $configfile;
+        }
+
         // Build the CLI command.
-        $command = "{$phpbinary} {$scriptpath} {$taskarg} --force";
+        $command = "{$setconfig} {$phpbinary} {$scriptpath} {$taskarg} --force";
+        // END LSU LTG patch for tasks to run now.
 
         // We cannot run it in phpunit.
         if (PHPUNIT_TEST) {
