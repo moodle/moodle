@@ -32,4 +32,4 @@ Manual tests
 Visual checks
 -------------
 
-* There aren't any additional visual checks in the Moodle GUI needed to upgrade this theme.
+* It might be advisable to have a quick look at the bulk enrolment page in the Moodle GUI as Moodle themes might influence the look of the page.

@@ -194,6 +194,24 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     And I click on "Enrol users" "button"
     Then I should see "No existing Moodle user account with e-mail address student4@example.com."
 
+  Scenario: Try to bulk enrol a student into the course for which two accounts exist in the system.
+    Given the following config values are set as admin:
+      | config                 | value |
+      | allowaccountssameemail | 1     |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | student4 | Student   | 4        | student2@example.com |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I select "Participants" from secondary navigation
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
+    And I set the field "List of e-mail addresses" to multiline:
+      """
+      student2@example.com
+      """
+    And I click on "Enrol users" "button"
+    Then I should see "More than one existing Moodle user account with e-mail address student2@example.com found."
+
   Scenario: Try to bulk enrol a list of invalid users.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -224,3 +242,31 @@ Feature: Using the local_bulkenrol plugin for user enrolments
     Then I should see "Line 2 is empty and will be ignored."
     And I should see "No e-mail address found in line 3 (foo). This line will be ignored."
     And I should see "Manual enrolments"
+
+  Scenario: Bulk enrol students into the course while disrespecting the case of the given e-mail addresses
+    Given the following "users" exist:
+      | username      | firstname | lastname        | email                            |
+      | studentupper1 | Student   | Upper Account 1 | studentUPPERACCOUNT1@example.com |
+      | studentupper2 | Student   | Upper Input 2   | studentupperinput2@example.com   |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I select "Participants" from secondary navigation
+    And I set the field "Participants tertiary navigation" to "User bulk enrolment"
+    And I set the field "List of e-mail addresses" to multiline:
+      """
+      studentupperaccount1@example.com
+      studentUPPERinput2@example.com
+      """
+    And I click on "Enrol users" "button"
+    Then the following should exist in the "localbulkenrol_enrolusers" table:
+      | Email address                    | First name | Last name       | User enrolment        |
+      | studentUPPERACCOUNT1@example.com | Student    | Upper Account 1 | User will be enrolled |
+      | studentupperinput2@example.com   | Student    | Upper Input 2   | User will be enrolled |
+    And the following should exist in the "localbulkenrol_enrolinfo" table:
+      | Enrolment method  | Assigned role |
+      | Manual enrolments | Student       |
+    And I click on "Enrol users" "button"
+    Then the following should exist in the "participants" table:
+      | Email address                    | First name | Last name       | Roles   |
+      | studentUPPERACCOUNT1@example.com | Student    | Upper Account 1 | Student |
+      | studentupperinput2@example.com   | Student    | Upper Input 2   | Student |

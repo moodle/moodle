@@ -4,6 +4,10 @@ moodle-local_bulkenrol
 Changes
 -------
 
+### v4.5-r2
+
+* 2025-05-22 - Improvement: E-Mail adresses are now case-insensitive, resolves #30 and #35
+
 ### v4.5-r1
 
 * 2024-10-14 - Upgrade: Adopt changes from MDL-82183 and use new \core\output\pix_icon class

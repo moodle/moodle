@@ -147,6 +147,7 @@ function local_bulkenrol_check_user_mails($emailstextfield, $courseid) {
 function local_bulkenrol_check_email($email, $linecnt, $courseid, $context, $currentgroup, &$checkedemails) {
     // Check for valid email.
     $emailisvalid = validate_email($email);
+
     // Email is not valid.
     if (!$emailisvalid) {
         $checkedemails->emails_to_ignore[] = $email;
@@ -165,17 +166,25 @@ function local_bulkenrol_check_email($email, $linecnt, $courseid, $context, $cur
         // Email is valid.
     } else {
         // Check for moodle user with email.
-        list($error, $userrecord) = local_bulkenrol_get_user($email);
-        if (!empty($error)) {
-            $checkedemails->emails_to_ignore[] = $email;
-            if (array_key_exists($linecnt, $checkedemails->error_messages)) {
-                $errors = $checkedemails->error_messages[$linecnt];
-                $errors .= "<br>".$error;
-                $checkedemails->error_messages[$linecnt] = $errors;
-            } else {
-                $checkedemails->error_messages[$linecnt] = $error;
-            }
-        } else if (!empty($userrecord) && !empty($userrecord->id)) {
+        try {
+            $userrecord = get_complete_user_data('email', $email, null, true);
+
+            // No user found.
+        } catch (dml_missing_record_exception $e) {
+            $userrecord = null;
+            $checkedemails->error_messages[$linecnt] = get_string('error_no_record_found_for_email', 'local_bulkenrol', $email);
+        } catch (dml_multiple_records_exception $e) {
+            $userrecord = null;
+            $checkedemails->error_messages[$linecnt] =
+                    get_string('error_more_than_one_record_for_email', 'local_bulkenrol', $email);
+        } catch (Exception $e) {
+            $userrecord = null;
+            $checkedemails->error_messages[$linecnt] =
+                    get_string('error_getting_user_for_email', 'local_bulkenrol', $email);
+        }
+
+        // A user was found.
+        if ($userrecord && !empty($userrecord->id)) {
             $checkedemails->validemailfound += 1;
 
             $useralreadyenroled = false;
@@ -239,57 +248,6 @@ function local_bulkenrol_parse_emails($emails) {
         }
         return $result;
     }
-}
-
-/**
- * Takes an e-mail and returns a moodle user record and error string (if occured).
- *
- * @param string $email E-mail used to search for a user
- * @return string,object[]
- */
-function local_bulkenrol_get_user($email) {
-    global $DB;
-
-    $error = null;
-    $userrecord = null;
-
-    if (empty($email)) {
-        return [$error, $userrecord];
-    } else {
-        // Get user records for email.
-        try {
-            $userrecords = $DB->get_records('user', ['email' => $email]);
-            $count = count($userrecords);
-            if (!empty($count)) {
-                // More than one user with email -> ignore email and don't enrol users later!
-                if ($count > 1) {
-                    $error = get_string('error_more_than_one_record_for_email', 'local_bulkenrol', $email);
-                } else {
-                    $userrecord = current($userrecords);
-                }
-            } else {
-                $error = get_string('error_no_record_found_for_email', 'local_bulkenrol', $email);
-            }
-        } catch (Exception $e) {
-            $error = get_string('error_getting_user_for_email', 'local_bulkenrol', $email).local_bulkenrol_get_exception_info($e);
-        }
-
-        return [$error, $userrecord];
-    }
-}
-
-/**
- * Get an understandable reason from an exception which happened during bulkenrol.
- *
- * @param object $e should be of instanceof Exception
- * @return string readable form of an exception
- */
-function local_bulkenrol_get_exception_info($e) {
-    if (empty($e) || !($e instanceof Exception) ) {
-        return '';
-    }
-
-    return " ".get_string('error_exception_info', 'local_bulkenrol').": ".$e->getMessage()." -> ".$e->getTraceAsString();
 }
 
 /**
@@ -386,14 +344,13 @@ function local_bulkenrol_users($localbulkenrolkey) {
                                     $a = new stdClass();
                                     $a->email = $user->email;
 
-                                    $msg = get_string('error_enrol_user', 'local_bulkenrol', $a).
-                                            local_bulkenrol_get_exception_info($e);
+                                    $msg = get_string('error_enrol_user', 'local_bulkenrol', $a);
                                     $exceptionsmsg[] = $msg;
                                 }
                             }
                         }
                     } catch (Exception $e) {
-                        $msg = get_string('error_enrol_users', 'local_bulkenrol').local_bulkenrol_get_exception_info($e);
+                        $msg = get_string('error_enrol_users', 'local_bulkenrol');
                         $exceptionsmsg[] = $msg;
                     }
 
@@ -441,15 +398,14 @@ function local_bulkenrol_users($localbulkenrolkey) {
                                             $a = new stdClass();
                                             $a->email = $member->email;
                                             $a->group = $groupname;
-                                            $msg = get_string('error_group_add_member', 'local_bulkenrol', $a).
-                                                    local_bulkenrol_get_exception_info($e);
+                                            $msg = get_string('error_group_add_member', 'local_bulkenrol', $a);
                                             $exceptionsmsg[] = $msg;
                                         }
                                     }
                                 }
                             }
                         } catch (Exception $e) {
-                            $msg = get_string('error_group_add_members', 'local_bulkenrol').local_bulkenrol_get_exception_info($e);
+                            $msg = get_string('error_group_add_members', 'local_bulkenrol');
                             $exceptionsmsg[] = $msg;
                         }
                     }
@@ -708,7 +664,7 @@ function local_bulkenrol_is_already_member($courseid, $groupname, $userid) {
             }
         }
     } catch (Exception $e) {
-        $msg = get_string('error_group_add_members', 'local_bulkenrol').local_bulkenrol_get_exception_info($e);
+        $msg = get_string('error_group_add_members', 'local_bulkenrol');
         $exceptionsmsg[] = $msg;
     }
     return $result;
