@@ -48,6 +48,57 @@ class workdaystudent {
     }
 
     /**
+     * Updates sections, student enrollments, and teacher enrollments for deleted courses so they can re-run.
+     *
+     * @return @void
+     */
+    public static function clear_missing_courses_for_recreation(): void {
+        global $DB;
+
+        // Define the get sections sql.
+        $gssql = "SELECT sec.*
+            FROM {enrol_wds_sections} sec
+            LEFT JOIN {course} c ON c.id = sec.moodle_status
+            WHERE sec.moodle_status != 'Pending'
+                AND c.id IS NULL";
+
+        // Get the sections.
+        $sections = $DB->get_records_sql($gssql);
+
+        // Loop through the sections with deleted courses.
+        foreach ($sections as $section) {
+
+            // Set the parms.
+            $parms = ['slid' => $section->section_listing_id];
+
+            // Define the sql for updating teacher enrollments.
+            $tsql = "UPDATE {enrol_wds_teacher_enroll} tenr
+                SET tenr.status = 'unenrolled'
+                WHERE tenr.section_listing_id = :slid";
+
+            // Do the nasty.
+            $DB->execute($tsql, $parms);
+
+            // Define the sql for updating student enrollments.
+            $ssql = "UPDATE {enrol_wds_student_enroll} stuenr
+                SET stuenr.status = 'tobeupdated'
+                WHERE stuenr.section_listing_id = :slid";
+
+            // Do the nasty.
+            $DB->execute($ssql, $parms);
+        }
+
+        // Update sections sql.
+        $ussql = "UPDATE {enrol_wds_sections} sec
+            LEFT JOIN {course} c ON c.id = sec.moodle_status
+            SET sec.moodle_status = 'Pending'
+            WHERE sec.moodle_status != 'Pending'
+                AND c.id IS NULL";
+
+        $DB->execute($ussql);
+    }
+
+    /**
      * Resets enrollments prior to pulling from WDS.
      *
      * @param @string $sectionlistingid The section listing id.
@@ -1939,9 +1990,19 @@ class workdaystudent {
         }
 
         // Get the actual data.
-        $periods = $DB->get_records($table, $parms);
+        $periodids = $DB->get_records($table, $parms);
 
-        $period = [reset($periods)];
+        // We need this for later. We reset it because there might be more than one and the period will be the same.
+        $periodid = reset($periodids);
+
+        // Set the table.
+        $ptable = 'enrol_wds_periods';
+
+        // Build out the parms.
+        $pparms = ['academic_period_id' => $periodid->academic_period_id];
+
+        // Get the actual data, but return it as an array as we need to loop through it.
+        $period = [$DB->get_record($ptable, $pparms)];
 
         return $period;
     }
@@ -1956,7 +2017,7 @@ class workdaystudent {
         $psemrange = isset($s->erange) ? ($s->erange * 86400) : 0;
 
         // Build the SQL.
-        $sql = "SELECT p.academic_period_id
+        $sql = "SELECT p.*
                   FROM {enrol_wds_periods} p
                 WHERE p.start_date < UNIX_TIMESTAMP() + $fsemrange
                   AND p.end_date > UNIX_TIMESTAMP() - $psemrange
@@ -3944,7 +4005,7 @@ class workdaystudent {
         purge_all_caches();
 
         // Get the WDS test courses.
-        $csql = "SELECT * FROM {course} WHERE fullname LIKE 'WDS - %'";
+        $csql = "SELECT * FROM {course} WHERE fullname LIKE 'LSUE -%' AND idnumber LIKE '%\ %'";
         $courses = $DB->get_records_sql($csql);
 
         // Set this to not back them up.
@@ -3963,6 +4024,8 @@ class workdaystudent {
 
     public static function get_potential_new_mshells($s, $period) {
         global $CFG, $DB;
+
+        $parms = ['apid' => $period->academic_period_id];
 
         // Do we want our shells built with common sections merged per teacher?
         if ($s->course_grouping == 1) {
@@ -4022,7 +4085,7 @@ class workdaystudent {
                     sec.wd_status = 'Waitlist'
                 )
                 AND tenr.role = 'primary'
-                AND sec.academic_period_id = '$period->academic_period_id'
+                AND sec.academic_period_id = :apid
                 AND (
                     sec.idnumber IS NULL OR
                     sec.moodle_status = 'pending'
@@ -4031,7 +4094,7 @@ class workdaystudent {
             ORDER BY cou.course_listing_id ASC";
 
         // Get the data.
-        $mshells = $DB->get_records_sql($sql);
+        $mshells = $DB->get_records_sql($sql, $parms);
 
         return $mshells;
     }
@@ -4808,7 +4871,7 @@ class workdaystudent {
         return $enrollments;
     }
 
-    public static function wds_get_student_enrollments($period, $courseid = null) {
+    public static function wds_get_student_enrollments($period, $courseid = null, $sections = null) {
         global $DB;
 
         // Build out the parms.
@@ -4834,8 +4897,18 @@ class workdaystudent {
 
                 // Build out the reprocessectionsql.
                 $reprocesssection = ' AND sec.course_section_definition_id = :courseid';
-
             }
+        }
+
+        $sectionids = '';
+
+        // If we have a courseid, figure shit out.
+        if (!is_null($sections)) {
+
+            // The courseid parm.
+            $parms['sectionids'] = $sections;
+
+            $sectionids = ' AND sec.id IN (:sectionids)';
         }
 
         $sql = "SELECT stuenr.id AS enrollment_id,
@@ -4869,6 +4942,7 @@ class workdaystudent {
                 AND sec.controls_grading = 1
                 AND stuenr.status IN ('enroll', 'unenroll')
                 $reprocesssection
+                $sectionids
             GROUP BY stuenr.id
             ORDER BY sec.section_listing_id ASC";
 
@@ -5482,6 +5556,84 @@ class workdaystudent {
         mtrace("Fixed {$stats['courses_fixed']} courses with duplicate idnumbers.");
         return $stats;
     }
+
+    public static function wds_get_enrollable_courses($period) {
+        global $DB;
+
+        // Build out the parms.
+        $parms = ['apid' => $period->academic_period_id];
+
+        // Build the SQL.
+        $sql = "SELECT c.*
+            FROM {enrol_wds_sections} sec
+            INNER JOIN {course} c
+                ON sec.moodle_status = c.id
+            INNER JOIN {enrol_wds_teacher_enroll} tenr
+                ON tenr.section_listing_id = sec.section_listing_id
+                AND tenr.role = 'primary'
+                AND tenr.status = 'enrolled'
+            WHERE sec.academic_period_id = :apid
+            GROUP BY c.id";
+
+        // Get the list of course ids for this period.
+        $courses = $DB->get_records_sql($sql, $parms);
+
+        // Return the list of course ids.
+        return $courses;
+    }
+
+    public static function wds_get_teacher_for_course($period, $course) {
+        global $DB;
+
+        // Build out the parms for getting the primary instructor for the course.
+        $parms = [
+            'apid' => $period->academic_period_id,
+            'courseid' => $course->id
+        ];
+
+        // SQL for grabbing the primary instructor.
+        $sql = "SELECT tea.userid,
+                tea.email,
+                tea.universal_id,
+                GROUP_CONCAT(
+                    sec.id ORDER BY sec.section_listing_id ASC
+                ) AS sectionids
+            FROM {enrol_wds_sections} sec
+                INNER JOIN {course} c
+                    ON sec.moodle_status = c.id
+                INNER JOIN {enrol_wds_teacher_enroll} tenr
+                    ON tenr.section_listing_id = sec.section_listing_id
+                    AND tenr.role = 'primary'
+                    AND tenr.status = 'enrolled'
+                INNER JOIN {enrol_wds_teachers} tea
+                    ON tea.universal_id = tenr.universal_id
+                LEFT JOIN {block_wdsprefs_unwants} uw
+                    ON uw.sectionid = sec.id
+                    AND uw.userid = tea.userid
+                    AND uw.unwanted = 1
+            WHERE academic_period_id = :apid
+                AND c.id = :courseid
+            GROUP BY tea.id";
+
+        // Get the primary instructor.
+        $teacher = $DB->get_records_sql($sql, $parms);
+
+        // We should never have two primaries, but if we do, deal.
+        if (count($teacher) > 1) {
+
+            var_dump($teacher);
+
+            $teacher = reset($teacher);
+
+            return $teacher;
+        }
+
+        // We have an array of one item. Get the object.
+        $teacher = reset($teacher);
+
+        return $teacher;
+    }
+
 }
 
 class wdscronhelper {
@@ -6468,6 +6620,106 @@ class wdscronhelper {
         }
     }
 
+    public static function cron_per_course_enrolls($period, $courseid = null) {
+        global $DB;
+
+        if (is_null($courseid)) {
+            // Get all the created courses for this period.
+            $courses = workdaystudent::wds_get_enrollable_courses($period);
+        } else {
+            // Get this course.
+            $courses = $DB->get_records('course', ['id' => $courseid]);
+        }
+
+        // Loop through them.
+        foreach ($courses as $course) {
+
+            // Get the primary instructor for the course.
+            $teacher = workdaystudent::wds_get_teacher_for_course($period, $course);
+
+            // Get the teacher's/default preferences for this course.
+            $teacherprefs = workdaystudent::wds_get_faculty_preferences($teacher);
+
+            // Convert sectionids to array.
+            $sectionids = explode(',', $teacher->sectionids);
+
+            // Filter out any IDs that are in the unwants array.
+            $filteredsectionids = array_filter($sectionids, function($id) use ($teacherprefs) {
+                return !in_array($id, $teacherprefs->unwants);
+            });
+
+            // Check if any section IDs remain.
+            if (empty($filteredsectionids)) {
+                mtrace("Skipped enrollment for $course->fullname. Unwanted.");
+
+                // No valid section IDs left — exit early.
+                continue;
+            }
+
+            // Parse the period start_date.
+            $startdate = (new DateTime())->setTimestamp((int)$period->start_date);
+
+            // Subtract enrollprior days from the start date.
+            $enrollopendate = (clone $startdate)->modify('-' . $teacherprefs->enrollprior . ' days');
+
+            // Where we at?
+            $now = new DateTime();
+
+            // If the course starts AFTER the date, skip it.
+            if ($enrollopendate > $now) {
+                mtrace("Skipped enrollment for $course->fullname. Not less than $teacherprefs->enrollprior days.");
+
+                continue;
+            }
+
+            // Update the teacher object with cleaned section IDs.
+            $teacher->sectionids = implode(',', $filteredsectionids);
+
+            // Get all the enrollments for this course.
+            $enrollments = workdaystudent::wds_get_student_enrollments($period, $course->id, $teacher->sectionids);
+
+            mtrace("Beginning Enrollment for $course->fullname.");
+
+            // Bulk enrollment for this course.
+            $wdsbulk = enrol_workdaystudent::wds_bulk_student_enrollments($enrollments);
+
+            mtrace("Finished Enrollment for $course->fullname.\n");
+        }
+    }
+
+    public static function cronmenrolls2($courseid = null) {
+        $s = workdaystudent::get_settings();
+
+        if (!is_null($courseid)) {
+
+            // Get the period for this courseid.
+            $periods = workdaystudent::get_specified_period($courseid);
+
+        } else {
+
+            // Get the current periods.
+            $periods = workdaystudent::get_current_periods($s);
+        }
+
+        // Get the period count.
+        $periodcount = count($periods);
+
+        mtrace("Enrolling students for $periodcount periods.");
+
+        // Loop through the periods eo enroll them.
+        foreach ($periods as $period) {
+
+            if (!is_null($courseid)) {
+                mtrace("Enrolling into $period->academic_period_id and course id $courseid.");
+                self::cron_per_course_enrolls($period, $courseid);
+
+            } else {
+                mtrace("Enrolling into $period->academic_period_id.");
+                self::cron_per_course_enrolls($period, null);
+            }
+        }
+    }
+
     public static function cronmenrolls($courseid = null) {
         $s = workdaystudent::get_settings();
 
@@ -6866,7 +7118,7 @@ class enrol_workdaystudent extends enrol_plugin {
             ));
         }
 
-        mtrace("\nEnrollment Summary Begins");
+        mtrace("Enrollment Summary Begins");
 
         // Let us know how it went.
         foreach ($allcourses as $coursed) {

@@ -98,7 +98,7 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
         $nonactive = workdaystudent::wds_get_insert_missing_students();
 
         // Enroll the students into courses and groups.
-        $cronenrollments = wdscronhelper::cronmenrolls();
+        $cronenrollments = wdscronhelper::cronmenrolls2();
 
         $endtime = microtime(true);
         $elapsedtime = round($endtime - $starttime, 2);
@@ -150,7 +150,7 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
             );
 
             // Enroll the students into courses and groups.
-            $cronenrollments = wdscronhelper::cronmenrolls(
+            $cronenrollments = wdscronhelper::cronmenrolls2(
                 $section->course_section_definition_id
             );
 
@@ -217,7 +217,7 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
         $nonactive = workdaystudent::wds_get_insert_missing_students();
 
         // Enroll the students into courses and groups.
-        $cronenrollments = wdscronhelper::cronmenrolls();
+        $cronenrollments = wdscronhelper::cronmenrolls2();
 
         $endtime = microtime(true);
         $elapsedtime = round($endtime - $starttime, 2);
