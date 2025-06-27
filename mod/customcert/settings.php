@@ -81,6 +81,17 @@ $settings->add(new admin_setting_configduration('customcert/certificateexecution
 $settings->add(new admin_setting_heading('defaults',
     get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
+$settings->add(new admin_setting_configselect(
+    'customcert/codegenerationmethod',
+    get_string('codegenerationmethod', 'customcert'),
+    get_string('codegenerationmethod_desc', 'customcert'),
+    0, // Default option (0 = Upper/lower/digits random string method).
+    [
+        0 => get_string('codegenerationmethod_upperlowerdigits', 'customcert'), // Upper/lower/digits random string.
+        1 => get_string('codegenerationmethod_digitshyphens', 'customcert')  // Digits with hyphens numeric code.
+    ]
+));
+
 $yesnooptions = [
     0 => get_string('no'),
     1 => get_string('yes'),

@@ -86,7 +86,7 @@ class email_certificate_task extends \core\task\adhoc_task {
 
         // Get the information about the user and the certificate issue.
         $userfields = helper::get_all_user_name_fields('u');
-        $sql = "SELECT u.id, u.username, $userfields, u.email, ci.id as issueid, ci.emailed
+        $sql = "SELECT u.id, u.username, $userfields, u.email, u.mailformat, ci.id as issueid, ci.emailed
                   FROM {customcert_issues} ci
                   JOIN {user} u
                     ON ci.userid = u.id

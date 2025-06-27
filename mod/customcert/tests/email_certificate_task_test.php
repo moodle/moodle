@@ -48,7 +48,10 @@ final class email_certificate_task_test extends advanced_testcase {
      */
     public function setUp(): void {
         $this->resetAfterTest();
+
         set_config('certificateexecutionperiod', 0, 'customcert');
+
+        parent::setUp();
     }
 
     /**

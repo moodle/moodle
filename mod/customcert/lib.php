@@ -87,8 +87,21 @@ function customcert_delete_instance($id) {
         return false;
     }
 
-    // Delete the customcert instance.
-    if (!$DB->delete_records('customcert', ['id' => $id])) {
+    $context = context_module::instance($cm->id);
+
+    // Trigger issue_deleted events for each issue.
+    $issues = $DB->get_records('customcert_issues', ['customcertid' => $id]);
+    foreach ($issues as $issue) {
+        $event = \mod_customcert\event\issue_deleted::create([
+            'objectid' => $issue->id,
+            'context' => $context,
+            'relateduserid' => $issue->userid,
+        ]);
+        $event->trigger();
+    }
+
+    // Delete the customcert issues.
+    if (!$DB->delete_records('customcert_issues', ['customcertid' => $id])) {
         return false;
     }
 
@@ -98,13 +111,12 @@ function customcert_delete_instance($id) {
         $template->delete();
     }
 
-    // Delete the customcert issues.
-    if (!$DB->delete_records('customcert_issues', ['customcertid' => $id])) {
+    // Delete the customcert instance.
+    if (!$DB->delete_records('customcert', ['id' => $id])) {
         return false;
     }
 
     // Delete any files associated with the customcert.
-    $context = context_module::instance($cm->id);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id);
 
