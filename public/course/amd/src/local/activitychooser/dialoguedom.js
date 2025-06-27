@@ -15,6 +15,7 @@
 
 import {addIconToContainer} from 'core/loadingicon';
 import Carousel from 'theme_boost/bootstrap/carousel';
+import {getFirst} from 'core/normalise';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import selectors from 'core_course/local/activitychooser/selectors';
@@ -30,9 +31,16 @@ import * as Templates from 'core/templates';
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 export default class ChooserDialogueDOM {
-
-    constructor(dialogue, modalBody, exporter) {
-        this.modalBody = modalBody;
+    /**
+     * ChooserDialogueDOM constructor.
+     *
+     * @param {Object} dialogue The dialogue object.
+     * @param {Modal} modal The modal object.
+     * @param {Object} exporter The exporter object to generate template data.
+     */
+    constructor(dialogue, modal, exporter) {
+        this.modal = modal;
+        this.modalBody = getFirst(this.modal.getBody());
         this.exporter = exporter;
         // Temporal variable while migrating methods.
         this.dialogue = dialogue;
@@ -65,6 +73,21 @@ export default class ChooserDialogueDOM {
     isFavoutiteTabActive() {
         const favouriteTab = this.modalBody.querySelector(selectors.regions.favouriteTabNav);
         return favouriteTab && favouriteTab.classList.contains('active');
+    }
+
+    /**
+     * Get the URL of a chooser option.
+     *
+     * @param {HTMLElement} optionContainer The container of the chooser option.
+     * @return {String} The URL of the chooser option.
+     * @throws {Error} If the option container does not contain a link.
+     */
+    getChooserOptionUrl(optionContainer) {
+        const optionLink = optionContainer.querySelector(selectors.actions.addChooser);
+        if (!optionLink) {
+            throw new Error('Invalid chooser option container: no link found');
+        }
+        return optionLink.getAttribute('href');
     }
 
     /**
@@ -221,17 +244,10 @@ export default class ChooserDialogueDOM {
      *
      * @method showModuleHelp
      * @param {Object} moduleData Data of the module to carousel to
-     * @param {Modal} modal The modal object
      */
-    showModuleHelp(moduleData, modal) {
+    showModuleHelp(moduleData) {
         const carousel = this.modalBody.querySelector(selectors.regions.carousel);
-        // If we have a real footer then we need to change temporarily.
-        if (moduleData.showFooter === true) {
-            modal.setFooter(Templates.render(
-                'core_course/local/activitychooser/footer_partial',
-                moduleData
-            ));
-        }
+
         const help = carousel.querySelector(selectors.regions.help);
         help.innerHTML = '';
         help.classList.add('m-auto');
@@ -280,8 +296,9 @@ export default class ChooserDialogueDOM {
     hideModuleHelp(internal = null) {
         const carousel = this.modalBody.querySelector(selectors.regions.carousel);
         // Trigger the transition between 'pages'.
-        Carousel.getInstance(carousel).prev();
-        if (internal === null) {
+        Carousel.getInstance(carousel).to(0);
+        // Some active footers may not provide a valid internal value.
+        if (!internal) {
             return;
         }
         carousel.addEventListener(
@@ -291,6 +308,47 @@ export default class ChooserDialogueDOM {
             },
             {once: true}
         );
+    }
+
+    /**
+     * Set the module data for the back button.
+     *
+     * @param {Object} moduleData The module data to set for the back button.
+     */
+    setBackButtonModuleData(moduleData) {
+        const footer = getFirst(this.modal.getFooter());
+        const modnameValue = `${moduleData.componentname}_${moduleData.link}`;
+        footer.querySelector(selectors.actions.closeOption).dataset.modname = modnameValue;
+    }
+
+    /**
+     * Toggle the visibility of the back button.
+     *
+     * @param {Boolean} show Whether to show or hide the back button.
+     */
+    toggleBackButton(show) {
+        const footer = getFirst(this.modal.getFooter());
+        footer.querySelector(selectors.actions.closeOption).classList.toggle('d-none', !show);
+    }
+
+    /**
+     * Toggle the visibility of the "Add selected" button.
+     *
+     * @param {Boolean} show Whether to show or hide the "Add selected" button.
+     */
+    toggleAddButton(show) {
+        const footer = getFirst(this.modal.getFooter());
+        footer.querySelector(selectors.actions.addSelectedChooserOption).classList.toggle('d-none', !show);
+    }
+
+    /**
+     * Toggle the visibility of the active footer.
+     *
+     * @param {Boolean} show Whether to show or hide the active footer.
+     */
+    toggleActiveFooter(show) {
+        const footer = getFirst(this.modal.getFooter());
+        footer.querySelector(selectors.regions.activeFooter).classList.toggle('d-none', !show);
     }
 
     /**
@@ -475,5 +533,41 @@ export default class ChooserDialogueDOM {
         this.toggleFocusableChooserOption(currentOption, false);
         this.toggleFocusableChooserOption(newFocusOption, true);
         newFocusOption.focus();
+    }
+
+    /**
+     * Mark a chooser option as selected.
+     *
+     * @param {HTMLElement} chooserOption The chooser option element to mark as selected.
+     */
+    markChooserOptionAsSelected(chooserOption) {
+        this.unmarkAllChooserOptionAsSelected();
+        chooserOption.classList.add('selected');
+        chooserOption.classList.add('border-primary');
+        chooserOption.setAttribute('aria-selected', 'true');
+
+        const footer = getFirst(this.modal.getFooter());
+        const addButton = footer.querySelector(selectors.actions.addSelectedChooserOption);
+        if (addButton) {
+            addButton.removeAttribute('disabled');
+        }
+    }
+
+    /**
+     * Unmark all chooser options as selected.
+     */
+    unmarkAllChooserOptionAsSelected() {
+        const selectedOptions = this.modalBody.querySelectorAll(`${selectors.regions.chooserOption.container}.selected`);
+        selectedOptions.forEach((option) => {
+            option.classList.remove('selected');
+            option.classList.remove('border-primary');
+            option.setAttribute('aria-selected', 'false');
+        });
+
+        const footer = getFirst(this.modal.getFooter());
+        const addButton = footer.querySelector(selectors.actions.addSelectedChooserOption);
+        if (addButton) {
+            addButton.setAttribute('disabled', 'disabled');
+        }
     }
 }

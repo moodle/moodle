@@ -34,6 +34,7 @@ const getDataSelector = (name, value) => {
 
 export default {
     regions: {
+        activeFooter: getDataSelector('region', 'active-footer-container'),
         categoryContent: getDataSelector('region', 'category-content'),
         getSectionChooserOptions: containerid => `${containerid} ${getDataSelector('region', 'chooser-options-container')}`,
         chooserOptions: getDataSelector('region', 'chooser-options-container'),
@@ -63,6 +64,7 @@ export default {
             manageFavourite: getDataSelector('action', 'manage-module-favourite'),
         },
         addChooser: getDataSelector('action', 'add-chooser-option'),
+        addSelectedChooserOption: getDataSelector('action', 'add-selected-chooser-option'),
         closeOption: getDataSelector('action', 'close-chooser-option-summary'),
         hide: getDataSelector('action', 'hide'),
         search: getDataSelector('action', 'search'),

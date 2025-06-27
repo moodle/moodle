@@ -197,6 +197,16 @@ export default class {
         return tabData.items?.length ?? 0;
     }
 
+    /**
+     * Get the activity chooser footer template data.
+     * @param {Object} footerData The active footer data object.
+     * @return {Object} The template data.
+     */
+    getFooterData(footerData) {
+        return {
+            'activeFooter': footerData.customfootertemplate,
+        };
+    }
 }
 
 /**

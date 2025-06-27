@@ -53,12 +53,19 @@ export async function displayActivityChooserModal(
         bodyPromiseResolver = resolve;
     });
 
+    const exporter = new Exporter();
+
     const footerData = await footerDataPromise;
+
+    const footerPromise = Templates.render(
+        'core_course/local/activitychooser/footer',
+        exporter.getFooterData(footerData),
+    );
 
     const sectionModal = Modal.create({
         body: bodyPromise,
         title: getString('addresourceoractivity'),
-        footer: footerData.customfootertemplate,
+        footer: footerPromise,
         large: true,
         scrollable: false,
         templateContext: {
@@ -75,9 +82,9 @@ export async function displayActivityChooserModal(
         }
 
         const modal = await sectionModal;
-        const dialogue = new ActivityChooserDialogue(modal, modulesData, footerData);
+        new ActivityChooserDialogue(modal, modulesData, footerData);
 
-        const templateData = await dialogue.exporter.getModChooserTemplateData(modulesData);
+        const templateData = await exporter.getModChooserTemplateData(modulesData);
         bodyPromiseResolver(await Templates.render('core_course/activitychooser', templateData));
     } catch (error) {
         const errorTemplateData = {
@@ -131,6 +138,7 @@ class ActivityChooserDialogue {
         this.dialogueDom = null; // We cannot init until we have the modal body loaded.
         this.footerData = footerData;
         this.exporter = new Exporter();
+        this.selectedModule = null;
         // This attribute marks when the tab content is dirty and needs to be refreshed when the user changes the tab.
         // We don't want the content to be updated while the user is managing their favourites.
         this.isFavouriteTabDirty = false;
@@ -148,14 +156,17 @@ class ActivityChooserDialogue {
      * @return {Promise} A promise that resolves when the modal is ready.
      */
     async init() {
-        const modalBody = getFirst(await this.modal.getBodyPromise());
-        this.dialogueDom = new DialogueDom(this, modalBody, this.exporter);
+        await this.modal.getBodyPromise();
+        await this.modal.getFooterPromise();
+        this.dialogueDom = new DialogueDom(this, this.modal, this.exporter);
         this.registerModalListenerEvents();
         this.setupKeyboardAccessibility();
         // We want to focus on the action select when the dialog is closed.
         this.modal.getRoot().on(ModalEvents.hidden, () => {
             this.modal.destroy();
         });
+        // When modal is open the add button should be disabled because there is no activity selected.
+        this.dialogueDom.unmarkAllChooserOptionAsSelected();
     }
 
     /**
@@ -170,6 +181,7 @@ class ActivityChooserDialogue {
         modalRoot.addEventListener(
             'shown.bs.tab',
             (event) => {
+                this.dialogueDom.unmarkAllChooserOptionAsSelected();
                 // The all tab has the search result, so we do not want to clear the search input.
                 if (event.target.closest(selectors.regions.allTabNav)) {
                     return;
@@ -186,6 +198,10 @@ class ActivityChooserDialogue {
         modalRoot.addEventListener(
             'click',
             this.handleModalClick.bind(this),
+        );
+        modalRoot.addEventListener(
+            'dblclick',
+            this.handleModalDoubleClick.bind(this),
         );
 
         // Add a listener for an input change in the activity chooser's search bar.
@@ -227,6 +243,19 @@ class ActivityChooserDialogue {
             'click',
             this.handleFooterClick.bind(this),
         );
+
+        // Adapt modal footer depending on the displayed carousel page.
+        modalRoot.addEventListener('slide.bs.carousel', (event) => {
+            if (event.to === undefined) {
+                return;
+            }
+            // The boostrap carousel event.to contains the index of the newly active item.
+            // The zero index is the chooser options, the first index is the module help,
+            // any other index are custom footer pages.
+            this.dialogueDom.toggleActiveFooter(event.to === 0);
+            this.dialogueDom.toggleBackButton(event.to !== 0);
+            this.dialogueDom.toggleAddButton(event.to < 2);
+        });
     }
 
     /**
@@ -236,7 +265,14 @@ class ActivityChooserDialogue {
      * @return {Promise} A promise that resolves when the event is handled
      */
     async handleFooterClick(event) {
-        if (this.footerData.footer === true) {
+        if (event.target.closest(selectors.actions.addSelectedChooserOption)) {
+            this.submitAddSelectedModule();
+        }
+
+        if (
+            event.target.closest(selectors.regions.activeFooter)
+            && this.footerData.footer === true
+        ) {
             const footerjs = await getPlugin(this.footerData.customfooterjs);
             await footerjs.footerClickListener(event, this.footerData, this.modal);
         }
@@ -253,20 +289,41 @@ class ActivityChooserDialogue {
 
         if (target.closest(selectors.actions.optionActions.showSummary)) {
             this.handleShowSummary(target);
+            return;
         }
 
         if (target.closest(selectors.actions.optionActions.manageFavourite)) {
             await this.handleFavouriteClick(target);
+            return;
         }
 
         // From the help screen go back to the module overview.
         if (target.matches(selectors.actions.closeOption)) {
             this.dialogueDom.hideModuleHelp(target.dataset.modname);
+            return;
         }
 
         // The "clear search" button is triggered.
         if (target.closest(selectors.actions.clearSearch)) {
             this.handleClearSearch();
+            return;
+        }
+
+        if (target.closest(selectors.regions.chooserOption.container)) {
+            event.preventDefault();
+            this.handleOptionSelection(target);
+            return;
+        }
+    }
+
+    /**
+     * Handle the double click event on the modal.
+     * @param {Object} event The event object
+     */
+    handleModalDoubleClick(event) {
+        const option = this.dialogueDom.getClosestChooserOption(event.target);
+        if (option !== null) {
+            this.submitAddSelectedModule(this.selectedModule);
         }
     }
 
@@ -279,8 +336,11 @@ class ActivityChooserDialogue {
         const module = this.dialogueDom.getClosestChooserOption(target);
         const moduleName = module.dataset.modname;
         const moduleData = this.mappedModules.get(moduleName);
+        // We select the module now. This way the back button will keep the module selected.
+        this.handleOptionSelection(target);
         // We need to know if the overall modal has a footer so we know when to show a real / vs fake footer.
         moduleData.showFooter = this.modal.hasFooterContent();
+        this.dialogueDom.setBackButtonModuleData(moduleData);
         this.dialogueDom.showModuleHelp(moduleData, this.modal);
     }
 
@@ -318,6 +378,38 @@ class ActivityChooserDialogue {
     }
 
     /**
+     * Handle the click on a chooser option.
+     *
+     * @param {HTMLElement} target The target element that triggered the event
+     */
+    handleOptionSelection(target) {
+        const option = this.dialogueDom.getClosestChooserOption(target);
+        if (option === null) {
+            return;
+        }
+        this.selectedModule = option;
+        this.dialogueDom.markChooserOptionAsSelected(option, getFirst(this.modal.getFooter()));
+    }
+
+    /**
+     * Submit the selected module to the chooser.
+     *
+     * This method will redirect the user to the URL of the selected module, if one is selected.
+     *
+     * @param {HTMLElement} newSelectedModule optional new selected module element.
+     * @return {void}
+     */
+    submitAddSelectedModule(newSelectedModule = null) {
+        if (newSelectedModule) {
+            this.handleOptionSelection(newSelectedModule);
+        }
+        if (this.selectedModule === null) {
+            return;
+        }
+        window.location.href = this.dialogueDom.getChooserOptionUrl(this.selectedModule);
+    }
+
+    /**
      * Set up our tabindex information across the chooser.
      *
      * @method setupKeyboardAccessibility
@@ -333,14 +425,22 @@ class ActivityChooserDialogue {
                 return;
             }
 
-            // Check for enter/ space triggers for showing the help.
             if (e.keyCode === enter || e.keyCode === space) {
-                if (e.target.matches(selectors.actions.optionActions.showSummary)) {
-                    e.preventDefault();
-                    this.handleShowSummary(e.target);
+                // Check first if the target is an internal control button (favourite or help).
+                // If that is the case, the regular click will handle the event.
+                if (e.target.closest(selectors.regions.chooserOption.actions)) {
+                    return;
                 }
             }
 
+            if (e.keyCode === space) {
+                e.preventDefault();
+                this.handleOptionSelection(currentOption);
+            }
+            if (e.keyCode === enter) {
+                e.preventDefault();
+                this.submitAddSelectedModule(currentOption);
+            }
             if (e.keyCode === arrowRight) {
                 e.preventDefault();
                 this.dialogueDom.focusNextChooserOption(currentOption);
