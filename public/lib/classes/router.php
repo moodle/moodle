@@ -112,7 +112,7 @@ class router {
             }
         }
 
-        if ($CFG->routerconfigured !== true || $userphp) {
+        if ($CFG->routerconfigured != true || $userphp) {
             $scriptroot .= '/r.php';
         }
 

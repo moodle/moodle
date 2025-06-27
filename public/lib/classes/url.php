@@ -684,7 +684,7 @@ All values that are not arrays should be a string.');
     ): self {
         global $CFG;
 
-        if ($CFG->routerconfigured !== true) {
+        if ($CFG->routerconfigured != true) {
             $path = '/r.php/' . ltrim($path, '/');
         }
         $url = new self($path, $params, $anchor);
