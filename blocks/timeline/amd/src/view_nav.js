@@ -61,7 +61,7 @@ const registerTimelineDaySelector = function(root, timelineViewRoot) {
 
             var option = $(e.target).closest(SELECTORS.TIMELINE_DAY_FILTER_OPTION);
 
-            if (option.attr('aria-selected') == 'true') {
+            if (option.attr('aria-current') == 'true') {
                 // If it's already active then we don't need to do anything.
                 return;
             }
@@ -109,8 +109,9 @@ const registerViewSelector = function(root, timelineViewRoot) {
     // Listen for when the user changes tab so that we can show the first set of courses
     // and load their events when they request the sort by courses view for the first time.
     getFirst(viewSelector).querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
-        tab.addEventListener('shown.bs.tab', () => {
+        tab.addEventListener('shown.bs.tab', (e) => {
             View.shown(timelineViewRoot);
+            $(e.target).removeClass('active');
         });
     });
 
