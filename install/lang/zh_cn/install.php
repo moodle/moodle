@@ -87,7 +87,7 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装并启用了<strong>{$a->packname} {$a->packversion}</strong>软件包。恭喜您！';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>的此发行版包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
 $string['welcomep40'] = '这个软件包还包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
-$string['welcomep50'] = '此软件包中所有应用程序的使用均受其各自许可证的约束。完整的 <strong>{$a->installername}</strong> 软件包是 <a href=“https://www.opensource.org/docs/definition_plain.html”>开源的，</a>并在 <a href=“https://www.gnu.org/copyleft/gpl.html”>GPL 许可证下分发</a>';
+$string['welcomep50'] = '此软件包中所有应用程序的使用均受其各自许可证的约束。完整的 <strong>{$a->installername}</strong> 软件包是 <a href="https://www.opensource.org/docs/definition_plain.html">开源</a>的，并在 <a href="https://www.gnu.org/copyleft/gpl.html">GPL </a>许可证下分发。';
 $string['welcomep60'] = '接下来的页面会引导您通过一系列步骤在您的计算机上安装并配置好<strong>Moodle</strong>。您可以接受缺省的设置，或者根据需要修改它们。';
 $string['welcomep70'] = '点击“向后”按钮以继续<strong>Moodle</strong>的安装过程。';
 $string['wwwroot'] = '网站地址';
