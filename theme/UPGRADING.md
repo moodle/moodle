@@ -1,5 +1,19 @@
 # theme (plugin type) Upgrade notes
 
+## 5.1dev
+
+### Deprecated
+
+- These icons are no longer in use and have been deprecated:
+    - core:e/insert_col_after
+    - core:e/insert_col_before
+    - core:e/split_cells
+    - core:e/text_color
+    - core:t/locktime
+    - tool_policy/level
+
+  For more information see [MDL-85436](https://tracker.moodle.org/browse/MDL-85436)
+
 ## 4.5
 
 ### Added

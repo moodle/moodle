@@ -120,6 +120,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- Added new core_courseformat\output\local\overview\overviewdialog output class to create dialog elements in the course overview page. Overview dialog will display a combination of title, description and a list of items (label: value).
+
+  For more information see [MDL-83896](https://tracker.moodle.org/browse/MDL-83896)
 - A new interface, `main_activity_interface`, is now available. Course format plugins should implement it if they intend to display only a single activity in the course page.
 
   For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
@@ -354,6 +357,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added a new optional parameter $activegroup to render_groups_select()
 
   For more information see [MDL-82381](https://tracker.moodle.org/browse/MDL-82381)
+
+### theme
+
+#### Deprecated
+
+- These icons are no longer in use and have been deprecated:
+    - core:e/insert_col_after
+    - core:e/insert_col_before
+    - core:e/split_cells
+    - core:e/text_color
+    - core:t/locktime
+    - tool_policy/level
+
+  For more information see [MDL-85436](https://tracker.moodle.org/browse/MDL-85436)
 
 ## 5.0
 

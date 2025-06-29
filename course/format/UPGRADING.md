@@ -4,6 +4,9 @@
 
 ### Added
 
+- Added new core_courseformat\output\local\overview\overviewdialog output class to create dialog elements in the course overview page. Overview dialog will display a combination of title, description and a list of items (label: value).
+
+  For more information see [MDL-83896](https://tracker.moodle.org/browse/MDL-83896)
 - A new interface, `main_activity_interface`, is now available. Course format plugins should implement it if they intend to display only a single activity in the course page.
 
   For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
