@@ -1842,5 +1842,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025053000.02);
     }
 
+    if ($oldversion < 2025062900.01) {
+        // The activity chooser tab mode setting is no longer used.
+        unset_config('activitychoosertabmode');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025062900.01);
+    }
+
     return true;
 }

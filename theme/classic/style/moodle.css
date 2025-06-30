@@ -27083,10 +27083,6 @@ audio.mediaplugin_html5audio {
   margin-bottom: 0.6rem;
 }
 
-.modchoosercontainer.noscroll {
-  overflow-y: hidden;
-}
-
 .modchoosercontainer .optionscontainer,
 .modchoosercontainer .searchresultitemscontainer {
   overflow-x: hidden;
@@ -27094,6 +27090,10 @@ audio.mediaplugin_html5audio {
 .modchoosercontainer .optionscontainer .option,
 .modchoosercontainer .searchresultitemscontainer .option {
   flex-basis: calc(50% - 0.5rem);
+}
+.modchoosercontainer .optionscontainer .option:hover,
+.modchoosercontainer .searchresultitemscontainer .option:hover {
+  border: 1px solid #7c7f83;
 }
 .modchoosercontainer .optionscontainer .option .optionactions .optionaction,
 .modchoosercontainer .searchresultitemscontainer .option .optionactions .optionaction {
@@ -27111,6 +27111,41 @@ audio.mediaplugin_html5audio {
 .modchoosercontainer .optionscontainer .option .optioninfo a:hover,
 .modchoosercontainer .searchresultitemscontainer .option .optioninfo a:hover {
   text-decoration: none;
+}
+
+.modchoosercontainer {
+  display: grid;
+  width: 100%;
+  grid-template-areas: "nav filters" "nav content";
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+}
+.modchoosercontainer .modchooserfilters {
+  grid-area: filters;
+}
+.modchoosercontainer .modchoosernav {
+  grid-area: nav;
+  min-width: 150px;
+}
+.modchoosercontainer .modchoosercontent {
+  grid-area: content;
+  overflow: auto;
+}
+.modchoosercontainer .searchresultscontainer {
+  overflow: auto;
+}
+@media (max-width: 767.98px) {
+  .modchoosercontainer {
+    grid-template-areas: "filters" "nav" "content";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  .modchoosercontainer .modchoosernav {
+    overflow-x: auto;
+    height: 3rem;
+    white-space: nowrap;
+  }
 }
 
 .modchooser .modal-body .optionsummary {
@@ -27164,7 +27199,7 @@ audio.mediaplugin_html5audio {
 @media (min-width: 992px) {
   .modchoosercontainer .optionscontainer .option,
   .modchoosercontainer .searchresultitemscontainer .option {
-    flex-basis: calc(16.66% - 0.5rem);
+    flex-basis: calc(25% - 0.5rem);
   }
 }
 /* Form element: listing */

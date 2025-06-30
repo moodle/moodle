@@ -31,7 +31,7 @@
         "branded": 0
     }
 }}
-<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option border-0 card m-1 bg-white" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
+<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option card m-1 bg-white" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
     <div class="optioninfo card-body d-flex flex-column text-center p-1" data-region="chooser-option-info-container">
         <a class="d-flex flex-column justify-content-between flex-fill" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
             <div class="optionicon mt-2 mb-1 mx-auto icon-no-margin modicon_{{name}} activityiconcontainer smaller
@@ -50,19 +50,28 @@
                         data-internal="{{name}}"
                         {{^favourite}}
                             aria-pressed="false"
+                            aria-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
                         {{/favourite}}
                         {{#favourite}}
                             aria-pressed="true"
+                            aria-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
                         {{/favourite}}
-                        aria-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
                         tabindex="-1"
                 >
-                    {{#favourite}}
+                    <span
+                        class="{{^favourite}}d-none{{/favourite}}"
+                        data-icon="favourite-active"
+                        data-action-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                    >
                         {{#pix}} i/star, core {{/pix}}
-                    {{/favourite}}
-                    {{^favourite}}
+                    </span>
+                    <span
+                        class="{{#favourite}}d-none{{/favourite}}"
+                        data-icon="favourite-inactive"
+                        data-action-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                    >
                         {{#pix}} i/star-o, core {{/pix}}
-                    {{/favourite}}
+                    </span>
                 </button>
             {{/legacyitem}}
             <button class="btn btn-icon m-0 optionaction" data-action="show-option-summary" tabindex="-1">

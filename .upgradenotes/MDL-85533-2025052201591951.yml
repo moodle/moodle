@@ -1,0 +1,7 @@
+issueNumber: MDL-85533
+notes:
+  core_course:
+    - message: >-
+        The activitychoosertabmode setting has been removed. Consider
+        implementing your own setting in your theme if needed.
+      type: removed

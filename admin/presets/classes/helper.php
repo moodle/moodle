@@ -190,8 +190,6 @@ class helper {
         static::add_item($presetid, 'showdataretentionsummary', '0', 'tool_dataprivacy');
         static::add_item($presetid, 'forum_maxattachments', '3');
         static::add_item($presetid, 'guestloginbutton', '0');
-        // Set Activity chooser tabs to "Starred, Recommended, All".
-        static::add_item($presetid, 'activitychoosertabmode', '4');
 
         // Modules: Hide database, external tool (lti), IMS content package (imscp), lesson, SCORM, wiki, workshop.
         static::add_plugin($presetid, 'mod', 'data', false);
@@ -295,8 +293,6 @@ class helper {
         static::add_item($presetid, 'showdataretentionsummary', '1', 'tool_dataprivacy');
         static::add_item($presetid, 'forum_maxattachments', '9');
         static::add_item($presetid, 'guestloginbutton', '1');
-        // Set Activity chooser tabs to the default value ("Starred, Recommended, All, Activities, Resources").
-        static::add_item($presetid, 'activitychoosertabmode', '3');
 
         // Modules: Enable database, external tool (lti), IMS content package (imscp), lesson, SCORM, wiki, workshop.
         static::add_plugin($presetid, 'mod', 'data', true);

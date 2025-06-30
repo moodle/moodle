@@ -28,18 +28,18 @@
             "urls": {
                 "addoption": "http://addoptionurl.com"
             },
-            "icon": "<img class='icon' src='http://urltooptionicon'>"
+            "icon": "<img class='icon' alt='' src='http://urltooptionicon'>"
         }
     }
 }}
-<p class="mt-4 px-3 pb-1">{{#str}} resultsfound, core, {{searchresultsnumber}} {{/str}}</p>
-<div class="bg-light searchresultitemscontainer-wrapper border">
-<div class="searchresultitemscontainer d-flex flex-wrap h-100 mh-100 mw-100 position-relative p-1"
-     role="menubar"
-     data-region="search-result-items-container"
-    >
+<h6>{{#str}} search, core, {{searchresultsnumber}} {{/str}}</h6>
+<p class="activitychooser_help">{{#str}} resultsfound, core, {{searchresultsnumber}} {{/str}}</p>
+<div
+    class="optionscontainer d-flex flex-wrap mw-100 position-relative"
+    role="menubar"
+    data-region="chooser-options-container"
+>
     {{#searchresults}}
         {{>core_course/local/activitychooser/item}}
     {{/searchresults}}
-</div>
 </div>

@@ -34,8 +34,9 @@ const getDataSelector = (name, value) => {
 
 export default {
     regions: {
-        chooser: getDataSelector('region', 'chooser-container'),
+        categoryContent: getDataSelector('region', 'category-content'),
         getSectionChooserOptions: containerid => `${containerid} ${getDataSelector('region', 'chooser-options-container')}`,
+        chooserOptions: getDataSelector('region', 'chooser-options-container'),
         chooserOption: {
             container: getDataSelector('region', 'chooser-option-container'),
             actions: getDataSelector('region', 'chooser-option-actions-container'),
@@ -49,18 +50,12 @@ export default {
         },
         carousel: getDataSelector('region', 'carousel'),
         help: getDataSelector('region', 'help'),
-        modules: getDataSelector('region', 'modules'),
-        favouriteTabNav: getDataSelector('region', 'favourite-tab-nav'),
-        defaultTabNav: getDataSelector('region', 'default-tab-nav'),
-        activityTabNav: getDataSelector('region', 'activity-tab-nav'),
+        tabContent: getDataSelector('region', 'tabcontent'),
+        favouriteTabNav: getDataSelector('region', 'favourites-tab-nav'),
+        allTabNav: getDataSelector('region', 'all-tab-nav'),
         favouriteTab: getDataSelector('region', 'favourites'),
-        recommendedTab: getDataSelector('region', 'recommended'),
-        defaultTab: getDataSelector('region', 'default'),
-        activityTab: getDataSelector('region', 'activity'),
-        resourceTab: getDataSelector('region', 'resources'),
         getModuleSelector: modname => `[role="menuitem"][data-modname="${modname}"]`,
         searchResults: getDataSelector('region', 'search-results-container'),
-        searchResultItems: getDataSelector('region', 'search-result-items-container'),
     },
     actions: {
         optionActions: {
@@ -73,16 +68,13 @@ export default {
         search: getDataSelector('action', 'search'),
         clearSearch: getDataSelector('action', 'clearsearch'),
     },
-    render: {
-        favourites: getDataSelector('render', 'favourites-area'),
-    },
     elements: {
         section: '.section',
         sectionmodchooser: 'button.section-modchooser-link',
-        sitemenu: '.block_site_main_menu',
-        sitetopic: 'div.sitetopic',
         tab: 'a[data-bs-toggle="tab"]',
         activetab: 'a[data-bs-toggle="tab"][aria-selected="true"]',
-        visibletabs: 'a[data-bs-toggle="tab"]:not(.d-none)'
+        moduleItem: item => `[data-internal="${item}"]`,
+        favouriteIconActive: '[data-icon="favourite-active"]',
+        favouriteIconInactive: '[data-icon="favourite-inactive"]',
     },
 };
