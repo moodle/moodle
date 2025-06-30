@@ -500,7 +500,7 @@ class theme_config {
         $configurable = [
             'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'usefallback',
             'javascripts', 'javascripts_footer', 'parents_exclude_javascripts',
-            'layouts', 'enablecourseajax', 'requiredblocks',
+            'enablecourseajax', 'requiredblocks',
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'editor_scss', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations', 'blockrendermethod',
             'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition',
@@ -549,19 +549,26 @@ class theme_config {
             }
         }
 
-        // Cascade all layouts properly.
-        foreach ($baseconfig->layouts as $layout => $value) {
-            if (!isset($this->layouts[$layout])) {
-                foreach ($this->parent_configs as $parent_config) {
-                    if (isset($parent_config->layouts[$layout])) {
-                        $this->layouts[$layout] = $parent_config->layouts[$layout];
-                        continue 2;
+        // Cascade all layouts properly, giving precedence to the current theme.
+        $this->layouts = $baseconfig->layouts;
+        // Then merge layouts from parent themes in reverse order (first the parent then the child).
+        foreach (array_reverse($this->parent_configs) as $parent) {
+            if (!empty($parent->layouts)) {
+                foreach ($parent->layouts as $layout => $value) {
+                    if (!empty($value)) {
+                        $this->layouts[$layout] = $value;
                     }
                 }
-                $this->layouts[$layout] = $value;
             }
         }
-
+        // Finally, merge current theme layouts (highest precedence).
+        if (!empty($config->layouts)) {
+            foreach ($config->layouts as $layout => $value) {
+                if (!empty($value)) {
+                    $this->layouts[$layout] = $value;
+                }
+            }
+        }
         // Fix arrows if needed.
         $this->check_theme_arrows();
     }
