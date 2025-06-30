@@ -10,7 +10,7 @@ Feature: Embed videos without the media filter
     And I turn editing mode on
 
   @javascript
-  Scenario: Add a video in a URL resource. Make sure media filters work
+  Scenario: Make sure media filters work when adding a video in a URL resource
     Given the following "activity" exists:
       | activity    | url                                                        |
       | course      | Acceptance test site                                       |
@@ -23,7 +23,7 @@ Feature: Embed videos without the media filter
     And I am on site homepage
 
   @javascript
-  Scenario: Add a video as a File resource. Make sure media filters work
+  Scenario: Make sure media filters work when adding a video as a File resource
     When I add a "File" to section "1" using the activity chooser
     And I set the following fields to these values:
       | Name | Video File |
@@ -33,7 +33,7 @@ Feature: Embed videos without the media filter
     Then ".video-js" "css_element" should exist
 
   @javascript
-  Scenario: Add a video as content to a lesson. Make sure media filters work
+  Scenario: Make sure media filters work when adding a video as content to a lesson
     Given the following "activities" exist:
       | activity | course               | section | name              |
       | lesson   | Acceptance test site | 1       | Lesson with video |

@@ -1,5 +1,5 @@
 @core @core_completion @javascript
-Feature: Allow teachers to edit the default activity completion rules in a course.
+Feature: Allow teachers to edit the default activity completion rules in a course
   In order to set the activity completion defaults for new activities
   As a teacher
   I need to be able to edit the completion rules for a group of activities.
@@ -42,10 +42,7 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I set the following fields to these values:
       | completionview_assign     | 0 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-assign']" "css_element"
-    And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add content" "button" in the "New section" "section"
-    And I click on "Activity or resource" "button" in the "New section" "section"
-    And I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
+    And I add an assign activity to course "Course 1" section "New section"
     And I expand all fieldsets
     # Completion tracking 2 = Add requirements.
     And the field "Add requirements" matches value "1"
@@ -83,10 +80,7 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
       | completionreplies_forum         | 3 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-forum']" "css_element"
     Then I should see "Changes saved"
-    And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add content" "button" in the "New section" "section"
-    And I click on "Activity or resource" "button" in the "New section" "section"
-    And I click on "Add a new Forum" "link" in the "Add an activity or resource" "dialogue"
+    And I add a forum activity to course "Course 1" section "New section"
     And I expand all fieldsets
     # Completion tracking 2 = Add requirements.
     And the field "Add requirements" matches value "1"
@@ -123,10 +117,7 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
       | completionentries_glossary         | 2 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-glossary']" "css_element"
     Then I should see "Changes saved"
-    And I am on "Course 1" course homepage with editing mode on
-    And I click on "Add content" "button" in the "New section" "section"
-    And I click on "Activity or resource" "button" in the "New section" "section"
-    And I click on "Add a new Glossary" "link" in the "Add an activity or resource" "dialogue"
+    And I add a glossary activity to course "Course 1" section "New section"
     And I expand all fieldsets
     # Completion tracking 2 = Add requirements.
     And the field "Add requirements" matches value "1"

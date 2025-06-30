@@ -37,6 +37,7 @@ Feature: Teachers create and destroy subsections on section page
     And I turn editing mode on
     And I click on "Add an activity or resource" "button"
     And I click on "Add a new Assignment" "link"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
       | Assignment name | Test assignment name        |
       | ID number       | Test assignment name        |

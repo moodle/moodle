@@ -1,4 +1,4 @@
-@mod @mod_url @javascript
+@mod @mod_url
 Feature: Manage URL variables
   In order to maintain privacy for URLs
   As a teacher
@@ -9,6 +9,7 @@ Feature: Manage URL variables
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
 
+  @javascript
   Scenario: Disabling URL variables hides Role names as URL variables check box
     Given the following config values are set as admin:
       | allowvariables | 1 | url |
@@ -23,8 +24,7 @@ Feature: Manage URL variables
     Given the following config values are set as admin:
       | allowvariables | 0 | url |
     When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "URL" to section "1" using the activity chooser
+    And I add a url activity to course "Course 1" section "1"
     Then I should not see "URL variables"
 
   Scenario: Enable the use of URL variables without role names
@@ -32,10 +32,8 @@ Feature: Manage URL variables
       | allowvariables | 1 | url |
       | rolesinparams  | 0 | url |
     When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "URL" to section "1" using the activity chooser
+    And I add a url activity to course "Course 1" section "1"
     Then I should see "URL variables"
-    And I expand all fieldsets
     And I should see "Full site name" in the "id_variable_0" "select"
     But I should not see "Roles" in the "id_variable_0" "select"
 
@@ -44,9 +42,7 @@ Feature: Manage URL variables
       | allowvariables | 1 | url |
       | rolesinparams  | 1 | url |
     When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "URL" to section "1" using the activity chooser
+    And I add a url activity to course "Course 1" section "1"
     Then I should see "URL variables"
-    And I expand all fieldsets
     And I should see "Full site name" in the "id_variable_0" "select"
     And I should see "Your word for 'Student'" in the "id_variable_0" "select"

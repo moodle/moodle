@@ -42,6 +42,7 @@ Feature: Users view subsections on course page
     And I hover "Insert an activity or resource before 'Page1 in Subsection1'" "button"
     And I press "Insert an activity or resource before 'Page1 in Subsection1'"
     And I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
     | Assignment name | Assignment1 in Subsection1 |
     And I press "Save and return to course"
@@ -59,6 +60,7 @@ Feature: Users view subsections on course page
     And I press "Insert content before 'Subsection2'"
     And I click on "Activity or resource" "button" in the ".dropdown-menu.show" "css_element"
     And I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
     | Assignment name | Assignment between subsections |
     And I press "Save and return to course"
@@ -92,6 +94,7 @@ Feature: Users view subsections on course page
     And I click on "Add content" "button" in the "General" "section"
     And I click on "Activity or resource" "button" in the ".dropdown-menu.show" "css_element"
     And I click on "Add a new Forum" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     And I set the field "Forum name" to "New forum"
     And I press "Save and return to course"
     Then I should see "New forum" in the "General" "section"
@@ -104,6 +107,7 @@ Feature: Users view subsections on course page
     And I press "Insert content before 'New page'"
     And I click on "Activity or resource" "button" in the ".dropdown-menu.show" "css_element"
     And I click on "Add a new Forum" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     And I set the field "Forum name" to "New forum"
     And I press "Save and return to course"
     Then I should see "New forum" in the "Section 3" "section"
