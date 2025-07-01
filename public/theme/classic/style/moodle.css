@@ -26269,11 +26269,6 @@ table.mod_index {
 /**
 * Tags
 */
-#tag-search-box {
-  text-align: center;
-  margin: 10px auto;
-}
-
 span.flagged-tag,
 tr.flagged-tag,
 span.flagged-tag a,
