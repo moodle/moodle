@@ -32,7 +32,7 @@
     final: true,
 )]
 function data_print_template(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -40,7 +40,7 @@ function data_print_template(): void {
  */
 #[\core\attribute\deprecated('mod_data\preset::get_name_from_plugin()', since: '4.1', mdl: 'MDL-75148', final: true)]
 function data_preset_name(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -48,7 +48,7 @@ function data_preset_name(): void {
  */
 #[\core\attribute\deprecated('mod_data\manager::get_available_presets()', since: '4.1', mdl: 'MDL-75148', final: true)]
 function data_get_available_presets(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -56,7 +56,7 @@ function data_get_available_presets(): void {
  */
 #[\core\attribute\deprecated('mod_data\manager::get_available_saved_presets()', since: '4.1', mdl: 'MDL-75148', final: true)]
 function data_get_available_site_presets(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -64,7 +64,7 @@ function data_get_available_site_presets(): void {
  */
 #[\core\attribute\deprecated('mod_data\preset::delete()', since: '4.1', mdl: 'MDL-75187', final: true)]
 function data_delete_site_preset(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -72,7 +72,7 @@ function data_delete_site_preset(): void {
  */
 #[\core\attribute\deprecated('mod_data\preset::save()', since: '4.1', mdl: 'MDL-75142', final: true)]
 function data_presets_save(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -80,7 +80,7 @@ function data_presets_save(): void {
  */
 #[\core\attribute\deprecated('mod_data\preset::generate_preset_xml()', since: '4.1', mdl: 'MDL-75142', final: true)]
 function data_presets_generate_xml(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -88,7 +88,7 @@ function data_presets_generate_xml(): void {
  */
 #[\core\attribute\deprecated('mod_data\preset::export()', since: '4.1', mdl: 'MDL-75142', final: true)]
 function data_presets_export(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -96,7 +96,7 @@ function data_presets_export(): void {
  */
 #[\core\attribute\deprecated('mod_data\preset::can_manage()', since: '4.1', mdl: 'MDL-75187', final: true)]
 function data_user_can_delete_preset(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -104,7 +104,7 @@ function data_user_can_delete_preset(): void {
  */
 #[\core\attribute\deprecated('mod_data\manager::set_module_viewed', since: '4.1', mdl: 'MDL-75146', final: true)]
 function data_view(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -112,7 +112,7 @@ function data_view(): void {
  */
 #[\core\attribute\deprecated('mod_data\preset::is_directory_a_preset()', since: '4.1', mdl: 'MDL-75148', final: true)]
 function is_directory_a_preset(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**

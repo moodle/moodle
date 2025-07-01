@@ -255,6 +255,6 @@ class availability implements named_templatable, renderable {
      */
     #[\core\attribute\deprecated('get_availability_data()', since: '4.3', mdl: 'MDL-78489', final: true)]
     protected function availability_info() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 }

@@ -95,7 +95,7 @@ class helper {
         mdl: 'MDL-72397'
     )]
     public static function question_is_only_child_of_top_category_in_context(int $categoryid): bool {
-        \core\deprecation::emit_deprecation_if_present([__CLASS__, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([__CLASS__, __FUNCTION__]);
         $manager = new category_manager();
         return $manager->is_only_child_of_top_category_in_context($categoryid);
     }
@@ -116,7 +116,7 @@ class helper {
         mdl: 'MDL-72397'
     )]
     public static function question_is_top_category(int $categoryid): bool {
-        \core\deprecation::emit_deprecation_if_present([__CLASS__, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([__CLASS__, __FUNCTION__]);
         $manager = new category_manager();
         return $manager->is_top_category($categoryid);
     }
@@ -137,7 +137,7 @@ class helper {
         mdl: 'MDL-72397'
     )]
     public static function question_can_delete_cat(int $todelete): void {
-        \core\deprecation::emit_deprecation_if_present([__CLASS__, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([__CLASS__, __FUNCTION__]);
         $manager = new category_manager();
         $manager->require_can_delete_category($todelete);
     }

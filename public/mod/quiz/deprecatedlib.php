@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 #[\core\attribute\deprecated('mod_quiz\structure::has_use_capability()', since: '4.1', mdl: 'MDL-76898', final: true)]
 function quiz_has_question_use($quiz, $slot) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -39,7 +39,7 @@ function quiz_has_question_use($quiz, $slot) {
  */
 #[\core\attribute\deprecated('grade_calculator::recompute_quiz_sumgrades()', since: '4.2', mdl: 'MDL-76897', final: true)]
 function quiz_update_sumgrades($quiz) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -47,7 +47,7 @@ function quiz_update_sumgrades($quiz) {
  */
 #[\core\attribute\deprecated('grade_calculator::recompute_all_attempt_sumgrades()', since: '4.2', mdl: 'MDL-76897', final: true)]
 function quiz_update_all_attempt_sumgrades($quiz) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -55,7 +55,7 @@ function quiz_update_all_attempt_sumgrades($quiz) {
  */
 #[\core\attribute\deprecated('grade_calculator::recompute_all_final_grades()', since: '4.2', mdl: 'MDL-76897', final: true)]
 function quiz_update_all_final_grades($quiz) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -63,7 +63,7 @@ function quiz_update_all_final_grades($quiz) {
  */
 #[\core\attribute\deprecated('grade_calculator::update_quiz_maximum_grade()', since: '4.2', mdl: 'MDL-76897', final: true)]
 function quiz_set_grade($newgrade, $quiz) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -71,7 +71,7 @@ function quiz_set_grade($newgrade, $quiz) {
  */
 #[\core\attribute\deprecated('grade_calculator::recompute_final_grade()', since: '4.2', mdl: 'MDL-76897', final: true)]
 function quiz_save_best_grade($quiz, $userid = null, $attempts = []) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -79,7 +79,7 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = []) {
  */
 #[\core\attribute\deprecated(null, since: '4.2', mdl: 'MDL-76897', final: true)]
 function quiz_calculate_best_grade($quiz, $attempts) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -87,7 +87,7 @@ function quiz_calculate_best_grade($quiz, $attempts) {
  */
 #[\core\attribute\deprecated(null, since: '4.2', mdl: 'MDL-76897', final: true)]
 function quiz_calculate_best_attempt($quiz, $attempts) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -95,7 +95,7 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
  */
 #[\core\attribute\deprecated('override_manager::delete_override_by_id', since: '4.4', mdl: '80300', final: true)]
 function quiz_delete_override($quiz, $overrideid, $log = true) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return true;
 }
 
@@ -104,7 +104,7 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
  */
 #[\core\attribute\deprecated('override_manager::delete_all_overrides', since: '4.4', mdl: '80300', final: true)]
 function quiz_delete_all_overrides($quiz, $log = true) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -112,5 +112,5 @@ function quiz_delete_all_overrides($quiz, $log = true) {
  */
 #[\core\attribute\deprecated('mod_quiz\structure::add_random_questions()', since: '4.3', mdl: 'MDL-72321', final: true)]
 function quiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }

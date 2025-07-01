@@ -1313,7 +1313,7 @@ class grade_report_grader extends grade_report {
      */
     #[\core\attribute\deprecated('core\output\action_menu', since: '4.2', mdl: 'MDL-76147', final: true)]
     public function get_left_icons_row($rows=array(), $colspan=1) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1397,7 +1397,7 @@ class grade_report_grader extends grade_report {
      */
     #[\core\attribute\deprecated('core\output\action_menu', since: '4.2', mdl: 'MDL-76147', final: true)]
     public function get_right_icons_row($rows=array()) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1441,7 +1441,7 @@ class grade_report_grader extends grade_report {
      */
     #[\core\attribute\deprecated('grade_report::calculate_average()', since: '4.4', final: true)]
     public function get_right_avg_row() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1480,7 +1480,7 @@ class grade_report_grader extends grade_report {
      */
     #[\core\attribute\deprecated('core\output\action_menu', since: '4.2', mdl: 'MDL-76147', final: true)]
     protected function get_icons($element) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

@@ -64,7 +64,7 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
      */
     #[\core\attribute\deprecated(replacement: null, since: '5.0', mdl: 'MDL-82977')]
     protected function get_plugintype(): string {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return 'aiprovider';
     }
 
@@ -125,7 +125,7 @@ class aiprovider_management_table extends flexible_table implements dynamic_tabl
      */
     #[\core\attribute\deprecated(replacement: null, since: '5.0', mdl: 'MDL-82977')]
     protected function get_action_url(array $params = []): moodle_url {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return new moodle_url('/admin/ai.php', $params);
     }
 

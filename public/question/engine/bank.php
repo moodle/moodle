@@ -668,7 +668,7 @@ class question_finder implements data_source_interface {
         $extraconditions = '',
         $extraparams = []
     ) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -682,7 +682,7 @@ class question_finder implements data_source_interface {
         $extraparams = [],
         $tagids = []
     ) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     #[\Override]

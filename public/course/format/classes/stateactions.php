@@ -157,7 +157,7 @@ class stateactions {
         ?int $targetsectionid = null,
         ?int $targetcmid = null
     ): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1182,7 +1182,7 @@ class stateactions {
         global $CFG;
         require_once($CFG->dirroot . '/course/modlib.php');
 
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         $coursecontext = context_course::instance($course->id);
         require_capability('moodle/course:update', $coursecontext);

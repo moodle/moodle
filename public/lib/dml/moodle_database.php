@@ -2880,7 +2880,7 @@ abstract class moodle_database {
         reason: 'Renamed'
     )]
     public function want_read_slave(): bool {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return false;
     }
 
@@ -2906,7 +2906,7 @@ abstract class moodle_database {
         reason: 'Renamed'
     )]
     public function perf_get_reads_slave(): int {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return 0;
     }
 

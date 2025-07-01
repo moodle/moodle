@@ -146,7 +146,7 @@ class schedule {
      */
     #[\core\attribute\deprecated('report::get_report_row_count', since: '5.0', mdl: 'MDL-74488')]
     public static function get_schedule_report_count(model $schedule): int {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         return report::get_report_row_count($schedule->get('reportid'));
     }

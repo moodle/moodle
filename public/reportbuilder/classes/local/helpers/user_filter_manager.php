@@ -136,7 +136,7 @@ class user_filter_manager {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', mdl: 'MDL-83345', since: '5.0')]
     public static function get_all_for_user(int $userid): array {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         $prefs = [];
 

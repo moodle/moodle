@@ -322,6 +322,6 @@ class mnet_peer {
      */
     #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-77341', final: true)]
     public function get_public_key(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 }

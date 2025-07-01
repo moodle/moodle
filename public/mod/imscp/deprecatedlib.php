@@ -27,5 +27,5 @@
  */
 #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.3', mdl: 'MDL-76953', final: true)]
 function imscp_libxml_disable_entity_loader() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
