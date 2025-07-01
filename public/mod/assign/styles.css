@@ -1,4 +1,8 @@
 /* stylelint-disable max-line-length */
+:root {
+    --mod-assign-panel-split: 70%;
+}
+
 /* FIXME: MDL-55370: remove this stylelint disable */
 .path-mod-assign div.gradingnavigation div {
     float: left;
@@ -460,7 +464,7 @@
     top: 85px;
     bottom: 60px;
     left: 0;
-    right: 30%;
+    right: calc(100% - var(--mod-assign-panel-split));
     width: auto;
     box-sizing: border-box;
     -webkit-transition: right 0.5s, left 0.5s;
@@ -580,13 +584,41 @@
     margin-right: auto;
 }
 
+.path-mod-assign [data-region="resizer"] {
+    position: absolute;
+    top: 85px;
+    bottom: 60px;
+    left: var(--mod-assign-panel-split);
+    width: 5px;
+    background-color: #888;
+    cursor: ew-resize;
+    z-index: 1000;
+}
+
+.path-mod-assign [data-region="resizer"]:hover {
+    background-color: #666;
+}
+
+.path-mod-assign [data-region="resizer"]:focus {
+    outline: thin dotted #333;
+    outline-color: -webkit-focus-ring-color;
+    outline-width: 5px;
+    outline-style: auto;
+    outline-offset: -2px;
+}
+
+.path-mod-assign iframe.disable-pointer {
+    /* This class is added to all iframes through JS during when resizing starts. */
+    pointer-events: none;
+}
+
 .path-mod-assign [data-region="grade-panel"] {
     position: absolute;
     top: 85px;
     bottom: 60px;
     right: 0;
-    left: 70%;
-    width: 30%;
+    left: var(--mod-assign-panel-split);
+    width: calc(100% - var(--mod-assign-panel-split));
     overflow: auto;
     box-sizing: border-box;
     background-color: #f5f5f5;

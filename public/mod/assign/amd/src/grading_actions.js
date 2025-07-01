@@ -45,6 +45,12 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
     /** @property {JQuery} JQuery node for the page region containing the user navigation. */
     GradingActions.prototype._region = null;
 
+    /** @property {Integer} Lower percent limit (mouseX / pagewidth), collapses review panel if exceeded during resizing. */
+    GradingActions.prototype.LOWER_RESIZING_LIMIT = 5;
+
+    /** @property {Integer} Upper percent limit (mouseX / pagewidth), collapses grade panel if exceeded  during resizing. */
+    GradingActions.prototype.UPPER_RESIZING_LIMIT = 95;
+
     /**
      * Show the actions if there is valid user.
      *
@@ -129,6 +135,16 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
     };
 
     /**
+     * Get the review slider element.
+     *
+     * @method getResizePanelsElement
+     * @return {HTMLElement} The resizer element or null if not found.
+     */
+    GradingActions.prototype.getResizePanelsElement = function() {
+        return document.querySelector('[data-region="resizer"]');
+    };
+
+    /**
      * Remove the active state from all layout buttons.
      *
      * @method resetLayoutButtons
@@ -149,6 +165,7 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
         $(document).trigger(GradingEvents.EXPAND_GRADE_PANEL);
         this.resetLayoutButtons();
         this.getCollapseReviewPanelButton().addClass('active');
+        this.setPanelSplit(0);
     };
 
     /**
@@ -161,6 +178,7 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
         $(document).trigger(GradingEvents.EXPAND_REVIEW_PANEL);
         this.resetLayoutButtons();
         this.getCollapseGradePanelButton().addClass('active');
+        this.setPanelSplit(100);
     };
 
     /**
@@ -173,6 +191,99 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
         $(document).trigger(GradingEvents.EXPAND_REVIEW_PANEL);
         this.resetLayoutButtons();
         this.getExpandAllPanelsButton().addClass('active');
+        this.getResizePanelsElement().classList.remove('hide');
+        this.setPanelSplit(70);
+    };
+
+
+    /**
+     * This function enabled the tracking of mouse movement for resizing.
+     *
+     * @method onResizeStart
+     */
+    GradingActions.prototype.onResizeStart = function() {
+        // Bind and store the handlers so we can remove them later.
+        this.handleMouseMove = this.onResizing.bind(this);
+        this.handleMouseUp = this.onResizeEnd.bind(this);
+
+        // Add a class to disable pointer events on iframes during resizing.
+        // This is to prevent the mouse events from being captured by iframes,
+        // preventing the mouse up event from triggering.
+        document.querySelectorAll('iframe').forEach(function(iframe) {
+            iframe.classList.add('disable-pointer');
+        });
+
+        document.addEventListener('mousemove', this.handleMouseMove);
+        document.addEventListener('mouseup', this.handleMouseUp);
+    };
+
+    /**
+     * When user releases the mouse button, finishing resizing, we stop tracking the mouse movement.
+     *
+     * @method onResizeEnd
+     */
+    GradingActions.prototype.onResizeEnd = function() {
+        document.querySelectorAll('iframe').forEach(function(iframe) {
+            iframe.classList.remove('disable-pointer');
+        });
+        document.removeEventListener('mousemove', this.handleMouseMove);
+        document.removeEventListener('mouseup', this.handleMouseUp);
+    };
+
+    /**
+     * Set the CSS variable for panel split.
+     *
+     * @method setPanelSplit
+     * @param {Number} percentage The percentage to set.
+     */
+    GradingActions.prototype.setPanelSplit = function(percentage) {
+        if (percentage <= 0 || percentage >= 100) {
+            this.getResizePanelsElement().classList.add('hide');
+        }
+
+        document.documentElement.style.setProperty('--mod-assign-panel-split', percentage + '%');
+    };
+
+    /**
+     * Get the CSS variable for panel split.
+     *
+     * @method getPanelSplit
+     * @return {Number} The current panel split percentage.
+     */
+    GradingActions.prototype.getPanelSplit = function() {
+        const split = getComputedStyle(document.documentElement).getPropertyValue('--mod-assign-panel-split');
+        return parseFloat(split);
+    };
+
+    /**
+     * Handle the resize action.
+     *
+     * @method onResizing
+     * @param {Event} e The mousemove event.
+     */
+    GradingActions.prototype.onResizing = function(e) {
+        const x = e.clientX;
+        const pagewidth = document.documentElement.clientWidth;
+        let percentage = (x / pagewidth) * 100;
+
+        // Flip percentage in RTL.
+        const isRTL = document.documentElement.dir === 'rtl';
+        if (isRTL) {
+            percentage = 100 - percentage;
+        }
+
+        // When the user resizes panels to a certain exist, we collapse them.
+        if (percentage < this.LOWER_RESIZING_LIMIT || percentage > this.UPPER_RESIZING_LIMIT) {
+            if (percentage > this.UPPER_RESIZING_LIMIT) {
+                this.collapseGradePanel();
+            } else if (percentage < this.LOWER_RESIZING_LIMIT) {
+                this.collapseReviewPanel();
+            }
+            this.onResizeEnd();
+            return;
+        }
+
+        this.setPanelSplit(percentage);
     };
 
     /**
@@ -226,6 +337,46 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
                         e.preventDefault();
                     }
                 }
+            }.bind(this));
+
+            var resizePanelsSlider = this.getResizePanelsElement();
+            resizePanelsSlider.addEventListener('mousedown', function(e) {
+                this.onResizeStart();
+                e.preventDefault();
+            }.bind(this));
+
+            resizePanelsSlider.addEventListener('keydown', function(e) {
+                if (![37, 39, 38, 40].includes(e.keyCode)) {
+                    // Ignore keys other than arrow keys.
+                    return;
+                }
+
+
+                const isRTL = document.documentElement.dir === 'rtl';
+                const currentSplit = this.getPanelSplit();
+
+                // Flip percentage in RTL.
+                var increment = isRTL ? -5 : 5;
+                var newValue = currentSplit;
+
+                // Left or down arrow key.
+                if (e.keyCode === 37 || e.keyCode === 40) {
+                    newValue = currentSplit - increment;
+                }
+
+                // Right or up arrow key.
+                if (e.keyCode === 39 || e.keyCode === 38) {
+                    newValue = currentSplit + increment;
+                }
+
+                // Add extra space to prevent the panel immediately collapsing
+                // when the user tries to resize it using the mouse.
+                const extraSpace = 3;
+
+                newValue = Math.max(newValue, this.LOWER_RESIZING_LIMIT + extraSpace);
+                newValue = Math.min(newValue, this.UPPER_RESIZING_LIMIT - extraSpace);
+
+                this.setPanelSplit(newValue);
             }.bind(this));
         }
 
