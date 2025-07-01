@@ -1,0 +1,7 @@
+issueNumber: MDL-84531
+notes:
+  core:
+    - message: >-
+        The `\core\attribute\deprecated` attribute constructor `$replacement`
+        parameter now defaults to null, and can be omitted
+      type: changed
