@@ -16,6 +16,8 @@
 
 namespace core\attribute;
 
+use core\exception\coding_exception;
+
 /**
  * Attribute to describe a deprecated item.
  *
@@ -25,10 +27,12 @@ namespace core\attribute;
  */
 #[\Attribute]
 class deprecated {
+
     /**
      * A deprecated item.
      *
-     * This attribute can be applied to any function, class, method, constant, property, enum, etc.
+     * This attribute can be applied to any function, class, method, constant, property, enum, etc. Note that at least one of
+     * $replacement, $since or $reason parameters must be non-null
      *
      * Note: The mere presence of the attribute does not do anything. It must be checked by some part of the code.
      *
@@ -40,7 +44,7 @@ class deprecated {
      * @param bool $emit Whether to emit a deprecation warning
      */
     public function __construct(
-        public readonly ?string $replacement,
+        public readonly ?string $replacement = null,
         public readonly ?string $since = null,
         public readonly ?string $reason = null,
         public readonly ?string $mdl = null,
@@ -48,8 +52,8 @@ class deprecated {
         public readonly bool $emit = true,
     ) {
         if ($replacement === null && $reason === null && $mdl === null) {
-            throw new \coding_exception(
-                'A deprecated item which is not deprecated must provide a reason, or an issue number.',
+            throw new coding_exception(
+                'A deprecated item must provide either a replacement, reason, or an issue number.',
             );
         }
     }
