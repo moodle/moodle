@@ -42,7 +42,7 @@ class aws_helper {
         mdl: 'MDL-80962',
     )]
     public static function get_proxy_string(): string {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         global $CFG;
         $proxy = '';
         if (empty($CFG->proxytype)) {
@@ -79,7 +79,7 @@ class aws_helper {
         mdl: 'MDL-80962',
     )]
     public static function configure_client_proxy(AwsClient $client): AwsClient {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         $client->getHandlerList()->appendBuild(self::add_proxy_when_required(), 'proxy_bypass');
         return $client;
     }
@@ -96,7 +96,7 @@ class aws_helper {
         mdl: 'MDL-80962',
     )]
     protected static function add_proxy_when_required(): callable {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return function (callable $fn) {
             return function (CommandInterface $command, ?RequestInterface $request = null) use ($fn) {
                 if (isset($request)) {

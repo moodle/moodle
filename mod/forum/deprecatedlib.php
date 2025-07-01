@@ -427,7 +427,7 @@ function forum_get_completion_state() {
     final: true
 )]
 function forum_update_subscriptions_button(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**

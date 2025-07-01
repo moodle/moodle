@@ -85,7 +85,7 @@ class core_text {
         final: true,
     )]
     public static function reset_caches(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

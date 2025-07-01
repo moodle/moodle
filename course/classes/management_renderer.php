@@ -71,7 +71,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         final: true,
     )]
     public function management_heading() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1286,7 +1286,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         final: true,
     )]
     public function course_search_form() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

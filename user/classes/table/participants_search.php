@@ -140,7 +140,7 @@ class participants_search {
     )]
     public function get_total_participants_count(string $additionalwhere = '', array $additionalparams = []): int {
 
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
 
         global $DB;
 

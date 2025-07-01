@@ -39,7 +39,7 @@ class question_category_list_item extends \list_item {
      * @deprecated MDL-72397 Since Moodle 4.5
      */
     public function set_icon_html($first, $last, $lastitem): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $CFG;
         $category = $this->item;
         $url = new moodle_url('/question/bank/managecategories/category.php',
@@ -82,7 +82,7 @@ class question_category_list_item extends \list_item {
      * @deprecated MDL-72397 Since Moodle 4.5
      */
     public function item_html($extraargs = []): string {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $PAGE, $OUTPUT;
         $str = $extraargs['str'];
         $category = $this->item;

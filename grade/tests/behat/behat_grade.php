@@ -244,7 +244,7 @@ class behat_grade extends behat_base {
      */
     #[\core\attribute\deprecated('behat_forms::i_set_the_field_to', since: '4.0', final: true)]
     protected function select_in_gradebook_tabs() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -307,6 +307,6 @@ class behat_grade extends behat_base {
      */
     #[\core\attribute\deprecated('behat_forms::i_set_the_field_to', since: '4.1', final: true)]
     protected function select_in_gradebook_navigation_selector() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 }

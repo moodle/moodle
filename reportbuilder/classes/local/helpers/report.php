@@ -420,7 +420,7 @@ class report {
      */
     #[\core\attribute\deprecated('custom_report_column_cards_exporter', since: '4.1', final: true)]
     public static function get_available_columns() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

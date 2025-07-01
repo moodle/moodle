@@ -172,7 +172,7 @@ class mod_data_renderer extends plugin_renderer_base {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.5')]
     public function render_fields_footer(manager $manager): string {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         $cm = $manager->get_coursemodule();
         $pageurl = new moodle_url('/mod/data/templates.php', ['id' => $cm->id]);

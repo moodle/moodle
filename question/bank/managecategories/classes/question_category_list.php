@@ -89,7 +89,7 @@ class question_category_list extends moodle_list {
     public function __construct($type='ul', $attributes='', $editable = false, $pageurl=null,
                                 $page = 0, $pageparamname = 'page',
                                 $itemsperpage = DEFAULT_QUESTIONS_PER_PAGE, $context = null) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         parent::__construct('ul', '', $editable, $pageurl, $page, 'cpage', $itemsperpage);
         $this->context = $context;
     }
@@ -101,7 +101,7 @@ class question_category_list extends moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804
      */
     public function get_records(): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->records = helper::get_categories_for_contexts($this->context->id, $this->sortby);
     }
 
@@ -115,7 +115,7 @@ class question_category_list extends moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804
      */
     public function get_top_level_parent_id($item): int {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         // Put the item at the highest level it can go.
         $topcategory = question_get_top_category($item->item->contextid, true);
         return $topcategory->id;
@@ -133,7 +133,7 @@ class question_category_list extends moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804
      */
     public function process_actions($left, $right, $moveup, $movedown): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $category = new stdClass();
         if (!empty($left)) {
             // Moved Left (In to another category).

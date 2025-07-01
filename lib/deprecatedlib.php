@@ -47,7 +47,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 #[\core\attribute\deprecated('core_component::get_core_subsystems', since: '4.5', mdl: 'MDL-82287')]
 function get_core_subsystems($fullpaths = false) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $CFG;
 
     $subsystems = core_component::get_core_subsystems();
@@ -79,7 +79,7 @@ function get_core_subsystems($fullpaths = false) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_types', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_types($fullpaths = true) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $CFG;
 
     $types = core_component::get_plugin_types();
@@ -112,7 +112,7 @@ function get_plugin_types($fullpaths = true) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_list', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_list($plugintype) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     if ($plugintype === '') {
         $plugintype = 'mod';
@@ -137,7 +137,7 @@ function get_plugin_list($plugintype) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_list_with_class', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_list_with_class($plugintype, $class, $file) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return core_component::get_plugin_list_with_class($plugintype, $class, $file);
 }
 
@@ -151,7 +151,7 @@ function get_plugin_list_with_class($plugintype, $class, $file) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_directory', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_directory($plugintype, $name) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     if ($plugintype === '') {
         $plugintype = 'mod';
     }
@@ -168,7 +168,7 @@ function get_plugin_directory($plugintype, $name) {
  */
 #[\core\attribute\deprecated('core_component::normalize_component', since: '4.5', mdl: 'MDL-82287')]
 function normalize_component($component) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return core_component::normalize_component($component);
 }
 
@@ -182,7 +182,7 @@ function normalize_component($component) {
  */
 #[\core\attribute\deprecated('core_component::get_component_directory', since: '4.5', mdl: 'MDL-82287')]
 function get_component_directory($component) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return core_component::get_component_directory($component);
 }
 
@@ -191,7 +191,7 @@ function get_component_directory($component) {
  */
 #[\core\attribute\deprecated('\core\context::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
 function get_context_instance() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -199,7 +199,7 @@ function get_context_instance() {
  */
 #[\core\attribute\deprecated('Not replaced', since: '2.0', mdl: 'MDL-19756', final: true)]
 function can_use_rotated_text() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -207,7 +207,7 @@ function can_use_rotated_text() {
  */
 #[\core\attribute\deprecated('\core\context\system::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
 function get_system_context() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -218,7 +218,7 @@ function get_system_context() {
  */
 #[\core\attribute\deprecated('OUTPUT->[l|r]arrow', since: '2.0', mdl: 'MDL-19756', final: true)]
 function print_arrow() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -226,7 +226,7 @@ function print_arrow() {
  */
 #[\core\attribute\deprecated('category_action_bar tertiary navigation', since: '4.0', mdl: 'MDL-73462', final: true)]
 function print_course_request_buttons() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -503,7 +503,7 @@ function rc4decrypt($data) {
  */
 #[\core\attribute\deprecated(\core\encryption::class, since: '4.5', mdl: 'MDL-81940')]
 function endecrypt($pwd, $data, $case) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     if ($case == 'de') {
         $data = urldecode($data);
@@ -648,7 +648,7 @@ function question_fix_top_names() {
  */
 #[\core\attribute\deprecated('search_generate_SQL', since: '2.9', mdl: 'MDL-48939', final: true)]
 function search_generate_text_SQL() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -656,7 +656,7 @@ function search_generate_text_SQL() {
  */
 #[\core\attribute\deprecated('This method should not be used', since: '4.5', mdl: 'MDL-80275', final: true)]
 function disable_output_buffering(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 
@@ -676,7 +676,7 @@ function disable_output_buffering(): void {
  */
 #[\core\attribute\deprecated('This method should not be used', since: '4.5', mdl: 'MDL-82157')]
 function print_grade_menu($courseid, $name, $current, $includenograde=true, $return=false) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $OUTPUT;
 
     $output = '';
@@ -723,7 +723,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     reason: 'It is no longer used',
 )]
 function reset_password_and_mail($user) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $CFG;
 
     $site  = get_site();
@@ -770,7 +770,7 @@ function reset_password_and_mail($user) {
     final: true,
 )]
 function plagiarism_get_file_results(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -783,5 +783,5 @@ function plagiarism_get_file_results(): void {
     final: true,
 )]
 function plagiarism_update_status(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }

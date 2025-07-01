@@ -881,7 +881,7 @@ class assign_grading_table extends table_sql implements renderable {
         reason: 'Picture column is merged with fullname column'
     )]
     public function col_picture(stdClass $row) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->output->user_picture($row);
     }
 
@@ -1359,7 +1359,7 @@ class assign_grading_table extends table_sql implements renderable {
     public function col_userid(stdClass $row) {
         global $USER;
 
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $edit = '';
 
         $actions = array();
