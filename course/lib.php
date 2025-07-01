@@ -1375,7 +1375,7 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     global $COURSE, $SITE, $CFG;
 
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     static $str;
 
@@ -1767,7 +1767,7 @@ function course_format_uses_sections($format) {
  */
 #[\core\attribute\deprecated(since: '5.0', mdl: 'MDL-82351')]
 function course_format_ajax_support($format) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     $course = new stdClass();
     $course->format = $format;
     return course_get_format($course)->supports_ajax();

@@ -41,7 +41,7 @@ class client_factory {
         mdl: 'MDL-80962',
     )]
     public static function get_client(string $class, array $opts): AwsClient {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         // Modify the opts to add HTTP timeouts.
         if (empty($opts['http'])) {
             $opts['http'] = ['connect_timeout' => HOURSECS];

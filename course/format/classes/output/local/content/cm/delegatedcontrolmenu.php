@@ -317,7 +317,7 @@ class delegatedcontrolmenu extends basecontrolmenu {
     )]
     protected function delegated_control_items_legacy(): array {
         global $USER;
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         $format = $this->format;
         $section = $this->section;

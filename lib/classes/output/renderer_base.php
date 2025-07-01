@@ -429,7 +429,7 @@ class renderer_base {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
     public function should_display_main_logo() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

@@ -35,7 +35,7 @@ class enrolment {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.3', mdl: 'MDL-76900', final: true)]
     public static function enrolment_name(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

@@ -101,7 +101,7 @@ class core_question_bank_renderer extends plugin_renderer_base {
         final: true
     )]
     public function render_category_condition($displaydata) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -109,7 +109,7 @@ class core_question_bank_renderer extends plugin_renderer_base {
      */
     #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
     public function render_category_condition_advanced($displaydata) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -122,7 +122,7 @@ class core_question_bank_renderer extends plugin_renderer_base {
         final: true
     )]
     public function render_hidden_condition_advanced($displaydata) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

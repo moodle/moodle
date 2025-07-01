@@ -86,7 +86,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         final: true,
     )]
     public function event() {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
     }
 
     /**

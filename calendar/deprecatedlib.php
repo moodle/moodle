@@ -47,7 +47,7 @@ use core_calendar\output\humantimeperiod;
 function calendar_day_representation($tstamp, $now = false, $usecommonwords = true) {
     static $shortformat;
 
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     if (empty($shortformat)) {
         $shortformat = get_string('strftimedayshort');
@@ -96,7 +96,7 @@ function calendar_day_representation($tstamp, $now = false, $usecommonwords = tr
     mdl: 'MDL-83873',
 )]
 function calendar_time_representation($time) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     global $OUTPUT;
 
@@ -127,7 +127,7 @@ function calendar_time_representation($time) {
     mdl: 'MDL-83873',
 )]
 function calendar_format_event_time($event, $now, $linkparams = null, $usecommonwords = true, $showtime = 0) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     global $OUTPUT;
 
@@ -151,7 +151,7 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
     final: true,
 )]
 function calendar_add_event_metadata() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -169,7 +169,7 @@ function calendar_add_event_metadata() {
     mdl: 'MDL-84617',
 )]
 function calendar_get_courselink($course) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     if (!$course) {
         return '';
@@ -207,7 +207,7 @@ function calendar_get_courselink($course) {
     mdl: 'MDL-84617',
 )]
 function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$durationbyday, &$typesbyday, &$courses) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     $calendartype = \core_calendar\type_factory::get_calendar_instance();
 

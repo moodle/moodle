@@ -417,7 +417,7 @@ class graded_users_iterator {
  */
 #[\core\attribute\deprecated('grade_get_graded_users_select()', since: '5.0', mdl: 'MDL-84673')]
 function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0, $includeall=true, $return=false) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $OUTPUT;
     return $OUTPUT->render(grade_get_graded_users_select(substr($actionpage, 0, strpos($actionpage, '/')), $course, $userid, $groupid, $includeall));
 }
@@ -1466,7 +1466,7 @@ class grade_structure {
      */
     #[\core\attribute\deprecated('grade_helper::get_element_icon', since: '4.4', mdl: 'MDL-77326', final: true)]
     public function get_element_icon(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1474,7 +1474,7 @@ class grade_structure {
      */
     #[\core\attribute\deprecated('grade_helper::get_element_type_string', since: '4.4', mdl: 'MDL-77326', final: true)]
     public function get_element_type_string(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1482,7 +1482,7 @@ class grade_structure {
      */
     #[\core\attribute\deprecated('grade_helper::get_element_header', since: '4.4', mdl: 'MDL-77326', final: true)]
     public function get_element_header(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1490,7 +1490,7 @@ class grade_structure {
      */
     #[\core\attribute\deprecated('grade_helper::get_activity_link', since: '4.4', mdl: 'MDL-77326', final: true)]
     private function get_activity_link(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -3416,7 +3416,7 @@ abstract class grade_helper {
      */
     #[\core\attribute\deprecated('get_string', since: '4.3', mdl: 'MDL-78561', final: true)]
     public static function get_lang_string(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

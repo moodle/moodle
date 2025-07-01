@@ -47,7 +47,7 @@ require_once($CFG->dirroot.'/course/lib.php');
 function dndupload_add_to_course($course, $modnames) {
     global $CFG, $PAGE;
 
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     $showstatus = optional_param('notifyeditingon', false, PARAM_BOOL);
 

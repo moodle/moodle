@@ -182,7 +182,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
      */
     #[\core\attribute\deprecated('get_grading_batch_operation_details', since: '4.5', mdl: 'MDL-80750')]
     public function get_grading_batch_operations() {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
 
         return array_column(static::get_grading_batch_operation_details(), 'confirmationtitle', 'key');
     }

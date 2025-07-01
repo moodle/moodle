@@ -1789,7 +1789,7 @@ abstract class repository implements cacheable_object {
      */
     #[\core\attribute\deprecated(null, reason: 'No longer used', since: '4.3', mdl: 'MDL-50272', final: true)]
     public function get_file_size() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

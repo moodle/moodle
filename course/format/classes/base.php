@@ -664,7 +664,7 @@ abstract class base {
         final: true,
     )]
     public function set_section_number(int $singlesection): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -712,7 +712,7 @@ abstract class base {
         final: true,
     )]
     public function get_section_number(): int {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         return 0;
     }
 
@@ -1009,7 +1009,7 @@ abstract class base {
         if (!isset($nonajaxactions[$action])) {
             throw new coding_exception('Unknown activity action: ' . $action);
         }
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $nonajaxaction = $nonajaxactions[$action];
         return $this->get_update_url(
             action: $nonajaxaction,

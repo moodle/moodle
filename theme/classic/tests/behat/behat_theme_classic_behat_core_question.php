@@ -38,7 +38,7 @@ class behat_theme_classic_behat_core_question extends behat_core_question {
     #[\core\attribute\deprecated('behat_core_question::i_add_a_question_filling_the_form_with()', since: '5.0', mdl: 'MDL-71378')]
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
 
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         parent::i_add_a_question_filling_the_form_with($questiontypename, $questiondata);
     }
 }

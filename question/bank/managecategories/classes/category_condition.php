@@ -113,7 +113,7 @@ class category_condition extends condition {
      */
     #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
     public function display_options() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -121,7 +121,7 @@ class category_condition extends condition {
      */
     #[\core\attribute\deprecated('foobar::blah()', since: '4.3', mdl: 'MDL-72321', final: true)]
     public function display_options_adv() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -129,7 +129,7 @@ class category_condition extends condition {
      */
     #[\core\attribute\deprecated('core_question renderer', since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function display_category_form($contexts, $pageurl, $current) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -137,7 +137,7 @@ class category_condition extends condition {
      */
     #[\core\attribute\deprecated('qbank_managecategories/choose_category template', since: '4.3', mdl: 'MDL-72321', final: true)]
     public static function print_choose_category_message(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -145,7 +145,7 @@ class category_condition extends condition {
      */
     #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
     public static function get_current_category($categoryandcontext) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -183,7 +183,7 @@ class category_condition extends condition {
      */
     #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function print_category_info($category): string {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     public static function build_query_from_filter(array $filter): array {

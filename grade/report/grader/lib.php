@@ -1487,7 +1487,7 @@ class grade_report_grader extends grade_report {
      */
     #[\core\attribute\deprecated('grade_report::calculate_average()', since: '4.4', final: true)]
     public function get_right_avg_row() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

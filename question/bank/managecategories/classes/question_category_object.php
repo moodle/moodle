@@ -92,7 +92,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function __construct($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
 
         $this->str = new stdClass();
@@ -139,7 +139,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $lastlist = null;
         foreach ($contexts as $context) {
             $this->editlists[$context->id] =
@@ -176,7 +176,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function display_user_interface(): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         // Interface for editing existing categories.
         $this->output_edit_lists();
     }
@@ -194,7 +194,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function output_new_table(): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->catform->display();
     }
 
@@ -213,7 +213,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function output_edit_lists(): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $OUTPUT;
 
         echo $OUTPUT->heading_with_help(get_string('questioncategories', 'question'), 'editcategories', 'question');
@@ -247,7 +247,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function get_course_ids(array $categories): array {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $courseids = [];
         foreach ($categories as $key => $cat) {
             $courseids[$key] = $cat->course;
@@ -272,7 +272,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function edit_single_category(int $categoryid): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         // Interface for adding a new category.
         global $DB;
 
@@ -311,7 +311,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function set_viable_parents(array &$parentstrings, object $category): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         unset($parentstrings[$category->id]);
         if (isset($category->children)) {
             foreach ($category->children as $child) {
@@ -336,7 +336,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function get_question_categories(?int $parent = null, string $sort = "sortorder ASC"): array {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $COURSE, $DB;
         if (is_null($parent)) {
             $categories = $DB->get_records('question_categories', ['course' => $COURSE->id], $sort);
@@ -361,7 +361,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function delete_category(int $categoryid): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $CFG, $DB;
         helper::question_can_delete_cat($categoryid);
         if (!$category = $DB->get_record("question_categories", ["id" => $categoryid])) {  // Security.
@@ -395,7 +395,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function move_questions_and_delete_category(int $oldcat, int $newcat): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         helper::question_can_delete_cat($oldcat);
         $this->move_questions($oldcat, $newcat);
         $this->delete_category($oldcat);
@@ -411,7 +411,7 @@ class question_category_object {
      * @deprecated No longer used by internal code and not recommended since Moodle 4.2 MDL-77299.
      */
     public function display_move_form($questionsincategory, $category): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         debugging(
             'display_move_form() is deprecated and no longer used by internal code.',
             DEBUG_DEVELOPER
@@ -440,7 +440,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function move_questions(int $oldcat, int $newcat): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $questionids = $this->get_real_question_ids_in_category($oldcat);
         question_move_questions_to_category($questionids, $newcat);
     }
@@ -470,7 +470,7 @@ class question_category_object {
     )]
     public function add_category($newparent, $newcategory, $newinfo, $return = false, $newinfoformat = FORMAT_HTML,
             $idnumber = null): int {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $DB;
         if (empty($newcategory)) {
             throw new moodle_exception('categorynamecantbeblank', 'question');
@@ -545,7 +545,7 @@ class question_category_object {
     )]
     public function update_category($updateid, $newparent, $newname, $newinfo, $newinfoformat = FORMAT_HTML,
             $idnumber = null, $redirect = true): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $CFG, $DB;
         if (empty($newname)) {
             throw new moodle_exception('categorynamecantbeblank', 'question');
@@ -640,7 +640,7 @@ class question_category_object {
         mdl: 'MDL-72397',
     )]
     public function get_real_question_ids_in_category(int $categoryid): array {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $DB;
 
         $sql = "SELECT q.id

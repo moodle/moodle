@@ -118,7 +118,7 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
      */
     #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-78528', final: true)]
     public function edit_default_completion() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

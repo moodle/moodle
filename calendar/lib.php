@@ -1184,7 +1184,7 @@ class calendar_information {
      */
     #[\core\attribute\deprecated('prepare_for_view', since: '3.4', mdl: 'MDL-59890', final: true)]
     public function prepare_for_view() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

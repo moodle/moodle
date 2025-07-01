@@ -113,7 +113,7 @@ class renderer extends plugin_renderer_base {
      */
     #[\core\attribute\deprecated('\core_reportbuilder\system_report::set_report_action', mdl: 'MDL-82936', since: '5.0')]
     public function render_new_report_button(): string {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         return html_writer::tag('button', get_string('newreport', 'core_reportbuilder'), [
             'class' => 'btn btn-primary my-auto',

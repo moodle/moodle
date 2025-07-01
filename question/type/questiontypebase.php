@@ -1396,7 +1396,7 @@ class question_type {
      */
     #[\core\attribute\deprecated(replacement: null, since: '5.0', mdl: 'MDL-71378')]
     public function generate_test($name, $courseid=null) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $form = new stdClass();
         $form->name = $name;
         $form->questiontextformat = 1;
