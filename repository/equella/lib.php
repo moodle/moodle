@@ -164,6 +164,17 @@ class repository_equella extends repository {
     }
 
     /**
+     * Returned unserialized object from base64 encoded file reference data
+     *
+     * @param string $reference
+     * @return stdClass
+     */
+    private function unserialize_reference(string $reference): stdClass {
+        $decoded = base64_decode($reference);
+        return unserialize_object($decoded);
+    }
+
+    /**
      * Download a file, this function can be overridden by subclass. {@link curl}
      *
      * @param string $reference the source of the file
@@ -175,7 +186,7 @@ class repository_equella extends repository {
      */
     public function get_file($reference, $filename = '') {
         global $USER, $CFG;
-        $ref = @unserialize(base64_decode($reference));
+        $ref = $this->unserialize_reference($reference);
         if (!isset($ref->url) || !($url = $this->appendtoken($ref->url))) {
             // Occurs when the user isn't known..
             return null;
@@ -201,7 +212,7 @@ class repository_equella extends repository {
             // if we had several unsuccessfull attempts to connect to server - do not try any more.
             return false;
         }
-        $ref = @unserialize(base64_decode($file->get_reference()));
+        $ref = $this->unserialize_reference($file->get_reference());
         if (!isset($ref->url) || !($url = $this->appendtoken($ref->url))) {
             // Occurs when the user isn't known..
             $file->set_missingsource();
@@ -248,9 +259,8 @@ class repository_equella extends repository {
      * @param array $options additional options affecting the file serving
      */
     public function send_file($stored_file, $lifetime=null , $filter=0, $forcedownload=false, ?array $options = null) {
-        $reference  = unserialize(base64_decode($stored_file->get_reference()));
-        $url = $this->appendtoken($reference->url);
-        if ($url) {
+        $ref = $this->unserialize_reference($stored_file->get_reference());
+        if (isset($ref->url) && $url = $this->appendtoken($ref->url)) {
             header('Location: ' . $url);
         } else {
             send_file_not_found();
@@ -435,8 +445,8 @@ class repository_equella extends repository {
      */
     public function get_reference_details($reference, $filestatus = 0) {
         if (!$filestatus) {
-            $ref = unserialize(base64_decode($reference));
-            return $this->get_name(). ': '. $ref->filename;
+            $ref = $this->unserialize_reference($reference);
+            return $this->get_name(). ': '. ($ref->filename ?? '');
         } else {
             return get_string('lostsource', 'repository', '');
         }

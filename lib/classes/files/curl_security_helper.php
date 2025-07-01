@@ -55,6 +55,21 @@ class curl_security_helper extends curl_security_helper_base {
     ];
 
     /**
+     * @var string the host of the URL being checked by the helper.
+     */
+    protected $host;
+
+    /**
+     * @var array IP address or addresses the URL is allowed to be requested from (passed the blocked hosts check).
+     */
+    protected $allowedips = [];
+
+    /**
+     * @var ?int The port the URL is allowed to be requested from (passed the allowed port check).
+     */
+    protected $allowedport;
+
+    /**
      * Checks whether the given URL is blocked by checking its address and port number against the allow/block lists.
      * The behaviour of this function can be classified as strict, as it returns true for URLs which are invalid or
      * could not be parsed, as well as those valid URLs which were found in the blocklist.
@@ -84,6 +99,8 @@ class curl_security_helper extends curl_security_helper_base {
             // Moodle exception is thrown if the $urlstring is invalid. Treat as blocked.
             return true;
         }
+
+        $this->host = $parsed['host'];
 
         // The port will be empty unless explicitly set in the $url (uncommon), so try to infer it from the supported schemes.
         if (!$parsed['port'] && $parsed['scheme'] && isset($this->transportschemes[$parsed['scheme']])) {
@@ -162,12 +179,17 @@ class curl_security_helper extends curl_security_helper_base {
                     return true;
                 }
 
-                // If any of the returned IPs are in the blocklist, block the request.
+                // If any of the returned IPs are in the blocklist, block the request. Otherwise, temporarily record the IPs.
+                $allowedips = [];
                 foreach ($hostips as $hostip) {
                     if ($this->address_explicitly_blocked($hostip)) {
                         return true;
                     }
+                    $allowedips[] = $hostip;
                 }
+
+                // If none of the IPs are blocked, set them on the allow list so we can enforce them on subsequent requests.
+                $this->allowedips = $allowedips;
             }
         } else {
             // Was not something we consider to be a valid IP or domain name, block it.
@@ -201,7 +223,15 @@ class curl_security_helper extends curl_security_helper_base {
             return true;
         }
         $allowedports = $this->get_allowed_ports();
-        return !empty($allowedports) && !in_array($portnum, $allowedports);
+
+        $isblocked = !empty($allowedports) && !in_array($portnum, $allowedports);
+
+        // If port is allowed, add it to our allow list so we can enforce it on subsequent requests.
+        if (!$isblocked) {
+            $this->allowedport = $portnum;
+        }
+
+        return $isblocked;
     }
 
     /**
@@ -290,5 +320,24 @@ class curl_security_helper extends curl_security_helper_base {
         return array_filter(array_map('trim', explode("\n", $CFG->curlsecurityblockedhosts)), function($entry) {
             return !empty($entry);
         });
+    }
+
+    /**
+     * Helper that returns host, IP and port information for the URL that has passed the blocked hosts/allowed ports checks.
+     *
+     * This data is in a format compatible with CURLOPT_RESOLVE, so it can be passed directly into that option.
+     * Doing so will prevent cURL re-fetching the info from DNS, preventing subsequent requests to the remote host from
+     * modifying the IP/port to ones that haven't been validated.
+     *
+     * @return array of strings in the format hostname:port:ip_address.
+     * @throws \coding_exception
+     */
+    public function get_resolve_info(): array {
+        if (empty($this->host || empty($this->allowedips) || empty($this->allowedport))) {
+            $exception = 'In the curl_security_helper class, url_is_blocked() must be called before get_resolve_info() is called.';
+            throw new \core\exception\coding_exception($exception);
+        }
+
+        return array_map(fn($ip) => "$this->host:$this->allowedport:$ip", $this->allowedips);
     }
 }

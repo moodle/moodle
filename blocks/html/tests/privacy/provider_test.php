@@ -297,6 +297,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $this->setUser($user);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'editingteacher');
 
         $block = $this->create_course_block($course, $title, $content, $format);
         $context = \context_block::instance($block->instance->id);
@@ -324,6 +325,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $this->setUser($user);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'editingteacher');
 
         $block = $this->create_course_block($course, $title, $content, $format);
         $context = \context_block::instance($block->instance->id);
@@ -369,6 +371,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setUser($user2);
 
         $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'editingteacher');
         $courseblock = $this->create_course_block($course, $title, $content, $blockformat);
         $coursecontext = \context_block::instance($courseblock->instance->id);
 

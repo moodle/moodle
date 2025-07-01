@@ -581,6 +581,11 @@ abstract class oauth2_client extends curl {
             $params['client_secret'] = $this->clientsecret;
         }
 
+        // If we have additional parameters, add them to the request.
+        if ($this->get_additional_upgrade_token_parameters()) {
+            $params = array_merge($params, $this->get_additional_upgrade_token_parameters());
+        }
+
         // Requests can either use http GET or POST.
         if ($this->use_http_get()) {
             $response = $this->get($this->token_url(), $params);
@@ -780,5 +785,14 @@ abstract class oauth2_client extends curl {
      */
     protected function use_http_get() {
         return false;
+    }
+
+    /**
+     * An additional array of url params to pass with upgrade token request.
+     *
+     * @return array of name value pairs.
+     */
+    public function get_additional_upgrade_token_parameters(): array {
+        return [];
     }
 }

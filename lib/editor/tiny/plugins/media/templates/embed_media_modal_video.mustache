@@ -90,7 +90,7 @@
         <div class="position-relative d-flex ftoggler align-items-center position-relative me-1">
             <a role="button" data-toggle="collapse" href="#vdisplayoptions" aria-expanded="false"
                aria-controls="vdisplayoptions"
-               class="btn btn-icon me-1 icons-collapse-expand stretched-link fheader collapsed">
+               class="btn btn-icon me-3 icons-collapse-expand stretched-link fheader collapsed">
                 <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
                             <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
                 </span>
@@ -155,7 +155,7 @@
         <div class="position-relative d-flex ftoggler align-items-center position-relative me-1">
             <a role="button" data-toggle="collapse" href="#vadvancedsettings" aria-expanded="false"
                aria-controls="vadvancedsettings"
-               class="btn btn-icon me-1 icons-collapse-expand stretched-link fheader collapsed">
+               class="btn btn-icon me-3 icons-collapse-expand stretched-link fheader collapsed">
             <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
                                 <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
                             </span>
@@ -213,7 +213,7 @@
         <div class="position-relative d-flex ftoggler align-items-center position-relative me-1">
             <a role="button" data-toggle="collapse" href="#vtracks" aria-expanded="false"
                aria-controls="vtracks"
-               class="btn btn-icon me-1 icons-collapse-expand stretched-link fheader collapsed">
+               class="btn btn-icon me-3 icons-collapse-expand stretched-link fheader collapsed">
             <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
                                 <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
                             </span>
@@ -295,12 +295,12 @@
                             <select id="subtitle-video-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -347,12 +347,12 @@
                             <select id="subtitle-video-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -407,12 +407,12 @@
                             <select id="caption-video-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -459,12 +459,12 @@
                             <select id="caption-video-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -519,12 +519,12 @@
                             <select id="description-video-ang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -571,12 +571,12 @@
                             <select id="description-video-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -631,12 +631,12 @@
                             <select id="chapter-video-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -683,12 +683,12 @@
                             <select id="chapter-video-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -744,12 +744,12 @@
                             <select id="metadata-video-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>
@@ -796,12 +796,12 @@
                             <select id="metadata-video-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
-                                        <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
                                     {{/langsinstalled}}
                                 </optgroup>
                                 <optgroup label="{{#str}} languagesavailable, tiny_media {{/str}} ">
                                     {{#langsavailable}}
-                                        <option value="{{code}}">{{lang}}</option>
+                                        <option value="{{lang}}" data-language-code="{{code}}">{{lang}}</option>
                                     {{/langsavailable}}
                                 </optgroup>
                             </select>

@@ -70,26 +70,26 @@ Feature: Optional policies
     And I should see "OwnPageCompulsory1" in the "region-main" "region"
     And I should see "short text4" in the "region-main" "region"
     And I should see "full text4" in the "region-main" "region"
-    And I press "I agree to the OwnPageCompulsory1"
+    And I press "I agree to the OwnPageCompulsory1."
     # Compulsory policies displayed on the consent page are shown next and must be agreed.
     And I should see "ConsentPageCompulsory1"
     And I should see "short text3" in the "region-main" "region"
     And I should see "full text3" in the "region-main" "region"
     And I press "Next"
-    And I should see "Please agree to the following policies"
-    And I set the field "I agree to the ConsentPageCompulsory1" to "1"
+    And I should see "Please agree to the following policies:"
+    And I set the field "I agree to the ConsentPageCompulsory1." to "1"
     And I press "Next"
     # The signup form can be submitted and a new account created.
     And I set the following fields to these values:
       | Username      | user3               |
       | Password      | user3                 |
-      | Email address | user3@address.invalid |
-      | Email (again) | user3@address.invalid |
+      | Email address | user3@example.com    |
+      | Email (again) | user3@example.com   |
       | First name    | User3                 |
       | Last name       | L3                    |
     And I press "Create my new account"
     And I should see "Confirm your account"
-    And I should see "An email should have been sent to your address at user3@address.invalid"
+    And I should see "An email should have been sent to your address at user3@example.com"
     And I confirm email for "user3"
     And I should see "Thanks, User3 L3"
     And I should see "Your registration has been confirmed"
@@ -99,7 +99,7 @@ Feature: Optional policies
     Then I should see "OwnPageOptional1"
     And I should see "short text5" in the "region-main" "region"
     And I should see "full text5" in the "region-main" "region"
-    And I press "No thanks, I decline OwnPageOptional1"
+    And I press "I don't agree to the OwnPageOptional1"
     # Then come policies displayed on the consent page.
     And I should see "ConsentPageOptional1" in the "region-main" "region"
     And I should see "short text1" in the "region-main" "region"
@@ -109,9 +109,9 @@ Feature: Optional policies
     And I should see "short text2" in the "region-main" "region"
     And I should see "full text2" in the "region-main" "region"
     And I press "Next"
-    And I should see "Please agree to the following policies"
-    And I set the field "I agree to the ConsentPageOptional1" to "1"
-    And I set the field "No thanks, I decline ConsentPageOptional2" to "0"
+    And I should see "Please agree to the following policies:"
+    And I set the field "I agree to the ConsentPageOptional1." to "1"
+    And I set the field "I don't agree to the ConsentPageOptional2" to "0"
     And I press "Next"
     # Accepted and declined policies are shown in the profile.
     And I follow "Profile" in the user menu
@@ -132,14 +132,14 @@ Feature: Optional policies
     Then I should see "OwnPageOptional1"
     And I should see "short text5" in the "region-main" "region"
     And I should see "full text5" in the "region-main" "region"
-    And I press "I agree to the OwnPageOptional1"
+    And I press "I agree to the OwnPageOptional1."
     # Then come policies displayed on the consent page.
     And I should see "ConsentPageOptional1" in the "region-main" "region"
     And I should see "short text1" in the "region-main" "region"
     And I should see "full text1" in the "region-main" "region"
     And I press "Next"
-    And I should see "Please agree to the following policies"
-    And I set the field "No thanks, I decline ConsentPageOptional1" to "0"
+    And I should see "Please agree to the following policies:"
+    And I set the field "I don't agree to the ConsentPageOptional1" to "0"
     And I press "Next"
     # Accepted and declined policies are shown in the profile.
     And I follow "Profile" in the user menu
@@ -152,7 +152,7 @@ Feature: Optional policies
       | Name                   | Content    | Summary     | Agreementstyle | Optional  |
       | OwnPageOptional1       | full text1 | short text1 | 1              | 1         |
     And I log in as "user1"
-    And I press "I agree to the OwnPageOptional1"
+    And I press "I agree to the OwnPageOptional1."
     And I follow "Profile" in the user menu
     And I follow "Policies and agreements"
     And "Accepted" "text" should exist in the "OwnPageOptional1" "table_row"
@@ -177,7 +177,7 @@ Feature: Optional policies
       | Name                   | Content    | Summary     | Agreementstyle | Optional  |
       | OwnPageOptional1       | full text1 | short text1 | 1              | 1         |
     And I log in as "user1"
-    And I press "I agree to the OwnPageOptional1"
+    And I press "I agree to the OwnPageOptional1."
     And I follow "Profile" in the user menu
     And I follow "Policies and agreements"
     And "Accepted" "text" should exist in the "OwnPageOptional1" "table_row"
@@ -202,12 +202,12 @@ Feature: Optional policies
       | OwnPageOptional1       | full text1 | short text1 | 1              | 1         |
       | OwnPageOptional2       | full text2 | short text2 | 1              | 1         |
     And I log in as "user1"
-    And I press "I agree to the OwnPageOptional1"
-    And I press "No thanks, I decline OwnPageOptional2"
+    And I press "I agree to the OwnPageOptional1."
+    And I press "I don't agree to the OwnPageOptional2"
     And I log out
     And I log in as "manager"
-    And I press "I agree to the OwnPageOptional1"
-    And I press "I agree to the OwnPageOptional2"
+    And I press "I agree to the OwnPageOptional1."
+    And I press "I agree to the OwnPageOptional2."
     When I navigate to "Users > Privacy and policies > User agreements" in site administration
     # User One has accepted just some policies.
     Then "Partially accepted" "text" should exist in the "User One" "table_row"
@@ -228,8 +228,8 @@ Feature: Optional policies
       | OwnPageOptional1       | full text1 | short text1 | 1              | 1         |
       | OwnPageOptional2       | full text2 | short text2 | 1              | 1         |
     And I log in as "user1"
-    And I press "I agree to the OwnPageOptional1"
-    And I press "No thanks, I decline OwnPageOptional2"
+    And I press "I agree to the OwnPageOptional1."
+    And I press "I don't agree to the OwnPageOptional2"
     And I log out
     And I log in as "admin"
     When I navigate to "Users > Privacy and policies > User agreements" in site administration

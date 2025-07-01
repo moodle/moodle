@@ -114,7 +114,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:e/insert_file' => 'fa-regular fa-file',
             'core:e/insert_horizontal_ruler' => 'fa-ruler-horizontal',
             'core:e/insert_nonbreaking_space' => 'fa-regular fa-square',
-            'core:e/insert_page_break' => 'fa-arrows-left-right-to-line',
+            'core:e/insert_page_break' => 'fa-plus',
             'core:e/insert_row_after' => 'fa-plus',
             'core:e/insert_row_before' => 'fa-plus',
             'core:e/insert' => 'fa-plus',

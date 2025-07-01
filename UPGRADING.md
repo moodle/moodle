@@ -6,6 +6,82 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 4.5.5+
+
+### core_message
+
+#### Added
+
+- The web service `core_message_get_member_info` additionally returns `cancreatecontact` which is a boolean value for a user's permission to add a contact.
+
+  For more information see [MDL-72123](https://tracker.moodle.org/browse/MDL-72123)
+
+## 4.5.5
+
+### core
+
+#### Added
+
+- - Added is_site_registered_in_hub method in lib/classes/hub/api.php to
+    check if the site is registered or not.
+  - Added get_secret method in lib/classes/hub/registration.php to get site's secret.
+
+  For more information see [MDL-83448](https://tracker.moodle.org/browse/MDL-83448)
+- Added a new optional param to adhoc_task_failed and scheduled_task_failed to allow skipping log finalisation when called from a separate task.
+
+  For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
+- There is a new `core/page_title` Javascript module for manipulating the current page title
+
+  For more information see [MDL-84804](https://tracker.moodle.org/browse/MDL-84804)
+
+### core_auth
+
+#### Added
+
+- A new method called `get_additional_upgrade_token_parameters` has been added to `oauth2_client` class. This will allow custom clients to override this one and add their extra parameters for upgrade token request.
+
+  For more information see [MDL-80380](https://tracker.moodle.org/browse/MDL-80380)
+
+### core_user
+
+#### Added
+
+- New method `\core_user::get_dummy_fullname(...)` for returning dummy user fullname comprised of configured name fields only
+
+  For more information see [MDL-82132](https://tracker.moodle.org/browse/MDL-82132)
+
+## 4.5.4
+
+### core
+
+#### Added
+
+- Behat now supports email content verification using Mailpit.
+  You can check the contents of an email using the step `Then the email to "user@example.com" with subject containing "subject" should contain "content".`
+  To use this feature:
+  1. Ensure that Mailpit is running
+  2. Define the following constants in your `config.php`:
+      - `TEST_EMAILCATCHER_MAIL_SERVER` - The Mailpit server address (e.g. `0.0.0.0:1025`)
+      - `TEST_EMAILCATCHER_API_SERVER` - The Mailpit API server (qe.g. `http://localhost:8025`)
+
+  3. Ensure that the email catcher is set up using the step `Given an email catcher server is configured`.
+
+  For more information see [MDL-75971](https://tracker.moodle.org/browse/MDL-75971)
+- The public method `get_slashargument` has been added to the `url` class.
+
+  For more information see [MDL-84351](https://tracker.moodle.org/browse/MDL-84351)
+- A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text. This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
+
+  For more information see [MDL-84907](https://tracker.moodle.org/browse/MDL-84907)
+
+### core_files
+
+#### Added
+
+- A new function `file_clear_draft_area()` has been added to delete the files in a draft area.
+
+  For more information see [MDL-72050](https://tracker.moodle.org/browse/MDL-72050)
+
 ## 4.5.3
 
 ### core_question

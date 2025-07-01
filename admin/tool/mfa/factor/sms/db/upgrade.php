@@ -76,5 +76,25 @@ function xmldb_factor_sms_upgrade(int $oldversion): bool {
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2024100702) {
+        // Ensure default values are applied for the MFA SMS factor when upgrading.
+        $config = get_config('factor_sms');
+
+        // Set the weight to the default value (100) if it is misconfigured (e.g. set to 0).
+        $weight = $config->weight ?? null;
+        if (isset($weight) && (int)$weight <= 0) {
+            set_config('weight', 100, 'factor_sms');
+        }
+
+        // Set the duration to the default value (30 minutes) if it is misconfigured (e.g. set to 0).
+        $duration = $config->duration ?? null;
+        if (isset($duration) && (int)$duration <= 0) {
+            set_config('duration', 30 * MINSECS, 'factor_sms');
+        }
+
+        // MFA savepoint reached.
+        upgrade_plugin_savepoint(true, 2024100702, 'factor', 'sms');
+    }
+
     return true;
 }

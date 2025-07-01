@@ -792,11 +792,10 @@ abstract class info {
         // plugin could also rely on the completion plugin.
         $pluginmanager = \core_plugin_manager::instance();
         $enabled = $pluginmanager->get_enabled_plugins('availability');
-        $componentparams = new \stdClass();
         foreach ($enabled as $plugin => $info) {
-            // Use the static method.
+            /** @var \core_availability\condition $class */
             $class = '\availability_' . $plugin . '\condition';
-            if ($class::completion_value_used($course, $cmid)) {
+            if (class_exists($class) && $class::completion_value_used($course, $cmid)) {
                 return true;
             }
         }

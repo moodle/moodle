@@ -1763,4 +1763,36 @@ calendar,core_calendar|/calendar/view.php?view=month',
         $this->assertEquals('/page2', get_user_preferences('user_home_page_preference', null, $user1->id));
         $this->assertEquals(HOMEPAGE_MY, get_user_preferences('user_home_page_preference', null, $user2->id));
     }
+
+    /**
+     * Test the check_aurora_version check when the Moodle instance is not using Amazon Aurora as a database architecture.
+     *
+     * @covers ::check_aurora_version
+     */
+    public function test_check_aurora_version_is_not_used(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->dbtype = 'pgsql';
+
+        $result = new environment_results('custom_checks');
+        $this->assertNull(check_aurora_version($result));
+    }
+
+    /**
+     * Test the check_aurora_version check when the Moodle instance is using Amazon Aurora as a database architecture.
+     *
+     * @covers ::check_aurora_version
+     */
+    public function test_check_aurora_version_is_used(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->dbtype = 'auroramysql';
+
+        $result = new environment_results('custom_checks');
+        $this->assertInstanceOf(environment_results::class, check_aurora_version($result));
+        $this->assertEquals('Aurora compatibility', $result->getInfo());
+        $this->assertFalse($result->getStatus());
+    }
 }

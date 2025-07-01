@@ -178,9 +178,16 @@ define([
             nextUserId = this._lastUserId;
         }
         if (response.length) {
+            str.get_string('errorgradechangessaveddetail', 'mod_assign')
+                .then(function(str) {
+                    Toast.add(str, {type: 'danger', delay: 4000});
+                    return str;
+                })
+                .catch(notification.exception);
+
             // There was an error saving the grade. Re-render the form using the submitted data so we can show
             // validation errors.
-            $(document).trigger('reset', [this._lastUserId, formdata]);
+            $(document).trigger('reset', [this._lastUserId, formdata, true]);
         } else {
             str.get_string('gradechangessaveddetail', 'mod_assign')
             .then(function(str) {
@@ -212,15 +219,16 @@ define([
      * @param {Event} e
      * @param {Integer} userid
      * @param {Array} formdata
+     * @param {Boolean} unresolvederror
      */
-    GradingPanel.prototype._resetForm = function(e, userid, formdata) {
+    GradingPanel.prototype._resetForm = function(e, userid, formdata, unresolvederror) {
         // The form was cancelled - refresh with default values.
         var event = $.Event("custom");
         if (typeof userid == "undefined") {
             userid = this._lastUserId;
         }
         this._lastUserId = 0;
-        this._refreshGradingPanel(event, userid, formdata);
+        this._refreshGradingPanel(event, userid, formdata, -1, unresolvederror);
     };
 
     /**
@@ -266,7 +274,7 @@ define([
         templates.render('mod_assign/popout_button', {}).done(function(html) {
             var parents = region.find('[data-fieldtype="filemanager"],[data-fieldtype="editor"],[data-fieldtype="grading"]')
                     .closest('.fitem');
-            parents.addClass('has-popout').find('label').parent().append(html);
+            parents.addClass('has-popout').find('label:first').parent().append(html);
 
             region.on('click', '[data-region="popout-button"]', this._togglePopout.bind(this));
         }.bind(this)).fail(notification.exception);
@@ -300,14 +308,18 @@ define([
      * @param {Number} userid
      * @param {String} submissiondata serialised submission data.
      * @param {Integer} attemptnumber
+     * @param {Boolean} unresolvederror
      */
-    GradingPanel.prototype._refreshGradingPanel = function(event, userid, submissiondata, attemptnumber) {
+    GradingPanel.prototype._refreshGradingPanel = function(event, userid, submissiondata, attemptnumber, unresolvederror) {
         var contextid = this._region.attr('data-contextid');
         if (typeof submissiondata === 'undefined') {
             submissiondata = '';
         }
         if (typeof attemptnumber === 'undefined') {
             attemptnumber = -1;
+        }
+        if (typeof unresolvederror === 'undefined') {
+            unresolvederror = false;
         }
         // Skip reloading if it is the same user.
         if (this._lastUserId == userid && this._lastAttemptNumber == attemptnumber && submissiondata === '') {
@@ -327,6 +339,13 @@ define([
                     // Reload the grading form "fragment" for this user.
                     var params = {userid: userid, attemptnumber: attemptnumber, jsonformdata: JSON.stringify(submissiondata)};
                     fragment.loadFragment('mod_assign', 'gradingpanel', contextid, params).done(function(html, js) {
+
+                        // Reset whole grading page when there is a failure in retrieving the html
+                        // i.e. user no longer under "requires grading" filter when graded
+                        if (html === '') {
+                            $(document).trigger('reset-table', true);
+                        }
+
                         this._niceReplaceNodeContents(this._region, html, js)
                         .done(function() {
                             checker.saveFormState('[data-region="grade-panel"] .gradeform');
@@ -337,6 +356,9 @@ define([
                             });
                             $('[data-region="attempt-chooser"]').on('click', this._chooseAttempt.bind(this));
                             this._addPopoutButtons('[data-region="grade-panel"] .gradeform');
+                            if (unresolvederror) {
+                                $('[data-region="grade-panel"] .gradeform').data('unresolved-error', true);
+                            }
                             $(document).trigger('finish-loading-user');
                             // Tell behat we are friends again.
                             window.M.util.js_complete('mod-assign-loading-user');

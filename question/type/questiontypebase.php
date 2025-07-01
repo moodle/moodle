@@ -1446,8 +1446,10 @@ class question_type {
     protected function import_or_save_files($field, $context, $component, $filearea, $itemid) {
         if (!empty($field['itemid'])) {
             // This is the normal case. We are safing the questions editing form.
-            return file_save_draft_area_files($field['itemid'], $context->id, $component,
+            $result = file_save_draft_area_files($field['itemid'], $context->id, $component,
                     $filearea, $itemid, $this->fileoptions, trim($field['text']));
+            file_clear_draft_area($field['itemid']);
+            return $result;
 
         } else if (!empty($field['files'])) {
             // This is the case when we are doing an import.

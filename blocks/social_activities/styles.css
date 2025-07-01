@@ -13,3 +13,7 @@
 .block_social_activities .instancename {
     word-break: break-all;
 }
+
+.block_social_activities .inplaceeditable.inplaceeditingon input {
+    width: 100%;
+}

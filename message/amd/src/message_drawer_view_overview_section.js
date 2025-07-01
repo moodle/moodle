@@ -160,6 +160,8 @@ function(
 
         if (count > 0) {
             container.removeClass('hidden');
+        } else {
+            container.addClass('hidden');
         }
     };
 
@@ -446,11 +448,8 @@ function(
             var element = getTotalUnreadConversationCountElement(root);
             var count = parseInt(element.text());
             count = count - 1;
-            element.text(count);
-
-            if (count < 1) {
-                element.addClass('hidden');
-            }
+            // Re-render the unread count.
+            renderUnreadCount(root, count);
         }
     };
 
@@ -607,10 +606,6 @@ function(
             return true;
         };
 
-        // Set the minimum height of the section to the height of the toggle. This
-        // smooths out the collapse animation.
-        var toggle = root.find(SELECTORS.TOGGLE);
-        root.css('min-height', toggle.outerHeight());
 
         root.on('show.bs.collapse', function() {
             setExpanded(root);

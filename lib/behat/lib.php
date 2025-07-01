@@ -233,6 +233,12 @@ function behat_clean_init_config() {
             unset($CFG->{$key});
         }
     }
+
+    // Allow email catcher settings.
+    if (defined('TEST_EMAILCATCHER_MAIL_SERVER')) {
+        $CFG->noemailever = false;
+        $CFG->smtphosts = TEST_EMAILCATCHER_MAIL_SERVER;
+    }
 }
 
 /**
@@ -340,6 +346,11 @@ function behat_is_test_site() {
     }
     if (empty($CFG->behat_wwwroot)) {
         return false;
+    }
+    if (defined('CLI_SCRIPT') && CLI_SCRIPT && getenv('BEHAT_CLI')) {
+        // Environment variable makes CLI script run on Behat instance.
+        echo "BEHAT_CLI: This command line script is running on the acceptance testing site.\n\n";
+        return true;
     }
     if (isset($_SERVER['REMOTE_ADDR']) and behat_is_requested_url($CFG->behat_wwwroot)) {
         // Something is accessing the web server like a real browser.

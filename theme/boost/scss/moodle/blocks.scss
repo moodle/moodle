@@ -30,6 +30,12 @@
     .dropdown-toggle::after {
         display: none;
     }
+    .dropdown-menu {
+        max-width: 500px;
+        .dropdown-item {
+            @include text-truncate;
+        }
+    }
 }
 
 $blocks-column-width: 360px !default;

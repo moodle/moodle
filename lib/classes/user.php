@@ -1519,6 +1519,22 @@ class user {
     }
 
     /**
+     * Return fullname of a dummy user comprised of configured name fields only
+     *
+     * @param context|null $context
+     * @param array $options
+     * @return string
+     */
+    public static function get_dummy_fullname(?context $context = null, array $options = []): string {
+
+        // Create a dummy user object containing all name fields.
+        $namefields = \core_user\fields::get_name_fields();
+        $user = (object) array_combine($namefields, $namefields);
+
+        return static::get_fullname($user, $context, $options);
+    }
+
+    /**
      * Return profile url depending on context.
      *
      * @param stdClass $user the person to get details of.
@@ -1588,10 +1604,10 @@ class user {
     public static function get_initials(stdClass $user): string {
         // Get the available name fields.
         $namefields = \core_user\fields::get_name_fields();
-        // Build a dummy user to determine the name format.
-        $dummyuser = array_combine($namefields, $namefields);
+
         // Determine the name format by using fullname() and passing the dummy user.
-        $nameformat = fullname((object) $dummyuser);
+        $nameformat = static::get_dummy_fullname();
+
         // Fetch all the available username fields.
         $availablefields = order_in_string($namefields, $nameformat);
         // We only want the first and last name fields.

@@ -1,5 +1,43 @@
 # core (subsystem) Upgrade notes
 
+## 4.5.5
+
+### Added
+
+- - Added is_site_registered_in_hub method in lib/classes/hub/api.php to
+    check if the site is registered or not.
+  - Added get_secret method in lib/classes/hub/registration.php to get site's secret.
+
+  For more information see [MDL-83448](https://tracker.moodle.org/browse/MDL-83448)
+- Added a new optional param to adhoc_task_failed and scheduled_task_failed to allow skipping log finalisation when called from a separate task.
+
+  For more information see [MDL-84442](https://tracker.moodle.org/browse/MDL-84442)
+- There is a new `core/page_title` Javascript module for manipulating the current page title
+
+  For more information see [MDL-84804](https://tracker.moodle.org/browse/MDL-84804)
+
+## 4.5.4
+
+### Added
+
+- Behat now supports email content verification using Mailpit.
+  You can check the contents of an email using the step `Then the email to "user@example.com" with subject containing "subject" should contain "content".`
+  To use this feature:
+  1. Ensure that Mailpit is running
+  2. Define the following constants in your `config.php`:
+      - `TEST_EMAILCATCHER_MAIL_SERVER` - The Mailpit server address (e.g. `0.0.0.0:1025`)
+      - `TEST_EMAILCATCHER_API_SERVER` - The Mailpit API server (qe.g. `http://localhost:8025`)
+
+  3. Ensure that the email catcher is set up using the step `Given an email catcher server is configured`.
+
+  For more information see [MDL-75971](https://tracker.moodle.org/browse/MDL-75971)
+- The public method `get_slashargument` has been added to the `url` class.
+
+  For more information see [MDL-84351](https://tracker.moodle.org/browse/MDL-84351)
+- A new method, `core_text::trim_ctrl_chars()`, has been introduced to clean control characters from text. This ensures cleaner input handling and prevents issues caused by invisible or non-printable characters
+
+  For more information see [MDL-84907](https://tracker.moodle.org/browse/MDL-84907)
+
 ## 4.5.2
 
 ### Added

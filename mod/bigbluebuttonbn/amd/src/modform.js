@@ -164,6 +164,9 @@ const applyInstanceTypeProfile = (profileType, isFeatureEnabled) => {
     showFieldset('id_competenciessection', showAll ||
         isFeatureEnabled(profileType, 'competenciessection'));
     // Completion validation.
+    showFieldset('id_activitycompletionheader', showAll ||
+        isFeatureEnabled(profileType, 'activitycompletionheader'));
+    // Completion validation.
     showFormGroup('completionattendancegroup', showAll ||
         isFeatureEnabled(profileType, 'completionattendance'));
     // Completion validation.

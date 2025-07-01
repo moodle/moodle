@@ -24,6 +24,7 @@
 import Notification from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
 import {getString} from 'core/str';
+import * as FormChangeChecker from 'core_form/changechecker';
 
 const selectors = {
     resetCoursetButton: '[data-action="resetcourse"]',
@@ -69,6 +70,7 @@ const resetCourseConfirm = async(resetButton) => {
         getString('resetcoursewarning', 'core', courseName),
         getString('resetcourse'),
     ).then(() => {
+        FormChangeChecker.markFormSubmitted(resetButton.closest('form'));
         resetButton.closest('form').submit();
         return;
     }).catch(() => {

@@ -1069,6 +1069,7 @@ class core_message_external extends external_api {
                 'If the user can still message even if they get blocked'),
             'canmessage' => new external_value(PARAM_BOOL, 'If the user can be messaged'),
             'requirescontact' => new external_value(PARAM_BOOL, 'If the user requires to be contacts'),
+            'cancreatecontact' => new external_value(PARAM_BOOL, 'Is the user permitted to add a contact'),
         ];
 
         $result['contactrequests'] = new external_multiple_structure(
@@ -3376,7 +3377,7 @@ class core_message_external extends external_api {
         bool $includecontactrequests = false,
         bool $includeprivacyinfo = false
     ) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         // All the business logic checks that really shouldn't be in here.
         if (empty($CFG->messaging)) {
@@ -3396,9 +3397,37 @@ class core_message_external extends external_api {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
+        // Return early if no userids are provided.
+        if (empty($params['userids'])) {
+            return [];
+        }
+
+        // Filter the user IDs, removing the IDs of the users that the current user cannot view.
+        require_once($CFG->dirroot . '/user/lib.php');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('username', 'deleted');
+        $userfields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
+        $users = $DB->get_records_list('user', 'id', $userids, '', $userfields, 0, 100);
+        $filteredids = array_filter($params['userids'], function($userid) use ($users, $params) {
+            $targetuser = $users[$userid];
+            // Check if the user has the contact already.
+            $iscontact = \core_message\api::is_contact($params['referenceuserid'], $userid);
+            if ($iscontact) {
+                // User is a contact, so we can return the info for this user.
+                return true;
+            } else {
+                // User is not a contact, so we need to check if the user is allowed to see the profile or not.
+                return user_can_view_profile($targetuser);
+            }
+        });
+
+        // Return early if no user IDs are left after filtering.
+        if (empty($filteredids)) {
+            return [];
+        }
+
         return \core_message\helper::get_member_info(
             $params['referenceuserid'],
-            $params['userids'],
+            $filteredids,
             $params['includecontactrequests'],
             $params['includeprivacyinfo']
         );

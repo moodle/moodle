@@ -1160,7 +1160,14 @@ class core_course_renderer extends plugin_renderer_base {
             // This is a request for the course information.
             $courseid = required_param('courseid', PARAM_INT);
 
-            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', ['id' => $courseid], '*', IGNORE_MISSING);
+            if ($course === false) {
+                throw new \moodle_exception('invalidcourseid');
+            }
+            $coursecontext = context_course::instance($course->id, MUST_EXIST);
+            if ($course->visible == 0 && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                throw new \moodle_exception('invalidcourseid');
+            }
 
             $chelper = new coursecat_helper();
             $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED);

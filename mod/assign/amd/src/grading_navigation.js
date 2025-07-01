@@ -61,6 +61,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         this._region.find('[data-region="user-resettable"]').on('click', this._toggleResetTable.bind());
 
         $(document).on('user-changed', this._refreshSelector.bind(this));
+        $(document).on('reset-table', this._toggleResetTable.bind(this));
         $(document).on('done-saving-show-next', this._handleNextUser.bind(this));
 
         // Position the configure filters panel under the link that expands it.
@@ -158,6 +159,9 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
             var configPanel = $(document.getElementById(toggleLink.attr('aria-controls')));
 
             configPanel.find('select[name="filter"]').trigger('change');
+
+            $('[data-region="grade-panel"]').show();
+            $('[data-region="grade-actions-panel"]').show();
         } else {
             this._selectNoUser();
         }
@@ -267,8 +271,8 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
                     }
                 });
 
-                if (this._filteredUsers.length && foundIndex !== null) {
-                    this._selectUserById(this._filteredUsers[foundIndex].id);
+                if (this._filteredUsers.length) {
+                    this._selectUserById(this._filteredUsers[foundIndex ?? 0].id);
                 } else {
                     this._selectNoUser();
                 }
@@ -289,6 +293,10 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         if (this._isLoading) {
             return;
         }
+
+        $('[data-region="grade-panel"]').hide();
+        $('[data-region="grade-actions-panel"]').hide();
+
         if (checker.checkFormForChanges('[data-region="grade-panel"] .gradeform')) {
             // Form has changes, so we need to confirm before switching users.
             str.get_strings([

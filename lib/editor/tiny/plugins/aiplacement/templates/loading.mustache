@@ -36,12 +36,8 @@
 }}
 <div id="{{elementid}}_tiny_aiplacement_spinner" class="tiny-aiplacement-loading-spinner-container hidden">
     <div class="tiny-aiplacement-loading-spinner d-flex justify-content-center align-items-center flex-column">
-        <div class="spinner-border tiny-aiplacement-spinner-style" role="status">
-            <span class="sr-only">
-              {{#str}} loading, tiny_aiplacement{{/str}}
-            </span>
-        </div>
-        <div id="{{elementid}}_tiny_aiplacement_loading_text" class="text-center tiny-aiplacement-spinner-text-style">
+        <div class="spinner-border tiny-aiplacement-spinner-style" aria-hidden="true"></div>
+        <div id="{{elementid}}_tiny_aiplacement_loading_text" class="text-center tiny-aiplacement-spinner-text-style" role="status">
             {{#str}} loading, tiny_aiplacement{{/str}}
         </div>
     </div>

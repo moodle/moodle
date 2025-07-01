@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20240923" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20250520" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -395,6 +395,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="course_section" UNIQUE="true" FIELDS="course, section"/>
+        <INDEX NAME="component_itemid" UNIQUE="false" FIELDS="component, itemid" COMMENT="necessary for querying delegated sections"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_request" COMMENT="course requests">
@@ -3983,6 +3984,7 @@
         <FIELD NAME="requireconfirmation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="servicetype" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Issuer service type, such as 'google' or 'facebook'."/>
         <FIELD NAME="loginpagename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="systememail" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The email that will be used connect system account for sending email via SMTP"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

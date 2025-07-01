@@ -57,6 +57,9 @@ class grading_actionmenu implements templatable, renderable {
     /** @var array Applied user initials filters, containing 'firstname' and 'lastname'. **/
     protected array $userinitials;
 
+    /** @var bool true if the user has this capability. Otherwise false. */
+    private bool $hasviewblind;
+
     /**
      * Constructor for this object.
      *
@@ -81,6 +84,9 @@ class grading_actionmenu implements templatable, renderable {
         $this->assign = $assign;
         $this->showdownload = $this->assign->is_any_submission_plugin_enabled() && $this->assign->count_submissions();
         $this->userinitials = $userinitials;
+
+        // Check if we have the elevated view capablities to see the blind details.
+        $this->hasviewblind = has_capability('mod/assign:viewblinddetails', $this->assign->get_context());
     }
 
     /**
@@ -101,12 +107,17 @@ class grading_actionmenu implements templatable, renderable {
         // string with the full name of the selected user.
         $usersearch = $userid ? fullname(\core_user::get_user($userid)) : optional_param('search', '', PARAM_NOTAGS);
 
+        $isblind = $this->assign->is_blind_marking() && !$this->hasviewblind;
+        if ($isblind) {
+            $usersearch = $userid ? get_string('hiddenuser', 'assign') . $this->assign->get_uniqueid_for_user($userid) : $usersearch;
+        }
+
         $resetlink = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'grading']);
         $groupid = groups_get_course_group($course, true);
         $userselector = new user_selector(
             course: $course,
             resetlink: $resetlink,
-            userid: $userid,
+            userid: !$isblind ? $userid : null,
             groupid: $groupid,
             usersearch: $usersearch,
             instanceid: $this->assign->get_instance()->id

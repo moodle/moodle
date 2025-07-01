@@ -55,7 +55,7 @@ $string['settings:gateway_help'] = 'The SMS provider you wish to send messages v
 $string['settings:heading'] = 'Users will receive an SMS with 6-digit code during login, which they must enter to complete the login process.
 
 Users will need to register their mobile phone number first.';
-$string['settings:setupdesc'] = '<br><br>To use SMS as an authentication factor, you first need to <a href="{$a}">set up an SMS gateway</a>.';
+$string['settings:setupdesc'] = 'To use SMS as an authentication factor, you first need to <a href="{$a}">set up an SMS gateway</a>.';
 $string['settings:smsgateway'] = 'SMS gateway';
 $string['settings:smsgateway_help'] = 'Select a gateway from the list, or <a href="{$a}">create a new gateway</a>.';
 $string['setupfactor'] = 'Set up SMS';

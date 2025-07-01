@@ -1,5 +1,13 @@
 # core_files (subsystem) Upgrade notes
 
+## 4.5.4
+
+### Added
+
+- A new function `file_clear_draft_area()` has been added to delete the files in a draft area.
+
+  For more information see [MDL-72050](https://tracker.moodle.org/browse/MDL-72050)
+
 ## 4.5
 
 ### Added

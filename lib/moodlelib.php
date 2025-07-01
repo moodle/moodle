@@ -1514,19 +1514,30 @@ function set_user_preference($name, $value, $user = null) {
         return true;
     }
 
-    if ($preference = $DB->get_record('user_preferences', array('userid' => $user->id, 'name' => $name))) {
-        if ($preference->value === $value and isset($user->preference[$name]) and $user->preference[$name] === $value) {
-            // Preference already set to this value.
-            return true;
-        }
-        $DB->set_field('user_preferences', 'value', $value, array('id' => $preference->id));
+    $retry = 0;
+    $saved = false;
 
-    } else {
-        $preference = new stdClass();
-        $preference->userid = $user->id;
-        $preference->name   = $name;
-        $preference->value  = $value;
-        $DB->insert_record('user_preferences', $preference);
+    while (!$saved && $retry++ < 2) {
+        if ($preference = $DB->get_record('user_preferences', ['userid' => $user->id, 'name' => $name])) {
+            if ($preference->value === $value && isset($user->preference[$name]) && $user->preference[$name] === $value) {
+                // Preference already set to this value.
+                return true;
+            }
+            $DB->set_field('user_preferences', 'value', $value, ['id' => $preference->id]);
+            $saved = true;
+        } else {
+            $preference = new stdClass();
+            $preference->userid = $user->id;
+            $preference->name   = $name;
+            $preference->value  = $value;
+            try {
+                $DB->insert_record('user_preferences', $preference);
+                $saved = true;
+            } catch (dml_write_exception $e) {
+                // We have an insert race, so just ignore and try again.
+                $saved = false;
+            }
+        }
     }
 
     // Update value in cache.
@@ -5604,14 +5615,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         return false;
     }
 
-    if (defined('BEHAT_SITE_RUNNING')) {
-        // Fake email sending in behat.
+    if (defined('BEHAT_SITE_RUNNING') && !defined('TEST_EMAILCATCHER_MAIL_SERVER') &&
+            !defined('TEST_EMAILCATCHER_API_SERVER')) {
+
+        // Behat tests are running and we are not using email catcher so fake email sending.
         return true;
     }
 
     if (!empty($CFG->noemailever)) {
         // Hidden setting for development sites, set in config.php if needed.
-        debugging('Not sending email due to $CFG->noemailever config setting', DEBUG_NORMAL);
+        debugging('Not sending email due to $CFG->noemailever config setting', DEBUG_DEVELOPER);
         return true;
     }
 

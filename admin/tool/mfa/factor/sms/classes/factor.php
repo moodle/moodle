@@ -351,7 +351,10 @@ class factor extends object_factor_base {
      * @return bool
      */
     public function show_setup_buttons(): bool {
-        return true;
+        if (get_config('factor_sms', 'smsgateway') > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

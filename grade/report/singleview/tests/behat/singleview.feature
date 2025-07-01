@@ -237,6 +237,9 @@ Feature: We can use Single view
     When I navigate to "View > Single view" in the course gradebook
     Then I should see "Search for a user to view all their grades" in the "region-main" "region"
     And I should not see "Gronya,Beecham" in the "region-main" "region"
+    # edge case coverage: to ensure session variable not causing error upon second visit
+    And I reload the page
+    And I should see "Search for a user to view all their grades" in the "region-main" "region"
 
   Scenario: Teacher does not see his last viewed user report if that user is no longer enrolled in the course.
     Given I navigate to "View > Single view" in the course gradebook
@@ -247,6 +250,9 @@ Feature: We can use Single view
     When I am on the "Course 1" "grades > Single view > View" page
     Then I should see "Search for a user to view all their grades" in the "region-main" "region"
     And I should not see "Gronya,Beecham" in the "region-main" "region"
+    # edge case coverage: to ensure session variable not causing error upon second visit
+    And I reload the page
+    And I should see "Search for a user to view all their grades" in the "region-main" "region"
 
   Scenario: Teacher does not see his last viewed grade item report if the item no longer exists in the course.
     Given I navigate to "View > Single view" in the course gradebook
@@ -258,3 +264,6 @@ Feature: We can use Single view
     When I navigate to "View > Single view" in the course gradebook
     Then I should see "Select a grade item above" in the "region-main" "region"
     And I should not see "Test grade item" in the "region-main" "region"
+    # edge case coverage: to ensure session variable not causing error upon second visit
+    And I reload the page
+    And I should see "Select a grade item above" in the "region-main" "region"

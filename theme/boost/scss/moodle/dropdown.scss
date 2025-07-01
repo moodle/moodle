@@ -40,12 +40,22 @@
     width: fit-content;
 }
 
-// Add dropdown menu items styles for each theme color (mantainning default hover colour for contrast).
+// Add dropdown menu items styles for each theme color mantainning default hover/focus colour for contrast.
 @each $color, $value in $theme-colors {
-    .dropdown-item.text-#{$color} {
-        color: $value;
-        &:hover {
-            color: $dropdown-link-hover-color !important; /* stylelint-disable-line declaration-no-important */
+    .dropdown-item {
+        &:hover,
+        &:focus {
+            &.text-#{$color},
+            a.text-#{$color} {
+                color: $dropdown-link-hover-color !important; /* stylelint-disable-line declaration-no-important */
+            }
         }
     }
+}
+
+// Fixes for dropdown menu in RTL for moodle 4.x.
+.dir-rtl .dropdown-menu {
+    transform: none !important; /* stylelint-disable-line declaration-no-important */
+    top: 100% !important; /* stylelint-disable-line declaration-no-important */
+    right: inherit !important; /* stylelint-disable-line declaration-no-important */
 }

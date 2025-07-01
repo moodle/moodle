@@ -41,6 +41,18 @@ class manager {
     /** @var int */
     const REDIR_LOOP_THRESHOLD = 5;
 
+    /** @var array These components and related fileareas will not redirect. */
+    const ALLOWED_COMPONENTS = [
+        'core_admin' => [
+            'logocompact',
+            'logo',
+            'favicon',
+        ],
+        'tool_mfa' => [
+            'guidance',
+        ]
+    ];
+
     /**
      * Displays a debug table with current factor information.
      *
@@ -424,6 +436,37 @@ class manager {
             return self::NO_REDIRECT;
         }
 
+        // Ensure we have a moodle_url object if a string is provided.
+        if (is_string($url)) {
+            $url = new \moodle_url($url);
+        }
+
+        // Check for pluginfile.php urls.
+        $pluginfileurl = new \moodle_url('/pluginfile.php');
+        if ($url->compare($pluginfileurl)) {
+            // Get the slash arguments.
+            $args = explode('/', ltrim($url->get_slashargument(), '/'));
+
+            // Remove the contextid because we do not need it for this check.
+            array_shift($args);
+
+            // Get the component and filearea.
+            $component = clean_param(array_shift($args), PARAM_COMPONENT);
+            $filearea = clean_param(array_shift($args), PARAM_AREA);
+
+            // Check allowed components.
+            if (!array_key_exists($component, static::ALLOWED_COMPONENTS)) {
+                return self::REDIRECT;
+            }
+
+            // Check allowed fileareas.
+            if (!in_array($filearea, static::ALLOWED_COMPONENTS[$component])) {
+                return self::REDIRECT;
+            }
+
+            return self::NO_REDIRECT;
+        }
+
         // Remove all params before comparison.
         $url->remove_all_params();
 
@@ -440,12 +483,6 @@ class manager {
             if ($url->compare($upgradesettings, URL_MATCH_BASE)) {
                 return self::NO_REDIRECT;
             }
-        }
-
-        // Dont redirect logo images from pluginfile.php (for example: logo in header).
-        $logourl = new \moodle_url('/pluginfile.php/1/core_admin/logocompact/');
-        if ($url->compare($logourl)) {
-            return self::NO_REDIRECT;
         }
 
         // Admin not setup.
@@ -466,12 +503,6 @@ class manager {
 
         // User not properly setup.
         if (user_not_fully_set_up($USER)) {
-            return self::NO_REDIRECT;
-        }
-
-        // Enrolment.
-        $enrol = new \moodle_url('/enrol/index.php');
-        if ($enrol->compare($url, URL_MATCH_BASE)) {
             return self::NO_REDIRECT;
         }
 
@@ -497,6 +528,13 @@ class manager {
             if (!empty($policyurl) && $url->compare($policyurl, URL_MATCH_BASE)) {
                 return self::NO_REDIRECT;
             }
+        }
+
+        // Site policies from tool_policy.
+        $policyviewurl = new \moodle_url('/admin/tool/policy/view.php');
+        $policyindexurl = new \moodle_url('/admin/tool/policy/index.php');
+        if ($policyviewurl->compare($url, URL_MATCH_BASE) || $policyindexurl->compare($url, URL_MATCH_BASE)) {
+            return self::NO_REDIRECT;
         }
 
         // WS/AJAX check.

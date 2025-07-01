@@ -110,8 +110,9 @@ Feature: View activity completion in the SCORM activity
     And I switch to the main frame
     When I am on the "Music history" "scorm activity" page
     Then the "View" completion condition of "Music history" is displayed as "done"
-    # Conditions that are not possible to achieve (eg score below requirement but all attempts used) are marked as failed.
-    And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "failed"
+    # Conditions that are not possible to achieve (eg score below requirement but all attempts used) are still marked as todo.
+    # this is because the SCORM does not return a score and also that the completion is not possible anymore (as all attempts are used).
+    And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "todo"
     And the "Do all parts of this activity" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "Complete or pass the activity" completion condition of "Music history" is displayed as "done"

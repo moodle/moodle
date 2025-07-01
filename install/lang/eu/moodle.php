@@ -30,7 +30,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Hizkuntza';
-$string['moodlelogo'] = 'Moodleren logoa';
+$string['moodlelogo'] = 'Moodleko logoa';
 $string['next'] = 'Hurrengoa';
 $string['previous'] = 'Aurrekoa';
 $string['reload'] = 'Berriz kargatu';

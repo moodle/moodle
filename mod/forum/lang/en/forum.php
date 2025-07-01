@@ -779,7 +779,6 @@ $string['gradeitemnameforwholeforum'] = '{$a->name} whole forum';
 $string['gradeitemnameforrating'] = '{$a->name} rating';
 $string['grades:gradesavedfor'] = 'Grade saved for {$a->fullname}';
 $string['grades:gradesavefailed'] = 'Unable to save grade for {$a->fullname}: {$a->error}';
-$string['notgraded'] = 'Not graded';
 $string['nousersmatch'] = 'No user(s) found for given criteria';
 $string['showmoreusers'] = 'Show more users';
 $string['viewconversation'] = 'View discussion';

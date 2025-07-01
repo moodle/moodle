@@ -5,7 +5,7 @@
 //
 // Deprecation mixin.
 //
-@mixin deprecated-styles() {
+@mixin deprecated-styles($deprecatedrule) {
     /* stylelint-disable declaration-no-important */
     body.behat-site &,
     body.behat-site#{&},
@@ -14,7 +14,7 @@
         outline: 3px dotted $red !important;
         background-color: lighten($red, 50%) !important;
         &::before {
-            content: "Deprecated style in use" !important;
+            content: "Deprecated style in use (#{$deprecatedrule})" !important;
             color: $red !important;
             font-size: smaller !important;
         }
@@ -44,7 +44,7 @@
 // The .togglecompletion usage was deprecated in 311 and finally removed in 403.
 // Replaced by core_renderer::activity_information() and proper use of templates.
 .path-course-view li.activity form.togglecompletion {
-    @include deprecated-styles();
+    @include deprecated-styles(".togglecompletion");
 }
 .path-course-view li.activity form.togglecompletion .ajaxworking {
     width: 16px;

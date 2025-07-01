@@ -19,6 +19,7 @@ body {
     font-size: calc(#{$font-size-base} * 1.10);
     // Adjust sticky footer width to the main content area.
     .sticky-footer-content {
+        overflow: hidden;
         @include media-breakpoint-up(md) {
             .pagelayout-standard &,
             body.limitedwidth.uses-drawers & {

@@ -532,10 +532,6 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .slotnumber {
     text-align: center;
     margin: 0.1em 0.5em;
-    min-width: 2em;
-    display: inline-block;
-}
-#page-mod-quiz-edit li.section .slotnumber.unshuffled {
     display: inline-block;
 }
 #page-mod-quiz-edit li.section .slotnumber.shuffled {
@@ -546,6 +542,10 @@ table.quizreviewsummary td.cell {
 }
 #page-mod-quiz-edit li.section.shuffled .slotnumber.shuffled {
     display: inline-block;
+}
+
+#page-mod-quiz-edit .slotnumber .inplaceeditable {
+    white-space: nowrap;
 }
 
 #page-mod-quiz-edit .section-heading {
@@ -758,8 +758,6 @@ table.quizreviewsummary td.cell {
     overflow-y: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    display: inline-block;
-    height: 20px;
 }
 
 #page-mod-quiz-edit ul.slots .activityinstance span.instancename img {

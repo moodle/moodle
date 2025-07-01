@@ -123,6 +123,7 @@ class expired_contexts_manager {
             $expiredcontext = new expired_context(0, $orphan);
             $expiredcontext->delete();
         }
+        $orphaned->close();
 
         // Delete any child of a user context.
         $parentpath = $DB->sql_concat('ctxuser.path', "'/%'");
@@ -143,6 +144,7 @@ class expired_contexts_manager {
             $expiredcontext = new expired_context(0, $child);
             $expiredcontext->delete();
         }
+        $userchildren->close();
     }
 
     /**

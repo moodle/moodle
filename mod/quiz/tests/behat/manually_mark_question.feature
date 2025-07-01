@@ -62,6 +62,7 @@ Feature: Teachers can override the grade for any question
     And I am on the "Quiz 1 > student1 > Attempt 1" "mod_quiz > Attempt review" page
     And I follow "Make comment or override mark"
     And I switch to "commentquestion" window
+    And "Summary of attempt" "table" should exist
     And I set the field "Comment" to "Administrator's comment"
     And I select the "p" element in position "0" of the "Comment" TinyMCE editor
     And I click on the "Image" button for the "Comment" TinyMCE editor

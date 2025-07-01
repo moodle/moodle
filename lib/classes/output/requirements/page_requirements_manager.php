@@ -358,7 +358,7 @@ class page_requirements_manager {
     protected function get_api_base(): string {
         global $CFG;
 
-        if (!empty($CFG->router_configured)) {
+        if (!empty($CFG->routerconfigured)) {
             return sprintf(
                 "%s/api",
                 $CFG->wwwroot,

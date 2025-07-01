@@ -586,6 +586,12 @@ class secondary extends view {
         $activenode = $this->find_active_node();
         $incourseadmin = false;
 
+        $activeleafnode = $this->page->settingsnav->find_active_node();
+        $parentnode = $activeleafnode->parent ?? null;
+        if ($issingleactivitycourse && $parentnode && $parentnode->key === 'quiz_report') {
+            $activenode = $parentnode;
+        }
+
         if (!$activenode || ($issingleactivitycourse && $activenode->key === 'course')) {
             // Could be in the course admin section.
             $courseadmin = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);

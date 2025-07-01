@@ -219,8 +219,15 @@ class roles {
         ];
         $data['user'] = [
             'name' => get_string('mod_form_field_participant_list_type_user', 'bigbluebuttonbn'),
-            'children' => self::get_users_array($context, $bbactivity),
+            'children' => [],
         ];
+
+        if (empty($bbactivity)) {
+            return $data;
+        }
+
+        $data['user']['children'] = self::get_users_array($context, $bbactivity);
+
         return $data;
     }
 

@@ -47,7 +47,7 @@
         }}{{#unreadcount}} {{#str}} shownotificationwindowwithcount, message, {{.}} {{/str}} {{/unreadcount}} {{!
     }}{{/togglelabel}}
     {{$togglecontent}}
-        {{#pix}} i/notifications, core, {{#str}} togglenotificationmenu, message {{/str}} {{/pix}}
+        {{#pix}} i/notifications, core {{/pix}}
         <div
             class="count-container {{^unreadcount}}hidden{{/unreadcount}}"
             data-region="count-container"
@@ -69,6 +69,8 @@
            aria-label="{{#str}} markallread {{/str}}">
             <span class="normal-icon">{{#pix}} t/markasread, core {{/pix}}</span>
             {{> core/loading }}
+            {{! Records notifications being marked as read state message. }}
+            <span aria-live="polite" class="sr-only" data-region="notification-read-feedback"></span>
         </a>
         {{# urls.preferences }}
             <a href="{{{ . }}}"

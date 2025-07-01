@@ -337,6 +337,7 @@ final class oauth2_test extends \advanced_testcase {
             ],
             'Microsoft' => [
                 'type' => 'microsoft',
+                'discoveryurl' => '.well-known/openid-configuration',
             ],
             'Facebook' => [
                 'type' => 'facebook',
@@ -415,6 +416,12 @@ final class oauth2_test extends \advanced_testcase {
 
         // Set showonloginpage to service only.
         $googleissuer->set('showonloginpage', issuer::SERVICEONLY);
+        $googleissuer->update();
+
+        $this->assertFalse($googleissuer->is_available_for_login());
+
+        // Set showonloginpage to SMTP with XOAUTH2 only.
+        $googleissuer->set('showonloginpage', issuer::SMTPWITHXOAUTH2);
         $googleissuer->update();
 
         $this->assertFalse($googleissuer->is_available_for_login());

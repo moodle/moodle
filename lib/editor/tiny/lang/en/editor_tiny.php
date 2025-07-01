@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['settings'] = 'General settings';
 $string['pluginname'] = 'TinyMCE editor';
 $string['settings'] = 'General settings';
 $string['privacy:reason'] = 'The TinyMCE editor does not store any preferences or user data.';

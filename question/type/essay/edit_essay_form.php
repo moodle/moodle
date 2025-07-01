@@ -57,21 +57,24 @@ class qtype_essay_edit_form extends question_edit_form {
 
         // Create a text box that can be enabled/disabled for max/min word limits options.
         $wordlimitoptions = ['size' => '6', 'maxlength' => '6'];
-        $mingrp[] = $mform->createElement('text', 'minwordlimit', '', $wordlimitoptions);
-        $mform->setType('minwordlimit', PARAM_INT);
+
+        $strminwordlimit = get_string('minwordlimit', 'qtype_essay');
         $mingrp[] = $mform->createElement('checkbox', 'minwordenabled', '', get_string('enable'));
         $mform->setDefault('minwordenabled', 0);
-        $mform->addGroup($mingrp, 'mingroup', get_string('minwordlimit', 'qtype_essay'), ' ', false);
+        $mingrp[] = $mform->createElement('text', 'minwordlimit', '', $wordlimitoptions + ['aria-label' => $strminwordlimit]);
+        $mform->setType('minwordlimit', PARAM_INT);
+        $mform->addGroup($mingrp, 'mingroup', $strminwordlimit, ' ', false);
         $mform->addHelpButton('mingroup', 'minwordlimit', 'qtype_essay');
         $mform->disabledIf('minwordlimit', 'minwordenabled', 'notchecked');
         $mform->hideIf('mingroup', 'responserequired', 'eq', '0');
         $mform->hideIf('mingroup', 'responseformat', 'eq', 'noinline');
 
-        $maxgrp[] = $mform->createElement('text', 'maxwordlimit', '', $wordlimitoptions);
-        $mform->setType('maxwordlimit', PARAM_INT);
+        $strmaxwordlimit = get_string('maxwordlimit', 'qtype_essay');
         $maxgrp[] = $mform->createElement('checkbox', 'maxwordenabled', '', get_string('enable'));
         $mform->setDefault('maxwordenabled', 0);
-        $mform->addGroup($maxgrp, 'maxgroup', get_string('maxwordlimit', 'qtype_essay'), ' ', false);
+        $maxgrp[] = $mform->createElement('text', 'maxwordlimit', '', $wordlimitoptions + ['aria-label' => $strmaxwordlimit]);
+        $mform->setType('maxwordlimit', PARAM_INT);
+        $mform->addGroup($maxgrp, 'maxgroup', $strmaxwordlimit, ' ', false);
         $mform->addHelpButton('maxgroup', 'maxwordlimit', 'qtype_essay');
         $mform->disabledIf('maxwordlimit', 'maxwordenabled', 'notchecked');
         $mform->hideIf('maxgroup', 'responserequired', 'eq', '0');

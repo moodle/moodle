@@ -757,6 +757,7 @@ class core_date {
           if ($intltz === null) {
               // Where intl doesn't know about a recent timezone, map it to an equivalent existing zone.
               $intltzname = strtr($tz->getName(), [
+                  'America/Coyhaique' => 'America/Santiago',
                   'America/Ciudad_Juarez' => 'America/Denver',
                   'America/Nuuk' => 'America/Godthab',
                   'Europe/Kyiv' => 'Europe/Kiev',
@@ -818,7 +819,17 @@ class core_date {
           $calendar = IntlGregorianCalendar::createInstance($intltz);
           $calendar->setGregorianChange(PHP_INT_MIN);
 
-          return (new IntlDateFormatter($locale, $date_type, $time_type, $intltz, $calendar, $pattern))->format($timestamp);
+          // We need to account for invalid locales here in recent PHP versions, and ensure we catch errors and switch
+          // back to a default value where an invalid locale is provided.
+          try {
+              $formatter = new IntlDateFormatter($locale, $date_type, $time_type, $intltz, $calendar, $pattern);
+              $result = $formatter->format($timestamp);
+          } catch (Error $e) {
+              $formatter = new IntlDateFormatter(null, $date_type, $time_type, $intltz, $calendar, $pattern);
+              $result = $formatter->format($timestamp);
+          }
+
+          return $result;
         };
 
         // Same order as https://www.php.net/manual/en/function.strftime.php

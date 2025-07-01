@@ -34,13 +34,13 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     Then I should see "This site policy"
     And I should not see "Course overview"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     And I should see "Calendar"
     And I log out
     And I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And "Accepted" "text" should exist in the "User One" "table_row"
@@ -53,7 +53,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
       | tool/policy:acceptbehalf | allow   |
     When I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
@@ -76,7 +76,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
       | tool/policy:acceptbehalf | allow   |
     When I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     And I should see "Calendar"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
@@ -104,16 +104,16 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I should see "This privacy policy"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
-    And I set the field "I agree to the This privacy policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
+    And I set the field "I agree to the This privacy policy." to "1"
     And I press "Next"
     And I should see "Calendar"
     And I log out
     And I log in as "manager"
     And I press "Next"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
-    And I set the field "I agree to the This privacy policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
+    And I set the field "I agree to the This privacy policy." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And "Accepted" "text" should exist in the "User One" "table_row"
@@ -142,8 +142,8 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     When I log in as "manager"
     And I press "Next"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
-    And I set the field "I agree to the This privacy policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
+    And I set the field "I agree to the This privacy policy." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And I click on "Accept This site policy" "link" in the "User One" "table_row"
@@ -176,8 +176,8 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     When I log in as "manager"
     And I press "Next"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
-    And I set the field "I agree to the This privacy policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
+    And I set the field "I agree to the This privacy policy." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And I click on "Accept This site policy" "link" in the "User One" "table_row"
@@ -198,7 +198,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
   Scenario: Policies and agreements profile link visible for current user
     Given I log in as "user1"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     When I follow "Profile" in the user menu
     # User can see his own agreements link in the profile.
@@ -217,7 +217,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
       | tool/policy:acceptbehalf | allow   |
     And I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     # User can see agreements link in other user profiles because has the capability for accepting on behalf of them.
     When I am on "Course1" course homepage
@@ -231,7 +231,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
       | tool/policy:acceptbehalf | allow   |
     When I log in as "manager"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     And I log out
     And I am on the "manager" "user > profile" page logged in as "admin"
@@ -267,8 +267,8 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     When I log in as "manager"
     And I press "Next"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
-    And I set the field "I agree to the This privacy policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
+    And I set the field "I agree to the This privacy policy." to "1"
     And I press "Next"
     And I navigate to "Users > Privacy and policies > User agreements" in site administration
     And I click on "Select" "checkbox" in the "User One" "table_row"
@@ -290,7 +290,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I should see "This site policy"
     And I should not see "Course overview"
     And I press "Next"
-    And I set the field "I agree to the This site policy" to "1"
+    And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     And I should see "Calendar"
     And I log out
@@ -304,3 +304,14 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I log out
     When I log in as "user1"
     Then I should see "Calendar"
+
+  Scenario: Policy acceptance is prioritised when MFA is enabled
+    Given the following config values are set as admin:
+      | enabled | 1 | tool_mfa |
+    And the following config values are set as admin:
+      | enabled | 1 | factor_email |
+    And I log in as "user1"
+    And I press "Next"
+    And I set the field "I agree to the This site policy" to "1"
+    When I press "Next"
+    Then I should see "2-step verification"

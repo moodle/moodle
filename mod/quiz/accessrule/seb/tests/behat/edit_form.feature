@@ -39,13 +39,13 @@ Feature: Safe Exam Browser settings in quiz edit form
       | contextlevel | System                               |
       | reference    |                                      |
     And the following "user" exists:
-      | username     | teacher |
-      | firstname    | Teacher |
-      | lastname     | One     |
+      | username  | teacher |
+      | firstname | Teacher |
+      | lastname  | One     |
     And the following "course enrolment" exists:
-      | user         | teacher        |
-      | course       | C1             |
-      | role         | editingteacher |
+      | user   | teacher        |
+      | course | C1             |
+      | role   | editingteacher |
     And I log in as "teacher"
     # Create the quiz.
     When I add a quiz activity to course "Course 1" section "0" and I fill the form with:
@@ -81,6 +81,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Show Wi-Fi control"
     Then I should not see "Enable audio controls"
     Then I should not see "Mute on startup"
+    Then I should not see "Allow browser access to camera"
+    Then I should not see "Allow browser access to microphone"
     Then I should not see "Enable spell checking"
     Then I should not see "Enable URL filtering"
     Then I should not see "Filter also embedded content"
@@ -113,6 +115,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Show Wi-Fi control"
     Then I should not see "Enable audio controls"
     Then I should not see "Mute on startup"
+    Then I should not see "Allow browser access to camera"
+    Then I should not see "Allow browser access to microphone"
     Then I should not see "Enable spell checking"
     Then I should not see "Enable URL filtering"
     Then I should not see "Filter also embedded content"
@@ -143,6 +147,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Show Wi-Fi control"
     Then I should not see "Enable audio controls"
     Then I should not see "Mute on startup"
+    Then I should not see "Allow browser access to camera"
+    Then I should not see "Allow browser access to microphone"
     Then I should not see "Enable spell checking"
     Then I should not see "Enable URL filtering"
     Then I should not see "Filter also embedded content"
@@ -177,6 +183,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Show Wi-Fi control"
     Then I should not see "Enable audio controls"
     Then I should not see "Mute on startup"
+    Then I should not see "Allow browser access to camera"
+    Then I should not see "Allow browser access to microphone"
     Then I should not see "Enable spell checking"
     Then I should not see "Enable URL filtering"
     Then I should not see "Filter also embedded content"
@@ -207,6 +215,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should see "Show Wi-Fi control"
     Then I should see "Enable audio controls"
     Then I should not see "Mute on startup"
+    Then I should see "Allow browser access to camera"
+    Then I should see "Allow browser access to microphone"
     Then I should see "Enable spell checking"
     Then I should see "Enable URL filtering"
     Then I should not see "Filter also embedded content"

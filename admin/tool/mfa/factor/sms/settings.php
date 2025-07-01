@@ -51,70 +51,63 @@ if ($ADMIN->fulltree) {
         ),
     );
 
+    // Get available gateways, or link to gateway creation.
+    $gateways = [0 => new lang_string('none')];
     if (count($gatewayrecords) > 0) {
-        $gateways = [0 => new lang_string('none')];
         foreach ($gatewayrecords as $record) {
             $values = explode('\\', $record->gateway);
             $gatewayname = new lang_string('pluginname', $values[0]);
             $gateways[$record->id] = $record->name . ' (' . $gatewayname . ')';
         }
-
-        $settings->add(
-            new admin_setting_configselect(
-                'factor_sms/smsgateway',
-                new lang_string('settings:smsgateway', 'factor_sms'),
-                new lang_string('settings:smsgateway_help', 'factor_sms', $smsconfigureurl),
-                0,
-                $gateways,
-            ),
-        );
-
-        $enabled = new admin_setting_configcheckbox(
-            'factor_sms/enabled',
-            new lang_string('settings:enablefactor', 'tool_mfa'),
-            new lang_string('settings:enablefactor_help', 'tool_mfa'),
-            0,
-        );
-        $enabled->set_updatedcallback(function () {
-            \tool_mfa\manager::do_factor_action(
-                'sms',
-                get_config('factor_sms', 'enabled') ? 'enable' : 'disable',
-            );
-        });
-        $settings->add($enabled);
-
-        $settings->add(
-            new admin_setting_configtext(
-                'factor_sms/weight',
-                new lang_string('settings:weight', 'tool_mfa'),
-                new lang_string('settings:weight_help', 'tool_mfa'),
-                100,
-                PARAM_INT,
-            ),
-        );
-        $settings->hide_if('factor_sms/weight', 'factor_sms/enabled');
-
-        $settings->add(
-            new admin_setting_configduration(
-                'factor_sms/duration',
-                new lang_string('settings:duration', 'tool_mfa'),
-                new lang_string('settings:duration_help', 'tool_mfa'),
-                30 * MINSECS,
-                MINSECS,
-            ),
-        );
-        $settings->hide_if('factor_sms/duration', 'factor_sms/enabled');
     } else {
-        $settings->add(
-            new admin_setting_description(
-                'factor_sms/setupdesc',
-                '',
-                new lang_string(
-                    'settings:setupdesc',
-                    'factor_sms',
-                    $smsconfigureurl,
-                ),
-            ),
+        $notify = new \core\output\notification(
+            get_string('settings:setupdesc', 'factor_sms', $smsconfigureurl),
+            \core\output\notification::NOTIFY_WARNING
         );
+        $settings->add(new admin_setting_heading('factor_sms/setupdesc', '', $OUTPUT->render($notify)));
     }
+
+    $settings->add(
+        new admin_setting_configselect(
+            'factor_sms/smsgateway',
+            new lang_string('settings:smsgateway', 'factor_sms'),
+            new lang_string('settings:smsgateway_help', 'factor_sms', $smsconfigureurl),
+            0,
+            $gateways,
+        ),
+    );
+
+    $enabled = new admin_setting_configcheckbox(
+        'factor_sms/enabled',
+        new lang_string('settings:enablefactor', 'tool_mfa'),
+        new lang_string('settings:enablefactor_help', 'tool_mfa'),
+        0,
+    );
+    $enabled->set_updatedcallback(function () {
+        \tool_mfa\manager::do_factor_action(
+            'sms',
+            get_config('factor_sms', 'enabled') ? 'enable' : 'disable',
+        );
+    });
+    $settings->add($enabled);
+
+    $settings->add(
+        new admin_setting_configtext(
+            'factor_sms/weight',
+            new lang_string('settings:weight', 'tool_mfa'),
+            new lang_string('settings:weight_help', 'tool_mfa'),
+            100,
+            PARAM_INT,
+        ),
+    );
+
+    $settings->add(
+        new admin_setting_configduration(
+            'factor_sms/duration',
+            new lang_string('settings:duration', 'tool_mfa'),
+            new lang_string('settings:duration_help', 'tool_mfa'),
+            30 * MINSECS,
+            MINSECS,
+        ),
+    );
 }

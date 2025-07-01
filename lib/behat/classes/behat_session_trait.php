@@ -1038,14 +1038,25 @@ EOF;
             return;
         }
 
-        // Look for any DOM element with deprecated message in before pseudo-element.
+        // Look for DOM elements with deprecated message in before pseudo-element.
         $js = <<<EOF
-            [...document.querySelectorAll('*')].some(
-                el => window.getComputedStyle(el, ':before').content === '"Deprecated style in use"'
-            );
+            [...document.querySelectorAll('*')].flatMap(el => {
+                const beforeContent = window.getComputedStyle(el, ':before').content;
+                if (beforeContent.startsWith('"Deprecated style in use')) {
+                    const deprecatedClass = beforeContent.match(/\(([^)]+)\)/)?.[1] ?? 'unknown';
+                    return [deprecatedClass + ' (found in: ' + el.classList + ')'];
+                }
+                return [];
+            });
         EOF;
-        if ($this->evaluate_script($js)) {
-            throw new \Exception(html_entity_decode("Deprecated style in use", ENT_COMPAT));
+
+        $deprecations = $this->evaluate_script($js);
+        if ($deprecations) {
+            $deprecationdata = "Deprecated styles found:\n";
+            foreach ($deprecations as $deprecation) {
+                $deprecationdata .= "  {$deprecation}\n";
+            }
+            throw new \Exception(html_entity_decode($deprecationdata, ENT_COMPAT));
         }
     }
 
@@ -1717,6 +1728,32 @@ EOF;
         $matches = array_filter($tags, $callback);
 
         return !empty($matches);
+    }
+
+    /**
+     * Get the user object from an identifier.
+     *
+     * The user username and email fields are checked.
+     *
+     * @param string $identifier The user's username or email.
+     * @return stdClass|null The user id or null if not found.
+     */
+    protected function get_user_by_identifier(string $identifier): ?stdClass {
+        global $DB;
+
+        $sql = <<<EOF
+            SELECT *
+              FROM {user}
+             WHERE username = :username
+                OR email = :email
+        EOF;
+
+        $result = $DB->get_record_sql($sql, [
+            'username' => $identifier,
+            'email' => $identifier,
+        ]);
+
+        return $result ?: null;
     }
 
     /**

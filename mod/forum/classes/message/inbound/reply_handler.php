@@ -67,7 +67,7 @@ class reply_handler extends \core\message\inbound\handler {
      * @return bool Whether the message was successfully processed.
      */
     public function process_message(\stdClass $record, \stdClass $messagedata) {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
 
         // Load the post being replied to.
         $post = $DB->get_record('forum_posts', array('id' => $record->datavalue));
@@ -214,13 +214,13 @@ class reply_handler extends \core\message\inbound\handler {
                 $filesize += $attachment->filesize;
             }
 
-            if ($forum->maxbytes < $filesize) {
+            $maxbytes = get_user_max_upload_file_size($modcontext, $CFG->maxbytes, $course->maxbytes, $forum->maxbytes);
+            if ($maxbytes < $filesize) {
                 // Too many attachments.
-                mtrace("--> User attached {$filesize} bytes of files when only {$forum->maxbytes} where allowed. "
-                     . "Rejecting e-mail.");
+                mtrace("--> User attached {$filesize} bytes of files when only {$maxbytes} were allowed. Rejecting e-mail.");
                 $data = new \stdClass();
                 $data->forum = $forum;
-                $data->maxbytes = display_size($forum->maxbytes, 0);
+                $data->maxbytes = display_size($maxbytes);
                 $data->filesize = display_size($filesize);
                 throw new \core\message\inbound\processing_failed_exception('messageinboundfilesizeexceeded', 'mod_forum', $data);
             }

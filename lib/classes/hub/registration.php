@@ -145,6 +145,18 @@ class registration {
     }
 
     /**
+     * Returns registration secret.
+     *
+     * @return string
+     */
+    public static function get_secret(): string {
+        if ($registration = self::get_registration()) {
+            return $registration->secret;
+        }
+        return '';
+    }
+
+    /**
      * When was the registration last updated
      *
      * @return int|null timestamp or null if site is not registered
@@ -239,6 +251,8 @@ class registration {
      * @return string
      */
     public static function get_stats_summary($siteinfo) {
+        global $OUTPUT;
+
         $fieldsneedconfirm = self::get_new_registration_fields();
         $summary = html_writer::tag('p', get_string('sendfollowinginfo_help', 'hub')) .
             html_writer::start_tag('ul');
@@ -284,7 +298,7 @@ class registration {
             'sitetheme' => get_string('sitetheme', 'hub', $siteinfo['sitetheme']),
             'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
             'pluginusage' => get_string('pluginusagedata', 'hub', $pluginusagelinks),
-            'aiusage' => get_string('aiusagestats', 'hub', self::get_ai_usage_time_range(true)),
+            'aiusage' => $OUTPUT->render_from_template('core/ai_usage_data', ['aiusagedata' => self::show_ai_usage()]),
         ];
 
         foreach ($senddata as $key => $str) {
@@ -379,6 +393,8 @@ class registration {
         if (!$registration || $registration->token !== $token) {
             throw new moodle_exception('wrongtoken', 'hub', new moodle_url('/admin/registration/index.php'));
         }
+
+        // Update hub information of the site.
         $record = ['id' => $registration->id];
         $record['token'] = $newtoken;
         $record['confirmed'] = 1;
@@ -459,16 +475,23 @@ class registration {
     public static function register($returnurl) {
         global $DB, $SESSION;
 
-        if (self::is_registered()) {
+        // We should also check if the url is registered in the hub.
+        if (self::is_registered() && api::is_site_registered_in_hub()) {
             // Caller of this method must make sure that site is not registered.
             throw new \coding_exception('Site already registered');
         }
 
+        // Delete 'confirmed' registrations.
+        $DB->delete_records('registration_hubs', ['confirmed' => 1]);
+
+        // Get 'unconfirmed' registration.
         $hub = self::get_registration(false);
         if (empty($hub)) {
             // Create a new record in 'registration_hubs'.
             $hub = new stdClass();
-            $hub->token = get_site_identifier();
+            // Let's add date('Ymdhis') to make the token unique.
+            $hub->token = get_site_identifier() . date('Ymdhis');
+            // Secret is identical to token until registration confirmed (confirmregistration.php).
             $hub->secret = $hub->token;
             $hub->huburl = HUB_MOODLEORGHUBURL;
             $hub->hubname = 'moodle';
@@ -651,7 +674,10 @@ class registration {
         if (!has_capability('moodle/site:config', context_system::instance())) {
             return;
         }
-        if (self::show_after_install() || self::get_new_registration_fields()) {
+        if (
+            site_is_public() &&
+            (self::show_after_install() || self::get_new_registration_fields())
+        ) {
             $returnurl = new moodle_url($url);
             redirect(new moodle_url('/admin/registration/index.php', ['returnurl' => $returnurl->out_as_local_url(false)]));
         }
@@ -723,6 +749,75 @@ class registration {
             'timefrom' => $timefrom,
             'timeto' => $timeto,
         ];
+    }
+
+    /**
+     * Displays AI usage data for all providers.
+     *
+     * @return array Array containing usage data, grouped by provider
+     */
+    public static function show_ai_usage(): array {
+        // Initialize aiusage collection.
+        $aiusage = [];
+
+        // Process each provider's data.
+        foreach (self::get_ai_usage_data() as $provider => $actions) {
+            if ($provider === 'time_range') {
+                $aiusage['timerange'] = [
+                    'label' => get_string($provider, 'hub'),
+                    'values' => self::format_ai_usage_actions($actions),
+                ];
+            } else {
+                // Initialize provider data structure.
+                $aiusage['providers'][] = [
+                    'providername' => get_string('pluginname', $provider),
+                    'aiactions' => self::format_ai_usage_actions($actions),
+                ];
+            }
+        }
+
+        return $aiusage;
+    }
+
+    /**
+     * Formats individual actions for a provider.
+     *
+     * @param array $actions Raw actions data
+     * @return array Formatted action data
+     */
+    private static function format_ai_usage_actions(array $actions): array {
+        $formattedactions = [];
+
+        foreach ($actions as $action => $values) {
+            if (in_array($action, ['timefrom', 'timeto'])) {
+                $formattedactions[] = get_string($action, 'hub', userdate($values));
+            } else {
+                $formattedactions[] = [
+                    'actionname' => get_string("action_$action", 'core_ai'),
+                    'aiactionvalues' => self::format_ai_usage_action_values($values),
+                ];
+            }
+        }
+
+        return $formattedactions;
+    }
+
+    /**
+     * Formats action values into formatted strings.
+     *
+     * @param array $values Action values to format
+     * @return array Formatted action values
+     */
+    private static function format_ai_usage_action_values(array $values): array {
+        $formattedvalues = [];
+
+        foreach ($values as $key => $value) {
+            if (get_string_manager()->string_exists($key, 'hub', $value)) {
+                $formattedvalues[]['values'] = get_string($key, 'hub', $value);
+            }
+        }
+
+        return $formattedvalues;
     }
 
     /**

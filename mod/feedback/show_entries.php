@@ -85,16 +85,20 @@ if ($data = $courseselectform->get_data()) {
 // Print the page header.
 navigation_node::override_active_url($baseurl);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+
+/** @var \mod_feedback\output\renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_feedback');
+$renderer->set_title(
+        [format_string($feedback->name), format_string($course->fullname)],
+        get_string('responses', 'feedback')
+);
+
 $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
 ]);
 $PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
-
-/** @var \mod_feedback\output\renderer $renderer */
-$renderer = $PAGE->get_renderer('mod_feedback');
 echo $renderer->main_action_bar($actionbar);
 echo $OUTPUT->heading(get_string('show_entries', 'mod_feedback'), 3);
 

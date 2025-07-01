@@ -82,6 +82,7 @@
         >
             {{#str}}removefromyourcontacts, message{{/str}}
         </button>
+        {{#cancreatecontact}}
         <button
             type="button"
             class="btn btn-primary btn-block {{#iscontact}}hidden{{/iscontact}}"
@@ -92,5 +93,6 @@
         >
             {{#str}}addtoyourcontacts, message{{/str}}
         </button>
+        {{/cancreatecontact}}
     </div>
 </div>

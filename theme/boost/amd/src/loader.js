@@ -91,6 +91,12 @@ const enableTooltips = () => {
         container: 'body',
         selector: '[data-toggle="tooltip"]',
     });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            // Hide tooltips on escape key press.
+            $('.tooltip').tooltip('hide');
+        }
+    });
 };
 
 const pendingPromise = new Pending('theme_boost/loader:init');

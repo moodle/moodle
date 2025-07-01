@@ -366,6 +366,9 @@ class stateactions {
             // We need to get the latest modinfo on each iteration because the section numbers change.
             $modinfo = get_fast_modinfo($course);
             $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
+            if (!course_can_delete_section($course, $section)) {
+                continue;
+            }
             // Send all activity deletions.
             if (!empty($modinfo->sections[$section->section])) {
                 foreach ($modinfo->sections[$section->section] as $modnumber) {
@@ -1205,6 +1208,40 @@ class stateactions {
 
         // Method "can_add_moduleinfo" called in "prepare_new_moduleinfo_data" will handle the capability checks.
         [, , , , $moduleinfo] = prepare_new_moduleinfo_data($course, $modname, $targetsectionnum);
+        $moduleinfo->beforemod = $targetcmid;
+        create_module((object) $moduleinfo);
+
+        // Adding module affects section structure, and if the module has a delegated section even the course structure.
+        $this->course_state($updates, $course);
+    }
+
+    /**
+     * Create a new course module.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param string $modname the module name
+     * @param int $targetsectionid target section id
+     * @param int|null $targetcmid optional target cm id
+     */
+    public function new_module(
+        stateupdates $updates,
+        stdClass $course,
+        string $modname,
+        int $targetsectionid,
+        ?int $targetcmid = null
+    ): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/modlib.php');
+
+        $coursecontext = context_course::instance($course->id);
+        require_capability('moodle/course:update', $coursecontext);
+
+        $modinfo = get_fast_modinfo($course);
+        $section = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+
+        // Method "can_add_moduleinfo" called in "prepare_new_moduleinfo_data" will handle the capability checks.
+        [, , , , $moduleinfo] = prepare_new_moduleinfo_data($course, $modname, $section->sectionnum);
         $moduleinfo->beforemod = $targetcmid;
         create_module((object) $moduleinfo);
 

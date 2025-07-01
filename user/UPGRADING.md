@@ -1,5 +1,13 @@
 # core_user (subsystem) Upgrade notes
 
+## 4.5.5
+
+### Added
+
+- New method `\core_user::get_dummy_fullname(...)` for returning dummy user fullname comprised of configured name fields only
+
+  For more information see [MDL-82132](https://tracker.moodle.org/browse/MDL-82132)
+
 ## 4.5
 
 ### Added

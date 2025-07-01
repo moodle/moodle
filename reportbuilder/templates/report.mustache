@@ -35,10 +35,11 @@
     }
 }}
 <div class="reportbuilder-report {{classes}}"
+        id="reportbuilder-report-{{uniqid}}"
         data-region="core_reportbuilder/report"
         data-report-id="{{id}}"
         data-report-type="{{type}}"
-        data-parameter="{{parameters}}"
+        data-report-parameters="{{parameters}}"
         {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
             <div class="reportbuilder-wrapper">
                 {{#filterspresent}}

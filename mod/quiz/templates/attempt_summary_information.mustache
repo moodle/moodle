@@ -29,11 +29,15 @@
             {"title": "Completed", "content": "Thursday, 23 November 2023, 9:32 AM"},
             {"title": "Duration", "content": "3 minutes"},
             {"title": "Grade", "content": "Not yet graded"}
-        ]
+        ],
+        "caption": "Summary of attempt"
     }
 }}
 {{#hasitems}}
 <table class="generaltable generalbox quizreviewsummary mb-0">
+       {{#caption}}
+           <caption class="sr-only">{{caption}}</caption>
+       {{/caption}}
     <tbody>
     {{#items}}
         <tr>

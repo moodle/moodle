@@ -177,7 +177,7 @@ final class settings_provider_test extends \advanced_testcase {
     public function test_hideifs(): void {
         $settinghideifs = settings_provider::get_quiz_hideifs();
 
-        $this->assertCount(23, $settinghideifs);
+        $this->assertCount(25, $settinghideifs);
 
         $this->assertArrayHasKey('seb_templateid', $settinghideifs);
         $this->assertCount(1, $settinghideifs['seb_templateid']);
@@ -357,6 +357,26 @@ final class settings_provider_test extends \advanced_testcase {
         $this->assert_hide_if(
             $settinghideifs['seb_enableaudiocontrol'][0],
             'seb_enableaudiocontrol',
+            'seb_requiresafeexambrowser',
+            'noteq',
+            settings_provider::USE_SEB_CONFIG_MANUALLY
+        );
+
+        $this->assertArrayHasKey('seb_allowcapturecamera', $settinghideifs);
+        $this->assertCount(1, $settinghideifs['seb_allowcapturecamera']);
+        $this->assert_hide_if(
+            $settinghideifs['seb_allowcapturecamera'][0],
+            'seb_allowcapturecamera',
+            'seb_requiresafeexambrowser',
+            'noteq',
+            settings_provider::USE_SEB_CONFIG_MANUALLY
+        );
+
+        $this->assertArrayHasKey('seb_allowcapturemicrophone', $settinghideifs);
+        $this->assertCount(1, $settinghideifs['seb_allowcapturemicrophone']);
+        $this->assert_hide_if(
+            $settinghideifs['seb_allowcapturemicrophone'][0],
+            'seb_allowcapturemicrophone',
             'seb_requiresafeexambrowser',
             'noteq',
             settings_provider::USE_SEB_CONFIG_MANUALLY
@@ -1319,6 +1339,8 @@ final class settings_provider_test extends \advanced_testcase {
         $allsettings->seb_regexblocked = 20;
         $allsettings->seb_templateid = 21;
         $allsettings->seb_allowedbrowserexamkeys = 22;
+        $allsettings->seb_allowcapturecamera = 23;
+        $allsettings->seb_allowcapturemicrophone = 24;
 
         return $allsettings;
     }
@@ -1422,6 +1444,8 @@ final class settings_provider_test extends \advanced_testcase {
                 'seb_enableaudiocontrol' => [
                     'seb_muteonstartup' => [],
                 ],
+                'seb_allowcapturecamera' => [],
+                'seb_allowcapturemicrophone' => [],
                 'seb_allowspellchecking' => [],
                 'seb_activateurlfiltering' => [
                     'seb_filterembeddedcontent' => [],

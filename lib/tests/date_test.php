@@ -740,6 +740,12 @@ final class date_test extends advanced_testcase {
                 "%e %b %Y",
                 " 9 окт. 2024",
             ],
+            'Invalid locale' => [
+                1728487000,
+                'xx',
+                '%B %Y',
+                'October 2024',
+            ],
         ];
     }
 

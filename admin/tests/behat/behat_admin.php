@@ -81,6 +81,8 @@ class behat_admin extends behat_base {
 
             $this->execute('behat_forms::i_set_the_field_with_xpath_to', [$fieldxpath, $value]);
             $this->execute("behat_general::i_click_on", [get_string('savechanges'), 'button']);
+            // Wait for the page to be redirected.
+            $this->execute("behat_general::i_wait_to_be_redirected");
         }
     }
 

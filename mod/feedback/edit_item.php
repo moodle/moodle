@@ -98,7 +98,14 @@ if ($item->id) {
     $PAGE->navbar->add(get_string('add_item', 'feedback'));
 }
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+
+$renderer = $PAGE->get_renderer('mod_feedback');
+$pagetitle = ($itemid) ? get_string('edit_item', 'feedback') : get_string('add_item', 'feedback');
+$renderer->set_title(
+    [format_string($feedback->name), format_string($course->fullname)],
+    $pagetitle
+);
+
 $PAGE->activityheader->set_attrs([
     "hidecompletion" => true,
     "description" => ''

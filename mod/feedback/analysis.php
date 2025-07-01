@@ -45,7 +45,13 @@ if (!$feedbackstructure->can_view_analysis()) {
 /// Print the page header
 
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+
+$renderer = $PAGE->get_renderer('mod_feedback');
+$renderer->set_title(
+    [format_string($feedback->name), format_string($course->fullname)],
+    get_string('analysis', 'feedback')
+);
+
 $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
