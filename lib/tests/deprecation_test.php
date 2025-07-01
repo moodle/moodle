@@ -187,11 +187,10 @@ final class deprecation_test extends \advanced_testcase {
         ];
     }
 
-    public function test_deprecated_without_replacement(): void {
+    public function test_deprecated_missing_constuctor_parameters(): void {
         $this->expectException(\coding_exception::class);
-        new deprecated(
-            replacement: null,
-        );
+        $this->expectExceptionMessage('A deprecated item must provide either a replacement, reason, or an issue number.');
+        new deprecated();
     }
 
     /**
