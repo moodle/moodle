@@ -186,8 +186,37 @@ class enrol_database_plugin extends enrol_plugin {
                         continue;
                     }
 
-                    $enrolid = $this->add_instance($course);
-                    $instances[$course->id] = $DB->get_record('enrol', array('id'=>$enrolid));
+                    $timeout = 5;
+                    $locktype = 'enrol_database_user_enrolments';
+                    $resource = 'course:' . $course->id;
+                    $lockfactory = \core\lock\lock_config::get_lock_factory($locktype);
+                    if ($lock = $lockfactory->get_lock($resource, $timeout)) {
+                        try {
+                            $instance = $DB->get_record('enrol', ['enrol' => 'database', 'courseid' => $course->id]);
+                            if (!$instance) {
+                                $enrolid = $this->add_instance($course);
+                                $instance = $DB->get_record('enrol', ['id' => $enrolid]);
+                            }
+                        } finally {
+                            $lock->release();
+                        }
+                    } else {
+                        // Attempt to reuse an existing record added by another process during race condition.
+                        if ($instance = $DB->get_record('enrol', ['enrol' => 'database', 'courseid' => $course->id])) {
+                            $instances[$course->id] = $instance;
+                            continue;
+                        } else {
+                            // Give up.
+                            throw new moodle_exception(
+                                'locktimeout',
+                                'enrol_database',
+                                '',
+                                null,
+                                'Could not create database enrolment instance for course ' . $course->id
+                            );
+                        }
+                    }
+                    $instances[$course->id] = $instance;
                 }
             }
             $rs->Close();
