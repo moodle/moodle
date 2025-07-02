@@ -23,6 +23,7 @@
  */
 
 function xmldb_enrol_database_upgrade($oldversion) {
+    global $DB;
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -37,6 +38,56 @@ function xmldb_enrol_database_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2024100701) {
+        // Remove duplicated enrolment records, keeping only the earliest records.
+        $transaction = $DB->start_delegated_transaction();
+        $courses = $DB->get_records_sql(
+            "
+             SELECT courseid
+               FROM {enrol}
+              WHERE enrol = 'database'
+           GROUP BY courseid
+             HAVING COUNT(*) > 1"
+        );
+        foreach ($courses as $course) {
+            $instances = $DB->get_records('enrol', ['enrol' => 'database', 'courseid' => $course->courseid], 'id ASC');
+            $idtokeep = array_key_first($instances);
+            $idstodelete = array_slice(array_keys($instances), 1);
+            [$insql, $inparams] = $DB->get_in_or_equal($idstodelete, SQL_PARAMS_NAMED);
+
+            // Migrate enrolments where possible.
+            $DB->execute(
+                "
+                UPDATE {user_enrolments} ue
+                   SET enrolid = :idtokeep1
+                 WHERE ue.enrolid $insql
+                   AND NOT EXISTS (
+                       SELECT 1
+                         FROM {user_enrolments} ue2
+                        WHERE ue2.userid  = ue.userid
+                          AND ue2.enrolid = :idtokeep2)",
+                array_merge($inparams, ['idtokeep1' => $idtokeep, 'idtokeep2' => $idtokeep])
+            );
+
+            $DB->delete_records_select('user_enrolments', "enrolid $insql", $inparams);
+
+            // Migrate role assignments.
+            $DB->execute(
+                "
+                UPDATE {role_assignments}
+                   SET itemid = :idtokeep
+                 WHERE component = :component
+                   AND itemid $insql",
+                array_merge($inparams, ['component' => 'enrol_database', 'idtokeep' => $idtokeep])
+            );
+            $DB->delete_records_select('role_assignments', "itemid $insql", $inparams);
+
+            $DB->delete_records_list('enrol', 'id', $idstodelete);
+        }
+        $transaction->allow_commit();
+        upgrade_plugin_savepoint(true, 2024100701, 'enrol', 'database');
+    }
 
     return true;
 }
