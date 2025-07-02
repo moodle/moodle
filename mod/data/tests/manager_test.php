@@ -770,4 +770,348 @@ final class manager_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test for get_all_entries().
+     *
+     * @covers ::get_all_entries
+     */
+    public function test_get_all_entries(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $data = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $manager = manager::create_from_instance($data);
+
+        // Empty database should return empty array.
+        $this->assertEmpty($manager->get_all_entries());
+
+        // Create data record.
+        $datarecords = new \stdClass();
+        $datarecords->userid = '2';
+        $datarecords->dataid = $data->id;
+
+        // Add a field.
+        /** @var \mod_data_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+                'name' => 'myfield',
+                'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $data);
+        $generator->create_entry(
+            $data,
+            [$field->field->id => 'Example entry'],
+        );
+        $this->assertCount(1, $manager->get_all_entries());
+    }
+
+    /**
+     * Test filter_entries_by_user.
+     *
+     * @covers ::filter_entries_by_user
+     * @dataProvider provider_test_filter_entries_by_user
+     *
+     * @param array $entries
+     * @param array $myentries
+     * @param int $expected
+     * @return void
+     */
+    public function test_filter_entries_by_user(
+            array $entries,
+            array $myentries,
+            int $expected,
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+
+        $activity = $this->getDataGenerator()->create_module(
+                manager::MODULE,
+                ['course' => $course, 'approval' => 1],
+        );
+
+        // Add a field.
+        /** @var \mod_data_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+                'name' => 'myfield',
+                'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $activity);
+        foreach ($entries as $entry => $approved) {
+            $generator->create_entry(
+                    $activity,
+                    [$field->field->id => 'Example entry: '.$entry],
+                    0,
+                    [],
+                    ['approved' => $approved],
+            );
+        }
+
+        $currentuser = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->setUser($currentuser);
+        foreach ($myentries as $entry => $approved) {
+            $generator->create_entry(
+                    $activity,
+                    [$field->field->id => 'Example entry: '.$entry],
+                    0,
+                    [],
+                    ['approved' => $approved],
+            );
+        }
+
+        $manager = manager::create_from_instance($activity);
+        $allentries = $manager->get_all_entries();
+        $this->assertCount($expected, $manager->filter_entries_by_user($allentries, $currentuser->id));
+    }
+
+    /**
+     * Data provider for test_filter_entries_by_user.
+     *
+     * @return array
+     */
+    public static function provider_test_filter_entries_by_user(): array {
+        return [
+                'Empty database filtered by current user' => [
+                        'entries' => [],
+                        'myentries' => [],
+                        'expected' => 0,
+                ],
+                'User without own entries filtered by current user' => [
+                        'entries' => [1, 0],
+                        'myentries' => [],
+                        'expected' => 0,
+                ],
+                'User with own entries filtered by current user' => [
+                        'entries' => [1, 0],
+                        'myentries' => [1, 0],
+                        'expected' => 2,
+                ],
+        ];
+    }
+
+    /**
+     * Test filter_entries_by_approval.
+     *
+     * @covers ::filter_entries_by_approval
+     * @dataProvider provider_test_filter_entries_by_approval
+     *
+     * @param array $entries
+     * @param int $approvalfilter
+     * @param int $expected
+     * @return void
+     */
+    public function test_filter_entries_by_approval(
+            array $entries,
+            int $approvalfilter,
+            int $expected,
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+
+        $activity = $this->getDataGenerator()->create_module(
+                manager::MODULE,
+                ['course' => $course, 'approval' => 1],
+        );
+
+        // Add a field.
+        /** @var \mod_data_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+                'name' => 'myfield',
+                'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $activity);
+        foreach ($entries as $entry => $approved) {
+            $generator->create_entry(
+                    $activity,
+                    [$field->field->id => 'Example entry: '.$entry],
+                    0,
+                    [],
+                    ['approved' => $approved],
+            );
+        }
+
+        $manager = manager::create_from_instance($activity);
+        $allentries = $manager->get_all_entries();
+
+        $this->assertCount($expected, $manager->filter_entries_by_approval($allentries, $approvalfilter));
+    }
+
+    /**
+     * Data provider for test_filter_entries_by_approval.
+     *
+     * @return array
+     */
+    public static function provider_test_filter_entries_by_approval(): array {
+        return [
+                'Empty database filtered by approved' => [
+                        'entries' => [],
+                        'approvalfilter' => 1,
+                        'expected' => 0,
+                ],
+                'Database with entries filtered by approved' => [
+                        'entries' => [1, 0, 1, 1],
+                        'approvalfilter' => 1,
+                        'expected' => 3,
+                ],
+                'Database with entries filtered by non approved' => [
+                        'entries' => [1, 0, 1, 1],
+                        'approvalfilter' => 0,
+                        'expected' => 1,
+                ],
+        ];
+    }
+
+    /**
+     * Test get_comments.
+     *
+     * @covers ::get_comments
+     * @dataProvider provider_test_get_comments
+     *
+     * @param array $entries
+     * @param int $expected
+     * @param ?int $approvalfilter
+     * @return void
+     */
+    public function test_get_comments(
+        array $entries,
+        int $expected,
+        ?int $approvalfilter = null,
+    ): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->usecomments = true;
+
+        $course = $this->getDataGenerator()->create_course(['enablecomment' => 1]);
+        $this->setAdminUser();
+
+        $activity = $this->getDataGenerator()->create_module(
+            manager::MODULE,
+            ['course' => $course, 'approval' => 1, 'comments' => 1],
+        );
+
+        // Add a field.
+        /** @var \mod_data_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+            'name' => 'myfield',
+            'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $activity);
+        foreach ($entries as $entry) {
+            $entryid = $generator->create_entry(
+                $activity,
+                [$field->field->id => 'Example entry'],
+                0,
+                [],
+                ['approved' => $entry['approved']],
+            );
+            if ($entry['comments']) {
+                $commentdata = [
+                    [
+                        'contextlevel' => 'module',
+                        'instanceid' => $activity->cmid,
+                        'component' => 'mod_data',
+                        'content' => 'abc',
+                        'itemid' => $entryid,
+                        'area' => 'database_entry',
+                    ],
+                ];
+                \core_comment_external::add_comments($commentdata);
+            }
+        }
+        $manager = manager::create_from_instance($activity);
+        $this->assertCount($expected, $manager->get_comments(approved: $approvalfilter));
+    }
+
+    /**
+     * Data provider for test comments extras.
+     *
+     * @return array
+     */
+    public static function provider_test_get_comments(): array {
+        return [
+            'No comments - no filter' => [
+                'entries' => [
+                    ['approved' => 1, 'comments' => false],
+                    ['approved' => 0, 'comments' => false],
+                ],
+                'expected' => 0,
+                'approvalfilter' => null,
+            ],
+            'No comments - filtered by approved' => [
+                'entries' => [
+                    ['approved' => 1, 'comments' => false],
+                    ['approved' => 0, 'comments' => false],
+                ],
+                'expected' => 0,
+                'approvalfilter' => 1,
+            ],
+            'No comments - filtered by pending' => [
+                'entries' => [
+                    ['approved' => 1, 'comments' => false],
+                    ['approved' => 0, 'comments' => false],
+                ],
+                'expected' => 0,
+                'approvalfilter' => 0,
+            ],
+            'With comments - no filter' => [
+                'entries' => [
+                    ['approved' => 1, 'comments' => true],
+                    ['approved' => 0, 'comments' => true],
+                ],
+                'expected' => 2,
+                'approvalfilter' => null,
+            ],
+            'With comments - filtered by approved' => [
+                'entries' => [
+                    ['approved' => 1, 'comments' => true],
+                    ['approved' => 0, 'comments' => true],
+                ],
+                'expected' => 1,
+                'approvalfilter' => 1,
+            ],
+            'With comments - filtered by pending' => [
+                'entries' => [
+                    ['approved' => 1, 'comments' => true],
+                    ['approved' => 0, 'comments' => true],
+                ],
+                'expected' => 1,
+                'approvalfilter' => 0,
+            ],
+        ];
+    }
+
+    /**
+     * Test get_approval_requested.
+     *
+     * @covers ::get_approval_requested
+     */
+    public function test_get_approval_requested(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+
+        $activity = $this->getDataGenerator()->create_module(
+                manager::MODULE,
+                ['course' => $course, 'approval' => 1],
+        );
+        $manager = manager::create_from_instance($activity);
+        $this->assertEquals(1, $manager->get_approval_requested());
+
+        $activity = $this->getDataGenerator()->create_module(
+                manager::MODULE,
+                ['course' => $course, 'approval' => 0],
+        );
+        $manager = manager::create_from_instance($activity);
+        $this->assertEquals(0, $manager->get_approval_requested());
+    }
 }

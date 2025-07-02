@@ -92,6 +92,11 @@ class behat_mod_data_generator extends behat_generator_base {
         } else {
             $groupid = 0;
         }
+        $options = null;
+        if (array_key_exists('approved', $data)) {
+            $options = ['approved' => $data['approved']];
+            unset($data['approved']);
+        }
 
         $data = array_reduce(array_keys($data), function ($fields, $fieldname) use ($data, $database) {
             global $DB;
@@ -103,7 +108,7 @@ class behat_mod_data_generator extends behat_generator_base {
             return $fields;
         }, []);
 
-        $this->get_data_generator()->create_entry($database, $data, $groupid, [], null, $userid);
+        $this->get_data_generator()->create_entry($database, $data, $groupid, [], $options, $userid);
     }
 
     /**

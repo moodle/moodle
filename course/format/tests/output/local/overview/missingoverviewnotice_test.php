@@ -67,7 +67,7 @@ final class missingoverviewnotice_test extends \advanced_testcase {
             'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'expectempty' => false],
             'book' => ['modname' => 'book', 'expectempty' => false],
             'choice' => ['modname' => 'choice', 'expectempty' => false],
-            'data' => ['modname' => 'data', 'expectempty' => false],
+            'data' => ['modname' => 'data', 'expectempty' => true],
             'feedback' => ['modname' => 'feedback', 'expectempty' => true],
             'folder' => ['modname' => 'folder', 'expectempty' => false],
             'forum' => ['modname' => 'forum', 'expectempty' => false],
