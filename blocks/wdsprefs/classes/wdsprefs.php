@@ -255,6 +255,10 @@ class wdsprefs {
                     $coursedata->category = $ccat->id;
                     $coursedata->visible = 1;
 
+                    // Add the course start and end dates.
+                    $coursedata->startdate = $period->start_date;
+                    $coursedata->enddate = $period->end_date + (($s->erange / 3) * 86400);
+
                     $excourseidn = $DB->get_record('course', ['idnumber' => $idnumber]);
                     $excoursesn = $DB->get_record('course', ['shortname' => $fullname]);
 
@@ -728,6 +732,10 @@ class wdsprefs {
             $course->numsections = $coursedefaults->numsections;
             $course->summary = 'CrossSplit course shell containing sections from one or more courses';
             $course->idnumber = $idnumber;
+
+            // Add the course start and end dates.
+            $course->startdate = $period->start_date;
+            $course->enddate = $period->end_date + (($s->erange / 3) * 86400);
 
             // Get the category based on subject of first course.
             $cat = self::get_subject_category($courseinfo->course_subject_abbreviation);
