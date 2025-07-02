@@ -83,18 +83,22 @@ class overview extends \core_courseformat\activityoverviewbase {
         if (!has_capability('mod/assign:grade', $this->context)) {
             return null;
         }
-        $needgrading = $this->assign->count_submissions_need_grading();
 
         $alertlabel = get_string('numberofsubmissionsneedgrading', 'assign');
-        $name = get_string('gradeverb');
-
+        $name = get_string('view');
         $badge = '';
-        if ($needgrading > 0) {
-            $renderer = $this->rendererhelper->get_core_renderer();
-            $badge = $renderer->notice_badge(
-                contents: $needgrading,
-                title: $alertlabel,
-            );
+        $needgrading = 0;
+
+        if (is_gradable(courseid: $this->course->id, itemtype: 'mod', itemmodule: 'assign', iteminstance: $this->cm->instance)) {
+            $needgrading = $this->assign->count_submissions_need_grading();
+            if ($needgrading > 0) {
+                $name = get_string('gradeverb');
+                $renderer = $this->rendererhelper->get_core_renderer();
+                $badge = $renderer->notice_badge(
+                    contents: $needgrading,
+                    title: $alertlabel,
+                );
+            }
         }
 
         $content = new action_link(
@@ -137,20 +141,14 @@ class overview extends \core_courseformat\activityoverviewbase {
         $submissions = $this->assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED);
         $total = $this->assign->count_participants($activitygroup);
 
-        $content = new action_link(
-            url: new url('/mod/assign/view.php', ['id' => $this->cm->id, 'action' => 'grading']),
-            text: get_string(
+        return new overviewitem(
+            name: get_string('submissions', 'assign'),
+            value: $submissions,
+            content: get_string(
                 'count_of_total',
                 'core',
                 ['count' => $submissions, 'total' => $total]
             ),
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
-        );
-
-        return new overviewitem(
-            name: get_string('submissions', 'assign'),
-            value: $submissions,
-            content: $content,
             textalign: text_align::CENTER,
         );
     }

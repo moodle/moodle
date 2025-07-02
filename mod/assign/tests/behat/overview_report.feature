@@ -44,7 +44,6 @@ Feature: Testing overview integration in mod_assign
       | gradeitem      | user     | grade |
       | Pending grades | student1 | 50    |
 
-  @javascript
   Scenario: The assign overview report should generate log events
     Given I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     When I am on the "Course 1" "course" page logged in as "teacher1"
@@ -72,13 +71,9 @@ Feature: Testing overview integration in mod_assign
     And I should see "2 of 8" in the "Pending grades" "table_row"
     # Check main actions.
     And I should see "Grade" in the "Date assign" "table_row"
-    And I should see "Grade" in the "No submissions" "table_row"
+    And I should see "View" in the "No submissions" "table_row"
     And I should see "Grade" in the "Pending grades" "table_row"
     And I should see "(2)" in the "Pending grades" "table_row"
-    # Check submission link.
-    And I click on "2 of 8" "link" in the "Pending grades" "table_row"
-    And I should see "50.00" in the "Username 1" "table_row"
-    And I should see "-" in the "Username 2" "table_row"
     # Check grade link.
     And I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     And I click on "Grade" "link" in the "Date assign" "table_row"
@@ -91,7 +86,7 @@ Feature: Testing overview integration in mod_assign
     # Check main actions.
     And I should see "Grade" in the "Date assign" "table_row"
     And I should see "(1)" in the "Date assign" "table_row"
-    And I should see "Grade" in the "No submissions" "table_row"
+    And I should see "View" in the "No submissions" "table_row"
     And I should see "Grade" in the "Pending grades" "table_row"
     And I should see "(2)" in the "Pending grades" "table_row"
     # Validate the grade alert count data attribute.
@@ -107,9 +102,10 @@ Feature: Testing overview integration in mod_assign
       | Date assign    | student1 | 50    |
       | Pending grades | student1 | 50    |
     And I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
-    And I should see "Grade" in the "Date assign" "table_row"
+    And I should see "View" in the "Date assign" "table_row"
+    And I should not see "Grade" in the "Date assign" "table_row"
     And I should not see "(1)" in the "Date assign" "table_row"
-    And I should see "Grade" in the "No submissions" "table_row"
+    And I should see "View" in the "No submissions" "table_row"
     And I should see "Grade" in the "Pending grades" "table_row"
     And I should see "(1)" in the "Pending grades" "table_row"
     # Validate the grade alert count data attribute update.
@@ -119,6 +115,44 @@ Feature: Testing overview integration in mod_assign
     And "[data-mdl-overview-alertlabel]" "css_element" should not exist in the "No submissions" "table_row"
     And "[data-mdl-overview-alertcount='1']" "css_element" should exist in the "Pending grades" "table_row"
     And "[data-mdl-overview-alertlabel='Needs grading']" "css_element" should exist in the "Pending grades" "table_row"
+
+  Scenario: The assign overview actions has different label action based on assignment configuration
+    Given the following "activity" exists:
+      | course                              | C1            |
+      | activity                            | assign        |
+      | name                                | Feedback only |
+      | idnumber                            | assign4       |
+      | submissiondrafts                    | 0             |
+      | assignsubmission_onlinetext_enabled | 1             |
+      | assignfeedback_comments_enabled     | 1             |
+      | assignfeedback_editpdf_enabled      | 1             |
+    And the following "activity" exists:
+      | course                              | C1            |
+      | activity                            | assign        |
+      | name                                | Neither grading nor feedback |
+      | idnumber                            | assign5       |
+      | submissiondrafts                    | 0             |
+      | assignsubmission_onlinetext_enabled | 1             |
+      | assignfeedback_comments_enabled     | 0             |
+      | assignfeedback_editpdf_enabled      | 0             |
+    And the following "mod_assign > submissions" exist:
+      | assign                       | user     | onlinetext                              |
+      | Feedback only                | student1 | Feedback only assignment                |
+      | Neither grading nor feedback | student1 | Neither grading nor feedback submission |
+    When I am on the "Feedback only" "assign activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I set the field "grade[modgrade_type]" to "None"
+    And I press "Save and return to course"
+    And I am on the "Neither grading nor feedback" "assign activity editing" page
+    And I expand all fieldsets
+    And I set the field "grade[modgrade_type]" to "None"
+    And I press "Save and return to course"
+    And I am on the "Course 1" "course > activities > assign" page
+    And I should see "Grade" in the "Date assign" "table_row"
+    And I should see "View" in the "Feedback only" "table_row"
+    And I should see "View" in the "Neither grading nor feedback" "table_row"
+    And I should see "1 of 8" in the "Feedback only" "table_row"
+    And I should see "1 of 8" in the "Neither grading nor feedback" "table_row"
 
   @javascript
   Scenario: Students can see relevant columns in the assign overview
