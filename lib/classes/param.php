@@ -1189,7 +1189,7 @@ enum param: string {
      * @return string
      */
     protected function clean_param_value_capability(mixed $param): string {
-        if (get_capability_info($param)) {
+        if (!empty($param) && get_capability_info($param)) {
             return $param;
         } else {
             return '';
