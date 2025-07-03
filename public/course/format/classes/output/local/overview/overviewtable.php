@@ -20,6 +20,7 @@ use core\output\named_templatable;
 use core\output\renderable;
 use core\output\renderer_base;
 use core\plugin_manager;
+use core_courseformat\activityoverviewbase;
 use core_courseformat\local\overview\overviewitem;
 use core_courseformat\local\overview\overviewfactory;
 use cm_info;
@@ -55,7 +56,7 @@ class overviewtable implements renderable, named_templatable {
 
     #[\Override]
     public function export_for_template(renderer_base $output): stdClass {
-        $activities = $this->load_all_overviews_from_each_activity($output);
+        $activities = $this->load_all_overviews_from_each_activity();
         $headers = $this->export_headers();
         $result = (object) [
             'caption' => $this->get_table_caption(),
@@ -120,6 +121,7 @@ class overviewtable implements renderable, named_templatable {
             }
             $result[] = [
                 'cmid' => $activity['cmid'],
+                'haserror' => $activity['haserror'],
                 'overviews' => $items,
             ];
         }
@@ -129,18 +131,19 @@ class overviewtable implements renderable, named_templatable {
     /**
      * Loads all overviews from activities for the given course and module name.
      *
-     * @param renderer_base $output
      * @return array An array of overviews.
      */
-    private function load_all_overviews_from_each_activity(renderer_base $output): array {
+    private function load_all_overviews_from_each_activity(): array {
         $result = [];
         foreach ($this->get_related_course_modules() as $cm) {
             if (!$this->is_cm_displayable($cm)) {
                 continue;
             }
+            $overview = overviewfactory::create($cm);
             $result[] = [
                 'cmid' => $cm->id,
-                'overviews' => $this->load_overview_items_from_activity($output, $cm),
+                'haserror' => $overview->has_error(),
+                'overviews' => $this->load_overview_items_from_activity($overview),
             ];
         }
         return $result;
@@ -218,21 +221,21 @@ class overviewtable implements renderable, named_templatable {
     /**
      * Loads overview items from a given activity.
      *
-     * @param renderer_base $output
-     * @param cm_info $cm
+     * @param activityoverviewbase $overview
      * @return array An associative array containing the overview items for the activity.
      */
-    private function load_overview_items_from_activity(renderer_base $output, cm_info $cm): array {
-        global $PAGE;
-        $overview = overviewfactory::create($cm);
+    private function load_overview_items_from_activity(activityoverviewbase $overview): array {
+        if ($overview->has_error()) {
+            return ['name' => $overview->get_name_overview()];
+        }
 
         $row = [
-            'name' => $overview->get_name_overview($output),
-            'duedate' => $overview->get_due_date_overview($output),
-            'completion' => $overview->get_completion_overview($output),
+            'name' => $overview->get_name_overview(),
+            'duedate' => $overview->get_due_date_overview(),
+            'completion' => $overview->get_completion_overview(),
         ];
 
-        $row = array_merge($row, $overview->get_extra_overview_items($output));
+        $row = array_merge($row, $overview->get_extra_overview_items());
 
         $gradeitems = $overview->get_grades_overviews();
         if (!empty($gradeitems)) {
@@ -242,7 +245,7 @@ class overviewtable implements renderable, named_templatable {
         }
 
         // Actions are always the last column, if any.
-        $row['actions'] = $overview->get_actions_overview($output);
+        $row['actions'] = $overview->get_actions_overview();
 
         $row = array_filter($row, function ($item) {
             return $item !== null;
