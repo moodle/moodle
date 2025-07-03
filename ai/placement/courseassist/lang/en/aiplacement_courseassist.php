@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['aidrawerlabel'] = 'AI-generated content drawer';
 $string['aisummary'] = 'AI summary';
 $string['courseassist:summarise_text'] = 'Summarise text';
 $string['copy'] = 'Copy';
