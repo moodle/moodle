@@ -67,7 +67,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = new action_link(
             url: new url('/mod/h5pactivity/report.php', ['id' => $this->cm->id]),
             text: $viewresults,
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
 
         return new overviewitem(
@@ -152,7 +152,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             $content = new overviewdialog(
                     buttoncontent: $totalattempts,
                     title: $this->stringmanager->get_string('totalattempts', 'mod_h5pactivity'),
-                    definition: ['buttonclasses' => button::SECONDARY_OUTLINE->classes() . ' dropdown-toggle'],
+                    definition: ['buttonclasses' => button::BODY_OUTLINE->classes()],
             );
             $method = $this->manager::get_grading_methods()[$this->manager->get_instance()->grademethod];
             $content->add_item($this->stringmanager->get_string('gradingmethod', 'grading'), $method);

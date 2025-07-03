@@ -17,6 +17,7 @@
 namespace core_courseformat\output\local\overview;
 
 use core\output\local\dropdown\dialog;
+use core\output\local\properties\button;
 use stdClass;
 
 /**
@@ -108,6 +109,11 @@ class overviewdialog extends dialog {
             'hasitems' => count($this->items),
             'description' => $this->description,
         ];
+
+        // Overview dropdowns always have a dropdown toggle.
+        $data['buttonclasses'] = empty($data['buttonclasses'])
+            ? button::BODY_OUTLINE->classes() . ' dropdown-toggle'
+            : $data['buttonclasses'] . ' dropdown-toggle';
 
         return $data;
     }

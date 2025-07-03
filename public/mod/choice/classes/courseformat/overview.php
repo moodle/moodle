@@ -96,7 +96,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = new action_link(
             url: new \moodle_url('/mod/choice/report.php', ['id' => $this->cm->id]),
             text: get_string('view'),
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
 
         return new overviewitem(

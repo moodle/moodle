@@ -65,7 +65,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 'core',
                 ['count' => $submissions, 'total' => $total]
             ),
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
 
         return new overviewitem(

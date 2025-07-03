@@ -1,0 +1,64 @@
+/*
+ * Course Overview page styles.
+ */
+
+$overviewdialogmaxwidth: 20rem !default;
+
+
+#course-overview-page {
+    .table {
+        border-top: none;
+    }
+    table tbody td {
+        align-content: center;
+
+        // Buttons in the course overview.
+        .btn {
+            // Display buttons small by default inside the course overview table.
+            @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-border-radius);
+            &:not(.dropdown-toggle) {
+                min-width: 6rem;
+            }
+
+            &:hover {
+                .badge.text-bg-primary {
+                    color: var(--#{$prefix}body-color) !important; /* stylelint-disable-line declaration-no-important */
+                    background-color: var(--#{$prefix}body-bg) !important; /* stylelint-disable-line declaration-no-important */
+                    @include transition($btn-transition);
+                }
+            }
+        }
+
+        // Dropdowns in the course overview.
+        .dropdown:not(.completion-dropdown) {
+            .dropdown-toggle {
+                display: inline-flex;
+                justify-content: space-between;
+                align-items: center;
+                min-width: 5rem;
+                --#{$prefix}btn-font-weight: #{$font-weight-normal};
+            }
+            .dropdown-menu {
+                max-width: 20rem;
+            }
+        }
+    }
+
+    // Inline selects in the course overview.
+    .inplaceeditable-select {
+        display: inline-block;
+    }
+    .form-select {
+        padding-top: $btn-padding-y-sm;
+        padding-bottom: $btn-padding-y-sm;
+    }
+
+    // Activity icons in the course overview.
+    .activityiconcontainer {
+        width: map-get($iconsizes, 6);
+        height: map-get($iconsizes, 6);
+        max-height: map-get($iconsizes, 6);
+        max-width: map-get($iconsizes, 6);
+        margin-right: map-get($spacers, 2);
+    }
+}

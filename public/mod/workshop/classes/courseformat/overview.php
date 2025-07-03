@@ -172,7 +172,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                     'workshop-viewlet-allsubmissions',
                 ),
                 text: $content,
-                attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+                attributes: ['class' => button::BODY_OUTLINE->classes()],
             );
         }
 
@@ -223,7 +223,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                     'workshop-viewlet-gradereport',
                 ),
                 text: $content,
-                attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+                attributes: ['class' => button::BODY_OUTLINE->classes()],
             );
         }
 

@@ -104,7 +104,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = new action_link(
             url: new url('/mod/assign/view.php', ['id' => $this->cm->id, 'action' => 'grading']),
             text: $name . $badge,
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
 
         return new overviewitem(

@@ -31805,6 +31805,59 @@ table.calendartable caption {
   margin: 10px 0 20px;
 }
 
+/*
+ * Course Overview page styles.
+ */
+#course-overview-page .table {
+  border-top: none;
+}
+#course-overview-page table tbody td {
+  align-content: center;
+}
+#course-overview-page table tbody td .btn {
+  --bs-btn-padding-y: 0.25rem;
+  --bs-btn-padding-x: 0.5rem;
+  --bs-btn-font-size: 0.8203125rem;
+  --bs-btn-border-radius: var(--bs-border-radius);
+}
+#course-overview-page table tbody td .btn:not(.dropdown-toggle) {
+  min-width: 6rem;
+}
+#course-overview-page table tbody td .btn:hover .badge.text-bg-primary {
+  color: var(--bs-body-color) !important; /* stylelint-disable-line declaration-no-important */
+  background-color: var(--bs-body-bg) !important; /* stylelint-disable-line declaration-no-important */
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  #course-overview-page table tbody td .btn:hover .badge.text-bg-primary {
+    transition: none;
+  }
+}
+#course-overview-page table tbody td .dropdown:not(.completion-dropdown) .dropdown-toggle {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 5rem;
+  --bs-btn-font-weight: 400;
+}
+#course-overview-page table tbody td .dropdown:not(.completion-dropdown) .dropdown-menu {
+  max-width: 20rem;
+}
+#course-overview-page .inplaceeditable-select {
+  display: inline-block;
+}
+#course-overview-page .form-select {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+#course-overview-page .activityiconcontainer {
+  width: 40px;
+  height: 40px;
+  max-height: 40px;
+  max-width: 40px;
+  margin-right: 0.5rem;
+}
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target,
 :focus {
@@ -37393,7 +37446,7 @@ p.arrow_button {
  * Subtle buttons.
  */
 .btn-subtle-primary {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-primary-text-emphasis);
   --bs-btn-bg: var(--bs-primary-bg-subtle);
   --bs-btn-active-color: var(--bs-primary-text-emphasis);
@@ -37408,7 +37461,7 @@ p.arrow_button {
 }
 
 .btn-subtle-secondary {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-secondary-text-emphasis);
   --bs-btn-bg: var(--bs-secondary-bg-subtle);
   --bs-btn-active-color: var(--bs-secondary-text-emphasis);
@@ -37423,7 +37476,7 @@ p.arrow_button {
 }
 
 .btn-subtle-success {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-success-text-emphasis);
   --bs-btn-bg: var(--bs-success-bg-subtle);
   --bs-btn-active-color: var(--bs-success-text-emphasis);
@@ -37438,7 +37491,7 @@ p.arrow_button {
 }
 
 .btn-subtle-info {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-info-text-emphasis);
   --bs-btn-bg: var(--bs-info-bg-subtle);
   --bs-btn-active-color: var(--bs-info-text-emphasis);
@@ -37453,7 +37506,7 @@ p.arrow_button {
 }
 
 .btn-subtle-warning {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-warning-text-emphasis);
   --bs-btn-bg: var(--bs-warning-bg-subtle);
   --bs-btn-active-color: var(--bs-warning-text-emphasis);
@@ -37468,7 +37521,7 @@ p.arrow_button {
 }
 
 .btn-subtle-danger {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-danger-text-emphasis);
   --bs-btn-bg: var(--bs-danger-bg-subtle);
   --bs-btn-active-color: var(--bs-danger-text-emphasis);
@@ -37483,7 +37536,7 @@ p.arrow_button {
 }
 
 .btn-subtle-light {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-light-text-emphasis);
   --bs-btn-bg: var(--bs-light-bg-subtle);
   --bs-btn-active-color: var(--bs-light-text-emphasis);
@@ -37498,7 +37551,7 @@ p.arrow_button {
 }
 
 .btn-subtle-dark {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-dark-text-emphasis);
   --bs-btn-bg: var(--bs-dark-bg-subtle);
   --bs-btn-active-color: var(--bs-dark-text-emphasis);
@@ -37513,7 +37566,7 @@ p.arrow_button {
 }
 
 .btn-subtle-body {
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-weight: 500;
   --bs-btn-color: var(--bs-body-color);
   --bs-btn-bg: transparent;
   --bs-btn-border-color: var(--bs-border-color);

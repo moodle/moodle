@@ -75,7 +75,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = new action_link(
             url: new url('/mod/glossary/view.php', ['id' => $this->cm->id, 'mode' => 'approval']),
             text: $this->stringmanager->get_string('approve', 'mod_glossary') . $badge,
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
 
         return new overviewitem(
@@ -105,7 +105,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             url: new url('/mod/glossary/view.php', ['id' => $this->cm->id]),
             text: $entriescount,
             attributes: [
-                'class' => button::SECONDARY_OUTLINE->classes(),
+                'class' => button::BODY_OUTLINE->classes(),
                 'title' => $this->stringmanager->get_string('seeallentries', 'mod_glossary'),
             ],
         );

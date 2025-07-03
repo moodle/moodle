@@ -84,13 +84,14 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = new action_link(
             url: new url('/mod/lesson/report.php', ['id' => $this->cm->id, 'action' => 'reportoverview']),
             text: $this->stringmanager->get_string('view', 'mod_lesson'),
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
 
         return new overviewitem(
             name: $this->stringmanager->get_string('actions'),
             value: '',
             content: $content,
+            textalign: text_align::CENTER,
         );
     }
 
@@ -144,7 +145,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             $overviewdialog = new overviewdialog(
                 buttoncontent: $totalattempts,
                 description: $this->stringmanager->get_string('retakesallowedinfo', 'mod_lesson'),
-                definition: ['buttonclasses' => button::SECONDARY_OUTLINE->classes() . ' dropdown-toggle'],
+                definition: ['buttonclasses' => button::BODY_OUTLINE->classes() . ' dropdown-toggle'],
             );
 
             $averageattempts = $totalattempts ? round($totalattempts / $attemptedusers) : 0;
@@ -160,7 +161,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('totalattepmts', 'mod_lesson'),
             value: !empty($overviewdialog) ? $totalattempts : null,
             content: $overviewdialog ?? $totalattempts,
-            textalign: text_align::CENTER,
+            textalign: text_align::START,
         );
     }
 }
