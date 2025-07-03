@@ -667,16 +667,17 @@ function move_question_set_references(int $oldcategoryid, int $newcatgoryid,
     if ($delete || $oldcontextid !== $newcontextid) {
         $setreferences = $DB->get_recordset('question_set_references', ['questionscontextid' => $oldcontextid]);
         foreach ($setreferences as $setreference) {
-            $filter = json_decode($setreference->filtercondition);
-            if (isset($filter->questioncategoryid)) {
-                if ((int)$filter->questioncategoryid === $oldcategoryid) {
-                    $setreference->questionscontextid = $newcontextid;
-                    if ($oldcategoryid !== $newcatgoryid) {
-                        $filter->questioncategoryid = $newcatgoryid;
-                        $setreference->filtercondition = json_encode($filter);
-                    }
-                    $DB->update_record('question_set_references', $setreference);
+            $filter = json_decode($setreference->filtercondition, true);
+            if (isset($filter['questioncategoryid'])) {
+                $filter = question_reference_manager::convert_legacy_set_reference_filter_condition($filter);
+            }
+            if ((int)$filter['filter']['category']['values'][0] === $oldcategoryid) {
+                $setreference->questionscontextid = $newcontextid;
+                if ($oldcategoryid !== $newcatgoryid) {
+                    $filter['filter']['category']['values'][0] = $newcatgoryid;
+                    $setreference->filtercondition = json_encode($filter);
                 }
+                $DB->update_record('question_set_references', $setreference);
             }
         }
         $setreferences->close();
@@ -728,6 +729,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
 
     $subcatids = $DB->get_records_menu('question_categories', ['parent' => $categoryid], '', 'id,1');
     foreach ($subcatids as $subcatid => $notused) {
+        move_question_set_references($subcatid, $subcatid, $oldcontextid, $newcontext->id);
         $DB->set_field('question_categories', 'contextid', $newcontextid, ['id' => $subcatid]);
         question_move_category_to_context($subcatid, $oldcontextid, $newcontextid);
     }
