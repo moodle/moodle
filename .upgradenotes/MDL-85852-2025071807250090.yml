@@ -1,0 +1,8 @@
+issueNumber: MDL-85852
+notes:
+  core_courseformat:
+    - message: >-
+        New optional $nogroupserror parameter has been added to activityname
+        class constructor. A set_nogroupserror() setter to change the value
+        after the constructor has been also added.
+      type: improved

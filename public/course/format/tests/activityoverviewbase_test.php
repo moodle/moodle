@@ -16,6 +16,8 @@
 
 namespace core_courseformat;
 
+use core_courseformat\local\overview\overviewfactory;
+
 /**
  * Tests for course
  *
@@ -277,11 +279,6 @@ final class activityoverviewbase_test extends \advanced_testcase {
     }
 
     /**
-     * Test get_grades_overviews when the grade item is hidden.
-     *
-     * @covers ::get_grades_overviews
-     */
-    /**
      * Test get_grades_overviews method.
      *
      * @covers ::get_grades_overviews
@@ -330,5 +327,281 @@ final class activityoverviewbase_test extends \advanced_testcase {
         $this->assertEquals(get_string('gradenoun'), $result[0]->get_name());
         $this->assertEquals('-', $result[0]->get_value());
         $this->assertEquals('-', $result[0]->get_content());
+    }
+
+    /**
+     * Test needs_filtering_by_groups method.
+     *
+     * @covers ::needs_filtering_by_groups
+     * @dataProvider provider_needs_filtering_by_groups
+     *
+     * @param string $role of the user to test
+     * @param int $groupmode of the activity to test
+     * @param bool $expected result.
+     * @return void
+     */
+    public function test_needs_filtering_by_groups(string $role, int $groupmode, bool $expected): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'groupmode' => $groupmode]
+        );
+        $user = $this->getDataGenerator()->create_and_enrol($course, $role);
+        $this->setUser($user);
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($activity->cmid);
+        $overview = new \core_courseformat\fake_activityoverview($cm);
+        $this->assertEquals($expected, $overview->needs_filtering_by_groups());
+    }
+
+    /**
+     * Data provider for test_needs_filtering_by_groups.
+     *
+     * @return array the testing scenarios
+     */
+    public static function provider_needs_filtering_by_groups(): array {
+        return [
+            'Editing teacher with no groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
+                'expected' => false,
+            ],
+            'Editing teacher with visible groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => false,
+            ],
+            'Editing teacher with separate groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => false,
+            ],
+            'Non-editing teacher with no groups' => [
+                'role' => 'teacher',
+                'groupmode' => NOGROUPS,
+                'expected' => false,
+            ],
+            'Non-editing teacher with visible groups' => [
+                'role' => 'teacher',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => false,
+            ],
+            'Non-editing teacher with separate groups' => [
+                'role' => 'teacher',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => true,
+            ],
+            'Student with no groups' => [
+                'role' => 'student',
+                'groupmode' => NOGROUPS,
+                'expected' => false,
+            ],
+            'Student with visible groups' => [
+                'role' => 'student',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => false,
+            ],
+            'Student with separate groups' => [
+                'role' => 'student',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Test needs_filtering_by_groups method.
+     *
+     * @covers ::get_groups_for_filtering
+     * @dataProvider provider_get_groups_for_filtering
+     *
+     * @param string $role of the user to test
+     * @param int $groupmode of the activity to test
+     * @param array $expected result
+     * @return void
+     */
+    public function test_get_groups_for_filtering(string $role, int $groupmode, array $expected): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $activity = $generator->create_module(
+            'assign',
+            ['course' => $course->id, 'groupmode' => $groupmode]
+        );
+        $user = $generator->create_and_enrol($course, $role);
+        $g1 = $generator->create_group(['courseid' => $course->id, 'name' => 'g1']);
+        $g2 = $generator->create_group(['courseid' => $course->id, 'name' => 'g2']);
+        $g3 = $generator->create_group(['courseid' => $course->id, 'name' => 'g3']);
+
+        // We add user to g1 and g2 only.
+        groups_add_member($g1, $user);
+        groups_add_member($g2, $user);
+
+        $this->setUser($user);
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($activity->cmid);
+        $overview = new \core_courseformat\fake_activityoverview($cm);
+        $result = $overview->get_groups_for_filtering();
+        if (!$expected) {
+            $this->assertEquals($expected, $result);
+        } else {
+            foreach ($result as $group) {
+                $this->assertContains($group->name, $expected);
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_get_groups_for_filtering.
+     *
+     * @return array the testing scenarios
+     */
+    public static function provider_get_groups_for_filtering(): array {
+        return [
+            'Editing teacher with no groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
+                'expected' => [],
+            ],
+            'Editing teacher with visible groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => [],
+            ],
+            'Editing teacher with separate groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => [],
+            ],
+            'Non-editing teacher with no groups' => [
+                'role' => 'teacher',
+                'groupmode' => NOGROUPS,
+                'expected' => [],
+            ],
+            'Non-editing teacher with visible groups' => [
+                'role' => 'teacher',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => ['g1', 'g2', 'g3'],
+            ],
+            'Non-editing teacher with separate groups' => [
+                'role' => 'teacher',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => ['g1', 'g2'],
+            ],
+            'Student with no groups' => [
+                'role' => 'student',
+                'groupmode' => NOGROUPS,
+                'expected' => [],
+            ],
+            'Student with visible groups' => [
+                'role' => 'student',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => ['g1', 'g2', 'g3'],
+            ],
+            'Student with separate groups' => [
+                'role' => 'student',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => ['g1', 'g2'],
+            ],
+        ];
+    }
+
+    /**
+     * Test has_error method.
+     *
+     * @covers ::has_error
+     * @dataProvider provider_has_error
+     *
+     * @param string $role of the user to test
+     * @param int $groupmode of the activity to test
+     * @param bool $expected result
+     * @return void
+     */
+    public function test_has_error(string $role, int $groupmode, bool $expected): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $activity = $generator->create_module(
+            'assign',
+            ['course' => $course->id, 'groupmode' => $groupmode]
+        );
+        $user = $generator->create_and_enrol($course, $role);
+        $g1 = $generator->create_group(['courseid' => $course->id, 'name' => 'g1']);
+        $g2 = $generator->create_group(['courseid' => $course->id, 'name' => 'g2']);
+
+        $this->setUser($user);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($activity->cmid);
+        $overview = new \core_courseformat\fake_activityoverview($cm);
+        $this->assertEquals($expected, $overview->has_error());
+
+        // We add user to g1.
+        groups_add_member($g1, $user);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($activity->cmid);
+        $overview = new \core_courseformat\fake_activityoverview($cm);
+
+        $this->assertfalse($overview->has_error());
+    }
+
+    /**
+     * Data provider for test_has_error.
+     *
+     * @return array the testing scenarios
+     */
+    public static function provider_has_error(): array {
+        return [
+            'Editing teacher with no groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
+                'expected' => false,
+            ],
+            'Editing teacher with visible groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => false,
+            ],
+            'Editing teacher with separate groups' => [
+                'role' => 'editingteacher',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => false,
+            ],
+            'Non-editing teacher with no groups' => [
+                'role' => 'teacher',
+                'groupmode' => NOGROUPS,
+                'expected' => false,
+            ],
+            'Non-editing teacher with visible groups' => [
+                'role' => 'teacher',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => false,
+            ],
+            'Non-editing teacher with separate groups' => [
+                'role' => 'teacher',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => true,
+            ],
+            'Student with no groups' => [
+                'role' => 'student',
+                'groupmode' => NOGROUPS,
+                'expected' => false,
+            ],
+            'Student with visible groups' => [
+                'role' => 'student',
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => false,
+            ],
+            'Student with separate groups' => [
+                'role' => 'student',
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => true,
+            ],
+        ];
     }
 }

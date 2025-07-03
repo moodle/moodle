@@ -39,7 +39,20 @@ class activityname implements renderable, named_templatable {
     public function __construct(
         /** @var cm_info The course module. */
         protected cm_info $cm,
+        /** @var bool Should show no groups error */
+        protected bool $nogroupserror = false,
     ) {
+    }
+
+    /**
+     * nogroupserror property setter
+     *
+     * @param bool $nogroupserror New value fpr nogroupserror property
+     * @return $this
+     */
+    public function set_nogroupserror(bool $nogroupserror): self {
+        $this->nogroupserror = $nogroupserror;
+        return $this;
     }
 
     /**
@@ -59,6 +72,7 @@ class activityname implements renderable, named_templatable {
             'activityurl' => $cm->url,
             'hidden' => empty($cm->visible),
             'stealth' => $cm->is_stealth(),
+            'nogroupserror' => $this->nogroupserror,
         ];
         if ($format->uses_sections()) {
             $result->sectiontitle = $format->get_section_name($section);

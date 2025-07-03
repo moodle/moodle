@@ -313,3 +313,30 @@ Feature: Users can access the course activities overview page
       | name      | <span class="filter_mathjaxloader_equation">Announcements$$(a+b)=2$$<span class="nolink">$$(a+b)=2$$</span></span> |
     When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     Then I should not see "span" in the "assign_overview_collapsible" "region"
+
+  @javascript
+  Scenario: Users in no group that cannot view all groups see an error on 'Separate groups' activities
+    Given the following "users" exist:
+      | username   | firstname   | lastname | email                   |
+      | nonediting | Non-editing | Teacher  | nonediting1@example.com |
+    And the following "course enrolments" exist:
+      | user       | course | role    |
+      | nonediting | C1     | teacher |
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+    And the following "activity" exists:
+      | activity  | assign          |
+      | course    | C1              |
+      | section   | 1               |
+      | idnumber  | separate        |
+      | name      | Separate groups |
+      | groupmode | 1               |
+    When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
+    Then I should not see "You are not a member of any group" in the "assign_overview_collapsible" "region"
+    And I log out
+    And I am on the "Course 1" "course > activities > assign" page logged in as "nonediting"
+    And I should see "You are not a member of any group" in the "assign_overview_collapsible" "region"
+    And I log out
+    And I am on the "Course 1" "course > activities > assign" page logged in as "student1"
+    And I should see "You are not a member of any group" in the "assign_overview_collapsible" "region"
