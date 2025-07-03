@@ -102,6 +102,7 @@ Feature: Adding random questions to a quiz based on category and tags
     And I should see "foo"
     And I should see "question 1 name"
     And I should see "\"listen\" & \"answer\""
+    And I click on "Cancel" "button" in the "Editing a random question" "dialogue"
     # Include subcategories.
     And I navigate to "Questions" in current page administration
     And I open the "Page 1" add to quiz menu

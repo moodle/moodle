@@ -52,11 +52,14 @@
 <div class="mt-2 position-relative" data-region="add_random_question_form-container">
     <form action="{{returnurl}}" method="POST" id="add_random_question_form" class="mform">
         <fieldset id="id_existingcategoryheader">
+            {{^slotid}}
             <legend>{{#str}} randomfromexistingcategory, mod_quiz {{/str}}</legend>
+            {{/slotid}}
             <!-- Question bank -->
             {{{questionbank}}}
 
             <!-- Select number of random question -->
+            {{^slotid}}
             <label>
                 {{#str}}randomnumber, mod_quiz{{/str}}
                 <select id="menurandomcount" name="randomcount" class="form-control form-select">
@@ -65,16 +68,24 @@
                     {{/randomoptions}}
                 </select>
             </label>
+            {{/slotid}}
 
-            <!-- Buttons -->
+                        <!-- Buttons -->
             <div class="modal-footer mt-1" data-region="footer">
                 <input type="hidden" name="message" value="">
-                <input type="submit" class="btn btn-primary" name="addrandom" value="{{#str}} addrandomquestion, mod_quiz {{/str}}">
+                {{#slotid}}
+                    <input name="slotid" type="hidden" value="{{slotid}}"/>
+                    <input type="submit" class="btn btn-primary" name="update" value="{{#str}} updatefilterconditon, mod_quiz {{/str}}">
+                {{/slotid}}
+                {{^slotid}}
+                    <input type="submit" class="btn btn-primary" name="addrandom" value="{{#str}} addrandomquestion, mod_quiz {{/str}}">
+                {{/slotid}}
                 <input type="submit" class="btn btn-secondary" name="cancel" value="{{#str}} cancel {{/str}}">
             </div>
 
         </fieldset>
 
+        {{^slotid}}
         <fieldset id="id_newcategoryheader">
             <legend>{{#str}} randomquestionusinganewcategory, mod_quiz {{/str}}</legend>
             <!-- New categoryname -->
@@ -114,5 +125,6 @@
                 <input type="submit" class="btn btn-secondary" name="cancel" value="{{#str}} cancel {{/str}}">
             </div>
         </fieldset>
+        {{/slotid}}
     </form>
 </div>
