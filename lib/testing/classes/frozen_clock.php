@@ -40,7 +40,7 @@ class frozen_clock implements \core\clock {
             $this->time = (new \DateTimeImmutable("@{$time}"))
                 ->setTimezone(\core_date::get_server_timezone_object());
         } else {
-            $this->time = new \DateTimeImmutable();
+            $this->time = (new \DateTimeImmutable())->setTimezone(\core_date::get_server_timezone_object());
         }
     }
 
