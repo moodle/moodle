@@ -38226,6 +38226,21 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
  * - Make the content region flex grow so it pushes things like the
  *   next activity selector to the bottom of the page.
  */
+/**
+ * Reset the Bootstrap _reboot.scss styles for tables.
+ * That reboot mainly affects tables added by the tiny editor.
+ */
+table:not(.table) thead,
+table:not(.table) tbody,
+table:not(.table) tfoot,
+table:not(.table) tr,
+table:not(.table) td,
+table:not(.table) th {
+  border-color: var(--bs-border-color);
+  border-style: solid;
+  border-width: var(--bs-border-width);
+}
+
 body.behat-site .fixed-top {
   position: absolute;
 }
