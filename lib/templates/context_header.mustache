@@ -43,7 +43,7 @@
         ]
     }
 }}
-<div class="page-context-header d-flex align-items-center mb-2">
+<div class="page-context-header d-flex flex-wrap align-items-center mb-2">
     {{#imagedata}}
     <div class="page-header-image">
         {{{imagedata}}}
@@ -58,7 +58,7 @@
         {{{heading}}}
     </div>
     {{#hasadditionalbuttons}}
-    <div class="btn-group header-button-group mx-3">
+    <div class="btn-group header-button-group d-block mx-sm-3">
         {{#additionalbuttons}}
             <a href="{{url}}" {{#attributes}} {{name}}="{{value}}" {{/attributes}}>
                 {{#page}}
