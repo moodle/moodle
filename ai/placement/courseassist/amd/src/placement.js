@@ -32,6 +32,8 @@ import DrawerEvents from 'core/drawer_events';
 import {subscribe} from 'core/pubsub';
 import * as MessageDrawerHelper from 'core_message/message_drawer_helper';
 import {getString} from 'core/str';
+import * as FocusLock from 'core/local/aria/focuslock';
+import {isSmall} from "core/pagehelpers";
 
 const AICourseAssist = class {
 
@@ -63,6 +65,7 @@ const AICourseAssist = class {
         this.aiDrawerCloseElement = this.aiDrawerElement.querySelector(Selectors.ELEMENTS.AIDRAWER_CLOSE);
         this.lastAction = '';
         this.responses = new Map();
+        this.isDrawerFocusLocked = false;
 
         this.registerEventListeners();
     }
@@ -106,6 +109,12 @@ const AICourseAssist = class {
             const closeAiDrawer = e.target.closest(Selectors.ELEMENTS.AIDRAWER_CLOSE);
             if (closeAiDrawer) {
                 e.preventDefault();
+                this.closeAIDrawer();
+            }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (this.isAIDrawerOpen() && e.key === 'Escape') {
                 this.closeAIDrawer();
             }
         });
@@ -239,12 +248,27 @@ const AICourseAssist = class {
         }
         this.jumpToElement.setAttribute('tabindex', 0);
         this.jumpToElement.focus();
+
+        // If the AI drawer is opened on a small screen, we need to trap the focus tab within the AI drawer.
+        if (isSmall()) {
+            FocusLock.trapFocus(this.aiDrawerElement);
+            this.aiDrawerElement.setAttribute('aria-modal', 'true');
+            this.aiDrawerElement.setAttribute('role', 'dialog');
+            this.isDrawerFocusLocked = true;
+        }
     }
 
     /**
      * Close the AI drawer.
      */
     closeAIDrawer() {
+        // Untrap focus if it was locked.
+        if (this.isDrawerFocusLocked) {
+            FocusLock.untrapFocus();
+            this.aiDrawerElement.removeAttribute('aria-modal');
+            this.aiDrawerElement.setAttribute('role', 'region');
+        }
+
         this.aiDrawerElement.classList.remove('show');
         this.aiDrawerElement.setAttribute('tabindex', -1);
         this.aiDrawerBodyElement.removeAttribute('aria-live');
