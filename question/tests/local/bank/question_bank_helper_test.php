@@ -407,10 +407,6 @@ final class question_bank_helper_test extends \advanced_testcase {
         self::setAdminUser();
 
         $course = self::getDataGenerator()->create_course();
-        // Create module other than a qbank.
-        $wiki = self::getDataGenerator()->create_module('wiki', [
-            'course' => $course->id,
-        ]);
         $modinfo = get_fast_modinfo($course);
         $qbanks = $modinfo->get_instances_of('qbank');
         $this->assertCount(0, $qbanks);
@@ -420,6 +416,12 @@ final class question_bank_helper_test extends \advanced_testcase {
         $this->assertEquals(get_string('systembank', 'question'), $qbank->get_name());
         $modrecord = $DB->get_record('qbank', ['id' => $qbank->instance]);
         $this->assertEquals(question_bank_helper::TYPE_SYSTEM, $modrecord->type);
+	// Create module other than a qbank with an ID that isn't used by a qbank yet.
+	do {
+	    $wiki = self::getDataGenerator()->create_module('wiki', [
+                'course' => $course->id,
+            ]);
+	} while ($DB->record_exists('qbank', ['id' => $wiki->id]));
         // Swap the qbank instance record for one with the same ID as the wiki instance.
         $newqbank = clone($modrecord);
         $newqbank->id = $wiki->id;
