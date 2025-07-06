@@ -1,5 +1,13 @@
 # core (subsystem) Upgrade notes
 
+## 4.5.5+
+
+### Changed
+
+- The `\core\attribute\deprecated` attribute constructor `$replacement` parameter now defaults to null, and can be omitted
+
+  For more information see [MDL-84531](https://tracker.moodle.org/browse/MDL-84531)
+
 ## 4.5.5
 
 ### Added
