@@ -1,5 +1,16 @@
 # mod_data Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- Database entries generator could create 'approved' entries.
+
+  For more information see [MDL-83891](https://tracker.moodle.org/browse/MDL-83891)
+- New get_approval_requested(), get_all_entries(), filter_entries_by_user(), filter_entries_by_approval() and get_comments() functions have been added to mod_data manager class.
+
+  For more information see [MDL-83891](https://tracker.moodle.org/browse/MDL-83891)
+
 ## 5.0
 
 ### Deprecated

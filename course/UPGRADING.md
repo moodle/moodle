@@ -14,6 +14,12 @@
 
   For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
 
+### Removed
+
+- The activitychoosertabmode setting has been removed. Consider implementing your own setting in your theme if needed.
+
+  For more information see [MDL-85533](https://tracker.moodle.org/browse/MDL-85533)
+
 ## 5.0
 
 ### Added

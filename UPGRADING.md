@@ -35,6 +35,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   * Replace the references to `slave` checkboxes with `target`.
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
+- The `\core\attribute\deprecated` attribute constructor `$replacement` parameter now defaults to null, and can be omitted
+
+  For more information see [MDL-84531](https://tracker.moodle.org/browse/MDL-84531)
 
 #### Deprecated
 
@@ -115,6 +118,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The duplicatesection param in course/view.php is deprecated. Use course/format/update.php with action section_duplicate instead.
 
   For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
+
+#### Removed
+
+- The activitychoosertabmode setting has been removed. Consider implementing your own setting in your theme if needed.
+
+  For more information see [MDL-85533](https://tracker.moodle.org/browse/MDL-85533)
 
 ### core_courseformat
 
@@ -255,6 +264,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84071](https://tracker.moodle.org/browse/MDL-84071)
 
+### mod_data
+
+#### Added
+
+- Database entries generator could create 'approved' entries.
+
+  For more information see [MDL-83891](https://tracker.moodle.org/browse/MDL-83891)
+- New get_approval_requested(), get_all_entries(), filter_entries_by_user(), filter_entries_by_approval() and get_comments() functions have been added to mod_data manager class.
+
+  For more information see [MDL-83891](https://tracker.moodle.org/browse/MDL-83891)
+
 ### mod_label
 
 #### Removed
@@ -371,6 +391,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     - tool_policy/level
 
   For more information see [MDL-85436](https://tracker.moodle.org/browse/MDL-85436)
+
+### theme_boost
+
+#### Added
+
+- Theme can now inherit from their grand-parent and parents.  So if a child theme inherit from a parent theme that declares a new layout, the child theme can use it without redeclaring it. Also inheritance for layout uses the expected grandparent > parent > child with precedence to the child theme.
+
+  For more information see [MDL-79319](https://tracker.moodle.org/browse/MDL-79319)
 
 ## 5.0
 

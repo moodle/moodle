@@ -1,5 +1,13 @@
 # theme_boost Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- Theme can now inherit from their grand-parent and parents.  So if a child theme inherit from a parent theme that declares a new layout, the child theme can use it without redeclaring it. Also inheritance for layout uses the expected grandparent > parent > child with precedence to the child theme.
+
+  For more information see [MDL-79319](https://tracker.moodle.org/browse/MDL-79319)
+
 ## 5.0
 
 ### Changed
