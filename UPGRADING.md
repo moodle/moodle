@@ -8,6 +8,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## 5.0.1+
 
+### core
+
+#### Changed
+
+- The `\core\attribute\deprecated` attribute constructor `$replacement` parameter now defaults to null, and can be omitted
+
+  For more information see [MDL-84531](https://tracker.moodle.org/browse/MDL-84531)
+
 ### core_message
 
 #### Added
