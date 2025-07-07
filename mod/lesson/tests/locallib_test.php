@@ -25,6 +25,7 @@
 namespace mod_lesson;
 
 use lesson;
+use core\context\module as context_module;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -285,5 +286,105 @@ final class locallib_test extends \advanced_testcase {
         $lesson = $this->getDataGenerator()->create_module('lesson', ['course' => $course, 'maxattempts' => $maxattempts]);
         $lesson = new lesson($lesson);
         $this->assertEquals($expected, $lesson->get_last_attempt($attempts));
+    }
+
+    /**
+     * Helper function to create attempts for a lesson.
+     *
+     * @param lesson $lesson The lesson object.
+     * @param int $userid The user ID for whom the attempts are created.
+     * @param int $count The number of attempts to create.
+     */
+    private function create_user_submissions(lesson $lesson, int $userid, int $count): void {
+        /** @var \mod_lesson_generator $lessongenerator */
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+
+        for ($i = 0; $i < $count; $i++) {
+            $lessongenerator->create_submission([
+                'lessonid' => $lesson->id,
+                'userid' => $userid,
+                'grade' => 100,
+            ]);
+        }
+    }
+
+    /**
+     * Helper function to create lesson pages with multichoice questions.
+     *
+     * @param lesson $lesson The lesson object.
+     * @param int $count The number of multichoice questions to create.
+     */
+    private function create_lesson_pages(lesson $lesson, int $count): void {
+        /** @var \mod_lesson_generator $lessongenerator */
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+
+        for ($i = 0; $i < $count; $i++) {
+            $lessongenerator->create_page([
+                'title' => 'Multichoice question' . ($i + 1),
+                'content' => 'Question content',
+                'qtype' => 'multichoice',
+                'lessonid' => $lesson->id,
+            ]);
+            $lessongenerator->create_answer(['page' => 'Multichoice question' . ($i + 1), 'answer' => 'A', 'score' => 1]);
+            $lessongenerator->create_answer(['page' => 'Multichoice question' . ($i + 1), 'answer' => 'B']);
+        }
+        $lessongenerator->finish_generate_answer();
+    }
+
+    /**
+     * Test the count_all_attempts, count_attempted_participants and count_all_participants methods.
+     *
+     * @covers \lesson::count_all_submissions
+     * @covers \lesson::count_submitted_participants
+     * @covers \lesson::count_all_participants
+     */
+    public function test_count_attempts_and_participants(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student4 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+
+        $lessonrecord = $this->getDataGenerator()->create_module(
+            'lesson',
+            ['course' => $course, 'retake' => 1]
+        );
+
+        $lesson = new lesson($lessonrecord);
+        $this->create_lesson_pages($lesson, 2);
+        $this->create_user_submissions($lesson, $student1->id, 1);
+        $this->create_user_submissions($lesson, $student2->id, 2);
+        $this->create_user_submissions($lesson, $student3->id, 2);
+
+        $this->setUser($teacher->id);
+
+        $this->assertEquals(5, $lesson->count_all_submissions());
+        $this->assertEquals(3, $lesson->count_submitted_participants());
+        $this->assertEquals(4, $lesson->count_all_participants());
+
+        // Check that the lesson is not counting teachers as participants.
+        $teacher2 = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->assertEquals(4, $lesson->count_all_participants());
+        $student5 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->assertEquals(5, $lesson->count_all_participants());
+
+        // Prohibit mod/lesson:view capability on student role to ensure it does not count students as participants/submissions.
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        assign_capability(
+            'mod/lesson:view',
+            CAP_PROHIBIT,
+            $studentrole->id,
+            context_module::instance($lesson->get_cm()->id)
+        );
+        $this->assertEquals(0, $lesson->count_all_submissions());
+        $this->assertEquals(0, $lesson->count_submitted_participants());
+        $this->assertEquals(0, $lesson->count_all_participants());
     }
 }

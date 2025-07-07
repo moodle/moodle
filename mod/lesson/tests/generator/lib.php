@@ -802,4 +802,66 @@ class mod_lesson_generator extends testing_module_generator {
 
         return $jumptolist;
     }
+
+    /**
+     * Creates a lesson submission for testing purposes.
+     *
+     * @param mixed $record
+     * @throws \coding_exception
+     * @return bool|int
+     */
+    public function create_submission($record = null) {
+        $db = \core\di::get(\moodle_database::class);
+
+        [
+            'lessonid' => $lessonid,
+            'userid' => $userid,
+            'grade' => $grade,
+        ] = $record;
+
+        [, $cm] = get_course_and_cm_from_instance($lessonid, 'lesson');
+        $lesson = new lesson($cm->get_instance_record());
+
+        // Check if the lesson exists and retakes are allowed.
+        if (!$lesson->retake && $db->record_exists('lesson_grades', ['lessonid' => $lessonid, 'userid' => $userid])) {
+            throw new coding_exception("Grade for user $userid in lesson $lessonid already exists and retakes are not allowed.");
+        }
+
+        // Get the highest score answer for each page in the lesson.
+        $sql = "SELECT la.id AS answerid, la.answer, la.pageid FROM {lesson_answers} la
+                  JOIN (
+                        SELECT lessonid, pageid, MAX(score) AS maxscore FROM {lesson_answers}
+                        GROUP BY lessonid, pageid
+                    ) mla ON mla.lessonid = la.lessonid AND mla.pageid = la.pageid AND mla.maxscore = la.score
+                 WHERE (
+                        SELECT COUNT(*)
+                        FROM {lesson_answers} lac
+                        WHERE lac.lessonid = la.lessonid
+                        AND lac.pageid = la.pageid
+                        AND lac.score = la.score
+                    ) = 1
+                   AND la.lessonid = :lessonid";
+
+        $answers = $db->get_records_sql($sql, ['lessonid' => $lessonid]);
+        foreach ($answers as $answer) {
+            // Create an attempt for each answer.
+            $db->insert_record('lesson_attempts', [
+                'lessonid' => $lessonid,
+                'userid' => $userid,
+                'pageid' => $answer->pageid,
+                'answerid' => $answer->answerid,
+                'retry' => 0,
+                'useranswer' => $answer->answer,
+                'timeseen' => time(),
+            ]);
+        }
+
+        return $db->insert_record('lesson_grades', [
+            'lessonid' => $lessonid,
+            'userid' => $userid,
+            'grade' => $grade,
+            'late' => 0,
+            'completed' => time(),
+        ]);
+    }
 }

@@ -59,8 +59,8 @@ Feature: Lesson reset
     And I navigate to "Overrides" in current page administration
     And I follow "Add user override"
     And I set the following fields to these values:
-        | Override user    | Student1  |
-        | Re-takes allowed | 1 |
+        | Override user           | Student1  |
+        | Allow multiple attempts | 1 |
     And I press "Save"
     And I should see "Sam1 Student1"
     And I am on the "Course 1" "reset" page
@@ -81,8 +81,8 @@ Feature: Lesson reset
     And I select "Group overrides" from the "jump" singleselect
     And I follow "Add group override"
     And I set the following fields to these values:
-        | Override group   | Group 1  |
-        | Re-takes allowed | 1 |
+        | Override group          | Group 1  |
+        | Allow multiple attempts | 1 |
     And I press "Save"
     And I should see "Group 1"
     And I am on the "Course 1" "reset" page

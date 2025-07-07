@@ -75,7 +75,7 @@ final class missingoverviewnotice_test extends \advanced_testcase {
             'h5pactivity' => ['modname' => 'h5pactivity', 'expectempty' => true],
             'imscp' => ['modname' => 'imscp', 'expectempty' => false],
             'label' => ['modname' => 'label', 'expectempty' => false],
-            'lesson' => ['modname' => 'lesson', 'expectempty' => false],
+            'lesson' => ['modname' => 'lesson', 'expectempty' => true],
             'lti' => ['modname' => 'lti', 'expectempty' => false],
             'page' => ['modname' => 'page', 'expectempty' => false],
             'qbank' => ['modname' => 'qbank', 'expectempty' => false],

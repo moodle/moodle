@@ -29,11 +29,11 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | maxanswers  | 10               |
       # Allow student review = Yes
       | modattempts | 1                |
-      # Maximum number of attempts per question
+      # Maximum number of tries per question
       | maxattempts | 3                |
       # Custom scoring = No
       | custom      | 0                |
-      # Re-takes allowed = Yes
+      # Allow multiple attempts = Yes
       | retake      | 1                |
     And the following "mod_lesson > pages" exist:
       | lesson           | qtype     | title                 | content                   |

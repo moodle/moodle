@@ -22,7 +22,7 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
     And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Provide option to try a question again | Yes |
-      | Maximum number of attempts per question | 2 |
+      | Maximum number of tries per question | 2 |
     And I press "Save and display"
 
   Scenario: A student answering incorrectly to a question will see an option to move to the next question if set up.

@@ -49,6 +49,12 @@ class behat_mod_lesson_generator extends behat_generator_base {
                 'datagenerator' => 'answer',
                 'required' => ['page'],
             ],
+            'submissions' => [
+                'singular' => 'submission',
+                'datagenerator' => 'submission',
+                'required' => ['lesson', 'user'],
+                'switchids' => ['lesson' => 'lessonid', 'user' => 'userid'],
+            ],
         ];
     }
 

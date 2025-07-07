@@ -62,7 +62,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I set the following fields to these values:
       | False| 1 |
     When I press "Submit"
-    Then I should see "Maximum number of attempts reached - Moving to next page"
+    Then I should see "You have reached the maximum number of tries for this question. The lesson will now move to the next page."
 
   @javascript @_bug_phantomjs
   Scenario: Check that we can not click back on the browser at the last quiz result page and re-attempt the last question to get full marks
@@ -122,7 +122,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I set the following fields to these values:
       | True | 1 |
     When I press "Submit"
-    Then I should see "Maximum number of attempts reached - Moving to next page"
+    Then I should see "You have reached the maximum number of tries for this question. The lesson will now move to the next page."
     And I press "Continue"
     And I should see "Kermit is a frog"
     And I set the following fields to these values:
@@ -133,7 +133,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"
-    And I should see "Maximum number of attempts reached - Moving to next page"
+    And I should see "You have reached the maximum number of tries for this question. The lesson will now move to the next page."
     And I press "Continue"
     And I should see "Second page contents"
     And I press "Next page"
@@ -147,7 +147,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I set the following fields to these values:
       | False | 1 |
     And I press "Submit"
-    And I should see "Maximum number of attempts reached - Moving to next page"
+    And I should see "You have reached the maximum number of tries for this question. The lesson will now move to the next page."
     And I press "Continue"
     And I should see "Third page contents"
     And I press "Next page"
