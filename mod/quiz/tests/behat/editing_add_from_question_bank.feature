@@ -216,3 +216,32 @@ Feature: Adding questions to a quiz from the question bank
     When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
     Then I should see "Question Bank A" in the "TF1" "list_item"
     And I should see "Question Bank B" in the "TF2" "list_item"
+
+  Scenario: User doesn't see the option to switch to a bank they can't use
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+    And the following "role" exists:
+      | shortname               | noquestions          |
+      | name                    | Cannot use questions |
+      | moodle/question:usemine | prohibit             |
+      | moodle/question:useall  | prohibit             |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher2 | C1     | editingteacher |
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher2"
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
+    And I click on "Select" "checkbox" in the "question 03 name" "table_row"
+    And I click on "Add selected questions to the quiz" "button"
+    When the following "role assigns" exist:
+      | user     | role        | contextlevel    | reference |
+      | teacher2 | noquestions | Activity module | qbank1    |
+    And I open the "Page 1" add to quiz menu
+    And I follow "from question bank"
+    And I click on "Switch bank" "button"
+    Then "Qbank 1 & < > \" ' &amp;" "link" should not exist in the "Select question bank" "dialogue"
