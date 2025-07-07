@@ -339,6 +339,7 @@ class question_bank_helper {
         int $userid,
         int $notincourseid = 0,
         ?context $filtercontext = null,
+        array $havingcap = [],
     ): array {
         $prefs = get_user_preferences(self::RECENTLY_VIEWED, null, $userid);
         $contextids = !empty($prefs) ? explode(',', $prefs) : [];
@@ -358,6 +359,9 @@ class question_bank_helper {
             }
             [, $cm] = get_module_from_cmid($context->instanceid);
             if (!empty($notincourseid) && $notincourseid == $cm->course) {
+                continue;
+            }
+            if (!empty($havingcap) && !(new question_edit_contexts($context))->have_one_cap($havingcap)) {
                 continue;
             }
             $record = self::get_formatted_bank($cm, filtercontext: $filtercontext);
