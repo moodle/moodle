@@ -23,6 +23,7 @@ require_once($CFG->libdir . "/questionlib.php");
 use context;
 use core_question\category_manager;
 use core_question\local\bank\question_version_status;
+use core_question\output\question_category_selector;
 use moodle_exception;
 use html_writer;
 
@@ -304,46 +305,7 @@ class helper {
         bool $top = false,
         int $showallversions = 0,
     ): array {
-        global $DB;
-
-        $contextids = explode(',', $contexts);
-        foreach ($contextids as $contextid) {
-            $context = context::instance_by_id($contextid);
-            if ($context->contextlevel === CONTEXT_MODULE) {
-                $validcontexts[] = $contextid;
-            }
-        }
-        if (empty($validcontexts)) {
-            return [];
-        }
-
-        [$insql, $inparams] = $DB->get_in_or_equal($validcontexts);
-
-        $topwhere = $top ? '' : 'AND c.parent <> 0';
-        $statuscondition = "AND (qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' " .
-            " OR qv.status = '" . question_version_status::QUESTION_STATUS_DRAFT . "' )";
-        $substatuscondition = "AND v.status <> '"  . question_version_status::QUESTION_STATUS_HIDDEN . "' ";
-        $sql = "SELECT c.*,
-                    (SELECT COUNT(1)
-                       FROM {question} q
-                       JOIN {question_versions} qv ON qv.questionid = q.id
-                       JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                      WHERE q.parent = '0'
-                        $statuscondition
-                            AND c.id = qbe.questioncategoryid
-                            AND ({$showallversions} = 1
-                                OR (qv.version = (SELECT MAX(v.version)
-                                                    FROM {question_versions} v
-                                                    JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
-                                                   WHERE be.id = qbe.id $substatuscondition)
-                                   )
-                                )
-                            ) AS questioncount
-                  FROM {question_categories} c
-                 WHERE c.contextid {$insql} {$topwhere}
-              ORDER BY {$sortorder}";
-
-        return $DB->get_records_sql($sql, $inparams);
+        return (new question_category_selector())->get_categories_for_contexts($contexts, $sortorder, $top, $showallversions);
     }
 
     /**
@@ -366,74 +328,14 @@ class helper {
         int $nochildrenof = -1,
         bool $escapecontextnames = true,
     ): array {
-        global $CFG;
-        $pcontexts = [];
-        foreach ($contexts as $context) {
-            if ($context->contextlevel !== CONTEXT_MODULE) {
-                continue;
-            }
-            $pcontexts[] = $context->id;
-        }
-        $contextslist = join(', ', $pcontexts);
-
-        $categories = self::get_categories_for_contexts($contextslist, 'parent, sortorder, name ASC', $top);
-
-        if ($top) {
-            $categories = self::question_fix_top_names($categories);
-        }
-
-        $categories = self::question_add_context_in_key($categories);
-        $categories = self::add_indented_names($categories, $nochildrenof);
-
-        // Sort cats out into different contexts.
-        $categoriesarray = [];
-        foreach ($pcontexts as $contextid) {
-            $context = \context::instance_by_id($contextid);
-            $contextstring = $context->get_context_name(true, true, $escapecontextnames);
-            foreach ($categories as $category) {
-                if ($category->contextid == $contextid) {
-                    $cid = $category->id;
-                    if ("{$currentcat},{$contextid}" != $cid || $currentcat == 0) {
-                        $a = new \stdClass();
-                        $a->name = format_string(
-                            $category->indentedname,
-                            true,
-                            ['context' => $context]
-                        );
-                        if ($category->idnumber !== null && $category->idnumber !== '') {
-                            $a->idnumber = s($category->idnumber);
-                        }
-                        if (!empty($category->questioncount)) {
-                            $a->questioncount = $category->questioncount;
-                        }
-                        if (isset($a->idnumber) && isset($a->questioncount)) {
-                            $formattedname = get_string('categorynamewithidnumberandcount', 'question', $a);
-                        } else if (isset($a->idnumber)) {
-                            $formattedname = get_string('categorynamewithidnumber', 'question', $a);
-                        } else if (isset($a->questioncount)) {
-                            $formattedname = get_string('categorynamewithcount', 'question', $a);
-                        } else {
-                            $formattedname = $a->name;
-                        }
-                        $categoriesarray[$contextstring][$cid] = $formattedname;
-                    }
-                }
-            }
-        }
-        if ($popupform) {
-            $popupcats = [];
-            foreach ($categoriesarray as $contextstring => $optgroup) {
-                $group = [];
-                foreach ($optgroup as $key => $value) {
-                    $key = str_replace($CFG->wwwroot, '', $key);
-                    $group[$key] = $value;
-                }
-                $popupcats[] = [$contextstring => $group];
-            }
-            return $popupcats;
-        } else {
-            return $categoriesarray;
-        }
+        return (new question_category_selector())->question_category_options(
+            $contexts,
+            $top,
+            $currentcat,
+            $popupform,
+            $nochildrenof,
+            $escapecontextnames,
+        );
     }
 
     /**
@@ -443,13 +345,7 @@ class helper {
      * @return array
      */
     public static function question_add_context_in_key(array $categories): array {
-        $newcatarray = [];
-        foreach ($categories as $id => $category) {
-            $category->parent = "$category->parent,$category->contextid";
-            $category->id = "$category->id,$category->contextid";
-            $newcatarray["$id,$category->contextid"] = $category;
-        }
-        return $newcatarray;
+        return (new question_category_selector())->question_add_context_in_key($categories);
     }
 
     /**
@@ -461,15 +357,7 @@ class helper {
      * @throws \coding_exception
      */
     public static function question_fix_top_names(array $categories, bool $escape = true): array {
-
-        foreach ($categories as $id => $category) {
-            if ($category->parent == 0) {
-                $context = \context::instance_by_id($category->contextid);
-                $categories[$id]->name = get_string('topfor', 'question', $context->get_context_name(false, false, $escape));
-            }
-        }
-
-        return $categories;
+        return (new question_category_selector())->question_fix_top_names($categories, $escape);
     }
 
     /**

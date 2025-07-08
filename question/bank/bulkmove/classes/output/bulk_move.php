@@ -27,6 +27,7 @@ namespace qbank_bulkmove\output;
 
 use cm_info;
 use core_question\local\bank\question_bank_helper;
+use core_question\output\question_category_selector;
 use moodle_url;
 use renderer_base;
 use single_button;
@@ -62,44 +63,26 @@ class bulk_move implements \renderable, \templatable {
     public function export_for_template(renderer_base $output) {
 
         [, $cmrec] = get_module_from_cmid($this->currentbankid);
-        $currentbank = cm_info::create($cmrec);
+        $currentbankcm = cm_info::create($cmrec);
 
-        // Get all shared banks and categories and make the current bank/category pre-selected, i.e. ordered first in the list.
-        $bankstorender = question_bank_helper::get_activity_instances_with_shareable_questions(
-            [],
-            [],
-            ['moodle/question:add'],
-            true,
-            $this->currentbankid
-        );
-
-        $allcategories = array_map(function($bank) {
-            if ($bank->modid == $this->currentbankid) {
-                // If this is the current bank then sort the categories so that our current categoryid is first in the list.
-                $this->sort_categories($bank->questioncategories, $this->currentcategoryid);
-            }
-            return $bank->questioncategories;
-        }, $bankstorender);
-
-        // The current bank is not a shared bank, but grab the category records anyway so that we can at least allow them
-        // to be moved to another local category in the bank.
-        if (!plugin_supports('mod', $currentbank->modname, FEATURE_PUBLISHES_QUESTIONS, false)) {
-            $currentbank = question_bank_helper::get_activity_instances_with_private_questions(
-                incourseids: [$currentbank->course],
-                getcategories: true,
+        // Get the current bank and its categories. All other banks and categories will be loaded dynamically.
+        if (plugin_supports('mod', $currentbankcm->modname, FEATURE_PUBLISHES_QUESTIONS, false)) {
+            $banktorender = question_bank_helper::get_activity_instances_with_shareable_questions(
+                havingcap: ['moodle/question:add'],
                 currentbankid: $this->currentbankid,
+                filtercontext: $currentbankcm->context,
+                limit: 1,
             )[0];
-            $currentbankcats = $currentbank->questioncategories;
-            // Move the current category to the top of the list.
-            $this->sort_categories($currentbankcats, $this->currentcategoryid);
-            // Add the current bank categories to the front of the categories list.
-            array_unshift($allcategories, $currentbankcats);
-            // Add the current bank to the front of the banks list.
-            array_unshift($bankstorender, $currentbank);
+        } else {
+            $banktorender = question_bank_helper::get_activity_instances_with_private_questions(
+                incourseids: [$currentbankcm->course],
+                havingcap: ['moodle/question:add'],
+                currentbankid: $this->currentbankid,
+                filtercontext: $currentbankcm->context,
+            )[0];
         }
 
-        // Flatten all the categories into a 2D array.
-        $allcategories = array_merge(...array_values($allcategories));
+        $categoryselector = new question_category_selector([$currentbankcm->context], autocomplete: true);
 
         $savebutton = new single_button(
             new moodle_url('#'),
@@ -113,29 +96,10 @@ class bulk_move implements \renderable, \templatable {
         );
 
         return [
-            'allsharedbanks' => $bankstorender,
-            'allcategories' => $allcategories,
+            'bank' => $banktorender,
+            'categories' => $categoryselector->export_for_template($output),
             'save' => $savebutton->export_for_template($output),
+            'contextid' => $currentbankcm->context->id,
         ];
-    }
-
-    /**
-     * Wrapped usort to move the currentcategoryid to the top of the list of question categories.
-     *
-     * @param array $categories categories to sort
-     * @param int $currentcategoryid the category to be sorted to the top of the list
-     * @return void
-     */
-    protected function sort_categories(array &$categories, int $currentcategoryid): void {
-        usort($categories, static function($categorya, $categoryb) use ($currentcategoryid) {
-            if ($categorya->id != $currentcategoryid && $categoryb->id == $currentcategoryid) {
-                return 1;
-            }
-            if ($categorya->id == $currentcategoryid && $categoryb->id != $currentcategoryid) {
-                return -1;
-            }
-
-            return $categoryb->id <=> $categorya->id;
-        });
     }
 }

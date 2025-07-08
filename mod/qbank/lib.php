@@ -108,3 +108,40 @@ function qbank_delete_instance(int $id): bool {
 
     return true;
 }
+
+/**
+ * Callback for tool_generator so we can add qbanks to generated courses.
+ *
+ * @param tool_generator_course_backend $backend
+ * @param testing_data_generator $generator
+ * @param int $courseid
+ * @param int $number
+ * @return void
+ * @throws coding_exception
+ */
+function qbank_course_backend_generator_create_activity(
+    tool_generator_course_backend $backend,
+    testing_data_generator $generator,
+    int $courseid,
+    int $number,
+) {
+    // Set up generator.
+    $generator = $generator->get_plugin_generator('mod_qbank');
+
+    // Create assignments.
+    $backend->log('createqbank', $number, true, 'mod_qbank');
+    for ($i = 1; $i <= $number; $i++) {
+        $qbank = $generator->create_instance(
+            [
+                'course' => $courseid,
+                'name' => "Question bank course {$courseid} bank {$i}",
+            ],
+            [
+                'section' => 0,
+            ],
+        );
+        question_get_default_category(\core\context\module::instance($qbank->cmid)->id, true);
+        $backend->dot($i, $number);
+    }
+    $backend->end_log();
+}
