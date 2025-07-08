@@ -382,3 +382,103 @@ Feature: Lesson group override
     And I should see "Only visible to members/Non-Participation" in the "Override group" "select"
     And I should see "Only see own membership" in the "Override group" "select"
     And I should not see "Not visible" in the "Override group" "select"
+
+  @javascript
+  Scenario: Lesson activity group overrides are displayed on the timeline block
+    Given the following "group members" exist:
+      | user     | group |
+      | student1 | G2    |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    And I set the following fields to these values:
+      | available[enabled] | 1            |
+      | deadline[enabled]  | 1            |
+      | available          | ##today##    |
+      | deadline           | ##tomorrow## |
+    And I press "Save and display"
+    When I log in as "student1"
+    Then I should see "##tomorrow##%A, %d %B %Y##" in the "Timeline" "block"
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
+    And I set the following fields to these values:
+      | Override group | Group 1            |
+      | Available from | ##tomorrow##       |
+      | Deadline       | ##tomorrow +1day## |
+    And I press "Save"
+    And I log in as "student1"
+    And I should see "##tomorrow +1day##%A, %d %B %Y##" in the "Timeline" "block"
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
+    And I set the following fields to these values:
+      | Override group | Group 2             |
+      | Available from | ##tomorrow +1day##  |
+      | Deadline       | ##tomorrow +3days## |
+    And I press "Save"
+    And I log in as "student1"
+    And I should see "##tomorrow +3days##%A, %d %B %Y##" in the "Timeline" "block"
+
+  @javascript
+  Scenario: Lesson activity user override is displayed even if group override exists on the timeline block
+    Given the following "group members" exist:
+      | user     | group |
+      | student1 | G2    |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    And I set the following fields to these values:
+      | available[enabled] | 1            |
+      | deadline[enabled]  | 1            |
+      | available          | ##today##    |
+      | deadline           | ##tomorrow## |
+    And I press "Save and display"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
+    And I set the following fields to these values:
+      | Override group | Group 1            |
+      | Available from | ##tomorrow##       |
+      | Deadline       | ##tomorrow +1day## |
+    And I press "Save"
+    And I follow "Add group override"
+    And I set the following fields to these values:
+      | Override group | Group 2             |
+      | Available from | ##tomorrow +1day##  |
+      | Deadline       | ##tomorrow +3days## |
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
+    And I set the following fields to these values:
+      | Override user  | Sam1 Student1     |
+      | Available from | ##tomorrow##      |
+      | Deadline       | ##tomorrow noon## |
+    And I press "Save"
+    When I log in as "student1"
+    Then I should see "##tomorrow noon##%A, %d %B %Y##" in the "Timeline" "block"
+
+  @javascript
+  Scenario: Lesson activity override are not visible on timeline block when student is unenrolled
+    Given the following "group members" exist:
+      | user     | group |
+      | student1 | G2    |
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
+    And I set the following fields to these values:
+      | Override group | Group 2             |
+      | Available from | ##tomorrow +1day##  |
+      | Deadline       | ##tomorrow +3days## |
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
+    And I set the following fields to these values:
+      | Override user  | Sam1 Student1     |
+      | Available from | ##tomorrow##      |
+      | Deadline       | ##tomorrow noon## |
+    And I press "Save"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I click on "Unenrol" "icon" in the "student1" "table_row"
+    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    When I log in as "student1"
+    Then "Test lesson name" "link" should not exist in the "Timeline" "block"
+    And I should not see "##tomorrow noon##%A, %d %B %Y##" in the "Timeline" "block"
