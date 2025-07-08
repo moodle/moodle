@@ -40,61 +40,66 @@ abstract class backup_question_dbops extends backup_dbops {
     public static function calculate_question_categories($backupid, $contextid) {
         global $DB;
 
-        // First step, annotate all the categories for the given context (course/module)
+        // First step, get all the categories for the given context (course/module)
         // i.e. the whole context questions bank
-        $DB->execute("INSERT INTO {backup_ids_temp} (backupid, itemname, itemid)
-                      SELECT ?, 'question_category', id
-                        FROM {question_categories}
-                       WHERE contextid = ?", array($backupid, $contextid));
+        $contextcategories = $DB->get_records_menu('question_categories', ['contextid' => $contextid], '', 'id, parent');
 
-        // Now, based in the annotated questions, annotate all the categories they
-        // belong to (whole context question banks too)
-        // First, get all the contexts we are going to save their question bank (no matter
-        // where they are in the contexts hierarchy, transversals... whatever)
-        $contexts = $DB->get_fieldset_sql("SELECT DISTINCT qc2.contextid
-                                                 FROM {question_categories} qc2
-                                                 JOIN {question_bank_entries} qbe ON qbe.questioncategoryid = qc2.id
-                                                 JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                                                 JOIN {question} q ON q.id = qv.questionid
-                                                 JOIN {backup_ids_temp} bi ON bi.itemid = q.id
-                                                WHERE bi.backupid = ?
-                                                  AND bi.itemname = 'question'
-                                                  AND qc2.contextid != ?", array($backupid, $contextid));
+        // Now, based in the annotated question bank entries, get all the categories they
+        // belong to.
+        $questioncategories = $DB->get_records_sql_menu(
+            "SELECT DISTINCT qc2.id, qc2.parent
+               FROM {question_categories} qc2
+                    JOIN {question_bank_entries} qbe ON qbe.questioncategoryid = qc2.id
+                    JOIN {backup_ids_temp} bi ON bi.itemid = qbe.id
+              WHERE bi.backupid = ?
+                    AND bi.itemname = 'question_bank_entry'
+                    AND qc2.contextid != ?",
+            [$backupid, $contextid]
+        );
 
-        // Calculate and get the set reference records.
-        $setreferencecontexts = $DB->get_fieldset_sql("
-        SELECT DISTINCT qc.contextid
-          FROM {question_categories} qc
-          JOIN {question_set_references} qsr ON qsr.questionscontextid = qc.contextid
-         WHERE qsr.usingcontextid = ?", [$contextid]);
-        foreach ($setreferencecontexts as $setreferencecontext) {
-            if (!in_array($setreferencecontext, $contexts) && (int)$setreferencecontext !== $contextid) {
-                $contexts [] = $setreferencecontext;
+        // These are all the question categories we want to include in the backup.
+        $categories = $contextcategories + $questioncategories;
+        // If we're not already including the parents of a category, add them in.
+        foreach ($categories as $parentid) {
+            if (!array_key_exists($parentid, $categories)) {
+                $categories += self::get_parent_categories($parentid);
             }
         }
+        // Insert annotations of the found categories.
+        foreach (array_keys($categories) as $categoryid) {
+            backup_structure_dbops::insert_backup_ids_record($backupid, 'question_category', $categoryid);
+        }
+        // For these categories, we want to include all questions.
+        foreach (array_keys($contextcategories) as $categoryid) {
+            backup_structure_dbops::insert_backup_ids_record($backupid, 'question_category_complete', $categoryid);
+        }
+        // For these categories, we only want to include the questions that have been annotated.
+        // Exclude those where we're already including all questions.
+        $partialcategories = array_diff(
+            array_keys($questioncategories),
+            array_keys($contextcategories),
+        );
+        foreach ($partialcategories as $categoryid) {
+            backup_structure_dbops::insert_backup_ids_record($backupid, 'question_category_partial', $categoryid);
+        }
+    }
 
-        // Calculate the get the reference records.
-        $referencecontexts = $DB->get_fieldset_sql("
-        SELECT DISTINCT qc.contextid
-         FROM {question_categories} qc
-         JOIN {question_bank_entries} qbe ON qbe.questioncategoryid = qc.id
-         JOIN {question_references} qr ON qr.questionbankentryid = qbe.id
-        WHERE qr.usingcontextid =?", [$contextid]);
-        foreach ($referencecontexts as $referencecontext) {
-            if (!in_array($referencecontext, $contexts) && (int)$referencecontext !== $contextid) {
-                $contexts [] = $referencecontext;
-            }
+    /**
+     * Recursively find the parents and ancestors of the given category
+     *
+     * @param int $categoryid The category we want to find parents for.
+     * @return array id => parentid for each category
+     */
+    protected static function get_parent_categories(int $categoryid): array {
+        global $DB;
+        $parentcategories = [];
+        $parentid = $DB->get_field('question_categories', 'parent', ['id' => $categoryid]);
+        $parentcategories[$categoryid] = $parentid;
+        // If this is not a top category, keep going.
+        if ($parentid > 0) {
+            array_merge($parentcategories, self::get_parent_categories($parentid));
         }
-        // And now, simply insert all the question categories (complete question bank)
-        // for those contexts if we have found any
-        if ($contexts) {
-            list($contextssql, $contextparams) = $DB->get_in_or_equal($contexts);
-            $params = array_merge(array($backupid), $contextparams);
-            $DB->execute("INSERT INTO {backup_ids_temp} (backupid, itemname, itemid)
-                          SELECT ?, 'question_category', id
-                            FROM {question_categories}
-                           WHERE contextid $contextssql", $params);
-        }
+        return $parentcategories;
     }
 
     /**
