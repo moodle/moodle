@@ -1,5 +1,5 @@
 @mod @mod_feedback
-Feature: As a teacher, I can see users who have reponded or not responded to a feedback activity.
+Feature: As a teacher, I can see users who have responded or not responded to a feedback activity.
   As a non editing teacher not in a group I cannot see the responses.
 
   Background:
