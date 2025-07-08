@@ -590,6 +590,7 @@ class api {
             'subdirs' => false,
             'maxfiles' => -1,
             'context' => context_system::instance(),
+            'noclean' => true,
         ];
     }
 
@@ -606,6 +607,7 @@ class api {
             'subdirs' => false,
             'maxfiles' => -1,
             'context' => context_system::instance(),
+            'noclean' => true,
         ];
     }
 
