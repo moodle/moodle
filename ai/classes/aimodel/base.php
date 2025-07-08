@@ -56,6 +56,15 @@ abstract class base {
      * @return bool Whether the model has settings.
      */
     public function has_model_settings(): bool {
-        return false;
+        return !empty($this->get_model_settings());
+    }
+
+    /**
+     * Get all settings that can be configured for a model.
+     *
+     * @return string[] Array of settings.
+     */
+    public function get_model_settings(): array {
+        return [];
     }
 }

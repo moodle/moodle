@@ -51,6 +51,10 @@ class action_form extends action_settings_form {
      * @var string Provider name.
      */
     protected string $providername;
+    /**
+     * @var array Stored model settings.
+     */
+    protected array $storedmodelsettings;
 
     #[\Override]
     protected function definition(): void {
@@ -61,6 +65,7 @@ class action_form extends action_settings_form {
         $this->action = $this->_customdata['action'];
         $this->providerid = $this->_customdata['providerid'] ?? 0;
         $this->providername = $this->_customdata['providername'] ?? 'aiprovider_openai';
+        $this->storedmodelsettings = $this->_customdata['actionconfig']['modelsettings'] ?? [];
 
         $mform->addElement('header', 'generalsettingsheader', get_string('general', 'core'));
     }
@@ -77,20 +82,32 @@ class action_form extends action_settings_form {
     public function get_data(): ?\stdClass {
         $data = parent::get_data();
 
-        if ($data) {
-            if (isset($data->modeltemplate)) {
-                if ($data->modeltemplate === 'custom') {
-                    $data->model = $data->custommodel;
-                } else {
-                    // Set the model to the selected model template.
-                    $data->model = $data->modeltemplate;
+        if (isset($data->model)) {
+            if ($data->modeltemplate === 'custom') {
+                $data->modelsettings['custom']['modelextraparams'] = $data->modelextraparams;
+            } else {
+                $modelclass = helper::get_model_class($data->model);
+                if ($modelclass) {
+                    if ($modelclass->has_model_settings()) {
+                        $modelsettings = array_keys($modelclass->get_model_settings());
+                        // Process the model settings.
+                        $modeldata = [];
+                        foreach ($data as $key => $value) {
+                            if (in_array($key, $modelsettings)) {
+                                $modeldata[$key] = $value;
+                            }
+                        }
+                        if (!empty($modeldata)) {
+                            $data->modelsettings[$data->model] = $modeldata;
+                        }
+                    }
                 }
-
             }
-            // Unset the model template.
+        }
+
+        if (!empty($data)) {
             unset($data->custommodel);
             unset($data->modeltemplate);
-
             // Unset any false-y values.
             $data = (object) array_filter((array) $data);
         }
@@ -142,16 +159,7 @@ class action_form extends action_settings_form {
         $mform = $this->_form;
         $actionname = $this->actionname;
 
-        // Action model to use.
-        $mform->addElement(
-            'select',
-            'modeltemplate',
-            get_string("action:{$this->actionname}:model", 'aiprovider_openai'),
-            $this->get_model_list($modeltype),
-            ['data-modelchooser-field' => 'selector'],
-        );
-        $mform->setType('modeltemplate', PARAM_TEXT);
-        $mform->addRule('modeltemplate', null, 'required', null, 'client');
+        // Determine which model to use as the default.
         if (!empty($this->actionconfig['model']) &&
                 (!array_key_exists($this->actionconfig['model'], $this->get_model_list($modeltype)) ||
                 !empty($this->actionconfig['modelextraparams']))) {
@@ -161,6 +169,23 @@ class action_form extends action_settings_form {
         } else {
             $defaultmodel = $this->actionconfig['model'];
         }
+
+        // Get this model's stored values to assist model switching and value population in JS.
+        $modeltemplate = optional_param('modeltemplate', $defaultmodel, PARAM_TEXT);
+        if (isset($this->storedmodelsettings[$modeltemplate])) {
+            $this->storedmodelsettings = [$modeltemplate => $this->storedmodelsettings[$modeltemplate]];
+        }
+
+        // Model chooser.
+        $mform->addElement(
+            'select',
+            'modeltemplate',
+            get_string("action:{$this->actionname}:model", 'aiprovider_openai'),
+            $this->get_model_list($modeltype),
+            ['data-modelchooser-field' => 'selector', 'data-storedmodelsettings' => json_encode($this->storedmodelsettings)],
+        );
+        $mform->setType('modeltemplate', PARAM_TEXT);
+        $mform->addRule('modeltemplate', null, 'required', null, 'client');
         $mform->setDefault('modeltemplate', $defaultmodel);
         $mform->addHelpButton('modeltemplate', "action:{$this->actionname}:model", 'aiprovider_openai');
 

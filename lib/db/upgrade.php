@@ -1850,5 +1850,70 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025062900.01);
     }
 
+    if ($oldversion < 2025070600.01) {
+
+        // Get all AI providers that potentially have model settings.
+        $sql = "SELECT * FROM {ai_providers} WHERE provider IN (?, ?)";
+
+        $params = [
+            'aiprovider_openai\provider',
+            'aiprovider_ollama\provider',
+        ];
+        $records = $DB->get_records_sql($sql, $params);
+
+        $affectedkeys = [
+            'gpt-4o' => [
+                'top_p',
+                'max_tokens',
+                'frequency_penalty',
+                'presence_penalty',
+            ],
+            'o1' => [
+                'top_p',
+                'max_tokens',
+                'frequency_penalty',
+                'presence_penalty',
+            ],
+            'llama3.3' => [
+                'mirostat',
+                'temperature',
+                'seed',
+                'top_k',
+                'top_p',
+            ],
+        ];
+
+        // Get covert model settings to new format.
+        foreach ($records as $record) {
+            $actionconfig = json_decode($record->actionconfig, true, 512);
+            foreach($actionconfig as $actionkey => $action) {
+                $model = $action['settings']['model'];
+                $modelsettings = [];
+                // Handle custom params.
+                if (isset($action['settings']['modelextraparams'])) {
+                    $modelsettings['custom']['modelextraparams'] = $action['settings']['modelextraparams'] ?? '';
+                // Handle known models and their keys.
+                } else if (isset($affectedkeys[$model])) {
+                    foreach ($affectedkeys[$model] as $key) {
+                        $modelsettings[$model][$key] = $action['settings'][$key] ?? '';
+                    }
+                }
+                if (!empty($modelsettings)) {
+                    $actionconfig[$actionkey]['modelsettings'] = $modelsettings;
+                }
+            };
+            // Update the record with modified actionconfig.
+            if (isset($actionconfig[$actionkey]['modelsettings'])) {
+                $updatedrecord = new stdClass();
+                $updatedrecord->id = $record->id;
+                $updatedrecord->actionconfig = json_encode($actionconfig);
+                $DB->update_record('ai_providers', $updatedrecord);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025070600.01);
+    }
+
     return true;
 }

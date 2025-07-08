@@ -20,10 +20,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {populateFields, clearFields} from 'core_ai/helper';
+
 const Selectors = {
     fields: {
         selector: '[data-modelchooser-field="selector"]',
         updateButton: '[data-modelchooser-field="updateButton"]',
+        modelSettingsContainer: 'id_modelsettingsheadercontainer',
     },
 };
 
@@ -33,6 +36,17 @@ const Selectors = {
 export const init = () => {
     const modelSelector = document.querySelector(Selectors.fields.selector);
     if (modelSelector) {
+        // If we have stored model settings, populate them in their respective fields.
+        const storedModelSettings = JSON.parse(modelSelector.getAttribute('data-storedmodelsettings'));
+        const modelSettings = storedModelSettings[modelSelector.value];
+        const containerId = Selectors.fields.modelSettingsContainer;
+
+        if (modelSettings) {
+            populateFields(modelSettings, containerId);
+        } else {
+            clearFields(containerId);
+        }
+
         modelSelector.addEventListener('change', e => {
             modelSelector.options[e.target.selectedIndex].selected = true;
             const form = e.target.closest('form');

@@ -36,11 +36,6 @@ class o1 extends gpt4o {
     }
 
     #[\Override]
-    public function has_model_settings(): bool {
-        return true;
-    }
-
-    #[\Override]
     public function model_type(): array {
         return [self::MODEL_TYPE_TEXT];
     }
