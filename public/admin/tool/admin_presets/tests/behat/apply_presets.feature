@@ -81,7 +81,6 @@ Feature: I can apply presets
     And I should see "Restriction by profile" in the "Setting changes" "table"
     And I should see "SCORM package" in the "Setting changes" "table"
     And I should see "Search forums" in the "Setting changes" "table"
-    And I should see "Section links" in the "Setting changes" "table"
     And I should see "Server files" in the "Setting changes" "table"
     And I should see "Show data retention summary" in the "Setting changes" "table"
     And I should see "Social activities" in the "Setting changes" "table"

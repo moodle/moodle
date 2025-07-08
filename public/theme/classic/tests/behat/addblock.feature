@@ -16,7 +16,6 @@ Feature: Add a block using classic theme
     Then I should see "Administration"
     And I should see "Navigation"
     And I should see "Courses"
-    And I should see "Section links"
 
   Scenario: Admins can change unaddable blocks using the unaddableblocks setting for classic
     Given the following config values are set as admin:
@@ -29,4 +28,3 @@ Feature: Add a block using classic theme
     And I should see "Administration"
     And I should see "Navigation"
     And I should see "Courses"
-    And I should see "Section links"

@@ -1,0 +1,5 @@
+issueNumber: MDL-80556
+notes:
+  core_block:
+    - message: Removed block_section_links from Moodle 5.1.
+      type: removed

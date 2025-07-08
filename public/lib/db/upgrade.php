@@ -1996,5 +1996,33 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025073100.01);
     }
 
+    if ($oldversion < 2025080700.01) {
+        // Remove section_links block.
+
+        if (!file_exists($CFG->dirroot . "/blocks/section_links/version.php")) {
+            uninstall_plugin('block', 'section_links');
+            // Delete all the admin preset plugin references to section_links.
+            $DB->delete_records('adminpresets_plug', ['plugin' => 'block', 'name' => 'section_links']);
+            // Remove the section_links block from the unaddableblocks setting.
+            $settings = $DB->get_records('config_plugins', ['name' => 'unaddableblocks'], '', 'plugin, value');
+            foreach ($settings as $setting) {
+                // Split the value into an array of items and remove 'section_links'.
+                // Using PREG_SPLIT_NO_EMPTY will remove any empty strings resulting from multiple commas.
+                $items = preg_split('/,/', $setting->value, -1, PREG_SPLIT_NO_EMPTY);
+                $newvalue = array_filter($items, function($item) {
+                    return trim($item) !== 'section_links';
+                });
+                set_config(
+                    'unaddableblocks',
+                    implode(',', $newvalue),
+                    $setting->plugin,
+                );
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025080700.01);
+    }
+
     return true;
 }

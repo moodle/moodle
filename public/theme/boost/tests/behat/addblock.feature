@@ -16,7 +16,6 @@ Feature: Add a block using boost theme
     Then I should not see "Administration"
     And I should not see "Navigation"
     And I should not see "Courses"
-    And I should not see "Section links"
     And I should see "Online users"
 
   Scenario: Admins can change unaddable blocks using the unaddableblocks setting
@@ -28,7 +27,6 @@ Feature: Add a block using boost theme
     And I should not see "Private files"
     And I should see "Navigation"
     And I should see "Courses"
-    And I should see "Section links"
 
   Scenario: If unaddableblocks settting is empty, no block is excluded from the Add a block list
     Given the following config values are set as admin:
@@ -38,4 +36,3 @@ Feature: Add a block using boost theme
     Then I should see "Administration"
     And I should see "Navigation"
     And I should see "Courses"
-    And I should see "Section links"
