@@ -59,6 +59,8 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
         $this->add_question_set_references($qinstance, 'mod_quiz', 'slot');
 
+        $this->annotate_set_reference_bank_entries($this->task->get_contextid(), 'mod_quiz', 'slot', $this->task->get_backupid());
+
         $sections = new backup_nested_element('sections');
 
         $section = new backup_nested_element('section', ['id'], ['firstslot', 'heading', 'shufflequestions']);
