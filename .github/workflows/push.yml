@@ -19,7 +19,7 @@ env:
 
 jobs:
   Grunt:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checking out code
@@ -60,11 +60,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             php: 7.4
             extensions:
             db: mysqli
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             extensions: mongodb-1.19.4
             php: 8.1
             db: pgsql
