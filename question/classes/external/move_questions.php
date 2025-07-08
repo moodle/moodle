@@ -47,7 +47,7 @@ class move_questions extends external_api {
                 'newcontextid' => new external_value(PARAM_INT, 'Contextid of the target question bank'),
                 'newcategoryid' => new external_value(PARAM_INT, 'ID of the target question category'),
                 'questionids' => new external_value(PARAM_SEQUENCE, 'Comma separated list of question ids to move'),
-                'returnurl' => new external_value(PARAM_URL,
+                'returnurl' => new external_value(PARAM_LOCALURL,
                     desc: 'A URL to add/update the filter param with the new category',
                     default: ''
                 ),
@@ -112,6 +112,15 @@ class move_questions extends external_api {
         if ($returnurlstring) {
             $returnurl = new moodle_url($returnurlstring);
             $returnurl->param('cmid', $newcontext->instanceid);
+            $returnurl->param('cat', "{$newcategoryid},{$newcontextid}");
+            $returnurl->remove_params('category');
+            // We can only highlight 1 question, so only highlight if we're moving a single question.
+            $qids = explode(',', $questionids);
+            if (count($qids) === 1) {
+                $returnurl->param('lastchanged', reset($qids));
+            } else {
+                $returnurl->remove_params('lastchanged');
+            };
             $filter = $returnurl->param('filter');
             if ($filter) {
                 $returnfilters = filter_condition_manager::update_filter_param_to_category(

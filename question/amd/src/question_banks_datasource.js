@@ -30,6 +30,10 @@ export default {
     transport: function(selector, query, callback) {
         const element = document.querySelector(selector);
         const contextId = element.dataset.contextid;
+        let requiredcapabilities = ['use'];
+        if (element.dataset.requiredcapabilities) {
+            requiredcapabilities = JSON.parse(element.dataset.requiredcapabilities);
+        }
 
         if (!contextId) {
             throw new Error('The attribute data-contextid is required on ' + selector);
@@ -40,6 +44,7 @@ export default {
             args: {
                 contextid: contextId,
                 search: query,
+                requiredcapabilities: requiredcapabilities,
             },
         }])[0]
         .then(callback)
