@@ -38292,6 +38292,21 @@ body.reset-style .btn:not(.btn-icon) {
   border-radius: 0.6rem;
 }
 
+/**
+ * Reset the Bootstrap _reboot.scss styles for tables.
+ * That reboot mainly affects tables added by the tiny editor.
+ */
+table:not(.table) thead,
+table:not(.table) tbody,
+table:not(.table) tfoot,
+table:not(.table) tr,
+table:not(.table) td,
+table:not(.table) th {
+  border-color: var(--bs-border-color);
+  border-style: solid;
+  border-width: var(--bs-border-width);
+}
+
 body.behat-site .fixed-top {
   position: absolute;
 }

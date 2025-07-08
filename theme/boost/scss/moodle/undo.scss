@@ -238,3 +238,20 @@ $allow-reset-style: true !default;
         }
     }
 }
+
+/**
+ * Reset the Bootstrap _reboot.scss styles for tables.
+ * That reboot mainly affects tables added by the tiny editor.
+ */
+table:not(.table) {
+    thead,
+    tbody,
+    tfoot,
+    tr,
+    td,
+    th {
+        border-color: $table-border-color;
+        border-style: solid;
+        border-width: $table-border-width;
+    }
+}
