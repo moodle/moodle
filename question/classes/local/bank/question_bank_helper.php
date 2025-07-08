@@ -582,7 +582,7 @@ class question_bank_helper {
             }
         }
 
-        if (strlen($bankname) > self::BANK_NAME_MAX_LENGTH) {
+        if (\core_text::strlen($bankname) > self::BANK_NAME_MAX_LENGTH) {
             throw new \coding_exception(
                 'The provided bankname is too long for the database field.',
                 'Use question_bank_helper::get_bank_name_string to get a suitably truncated name.',
