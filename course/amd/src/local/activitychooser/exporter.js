@@ -23,7 +23,14 @@
 
 import {getStrings} from 'core/str';
 
-const activityCategories = ['activities', 'resources'];
+const activityCategories = [
+    'administration',
+    'assessment',
+    'collaboration',
+    'communication',
+    'content',
+    'interactivecontent',
+];
 
 let allStrings = null;
 
@@ -119,8 +126,8 @@ export default class {
             },
         ];
 
-        activityCategories.forEach((category, index) => {
-            const categoryModules = modulesData.filter(mod => mod.archetype == index);
+        activityCategories.forEach((category) => {
+            const categoryModules = modulesData.filter(mod => mod.purpose == category);
             if (categoryModules.length === 0) {
                 return;
             }
@@ -128,8 +135,8 @@ export default class {
                 this.getTabData(
                     category,
                     categoryModules,
-                    allStrings[category],
-                    allStrings[category + '_help']
+                    allStrings['mod_purpose_' + category],
+                    allStrings['mod_purpose_' + category + '_help']
                 )
             );
         });
@@ -210,14 +217,14 @@ async function loadNecessaryStrings() {
         {key: 'recommended_help', component: 'core_course'},
         ...activityCategories.map(
             (key) => ({
-                key: key,
-                component: 'core',
+                key: 'mod_purpose_' + key,
+                component: 'core_course',
             })
         ),
         ...activityCategories.map(
             (key) => ({
-                key: key + '_help',
-                component: 'core',
+                key: 'mod_purpose_' + key + '_help',
+                component: 'core_course',
             })
         ),
     ];

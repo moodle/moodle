@@ -84,3 +84,5 @@ unlockverbose,core_grades
 aiusagestats,core_hub
 maxsectionslimit,core
 maxsectionaddmessage,core_courseformat
+activities_help,core
+resources_help,core
