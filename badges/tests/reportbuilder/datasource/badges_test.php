@@ -257,6 +257,14 @@ final class badges_test extends core_reportbuilder_testcase {
                 'badge:name_operator' => text::IS_EQUAL_TO,
                 'badge:name_value' => 'Other badge',
             ], false],
+            'Filter badge language' => ['badge:language', [
+                'badge:language_operator' => select::EQUAL_TO,
+                'badge:language_value' => 'en',
+            ], true],
+            'Filter badge language (no match)' => ['badge:language', [
+                'badge:language_operator' => select::NOT_EQUAL_TO,
+                'badge:language_value' => 'en',
+            ], false],
             'Filter badge version' => ['badge:version', [
                 'badge:version_operator' => text::IS_EQUAL_TO,
                 'badge:version_value' => '2.0',
@@ -364,6 +372,7 @@ final class badges_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
         $badge = $generator->create_badge([
             'name' => 'Course badge',
+            'language' => 'en',
             'version' => '2.0',
             'type' => BADGE_TYPE_COURSE,
             'courseid' => $course->id,
