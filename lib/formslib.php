@@ -1776,7 +1776,17 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }
         $this->_reqHTML = '<span class="req">' . $OUTPUT->pix_icon('req', get_string('requiredelement', 'form')) . '</span>';
         $this->_advancedHTML = '<span class="adv">' . $OUTPUT->pix_icon('adv', get_string('advancedelement', 'form')) . '</span>';
-        $this->setRequiredNote(get_string('somefieldsrequired', 'form', $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'))));
+        $this->setRequiredNote(
+            get_string(
+                identifier: 'somefieldsrequired',
+                component: 'form',
+                a: $OUTPUT->pix_icon(
+                    pix: 'req',
+                    alt: get_string('requiredelement', 'form'),
+                    attributes: ['aria-hidden' => 'true'],
+                ),
+            ),
+        );
     }
 
     /**
@@ -3194,7 +3204,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
     /** @var string Required Note template string */
     var $_requiredNoteTemplate =
-        "\n\t\t<div class=\"fdescription required\">{requiredNote}</div>";
+        "\n\t\t<div class=\"fdescription required\" aria-hidden=\"true\">{requiredNote}</div>";
 
     /**
      * Collapsible buttons string template.

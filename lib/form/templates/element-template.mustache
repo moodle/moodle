@@ -58,8 +58,8 @@
         {{/ label }}{{/ label}}
         <div class="form-label-addon d-flex align-items-center align-self-start">
             {{#required}}
-                <div class="text-danger" title="{{#str}}required{{/str}}">
-                {{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}
+                <div class="text-danger" title="{{#str}}required{{/str}}" aria-hidden="true">
+                    {{#pix}}req, core{{/pix}}
                 </div>
             {{/required}}
             {{{helpbutton}}}
