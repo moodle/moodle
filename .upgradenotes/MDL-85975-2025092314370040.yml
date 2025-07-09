@@ -1,0 +1,17 @@
+issueNumber: MDL-85975
+notes:
+  core:
+    - message: >
+        `restore_qtype_plugin::unset_excluded_fields` now returns the modified
+        questiondata structure,
+
+        in order to support structures that contain arrays.
+
+        If your qtype plugin overrides
+        `restore_qtype_plugin::remove_excluded_question_data` without
+
+        calling the parent method, you may need to modify your overridden method
+        to use the returned
+
+        value.
+      type: fixed
