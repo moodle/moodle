@@ -46,14 +46,21 @@ class cleanup_duplicate_subquestions extends \core\task\adhoc_task {
      */
     public function find_duplicated_subquestions(): array {
         global $DB;
+        $questiontext = $DB->sql_cast_to_char('subq.questiontext');
+        $sequence = $DB->sql_cast_to_char('qm.sequence');
         return $DB->get_records_sql("
-            SELECT MIN(subq.id) AS firstid, subq.stamp, subq.questiontext, subq.parent, qm.sequence, COUNT(1) AS count
+            SELECT MIN(subq.id) AS firstid,
+                   subq.stamp AS stamp,
+                   {$questiontext} AS questiontext,
+                   subq.parent,
+                   {$sequence} AS sequence,
+                   COUNT(1) AS count
               FROM {question} subq
               JOIN {question} q ON q.id = subq.parent
               JOIN {question_multianswer} qm ON q.id = qm.question
              WHERE q.qtype = 'multianswer'
-          GROUP BY subq.stamp, subq.questiontext, subq.parent, qm.sequence
-            HAVING COUNT(1) > 1;
+          GROUP BY subq.stamp, {$questiontext}, subq.parent, {$sequence}
+            HAVING COUNT(1) > 1
         ");
     }
 
