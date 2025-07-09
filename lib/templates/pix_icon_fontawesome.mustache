@@ -31,6 +31,7 @@
     * pix
     * title
     * extraclasses
+    * aria-hidden - whether the icon is hidden from assistive technologies
 
     Example context (json):
     {
@@ -38,12 +39,13 @@
         "title": "Meh",
         "alt": "Meh Meh",
         "extraclasses": "fa-spin",
-        "unmappedIcon": false
+        "unmappedIcon": false,
+        "aria-hidden": false
     }
 
 }}
 {{^unmappedIcon}}
-<i class="icon {{key}} fa-fw {{extraclasses}}" {{#aria-hidden}}aria-hidden="true"{{/aria-hidden}} {{#title}}title="{{title}}"{{/title}} {{#alt}}role="img" aria-label="{{alt}}"{{/alt}}></i>
+<i class="icon {{key}} fa-fw {{extraclasses}}"{{#aria-hidden}} aria-hidden="true"{{/aria-hidden}} {{#title}} title="{{title}}"{{/title}}{{^aria-hidden}}{{#alt}} role="img" aria-label="{{alt}}"{{/alt}}{{/aria-hidden}}></i>
 {{/unmappedIcon}}
 {{#unmappedIcon}}
 {{! We cannot include the pix_icon template directly here because we don't have all the mustache helpers loaded. }}
