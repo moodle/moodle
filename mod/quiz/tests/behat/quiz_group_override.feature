@@ -137,3 +137,77 @@ Feature: Quiz group override
     And I should see "Only visible to members/Non-Participation" in the "Override group" "select"
     And I should see "Only see own membership" in the "Override group" "select"
     And I should not see "Not visible" in the "Override group" "select"
+
+  @javascript
+  Scenario: Quiz activity group overrides are displayed on the timeline block
+    Given the following "group members" exist:
+      | user     | group |
+      | student1 | G2    |
+    And I am on the "Test quiz" "quiz activity editing" page logged in as teacher1
+    And I set the following fields to these values:
+      | timeopen[enabled]  | 1            |
+      | timeclose[enabled] | 1            |
+      | timeopen           | ##today##    |
+      | timeclose          | ##tomorrow## |
+    And I press "Save and display"
+    When I log in as "student1"
+    Then I should see "##tomorrow##%A, %d %B %Y##" in the "Timeline" "block"
+    And the following "mod_quiz > group overrides" exist:
+      | quiz      | group | timeopen     | timeclose          |
+      | Test quiz | G1    | ##tomorrow## | ##tomorrow +1day## |
+    And I reload the page
+    And I should see "##tomorrow +1day##%A, %d %B %Y##" in the "Timeline" "block"
+    And the following "mod_quiz > group overrides" exist:
+      | quiz      | group | timeopen           | timeclose           |
+      | Test quiz | G2    | ##tomorrow +1day## | ##tomorrow +3days## |
+    And I reload the page
+    And I should see "##tomorrow +3days##%A, %d %B %Y##" in the "Timeline" "block"
+
+  @javascript
+  Scenario: Quiz activity user override is displayed even if group override exists on the timeline block
+    Given the following "group members" exist:
+      | user     | group |
+      | student1 | G2    |
+    And I am on the "Test quiz" "quiz activity editing" page logged in as teacher1
+    And I set the following fields to these values:
+      | timeopen[enabled]  | 1            |
+      | timeclose[enabled] | 1            |
+      | timeopen           | ##today##    |
+      | timeclose          | ##tomorrow## |
+    And I press "Save and display"
+    And the following "mod_quiz > group overrides" exist:
+      | quiz      | group | timeopen           | timeclose           |
+      | Test quiz | G1    | ##tomorrow##       | ##tomorrow +1day##  |
+      | Test quiz | G2    | ##tomorrow +1day## | ##tomorrow +3days## |
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user | Sam 1 Student 1   |
+      | timeopen      | ##tomorrow##      |
+      | timeclose     | ##tomorrow noon## |
+    And I press "Save"
+    When I log in as "student1"
+    Then I should see "##tomorrow noon##%A, %d %B %Y##" in the "Timeline" "block"
+
+  @javascript
+  Scenario: Quiz activity override are not visible on timeline block when student is unenrolled
+    Given the following "group members" exist:
+      | user     | group |
+      | student1 | G2    |
+    And the following "mod_quiz > group overrides" exist:
+      | quiz      | group | timeopen           | timeclose           |
+      | Test quiz | G2    | ##tomorrow +1day## | ##tomorrow +3days## |
+    And I am on the "Test quiz" "quiz activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user | Sam 1 Student 1   |
+      | timeopen      | ##tomorrow##      |
+      | timeclose     | ##tomorrow noon## |
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I click on "Unenrol" "icon" in the "student1" "table_row"
+    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    When I log in as "student1"
+    Then "Test quiz" "link" should not exist in the "Timeline" "block"
+    And I should not see "##tomorrow noon##%A, %d %B %Y##" in the "Timeline" "block"
