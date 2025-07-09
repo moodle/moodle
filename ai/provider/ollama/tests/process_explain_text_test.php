@@ -263,7 +263,8 @@ final class process_explain_text_test extends \advanced_testcase {
         $response = [
             'success' => false,
             'errorcode' => 500,
-            'errormessage' => 'Internal server error.',
+            'error' => 'Internal server error',
+            'errormessage' => 'Try again later',
         ];
 
         $result = $method->invoke($processor, $response);
@@ -390,7 +391,10 @@ final class process_explain_text_test extends \advanced_testcase {
         $processor = new process_explain_text($provider, $this->action);
         $result = $processor->process();
         $this->assertEquals(429, $result->get_errorcode());
-        $this->assertEquals('User rate limit exceeded', $result->get_errormessage());
+        $this->assertEquals(
+            expected: 'You have reached the maximum number of AI requests you can make in an hour. Try again later',
+            actual: $result->get_errormessage(),
+        );
         $this->assertFalse($result->get_success());
 
         // Case 3: User rate limit has not been reached for a different user.
@@ -484,7 +488,10 @@ final class process_explain_text_test extends \advanced_testcase {
         $processor = new process_explain_text($provider, $this->action);
         $result = $processor->process();
         $this->assertEquals(429, $result->get_errorcode());
-        $this->assertEquals('Global rate limit exceeded', $result->get_errormessage());
+        $this->assertEquals(
+            expected: 'AI has reached the maximum number of site-wide requests per hour. Try again later',
+            actual: $result->get_errormessage(),
+        );
         $this->assertFalse($result->get_success());
 
         // Case 3: Global rate limit has been reached for a different user too.

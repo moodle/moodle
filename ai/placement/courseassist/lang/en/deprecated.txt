@@ -1,0 +1,2 @@
+generatefailtitle,aiplacement_courseassist
+tryagain,aiplacement_courseassist

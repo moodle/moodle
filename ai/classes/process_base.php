@@ -55,6 +55,7 @@ abstract class process_base {
             return $this->get_response(
                 success: false,
                 errorcode: $ratelimitcheck['errorcode'],
+                error: $ratelimitcheck['error'],
                 errormessage: $ratelimitcheck['errormessage'],
             );
         }
@@ -88,6 +89,7 @@ abstract class process_base {
             return $this->get_response(
                 success: false,
                 errorcode: $responsedata['errorcode'],
+                error: $responsedata['error'],
                 errormessage: $responsedata['errormessage'],
             );
         }

@@ -30,7 +30,8 @@
 
     Example context (json):
     {
-        "errorMessage": "ABC"
+        "error": "Something went wrong",
+        "errorMessage": "Try again later"
     }
 }}
 <div class="d-flex align-items-center h-100">
@@ -38,10 +39,10 @@
         <div class="fw-bold">
             <i class="icon fa fa-info-circle m-0 text-danger" aria-hidden="true"></i>
             <span class="d-inline-block">
-                {{#str}} generatefailtitle, tiny_aiplacement{{/str}}
+                {{error}}
             </span>
         </div>
-        <div>
+        <div class="text-break">
             {{errorMessage}}
         </div>
     </div>

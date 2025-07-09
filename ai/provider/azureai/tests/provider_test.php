@@ -118,7 +118,10 @@ final class provider_test extends \advanced_testcase {
         // The 4th request for the same user should be denied.
         $result = $provider->is_request_allowed($action);
         $this->assertFalse($result['success']);
-        $this->assertEquals('User rate limit exceeded', $result['errormessage']);
+        $this->assertEquals(
+            'You have reached the maximum number of AI requests you can make in an hour. Try again later',
+            $result['errormessage'],
+        );
 
         // Change user id to make a request for a different user, should pass (4 requests for global rate).
         $action = new \core_ai\aiactions\generate_image(
@@ -137,7 +140,10 @@ final class provider_test extends \advanced_testcase {
         // The 6th request should be denied.
         $result = $provider->is_request_allowed($action);
         $this->assertFalse($result['success']);
-        $this->assertEquals('Global rate limit exceeded', $result['errormessage']);
+        $this->assertEquals(
+            expected: 'AI has reached the maximum number of site-wide requests per hour. Try again later',
+            actual: $result['errormessage'],
+        );
     }
 
     /**

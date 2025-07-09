@@ -45,7 +45,7 @@ final class response_generate_image_test extends \advanced_testcase {
      */
     public function test_construct_error(): void {
         $this->expectException(coding_exception::class);
-        $this->expectExceptionMessage('Error code and message must exist in an error response.');
+        $this->expectExceptionMessage('Error code and name must exist in an error response.');
         new response_generate_image(
             success: false,
         );
