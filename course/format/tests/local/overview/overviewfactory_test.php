@@ -97,7 +97,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'choice' => [
                 'resourcetype' => 'choice',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_choice\courseformat\overview::class,
             ],
             'data' => [
                 'resourcetype' => 'data',
