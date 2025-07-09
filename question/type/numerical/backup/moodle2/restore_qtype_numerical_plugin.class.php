@@ -83,13 +83,34 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
 
     #[\Override]
     public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
         $questiondata = parent::convert_backup_to_questiondata($backupdata);
-        foreach ($backupdata['plugin_qtype_numerical_question']['numerical_records']['numerical_record'] as $record) {
-            foreach ($questiondata->options->answers as &$answer) {
-                if ($answer->id == $record['answer']) {
-                    $answer->tolerance = $record['tolerance'];
-                    continue 2;
+        if (count(get_object_vars($questiondata->options)) <= 2) {
+            // Old question, set defaults.
+            $qtype = new qtype_numerical();
+            $questiondata->options->unitgradingtype = 0;
+            $questiondata->options->unitpenalty = 0.1;
+            if ($qtype->get_default_numerical_unit($questiondata)) {
+                $questiondata->options->showunits = $qtype::UNITINPUT;
+            } else {
+                $questiondata->options->showunits = $qtype::UNITNONE;
+            }
+            $questiondata->options->unitsleft = 0;
+        }
+        if (isset($backupdata['plugin_qtype_numerical_question']['numerical_records'])) {
+            foreach ($backupdata['plugin_qtype_numerical_question']['numerical_records']['numerical_record'] as $record) {
+                foreach ($questiondata->options->answers as &$answer) {
+                    if ($answer->id == $record['answer']) {
+                        $answer->tolerance = $record['tolerance'];
+                        continue 2;
+                    }
                 }
+            }
+        } else {
+            // If the numerical record is missing (e.g. MDL-85721), default tolerances to 0.
+            foreach ($questiondata->options->answers as &$answer) {
+                $answer->tolerance = 0;
             }
         }
         return $questiondata;
