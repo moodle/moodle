@@ -58,6 +58,71 @@ final class gradelib_test extends \advanced_testcase {
         $this->assertTrue(grade_update_mod_grades($modinstance));
     }
 
+
+    /**
+     * Tests is_gradable() function return.
+     *
+     * @covers \is_gradable()
+     * @dataProvider graditems_provider
+     * @param array $gradetypes Grade item types to create.
+     * @param bool $expected The expected result for is_gradable() function.
+     * @return void
+     */
+    public function test_is_gradable(array $gradetypes, bool $expected): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $assignment = $generator->create_module('assign', ['course' => $course->id, 'gradetype' => GRADE_TYPE_NONE]);
+        // Create grade items.
+        foreach ($gradetypes as $gradetype) {
+            $generator->create_grade_item(
+                [
+                    'courseid' => $course->id,
+                    'itemtype' => 'mod',
+                    'itemmodule' => 'assign',
+                    'iteminstance' => $assignment->id,
+                    'gradetype' => $gradetype,
+                ]
+            );
+        }
+        $this->assertEquals($expected, is_gradable($course->id, 'mod', 'assign', $assignment->id));
+    }
+
+    /**
+     * Data provider for testing test_is_gradable function.
+     *
+     * @return array
+     */
+    public static function graditems_provider(): array {
+        return [
+            'No grade items' => [
+                'gradetypes' => [],
+                'expected' => false,
+            ],
+            'No grading item' => [
+                'gradetypes' => [GRADE_TYPE_NONE],
+                'expected' => false,
+            ],
+            'Grading by feedback' => [
+                'gradetypes' => [GRADE_TYPE_TEXT],
+                'expected' => false,
+            ],
+            'Grading by points' => [
+                'gradetypes' => [GRADE_TYPE_VALUE],
+                'expected' => true,
+            ],
+            'Grading by scale' => [
+                'gradetypes' => [GRADE_TYPE_SCALE],
+                'expected' => true,
+            ],
+            'Mix of grading' => [
+                'gradetypes' => [GRADE_TYPE_TEXT, GRADE_TYPE_NONE, GRADE_TYPE_VALUE, GRADE_TYPE_SCALE],
+                'expected' => true,
+            ],
+        ];
+    }
+
     /**
      * Tests the function remove_grade_letters().
      */
