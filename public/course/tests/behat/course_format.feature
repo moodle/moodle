@@ -19,6 +19,12 @@ Feature: Teacher can change the course format
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activity" exists:
+      | activity | forum         |
+      | course   | C1            |
+      | name     | My forum name |
+      | summary  | Test forum 1  |
+      | section  | 0             |
     # Confirm that course format is Custom sections.
     When I am on the "Course 1" course page logged in as teacher1
     Then I should see "Section 1"
@@ -71,13 +77,13 @@ Feature: Teacher can change the course format
     And I should not see "Browse the glossary using this index"
     And I am on the "Course 1" "course editing" page
     And I expand all fieldsets
-    # Set course format to Social format
-    And I set the field "Format" to "Social"
-    # Confirm that fields that appear for Social format appears
+    # Set course format to Single activity format
+    And I set the field "Format" to "Single activity"
+    # Confirm that fields that appear for Single activity format appears
     And I expand all fieldsets
-    And I should see "Number of discussions"
-    And the field "Number of discussions" matches value "10"
+    And I should see "Type of activity"
+    And the field "Type of activity" matches value "Forum"
     And I press "Save and display"
     # Confirm that course page displays a forum
-    And I should see "There are no discussion topics yet in this forum"
+    And I should see "Test forum 1"
     And I should not see "Current week"

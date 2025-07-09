@@ -4,7 +4,7 @@ Feature: I can revert changes after a load
   Background: Apply Starter Moodle to revert it
     Given I log in as "admin"
     And I navigate to "Site admin presets" in site administration
-    And I press "Review settings and apply" action in the "Starter" report row
+    And I press "Review settings and apply" action in the "Moodle with all of the most popular features" report row
     And I should see "Setting changes"
     And I click on "Apply" "button"
     And I click on "Continue" "button"
@@ -24,14 +24,12 @@ Feature: I can revert changes after a load
     And I should see "Enable Restriction by grouping"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
     And "Disable Logged in user" "icon" should not exist in the "Logged in user" "table_row"
-    And I navigate to "Plugins > Course formats > Manage course formats" in site administration
-    And "Disable" "icon" should not exist in the "Social" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration
     And "Enabled" "icon" should not exist in the "Immediate feedback with CBM" "table_row"
     And I navigate to "Plugins > Question types > Manage question types" in site administration
     And "Enabled" "icon" should not exist in the "Calculated multichoice" "table_row"
     And I navigate to "Site admin presets" in site administration
-    And I press "Show version history" action in the "Starter" report row
+    And I press "Show version history" action in the "Moodle with all of the most popular features" report row
     When I click on "Restore this version" "link"
     And I navigate to "Advanced features" in site administration
     Then the field "Enable badges" matches value "1"
@@ -42,8 +40,6 @@ Feature: I can revert changes after a load
     And I should see "Disable Restriction by grouping"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
     And I should see "Disable Logged in user"
-    And I navigate to "Plugins > Course formats > Manage course formats" in site administration
-    And "Disable" "icon" should exist in the "Social" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration
     And "Enabled" "icon" should exist in the "Immediate feedback with CBM" "table_row"
     And I navigate to "Plugins > Question types > Manage question types" in site administration

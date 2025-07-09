@@ -5,7 +5,8 @@ Feature: Change number of discussions displayed
   I need to edit the course and change the number of sections displayed.
 
   Background:
-    Given the following "users" exist:
+    Given I enable "social" "format" plugin
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
