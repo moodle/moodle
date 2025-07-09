@@ -306,6 +306,35 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 }
 
 /**
+ * Returns whether the item is gradable or not. It's considered gradable when there is at least one gradeitem
+ * set as GRADE_TYPE_VALUE or GRADE_TYPE_SCALE.
+ *
+ * @category grade
+ * @param int $courseid ID of course
+ * @param string $itemtype Type of grade item. For example, 'mod' or 'block'
+ * @param string $itemmodule More specific then $itemtype. For example, 'forum' or 'quiz'. May be NULL for some item types
+ * @param int $iteminstance Instance ID of graded item. For example the forum ID.
+ * @return bool returns true if the there is any grade item set as GRADE_TYPE_VALUE, GRADE_TYPE_SCALE.
+ * @category grade
+ */
+function is_gradable(int $courseid, string $itemtype, string $itemmodule, int $iteminstance): bool {
+    $items = grade_item::fetch_all([
+        'itemtype' => $itemtype,
+        'itemmodule' => $itemmodule,
+        'iteminstance' => $iteminstance,
+        'courseid' => $courseid,
+    ]);
+    if ($items) {
+        foreach ($items as $item) {
+            if ($item->gradetype == GRADE_TYPE_VALUE || $item->gradetype == GRADE_TYPE_SCALE) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Updates a user's outcomes. Manual outcomes can not be updated.
  *
  * @category grade
