@@ -162,9 +162,9 @@ class qtype_multianswer extends question_type {
         // This function needs to be able to handle the case where the existing set of wrapped
         // questions does not match the new set of wrapped questions so that some need to be
         // created, some modified and some deleted.
-        // Unfortunately the code currently simply overwrites existing ones in sequence. This
-        // will make re-marking after a re-ordering of wrapped questions impossible and
-        // will also create difficulties if questiontype specific tables reference the id.
+        // Thanks to versioning, we no longer overwrite existing questions in the sequence
+        // by re-using IDs, but instead create a new version of each wrapped question for
+        // the new version of the parent.
 
         // First we get all the existing wrapped questions.
         $oldwrappedquestions = [];
@@ -186,30 +186,12 @@ class qtype_multianswer extends question_type {
         $sequence = array();
         foreach ($question->options->questions as $wrapped) {
             if (!empty($wrapped)) {
-                // If we still have some old wrapped question ids, reuse the next of them.
+                // If we still have some old wrapped question ids, reuse the next of them to save
+                // the new version against its question bank entry.
                 $wrapped->id = 0;
                 if (is_array($oldwrappedquestions) &&
                         $oldwrappedquestion = array_shift($oldwrappedquestions)) {
                     $wrapped->oldid = $oldwrappedquestion->id;
-                    if ($oldwrappedquestion->qtype != $wrapped->qtype) {
-                        switch ($oldwrappedquestion->qtype) {
-                            case 'multichoice':
-                                $DB->delete_records('qtype_multichoice_options',
-                                        array('questionid' => $oldwrappedquestion->id));
-                                break;
-                            case 'shortanswer':
-                                $DB->delete_records('qtype_shortanswer_options',
-                                        array('questionid' => $oldwrappedquestion->id));
-                                break;
-                            case 'numerical':
-                                $DB->delete_records('question_numerical',
-                                        array('question' => $oldwrappedquestion->id));
-                                break;
-                            default:
-                                throw new moodle_exception('qtypenotrecognized',
-                                        'qtype_multianswer', '', $oldwrappedquestion->qtype);
-                        }
-                    }
                 }
             }
             $wrapped->name = $question->name;
