@@ -23,9 +23,9 @@
 
 "use strict";
 
-import $ from 'jquery';
 import {dispatchEvent} from 'core/event_dispatcher';
 import AutoComplete from 'core/form-autocomplete';
+import {processCollectedJavascript} from 'core/fragment';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -50,11 +50,12 @@ const reloadSettingsConditionsRegion = (reportElement, templateContext) => {
     const pendingPromise = new Pending('core_reportbuilder/conditions:reload');
     const settingsConditionsRegion = reportElement.querySelector(reportSelectors.regions.settingsConditions);
 
-    return Templates.renderForPromise('core_reportbuilder/local/settings/conditions', {conditions: templateContext})
-        .then(({html, js}) => {
-            const conditionsjs = $.parseHTML(templateContext.javascript, null, true).map(node => node.innerHTML).join("\n");
-            Templates.replaceNode(settingsConditionsRegion, html, js + conditionsjs);
-
+    return Promise.all([
+        processCollectedJavascript(templateContext.javascript),
+        Templates.renderForPromise('core_reportbuilder/local/settings/conditions', {conditions: templateContext}),
+    ])
+        .then(([templateJs, {html, js}]) => Templates.replaceNode(settingsConditionsRegion, html, js + templateJs))
+        .then(() => {
             initConditionsForm();
 
             // Re-focus the add condition element after reloading the region.
