@@ -115,13 +115,6 @@ class grade_calculator {
             self::update_quiz_maximum_grade(0);
         }
 
-        // This class callback is deprecated, and will be removed in Moodle 4.8 (MDL-80327).
-        // Use the structure_modified hook instead.
-        $callbackclasses = core_component::get_plugin_list_with_class('quiz', 'quiz_structure_modified');
-        foreach ($callbackclasses as $callbackclass) {
-            component_class_callback($callbackclass, 'callback', [$quiz->id], null, true);
-        }
-
         di::get(hook\manager::class)->dispatch(new structure_modified($this->quizobj->get_structure()));
     }
 

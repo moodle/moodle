@@ -1,0 +1,8 @@
+issueNumber: MDL-80327
+notes:
+  mod_quiz:
+    - message: >
+        Removed the deprecated class callbacks `quiz_structure_modified` and `quiz_attempt_deleted` from mod_quiz,
+        use the `structure_modified` and `attempt_state_changed` hooks instead. These callbacks were deprecated in
+        Moodle 4.4 and were outputting deprecation warnings since then.
+      type: removed
