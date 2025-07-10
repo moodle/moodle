@@ -553,6 +553,7 @@ $string['sessionipnomatch2'] = '<p>Sorry, but your IP number seems to have chang
 $string['sessioncannotobtainlock'] = '<p>Unable to obtain lock for session id {$a->id} within {$a->acquiretimeout}.</p>
 <p>It is likely that another page ({$a->whohaslock}) is still running in another browser tab, or it did not release the lock due to an error.</p>
 <p>You can wait until the session lock timeout ({$a->lockexpire}) or you can restart your browser session. If this error persists, please notify the server administrator.</p>';
+$string['sessionstarterror'] = 'Couldn\'t start session. Please try again later.';
 $string['shortnametaken'] = 'Short name is already used for another course ({$a})';
 $string['sitepolicynotagreed'] = 'Site policy not agreed: <a href="{$a}">Click here to open the site policy.</a>';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
