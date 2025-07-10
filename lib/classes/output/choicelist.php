@@ -121,7 +121,7 @@ class choicelist implements named_templatable, renderable {
      * @return string|null The value of the selected option.
      */
     public function get_selected_value(): ?string {
-        if (empty($this->selected) && !$this->allowempty && !empty($this->options)) {
+        if (is_null($this->selected) && !$this->allowempty && !empty($this->options)) {
             return array_key_first($this->options);
         }
         return $this->selected;
@@ -244,7 +244,7 @@ class choicelist implements named_templatable, renderable {
      * @return string
      */
     public function get_selected_content(renderer_base $output): string {
-        if (empty($this->selected)) {
+        if (is_null($this->selected)) {
             return '';
         }
         $option = $this->options[$this->selected];
