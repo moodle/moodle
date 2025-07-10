@@ -42,35 +42,118 @@ $response = array('success' => false, 'message' => '');
 switch ($action) {
     case 'save_ubd_plan':
         try {
-            // Get UbD data from POST
+            // Validate input data
             $ubdData = array();
             $ubdFields = array(
-                'ubd_stage1_enduring',
-                'ubd_stage1_questions', 
-                'ubd_stage1_knowledge',
-                'ubd_stage2_performance',
-                'ubd_stage2_evidence',
-                'ubd_stage3_activities'
+                'ubd_stage1_enduring' => 'Stage 1: Enduring Understandings',
+                'ubd_stage1_questions' => 'Stage 1: Essential Questions',
+                'ubd_stage1_knowledge' => 'Stage 1: Knowledge & Skills',
+                'ubd_stage2_performance' => 'Stage 2: Performance Tasks',
+                'ubd_stage2_evidence' => 'Stage 2: Other Evidence',
+                'ubd_stage3_activities' => 'Stage 3: Learning Activities'
             );
-            
-            foreach ($ubdFields as $field) {
-                $ubdData[$field] = optional_param($field, '', PARAM_RAW);
+
+            $validationErrors = array();
+            $totalLength = 0;
+
+            foreach ($ubdFields as $field => $fieldName) {
+                $value = optional_param($field, '', PARAM_RAW);
+
+                // Clean and validate the input
+                $value = trim($value);
+
+                // Check individual field length (max 5000 characters per field)
+                if (strlen($value) > 5000) {
+                    $validationErrors[] = $fieldName . ' exceeds maximum length of 5000 characters';
+                }
+
+                $totalLength += strlen($value);
+                $ubdData[$field] = $value;
             }
-            
+
+            // Check total content length (max 25000 characters total)
+            if ($totalLength > 25000) {
+                $validationErrors[] = 'Total content exceeds maximum length of 25000 characters';
+            }
+
+            // Return validation errors if any
+            if (!empty($validationErrors)) {
+                $response['message'] = 'Validation errors: ' . implode('; ', $validationErrors);
+                break;
+            }
+
+            // Log the save attempt
+            $logData = array(
+                'courseid' => $courseid,
+                'userid' => $USER->id,
+                'action' => 'ubd_plan_save',
+                'timestamp' => time(),
+                'data_length' => $totalLength
+            );
+
             // Update course format options
             $courseformat = course_get_format($course);
-            $courseformat->update_course_format_options($ubdData);
-            
-            $response['success'] = true;
-            $response['message'] = get_string('changessaved');
-            
+            $result = $courseformat->update_course_format_options($ubdData);
+
+            if ($result) {
+                // Log successful save
+                error_log('UbD Plan saved successfully for course ' . $courseid . ' by user ' . $USER->id);
+
+                $response['success'] = true;
+                $response['message'] = get_string('changessaved');
+                $response['saved_at'] = date('Y-m-d H:i:s');
+                $response['data_length'] = $totalLength;
+
+                // Trigger course updated event
+                $event = \core\event\course_updated::create(array(
+                    'objectid' => $course->id,
+                    'context' => $context,
+                    'other' => array('updatedfields' => array_keys($ubdFields))
+                ));
+                $event->trigger();
+
+            } else {
+                $response['message'] = 'Failed to save UbD plan data';
+                error_log('Failed to save UbD Plan for course ' . $courseid . ' by user ' . $USER->id);
+            }
+
         } catch (Exception $e) {
-            $response['message'] = $e->getMessage();
+            $response['message'] = 'Error: ' . $e->getMessage();
+            error_log('UbD Plan save error for course ' . $courseid . ': ' . $e->getMessage());
         }
         break;
-        
+
+    case 'validate_ubd_data':
+        try {
+            // Validate data without saving
+            $field = required_param('field', PARAM_ALPHA);
+            $value = required_param('value', PARAM_RAW);
+
+            $validation = array(
+                'valid' => true,
+                'length' => strlen($value),
+                'warnings' => array()
+            );
+
+            if (strlen($value) > 5000) {
+                $validation['valid'] = false;
+                $validation['warnings'][] = 'Content exceeds maximum length of 5000 characters';
+            }
+
+            if (strlen($value) > 1000) {
+                $validation['warnings'][] = 'Consider breaking this into smaller sections';
+            }
+
+            $response['success'] = true;
+            $response['validation'] = $validation;
+
+        } catch (Exception $e) {
+            $response['message'] = 'Validation error: ' . $e->getMessage();
+        }
+        break;
+
     default:
-        $response['message'] = 'Invalid action';
+        $response['message'] = 'Invalid action specified';
         break;
 }
 
