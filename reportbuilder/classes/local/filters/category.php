@@ -19,9 +19,9 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\filters;
 
 use core_course_category;
-use lang_string;
-use MoodleQuickForm;
+use core\lang_string;
 use core_reportbuilder\local\helpers\database;
+use MoodleQuickForm;
 
 /**
  * Course category report filter
@@ -37,6 +37,9 @@ use core_reportbuilder\local\helpers\database;
  */
 class category extends base {
 
+    /** @var int Category is any value */
+    public const ANY_VALUE = -1;
+
     /** @var int Category is equal to */
     public const EQUAL_TO = 0;
 
@@ -50,6 +53,7 @@ class category extends base {
      */
     private function get_operators(): array {
         $operators = [
+            self::ANY_VALUE => new lang_string('filterisanyvalue', 'core_reportbuilder'),
             self::EQUAL_TO => new lang_string('filterisequalto', 'core_reportbuilder'),
             self::NOT_EQUAL_TO => new lang_string('filterisnotequalto', 'core_reportbuilder'),
         ];
@@ -73,7 +77,10 @@ class category extends base {
 
         $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
         $mform->addElement('autocomplete', "{$this->name}_value", $valuelabel, $categories)->setHiddenLabel(true);
+        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::ANY_VALUE);
+
         $mform->addElement('advcheckbox', "{$this->name}_subcategories", get_string('includesubcategories'));
+        $mform->hideIf("{$this->name}_subcategories", "{$this->name}_operator", 'eq', self::ANY_VALUE);
     }
 
     /**
@@ -87,12 +94,12 @@ class category extends base {
 
         [$fieldsql, $params] = $this->filter->get_field_sql_and_params();
 
-        $operator = (int) ($values["{$this->name}_operator"] ?? self::EQUAL_TO);
+        $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
         $category = (int) ($values["{$this->name}_value"] ?? 0);
         $subcategories = !empty($values["{$this->name}_subcategories"]);
 
         // Invalid or inactive filter.
-        if (empty($category)) {
+        if ($operator === self::ANY_VALUE || $category === 0) {
             return ['', []];
         }
 
@@ -132,6 +139,7 @@ class category extends base {
      */
     public function get_sample_values(): array {
         return [
+            "{$this->name}_operator" => self::EQUAL_TO,
             "{$this->name}_value" => 1,
         ];
     }
