@@ -245,7 +245,7 @@ export default class ChooserDialogueDOM {
      * @method showModuleHelp
      * @param {Object} moduleData Data of the module to carousel to
      */
-    showModuleHelp(moduleData) {
+    async showModuleHelp(moduleData) {
         const carousel = this.modalBody.querySelector(selectors.regions.carousel);
 
         const help = carousel.querySelector(selectors.regions.help);
@@ -264,7 +264,7 @@ export default class ChooserDialogueDOM {
         // Build up the html & js ready to place into the help section.
         const contentPromise = Templates.renderForPromise(
             'core_course/local/activitychooser/help',
-            moduleData
+            await this.exporter.getModuleHelpTemplateData(moduleData),
         );
 
         // Wait for the content to be ready, and for the transition to be complet.

@@ -27040,12 +27040,14 @@ audio.mediaplugin_html5audio {
 .modchooser .modal-body {
   padding: 0;
   overflow-y: auto;
-  min-height: 640px;
   display: flex;
   flex-direction: column;
 }
 .modchooser .modal-body .searchresultitemscontainer-wrapper {
   min-height: 495px;
+}
+.modchooser .modal-body .carousel-item {
+  height: 640px;
 }
 .modchooser .modal-body .carousel-item.active {
   display: flex;
@@ -27152,20 +27154,15 @@ audio.mediaplugin_html5audio {
   background-color: #fff;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 640px;
 }
-.modchooser .modal-body .optionsummary .content {
-  overflow-y: auto;
+.modchooser .modal-body .optionsummary .activitychooser-option-details {
+  min-width: 10rem;
 }
-.modchooser .modal-body .optionsummary .content .heading .icon {
-  height: 32px;
-  width: 32px;
-  font-size: 32px;
-  padding: 0;
+.modchooser .modal-body .optionsummary .modchooser-detail-name {
+  margin-inline-start: -1rem;
 }
-.modchooser .modal-body .optionsummary .actions {
-  border-top: 1px solid #dee2e6;
-  background: #fff;
+.modchooser .modal-body .optionsummary .modchooser-detail-name .modchooser-detail-icon {
+  width: 1rem;
 }
 
 @media (max-width: 575.98px) {
