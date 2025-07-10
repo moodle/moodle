@@ -792,6 +792,174 @@ class webdav_client {
     }
 
     /**
+     * Search for files using WebDAV method.
+     *
+     * Implements the WebDAV SEARCH extension (RFC 5323).
+     *
+     * @param string $path Request path for the DAV path
+     * @param string $username Username from the repository user in the nextcloud
+     * @param string $query Search query
+     * @param array $properties Optional array of DAV properties to return
+     * @return array|bool Array of matching files/folders or false on error
+     */
+    public function search(string $path, string $username, string $query, array $properties = []): array|false {
+        try {
+            $path = validate_param($path, PARAM_PATH, NULL_NOT_ALLOWED, 'WebDAV search path');
+            $username = validate_param($username, PARAM_RAW_TRIMMED, NULL_NOT_ALLOWED, 'WebDAV search username');
+            $query = validate_param($query, PARAM_RAW_TRIMMED, NULL_NOT_ALLOWED, 'WebDAV search query');
+
+            // Escape literal pattern signs in the SEARCH query to prevent issues.
+            $query = str_replace('\\', '\\\\', $query);
+            $query = str_replace("%", "\%", $query);
+            $query = str_replace("_", "\_", $query);
+
+            if (empty($path)) {
+                debugging('Missing a path in WebDAV method search', DEBUG_DEVELOPER);
+                return false;
+            }
+
+            if (empty($username)) {
+                debugging('Missing a username in WebDAV method search', DEBUG_DEVELOPER);
+                return false;
+            }
+
+            if (empty($query)) {
+                debugging('Missing a query in WebDAV method search', DEBUG_DEVELOPER);
+                return false;
+            }
+        } catch (invalid_parameter_exception $e) {
+            debugging('Invalid parameter in WebDAV method search: ' . $e->getMessage(), DEBUG_DEVELOPER);
+            return false;
+        }
+
+        $this->_path = $this->translate_uri($path);
+
+        // Restrict search scope to user's personal files to enforce security boundaries.
+        $userpath = '/files/' . $username . '/';
+
+        $this->header_unset();
+        $this->create_basic_request('SEARCH');
+        $this->header_add('Content-type: text/xml');
+
+        // Provide sensible defaults to reduce API complexity for common use cases.
+        if (empty($properties)) {
+            $properties = [
+                'displayname',
+                'getcontentlength',
+                'getlastmodified',
+                'resourcetype',
+            ];
+        }
+
+        // Build the SEARCH request XML using XMLWriter.
+        $xmlwriter = new XMLWriter();
+        $xmlwriter->openMemory();
+        $xmlwriter->startDocument('1.0', 'UTF-8');
+        $xmlwriter->setIndent(true);
+        $xmlwriter->setIndentString('  ');
+
+        $xmlwriter->startElement('d:searchrequest');
+        $xmlwriter->writeAttribute('xmlns:d', 'DAV:');
+
+        $xmlwriter->startElement('d:basicsearch');
+
+        $xmlwriter->startElement('d:select');
+        $xmlwriter->startElement('d:prop');
+        foreach ($properties as $prop) {
+            $xmlwriter->writeElement('d:' . basename($prop));
+        }
+        $xmlwriter->endElement();
+        $xmlwriter->endElement();
+
+        $xmlwriter->startElement('d:from');
+        $xmlwriter->startElement('d:scope');
+        $xmlwriter->writeElement('d:href', $userpath);
+        $xmlwriter->writeElement('d:depth', 'infinity');
+        $xmlwriter->endElement();
+        $xmlwriter->endElement();
+
+        $xmlwriter->startElement('d:where');
+        $xmlwriter->startElement('d:like');
+        $xmlwriter->startElement('d:prop');
+        $xmlwriter->writeElement('d:displayname');
+        $xmlwriter->endElement();
+        // Add wildcards to enable partial string matching.
+        $xmlwriter->writeElement('d:literal', '%' . $query . '%');
+        $xmlwriter->endElement();
+        $xmlwriter->endElement();
+
+        $xmlwriter->writeElement('d:orderby');
+
+        $xmlwriter->endElement();
+        $xmlwriter->endElement();
+
+        $xml = $xmlwriter->outputMemory();
+
+        $this->header_add('Content-length: ' . strlen($xml));
+        $this->send_request();
+        debugging('WebDAV search XML request: ' . $xml, DEBUG_DEVELOPER);
+        fputs($this->sock, $xml);
+        $this->get_respond();
+        $response = $this->process_respond();
+
+        // Parsing of the response is taking place in the same way as in the ls() implementation.
+        // Check http-version.
+        if (
+            $response['status']['http-version'] === 'HTTP/1.1' ||
+            $response['status']['http-version'] === 'HTTP/1.0'
+            ) {
+            // RFC 4918 requires 207 Multi-Status for successful SEARCH operations with multiple results.
+            if (strcmp($response['status']['status-code'], '207') === 0) {
+                // Ensure the response is valid XML before attempting to parse it.
+                if (preg_match('#(application|text)/xml;\s?charset=[\'\"]?utf-8[\'\"]?#i', $response['header']['Content-Type'])) {
+                    // Create namespace-aware parser to handle DAV properties correctly.
+                    $this->_parser = xml_parser_create_ns('UTF-8');
+                    $this->_parserid = $this->get_parser_id($this->_parser);
+                    // Clear previous parsing results to prevent data contamination.
+                    unset($this->_ls[$this->_parserid]);
+                    unset($this->_xmltree[$this->_parserid]);
+                    xml_parser_set_option($this->_parser, XML_OPTION_SKIP_WHITE, 0);
+                    xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, 0);
+                    xml_set_element_handler($this->_parser, [$this, "_propfind_startElement"], [$this, "_endElement"]);
+                    xml_set_character_data_handler($this->_parser, [$this, "_propfind_cdata"]);
+
+                    if (!xml_parse($this->_parser, $response['body'])) {
+                        $errormessage = sprintf(
+                            "XML parsing in WebDAV search failed: %s at line %d",
+                            xml_error_string(xml_get_error_code($this->_parser)),
+                            xml_get_current_line_number($this->_parser)
+                        );
+
+                        xml_parser_free($this->_parser);
+                        debugging($errormessage, DEBUG_DEVELOPER);
+                        return false;
+                    }
+
+                    xml_parser_free($this->_parser);
+                    $arr = $this->_ls[$this->_parserid];
+                    // Return empty array instead of false for no results to maintain consistent API behavior.
+                    if (!is_array($arr)) {
+                        debugging('WebDAV search: No results found or invalid response format.', DEBUG_DEVELOPER);
+                        return [];
+                    }
+                    return $arr;
+                } else {
+                    debugging('Missing Content-Type: text/xml header in response!', DEBUG_DEVELOPER);
+                    return false;
+                }
+            } else {
+                debugging('WebDAV search: Unexpected HTTP status code: ' . $response['status']['status-code'] .
+                    '. Expected 207 Multi-Status', DEBUG_NORMAL);
+                return false;
+            }
+        }
+
+        debugging('WebDAV search: Invalid HTTP response version: ' .
+            ($response['status']['http-version'] ?? 'unknown'), DEBUG_NORMAL);
+        return false;
+    }
+
+    /**
      * Public method ls
      *
      * Get's directory information from webdav server into flat a array using PROPFIND
