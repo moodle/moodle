@@ -61,7 +61,7 @@
 }
 
 .path-mod-book .book_content {
-    margin: 0 5px;
+    margin: 0 15px;
     padding-right: 15px;
     padding-left: 15px;
     position: relative; /* Chapter navigation should not float on top of content. */
