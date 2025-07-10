@@ -283,37 +283,50 @@ class format_legacy extends core_courseformat\base {
             for ($i = 0; $i <= $courseconfig->maxsections; $i++) {
                 $sectionmenu[$i] = "$i";
             }
-            $courseformatoptionsedit = array(
-                'numsections' => array(
+
+            $hiddensectionslist = new core\output\choicelist();
+            $hiddensectionslist->set_allow_empty(false);
+            $hiddensectionslist->add_option(
+                1,
+                new lang_string('hiddensectionsinvisible'),
+                [
+                    'description' => new lang_string('hiddensectionsinvisible_description'),
+                ],
+            );
+            $hiddensectionslist->add_option(
+                0,
+                new lang_string('hiddensectionscollapsed'),
+                [
+                    'description' => new lang_string('hiddensectionscollapsed_description'),
+                ],
+            );
+
+            $courseformatoptionsedit = [
+                'numsections' => [
                     'label' => new lang_string('numberweeks'),
                     'element_type' => 'select',
-                    'element_attributes' => array($sectionmenu),
-                ),
-                'hiddensections' => array(
+                    'element_attributes' => [$sectionmenu],
+                ],
+                'hiddensections' => [
                     'label' => new lang_string('hiddensections'),
-                    'help' => 'hiddensections',
-                    'help_component' => 'moodle',
-                    'element_type' => 'select',
-                    'element_attributes' => array(
-                        array(
-                            0 => new lang_string('hiddensectionscollapsed'),
-                            1 => new lang_string('hiddensectionsinvisible')
-                        )
-                    ),
-                ),
-                'coursedisplay' => array(
+                    'element_type' => 'choicedropdown',
+                    'element_attributes' => [
+                        $hiddensectionslist,
+                    ],
+                ],
+                'coursedisplay' => [
                     'label' => new lang_string('coursedisplay'),
                     'element_type' => 'select',
-                    'element_attributes' => array(
-                        array(
+                    'element_attributes' => [
+                        [
                             COURSE_DISPLAY_SINGLEPAGE => new lang_string('coursedisplay_single'),
-                            COURSE_DISPLAY_MULTIPAGE => new lang_string('coursedisplay_multi')
-                        )
-                    ),
+                            COURSE_DISPLAY_MULTIPAGE => new lang_string('coursedisplay_multi'),
+                        ],
+                    ],
                     'help' => 'coursedisplay',
                     'help_component' => 'moodle',
-                )
-            );
+                ],
+            ];
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
         }
         return $courseformatoptions;

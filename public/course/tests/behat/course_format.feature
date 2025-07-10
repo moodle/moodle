@@ -27,9 +27,9 @@ Feature: Teacher can change the course format
     # Fields that appear for Custom sections format exist
     # Also confirm contents of Hidden sections and Course layout select box
     And I should see "Hidden sections"
-    And the "Hidden sections" select box should contain "Hidden sections are shown as not available"
-    And the "Hidden sections" select box should contain "Hidden sections are completely invisible"
-    # Hidden sections default value is 1 (Hidden sections are completely invisible)
+    And the "Hidden sections" select box should contain "Show section names only"
+    And the "Hidden sections" select box should contain "Hide completely"
+    # Hidden sections default value is 1 (Hide completely)
     And the field "Hidden sections" matches value "1"
     And I should see "Course layout"
     And the "Course layout" select box should contain "Show all sections on one page"
@@ -56,9 +56,9 @@ Feature: Teacher can change the course format
     # Confirm that fields that appear for Weekly sections format appears
     # Also confirm contents of Hidden sections and Course layout select box
     And I should see "Hidden sections"
-    And the "Hidden sections" select box should contain "Hidden sections are shown as not available"
-    And the "Hidden sections" select box should contain "Hidden sections are completely invisible"
-    # Hidden sections default value is 1 (Hidden sections are completely invisible)
+    And the "Hidden sections" select box should contain "Show section names only"
+    And the "Hidden sections" select box should contain "Hide completely"
+    # Hidden sections default value is 1 (Hide completely)
     And the field "Hidden sections" matches value "1"
     And I should see "Course layout"
     And the "Course layout" select box should contain "Show all sections on one page"

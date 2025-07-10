@@ -240,17 +240,29 @@ class format_topics extends core_courseformat\base {
             ];
         }
         if ($foreditform && !isset($courseformatoptions['coursedisplay']['label'])) {
+            $hiddensectionslist = new core\output\choicelist();
+            $hiddensectionslist->set_allow_empty(false);
+            $hiddensectionslist->add_option(
+                1,
+                new lang_string('hiddensectionsinvisible'),
+                [
+                    'description' => new lang_string('hiddensectionsinvisible_description'),
+                ],
+            );
+            $hiddensectionslist->add_option(
+                0,
+                new lang_string('hiddensectionscollapsed'),
+                [
+                    'description' => new lang_string('hiddensectionscollapsed_description'),
+                ],
+            );
+
             $courseformatoptionsedit = [
                 'hiddensections' => [
                     'label' => new lang_string('hiddensections'),
-                    'help' => 'hiddensections',
-                    'help_component' => 'moodle',
-                    'element_type' => 'select',
+                    'element_type' => 'choicedropdown',
                     'element_attributes' => [
-                        [
-                            0 => new lang_string('hiddensectionscollapsed'),
-                            1 => new lang_string('hiddensectionsinvisible')
-                        ],
+                        $hiddensectionslist,
                     ],
                 ],
                 'coursedisplay' => [
