@@ -341,3 +341,9 @@
         {{/privatebanks}}
     </div>
 {{/hasprivatebanks}}
+
+{{#js}}
+    require(['core_question/questioncount'], function(questionCount) {
+        questionCount.fetchCounts('{{courseid}}');
+    });
+{{/js}}

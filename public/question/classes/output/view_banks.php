@@ -94,6 +94,7 @@ class view_banks implements \templatable, \renderable {
             'privatebanks' => $privatebankscontext,
             'addcustombanks' => $addcustombanksrenderable->export_for_template($output),
             'createdefault' => $cancreatedefault ? $createdefaultrenderable->export_for_template($output) : false,
+            'courseid' => $this->course->id,
         ];
     }
 }

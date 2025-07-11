@@ -213,6 +213,9 @@
                 {{#managequestions}}
                     {{> core/action_link}}
                 {{/managequestions}}
+                <div class="d-inline-block questioncount" data-cmid="{{cmid}}">
+                    <span class="badge rounded-pill bg-primary d-none"></span>
+                </div>
                 <div class="manage-bank-actions d-inline-block">
                     {{#managebank}}
                         {{> core/action_menu}}

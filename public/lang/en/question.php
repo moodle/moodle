@@ -233,6 +233,7 @@ $string['matchgrades_help'] = 'Imported grades must match one of the fixed list 
 
 *  Error if grade not listed - If a question contains any grades not found in the list an error is displayed and that question will not be imported
 * Nearest grade if not listed - If a grade is found that does not match a value in the list, the grade is changed to the closest matching value in the list ';
+$string['missingcapability'] = 'You must have a capability allowing usage or management of questions, for example {$a}';
 $string['missingcourseorcmid'] = 'Need to provide courseid or cmid to print_question.';
 $string['missingcourseorcmidtolink'] = 'Need to provide courseid or cmid to get_question_edit_link.';
 $string['missingimportantcode'] = 'This question type is missing important code: {$a}.';
@@ -455,6 +456,7 @@ $string['questionbehavioursdisabled'] = 'Question behaviours to disable';
 $string['questionbehavioursdisabledexplained'] = 'Enter a comma-separated list of behaviours you do not want to appear in the drop-down menu.';
 $string['questionbehavioursorder'] = 'Question behaviours order';
 $string['questionbehavioursorderexplained'] = 'Enter a comma-separated list of behaviours in the order you want them to appear in the drop-down menu.';
+$string['questioncount'] = 'Questions: {$a}';
 $string['questiondefaultssave'] = 'Save question options as user preference defaults';
 $string['questiondefaultssave_desc'] = 'Whether question options such as \'Default mark\', \'One or multiple answers?\' etc. should be saved as user preferences when the edit question form is submitted, for use as defaults the next time the user accesses the form.';
 $string['questionediting'] = 'Question editing';
