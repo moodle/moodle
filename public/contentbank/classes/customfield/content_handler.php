@@ -170,7 +170,7 @@ class content_handler extends \core_customfield\handler {
         $courseid = $task->get_courseid();
         $context = $this->get_instance_context($courseid);
         $editablefields = $this->get_editable_fields($courseid);
-        $records = api::get_instance_fields_data($editablefields, $courseid);
+        $records = $this->get_instance_fields_data($editablefields, $courseid);
         $target = $task->get_target();
         $override = ($target != \backup::TARGET_CURRENT_ADDING && $target != \backup::TARGET_EXISTING_ADDING);
 

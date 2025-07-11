@@ -276,6 +276,9 @@ class phpunit_util extends testing_util {
         if (class_exists('\core_reportbuilder\customfield\report_handler')) {
             \core_reportbuilder\customfield\report_handler::reset_caches();
         }
+        if (class_exists('\core_customfield\customfield\shared_handler')) {
+            \core_customfield\customfield\shared_handler::reset_caches();
+        }
 
         // Clear static cache within restore.
         if (class_exists('restore_section_structure_step')) {

@@ -79,11 +79,15 @@ class management implements renderable, templatable {
 
         foreach ($categories as $category) {
 
+            $canedit = $data->component === $category->get('component') && $data->area === $category->get('area');
+
             $categoryarray = array();
             $categoryarray['id'] = $category->get('id');
-            $categoryarray['nameeditable'] = $output->render(api::get_category_inplace_editable($category, true));
+            $categoryarray['nameeditable'] = $canedit ? $output->render(api::get_category_inplace_editable($category, true)) :
+                $category->get_formatted_name();
             $categoryarray['movetitle'] = get_string('movecategory', 'core_customfield',
                 $category->get_formatted_name());
+            $categoryarray['canedit'] = $canedit;
 
             $categoryarray['fields'] = array();
 
@@ -95,22 +99,31 @@ class management implements renderable, templatable {
                 $fieldarray['name'] = $fieldname;
                 $fieldarray['shortname'] = $field->get('shortname');
                 $fieldarray['movetitle'] = get_string('movefield', 'core_customfield', $fieldname);
+                $categoryarray['canedit'] = $canedit;
 
                 $categoryarray['fields'][] = $fieldarray;
             }
 
-            $menu = new \action_menu();
-            $menu->set_menu_trigger(get_string('createnewcustomfield', 'core_customfield'));
+            if ($canedit) {
+                $menu = new \action_menu();
+                $menu->set_menu_trigger(get_string('createnewcustomfield', 'core_customfield'));
 
-            foreach ($fieldtypes as $type => $fieldname) {
-                $action = new \action_menu_link_secondary(new \moodle_url('#'), null, $fieldname,
-                    ['data-role' => 'addfield', 'data-categoryid' => $category->get('id'), 'data-type' => $type,
-                        'data-typename' => $fieldname]);
-                $menu->add($action);
+                foreach ($fieldtypes as $type => $fieldname) {
+                    $params = [
+                        'data-role' => 'addfield',
+                        'data-categoryid' => $category->get('id'),
+                        'data-type' => $type,
+                        'data-typename' => $fieldname,
+                    ];
+                    $action = new \action_menu_link_secondary(new \core\url('#'), null, $fieldname, $params);
+                    $menu->add($action);
+                }
+                $menu->attributes['class'] .= ' float-start me-1';
+
+                $categoryarray['addfieldmenu'] = $output->render($menu);
+            } else {
+                $categoryarray['addfieldmenu'] = '';
             }
-            $menu->attributes['class'] .= ' float-start me-1';
-
-            $categoryarray['addfieldmenu'] = $output->render($menu);
 
             $categoriesarray[] = $categoryarray;
         }

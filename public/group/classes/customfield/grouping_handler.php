@@ -170,7 +170,7 @@ class grouping_handler extends handler {
         $instanceid = $data['groupingid'];
         $context = $this->get_instance_context($instanceid);
         $editablefields = $this->get_editable_fields($instanceid);
-        $records = api::get_instance_fields_data($editablefields, $instanceid);
+        $records = $this->get_instance_fields_data($editablefields, $instanceid);
 
         foreach ($records as $d) {
             $field = $d->get_field();

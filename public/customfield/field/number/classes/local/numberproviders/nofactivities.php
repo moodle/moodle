@@ -129,7 +129,7 @@ class nofactivities extends provider_base {
                 }
             } else if (empty($record->dataid) || (int)$record->decvalue != $value) {
                 // Stored value is out of date.
-                $data = \core_customfield\api::get_instance_fields_data(
+                $data = $this->field->get_handler()->get_instance_fields_data(
                     [$fieldid => $this->field], (int)$record->id)[$fieldid];
                 $data->set('contextid', context_course::instance($record->id)->id);
                 $data->set('decvalue', $value);

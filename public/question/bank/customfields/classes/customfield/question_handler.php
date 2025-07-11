@@ -208,7 +208,7 @@ class question_handler extends \core_customfield\handler {
      */
     public function get_field_data(\core_customfield\field_controller $field, int $instanceid): \core_customfield\data_controller {
         $fields = [$field->get('id') => $field];
-        $fieldsdata = api::get_instance_fields_data($fields, $instanceid);
+        $fieldsdata = $this->get_instance_fields_data($fields, $instanceid);
         return $fieldsdata[$field->get('id')];
     }
 
@@ -309,7 +309,7 @@ class question_handler extends \core_customfield\handler {
     public function restore_instance_data_from_backup(\restore_task $task, array $data) {
 
         $editablefields = $this->get_editable_fields($data['newquestion']);
-        $records = api::get_instance_fields_data($editablefields, $data['newquestion']);
+        $records = $this->get_instance_fields_data($editablefields, $data['newquestion']);
         $target = $task->get_target();
         $override = ($target != \backup::TARGET_CURRENT_ADDING && $target != \backup::TARGET_EXISTING_ADDING);
 

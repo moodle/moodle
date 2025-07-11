@@ -113,6 +113,18 @@ abstract class data_controller {
         if (!class_exists($customfieldtype) || !is_subclass_of($customfieldtype, self::class)) {
             throw new \moodle_exception('errorfieldtypenotfound', 'core_customfield', '', s($type));
         }
+
+        $category = $field->get_category();
+        $record->component = $category->get_original_component();
+        $record->area = $category->get_original_area();
+        $record->itemid = $category->get_original_itemid();
+
+        if (!$record->component || !$record->area) {
+            $record->component = $field->get_handler()->get_component();
+            $record->area = $field->get_handler()->get_area();
+            $record->itemid = $field->get_handler()->get_itemid();
+        }
+
         $datacontroller = new $customfieldtype(0, $record);
         $datacontroller->field = $field;
         return $datacontroller;
@@ -210,6 +222,14 @@ abstract class data_controller {
 
         $this->data->set($datafield, $datafieldvalue);
         $this->data->set('value', $value);
+
+        // Set component, area and itemid from the handler.
+        $category = $this->field->get_category();
+        $this->data->set_many([
+            'component' => $category->get_original_component(),
+            'area' => $category->get_original_area(),
+            'itemid' => $category->get_original_itemid(),
+        ]);
         $this->save();
     }
 

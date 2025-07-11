@@ -85,6 +85,7 @@ $string['privacy:metadata:customfield_data:valueformat'] = 'The format of the va
 $string['privacy:metadata:customfield_data:valuetrust'] = 'The trust flag of the value, when it is text';
 $string['privacy:metadata:customfieldpluginsummary'] = 'Fields for various components';
 $string['privacy:metadata:filepurpose'] = 'File attached to the custom field data';
+$string['sharedcustomfields'] = 'Shared custom fields';
 $string['shortname'] = 'Short name';
 $string['shortname_help'] = 'The short name must be unique and can only contain alphanumeric lowercase characters and underscores (_). It is not displayed anywhere on the site, but may be used for synchronisation with external systems or in web services.';
 $string['showdate'] = 'Show date';

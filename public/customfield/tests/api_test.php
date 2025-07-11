@@ -181,7 +181,14 @@ final class api_test extends \advanced_testcase {
 
         $handler = \core_course\customfield\course_handler::create();
         $c1id = $handler->create_category();
-        $c1 = $handler->get_categories_with_fields()[$c1id];
+        $categories = $handler->get_categories_with_fields();
+        $c1 = $handler->get_category_from_array(
+            $categories,
+            $c1id,
+            $handler->get_component(),
+            $handler->get_area(),
+            $handler->get_itemid()
+        );
         $this->assertEquals('Other fields', $c1->get('name'));
         $this->assertEquals($handler->get_component(), $c1->get('component'));
         $this->assertEquals($handler->get_area(), $c1->get('area'));
@@ -191,8 +198,21 @@ final class api_test extends \advanced_testcase {
         // Generate more categories and make sure they have different names.
         $c2id = $handler->create_category();
         $c3id = $handler->create_category();
-        $c2 = $handler->get_categories_with_fields()[$c2id];
-        $c3 = $handler->get_categories_with_fields()[$c3id];
+        $categories = $handler->get_categories_with_fields();
+        $c2 = $handler->get_category_from_array(
+            $categories,
+            $c2id,
+            $handler->get_component(),
+            $handler->get_area(),
+            $handler->get_itemid()
+        );
+        $c3 = $handler->get_category_from_array(
+            $categories,
+            $c3id,
+            $handler->get_component(),
+            $handler->get_area(),
+            $handler->get_itemid()
+        );
         $this->assertEquals('Other fields 1', $c2->get('name'));
         $this->assertEquals('Other fields 2', $c3->get('name'));
     }
