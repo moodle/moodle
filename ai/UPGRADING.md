@@ -1,5 +1,25 @@
 # core_ai (subsystem) Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- Error message handler for AI subsystem.
+  - Object creation
+    Use `core_ai\error\factory::create($errorcode, $reason, $errorsource)` to generate the appropriate error object.
+
+  - Extensibility
+    Add new error types by extending `core_ai\error\base` and registering them in the factory.
+    Please see `core_ai\error\ratelimit` as an example.
+
+  For more information see [MDL-83147](https://tracker.moodle.org/browse/MDL-83147)
+
+### Changed
+
+- The method `has_model_settings` inside `core_ai\aimodel\base` is now determined by values returned from a new method called `get_model_settings`.
+
+  For more information see [MDL-84779](https://tracker.moodle.org/browse/MDL-84779)
+
 ## 5.0
 
 ### Added

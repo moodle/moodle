@@ -1,5 +1,16 @@
 # mod_choice Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- Add manager class to the mod_choice activity. For now this is only for the purpose of implementing the activity overview page but can be improved to be used elsewhere.
+
+  For more information see [MDL-83890](https://tracker.moodle.org/browse/MDL-83890)
+- Add new generator for choice responses
+
+  For more information see [MDL-83890](https://tracker.moodle.org/browse/MDL-83890)
+
 ## 5.0
 
 ### Changed

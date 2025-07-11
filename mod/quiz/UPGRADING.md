@@ -62,6 +62,9 @@
     - quiz_add_random_questions()
 
   For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+- Removed the deprecated class callbacks `quiz_structure_modified` and `quiz_attempt_deleted` from mod_quiz, use the `structure_modified` and `attempt_state_changed` hooks instead. These callbacks were deprecated in Moodle 4.4 and were outputting deprecation warnings since then.
+
+  For more information see [MDL-80327](https://tracker.moodle.org/browse/MDL-80327)
 
 ## 5.0
 

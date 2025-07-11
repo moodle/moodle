@@ -74,6 +74,29 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     - admin_setting_devicedetectregex
 
   For more information see [MDL-79052](https://tracker.moodle.org/browse/MDL-79052)
+- Removed `core\hook\manager::is_deprecated_plugin_callback()` in favor of `core\hook\manager::get_hooks_deprecating_plugin_callback()`.
+
+  For more information see [MDL-80327](https://tracker.moodle.org/browse/MDL-80327)
+
+### core_ai
+
+#### Added
+
+- Error message handler for AI subsystem.
+  - Object creation
+    Use `core_ai\error\factory::create($errorcode, $reason, $errorsource)` to generate the appropriate error object.
+
+  - Extensibility
+    Add new error types by extending `core_ai\error\base` and registering them in the factory.
+    Please see `core_ai\error\ratelimit` as an example.
+
+  For more information see [MDL-83147](https://tracker.moodle.org/browse/MDL-83147)
+
+#### Changed
+
+- The method `has_model_settings` inside `core_ai\aimodel\base` is now determined by values returned from a new method called `get_model_settings`.
+
+  For more information see [MDL-84779](https://tracker.moodle.org/browse/MDL-84779)
 
 ### core_auth
 
@@ -175,6 +198,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_question
 
+#### Added
+
+- The question backup API has been improved to only include questions that are actually used or owned by backed up activities.
+  Any activities that use question references should be supported automatically. Activities that use *question set references* (for example, random quiz questions) need to add a call to `backup_question_set_reference_trait::annotate_set_reference_bank_entries()` alongside the call to `backup_question_set_reference_trait::add_question_set_references()` in their backup step. See `backup_quiz_activity_structure_step::define_structure()` for an example.
+
+  For more information see [MDL-41924](https://tracker.moodle.org/browse/MDL-41924)
+
+#### Changed
+
+- `core_question_search_shared_banks` will now search all question banks, not just those outside the current course.
+  This makes the service usable in cases outside of the current "Switch banks" UI, which require searching all banks on the site.
+  It also makes the autocomplete in the "Switch banks" UI more consistent, as it was previously excluding some of the banks listed in the UI (Question banks in this course), but not others (Recently viewed question banks).
+  This change has also adds a 'requiredcapabilties' parameter to the function, which accepts an list of abbreviated capabilities for  checking access against question banks before they are returned.
+
+  For more information see [MDL-85069](https://tracker.moodle.org/browse/MDL-85069)
+
 #### Deprecated
 
 - Intial deprecation of core_question_bank_renderer::render_question_pagination() and the associated template file. Rendering the question pagination is now done via ajax based pagination.
@@ -264,6 +303,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84071](https://tracker.moodle.org/browse/MDL-84071)
 
+### mod_choice
+
+#### Added
+
+- Add manager class to the mod_choice activity. For now this is only for the purpose of implementing the activity overview page but can be improved to be used elsewhere.
+
+  For more information see [MDL-83890](https://tracker.moodle.org/browse/MDL-83890)
+- Add new generator for choice responses
+
+  For more information see [MDL-83890](https://tracker.moodle.org/browse/MDL-83890)
+
 ### mod_data
 
 #### Added
@@ -282,6 +332,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The dndmedia setting has been removed. From now on dropping a media file into a course will always ask the user if they want to create a label.
 
   For more information see [MDL-83081](https://tracker.moodle.org/browse/MDL-83081)
+
+### mod_lesson
+
+#### Added
+
+- Added new 'count_all_submissions', 'count_submitted_participants' and 'count_all_participants' functions needed by the overview page.
+
+  For more information see [MDL-83896](https://tracker.moodle.org/browse/MDL-83896)
 
 ### mod_qbank
 
@@ -353,6 +411,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     - quiz_add_random_questions()
 
   For more information see [MDL-78091](https://tracker.moodle.org/browse/MDL-78091)
+- Removed the deprecated class callbacks `quiz_structure_modified` and `quiz_attempt_deleted` from mod_quiz, use the `structure_modified` and `attempt_state_changed` hooks instead. These callbacks were deprecated in Moodle 4.4 and were outputting deprecation warnings since then.
+
+  For more information see [MDL-80327](https://tracker.moodle.org/browse/MDL-80327)
 
 ### mod_scorm
 

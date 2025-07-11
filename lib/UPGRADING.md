@@ -66,6 +66,9 @@
     - admin_setting_devicedetectregex
 
   For more information see [MDL-79052](https://tracker.moodle.org/browse/MDL-79052)
+- Removed `core\hook\manager::is_deprecated_plugin_callback()` in favor of `core\hook\manager::get_hooks_deprecating_plugin_callback()`.
+
+  For more information see [MDL-80327](https://tracker.moodle.org/browse/MDL-80327)
 
 ## 5.0
 

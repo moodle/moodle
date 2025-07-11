@@ -1,5 +1,13 @@
 # mod_lesson Upgrade notes
 
+## 5.1dev
+
+### Added
+
+- Added new 'count_all_submissions', 'count_submitted_participants' and 'count_all_participants' functions needed by the overview page.
+
+  For more information see [MDL-83896](https://tracker.moodle.org/browse/MDL-83896)
+
 ## 5.0
 
 ### Removed
