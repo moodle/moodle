@@ -4685,3 +4685,50 @@ function mod_glossary_prepare_entry_for_edition(stdClass $entry): stdClass {
 
     return $entry;
 }
+
+/**
+ * Gets comments for the given glossary.
+ *
+ * @package  mod_glossary
+ * @category comment
+ *
+ * @param cm_info $cm The glossary course module information.
+ * @return array An array of comments related to the glossary entries.
+ */
+function mod_glossary_get_comments(cm_info $cm): array {
+    global $CFG;
+
+    $context = context_module::instance($cm->id);
+    $glossary = $cm->get_instance_record();
+    if (empty($CFG->usecomments) || !has_capability('mod/glossary:comment', $context) || !$glossary->allowcomments) {
+        return [];
+    }
+
+    require_once($CFG->dirroot . '/comment/lib.php');
+
+    // Initilising comment object.
+    $cmtoptions = new stdClass();
+    $cmtoptions->context = $context;
+    $cmtoptions->course = $cm->get_course();
+    $cmtoptions->cm = $cm;
+    $cmtoptions->component = 'mod_glossary';
+    $cmtoptions->area = 'glossary_entry';
+
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    $qb->add_field('*', 'entries');
+    if (has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $comments = [];
+    $entries = $qb->get_records();
+    foreach ($entries as $entry) {
+        $cmtoptions->itemid = $entry->id;
+        $comment = new \comment($cmtoptions);
+        $comments = array_merge($comments, $comment->get_comments());
+    }
+
+    return $comments;
+}
