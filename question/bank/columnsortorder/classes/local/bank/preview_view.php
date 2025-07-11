@@ -68,6 +68,8 @@ class preview_view extends view {
         return (object)[
             'id' => 1,
             'qtype' => 'truefalse',
+            'questiontext' => 'Is the moon made of cheese?',
+            'questiontextformat' => FORMAT_PLAIN,
             'createdby' => 2,
             'categoryid' => 1,
             'contextid' => 1,
