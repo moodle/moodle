@@ -1996,5 +1996,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025073100.01);
     }
 
+    if ($oldversion < 2025080700.01) {
+        // Remove any orphaned competency evidence records (pointing to non-existing contexts).
+        $DB->delete_records_select('competency_evidence', 'NOT EXISTS (
+            SELECT ctx.id FROM {context} ctx WHERE ctx.id = {competency_evidence}.contextid
+        )');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025080700.01);
+    }
+
     return true;
 }
