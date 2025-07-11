@@ -4781,6 +4781,8 @@ class api {
     public static function hook_course_module_deleted(stdClass $cm) {
         global $DB;
         $DB->delete_records(course_module_competency::TABLE, array('cmid' => $cm->id));
+        $context = context_module::instance($cm->id);
+        $DB->delete_records(evidence::TABLE, ['contextid' => $context->id]);
     }
 
     /**
