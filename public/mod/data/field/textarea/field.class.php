@@ -203,6 +203,15 @@ class data_field_textarea extends data_field_base {
             $link_options->env = 'editor';
             $link_options->itemid = $draftitemid;
 
+            // Subtitles, for multimedia.
+            $args->accepted_types = ['.vtt'];
+            $subtitleoptions = initialise_filepicker($args);
+            $subtitleoptions->context = $this->context;
+            $subtitleoptions->client_id = uniqid();
+            $subtitleoptions->maxbytes  = $options['maxbytes'];
+            $subtitleoptions->env = 'editor';
+            $subtitleoptions->itemid = $draftitemid;
+
             // H5P plugin.
             $args->accepted_types = ['h5p'];
             $h5poptions = initialise_filepicker($args);
@@ -215,6 +224,7 @@ class data_field_textarea extends data_field_base {
             $fpoptions['image'] = $image_options;
             $fpoptions['media'] = $media_options;
             $fpoptions['link'] = $link_options;
+            $fpoptions['subtitle'] = $subtitleoptions;
             $fpoptions['h5p'] = $h5poptions;
         }
 
