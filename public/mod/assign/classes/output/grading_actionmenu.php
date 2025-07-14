@@ -390,6 +390,7 @@ class grading_actionmenu implements templatable, renderable {
             [
                 'classes' => 'extrafilters d-flex',
                 'buttonclasses' => 'btn d-flex border-none align-items-center dropdown-toggle p-0',
+                'autoclose' => 'outside',
             ]
         );
     }
