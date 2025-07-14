@@ -59,7 +59,7 @@ final class overview_test extends \advanced_testcase {
         $this->setUser($teacher);
         $item = overviewfactory::create($cm)->get_actions_overview();
         $this->assertEquals(get_string('actions'), $item->get_name());
-        $this->assertEquals(get_string('gradeverb'), $item->get_value());
+        $this->assertEquals(get_string('view'), $item->get_value());
         $this->assertEquals(0, $item->get_alert_count());
         $this->assertEquals(get_string('numberofsubmissionsneedgrading', 'assign'), $item->get_alert_label());
 

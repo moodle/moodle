@@ -1,0 +1,7 @@
+issueNumber: MDL-85837
+notes:
+  core_grades:
+    - message: >-
+        New 'is_gradable()' function has been created to return whether the item
+        has any gradeitem that is GRADE_TYPE_VALUE or GRADE_TYPE_SCALE.
+      type: improved
