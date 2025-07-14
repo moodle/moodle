@@ -139,7 +139,7 @@ const getLanguageJson = () => {
         },
     };
 
-    return Ajax.call([request])[0]
+    return Ajax.call([request], true, false, false, 0, Config.jsrev)[0]
         .then(langStringData => {
             LocalStorage.set(cacheKey, langStringData);
 
