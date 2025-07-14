@@ -342,7 +342,7 @@ class component {
             return false;
         }
 
-        $path = $CFG->root . '/' . $path;
+        $path = self::get_path($path);
 
         // Get the relative class name.
         $relativeclass = substr($class, $len);
@@ -701,7 +701,7 @@ $cache = ' . var_export($cache, true) . ';
                 }
             }
 
-            $info[$subsystem] = empty($path) ? null : "{$CFG->root}/{$path}";
+            $info[$subsystem] = empty($path) ? null : self::get_path($path);
         }
 
         return $info;
@@ -744,7 +744,7 @@ $cache = ' . var_export($cache, true) . ';
                 if ($CFG->admin !== 'admin' && strpos($path, 'admin/') === 0) {
                     $path = $CFG->admin . substr($path, 5);
                 }
-                $plugintypesmap[$sourcekey][$plugintype] = "{$CFG->root}/{$path}";
+                $plugintypesmap[$sourcekey][$plugintype] = self::get_path($path);
             }
         }
 
@@ -880,8 +880,9 @@ $cache = ' . var_export($cache, true) . ';
 
         $types = [];
         $subplugins = [];
-        if (str_contains($ownerdir, $CFG->root)) {
-            $plugindir = substr($ownerdir, strlen($CFG->root) + 1);
+        $root = self::get_path();
+        if (str_contains($ownerdir, $root)) {
+            $plugindir = substr($ownerdir, strlen($root) + 1);
         } else {
             $realownerdir = realpath($ownerdir);
             $realroot = realpath(dirname(__DIR__, 2));
@@ -977,11 +978,11 @@ $cache = ' . var_export($cache, true) . ';
                 if ($CFG->admin !== 'admin' && strpos($dir, 'admin/') === 0) {
                     $dir = preg_replace('|^admin/|', "$CFG->admin/", $dir);
                 }
-                if (!is_dir("$CFG->root/$dir")) {
+                if (!is_dir(self::get_path($dir))) {
                     error_log("Invalid subtype directory '$dir' detected in '$ownerdir'.");
                     continue;
                 }
-                $types[$key][$subtype] = "$CFG->root/$dir";
+                $types[$key][$subtype] = self::get_path($dir);
             }
         }
 
@@ -2042,6 +2043,34 @@ $cache = ' . var_export($cache, true) . ';
         $hassvgmonologo = $theme->resolve_image_location('monologo', $component, true) !== null;
         $haspngmonologo = $theme->resolve_image_location('monologo', $component) !== null;
         return $haspngmonologo || $hassvgmonologo;
+    }
+
+    /**
+     * Returns a path relative to the Moodle root directory.
+     *
+     * @param string $path The child path
+     * @return string The full path within the root directory.
+     */
+    protected static function get_path(string $path = ''): string {
+        global $CFG;
+
+        if (property_exists($CFG, 'root')) {
+            // If the root property exists, use it.
+            $root = $CFG->root;
+        } else if (property_exists($CFG, 'dirroot')) {
+            $root = dirname($CFG->dirroot);
+        } else {
+            throw new \RuntimeException(
+                'The $CFG->root or $CFG->dirroot property must be set to use the component class.',
+            );
+        }
+
+        if ($path === '') {
+            // If no path is provided, return the root directory.
+            return rtrim($root, '/');
+        }
+
+        return rtrim($root, '/') . '/' . ltrim($path, '/');
     }
 }
 
