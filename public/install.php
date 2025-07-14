@@ -241,16 +241,16 @@ $hint_dataroot = '';
 $hint_admindir = '';
 $hint_database = '';
 
-//first time here? find out suitable dataroot
+// First time here? Find a suitable dataroot.
 if (is_null($CFG->dataroot)) {
-    $CFG->dataroot = __DIR__.'/../moodledata';
+    $CFG->dataroot = dirname($CFG->root) . '/moodledata';
 
-    $i = 0; //safety check - dirname might return some unexpected results
-    while(is_dataroot_insecure()) {
+    $i = 0; // Safety check - dirname might return some unexpected results.
+    while (is_dataroot_insecure()) {
         $parrent = dirname($CFG->dataroot);
         $i++;
         if ($parrent == '/' or $parrent == '.' or preg_match('/^[a-z]:\\\?$/i', $parrent) or ($i > 100)) {
-            $CFG->dataroot = ''; //can not find secure location for dataroot
+            $CFG->dataroot = ''; // Can not find secure location for dataroot.
             break;
         }
         $CFG->dataroot = dirname($parrent).DIRECTORY_SEPARATOR.'moodledata';
