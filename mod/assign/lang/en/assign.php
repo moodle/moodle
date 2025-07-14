@@ -73,7 +73,7 @@ $string['assignmentduedigesthtml'] = '<p>Hi {$a->firstname},</p>
 $string['assignmentduedigestitem'] = '<strong>{$a->assignmentname}</strong> in course {$a->coursename}<br/>
 <strong>Due: {$a->duetime}</strong><br/>
 <a href="{$a->url}" aria-label="Go to {$a->assignmentname}">Go to activity</a>';
-$string['assignmentduedigestsms'] = '{$a->grader} has posted some feedback on your assignment submission for {$a->assignment}: {$a->url}';
+$string['assignmentduedigestsms'] = 'One or more assignments are due in 7 days. Log in to view upcoming assignments.';
 $string['assignmentduedigestsubject'] = 'You have assignments due in 7 days';
 $string['assignmentduesoonhtml'] = '<p>Hi {$a->firstname},</p>
 <p>The assignment <strong>{$a->assignmentname}</strong> in course {$a->coursename} is due soon.</p>
@@ -274,7 +274,7 @@ It is available here:
     {$a->url}';
 $string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their assignment submission for \'{$a->assignment}\' at {$a->timeupdated}. It is available in <a href="{$a->url}">assignment submissions</a>.';
 $string['gradersubmissionupdatedsmall'] = '{$a->username} has updated their submission for assignment {$a->assignment}.';
-$string['gradersubmissionupdatedsms'] = '{$a->username} updated {$a->assignment}: {$a->url}';
+$string['gradersubmissionupdatedsms'] = '{$a->username} updated their submission for assignment \'{$a->assignment}\' in \'{$a->coursefullname}\'. Log in to view';
 $string['gradeuser'] = 'Grade {$a}';
 $string['grantextension'] = 'Grant extension';
 $string['grantextensionforusers'] = 'Grant extension for {$a} students';
@@ -300,8 +300,8 @@ You can see it appended to your assignment submission:
     {$a->url}';
 $string['feedbackavailableanonhtml'] = 'You have new feedback on your assignment submission for \'{$a->assignment}\'. You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
 $string['feedbackavailableanonsmall'] = 'New feedback for assignment {$a->assignment}';
-$string['feedbackavailableanonsms'] = 'You have feedback on {$a->assignment}: {$a->url}';
-$string['feedbackavailablesms'] = '{$a->username} gave feedback on {$a->assignment}: {$a->url}';
+$string['feedbackavailableanonsms'] = 'New feedback on \'{$a->assignment}\' in \'{$a->coursefullname}\'. Log in to view';
+$string['feedbackavailablesms'] = 'New feedback on \'{$a->assignment}\' in \'{$a->coursefullname}\'. Log in to view';
 $string['feedbackplugins'] = 'Feedback plugins';
 $string['feedbackpluginforgradebook'] = 'Feedback plugin that will push comments to the gradebook';
 $string['feedbackpluginforgradebook_help'] = 'Only one assignment feedback plugin can push feedback into the gradebook.';
@@ -586,7 +586,7 @@ You can see the status of your assignment submission:
 $string['submissioncopiedhtml'] = '<p>You have made a copy of your previous assignment submission for \'{$a->assignment}\'.</p>
 <p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['submissioncopiedsmall'] = 'You have copied your previous assignment submission for {$a->assignment}';
-$string['submissioncopiedsms'] = 'You have copied your previous assignment submission for {$a->assignment}: {$a->url}';
+$string['submissioncopiedsms'] = 'You have made a copy of your previous submission for \'{$a->assignment}\' in \'{$a->coursefullname}\'. Log in to view';
 $string['submissiondrafts'] = 'Require students to click the submit button';
 $string['submissiondrafts_help'] = 'Should students have a submit button to indicate when they have finished making changes to their submission and it is ready for grading?';
 $string['submissioneditable'] = 'Student can edit this submission';
@@ -608,9 +608,10 @@ You can see the status of your assignment submission:
     {$a->url}';
 $string['submissionreceiptotherhtml'] = 'Your assignment submission for \'{$a->assignment}\' has been submitted. You can see the status of your <a href="{$a->url}">assignment submission</a>.';
 $string['submissionreceiptothersmall'] = 'Your assignment submission for {$a->assignment} has been submitted.';
-$string['submissionreceiptothersms'] = 'Your submission for {$a->assignment} has been submitted: {$a->url}';
+$string['submissionreceiptothersms'] = 'Submission made for \'{$a->assignment}\' in \'{$a->coursefullname}\'. Log in to view your submission status';
 $string['submissionreceipts'] = 'Send submission receipts';
 $string['submissionreceiptsmall'] = 'Assignment submission confirmation - {$a->assignment}';
+$string['submissionreceiptsms'] = 'You have submitted \'{$a->assignment}\' in \'{$a->coursefullname}\'. Log in to view the submission status';
 $string['submissionreceipttext'] = 'You have submitted an assignment submission for \'{$a->assignment}\'.
 
 You can see the status of your assignment submission:
@@ -618,7 +619,6 @@ You can see the status of your assignment submission:
     {$a->url}
 
 {$a->submissionsummarytext}';
-$string['submissionreceiptsms'] = 'You have submitted {$a->assignment}: {$a->url}';
 $string['submissions'] = 'Submissions';
 $string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
