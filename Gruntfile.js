@@ -81,7 +81,7 @@ const setupMoodleEnvironment = grunt => {
         let scssSrc = [];
 
         const checkComponentDirectory = componentDirectory => {
-            const isTheme = componentDirectory.startsWith('theme/');
+            const isTheme = componentDirectory.startsWith('public/theme/');
             if (isTheme) {
                 const scssDirectory = `${componentDirectory}/scss`;
 
@@ -153,7 +153,7 @@ const setupMoodleEnvironment = grunt => {
     const relativeCwd = path.relative(gruntFilePath, cwd);
     const componentDirectory = ComponentList.getOwningComponentDirectory(relativeCwd);
     const inComponent = !!componentDirectory;
-    const inTheme = !!componentDirectory && componentDirectory.startsWith('theme/');
+    const inTheme = !!componentDirectory && componentDirectory.startsWith('public/theme/');
     const runDir = inComponent ? componentDirectory : relativeCwd;
     const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
     const {inAMD, amdSrc} = getAmdConfiguration();

@@ -1,0 +1,73 @@
+languageCode:           "en"
+title:                  "Moodle Component Library"
+baseURL:                "http://MOODLEROOT/"
+enableInlineShortcodes:  true
+pygmentsUseClasses: true
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+markup:
+  goldmark:
+    extensions:
+      definitionList: true
+      footnote: true
+      linkify: true
+      strikethrough: true
+      table: true
+      taskList: true
+      typographer: true
+    parser:
+      attribute: true
+      autoHeadingID: true
+      autoHeadingIDType: github
+    renderer:
+      hardWraps: false
+      unsafe: true
+      xHTML: false
+  highlight:
+    codeFences: true
+    guessSyntax: true
+    hl_Lines: ""
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: true
+    style: monokailight
+    tabWidth: 4
+
+buildDrafts:            false
+buildFuture:            true
+
+enableRobotsTXT:        true
+metaDataFormat:         "yaml"
+
+disableKinds:           ["404", "taxonomy", "taxonomyTerm", "RSS"]
+
+blackfriday:
+  fractions:            false
+
+relativeURLs:           true
+
+publishDir:             "./public/admin/tool/componentlibrary/docs"
+archetypeDir:           "./public/admin/tool/componentlibrary/hugo/archetypes"
+assetDir:               "./public/admin/tool/componentlibrary/hugo/assets"
+contentDir:             "./public/admin/tool/componentlibrary/content"
+dataDir:                "./public/admin/tool/componentlibrary/hugo/site/data"
+layoutDir:              "./public/admin/tool/componentlibrary/hugo/site/layouts"
+staticDir:              "./public/admin/tool/componentlibrary/content/static"
+
+params:
+  moodleroot:           "MOODLEROOT"
+
+  current_version:      "4.6.2"
+  current_ruby_version: "4.6.2"
+  docs_version:         "4.6"
+  boostrap_docs:        "https://getbootstrap.com/docs/4.6"
+  repo:                 "https://github.com/twbs/bootstrap"
+
+  cdn:
+    # See https://www.srihash.org for info on how to generate the hashes
+    popper:           "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"

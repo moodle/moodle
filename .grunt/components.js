@@ -47,8 +47,6 @@ const fetchComponentData = () => {
         const components = JSON.parse(fs.readFileSync(`${gruntFilePath}/lib/components.json`));
         const pluginData = JSON.parse(fs.readFileSync(`${gruntFilePath}/lib/plugins.json`));
 
-        componentData.pluginTypes = components.plugintypes;
-
         const standardPlugins = Object.entries(pluginData.standard).map(
             ([pluginType, pluginNames]) => {
                 return pluginNames.map(pluginName => `${pluginType}_${pluginName}`);
@@ -56,18 +54,21 @@ const fetchComponentData = () => {
         ).reduce((acc, val) => acc.concat(val), []);
 
         // Build the list of moodle subsystems.
-        componentData.subsystems.lib = 'core';
-        componentData.pathList.push(process.cwd() + path.sep + 'lib');
+        componentData.subsystems['public/lib'] = 'core';
+        componentData.pathList.push(`${process.cwd()}/public/lib`);
         for (const [component, thisPath] of Object.entries(components.subsystems)) {
             if (thisPath) {
                 // Prefix "core_" to the front of the subsystems.
                 componentData.subsystems[thisPath] = `core_${component}`;
-                componentData.pathList.push(process.cwd() + path.sep + thisPath);
+                componentData.pathList.push(`${process.cwd()}/${thisPath}`);
             }
         }
 
         // The list of components includes the list of subsystems.
-        componentData.components = {...componentData.subsystems};
+        componentData.components = Object.fromEntries(
+            Object.entries(componentData.subsystems)
+            .map(([path, name]) => ([path, name]))
+        );
 
         const subpluginAdder = (subpluginType, subpluginTypePath) => {
             glob.sync(`${subpluginTypePath}/*/version.php`).forEach(versionPath => {
@@ -104,7 +105,7 @@ const fetchComponentData = () => {
                         });
                     } else if (subpluginList.plugintypes) {
                         Object.entries(subpluginList.plugintypes).forEach(([subpluginType, subpluginTypePath]) => {
-                            subpluginAdder(subpluginType, subpluginTypePath);
+                            subpluginAdder(subpluginType, `public/${subpluginTypePath}`);
                         });
                     }
                 }

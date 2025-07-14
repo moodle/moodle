@@ -43,8 +43,8 @@ module.exports = (grunt) => {
 
         const componentData = fetchComponentData().components;
         for (const [thisPath, component] of Object.entries(componentData)) {
-            jsconfigData.compilerOptions.paths[`${component}/*`] = [`${thisPath}/amd/src/*`];
-            jsconfigData.include.push(`${thisPath}/amd/src/**/*`);
+            jsconfigData.compilerOptions.paths[`${component}/*`] = [`public/${thisPath}/amd/src/*`];
+            jsconfigData.include.push(`public/${thisPath}/amd/src/**/*`);
         }
 
         grunt.file.write('jsconfig.json', JSON.stringify(jsconfigData, null, "  ") + "\n");
