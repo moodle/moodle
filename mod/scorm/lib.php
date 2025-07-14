@@ -777,7 +777,7 @@ function scorm_option2text($scorm) {
 function scorm_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'scormheader', get_string('modulenameplural', 'scorm'));
     $mform->addElement('static', 'scormdelete', get_string('delete'));
-    $mform->addElement('advcheckbox', 'reset_scorm', get_string('deleteallattempts', 'scorm'));
+    $mform->addElement('advcheckbox', 'reset_scorm', get_string('allattempts', 'scorm'));
 }
 
 /**
@@ -840,7 +840,7 @@ function scorm_reset_userdata($data) {
             scorm_reset_gradebook($data->courseid);
         }
 
-        $status[] = ['component' => $componentstr, 'item' => get_string('deleteallattempts', 'scorm'), 'error' => false];
+        $status[] = ['component' => $componentstr, 'item' => get_string('allattempts', 'scorm'), 'error' => false];
     }
 
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
