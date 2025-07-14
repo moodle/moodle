@@ -141,7 +141,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'wiki' => [
                 'resourcetype' => 'wiki',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_wiki\courseformat\overview::class,
             ],
             'workshop' => [
                 'resourcetype' => 'workshop',
