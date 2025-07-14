@@ -254,12 +254,12 @@ Feature: Users can access the course activities overview page
   Scenario: Users can see a link to the old index when the activity does not provide overview information
     Given the following "activities" exist:
       | activity | course | name       |
-      | wiki     | C1     | Activity 1 |
-      | wiki     | C1     | Activity 2 |
+      | lti     | C1     | Activity 1 |
+      | lti     | C1     | Activity 2 |
       | assign   | C1     | Activity 3 |
-    When I am on the "Course 1" "course > activities > wiki" page logged in as "student1"
-    And I should see "Wiki overview"
-    And I follow "Wiki overview"
+    When I am on the "Course 1" "course > activities > lti" page logged in as "student1"
+    And I should see "External tool"
+    And I follow "External tool overview"
     And I should see "Activity 1"
     And I should see "Activity 2"
     # Check activities with integration do not show the link.
