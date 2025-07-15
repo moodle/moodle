@@ -761,7 +761,7 @@ class edit_renderer extends \plugin_renderer_base {
         $question = $structure->get_question_in_slot($slot);
         $bank = $structure->get_source_bank($slot);
 
-        if ($bank?->issharedbank) {
+        if ($bank?->issharedbank && question_has_capability_on($question, 'view')) {
             $bankurl = (new \moodle_url('/question/edit.php',
                 [
                     'cmid' => $bank->cminfo->id,
@@ -1082,12 +1082,21 @@ class edit_renderer extends \plugin_renderer_base {
                 'badge bg-danger text-white ms-3'
             );
         } else {
-
-            // Display the link itself.
-            $activitylink = $icon . html_writer::tag('span', $editicon . $instancename, ['class' => 'instancename']);
-            $output .= html_writer::link($editurl, $activitylink,
-                ['title' => get_string('editquestion', 'quiz') . ' ' . $title]);
-
+            $canedit = question_has_capability_on($question->questionid, 'edit');
+            $instancename = $canedit ? $editicon . $instancename : $instancename;
+            // Display the link, if the user has permission to edit. Otherwise, just display the name and icon.
+            $questionname = $icon . html_writer::tag('span', $instancename, ['class' => 'instancename']);
+            if ($canedit) {
+                $output .= html_writer::link(
+                    $editurl,
+                    $questionname,
+                    [
+                        'title' => get_string('editquestion', 'quiz') . ' ' . $title,
+                    ],
+                );
+            } else {
+                $output .= $questionname;
+            }
         }
 
         return $output;

@@ -57,9 +57,13 @@
         <div>{{{questionname}}}</div>
         {{#issharedbank}}
             <div class="sharedbank">
-                <a href="{{bankurl}}">
+                {{#bankurl}}
+                    <a href="{{bankurl}}">
+                {{/bankurl}}
                     <span class="badge bg-primary text-light ms-2 mt-1">{{{bankname}}}</span>
-                </a>
+                {{#bankurl}}
+                    </a>
+                {{/bankurl}}
             </div>
         {{/issharedbank}}
     </div>

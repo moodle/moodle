@@ -245,3 +245,27 @@ Feature: Adding questions to a quiz from the question bank
     And I follow "from question bank"
     And I click on "Switch bank" "button"
     Then "Qbank 1 & < > \" ' &amp;" "link" should not exist in the "Select question bank" "dialogue"
+
+  @javascript
+  Scenario: Don't show the edit link if the user doesn't have permission
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 2 | C2        | 0        |
+    And the following "activities" exist:
+      | activity   | name            | course | idnumber |
+      | qbank      | Question Bank C | C2     | qbankC   |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name              |
+      | Activity module | qbankC    | Qbank Questions 3 |
+    And the following "questions" exist:
+      | questioncategory  | qtype     | name            | questiontext        |
+      | Qbank Questions 3 | truefalse | Shared question | Answer the question |
+    And quiz "Quiz 1" contains the following questions:
+      | question        | page |
+      | TF1             | 1    |
+      | Shared question | 1    |
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    Then "TF1" "link" should exist
+    And "Question Bank A" "link" should exist
+    And "Shared question" "link" should not exist
+    And "Question Bank C" "link" should not exist
