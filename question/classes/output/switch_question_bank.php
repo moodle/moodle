@@ -62,12 +62,13 @@ class switch_question_bank implements \renderable, \templatable {
         [, $cm] = get_module_from_cmid($this->quizcmid);
         $cminfo = cm_info::create($cm);
 
+        $capabilities = ['moodle/question:useall', 'moodle/question:usemine'];
         $coursesharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
             incourseids: [$this->courseid],
-            havingcap: ['moodle/question:managecategory'],
+            havingcap: $capabilities,
             filtercontext:  $cminfo->context,
         );
-        $recentlyviewedbanks = question_bank_helper::get_recently_used_open_banks($this->userid);
+        $recentlyviewedbanks = question_bank_helper::get_recently_used_open_banks($this->userid, havingcap: $capabilities);
 
         return [
             'quizname' => $cminfo->get_formatted_name(),

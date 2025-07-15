@@ -319,6 +319,7 @@ final class question_bank_helper_test extends \advanced_testcase {
         $user = self::getDataGenerator()->create_user();
         $course1 = self::getDataGenerator()->create_course();
         $course2 = self::getDataGenerator()->create_course();
+        self::getDataGenerator()->enrol_user($user->id, $course1->id, 'editingteacher');
         $banks = [];
         $banks[] = self::getDataGenerator()->create_module('qbank', ['course' => $course1->id]);
         $banks[] = self::getDataGenerator()->create_module('qbank', ['course' => $course1->id]);
@@ -340,6 +341,16 @@ final class question_bank_helper_test extends \advanced_testcase {
         // Check that the courseid filter works.
         $recentlyviewed = question_bank_helper::get_recently_used_open_banks($user->id, $course1->id);
         $this->assertCount(3, $recentlyviewed);
+        // We should have the viewed banks in course 2.
+        $courseviewed = array_slice($banks, 3, 3);
+        $this->assertEqualsCanonicalizing(array_column($recentlyviewed, 'modid'), array_column($courseviewed, 'cmid'));
+
+        // Check that the capability filter works.
+        $recentlyviewed = question_bank_helper::get_recently_used_open_banks($user->id, havingcap: ['moodle/question:useall']);
+        $this->assertCount(2, $recentlyviewed);
+        // We should have the 2 most recently viewed banks in course 1.
+        $capabilityviewed = array_slice($banks, 1, 2);
+        $this->assertEqualsCanonicalizing(array_column($recentlyviewed, 'modid'), array_column($capabilityviewed, 'cmid'));
 
         $recentlyviewed = question_bank_helper::get_recently_used_open_banks($user->id);
 
