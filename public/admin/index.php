@@ -908,11 +908,26 @@ $mobileconfigured = !empty($CFG->enablemobilewebservice);
 $invalidforgottenpasswordurl = !empty($CFG->forgottenpasswordurl) && empty(clean_param($CFG->forgottenpasswordurl, PARAM_URL));
 
 // Check if a directory with development libraries exists.
-if (empty($CFG->disabledevlibdirscheck) && (is_dir($CFG->dirroot.'/vendor') || is_dir($CFG->dirroot.'/node_modules'))) {
-    $devlibdir = true;
-} else {
-    $devlibdir = false;
+$devlibdir = false;
+if (empty($CFG->disabledevlibdirscheck)) {
+    if (is_dir("{$CFG->root}/node_modules")) {
+        // The node_modules directory is used by Node.js packages, which are often used in development.
+        $devlibdir = true;
+    }
+
+    if (is_dir("{$CFG->root}/vendor") && is_file("{$CFG->root}/vendor/composer/installed.php")) {
+        // The vendor directory is used by Composer packages, which are often used in development.
+        // These files may also be used for production code, so we need to read the installed.php file to determine
+        // if development dependencies are included.
+        $installed = include("{$CFG->root}/vendor/composer/installed.php");
+        if (is_array($installed) && array_key_exists('root', $installed)) {
+            if ($installed['root']['dev']) {
+                $devlibdir = true;
+            }
+        }
+    }
 }
+
 // Check if the site is being foced onto ssl.
 $overridetossl = !empty($CFG->overridetossl);
 
