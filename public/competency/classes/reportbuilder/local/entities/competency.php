@@ -110,14 +110,14 @@ class competency extends base {
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $competency): string {
-                if ($description === null) {
+                if ($description === null || $competency->ctxid === null) {
                     return '';
                 }
 
                 context_helper::preload_from_record(clone $competency);
                 $context = context::instance_by_id($competency->ctxid);
 
-                return format_text($description, $competency->descriptionformat, ['context' => $context->id]);
+                return format_text($description, $competency->descriptionformat, ['context' => $context]);
             });
 
         // ID number.

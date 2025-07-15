@@ -18,10 +18,8 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\entities;
 
-use context_helper;
-use context_system;
-use context_user;
-use core\context;
+use core\{context, context_helper};
+use core\context\system;
 use core_component;
 use core_date;
 use core_user;
@@ -178,8 +176,6 @@ class user extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        global $DB;
-
         $usertablealias = $this->get_table_alias('user');
         $contexttablealias = $this->get_table_alias('context');
 
@@ -187,7 +183,7 @@ class user extends base {
         $fullnamesort = explode(', ', $fullnameselect);
 
         $userpictureselect = fields::for_userpic()->get_sql($usertablealias, false, '', '', false)->selects;
-        $viewfullnames = has_capability('moodle/site:viewfullnames', context_system::instance());
+        $viewfullnames = has_capability('moodle/site:viewfullnames', system::instance());
 
         // Fullname column.
         $columns[] = (new column(
@@ -305,7 +301,7 @@ class user extends base {
                     ->add_join("LEFT JOIN {context} {$contexttablealias}
                            ON {$contexttablealias}.contextlevel = " . CONTEXT_USER . "
                           AND {$contexttablealias}.instanceid = {$usertablealias}.id")
-                    ->add_fields("{$usertablealias}.descriptionformat, {$usertablealias}.id")
+                    ->add_field("{$usertablealias}.descriptionformat")
                     ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
             }
 
@@ -341,17 +337,17 @@ class user extends base {
         }
 
         if ($fieldname === 'description') {
-            if (empty($row->id)) {
+            if ($value === null || $row->ctxid === null) {
                 return '';
             }
 
             require_once("{$CFG->libdir}/filelib.php");
 
-            context_helper::preload_from_record($row);
-            $context = context_user::instance($row->id);
+            context_helper::preload_from_record(clone $row);
+            $context = context::instance_by_id($row->ctxid);
 
             $description = file_rewrite_pluginfile_urls($value, 'pluginfile.php', $context->id, 'user', 'profile', null);
-            return format_text($description, $row->descriptionformat, ['context' => $context->id]);
+            return format_text($description, $row->descriptionformat, ['context' => $context]);
         }
 
         return s($value);
@@ -369,7 +365,7 @@ class user extends base {
 
         $namefields = fields::get_name_fields(true);
 
-        $viewfullnames = has_capability('moodle/site:viewfullnames', context_system::instance());
+        $viewfullnames = has_capability('moodle/site:viewfullnames', system::instance());
         $dummyfullname = core_user::get_dummy_fullname(null, ['override' => $viewfullnames]);
 
         // Extract any name fields from the fullname format in the order that they appear.
@@ -463,7 +459,7 @@ class user extends base {
         $tablealias = $this->get_table_alias('user');
 
         // Fullname filter.
-        $canviewfullnames = has_capability('moodle/site:viewfullnames', context_system::instance());
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', system::instance());
         [$fullnamesql, $fullnameparams] = fields::get_sql_fullname($tablealias, $canviewfullnames);
         $filters[] = (new filter(
             text::class,

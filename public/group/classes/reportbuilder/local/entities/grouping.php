@@ -18,8 +18,7 @@ declare(strict_types=1);
 
 namespace core_group\reportbuilder\local\entities;
 
-use context_course;
-use context_helper;
+use core\{context, context_helper};
 use lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
@@ -105,19 +104,18 @@ class grouping extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$groupingsalias}.name, {$groupingsalias}.courseid")
+            ->add_field("{$groupingsalias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
-            ->set_callback(static function($name, stdClass $grouping): string {
-                if ($name === null) {
+            ->set_callback(static function(?string $name, stdClass $grouping): string {
+                if ($name === null || $grouping->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($grouping);
-                $context = context_course::instance($grouping->courseid);
+                context_helper::preload_from_record(clone $grouping);
+                $context = context::instance_by_id($grouping->ctxid);
 
-                return format_string($grouping->name, true, ['context' => $context]);
+                return format_string($name, true, ['context' => $context]);
             });
 
         // ID number column.
@@ -127,7 +125,6 @@ class grouping extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$groupingsalias}.idnumber")
             ->set_is_sortable(true);
 
@@ -139,21 +136,20 @@ class grouping extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field("{$groupingsalias}.description")
-            ->add_fields("{$groupingsalias}.descriptionformat, {$groupingsalias}.id, {$groupingsalias}.courseid")
+            ->add_fields("{$groupingsalias}.description, {$groupingsalias}.descriptionformat, {$groupingsalias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
             ->set_callback(static function(?string $description, stdClass $grouping): string {
                 global $CFG;
 
-                if ($description === null) {
+                if ($description === null || $grouping->ctxid === null) {
                     return '';
                 }
 
                 require_once("{$CFG->libdir}/filelib.php");
 
-                context_helper::preload_from_record($grouping);
-                $context = context_course::instance($grouping->courseid);
+                context_helper::preload_from_record(clone $grouping);
+                $context = context::instance_by_id($grouping->ctxid);
 
                 $description = file_rewrite_pluginfile_urls($description, 'pluginfile.php', $context->id, 'grouping',
                     'description', $grouping->id);

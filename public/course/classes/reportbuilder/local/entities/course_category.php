@@ -18,11 +18,10 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\local\entities;
 
-use context_coursecat;
-use context_helper;
+use core\{context, context_helper};
+use core\url;
 use html_writer;
 use lang_string;
-use moodle_url;
 use stdClass;
 use theme_config;
 use core_course_category;
@@ -100,18 +99,17 @@ class course_category extends base {
         ))
             ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.name, {$tablealias}.id")
+            ->add_field("{$tablealias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
             ->add_callback(static function(?string $name, stdClass $category): string {
-                if (empty($category->id)) {
+                if ($name === null || $category->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($category);
-                $context = context_coursecat::instance($category->id);
+                context_helper::preload_from_record(clone $category);
+                $context = context::instance_by_id($category->ctxid);
 
-                return format_string($category->name, true, ['context' => $context]);
+                return format_string($name, true, ['context' => $context]);
             })
             ->set_is_sortable(true);
 
@@ -123,18 +121,20 @@ class course_category extends base {
         ))
             ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.name, {$tablealias}.id")
+            ->add_field("{$tablealias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
             ->add_callback(static function(?string $name, stdClass $category): string {
-                if (empty($category->id)) {
+                if ($name === null || $category->ctxid === null) {
                     return '';
                 }
-                context_helper::preload_from_record($category);
-                $context = context_coursecat::instance($category->id);
-                $url = new moodle_url('/course/management.php', ['categoryid' => $category->id]);
-                return html_writer::link($url,
-                    format_string($category->name, true, ['context' => $context]));
+
+                context_helper::preload_from_record(clone $category);
+                $context = context::instance_by_id($category->ctxid);
+
+                return html_writer::link(
+                    new url('/course/management.php', ['categoryid' => $context->instanceid]),
+                    format_string($name, true, ['context' => $context]),
+                );
             })
             ->set_is_sortable(true);
 
@@ -145,7 +145,6 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
             ->add_callback(static function(?string $name, stdClass $category): string {
                 return empty($category->id) ? '' :
@@ -161,7 +160,6 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.idnumber")
             ->set_is_sortable(true);
 
@@ -174,24 +172,24 @@ class course_category extends base {
             ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id")
+            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
             ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $category): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
 
-                if ($description === null) {
+                if ($description === null || $category->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($category);
-                $context = context_coursecat::instance($category->id);
+                context_helper::preload_from_record(clone $category);
+                $context = context::instance_by_id($category->ctxid);
 
                 $description = file_rewrite_pluginfile_urls($description, 'pluginfile.php', $context->id, 'coursecat',
                     'description', null);
 
-                return format_text($description, $category->descriptionformat, ['context' => $context->id]);
+                return format_text($description, $category->descriptionformat, ['context' => $context]);
             });
 
         // Theme column.
@@ -201,7 +199,6 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.theme")
             ->set_is_sortable(true)
             ->add_callback(static function (?string $theme): string {

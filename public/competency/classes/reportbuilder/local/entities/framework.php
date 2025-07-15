@@ -110,14 +110,14 @@ class framework extends base {
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $framework): string {
-                if ($description === null) {
+                if ($description === null || $framework->ctxid === null) {
                     return '';
                 }
 
                 context_helper::preload_from_record(clone $framework);
                 $context = context::instance_by_id($framework->ctxid);
 
-                return format_text($description, $framework->descriptionformat, ['context' => $context->id]);
+                return format_text($description, $framework->descriptionformat, ['context' => $context]);
             });
 
         // ID number.

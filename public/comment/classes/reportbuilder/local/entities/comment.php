@@ -18,14 +18,13 @@ declare(strict_types=1);
 
 namespace core_comment\reportbuilder\local\entities;
 
-use context;
-use context_helper;
-use lang_string;
-use stdClass;
+use core\{context, context_helper};
+use core\lang_string;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{date, text};
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\{column, filter};
+use stdClass;
 
 /**
  * Comment entity
@@ -97,16 +96,16 @@ class comment extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_join($this->get_context_join())
-            ->add_fields("{$commentalias}.content, {$commentalias}.format, {$commentalias}.contextid")
+            ->add_fields("{$commentalias}.content, {$commentalias}.format")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
-            ->add_callback(static function($content, stdClass $comment): string {
-                if ($content === null) {
+            ->add_callback(static function(?string $content, stdClass $comment): string {
+                if ($content === null || $comment->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($comment);
-                $context = context::instance_by_id($comment->contextid);
+                context_helper::preload_from_record(clone $comment);
+                $context = context::instance_by_id($comment->ctxid);
 
                 return format_text($content, $comment->format, ['context' => $context]);
             });
@@ -118,7 +117,6 @@ class comment extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$commentalias}.component")
             ->set_is_sortable(true);
 
@@ -129,7 +127,6 @@ class comment extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$commentalias}.commentarea")
             ->set_is_sortable(true);
 

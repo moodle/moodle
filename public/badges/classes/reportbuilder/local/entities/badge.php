@@ -18,9 +18,8 @@ declare(strict_types=1);
 
 namespace core_badges\reportbuilder\local\entities;
 
-use context_course;
-use context_helper;
-use context_system;
+use core\{context, context_helper};
+use core\context\system;
 use html_writer;
 use lang_string;
 use moodle_url;
@@ -158,6 +157,8 @@ class badge extends base {
                 if (empty($badge->criteria)) {
                     return '<span class="no-criteria-set d-none"></span>';
                 }
+
+                /** @var \core_badges_renderer $renderer */
                 $renderer = $PAGE->get_renderer('core_badges');
                 return $renderer->print_badge_criteria($badge, 'short');
             });
@@ -172,17 +173,17 @@ class badge extends base {
             ->add_join("LEFT JOIN {context} {$contextalias}
                     ON {$contextalias}.contextlevel = " . CONTEXT_COURSE . "
                    AND {$contextalias}.instanceid = {$badgealias}.courseid")
-            ->add_fields("{$badgealias}.id, {$badgealias}.type, {$badgealias}.courseid, {$badgealias}.imagecaption")
+            ->add_fields("{$badgealias}.id, {$badgealias}.type, {$badgealias}.imagecaption")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->add_callback(static function($value, stdClass $badge): string {
-                if ($badge->id === null) {
+                if ($value === null) {
                     return '';
                 }
                 if ($badge->type == BADGE_TYPE_SITE) {
-                    $context = context_system::instance();
+                    $context = system::instance();
                 } else {
-                    context_helper::preload_from_record($badge);
-                    $context = context_course::instance($badge->courseid);
+                    context_helper::preload_from_record(clone $badge);
+                    $context = context::instance_by_id($badge->ctxid);
                 }
 
                 $badgeimage = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/', 'f2');

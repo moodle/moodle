@@ -18,11 +18,10 @@ declare(strict_types=1);
 
 namespace core_cohort\reportbuilder\local\entities;
 
-use context;
-use context_helper;
 use lang_string;
 use stdClass;
 use theme_config;
+use core\{context, context_helper};
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\cohort as cohort_filter;
@@ -113,16 +112,17 @@ class cohort extends base {
         ))
             ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
+            ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
             ->add_callback(static function($contextid, stdClass $cohort): string {
-                if ($contextid === null) {
+                if ($cohort->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($cohort);
-                return context::instance_by_id($cohort->contextid)->get_context_name(false);
+                context_helper::preload_from_record(clone $cohort);
+                $context = context::instance_by_id($cohort->ctxid);
+
+                return $context->get_context_name(false);
             });
 
         // Name column.
@@ -132,7 +132,6 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name")
             ->set_is_sortable(true);
 
@@ -143,7 +142,6 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.idnumber")
             ->set_is_sortable(true);
 
@@ -156,24 +154,24 @@ class cohort extends base {
             ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id, {$tablealias}.contextid")
+            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $cohort): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
 
-                if ($description === null) {
+                if ($description === null || $cohort->ctxid === null) {
                     return '';
                 }
 
-                context_helper::preload_from_record($cohort);
-                $context = context::instance_by_id($cohort->contextid);
+                context_helper::preload_from_record(clone $cohort);
+                $context = context::instance_by_id($cohort->ctxid);
 
                 $description = file_rewrite_pluginfile_urls($description, 'pluginfile.php', $context->id, 'cohort',
                     'description', $cohort->id);
 
-                return format_text($description, $cohort->descriptionformat, ['context' => $context->id]);
+                return format_text($description, $cohort->descriptionformat, ['context' => $context]);
             });
 
         // Visible column.
@@ -219,7 +217,6 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.component")
             ->set_is_sortable(true)
             ->add_callback(static function(?string $component): string {
@@ -239,7 +236,6 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.theme")
             ->set_is_sortable(true)
             ->add_callback(static function (?string $theme): string {
@@ -286,16 +282,16 @@ class cohort extends base {
                 // Load all contexts in which there are cohorts.
                 $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
                 $contexts = $DB->get_records_sql("
-                    SELECT DISTINCT {$ctxfields}, c.contextid
+                    SELECT DISTINCT {$ctxfields}
                       FROM {context} ctx
                       JOIN {cohort} c ON c.contextid = ctx.id");
 
                 // Transform context record into it's name (used as the filter options).
-                return array_map(static function(stdClass $contextrecord): string {
-                    context_helper::preload_from_record($contextrecord);
+                return array_map(static function(stdClass $context): string {
+                    context_helper::preload_from_record(clone $context);
+                    $context = context::instance_by_id($context->ctxid);
 
-                    return context::instance_by_id($contextrecord->contextid)
-                        ->get_context_name(false);
+                    return $context->get_context_name(false);
                 }, $contexts);
             });
 
