@@ -26,7 +26,7 @@ use environment_results;
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class environment_test extends \advanced_testcase {
+final class environmentlib_test extends \advanced_testcase {
 
     /**
      * Test the environment check status.
