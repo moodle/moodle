@@ -90,8 +90,15 @@ class reconcile_files extends XMLDBAction {
 
                 // Generate the XML contents from the loaded structure.
                 $xmlcontents = $xmldb->getStructure()->xmlOutput();
+                $correctdom = new \DOMDocument();
+                $correctdom->loadXML($xmlcontents);
+                $correct = $correctdom->saveXML();
 
-                if ($rawcontents != $xmlcontents) {
+                $currentdom = new \DOMDocument();
+                $currentdom->loadXML($rawcontents);
+                $current = $currentdom->saveXML();
+
+                if ($current !== $correct) {
                     $relpath = str_replace($CFG->dirroot . '/', '', $key) . '/install.xml';
                     $needfix[] = $relpath;
                     // Left here on purpose, as a quick way to fix problems. To be
