@@ -50,7 +50,7 @@ final class context_to_string_translator_test extends \advanced_testcase {
         $quizcontext = context_module::instance($quiz->cmid);
 
         // Create the context_to_string_translator.
-        $translator = new context_to_string_translator((new question_edit_contexts($quizcontext))->all());
+        $translator = new context_to_string_translator([$systemcontext, $categorycontext, $coursecontext, $quizcontext]);
 
         // Verify its behaviour.
         $this->assertEquals('module', $translator->context_to_string($quizcontext->id));
