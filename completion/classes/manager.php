@@ -114,6 +114,7 @@ class manager {
             }
 
             $icon = activity_icon::from_cm_info($mod)
+                ->set_extra_classes('smaller')
                 ->set_icon_size(iconsize::SIZE5);
 
             $moduleobject = new stdClass();

@@ -72,7 +72,9 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
                     $module->open = false;
                 }
 
-                $module->activityicon = activity_icon::from_modname($module->name)->export_for_template($this);
+                $module->activityicon = activity_icon::from_modname($module->name)
+                    ->set_extra_classes('smaller')
+                    ->export_for_template($this);
 
                 $moduleform = manager::get_module_form($module->name, $course);
                 if ($moduleform) {

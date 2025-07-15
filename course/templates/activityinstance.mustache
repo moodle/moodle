@@ -41,7 +41,7 @@
             <label class="accesshide" for="selectactivity_{{cmid}}">{{#str}}select, completion{{/str}} {{modname}}</label>
             <input type="checkbox" id="selectactivity_{{cmid}}" name="cmid[]" data-section="{{sectionnumber}}" value="{{cmid}}" aria-label="{{#str}}checkactivity, completion, {{{modname}}}{{/str}}">
             {{/canmanage}}
-            <a href="{{url}}" class="activityiconcontainer">
+            <a href="{{url}}" class="d-flex gap-2 justify-content-center align-items-center">
                 {{#activityicon}}
                     {{> core_course/activity_icon}}
                 {{/activityicon}}
