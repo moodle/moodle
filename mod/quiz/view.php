@@ -115,6 +115,7 @@ foreach (array_reverse($viewobj->attemptobjs) as $attemptobj) {
 }
 
 // Work out the final grade, checking whether it was overridden in the gradebook.
+// First, get an initial grade to display.
 if (!$canpreview) {
     $mygrade = quiz_get_best_grade($quiz, $USER->id);
 } else if ($lastfinishedattempt) {
@@ -125,6 +126,7 @@ if (!$canpreview) {
     $mygrade = null;
 }
 
+// Now, check the grade in the gradebook, if there is one.
 $mygradeoverridden = false;
 $gradebookfeedback = '';
 
@@ -136,25 +138,23 @@ $gradeitem = grade_item::fetch([
     'courseid' => $course->id,
 ]);
 
-if ($gradeitem) {
-    if ($CFG->recovergradesdefault && $gradeitem->refresh_grades($USER->id)) {
-        $grade = $gradeitem->get_grade($USER->id, false);
-        if ($grade->overridden) {
-            if ($gradeitem->needsupdate) {
-                // It is Error, but let's be consistent with the old code.
-                $mygrade = 0;
-            } else {
-                $mygrade = $grade->finalgrade;
-            }
-            $mygradeoverridden = true;
-        }
+// If there's a grade item grade, then get that grade for this user.
+// Users who can preview the quiz (eg teachers) won't have a proper grade,
+// so no point getting their grades here.
+if (!$canpreview && $gradeitem) {
+    $grade = $gradeitem->get_grade($USER->id, false);
+    $mygrade = $grade->finalgrade; // Use this grade to display in the view page.
 
-        if (!empty($grade->feedback)) {
-            $gradebookfeedback = $grade->feedback;
+    if ($grade->overridden) {
+        if ($gradeitem->needsupdate) {
+            // It is Error, but let's be consistent with the old code.
+            $mygrade = 0;
         }
-    } else {
-        // It is Error, but let's be consistent with the old code.
-        $mygrade = 0;
+        $mygradeoverridden = true;
+    }
+
+    if (!empty($grade->feedback)) {
+        $gradebookfeedback = $grade->feedback;
     }
 }
 
@@ -168,7 +168,7 @@ $PAGE->add_body_class('limitedwidth');
 /** @var renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
 
-// Print table with existing attempts.
+// Print overall stats and table with existing attempts.
 if ($attempts) {
     // Work out which columns we need, taking account what data is available in each attempt.
     list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts);

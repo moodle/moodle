@@ -74,6 +74,7 @@ Feature: Attempt a quiz
     And I should see "Grade"
     And I should see "25.00 out of 100.00"
     And I follow "Finish review"
+    And I should see "Highest grade: 25.00 / 100.00"
     And I press "Re-attempt quiz"
 
   @javascript
