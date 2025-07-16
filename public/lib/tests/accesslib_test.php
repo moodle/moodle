@@ -2248,7 +2248,7 @@ final class accesslib_test extends advanced_testcase {
 
         $this->expectException('coding_exception');
         $this->expectExceptionMessage("Capability '{$capability}' was not found! This has to be fixed in code.");
-        unassign_capability($capability, CAP_ALLOW, $teacherrole->id, $coursecontext);
+        unassign_capability($capability, $teacherrole->id, $coursecontext);
     }
 
     /**
@@ -3597,10 +3597,10 @@ final class accesslib_test extends advanced_testcase {
         $rc = $DB->get_record('role_capabilities', array('contextid'=>$frontpagecontext->id, 'roleid'=>$allroles['teacher'], 'capability'=>'moodle/site:accessallgroups'));
         $this->assertFalse($rc);
         assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $allroles['teacher'], $frontpagecontext);
-        unassign_capability('moodle/site:accessallgroups', $allroles['teacher'], $frontpagecontext, true);
+        unassign_capability('moodle/site:accessallgroups', $allroles['teacher'], $frontpagecontext);
         $rc = $DB->get_record('role_capabilities', array('contextid'=>$frontpagecontext->id, 'roleid'=>$allroles['teacher'], 'capability'=>'moodle/site:accessallgroups'));
         $this->assertFalse($rc);
-        unassign_capability('moodle/site:accessallgroups', $allroles['teacher'], $frontpagecontext->id, true);
+        unassign_capability('moodle/site:accessallgroups', $allroles['teacher'], $frontpagecontext->id);
         unset($rc);
 
         accesslib_clear_all_caches_for_unit_testing(); // Must be done after assign_capability().
@@ -5315,6 +5315,28 @@ final class accesslib_test extends advanced_testcase {
         $this->assertNotEmpty(get_capability_info('fake/fullfeatured:fakecapability'));
         $this->assertTrue(has_capability('fake/fullfeatured:fakecapability', \core\context\system::instance(), $user));
         $this->assertEquals('Fullfeatured capability description', get_capability_string('fake/fullfeatured:fakecapability'));
+    }
+
+    /**
+     * Test get_deprecated_capability_info() debugging messages.
+     *
+     * @covers ::get_deprecated_capability_info
+     */
+    public function test_get_deprecated_capability_info_debugging(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->create_and_enrol($course);
+        $this->setup_fake_plugin('access');
+        // Debugging messages should not be called with valid capability.
+        get_capability_info('fake/access:existingcapability');
+        $this->assertDebuggingNotCalled();
+        // Debugging messages should be called with invalid capability.
+        get_capability_info('fake/access:fakecapability');
+        $this->assertDebuggingCalled("The capability 'fake/access:fakecapability' is"
+            . " deprecated.This capability should not be used anymore.");
+        // Debugging messages should not be called with invalid capability with suppression param supplied.
+        get_capability_info('fake/access:fakecapability', false);
+        $this->assertDebuggingNotCalled();
     }
 }
 
