@@ -1480,13 +1480,14 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
  * @param string $capability the name of the capability
  * @param int $roleid the role id
  * @param int|context $contextid null means all contexts
+ * @param bool $showdebug if true, will show debugging messages
  * @return boolean true or exception
  */
-function unassign_capability($capability, $roleid, $contextid = null) {
+function unassign_capability($capability, $roleid, $contextid = null, bool $showdebug = true) {
     global $DB, $USER;
 
     // Capability must exist.
-    if (!$capinfo = get_capability_info($capability)) {
+    if (!get_capability_info($capability, $showdebug)) {
         throw new coding_exception("Capability '{$capability}' was not found! This has to be fixed in code.");
     }
 
@@ -2460,7 +2461,11 @@ function capabilities_cleanup($component, $newcapdef = null) {
                 // Delete from roles.
                 if ($roles = get_roles_with_capability($cachedcap->name)) {
                     foreach ($roles as $role) {
-                        if (!unassign_capability($cachedcap->name, $role->id)) {
+                        if (!unassign_capability(
+                            capability: $cachedcap->name,
+                            roleid: $role->id,
+                            showdebug: false, // Suppress debugging messages in the get_capability_info().
+                        )) {
                             throw new \moodle_exception('cannotunassigncap', 'error', '',
                                 (object)array('cap' => $cachedcap->name, 'role' => $role->name));
                         }
@@ -2595,10 +2600,11 @@ function is_inside_frontpage(context $context) {
 /**
  * Returns capability information (cached)
  *
- * @param string $capabilityname
+ * @param string $capabilityname the capability name.
+ * @param bool $showdebug if true, will show debugging messages.
  * @return ?stdClass object or null if capability not found
  */
-function get_capability_info($capabilityname) {
+function get_capability_info(string $capabilityname, bool $showdebug = true): ?stdClass {
     $caps = get_all_capabilities();
 
     // Check for deprecated capability.
@@ -2608,12 +2614,17 @@ function get_capability_info($capabilityname) {
             if (isset($caps[$deprecatedinfo['replacement']])) {
                 $capabilityname = $deprecatedinfo['replacement'];
             } else {
-                debugging("Capability '{$capabilityname}' was supposed to be replaced with ".
-                    "'{$deprecatedinfo['replacement']}', which does not exist !");
+                if ($showdebug) {
+                    debugging("Capability '{$capabilityname}' was supposed to be replaced with ".
+                        "'{$deprecatedinfo['replacement']}', which does not exist !");
+                }
             }
         }
-        $fullmessage = $deprecatedinfo['fullmessage'];
-        debugging($fullmessage, DEBUG_DEVELOPER);
+
+        if ($showdebug) {
+            $fullmessage = $deprecatedinfo['fullmessage'];
+            debugging($fullmessage, DEBUG_DEVELOPER);
+        }
     }
     if (!isset($caps[$capabilityname])) {
         return null;
