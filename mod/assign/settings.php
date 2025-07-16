@@ -177,14 +177,17 @@ if ($ADMIN->fulltree) {
                                                     ]);
     $settings->add($setting);
 
-    /** @var grade_scale[] $scales */
-    $scales = grade_scale::fetch_all_global();
-    $choices = ['' => new lang_string('choosedots')];
-    foreach ($scales as $scale) {
-        $choices[$scale->id] = $scale->get_name();
-    }
     $name = new lang_string('defaultgradescale', 'mod_assign');
     $description = new lang_string('defaultgradescale_help', 'mod_assign');
+
+    $choices = ['' => new lang_string('choosedots')];
+    $scales = grade_scale::fetch_all_global();
+    if ($scales !== false) {
+        foreach ($scales as $scale) {
+            $choices[$scale->id] = $scale->get_name();
+        }
+    }
+
     if (count($choices) > 1) {
         $setting = new admin_setting_configselect('mod_assign/defaultgradescale',
             $name,
