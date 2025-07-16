@@ -1,0 +1,7 @@
+issueNumber: MDL-83893
+notes:
+  mod_forum:
+    - message: >-
+        The function forum_tp_get_untracked_forums() has been deprecated because
+        it is no longer used.
+      type: deprecated

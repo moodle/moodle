@@ -4576,45 +4576,6 @@ function forum_tp_delete_read_records($userid=-1, $postid=-1, $discussionid=-1, 
         return $DB->delete_records_select('forum_read', $select, $params);
     }
 }
-/**
- * Get a list of forums not tracked by the user.
- *
- * @global object
- * @global object
- * @param int $userid The id of the user to use.
- * @param int $courseid The id of the course being checked.
- * @return mixed An array indexed by forum id, or false.
- */
-function forum_tp_get_untracked_forums($userid, $courseid) {
-    global $CFG, $DB;
-
-    if ($CFG->forum_allowforcedreadtracking) {
-        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_OFF."
-                            OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND (ft.id IS NOT NULL
-                                OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
-    } else {
-        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_OFF."
-                            OR ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_FORCED.")
-                                AND (ft.id IS NOT NULL
-                                    OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
-    }
-
-    $sql = "SELECT f.id
-              FROM {forum} f
-                   LEFT JOIN {forum_track_prefs} ft ON (ft.forumid = f.id AND ft.userid = ?)
-             WHERE f.course = ?
-                   $trackingsql";
-
-    if ($forums = $DB->get_records_sql($sql, array($userid, $courseid, $userid))) {
-        foreach ($forums as $forum) {
-            $forums[$forum->id] = $forum;
-        }
-        return $forums;
-
-    } else {
-        return array();
-    }
-}
 
 /**
  * Determine if a user can track forums and optionally a particular forum.
@@ -4660,8 +4621,14 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
         $forum = $DB->get_record('forum', array('id' => $forum), '', 'id,trackingtype');
     }
 
-    $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
-    $forumforced = ($forum->trackingtype == FORUM_TRACKING_FORCED);
+    if (method_exists($forum, 'get_tracking_type')) {
+        $trackingtype = $forum->get_tracking_type();
+    } else {
+        $trackingtype = $forum->trackingtype;
+    }
+
+    $forumallows = ($trackingtype == FORUM_TRACKING_OPTIONAL);
+    $forumforced = ($trackingtype == FORUM_TRACKING_FORCED);
 
     if ($CFG->forum_allowforcedreadtracking) {
         // If we allow forcing, then forced forums takes procidence over user setting.

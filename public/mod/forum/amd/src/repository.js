@@ -23,6 +23,42 @@
  */
 define(['core/ajax'], function(Ajax) {
     /**
+     * Set the subscription state for forum.
+     *
+     * @param {number} forumId ID of the forum to set the subscription state for
+     * @param {boolean} targetState Set the subscribed state. True == subscribed; false == unsubscribed.
+     * @return {object} jQuery promise
+     */
+    const setForumSubscriptionState = function(forumId, targetState) {
+        const request = {
+            methodname: 'mod_forum_set_forum_subscription',
+            args: {
+                forumid: forumId,
+                targetstate: targetState
+            }
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
+     * Set the tracking state for forum.
+     *
+     * @param {number} forumId ID of the forum to set the tracking state for
+     * @param {boolean} targetState Set the tracking state for unread messages. True == track; false == untrack.
+     * @return {object} jQuery promise
+     */
+    const setForumTrackingState = function(forumId, targetState) {
+        const request = {
+            methodname: 'mod_forum_set_forum_tracking',
+            args: {
+                forumid: forumId,
+                targetstate: targetState
+            }
+        };
+        return Ajax.call([request])[0];
+    };
+
+    /**
      * Set the subscription state for a discussion in a forum.
      *
      * @param {number} forumId ID of the forum the discussion belongs to
@@ -154,6 +190,8 @@ define(['core/ajax'], function(Ajax) {
     };
 
     return {
+        setForumSubscriptionState: setForumSubscriptionState,
+        setForumTrackingState: setForumTrackingState,
         setDiscussionSubscriptionState: setDiscussionSubscriptionState,
         addDiscussionPost: addDiscussionPost,
         setDiscussionLockState: setDiscussionLockState,
