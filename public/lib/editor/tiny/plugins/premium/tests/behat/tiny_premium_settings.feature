@@ -27,3 +27,29 @@ Feature: Check the features of the TinyMCE Premium settings
     When I click on "Enable Accessibility Checker" "link"
     Then I should see "Accessibility Checker enabled."
     And I should see "The TinyMCE Premium Accessibility Checker will override the default Accessibility Checker for users who have access to it."
+
+  @javascript
+  Scenario Outline: I can set service URL for the TinyMCE Premium plugins
+    Given the following config values are set as admin:
+      | apikey | "123456" | tiny_premium |
+    And "Settings" "link" should exist in the "<plugin>" "table_row"
+    When I click on "Settings" "link" in the "<plugin>" "table_row"
+    Then I should see "The <plugin> plugin uses a server-side service to process data. You can choose to use the Tiny Cloud service, or connect to your own self-hosted instance using a service URL."
+    And I should see "Use Tiny Cloud"
+    And I should see "Use self-hosted service"
+    And "Service URL" "field" should not be visible
+    And I click on "Use self-hosted service" "radio"
+    And "Service URL" "field" should be visible
+    And I should see "Enter the URL of your self-hosted <plugin> service"
+    And I set the field "Service URL" to "<serviceurl>"
+    And I click on "Save changes" "button"
+    And I should see "Changes saved"
+    And I click on "Settings" "link" in the "<plugin>" "table_row"
+    And "Service URL" "field" should be visible
+    And the field "Service URL" matches value "<serviceurl>"
+
+    Examples:
+      | plugin                 | serviceurl                                 |
+      | Enhanced Image Editing | http://moodle.test:8080/ephox-image-proxy  |
+      | Link Checker           | http://moodle.test:8080/ephox-hyperlinking |
+      | Spell Checker Pro      | http://moodle.test:8080/ephox-spelling     |
