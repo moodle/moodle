@@ -204,15 +204,7 @@ abstract class component_gradeitem {
      * @return bool
      */
     public function is_using_advanced_grading(): bool {
-        if ($this->is_using_scale()) {
-            return false;
-        }
-
-        if ($this->get_advanced_grading_controller()) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->get_advanced_grading_controller();
     }
 
     /**
