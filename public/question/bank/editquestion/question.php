@@ -128,6 +128,17 @@ if ($id) {
     throw new moodle_exception('notenoughdatatoeditaquestion', 'question', $returnurl);
 }
 
+// If we get to the editing page from somewhere outside the question bank (such as the quiz) while migration is still
+// pending, redirect back with a warning.
+if (!\core_question\local\bank\question_bank_helper::has_bank_migration_task_completed_successfully()) {
+    $defaultactivityname = \core_question\local\bank\question_bank_helper::get_default_question_bank_activity_name();
+    redirect(
+        $returnurl,
+        get_string('transfernotfinished', 'mod_' . $defaultactivityname),
+        messagetype: \core\output\notification::NOTIFY_WARNING,
+    );
+}
+
 $qtypeobj = question_bank::get_qtype($question->qtype);
 
 if (isset($question->categoryobject)) {

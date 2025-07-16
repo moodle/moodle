@@ -71,9 +71,13 @@ $PAGE->activityheader->disable();
 echo $OUTPUT->header();
 if (!\core_question\local\bank\question_bank_helper::has_bank_migration_task_completed_successfully()) {
     $defaultactivityname = \core_question\local\bank\question_bank_helper::get_default_question_bank_activity_name();
-    echo $OUTPUT->notification(get_string('transfernotfinished', 'mod_' . $defaultactivityname),
-        \core\output\notification::NOTIFY_WARNING
+    echo $OUTPUT->notification(
+        get_string('transfernotfinished', 'mod_' . $defaultactivityname),
+        \core\output\notification::NOTIFY_WARNING,
+        false,
     );
+    echo $OUTPUT->footer();
+    exit();
 }
 
 // Print horizontal nav if needed.

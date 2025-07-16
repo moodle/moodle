@@ -647,7 +647,8 @@ class question_bank_helper {
     public static function has_bank_migration_task_completed_successfully(): bool {
         $defaultbank = self::get_default_question_bank_activity_name();
         $task = manager::get_adhoc_tasks("\\mod_{$defaultbank}\\task\\transfer_question_categories");
-        return empty($task);
+        $subtasks = manager::get_adhoc_tasks("\\mod_{$defaultbank}\\task\\transfer_questions");
+        return empty($task) && empty($subtasks);
     }
 
     /**

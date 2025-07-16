@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_essay_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('editor', 'editorfilepicker', 'plain', 'monospaced', 'responsetemplate', 'noinline');
+        return ['editor', 'editorfilepicker', 'plain', 'monospaced', 'responsetemplate', 'noinline', 'files'];
     }
 
     /**
@@ -291,5 +291,87 @@ class qtype_essay_test_helper extends question_test_helper {
         return new question_file_saver($this->make_attachments($attachments), 'question', 'response_attachments');
     }
 
+    /**
+     * Create a question with images embedded in the questiontext, generalfeedback and graderinfo.
+     *
+     * @return stdClass
+     */
+    public function get_essay_question_form_data_files() {
+        global $CFG, $USER;
+        $fromform = new stdClass();
 
+        $usercontext = context_user::instance($USER->id);
+        $questiontextdraftid = 1;
+        file_prepare_draft_area($questiontextdraftid, $usercontext->id, null, null, null);
+        $fs = get_file_storage();
+        $filerecord = new stdClass();
+        $filerecord->contextid = $usercontext->id;
+        $filerecord->component = 'user';
+        $filerecord->filearea = 'draft';
+        $filerecord->itemid = $questiontextdraftid;
+        $filerecord->filepath = '/';
+        $filerecord->filename = '1.png';
+        $fs->create_file_from_pathname($filerecord, $CFG->dirroot .
+            '/question/type/essay/tests/fixtures/1.png');
+
+        $feedbackdraftid = 2;
+        file_prepare_draft_area($feedbackdraftid, $usercontext->id, null, null, null);
+        $fs = get_file_storage();
+        $filerecord = new stdClass();
+        $filerecord->contextid = $usercontext->id;
+        $filerecord->component = 'user';
+        $filerecord->filearea = 'draft';
+        $filerecord->itemid = $feedbackdraftid;
+        $filerecord->filepath = '/';
+        $filerecord->filename = '2.png';
+        $fs->create_file_from_pathname($filerecord, $CFG->dirroot .
+            '/question/type/essay/tests/fixtures/2.png');
+
+        $graderinfodraftid = 3;
+        file_prepare_draft_area($graderinfodraftid, $usercontext->id, null, null, null);
+        $fs = get_file_storage();
+        $filerecord = new stdClass();
+        $filerecord->contextid = $usercontext->id;
+        $filerecord->component = 'user';
+        $filerecord->filearea = 'draft';
+        $filerecord->itemid = $graderinfodraftid;
+        $filerecord->filepath = '/';
+        $filerecord->filename = '3.png';
+        $fs->create_file_from_pathname($filerecord, $CFG->dirroot .
+            '/question/type/essay/tests/fixtures/3.png');
+
+        $fromform->name = 'Essay question (HTML editor)';
+        $questionfileurl = $CFG->wwwroot . '/draftfile.php/' . $usercontext->id . '/user/draft/' . $questiontextdraftid . '/1.png';
+        $fromform->questiontext = [
+            'text' => 'Please write a story about a frog. <img src="'.$questionfileurl.'" alt="">',
+            'format' => FORMAT_HTML,
+            'itemid' => $questiontextdraftid,
+        ];
+        $fromform->defaultmark = 1.0;
+
+        $feedbackfileurl = $CFG->wwwroot . '/draftfile.php/' . $usercontext->id . '/user/draft/' . $feedbackdraftid . '/2.png';
+        $fromform->generalfeedback = [
+            'text' => 'I hope your story had a beginning, a middle and an end. <img src="'.$feedbackfileurl.'" alt="">',
+            'format' => FORMAT_HTML,
+            'itemid' => $feedbackdraftid,
+        ];
+        $fromform->responseformat = 'editor';
+        $fromform->responserequired = 1;
+        $fromform->responsefieldlines = 10;
+        $fromform->attachments = 0;
+        $fromform->attachmentsrequired = 0;
+        $fromform->maxbytes = 0;
+        $fromform->filetypeslist = ''; // Although once saved in the DB, this becomes null, the form returns '' here.
+
+        $graderinfourl = $CFG->wwwroot . '/draftfile.php/' . $usercontext->id . '/user/draft/' . $graderinfodraftid . '/3.png';
+        $fromform->graderinfo = [
+            'text' => '',
+            'format' => FORMAT_HTML,
+            'itemid' => $graderinfodraftid,
+        ];
+        $fromform->responsetemplate = ['text' => '<img src="'.$graderinfourl.'" alt="">', 'format' => FORMAT_HTML];
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+
+        return $fromform;
+    }
 }
