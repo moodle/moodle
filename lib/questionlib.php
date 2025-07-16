@@ -671,14 +671,15 @@ function move_question_set_references(int $oldcategoryid, int $newcatgoryid,
             if (isset($filter['questioncategoryid'])) {
                 $filter = question_reference_manager::convert_legacy_set_reference_filter_condition($filter);
             }
-            if ((int)$filter['filter']['category']['values'][0] === $oldcategoryid) {
-                $setreference->questionscontextid = $newcontextid;
-                if ($oldcategoryid !== $newcatgoryid) {
-                    $filter['filter']['category']['values'][0] = $newcatgoryid;
-                    $setreference->filtercondition = json_encode($filter);
-                }
-                $DB->update_record('question_set_references', $setreference);
+            $setreference->questionscontextid = $newcontextid;
+            if (
+                (int)$filter['filter']['category']['values'][0] === $oldcategoryid
+                && $oldcategoryid !== $newcatgoryid
+            ) {
+                $filter['filter']['category']['values'][0] = $newcatgoryid;
+                $setreference->filtercondition = json_encode($filter);
             }
+            $DB->update_record('question_set_references', $setreference);
         }
         $setreferences->close();
     }
