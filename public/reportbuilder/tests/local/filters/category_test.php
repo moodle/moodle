@@ -40,6 +40,9 @@ final class category_test extends advanced_testcase {
      */
     public static function get_sql_filter_provider(): array {
         return [
+            // Any value.
+            [null, category::ANY_VALUE, false, ['Category 1', 'One', 'Two', 'Three', 'Four', 'Five', 'Six']],
+
             // Equal to.
             ['One', category::EQUAL_TO, false, ['One']],
             ['One', category::EQUAL_TO, true, ['One', 'Two', 'Three']],
@@ -138,6 +141,7 @@ final class category_test extends advanced_testcase {
 
         // When including sub-categories, the filter SQL is included twice (for the category itself, plus to find descendents).
         [$select, $params] = category::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => category::EQUAL_TO,
             $filter->get_unique_identifier() . '_value' => $category1->id,
             $filter->get_unique_identifier() . '_subcategories' => true,
         ]);
