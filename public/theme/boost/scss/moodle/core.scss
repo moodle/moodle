@@ -2946,15 +2946,15 @@ body.dragging {
             border-top: 1px solid $border-color;
             padding-top: map-get($spacers, 2);
         }
-        // Boost theme styling only (drawers not used in classic).
-        .drawers {
-            .block_myoverview {
-                border: 0;
-                & > .card-body {
-                    padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
-                    padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
-                    padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
-                }
+    }
+    // Boost theme styling only (drawers not used in classic).
+    .drawers {
+        .block_myoverview {
+            border: 0;
+            & > .card-body {
+                padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
+                padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+                padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
             }
         }
     }
