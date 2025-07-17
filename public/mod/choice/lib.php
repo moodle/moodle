@@ -23,14 +23,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** @global int $CHOICE_COLUMN_HEIGHT */
-global $CHOICE_COLUMN_HEIGHT;
-$CHOICE_COLUMN_HEIGHT = 300;
-
-/** @global int $CHOICE_COLUMN_WIDTH */
-global $CHOICE_COLUMN_WIDTH;
-$CHOICE_COLUMN_WIDTH = 300;
-
 define('CHOICE_PUBLISH_ANONYMOUS', '0');
 define('CHOICE_PUBLISH_NAMES',     '1');
 
