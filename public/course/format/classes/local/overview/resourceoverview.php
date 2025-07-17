@@ -16,6 +16,11 @@
 
 namespace core_courseformat\local\overview;
 
+use core\url;
+use action_link;
+use core\output\local\properties\button;
+use core\output\local\properties\text_align;
+
 /**
  * Class resourceoverview
  *
@@ -24,6 +29,36 @@ namespace core_courseformat\local\overview;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class resourceoverview extends \core_courseformat\activityoverviewbase {
+
+    #[\Override]
+    public function get_actions_overview(): ?overviewitem {
+        if (!$this->is_resource()) {
+            // Only resource activities show the actions overview
+            // because they are aggregated in one table.
+            return null;
+        }
+
+        if (!has_capability('report/log:view', $this->context)) {
+            return null;
+        }
+
+        $content = new action_link(
+            url: new url(
+                '/report/log/index.php?',
+                ['id' => $this->cm->course, 'modid' => $this->cm->id, 'chooselog' => 1, 'modaction' => 'r']
+            ),
+            text: get_string('view'),
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
+        );
+
+        return new overviewitem(
+            name: get_string('actions'),
+            value: '',
+            content: $content,
+            textalign: text_align::CENTER,
+        );
+    }
+
     #[\Override]
     public function get_extra_overview_items(): array {
         return [
@@ -34,18 +69,11 @@ class resourceoverview extends \core_courseformat\activityoverviewbase {
     /**
      * Retrieves an overview item for the extra type of the resource.
      *
-     * @return overviewitem|null
+     * @return overviewitem|null The overview item for the resource type.
      */
     private function get_extra_type_overview(): ?overviewitem {
-        // Only resource activities shows the type overview
-        // because they are aggregated in one table.
-        $archetype = plugin_supports(
-            type: 'mod',
-            name: $this->cm->modname,
-            feature: FEATURE_MOD_ARCHETYPE,
-            default: MOD_ARCHETYPE_OTHER
-        );
-        if ($archetype != MOD_ARCHETYPE_RESOURCE) {
+        if (!$this->is_resource()) {
+            // Only resource activities show the type.
             return null;
         }
 
@@ -54,5 +82,21 @@ class resourceoverview extends \core_courseformat\activityoverviewbase {
             value: $this->cm->modfullname,
             content: $this->cm->modfullname,
         );
+    }
+
+    /**
+     * Checks if the current activity is a resource type.
+     *
+     * @return bool True if the activity is a resource type, false otherwise.
+     */
+    protected function is_resource(): bool {
+        // Check if the activity is a resource type.
+        $archetype = plugin_supports(
+            type: 'mod',
+            name: $this->cm->modname,
+            feature: FEATURE_MOD_ARCHETYPE,
+            default: MOD_ARCHETYPE_OTHER
+        );
+        return $archetype === MOD_ARCHETYPE_RESOURCE;
     }
 }

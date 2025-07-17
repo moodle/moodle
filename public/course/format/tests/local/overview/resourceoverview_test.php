@@ -26,6 +26,111 @@ namespace core_courseformat\local\overview;
  * @covers     \core_courseformat\local\overview\resourceoverview
  */
 final class resourceoverview_test extends \advanced_testcase {
+
+    /**
+     * Test get_actions_overview.
+     *
+     * @covers ::get_actions_overview
+     * @dataProvider provider_test_get_actions_overview
+     *
+     * @param string $role The role of the user to test.
+     * @param string $resourcetype The type of resource to create.
+     * @param array|null $expected Expected overview item data.
+     */
+    public function test_get_actions_overview(
+        string $role,
+        string $resourcetype,
+        ?array $expected
+    ): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
+        $resource = $this->getDataGenerator()->create_module($resourcetype, ['course' => $course->id]);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($resource->cmid);
+
+        $this->setUser($currentuser);
+        $cm = get_fast_modinfo($course)->get_cm($resource->cmid);
+        $item = overviewfactory::create($cm)->get_actions_overview();
+
+        if ($expected === null) {
+            $this->assertNull($item);
+            return;
+        }
+
+        $this->assertEquals($expected['name'], $item->get_name());
+        $this->assertEquals($expected['value'], $item->get_value());
+        $this->assertStringContainsString($expected['content'], $item->get_content()->text);
+    }
+
+    /**
+     * Data provider for test_get_actions_overview.
+     *
+     * @return array
+     */
+    public static function provider_test_get_actions_overview(): array {
+        return [
+            'Student' => [
+                'role' => 'student',
+                'resourcetype' => 'url',
+                'expected' => null,
+            ],
+            'Teacher - Book' => [
+                'role' => 'editingteacher',
+                'resourcetype' => 'book',
+                'expected' => [
+                    'name' => get_string('actions'),
+                    'value' => '',
+                    'content' => get_string('view'),
+                ],
+            ],
+            'Teacher - Folder' => [
+                'role' => 'editingteacher',
+                'resourcetype' => 'folder',
+                'expected' => [
+                    'name' => get_string('actions'),
+                    'value' => '',
+                    'content' => get_string('view'),
+                ],
+            ],
+            'Teacher - Page' => [
+                'role' => 'editingteacher',
+                'resourcetype' => 'page',
+                'expected' => [
+                    'name' => get_string('actions'),
+                    'value' => '',
+                    'content' => get_string('view'),
+                ],
+            ],
+            'Teacher - Resource' => [
+                'role' => 'editingteacher',
+                'resourcetype' => 'resource',
+                'expected' => [
+                    'name' => get_string('actions'),
+                    'value' => '',
+                    'content' => get_string('view'),
+                ],
+            ],
+            'Teacher - URL' => [
+                'role' => 'editingteacher',
+                'resourcetype' => 'url',
+                'expected' => [
+                    'name' => get_string('actions'),
+                    'value' => '',
+                    'content' => get_string('view'),
+                ],
+            ],
+            'Teacher - Non resource' => [
+                'role' => 'editingteacher',
+                'resourcetype' => 'lti',
+                'expected' => null,
+            ],
+        ];
+    }
+
     /**
      * Test get_extra_overview_items method.
      *
@@ -47,6 +152,17 @@ final class resourceoverview_test extends \advanced_testcase {
         $this->assertCount(1, $result);
         $this->assertArrayHasKey('type', $result);
         $this->assertInstanceOf(\core_courseformat\local\overview\overviewitem::class, $result['type']);
+
+        $activity = $this->getDataGenerator()->create_module('lti', ['course' => $course->id]);
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($activity->cmid);
+
+        $overview = overviewfactory::create($cm);
+
+        $result = $overview->get_extra_overview_items();
+        $this->assertCount(1, $result);
+        $this->assertArrayHasKey('type', $result);
+        $this->assertNull($result['type']);
     }
 
     /**
@@ -74,13 +190,13 @@ final class resourceoverview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
 
         $items = $overview->get_extra_overview_items();
-        $result = $items['type'];
 
         if ($expected === null) {
-            $this->assertNull($result);
+            $this->assertTrue(!array_key_exists('type', $items) || $items['type'] === null);
             return;
         }
 
+        $result = $items['type'];
         $this->assertEquals(get_string('resource_type'), $result->get_name());
         $this->assertEquals($expected, $result->get_value());
         $this->assertEquals($expected, $result->get_content());
@@ -113,7 +229,7 @@ final class resourceoverview_test extends \advanced_testcase {
                 'resourcetype' => 'url',
                 'expected' => 'URL',
             ],
-            // Activities without integration.
+            // Non-resource activities.
             'bigbluebuttonbn' => [
                 'resourcetype' => 'bigbluebuttonbn',
                 'expected' => null,
