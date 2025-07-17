@@ -156,7 +156,7 @@ final class manager_test extends \advanced_testcase {
      * @param int $expectedcount the expected count of answers for the user.
      *
      * @covers       \mod_choice\manager::count_all_users_answered
-     * @dataProvider count_all_answers_provider
+     * @dataProvider provider_count_all_answers
      */
     public function test_count_all_users_answered(
         string $username,
@@ -165,6 +165,8 @@ final class manager_test extends \advanced_testcase {
         int $expectedcount
     ): void {
         global $SESSION;
+
+        $db = \core\di::get(\moodle_database::class);
         [
             'users' => $users,
             'instance' => $instance,
@@ -179,6 +181,21 @@ final class manager_test extends \advanced_testcase {
         }
         $count = $manager->count_all_users_answered();
         $this->assertEquals($expectedcount, $count);
+
+        // Check answers count for each option.
+        $options = $db->get_records_menu('choice_options', ['choiceid' => $instance->id], '', 'id, text');
+        foreach ($options as $optionid => $optiontext) {
+            $count = $manager->count_all_users_answered($optionid);
+            if ($optiontext === 'A') {
+                $this->assertEquals(1, $count);
+            } else if ($optiontext === 'B') {
+                $this->assertEquals(2, $count);
+            } else {
+                // Option C has no answers.
+                $this->assertEquals(0, $count);
+            }
+        }
+
     }
 
     /**
@@ -186,18 +203,53 @@ final class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public static function count_all_answers_provider(): array {
+    public static function provider_count_all_answers(): array {
         return [
-            'teacher 1 (no group mode)' => ['t1', NOGROUPS, null, 2],
+            'Teacher in a group - No group mode' => [
+                'username' => 't1',
+                'coursegroupmode' => NOGROUPS,
+                'currentgroup' => null,
+                'expectedcount' => 2,
+            ],
             // This test about SEPARATEGROUPS it will be the subject of an follow up ticket (MDL-85852).
-            'teacher 1 (separate group mode) - group 1 set' => ['t1', SEPARATEGROUPS, null, 2],
-            'teacher 1 (separate group mode)' => ['t1', SEPARATEGROUPS, 'g1', 2],
-            'teacher 1 (visible group mode)' => ['t1', VISIBLEGROUPS, null, 2],
+            'Teacher in a group - Separate group mode' => [
+                'username' => 't1',
+                'coursegroupmode' => SEPARATEGROUPS,
+                'currentgroup' => null,
+                'expectedcount' => 2,
+            ],
+            'Teacher in a group - Separate group mode - Group1' => [
+                'username' => 't1',
+                'coursegroupmode' => SEPARATEGROUPS,
+                'currentgroup' => 'g1',
+                'expectedcount' => 2,
+            ],
+            'Teacher in a group - Visible group mode' => [
+                'username' => 't1',
+                'coursegroupmode' => VISIBLEGROUPS,
+                'currentgroup' => null,
+                'expectedcount' => 2,
+            ],
             // Teacher 2 does not belong to any group.
-            'teacher 2 (no group mode)' => ['t2', NOGROUPS, null, 2],
-            // This test about SEPARATEGROUPS it will be the subject of an follow up ticket (MDL-85852).
-            'teacher 2 (separate group mode)' => ['t2', SEPARATEGROUPS, null, 2],
-            'teacher 2 (visible group mode)' => ['t2', VISIBLEGROUPS, null, 2],
+            'Teacher without group - No group mode' => [
+                'username' => 't2',
+                'coursegroupmode' => NOGROUPS,
+                'currentgroup' => null,
+                'expectedcount' => 2,
+            ],
+            // These tests about SEPARATEGROUPS will be the subject of an follow up ticket (MDL-85852).
+            'Teacher without group - Separate group mode' => [
+                'username' => 't2',
+                'coursegroupmode' => SEPARATEGROUPS,
+                'currentgroup' => null,
+                'expectedcount' => 2,
+            ],
+            'Teacher without group - Visible group mode' => [
+                'username' => 't2',
+                'coursegroupmode' => VISIBLEGROUPS,
+                'currentgroup' => null,
+                'expectedcount' => 2,
+            ],
         ];
     }
 
@@ -213,5 +265,29 @@ final class manager_test extends \advanced_testcase {
         $this->assertTrue($manager->has_answered());
         $this->setUser($users['s3']);
         $this->assertFalse($manager->has_answered());
+    }
+
+    /**
+     * Test get_options method.
+     *
+     * @covers \mod_choice\manager::get_options
+     */
+    public function test_get_options(): void {
+        $course = $this->getDataGenerator()->create_course();
+        $instance1 = $this->getDataGenerator()->create_module('choice', [
+            'course' => $course,
+            'option' => ['A', 'B', 'C'],
+        ]);
+        $manager = \mod_choice\manager::create_from_instance($instance1);
+        $options = $manager->get_options();
+        $this->assertCount(3, $options);
+
+        $instance2 = $this->getDataGenerator()->create_module('choice', [
+            'course' => $course,
+            'option' => ['111'],
+        ]);
+        $manager = \mod_choice\manager::create_from_instance($instance2);
+        $options = $manager->get_options();
+        $this->assertCount(1, $options);
     }
 }

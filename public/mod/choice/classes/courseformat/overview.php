@@ -16,14 +16,15 @@
 
 namespace mod_choice\courseformat;
 
-use core\activity_dates;
-use core_calendar\output\humandate;
 use cm_info;
-use core_courseformat\local\overview\overviewitem;
-use core\output\action_link;
-use core\output\local\properties\text_align;
-use core\output\local\properties\button;
 use mod_choice\manager;
+use core\activity_dates;
+use core\output\action_link;
+use core_calendar\output\humandate;
+use core\output\local\properties\button;
+use core\output\local\properties\text_align;
+use core_courseformat\local\overview\overviewitem;
+use core_courseformat\output\local\overview\overviewdialog;
 
 /**
  * Choice overview integration.
@@ -43,14 +44,11 @@ class overview extends \core_courseformat\activityoverviewbase {
      *
      * @param cm_info $cm the course module instance.
      * @param \core\output\renderer_helper $rendererhelper the renderer helper.
-     * @param \core_string_manager $sm the string manager.
      */
     public function __construct(
         cm_info $cm,
         /** @var \core\output\renderer_helper $rendererhelper the renderer helper */
         protected readonly \core\output\renderer_helper $rendererhelper,
-        /** @var \core_string_manager $sm the string manager */
-        protected readonly \core_string_manager $sm,
     ) {
         parent::__construct($cm);
         $this->manager = manager::create_from_coursemodule($cm);
@@ -70,7 +68,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         }
         if (empty($closedate)) {
             return new overviewitem(
-                name: $this->sm->get_string('duedate', 'choice'),
+                name: get_string('duedate', 'choice'),
                 value: null,
                 content: '-',
             );
@@ -79,7 +77,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = humandate::create_from_timestamp($closedate);
 
         return new overviewitem(
-            name: $this->sm->get_string('duedate', 'choice'),
+            name: get_string('duedate', 'choice'),
             value: $closedate,
             content: $content,
         );
@@ -100,8 +98,8 @@ class overview extends \core_courseformat\activityoverviewbase {
         );
 
         return new overviewitem(
-            name: $this->sm->get_string('actions'),
-            value: $this->sm->get_string('viewallresponses', 'choice', $currentanswerscount),
+            name: get_string('actions'),
+            value: get_string('viewallresponses', 'choice', $currentanswerscount),
             content: $content,
             textalign: text_align::CENTER,
         );
@@ -117,12 +115,8 @@ class overview extends \core_courseformat\activityoverviewbase {
 
     #[\Override]
     public function get_extra_overview_items(): array {
-        if (has_capability('mod/choice:readresponses', $this->cm->context)) {
-            return [
-                'studentwhoresponded' => $this->get_students_who_responded(),
-            ]; // If the user can read responses, we don't show the submission status as it is for the student only.
-        }
         return [
+            'studentwhoresponded' => $this->get_students_who_responded(),
             'responded' => $this->get_extra_status_for_user(),
         ];
     }
@@ -130,13 +124,17 @@ class overview extends \core_courseformat\activityoverviewbase {
     /**
      * Get the response status overview item.
      *
-     * @return overviewitem An overview item
+     * @return overviewitem|null An overview item or null for teachers.
      */
-    private function get_extra_status_for_user(): overviewitem {
+    private function get_extra_status_for_user(): ?overviewitem {
+        if (has_capability('mod/choice:readresponses', $this->cm->context)) {
+            return null;
+        }
+
         $status = $this->manager->has_answered();
-        $statustext = $this->sm->get_string('notanswered', 'choice');
+        $statustext = get_string('notanswered', 'choice');
         if ($status) {
-            $statustext = $this->sm->get_string('answered', 'choice');
+            $statustext = get_string('answered', 'choice');
         }
         $corerenderer = $this->rendererhelper->get_core_renderer();
         $submittedstatuscontent = "-";
@@ -149,7 +147,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             );
         }
         return new overviewitem(
-            name: $this->sm->get_string('responded', 'choice'),
+            name: get_string('responded', 'choice'),
             value: $status,
             content: $submittedstatuscontent,
             textalign: text_align::CENTER,
@@ -159,14 +157,33 @@ class overview extends \core_courseformat\activityoverviewbase {
     /**
      * Get the count of student who responded.
      *
-     * @return overviewitem An overview item
+     * @return overviewitem|null An overview item or null if for students.
      */
-    private function get_students_who_responded(): overviewitem {
+    private function get_students_who_responded(): ?overviewitem {
+        if (!has_capability('mod/choice:readresponses', $this->cm->context)) {
+            return null;
+        }
+
         $studentwhoanswered = $this->manager->count_all_users_answered();
+        $overviewdialog = new overviewdialog(
+            buttoncontent: $studentwhoanswered,
+            title: get_string('totalresponses', 'mod_choice'),
+            description: $this->cm->get_instance_record()->allowmultiple ? get_string('allowmultiple', 'mod_choice') : '',
+            definition: ['buttonclasses' => button::BODY_OUTLINE->classes()],
+        );
+
+        $options = $this->manager->get_options();
+        foreach ($options as $option) {
+            $overviewdialog->add_item(
+                $option->text,
+                $this->manager->count_all_users_answered($option->id),
+            );
+        }
+
         return new overviewitem(
-            name: $this->sm->get_string('studentwhoresponded', 'choice'),
+            name: get_string('studentwhoresponded', 'choice'),
             value: $studentwhoanswered,
-            content: $studentwhoanswered,
+            content: $overviewdialog,
             textalign: text_align::CENTER,
         );
     }

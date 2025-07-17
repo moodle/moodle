@@ -121,14 +121,19 @@ class manager {
     /**
      * Return the current count of users who have answered this choice module, that the current user can see.
      *
+     * @param int|null $optionid the option ID to filter by, or null to count all answers
      * @return int the number of answers that the user can see
      */
-    public function count_all_users_answered(): int {
+    public function count_all_users_answered(?int $optionid = null): int {
         if (!has_any_capability(['mod/choice:view', 'mod/choice:readresponses'], $this->context)) {
             return 0;
         }
         $where = ' WHERE ca.choiceid = :choiceid';
         $params = ['choiceid' => $this->instance->id];
+        if ($optionid) {
+            $where .= ' AND ca.optionid = :optionid';
+            $params['optionid'] = $optionid;
+        }
         return $this->db->count_records_sql(
             'SELECT COUNT(DISTINCT ca.userid) FROM {choice_answers} ca' .  $where,
             $params
@@ -146,5 +151,18 @@ class manager {
         global $USER;
         $conditions = ['choiceid' => $this->instance->id, 'userid' => $USER->id];
         return $this->db->record_exists('choice_answers', $conditions);
+    }
+
+    /**
+     * Get the options for this choice activity.
+     *
+     * @return array of choice options
+     */
+    public function get_options(): array {
+        return $this->db->get_records(
+            'choice_options',
+            ['choiceid' => $this->instance->id],
+            'id ASC',
+        );
     }
 }

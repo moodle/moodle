@@ -17,6 +17,7 @@
 namespace mod_choice\courseformat;
 
 use core_courseformat\local\overview\overviewfactory;
+use core_courseformat\output\local\overview\overviewdialog;
 
 /**
  * Tests for Choice integration.
@@ -40,15 +41,14 @@ final class overview_test extends \advanced_testcase {
     public function test_get_extra_status_for_user(string $user, ?bool $answered): void {
         $this->resetAfterTest();
         ['users' => $users, 'course' => $course, 'instance' => $instance] =
-            $this->setup_users_and_activity($answered ?? false);
+            $this->setup_users_and_activity(false, $answered ?? false);
         $cm = get_fast_modinfo($course)->get_cm($instance->cmid);
         $this->setUser($users[$user]);
         $overview = overviewfactory::create($cm);
         $actionoverview = $overview->get_extra_overview_items();
         if ($answered === null) {
-            $this->assertArrayNotHasKey('responded', $actionoverview);
+            $this->assertNull($actionoverview['responded']);
         } else {
-            $this->assertArrayHasKey('responded', $actionoverview);
             $this->assertEquals($answered, $actionoverview['responded']->get_value());
             if (!$answered) {
                 $this->assertEquals('-', $actionoverview['responded']->get_content());
@@ -137,11 +137,11 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview method.
      *
-     * @param string $username
-     * @param int|null $expectedcount
+     * @param string $username The username of the user to test.
+     * @param int|null $expectedcount the expected count of users who responded
      *
      * @covers ::get_actions_overview
-     * @dataProvider data_provider_get_student_responded_count
+     * @dataProvider provider_test_get_actions_overview
      */
     public function test_get_actions_overview(string $username, ?int $expectedcount = null): void {
         $this->resetAfterTest();
@@ -162,42 +162,117 @@ final class overview_test extends \advanced_testcase {
     }
 
     /**
+     * Data provider for test_get_actions_overview.
+     *
+     * @return array the data provider array
+     */
+    public static function provider_test_get_actions_overview(): array {
+        return [
+            'Student' => [
+                'username' => 's1',
+                'expectedcount' => null,
+            ],
+            'Teacher' => [
+                'username' => 't1',
+                'expectedcount' => 2,
+            ],
+        ];
+    }
+
+    /**
      * Test get_actions_overview method.
      *
-     * @param string $username
-     * @param int|null $expectedcount
+     * @param string $username The username of the user to test.
+     * @param bool $allowmultiple whether the choice allows multiple answers
+     * @param bool $withanswers whether the choice will be created with answers
+     * @param int|null $expectedcount the expected count of users who responded
      *
      * @covers ::get_actions_overview
-     * @dataProvider data_provider_get_student_responded_count
+     * @dataProvider provider_get_student_responded_count
      */
-    public function test_get_students_who_responded(string $username, ?int $expectedcount = null): void {
+    public function test_get_students_who_responded(
+        string $username,
+        bool $allowmultiple = false,
+        bool $withanswers = true,
+        ?int $expectedcount = null,
+    ): void {
         $this->resetAfterTest();
-        ['users' => $users, 'course' => $course, 'instance' => $instance] = $this->setup_users_and_activity();
+        [
+            'users' => $users,
+            'course' => $course,
+            'instance' => $instance
+        ] = $this->setup_users_and_activity($allowmultiple, $withanswers);
         $cm = get_fast_modinfo($course)->get_cm($instance->cmid);
         $this->setUser($users[$username]);
         $overview = overviewfactory::create($cm);
-        $actionoverview = $overview->get_extra_overview_items();
+        $result = $overview->get_extra_overview_items();
 
         if (is_null($expectedcount)) {
-            $this->assertArrayNotHasKey('studentwhoresponded', $actionoverview);
+            $this->assertNull($result['studentwhoresponded']);
         } else {
-            $this->assertArrayHasKey('studentwhoresponded', $actionoverview);
             $this->assertEquals(
                 $expectedcount,
-                $actionoverview['studentwhoresponded']->get_value(),
+                $result['studentwhoresponded']->get_value(),
+            );
+            /** @var \core_courseformat\output\local\overview\overviewdialog $content */
+            $content = $result['studentwhoresponded']->get_content();
+            $reflection = new \ReflectionClass($content);
+            $description = $reflection->getProperty('description');
+            $description->setAccessible(true);
+            if ($allowmultiple) {
+                $this->assertEquals(
+                    get_string('allowmultiple', 'mod_choice'),
+                    $description->getValue($content),
+                );
+            } else {
+                $this->assertEmpty($description->getValue($content));
+            }
+
+            $reflection = new \ReflectionClass($content);
+            $items = $reflection->getProperty('items');
+            $items->setAccessible(true);
+            $this->assertEquals(
+                3, // A, B, C.
+                count($items->getValue($content)),
             );
         }
     }
+
     /**
-     * Data provider for get_actions_overview.
+     * Data provider for test_get_students_who_responded.
      *
-     * @return array
+     * @return array the data provider array
      */
-    public static function data_provider_get_student_responded_count(): array {
-            return [
-                'teacher 1' => ['t1', 2],
-                'student 1' => ['s1', null],
-            ];
+    public static function provider_get_student_responded_count(): array {
+        return [
+            'Student' => [
+                'username' => 's1',
+                'expectedcount' => null,
+            ],
+            'Teacher - With answers - No multiple' => [
+                'username' => 't1',
+                'allowmultiple' => false,
+                'withanswers' => true,
+                'expectedcount' => 2,
+            ],
+            'Teacher - Without answers - No multiple' => [
+                'username' => 't1',
+                'withanswers' => false,
+                'expectedcount' => 0,
+            ],
+            'Teacher - With answers - Multiple' => [
+                'username' => 't1',
+                'allowmultiple' => true,
+                'withanswers' => true,
+                'expectedcount' => 2,
+            ],
+            'Teacher - Without answers - Multiple' => [
+                'username' => 't1',
+                'allowmultiple' => true,
+                'withanswers' => false,
+                'expectedcount' => 0,
+            ],
+        ];
     }
 
     /**
@@ -207,7 +282,10 @@ final class overview_test extends \advanced_testcase {
      *
      * @return array
      */
-    private function setup_users_and_activity(bool $withanswers = true): array {
+    private function setup_users_and_activity(
+        bool $allowmultiple = false,
+        bool $withanswers = true
+    ): array {
         $this->setAdminUser();
         $db = \core\di::get(\moodle_database::class);
         $generator = $this->getDataGenerator();
@@ -217,7 +295,8 @@ final class overview_test extends \advanced_testcase {
         }
         $instance = $generator->create_module('choice', [
             'course' => $course,
-            'option' => ['A', 'B'],
+            'option' => ['A', 'B', 'C'],
+            'allowmultiple' => $allowmultiple,
         ]);
 
         if ($withanswers) {
