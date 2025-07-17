@@ -217,7 +217,7 @@ const getInitialMessageValue = (options) => {
 export const getCurrentVersion = async () => {
     const versionRegex = new RegExp(/^ *\$release *= *['\"](?<release>[^ \+]+\+?) *\(Build:.*/m);
     try {
-        const versionFile = await readFile('version.php', 'utf8');
+        const versionFile = await readFile('public/version.php', 'utf8');
         const match = versionFile.match(versionRegex);
         if (match) {
             return match.groups.release;
