@@ -58,7 +58,7 @@ final class adhoc_task_test extends \advanced_testcase {
     public function test_get_next_adhoc_task_now(): void {
         $this->resetAfterTest(true);
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         // Create an adhoc task.
         $task = new adhoc_test_task();
@@ -149,7 +149,7 @@ final class adhoc_task_test extends \advanced_testcase {
     public function test_get_next_adhoc_task_maximum_fail_delay(): void {
         $this->resetAfterTest(true);
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
         $now = $clock->time();
 
         // Create an adhoc task.
@@ -175,7 +175,7 @@ final class adhoc_task_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         $now = $clock->time();
         // Create a normal adhoc task.
@@ -276,7 +276,7 @@ final class adhoc_task_test extends \advanced_testcase {
         global $DB, $CFG;
         $this->resetAfterTest();
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         // Create two no-retry adhoc tasks.
         $task1 = new no_retry_adhoc_task();
@@ -378,9 +378,9 @@ final class adhoc_task_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
 
-        $clock = \core\di::get(\core\clock::class);
-
+        $clock = $this->mock_clock_with_frozen();
         $now = $clock->time();
+
         // Create an adhoc task.
         $task = new adhoc_test_task();
         // Queue it.
@@ -425,9 +425,9 @@ final class adhoc_task_test extends \advanced_testcase {
     public function test_get_next_adhoc_task_future(): void {
         $this->resetAfterTest(true);
 
-        $clock = \core\di::get(\core\clock::class);
-
+        $clock = $this->mock_clock_with_frozen();
         $now = $clock->time();
+
         // Create an adhoc task in future.
         $task = new adhoc_test_task();
         $task->set_next_run_time($now + 1000);
@@ -585,7 +585,7 @@ final class adhoc_task_test extends \advanced_testcase {
     public function test_reschedule_or_queue_adhoc_task_match_no_change(): void {
         $this->resetAfterTest(true);
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         // Schedule adhoc task.
         $task = new adhoc_test_task();
@@ -610,7 +610,7 @@ final class adhoc_task_test extends \advanced_testcase {
     public function test_reschedule_or_queue_adhoc_task_match_update_runtime(): void {
         $this->resetAfterTest(true);
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         $initialruntime = $clock->time() + DAYSECS;
         $newruntime = $clock->time() + WEEKSECS;
@@ -709,7 +709,7 @@ final class adhoc_task_test extends \advanced_testcase {
     public function test_adhoc_task_user_empty(): void {
         $this->resetAfterTest(true);
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         // Create an adhoc task in future.
         $task = new adhoc_test_task();
@@ -739,7 +739,7 @@ final class adhoc_task_test extends \advanced_testcase {
         manager::queue_adhoc_task($task);
 
         // Get it back from the scheduler.
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
         $now = $clock->time();
         $task = manager::get_next_adhoc_task($now);
         manager::adhoc_task_complete($task);
@@ -858,7 +858,7 @@ final class adhoc_task_test extends \advanced_testcase {
     public function test_get_next_adhoc_task_sorting(): void {
         $this->resetAfterTest(true);
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         // Create adhoc tasks.
         $task1 = new adhoc_test_task();
@@ -955,7 +955,7 @@ final class adhoc_task_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $clock = \core\di::get(\core\clock::class);
+        $clock = $this->mock_clock_with_frozen();
 
         // Redirect messages.
         $messagesink = $this->redirectMessages();
