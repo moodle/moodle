@@ -1609,7 +1609,7 @@ class manager {
             $phpbinary = escapeshellarg(self::find_php_cli_path());
 
             // Shell-escaped path CLI script.
-            $pathcomponents = [$CFG->dirroot, $CFG->admin, 'cli', 'scheduled_task.php'];
+            $pathcomponents = [$CFG->root, 'admin', 'cli', 'scheduled_task.php'];
             $scriptpath     = escapeshellarg(implode(DIRECTORY_SEPARATOR, $pathcomponents));
 
             // Shell-escaped task name.
@@ -1705,7 +1705,7 @@ class manager {
         $phpbinary = escapeshellarg(self::find_php_cli_path());
 
         // Shell-escaped path CLI script.
-        $pathcomponents = [$CFG->dirroot, $CFG->admin, 'cli', 'adhoc_task.php'];
+        $pathcomponents = [$CFG->root, 'admin', 'cli', 'adhoc_task.php'];
         $scriptpath = escapeshellarg(implode(DIRECTORY_SEPARATOR, $pathcomponents));
 
         // Build the CLI command.
