@@ -1116,6 +1116,16 @@ function login_captcha_enabled(): bool {
 }
 
 /**
+ * Checks if the captcha is enabled for the forgot password feature.
+ *
+ * @return bool True if captcha is enabled, false otherwise.
+ */
+function forgotpassword_captcha_enabled(): bool {
+    global $CFG;
+    return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && $CFG->enableforgotpasswordrecaptcha == true;
+}
+
+/**
  * Check the submitted captcha is valid or not.
  *
  * @param string|bool $captcha The value submitted in the login form that we are validating.

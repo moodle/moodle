@@ -56,17 +56,25 @@ class login_forgot_password_form extends moodleform {
         $mform->addElement('text', 'username', get_string('username'), 'size="20"' . $purpose);
         $mform->setType('username', PARAM_RAW);
 
-        $submitlabel = get_string('search');
-        $mform->addElement('submit', 'submitbuttonusername', $submitlabel);
-
         $mform->addElement('header', 'searchbyemail', get_string('searchbyemail'), '');
 
         $purpose = user_edit_map_field_purpose($USER->id, 'email');
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"' . $purpose);
         $mform->setType('email', PARAM_RAW_TRIMMED);
 
+        // Avoid the user to fill both fields.
+        $mform->disabledIf('email', 'username', 'neq', '');
+        $mform->disabledIf('username', 'email', 'neq', '');
+
+        $mform->addElement('html', '<hr />');
+
+        // Adds a reCAPTCHA element to the forgot password form if the forgot password captcha is enabled.
+        if (forgotpassword_captcha_enabled()) {
+            $mform->addElement('recaptcha', 'recaptcha_element', '');
+        }
+
         $submitlabel = get_string('search');
-        $mform->addElement('submit', 'submitbuttonemail', $submitlabel);
+        $mform->addElement('submit', 'submit', $submitlabel);
     }
 
     /**
@@ -78,6 +86,18 @@ class login_forgot_password_form extends moodleform {
     function validation($data, $files) {
 
         $errors = parent::validation($data, $files);
+
+        if (forgotpassword_captcha_enabled()) {
+            $recaptchaelement = $this->_form->getElement('recaptcha_element');
+            if (!empty($this->_form->_submitValues['g-recaptcha-response'])) {
+                $response = $this->_form->_submitValues['g-recaptcha-response'];
+                if (!$recaptchaelement->verify($response)) {
+                    $errors['recaptcha_element'] = get_string('incorrectpleasetryagain', 'auth');
+                }
+            } else {
+                $errors['recaptcha_element'] = get_string('missingrecaptchachallengefield');
+            }
+        }
 
         // Extend validation for any form extensions from plugins.
         $errors = array_merge($errors, core_login_validate_extend_forgot_password_form($data));

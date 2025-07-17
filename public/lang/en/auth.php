@@ -34,6 +34,8 @@ $string['auth_fieldlock_expl'] = '<p>Lock value: If enabled, users will not be a
 $string['auth_fieldlocks'] = 'Lock user fields';
 $string['auth_fieldlocks_help'] = '<p>You can lock user data fields. This is useful for sites where the user data is maintained by the administrators manually by editing user records or uploading using the \'Upload users\' facility. If you are locking fields that are required by Moodle, make sure that you provide that data when creating user accounts or the accounts will be unusable.</p><p>Consider setting the lock mode to \'Unlocked if empty\' to avoid this problem.</p>';
 $string['auth_fieldmapping'] = 'Data mapping ({$a})';
+$string['auth_forgotpasswordrecaptcha'] = 'Enable reCAPTCHA for forgot password';
+$string['auth_forgotpasswordrecaptcha_desc'] = 'Add a visual/audio confirmation form element to the forgot password page. This reduces the risk of unwarranted forgotten password attempts. See <a target="_blank" href="https://www.google.com/recaptcha">Google reCAPTCHA</a> for more details.';
 $string['auth_changepasswordhelp'] = 'Change password help';
 $string['auth_changepasswordhelp_expl'] = 'Display lost password help to users who have lost their {$a} password. This will be displayed either as well as or instead of the <strong>Change Password URL</strong> or Internal Moodle password change.';
 $string['auth_changepasswordurl'] = 'Change password URL';
