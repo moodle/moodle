@@ -19,12 +19,14 @@ namespace core_calendar\output;
 use DateInterval;
 use DateTimeInterface;
 use DateTimeImmutable;
+use core\output\externable;
 use core\output\pix_icon;
 use core\output\templatable;
 use core\output\renderable;
 use core\output\renderer_base;
 use core\clock;
 use core\url;
+use core_calendar\external\humandate_exporter;
 
 /**
  * Class humandate.
@@ -39,8 +41,7 @@ use core\url;
  * @copyright  2024 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class humandate implements renderable, templatable {
-
+class humandate implements externable, renderable, templatable {
     /** @var int|null The number of seconds within which a date is considered near. 1 day by default. */
     protected ?int $near = DAYSECS;
 
@@ -213,17 +214,49 @@ class humandate implements renderable, templatable {
             'needtitle' => ($relative !== null || $this->timeonly),
             'link' => $this->link ? $this->link->out(false) : '',
         ];
+
+        $icon = $this->get_near_icon();
+        if ($icon) {
+            $data['isnear'] = true;
+            $data['nearicon'] = $icon->export_for_template($output);
+        }
+        return $data;
+    }
+
+    /**
+     * Returns the near icon if the date is near.
+     *
+     * @return pix_icon|null The near icon or null if not near.
+     */
+    public function get_near_icon(): ?pix_icon {
         if ($this->is_near()) {
-            $icon = new pix_icon(
+            return new pix_icon(
                 pix: 'i/warning',
                 alt: get_string('warning'),
                 component: 'moodle',
                 attributes: ['class' => 'me-0 pb-1']
             );
-            $data['isnear'] = true;
-            $data['nearicon'] = $icon->export_for_template($output);
         }
-        return $data;
+        return null;
+    }
+
+    #[\Override]
+    public function get_exporter(?\core\context $context = null): humandate_exporter {
+        $context = $context ?? \core\context\system::instance();
+        return new humandate_exporter($this, ['context' => $context]);
+    }
+
+    #[\Override]
+    public static function get_read_structure(
+        int $required = VALUE_REQUIRED,
+        mixed $default = null
+    ): \core_external\external_single_structure {
+        return humandate_exporter::get_read_structure($required, $default);
+    }
+
+    #[\Override]
+    public static function read_properties_definition(): array {
+        return humandate_exporter::read_properties_definition();
     }
 
     /**

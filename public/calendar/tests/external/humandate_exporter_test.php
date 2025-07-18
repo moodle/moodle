@@ -14,35 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_calendar\output;
+namespace core_calendar\external;
 
-use DateTime;
+use core_calendar\output\humandate;
 
 /**
- * Tests for humandate class.
+ * Tests for calendar
  *
- * @covers     \core_calendar\output\humandate
+ * @covers     \core_calendar\external\humandate_exporter
  * @package    core_calendar
  * @category   test
- * @copyright  2025 Sara Arjona <sara@moodle.com>
+ * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class humandate_test extends \advanced_testcase {
-
+final class humandate_exporter_test extends \advanced_testcase {
     /**
-     * Initialize.
-     */
-    protected function setUp(): void {
-        parent::setUp();
-
-        // Mock the clock.
-        $this->setTimezone('Australia/Perth');
-    }
-
-    /**
-     * Test export_for_template() method.
+     * Test exporting human-readable dates for external use.
      *
-     * @dataProvider provider_export_for_template
+     * @dataProvider provider_export
      * @param int $addseconds The number of seconds to add to the current time.
      * @param bool $userelatives Whether to use relative dates.
      * @param string|null $date For relative dates, the expected string (Tomorrow, Today, Yesterday).
@@ -51,7 +40,7 @@ final class humandate_test extends \advanced_testcase {
      * @param bool $isnear Whether the date is near.
      * @param string $userdateformat The user date expected format.
      */
-    public function test_export_for_template(
+    public function test_export(
         int $addseconds,
         bool $userelatives,
         ?string $date,
@@ -69,18 +58,53 @@ final class humandate_test extends \advanced_testcase {
         $renderer = $PAGE->get_renderer('core');
 
         $timestamp = $clock->time() + $addseconds;
-        $expected = [
-            'timestamp' => $timestamp,
-            'date' => $date,
-            'userdate' => userdate($timestamp, get_string($userdateformat)),
-            'ispast' => $ispast,
-            'needtitle' => $needtitle,
-            'isnear' => $isnear,
-        ];
+
         $humandate = humandate::create_from_timestamp($timestamp);
         $humandate->set_use_relatives($userelatives);
-        $result = $humandate->export_for_template($renderer);
-        $this->compare_output($expected, $result, $userelatives);
+
+        $icon = $humandate->get_near_icon();
+        if ($icon) {
+            $icondata = $icon->get_exporter()->export($renderer);
+        } else {
+            $icondata = null;
+        }
+
+        $exporter = new humandate_exporter($humandate, ['context' => \context_system::instance()]);
+        $data = $exporter->export($renderer);
+
+        $this->assertObjectHasProperty('timestamp', $data);
+        $this->assertObjectHasProperty('userdate', $data);
+        $this->assertObjectHasProperty('date', $data);
+        $this->assertObjectHasProperty('time', $data);
+        $this->assertObjectHasProperty('needtitle', $data);
+        $this->assertObjectHasProperty('link', $data);
+        $this->assertObjectHasProperty('ispast', $data);
+        $this->assertObjectHasProperty('isnear', $data);
+        $this->assertObjectHasProperty('nearicon', $data);
+        $this->assertCount(9, get_object_vars($data));
+
+        $formatmethod = new \ReflectionMethod(humandate::class, 'format_time');
+        $formatmethod->setAccessible(true);
+
+        $expected = [
+            'timestamp' => $timestamp,
+            'userdate' => userdate($timestamp, get_string($userdateformat)),
+            'time' => $formatmethod->invoke($humandate),
+            'needtitle' => $needtitle,
+            'link' => '',
+            'ispast' => $ispast,
+            'isnear' => $isnear,
+            'nearicon' => $icondata,
+        ];
+        foreach ($expected as $key => $value) {
+            $this->assertEquals($value, $data->$key);
+        }
+
+        if ($userelatives) {
+            $this->assertStringContainsString($date, $data->date);
+        } else {
+            $this->assertStringContainsString($expected['userdate'], $data->date);
+        }
     }
 
     /**
@@ -88,7 +112,7 @@ final class humandate_test extends \advanced_testcase {
      *
      * @return array
      */
-    public static function provider_export_for_template(): array {
+    public static function provider_export(): array {
         return [
             'Now with relatives' => [
                 'addseconds' => 0,
@@ -138,7 +162,7 @@ final class humandate_test extends \advanced_testcase {
             'Now without relatives' => [
                 'addseconds' => 0,
                 'userelatives' => false,
-                'date' => 'Today',
+                'date' => null,
                 'ispast' => false,
                 'needtitle' => false,
                 'isnear' => false,
@@ -147,7 +171,7 @@ final class humandate_test extends \advanced_testcase {
             'Tomorrow without relatives' => [
                 'addseconds' => DAYSECS,
                 'userelatives' => false,
-                'date' => 'Tomorrow',
+                'date' => null,
                 'ispast' => false,
                 'needtitle' => false,
                 'isnear' => false,
@@ -156,7 +180,7 @@ final class humandate_test extends \advanced_testcase {
             'Yesterday without relatives' => [
                 'addseconds' => -DAYSECS,
                 'userelatives' => false,
-                'date' => 'Yesterday',
+                'date' => null,
                 'ispast' => true,
                 'needtitle' => false,
                 'isnear' => false,
@@ -199,109 +223,5 @@ final class humandate_test extends \advanced_testcase {
                 'userdateformat' => 'strftimedaydate',
             ],
         ];
-    }
-
-    public function test_create_from_timestamp(): void {
-        $this->resetAfterTest();
-
-        $clock = $this->mock_clock_with_frozen();
-        $timestamp = $clock->time();
-        $humandate = humandate::create_from_timestamp($timestamp);
-        $this->assertInstanceOf(humandate::class, $humandate);
-    }
-
-    public function test_create_from_datetime(): void {
-        $this->resetAfterTest();
-
-        $humandate = humandate::create_from_datetime(new DateTime());
-        $this->assertInstanceOf(humandate::class, $humandate);
-    }
-
-    /**
-     * Compare humandate output.
-     *
-     * @param array $expected The expected output.
-     * @param array $actual The actual output.
-     * @param bool $userelatives Whether to use relative dates.
-     */
-    protected function compare_output(
-        array $expected,
-        array $actual,
-        bool $userelatives,
-    ): void {
-        $fields = ['timestamp', 'userdate', 'ispast', 'needtitle'];
-        foreach ($fields as $field) {
-            $this->assertEquals($expected[$field], $actual[$field], "Field $field does not match");
-        }
-
-        if ($expected['isnear']) {
-            $this->assertEquals($expected[$field], $actual[$field], "Field isnear does not match");
-        } else {
-            $this->assertArrayNotHasKey('isnear', $actual);
-        }
-
-        if (!is_null($expected['date'])) {
-            if ($userelatives) {
-                $this->assertStringContainsString($expected['date'], $actual['date']);
-            } else {
-                $this->assertStringNotContainsString($expected['date'], $actual['date']);
-            }
-        } else {
-            $this->assertStringNotContainsString('Today', $actual['date']);
-            $this->assertStringNotContainsString('Yesterday', $actual['date']);
-            $this->assertStringNotContainsString('Tomorrow', $actual['date']);
-        }
-    }
-
-    /**
-     * Test get_near_icon method.
-     *
-     * This test checks that the near icon is returned correctly based on the timestamp.
-     */
-    public function test_get_near_icon(): void {
-        $this->resetAfterTest();
-
-        $clock = $this->mock_clock_with_frozen();
-
-        // Near time.
-        $timestamp = $clock->time() + HOURSECS;
-        $humandate = humandate::create_from_timestamp($timestamp);
-        $icon = $humandate->get_near_icon();
-
-        $this->assertInstanceOf(\core\output\pix_icon::class, $icon);
-
-        // Not near time.
-        $timestamp = $clock->time() + DAYSECS * 30;
-        $humandate = humandate::create_from_timestamp($timestamp);
-        $icon = $humandate->get_near_icon();
-
-        $this->assertNull($icon);
-    }
-
-    /**
-     * Test the exportable interface implementation.
-     */
-    public function test_get_exporter(): void {
-        $this->resetAfterTest();
-
-        $clock = $this->mock_clock_with_frozen();
-        $timestamp = $clock->time();
-        $humandate = humandate::create_from_timestamp($timestamp);
-
-        $exporter = $humandate->get_exporter(\core\context\system::instance());
-        $this->assertInstanceOf(\core_calendar\external\humandate_exporter::class, $exporter);
-
-        $structure = humandate::get_read_structure();
-        $this->assertInstanceOf(\core_external\external_single_structure::class, $structure);
-        $this->assertEquals(
-            \core_calendar\external\humandate_exporter::get_read_structure(),
-            $structure,
-        );
-
-        $structure = humandate::read_properties_definition();
-        $this->assertEquals(
-            \core_calendar\external\humandate_exporter::read_properties_definition(),
-            $structure,
-        );
     }
 }

@@ -19,11 +19,13 @@ namespace core_courseformat\output\local\content\cm;
 use cm_info;
 use core_course\output\activity_completion;
 use section_info;
-use renderable;
 use stdClass;
+use core\output\externable;
 use core\output\named_templatable;
+use core\output\renderable;
 use core\output\local\dropdown\dialog as dropdown_dialog;
 use core_completion\cm_completion_details;
+use core_completion\external\completion_info_exporter;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
 
@@ -34,8 +36,7 @@ use core_courseformat\output\local\courseformat_named_templatable;
  * @copyright 2023 Mikel Martin <mikel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class completion implements named_templatable, renderable {
-
+class completion implements externable, named_templatable, renderable {
     use courseformat_named_templatable;
 
     /** @var bool $smallbutton if the button is rendered small (like in course page). */
@@ -100,6 +101,29 @@ class completion implements named_templatable, renderable {
         }
 
         return $completiondata;
+    }
+
+    #[\Override]
+    public function get_exporter(?\core\context $context = null): completion_info_exporter {
+        global $USER;
+        return new completion_info_exporter(
+            $this->format->get_course(),
+            $this->mod,
+            $USER->id,
+        );
+    }
+
+    #[\Override]
+    public static function get_read_structure(
+        int $required = VALUE_REQUIRED,
+        mixed $default = null
+    ): \core_external\external_single_structure {
+        return completion_info_exporter::get_read_structure($required, $default);
+    }
+
+    #[\Override]
+    public static function read_properties_definition(): array {
+        return completion_info_exporter::read_properties_definition();
     }
 
     /**

@@ -16,8 +16,10 @@
 
 namespace core_courseformat\output\local\overview;
 
+use core\output\externable;
 use core\output\local\dropdown\dialog;
 use core\output\local\properties\button;
+use core_courseformat\external\overviewdialog_exporter;
 use stdClass;
 
 /**
@@ -27,8 +29,7 @@ use stdClass;
  * @copyright  2025 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class overviewdialog extends dialog {
-
+class overviewdialog extends dialog implements externable {
     /** @var stdClass[] The list of the items. */
     protected array $items;
 
@@ -96,6 +97,33 @@ class overviewdialog extends dialog {
     }
 
     /**
+     * Get the items to be displayed in the overview dialog.
+     *
+     * @return stdClass[] The items to be displayed in the overview dialog.
+     */
+    public function get_items(): array {
+        return $this->items;
+    }
+
+    /**
+     * Get the title of the overview dialog content.
+     *
+     * @return string The title of the overview dialog content.
+     */
+    public function get_title(): string {
+        return $this->title;
+    }
+
+    /**
+     * Get the description of the overview dialog content.
+     *
+     * @return string The description of the overview dialog content.
+     */
+    public function get_description(): string {
+        return $this->description;
+    }
+
+    /**
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
@@ -126,5 +154,24 @@ class overviewdialog extends dialog {
      */
     public function get_template_name(\renderer_base $renderer): string {
         return 'core_courseformat/local/overview/overviewdialog';
+    }
+
+    #[\Override]
+    public function get_exporter(?\core\context $context = null): overviewdialog_exporter {
+        $context = $context ?? \core\context\system::instance();
+        return new overviewdialog_exporter($this, ['context' => $context]);
+    }
+
+    #[\Override]
+    public static function get_read_structure(
+        int $required = VALUE_REQUIRED,
+        mixed $default = null
+    ): \core_external\external_single_structure {
+        return overviewdialog_exporter::get_read_structure($required, $default);
+    }
+
+    #[\Override]
+    public static function read_properties_definition(): array {
+        return overviewdialog_exporter::read_properties_definition();
     }
 }
