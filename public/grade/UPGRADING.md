@@ -2,6 +2,12 @@
 
 ## 5.1dev
 
+### Added
+
+- New 'is_gradable()' function has been created to return whether the item has any gradeitem that is GRADE_TYPE_VALUE or GRADE_TYPE_SCALE.
+
+  For more information see [MDL-85837](https://tracker.moodle.org/browse/MDL-85837)
+
 ### Removed
 
 - The previously deprecate methods have been removed:

@@ -176,6 +176,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_grades
 
+#### Added
+
+- New 'is_gradable()' function has been created to return whether the item has any gradeitem that is GRADE_TYPE_VALUE or GRADE_TYPE_SCALE.
+
+  For more information see [MDL-85837](https://tracker.moodle.org/browse/MDL-85837)
+
 #### Removed
 
 - The previously deprecate methods have been removed:
@@ -213,6 +219,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   This change has also adds a 'requiredcapabilties' parameter to the function, which accepts an list of abbreviated capabilities for  checking access against question banks before they are returned.
 
   For more information see [MDL-85069](https://tracker.moodle.org/browse/MDL-85069)
+- `question_edit_contexts` now only considers the provided context when checking permissions, rather than all parent contexts as well. As questions now exist only at the activity module context level, permissions can be inherited or overridden as normal for each question bank. The previous pattern of checking for a permission in any parent context circumvented the override system, and no longer makes sense.
+
+  For more information see [MDL-85754](https://tracker.moodle.org/browse/MDL-85754)
 
 #### Deprecated
 
@@ -325,6 +334,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83891](https://tracker.moodle.org/browse/MDL-83891)
 
+### mod_forum
+
+#### Deprecated
+
+- The function forum_tp_get_untracked_forums() has been deprecated because it is no longer used.
+
+  For more information see [MDL-83893](https://tracker.moodle.org/browse/MDL-83893)
+
 ### mod_label
 
 #### Removed
@@ -422,6 +439,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The method `\mod_scorm\report::generate_master_checkbox()` has been deprecated and should no longer be used. SCORM report plugins calling this method should use `\mod_scorm\report::generate_toggler_checkbox()` instead.
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
+
+### mod_wiki
+
+#### Added
+
+- Create a manager class to regroup common functionalities and a wiki_mode enum related to the two different modes
+
+  For more information see [MDL-83900](https://tracker.moodle.org/browse/MDL-83900)
 
 ### qtype_multichoice
 
