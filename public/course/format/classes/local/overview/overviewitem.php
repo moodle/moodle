@@ -16,9 +16,12 @@
 
 namespace core_courseformat\local\overview;
 
+use core_courseformat\external\overviewitem_exporter;
 use core\output\renderable;
 use core\output\renderer_base;
 use core\output\local\properties\text_align;
+use core\output\externable;
+use stdClass;
 
 /**
  * Class overviewitem
@@ -27,30 +30,50 @@ use core\output\local\properties\text_align;
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class overviewitem {
+class overviewitem implements externable {
+    /**
+     * The basic content type for overview items.
+     *
+     * @var string
+     */
+    public const BASIC_CONTENT_TYPE = 'basic';
+
+    /**
+     * Internal key for the overview item, if any.
+     *
+     * This value may be provided by the caller to uniquely identify the item inside a list of items.
+     * Used mostly for web services or API responses where items need to be referenced.
+     *
+     * @var string|null
+     */
+    private string|null $key = null;
+
     /**
      * Overview item constructor.
      *
-     * @param string $name The name of the activity.
-     * @param int|string|bool|null $value The section name.
-     * @param string|renderable|null $content The item content.
-     * @param text_align $textalign The preferred text alignment.
+     * @param string $name The overview item name.
+     * @param int|string|bool|null $value Internal value of the item (used for filtering and export).
+     * @param string|renderable|null $content The item content to display.
+     * @param text_align $textalign The preferred text alignment for the parent container.
      * @param int $alertcount an optional numeric indicator for alerts (zero means no alerts).
      * @param string $alertlabel the meaning to show with the alert count.
+     * @param stdClass|null $extradata any extra optional item data to export.
      */
     public function __construct(
-        /** @var string the name of the activity */
+        /** @var string The overview item name */
         protected string $name,
-        /** @var string the section name */
+        /** @var string Internal value of the item (used for filtering and export) */
         protected int|string|bool|null $value,
-        /** @var string the item content */
+        /** @var string The item content to display */
         protected string|renderable|null $content = null,
-        /** @var text_align the preferred text alignment. */
+        /** @var text_align The preferred text alignment for the parent container. */
         protected text_align $textalign = text_align::START,
         /** @var int an optional numeric indicator for alerts (zero means no alerts). */
         protected int $alertcount = 0,
         /** @var string the badge label an optional label for the badge. */
         protected string $alertlabel = '',
+        /** @var stdClass any extra optional item data to export */
+        protected stdClass|null $extradata = null,
     ) {
     }
 
@@ -134,6 +157,28 @@ class overviewitem {
     }
 
     /**
+     * Gets the key for the overview item.
+     *
+     * The key is an optional internal identifier that can be used to reference the item.
+     *
+     * @return string|null The key or null if not set.
+     */
+    public function get_key(): ?string {
+        return $this->key;
+    }
+
+    /**
+     * Gets the extra data for the overview item.
+     *
+     * This method returns any additional data that may be associated with the item.
+     *
+     * @return stdClass|null The extra data or null if not set.
+     */
+    public function get_extra_data(): ?stdClass {
+        return $this->extradata;
+    }
+
+    /**
      * Sets the content for this item.
      *
      * Items can utilize either a renderable object or a pre-rendered string as their content.
@@ -190,5 +235,62 @@ class overviewitem {
         $this->alertcount = $alertcount;
         $this->alertlabel = $alertlabel;
         return $this;
+    }
+
+    /**
+     * Sets the key for the overview item.
+     *
+     * The key is an optional internal identifier that can be used to reference the item.
+     *
+     * @param string|null $key
+     * @return $this
+     */
+    public function set_key(?string $key): static {
+        $this->key = $key;
+        return $this;
+    }
+
+    /**
+     * Sets the extra data for the overview item.
+     *
+     * This method allows setting additional data that may be associated with the item.
+     *
+     * @param stdClass|null $extradata
+     * @return $this
+     */
+    public function set_extra_data(?stdClass $extradata): static {
+        $this->extradata = $extradata;
+        return $this;
+    }
+
+    /**
+     * Gets the content type of the overview item.
+     *
+     * @return string The content type class name or 'basic' if it is not a renderable.
+     */
+    public function get_content_type(): string {
+        if ($this->content instanceof renderable) {
+            return $this->content::class;
+        }
+        return self::BASIC_CONTENT_TYPE;
+    }
+
+    #[\Override]
+    public function get_exporter(?\core\context $context = null): overviewitem_exporter {
+        $context = $context ?? \core\context\system::instance();
+        return new overviewitem_exporter($this, ['context' => $context]);
+    }
+
+    #[\Override]
+    public static function get_read_structure(
+        int $required = VALUE_REQUIRED,
+        mixed $default = null
+    ): \core_external\external_single_structure {
+        return overviewitem_exporter::get_read_structure($required, $default);
+    }
+
+    #[\Override]
+    public static function read_properties_definition(): array {
+        return overviewitem_exporter::read_properties_definition();
     }
 }

@@ -593,6 +593,13 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true,
     ],
+    'core_courseformat_get_overview_information' => [
+        'classname'     => 'core_courseformat\external\get_overview_information',
+        'description'   => 'Get the course overview information for an specific activity type.',
+        'type'          => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_courseformat_new_module' => [
         'classname'     => 'core_courseformat\external\new_module',
         'methodname'    => 'execute',
