@@ -70,7 +70,6 @@ final class get_test extends externallib_advanced_testcase {
         $this->assertEquals($result['source'], users::class);
         $this->assertNotEmpty($result['table']);
         $this->assertNotEmpty($result['javascript']);
-        $this->assertEmpty($result['button']);
         $this->assertEquals('Hello', $result['infocontainer']);
         $this->assertFalse($result['filterspresent']);
         $this->assertEmpty($result['filtersform']);
@@ -87,6 +86,9 @@ final class get_test extends externallib_advanced_testcase {
         $this->assertEquals($filteremail->get('id'), $result['filters']['activefilters'][1]['id']);
         $this->assertNotEmpty($result['sorting']);
         $this->assertNotEmpty($result['cardview']);
+
+        // The following should not be present when editing.
+        $this->assertArrayNotHasKey('button', $result);
     }
 
     /**
@@ -135,7 +137,7 @@ final class get_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['filtersform']);
         $this->assertFalse($result['editmode']);
 
-        // Confirm editor-specific data is not returned.
+        // The following should not be present when viewing.
         $this->assertArrayNotHasKey('sidebarmenucards', $result);
         $this->assertArrayNotHasKey('conditions', $result);
         $this->assertArrayNotHasKey('filters', $result);
