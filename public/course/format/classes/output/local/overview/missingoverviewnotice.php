@@ -22,6 +22,7 @@ use core\output\renderable;
 use core\output\notification;
 use core\plugin_manager;
 use core\url;
+use core_courseformat\local\overview\overviewfactory;
 use stdClass;
 
 /**
@@ -48,27 +49,11 @@ class missingoverviewnotice implements renderable, named_templatable {
 
     #[\Override]
     public function export_for_template(\renderer_base $output): stdClass {
-        if (!$this->activity_has_overview_integration($this->modname)) {
+        if (!overviewfactory::activity_has_overview_integration($this->modname)) {
             return $this->export_legacy_overview($output);
         }
         // The notice is not needed for plugins with overview class.
         return (object) [];
-    }
-
-    /**
-     * Checks if a given activity module has an overview integration.
-     *
-     * The method search for an integration class named `\mod_{modname}\course\overview`.
-     *
-     * @param string $modname The name of the activity module.
-     * @return bool True if the activity module has an overview integration, false otherwise.
-     */
-    private function activity_has_overview_integration(string $modname): bool {
-        $classname = 'mod_' . $modname . '\courseformat\overview';
-        if ($modname === 'resource') {
-            $classname = 'core_courseformat\local\overview\resourceoverview';
-        }
-        return class_exists($classname);
     }
 
     /**
