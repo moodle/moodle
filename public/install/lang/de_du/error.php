@@ -30,3 +30,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['downloadedfilecheckfailed'] = 'Die Prüfung der heruntergeladenen Datei ist gescheitert';
+$string['invalidmd5'] = 'Der Prüfwert ist ungültig. Versuche es bitte nochmal!';
