@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_data;
+namespace mod_data\courseformat;
 
 use core_courseformat\local\overview\overviewfactory;
+use mod_data\manager;
 
 /**
  * Tests for Database activity overview
@@ -135,8 +136,8 @@ final class overview_test extends \advanced_testcase {
                 'needsapproval' => true,
                 'entries' => [1, 1],
                 'expected' => [
-                        'link' => get_string('view', 'moodle'),
-                        'value' => 0,
+                    'link' => get_string('view', 'moodle'),
+                    'value' => 0,
                 ],
             ],
         ];
@@ -156,11 +157,11 @@ final class overview_test extends \advanced_testcase {
      * @return void
      */
     public function test_get_extra_entries_overview(
-            string $role,
-            bool $needsapproval,
-            array $entries,
-            array $myentries,
-            array $expected
+        string $role,
+        bool $needsapproval,
+        array $entries,
+        array $myentries,
+        array $expected
     ): void {
         $this->resetAfterTest();
 
@@ -206,13 +207,13 @@ final class overview_test extends \advanced_testcase {
         $items = overviewfactory::create($cm)->get_extra_overview_items();
 
         if (is_null($expected['totalentries'])) {
-            $this->assertArrayNotHasKey('totalentries', $items);
+            $this->assertNull($items['totalentries']);
         } else {
             $this->assertEquals($expected['totalentries'], $items['totalentries']->get_value());
         }
 
         if (is_null($expected['myentries'])) {
-            $this->assertArrayNotHasKey('myentries', $items);
+            $this->assertNull($items['myentries']);
         } else {
             $this->assertEquals($expected['myentries'], $items['myentries']->get_value());
         }
@@ -289,6 +290,96 @@ final class overview_test extends \advanced_testcase {
     }
 
     /**
+     * Test get_extra_overview_items with groups.
+     *
+     * @covers ::get_extra_overview_items
+     */
+    public function test_get_extra_entries_overview_with_groups(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $g2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->setAdminUser();
+
+        $activity = $this->getDataGenerator()->create_module(
+            manager::MODULE,
+            ['course' => $course, 'groupmode' => SEPARATEGROUPS],
+        );
+
+        // Add a field.
+        /** @var \mod_data_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+            'name' => 'myfield',
+            'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $activity);
+        $generator->create_entry(
+            $activity,
+            [$field->field->id => 'Example entry: All participants'],
+        );
+
+        // Create entries for each group.
+        $generator->create_entry(
+            $activity,
+            [$field->field->id => 'G1'],
+            $g1->id,
+        );
+        $generator->create_entry(
+            $activity,
+            [$field->field->id => 'G2'],
+            $g2->id,
+        );
+
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $noneditingteacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        groups_add_member($g1, $noneditingteacher->id);
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($g1, $student->id);
+        $otherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($g2, $otherstudent->id);
+
+        $generator->create_entry(
+            $activity,
+            [$field->field->id => 'G1'],
+            $g1->id,
+            [],
+            null,
+            $student->id
+        );
+        $generator->create_entry(
+            $activity,
+            [$field->field->id => 'G2'],
+            $g2->id,
+            [],
+            null,
+            $otherstudent->id
+        );
+
+        // Editing teachers can see everything.
+        $this->setUser($teacher);
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(5, $items['totalentries']->get_value());
+        $this->assertNull($items['myentries']);
+
+        // Non-editing teachers can see their groups and all participants.
+        $this->setUser($noneditingteacher);
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(3, $items['totalentries']->get_value());
+        $this->assertNull($items['myentries']);
+
+        // Students can see their groups and all participants.
+        $this->setUser($student);
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(3, $items['totalentries']->get_value());
+        $this->assertEquals(1, $items['myentries']->get_value());
+    }
+
+    /**
      * Test get_extra_comments_overview.
      *
      * @covers ::get_extra_comments_overview
@@ -301,10 +392,10 @@ final class overview_test extends \advanced_testcase {
      * @return void
      */
     public function test_get_extra_comments_overview(
-            string $role,
-            bool $needsapproval,
-            array $entries,
-            int $expected
+        string $role,
+        bool $needsapproval,
+        array $entries,
+        int $expected
     ): void {
         global $CFG;
 

@@ -13,9 +13,9 @@ Feature: Testing overview integration in database activity
       | fullname | shortname | category | enablecompletion |
       | Course 1 | C1        | 0        | 1                |
     And the following "course enrolments" exist:
-      | user | course | role           |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student        |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
     And the following "activity" exists:
       | course          | C1                   |
       | activity        | data                 |
