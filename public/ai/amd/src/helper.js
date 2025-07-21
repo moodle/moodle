@@ -78,7 +78,9 @@ export default class AIHelper {
         if (container) {
             for (const [key, value] of Object.entries(settings)) {
                 const field = container.querySelector(`[name="${key}"]`);
-                field.value = value;
+                if (field) {
+                    field.value = value;
+                }
             }
         }
     };
