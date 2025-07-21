@@ -113,7 +113,7 @@ Feature: Add links to TinyMCE
     And I click on the "Link" button for the "Description" TinyMCE editor
     And I set the field "Enter a URL" to "https://moodle.org/"
     And I set the field "Text to display" to "Moodle - Open-source learning platform"
-    And I click on "Update link" "button" in the "Create link" "dialogue"
+    And I click on "Create link" "button" in the "Create link" "dialogue"
     # TODO: Verify the HTML by the improved code plugin in MDL-75265
     And I click on "Update profile" "button"
     And I follow "Preferences" in the user menu
