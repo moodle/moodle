@@ -366,7 +366,7 @@ class submissions_table extends table_sql {
             $buttontext = get_string('update');
         } else {
             $class = 's0';
-            $buttontext  = get_string('grade');
+            $buttontext  = get_string('gradeverb');
         }
 
         if (!$submitted) {
@@ -873,7 +873,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $baseurl = new moodle_url('/mod/kalvidassign/grade_submissions.php', array('cmid' => $cm->id));
 
         $col1 = get_string('fullname', 'kalvidassign');
-        $col2 = get_string('grade', 'kalvidassign');
+        $col2 = get_string('gradenoun');
         $col3 = get_string('submissioncomment', 'kalvidassign');
         $col4 = get_string('timemodified', 'kalvidassign');
         $col5 = get_string('grademodified', 'kalvidassign');
@@ -1126,7 +1126,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
         echo '<div class="grade">';
-        echo get_string("grade").': '.$grade->str_long_grade;
+        echo get_string('gradenoun').': '.$grade->str_long_grade;
         echo '</div>';
         echo '<div class="clearer"></div>';
 
@@ -1149,7 +1149,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $strsectionname  = $indexsummary->courseformatname;
         $strduedate = get_string('duedate', 'kalvidassign');
         $strsubmission = get_string('submission', 'kalvidassign');
-        $strgrade = get_string('grade');
+        $strgrade = get_string('gradenoun');
 
         $table = new html_table();
         if ($indexsummary->usesections) {

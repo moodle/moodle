@@ -48,7 +48,6 @@ $string['assignmentsubmitted'] = 'Success, your assignment has been submitted';
 $string['emptyentryid'] = 'Video assignment was not submitted correctly.  Please try to resubmit.';
 $string['deleteallsubmissions'] = 'Delete all video submissions';
 $string['fullname'] = 'Name';
-$string['grade'] = 'Grade';
 $string['submissioncomment'] = 'Comment';
 $string['timemodified'] = 'Last modified (Submission)';
 $string['grademodified'] = 'Last modified (Grade)';
