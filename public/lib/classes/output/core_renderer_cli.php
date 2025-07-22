@@ -19,6 +19,11 @@ namespace core\output;
 use core_text;
 use core\check\result as check_result;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->libdir}/clilib.php");
+
 /**
  * A renderer that generates output for command-line scripts.
  *
@@ -89,14 +94,10 @@ class core_renderer_cli extends core_renderer {
      * @return string ascii fragment
      */
     public function render_progress_bar(progress_bar $bar) {
-        global $CFG;
-
         $size = 55; // The width of the progress bar in chars.
         $ascii = "\n";
 
         if (stream_isatty(STDOUT)) {
-            require_once($CFG->libdir . '/clilib.php');
-
             $ascii .= "[" . str_repeat(' ', $size) . "] 0% \n";
             return cli_ansi_format($ascii);
         }
