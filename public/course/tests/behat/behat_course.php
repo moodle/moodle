@@ -326,7 +326,7 @@ class behat_course extends behat_base {
         // Clicks the selected activity if it exists.
         $activityliteral = behat_context_helper::escape(ucfirst($activityname));
         $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
-            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
+            "/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
             "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
             "[normalize-space(.)=$activityliteral]" .
             "/parent::a";

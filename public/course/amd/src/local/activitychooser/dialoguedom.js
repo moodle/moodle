@@ -180,8 +180,6 @@ export default class ChooserDialogueDOM {
             `${selectors.elements.moduleItem(internal)} ${selectors.actions.optionActions.manageFavourite}`
         );
         Array.from(favouriteButtons).forEach((element) => {
-            element.classList.toggle('text-muted', !favourite);
-            element.classList.toggle('text-primary', favourite);
             element.dataset.favourited = favourite;
             element.setAttribute('aria-pressed', favourite);
             element.querySelector(selectors.elements.favouriteIconActive)?.classList.toggle('d-none', !favourite);
@@ -190,6 +188,7 @@ export default class ChooserDialogueDOM {
             const iconSelectsor = favourite ? selectors.elements.favouriteIconActive : selectors.elements.favouriteIconInactive;
             const favouriteIcon = element.querySelector(iconSelectsor);
             element.setAttribute('aria-label', favouriteIcon?.getAttribute('data-action-label') || '');
+            element.setAttribute('title', favouriteIcon?.getAttribute('data-action-label') || '');
         });
     }
 
@@ -543,7 +542,6 @@ export default class ChooserDialogueDOM {
     markChooserOptionAsSelected(chooserOption) {
         this.unmarkAllChooserOptionAsSelected();
         chooserOption.classList.add('selected');
-        chooserOption.classList.add('border-primary');
         chooserOption.setAttribute('aria-selected', 'true');
 
         const footer = getFirst(this.modal.getFooter());
@@ -560,7 +558,6 @@ export default class ChooserDialogueDOM {
         const selectedOptions = this.modalBody.querySelectorAll(`${selectors.regions.chooserOption.container}.selected`);
         selectedOptions.forEach((option) => {
             option.classList.remove('selected');
-            option.classList.remove('border-primary');
             option.setAttribute('aria-selected', 'false');
         });
 

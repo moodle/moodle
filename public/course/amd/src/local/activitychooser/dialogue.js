@@ -285,6 +285,7 @@ class ActivityChooserDialogue {
      * @return {Promise} A promise that resolves when the event is handled
      */
     async handleModalClick(event) {
+        event.preventDefault();
         const target = event.target;
 
         if (target.closest(selectors.actions.optionActions.showSummary)) {
@@ -309,7 +310,7 @@ class ActivityChooserDialogue {
             return;
         }
 
-        if (target.closest(selectors.regions.chooserOption.container)) {
+        if (target.closest(selectors.regions.chooserOption.info)) {
             event.preventDefault();
             this.handleOptionSelection(target);
             return;

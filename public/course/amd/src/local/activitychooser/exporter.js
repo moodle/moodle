@@ -161,8 +161,7 @@ export default class {
         };
         data.details = [
             {
-                icon: 'i/categoryevent',
-                label: allStrings['mod_purposes'],
+                label: allStrings['supports'],
                 value: allStrings[purposeKey] || '',
             },
         ];
@@ -247,7 +246,7 @@ async function loadNecessaryStrings() {
         {key: 'favourites', component: 'core'},
         {key: 'recommended', component: 'core'},
         {key: 'recommended_help', component: 'core_course'},
-        {key: 'mod_purposes', component: 'core_course'},
+        {key: 'supports', component: 'core_course'},
         ...activityCategories.map(
             (key) => ({
                 key: 'mod_purpose_' + key,
