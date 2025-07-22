@@ -119,7 +119,7 @@ final class overview_test extends \advanced_testcase {
         $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
 
-        $this->assertArrayNotHasKey('h5ptype', $items);
+        $this->assertNull($items['h5ptype']);
     }
 
     /**
@@ -174,10 +174,12 @@ final class overview_test extends \advanced_testcase {
         $this->setUser($teacher);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(0, $items['totalattempts']->get_value());
+        $this->assertNull($items['myattempts']);
 
         $this->setUser($student);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(0, $items['myattempts']->get_value());
+        $this->assertNull($items['totalattempts']);
 
         // Attempts done by other student.
         $params = ['cmid' => $cm->id, 'userid' => $other->id];
@@ -187,10 +189,12 @@ final class overview_test extends \advanced_testcase {
         $this->setUser($teacher);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(2, $items['totalattempts']->get_value());
+        $this->assertNull($items['myattempts']);
 
         $this->setUser($student);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(0, $items['myattempts']->get_value());
+        $this->assertNull($items['totalattempts']);
 
         // Attempts done by the student.
         $params = ['cmid' => $cm->id, 'userid' => $student->id];
@@ -200,10 +204,12 @@ final class overview_test extends \advanced_testcase {
         $this->setUser($teacher);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(4, $items['totalattempts']->get_value());
+        $this->assertNull($items['myattempts']);
 
         $this->setUser($student);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(2, $items['myattempts']->get_value());
+        $this->assertNull($items['totalattempts']);
     }
 
     /**
@@ -243,5 +249,10 @@ final class overview_test extends \advanced_testcase {
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(1, $items['attempted']->get_value());
         $this->assertEquals('<strong>1</strong> of 2', $items['attempted']->get_content());
+
+        // Student.
+        $this->setUser($student);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertNull($items['attempted']);
     }
 }

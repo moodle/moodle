@@ -42,14 +42,11 @@ class overview extends \core_courseformat\activityoverviewbase {
      *
      * @param cm_info $cm the course module instance.
      * @param \core\output\renderer_helper $rendererhelper the renderer helper.
-     * @param \core_string_manager $stringmanager the string manager.
      */
     public function __construct(
             cm_info $cm,
             /** @var \core\output\renderer_helper $rendererhelper the renderer helper */
             protected readonly \core\output\renderer_helper $rendererhelper,
-            /** @var \core_string_manager $stringmanager the string manager */
-            protected readonly \core_string_manager $stringmanager,
     ) {
         parent::__construct($cm);
 
@@ -63,7 +60,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             return null;
         }
 
-        $viewresults = $this->stringmanager->get_string('viewresults', 'mod_h5pactivity');
+        $viewresults = get_string('view');
         $content = new action_link(
             url: new url('/mod/h5pactivity/report.php', ['id' => $this->cm->id]),
             text: $viewresults,
@@ -71,7 +68,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         );
 
         return new overviewitem(
-            name: $this->stringmanager->get_string('actions'),
+            name: get_string('actions'),
             value: '',
             content: $content,
             textalign: text_align::CENTER,
@@ -80,48 +77,50 @@ class overview extends \core_courseformat\activityoverviewbase {
 
     #[\Override]
     public function get_extra_overview_items(): array {
-        global $USER;
-
-        if (!$this->manager->can_view_own_attempts() && $this->manager->can_view_all_attempts()) {
-            return [];
-        }
-
-        if (!$this->manager->can_view_all_attempts()) {
-            return [
-                'myattempts' => $this->get_extra_userattempts_overview($USER->id),
-            ];
-        }
-
         return [
             'h5ptype' => $this->get_extra_h5ptype_overview(),
             'attempted' => $this->get_extra_studentsattempted_overview(),
             'totalattempts' => $this->get_extra_totalattempts_overview(),
+            'myattempts' => $this->get_extra_userattempts_overview(),
         ];
     }
 
     /**
      * Get the attempts of the given user.
      *
-     * @param int $userid The user to return the attempts from.
-     * @return overviewitem The overview item.
+     * @param int|null $userid The user to return the attempts from (uses current user if null).
+     * @return overviewitem|null The overview item or null for teachers.
      */
-    private function get_extra_userattempts_overview(int $userid): overviewitem {
+    private function get_extra_userattempts_overview(?int $userid = null): ?overviewitem {
+        global $USER;
+
+        if ($this->manager->can_view_all_attempts()) {
+            return null;
+        }
+
+        if ($userid === null) {
+            $userid = $USER->id;
+        }
 
         $attempts = $this->manager->count_attempts($userid);
         return new overviewitem(
-                name: $this->stringmanager->get_string('attempts', 'mod_h5pactivity'),
-                value: $attempts,
-                content: $attempts ?? '-',
-                textalign: text_align::CENTER,
+            name: get_string('attempts', 'mod_h5pactivity'),
+            value: $attempts,
+            content: $attempts ?? '-',
+            textalign: text_align::CENTER,
         );
     }
 
     /**
      * Get the students who attempted.
      *
-     * @return overviewitem The overview item.
+     * @return overviewitem|null The overview item or null for students.
      */
-    private function get_extra_studentsattempted_overview(): overviewitem {
+    private function get_extra_studentsattempted_overview(): ?overviewitem {
+
+        if (!$this->manager->can_view_all_attempts()) {
+            return null;
+        }
 
         $attempts = $this->manager->count_users_attempts();
         $participants = get_users_by_capability($this->context, 'mod/h5pactivity:submit');
@@ -130,9 +129,9 @@ class overview extends \core_courseformat\activityoverviewbase {
             'total' => count($participants),
         ];
         return new overviewitem(
-            name: $this->stringmanager->get_string('attempted', 'mod_h5pactivity'),
+            name: get_string('attempted', 'mod_h5pactivity'),
             value: count($attempts),
-            content: $this->stringmanager->get_string('count_of_total', 'core', $params),
+            content: get_string('count_of_total', 'core', $params),
             textalign: text_align::CENTER,
         );
     }
@@ -140,38 +139,48 @@ class overview extends \core_courseformat\activityoverviewbase {
     /**
      * Get the "Total attempts" colum data.
      *
-     * @return overviewitem The overview item.
+     * @return overviewitem|null The overview item or null for students.
      */
-    private function get_extra_totalattempts_overview(): overviewitem {
+    private function get_extra_totalattempts_overview(): ?overviewitem {
+
+        if (!$this->manager->can_view_all_attempts()) {
+            return null;
+        }
+
         $totalattempts = $this->manager->count_attempts();
         $totalusers = $this->manager->count_users_attempts();
 
-        $content = '-';
+        $averageattempts = 0;
         if ($totalusers && count($totalusers) > 0 && $totalattempts) {
             $averageattempts = (int) round($totalattempts / count($totalusers));
-            $content = new overviewdialog(
-                    buttoncontent: $totalattempts,
-                    title: $this->stringmanager->get_string('totalattempts', 'mod_h5pactivity'),
-                    definition: ['buttonclasses' => button::BODY_OUTLINE->classes()],
-            );
-            $method = $this->manager::get_grading_methods()[$this->manager->get_instance()->grademethod];
-            $content->add_item($this->stringmanager->get_string('gradingmethod', 'grading'), $method);
-            $content->add_item($this->stringmanager->get_string('averageattempts', 'mod_h5pactivity'), $averageattempts);
         }
+        $content = new overviewdialog(
+            buttoncontent: $totalattempts,
+            title: get_string('totalattempts', 'mod_h5pactivity'),
+            definition: ['buttonclasses' => button::BODY_OUTLINE->classes()],
+        );
+        $method = $this->manager::get_grading_methods()[$this->manager->get_instance()->grademethod];
+        $content->add_item(get_string('gradingmethod', 'grading'), $method);
+        $content->add_item(get_string('averageattempts', 'mod_h5pactivity'), $averageattempts);
 
         return new overviewitem(
-                name: $this->stringmanager->get_string('totalattempts', 'mod_h5pactivity'),
-                value: $totalattempts,
-                content: $content,
+            name: get_string('totalattempts', 'mod_h5pactivity'),
+            value: $totalattempts,
+            content: $content,
         );
     }
 
     /**
      * Get the H5P content type.
      *
-     * @return overviewitem The overview item.
+     * @return overviewitem|null The overview item or null for students.
      */
-    private function get_extra_h5ptype_overview(): overviewitem {
+    private function get_extra_h5ptype_overview(): ?overviewitem {
+
+        if (!$this->manager->can_view_all_attempts()) {
+            return null;
+        }
+
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_h5pactivity', 'package', 0, 'id', false);
         $file = reset($files);
@@ -179,9 +188,9 @@ class overview extends \core_courseformat\activityoverviewbase {
         $h5p = \core_h5p\api::get_content_from_pathnamehash($file->get_pathnamehash());
 
         $unknonwoverview = new overviewitem(
-            name: $this->stringmanager->get_string('contenttype', 'mod_h5pactivity'),
-            value: $this->stringmanager->get_string('unknowntype', 'mod_h5pactivity'),
-            content: $this->stringmanager->get_string('unknowntype', 'mod_h5pactivity'),
+            name: get_string('contenttype', 'mod_h5pactivity'),
+            value: get_string('unknowntype', 'mod_h5pactivity'),
+            content: get_string('unknowntype', 'mod_h5pactivity'),
         );
 
         if (empty($h5p)) {
@@ -196,7 +205,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         }
 
         return new overviewitem(
-            name: $this->stringmanager->get_string('contenttype', 'mod_h5pactivity'),
+            name: get_string('contenttype', 'mod_h5pactivity'),
             value: $h5plib->title,
             content: $h5plib->title,
         );
