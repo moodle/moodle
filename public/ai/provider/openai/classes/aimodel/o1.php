@@ -36,6 +36,36 @@ class o1 extends gpt4o {
     }
 
     #[\Override]
+    public function get_model_settings(): array {
+        return [
+            'top_p' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_top_p',
+                    'component' => 'aiprovider_openai',
+                ],
+                'type' => PARAM_FLOAT,
+                'help' => [
+                    'identifier' => 'settings_top_p',
+                    'component' => 'aiprovider_openai',
+                ],
+            ],
+            'max_completion_tokens' => [
+                'elementtype' => 'text',
+                'label' => [
+                    'identifier' => 'settings_max_completion_tokens',
+                    'component' => 'aiprovider_openai',
+                ],
+                'type' => PARAM_INT,
+                'help' => [
+                    'identifier' => 'settings_max_completion_tokens',
+                    'component' => 'aiprovider_openai',
+                ],
+            ],
+        ];
+    }
+
+    #[\Override]
     public function model_type(): array {
         return [self::MODEL_TYPE_TEXT];
     }
