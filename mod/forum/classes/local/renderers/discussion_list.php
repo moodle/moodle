@@ -385,14 +385,21 @@ class discussion_list {
 
         if ($forum->is_in_group_mode() && !$capabilitymanager->can_access_all_groups($user)) {
             if ($groupid === null) {
-                if (!$capabilitymanager->can_post_to_my_groups($user)) {
+                $isvisiblegroupsmode = $forum->get_effective_group_mode() == VISIBLEGROUPS;
+                $isgroupmember = !empty(groups_get_user_groups($forum->get_course_id(), $user->id)[0]);
+
+                if (
+                    !$capabilitymanager->can_post_to_my_groups($user)
+                    && $isvisiblegroupsmode
+                    && $isgroupmember
+                ) {
                     $notifications[] = (new notification(
-                        get_string('cannotadddiscussiongroup', 'mod_forum'),
+                        get_string('cannotadddiscussionall', 'mod_forum'),
                         \core\output\notification::NOTIFY_WARNING
                     ))->set_show_closebutton();
                 } else {
                     $notifications[] = (new notification(
-                        get_string('cannotadddiscussionall', 'mod_forum'),
+                        get_string('cannotadddiscussiongroup', 'mod_forum'),
                         \core\output\notification::NOTIFY_WARNING
                     ))->set_show_closebutton();
                 }

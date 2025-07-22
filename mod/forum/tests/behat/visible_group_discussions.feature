@@ -259,7 +259,7 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     And I should see "Initial Disc G1"
     And I should see "Initial Disc G2"
     And I should see "Initial Disc G2"
-    And I should see "You are not able to create a discussion"
+    And I should see "You are not able to create a discussion because you are not a member of any group."
     And I should not see "Add discussion topic"
 
   Scenario: Students in non-participation groups can see all discussions, but not post.
@@ -271,5 +271,5 @@ Feature: Posting to all groups in a visible group discussion is restricted to us
     And I should see "Initial Disc G1"
     And I should see "Initial Disc G2"
     And I should see "Initial Disc G2"
-    And I should see "You are not able to create a discussion"
+    And I should see "You do not have permission to add a new discussion topic for all participants."
     And I should not see "Add discussion topic"
