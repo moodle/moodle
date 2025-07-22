@@ -317,8 +317,14 @@ class notification_helper {
      * @param int $userid The user id.
      */
     public static function send_due_soon_notification_to_user(int $assignmentid, int $userid): void {
-        // Get assignment data.
-        $assignmentobj = self::get_assignment_data($assignmentid);
+        try {
+            // Get assignment data.
+            $assignmentobj = self::get_assignment_data($assignmentid);
+        } catch (\dml_missing_record_exception) {
+            // The assignment has vanished, nothing to do.
+            mtrace("No notification send as the assignment $assignmentid can no longer be found in the database.");
+            return;
+        }
 
         // Check if the due date still within range.
         $assignmentobj->update_effective_access($userid);
@@ -392,8 +398,14 @@ class notification_helper {
      * @param int $userid The user id.
      */
     public static function send_overdue_notification_to_user(int $assignmentid, int $userid): void {
-        // Get assignment data.
-        $assignmentobj = self::get_assignment_data($assignmentid);
+        try {
+            // Get assignment data.
+            $assignmentobj = self::get_assignment_data($assignmentid);
+        } catch (\dml_missing_record_exception) {
+            // The assignment has vanished, nothing to do.
+            mtrace("No notification send as the assignment $assignmentid can no longer be found in the database.");
+            return;
+        }
 
         // Get the user and check they are a still a valid participant.
         $user = $assignmentobj->get_participant($userid);
