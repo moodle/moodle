@@ -122,7 +122,7 @@ p.arrow_button {
 
 @each $color, $value in $theme-colors {
     .btn-subtle-#{$color} {
-        --#{$prefix}btn-font-weight: #{$font-weight-bold};
+        --#{$prefix}btn-font-weight: #{$font-weight-medium};
         --#{$prefix}btn-color: var(--#{$prefix}#{$color}-text-emphasis);
         --#{$prefix}btn-bg: var(--#{$prefix}#{$color}-bg-subtle);
         --#{$prefix}btn-active-color: var(--#{$prefix}#{$color}-text-emphasis);
@@ -134,7 +134,7 @@ p.arrow_button {
     }
 }
 .btn-subtle-body {
-    --#{$prefix}btn-font-weight: #{$font-weight-bold};
+    --#{$prefix}btn-font-weight: #{$font-weight-medium};
     --#{$prefix}btn-color: var(--#{$prefix}body-color);
     --#{$prefix}btn-bg: transparent;
     --#{$prefix}btn-border-color: var(--#{$prefix}border-color);

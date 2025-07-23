@@ -30,9 +30,8 @@ enum button: string {
     case DANGER = 'btn-danger';
 
     case PRIMARY_OUTLINE = 'btn-outline-primary';
-
     case SECONDARY_OUTLINE = 'btn-outline-secondary';
-
+    case BODY_OUTLINE = 'btn-subtle-body';
     /**
      * Returns the CSS classes for the property based on its type.
      *
@@ -46,6 +45,7 @@ enum button: string {
             self::DANGER => ' btn btn-danger',
             self::PRIMARY_OUTLINE => ' btn btn-outline-primary',
             self::SECONDARY_OUTLINE => ' btn btn-outline-secondary',
+            self::BODY_OUTLINE => ' btn btn-subtle-body',
         };
     }
 }
