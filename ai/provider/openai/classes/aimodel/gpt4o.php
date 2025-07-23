@@ -55,11 +55,11 @@ class gpt4o extends base implements openai_base {
 
         $mform->addElement(
             'text',
-            'max_tokens',
-            get_string('settings_max_tokens', 'aiprovider_openai'),
+            'max_completion_tokens',
+            get_string('settings_max_completion_tokens', 'aiprovider_openai'),
         );
-        $mform->setType('max_tokens', PARAM_INT);
-        $mform->addHelpButton('max_tokens', 'settings_max_tokens', 'aiprovider_openai');
+        $mform->setType('max_completion_tokens', PARAM_INT);
+        $mform->addHelpButton('max_completion_tokens', 'settings_max_completion_tokens', 'aiprovider_openai');
 
         $mform->addElement(
             'text',
