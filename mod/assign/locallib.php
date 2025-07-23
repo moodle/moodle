@@ -128,8 +128,7 @@ class assign {
     /** @var grade_item the grade_item record for this assign instance's primary grade item. */
     private $gradeitem;
 
-    /** @var context the context of the course module for this assign instance
-     *               (or just the course if we are creating a new one)
+    /** @var context the context of the course module for this assign instance'
      */
     private $context;
 
@@ -4496,6 +4495,12 @@ class assign {
             set_user_preference('assign_downloadasfolders', $submitteddownloadasfolders);
         }
 
+        // assign_prefixwithusername属性の保存処理を追加
+        $submittedprefixwithusername = optional_param('prefixwithusername', null, PARAM_BOOL);
+        if (isset($submittedprefixwithusername)) {
+            set_user_preference('assign_prefixwithusername', $submittedprefixwithusername);
+        }
+
         $submittedperpage = optional_param('perpage', null, PARAM_INT);
         if (isset($submittedperpage)) {
             set_user_preference('assign_perpage', $submittedperpage);
@@ -4557,6 +4562,18 @@ class assign {
             userinitials: [
                 'firstname' => $gradingtable->get_initial_first(),
                 'lastname' => $gradingtable->get_initial_last(),
+            ],
+            quickgrading: [
+                'baseurl' => $currenturl->out(false),
+                'enabled' => $quickgrading
+            ],
+            downloadasfolders: [
+                'baseurl' => $currenturl->out(false),
+                'enabled' => $downloadasfolders
+            ],
+            prefixwithusername: [
+                'baseurl' => $currenturl->out(false),
+                'enabled' => $prefixwithusername
             ]
         );
         $actionformtext = $this->get_renderer()->render($buttons);

@@ -198,6 +198,8 @@ $string['downloadall'] = 'Download all submissions';
 $string['download all submissions'] = 'Download all submissions in a zip file.';
 $string['downloadasfolders'] = 'Download submissions in folders';
 $string['downloadselectedsubmissions'] = 'Download selected submissions';
+$string['prefixwithusername'] = 'Include username in filename';
+$string['prefixwithusername_help'] = 'Username is included in filename as well as fullname.';
 $string['duedate'] = 'Due date';
 $string['duedatecolon'] = 'Due date: {$a}';
 $string['duedate_help'] = 'This is when the assignment is due. Submissions will still be allowed after this date, but any assignments submitted after this date will be marked as late. Set an assignment cut-off date to prevent submissions after a certain date.';
@@ -719,3 +721,4 @@ $string['saveallquickgradingchanges'] = 'Save all quick grading changes';
 $string['updategrade'] = 'Update grade';
 $string['useroverridesdeleted'] = 'User overrides deleted';
 $string['viewgrader'] = 'View Grader';
+

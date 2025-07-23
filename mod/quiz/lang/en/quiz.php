@@ -109,6 +109,7 @@ $string['attemptsallowed'] = 'Attempts allowed';
 $string['attemptselection'] = 'Select which attempts to analyze per user:';
 $string['attemptsexist'] = 'You can no longer add or remove questions.';
 $string['attemptsnum'] = 'Attempts: {$a}';
+$string['attemptsnumstudents'] = 'Students: {$a->studentsnum} Attempts: {$a->total}';
 $string['attemptsnumthisgroup'] = 'Attempts: {$a->total} ({$a->group} from this group)';
 $string['attemptsnumyourgroups'] = 'Attempts: {$a->total} ({$a->group} from your groups)';
 $string['attemptsonly'] = 'Show only students with attempts';

@@ -793,7 +793,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'rcs-results table-sm w-75'));
 
         $table = new html_table();
-        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
+        $table->head = array('', get_string('fullnamecourse'), get_string('shortnamecourse'));
         $table->data = array();
         if ($component->get_count() !== 0) {
             foreach ($component->get_results() as $course) {
@@ -810,12 +810,12 @@ class core_backup_renderer extends plugin_renderer_base {
                 $row->cells = [
                     html_writer::empty_tag('input', $attrs),
                     html_writer::label(
-                        format_string($course->shortname, true, ['context' => context_course::instance($course->id)]),
+                        format_string($course->fullname, true, ['context' => context_course::instance($course->id)]),
                         $id,
                         true,
                         ['class' => 'd-block']
                     ),
-                    format_string($course->fullname, true, ['context' => context_course::instance($course->id)])
+                    format_string($course->shortname, true, ['context' => context_course::instance($course->id)])
                 ];
                 $table->data[] = $row;
             }
@@ -900,7 +900,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'ics-results'));
 
         $table = new html_table();
-        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
+        $table->head = array('', get_string('fullnamecourse'), get_string('shortnamecourse'));
         $table->data = array();
         foreach ($component->get_results() as $course) {
             $row = new html_table_row();
@@ -913,12 +913,12 @@ class core_backup_renderer extends plugin_renderer_base {
                 html_writer::empty_tag('input', ['type' => 'radio', 'name' => 'importid', 'value' => $course->id,
                     'id' => $id]),
                 html_writer::label(
-                    format_string($course->shortname, true, ['context' => context_course::instance($course->id)]),
+                    format_string($course->fullname, true, ['context' => context_course::instance($course->id)]),
                     $id,
                     true,
                     ['class' => 'd-block']
                 ),
-                format_string($course->fullname, true, ['context' => context_course::instance($course->id)])
+                format_string($course->shortname, true, ['context' => context_course::instance($course->id)])
             ];
             $table->data[] = $row;
         }

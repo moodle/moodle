@@ -326,7 +326,7 @@ class restore_course_search extends restore_search_base {
         $from       = " FROM {course} c ";
         $where      = " WHERE (".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".
             $DB->sql_like('c.shortname', ':shortnamesearch', false).")";
-        $orderby    = " ORDER BY c.sortorder";
+        $orderby    = " ORDER BY c.fullname";
 
         if ($this->currentcourseid !== null && !$this->includecurrentcourse) {
             $where .= " AND c.id <> :currentcourseid";

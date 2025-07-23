@@ -60,6 +60,9 @@ class downloader {
     /** @var int $downloadasfolders the files to zipo (path => file) */
     private $downloadasfolders;
 
+    /** @var int $prefixwithusername ユーザ名をファイル名に含めるかどうかのフラグ */
+    private $prefixwithusername;
+
     /**
      * Class constructor.
      *
@@ -72,6 +75,7 @@ class downloader {
         $this->instance = $manager->get_instance();
 
         $this->downloadasfolders = get_user_preferences('assign_downloadasfolders', 1);
+        $this->prefixwithusername = get_user_preferences('assign_prefixwithusername', 1);
 
         $cm = $manager->get_course_module();
         $this->groupmode = groups_get_activity_groupmode($cm);
@@ -190,6 +194,10 @@ class downloader {
             $fullname = get_string('participant', 'mod_assign');
         } else {
             $fullname = fullname($student, has_capability('moodle/site:viewfullnames', $manager->get_context()));
+        }
+        // ユーザ名をprefixに含める場合
+        if ($this->prefixwithusername) {
+            $fullname = $student->username . '_' . $fullname;
         }
         $prefix = str_replace('_', ' ', $fullname);
         $prefix = clean_filename($prefix . '_' . $manager->get_uniqueid_for_user($student->id));

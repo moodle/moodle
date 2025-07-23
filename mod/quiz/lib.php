@@ -1590,7 +1590,11 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
                 return get_string('attemptsnumyourgroups', 'quiz', $a);
             }
         }
-        return get_string('attemptsnum', 'quiz', $numattempts);
+        $studentnum = $DB->count_records_select('quiz_attempts', 'quiz = ? AND preview = ?', array($quiz->id, 0),'COUNT(DISTINCT userid)');
+        $a = new stdClass();
+        $a->total = $numattempts;
+        $a->studentsnum = $studentnum;
+        return get_string('attemptsnumstudents', 'quiz', $a);
     }
     return '';
 }

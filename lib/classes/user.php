@@ -1140,7 +1140,7 @@ class user {
         $preferences['userselector_searchtype'] = [
             'type' => PARAM_INT,
             'null' => NULL_NOT_ALLOWED,
-            'default' => USER_SEARCH_STARTS_WITH,
+            'default' => USER_SEARCH_CONTAINS,
             'permissioncallback' => [static::class, 'is_current_user'],
         ];
         $preferences['question_bank_advanced_search'] = [

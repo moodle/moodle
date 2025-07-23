@@ -504,7 +504,7 @@ class course_enrolment_manager {
      *      boolean moreusers True if there are still more users, otherwise is False.
      * @throws dml_exception
      */
-    public function get_potential_users($enrolid, $search = '', $searchanywhere = false, $page = 0, $perpage = 25,
+    public function get_potential_users($enrolid, $search = '', $searchanywhere = true, $page = 0, $perpage = 25,
             $addedenrollment = 0, $returnexactcount = false) {
         global $DB;
 
@@ -538,7 +538,7 @@ class course_enrolment_manager {
      *      boolean moreusers True if there are still more users, otherwise is False.
      * @throws dml_exception
      */
-    public function search_other_users($search = '', $searchanywhere = false, $page = 0, $perpage = 25, $returnexactcount = false) {
+    public function search_other_users($search = '', $searchanywhere = true, $page = 0, $perpage = 25, $returnexactcount = false) {
         global $DB, $CFG;
 
         [$ufields, $joins, $params, $wherecondition] = $this->get_basic_search_conditions($search, $searchanywhere);
@@ -569,7 +569,7 @@ class course_enrolment_manager {
      *      array users List of user objects returned by the query.
      *      boolean moreusers True if there are still more users, otherwise is False.
      */
-    public function search_users(string $search = '', bool $searchanywhere = false, int $page = 0, int $perpage = 25,
+    public function search_users(string $search = '', bool $searchanywhere = true, int $page = 0, int $perpage = 25,
             bool $returnexactcount = false, ?int $contextid = null) {
         global $USER;
 

@@ -60,7 +60,7 @@ abstract class user_selector_base {
     protected $autoselectunique = false;
     /** @var int When searching, do we only match the starts of fields (better performance)
      * or do we match occurrences anywhere or do we match exact the fields. */
-    protected $searchtype = USER_SEARCH_STARTS_WITH;
+    protected $searchtype = USER_SEARCH_CONTAINS;
     /** @var mixed This is used by get selected users */
     protected $validatinguserids = null;
 
