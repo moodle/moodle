@@ -74,7 +74,7 @@ class footer_options_exporter extends exporter {
      */
     protected function get_manage_subscriptions_link(): ?string {
         if (calendar_user_can_add_event($this->calendar->course)) {
-            $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php');
+            $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php', ['course' => $this->calendar->courseid]);
             return $managesubscriptionurl->out(true);
         }
         return null;
