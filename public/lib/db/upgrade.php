@@ -1915,5 +1915,78 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025070600.01);
     }
 
+    if ($oldversion < 2025072500.01) {
+        // Get all OpenAI providers.
+        $records = $DB->get_records('ai_providers', ['provider' => 'aiprovider_openai\provider']);
+
+        foreach ($records as $record) {
+            $actionconfig = json_decode($record->actionconfig, true, 512);
+            $originalactionconfig = $actionconfig;
+
+            foreach ($actionconfig as $actionkey => $action) {
+                $model = $action['settings']['model'];
+                if ($model === 'gpt-4o' || $model === 'o1') {
+                    // Rename setting max_tokens to max_completion_tokens.
+                    if (isset($action['settings']['max_tokens'])) {
+                        $actionconfig[$actionkey]['settings']['max_completion_tokens'] = intval($action['settings']['max_tokens']);
+                        unset($actionconfig[$actionkey]['settings']['max_tokens']);
+                    }
+                    // Rename max_tokens in model settings too (casting not necessary).
+                    if (isset($action['modelsettings'][$model]['max_tokens'])) {
+                        $actionconfig[$actionkey]['modelsettings'][$model]['max_completion_tokens'] =
+                            $action['modelsettings'][$model]['max_tokens'];
+                        unset($actionconfig[$actionkey]['modelsettings'][$model]['max_tokens']);
+                    }
+                }
+                // Cast settings for 'gpt-4o' model.
+                if ($model === 'gpt-4o') {
+                    if (isset($action['settings']['top_p'])) {
+                        $actionconfig[$actionkey]['settings']['top_p'] = floatval($action['settings']['top_p']);
+                    }
+                    if (isset($action['settings']['presence_penalty'])) {
+                        $actionconfig[$actionkey]['settings']['presence_penalty'] =
+                            floatval($action['settings']['presence_penalty']);
+                    }
+                    if (isset($action['settings']['frequency_penalty'])) {
+                        $actionconfig[$actionkey]['settings']['frequency_penalty'] =
+                            floatval($action['settings']['frequency_penalty']);
+                    }
+                }
+                // Remove settings from 'o1' model.
+                if ($model === 'o1') {
+                    if (isset($action['settings']['top_p'])) {
+                        unset($actionconfig[$actionkey]['settings']['top_p']);
+                    }
+                    if (isset($action['settings']['presence_penalty'])) {
+                        unset($actionconfig[$actionkey]['settings']['presence_penalty']);
+                    }
+                    if (isset($action['settings']['frequency_penalty'])) {
+                        unset($actionconfig[$actionkey]['settings']['frequency_penalty']);
+                    }
+                    // Remove from model settings too.
+                    if (isset($action['modelsettings'][$model]['top_p'])) {
+                        unset($actionconfig[$actionkey]['modelsettings'][$model]['top_p']);
+                    }
+                    if (isset($action['modelsettings'][$model]['presence_penalty'])) {
+                        unset($actionconfig[$actionkey]['modelsettings'][$model]['presence_penalty']);
+                    }
+                    if (isset($action['modelsettings'][$model]['frequency_penalty'])) {
+                        unset($actionconfig[$actionkey]['modelsettings'][$model]['frequency_penalty']);
+                    }
+                }
+            }
+
+            if ($originalactionconfig !== $actionconfig) {
+                $updatedrecord = new stdClass();
+                $updatedrecord->id = $record->id;
+                $updatedrecord->actionconfig = json_encode($actionconfig);
+                $DB->update_record('ai_providers', $updatedrecord);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025072500.01);
+    }
+
     return true;
 }
