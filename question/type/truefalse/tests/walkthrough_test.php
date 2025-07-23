@@ -17,6 +17,7 @@
 namespace qtype_truefalse;
 
 use question_state;
+use question_display_options;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -159,5 +160,29 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             'class' => 'prompt h6 font-weight-normal sr-only'
         ]);
         $this->assertStringContainsString($standardinstruction, $this->currentoutput);
+    }
+
+    /**
+     * Tests that the general feedback box is not displayed when it is empty for a false answer.
+     *
+     * @covers ::format_generalfeedback
+     */
+    public function test_false_right_does_not_show_empty_general_feedback_when_answer(): void {
+        $tf = \test_question_maker::make_question('truefalse', 'false');
+        $this->start_attempt_at_question($tf, 'deferredfeedback', 1);
+        $this->process_submission(data: ['answer' => 0]);
+        $this->quba->finish_all_questions();
+        $displayoptions = new question_display_options();
+        $html = $this->quba->render_question(1, $displayoptions);
+        $pattern = "/<div class=\"generalfeedback\">\s*<div class=\"clearfix\">\s*{$tf->generalfeedback}\s*<\/div>\s*<\/div>/";
+        $this->assertMatchesRegularExpression($pattern, $html);
+
+        $tf->generalfeedback = "";
+        $this->start_attempt_at_question($tf, 'deferredfeedback', 1);
+        $this->process_submission(data: ['answer' => 0]);
+        $this->quba->finish_all_questions();
+        $html = $this->quba->render_question(1, $displayoptions);
+        $pattern = "/<div class=\"generalfeedback\">\s*<div class=\"clearfix\"><\/div>\s*<\/div>/";
+        $this->assertDoesNotMatchRegularExpression($pattern, $html);
     }
 }
