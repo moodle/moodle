@@ -89,12 +89,6 @@ if ($mform->is_cancelled()) {
             $reset = ($instance->status != $data->status);
         }
 
-        foreach ($data as $key => $value) {
-            $instance->$key = $value;
-        }
-
-        $instance->timemodified   = time();
-
         $plugin->update_instance($instance, $data);
 
         if ($reset) {
