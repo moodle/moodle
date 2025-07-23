@@ -16,9 +16,8 @@
 
 namespace mod_wiki\courseformat;
 
-use core_courseformat\local\overview\overviewfactory;
 use mod_wiki\wiki_mode;
-use ReflectionClass;
+use core_courseformat\local\overview\overviewfactory;
 
 /**
  * Tests for Wiki integration.
@@ -30,7 +29,6 @@ use ReflectionClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class overview_test extends \advanced_testcase {
-
 
     /**
      * Data provider for wiki modes.
@@ -249,11 +247,14 @@ final class overview_test extends \advanced_testcase {
 
         [
             'users' => $users,
-            'instance' => $instance,
+            'instance' => $instancecol,
             'course' => $course
-        ] = $this->setup_users_and_activity(SEPARATEGROUPS);
+        ] = $this->setup_users_and_activity(
+            groupmode: SEPARATEGROUPS, // Use separate groups to initialise pages too.
+            mode: wiki_mode::COLLABORATIVE->value,
+        );
 
-        $notinitinstance = $this->getDataGenerator()->create_module(
+        $instanceind = $this->getDataGenerator()->create_module(
             'wiki',
             [
                 'course' => $course,
@@ -263,17 +264,16 @@ final class overview_test extends \advanced_testcase {
 
         $this->setUser($users['t1']->id);
 
-        $cm = get_fast_modinfo($course)->get_cm($instance->cmid);
-        $emptycm = get_fast_modinfo($course)->get_cm($notinitinstance->cmid);
-
-        $overview = overviewfactory::create($cm);
+        $cmcol = get_fast_modinfo($course)->get_cm($instancecol->cmid);
+        $overview = overviewfactory::create($cmcol);
         $item = $overview->get_actions_overview();
-
         $this->assertNotNull($item);
+        $this->assertStringContainsString('wiki/map.php', $item->get_content()->url->out(false));
 
-        $overview = overviewfactory::create($emptycm);
+        // Test the individual wiki instance, which is also empty, has actions.
+        $cmind = get_fast_modinfo($course)->get_cm($instanceind->cmid);
+        $overview = overviewfactory::create($cmind);
         $item = $overview->get_actions_overview();
-
-        $this->assertNull($item);
+        $this->assertStringContainsString('wiki/view.php', $item->get_content()->url->out(false));
     }
 }
