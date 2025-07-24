@@ -46,6 +46,7 @@ export default class Component extends DndCmItem {
         this.selectors = {
             CM_NAME: `[data-for='cm_name']`,
             CM_COMPLETION: `[data-for='cm_completion']`,
+            DND_ALLOWED: `[data-courseindexdndallowed='true']`,
         };
         // Default classes to toggle on refresh.
         this.classes = {
@@ -79,7 +80,9 @@ export default class Component extends DndCmItem {
      * @param {Object} state the course state.
      */
     stateReady(state) {
-        this.configDragDrop(this.id);
+        if (document.querySelector(this.selectors.DND_ALLOWED)) {
+            this.configDragDrop(this.id);
+        }
         const cm = state.cm.get(this.id);
         const course = state.course;
         // Refresh completion icon.

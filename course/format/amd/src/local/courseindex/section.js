@@ -41,6 +41,7 @@ export default class Component extends DndSection {
             SECTION_ITEM: `[data-for='section_item']`,
             SECTION_TITLE: `[data-for='section_title']`,
             CM_LAST: `[data-for="cm"]:last-child`,
+            DND_ALLOWED: `[data-courseindexdndallowed='true']`,
         };
         // Default classes to toggle on refresh.
         this.classes = {
@@ -80,7 +81,7 @@ export default class Component extends DndSection {
         this.configState(state);
         const sectionItem = this.getElement(this.selectors.SECTION_ITEM);
         // Drag and drop is only available for components compatible course formats.
-        if (this.reactive.isEditing && this.reactive.supportComponents) {
+        if (this.reactive.isEditing && this.reactive.supportComponents && document.querySelector(this.selectors.DND_ALLOWED)) {
             // Init the inner dragable element passing the full section as affected region.
             const titleitem = new SectionTitle({
                 ...this,
