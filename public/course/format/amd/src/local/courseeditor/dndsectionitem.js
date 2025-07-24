@@ -35,8 +35,9 @@ export default class extends BaseComponent {
      * @param {number} sectionid the section id
      * @param {Object} state the initial state
      * @param {Element} fullregion the complete section region to mark as dragged
+     * @param {Boolean} isDndAllowed Whether drag and drop is allowed in this section.
      */
-    configDragDrop(sectionid, state, fullregion) {
+    configDragDrop(sectionid, state, fullregion, isDndAllowed = true) {
 
         this.id = sectionid;
         if (this.section === undefined) {
@@ -54,7 +55,7 @@ export default class extends BaseComponent {
         this.fullregion = fullregion;
 
         // Drag and drop is only available for components compatible course formats.
-        if (this.reactive.isEditing && this.reactive.supportComponents) {
+        if (this.reactive.isEditing && this.reactive.supportComponents && isDndAllowed) {
             // Init the dropzone.
             this.dragdrop = new DragDrop(this);
             // Save dropzone classes.

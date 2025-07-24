@@ -349,18 +349,21 @@ if (has_capability('moodle/course:update', $context)) {
     core_communication\helper::get_course_communication_status_notification($course);
 }
 
-if ($USER->editing == 1) {
-
+$containerattributes = ['class' => 'course-content'];
+if ($PAGE->user_is_editing()) {
     // MDL-65321 The backup libraries are quite heavy, only require the bare minimum.
     require_once($CFG->dirroot . '/backup/util/helper/async_helper.class.php');
 
     if (async_helper::is_async_pending($id, 'course', 'backup')) {
         echo $OUTPUT->notification(get_string('pendingasyncedit', 'backup'), 'warning');
     }
+
+    // Allow drag and drop in the course index.
+    $containerattributes['data-courseindexdndallowed'] = 'true';
 }
 
 // Course wrapper start.
-echo html_writer::start_tag('div', ['class' => 'course-content']);
+echo html_writer::start_tag('div', $containerattributes);
 
 // CAUTION, hacky fundamental variable defintion to follow!
 // Note that because of the way course fromats are constructed though
