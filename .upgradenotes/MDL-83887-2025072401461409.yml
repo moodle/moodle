@@ -1,0 +1,5 @@
+issueNumber: MDL-83887
+notes:
+  core_block:
+    - message: Removed block_activity_modules from Moodle 5.1.
+      type: removed

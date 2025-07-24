@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PRESET>
     <NAME>Starter</NAME>
-    <COMMENTS>&lt;p dir="ltr" style="text-align:left;"&gt;Badges disabled, Emojipicker enabled, Lesson  media width set to 900 and maxanswers set to 2 and disabled advanced. Plugins: disabled block_html, mod_database and mod_page plugins and enabled atto_html and block_activity_modules.&lt;/p&gt;</COMMENTS>
+    <COMMENTS>&lt;p dir="ltr" style="text-align:left;"&gt;Badges disabled, Emojipicker enabled, Lesson  media width set to 900 and maxanswers set to 2 and disabled advanced. Plugins: disabled block_html, mod_database and mod_page plugins and enabled atto_html and block_comments.&lt;/p&gt;</COMMENTS>
     <PRESET_DATE>1631615985</PRESET_DATE>
     <SITE_URL>http://demo.moodle</SITE_URL>
     <AUTHOR>Ada Lovelace</AUTHOR>
@@ -27,7 +27,7 @@
         </ATTO>
         <BLOCK>
             <HTML>0</HTML>
-            <ACTIVITY_MODULES>1</ACTIVITY_MODULES>
+            <COMMENTS>1</COMMENTS>
         </BLOCK>
         <MOD>
             <PAGE>0</PAGE>

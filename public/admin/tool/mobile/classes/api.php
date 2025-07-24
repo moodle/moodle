@@ -525,7 +525,6 @@ class api {
         $availableblocks = core_plugin_manager::instance()->get_plugins_of_type('block');
         $courseblocks = array();
         $appsupportedblocks = array(
-            'activity_modules' => 'CoreBlockDelegate_AddonBlockActivityModules',
             'activity_results' => 'CoreBlockDelegate_AddonBlockActivityResults',
             'site_main_menu' => 'CoreBlockDelegate_AddonBlockSiteMainMenu',
             'myoverview' => 'CoreBlockDelegate_AddonBlockMyOverview',

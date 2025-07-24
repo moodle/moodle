@@ -94,13 +94,3 @@ Feature: Testing overview integration in H5P activity
     # Check the View link.
     And I click on "View" "link" in the "H5P activity" "table_row"
     And I should see "Attempts (5)"
-
-  Scenario: The H5P activity index redirect to the activities overview
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Activities" block
-    When I click on "H5P" "link" in the "Activities" "block"
-    Then I should see "An overview of all activities in the course"
-    And I should see "Name" in the "h5pactivity_overview_collapsible" "region"
-    And I should see "H5P type" in the "h5pactivity_overview_collapsible" "region"
-    And I should see "Actions" in the "h5pactivity_overview_collapsible" "region"
