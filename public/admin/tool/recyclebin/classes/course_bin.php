@@ -254,7 +254,7 @@ class course_bin extends base_bin {
         // This hack will be removed once recycle bin switches to use its own backup mode, with
         // own preferences and 100% separate from MOODLE_AUTOMATED.
         // TODO: Remove this as part of MDL-65228.
-        $forcedrestoresettings = $CFG->forced_plugin_settings['restore'] ?? null;
+        $forcedrestoresettings = $CFG->forced_plugin_settings['restore'] ?? [];
         $CFG->forced_plugin_settings['restore']['restore_general_users'] = 1;
         $CFG->forced_plugin_settings['restore']['restore_general_groups'] = 1;
 
