@@ -19,14 +19,14 @@ Feature: Allowed blocks controls
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I add the "Course completion status" block
-    And I add the "Activities" block
-    Then I should see "Activities" in the "Activities" "block"
+    And I add the "Comments" block
+    Then I should see "Comments" in the "Comments" "block"
     And I should see "Course completion status" in the "Course completion status" "block"
 
   Scenario: Blocks can not be added when the admin restricts the permissions
     Given the following "role capability" exists:
       | role                               | editingteacher  |
-      | block/activity_modules:addinstance | prohibit        |
+      | block/comments:addinstance | prohibit        |
     And I log in as "admin"
     And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
@@ -34,5 +34,5 @@ Feature: Allowed blocks controls
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    Then the add block selector should not contain "Activities" block
+    Then the add block selector should not contain "Comments" block
     And the add block selector should not contain "Course completion status" block

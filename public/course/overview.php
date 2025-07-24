@@ -35,6 +35,10 @@ $PAGE->set_url('/course/overview.php', ['id' => $courseid]);
 
 $course = get_course($courseid);
 
+if ($course->id == SITEID) {
+    // As site home is not a real course, we do not support the overview page.
+    throw new moodle_exception('The site home course overview page is not supported.');
+}
 $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);

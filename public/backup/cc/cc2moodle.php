@@ -384,7 +384,7 @@ class cc2moodle {
             if (isset($CFG->defaultblocks)) {
                 $blocknames = $CFG->defaultblocks;
             } else {
-                $blocknames = 'activity_modules,search_forums,course_list:news_items,calendar_upcoming,recent_activity';
+                $blocknames = 'search_forums,course_list:news_items,calendar_upcoming,recent_activity';
             }
         }
 

@@ -155,7 +155,7 @@ final class import_test extends \advanced_testcase {
                         ],
                         'block' => [
                             'html' => 0,
-                            'activity_modules' => 1,
+                            'comments' => 1,
                         ],
                         'mod' => [
                             'page' => 0,

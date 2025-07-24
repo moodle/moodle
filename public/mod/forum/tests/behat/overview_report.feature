@@ -105,13 +105,3 @@ Feature: Testing overview integration in mod_forum
     And I click on "input[data-type=forum-track-toggle]" "css_element" in the "Unread posts" "table_row"
     And I follow "Unread posts"
     And I navigate to "Don't track unread posts" in current page administration
-
-  Scenario: The forum index redirect to the activities overview
-    When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Activities" block
-    And I click on "Forums" "link" in the "Activities" "block"
-    Then I should see "An overview of all activities in the course"
-    And I should see "Name" in the "forum_overview_collapsible" "region"
-    And I should see "Discussions" in the "forum_overview_collapsible" "region"
-    And I should see "Posts" in the "forum_overview_collapsible" "region"
