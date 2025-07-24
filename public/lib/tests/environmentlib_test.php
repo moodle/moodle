@@ -22,18 +22,17 @@ use environment_results;
  * Moodle environment test.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class environmentlib_test extends \advanced_testcase {
-
     /**
      * Test the environment check status.
      */
     public function test_environment_check_status(): void {
         global $CFG;
-        require_once($CFG->libdir.'/environmentlib.php');
+        require_once($CFG->libdir . '/environmentlib.php');
 
         $results = check_moodle_environment(normalize_version($CFG->release), ENV_SELECT_RELEASE);
 
@@ -49,12 +48,12 @@ final class environmentlib_test extends \advanced_testcase {
      */
     public static function environment_provider(): array {
         global $CFG;
-        require_once($CFG->libdir.'/environmentlib.php');
+        require_once($CFG->libdir . '/environmentlib.php');
 
         $results = check_moodle_environment(normalize_version($CFG->release), ENV_SELECT_RELEASE);
         // The second element of the results array contains the list of environment results.
         $environmentresults = end($results);
-        return array_map(function($result) {
+        return array_map(function ($result) {
             return [$result];
         }, $environmentresults);
     }
@@ -68,30 +67,38 @@ final class environmentlib_test extends \advanced_testcase {
     public function test_environment($result): void {
         $sslmessages = ['ssl/tls configuration not supported', 'invalid ssl/tls configuration'];
 
-        if ($result->part === 'php_setting'
+        if (
+            $result->part === 'php_setting'
                 && $result->info === 'opcache.enable'
                 && $result->getLevel() === 'optional'
-                && $result->getStatus() === false) {
+                && $result->getStatus() === false
+        ) {
             $this->markTestSkipped('OPCache extension is not necessary for unit testing.');
         }
 
-        if ($result->part === 'php_setting'
+        if (
+            $result->part === 'php_setting'
                 && $result->info === 'zend.exception_ignore_args'
                 && $result->getLevel() === 'optional'
-                && $result->getStatus() === false) {
+                && $result->getStatus() === false
+        ) {
             $this->markTestSkipped('zend.exception_ignore_args is not necessary for unit testing.');
         }
 
-        if ($result->part === 'php_extension'
+        if (
+            $result->part === 'php_extension'
                 && $result->getPluginName() !== ''
                 && $result->getLevel() === 'optional'
-                && $result->getStatus() === false) {
+                && $result->getStatus() === false
+        ) {
             $this->markTestSkipped('Optional plugin extension is not necessary for unit testing.');
         }
 
-        if ($result->part === 'custom_check'
+        if (
+            $result->part === 'custom_check'
                 && $result->getLevel() === 'optional'
-                && $result->getStatus() === false) {
+                && $result->getStatus() === false
+        ) {
             if (in_array($result->info, $sslmessages)) {
                 $this->markTestSkipped('Up-to-date TLS libraries are not necessary for unit testing.');
             }
@@ -109,7 +116,7 @@ final class environmentlib_test extends \advanced_testcase {
      */
     public function test_get_list_of_environment_versions(): void {
         global $CFG;
-        require_once($CFG->libdir.'/environmentlib.php');
+        require_once($CFG->libdir . '/environmentlib.php');
         // Build a sample xmlised environment.xml.
         $xml = <<<END
 <COMPATIBILITY_MATRIX>
@@ -155,8 +162,8 @@ END;
      */
     public function test_verify_plugin(): void {
         global $CFG;
-        require_once($CFG->libdir.'/environmentlib.php');
         $xmlparser = new \core\xml_parser();
+        require_once($CFG->libdir . '/environmentlib.php');
         // Build sample xmlised environment file fragments.
         $plugin1xml = <<<END
 <PLUGIN name="block_testcase">
@@ -186,7 +193,7 @@ END;
      */
     public function test_restrict_php_version_greater_than_restricted_version(): void {
         global $CFG;
-        require_once($CFG->libdir.'/environmentlib.php');
+        require_once($CFG->libdir . '/environmentlib.php');
 
         $result = new environment_results('php');
         $delimiter = '.';
@@ -199,8 +206,10 @@ END;
         // Make sure the status is true before the test to see it flip to false.
         $result->setStatus(true);
 
-        $this->assertTrue(restrict_php_version($result, $restrictedversion),
-            'restrict_php_version returns true if the current version exceeds the restricted version');
+        $this->assertTrue(
+            restrict_php_version($result, $restrictedversion),
+            'restrict_php_version returns true if the current version exceeds the restricted version'
+        );
     }
 
     /**
@@ -209,7 +218,7 @@ END;
      */
     public function test_restrict_php_version_equal_to_restricted_version(): void {
         global $CFG;
-        require_once($CFG->libdir.'/environmentlib.php');
+        require_once($CFG->libdir . '/environmentlib.php');
 
         $result = new environment_results('php');
         // Get the current PHP version.
@@ -218,8 +227,10 @@ END;
         // Make sure the status is true before the test to see it flip to false.
         $result->setStatus(true);
 
-        $this->assertTrue(restrict_php_version($result, $currentversion),
-            'restrict_php_version returns true if the current version is equal to the restricted version');
+        $this->assertTrue(
+            restrict_php_version($result, $currentversion),
+            'restrict_php_version returns true if the current version is equal to the restricted version'
+        );
     }
 
     /**
@@ -228,7 +239,7 @@ END;
      */
     public function test_restrict_php_version_less_than_restricted_version(): void {
         global $CFG;
-        require_once($CFG->libdir.'/environmentlib.php');
+        require_once($CFG->libdir . '/environmentlib.php');
 
         $result = new environment_results('php');
         $delimiter = '.';
@@ -241,7 +252,9 @@ END;
         // Make sure the status is true before the test to see it flip to false.
         $result->setStatus(true);
 
-        $this->assertFalse(restrict_php_version($result, $restrictedversion),
-            'restrict_php_version returns false if the current version is less than the restricted version');
+        $this->assertFalse(
+            restrict_php_version($result, $restrictedversion),
+            'restrict_php_version returns false if the current version is less than the restricted version'
+        );
     }
 }
