@@ -1,0 +1,5 @@
+issueNumber: MDL-86036
+notes:
+  core_course:
+    - message: Added new `gradable` property to `core_course\local\entity\content_item`
+      type: improved

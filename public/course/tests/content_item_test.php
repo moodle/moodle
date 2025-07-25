@@ -39,9 +39,19 @@ final class content_item_test extends \advanced_testcase {
     public function test_content_item(): void {
         $this->resetAfterTest();
 
-        $contentitem = new content_item(22, 'Item name', new lang_string_title('modulename', 'mod_assign'),
-            new \moodle_url('mod_edit.php'), '<img src="test">', 'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page',
-                MOD_PURPOSE_CONTENT, true);
+        $contentitem = new content_item(
+            id: 22,
+            name: 'Item name',
+            title: new lang_string_title('modulename', 'mod_assign'),
+            link: new \moodle_url('mod_edit.php'),
+            icon: '<img src="test">',
+            help: 'Description of the module',
+            archetype: MOD_ARCHETYPE_RESOURCE,
+            componentname: 'mod_page',
+            purpose: MOD_PURPOSE_CONTENT,
+            branded: true,
+            gradable: true,
+        );
 
         $this->assertEquals(22, $contentitem->get_id());
         $this->assertEquals('Item name', $contentitem->get_name());
@@ -53,6 +63,7 @@ final class content_item_test extends \advanced_testcase {
         $this->assertEquals('mod_page', $contentitem->get_component_name());
         $this->assertEquals('content', $contentitem->get_purpose());
         $this->assertTrue($contentitem->is_branded());
+        $this->assertTrue($contentitem->is_gradable());
     }
 
     /**

@@ -70,6 +70,7 @@ class course_content_item_exporter extends exporter {
             'componentname' => ['type' => PARAM_TEXT, 'description' => 'The name of the component exposing the content item'],
             'purpose' => ['type' => PARAM_TEXT, 'description' => 'The purpose of the component exposing the content item'],
             'branded' => ['type' => PARAM_BOOL, 'description' => ' Whether this content item is branded or not'],
+            'gradable' => ['type' => PARAM_BOOL, 'description' => 'Whether this content item is gradable or not'],
         ];
     }
 
@@ -141,6 +142,7 @@ class course_content_item_exporter extends exporter {
             'recommended' => $recommended,
             'purpose' => $this->contentitem->get_purpose(),
             'branded' => $this->contentitem->is_branded(),
+            'gradable' => $this->contentitem->is_gradable(),
         ];
 
         return $properties;
