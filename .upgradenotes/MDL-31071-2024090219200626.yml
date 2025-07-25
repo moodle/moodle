@@ -1,0 +1,8 @@
+issueNumber: MDL-31071
+notes:
+  core:
+    - message: >-
+        The following function has been deprecated and should no longer be used:
+        `file_encode_url`. Please consider using the `core\url` factory methods
+        instead.
+      type: deprecated

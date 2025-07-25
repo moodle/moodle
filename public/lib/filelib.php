@@ -56,47 +56,6 @@ require_once("$CFG->libdir/filestorage/zip_packer.php");
 require_once("$CFG->libdir/filebrowser/file_browser.php");
 
 /**
- * Encodes file serving url
- *
- * @deprecated use moodle_url factory methods instead
- *
- * @todo MDL-31071 deprecate this function
- * @global stdClass $CFG
- * @param string $urlbase
- * @param string $path /filearea/itemid/dir/dir/file.exe
- * @param bool $forcedownload
- * @param bool $https https url required
- * @return string encoded file url
- */
-function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
-    global $CFG;
-
-//TODO: deprecate this
-
-    if ($CFG->slasharguments) {
-        $parts = explode('/', $path);
-        $parts = array_map('rawurlencode', $parts);
-        $path  = implode('/', $parts);
-        $return = $urlbase.$path;
-        if ($forcedownload) {
-            $return .= '?forcedownload=1';
-        }
-    } else {
-        $path = rawurlencode($path);
-        $return = $urlbase.'?file='.$path;
-        if ($forcedownload) {
-            $return .= '&amp;forcedownload=1';
-        }
-    }
-
-    if ($https) {
-        $return = str_replace('http://', 'https://', $return);
-    }
-
-    return $return;
-}
-
-/**
  * Detects if area contains subdirs,
  * this is intended for file areas that are attached to content
  * migrated from 1.x where subdirs were allowed everywhere.
