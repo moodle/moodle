@@ -1,0 +1,275 @@
+/**
+ * File modchooser.scss.
+ * Contains styles for the module chooser.
+ */
+
+/* Main modal dialogue style customization. */
+
+.modchooser.modal-dialog {
+    --#{$prefix}modal-width: #{$modal-xl};
+    --#{$prefix}modal-header-border-width: 0;
+
+    .modal-header {
+        .modal-title {
+            flex-grow: 1;
+            text-align: center;
+            font-weight: $font-weight-bold;
+            font-size: $h5-font-size;
+            @include media-breakpoint-up(sm) {
+                font-size: $h4-font-size;
+            }
+        }
+    }
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 0;
+
+        .carousel-item {
+            background-color: $modal-content-bg;
+            // Remove the default transition on carousel items.
+            transition: none !important; /* stylelint-disable-line declaration-no-important */
+
+            &.active {
+                display: flex;
+            }
+
+            @include media-breakpoint-up(sm) {
+                height: 640px;
+            }
+        }
+
+        .loading-icon {
+            opacity: 1;
+
+            .icon {
+                display: block;
+                max-height: 3rem;
+                max-width: 3rem;
+                font-size: 3rem;
+
+                .carousel-item & {
+                    margin: 1rem auto;
+                }
+            }
+        }
+    }
+
+    .modal-footer {
+        height: 70px;
+        background: $modal-content-bg;
+
+        .moodlenet-logo {
+            .icon {
+                height: 2.5rem;
+                width: 6rem;
+                max-height: 2.5rem;
+                max-width: 6rem;
+                margin-bottom: .6rem;
+            }
+        }
+    }
+}
+
+/* Main container layout styles. */
+
+.modchoosercontainer {
+    .modchooserfilters {
+        grid-area: filters;
+    }
+
+    .modchoosernav {
+        grid-area: nav;
+        min-width: 150px;
+    }
+
+    .modchoosercontent {
+        grid-area: content;
+        overflow: auto;
+    }
+
+    .searchresultscontainer {
+        overflow: auto;
+    }
+
+    display: grid;
+    width: 100%;
+
+    grid-template-areas:
+        "nav filters"
+        "nav content";
+
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 1rem;
+
+    @include media-breakpoint-down(md) {
+        grid-template-areas:
+            "filters"
+            "nav"
+            "content";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+    }
+}
+
+/* Main container Filters styles. */
+
+.modchooserfilters {
+    @include media-breakpoint-up(lg) {
+        // To center the search form in the filters area we need to adjust the left postion by deducting
+        // the calculated of the left navigation and its spacing.
+        .simplesearchform {
+            justify-content: center;
+            position: relative;
+            left: calc(-1*calc(75px + 2.5rem));
+        }
+
+        .searchbar {
+            max-width: 25rem !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+}
+
+/* Main container Navigation styles. */
+
+.modchoosernav {
+    --#{$prefix}nav-pills-border-radius: #{$border-radius-pill};
+    --#{$prefix}nav-pills-link-active-bg: #{$body-color};
+    --#{$prefix}nav-link-font-size: #{$font-size-base};
+
+    .nav-link {
+        --#{$prefix}nav-link-color: #{$body-color};
+        --#{$prefix}nav-link-hover-color: #{$body-color};
+        --#{$prefix}nav-link-font-weight: #{$font-weight-medium};
+        --#{$prefix}nav-link-padding-y: .3rem;
+
+        width: fit-content;
+        border: $border-width $border-style transparent;
+
+        @include media-breakpoint-up(md) {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &:not(.active) {
+            &:hover {
+                border: $border-width $border-style $border-color;
+                background-color: $gray-100;
+            }
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: $body-bg !important; /* stylelint-disable-line declaration-no-important */
+
+        .nav-link {
+            border: $border-width $border-style $border-color !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+}
+
+
+/* Main container Content styles. */
+
+.modchoosercontent .optionscontainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: map-get($spacers, 2);
+
+    @include media-breakpoint-down(lg) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include media-breakpoint-down(sm) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .option {
+        --#{$prefix}btn-border-radius: #{$border-radius-lg};
+
+        height: fit-content;
+        border: 2px solid transparent;
+
+        &.selected {
+            border: 2px solid $primary;
+            background-color: $primary-light-background;
+        }
+
+        &:not(.selected):hover {
+            background-color: $gray-100;
+        }
+
+        .optioninfo {
+            display: block;
+            text-align: initial;
+        }
+
+        .optionactions {
+            position: relative;
+            z-index: 10;
+        }
+    }
+}
+
+
+/* Option summary styles. */
+
+.modchooser .optionsummary {
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    background-color: $white;
+
+    .activitychooser-option-details {
+        min-width: 15rem;
+
+        .modchooser-detail:not(:last-child) {
+            margin-bottom: map-get($spacers, 4);
+            padding-bottom: map-get($spacers, 4);
+            border-bottom: $border-width $border-style $border-color;
+        }
+    }
+}
+
+/* Make modchooser modal full height and scrollable on small screens. */
+
+@include media-breakpoint-down(sm) {
+
+    // Course view modal dialogs
+    .path-course-view {
+        .modal-dialog.modal-lg,
+        .modal-content {
+            height: 100%;
+            overflow-y: auto;
+            margin: 0;
+        }
+    }
+
+    // Modchooser modal body and nested carousel/summary elements
+    .modchooser {
+        .modal-body,
+        .modal-body .carousel,
+        .modal-body .carousel-inner,
+        .modal-body .carousel-item,
+        .modal-body .optionsummary,
+        .modal-body .searchresultitemscontainer-wrapper {
+            height: 100%;
+            overflow-y: auto;
+        }
+    }
+
+    // Containers needing full height and scroll
+    .modchoosercontainer,
+    .optionscontainer,
+    .searchresultitemscontainer {
+        height: 100%;
+        overflow-y: auto;
+    }
+}

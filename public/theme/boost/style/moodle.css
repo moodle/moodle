@@ -27031,224 +27031,6 @@ audio.mediaplugin_html5audio {
     position: static;
   }
 }
-/**
- * Module chooser dialogue (activity chooser)
- */
-/* Main modal dialogue style customization. */
-.modchooser.modal-dialog {
-  --bs-modal-width: 1140px;
-  --bs-modal-header-border-width: 0;
-}
-.modchooser.modal-dialog .modal-header .modal-title {
-  flex-grow: 1;
-  text-align: center;
-  font-weight: 700;
-  font-size: 1.171875rem;
-}
-@media (min-width: 576px) {
-  .modchooser.modal-dialog .modal-header .modal-title {
-    font-size: 1.40625rem;
-  }
-}
-.modchooser.modal-dialog .modal-body {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  padding: 0;
-}
-.modchooser.modal-dialog .modal-body .carousel-item {
-  background-color: var(--bs-body-bg);
-  transition: none !important; /* stylelint-disable-line declaration-no-important */
-}
-.modchooser.modal-dialog .modal-body .carousel-item.active {
-  display: flex;
-}
-@media (min-width: 576px) {
-  .modchooser.modal-dialog .modal-body .carousel-item {
-    height: 640px;
-  }
-}
-.modchooser.modal-dialog .modal-body .loading-icon {
-  opacity: 1;
-}
-.modchooser.modal-dialog .modal-body .loading-icon .icon {
-  display: block;
-  max-height: 3rem;
-  max-width: 3rem;
-  font-size: 3rem;
-}
-.carousel-item .modchooser.modal-dialog .modal-body .loading-icon .icon {
-  margin: 1rem auto;
-}
-.modchooser.modal-dialog .modal-footer {
-  height: 70px;
-  background: var(--bs-body-bg);
-}
-.modchooser.modal-dialog .modal-footer .moodlenet-logo .icon {
-  height: 2.5rem;
-  width: 6rem;
-  max-height: 2.5rem;
-  max-width: 6rem;
-  margin-bottom: 0.6rem;
-}
-
-/* Main container layout styles. */
-.modchoosercontainer {
-  display: grid;
-  width: 100%;
-  grid-template-areas: "nav filters" "nav content";
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 1rem;
-}
-.modchoosercontainer .modchooserfilters {
-  grid-area: filters;
-}
-.modchoosercontainer .modchoosernav {
-  grid-area: nav;
-  min-width: 150px;
-}
-.modchoosercontainer .modchoosercontent {
-  grid-area: content;
-  overflow: auto;
-}
-.modchoosercontainer .searchresultscontainer {
-  overflow: auto;
-}
-@media (max-width: 767.98px) {
-  .modchoosercontainer {
-    grid-template-areas: "filters" "nav" "content";
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr;
-  }
-}
-
-/* Main container Filters styles. */
-@media (min-width: 992px) {
-  .modchooserfilters .simplesearchform {
-    justify-content: center;
-    position: relative;
-    left: calc(-1 * (75px + 2.5rem));
-  }
-  .modchooserfilters .searchbar {
-    max-width: 25rem !important; /* stylelint-disable-line declaration-no-important */
-  }
-}
-
-/* Main container Navigation styles. */
-.modchoosernav {
-  --bs-nav-pills-border-radius: 50rem;
-  --bs-nav-pills-link-active-bg: #1d2125;
-  --bs-nav-link-font-size: 0.9375rem;
-}
-.modchoosernav .nav-link {
-  --bs-nav-link-color: #1d2125;
-  --bs-nav-link-hover-color: #1d2125;
-  --bs-nav-link-font-weight: 500;
-  --bs-nav-link-padding-y: .3rem;
-  width: fit-content;
-  border: 1px solid transparent;
-}
-@media (min-width: 768px) {
-  .modchoosernav .nav-link {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-.modchoosernav .nav-link:not(.active):hover {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-}
-@media (max-width: 767.98px) {
-  .modchoosernav {
-    overflow-x: auto;
-    white-space: nowrap;
-    background-color: #fff !important; /* stylelint-disable-line declaration-no-important */
-  }
-  .modchoosernav .nav-link {
-    border: 1px solid #dee2e6 !important; /* stylelint-disable-line declaration-no-important */
-  }
-}
-
-/* Main container Content styles. */
-.modchoosercontent .optionscontainer {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-}
-@media (max-width: 991.98px) {
-  .modchoosercontent .optionscontainer {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-@media (max-width: 575.98px) {
-  .modchoosercontent .optionscontainer {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-.modchoosercontent .optionscontainer .option {
-  --bs-btn-border-radius: 0.6rem;
-  height: fit-content;
-  border: 2px solid transparent;
-}
-.modchoosercontent .optionscontainer .option.selected {
-  border: 2px solid #0f6cbf;
-  background-color: #e7f0f9;
-}
-.modchoosercontent .optionscontainer .option:not(.selected):hover {
-  background-color: #f8f9fa;
-}
-.modchoosercontent .optionscontainer .option .optioninfo {
-  display: block;
-  text-align: initial;
-}
-.modchoosercontent .optionscontainer .option .optionactions {
-  position: relative;
-  z-index: 10;
-}
-
-/* Option summary styles. */
-.modchooser .optionsummary {
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: 100%;
-  background-color: #fff;
-}
-.modchooser .optionsummary .activitychooser-option-details {
-  min-width: 15rem;
-}
-.modchooser .optionsummary .activitychooser-option-details .modchooser-detail:not(:last-child) {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #dee2e6;
-}
-
-/* Make modchooser modal full height and scrollable on small screens. */
-@media (max-width: 575.98px) {
-  .path-course-view .modal-dialog.modal-lg,
-  .path-course-view .modal-content {
-    height: 100%;
-    overflow-y: auto;
-    margin: 0;
-  }
-  .modchooser .modal-body,
-  .modchooser .modal-body .carousel,
-  .modchooser .modal-body .carousel-inner,
-  .modchooser .modal-body .carousel-item,
-  .modchooser .modal-body .optionsummary,
-  .modchooser .modal-body .searchresultitemscontainer-wrapper {
-    height: 100%;
-    overflow-y: auto;
-  }
-  .modchoosercontainer,
-  .optionscontainer,
-  .searchresultitemscontainer {
-    height: 100%;
-    overflow-y: auto;
-  }
-}
 /* Form element: listing */
 .formlistingradio {
   padding-bottom: 25px;
@@ -31906,6 +31688,225 @@ table.calendartable caption {
   margin-right: 0.5rem;
 }
 
+/**
+ * File modchooser.scss.
+ * Contains styles for the module chooser.
+ */
+/* Main modal dialogue style customization. */
+.modchooser.modal-dialog {
+  --bs-modal-width: 1140px;
+  --bs-modal-header-border-width: 0;
+}
+.modchooser.modal-dialog .modal-header .modal-title {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.171875rem;
+}
+@media (min-width: 576px) {
+  .modchooser.modal-dialog .modal-header .modal-title {
+    font-size: 1.40625rem;
+  }
+}
+.modchooser.modal-dialog .modal-body {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+}
+.modchooser.modal-dialog .modal-body .carousel-item {
+  background-color: var(--bs-body-bg);
+  transition: none !important; /* stylelint-disable-line declaration-no-important */
+}
+.modchooser.modal-dialog .modal-body .carousel-item.active {
+  display: flex;
+}
+@media (min-width: 576px) {
+  .modchooser.modal-dialog .modal-body .carousel-item {
+    height: 640px;
+  }
+}
+.modchooser.modal-dialog .modal-body .loading-icon {
+  opacity: 1;
+}
+.modchooser.modal-dialog .modal-body .loading-icon .icon {
+  display: block;
+  max-height: 3rem;
+  max-width: 3rem;
+  font-size: 3rem;
+}
+.carousel-item .modchooser.modal-dialog .modal-body .loading-icon .icon {
+  margin: 1rem auto;
+}
+.modchooser.modal-dialog .modal-footer {
+  height: 70px;
+  background: var(--bs-body-bg);
+}
+.modchooser.modal-dialog .modal-footer .moodlenet-logo .icon {
+  height: 2.5rem;
+  width: 6rem;
+  max-height: 2.5rem;
+  max-width: 6rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Main container layout styles. */
+.modchoosercontainer {
+  display: grid;
+  width: 100%;
+  grid-template-areas: "nav filters" "nav content";
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+}
+.modchoosercontainer .modchooserfilters {
+  grid-area: filters;
+}
+.modchoosercontainer .modchoosernav {
+  grid-area: nav;
+  min-width: 150px;
+}
+.modchoosercontainer .modchoosercontent {
+  grid-area: content;
+  overflow: auto;
+}
+.modchoosercontainer .searchresultscontainer {
+  overflow: auto;
+}
+@media (max-width: 767.98px) {
+  .modchoosercontainer {
+    grid-template-areas: "filters" "nav" "content";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+}
+
+/* Main container Filters styles. */
+@media (min-width: 992px) {
+  .modchooserfilters .simplesearchform {
+    justify-content: center;
+    position: relative;
+    left: calc(-1 * (75px + 2.5rem));
+  }
+  .modchooserfilters .searchbar {
+    max-width: 25rem !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+/* Main container Navigation styles. */
+.modchoosernav {
+  --bs-nav-pills-border-radius: 50rem;
+  --bs-nav-pills-link-active-bg: #1d2125;
+  --bs-nav-link-font-size: 0.9375rem;
+}
+.modchoosernav .nav-link {
+  --bs-nav-link-color: #1d2125;
+  --bs-nav-link-hover-color: #1d2125;
+  --bs-nav-link-font-weight: 500;
+  --bs-nav-link-padding-y: .3rem;
+  width: fit-content;
+  border: 1px solid transparent;
+}
+@media (min-width: 768px) {
+  .modchoosernav .nav-link {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.modchoosernav .nav-link:not(.active):hover {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+@media (max-width: 767.98px) {
+  .modchoosernav {
+    overflow-x: auto;
+    white-space: nowrap;
+    background-color: #fff !important; /* stylelint-disable-line declaration-no-important */
+  }
+  .modchoosernav .nav-link {
+    border: 1px solid #dee2e6 !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+/* Main container Content styles. */
+.modchoosercontent .optionscontainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+@media (max-width: 991.98px) {
+  .modchoosercontent .optionscontainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 575.98px) {
+  .modchoosercontent .optionscontainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.modchoosercontent .optionscontainer .option {
+  --bs-btn-border-radius: 0.6rem;
+  height: fit-content;
+  border: 2px solid transparent;
+}
+.modchoosercontent .optionscontainer .option.selected {
+  border: 2px solid #0f6cbf;
+  background-color: #e7f0f9;
+}
+.modchoosercontent .optionscontainer .option:not(.selected):hover {
+  background-color: #f8f9fa;
+}
+.modchoosercontent .optionscontainer .option .optioninfo {
+  display: block;
+  text-align: initial;
+}
+.modchoosercontent .optionscontainer .option .optionactions {
+  position: relative;
+  z-index: 10;
+}
+
+/* Option summary styles. */
+.modchooser .optionsummary {
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  background-color: #fff;
+}
+.modchooser .optionsummary .activitychooser-option-details {
+  min-width: 15rem;
+}
+.modchooser .optionsummary .activitychooser-option-details .modchooser-detail:not(:last-child) {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Make modchooser modal full height and scrollable on small screens. */
+@media (max-width: 575.98px) {
+  .path-course-view .modal-dialog.modal-lg,
+  .path-course-view .modal-content {
+    height: 100%;
+    overflow-y: auto;
+    margin: 0;
+  }
+  .modchooser .modal-body,
+  .modchooser .modal-body .carousel,
+  .modchooser .modal-body .carousel-inner,
+  .modchooser .modal-body .carousel-item,
+  .modchooser .modal-body .optionsummary,
+  .modchooser .modal-body .searchresultitemscontainer-wrapper {
+    height: 100%;
+    overflow-y: auto;
+  }
+  .modchoosercontainer,
+  .optionscontainer,
+  .searchresultitemscontainer {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target,
 :focus {
