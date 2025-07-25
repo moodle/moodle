@@ -25,7 +25,8 @@
         "activityurl": "http://moodle.com",
         "sectiontitle": "Section title",
         "visible": true,
-        "stealth": false
+        "stealth": false,
+        "nogroupserror": false
     }
 }}
 <div class="d-flex flex-column">
@@ -51,4 +52,9 @@
         </span>
         {{/stealth}}
     </div>
+    {{#nogroupserror}}
+    <div class="text-danger-emphasis small">
+        {{#pix}}e/cancel_solid_circle, moodle, {{#str}}overview_nogroups_title,course{{/str}}{{/pix}}{{#str}}overview_nogroups_error,course{{/str}}
+    </div>
+    {{/nogroupserror}}
 </div>

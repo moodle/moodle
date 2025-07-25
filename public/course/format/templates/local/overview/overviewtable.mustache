@@ -37,6 +37,7 @@
         "activities": [
             {
                 "cmid": 1,
+                "haserror": true,
                 "overviews": [
                     {
                         "overview": "name",
@@ -56,6 +57,7 @@
             },
             {
                 "cmid": 2,
+                "haserror": false,
                 "overviews": [
                     {
                         "overview": "name",
@@ -95,7 +97,7 @@
     </thead>
     <tbody>
         {{#activities}}
-        <tr data-mdl-overview-cmid="{{cmid}}">
+        <tr data-mdl-overview-cmid="{{cmid}}"{{#haserror}} class="bg-danger-subtle"{{/haserror}}>
             {{#overviews}}
             <td
                 class="{{textalign}}"

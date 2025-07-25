@@ -46,6 +46,15 @@ abstract class activityoverviewbase {
     /** @var courseformat $format the course format */
     protected courseformat $format;
 
+    /** @var ?bool $needsfiltering whether the current user needs to filter by groups or not in the current module */
+    protected ?bool $needsfiltering = null;
+
+    /** @var array $groupstofilterby the array of groups to use as parameter for the groups API. Empty array for all groups */
+    protected array $groupstofilterby;
+
+    /** @var bool $nogroupserror Whether the user has no permission to view any student */
+    protected bool $nogroupserror;
+
     /**
      * Activity Overview Base class constructor.
      *
@@ -70,6 +79,8 @@ abstract class activityoverviewbase {
         $this->context = $cm->context;
         $this->course = $cm->get_course();
         $this->format = courseformat::instance($this->course);
+
+        $this->nogroupserror = ($this->needs_filtering_by_groups() && empty($this->get_groups_for_filtering()));
     }
 
     /**
@@ -80,6 +91,45 @@ abstract class activityoverviewbase {
      */
     public static function redirect_to_overview_page(int $courseid, string $modname): void {
         redirect(overviewpage::get_modname_url($courseid, $modname));
+    }
+
+    /**
+     * Checks the module's group mode, the user's capabilities and returns
+     * whether overview page needs to filter by group.
+     *
+     * @return bool Whether current user needs to filter by group in the current module.
+     */
+    public function needs_filtering_by_groups(): bool {
+        if ($this->needsfiltering != null) {
+            return $this->needsfiltering;
+        }
+        if (has_capability('moodle/site:accessallgroups', $this->context)) {
+            $this->needsfiltering = false;
+            return $this->needsfiltering;
+        }
+        $groupmode = groups_get_activity_groupmode($this->cm);
+        if ($groupmode != SEPARATEGROUPS) {
+            $this->needsfiltering = false;
+            return $this->needsfiltering;
+        }
+        $this->needsfiltering = true;
+        return $this->needsfiltering;
+    }
+
+    /**
+     * Returns an array of the groups to filter by using groups API.
+     * Empty array for non-filtering by groups.
+     *
+     * @return array Groups to filter by.
+     */
+    public function get_groups_for_filtering(): array {
+        if (!$this->needsfiltering) {
+            return [];
+        }
+        if (!isset($this->groupstofilterby)) {
+            $this->groupstofilterby = groups_get_activity_allowed_groups($this->cm);
+        }
+        return $this->groupstofilterby;
     }
 
     /**
@@ -102,7 +152,7 @@ abstract class activityoverviewbase {
         return new overviewitem(
             name: get_string('name'),
             value: $this->cm->name,
-            content: new activityname($this->cm),
+            content: new activityname($this->cm, $this->nogroupserror),
         );
     }
 
@@ -254,5 +304,14 @@ abstract class activityoverviewbase {
             return [reset($items)->id => get_string('gradenoun')];
         }
         return [];
+    }
+
+    /**
+     * Wether the activity should show an error because the user is not in any group and they should be.
+     *
+     * @return bool nogroupserror property.
+     */
+    public function has_error(): bool {
+        return $this->nogroupserror;
     }
 }
