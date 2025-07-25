@@ -18,3 +18,5 @@ Feature: The private files block allows users to store files privately in moodle
     And I upload "blocks/private_files/tests/fixtures/testfile.txt" file to "Files" filemanager
     And I press "Save changes"
     Then I should see "testfile.txt" in the "Private files" "block"
+    And following "testfile.txt" should download a file that:
+      | contains text | This is a test file |
