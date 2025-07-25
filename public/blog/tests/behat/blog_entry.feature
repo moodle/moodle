@@ -13,9 +13,9 @@ Feature: Blog entries can be added, modified and deleted
     And I follow "Add a new entry"
     And I should see "Blogs: Add a new entry"
     And I set the following fields to these values:
-      | Entry title     | Entry 1         |
-      | Blog entry body | Entry 1 content |
-      | Attachment      | lib/tests/fixtures/gd-logo.png |
+      | Entry title     | Entry 1                      |
+      | Blog entry body | Entry 1 content              |
+      | Attachment      | lib/tests/fixtures/empty.txt |
     And I press "Save changes"
 
   Scenario: Modify a blog entry
@@ -24,6 +24,10 @@ Feature: Blog entries can be added, modified and deleted
       | Entry title | Blog entry 1 |
     And I press "Save changes"
     Then I should see "Blog entry 1"
+    And I should see "Entry 1 content"
+    And I should see "empty.txt"
+    And following "empty.txt" should download a file that:
+      | contains text | empty file for testing purposes |
 
   Scenario: Delete a blog entry
     When I click on "Delete" "link"
