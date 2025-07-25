@@ -33329,6 +33329,64 @@ a.ygtvspacer:hover {
   padding-left: 5px;
 }
 
+.foldertree [role=treeitem][aria-expanded=false] + [role=group] {
+  display: none;
+}
+.foldertree [role=treeitem][aria-expanded=true] + [role=group] {
+  display: block;
+}
+.foldertree [role=treeitem][aria-expanded=false] > ul {
+  display: none;
+}
+.foldertree [role=treeitem][aria-expanded=true] > ul {
+  display: block;
+}
+.foldertree [role=treeitem] > p {
+  margin-bottom: 0;
+}
+.foldertree [role=treeitem][aria-expanded] > p::before, .foldertree [role=treeitem][aria-expanded] > p::after {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  top: 4px;
+}
+.foldertree [role=treeitem][aria-expanded=false] > p::before {
+  background-image: url("[[pix:t/collapsed]]");
+}
+.foldertree [role=treeitem][aria-expanded=true] > p::before {
+  background-image: url("[[pix:t/expanded]]");
+}
+.foldertree li {
+  position: relative;
+  list-style: none;
+}
+.foldertree li::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--bs-body-font-size) / var(--bs-body-line-height) + 2px);
+  left: calc((2rem + 16px + 2px) / 2 * -1);
+  border-bottom: 2px dotted var(--bs-border-color);
+  width: 1rem;
+}
+.foldertree li img.icon {
+  width: auto;
+}
+.foldertree > li::before {
+  display: none;
+}
+.foldertree ul::before {
+  content: "";
+  position: absolute;
+  top: 1.3rem;
+  left: calc(16px / 2 - 2px / 2);
+  height: calc(100% - 2rem);
+  border-left: 2px dotted var(--bs-border-color);
+}
+
 /** The message area **/
 .hidden {
   display: none;
