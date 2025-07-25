@@ -4356,18 +4356,26 @@ function lti_is_cartridge($url) {
     if (preg_match('/\.xml$/', $url)) {
         return true;
     }
-    // Even if it doesn't have .xml, load the url to check if it's a cartridge..
-    try {
-        $toolinfo = lti_load_cartridge($url,
-            array(
-                "launch_url" => "launchurl"
-            )
-        );
-        if (!empty($toolinfo['launchurl'])) {
-            return true;
+
+    // Skip slow cartridge checks during tests.
+    // During tests, working .xml cartridge URLs are used when testing cartridge support. These will match the '.xml' check
+    // above (which is fast). Don't try to check whether other tool URLs are cartridges because most URLs used in tests will be
+    // example URLs and won't be resolvable, resulting in network hangs within load_cartridge() - which is called every time a
+    // tool is edited and will result in slow tests or seemingly random test failures.
+    if (!defined('BEHAT_SITE_RUNNING') && !defined('PHPUNIT_TEST')) {
+        // Even if it doesn't have .xml, load the url to check if it's a cartridge..
+        try {
+            $toolinfo = lti_load_cartridge($url,
+                array(
+                    "launch_url" => "launchurl"
+                )
+            );
+            if (!empty($toolinfo['launchurl'])) {
+                return true;
+            }
+        } catch (moodle_exception $e) {
+            return false; // Error loading the xml, so it's not a cartridge.
         }
-    } catch (moodle_exception $e) {
-        return false; // Error loading the xml, so it's not a cartridge.
     }
     return false;
 }
