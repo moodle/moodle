@@ -20,6 +20,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\url;
 use mod_forum\local\entities\forum as forum_entity;
 
 defined('MOODLE_INTERNAL') || die();
@@ -2580,7 +2581,14 @@ function forum_print_attachments($post, $cm, $type) {
                             'style' => 'max-width: 24px; max-height: 24px; vertical-align: middle;',
                     ]
             );
-            $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/mod_forum/attachment/'.$post->id.'/'.$filename);
+            $path = url::make_pluginfile_url(
+                contextid: $context->id,
+                component: 'mod_forum',
+                area: 'attachment',
+                itemid: $post->id,
+                pathname: '/',
+                filename: $filename
+            )->out();
 
             if ($type == 'html') {
                 $output .= "<a href=\"$path\">$iconimage</a> ";

@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\url;
+
 /**
  * Represents an actual file or folder - a row in the file table in the tree navigated by {@link file_browser}.
  *
@@ -182,7 +184,11 @@ class file_info_stored extends file_info {
         } else {
             $path = '/'.$contextid.'/'.$component.'/'.$filearea.$filepath.$filename;
         }
-        return file_encode_url($this->urlbase, $path, $forcedownload, $https);
+        $url = url::make_file_url($this->urlbase, $path, $forcedownload);
+        if ($https) {
+            $url->set_scheme('https');
+        }
+        return $url->out();
     }
 
     /**

@@ -23,6 +23,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\html_writer;
+use core\output\plugin_renderer_base;
+use core\url;
+
 defined('MOODLE_INTERNAL') || die();
 
 class mod_wiki_renderer extends plugin_renderer_base {
@@ -526,10 +530,20 @@ class mod_wiki_renderer extends plugin_renderer_base {
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->htmllize_tree($tree, $subdir).'</li>';
         }
         foreach ($dir['files'] as $file) {
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/mod_wiki/attachments/' . $tree->subwiki->id . '/'. $file->get_filepath() . $file->get_filename(), true);
             $filename = $file->get_filename();
+            $url = url::make_pluginfile_url(
+                contextid: $tree->context->id,
+                component: 'mod_wiki',
+                area: 'attachments',
+                itemid: $tree->subwiki->id,
+                pathname: $file->get_filepath(),
+                filename: $filename,
+                forcedownload: true
+            );
             $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).'</div></li>';
+            $result .= '<li yuiConfig=\'' . json_encode($yuiconfig) . '\'>';
+            $result .= '<div>' . $image . ' ' . html_writer::link($url->out(), $filename) . '</div>';
+            $result .= '</li>';
         }
         $result .= '</ul>';
 

@@ -23,6 +23,9 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+ use core\url;
+
 require_once($CFG->libdir . '/completionlib.php');
 
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
@@ -1590,7 +1593,14 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $unused = null) {
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
             $iconimage = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon'));
-            $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/mod_glossary/attachment/'.$entry->id.'/'.$filename);
+            $path = url::make_pluginfile_url(
+                contextid: $context->id,
+                component: 'mod_glossary',
+                area: 'attachment',
+                itemid: $entry->id,
+                pathname: '/',
+                filename: $filename
+            )->out();
 
             if ($type == 'html') {
                 $output .= "<a href=\"$path\">$iconimage</a> ";

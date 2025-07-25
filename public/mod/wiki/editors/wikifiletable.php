@@ -26,6 +26,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\url;
+
 require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 
@@ -117,22 +119,48 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
                 }
                 $checkbox .= " />";
 
-                //actions
+                // Get Actions.
                 $icon = file_file_icon($file);
-                $file_url = file_encode_url($CFG->wwwroot.'/pluginfile.php', "/{$this->_contextid}/mod_wiki/attachments/{$this->_fileareaitemid}/".$file->get_filename());
+                $filename = $file->get_filename();
+                $fileurl = url::make_pluginfile_url(
+                    contextid: $this->_contextid,
+                    component: 'mod_wiki',
+                    area: 'attachments',
+                    itemid: $this->_fileareaitemid,
+                    pathname: '/',
+                    filename: $filename
+                )->out();
 
-                $action_icons = "";
-                if(!empty($tags['attach'])) {
-                    $action_icons .= "<a href=\"javascript:void(0)\" class=\"wiki-attachment-attach\" ".$this->printInsertTags($tags['attach'], $file->get_filename())." title=\"".get_string('attachmentattach', 'wiki')."\">".$OUTPUT->pix_icon($icon, "Attach")."</a>"; //TODO: localize
+                $actionicons = "";
+                if (!empty($tags['attach'])) {
+                    $actionicons .= '<a href="javascript:void(0)" class="wiki-attachment-attach" ';
+                    $actionicons .= $this->printInsertTags($tags['attach'], $filename);
+                    $actionicons .= ' title="';
+                    $actionicons .= get_string('attachmentattach', 'wiki');
+                    $actionicons .= '">';
+                    $actionicons .= $OUTPUT->pix_icon($icon, "Attach");
+                    $actionicons .= '</a>';
                 }
 
-                $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-link\" ".$this->printInsertTags($tags['link'], $file_url)." title=\"".get_string('attachmentlink', 'wiki')."\">".$OUTPUT->pix_icon($icon, "Link")."</a>";
+                $actionicons .= '&nbsp;&nbsp;<a href="javascript:void(0)" class="wiki-attachment-link" ';
+                $actionicons .= $this->printInsertTags($tags['link'], $fileurl);
+                $actionicons .= ' title="';
+                $actionicons .= get_string('attachmentlink', 'wiki');
+                $actionicons .= '">';
+                $actionicons .= $OUTPUT->pix_icon($icon, 'Link');
+                $actionicons .= '</a>';
 
                 if (file_mimetype_in_typegroup($file->get_mimetype(), 'web_image')) {
-                    $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-image\" ".$this->printInsertTags($tags['image'], $file->get_filename())." title=\"".get_string('attachmentimage', 'wiki')."\">".$OUTPUT->pix_icon($icon, "Image")."</a>"; //TODO: localize
+                    $actionicons .= '&nbsp;&nbsp;<a href="javascript:void(0)" class="wiki-attachment-image" ';
+                    $actionicons .= $this->printInsertTags($tags['image'], $filename);
+                    $actionicons .= 'title="';
+                    $actionicons .= get_string('attachmentimage', 'wiki');
+                    $actionicons .= '">';
+                    $actionicons .= $OUTPUT->pix_icon($icon, 'Image');
+                    $actionicons .= '</a>';
                 }
 
-                $htmltable->data[] = array($checkbox, '<a href="'.$file_url.'">'.$file->get_filename().'</a>', $action_icons);
+                $htmltable->data[] = [$checkbox, '<a href="' . $fileurl . '">' . $filename . '</a>', $actionicons];
             }
         }
 
