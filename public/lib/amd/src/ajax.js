@@ -261,7 +261,10 @@ define(['jquery', 'core/config', 'core/log', 'core/url'], function($, config, Lo
                 processData: false,
                 async: async,
                 contentType: "application/json",
-                timeout: timeout
+                timeout: timeout,
+                headers: {
+                    pageparent: config.traceId || '',
+                },
             };
 
             var script = 'service.php';

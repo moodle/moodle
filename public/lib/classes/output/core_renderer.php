@@ -4002,6 +4002,21 @@ EOD;
     }
 
     /**
+     * Returns the telemetry trace id for the current page, if available.
+     *
+     * This can be used to correlate logs and telemetry data with specific page views.
+     * It is typically presented in the footer or somewhere inconspicious so that user's experiencing difficulties
+     * may be asked for it.
+     *
+     * The value is also passed in the Response header if required.
+     *
+     * @return string|null
+     */
+    public function telemetry_traceid(): ?string {
+        return \core\telemetry::get_page_id();
+    }
+
+    /**
      * Returns the communication link, complete with html.
      *
      * @return string

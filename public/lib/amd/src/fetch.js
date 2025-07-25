@@ -323,6 +323,9 @@ export default class Fetch {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                // Note: Do not use traceparent as this is used by the telemetry system to link requests from the
+                // same request together.
+                'pageparent': Cfg.traceId || '',
             },
         };
 

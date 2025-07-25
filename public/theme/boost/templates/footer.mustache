@@ -73,7 +73,17 @@
             </div>
             <div class="tool_usertours-resettourcontainer">
             </div>
-
+            {{# output.telemetry_traceid }}
+                <div>
+                    <span id="telemetry_traceid" class="d-none">
+                        {{{ output.telemetry_traceid }}}
+                    </span>
+                    <a href="#" data-action="copytoclipboard" data-clipboard-target="#telemetry_traceid"
+                            data-clipboard-success-message="{{#str}}telemetrytraceidfooterlinkcopied, core{{/str}}">
+                        {{#str}}telemetrytraceidfooterlink, core{{/str}}
+                    </a>
+                </div>
+            {{/ output.telemetry_traceid }}
             {{{ output.standard_footer_html }}}
             {{{ output.standard_end_of_body_html }}}
         </div>
@@ -94,7 +104,10 @@
     </div>
 </footer>
 {{#js}}
-require(['theme_boost/footer-popover'], function(FooterPopover) {
+require([
+    'theme_boost/footer-popover',
+    'core/copy_to_clipboard',
+], function(FooterPopover) {
     FooterPopover.init();
 });
 {{/js}}
