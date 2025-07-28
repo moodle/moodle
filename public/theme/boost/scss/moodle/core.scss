@@ -1423,12 +1423,15 @@ audio.mediaplugin_html5audio {
 .modchooser .modal-body {
     padding: 0;
     overflow-y: auto;
-    min-height: 640px;
     display: flex;
     flex-direction: column;
 
     .searchresultitemscontainer-wrapper {
         min-height: 495px;
+    }
+
+    .carousel-item {
+        height: 640px;
     }
 
     .carousel-item.active {
@@ -1552,23 +1555,18 @@ audio.mediaplugin_html5audio {
     background-color: $white;
     overflow-x: hidden;
     overflow-y: auto;
-    height: 640px;
 
-    .content {
-        overflow-y: auto;
-        .heading {
-            .icon {
-                height: 32px;
-                width: 32px;
-                font-size: 32px;
-                padding: 0;
-            }
-        }
+    .activitychooser-option-details {
+        min-width: 10rem;
     }
 
-    .actions {
-        border-top: 1px solid $gray-300;
-        background: $white;
+    // Force the detail icons to be displaced to the left while keeping the name aligned.
+    .modchooser-detail-name {
+        margin-inline-start: map-get($spacers, 3) * -1;
+
+        .modchooser-detail-icon {
+            width: map-get($spacers, 3);
+        }
     }
 }
 

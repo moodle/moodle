@@ -29,25 +29,76 @@
         "help": "This is a description of the assignment activity",
         "archetype": 0,
         "componentname": "mod_assign",
-        "favourite": 1
+        "favourite": 1,
+        "purpose": "collaboration",
+        "categories": "Collaboration, Communication"
     }
 }}
 <div
-    class="optionsummary d-flex flex-column rounded-bottom"
+    class="optionsummary"
     tabindex="-1"
     data-region="chooser-option-summary-container"
     aria-labelledby="optionsummary_label-{{uniqid}}"
     aria-describedby="optionsumary_desc-{{uniqid}}"
 >
-    <div class="content flex-grow-1 text-start p-2 px-sm-5 py-sm-4" data-region="chooser-option-summary-content-container">
-        <div class="heading mb-4">
-            <h5 id="optionsummary_label-{{uniqid}}" data-region="summary-header" tabindex="0">
-                {{{icon}}}
+    <div
+        class="p-5"
+        data-region="chooser-option-summary-content-container"
+    >
+        <div
+            class=""
+            id="optionsummary_label-{{uniqid}}"
+            data-region="summary-header"
+            tabindex="0"
+        >
+            <h6 class="h3 d-flex align-self-stretch align-items-center mb-4 gap-2">
+                <div
+                    class="modicon_{{name}} activityiconcontainer smaller {{!
+                        }} {{purpose}} {{#branded}}isbranded{{/branded}}"
+                >
+                    {{{icon}}}
+                </div>
                 {{title}}
-            </h5>
+            </h6>
         </div>
-        <div id="optionsumary_desc-{{uniqid}}" class="description" tabindex="0">
-            {{{help}}}
+        <div class="d-flex flex-column flex-md-row-reverse gap-3 gap-md-5">
+            {{! Details panel. }}
+            <div
+                class="activitychooser-option-details"
+            >
+                <div class="h5">{{#str}} activitydetails, course {{/str}}</div>
+                {{#details}}
+                <div class="modchooser-detail ps-3 pt-3">
+                    <div
+                        class="modchooser-detail-name {{!
+                        }} d-flex align-items-center text-muted icon-size-2"
+                    >
+                        <div
+                            class="modchooser-detail-icon icon-no-margin d-flex align-items-center"
+                        >
+                            {{#pix}} {{icon}}, core {{/pix}}
+                        </div>
+                        <div>
+                            <small>{{label}}</small>
+                        </div>
+                    </div>
+                    <div class="modchooser-detail-value fw-medium">
+                        {{value}}
+                    </div>
+                </div>
+                {{/details}}
+            </div>
+            {{! Repsonsive dividers. }}
+            <div class="d-none d-md-block vr mx-2"></div>
+            <hr class="d-block d-md-none my-2" />
+            {{! General helps text. }}
+            <div
+                class="flex-grow-1"
+                id="optionsumary_desc-{{uniqid}}"
+                tabindex="0"
+            >
+                {{{help}}}
+            </div>
         </div>
     </div>
 </div>

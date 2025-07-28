@@ -148,6 +148,28 @@ export default class {
     }
 
     /**
+     * Get the module help template data.
+     *
+     * @param {Object} moduleData Data of the module to get help for.
+     * @return {Promise<Object>} Promise resolved with the module help data.
+     */
+    async getModuleHelpTemplateData(moduleData) {
+        const purposeKey = `mod_purpose_${moduleData.purpose}`;
+        const allStrings = await loadNecessaryStrings();
+        const data = {
+            ...moduleData,
+        };
+        data.details = [
+            {
+                icon: 'i/categoryevent',
+                label: allStrings['mod_purposes'],
+                value: allStrings[purposeKey] || '',
+            },
+        ];
+        return data;
+    }
+
+    /**
      * Get the favourite tab data.
      *
      * @param {Array|Map} modulesData Modules data to be used in the chooser.
@@ -225,6 +247,7 @@ async function loadNecessaryStrings() {
         {key: 'favourites', component: 'core'},
         {key: 'recommended', component: 'core'},
         {key: 'recommended_help', component: 'core_course'},
+        {key: 'mod_purposes', component: 'core_course'},
         ...activityCategories.map(
             (key) => ({
                 key: 'mod_purpose_' + key,

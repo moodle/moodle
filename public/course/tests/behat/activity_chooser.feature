@@ -42,11 +42,13 @@ Feature: Display and choose from the available activities in course
     And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     Then I should see "New Assignment"
 
-  Scenario: Show summary
+  Scenario: The teacher can see the activity summary in the activity chooser
     Given I open the activity chooser
     When I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
     Then I should see "Assignment" in the "help" "core_course > Activity chooser screen"
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
+    And I should see "Activity details" in the "help" "core_course > Activity chooser screen"
+    And I should see "Assessment" in the "help" "core_course > Activity chooser screen"
     # Confirm show summary also works for weekly format course
     And I am on "C2" course homepage with editing mode on
     And I click on "Add content" "button" in the "13 January - 19 January" "section"
@@ -54,8 +56,10 @@ Feature: Display and choose from the available activities in course
     And I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
     And I should see "Assignment" in the "help" "core_course > Activity chooser screen"
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
+    And I should see "Activity details" in the "help" "core_course > Activity chooser screen"
+    And I should see "Assessment" in the "help" "core_course > Activity chooser screen"
 
-  Scenario: Hide summary
+  Scenario: The teacher can hide the activity summary in the activity chooser
     Given I open the activity chooser
     When I click on "Information about the Assignment activity" "button" in the "modules" "core_course > Activity chooser screen"
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "help" "core_course > Activity chooser screen"
@@ -64,6 +68,7 @@ Feature: Display and choose from the available activities in course
     And "help" "core_course > Activity chooser screen" should not be visible
     And "Back" "button" in the "Add an activity or resource" "dialogue" should not be visible
     And I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "Add an activity or resource" "dialogue"
+    And I should not see "Activity details" in the "help" "core_course > Activity chooser screen"
     # Confirm hide summary also works for weekly format course
     And I am on "C2" course homepage with editing mode on
     And I click on "Add content" "button" in the "13 January - 19 January" "section"
@@ -74,6 +79,7 @@ Feature: Display and choose from the available activities in course
     And "help" "core_course > Activity chooser screen" should not be visible
     And "Back" "button" should not exist in the "modules" "core_course > Activity chooser screen"
     And I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "Add an activity or resource" "dialogue"
+    And I should not see "Activity details" in the "Add an activity or resource" "dialogue"
 
   Scenario: View recommended activities
     When I log out
