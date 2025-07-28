@@ -29,6 +29,7 @@ Feature: Display and choose from the available activities in course
   Scenario: The teacher can choose to add an activity from the activity items in the activity chooser
     Given I open the activity chooser
     When I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     Then I should see "New Assignment"
     And I set the following fields to these values:
       | Assignment name | Test Assignment |
@@ -38,7 +39,7 @@ Feature: Display and choose from the available activities in course
   Scenario: The teacher can choose to add an activity from the activity summary in the activity chooser
     Given I open the activity chooser
     When I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    When I click on "Add a new Assignment" "link" in the "help" "core_course > Activity chooser screen"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     Then I should see "New Assignment"
 
   Scenario: Show summary
@@ -58,18 +59,17 @@ Feature: Display and choose from the available activities in course
     Given I open the activity chooser
     When I click on "Information about the Assignment activity" "button" in the "modules" "core_course > Activity chooser screen"
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "help" "core_course > Activity chooser screen"
-    And I should see "Back" in the "help" "core_course > Activity chooser screen"
-    When I click on "Back" "button" in the "help" "core_course > Activity chooser screen"
+    And I click on "Back" "button" in the "Add an activity or resource" "dialogue"
     Then "modules" "core_course > Activity chooser screen" should be visible
     And "help" "core_course > Activity chooser screen" should not be visible
-    And "Back" "button" should not exist in the "modules" "core_course > Activity chooser screen"
+    And "Back" "button" in the "Add an activity or resource" "dialogue" should not be visible
     And I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "Add an activity or resource" "dialogue"
     # Confirm hide summary also works for weekly format course
     And I am on "C2" course homepage with editing mode on
     And I click on "Add content" "button" in the "13 January - 19 January" "section"
     And I click on "Activity or resource" "button" in the "13 January - 19 January" "section"
     And I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    And I click on "Back" "button" in the "help" "core_course > Activity chooser screen"
+    And I click on "Back" "button" in the "Add an activity or resource" "dialogue"
     And "modules" "core_course > Activity chooser screen" should be visible
     And "help" "core_course > Activity chooser screen" should not be visible
     And "Back" "button" should not exist in the "modules" "core_course > Activity chooser screen"

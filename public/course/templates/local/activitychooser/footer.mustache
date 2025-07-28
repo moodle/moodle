@@ -15,19 +15,37 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/local/activitychooser/footer_partial
+    @template core_course/local/activitychooser/footer
 
-    Chooser favourite template partial.
+    This template renders the footer of the activity chooser modal.
 
     Example context (json):
     {
+        "activeFooter": "Some content"
     }
 }}
 <div class="w-100 d-flex justify-content-between" data-region="chooser-option-summary-actions-container">
-    <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="0" data-modname="{{componentname}}_{{link}}">
-        {{#str}} back {{/str}}
-    </button>
-    <a href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
-        {{#str}} add {{/str}}
-    </a>
+    <div data-region="active-footer-container">
+        {{{activeFooter}}}
+    </div>
+    <div>
+        <button
+            class="closeoptionsummary btn btn-secondary d-none"
+            data-action="close-chooser-option-summary"
+            tabindex="0"
+            data-modname=""
+        >
+            {{#str}} back {{/str}}
+        </button>
+    </div>
+    <div>
+        <button
+            class="addoption btn btn-primary"
+            title="{{#str}} addselectedactivity, course {{/str}}"
+            data-action="add-selected-chooser-option"
+            tabindex="0"
+        >
+            {{#str}} add {{/str}}
+        </button>
+    </div>
 </div>

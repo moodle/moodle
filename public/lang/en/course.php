@@ -32,6 +32,7 @@ $string['activitydate:closed'] = 'Closed:';
 $string['activitydate:closes'] = 'Closes:';
 $string['activitydate:opened'] = 'Opened:';
 $string['activitydate:opens'] = 'Opens:';
+$string['addselectedactivity'] = 'Add selected activity';
 $string['aria:coursecategory'] = 'Course category';
 $string['aria:courseshortname'] = 'Course short name';
 $string['aria:coursename'] = 'Course name';

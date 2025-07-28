@@ -94,9 +94,8 @@ define(['tool_moodlenet/validator',
      * @param {HTMLElement} showMoodleNet The chooser's area for ment
      * @param {Object} footerData Our footer object to render out
      * @param {Element} carousel Our carousel instance to manage
-     * @param {jQuery} modal Our modal instance to manage
      */
-    var chooserNavigateToMnet = function(showMoodleNet, footerData, carousel, modal) {
+    var chooserNavigateToMnet = function(showMoodleNet, footerData, carousel) {
         showMoodleNet.innerHTML = '';
 
         // Add a spinner.
@@ -125,7 +124,6 @@ define(['tool_moodlenet/validator',
         }, {once: true});
         // Trigger the transition between 'pages'.
         Carousel.getInstance(carousel).to(2);
-        modal.setFooter(Templates.render('tool_moodlenet/chooser_footer_close_mnet', {}));
     };
 
     /**

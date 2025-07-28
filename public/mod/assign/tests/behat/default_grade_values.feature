@@ -15,17 +15,13 @@ Feature: Assignments can have default grades and scales defined
       | user      | course  | role           |
       | teacher1  | C1      | editingteacher |
 
-  @javascript
   Scenario: When creating an assignment the default grade type and grade scale are set as default in the form
     Given the following config values are set as admin:
       | config            | value | plugin     |
       | defaultgradetype  | 2     | mod_assign |
       | defaultgradescale | 2     | mod_assign |
     When I am on the "Course 1" course page logged in as teacher1
-    And I wait until the page is ready
-    And I switch editing mode on
-    And I open the activity chooser
-    And I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
+    And I add an assign activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | name | Test assignment |
     Then the following fields match these values:

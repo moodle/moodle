@@ -332,6 +332,13 @@ class behat_course extends behat_base {
             "/parent::a";
 
         $this->execute('behat_general::i_click_on', [$activityxpath, 'xpath']);
+
+        $this->execute('behat_general::i_click_on_in_the', [
+            get_string('addselectedactivity', 'course'),
+            'button',
+            get_string('addresourceoractivity', 'moodle'),
+            'dialogue',
+        ]);
     }
 
     /**
