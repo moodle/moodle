@@ -81,16 +81,18 @@ Feature: Testing overview integration in H5P activity
     And I should see "Total attempts" in the "h5pactivity_overview_collapsible" "region"
     # Check column values.
     And the following should exist in the "Table listing all H5P activities" table:
-      | Name               | H5P type         | Students who attempted | Total attempts | Actions       |
-      | H5P activity       | Find The Words   | 2 of 3                 | 5              | View results  |
-      | Empty H5P activity | Unknown H5P type | 0 of 3                 | -              | View results  |
-    # Check the Total attempts value.
-    And I should see "-" in the "Empty H5P activity" "table_row"
+      | Name               | H5P type         | Students who attempted | Total attempts | Actions |
+      | H5P activity       | Find The Words   | 2 of 3                 | 5              | View    |
+      | Empty H5P activity | Unknown H5P type | 0 of 3                 | 0              | View    |
     When I click on "5" "button" in the "H5P activity" "table_row"
     Then I should see "Grading method: Average grade"
     And I should see "Average attempts per student: 3"
-    # Check the View results link.
-    And I click on "View results" "link" in the "H5P activity" "table_row"
+    And I press the escape key
+    And I click on "0" "button" in the "Empty H5P activity" "table_row"
+    And I should see "Grading method: Highest grade"
+    And I should see "Average attempts per student: 0"
+    # Check the View link.
+    And I click on "View" "link" in the "H5P activity" "table_row"
     And I should see "Attempts (5)"
 
   Scenario: The H5P activity index redirect to the activities overview

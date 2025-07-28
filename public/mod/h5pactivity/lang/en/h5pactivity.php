@@ -153,5 +153,4 @@ $string['unknowntype'] = 'Unknown H5P type';
 $string['usecontentbank'] = 'Use the <a href="{$a}" target="_blank">content bank (opens in new window)</a> to manage your H5P files';
 $string['view'] = 'View';
 $string['viewattempts'] = 'View attempts ({$a})';
-$string['viewresults'] = 'View results';
 $string['view_report'] = 'View report';
