@@ -36,7 +36,6 @@ final class overviewfactory_test extends \advanced_testcase {
     /**
      * Test create method on resource activities.
      *
-     * @covers ::create
      * @dataProvider create_resource_provider
      * @param string $resourcetype
      */
@@ -150,11 +149,6 @@ final class overviewfactory_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * Test create method on a fake activity with a wrong class.
-     *
-     * @covers ::create
-     */
     public function test_create_exception(
     ): void {
         $this->resetAfterTest();
@@ -179,5 +173,60 @@ final class overviewfactory_test extends \advanced_testcase {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessageMatches("/.* must extend core_courseformat\\\\activityoverviewbase.*/");
         overviewfactory::create($cm);
+    }
+
+    /**
+     * Test activity_has_overview_integration for existing modules.
+     *
+     * @dataProvider activity_has_overview_integration_provider
+     * @param string $modname
+     * @param bool $hasintegration
+     */
+    public function test_activity_has_overview_integration(
+        string $modname,
+        bool $hasintegration,
+    ): void {
+        $result = overviewfactory::activity_has_overview_integration($modname);
+        $this->assertEquals($hasintegration, $result);
+    }
+
+    /**
+     * Data provider for test_overview_integrations.
+     *
+     * @return array
+     */
+    public static function activity_has_overview_integration_provider(): array {
+        return [
+            'assign' => ['modname' => 'assign', 'hasintegration' => true],
+            'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'hasintegration' => false],
+            'book' => ['modname' => 'book', 'hasintegration' => false],
+            'choice' => ['modname' => 'choice', 'hasintegration' => true],
+            'data' => ['modname' => 'data', 'hasintegration' => true],
+            'feedback' => ['modname' => 'feedback', 'hasintegration' => true],
+            'folder' => ['modname' => 'folder', 'hasintegration' => false],
+            'forum' => ['modname' => 'forum', 'hasintegration' => true],
+            'glossary' => ['modname' => 'glossary', 'hasintegration' => true],
+            'h5pactivity' => ['modname' => 'h5pactivity', 'hasintegration' => true],
+            'imscp' => ['modname' => 'imscp', 'hasintegration' => false],
+            'label' => ['modname' => 'label', 'hasintegration' => false],
+            'lesson' => ['modname' => 'lesson', 'hasintegration' => true],
+            'lti' => ['modname' => 'lti', 'hasintegration' => false],
+            'page' => ['modname' => 'page', 'hasintegration' => false],
+            'qbank' => ['modname' => 'qbank', 'hasintegration' => false],
+            'quiz' => ['modname' => 'quiz', 'hasintegration' => false],
+            'resource' => ['modname' => 'resource', 'hasintegration' => true],
+            'scorm' => ['modname' => 'scorm', 'hasintegration' => false],
+            'url' => ['modname' => 'url', 'hasintegration' => false],
+            'wiki' => ['modname' => 'wiki', 'hasintegration' => true],
+            'workshop' => ['modname' => 'workshop', 'hasintegration' => true],
+        ];
+    }
+
+    /**
+     * Test activity_has_overview_integration for non-existing integration.
+     */
+    public function test_activity_has_overview_integration_non_existing(): void {
+        $result = overviewfactory::activity_has_overview_integration('fakemodulenonexisting');
+        $this->assertFalse($result);
     }
 }

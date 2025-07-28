@@ -16,6 +16,7 @@
 
 namespace core\output;
 
+use core\external\action_link_exporter;
 use core\output\actions\component_action;
 use moodle_url;
 use stdClass;
@@ -29,14 +30,14 @@ use stdClass;
  * @package core
  * @category output
  */
-class action_link implements renderable {
+class action_link implements externable, renderable {
     /**
      * @var moodle_url Href url
      */
     public $url;
 
     /**
-     * @var string Link text HTML fragment
+     * @var string|renderable Link text HTML fragment
      */
     public $text;
 
@@ -58,7 +59,7 @@ class action_link implements renderable {
     /**
      * Constructor
      * @param moodle_url $url
-     * @param string $text HTML fragment
+     * @param string|renderable $text HTML fragment
      * @param null|component_action $action
      * @param null|array $attributes associative array of html link attributes + disabled
      * @param null|pix_icon $icon optional pix_icon to render with the link text
@@ -159,6 +160,25 @@ class action_link implements renderable {
         $data->hasactions = !empty($this->actions);
 
         return $data;
+    }
+
+    #[\Override]
+    public function get_exporter(?\core\context $context = null): action_link_exporter {
+        $context = $context ?? \core\context\system::instance();
+        return new action_link_exporter($this, ['context' => $context]);
+    }
+
+    #[\Override]
+    public static function get_read_structure(
+        int $required = VALUE_REQUIRED,
+        mixed $default = null
+    ): \core_external\external_single_structure {
+        return action_link_exporter::get_read_structure($required, $default);
+    }
+
+    #[\Override]
+    public static function read_properties_definition(): array {
+        return action_link_exporter::read_properties_definition();
     }
 }
 

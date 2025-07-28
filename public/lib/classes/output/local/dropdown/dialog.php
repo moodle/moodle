@@ -204,6 +204,24 @@ class dialog implements named_templatable, renderable {
     }
 
     /**
+     * Get the button content.
+     *
+     * @return string the button content
+     */
+    public function get_button_content(): string {
+        return $this->buttoncontent;
+    }
+
+    /**
+     * Get the dialog content.
+     *
+     * @return string the dialog content
+     */
+    public function get_disabled(): bool {
+        return $this->disabled;
+    }
+
+    /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
      * @param \renderer_base $output typically, the renderer that's calling this function

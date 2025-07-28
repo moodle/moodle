@@ -46,4 +46,20 @@ class overviewfactory {
 
         return $result;
     }
+
+    /**
+     * Checks if a given activity module has an overview integration.
+     *
+     * The method search for an integration class named `\mod_{modname}\course\overview`.
+     *
+     * @param string $modname The activity module name.
+     * @return bool True if the activity module has an overview integration, false otherwise.
+     */
+    public static function activity_has_overview_integration(string $modname): bool {
+        $classname = 'mod_' . $modname . '\courseformat\overview';
+        if ($modname === 'resource') {
+            $classname = 'core_courseformat\local\overview\resourceoverview';
+        }
+        return class_exists($classname);
+    }
 }

@@ -30,7 +30,6 @@ final class missingoverviewnotice_test extends \advanced_testcase {
      * Test overview integrations.
      *
      * @covers ::export_for_template
-     * @covers ::activity_has_overview_integration
      * @dataProvider overview_integrations_provider
      * @param string $modname
      * @param bool $expectempty

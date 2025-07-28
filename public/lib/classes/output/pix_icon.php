@@ -16,6 +16,8 @@
 
 namespace core\output;
 
+use core\external\pix_icon_exporter;
+
 /**
  * Data structure representing an icon.
  *
@@ -25,7 +27,7 @@ namespace core\output;
  * @package core
  * @category output
  */
-class pix_icon implements renderable, templatable {
+class pix_icon implements externable, renderable, templatable {
     /**
      * @var string The icon name
      */
@@ -127,6 +129,25 @@ class pix_icon implements renderable, templatable {
         ];
 
         return $data;
+    }
+
+    #[\Override]
+    public function get_exporter(?\core\context $context = null): pix_icon_exporter {
+        $context = $context ?? \core\context\system::instance();
+        return new pix_icon_exporter($this, ['context' => $context]);
+    }
+
+    #[\Override]
+    public static function get_read_structure(
+        int $required = VALUE_REQUIRED,
+        mixed $default = null
+    ): \core_external\external_single_structure {
+        return pix_icon_exporter::get_read_structure($required, $default);
+    }
+
+    #[\Override]
+    public static function read_properties_definition(): array {
+        return pix_icon_exporter::read_properties_definition();
     }
 
     /**

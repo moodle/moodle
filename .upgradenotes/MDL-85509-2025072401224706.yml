@@ -1,0 +1,8 @@
+issueNumber: MDL-85509
+notes:
+  core_courseformat:
+    - message: >-
+        The core_courseformat\local\overview\overviewfactory now includes a new
+        method, activity_has_overview_integration, which determines if a module
+        supports overview integration.
+      type: improved

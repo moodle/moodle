@@ -1,0 +1,8 @@
+issueNumber: MDL-85509
+notes:
+  core:
+    - message: >-
+        Output classes can now implement the core\output\externable interface.
+        This allows these classes to define methods for exporting their data in a format
+        suitable for use in web services.
+      type: improved

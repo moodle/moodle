@@ -46,8 +46,12 @@ final class overviewitem_test extends \advanced_testcase {
         $textalign = text_align::CENTER;
         $alertcount = 1;
         $alertlabel = 'Alert label';
+        $extradata = (object)[
+            'key1' => 'value1',
+            'key2' => 'value2',
+        ];
 
-        $item = new overviewitem($name, $value, $content, $textalign, $alertcount, $alertlabel);
+        $item = new overviewitem($name, $value, $content, $textalign, $alertcount, $alertlabel, $extradata);
 
         $this->assertEquals($name, $item->get_name());
         $this->assertEquals($value, $item->get_value());
@@ -55,6 +59,8 @@ final class overviewitem_test extends \advanced_testcase {
         $this->assertEquals($textalign, $item->get_text_align());
         $this->assertEquals($alertcount, $item->get_alert_count());
         $this->assertEquals($alertlabel, $item->get_alert_label());
+        $this->assertNull($item->get_key()); // Key is null by default.
+        $this->assertEquals($extradata, $item->get_extra_data());
     }
 
     /**
@@ -89,12 +95,19 @@ final class overviewitem_test extends \advanced_testcase {
         $textalign = text_align::END;
         $alertcount = 2;
         $alertlabel = 'New alert label';
+        $key = 'newkey';
+        $extradata = (object)[
+            'key1' => 'value1',
+            'key2' => 'value2',
+        ];
 
         $item->set_name($name)
             ->set_value($value)
             ->set_content($content)
             ->set_text_align($textalign)
-            ->set_alert($alertcount, $alertlabel);
+            ->set_alert($alertcount, $alertlabel)
+            ->set_key($key)
+            ->set_extra_data($extradata);
 
         $this->assertEquals($name, $item->get_name());
         $this->assertEquals($value, $item->get_value());
@@ -102,5 +115,70 @@ final class overviewitem_test extends \advanced_testcase {
         $this->assertEquals($textalign, $item->get_text_align());
         $this->assertEquals($alertcount, $item->get_alert_count());
         $this->assertEquals($alertlabel, $item->get_alert_label());
+        $this->assertEquals($key, $item->get_key());
+        $this->assertEquals($extradata, $item->get_extra_data());
+    }
+
+    /**
+     * Test get_exporter method.
+     */
+    public function test_get_exporter(): void {
+        $name = 'Activity name';
+        $value = 1;
+        $content = 'Activity content';
+        $textalign = text_align::CENTER;
+        $alertcount = 1;
+        $alertlabel = 'Alert label';
+        $extradata = (object) [
+            'key1' => 'value1',
+            'key2' => 'value2',
+        ];
+
+        $source = new overviewitem($name, $value, $content, $textalign, $alertcount, $alertlabel, $extradata);
+        $expectedclass = \core_courseformat\external\overviewitem_exporter::class;
+
+        $exporter = $source->get_exporter();
+        $this->assertInstanceOf($expectedclass, $exporter);
+
+        $structure = overviewitem::get_read_structure();
+        $this->assertInstanceOf(\core_external\external_single_structure::class, $structure);
+        $this->assertEquals(
+            $expectedclass::get_read_structure(),
+            $structure,
+        );
+
+        $structure = overviewitem::read_properties_definition();
+        $this->assertEquals(
+            $expectedclass::read_properties_definition(),
+            $structure,
+        );
+    }
+
+    /**
+     * Test get_content_type method.
+     */
+    public function test_get_content_type(): void {
+        $name = 'Activity name';
+        $value = 1;
+        $textalign = text_align::CENTER;
+        $alertcount = 1;
+        $alertlabel = 'Alert label';
+        $extradata = (object) [
+            'key1' => 'value1',
+            'key2' => 'value2',
+        ];
+
+        // Test a basic string content.
+        $content = 'Activity content';
+        $source = new overviewitem($name, $value, $content, $textalign, $alertcount, $alertlabel, $extradata);
+        $this->assertEquals('basic', $source->get_content_type());
+
+        // Test an renderable content.
+        $content = new \core\output\action_link(
+            url: new \core\url('/some/url'),
+            text: 'Click here',
+        );
+        $source = new overviewitem($name, $value, $content, $textalign, $alertcount, $alertlabel, $extradata);
+        $this->assertEquals(\core\output\action_link::class, $source->get_content_type());
     }
 }
