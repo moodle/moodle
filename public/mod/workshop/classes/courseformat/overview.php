@@ -91,6 +91,42 @@ class overview extends \core_courseformat\activityoverviewbase {
         ];
     }
 
+    #[\Override]
+    public function get_actions_overview(): ?overviewitem {
+
+        if (
+            !has_capability('mod/workshop:viewallsubmissions', $this->cm->context)
+            && !has_capability('mod/workshop:viewallassessments', $this->cm->context)
+        ) {
+            // Students do not have any actions.
+            return null;
+        }
+
+        $anchor = null;
+        if ($this->workshop->phase == workshop::PHASE_SUBMISSION) {
+            $anchor = 'workshop-viewlet-allsubmissions';
+        } else if ($this->workshop->phase == workshop::PHASE_ASSESSMENT) {
+            $anchor = 'workshop-viewlet-gradereport';
+        }
+
+        $content = new action_link(
+            url: new url(
+                '/mod/workshop/view.php',
+                ['id' => $this->cm->id],
+                $anchor,
+            ),
+            text: get_string('view', 'core'),
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
+        );
+
+        return new overviewitem(
+            name: get_string('actions', 'core'),
+            value: get_string('view', 'core'),
+            content: $content,
+            textalign: text_align::CENTER,
+        );
+    }
+
     /**
      * Get the current phase overview item.
      *
@@ -163,19 +199,6 @@ class overview extends \core_courseformat\activityoverviewbase {
             ['count' => $submissions, 'total' => $total]
         );
 
-        // If the current phase is submission, we can add a direct link.
-        if ($this->workshop->phase == workshop::PHASE_SUBMISSION) {
-            $content = new action_link(
-                url: new url(
-                    '/mod/workshop/view.php',
-                    ['id' => $this->cm->id],
-                    'workshop-viewlet-allsubmissions',
-                ),
-                text: $content,
-                attributes: ['class' => button::BODY_OUTLINE->classes()],
-            );
-        }
-
         return new overviewitem(
             name: get_string('submissions', 'workshop'),
             value: $submissions,
@@ -213,19 +236,6 @@ class overview extends \core_courseformat\activityoverviewbase {
             'core',
             ['count' => $assessments, 'total' => $total]
         );
-
-        // If the current phase is assessment, we can add a direct link.
-        if ($this->workshop->phase == workshop::PHASE_ASSESSMENT) {
-            $content = new action_link(
-                url: new url(
-                    '/mod/workshop/view.php',
-                    ['id' => $this->cm->id],
-                    'workshop-viewlet-gradereport',
-                ),
-                text: $content,
-                attributes: ['class' => button::BODY_OUTLINE->classes()],
-            );
-        }
 
         return new overviewitem(
             name: get_string('assessments', 'workshop'),

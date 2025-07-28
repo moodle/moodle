@@ -56,7 +56,7 @@ In order to summarize the workshops
       | Overridden  | 1                      |
       | Final grade | 10                     |
     And I press "Save changes"
-    And I click on "Activity 2 (assessment)" "core_grades > grade_actions" in the "Student 1" "table_row"
+    And I click on "Activity 1 (assessment)" "core_grades > grade_actions" in the "Student 1" "table_row"
     And I choose "Edit grade" in the open action menu
     And I set the following fields to these values:
       | Overridden  | 1                      |
@@ -66,24 +66,11 @@ In order to summarize the workshops
     And I am on the "Activity 1" "workshop activity" page
     And I change phase in workshop "Activity 1" to "Submission phase"
     When I am on the "Course 1" "course > activities > workshop" page logged in as "student1"
-    # Check columns.
-    Then I should see "Name" in the "workshop_overview_collapsible" "region"
-    And I should see "Phase" in the "workshop_overview_collapsible" "region"
-    And I should see "Deadline" in the "workshop_overview_collapsible" "region"
-    And I should see "Assessment grade" in the "workshop_overview_collapsible" "region"
-    And I should see "Submission grade" in the "workshop_overview_collapsible" "region"
-    # Check phase.
-    And I should see "Submission phase" in the "Activity 1" "table_row"
-    And I should see "Setup phase" in the "Activity 2" "table_row"
-    # Cheack Deadline.
-    And I should see "1 January 2040" in the "Activity 1" "table_row"
-    And I should see "-" in the "Activity 2" "table_row"
-    # Check Grades.
-    And I should see "10.00" in the "Activity 1" "table_row"
-    And I should see "-" in the "Activity 1" "table_row"
-    And I should see "-" in the "Activity 2" "table_row"
-    # The worksup assessment grade is normalized to 5.00.
-    And I should see "5.00" in the "Activity 2" "table_row"
+    Then the following should exist in the "Table listing all Workshop activities" table:
+      | Name       | Phase            | Phase deadline      | Submission grade | Assessment grade |
+      | Activity 1 | Submission phase | 1 January 2040      | 10.00            | 5.00             |
+      | Activity 2 | Setup phase      | -                   | -                | -                |
+    And I should not see "Actions" in the "workshop_overview_collapsible" "region"
 
   Scenario: Teachers can see relevant columns in the workshop overview
     Given I log in as "teacher1"
@@ -134,33 +121,24 @@ In order to summarize the workshops
     And I press "Re-calculate grades"
     # Now, the test itself.
     When I am on the "Course 1" "course > activities > workshop" page logged in as "teacher1"
-    # Check columns.
-    Then I should see "Name" in the "workshop_overview_collapsible" "region"
-    And I should see "Phase" in the "workshop_overview_collapsible" "region"
-    And I should see "Deadline" in the "workshop_overview_collapsible" "region"
-    And I should see "Submissions" in the "workshop_overview_collapsible" "region"
-    And I should see "Assessments" in the "workshop_overview_collapsible" "region"
-    # Check phase.
-    And I should see "Grading evaluation phase" in the "Activity 1" "table_row"
-    And I should see "Submission phase" in the "Activity 2" "table_row"
-    # Cheack Deadline.
-    And I should see "-" in the "Activity 1" "table_row"
-    And I should see "Tomorrow" in the "Activity 2" "table_row"
-    # Check Submissions.
-    And I should see "1 of 8" in the "Activity 1" "table_row"
-    And I should see "0 of 8" in the "Activity 2" "table_row"
-    # Check Assessments.
-    And I should see "3 of 3" in the "Activity 1" "table_row"
-    And I should see "-" in the "Activity 2" "table_row"
+    Then the following should exist in the "Table listing all Workshop activities" table:
+      | Name       | Phase                    | Phase deadline | Submissions | Assessments | Actions |
+      | Activity 1 | Grading evaluation phase | -              | 1 of 8      | 3 of 3      | View    |
+      | Activity 2 | Submission phase         | Tomorrow       | 0 of 8      | -           | View    |
+    # Check the View link.
+    And I click on "View" "link" in the "Activity 1" "table_row"
+    And I should see "Workshop grades report"
+    And I am on the "Course 1" "course > activities > workshop" page
+    And I click on "View" "link" in the "Activity 2" "table_row"
+    And I should see "Workshop submissions report"
 
-  @javascript
   Scenario: The workshop index redirect to the activities overview
-    When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Activities" block
-    And I click on "Workshops" "link" in the "Activities" "block"
-    Then I should see "An overview of all activities in the course"
-    And I should see "Name" in the "workshop_overview_collapsible" "region"
-    And I should see "Phase" in the "workshop_overview_collapsible" "region"
-    And I should see "Submissions" in the "workshop_overview_collapsible" "region"
-    And I should see "Assessments" in the "workshop_overview_collapsible" "region"
+    Given the following "activity" exists:
+      | activity    | workshop           |
+      | course      | Acceptance test site |
+      | name        | Home workshop      |
+    And I log in as "admin"
+    When I visit "/mod/workshop/index.php?id=1"
+    Then the following should exist in the "Table listing all Workshop activities" table:
+      | Name          | Phase       | Submissions   | Assessments | Actions |
+      | Home workshop | Setup phase | -             | -           | View    |

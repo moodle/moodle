@@ -16,6 +16,11 @@
 
 namespace mod_workshop\courseformat;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/workshop/locallib.php');
+
 use core_courseformat\local\overview\overviewfactory;
 
 /**
@@ -28,12 +33,6 @@ use core_courseformat\local\overview\overviewfactory;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class overview_test extends \advanced_testcase {
-    #[\Override]
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/workshop/locallib.php');
-        parent::setUpBeforeClass();
-    }
 
     /**
      * Test get_grade_item_names method.
@@ -630,6 +629,70 @@ final class overview_test extends \advanced_testcase {
                 'currentphase' => \workshop::PHASE_CLOSED,
                 'hasstudentactivity' => true,
                 'expectnull' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Test get_actions_overview.
+     *
+     * @covers ::get_actions_overview
+     * @dataProvider provider_test_get_actions_overview
+     *
+     * @param string $role
+     * @param array|null $expected
+     */
+    public function test_get_actions_overview(
+        string $role,
+        ?array $expected
+    ): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
+        $activity = $this->getDataGenerator()->create_module('workshop', ['course' => $course->id]);
+
+        $this->setUser($currentuser);
+
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $item = overviewfactory::create($cm)->get_actions_overview();
+
+        if ($expected === null) {
+            $this->assertNull($item);
+            return;
+        }
+
+        $this->assertEquals(
+            $expected,
+            ['name' => $item->get_name(), 'value' => $item->get_value()]
+        );
+    }
+
+    /**
+     * Data provider for test_get_actions_overview.
+     *
+     * @return array
+     */
+    public static function provider_test_get_actions_overview(): array {
+        return [
+            'Student' => [
+                'role' => 'student',
+                'expected' => null,
+            ],
+            'Editing teacher' => [
+                'role' => 'editingteacher',
+                'expected' => [
+                    'name' => get_string('actions'),
+                    'value' => get_string('view'),
+                ],
+            ],
+            'Teacher' => [
+                'role' => 'teacher',
+                'expected' => [
+                    'name' => get_string('actions'),
+                    'value' => get_string('view'),
+                ],
             ],
         ];
     }
