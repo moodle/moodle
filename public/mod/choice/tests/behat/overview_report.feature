@@ -24,7 +24,8 @@ Feature: Testing overview integration in mod_choice
       | activity | name     | intro                | course | idnumber | option             | section | completion | allowmultiple | timeclose      |
       | choice   | Choice 1 | Choice Description 1 | C1     | choice1  | Option 1, Option 2 | 1       | 1          | 1             | 1 January 2040 |
       | choice   | Choice 2 | Choice Description 2 | C1     | choice2  | Option A, Option B | 1       | 0          | 0             |                |
-      | choice   | Choice 3 | Choice Description 3 | C1     | choice3  | Option A           | 1       | 0          | 0             |                |
+      | choice   | Choice 3 | Choice Description 3 | C1     | choice3  | Option A           | 1       | 0          | 1             |                |
+      | choice   | Choice 4 | Choice Description 4 | C1     | choice4  | Option Z           | 1       | 0          | 0             |                |
     And the following "mod_choice > responses" exist:
       | choice  | user     | responses          |
       | choice1 | student1 | Option 1, Option 2 |
@@ -56,7 +57,9 @@ Feature: Testing overview integration in mod_choice
       | Choice 1 | 1 January 2040 |
       | Choice 2 | -              |
       | Choice 3 | -              |
+      | Choice 4 | -              |
 
+  @javascript
   Scenario: Teachers can see relevant columns and content in the choice overview
     Given I am on the "Course 1" "course > activities > choice" page logged in as "teacher1"
     # Check columns.
@@ -70,6 +73,16 @@ Feature: Testing overview integration in mod_choice
       | Choice 1 | 2                      | View    |
       | Choice 2 | 1                      | View    |
       | Choice 3 | 0                      | View    |
+      | Choice 4 | 0                      | View    |
+    And I click on "2" "button" in the "Choice 1" "table_row"
+    And I should see "Allow more than one choice to be selected"
+    And I should see "Option 1: 1"
+    And I should see "Option 2: 2"
+    And I press the escape key
+    And I click on "0" "button" in the "Choice 4" "table_row"
+    And I should not see "Allow more than one choice to be selected"
+    And I should see "Option Z: 0"
+    And I press the escape key
 
   Scenario: The choice index redirect to the activities overview
     When I log in as "admin"
