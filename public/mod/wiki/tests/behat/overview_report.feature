@@ -31,9 +31,11 @@ Feature: Testing overview integration in mod_wiki
       | student2 | G2    |
       | student3 | G3    |
     And the following "activities" exist:
-      | activity | course | name          | idnumber | wikimode      | firstpagetitle  | groupmode |
-      | wiki     | C1     | Separate wiki | wiki1    | collaborative | Separate page 1 | 1         |
-      | wiki     | C1     | Visible wiki  | wiki2    | collaborative | Visible page 1  | 2         |
+      | activity | course | name                     | idnumber | wikimode      | firstpagetitle       | groupmode |
+      | wiki     | C1     | Separate wiki            | wiki1    | collaborative | Separate page 1      | 1         |
+      | wiki     | C1     | Visible wiki             | wiki2    | collaborative | Visible page 1       | 2         |
+      | wiki     | C1     | Collaborative wiki empty | wiki3    | collaborative | Collaborative page 1 |           |
+      | wiki     | C1     | Individual wiki empty    | wiki4    | individual    | Individual page 1    |           |
     And the following wiki pages exist:
       | wiki  | title           | content      | group |
       | wiki1 | Separate page 1 | Group 1 page | G1    |
@@ -57,16 +59,26 @@ Feature: Testing overview integration in mod_wiki
   Scenario: Students can see relevant columns in the wiki overview
     Given I am on the "Course 1" "course > activities > wiki" page logged in as "student1"
     Then the following should exist in the "Table listing all Wiki activities" table:
-      | Name          | My entries | Total entries |
-      | Separate wiki | 0          | 0             |
-      | Visible wiki  | 0          | 3             |
+      | Name                     | My entries | Total entries |
+      | Separate wiki            | 0          | 0             |
+      | Visible wiki             | 0          | 3             |
+      | Collaborative wiki empty | 0          | 0             |
+      | Individual wiki empty    | 0          | 0             |
 
+  @javascript
   Scenario: Teachers can see relevant columns in the wiki overview
-    Given I am on the "Course 1" "course > activities > wiki" page logged in as "teacher1"
+    When I am on the "Course 1" "course > activities > wiki" page logged in as "teacher1"
     Then the following should exist in the "Table listing all Wiki activities" table:
-      | Name          | Wiki mode          | Entries | Actions |
-      | Separate wiki | Collaborative wiki | 3       | View    |
-      | Visible wiki  | Collaborative wiki | 3       | View    |
+      | Name                     | Wiki mode          | Entries | Actions |
+      | Separate wiki            | Collaborative wiki | 3       | View    |
+      | Visible wiki             | Collaborative wiki | 3       | View    |
+      | Collaborative wiki empty | Collaborative wiki | 0       | View    |
+      | Individual wiki empty    | Individual wiki    | 0       | View    |
+    And I click on "View" "link" in the "Separate wiki" "table_row"
+    And I should see "Page list"
+    And I am on the "Course 1" "course > activities > wiki" page
+    And I click on "View" "link" in the "Collaborative wiki empty" "table_row"
+    And I should not see "Page list"
 
   Scenario: The wiki index redirect to the activities overview
     When I log in as "admin"
@@ -77,3 +89,4 @@ Feature: Testing overview integration in mod_wiki
     And I should see "Name" in the "wiki_overview_collapsible" "region"
     And I should see "Wiki mode" in the "wiki_overview_collapsible" "region"
     And I should see "Entries" in the "wiki_overview_collapsible" "region"
+    And I should see "Actions" in the "wiki_overview_collapsible" "region"

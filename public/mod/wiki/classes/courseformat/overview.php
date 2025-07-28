@@ -16,14 +16,14 @@
 
 namespace mod_wiki\courseformat;
 
-use core\output\renderer_helper;
-use core\url;
 use cm_info;
-use core_courseformat\local\overview\overviewitem;
-use core\output\action_link;
-use core\output\local\properties\text_align;
-use core\output\local\properties\button;
+use core\url;
 use mod_wiki\manager;
+use core\output\action_link;
+use core\output\renderer_helper;
+use core\output\local\properties\button;
+use core\output\local\properties\text_align;
+use core_courseformat\local\overview\overviewitem;
 
 /**
  * Wiki overview integration.
@@ -43,14 +43,11 @@ class overview extends \core_courseformat\activityoverviewbase {
      *
      * @param cm_info $cm the course module instance.
      * @param renderer_helper $rendererhelper the renderer helper.
-     * @param \core_string_manager $stringmanager
      */
     public function __construct(
         cm_info $cm,
         /** @var renderer_helper $rendererhelper the renderer helper */
         protected readonly renderer_helper $rendererhelper,
-        /** @var \core_string_manager $stringmanager the string manager */
-        protected readonly \core_string_manager $stringmanager,
     ) {
         parent::__construct($cm);
         $this->manager = manager::create_from_coursemodule($cm);
@@ -61,24 +58,30 @@ class overview extends \core_courseformat\activityoverviewbase {
         if (!has_capability('mod/wiki:managewiki', $this->cm->context)) {
             return null; // If the user cannot manage the wiki, we don't show the actions.
         }
-        // If a wiki does not have a main page means it is not used yet, so we do not show the action link.
+
         $pageid = $this->manager->get_main_wiki_pageid();
-        if (!$pageid) {
-            return null;
-        }
-
-        $text = $this->stringmanager->get_string('view');
-
-        $content = new action_link(
-            url: new url(
+        if ($pageid) {
+            // If the main page of the wiki exists, link to the map view.
+            $url = new url(
                 '/mod/wiki/map.php',
                 ['pageid' => $pageid],
-            ),
+            );
+        } else {
+            $url = new url(
+                '/mod/wiki/view.php',
+                ['id' => $this->cm->id],
+            );
+        }
+
+        $text = get_string('view');
+        $content = new action_link(
+            url: $url,
             text: $text,
             attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
         );
+
         return new overviewitem(
-            name: $this->stringmanager->get_string('actions'),
+            name: get_string('actions'),
             value: $text,
             content: $content,
             textalign: text_align::CENTER,
@@ -100,10 +103,9 @@ class overview extends \core_courseformat\activityoverviewbase {
      */
     private function get_extra_wiki_type(): overviewitem {
         return new overviewitem(
-            name: $this->stringmanager->get_string('wikimode', 'wiki'),
+            name: get_string('wikimode', 'wiki'),
             value: $this->manager->get_wiki_mode()->value,
             content: $this->manager->get_wiki_mode()->to_string(),
-            textalign: text_align::CENTER,
         );
     }
 
@@ -119,7 +121,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         }
         $entriescount  = $this->manager->get_user_entries_count($USER->id);
         return new overviewitem(
-            name: $this->stringmanager->get_string('myentries', 'wiki'),
+            name: get_string('myentries', 'wiki'),
             value: $entriescount,
             content: $entriescount,
             textalign: text_align::CENTER,
@@ -134,9 +136,9 @@ class overview extends \core_courseformat\activityoverviewbase {
     private function get_total_entries(): overviewitem {
         global $USER;
         $entriescount = $this->manager->get_all_entries_count($USER->id);
-        $label = $this->stringmanager->get_string('totalentries', 'wiki');
+        $label = get_string('totalentries', 'wiki');
         if (has_capability('mod/wiki:managewiki', $this->cm->context)) {
-            $label = $this->stringmanager->get_string('entries', 'wiki');
+            $label = get_string('entries', 'wiki');
         }
         return new overviewitem(
             name: $label,
