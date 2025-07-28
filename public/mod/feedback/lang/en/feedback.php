@@ -96,6 +96,7 @@ $string['dropdownlist'] = 'Multiple choice - single answer (drop-down menu)';
 $string['dropdownrated'] = 'Drop-down menu (rated)';
 $string['dropdown_values'] = 'Answers';
 $string['drop_feedback'] = 'Remove from this course';
+$string['duedate'] = 'Due date';
 $string['edit_item'] = 'Edit question';
 $string['edit_items'] = 'Edit questions';
 $string['email_notification'] = 'Enable notification of submissions';
