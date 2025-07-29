@@ -44,7 +44,7 @@ Feature: Custom profile fields creation using UI
     And I click on "Create a new profile field" "link"
     And I click on "Social" "link"
     And I set the following fields to these values:
-      | Network type  | Web page  |
+      | Network type  | Website   |
       | Short name    | social    |
     When I click on "Save changes" "button"
-    Then I should see "Web page"
+    Then I should see "Website"

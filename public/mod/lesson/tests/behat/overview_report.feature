@@ -46,7 +46,7 @@ Feature: Testing overview_report in mod_lesson
       | Lesson 1 | 2 of 3                 | 4                   | Tomorrow        |
       | Lesson 2 | 0 of 3                 | 0                   | -               |
     And I click on "4" "button" in the "Lesson 1" "table_row"
-    And I should see "This Lesson allows students to do multiple attempts."
+    And I should see "This lesson allows students to attempt it more than once."
     And I should see "Average attempts per student: 2"
     And I press the escape key
     And "0" "button" should not exist in the "Lesson 2" "table_row"

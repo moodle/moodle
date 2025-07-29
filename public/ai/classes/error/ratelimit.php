@@ -19,7 +19,7 @@ namespace core_ai\error;
 /**
  * Error 429 handler class.
  *
- * The HTTP 429 Too Many Requests error code indicates that
+ * The HTTP 429 Too many requests error code indicates that
  * the user has sent too many requests in a given amount of time.
  *
  * @package    core_ai

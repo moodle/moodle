@@ -67,7 +67,7 @@ final class ratelimit_test extends \advanced_testcase {
                 ],
                 'expected' => [
                     'errorcode' => 429,
-                    'error' => 'Too Many Requests',
+                    'error' => 'Too many requests',
                     'errormessage' => 'You have reached the maximum number of AI requests across the entire site '
                         . 'you can make in an hour. Try again later',
                 ],
@@ -82,7 +82,7 @@ final class ratelimit_test extends \advanced_testcase {
                 ],
                 'expected' => [
                     'errorcode' => 429,
-                    'error' => '429: Too Many Requests',
+                    'error' => '429: Too many requests',
                     'errormessage' => 'You have reached the maximum number of AI requests across the entire site '
                         . 'you can make in an hour. Try again later',
                 ],
@@ -97,8 +97,8 @@ final class ratelimit_test extends \advanced_testcase {
                 ],
                 'expected' => [
                     'errorcode' => 429,
-                    'error' => 'Too Many Requests',
-                    'errormessage' => 'This AI service has reached its request limit. Try again later',
+                    'error' => 'Too many requests',
+                    'errormessage' => 'This AI service has reached its request limit. Try again later.',
                 ],
             ],
             'case 4: Error 429, DEBUG_ALL, upstream' => [
@@ -111,7 +111,7 @@ final class ratelimit_test extends \advanced_testcase {
                 ],
                 'expected' => [
                     'errorcode' => 429,
-                    'error' => '429: Too Many Requests',
+                    'error' => '429: Too many requests',
                     'errormessage' => 'You have reached the maximum number of AI requests per user you can make in an hour. '
                         . 'Try again later',
                 ],
