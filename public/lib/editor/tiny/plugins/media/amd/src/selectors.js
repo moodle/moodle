@@ -62,12 +62,12 @@ export default {
         },
         template: {
             body: {
-                insertImageBody: 'tiny_media/insert_image_modal_insert',
-                insertImageDetailsBody: 'tiny_media/insert_image_modal_details',
+                insertImageBody: 'tiny_media/image/body/insert_image_modal_insert_body',
+                insertImageDetailsBody: 'tiny_media/image/body/insert_image_modal_details_body',
             },
             footer: {
-                insertImageFooter: 'tiny_media/insert_image_modal_insert_footer',
-                insertImageDetailsFooter: 'tiny_media/insert_image_modal_details_footer',
+                insertImageFooter: 'tiny_media/image/footer/insert_image_modal_insert_footer',
+                insertImageDetailsFooter: 'tiny_media/image/footer/insert_image_modal_details_footer',
             },
         },
         type: 'IMAGE',

@@ -28,7 +28,7 @@ import {
     videoButtonName,
     mediaManagerButtonName
 } from './common';
-import MediaImage from './image';
+import MediaImage from './image/image';
 import MediaEmbed from './embed';
 import MediaManager from './manager';
 import {getButtonImage} from 'editor_tiny/utils';

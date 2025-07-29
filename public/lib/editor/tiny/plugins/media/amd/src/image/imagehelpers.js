@@ -16,13 +16,13 @@
 /**
  * Tiny media plugin image helpers.
  *
- * @module      tiny_media/imagehelpers
+ * @module      tiny_media/image/imagehelpers
  * @copyright   2024 Meirza <meirza.arson@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import * as Helpers from 'tiny_media/helpers';
-import {Selectors} from './selectors';
+import * as Helpers from '../helpers';
+import {Selectors} from '../selectors';
 
 /**
  * Maximum length allowed for the alt attribute.

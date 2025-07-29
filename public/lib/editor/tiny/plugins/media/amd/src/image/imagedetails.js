@@ -16,7 +16,7 @@
 /**
  * Tiny media plugin image details class for Moodle.
  *
- * @module      tiny_media/imagedetails
+ * @module      tiny_media/image/imagedetails
  * @copyright   2024 Meirza <meirza.arson@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,18 +25,18 @@ import Config from 'core/config';
 import ModalEvents from 'core/modal_events';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
-import Selectors from './selectors';
+import Selectors from '../selectors';
 import Templates from 'core/templates';
 import {getString} from 'core/str';
-import {ImageInsert} from 'tiny_media/imageinsert';
-import {MediaBase} from './mediabase';
+import {ImageInsert} from './imageinsert';
+import {MediaBase} from '../mediabase';
 import {
     body,
     footer,
     hideElements,
     showElements,
     isPercentageValue,
-} from './helpers';
+} from '../helpers';
 
 export class ImageDetails extends MediaBase {
     DEFAULTS = {
@@ -353,7 +353,7 @@ export class ImageDetails extends MediaBase {
             return;
         }
 
-        Templates.render('tiny_media/image', this.getImageContext())
+        Templates.render('tiny_media/image/image', this.getImageContext())
         .then((html) => {
             this.editor.insertContent(html);
             this.currentModal.destroy();
@@ -378,8 +378,9 @@ export class ImageDetails extends MediaBase {
             // Removing the image in the preview will bring the user to the insert page.
             this.loadInsertImage();
             return;
-        }).catch(error => {
-            window.console.log(error);
+        }).catch(() => {
+            // User cancelled the delete action.
+            return;
         });
     }
 

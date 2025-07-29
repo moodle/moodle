@@ -22,10 +22,10 @@
  */
 
 import {getString} from 'core/str';
-import MediaImage from 'tiny_media/image';
+import MediaImage from 'tiny_media/image/image';
 import Notification from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
-import {MAX_LENGTH_ALT} from 'tiny_media/imagehelpers';
+import {MAX_LENGTH_ALT} from 'tiny_media/image/imagehelpers';
 
 prefetchStrings('core_ai', [
     'contentwatermark',

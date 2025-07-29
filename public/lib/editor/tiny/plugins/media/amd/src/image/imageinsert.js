@@ -16,27 +16,27 @@
 /**
  * Tiny media plugin image insertion class for Moodle.
  *
- * @module      tiny_media/imageinsert
+ * @module      tiny_media/image/imageinsert
  * @copyright   2024 Meirza <meirza.arson@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Selectors from './selectors';
+import Selectors from '../selectors';
 import Dropzone from 'core/dropzone';
 import uploadFile from 'editor_tiny/uploader';
 import {prefetchStrings} from 'core/prefetch';
 import {getStrings} from 'core/str';
-import {component} from "./common";
+import {component} from "../common";
 import {getFilePicker} from 'editor_tiny/options';
 import {displayFilepicker} from 'editor_tiny/utils';
-import {ImageDetails} from 'tiny_media/imagedetails';
+import {ImageDetails} from './imagedetails';
 import {
     body,
     footer,
     hideElements,
     showElements,
     isValidUrl,
-} from './helpers';
+} from '../helpers';
 import {MAX_LENGTH_ALT} from './imagehelpers';
 
 prefetchStrings('tiny_media', [

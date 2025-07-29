@@ -16,17 +16,17 @@
 /**
  * Image Modal for Tiny.
  *
- * @module      tiny_media/imagemodal
+ * @module      tiny_media/image/imagemodal
  * @copyright   2022 Huong Nguyen <huongnv13@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Modal from 'core/modal';
-import {component} from './common';
+import {component} from '../common';
 
 export default class ImageModal extends Modal {
-    static TYPE = `${component}/imagemodal`;
-    static TEMPLATE = `${component}/insert_image_modal`;
+    static TYPE = `${component}/image/imagemodal`;
+    static TEMPLATE = `${component}/image/insert_image_modal`;
 
     registerEventListeners() {
         // Call the parent registration.
