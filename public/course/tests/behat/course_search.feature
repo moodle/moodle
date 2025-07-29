@@ -20,12 +20,14 @@ Feature: Courses can be searched for and moved in bulk.
   Scenario: Search courses finds correct results
     Given I log in as "admin"
     And I go to the courses management page
+    And I should not see "Back" in the "region-main" "region"
     When I set the field "Search" to "Biology"
     And I press "Search"
     Then I should see "Biology Y1"
     And I should see "Biology Y2"
     And I should not see "English Y1"
     And I should not see "English Y2"
+    And I should see "Back" in the "region-main" "region"
 
   Scenario: Search courses displays contact names
     Given the following "users" exist:
