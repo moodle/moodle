@@ -1,0 +1,8 @@
+issueNumber: MDL-86151
+notes:
+  core_reportbuilder:
+    - message: >-
+        The report column class has a new `get_effective_type()` method to
+        determine the returned column type, taking into account applied
+        aggregation method
+      type: improved
