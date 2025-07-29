@@ -90,6 +90,16 @@ class user_submission_actionmenu implements templatable, renderable {
     }
 
     /**
+     * Has the submission started.
+     *
+     * @return bool The status of the submission; true if started, otherwise false.
+     */
+    protected function is_submission_started(): bool {
+        return (is_object($this->teamsubmission) && isset($this->teamsubmission->timestarted))
+            || (is_object($this->submission) && isset($this->submission->timestarted));
+    }
+
+    /**
      * Export the submission buttons for the page.
      *
      * @param  \renderer_base $output renderer base output.
@@ -130,20 +140,20 @@ class user_submission_actionmenu implements templatable, renderable {
                 $data['edit']['help'] = $newattempthelp->export_for_template($output);
             }
             if ($status === ASSIGN_SUBMISSION_STATUS_NEW) {
-
                 $timelimitenabled = get_config('assign', 'enabletimelimit');
-                if ($timelimitenabled && $this->timelimit && empty($this->submission->timestarted)) {
+                if ($timelimitenabled && $this->timelimit && !$this->is_submission_started()) {
                     $confirmation = new \confirm_action(
                         get_string('confirmstart', 'assign', format_time($this->timelimit)),
                         null,
                         get_string('beginassignment', 'assign')
                     );
-                    $urlparams = array('id' => $this->cmid, 'action' => 'editsubmission');
+                    // The 'begin' flag indicates that the user is starting a timed assignment.
+                    $urlparams = ['id' => $this->cmid, 'action' => 'editsubmission', 'begin' => 1];
                     $beginbutton = new \action_link(
                         new moodle_url('/mod/assign/view.php', $urlparams),
-                            get_string('beginassignment', 'assign'),
-                            $confirmation,
-                            ['class' => 'btn btn-primary']
+                        get_string('beginassignment', 'assign'),
+                        $confirmation,
+                        ['class' => 'btn btn-primary']
                     );
                     $data['edit']['button'] = $beginbutton->export_for_template($output);
                     $data['edit']['begin'] = true;
