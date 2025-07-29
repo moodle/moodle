@@ -36,4 +36,4 @@ $string['yahooid'] = 'Yahoo ID';
 $string['skypeid'] = 'Skype ID';
 $string['icqnumber'] = 'ICQ number';
 $string['msnid'] = 'MSN ID';
-$string['webpage'] = 'Web page';
+$string['webpage'] = 'Website';
