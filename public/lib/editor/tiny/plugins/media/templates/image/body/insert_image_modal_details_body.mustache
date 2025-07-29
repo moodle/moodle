@@ -37,23 +37,14 @@
 <div class="tiny_image_image_details">
     <div class="container">
         <div class="row">
-            <!-- Column 1: Image Preview and Description -->
-            <div class="tiny_image_preview_col col-lg-7 p-0">
-                <input type="hidden" class="tiny_image_customstyle" value="{{customStyle}}">
-                <!-- Row 1: Image preview -->
-                <div class="tiny_image_preview_box border rounded position-relative">
-                    <!-- Delete image icon -->
-                    <div class="tiny_image_deleteicon" tabindex="0" title="{{#str}} deleteimage, tiny_media {{/str}}">
-                        <i class="fa fa-trash-o" title="{{#str}} deleteimage, tiny_media {{/str}}"></i>
-                    </div>
-                    <!-- Image placeholder -->
-                    <img class="tiny_image_preview" src="data:," alt>
-                </div>
-                <!-- Row 2: Image description -->
-                <div class="mt-3">
+            {{! Checkbox and radio buttons }}
+            <div class="tiny_image_properties_col col-lg-5">
+                {{! Image description }}
+                <div class="mb-2">
+                    <span class="fw-bold">{{#str}} imagealternativetext, tiny_media {{/str}}</span>
                     <label for="{{elementid}}_tiny_image_altentry">{{#str}} enteralt, tiny_media {{/str}}</label>
-                    <textarea class="tiny_image_altentry form-control fullwidth" id="{{elementid}}_tiny_image_altentry" name="altentry" maxlength="{{maxlengthalt}}">{{alt}}</textarea>
-                    <!-- Character counter -->
+                    <textarea class="tiny_image_altentry form-control fullwidth" rows="5" id="{{elementid}}_tiny_image_altentry" name="altentry" maxlength="{{maxlengthalt}}">{{alt}}</textarea>
+                    {{! Character counter }}
                     <div id="the-count" class="d-flex justify-content-end small">
                         <span id="currentcount">0</span>
                         <span class="mx-1">/</span>
@@ -61,53 +52,62 @@
                         <span id="maxlength_feedback" class="visually-hidden" role="status"></span>
                     </div>
                 </div>
-            </div>
-            <!-- Column 2: Checkbox and Radio Buttons -->
-            <div class="tiny_image_properties_col col-lg-5">
-                <!-- Row 1: Image presentation role -->
+                {{! Image presentation checkbox }}
                 <div class="form-check mb-2">
                     <input type="checkbox" class="tiny_image_presentation form-check-input" id="{{elementid}}_tiny_image_presentation" {{# presentation }}checked{{/ presentation }}>
                     <label class="form-check-label" for="{{elementid}}_tiny_image_presentation">{{#str}} presentation, tiny_media {{/str}}</label>
+                    <span>{{#alttexthelpicon}}{{> core/help_icon }}{{/alttexthelpicon}}</span>
                 </div>
-                <!-- Row 2: Original size radiobutton -->
-                <div class="form-check mb-2 ps-0">
-                    <input type="radio" class="tiny_image_sizeoriginal" id="{{elementid}}_tiny_image_sizeoriginal" name="radioOptions">
-                    <label class="form-check-label" for="{{elementid}}_tiny_image_sizeoriginal">{{#str}} sizeoriginal, tiny_media {{/str}}</label>
+                <hr>
+                <div class="fw-bold">{{#str}} imagesize, tiny_media {{/str}}</div>
+                {{! Original size radio button }}
+                <div class="mt-1 mb-1">
+                    <div class="btn-group" role="group" aria-label="{{#str}} imagesize, tiny_media{{/str}}">
+                        <button class="btn btn-outline-primary image-original-size-toggle">{{#str}} sizeoriginal, tiny_media {{/str}}</button>
+                        <button class="btn btn-outline-primary image-custom-size-toggle">{{#str}} sizecustom, tiny_media {{/str}}</button>
+                    </div>
                 </div>
-                <!-- Row 3: Custom size radiobutton -->
-                <div class="form-check ps-0 mb-2">
-                    <input type="radio" class="tiny_image_sizecustom" id="{{elementid}}_tiny_image_sizecustom" name="radioOptions">
-                    <label class="form-check-label" for="{{elementid}}_tiny_image_sizecustom">{{#str}} sizecustom, tiny_media {{/str}}</label>
-                </div>
-                <!-- Row 4: Image size -->
+                {{! Image size }}
                 <div class="tiny_image_properties mb-2">
-                    <!-- Row 1: Image width and height -->
-                    <div id="{{elementid}}_tiny_image_size" class="tiny_image_size container ms-1">
+                    {{! Image width and height }}
+                    <div id="{{elementid}}_tiny_image_size" class="tiny_image_size">
                         <div class="d-flex justify-content-start">
-                            <!-- Column 1: Width Input -->
-                            <div class="flex-item me-2">
+                            {{! Width input }}
+                            <div class="flex-item me-2 col-5">
                                 <div>
-                                    <input type="number" min="0" class="tiny_image_widthentry form-control me-1 input-mini" id="{{elementid}}_tiny_image_widthentry" value="{{width}}">
-                                    <label for="{{elementid}}_tiny_image_widthentry" class="ms-1">{{#str}} width, tiny_media {{/str}}</label>
+                                    <label for="{{elementid}}_tiny_image_widthentry">{{#str}} width, tiny_media {{/str}}</label>
+                                    <div class="d-flex align-items-start">
+                                        <input type="number" min="0" class="tiny_image_widthentry form-control input-mini me-1 w-100" id="{{elementid}}_tiny_image_widthentry" value="{{width}}">
+                                        <span class="mt-1">px</span>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Column 2: "X" Text -->
-                            <div class="flex-item me-1 mt-2">X</div>
-                            <!-- Column 3: Height Input -->
-                            <div class="flex-item me-1">
+                            {{! Height input }}
+                            <div class="flex-item me-1 col-5">
                                 <div>
-                                    <input type="number" min="0" class="tiny_image_heightentry form-control ms-1 input-mini" id="{{elementid}}_tiny_image_heightentry" value="{{height}}">
-                                    <label for="{{elementid}}_tiny_image_heightentry" class="ms-1">{{#str}} height, tiny_media {{/str}}</label>
+                                    <label for="{{elementid}}_tiny_image_heightentry">{{#str}} height, tiny_media {{/str}}</label>
+                                    <div class="d-flex align-items-start">
+                                        <input type="number" min="0" class="tiny_image_heightentry form-control input-mini me-1 w-100" id="{{elementid}}_tiny_image_heightentry" value="{{height}}">
+                                        <span class="mt-1">px</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="tiny_image_customhelpicon flex-item ms-1">{{#sizecustomhelpicon}}{{> core/help_icon }}{{/sizecustomhelpicon}}</div>
                         </div>
                     </div>
-                    <!-- Row 2: Keep proportion -->
-                    <div class="form-check mb-2">
-                        <input type="checkbox" class="tiny_image_constrain form-check-input" id="{{elementid}}_tiny_image_constrain">
-                        <label class="form-check-label" for="{{elementid}}_tiny_image_constrain">{{#str}} constrain, tiny_media {{/str}}</label>
+                </div>
+            </div>
+            {{! Image preview and description }}
+            <div class="tiny_image_preview_col col-lg-7 p-0">
+                <input type="hidden" class="tiny_image_customstyle" value="{{customStyle}}">
+                {{! Image preview }}
+                <div class="tiny_image_preview_box border rounded position-relative">
+                    {{! Delete image icon }}
+                    <div class="tiny_image_deleteicon" tabindex="0" title="{{#str}} deleteimage, tiny_media {{/str}}">
+                        <i class="fa fa-trash-o" title="{{#str}} deleteimage, tiny_media {{/str}}"></i>
                     </div>
+                    {{! Image placeholder }}
+                    <img class="tiny_image_preview" src="data:," alt>
                 </div>
             </div>
         </div>

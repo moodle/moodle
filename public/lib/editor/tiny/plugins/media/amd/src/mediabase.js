@@ -45,17 +45,6 @@ export class MediaBase {
             this.sizeCustomChecked();
             widthInput.value = this.currentWidth;
             heightInput.value = this.currentHeight;
-
-            // If the current size is equal to the original size and selectorType = IMAGE,
-            // then check the Keep proportion checkbox.
-            if (
-                this.selectorType === Selectors.IMAGE.type &&
-                this.currentWidth === this.mediaDimensions.width &&
-                this.currentHeight === this.mediaDimensions.height
-            ) {
-                const constrainField = this.root.querySelector(Selectors[this.selectorType].elements.constrain);
-                constrainField.checked = true;
-            }
         }
         this.autoAdjustSize();
     };
@@ -64,8 +53,18 @@ export class MediaBase {
      * Handles the selection of the "Original Size" option and updates the form elements accordingly.
      */
     sizeOriginalChecked() {
-        this.root.querySelector(Selectors[this.selectorType].elements.sizeOriginal).checked = true;
-        this.root.querySelector(Selectors[this.selectorType].elements.sizeCustom).checked = false;
+        const customSize = this.root.querySelector(Selectors[this.selectorType].elements.customSizeToggle);
+        if (customSize && customSize.classList.contains('btn-primary')) {
+            customSize.classList.remove('btn-primary');
+            customSize.classList.add('btn-outline-primary');
+        }
+
+        const originalSize = this.root.querySelector(Selectors[this.selectorType].elements.originalSizeToggle);
+        if (originalSize && originalSize.classList.contains('btn-outline-primary')) {
+            originalSize.classList.remove('btn-outline-primary');
+            originalSize.classList.add('btn-primary');
+        }
+
         hideElements(Selectors[this.selectorType].elements.properties, this.root);
     }
 
@@ -73,8 +72,18 @@ export class MediaBase {
      * Handles the selection of the "Custom Size" option and updates the form elements accordingly.
      */
     sizeCustomChecked() {
-        this.root.querySelector(Selectors[this.selectorType].elements.sizeOriginal).checked = false;
-        this.root.querySelector(Selectors[this.selectorType].elements.sizeCustom).checked = true;
+        const customSize = this.root.querySelector(Selectors[this.selectorType].elements.customSizeToggle);
+        if (customSize && customSize.classList.contains('btn-outline-primary')) {
+            customSize.classList.remove('btn-outline-primary');
+            customSize.classList.add('btn-primary');
+        }
+
+        const originalSize = this.root.querySelector(Selectors[this.selectorType].elements.originalSizeToggle);
+        if (originalSize && originalSize.classList.contains('btn-primary')) {
+            originalSize.classList.remove('btn-primary');
+            originalSize.classList.add('btn-outline-primary');
+        }
+
         showElements(Selectors[this.selectorType].elements.properties, this.root);
     }
 
@@ -144,22 +153,19 @@ export class MediaBase {
         };
 
         // Now update with the new values.
-        const constrainField = this.root.querySelector(Selectors[this.selectorType].elements.constrain); // Only image.
-        if ((constrainField && constrainField.checked) || this.mediaType === 'video') {
-            const keyField = getKeyField();
-            const relativeField = getRelativeField();
-            // We are keeping the media in proportion.
-            // Calculate the size for the relative field.
-            if (keyField.isPercentageValue) {
-                // In proportion, so the percentages are the same.
-                relativeField.field.value = keyField.field.value;
-                relativeField.percentValue = keyField.percentValue;
-            } else {
-                relativeField.pixelSize = Math.round(
-                    keyField.pixelSize / this.mediaDimensions[keyField.type] * this.mediaDimensions[relativeField.type]
-                );
-                relativeField.field.value = relativeField.pixelSize;
-            }
+        const keyField = getKeyField();
+        const relativeField = getRelativeField();
+        // We are keeping the media in proportion.
+        // Calculate the size for the relative field.
+        if (keyField.isPercentageValue) {
+            // In proportion, so the percentages are the same.
+            relativeField.field.value = keyField.field.value;
+            relativeField.percentValue = keyField.percentValue;
+        } else {
+            relativeField.pixelSize = Math.round(
+                keyField.pixelSize / this.mediaDimensions[keyField.type] * this.mediaDimensions[relativeField.type]
+            );
+            relativeField.field.value = relativeField.pixelSize;
         }
 
         if (this.selectorType === Selectors.IMAGE.type) {

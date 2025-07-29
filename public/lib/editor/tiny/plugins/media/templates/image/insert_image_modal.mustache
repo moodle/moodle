@@ -30,19 +30,19 @@
 {{< core/modal }}
     {{$body}}
         <form class="tiny_image_form">
-            <!-- URL warning -->
+            {{! URL warning }}
             <div role="alert" class="d-none alert alert-warning mb-1 tiny_image_urlwarning">
                 <label>
                     {{#str}} imageurlrequired, tiny_media {{/str}}
                 </label>
             </div>
-            <!-- Presentation warning -->
+            {{! Presentation warning }}
             <div role="alert" class="d-none tiny_image_altwarning alert alert-warning mb-1">
                 <label>
                     {{#str}} presentationoraltrequired, tiny_media {{/str}}
                 </label>
             </div>
-            <!-- Preloader icon -->
+            {{! Preloader icon }}
             <div role="progressbar" class="d-none tiny_image_loader lead border rounded text-center">
                 <div class="tiny_image_loader_container d-flex flex-column justify-content-center">
                     <span data-region="loading-icon-container">

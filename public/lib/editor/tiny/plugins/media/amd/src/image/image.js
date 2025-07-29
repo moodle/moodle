@@ -157,6 +157,7 @@ export default class MediaImage {
             const currentImageData = await this.getCurrentImageData();
             let templateContext = await this.getTemplateContext(currentImageData);
             templateContext.sizecustomhelpicon = {text: await getString('sizecustom_help', 'tiny_media')};
+            templateContext.alttexthelpicon = {text: await getString('alttext_help', 'tiny_media')};
             templateContext.bodyTemplate = Selectors.IMAGE.template.body.insertImageDetailsBody;
             templateContext.footerTemplate = Selectors.IMAGE.template.footer.insertImageDetailsFooter;
             templateContext.selector = Selectors.IMAGE.type;
