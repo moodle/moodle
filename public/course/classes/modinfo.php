@@ -51,6 +51,16 @@ use stdClass;
  *     Is an array of grouping id => array of group id => group id. Includes grouping id 0 for 'all groups'
  */
 class modinfo {
+    /**
+     * @var int Summary of MAX_CACHE_SIZE
+     *
+     * Maximum number of modinfo items to keep in memory cache. Do not increase this to a large
+     * number because:
+     * a) modinfo can be big (megabyte range) for some courses
+     * b) performance of cache will deteriorate if there are very many items in it.
+     */
+    public const MAX_CACHE_SIZE = 10;
+
     /** @var int Maximum time the course cache building lock can be held */
     public const COURSE_CACHE_LOCK_EXPIRY = 180;
 
@@ -506,7 +516,7 @@ class modinfo {
      * Returns the instance of modinfo for the specified course and specified user
      *
      * This function uses static cache for the retrieved instances. The cache
-     * size is limited by MAX_MODINFO_CACHE_SIZE. If instance is not found in
+     * size is limited by self::MAX_CACHE_SIZE. If instance is not found in
      * the static cache or it was created for another user or the cacherev validation
      * failed - a new instance is constructed and returned.
      *
@@ -543,8 +553,8 @@ class modinfo {
         }
         $modinfo = new static($course, $userid);
 
-        // We have a limit of MAX_MODINFO_CACHE_SIZE entries to store in static variable.
-        if (count(self::$instancecache) >= MAX_MODINFO_CACHE_SIZE) {
+        // We have a limit of self::MAX_CACHE_SIZE entries to store in static variable.
+        if (count(self::$instancecache) >= self::MAX_CACHE_SIZE) {
             // Find the course that was the least recently accessed.
             asort(self::$cacheaccessed, SORT_NUMERIC);
             $courseidtoremove = key(array_reverse(self::$cacheaccessed, true));

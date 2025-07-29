@@ -26,12 +26,11 @@ use core_course\modinfo;
  * @author     sam marshall
  */
 
-
-// Maximum number of modinfo items to keep in memory cache. Do not increase this to a large
-// number because:
-// a) modinfo can be big (megabyte range) for some courses
-// b) performance of cache will deteriorate if there are very many items in it
 if (!defined('MAX_MODINFO_CACHE_SIZE')) {
+    /**
+     * @deprecated Since 5.1 MDL-86155.
+     * Replaced with \core_course\modinfo::MAX_CACHE_SIZE
+     */
     define('MAX_MODINFO_CACHE_SIZE', 10);
 }
 
