@@ -23,6 +23,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core\url;
+
 /**
  * List of features supported in Resource module
  * @param string $feature FEATURE_xx constant for requested feature
@@ -447,12 +449,20 @@ function resource_export_contents($cm, $baseurl) {
     $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false);
 
     foreach ($files as $fileinfo) {
-        $file = array();
+        $file = [];
         $file['type'] = 'file';
         $file['filename']     = $fileinfo->get_filename();
         $file['filepath']     = $fileinfo->get_filepath();
         $file['filesize']     = $fileinfo->get_filesize();
-        $file['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/'.$context->id.'/mod_resource/content/'.$resource->revision.$fileinfo->get_filepath().$fileinfo->get_filename(), true);
+        $file['fileurl']      = url::make_webservice_pluginfile_url(
+            contextid: $context->id,
+            component: 'mod_resource',
+            area: 'content',
+            itemid: $resource->revision,
+            pathname: $fileinfo->get_filepath(),
+            filename: $fileinfo->get_filename(),
+            forcedownload: true
+        )->out();
         $file['timecreated']  = $fileinfo->get_timecreated();
         $file['timemodified'] = $fileinfo->get_timemodified();
         $file['sortorder']    = $fileinfo->get_sortorder();

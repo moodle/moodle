@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\url;
+
 /**
  * Represents a course context in the tree navigated by {@link file_browser}.
  *
@@ -646,7 +648,11 @@ class file_info_area_course_legacy extends file_info_stored {
 
         $path = '/'.$courseid.$filepath.$filename;
 
-        return file_encode_url($this->urlbase, $path, $forcedownload, $https);
+        $url = url::make_file_url($this->urlbase, $path, $forcedownload);
+        if ($https) {
+            $url->set_scheme('https');
+        }
+        return $url->out();
     }
 
     /**

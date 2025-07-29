@@ -55,6 +55,12 @@ Feature: In a essay question, limit submittable file types
     # Wait for the page to "settle".
     And I wait until the page is ready
     Then I should not see "These file types are not allowed here:"
+    And I press "Finish attempt ..."
+    And I press "Submit all and finish"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
+    Then I should see "empty.txt"
+    And following "empty.txt" should download a file that:
+      | contains text | empty file for testing purposes |
 
   @javascript
   Scenario: Preview an Essay question and try to submit a response with an incorrect filetype.

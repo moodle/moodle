@@ -34,6 +34,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\url;
+
 require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/parser/parser.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -1487,7 +1489,15 @@ function wiki_print_upload_table($context, $filearea, $fileitemid, $deleteupload
 
             $checkbox .= " />";
 
-            $htmltable->data[] = array($checkbox, '<a href="' . file_encode_url($CFG->wwwroot . '/pluginfile.php', '/' . $context->id . '/wiki_upload/' . $fileitemid . '/' . $file->get_filename()) . '">' . $file->get_filename() . '</a>', "");
+            $url = url::make_pluginfile_url(
+                contextid: $context->id,
+                component: 'wiki_upload',
+                area: '',
+                itemid: $fileitemid,
+                pathname: '/',
+                filename: $file->get_filename()
+            );
+            $htmltable->data[] = [$checkbox, '<a href="' . $url->out() . '">' . $file->get_filename() . '</a>', ""];
         }
     }
 

@@ -854,3 +854,48 @@ function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $d
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return imagecopyresampled($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
 }
+
+/**
+ * Encodes file serving url
+ *
+ * @deprecated use moodle_url factory methods instead
+ * @todo Final deprecation on Moodle 6.0. See MDL-84939.
+ *
+ * @param string $urlbase
+ * @param string $path /filearea/itemid/dir/dir/file.exe
+ * @param bool $forcedownload
+ * @param bool $https https url required
+ * @return string encoded file url
+ */
+#[\core\attribute\deprecated(
+    replacement: 'core\url factory methods',
+    since: '5.1',
+    mdl: 'MDL-31071'
+)]
+function file_encode_url($urlbase, $path, $forcedownload = false, $https = false) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+
+    global $CFG;
+
+    if ($CFG->slasharguments) {
+        $parts = explode('/', $path);
+        $parts = array_map('rawurlencode', $parts);
+        $path  = implode('/', $parts);
+        $return = $urlbase . $path;
+        if ($forcedownload) {
+            $return .= '?forcedownload=1';
+        }
+    } else {
+        $path = rawurlencode($path);
+        $return = $urlbase . '?file=' . $path;
+        if ($forcedownload) {
+            $return .= '&amp;forcedownload=1';
+        }
+    }
+
+    if ($https) {
+        $return = str_replace('http://', 'https://', $return);
+    }
+
+    return $return;
+}

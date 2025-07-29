@@ -61,6 +61,8 @@ Feature: Glossary can be set to various display formats
     # Confirm that glossary format is full without author style.
     # In this format, the image link should exist and author's name should not be visible.
     Then "gd-logo.png" "link" should exist
+    And following "gd-logo.png" should download a file that:
+      | has mimetype | image/png |
     And I should not see "by Admin User"
     And ".fullwithoutauthor" "css_element" should exist
 
