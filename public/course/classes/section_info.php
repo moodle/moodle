@@ -220,7 +220,7 @@ class section_info implements IteratorAggregate {
 
     /**
      * List of class read-only properties' getter methods.
-     * Used by magic functions __get(), __isset(), __empty()
+     * Used by magic functions __get(), __isset().
      * @var array
      */
     private static $standardproperties = [
@@ -301,28 +301,6 @@ class section_info implements IteratorAggregate {
             return isset($value);
         }
         return false;
-    }
-
-    /**
-     * Magic method to check if the property is empty
-     *
-     * @param string $name name of the property
-     * @return bool
-     */
-    public function __empty($name) {
-        if (isset(self::$standardproperties[$name])) {
-            $value = $this->__get($name);
-            return empty($value);
-        }
-        if (
-            method_exists($this, 'get_' . $name) ||
-                property_exists($this, '_' . $name) ||
-                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])
-        ) {
-            $value = $this->__get($name);
-            return empty($value);
-        }
-        return true;
     }
 
     /**

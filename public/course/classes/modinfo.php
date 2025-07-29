@@ -137,7 +137,7 @@ class modinfo {
 
     /**
      * List of class read-only properties and their getter methods.
-     * Used by magic functions __get(), __isset(), __empty()
+     * Used by magic functions __get(), __isset().
      * @var array
      */
     private static $standardproperties = [
@@ -178,20 +178,6 @@ class modinfo {
             return isset($value);
         }
         return false;
-    }
-
-    /**
-     * Magic method for function empty()
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function __empty($name) {
-        if (isset(self::$standardproperties[$name])) {
-            $value = $this->__get($name);
-            return empty($value);
-        }
-        return true;
     }
 
     /**

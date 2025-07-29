@@ -169,7 +169,7 @@ use core\output\html_writer;
  * @property-read string $content Content to display on main (view) page - calculated on request
  * @property-read url|null $url URL to link to for this module, or null if it doesn't have a view page - calculated on request
  * @property-read string $extraclasses Extra CSS classes to add to html output for this activity on main page
- *      Calculated on request
+ *      C'alculated on request
  * @property-read string $onclick Content of HTML on-click attribute already escaped - calculated on request
  * @property-read mixed $customdata Optional custom data stored in modinfo cache for this activity, or null if none
  * @property-read string $afterlink Extra HTML code to display after link - calculated on request
@@ -506,7 +506,8 @@ class cm_info implements IteratorAggregate {
 
     /**
      * List of class read-only properties and their getter methods.
-     * Used by magic functions __get(), __isset(), __empty()
+     * Used by magic functions __get(), __isset().
+     *
      * @var array
      */
     private static $standardproperties = [
@@ -655,20 +656,6 @@ class cm_info implements IteratorAggregate {
             return isset($value);
         }
         return false;
-    }
-
-    /**
-     * Magic method for function empty()
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function __empty($name) {
-        if (isset(self::$standardproperties[$name])) {
-            $value = $this->__get($name);
-            return empty($value);
-        }
-        return true;
     }
 
     /**
