@@ -40,6 +40,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
         EMPTY_MESSAGE: '[data-region="empty-message"]',
         COUNT_CONTAINER: '[data-region="count-container"]',
         NOTIFICATION_READ_FEEDBACK: '[data-region="notification-read-feedback"]',
+        CLOSE_NOTIFICATION_POPOVER: '[data-action="close-notification-popover"]',
     };
 
     /**
@@ -357,6 +358,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
                 element.removeClass('unread');
             }
 
+            e.stopPropagation();
+        }.bind(this));
+
+        this.root.on(CustomEvents.events.activate, SELECTORS.CLOSE_NOTIFICATION_POPOVER, function(e) {
+            e.preventDefault();
+            $(this.root).trigger(CustomEvents.events.escape);
             e.stopPropagation();
         }.bind(this));
 
