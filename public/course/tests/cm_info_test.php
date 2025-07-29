@@ -31,7 +31,7 @@ use core\url;
 #[\PHPUnit\Framework\Attributes\CoversClass(cm_info::class)]
 final class cm_info_test extends \advanced_testcase {
     public function test_cm_info_properties(): void {
-        global $DB, $CFG;
+        global $DB;
 
         $this->resetAfterTest();
         set_config('enableavailability', 1);
@@ -40,16 +40,21 @@ final class cm_info_test extends \advanced_testcase {
 
         // Generate the course and pre-requisite module.
         $course = $this->getDataGenerator()->create_course(
-                array('format' => 'topics',
-                    'numsections' => 3,
-                    'enablecompletion' => 1,
-                    'groupmode' => SEPARATEGROUPS,
-                    'forcegroupmode' => 0),
-                array('createsections' => true));
+            [
+                'format' => 'topics',
+                'numsections' => 3,
+                'enablecompletion' => 1,
+                'groupmode' => SEPARATEGROUPS,
+                'forcegroupmode' => 0,
+            ],
+            ['createsections' => true],
+        );
         $coursecontext = context_course::instance($course->id);
-        $prereqforum = $this->getDataGenerator()->create_module('forum',
-                array('course' => $course->id),
-                array('completion' => 1));
+        $prereqforum = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id],
+            ['completion' => 1],
+        );
 
         // Generate module and add availability conditions.
         $availability = '{"op":"&","showc":[true,true,true],"c":[' .
@@ -58,31 +63,36 @@ final class cm_info_test extends \advanced_testcase {
                 '{"type":"grade","id":666,"min":0.4},' .
                 '{"type":"profile","op":"contains","sf":"email","v":"test"}' .
                 ']}';
-        $assign = $this->getDataGenerator()->create_module('assign',
-                array('course' => $course->id),
-                array('idnumber' => 123,
-                    'groupmode' => VISIBLEGROUPS,
-                    'availability' => $availability));
+        $assign = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id],
+            [
+                'idnumber' => 123,
+                'groupmode' => VISIBLEGROUPS,
+                'availability' => $availability,
+            ],
+        );
         rebuild_course_cache($course->id, true);
 
         // Retrieve all related records from DB.
-        $assigndb = $DB->get_record('assign', array('id' => $assign->id));
-        $moduletypedb = $DB->get_record('modules', array('name' => 'assign'));
-        $moduledb = $DB->get_record('course_modules', array('module' => $moduletypedb->id, 'instance' => $assign->id));
-        $sectiondb = $DB->get_record('course_sections', array('id' => $moduledb->section));
+        $assigndb = $DB->get_record('assign', ['id' => $assign->id]);
+        $moduletypedb = $DB->get_record('modules', ['name' => 'assign']);
+        $moduledb = $DB->get_record('course_modules', ['module' => $moduletypedb->id, 'instance' => $assign->id]);
+        $sectiondb = $DB->get_record('course_sections', ['id' => $moduledb->section]);
         $modnamessingular = get_module_types_names(false);
         $modnamesplural = get_module_types_names(true);
 
         // Create and enrol a student.
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
         $student = $this->getDataGenerator()->create_user();
         role_assign($studentrole->id, $student->id, $coursecontext);
         $enrolplugin = enrol_get_plugin('manual');
-        $enrolinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'));
+        $enrolinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual']);
         $enrolplugin->enrol_user($enrolinstance, $student->id);
         $this->setUser($student);
 
-        // Emulate data used in building course cache to receive the same instance of cached_cm_info as was used in building modinfo.
+        // Emulate data used in building course cache to receive the same instance of
+        // cached_cm_info as was used in building modinfo.
         $rawmods = get_course_mods($course->id);
         $cachedcminfo = assign_get_coursemodule_info($rawmods[$moduledb->id]);
 
@@ -103,8 +113,12 @@ final class cm_info_test extends \advanced_testcase {
         $this->assertEquals($course->groupmodeforce, $cm->coursegroupmodeforce);
         $this->assertEquals($course->groupmode, $cm->coursegroupmode);
         $this->assertEquals(SEPARATEGROUPS, $cm->coursegroupmode);
-        $this->assertEquals($course->groupmodeforce ? $course->groupmode : $moduledb->groupmode,
-                $cm->effectivegroupmode); // (since mod_assign supports groups).
+
+        // Since mod_assign supports groups.
+        $this->assertEquals(
+            $course->groupmodeforce ? $course->groupmode : $moduledb->groupmode,
+            $cm->effectivegroupmode,
+        );
         $this->assertEquals(VISIBLEGROUPS, $cm->effectivegroupmode);
         $this->assertEquals($moduledb->indent, $cm->indent);
         $this->assertEquals($moduledb->completion, $cm->completion);
@@ -125,7 +139,7 @@ final class cm_info_test extends \advanced_testcase {
         $this->assertEquals(context_module::instance($moduledb->id), $cm->context);
         $this->assertEquals($modnamessingular['assign'], $cm->modfullname);
         $this->assertEquals($modnamesplural['assign'], $cm->modplural);
-        $this->assertEquals(new url('/mod/assign/view.php', array('id' => $moduledb->id)), $cm->url);
+        $this->assertEquals(new url('/mod/assign/view.php', ['id' => $moduledb->id]), $cm->url);
         $this->assertEquals($cachedcminfo->customdata, $cm->customdata);
 
         // Dynamic fields, just test that they can be retrieved (must be carefully tested in each activity type).
@@ -171,39 +185,52 @@ final class cm_info_test extends \advanced_testcase {
         set_config('enablecompletion', 1);
 
         $course = $this->getDataGenerator()->create_course(
-                array('format' => 'topics', 'numsections' => 3, 'enablecompletion' => 1),
-                array('createsections' => true));
-        $mods = array();
-        $mods[0] = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $mods[1] = $this->getDataGenerator()->create_module('assign',
-                array('course' => $course->id,
-                    'section' => 3,
-                    'idnumber' => '12345',
-                    'showdescription' => true
-                    ));
+            ['format' => 'topics', 'numsections' => 3, 'enablecompletion' => 1],
+            ['createsections' => true],
+        );
+        $mods = [];
+        $mods[0] = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $mods[1] = $this->getDataGenerator()->create_module(
+            'assign',
+            [
+                'course' => $course->id,
+                'section' => 3,
+                'idnumber' => '12345',
+                'showdescription' => true,
+            ],
+        );
         // Pick a small valid availability value to use.
         $availabilityvalue = '{"op":"|","show":true,"c":[{"type":"date","d":">=","t":4}]}';
-        $mods[2] = $this->getDataGenerator()->create_module('book',
-                array('course' => $course->id,
-                    'indent' => 5,
-                    'availability' => $availabilityvalue,
-                    'showdescription' => false,
-                    'completion' => true,
-                    'completionview' => true,
-                    'completionexpected' => time() + 5000,
-                    ));
-        $mods[3] = $this->getDataGenerator()->create_module('forum',
-                array('course' => $course->id,
-                    'visible' => 0,
-                    'groupmode' => 1,
-                    'availability' => null));
-        $mods[4] = $this->getDataGenerator()->create_module('forum',
-                array('course' => $course->id,
-                    'grouping' => 12));
+        $mods[2] = $this->getDataGenerator()->create_module(
+            'book',
+            [
+                'course' => $course->id,
+                'indent' => 5,
+                'availability' => $availabilityvalue,
+                'showdescription' => false,
+                'completion' => true,
+                'completionview' => true,
+                'completionexpected' => time() + 5000,
+            ],
+        );
+        $mods[3] = $this->getDataGenerator()->create_module(
+            'forum',
+            [
+                'course' => $course->id,
+                'visible' => 0,
+                'groupmode' => 1,
+            'availability' => null,
+            ],
+        );
+        $mods[4] = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id, 'grouping' => 12],
+        );
 
         $modinfo = get_fast_modinfo($course->id);
 
-        // Make sure that object returned by get_course_module_record(false) has exactly the same fields as DB table 'course_modules'.
+        // Make sure that object returned by get_course_module_record(false) has exactly
+        // the same fields as DB table 'course_modules'.
         $dbfields = array_keys($DB->get_columns('course_modules'));
         sort($dbfields);
         $cmrecord = $modinfo->get_cm($mods[0]->cmid)->get_course_module_record();
@@ -212,7 +239,7 @@ final class cm_info_test extends \advanced_testcase {
         $this->assertEquals($dbfields, $cmrecordfields);
 
         // Make sure that object returned by get_course_module_record(true) has exactly the same fields
-        // as object returned by get_coursemodule_from_id(,,,true,);
+        // as object returned by get_coursemodule_from_id(,,,true,).
         $cmrecordfull = $modinfo->get_cm($mods[0]->cmid)->get_course_module_record(true);
         $cmrecordfullfields = array_keys((array)$cmrecordfull);
         $cm = get_coursemodule_from_id(null, $mods[0]->cmid, 0, true, MUST_EXIST);
@@ -220,7 +247,7 @@ final class cm_info_test extends \advanced_testcase {
         $this->assertEquals($cmfields, $cmrecordfullfields);
 
         // Make sure that object returned by get_course_module_record(true) has exactly the same fields
-        // as object returned by get_coursemodule_from_instance(,,,true,);
+        // as object returned by get_coursemodule_from_instance(,,,true,).
         $cm = get_coursemodule_from_instance('forum', $mods[0]->id, null, true, MUST_EXIST);
         $cmfields = array_keys((array)$cm);
         $this->assertEquals($cmfields, $cmrecordfullfields);
@@ -229,7 +256,7 @@ final class cm_info_test extends \advanced_testcase {
         $cm1 = get_coursemodule_from_id(null, $mods[0]->cmid, 0, true, MUST_EXIST);
         $cm2 = get_coursemodule_from_instance('forum', $mods[0]->id, 0, true, MUST_EXIST);
         $cminfo = $modinfo->get_cm($mods[0]->cmid);
-        $record = $DB->get_record('course_modules', array('id' => $mods[0]->cmid));
+        $record = $DB->get_record('course_modules', ['id' => $mods[0]->cmid]);
         $this->assertEquals($record, $cminfo->get_course_module_record());
         $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
         $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
@@ -237,7 +264,7 @@ final class cm_info_test extends \advanced_testcase {
         $cm1 = get_coursemodule_from_id(null, $mods[1]->cmid, 0, true, MUST_EXIST);
         $cm2 = get_coursemodule_from_instance('assign', $mods[1]->id, 0, true, MUST_EXIST);
         $cminfo = $modinfo->get_cm($mods[1]->cmid);
-        $record = $DB->get_record('course_modules', array('id' => $mods[1]->cmid));
+        $record = $DB->get_record('course_modules', ['id' => $mods[1]->cmid]);
         $this->assertEquals($record, $cminfo->get_course_module_record());
         $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
         $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
@@ -245,7 +272,7 @@ final class cm_info_test extends \advanced_testcase {
         $cm1 = get_coursemodule_from_id(null, $mods[2]->cmid, 0, true, MUST_EXIST);
         $cm2 = get_coursemodule_from_instance('book', $mods[2]->id, 0, true, MUST_EXIST);
         $cminfo = $modinfo->get_cm($mods[2]->cmid);
-        $record = $DB->get_record('course_modules', array('id' => $mods[2]->cmid));
+        $record = $DB->get_record('course_modules', ['id' => $mods[2]->cmid]);
         $this->assertEquals($record, $cminfo->get_course_module_record());
         $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
         $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
@@ -253,7 +280,7 @@ final class cm_info_test extends \advanced_testcase {
         $cm1 = get_coursemodule_from_id(null, $mods[3]->cmid, 0, true, MUST_EXIST);
         $cm2 = get_coursemodule_from_instance('forum', $mods[3]->id, 0, true, MUST_EXIST);
         $cminfo = $modinfo->get_cm($mods[3]->cmid);
-        $record = $DB->get_record('course_modules', array('id' => $mods[3]->cmid));
+        $record = $DB->get_record('course_modules', ['id' => $mods[3]->cmid]);
         $this->assertEquals($record, $cminfo->get_course_module_record());
         $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
         $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
@@ -261,11 +288,10 @@ final class cm_info_test extends \advanced_testcase {
         $cm1 = get_coursemodule_from_id(null, $mods[4]->cmid, 0, true, MUST_EXIST);
         $cm2 = get_coursemodule_from_instance('forum', $mods[4]->id, 0, true, MUST_EXIST);
         $cminfo = $modinfo->get_cm($mods[4]->cmid);
-        $record = $DB->get_record('course_modules', array('id' => $mods[4]->cmid));
+        $record = $DB->get_record('course_modules', ['id' => $mods[4]->cmid]);
         $this->assertEquals($record, $cminfo->get_course_module_record());
         $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
         $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
-
     }
 
     /**

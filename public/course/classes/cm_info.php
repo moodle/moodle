@@ -48,34 +48,34 @@ use core\output\html_writer;
  * Allows to add to the course cache static user-independent information about the module.
  * Modules should try to include only absolutely necessary information that may be required
  * when displaying course view page. The information is stored in application-level cache
- * and reset when {@link rebuild_course_cache()} is called or cache is purged by admin.
+ * and reset when {@see rebuild_course_cache()} is called or cache is purged by admin.
  *
  * Modules can implement callback XXX_get_coursemodule_info() returning instance of object
- * {@link cached_cm_info}
+ * {@see cached_cm_info}
  *
  * <b>Stage 2 - dynamic data.</b>
  * Dynamic data is user-dependent, it is stored in request-level cache. To reset this cache
- * {@link get_fast_modinfo()} with $reset argument may be called.
+ * {@see get_fast_modinfo()} with $reset argument may be called.
  *
  * Dynamic data is obtained when any of the following properties/methods is requested:
- * - {@link cm_info::$url}
- * - {@link cm_info::$name}
- * - {@link cm_info::$onclick}
- * - {@link cm_info::get_icon_url()}
- * - {@link cm_info::$uservisible}
- * - {@link cm_info::$available}
- * - {@link cm_info::$availableinfo}
+ * - {@see cm_info::$url}
+ * - {@see cm_info::$name}
+ * - {@see cm_info::$onclick}
+ * - {@see cm_info::get_icon_url()}
+ * - {@see cm_info::$uservisible}
+ * - {@see cm_info::$available}
+ * - {@see cm_info::$availableinfo}
  * - plus any of the properties listed in Stage 3.
  *
  * Modules can implement callback <b>XXX_cm_info_dynamic()</b> and inside this callback they
  * are allowed to use any of the following set methods:
- * - {@link cm_info::set_available()}
- * - {@link cm_info::set_name()}
- * - {@link cm_info::set_no_view_link()}
- * - {@link cm_info::set_user_visible()}
- * - {@link cm_info::set_on_click()}
- * - {@link cm_info::set_icon_url()}
- * - {@link cm_info::override_customdata()}
+ * - {@see cm_info::set_available()}
+ * - {@see cm_info::set_name()}
+ * - {@see cm_info::set_no_view_link()}
+ * - {@see cm_info::set_user_visible()}
+ * - {@see cm_info::set_on_click()}
+ * - {@see cm_info::set_icon_url()}
+ * - {@see cm_info::override_customdata()}
  * Any methods affecting view elements can also be set in this callback.
  *
  * <b>Stage 3 (view data).</b>
@@ -84,18 +84,18 @@ use core\output\html_writer;
  * Moodle APIs such as filters, user information, output renderers and we
  * don't want to request it until necessary.
  * View data is obtained when any of the following properties/methods is requested:
- * - {@link cm_info::$afterediticons}
- * - {@link cm_info::$content}
- * - {@link cm_info::get_formatted_content()}
- * - {@link cm_info::$extraclasses}
- * - {@link cm_info::$afterlink}
+ * - {@see cm_info::$afterediticons}
+ * - {@see cm_info::$content}
+ * - {@see cm_info::get_formatted_content()}
+ * - {@see cm_info::$extraclasses}
+ * - {@see cm_info::$afterlink}
  *
  * Modules can implement callback <b>XXX_cm_info_view()</b> and inside this callback they
  * are allowed to use any of the following set methods:
- * - {@link cm_info::set_after_edit_icons()}
- * - {@link cm_info::set_after_link()}
- * - {@link cm_info::set_content()}
- * - {@link cm_info::set_extra_classes()}
+ * - {@see cm_info::set_after_edit_icons()}
+ * - {@see cm_info::set_after_link()}
+ * - {@see cm_info::set_content()}
+ * - {@see cm_info::set_extra_classes()}
  *
  * @package core_course
  * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -113,13 +113,13 @@ use core\output\html_writer;
  * @property-read int $visibleold Old visible setting (if the entire section is hidden, the previous value for
  *    visible is stored in this field) - from course_modules table
  * @property-read int $groupmode Group mode (one of the constants NOGROUPS, SEPARATEGROUPS, or VISIBLEGROUPS) - from
- *    course_modules table. Use {@link cm_info::$effectivegroupmode} to find the actual group mode that may be forced by course.
+ *    course_modules table. Use {@see cm_info::$effectivegroupmode} to find the actual group mode that may be forced by course.
  * @property-read int $groupingid Grouping ID (0 = all groupings)
  * @property-read bool $coursegroupmodeforce Indicates whether the course containing the module has forced the groupmode
  *    This means that cm_info::$groupmode should be ignored and cm_info::$coursegroupmode be used instead
  * @property-read int $coursegroupmode Group mode (one of the constants NOGROUPS, SEPARATEGROUPS, or VISIBLEGROUPS) - from
  *    course table - as specified for the course containing the module
- *    Effective only if {@link cm_info::$coursegroupmodeforce} is set
+ *    Effective only if {@see cm_info::$coursegroupmodeforce} is set
  * @property-read int $effectivegroupmode Effective group mode for this module (one of the constants NOGROUPS, SEPARATEGROUPS,
  *    or VISIBLEGROUPS). This can be different from groupmode set for the module if the groupmode is forced for the course.
  *    This value will always be NOGROUPS if module type does not support group mode.
@@ -164,10 +164,12 @@ use core\output\html_writer;
  *    visible or not available, so this would be true in that case)
  * @property-read context_module $context Module context
  * @property-read string $modfullname Returns a localised human-readable name of the module type - calculated on request
- * @property-read string $modplural Returns a localised human-readable name of the module type in plural form - calculated on request
+ * @property-read string $modplural Returns a localised human-readable name of the module type in plural form
+ *      Calculated on request
  * @property-read string $content Content to display on main (view) page - calculated on request
- * @property-read url $url URL to link to for this module, or null if it doesn't have a view page - calculated on request
- * @property-read string $extraclasses Extra CSS classes to add to html output for this activity on main page - calculated on request
+ * @property-read url|null $url URL to link to for this module, or null if it doesn't have a view page - calculated on request
+ * @property-read string $extraclasses Extra CSS classes to add to html output for this activity on main page
+ *      Calculated on request
  * @property-read string $onclick Content of HTML on-click attribute already escaped - calculated on request
  * @property-read mixed $customdata Optional custom data stored in modinfo cache for this activity, or null if none
  * @property-read string $afterlink Extra HTML code to display after link - calculated on request
@@ -180,32 +182,29 @@ class cm_info implements IteratorAggregate {
     /**
      * State: Only basic data from modinfo cache is available.
      */
-    const STATE_BASIC = 0;
+    private const STATE_BASIC = 0;
 
     /**
      * State: In the process of building dynamic data (to avoid recursive calls to obtain_dynamic_data())
      */
-    const STATE_BUILDING_DYNAMIC = 1;
+    private const STATE_BUILDING_DYNAMIC = 1;
 
     /**
      * State: Dynamic data is available too.
      */
-    const STATE_DYNAMIC = 2;
+    private const STATE_DYNAMIC = 2;
 
     /**
      * State: In the process of building view data (to avoid recursive calls to obtain_view_data())
      */
-    const STATE_BUILDING_VIEW = 3;
+    private const STATE_BUILDING_VIEW = 3;
 
     /**
      * State: View data (for course page) is available.
      */
-    const STATE_VIEW = 4;
+    private const STATE_VIEW = 4;
 
-    /**
-     * Parent object
-     * @var modinfo
-     */
+    /** @var modinfo Parent object */
     private $modinfo;
 
     /**
@@ -240,10 +239,11 @@ class cm_info implements IteratorAggregate {
     private $added;
 
     /**
+     * @var int
+     *
      * This variable is not used and is included here only so it can be documented.
      * Once the database entry is removed from course_modules, it should be deleted
      * here too.
-     * @var int
      * @deprecated Do not use this variable
      */
     private $score;
@@ -314,32 +314,27 @@ class cm_info implements IteratorAggregate {
      */
     private $completionview;
 
-    /**
-     * Set to a unix time if completion of this activity is expected at a
-     * particular time, 0 if no time set - from course_modules table
-     * @var int
-     */
+    /** @var int Set to a unix time if completion of this activity is expected at a particular time, 0 if no time set - from course_modules table */
     private $completionexpected;
 
-    /**
-     * Availability information as JSON string or null if none - from course_modules table
-     * @var string
-     */
+    /** @var string Availability information as JSON string or null if none - from course_modules table */
     private $availability;
 
     /**
-     * Controls whether the description of the activity displays on the course main page (in
-     * addition to anywhere it might display within the activity itself). 0 = do not show
-     * on main page, 1 = show on main page.
-     * @var int
+     * @var int Whether the description of this activity is displayed on the course main page.
+     *
+     * Note: This would be in addition to anywhere it might display within the activity itself.
+     *
+     * 0 = do not show on main page, 1 = show on main page.
      */
     private $showdescription;
 
     /**
+     * @var string Extra HTML
+     *
      * Extra HTML that is put in an unhelpful part of the HTML when displaying this module in
      * course page - from cached data in modinfo field
      * @deprecated This is crazy, don't use it. Replaced by ->extraclasses and ->onclick
-     * @var string
      */
     private $extra;
 
@@ -445,7 +440,7 @@ class cm_info implements IteratorAggregate {
     private $uservisibleoncoursepage;
 
     /**
-     * @var url
+     * @var url|null The activity URL, if any.
      */
     private $url;
 
@@ -580,7 +575,7 @@ class cm_info implements IteratorAggregate {
      *
      * @var array $standardmethods
      */
-    private static $standardmethods = array(
+    private static $standardmethods = [
         // Following methods are not recommended to use because there have associated read-only properties.
         'get_url',
         'get_content',
@@ -591,7 +586,7 @@ class cm_info implements IteratorAggregate {
         'get_after_edit_icons',
         // Method obtain_dynamic_data() should not be called from outside of this class but it was public before Moodle 2.6.
         'obtain_dynamic_data',
-    );
+    ];
 
     /**
      * Magic method to call functions that are now declared as private but were public in Moodle before 2.6.
@@ -627,21 +622,16 @@ class cm_info implements IteratorAggregate {
                 return $this->$name;
             }
         } else {
-            debugging('Invalid cm_info property accessed: '.$name);
+            debugging('Invalid cm_info property accessed: ' . $name);
             return null;
         }
     }
 
-    /**
-     * Implementation of IteratorAggregate::getIterator(), allows to cycle through properties
-     * and use {@link convert_to_array()}
-     *
-     * @return ArrayIterator
-     */
+    #[\Override]
     public function getIterator(): Traversable {
         // Make sure dynamic properties are retrieved prior to view properties.
         $this->obtain_dynamic_data();
-        $ret = array();
+        $ret = [];
 
         // Do not iterate over deprecated properties.
         $props = self::$standardproperties;
@@ -694,9 +684,13 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * @return bool True if this module has a 'view' page that should be linked to in navigation
-     *   etc (note: modules may still have a view.php file, but return false if this is not
-     *   intended to be linked to from 'normal' parts of the interface; this is what label does).
+     * Whether this activity has a view page.
+     *
+     * Note: modules may still have a view.php file, but return false if this is not intended to be linked to
+     * from standard parts of the interface.
+     * For an example of these, see `mod_label`.
+     *
+     * @return bool True if this module has a 'view' page that should be linked to in navigation etc.
      */
     public function has_view() {
         return !is_null($this->url);
@@ -731,10 +725,10 @@ class cm_info implements IteratorAggregate {
      *
      * if $options['context'] is not specified, the module context is used
      *
-     * @param array|stdClass $options formatting options, see {@link format_text()}
+     * @param array|stdClass $options formatting options, see {@see format_text()}
      * @return string
      */
-    public function get_formatted_content($options = array()) {
+    public function get_formatted_content($options = []) {
         $this->obtain_view_data();
         if (empty($this->content)) {
             return '';
@@ -743,9 +737,8 @@ class cm_info implements IteratorAggregate {
             return $this->content;
         }
 
-        // Improve filter performance by preloading filter setttings for all
-        // activities on the course (this does nothing if called multiple
-        // times)
+        // Improve filter performance by preloading filter setttings for all activities on the course.
+        // This does nothing if called multiple times.
         filter_preload_activities($this->get_modinfo());
 
         $options = (array)$options;
@@ -786,10 +779,10 @@ class cm_info implements IteratorAggregate {
      *
      * if $options['context'] is not specified, the module context is used
      *
-     * @param array|stdClass $options formatting options, see {@link format_string()}
+     * @param array|stdClass $options formatting options, see {@see format_string()}
      * @return string
      */
-    public function get_formatted_name($options = array()) {
+    public function get_formatted_name($options = []) {
         global $CFG;
         $options = (array)$options;
         if (!isset($options['context'])) {
@@ -801,7 +794,7 @@ class cm_info implements IteratorAggregate {
         if (!empty($CFG->filterall)) {
             filter_preload_activities($this->get_modinfo());
         }
-        return format_string($this->get_name(), true,  $options);
+        return format_string($this->get_name(), true, $options);
     }
 
     /**
@@ -814,11 +807,14 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * @return string Content of HTML on-click attribute. This string will be used literally
-     * as a string so should be pre-escaped.
+     * Get the on-click attribute.
+     *
+     * Note: This string will be used literally as a string so should be pre-escaped.
+     *
+     * @return string Content of HTML on-click attribute.
      */
     private function get_on_click() {
-        // Does not need view data; may be used by navigation
+        // Does not need view data; may be used by navigation.
         $this->obtain_dynamic_data();
         return $this->onclick;
     }
@@ -848,7 +844,7 @@ class cm_info implements IteratorAggregate {
      * Get the activity badge data associated to this course module (if the module supports it).
      * Modules can use this method to provide additional data to be displayed in the activity badge.
      *
-     * @param renderer_base $output Output render to use, or null for default (global)
+     * @param renderer_base|null $output Output render to use, or null for default (global)
      * @return stdClass|null The activitybadge data (badgecontent, badgestyle...) or null if the module doesn't implement it.
      */
     public function get_activitybadge(?renderer_base $output = null): ?stdClass {
@@ -901,7 +897,7 @@ class cm_info implements IteratorAggregate {
         } else if (!empty($this->icon)) {
             // Fallback to normal local icon + component processing.
             if (substr($this->icon, 0, 4) === 'mod/') {
-                list($modname, $iconname) = explode('/', substr($this->icon, 4), 2);
+                [$modname, $iconname] = explode('/', substr($this->icon, 4), 2);
                 $icon = $output->image_url($iconname, $modname);
             } else {
                 if (!empty($this->iconcomponent)) {
@@ -931,16 +927,24 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * @param string $textclasses additionnal classes for grouping label
+     * Get the grouping label
+     *
+     * @param string $textclasses additional classes for grouping label
      * @return string An empty string or HTML grouping label span tag
      */
     public function get_grouping_label($textclasses = '') {
         $groupinglabel = '';
-        if ($this->effectivegroupmode != NOGROUPS && !empty($this->groupingid) &&
-                has_capability('moodle/course:managegroups', context_course::instance($this->course))) {
+        if (
+            $this->effectivegroupmode != NOGROUPS
+            && !empty($this->groupingid)
+            && has_capability('moodle/course:managegroups', context_course::instance($this->course))
+        ) {
             $groupings = groups_get_all_groupings($this->course);
-            $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$this->groupingid]->name).')',
-                array('class' => 'groupinglabel '.$textclasses));
+            $groupinglabel = html_writer::tag(
+                'span',
+                '(' . format_string($groupings[$this->groupingid]->name) . ')',
+                ['class' => 'groupinglabel ' . $textclasses],
+            );
         }
         return $groupinglabel;
     }
@@ -970,9 +974,11 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
+     * Get the modinfo object that this cm_info came from.
+     *
      * @return modinfo Modinfo object that this came from
      */
-    public function get_modinfo() {
+    public function get_modinfo(): modinfo {
         return $this->modinfo;
     }
 
@@ -997,13 +1003,13 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Returns course object that was used in the first {@link get_fast_modinfo()} call.
+     * Returns course object that was used in the first {@see get_fast_modinfo()} call.
      *
      * It may not contain all fields from DB table {course} but always has at least the following:
      * id,shortname,fullname,format,enablecompletion,groupmode,groupmodeforce,cacherev
      *
      * If the course object lacks the field you need you can use the global
-     * function {@link get_course()} that will save extra query if you access
+     * function {@see get_course()} that will save extra query if you access
      * current course or frontpage course.
      *
      * @return stdClass
@@ -1056,6 +1062,8 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
+     * Get the context for that activity.
+     *
      * @return context_module Current module context
      */
     private function get_context() {
@@ -1068,7 +1076,7 @@ class cm_info implements IteratorAggregate {
      * The object includes all fields that table course_modules has and additionally
      * fields 'name', 'modname', 'sectionnum' (if requested).
      *
-     * This can be used as a faster alternative to {@link get_coursemodule_from_id()}
+     * This can be used as a faster alternative to {@see get_coursemodule_from_id()}
      *
      * @param bool $additionalfields include additional fields 'name', 'modname', 'sectionnum'
      * @return stdClass
@@ -1077,10 +1085,10 @@ class cm_info implements IteratorAggregate {
         $cmrecord = new stdClass();
 
         // Standard fields from table course_modules.
-        static $cmfields = array('id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
+        static $cmfields = ['id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
             'score', 'indent', 'visible', 'visibleoncoursepage', 'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected', 'completionpassgrade',
-            'showdescription', 'availability', 'deletioninprogress', 'downloadcontent', 'lang');
+            'showdescription', 'availability', 'deletioninprogress', 'downloadcontent', 'lang'];
 
         foreach ($cmfields as $key) {
             $cmrecord->$key = $this->$key;
@@ -1127,9 +1135,6 @@ class cm_info implements IteratorAggregate {
         }
         return $delegatedsections[$this->id];
     }
-
-    // Set functions
-    ////////////////
 
     /**
      * Sets content to display on course view page below link (if present).
@@ -1274,7 +1279,7 @@ class cm_info implements IteratorAggregate {
      *   empty string if not displaying
      * @return void
      */
-    public function set_available($available, $showavailability=0, $availableinfo='') {
+    public function set_available($available, $showavailability = 0, $availableinfo = '') {
         $this->check_not_view_only();
         $this->available = $available;
         if (!$showavailability) {
@@ -1293,13 +1298,15 @@ class cm_info implements IteratorAggregate {
      */
     private function check_not_view_only() {
         if ($this->state >= self::STATE_DYNAMIC) {
-            throw new coding_exception('Cannot set this data from _cm_info_view because it may ' .
-                    'affect other pages as well as view');
+            throw new coding_exception(
+                'Cannot set this data from _cm_info_view because it may ' .
+                'affect other pages as well as view'
+            );
         }
     }
 
     /**
-     * Constructor should not be called directly; use {@link get_fast_modinfo()}
+     * Constructor should not be called directly; use {@see get_fast_modinfo()}
      *
      * @param modinfo $modinfo Parent object
      * @param mixed $notused1 Argument not used
@@ -1322,7 +1329,7 @@ class cm_info implements IteratorAggregate {
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';
-        // iconurl may be stored as either string or instance of url.
+        // The iconurl may be stored as either string or instance of url.
         $this->iconurl          = isset($mod->iconurl) ? new url($mod->iconurl) : '';
         $this->onclick          = isset($mod->onclick) ? $mod->onclick : '';
         $this->content          = isset($mod->content) ? $mod->content : '';
@@ -1343,7 +1350,7 @@ class cm_info implements IteratorAggregate {
 
         // Note: it saves effort and database space to always include the
         // availability and completion fields, even if availability or completion
-        // are actually disabled
+        // are actually disabled.
         $this->completion = isset($mod->completion) ? $mod->completion : 0;
         $this->completionpassgrade = isset($mod->completionpassgrade) ? $mod->completionpassgrade : 0;
         $this->completiongradeitemnumber = isset($mod->completiongradeitemnumber)
@@ -1354,19 +1361,22 @@ class cm_info implements IteratorAggregate {
                 ? $mod->completionexpected : 0;
         $this->availability = isset($mod->availability) ? $mod->availability : null;
         $this->conditionscompletion = isset($mod->conditionscompletion)
-                ? $mod->conditionscompletion : array();
+                ? $mod->conditionscompletion : [];
         $this->conditionsgrade = isset($mod->conditionsgrade)
-                ? $mod->conditionsgrade : array();
+                ? $mod->conditionsgrade : [];
         $this->conditionsfield = isset($mod->conditionsfield)
-                ? $mod->conditionsfield : array();
+                ? $mod->conditionsfield : [];
 
-        static $modviews = array();
+        static $modviews = [];
         if (!isset($modviews[$this->modname])) {
-            $modviews[$this->modname] = !plugin_supports('mod', $this->modname,
-                    FEATURE_NO_VIEW_LINK);
+            $modviews[$this->modname] = !plugin_supports(
+                'mod',
+                $this->modname,
+                FEATURE_NO_VIEW_LINK,
+            );
         }
         $this->url = $modviews[$this->modname]
-                ? new url('/mod/' . $this->modname . '/view.php', array('id'=>$this->id))
+                ? new url('/mod/' . $this->modname . '/view.php', ['id' => $this->id])
                 : null;
     }
 
@@ -1424,8 +1434,12 @@ class cm_info implements IteratorAggregate {
 
             // Note that the modinfo currently available only includes minimal details (basic data)
             // but we know that this function does not need anything more than basic data.
-            $this->available = $ci->is_available($this->availableinfo, true,
-                    $userid, $this->modinfo);
+            $this->available = $ci->is_available(
+                $this->availableinfo,
+                true,
+                $userid,
+                $this->modinfo,
+            );
         } else {
             $this->available = true;
         }
@@ -1434,9 +1448,8 @@ class cm_info implements IteratorAggregate {
         if ($this->available) {
             $parentsection = $this->modinfo->get_section_info($this->sectionnum);
             if (!$parentsection->get_available()) {
-                // Do not store info from section here, as that is already
-                // presented from the section (if appropriate) - just change
-                // the flag
+                // Do not store info from section here, as that is already presented from the section (if appropriate).
+                // Just change the flag.
                 $this->available = false;
             }
         }
@@ -1444,7 +1457,7 @@ class cm_info implements IteratorAggregate {
         // Update visible state for current user.
         $this->update_user_visible();
 
-        // Let module make dynamic changes at this point
+        // Let module make dynamic changes at this point.
         $this->call_mod_function('cm_info_dynamic');
         $this->state = self::STATE_DYNAMIC;
     }
@@ -1541,17 +1554,19 @@ class cm_info implements IteratorAggregate {
 
         // If the user cannot access the activity set the uservisible flag to false.
         // Additional checks are required to determine whether the activity is entirely hidden or just greyed out.
-        if ((!$this->visible && !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) ||
-                (!$this->get_available() &&
-                !has_capability('moodle/course:ignoreavailabilityrestrictions', $this->get_context(), $userid))) {
-
+        if (
+            !$this->visible && !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)
+            || (
+                !$this->get_available()
+                && !has_capability('moodle/course:ignoreavailabilityrestrictions', $this->get_context(), $userid)
+            )
+        ) {
             $this->uservisible = false;
         }
 
         // Check group membership.
         if ($this->is_user_access_restricted_by_capability()) {
-
-             $this->uservisible = false;
+            $this->uservisible = false;
             // Ensure activity is completely hidden from the user.
             $this->availableinfo = '';
         }
@@ -1573,7 +1588,7 @@ class cm_info implements IteratorAggregate {
     /**
      * Checks whether mod/...:view capability restricts the current user's access.
      *
-     * @return bool True if the user access is restricted.
+     * @return bool|null True if the user access is restricted.
      */
     public function is_user_access_restricted_by_capability() {
         $userid = $this->modinfo->get_user_id();
@@ -1635,7 +1650,7 @@ class cm_info implements IteratorAggregate {
         $this->obtain_dynamic_data();
         $this->state = self::STATE_BUILDING_VIEW;
 
-        // Let module make changes at this point
+        // Let module make changes at this point.
         $this->call_mod_function('cm_info_view');
         $this->state = self::STATE_VIEW;
     }

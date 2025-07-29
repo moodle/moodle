@@ -34,7 +34,7 @@ use stdClass;
  * This includes information about the course-modules and the sections on the course. It can also
  * include dynamic data that has been updated for the current user.
  *
- * Use {@link get_fast_modinfo()} to retrieve the instance of the object for particular course
+ * Use {@see get_fast_modinfo()} to retrieve the instance of the object for particular course
  * and particular user.
  *
  * @package    core
@@ -71,14 +71,14 @@ class modinfo {
      * List of fields from DB table 'course' that are cached in MUC and are always present in modinfo::$course
      * @var array
      */
-    public static $cachedfields = array('shortname', 'fullname', 'format',
-            'enablecompletion', 'groupmode', 'groupmodeforce', 'cacherev');
+    public static $cachedfields = ['shortname', 'fullname', 'format',
+            'enablecompletion', 'groupmode', 'groupmodeforce', 'cacherev'];
 
     /**
      * For convenience we store the course object here as it is needed in other parts of code
      * @var stdClass
      */
-    private \stdClass $course;
+    private stdClass $course;
 
     /**
      * Array of section data from cache indexed by section number.
@@ -140,7 +140,7 @@ class modinfo {
      * Used by magic functions __get(), __isset(), __empty()
      * @var array
      */
-    private static $standardproperties = array(
+    private static $standardproperties = [
         'courseid' => 'get_course_id',
         'userid' => 'get_user_id',
         'sections' => 'get_sections',
@@ -148,7 +148,7 @@ class modinfo {
         'instances' => 'get_instances',
         'groups' => 'get_groups_all',
         'delegatedbycm' => 'get_sections_delegated_by_cm',
-    );
+    ];
 
     /**
      * Magic method getter
@@ -161,7 +161,7 @@ class modinfo {
             $method = self::$standardproperties[$name];
             return $this->$method();
         } else {
-            debugging('Invalid modinfo property accessed: '.$name);
+            debugging('Invalid modinfo property accessed: ' . $name);
             return null;
         }
     }
@@ -207,7 +207,7 @@ class modinfo {
     }
 
     /**
-     * Returns course object that was used in the first {@link get_fast_modinfo()} call.
+     * Returns course object that was used in the first {@see get_fast_modinfo()} call.
      *
      * It may not contain all fields from DB table {course} but always has at least the following:
      * id,shortname,fullname,format,enablecompletion,groupmode,groupmodeforce,cacherev
@@ -219,6 +219,8 @@ class modinfo {
     }
 
     /**
+     * Returns the course ID for which this modinfo was generated.
+     *
      * @return int Course ID
      */
     public function get_course_id() {
@@ -226,6 +228,8 @@ class modinfo {
     }
 
     /**
+     * Returns the user ID for which this modinfo was generated.
+     *
      * @return int User ID
      */
     public function get_user_id() {
@@ -233,6 +237,8 @@ class modinfo {
     }
 
     /**
+     * Obtains all sections as array from section number (e.g. 0) to array of course-module IDs in that
+     *
      * @return array Array from section number (e.g. 0) to array of course-module IDs in that
      *   section; this only includes sections that contain at least one course-module
      */
@@ -241,6 +247,8 @@ class modinfo {
     }
 
     /**
+     * Obtains all course-module objects (for course-modules that are on this course).
+     *
      * @return cm_info[] Array from course-module instance to cm_info object within this course, in
      *   order of appearance
      */
@@ -277,7 +285,7 @@ class modinfo {
      */
     public function get_used_module_names($plural = false) {
         $modnames = get_module_types_names($plural);
-        $modnamesused = array();
+        $modnamesused = [];
         foreach ($this->get_cms() as $cmid => $mod) {
             if (!isset($modnamesused[$mod->modname]) && isset($modnames[$mod->modname]) && $mod->uservisible) {
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
@@ -293,7 +301,7 @@ class modinfo {
      */
     public function get_instances_of($modname) {
         if (empty($this->instances[$modname])) {
-            return array();
+            return [];
         }
         return $this->instances[$modname];
     }
@@ -318,7 +326,7 @@ class modinfo {
     public function get_groups($groupingid = 0) {
         $allgroups = $this->get_groups_all();
         if (!isset($allgroups[$groupingid])) {
-            return array();
+            return [];
         }
         return $allgroups[$groupingid];
     }
@@ -447,13 +455,12 @@ class modinfo {
     }
 
     /**
-     * Static cache for generated modinfo instances
+     * @var static[] Static cache for generated modinfo instances
      *
      * @see modinfo::instance()
      * @see modinfo::clear_instance_cache()
-     * @var static[]
      */
-    protected static $instancecache = array();
+    protected static $instancecache = [];
 
     /**
      * Timestamps (microtime) when the modinfo instances were last accessed
@@ -462,7 +469,7 @@ class modinfo {
      *
      * @var float[]
      */
-    protected static $cacheaccessed = array();
+    protected static $cacheaccessed = [];
 
     /**
      * Store a list of known course cacherev values. This is in case people reuse a course object
@@ -476,8 +483,8 @@ class modinfo {
     /**
      * Clears the cache used in modinfo::instance()
      *
-     * Used in {@link get_fast_modinfo()} when called with argument $reset = true
-     * and in {@link rebuild_course_cache()}
+     * Used in {@see get_fast_modinfo()} when called with argument $reset = true
+     * and in {@see rebuild_course_cache()}
      *
      * If the cacherev for the course is known to have updated (i.e. when doing
      * rebuild_course_cache), it should be specified here.
@@ -487,8 +494,8 @@ class modinfo {
      */
     public static function clear_instance_cache($courseorid = null, int $newcacherev = 0) {
         if (empty($courseorid)) {
-            self::$instancecache = array();
-            self::$cacheaccessed = array();
+            self::$instancecache = [];
+            self::$cacheaccessed = [];
             // This is called e.g. in phpunit when we just want to reset the caches, so also
             // reset the mincacherevs static cache.
             self::$mincacherevs = [];
@@ -520,7 +527,7 @@ class modinfo {
      * the static cache or it was created for another user or the cacherev validation
      * failed - a new instance is constructed and returned.
      *
-     * Used in {@link get_fast_modinfo()}
+     * Used in {@see get_fast_modinfo()}
      *
      * @param int|stdClass $courseorid object from DB table 'course' (must have field 'id'
      *     and recommended to have field 'cacherev') or just a course id
@@ -533,16 +540,20 @@ class modinfo {
         if (is_object($courseorid)) {
             $course = $courseorid;
         } else {
-            $course = (object)array('id' => $courseorid);
+            $course = (object)['id' => $courseorid];
         }
         if (empty($userid)) {
             $userid = $USER->id;
         }
 
         if (!empty(self::$instancecache[$course->id])) {
-            if (self::$instancecache[$course->id]->userid == $userid &&
-                    (!isset($course->cacherev) ||
-                    $course->cacherev == self::$instancecache[$course->id]->get_course()->cacherev)) {
+            if (
+                self::$instancecache[$course->id]->userid == $userid
+                && (
+                    !isset($course->cacherev)
+                    || $course->cacherev == self::$instancecache[$course->id]->get_course()->cacherev
+                )
+            ) {
                 // This course's modinfo for the same user was recently retrieved, return cached.
                 self::$cacheaccessed[$course->id] = microtime(true);
                 return self::$instancecache[$course->id];
@@ -588,8 +599,10 @@ class modinfo {
         // If we have rebuilt the course cache in this request, ensure that requested cacherev is
         // at least that value. This ensures that we're not reusing a course object with old
         // cacherev, which could result in using old cached data.
-        if (array_key_exists($course->id, self::$mincacherevs) &&
-                $course->cacherev < self::$mincacherevs[$course->id]) {
+        if (
+            array_key_exists($course->id, self::$mincacherevs)
+            && $course->cacherev < self::$mincacherevs[$course->id]
+        ) {
             $course->cacherev = self::$mincacherevs[$course->id];
         }
 
@@ -604,7 +617,7 @@ class modinfo {
             $coursemodinfo = self::build_course_cache($course);
         }
 
-        // Set initial values
+        // Set initial values.
         $this->userid = $userid;
         $this->sectionmodules = [];
         $this->cms = [];
@@ -623,10 +636,12 @@ class modinfo {
             // (Uncached modules will result in a very slow verification).
             foreach ($coursemodinfo->modinfo as $mod) {
                 if (!context_module::instance($mod->cm, IGNORE_MISSING)) {
-                    debugging('Course cache integrity check failed: course module with id '. $mod->cm.
-                            ' does not have context. Rebuilding cache for course '. $course->id);
+                    debugging(
+                        'Course cache integrity check failed: course module with id ' . $mod->cm .
+                        ' does not have context. Rebuilding cache for course ' . $course->id
+                    );
                     // Re-request the course record from DB as well, don't use get_course() here.
-                    $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+                    $course = $DB->get_record('course', ['id' => $course->id], '*', MUST_EXIST);
                     $coursemodinfo = self::build_course_cache($course, true);
                     break;
                 }
@@ -636,21 +651,24 @@ class modinfo {
         // Overwrite unset fields in $course object with cached values, store the course object.
         $this->course = fullclone($course);
         foreach ($coursemodinfo as $key => $value) {
-            if ($key !== 'modinfo' && $key !== 'sectioncache' &&
-                    (!isset($this->course->$key) || $key === 'cacherev')) {
+            if (
+                $key !== 'modinfo'
+                && $key !== 'sectioncache'
+                && (!isset($this->course->$key) || $key === 'cacherev')
+            ) {
                 $this->course->$key = $value;
             }
         }
 
-        // Loop through each piece of module data, constructing it
-        static $modexists = array();
+        // Loop through each piece of module data, constructing it.
+        static $modexists = [];
         foreach ($coursemodinfo->modinfo as $mod) {
             if (!isset($mod->name) || strval($mod->name) === '') {
-                // something is wrong here
+                // Something is wrong here.
                 continue;
             }
 
-            // Skip modules which don't exist
+            // Skip modules which don't exist.
             if (!array_key_exists($mod->mod, $modexists)) {
                 $modexists[$mod->mod] = file_exists("$CFG->dirroot/mod/$mod->mod/lib.php");
             }
@@ -658,30 +676,36 @@ class modinfo {
                 continue;
             }
 
-            // Construct info for this module
+            // Construct info for this module.
             $cm = new cm_info($this, null, $mod, null);
 
-            // Store module in instances and cms array
+            // Store module in instances and cms array.
             if (!isset($this->instances[$cm->modname])) {
-                $this->instances[$cm->modname] = array();
+                $this->instances[$cm->modname] = [];
             }
             $this->instances[$cm->modname][$cm->instance] = $cm;
             $this->cms[$cm->id] = $cm;
 
-            // Reconstruct sections. This works because modules are stored in order
+            // Reconstruct sections. This works because modules are stored in order.
             if (!isset($this->sectionmodules[$cm->sectionnum])) {
                 $this->sectionmodules[$cm->sectionnum] = [];
             }
             $this->sectionmodules[$cm->sectionnum][] = $cm->id;
         }
 
-        // Expand section objects
+        // Expand section objects.
         $this->sectioninfobynum = [];
         $this->sectioninfobyid = [];
         $this->delegatedsections = [];
         foreach ($coursemodinfo->sectioncache as $data) {
-            $sectioninfo = new section_info($data, $data->section, null, null,
-                $this, null);
+            $sectioninfo = new section_info(
+                $data,
+                $data->section,
+                null,
+                null,
+                $this,
+                null,
+            );
             $this->sectioninfobynum[$data->section] = $sectioninfo;
             $this->sectioninfobyid[$data->id] = $sectioninfo;
             if (!empty($sectioninfo->component)) {
@@ -703,7 +727,7 @@ class modinfo {
      * @param boolean $usecache use cached section info if exists, use true for partial course rebuild
      * @return array Information about sections, indexed by section id (not number)
      */
-    protected static function build_course_section_cache(\stdClass $course, bool $usecache = false): array {
+    protected static function build_course_section_cache(stdClass $course, bool $usecache = false): array {
         global $DB;
 
         // Get section data.
@@ -711,7 +735,7 @@ class modinfo {
             'course_sections',
             ['course' => $course->id],
             'section',
-            'id, section, course, name, summary, summaryformat, sequence, visible, availability, component, itemid'
+            'id, section, course, name, summary, summaryformat, sequence, visible, availability, component, itemid',
         );
         $compressedsections = [];
         $courseformat = course_get_format($course);
@@ -760,7 +784,7 @@ class modinfo {
      * @throws moodle_exception if course is not found (if $course object misses some of the
      *     necessary fields it is re-requested from database)
      */
-    public static function build_course_cache(\stdClass $course, bool $partialrebuild = false): \stdClass {
+    public static function build_course_cache(stdClass $course, bool $partialrebuild = false): stdClass {
         if (empty($course->id)) {
             throw new coding_exception('Object $course is missing required property \id\'');
         }
@@ -788,7 +812,7 @@ class modinfo {
      * @param bool $partialrebuild Indicate if it's partial course cache rebuild or not
      * @return stdClass Course object that has been stored in MUC
      */
-    protected static function inner_build_course_cache(\stdClass $course, bool $partialrebuild = false): \stdClass {
+    protected static function inner_build_course_cache(stdClass $course, bool $partialrebuild = false): stdClass {
         global $DB, $CFG;
         require_once("{$CFG->dirroot}/course/lib.php");
 
@@ -800,8 +824,12 @@ class modinfo {
 
         // Always reload the course object from database to ensure we have the latest possible
         // value for cacherev.
-        $course = $DB->get_record('course', ['id' => $course->id],
-                implode(',', array_merge(['id'], self::$cachedfields)), MUST_EXIST);
+        $course = $DB->get_record(
+            'course',
+            ['id' => $course->id],
+            implode(',', array_merge(['id'], self::$cachedfields)),
+            MUST_EXIST,
+        );
         // Retrieve all information about activities and sections.
         $coursemodinfo = new stdClass();
         $coursemodinfo->modinfo = self::get_array_of_activities($course, $partialrebuild);
@@ -973,14 +1001,24 @@ class modinfo {
 
         $courseformat = course_get_format($course);
 
-        if ($sections = $DB->get_records('course_sections', ['course' => $course->id],
-            'section ASC', 'id,section,sequence,visible')) {
+        if (
+            $sections = $DB->get_records(
+                'course_sections',
+                ['course' => $course->id],
+                'section ASC',
+                'id,section,sequence,visible',
+            )
+        ) {
             // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
             if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
                 debugging(join('<br>', $errormessages));
                 $rawmods = get_course_mods($course->id);
-                $sections = $DB->get_records('course_sections', ['course' => $course->id],
-                    'section ASC', 'id,section,sequence,visible');
+                $sections = $DB->get_records(
+                    'course_sections',
+                    ['course' => $course->id],
+                    'section ASC',
+                    'id,section,sequence,visible',
+                );
             }
             // Build array of activities.
             foreach ($sections as $section) {
@@ -1090,36 +1128,54 @@ class modinfo {
                         // ... but showdescriptions is enabled, then we use the 'intro',
                         // ... and 'introformat' fields in the module table.
                         if (!$hasfunction && $rawmods[$cmid]->showdescription) {
-                            if ($modvalues = $DB->get_record($rawmods[$cmid]->modname,
-                                ['id' => $rawmods[$cmid]->instance], 'name, intro, introformat')) {
+                            if (
+                                $modvalues = $DB->get_record(
+                                    $rawmods[$cmid]->modname,
+                                    ['id' => $rawmods[$cmid]->instance],
+                                    'name, intro, introformat',
+                                )
+                            ) {
                                 // Set content from intro and introformat. Filters are disabled.
                                 // Because we filter it with format_text at display time.
-                                $mods[$cmid]->content = format_module_intro($rawmods[$cmid]->modname,
-                                    $modvalues, $rawmods[$cmid]->id, false);
+                                $mods[$cmid]->content = format_module_intro(
+                                    $rawmods[$cmid]->modname,
+                                    $modvalues,
+                                    $rawmods[$cmid]->id,
+                                    false,
+                                );
 
                                 // To save making another query just below, put name in here.
                                 $mods[$cmid]->name = $modvalues->name;
                             }
                         }
                         if (!isset($mods[$cmid]->name)) {
-                            $mods[$cmid]->name = $DB->get_field($rawmods[$cmid]->modname, "name",
-                                ["id" => $rawmods[$cmid]->instance]);
+                            $mods[$cmid]->name = $DB->get_field(
+                                $rawmods[$cmid]->modname,
+                                "name",
+                                ["id" => $rawmods[$cmid]->instance],
+                            );
                         }
 
                         // Minimise the database size by unsetting default options when they are 'empty'.
                         // This list corresponds to code in the cm_info constructor.
-                        foreach (['idnumber', 'groupmode', 'groupingid',
+                        foreach (
+                            ['idnumber', 'groupmode', 'groupingid',
                             'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
                             'icon', 'iconcomponent', 'customdata', 'availability', 'completionview',
-                            'completionexpected', 'score', 'showdescription', 'deletioninprogress'] as $property) {
-                            if (property_exists($mods[$cmid], $property) &&
-                                empty($mods[$cmid]->{$property})) {
+                            'completionexpected', 'score', 'showdescription', 'deletioninprogress'] as $property
+                        ) {
+                            if (
+                                property_exists($mods[$cmid], $property)
+                                && empty($mods[$cmid]->{$property})
+                            ) {
                                 unset($mods[$cmid]->{$property});
                             }
                         }
                         // Special case: this value is usually set to null, but may be 0.
-                        if (property_exists($mods[$cmid], 'completiongradeitemnumber') &&
-                            is_null($mods[$cmid]->completiongradeitemnumber)) {
+                        if (
+                            property_exists($mods[$cmid], 'completiongradeitemnumber')
+                            && is_null($mods[$cmid]->completiongradeitemnumber)
+                        ) {
                             unset($mods[$cmid]->completiongradeitemnumber);
                         }
                     }
@@ -1135,7 +1191,7 @@ class modinfo {
      * @param int $courseid Course id
      */
     public static function purge_course_cache(int $courseid): void {
-        increment_revision_number('course', 'cacherev', 'id = :id', array('id' => $courseid));
+        increment_revision_number('course', 'cacherev', 'id = :id', ['id' => $courseid]);
         // Because this is a versioned cache, there is no need to actually delete the cache item,
         // only increase the required version number.
     }

@@ -40,16 +40,21 @@ final class section_info_test extends \advanced_testcase {
 
         // Generate the course and pre-requisite module.
         $course = $this->getDataGenerator()->create_course(
-                array('format' => 'topics',
-                    'numsections' => 3,
-                    'enablecompletion' => 1,
-                    'groupmode' => SEPARATEGROUPS,
-                    'forcegroupmode' => 0),
-                array('createsections' => true));
+            [
+                'format' => 'topics',
+                'numsections' => 3,
+                'enablecompletion' => 1,
+                'groupmode' => SEPARATEGROUPS,
+                'forcegroupmode' => 0,
+            ],
+            ['createsections' => true],
+        );
         $coursecontext = context_course::instance($course->id);
-        $prereqforum = $this->getDataGenerator()->create_module('forum',
-                array('course' => $course->id),
-                array('completion' => 1));
+        $prereqforum = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id],
+            ['completion' => 1],
+        );
 
         // Add availability conditions.
         $availability = '{"op":"&","showc":[true,true,true],"c":[' .
@@ -58,17 +63,21 @@ final class section_info_test extends \advanced_testcase {
                 '{"type":"grade","id":666,"min":0.4},' .
                 '{"type":"profile","op":"contains","sf":"email","v":"test"}' .
                 ']}';
-        $DB->set_field('course_sections', 'availability', $availability,
-                array('course' => $course->id, 'section' => 2));
+        $DB->set_field(
+            'course_sections',
+            'availability',
+            $availability,
+            ['course' => $course->id, 'section' => 2],
+        );
         rebuild_course_cache($course->id, true);
-        $sectiondb = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 2));
+        $sectiondb = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 2]);
 
         // Create and enrol a student.
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
         $student = $this->getDataGenerator()->create_user();
         role_assign($studentrole->id, $student->id, $coursecontext);
         $enrolplugin = enrol_get_plugin('manual');
-        $enrolinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'));
+        $enrolinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual']);
         $enrolplugin->enrol_user($enrolinstance, $student->id);
         $this->setUser($student);
 
@@ -78,7 +87,7 @@ final class section_info_test extends \advanced_testcase {
 
         $this->assertEquals($sectiondb->id, $si->id);
         $this->assertEquals($sectiondb->course, $si->course);
-        $this->assertEquals($sectiondb->section, $si->section);
+        $this->assertEquals($sectiondb->section, $si->sectionnum);
         $this->assertEquals($sectiondb->name, $si->name);
         $this->assertEquals($sectiondb->visible, $si->visible);
         $this->assertEquals($sectiondb->summary, $si->summary);
@@ -108,7 +117,7 @@ final class section_info_test extends \advanced_testcase {
             [
                 'component' => 'test_component',
                 'itemid' => 1,
-            ]
+            ],
         );
 
         $modinfo = get_fast_modinfo($course->id);
@@ -144,12 +153,12 @@ final class section_info_test extends \advanced_testcase {
     /**
      * Test get_uservisible method when the section is delegated.
      *
-     * @dataProvider data_provider_get_uservisible_delegate
      * @param string $role The role to assign to the user.
      * @param bool $parentvisible The visibility of the parent section.
      * @param bool $delegatedvisible The visibility of the delegated section.
      * @param bool $expected The expected visibility of the delegated section.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_provider_get_uservisible_delegate')]
     public function test_get_uservisible_delegate(
         string $role,
         bool $parentvisible,
@@ -167,7 +176,7 @@ final class section_info_test extends \advanced_testcase {
 
         formatactions::section($course)->update(
             $modinfo->get_section_info(1),
-            ['visible' => $parentvisible]
+            ['visible' => $parentvisible],
         );
 
         formatactions::cm($course)->set_visibility(
@@ -245,11 +254,11 @@ final class section_info_test extends \advanced_testcase {
     /**
      * Test get_uservisible method when the section is delegated and depending on if the plugin is enabled.
      *
-     * @dataProvider provider_test_get_uservisible_delegate_enabled
      * @param string $role The role to assign to the user.
      * @param bool $enabled Whether the plugin is enabled.
      * @param bool $expected The expected visibility of the delegated section.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_uservisible_delegate_enabled')]
     public function test_get_uservisible_delegate_enabled(
         string $role,
         bool $enabled,
@@ -274,7 +283,7 @@ final class section_info_test extends \advanced_testcase {
         $this->setUser($user);
         $modinfo = get_fast_modinfo($course);
 
-        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->sectionnum);
 
         // The get_uservisible is a magic getter.
         $this->assertEquals($expected, $delegatedsection->uservisible);
@@ -313,13 +322,13 @@ final class section_info_test extends \advanced_testcase {
     /**
      * Test get_available method when the section is delegated.
      *
-     * @dataProvider data_provider_get_available_delegated
      * @param string $role The role to assign to the user.
      * @param bool $parentavailable The parent section is available.
      * @param bool $delegatedavailable The delegated section is available..
      * @param bool $expectedavailable The expected availability of the delegated section.
      * @param bool $expecteduservisible The expected uservisibility of the delegated section.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_provider_get_available_delegated')]
     public function test_get_available_delegated(
         string $role,
         bool $parentavailable,
@@ -364,7 +373,7 @@ final class section_info_test extends \advanced_testcase {
         if (!$parentavailable) {
             formatactions::section($course)->update(
                 $modinfo->get_section_info(1),
-                ['availability' => $availability]
+                ['availability' => $availability],
             );
         }
 
@@ -467,7 +476,7 @@ final class section_info_test extends \advanced_testcase {
         rebuild_course_cache($course->id, true);
 
         $modinfo = get_fast_modinfo($course);
-        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->sectionnum);
         $this->assertTrue($delegatedsection->is_orphan());
 
         // Check enabling the plugin restore the previous state.
@@ -475,7 +484,7 @@ final class section_info_test extends \advanced_testcase {
         rebuild_course_cache($course->id, true);
 
         $modinfo = get_fast_modinfo($course);
-        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->sectionnum);
         $this->assertFalse($delegatedsection->is_orphan());
 
         // Force section limit in the course format instance.
@@ -492,7 +501,7 @@ final class section_info_test extends \advanced_testcase {
         $courseobject->numsections = 1;
         $property->setValue($format, $courseobject);
 
-        $delegatedsection = $modinfo->get_section_info($delegatedsection->section);
+        $delegatedsection = $modinfo->get_section_info($delegatedsection->sectionnum);
         $this->assertTrue($delegatedsection->is_orphan());
     }
 

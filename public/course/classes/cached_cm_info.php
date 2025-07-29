@@ -27,7 +27,7 @@ namespace core_course;
  * @package     core_course
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright   Sam Marshall
- */ 
+ */
 class cached_cm_info {
     /**
      * Name (text of link) for this activity; Leave unset to accept default name
@@ -36,28 +36,25 @@ class cached_cm_info {
     public $name;
 
     /**
-     * Name of icon for this activity. Normally, this should be used together with $iconcomponent
-     * to define the icon, as per image_url function.
+     * @var string Name of icon for this activity.
+     *
+     * Normally, this should be used together with $iconcomponent to define the icon, as per image_url function.
+     *
      * For backward compatibility, if this value is of the form 'mod/forum/icon' then an icon
      * within that module will be used.
+     *
      * @see cm_info::get_icon_url()
      * @see \core\output\renderer_base::image_url()
-     * @var string
      */
     public $icon;
 
     /**
-     * Component for icon for this activity, as per image_url; leave blank to use default 'moodle'
-     * component
+     * @var string Component for icon for this activity, as per image_url; leave blank to use default 'moodle' component
      * @see \core\output\renderer_base::image_url()
-     * @var string
      */
     public $iconcomponent;
 
-    /**
-     * HTML content to be displayed on the main page below the link (if any) for this course-module
-     * @var string
-     */
+    /** @var string HTML content to be displayed on the main page below the link (if any) for this course-module */
     public $content;
 
     /**

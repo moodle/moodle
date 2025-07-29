@@ -14,17 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core\exception\moodle_exception;
-use core_course\modinfo;
-
 /**
- * modinfolib.php - Functions/classes relating to cached information about module instances on
- * a course.
+ * Functions/classes relating to cached information about module instances on a course.
+ *
  * @package    core
  * @subpackage lib
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     sam marshall
+ * @copyright  Sam Marshall
  */
+
+use core_course\modinfo;
+use core\exception\coding_exception;
+use core\exception\moodle_exception;
 
 if (!defined('MAX_MODINFO_CACHE_SIZE')) {
     /**
@@ -55,11 +56,12 @@ if (!defined('MAX_MODINFO_CACHE_SIZE')) {
  * @throws moodle_exception when course is not found (nothing is thrown if resetting)
  */
 function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
-    // compartibility with syntax prior to 2.4:
+    // Compatibility with syntax prior to 2.4.
     if ($courseorid === 'reset') {
-        debugging("Using the string 'reset' as the first argument of get_fast_modinfo() is deprecated. Use get_fast_modinfo(0,0,true) instead.", DEBUG_DEVELOPER);
-        $courseorid = 0;
-        $resetonly = true;
+        throw new coding_exception(
+            'Using the string "reset" as the first argument of get_fast_modinfo() is deprecated. ' .
+            'Use get_fast_modinfo(0,0,true) instead.',
+        );
     }
 
     // Function get_fast_modinfo() can never be called during upgrade unless it is used for clearing cache only.
@@ -67,13 +69,13 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
         upgrade_ensure_not_running();
     }
 
-    // Function is called with $reset = true
+    // Function is called with $reset = true.
     if ($resetonly) {
         modinfo::clear_instance_cache($courseorid);
         return null;
     }
 
-    // Function is called with $reset = false, retrieve modinfo
+    // Function is called with $reset = false, retrieve modinfo.
     return modinfo::instance($courseorid, $userid);
 }
 
@@ -143,7 +145,7 @@ function get_course_and_cm_from_cmid($cmorid, $modulename = '', $courseorid = 0,
                     SELECT c.*
                       FROM {course_modules} cm
                       JOIN {course} c ON c.id = cm.course
-                     WHERE cm.id = ?", array($cmid), MUST_EXIST);
+                     WHERE cm.id = ?", [$cmid], MUST_EXIST);
         }
     }
 
@@ -153,7 +155,7 @@ function get_course_and_cm_from_cmid($cmorid, $modulename = '', $courseorid = 0,
     if ($modulename && $cm->modname !== $modulename) {
         throw new moodle_exception('invalidcoursemoduleid', 'error', '', $cmid);
     }
-    return array($course, $cm);
+    return [$course, $cm];
 }
 
 /**
@@ -222,7 +224,7 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
                     SELECT c.*
                       FROM $pagetable instance
                       JOIN {course} c ON c.id = instance.course
-                     WHERE instance.id = ?", array($instanceid), MUST_EXIST);
+                     WHERE instance.id = ?", [$instanceid], MUST_EXIST);
         }
     }
 
@@ -232,7 +234,7 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
     if (!array_key_exists($instanceid, $instances)) {
         throw new moodle_exception('invalidmoduleid', 'error', '', $instanceid);
     }
-    return array($course, $instances[$instanceid]);
+    return [$course, $instances[$instanceid]];
 }
 
 
@@ -244,13 +246,12 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
  * upgrade scripts of plugins.
  *
  * During the bulk operations if it is necessary to reset cache of multiple
- * courses it is enough to call {@link increment_revision_number()} for the
+ * courses it is enough to call {@see increment_revision_number()} for the
  * table 'course' and field 'cacherev' specifying affected courses in select.
  *
  * Cached course information is stored in MUC core/coursemodinfo and is
  * validated with the DB field {course}.cacherev
  *
- * @global moodle_database $DB
  * @param int $courseid id of course to rebuild, empty means all
  * @param boolean $clearonly only clear the cache, gets rebuild automatically on the fly.
  *     Recommended to set to true to avoid unnecessary multiple rebuilding.
@@ -266,7 +267,7 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
 function rebuild_course_cache(int $courseid = 0, bool $clearonly = false, bool $partialrebuild = false): void {
     global $COURSE, $SITE, $DB;
 
-    if ($courseid == 0 and $partialrebuild) {
+    if ($courseid == 0 && $partialrebuild) {
         throw new coding_exception('partialrebuild only works when a valid course id is provided.');
     }
 
@@ -275,7 +276,7 @@ function rebuild_course_cache(int $courseid = 0, bool $clearonly = false, bool $
         $clearonly = true;
     }
 
-    // Destroy navigation caches
+    // Destroy navigation caches.
     navigation_cache::destroy_volatile_caches();
 
     core_courseformat\base::reset_course_cache($courseid);
@@ -290,18 +291,18 @@ function rebuild_course_cache(int $courseid = 0, bool $clearonly = false, bool $
         // Clear memory static cache.
         modinfo::clear_instance_cache();
         // Update global values too.
-        $sitecacherev = $DB->get_field('course', 'cacherev', array('id' => SITEID));
+        $sitecacherev = $DB->get_field('course', 'cacherev', ['id' => SITEID]);
         $SITE->cachrev = $sitecacherev;
         if ($COURSE->id == SITEID) {
             $COURSE->cacherev = $sitecacherev;
         } else {
-            $COURSE->cacherev = $DB->get_field('course', 'cacherev', array('id' => $COURSE->id));
+            $COURSE->cacherev = $DB->get_field('course', 'cacherev', ['id' => $COURSE->id]);
         }
     } else {
         // Clearing cache for one course, make sure it is deleted from user request cache as well.
         // Because this is a versioned cache, there is no need to actually delete the cache item,
         // only increase the required version number.
-        increment_revision_number('course', 'cacherev', 'id = :id', array('id' => $courseid));
+        increment_revision_number('course', 'cacherev', 'id = :id', ['id' => $courseid]);
         $cacherev = $DB->get_field('course', 'cacherev', ['id' => $courseid]);
         // Clear memory static cache.
         modinfo::clear_instance_cache($courseid, $cacherev);
@@ -321,10 +322,11 @@ function rebuild_course_cache(int $courseid = 0, bool $clearonly = false, bool $
     }
 
     if ($courseid) {
-        $select = array('id'=>$courseid);
+        $select = ['id' => $courseid];
     } else {
-        $select = array();
-        core_php_time_limit::raise();  // this could take a while!   MDL-10954
+        $select = [];
+        // This could take a while -- See MDL-10954 for further information.
+        core_php_time_limit::raise();
     }
 
     $fields = 'id,' . join(',', modinfo::$cachedfields);

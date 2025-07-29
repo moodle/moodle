@@ -32,7 +32,7 @@ use Exception;
  * Unit tests for lib/modinfolib.php.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,33 +47,35 @@ final class modinfolib_test extends advanced_testcase {
     }
 
     public function test_matching_cacherev(): void {
-        global $DB, $CFG;
+        global $DB;
 
         $this->resetAfterTest();
         $this->setAdminUser();
         $cache = cache::make('core', 'coursemodinfo');
 
         // Generate the course and pre-requisite module.
-        $course = $this->getDataGenerator()->create_course(
-                array('format' => 'topics',
-                    'numsections' => 3),
-                array('createsections' => true));
+        $course = $this->getDataGenerator()->create_course([
+            'format' => 'topics',
+            'numsections' => 3,
+        ], [
+            'createsections' => true,
+        ]);
 
         // Make sure the cacherev is set.
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertGreaterThan(0, $cacherev);
         $prevcacherev = $cacherev;
 
         // Reset course cache and make sure cacherev is bumped up but cache is empty.
         rebuild_course_cache($course->id, true);
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertGreaterThan($prevcacherev, $cacherev);
         $this->assertEmpty($cache->get_versioned($course->id, $prevcacherev));
         $prevcacherev = $cacherev;
 
         // Build course cache. Cacherev should not change but cache is now not empty. Make sure cacherev is the same everywhere.
         $modinfo = get_fast_modinfo($course->id);
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertEquals($prevcacherev, $cacherev);
         $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
@@ -81,15 +83,16 @@ final class modinfolib_test extends advanced_testcase {
         $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
         $prevcacherev = $cacherev;
 
-        // Little trick to check that cache is not rebuilt druing the next step - substitute the value in MUC and later check that it is still there.
+        // Little trick to check that cache is not rebuilt druing the next step.
+        // Substitute the value in MUC and later check that it is still there.
         $cache->acquire_lock($course->id);
-        $cache->set_versioned($course->id, $cacherev, (object)array_merge((array)$cachedvalue, array('secretfield' => 1)));
+        $cache->set_versioned($course->id, $cacherev, (object)array_merge((array)$cachedvalue, ['secretfield' => 1]));
         $cache->release_lock($course->id);
 
         // Clear static cache and call get_fast_modinfo() again (pretend we are in another request). Cache should not be rebuilt.
         course_modinfo::clear_instance_cache();
         $modinfo = get_fast_modinfo($course->id);
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertEquals($prevcacherev, $cacherev);
         $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
@@ -100,7 +103,7 @@ final class modinfolib_test extends advanced_testcase {
 
         // Rebuild course cache. Cacherev must be incremented everywhere.
         rebuild_course_cache($course->id);
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertGreaterThan($prevcacherev, $cacherev);
         $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
@@ -110,11 +113,11 @@ final class modinfolib_test extends advanced_testcase {
         $prevcacherev = $cacherev;
 
         // Update cacherev in DB and make sure the cache will be rebuilt on the next call to get_fast_modinfo().
-        increment_revision_number('course', 'cacherev', 'id = ?', array($course->id));
+        increment_revision_number('course', 'cacherev', 'id = ?', [$course->id]);
         // We need to clear static cache for course_modinfo instances too.
         course_modinfo::clear_instance_cache();
         $modinfo = get_fast_modinfo($course->id);
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertGreaterThan($prevcacherev, $cacherev);
         $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
@@ -124,7 +127,7 @@ final class modinfolib_test extends advanced_testcase {
 
         // Reset cache for all courses and make sure this course cache is reset.
         rebuild_course_cache(0, true);
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertGreaterThan($prevcacherev, $cacherev);
         $this->assertEmpty($cache->get_versioned($course->id, $cacherev));
         // Rebuild again.
@@ -137,7 +140,7 @@ final class modinfolib_test extends advanced_testcase {
 
         // Purge all caches and make sure cacherev is increased and data from MUC erased.
         purge_all_caches();
-        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
         $this->assertGreaterThan($prevcacherev, $cacherev);
         $this->assertEmpty($cache->get($course->id));
     }
@@ -156,8 +159,10 @@ final class modinfolib_test extends advanced_testcase {
         $this->resetAfterTest();
         $originalcourse = $this->getDataGenerator()->create_course();
         $course = $DB->get_record('course', ['id' => $originalcourse->id]);
-        $page = $this->getDataGenerator()->create_module('page',
-                ['course' => $course->id, 'name' => 'frog']);
+        $page = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course->id, 'name' => 'frog']
+        );
         $oldmodinfo = get_fast_modinfo($course);
         $this->assertEquals('frog', $oldmodinfo->get_cm($page->cmid)->name);
 
@@ -212,15 +217,15 @@ final class modinfolib_test extends advanced_testcase {
 
         // Create a course and a mod_assign instance.
         $course = $this->getDataGenerator()->create_course();
-        $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
 
         // Create and enrol a student.
         $coursecontext = context_course::instance($course->id);
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
         $student = $this->getDataGenerator()->create_user();
         role_assign($studentrole->id, $student->id, $coursecontext);
         $enrolplugin = enrol_get_plugin('manual');
-        $enrolinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'));
+        $enrolinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual']);
         $enrolplugin->enrol_user($enrolinstance, $student->id);
         $this->setUser($student);
 
@@ -250,7 +255,7 @@ final class modinfolib_test extends advanced_testcase {
         $this->assertFalse($cm->uservisible);
         $this->assertTrue($cm->is_user_access_restricted_by_capability());
 
-        // Check calling get_fast_modinfo() for different user:
+        // Check calling get_fast_modinfo() for different user.
         $this->setAdminUser();
         $cm = get_fast_modinfo($course->id)->instances['assign'][$assign->id];
         $this->assertTrue($cm->uservisible);

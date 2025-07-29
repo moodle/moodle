@@ -23,6 +23,8 @@ use core\context\course as context_course;
 use core_courseformat\sectiondelegate;
 use core_courseformat\sectiondelegatemodule;
 
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
+
 /**
  * Data about a single section on a course.
  *
@@ -150,7 +152,7 @@ class section_info implements IteratorAggregate {
 
     /**
      * True if this section is available to students i.e. if all availability conditions
-     * are met - obtained dynamically on request, see function {@link section_info::get_available()}
+     * are met - obtained dynamically on request, see function {@see section_info::get_available()}
      * @var bool|null
      */
     private $_available;
@@ -159,7 +161,7 @@ class section_info implements IteratorAggregate {
      * If section is not available to some users, this string gives information about
      * availability which can be displayed to students and/or staff (e.g. 'Available from 3
      * January 2010') for display on main page - obtained dynamically on request, see
-     * function {@link section_info::get_availableinfo()}
+     * function {@see section_info::get_availableinfo()}
      * @var string
      */
     private $_availableinfo;
@@ -168,7 +170,7 @@ class section_info implements IteratorAggregate {
      * True if this section is available to the CURRENT user (for example, if current user
      * has viewhiddensections capability, they can access the section even if it is not
      * visible or not available, so this would be true in that case) - obtained dynamically
-     * on request, see function {@link section_info::get_uservisible()}
+     * on request, see function {@see section_info::get_uservisible()}
      * @var bool|null
      */
     private $_uservisible;
@@ -179,28 +181,28 @@ class section_info implements IteratorAggregate {
      * which means values must all be strings.
      * @var array
      */
-    private static $sectioncachedefaults = array(
+    private static $sectioncachedefaults = [
         'name' => null,
         'summary' => '',
-        'summaryformat' => '1', // FORMAT_HTML, but must be a string
+        'summaryformat' => '1', // FORMAT_HTML, but must be a string.
         'visible' => '1',
         'availability' => null,
         'component' => null,
         'itemid' => null,
-    );
+    ];
 
     /**
      * Stores format options that have been cached when building 'coursecache'
      * When the format option is requested we look first if it has been cached
      * @var array
      */
-    private $cachedformatoptions = array();
+    private $cachedformatoptions = [];
 
     /**
      * Stores the list of all possible section options defined in each used course format.
      * @var array
      */
-    static private $sectionformatoptions = array();
+    private static $sectionformatoptions = [];
 
     /**
      * Stores the modinfo object passed in constructor, may be used when requesting
@@ -236,22 +238,23 @@ class section_info implements IteratorAggregate {
      */
     public function __construct($data, $number, $notused1, $notused2, $modinfo, $notused3) {
         global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
 
-        // Data that is always present
+        // Data that is always present.
         $this->_id = $data->id;
 
-        $defaults = self::$sectioncachedefaults +
-                array('conditionscompletion' => array(),
-                    'conditionsgrade' => array(),
-                    'conditionsfield' => array());
+        $defaults = self::$sectioncachedefaults + [
+            'conditionscompletion' => [],
+            'conditionsgrade' => [],
+            'conditionsfield' => [],
+        ];
 
-        // Data that may use default values to save cache size
+        // Data that may use default values to save cache size.
         foreach ($defaults as $field => $value) {
             if (isset($data->{$field})) {
-                $this->{'_'.$field} = $data->{$field};
+                $this->{'_' . $field} = $data->{$field};
             } else {
-                $this->{'_'.$field} = $value;
+                $this->{'_' . $field} = $value;
             }
         }
 
@@ -289,9 +292,11 @@ class section_info implements IteratorAggregate {
             $value = $this->__get($name);
             return isset($value);
         }
-        if (method_exists($this, 'get_'.$name) ||
-                property_exists($this, '_'.$name) ||
-                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
+        if (
+            method_exists($this, 'get_' . $name)
+            || property_exists($this, '_' . $name)
+            || array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])
+        ) {
             $value = $this->__get($name);
             return isset($value);
         }
@@ -309,9 +314,11 @@ class section_info implements IteratorAggregate {
             $value = $this->__get($name);
             return empty($value);
         }
-        if (method_exists($this, 'get_'.$name) ||
-                property_exists($this, '_'.$name) ||
-                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
+        if (
+            method_exists($this, 'get_' . $name) ||
+                property_exists($this, '_' . $name) ||
+                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])
+        ) {
             $value = $this->__get($name);
             return empty($value);
         }
@@ -331,21 +338,21 @@ class section_info implements IteratorAggregate {
                 return $this->$method();
             }
         }
-        if (method_exists($this, 'get_'.$name)) {
-            return $this->{'get_'.$name}();
+        if (method_exists($this, 'get_' . $name)) {
+            return $this->{'get_' . $name}();
         }
-        if (property_exists($this, '_'.$name)) {
-            return $this->{'_'.$name};
+        if (property_exists($this, '_' . $name)) {
+            return $this->{'_' . $name};
         }
         if (array_key_exists($name, $this->cachedformatoptions)) {
             return $this->cachedformatoptions[$name];
         }
-        // precheck if the option is defined in format to avoid unnecessary DB queries in get_format_options()
+        // Precheck if the option is defined in format to avoid unnecessary DB queries in get_format_options().
         if (array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
             $formatoptions = course_get_format($this->modinfo->get_course())->get_format_options($this);
             return $formatoptions[$name];
         }
-        debugging('Invalid section_info property accessed! '.$name);
+        debugging('Invalid section_info property accessed! ' . $name);
         return null;
     }
 
@@ -369,8 +376,12 @@ class section_info implements IteratorAggregate {
         if (!empty($CFG->enableavailability)) {
             // Get availability information.
             $ci = new \core_availability\info_section($this);
-            $this->_available = $ci->is_available($this->_availableinfo, true,
-                    $userid, $this->modinfo);
+            $this->_available = $ci->is_available(
+                $this->_availableinfo,
+                true,
+                $userid,
+                $this->modinfo,
+            );
         }
 
         if ($this->_available) {
@@ -378,8 +389,10 @@ class section_info implements IteratorAggregate {
         }
         // Execute the hook from the course format that may override the available/availableinfo properties.
         $currentavailable = $this->_available;
-        course_get_format($this->modinfo->get_course())->
-            section_get_available_hook($this, $this->_available, $this->_availableinfo);
+
+        course_get_format($this->modinfo->get_course())
+            ->section_get_available_hook($this, $this->_available, $this->_availableinfo);
+
         if (!$currentavailable && $this->_available) {
             debugging('section_get_available_hook() can not make unavailable section available', DEBUG_DEVELOPER);
             $this->_available = $currentavailable;
@@ -422,18 +435,13 @@ class section_info implements IteratorAggregate {
         return $this->_availableinfo;
     }
 
-    /**
-     * Implementation of IteratorAggregate::getIterator(), allows to cycle through properties
-     * and use {@link convert_to_array()}
-     *
-     * @return ArrayIterator
-     */
+    #[\Override]
     public function getIterator(): Traversable {
-        $ret = array();
+        $ret = [];
         foreach (get_object_vars($this) as $key => $value) {
             if (substr($key, 0, 1) == '_') {
-                if (method_exists($this, 'get'.$key)) {
-                    $ret[substr($key, 1)] = $this->{'get'.$key}();
+                if (method_exists($this, 'get' . $key)) {
+                    $ret[substr($key, 1)] = $this->{'get' . $key}();
                 } else {
                     $ret[substr($key, 1)] = $this->$key;
                 }
@@ -629,15 +637,14 @@ class section_info implements IteratorAggregate {
     public static function convert_for_section_cache($section) {
         global $CFG;
 
-        // Course id stored in course table
+        // Course id stored in course table.
         unset($section->course);
-        // Sequence stored implicity in modinfo $sections array
+        // Sequence stored implicity in modinfo $sections array.
         unset($section->sequence);
 
-        // Remove default data
+        // Remove default data.
         foreach (self::$sectioncachedefaults as $field => $value) {
-            // Exact compare as strings to avoid problems if some strings are set
-            // to "0" etc.
+            // Exact compare as strings to avoid problems if some strings are set to "0" etc.
             if (isset($section->{$field}) && $section->{$field} === $value) {
                 unset($section->{$field});
             }

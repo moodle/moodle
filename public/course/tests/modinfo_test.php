@@ -30,6 +30,7 @@ use dml_exception;
  * @copyright  2025 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(modinfo::class)]
 final class modinfo_test extends \advanced_testcase {
     public function test_course_modinfo_properties(): void {
         global $USER, $DB;
@@ -41,59 +42,86 @@ final class modinfo_test extends \advanced_testcase {
 
         // Generate the course and some modules. Make one section hidden.
         $course = $this->getDataGenerator()->create_course(
-                ['format' => 'topics', 'numsections' => 3],
-                ['createsections' => true]);
-        $DB->execute('UPDATE {course_sections} SET visible = 0 WHERE course = ? and section = ?',
-                [$course->id, 3]);
-        $forum0 = $this->getDataGenerator()->create_module('forum',
-                ['course' => $course->id, 'section' => 0]);
-        $assign0 = $this->getDataGenerator()->create_module('assign',
-                ['course' => $course->id, 'section' => 0, 'visible' => 0]);
-        $page0 = $this->getDataGenerator()->create_module('page',
-                ['course' => $course->id, 'section' => 0, 'visibleoncoursepage' => 0]);
-        $forum1 = $this->getDataGenerator()->create_module('forum',
-                ['course' => $course->id, 'section' => 1]);
-        $assign1 = $this->getDataGenerator()->create_module('assign',
-                ['course' => $course->id, 'section' => 1]);
-        $page1 = $this->getDataGenerator()->create_module('page',
-                ['course' => $course->id, 'section' => 1]);
-        $page3 = $this->getDataGenerator()->create_module('page',
-                ['course' => $course->id, 'section' => 3]);
+            ['format' => 'topics', 'numsections' => 3],
+            ['createsections' => true],
+        );
+        $DB->execute(
+            'UPDATE {course_sections} SET visible = 0 WHERE course = ? and section = ?',
+            [$course->id, 3],
+        );
+        $forum0 = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id, 'section' => 0],
+        );
+        $assign0 = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'section' => 0, 'visible' => 0],
+        );
+        $page0 = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course->id, 'section' => 0, 'visibleoncoursepage' => 0],
+        );
+        $forum1 = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id, 'section' => 1],
+        );
+        $assign1 = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'section' => 1],
+        );
+        $page1 = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course->id, 'section' => 1],
+        );
+        $page3 = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course->id, 'section' => 3],
+        );
 
         $modinfo = get_fast_modinfo($course->id);
 
         $this->assertEquals(
-                [$forum0->cmid, $assign0->cmid, $page0->cmid, $forum1->cmid, $assign1->cmid, $page1->cmid, $page3->cmid],
-                array_keys($modinfo->cms));
+            [$forum0->cmid, $assign0->cmid, $page0->cmid, $forum1->cmid, $assign1->cmid, $page1->cmid, $page3->cmid],
+            array_keys($modinfo->cms),
+        );
         $this->assertEquals($course->id, $modinfo->courseid);
         $this->assertEquals($USER->id, $modinfo->userid);
-        $this->assertEquals([
+        $this->assertEquals(
+            [
                 0 => [$forum0->cmid, $assign0->cmid, $page0->cmid],
                 1 => [$forum1->cmid, $assign1->cmid, $page1->cmid],
                 3 => [$page3->cmid],
-            ], $modinfo->sections);
+            ],
+            $modinfo->sections,
+        );
         $this->assertEquals(['forum', 'assign', 'page'], array_keys($modinfo->instances));
         $this->assertEquals([$assign0->id, $assign1->id], array_keys($modinfo->instances['assign']));
         $this->assertEquals([$forum0->id, $forum1->id], array_keys($modinfo->instances['forum']));
         $this->assertEquals([$page0->id, $page1->id, $page3->id], array_keys($modinfo->instances['page']));
         $this->assertEquals(groups_get_user_groups($course->id), $modinfo->groups);
-        $this->assertEquals([
+        $this->assertEquals(
+            [
                 0 => [$forum0->cmid, $assign0->cmid, $page0->cmid],
                 1 => [$forum1->cmid, $assign1->cmid, $page1->cmid],
                 3 => [$page3->cmid],
-            ], $modinfo->get_sections());
+            ],
+            $modinfo->get_sections(),
+        );
         $this->assertEquals([0, 1, 2, 3], array_keys($modinfo->get_section_info_all()));
         $this->assertEquals($forum0->cmid . ',' . $assign0->cmid . ',' . $page0->cmid, $modinfo->get_section_info(0)->sequence);
         $this->assertEquals($forum1->cmid . ',' . $assign1->cmid . ',' . $page1->cmid, $modinfo->get_section_info(1)->sequence);
         $this->assertEquals('', $modinfo->get_section_info(2)->sequence);
         $this->assertEquals($page3->cmid, $modinfo->get_section_info(3)->sequence);
         $this->assertEquals($course->id, $modinfo->get_course()->id);
+
         $names = array_keys($modinfo->get_used_module_names());
         sort($names);
         $this->assertEquals(['assign', 'forum', 'page'], $names);
+
         $names = array_keys($modinfo->get_used_module_names(true));
         sort($names);
         $this->assertEquals(['assign', 'forum', 'page'], $names);
+
         // Admin can see hidden modules/sections.
         $this->assertTrue($modinfo->cms[$assign0->cmid]->uservisible);
         $this->assertTrue($modinfo->cms[$assign0->cmid]->is_visible_on_course_page());
@@ -174,18 +202,23 @@ final class modinfo_test extends \advanced_testcase {
      * and sections (just to see that it is correctly saved and accessed).
      */
     public function test_availability_property(): void {
-        global $DB, $CFG;
+        global $DB;
 
         $this->resetAfterTest();
 
         // Create a course with two modules and three sections.
         $course = $this->getDataGenerator()->create_course(
-                array('format' => 'topics', 'numsections' => 3),
-                array('createsections' => true));
-        $forum = $this->getDataGenerator()->create_module('forum',
-                array('course' => $course->id));
-        $forum2 = $this->getDataGenerator()->create_module('forum',
-                array('course' => $course->id));
+            ['format' => 'topics', 'numsections' => 3],
+            ['createsections' => true],
+        );
+        $forum = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id],
+        );
+        $forum2 = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id],
+        );
 
         // Get modinfo. Check that availability is null for both cm and sections.
         $modinfo = get_fast_modinfo($course->id);
@@ -195,8 +228,8 @@ final class modinfo_test extends \advanced_testcase {
         $this->assertNull($section->availability);
 
         // Update availability for cm and section in database.
-        $DB->set_field('course_modules', 'availability', '{}', array('id' => $cm->id));
-        $DB->set_field('course_sections', 'availability', '{}', array('id' => $section->id));
+        $DB->set_field('course_modules', 'availability', '{}', ['id' => $cm->id]);
+        $DB->set_field('course_sections', 'availability', '{}', ['id' => $section->id]);
 
         // Clear cache and get modinfo again.
         rebuild_course_cache($course->id, true);
@@ -218,8 +251,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Test for get_listed_section_info_all method.
-     * @covers modinfo::get_listed_section_info_all
-     * @covers modinfo::get_section_info_all
      */
     public function test_get_listed_section_info_all(): void {
         $this->resetAfterTest();
@@ -270,19 +301,19 @@ final class modinfo_test extends \advanced_testcase {
         $generator->enrol_user($user3->id, $course3->id);
 
         // Create groups.
-        $group1 = $generator->create_group(array('courseid' => $course1->id));
-        $group2 = $generator->create_group(array('courseid' => $course2->id));
-        $group3 = $generator->create_group(array('courseid' => $course2->id));
+        $group1 = $generator->create_group(['courseid' => $course1->id]);
+        $group2 = $generator->create_group(['courseid' => $course2->id]);
+        $group3 = $generator->create_group(['courseid' => $course2->id]);
 
         // Assign users to groups and assert the result.
-        $this->assertTrue($generator->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id)));
-        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id)));
-        $this->assertTrue($generator->create_group_member(array('groupid' => $group3->id, 'userid' => $user2->id)));
-        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user3->id)));
+        $this->assertTrue($generator->create_group_member(['groupid' => $group1->id, 'userid' => $user1->id]));
+        $this->assertTrue($generator->create_group_member(['groupid' => $group2->id, 'userid' => $user2->id]));
+        $this->assertTrue($generator->create_group_member(['groupid' => $group3->id, 'userid' => $user2->id]));
+        $this->assertTrue($generator->create_group_member(['groupid' => $group2->id, 'userid' => $user3->id]));
 
         // Create groupings.
-        $grouping1 = $generator->create_grouping(array('courseid' => $course1->id));
-        $grouping2 = $generator->create_grouping(array('courseid' => $course2->id));
+        $grouping1 = $generator->create_grouping(['courseid' => $course1->id]);
+        $grouping2 = $generator->create_grouping(['courseid' => $course2->id]);
 
         // Assign and assert group to groupings.
         groups_assign_grouping($grouping1->id, $group1->id);
@@ -312,23 +343,23 @@ final class modinfo_test extends \advanced_testcase {
     /**
      * Tests the function for constructing a cm_info from mixed data.
      */
-    
+
     public function test_create(): void {
-        global $CFG, $DB;
+        global $DB;
         $this->resetAfterTest();
 
         // Create a course and an activity.
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $page = $generator->create_module('page', array('course' => $course->id,
-                'name' => 'Annie'));
+        $page = $generator->create_module('page', ['course' => $course->id, 'name' => 'Annie']);
 
         // Null is passed through.
         $this->assertNull(cm_info::create(null));
 
         // Stdclass object turns into cm_info.
         $cm = cm_info::create(
-                (object)array('id' => $page->cmid, 'course' => $course->id));
+            (object)['id' => $page->cmid, 'course' => $course->id],
+        );
         $this->assertInstanceOf(cm_info::class, $cm);
         $this->assertEquals('Annie', $cm->name);
 
@@ -337,34 +368,42 @@ final class modinfo_test extends \advanced_testcase {
 
         // Invalid object (missing fields) causes error.
         try {
-            cm_info::create((object)array('id' => $page->cmid));
+            cm_info::create((object)['id' => $page->cmid]);
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertInstanceOf(coding_exception::class, $e);
         }
 
         // Create a second hidden activity.
-        $hiddenpage = $generator->create_module('page', array('course' => $course->id,
-                'name' => 'Annie', 'visible' => 0));
+        $hiddenpage = $generator->create_module('page', ['course' => $course->id, 'name' => 'Annie', 'visible' => 0]);
 
         // Create 2 user accounts, one is a manager who can see everything.
         $user = $generator->create_user();
         $generator->enrol_user($user->id, $course->id);
         $manager = $generator->create_user();
-        $generator->enrol_user($manager->id, $course->id,
-                $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST));
+        $generator->enrol_user(
+            $manager->id,
+            $course->id,
+            $DB->get_field('role', 'id', ['shortname' => 'manager'], MUST_EXIST),
+        );
 
         // User can see the normal page but not the hidden one.
-        $cm = cm_info::create((object)array('id' => $page->cmid, 'course' => $course->id),
-                $user->id);
+        $cm = cm_info::create(
+            (object)['id' => $page->cmid, 'course' => $course->id],
+            $user->id,
+        );
         $this->assertTrue($cm->uservisible);
-        $cm = cm_info::create((object)array('id' => $hiddenpage->cmid, 'course' => $course->id),
-                $user->id);
+        $cm = cm_info::create(
+            (object)['id' => $hiddenpage->cmid, 'course' => $course->id],
+            $user->id,
+        );
         $this->assertFalse($cm->uservisible);
 
         // Manager can see the hidden one too.
-        $cm = cm_info::create((object)array('id' => $hiddenpage->cmid, 'course' => $course->id),
-                $manager->id);
+        $cm = cm_info::create(
+            (object)['id' => $hiddenpage->cmid, 'course' => $course->id],
+            $manager->id,
+        );
         $this->assertTrue($cm->uservisible);
     }
 
@@ -378,40 +417,42 @@ final class modinfo_test extends \advanced_testcase {
 
         // Create a course and an activity.
         $generator = $this->getDataGenerator();
-        $course = $generator->create_course(array('shortname' => 'Halls'));
-        $page = $generator->create_module('page', array('course' => $course->id,
-                'name' => 'Annie'));
+        $course = $generator->create_course(['shortname' => 'Halls']);
+        $page = $generator->create_module(
+            'page',
+            ['course' => $course->id, 'name' => 'Annie'],
+        );
 
         // Successful usage.
-        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid);
+        [$course, $cm] = get_course_and_cm_from_cmid($page->cmid);
         $this->assertEquals('Halls', $course->shortname);
         $this->assertInstanceOf(cm_info::class, $cm);
         $this->assertEquals('Annie', $cm->name);
 
         // Specified module type.
-        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page');
+        [$course, $cm] = get_course_and_cm_from_cmid($page->cmid, 'page');
         $this->assertEquals('Annie', $cm->name);
 
         // With id in object.
-        $fakecm = (object)array('id' => $page->cmid);
-        list($course, $cm) = get_course_and_cm_from_cmid($fakecm);
+        $fakecm = (object)['id' => $page->cmid];
+        [$course, $cm] = get_course_and_cm_from_cmid($fakecm);
         $this->assertEquals('Halls', $course->shortname);
         $this->assertEquals('Annie', $cm->name);
 
         // With both id and course in object.
         $fakecm->course = $course->id;
-        list($course, $cm) = get_course_and_cm_from_cmid($fakecm);
+        [$course, $cm] = get_course_and_cm_from_cmid($fakecm);
         $this->assertEquals('Halls', $course->shortname);
         $this->assertEquals('Annie', $cm->name);
 
         // With supplied course id.
-        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', $course->id);
+        [$course, $cm] = get_course_and_cm_from_cmid($page->cmid, 'page', $course->id);
         $this->assertEquals('Annie', $cm->name);
 
         // With supplied course object (modified just so we can check it is
         // indeed reusing the supplied object).
         $course->silly = true;
-        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', $course);
+        [$course, $cm] = get_course_and_cm_from_cmid($page->cmid, 'page', $course);
         $this->assertEquals('Annie', $cm->name);
         $this->assertTrue($course->silly);
 
@@ -440,24 +481,29 @@ final class modinfo_test extends \advanced_testcase {
         }
 
         // Create a second hidden activity.
-        $hiddenpage = $generator->create_module('page', array('course' => $course->id,
-                'name' => 'Annie', 'visible' => 0));
+        $hiddenpage = $generator->create_module(
+            'page',
+            ['course' => $course->id, 'name' => 'Annie', 'visible' => 0],
+        );
 
         // Create 2 user accounts, one is a manager who can see everything.
         $user = $generator->create_user();
         $generator->enrol_user($user->id, $course->id);
         $manager = $generator->create_user();
-        $generator->enrol_user($manager->id, $course->id,
-                $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST));
+        $generator->enrol_user(
+            $manager->id,
+            $course->id,
+            $DB->get_field('role', 'id', ['shortname' => 'manager'], MUST_EXIST),
+        );
 
         // User can see the normal page but not the hidden one.
-        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', 0, $user->id);
+        [$course, $cm] = get_course_and_cm_from_cmid($page->cmid, 'page', 0, $user->id);
         $this->assertTrue($cm->uservisible);
-        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $user->id);
+        [$course, $cm] = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $user->id);
         $this->assertFalse($cm->uservisible);
 
         // Manager can see the hidden one too.
-        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $manager->id);
+        [$course, $cm] = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $manager->id);
         $this->assertTrue($cm->uservisible);
     }
 
@@ -471,36 +517,38 @@ final class modinfo_test extends \advanced_testcase {
 
         // Create a course and an activity.
         $generator = $this->getDataGenerator();
-        $course = $generator->create_course(array('shortname' => 'Halls'));
-        $page = $generator->create_module('page', array('course' => $course->id,
-                'name' => 'Annie'));
+        $course = $generator->create_course(['shortname' => 'Halls']);
+        $page = $generator->create_module(
+            'page',
+            ['course' => $course->id, 'name' => 'Annie'],
+        );
 
         // Successful usage.
-        list($course, $cm) = get_course_and_cm_from_instance($page->id, 'page');
+        [$course, $cm] = get_course_and_cm_from_instance($page->id, 'page');
         $this->assertEquals('Halls', $course->shortname);
         $this->assertInstanceOf(cm_info::class, $cm);
         $this->assertEquals('Annie', $cm->name);
 
         // With id in object.
-        $fakeinstance = (object)array('id' => $page->id);
-        list($course, $cm) = get_course_and_cm_from_instance($fakeinstance, 'page');
+        $fakeinstance = (object)['id' => $page->id];
+        [$course, $cm] = get_course_and_cm_from_instance($fakeinstance, 'page');
         $this->assertEquals('Halls', $course->shortname);
         $this->assertEquals('Annie', $cm->name);
 
         // With both id and course in object.
         $fakeinstance->course = $course->id;
-        list($course, $cm) = get_course_and_cm_from_instance($fakeinstance, 'page');
+        [$course, $cm] = get_course_and_cm_from_instance($fakeinstance, 'page');
         $this->assertEquals('Halls', $course->shortname);
         $this->assertEquals('Annie', $cm->name);
 
         // With supplied course id.
-        list($course, $cm) = get_course_and_cm_from_instance($page->id, 'page', $course->id);
+        [$course, $cm] = get_course_and_cm_from_instance($page->id, 'page', $course->id);
         $this->assertEquals('Annie', $cm->name);
 
         // With supplied course object (modified just so we can check it is
         // indeed reusing the supplied object).
         $course->silly = true;
-        list($course, $cm) = get_course_and_cm_from_instance($page->id, 'page', $course);
+        [$course, $cm] = get_course_and_cm_from_instance($page->id, 'page', $course);
         $this->assertEquals('Annie', $cm->name);
         $this->assertTrue($course->silly);
 
@@ -529,38 +577,41 @@ final class modinfo_test extends \advanced_testcase {
         }
 
         // Create a second hidden activity.
-        $hiddenpage = $generator->create_module('page', array('course' => $course->id,
-                'name' => 'Annie', 'visible' => 0));
+        $hiddenpage = $generator->create_module(
+            'page',
+            ['course' => $course->id, 'name' => 'Annie', 'visible' => 0],
+        );
 
         // Create 2 user accounts, one is a manager who can see everything.
         $user = $generator->create_user();
         $generator->enrol_user($user->id, $course->id);
         $manager = $generator->create_user();
-        $generator->enrol_user($manager->id, $course->id,
-                $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST));
+        $generator->enrol_user(
+            $manager->id,
+            $course->id,
+            $DB->get_field('role', 'id', ['shortname' => 'manager'], MUST_EXIST),
+        );
 
         // User can see the normal page but not the hidden one.
-        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', 0, $user->id);
+        [$course, $cm] = get_course_and_cm_from_cmid($page->cmid, 'page', 0, $user->id);
         $this->assertTrue($cm->uservisible);
-        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $user->id);
+        [$course, $cm] = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $user->id);
         $this->assertFalse($cm->uservisible);
 
         // Manager can see the hidden one too.
-        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $manager->id);
+        [$course, $cm] = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $manager->id);
         $this->assertTrue($cm->uservisible);
     }
 
     /**
      * Test test_get_section_info_by_id method
      *
-     * @dataProvider get_section_info_by_id_provider
-     * @covers modinfo::get_section_info_by_id
-     *
      * @param int $sectionnum the section number
      * @param int $strictness the search strict mode
      * @param bool $expectnull if the function will return a null
      * @param bool $expectexception if the function will throw an exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_section_info_by_id_provider')]
     public function test_get_section_info_by_id(
         int $sectionnum,
         int $strictness = IGNORE_MISSING,
@@ -579,7 +630,7 @@ final class modinfo_test extends \advanced_testcase {
         $modinfo = get_fast_modinfo($course);
         $allsections = $modinfo->get_section_info_all();
         foreach ($allsections as $section) {
-            $sectionindex[$section->section] = $section->id;
+            $sectionindex[$section->sectionnum] = $section->id;
         }
 
         if ($expectexception) {
@@ -594,7 +645,7 @@ final class modinfo_test extends \advanced_testcase {
             $this->assertNull($section);
         } else {
             $this->assertEquals($sectionid, $section->id);
-            $this->assertEquals($sectionnum, $section->section);
+            $this->assertEquals($sectionnum, $section->sectionnum);
         }
     }
 
@@ -635,15 +686,13 @@ final class modinfo_test extends \advanced_testcase {
     /**
      * Test get_section_info_by_component method
      *
-     * @covers modinfo::get_section_info_by_component
-     * @dataProvider get_section_info_by_component_provider
-     *
      * @param string $component the component name
      * @param int $itemid the section number
      * @param int $strictness the search strict mode
      * @param bool $expectnull if the function will return a null
      * @param bool $expectexception if the function will throw an exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_section_info_by_component_provider')]
     public function test_get_section_info_by_component(
         string $component,
         int $itemid,
@@ -733,8 +782,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Test has_delegated_sections method
-     *
-     * @covers modinfo::has_delegated_sections
      */
     public function test_has_delegated_sections(): void {
         $this->resetAfterTest();
@@ -751,9 +798,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Test purge_section_cache_by_id method
-     *
-     * @covers modinfo::purge_course_section_cache_by_id
-     * @return void
      */
     public function test_purge_section_cache_by_id(): void {
         $this->resetAfterTest();
@@ -761,7 +805,10 @@ final class modinfo_test extends \advanced_testcase {
         $cache = cache::make('core', 'coursemodinfo');
 
         // Generate the course and pre-requisite section.
-        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3], ['createsections' => true]);
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 3],
+            ['createsections' => true],
+        );
         // Reset course cache.
         rebuild_course_cache($course->id, true);
         // Build course cache.
@@ -802,9 +849,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Test purge_section_cache_by_number method
-     *
-     * @covers modinfo::purge_course_section_cache_by_number
-     * @return void
      */
     public function test_section_cache_by_number(): void {
         $this->resetAfterTest();
@@ -812,7 +856,10 @@ final class modinfo_test extends \advanced_testcase {
         $cache = cache::make('core', 'coursemodinfo');
 
         // Generate the course and pre-requisite section.
-        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3], ['createsections' => true]);
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 3],
+            ['createsections' => true]
+        );
         // Reset course cache.
         rebuild_course_cache($course->id, true);
         // Build course cache.
@@ -850,9 +897,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Purge a single course module from the cache.
-     *
-     * @return void
-     * @covers modinfo::purge_course_module_cache
      */
     public function test_purge_course_module(): void {
         $this->resetAfterTest();
@@ -891,9 +935,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Purge a multiple course modules from the cache.
-     *
-     * @return void
-     * @covers modinfo::purge_course_modules_cache
      */
     public function test_purge_multiple_course_modules(): void {
         $this->resetAfterTest();
@@ -932,9 +973,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Test get_cm() method to output course module id in the exception text.
-     *
-     * @covers modinfo::get_cm
-     * @return void
      */
     public function test_invalid_course_module_id(): void {
         global $DB;
@@ -973,8 +1011,6 @@ final class modinfo_test extends \advanced_testcase {
      * request that calls get_fast_modinfo and uses the read-only database will rebuild the course
      * cache. Since these will then create a still-newer version, future requests for the next
      * 100ms will also rebuild it again... etc.
-     *
-     * @covers modinfo
      */
     public function test_get_modinfo_with_newer_version(): void {
         global $DB;
@@ -1010,8 +1046,6 @@ final class modinfo_test extends \advanced_testcase {
      * one-course array, a two-course array, and an empty array, and ensure
      * that only the courses specified have their course cache version
      * incremented (or all course caches if none specified).
-     *
-     * @covers modinfo
      */
     public function test_multiple_modinfo_cache_purge(): void {
         global $DB;
@@ -1029,7 +1063,7 @@ final class modinfo_test extends \advanced_testcase {
             ],
             [
                 'createsections' => true,
-            ]
+            ],
         );
         $coursetwo = $this->getDataGenerator()->create_course(
             [
@@ -1038,7 +1072,7 @@ final class modinfo_test extends \advanced_testcase {
             ],
             [
                 'createsections' => true,
-            ]
+            ],
         );
         $coursethree = $this->getDataGenerator()->create_course(
             [
@@ -1047,7 +1081,7 @@ final class modinfo_test extends \advanced_testcase {
             ],
             [
                 'createsections' => true,
-            ]
+            ],
         );
 
         // Make sure the cacherev is set for all three.
@@ -1167,8 +1201,6 @@ final class modinfo_test extends \advanced_testcase {
 
     /**
      * Test get_sections_delegated_by_cm method
-     *
-     * @covers modinfo::get_sections_delegated_by_cm
      */
     public function test_get_sections_delegated_by_cm(): void {
         $this->resetAfterTest();
