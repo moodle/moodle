@@ -29,7 +29,7 @@ import {
     mediaManagerButtonName
 } from './common';
 import MediaImage from './image/image';
-import MediaEmbed from './embed';
+import MediaEmbed from './embed/embed';
 import MediaManager from './manager';
 import {getButtonImage} from 'editor_tiny/utils';
 import Selectors from './selectors';

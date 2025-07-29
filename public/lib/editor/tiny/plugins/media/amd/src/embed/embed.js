@@ -22,13 +22,13 @@
  */
 
 import EmbedModal from './embedmodal';
-import {getEmbedPermissions} from './options';
+import {getEmbedPermissions} from '../options';
 import {getFilePicker, getContextId} from 'editor_tiny/options';
-import {EmbedHandler} from './embed/embedhandler';
-import {insertMediaTemplateContext, getSelectedMediaElement} from './embed/embedhelpers';
-import {EmbedInsert} from './embed/embedinsert';
-import {startMediaLoading} from './helpers';
-import Selectors from "./selectors";
+import {EmbedHandler} from './embedhandler';
+import {insertMediaTemplateContext, getSelectedMediaElement} from './embedhelpers';
+import {EmbedInsert} from './embedinsert';
+import {startMediaLoading} from '../helpers';
+import Selectors from "../selectors";
 
 export default class MediaEmbed {
     editor = null;

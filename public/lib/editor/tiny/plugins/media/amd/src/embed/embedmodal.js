@@ -16,16 +16,16 @@
 /**
  * Embedded Media Management Modal for Tiny.
  *
- * @module      tiny_media/embedmodal
+ * @module      tiny_media/embed/embedmodal
  * @copyright   2022 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Modal from 'core/modal';
-import {component} from './common';
+import {component} from '../common';
 
 export default class EmbedModal extends Modal {
-    static TYPE = `${component}/modal`;
+    static TYPE = `${component}/embed/embedmodal`;
     static TEMPLATE = `${component}/embed/embed_media_modal`;
 
     registerEventListeners() {

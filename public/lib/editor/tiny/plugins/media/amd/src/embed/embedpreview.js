@@ -37,7 +37,7 @@ import {
 import {EmbedHandler} from './embedhandler';
 import {MediaBase} from '../mediabase';
 import Notification from 'core/notification';
-import EmbedModal from '../embedmodal';
+import EmbedModal from './embedmodal';
 import {
     getEmbeddedMediaDetails,
     insertMediaThumbnailTemplateContext,
