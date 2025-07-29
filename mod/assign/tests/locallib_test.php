@@ -613,6 +613,9 @@ final class locallib_test extends \advanced_testcase {
         $this->assertEquals(true, $assign->delete_instance());
     }
 
+    /**
+     * @covers ::assign_reset_userdata
+     */
     public function test_reset_userdata(): void {
         global $DB;
 
@@ -624,9 +627,12 @@ final class locallib_test extends \advanced_testcase {
         $now = time();
         $this->setUser($teacher);
         $assign = $this->create_instance($course, [
-                'assignsubmission_onlinetext_enabled' => 1,
-                'duedate' => $now,
-            ]);
+            'assignsubmission_onlinetext_enabled' => 1,
+            'allowsubmissionsfromdate' => $now - HOURSECS,
+            'duedate' => $now,
+            'cutoffdate' => $now + HOURSECS,
+            'gradingduedate' => $now + DAYSECS,
+        ]);
 
         // Simulate adding a grade.
         $this->add_submission($student, $assign);
@@ -659,7 +665,10 @@ final class locallib_test extends \advanced_testcase {
 
         // Reload the instance data.
         $instance = $DB->get_record('assign', ['id' => $assign->get_instance()->id]);
+        $this->assertEquals($now - HOURSECS + DAYSECS, $instance->allowsubmissionsfromdate);
         $this->assertEquals($now + DAYSECS, $instance->duedate);
+        $this->assertEquals($now + HOURSECS + DAYSECS, $instance->cutoffdate);
+        $this->assertEquals($now + DAYSECS + DAYSECS, $instance->gradingduedate);
 
         // Test reset using assign_reset_userdata().
         $assignduedate = $instance->duedate; // Keep old updated value for comparison.
