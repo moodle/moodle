@@ -100,8 +100,9 @@ export class EmbedThumbnailPreview {
         ).then(() => {
             (new EmbedHandler(this)).resetUploadForm(false);
             return;
-        }).catch(error => {
-            window.console.log(error);
+        }).catch(() => {
+            // User cancelled the delete action.
+            return;
         });
     };
 
