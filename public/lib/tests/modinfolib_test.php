@@ -45,7 +45,6 @@ final class modinfolib_test extends advanced_testcase {
         require_once($CFG->dirroot . '/course/lib.php');
         parent::setUpBeforeClass();
     }
-
     public function test_matching_cacherev(): void {
         global $DB;
 

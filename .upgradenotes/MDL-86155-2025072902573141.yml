@@ -1,0 +1,13 @@
+issueNumber: MDL-86155
+notes:
+  core_course:
+    - message: >
+        The `\course\cm_info::$extra` and `\course\cm_info::$score` properties
+        will now
+
+        emit appropriate debugging.
+
+
+        These have been deprecated for a long time, but did not emit any
+        debugging.
+      type: deprecated

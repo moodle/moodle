@@ -127,7 +127,6 @@ final class cm_info_test extends \advanced_testcase {
         $this->assertEquals($moduledb->completionview, $cm->completionview);
         $this->assertEquals($moduledb->completionexpected, $cm->completionexpected);
         $this->assertEquals($moduledb->showdescription, $cm->showdescription);
-        $this->assertEquals(null, $cm->extra); // Deprecated field. Used in module types that don't return cached_cm_info.
         $this->assertEquals($cachedcminfo->icon, $cm->icon);
         $this->assertEquals($cachedcminfo->iconcomponent, $cm->iconcomponent);
         $this->assertEquals('assign', $cm->modname);
@@ -170,6 +169,10 @@ final class cm_info_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
         $this->assertEquals($prevvalue, $cm->name);
         $this->assertDebuggingNotCalled();
+
+        // Deprecated fields.
+        $this->assertEquals(null, $cm->extra); // Deprecated field. Used in module types that don't return cached_cm_info.
+        $this->assertDebuggingCalled();
     }
 
     /**

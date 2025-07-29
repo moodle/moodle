@@ -246,6 +246,10 @@ class cm_info implements IteratorAggregate {
      * here too.
      * @deprecated Do not use this variable
      */
+    #[\core\attribute\deprecated(
+        since: '2.0',
+        mdl: 'MDL-26781',
+    )]
     private $score;
 
     /**
@@ -336,6 +340,12 @@ class cm_info implements IteratorAggregate {
      * course page - from cached data in modinfo field
      * @deprecated This is crazy, don't use it. Replaced by ->extraclasses and ->onclick
      */
+    #[\core\attribute\deprecated(
+        replacement: '->extraclasses and ->onclick',
+        since: '2.0',
+        mdl: 'MDL-25981',
+        reason: 'This is crazy, don\'t use it.'
+    )]
     private $extra;
 
     /**
@@ -616,6 +626,7 @@ class cm_info implements IteratorAggregate {
      * @return mixed
      */
     public function __get($name) {
+        \core\deprecation::emit_deprecation_if_present([__CLASS__, $name]);
         if (isset(self::$standardproperties[$name])) {
             if ($method = self::$standardproperties[$name]) {
                 return $this->$method();
@@ -639,6 +650,10 @@ class cm_info implements IteratorAggregate {
         unset($props['groupmembersonly']);
 
         foreach ($props as $key => $unused) {
+            if (\core\deprecation::is_deprecated([__CLASS__, $key])) {
+                continue;
+            }
+
             $ret[$key] = $this->__get($key);
         }
         return new ArrayIterator($ret);
@@ -651,6 +666,7 @@ class cm_info implements IteratorAggregate {
      * @return bool
      */
     public function __isset($name) {
+        \core\deprecation::emit_deprecation_if_present([__CLASS__, $name]);
         if (isset(self::$standardproperties[$name])) {
             $value = $this->__get($name);
             return isset($value);
