@@ -78,6 +78,12 @@
             "helpicon":false,
             "attributes":[]
         },
+        "backbutton": {
+            "url": "https://moodle.local/course/management.php",
+            "icon": "",
+            "title": "Back",
+            "classes": "btn btn-secondary"
+        },
         "search": {
             "action": "https://moodle.local/admin/search.php",
             "extraclasses": "my-2",
@@ -109,8 +115,13 @@
                 {{> core/url_select }}
             </div>
         {{/categoryselect}}
-        {{#search}}
+        {{#backbutton}}
             <div class="navitem">
+                {{> core/single_button }}
+            </div>
+        {{/backbutton}}
+        {{#search}}
+            <div class="navitem ms-auto">
                 {{> core/search_input }}
             </div>
         {{/search}}
