@@ -3145,7 +3145,9 @@ class assign {
             if ($create) {
                 $action = optional_param('action', '', PARAM_TEXT);
                 if ($action == 'editsubmission') {
-                    if (empty($submission->timestarted) && $this->get_instance()->timelimit) {
+                    $starttimer = optional_param('begin', 0, PARAM_INT);
+                    // Only start the timer if the user has clicked the 'Begin assignment' button.
+                    if (empty($submission->timestarted) && $this->get_instance()->timelimit && $starttimer) {
                         $submission->timestarted = time();
                         $DB->update_record('assign_submission', $submission);
                     }
@@ -3788,7 +3790,9 @@ class assign {
             if ($create) {
                 $action = optional_param('action', '', PARAM_TEXT);
                 if ($action == 'editsubmission') {
-                    if (empty($submission->timestarted) && $this->get_instance()->timelimit) {
+                    $starttimer = optional_param('begin', 0, PARAM_INT);
+                    // Only start the timer if the user has clicked the 'Begin assignment' button.
+                    if (empty($submission->timestarted) && $this->get_instance()->timelimit && $starttimer) {
                         $submission->timestarted = time();
                         $DB->update_record('assign_submission', $submission);
                     }
@@ -4796,7 +4800,7 @@ class assign {
      * @return string The page output.
      */
     protected function view_edit_submission_page($mform, $notices) {
-        global $CFG, $USER, $DB, $PAGE;
+        global $CFG, $USER, $DB, $PAGE, $OUTPUT;
 
         $o = '';
         require_once($CFG->dirroot . '/mod/assign/submission_form.php');
@@ -4881,7 +4885,30 @@ class assign {
             $o .= $this->get_renderer()->notification($notice);
         }
 
-        $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
+        if (
+            $submission->status == ASSIGN_SUBMISSION_STATUS_NEW && $this->get_instance()->timelimit &&
+            empty($submission->timestarted)
+        ) {
+            // Timed assignment should always get a confirmation that the user wants to start it.
+            $confirmation = new \confirm_action(
+                get_string('confirmstart', 'assign', format_time($this->get_instance()->timelimit)),
+                null,
+                get_string('beginassignment', 'assign')
+            );
+            // The 'begin' flag indicates that the user is starting a timed assignment.
+            $urlparams = ['id' => $this->get_course_module()->id, 'action' => 'editsubmission', 'begin' => 1];
+            $beginbutton = new \action_link(
+                new moodle_url('/mod/assign/view.php', $urlparams),
+                get_string('beginassignment', 'assign'),
+                $confirmation,
+                ['class' => 'btn btn-primary']
+            );
+
+            $o .= $OUTPUT->render($beginbutton);
+        } else {
+            $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
+        }
+
         $o .= $this->view_footer();
 
         \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
