@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use core\exception\coding_exception;
+
 /**
  * Subclass of navigation_node allowing different rendering for the breadcrumbs
  * in particular adding extra metadata for search engine robots to leverage.
@@ -64,3 +68,8 @@ class breadcrumb_navigation_node extends navigation_node {
         $this->last = $val;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(breadcrumb_navigation_node::class, \breadcrumb_navigation_node::class);

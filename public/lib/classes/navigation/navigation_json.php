@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use core\output\action_link;
+use core\output\pix_icon;
+use core\url;
+
 /**
  * Simple class used to output a navigation branch in XML
  *
@@ -96,7 +102,7 @@ class navigation_json {
         }
         if (is_string($child->action)) {
             $attributes['link'] = $child->action;
-        } else if ($child->action instanceof moodle_url) {
+        } else if ($child->action instanceof url) {
             $attributes['link'] = $child->action->out();
         } else if ($child->action instanceof action_link) {
             $attributes['link'] = $child->action->url->out();
@@ -119,3 +125,8 @@ class navigation_json {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(navigation_json::class, \navigation_json::class);

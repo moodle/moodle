@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use moodle_page;
 
 /**
  * Class used to populate site admin navigation for ajax.
@@ -52,3 +55,8 @@ class settings_navigation_ajax extends settings_navigation {
         $this->initialised = true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(settings_navigation_ajax::class, \settings_navigation_ajax::class);

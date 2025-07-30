@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use core\context\course as context_course;
+use core\context_helper;
+use core\url;
+use moodle_page;
+
 /**
  * Class used to generate a collection of navigation nodes most closely related
  * to the current page.
@@ -59,10 +66,10 @@ class flat_navigation extends navigation_node_collection {
         // First walk the nav tree looking for "flat_navigation" nodes.
         if ($course->id > 1) {
             // It's a real course.
-            $url = new moodle_url('/course/view.php', array('id' => $course->id));
+            $url = new url('/course/view.php', array('id' => $course->id));
 
             $coursecontext = context_course::instance($course->id, MUST_EXIST);
-            $displaycontext = \context_helper::get_navigation_filter_context($coursecontext);
+            $displaycontext = context_helper::get_navigation_filter_context($coursecontext);
             // This is the name that will be shown for the course.
             $coursename = empty($CFG->navshowfullcoursenames) ?
                 format_string($course->shortname, true, ['context' => $displaycontext]) :
@@ -119,7 +126,7 @@ class flat_navigation extends navigation_node_collection {
         if (isset($this->page->theme->addblockposition) &&
                 $this->page->theme->addblockposition == BLOCK_ADDBLOCK_POSITION_FLATNAV &&
                 $PAGE->user_is_editing() && $PAGE->user_can_edit_blocks()) {
-            $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
+            $url = new url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
             $addablock = navigation_node::create(get_string('addblock'), $url);
             $flat = new flat_navigation_node($addablock, 0);
             $flat->set_showdivider(true, get_string('blocksaddedit'));
@@ -154,3 +161,8 @@ class flat_navigation extends navigation_node_collection {
         return $result;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(flat_navigation::class, \flat_navigation::class);

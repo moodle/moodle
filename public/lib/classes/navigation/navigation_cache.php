@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use core_cache\cache;
+use core_cache\session_cache;
+use core_shutdown_manager;
+
 /**
  * Class navigation_cache
  *
@@ -41,7 +47,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class navigation_cache {
-    /** @var cache_session The session cache instance */
+    /** @var session_cache The session cache instance */
     protected $cache;
     /** @var array The current cache area data */
     protected $session = [];
@@ -202,3 +208,8 @@ class navigation_cache {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(navigation_cache::class, \navigation_cache::class);

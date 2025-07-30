@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use core\context\module as context_module;
+use core\context\course as context_course;
+use core\context_helper;
+use core\url;
+use moodle_page;
+
 /**
  * The global navigation class used especially for AJAX requests.
  *
@@ -72,7 +80,7 @@ class global_navigation_for_ajax extends global_navigation {
         $this->rootnodes['site']    = $this->add_course($SITE);
         $this->rootnodes['mycourses'] = $this->add(
             get_string('mycourses'),
-            new moodle_url('/my/courses.php'),
+            new url('/my/courses.php'),
             self::TYPE_ROOTNODE,
             null,
             'mycourses'
@@ -142,7 +150,7 @@ class global_navigation_for_ajax extends global_navigation {
                 }
                 break;
             default:
-                throw new Exception('Unknown type');
+                throw new \Exception('Unknown type');
                 return $this->expandable;
         }
 
@@ -172,10 +180,8 @@ class global_navigation_for_ajax extends global_navigation {
      * This is because with the AJAX navigation we know exactly what is wanted and only need to
      * request that.
      *
-     * @global moodle_database $DB
      * @param int $categoryid id of category to load in navigation.
      * @param int $nodetype type of node, if category is under MyHome then it's TYPE_MY_CATEGORY
-     * @return void.
      */
     protected function load_category($categoryid, $nodetype = self::TYPE_CATEGORY) {
         global $CFG, $DB;
@@ -276,3 +282,8 @@ class global_navigation_for_ajax extends global_navigation {
         return $this->expandable;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(global_navigation_for_ajax::class, \global_navigation_for_ajax::class);

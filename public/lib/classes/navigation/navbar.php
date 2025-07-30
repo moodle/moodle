@@ -14,6 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use core\context\course as context_course;
+use core\context_helper;
+use core_course_category;
+use core\context\coursecat as context_coursecat;
+use core\output\action_link;
+use core\output\pix_icon;
+use core\url;
+use moodle_page;
+
 /**
  * Navbar class
  *
@@ -369,3 +380,8 @@ class navbar extends navigation_node {
         return $this;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(navbar::class, \navbar::class);

@@ -1,0 +1,23 @@
+issueNumber: MDL-82159
+notes:
+  core:
+    - message: |+
+        The following classes have been renamed and now support autoloading.
+        Existing classes are currently unaffected.
+
+        | Old class name                  | New class name                                  |
+        | ---                             | ---                                             |
+        | `\breadcrumb_navigation_node`   | `\core\navigation\breadcrumb_navigation_node`   |
+        | `\flat_navigation_node`         | `\core\navigation\flat_navigation_node`         |
+        | `\flat_navigation`              | `\core\navigation\flat_navigation_node`         |
+        | `\global_navigation_for_ajax`   | `\core\navigation\global_navigation_for_ajax`   |
+        | `\global_navigation`            | `\core\navigation\global_navigation`            |
+        | `\navbar`                       | `\core\navigation\navbar`                       |
+        | `\navigation_cache`             | `\core\navigation\navigation_cache`             |
+        | `\navigation_json`              | `\core\navigation\navigation_json`              |
+        | `\navigation_node_collection`   | `\core\navigation\navigation_node_collection`   |
+        | `\navigation_node`              | `\core\navigation\navigation_node`              |
+        | `\settings_navigation_for_ajax` | `\core\navigation\settings_navigation_for_ajax` |
+        | `\settings_navigation`          | `\core\navigation\settings_navigation`          |
+
+      type: improved

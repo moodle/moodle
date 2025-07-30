@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\navigation;
+
+use core\context_helper;
+use core\exception\coding_exception;
+use core\output\action_link;
+use core\output\pix_icon;
+use core\output\renderable;
+use core\output\tabobject;
+use core\url;
+
 /**
  * This class is used to represent a node in a navigation tree
  *
@@ -730,7 +740,7 @@ class navigation_node implements renderable {
         global $CFG;
         if ($this->has_action()) {
             $url = $this->action();
-            if ($this->action() instanceof \action_link) {
+            if ($this->action() instanceof action_link) {
                 $url = $this->action()->url;
             }
 
@@ -1015,3 +1025,8 @@ class navigation_node implements renderable {
         self::$loadadmintree = false;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(navigation_node::class, \navigation_node::class);

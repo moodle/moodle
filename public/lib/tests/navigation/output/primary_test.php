@@ -374,7 +374,7 @@ final class primary_test extends \advanced_testcase {
         }
         $primary = new primary($PAGE);
 
-        $method = new ReflectionMethod('core\navigation\output\primary', 'get_primary_nav');
+        $method = new ReflectionMethod(primary::class, 'get_primary_nav');
         $dataprimary = $method->invoke($primary);
 
         // Take this custom menu that would come from the  setting custommenitems.
@@ -393,7 +393,7 @@ final class primary_test extends \advanced_testcase {
         ENDMENU;
 
         $datacustom = $this->get_custom_menu($custommenuitems);
-        $method = new ReflectionMethod('core\navigation\output\primary', 'merge_primary_and_custom');
+        $method = new ReflectionMethod(primary::class, 'merge_primary_and_custom');
         $menucomplete = $method->invoke($primary, $dataprimary, $datacustom, $ismobile);
         return $menucomplete;
     }
