@@ -248,7 +248,7 @@ class report_log_table_log extends table_sql {
                     if (empty($this->download) && $url = $context->get_url()) {
                         $contextname = html_writer::link($url, $contextname);
                     }
-                } else {
+                } else if (!$contextname = \report_log\helper::get_context_fallback($event)) {
                     $contextname = get_string('other');
                 }
             }
@@ -429,6 +429,10 @@ class report_log_table_log extends table_sql {
         if (!empty($this->filterparams->courseid) && $this->filterparams->courseid != SITEID) {
             $joins[] = "courseid = :courseid";
             $params['courseid'] = $this->filterparams->courseid;
+        } else if (!empty($this->filterparams->sitecoursefilter)) {
+            // Add filters for missing/deleted courses in site context.
+            $joins[] = "courseid = :courseid";
+            $params['courseid'] = $this->filterparams->sitecoursefilter;
         }
 
         if (!empty($this->filterparams->siteerrors)) {

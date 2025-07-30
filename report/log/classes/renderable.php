@@ -90,6 +90,9 @@ class report_log_renderable implements renderable {
     /** @var int group id */
     public $groupid;
 
+    /** @var int forces the use of a course filter in site context */
+    public $sitecoursefilter;
+
     /** @var table_log table log which will be used for rendering logs */
     public $tablelog;
 
@@ -123,12 +126,14 @@ class report_log_renderable implements renderable {
      * @param int $page (optional) page number.
      * @param int $perpage (optional) number of records to show per page.
      * @param string $order (optional) sortorder of fetched records
+     * @param string $origin (optional) origin of the event.
+     * @param int $sitecoursefilter (optional) use a course filter in site context.
      */
     public function __construct($logreader = "", $course = 0, $userid = 0, $modid = 0, $action = "", $groupid = 0, $edulevel = -1,
             $showcourses = false, $showusers = false, $showreport = true, $showselectorform = true, $url = "", $date = 0,
-            $logformat='showashtml', $page = 0, $perpage = 100, $order = "timecreated ASC", $origin ='') {
+            $logformat='showashtml', $page = 0, $perpage = 100, $order = "timecreated ASC", $origin ='', $sitecoursefilter = 0) {
 
-        global $PAGE;
+        global $PAGE, $SITE;
 
         // Use first reader as selected reader, if not passed.
         if (empty($logreader)) {
@@ -151,7 +156,14 @@ class report_log_renderable implements renderable {
 
         // Use site course id, if course is empty.
         if (!empty($course) && is_int($course)) {
-            $course = get_course($course);
+            $courseid = $course;
+            try {
+                $course = get_course($courseid);
+            } catch (dml_missing_record_exception) {
+                // Missing courses may have be deleted, so display them in site context.
+                $course = $SITE;
+                $sitecoursefilter = $courseid;
+            }
         }
         $this->course = $course;
 
@@ -171,6 +183,7 @@ class report_log_renderable implements renderable {
         $this->showselectorform = $showselectorform;
         $this->logformat = $logformat;
         $this->origin = $origin;
+        $this->sitecoursefilter = $sitecoursefilter;
     }
 
     /**
@@ -390,6 +403,12 @@ class report_log_renderable implements renderable {
                     }
                 }
             }
+            // If filtering by a missing course, add a placeholder.
+            if (!empty($this->sitecoursefilter)) {
+                $courses[$this->sitecoursefilter] = get_string('missingcourse', 'report_log', [
+                    'instanceid' => $this->sitecoursefilter,
+                ]);
+            }
             core_collator::asort($courses);
         }
         return $courses;
@@ -580,6 +599,7 @@ class report_log_renderable implements renderable {
         $filter->date = $this->date;
         $filter->orderby = $this->order;
         $filter->origin = $this->origin;
+        $filter->sitecoursefilter = $this->sitecoursefilter;
         // If showing site_errors.
         if ('site_errors' === $this->modid) {
             $filter->siteerrors = true;

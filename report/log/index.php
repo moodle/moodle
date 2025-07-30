@@ -100,11 +100,19 @@ $PAGE->set_url('/report/log/index.php', array('id' => $id));
 $PAGE->set_pagelayout('report');
 
 // Get course details.
+$sitecoursefilter = 0;
 if ($id != $SITE->id) {
-    $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
-    require_login($course);
-    $context = context_course::instance($course->id);
-} else {
+    $course = $DB->get_record('course', ['id' => $id], '*');
+    if ($course) {
+        require_login($course);
+        $context = context_course::instance($course->id);
+    } else {
+        // Missing courses may have be deleted, so display them in site context.
+        $sitecoursefilter = $id;
+    }
+}
+
+if (empty($course)) {
     $course = $SITE;
     require_login();
     $context = context_system::instance();
@@ -146,7 +154,7 @@ if ($course->id == $SITE->id) {
 }
 
 $reportlog = new report_log_renderable($logreader, $course, $user, $modid, $modaction, $group, $edulevel, $showcourses, $showusers,
-        $chooselog, true, $url, $date, $logformat, $page, $perpage, 'timecreated DESC', $origin);
+        $chooselog, true, $url, $date, $logformat, $page, $perpage, 'timecreated DESC', $origin, $sitecoursefilter);
 $readers = $reportlog->get_readers();
 $output = $PAGE->get_renderer('report_log');
 
