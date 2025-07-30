@@ -113,15 +113,23 @@ if ($isactivitypage) {
 }
 
 // Get course details.
+$sitecoursefilter = 0;
 if ($id != $SITE->id) {
-    $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
-    require_login($course);
-    $context = context_course::instance($course->id);
-    if ($cminfo !== null) {
-        $context = $cminfo->context;
-        $PAGE->set_cm($cminfo);
+    $course = $DB->get_record('course', ['id' => $id], '*');
+    if ($course) {
+        require_login($course);
+        $context = context_course::instance($course->id);
+        if ($cminfo !== null) {
+            $context = $cminfo->context;
+            $PAGE->set_cm($cminfo);
+        }
+    } else {
+        // Missing courses may have be deleted, so display them in site context.
+        $sitecoursefilter = $id;
     }
-} else {
+}
+
+if (empty($course)) {
     $course = $SITE;
     require_login();
     $context = context_system::instance();
@@ -186,6 +194,7 @@ $reportlog = new report_log_renderable(
     order: 'timecreated DESC',
     origin: $origin,
     isactivitypage: $isactivitypage,
+    sitecoursefilter: $sitecoursefilter,
 );
 
 $readers = $reportlog->get_readers();
