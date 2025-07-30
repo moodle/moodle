@@ -325,10 +325,10 @@ export const reloadCurrentMonth = (root, courseId = 0, categoryId = 0) => {
     const month = root.find(CalendarSelectors.wrapper).data('month');
     const day = root.find(CalendarSelectors.wrapper).data('day');
 
-    courseId = courseId || root.find(CalendarSelectors.wrapper).data('courseid');
-    categoryId = categoryId || root.find(CalendarSelectors.wrapper).data('categoryid');
+    const finalCourseId = (courseId !== undefined) ? courseId : root.find(CalendarSelectors.wrapper).data('courseid');
+    const finalCategoryId = (categoryId !== undefined) ? categoryId : root.find(CalendarSelectors.wrapper).data('categoryid');
 
-    return refreshMonthContent(root, year, month, courseId, categoryId, null, '', day).
+    return refreshMonthContent(root, year, month, finalCourseId, finalCategoryId, null, '', day).
         then((...args) => {
             $('body').trigger(CalendarEvents.courseChanged, [year, month, courseId, categoryId]);
             return args;
@@ -396,10 +396,10 @@ export const reloadCurrentDay = (root, courseId = 0, categoryId = 0) => {
     const month = wrapper.data('month');
     const day = wrapper.data('day');
 
-    courseId = courseId || root.find(CalendarSelectors.wrapper).data('courseid');
-    categoryId = categoryId || root.find(CalendarSelectors.wrapper).data('categoryid');
+    const finalCourseId = (courseId !== undefined) ? courseId : root.find(CalendarSelectors.wrapper).data('courseid');
+    const finalCategoryId = (categoryId !== undefined) ? categoryId : root.find(CalendarSelectors.wrapper).data('categoryid');
 
-    return refreshDayContent(root, year, month, day, courseId, categoryId);
+    return refreshDayContent(root, year, month, day, finalCourseId, finalCategoryId);
 };
 
 /**
@@ -482,10 +482,10 @@ export const reloadCurrentUpcoming = (root, courseId = 0, categoryId = 0, target
 
     target = target || root.find(CalendarSelectors.wrapper);
     template = template || root.attr('data-template');
-    courseId = courseId || root.find(CalendarSelectors.wrapper).data('courseid');
-    categoryId = categoryId || root.find(CalendarSelectors.wrapper).data('categoryid');
+    const finalCourseId = (courseId !== undefined) ? courseId : root.find(CalendarSelectors.wrapper).data('courseid');
+    const finalCategoryId = (categoryId !== undefined) ? categoryId : root.find(CalendarSelectors.wrapper).data('categoryid');
 
-    return CalendarRepository.getCalendarUpcomingData(courseId, categoryId)
+    return CalendarRepository.getCalendarUpcomingData(finalCourseId, finalCategoryId)
         .then((context) => {
             context.viewingupcoming = true;
             context.showviewselector = true;
