@@ -34,15 +34,20 @@ $id = optional_param('id', 0, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $logreader = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
 
-if (empty($id)) {
-    admin_externalpage_setup('reportloglive', '', null, '', array('pagelayout' => 'report'));
+// Get course details.
+if (!empty($id)) {
+    $course = $DB->get_record('course', ['id' => $id], '*');
+    if ($course) {
+        require_login($course);
+        $context = context_course::instance($course->id);
+        $coursename = format_string($course->fullname, true, ['context' => $context]);
+    }
+}
+
+if (empty($course)) {
+    admin_externalpage_setup('reportloglive', '', null, '', ['pagelayout' => 'report']);
     $context = context_system::instance();
-    $coursename = format_string($SITE->fullname, true, array('context' => $context));
-} else {
-    $course = get_course($id);
-    require_login($course);
-    $context = context_course::instance($course->id);
-    $coursename = format_string($course->fullname, true, array('context' => $context));
+    $coursename = format_string($SITE->fullname, true, ['context' => $context]);
 }
 require_capability('report/loglive:view', $context);
 
