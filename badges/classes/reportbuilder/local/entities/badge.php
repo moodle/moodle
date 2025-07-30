@@ -130,6 +130,38 @@ class badge extends base {
                 return html_writer::link($url, $row->name);
             });
 
+        // Name with image and link.
+        $columns[] = (new column(
+            'namewithimagelink',
+            new lang_string('namewithimagelink', 'core_badges'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->add_join("LEFT JOIN {context} {$contextalias}
+                    ON {$contextalias}.contextlevel = " . CONTEXT_COURSE . "
+                   AND {$contextalias}.instanceid = {$badgealias}.courseid")
+            ->add_fields(
+                "{$badgealias}.name, {$badgealias}.id, {$badgealias}.type, {$badgealias}.courseid"
+            )
+            ->add_field($DB->sql_cast_to_char("{$badgealias}.imagecaption"), 'imagecaption')
+            ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
+            ->set_is_sortable(true)
+            ->add_callback(static function ($value, stdClass $badge): string {
+                if ($badge->id === null) {
+                    return '';
+                }
+                if ($badge->type == BADGE_TYPE_SITE) {
+                    $context = context_system::instance();
+                } else {
+                    context_helper::preload_from_record($badge);
+                    $context = context_course::instance($badge->courseid);
+                }
+
+                $badgeimage = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/', 'f2');
+                $url = new moodle_url('/badges/overview.php', ['id' => $badge->id]);
+                return html_writer::img($badgeimage, $badge->imagecaption) . ' ' . html_writer::link($url, $badge->name);
+            });
+
         // Description (note, this column contains plaintext so requires no post-processing).
         $descriptionfieldsql = "{$badgealias}.description";
         if ($DB->get_dbfamily() === 'oracle') {
