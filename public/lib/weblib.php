@@ -1824,7 +1824,7 @@ function print_group_picture($group, $courseid, $large = false, $return = false,
 
     $context = context_course::instance($courseid);
 
-    $groupname = s($group->name);
+    $groupname = format_string($group->name, true, ['context' => $context, 'escape' => false]);
     $pictureimage = html_writer::img($pictureurl, $groupname, ['title' => $groupname]);
 
     $output = '';
