@@ -21,6 +21,7 @@ namespace core_reportbuilder\output;
 use advanced_testcase;
 use core_reportbuilder_generator;
 use core_reportbuilder\exception\report_access_exception;
+use core_reportbuilder\local\aggregation\count;
 use core_user\reportbuilder\datasource\users;
 
 /**
@@ -48,12 +49,12 @@ final class column_aggregation_editable_test extends advanced_testcase {
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
         $column = $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastname']);
 
-        $editable = column_aggregation_editable::update($column->get('id'), 'count');
+        $editable = column_aggregation_editable::update($column->get('id'), count::get_class_name());
         $result = $editable->export_for_template($PAGE->get_renderer('core'));
-        $this->assertEquals('count', $result['value']);
+        $this->assertEquals(count::get_class_name(), $result['value']);
 
         // Reload persistent, assert update.
-        $this->assertEquals('count', $column->read()->get('aggregation'));
+        $this->assertEquals(count::get_class_name(), $column->read()->get('aggregation'));
     }
 
     /**
@@ -91,11 +92,11 @@ final class column_aggregation_editable_test extends advanced_testcase {
         $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
         $column = $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastname']);
 
-        $params = ['columnaggregation', $column->get('id'), 'count'];
+        $params = ['columnaggregation', $column->get('id'), count::get_class_name()];
         $editable = component_callback('core_reportbuilder', 'inplace_editable', $params);
         $this->assertInstanceOf(column_aggregation_editable::class, $editable);
 
         // Reload persistent, assert update.
-        $this->assertEquals('count', $column->read()->get('aggregation'));
+        $this->assertEquals(count::get_class_name(), $column->read()->get('aggregation'));
     }
 }

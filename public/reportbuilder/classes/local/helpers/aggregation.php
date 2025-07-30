@@ -34,7 +34,7 @@ class aggregation {
     /**
      * Helper method to convert aggregation class name into fully qualified namespaced class
      *
-     * @param string $aggregation
+     * @param string $aggregation Type of aggregation obtained via {@see base::get_class_name}, e.g. 'sum', 'count', etc
      * @return string
      */
     public static function get_full_classpath(string $aggregation): string {
@@ -69,7 +69,7 @@ class aggregation {
      * Get available aggregation types for given column type
      *
      * @param int $columntype
-     * @param array $exclude List of types to exclude, e.g. ['min', 'sum']
+     * @param string[] $exclude Types of aggregation to exclude obtained via {@see base::get_class_name}, e.g. ['min', 'sum']
      * @return string[] Aggregation types indexed by [shortname => name]
      */
     public static function get_column_aggregations(int $columntype, array $exclude = []): array {

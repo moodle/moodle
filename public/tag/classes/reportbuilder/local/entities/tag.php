@@ -23,6 +23,7 @@ use core_tag_tag;
 use stdClass;
 use core\lang_string;
 use core\output\html_writer;
+use core_reportbuilder\local\aggregation\{groupconcat, groupconcatdistinct};
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{boolean_select, date, number, tags};
 use core_reportbuilder\local\helpers\format;
@@ -113,8 +114,8 @@ class tag extends base {
             ->add_joins($this->get_joins())
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name, {$tagalias}.flag, {$tagalias}.isstandard")
             ->set_is_sortable(true)
-            ->set_aggregation_options('groupconcat', ['separator' => ' '])
-            ->set_aggregation_options('groupconcatdistinct', ['separator' => ' '])
+            ->set_aggregation_options(groupconcat::get_class_name(), ['separator' => ' '])
+            ->set_aggregation_options(groupconcatdistinct::get_class_name(), ['separator' => ' '])
             ->add_callback(static function($rawname, stdClass $tag): string {
                 if ($rawname === null) {
                     return '';

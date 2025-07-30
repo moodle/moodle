@@ -22,6 +22,7 @@ use core\lang_string;
 use core_customfield\data_controller;
 use core_customfield\field_controller;
 use core_customfield\handler;
+use core_reportbuilder\local\aggregation\{avg, max, min, sum};
 use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
 use core_reportbuilder\local\report\{column, filter};
 use stdClass;
@@ -150,10 +151,13 @@ class custom_fields {
                         if ($row->tablefieldalias === null && $value === null) {
                             return '';
                         }
+
                         // If aggregating numeric column, populate row ID to ensure the controller is created correctly.
-                        if (in_array((string) $aggregation, ['avg', 'max', 'min', 'sum'])) {
+                        $numeric = [avg::get_class_name(), max::get_class_name(), min::get_class_name(), sum::get_class_name()];
+                        if (in_array((string) $aggregation, $numeric)) {
                             $row->id ??= -1;
                         }
+
                         return (string) data_controller::create(0, $row, $field)->export_value();
                     }, $field)
                     // Important. If the handler implements can_view() function, it will be called with parameter $instanceid=0.

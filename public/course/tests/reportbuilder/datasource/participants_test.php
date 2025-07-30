@@ -21,6 +21,7 @@ namespace core_course\reportbuilder\datasource;
 use completion_completion;
 use completion_criteria_self;
 use core_reportbuilder_generator;
+use core_reportbuilder\local\aggregation\{avg, max, min};
 use core_reportbuilder\local\filters\{boolean_select, date, duration, select, text};
 use core_reportbuilder\tests\core_reportbuilder_testcase;
 use core\user;
@@ -252,17 +253,21 @@ final class participants_test extends core_reportbuilder_testcase {
 
         $report = $generator->create_report(['name' => 'Participants', 'source' => participants::class, 'default' => 0]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
-        $column = $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'access:timeaccess']);
 
         // Course aggregated with "Minimum" last access.
-        $column->set('aggregation', 'min')->update();
+        $column = $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'access:timeaccess',
+            'aggregation' => min::get_class_name(),
+        ]);
+
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [$course->fullname, userdate($useronelastaccess->timeaccess)],
         ], array_map('array_values', $content));
 
         // Course aggregated with "Maximum" last access.
-        $column->set('aggregation', 'max')->update();
+        $column->set('aggregation', max::get_class_name())->update();
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [$course->fullname, userdate($usertwolastaccess->timeaccess)],
@@ -296,7 +301,7 @@ final class participants_test extends core_reportbuilder_testcase {
         $generator->create_column([
             'reportid' => $report->get('id'),
             'uniqueidentifier' => 'completion:dayscourse',
-            'aggregation' => 'avg',
+            'aggregation' => avg::get_class_name(),
         ]);
 
         $content = $this->get_custom_report_content($report->get('id'));

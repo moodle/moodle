@@ -525,7 +525,7 @@ final class column {
     /**
      * Set column aggregation type
      *
-     * @param string|null $aggregation Type of aggregation, e.g. 'sum', 'count', etc
+     * @param string|null $aggregation Type of aggregation obtained via {@see base::get_class_name}, e.g. 'sum', 'count', etc
      * @param array|null $options Aggregation type options
      * @return self
      * @throws coding_exception For invalid aggregation type, or one that is incompatible with column type
@@ -560,7 +560,7 @@ final class column {
     /**
      * Set options for the given aggregation type
      *
-     * @param string $aggregation Type of aggregation, e.g. 'sum', 'count', etc
+     * @param string $aggregation Type of aggregation obtained via {@see base::get_class_name}, e.g. 'sum', 'count', etc
      * @param array $options Aggregation type options
      * @return self
      */
@@ -572,7 +572,7 @@ final class column {
     /**
      * Get options for the given aggregation type
      *
-     * @param string|null $aggregation Type of aggregation, e.g. 'sum', 'count', etc
+     * @param string|null $aggregation Type of aggregation obtained via {@see base::get_class_name}, e.g. 'sum', 'count', etc
      * @return array
      */
     public function get_aggregation_options(?string $aggregation): array {
@@ -583,7 +583,7 @@ final class column {
      * Set disabled aggregation methods for the column. Typically only those methods suitable for the current column type are
      * available: {@see aggregation::get_column_aggregations}, however in some cases we may want to disable specific methods
      *
-     * @param array $disabledaggregation Array of types, e.g. ['min', 'sum']
+     * @param string[] $disabledaggregation Types of aggregation obtained via {@see base::get_class_name}, e.g. ['min', 'sum']
      * @return self
      */
     public function set_disabled_aggregation(array $disabledaggregation): self {

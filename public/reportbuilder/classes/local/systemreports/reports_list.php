@@ -26,6 +26,7 @@ use stdClass;
 use core_reportbuilder\datasource;
 use core_reportbuilder\manager;
 use core_reportbuilder\system_report;
+use core_reportbuilder\local\aggregation\groupconcat;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\{boolean_select, date, tags, text, select};
 use core_reportbuilder\local\helpers\{audience, custom_fields, format};
@@ -163,7 +164,7 @@ class reports_list extends system_report {
         // Tags column.
         $this->add_column_from_entity('tag:namewithbadge')
             ->set_title(new lang_string('tags'))
-            ->set_aggregation('groupconcat')
+            ->set_aggregation(groupconcat::get_class_name())
             ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true);
 
         // Time created column.
