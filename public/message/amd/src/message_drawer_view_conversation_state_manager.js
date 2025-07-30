@@ -147,7 +147,8 @@ define(['jquery'], function($) {
             pendingDeleteConversation: false,
             selectedMessageIds: [],
             showEmojiAutoComplete: false,
-            showEmojiPicker: false
+            showEmojiPicker: false,
+            canSendMessageToConversation: true,
         };
     };
 
@@ -836,6 +837,19 @@ define(['jquery'], function($) {
         return newState;
     };
 
+    /**
+     * Set whether the user can send messages to the conversation.
+     *
+     * @param  {Object} state Current state.
+     * @param  {Bool} value If it can send message to conversation.
+     * @return {Object} New state.
+     */
+    const setCanSendMessageToConversation = function(state, value) {
+        const newState = cloneState(state);
+        newState.canSendMessageToConversation = value;
+        return newState;
+    };
+
     return {
         buildInitialState: buildInitialState,
         addMessages: addMessages,
@@ -877,6 +891,7 @@ define(['jquery'], function($) {
         removeSelectedMessagesById: removeSelectedMessagesById,
         markMessagesAsRead: markMessagesAsRead,
         addContactRequests: addContactRequests,
-        removeContactRequests: removeContactRequests
+        removeContactRequests: removeContactRequests,
+        setCanSendMessageToConversation: setCanSendMessageToConversation,
     };
 });

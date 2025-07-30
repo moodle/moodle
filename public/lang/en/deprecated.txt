@@ -86,3 +86,4 @@ maxsectionslimit,core
 maxsectionaddmessage,core_courseformat
 activities_help,core
 resources_help,core
+unabletomessage,core_message

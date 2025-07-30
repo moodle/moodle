@@ -90,6 +90,46 @@ function(
     };
 
     /**
+     * Get the unable to message container element.
+     *
+     * @param  {Object} body Conversation body container element.
+     * @return {Object} The unable to message container element.
+     */
+    const getUnableToMessageContainer = (body) => {
+        return body.find(SELECTORS.UNABLE_TO_MESSAGE_CONTAINER);
+    };
+
+    /**
+     * Get the message text area element.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     * @return {Object} The message text area element.
+     */
+    const getMessageTextArea = (footer) => {
+        return footer.find(SELECTORS.MESSAGE_TEXT_AREA);
+    };
+
+    /**
+     * Get the send message button element.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     * @return {Object} The send message button element.
+     */
+    const getSendMessageButton = (footer) => {
+        return footer.find(SELECTORS.SEND_MESSAGE_BUTTON);
+    };
+
+    /**
+     * Get the emoji picker button element.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     * @return {Object} The emoji picker button element.
+     */
+    const getEmojiPickerButton = (footer) => {
+        return footer.find(SELECTORS.TOGGLE_EMOJI_PICKER_BUTTON);
+    };
+
+    /**
      * Hide the self-conversation message container element.
      *
      * @param  {Object} body Conversation body container element.
@@ -259,33 +299,6 @@ function(
         getFooterRequireUnblockContainer(footer).addClass('hidden');
     };
 
-    /**
-     * Get the footer Unable to message contact container element.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     * @return {Object} The footer Unable to message contact container element.
-     */
-    var getFooterUnableToMessageContainer = function(footer) {
-        return footer.find(SELECTORS.CONTENT_MESSAGES_FOOTER_UNABLE_TO_MESSAGE_CONTAINER);
-    };
-
-    /**
-     * Show the footer Unable to message contact container element.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     */
-    var showFooterUnableToMessage = function(footer) {
-        getFooterUnableToMessageContainer(footer).removeClass('hidden');
-    };
-
-    /**
-     * Hide the footer Unable to message contact container element.
-     *
-     * @param  {Object} footer Conversation footer container element.
-     */
-    var hideFooterUnableToMessage = function(footer) {
-        getFooterUnableToMessageContainer(footer).addClass('hidden');
-    };
 
     /**
      * Hide all header elements.
@@ -309,7 +322,6 @@ function(
         hideFooterPlaceholder(footer);
         hideFooterRequireContact(footer);
         hideFooterRequireUnblock(footer);
-        hideFooterUnableToMessage(footer);
     };
 
     /**
@@ -366,6 +378,111 @@ function(
      */
     var hideHeaderContent = function(header) {
         getHeaderContent(header).addClass('hidden');
+    };
+
+    /**
+     * Show the unable to message container.
+     *
+     * @param  {Object} body Conversation body container element.
+     */
+    const showUnableToMessage = (body) => {
+        getUnableToMessageContainer(body).removeClass('hidden');
+    };
+
+    /**
+     * Hide the unable to message container.
+     *
+     * @param  {Object} body Conversation body container element.
+     */
+    const hideUnableToMessage = (body) => {
+        getUnableToMessageContainer(body).addClass('hidden');
+    };
+
+    /**
+     * Enable the emoji picker button.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const enableEmojiPickerButton = (footer) => {
+        getEmojiPickerButton(footer).prop('disabled', false);
+    };
+
+    /**
+     * Enable the send message button.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const enableSendMessageButton = (footer) => {
+        getSendMessageButton(footer).prop('disabled', false);
+    };
+
+    /**
+     * Enable the message text area.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const enableMessageTextArea = (footer) => {
+        const messageTextArea = getMessageTextArea(footer);
+        messageTextArea.prop('disabled', false);
+        Aria.unhide(messageTextArea.get());
+
+        Str.get_string('writeamessage', 'core_message').done(function(string) {
+            if (!messageTextArea.prop('disabled')) {
+                messageTextArea.prop('placeholder', string);
+            }
+        });
+    };
+
+    /**
+     * Enable all footer content elements.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const enableAllFooterContentElements = (footer) => {
+        enableEmojiPickerButton(footer);
+        enableSendMessageButton(footer);
+        enableMessageTextArea(footer);
+    };
+
+    /**
+     * Disable the emoji picker button.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const disableEmojiPickerButton = (footer) => {
+        getEmojiPickerButton(footer).prop('disabled', true);
+    };
+
+    /**
+     * Disable the send message button.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const disableSendMessageButton = (footer) => {
+        getSendMessageButton(footer).prop('disabled', true);
+    };
+
+    /**
+     * Disable the message text area.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const disableMessageTextArea = (footer) => {
+        const messageTextArea = getMessageTextArea(footer);
+        messageTextArea.prop('disabled', true);
+        messageTextArea.removeAttr('placeholder');
+        Aria.unhide(messageTextArea.get());
+    };
+
+    /**
+     * Disable all footer content elements.
+     *
+     * @param  {Object} footer Conversation footer container element.
+     */
+    const disableAllFooterContentElements = (footer) => {
+        disableEmojiPickerButton(footer);
+        disableSendMessageButton(footer);
+        disableMessageTextArea(footer);
     };
 
     /**
@@ -572,9 +689,10 @@ function(
      * @param  {Object} footer The footer container element.
      * @param  {Array} days Array of days containing messages.
      * @param  {Object} datesCache Cache timestamps and their formatted date string.
+     * @param  {Boolean} isAbleToMessage Whether the user can send a message to the conversation.
      * @return {Promise} Days rendering promises.
      */
-    var renderAddDays = function(header, body, footer, days, datesCache) {
+    var renderAddDays = function(header, body, footer, days, datesCache, isAbleToMessage) {
         var messagesContainer = getMessagesContainer(body);
         var daysRenderPromises = days.map(function(data) {
             var timestampDate = new Date(data.value.timestamp * 1000);
@@ -589,6 +707,7 @@ function(
             // Wait until all of the rendering is done for each of the days
             // to ensure they are added to the page in the correct order.
             days.forEach(function(data, index) {
+                // eslint-disable-next-line promise/no-nesting
                 daysRenderPromises[index]
                     .then(function(html) {
                         if (data.before) {
@@ -597,6 +716,12 @@ function(
                         } else {
                             return messagesContainer.append(html);
                         }
+                    })
+                    .always(function() {
+                        const showUnableToMessage = !isAbleToMessage && index === days.length - 1;
+                        messagesContainer.find(SELECTORS.DAY_MESSAGE_UNABLE_TO_SEND_CONTAINER)
+                            .last().toggleClass('hidden', !showUnableToMessage);
+                        hideUnableToMessage(body);
                     })
                     .catch(function() {
                         // Fail silently.
@@ -823,7 +948,7 @@ function(
 
         if (hasAddDays) {
             renderingPromises.push(datesCachePromise.then(function(datesCache) {
-                return renderAddDays(header, body, footer, data.days.add, datesCache);
+                return renderAddDays(header, body, footer, data.days.add, datesCache, !data.unableToMessage);
             }));
         }
 
@@ -919,8 +1044,6 @@ function(
                 return showFooterContent(footer);
             case 'unblock':
                 return showFooterRequireUnblock(footer);
-            case 'unable-to-message':
-                return showFooterUnableToMessage(footer);
         }
 
         return true;
@@ -1645,6 +1768,29 @@ function(
     };
 
     /**
+     * Show or hide the unable to message container and enable or disable the footer messaging controls.
+     *
+     * @param {Object} header The header container element.
+     * @param {Object} body The body container element.
+     * @param {Object} footer The footer container element.
+     * @param {Object} disable should the message be displayed?.
+     * @return {Object|true} jQuery promise
+     */
+    var renderUnableToMessage = function(header, body, footer, disable) {
+        if (disable) {
+            disableAllFooterContentElements(footer);
+            if (!body.find(SELECTORS.DAY_MESSAGE_UNABLE_TO_SEND_CONTAINER).length) {
+                showUnableToMessage(body);
+            }
+        } else {
+            enableAllFooterContentElements(footer);
+            hideUnableToMessage(body);
+        }
+
+        return true;
+    };
+
+    /**
      * Show or hide the require add contact panel.
      *
      * @param {Object} header The header container element.
@@ -1684,6 +1830,8 @@ function(
         showHeaderPlaceholder(header);
         hideAllFooterElements(footer);
         showFooterPlaceholder(footer);
+        enableAllFooterContentElements(footer);
+        hideUnableToMessage(body);
         return true;
     };
 
@@ -1708,7 +1856,8 @@ function(
                 confirmContactRequest: renderConfirmContactRequest,
                 requireAddContact: renderRequireAddContact,
                 selfConversationMessage: renderSelfConversationMessage,
-                contactRequestSent: renderContactRequestSent
+                contactRequestSent: renderContactRequestSent,
+                unableToMessage: renderUnableToMessage,
             },
             {
                 loadingMembers: renderLoadingMembers,

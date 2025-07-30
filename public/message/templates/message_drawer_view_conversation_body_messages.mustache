@@ -38,4 +38,8 @@
     {{#messages}}
         {{> core_message/message_drawer_view_conversation_body_message }}
     {{/messages}}
+    <div class="p-3 text-center hidden" data-region="day-message-unable-to-send-container">
+        <p class="m-0">{{#str}} cannotsendmessages, core_message {{/str}}</p>
+        <p class="fst-italic fw-light" data-region="text">{{#str}} nopermissiontosend, core_message {{/str}}</p>
+    </div>
 </div>
