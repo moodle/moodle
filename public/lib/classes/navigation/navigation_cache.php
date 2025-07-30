@@ -21,13 +21,6 @@ use core_cache\session_cache;
 use core_shutdown_manager;
 
 /**
- * Class navigation_cache
- *
- * @package    core
- * @copyright  2025 Andrew Lyons <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-/**
  * The navigation_cache class is used for global and settings navigation data.
  *
  * It provides an easy access to the session cache with TTL of 1800 seconds.
@@ -59,12 +52,12 @@ class navigation_cache {
     protected $area;
     /** @var int cache time information */
     #[\core\attribute\deprecated(null, since: '4.5', reason: 'This constant is no longer needed.', mdl: 'MDL-79628')]
-    const CACHETIME = 0;
+    public const CACHETIME = 0;
     /** @var int cache user id */
     #[\core\attribute\deprecated(null, since: '4.5', reason: 'This constant is no longer needed.', mdl: 'MDL-79628')]
-    const CACHEUSERID = 1;
+    public const CACHEUSERID = 1;
     /** @var int cache value */
-    const CACHEVALUE = 2;
+    public const CACHEVALUE = 2;
     /** @var null|array An array of cache areas to expire on shutdown */
     public static $volatilecaches = null;
 

@@ -19,6 +19,8 @@ namespace core\tests\navigation;
 use core\exception\coding_exception;
 use core\navigation\settings_navigation;
 
+// phpcs:disable
+
 /**
  * This is a dummy object that allows us to call protected methods within the
  * global navigation class by prefixing the methods with `exposed_`.
@@ -27,7 +29,6 @@ use core\navigation\settings_navigation;
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class exposed_settings_navigation extends settings_navigation {
     protected string $exposedkey = 'exposed_';
 
@@ -41,8 +42,11 @@ class exposed_settings_navigation extends settings_navigation {
             $method = substr($method, strlen($this->exposedkey));
         }
         if (method_exists($this, $method)) {
-            return call_user_func_array(array($this, $method), $arguments);
+            return call_user_func_array([$this, $method], $arguments);
         }
-        throw new coding_exception('You have attempted to access a method that does not exist for the given object '.$method, DEBUG_DEVELOPER);
+        throw new coding_exception(
+            'You have attempted to access a method that does not exist for the given object ' . $method,
+            DEBUG_DEVELOPER,
+        );
     }
 }

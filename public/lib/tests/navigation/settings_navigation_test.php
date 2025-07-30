@@ -19,13 +19,14 @@ namespace core\navigation;
 use core\tests\navigation\exposed_settings_navigation;
 
 /**
- * Tests for 
+ * Tests for
  *
  * @package    core
  * @category   test
  * @copyright  2025 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(settings_navigation::class)]
 final class settings_navigation_test extends \advanced_testcase {
     public function test_setting___construct(): settings_navigation {
         global $PAGE, $SITE;
@@ -80,7 +81,7 @@ final class settings_navigation_test extends \advanced_testcase {
         $PAGE->set_course($SITE);
 
         // Check that a standard user can not view the preferences page.
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->getDataGenerator()->role_assign($studentrole->id, $persondoingtheviewing->id);
         $this->setUser($persondoingtheviewing);
         $settingsnav = new exposed_settings_navigation();
@@ -89,7 +90,7 @@ final class settings_navigation_test extends \advanced_testcase {
         $this->assertFalse($settingsnav->can_view_user_preferences($persontoview->id));
 
         // Set persondoingtheviewing as a manager.
-        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
         $this->getDataGenerator()->role_assign($managerrole->id, $persondoingtheviewing->id);
         $settingsnav = new exposed_settings_navigation();
         $settingsnav->initialise();
@@ -104,5 +105,4 @@ final class settings_navigation_test extends \advanced_testcase {
         $preferencenode = $settingsnav->find('userviewingsettings' . $persontoview->id, null);
         $this->assertTrue($settingsnav->can_view_user_preferences($persontoview->id));
     }
-
 }

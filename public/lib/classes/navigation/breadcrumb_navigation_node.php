@@ -28,7 +28,6 @@ use core\exception\coding_exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class breadcrumb_navigation_node extends navigation_node {
-
     /** @var $last boolean A flag indicating this is the last item in the list of breadcrumbs. */
     private $last = false;
 
@@ -41,7 +40,6 @@ class breadcrumb_navigation_node extends navigation_node {
         if (is_array($navnode)) {
             parent::__construct($navnode);
         } else if ($navnode instanceof navigation_node) {
-
             // Just clone everything.
             $objvalues = get_object_vars($navnode);
             foreach ($objvalues as $key => $value) {

@@ -69,5 +69,4 @@ final class navigation_cache_test extends \advanced_testcase {
         $this->assertTrue($cache->cached('software'));
         $this->assertEquals($cache->software, 'Moodle');
     }
-
 }

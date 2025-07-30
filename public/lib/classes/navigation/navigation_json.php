@@ -30,9 +30,9 @@ use core\url;
  */
 class navigation_json {
     /** @var array An array of different node types */
-    protected $nodetype = array('node','branch');
+    protected $nodetype = ['node', 'branch'];
     /** @var array An array of node keys and types */
-    protected $expandable = array();
+    protected $expandable = [];
     /**
      * Turns a branch and all of its children into XML
      *
@@ -50,7 +50,7 @@ class navigation_json {
      */
     public function set_expandable($expandable) {
         foreach ($expandable as $node) {
-            $this->expandable[$node['key'].':'.$node['type']] = $node;
+            $this->expandable[$node['key'] . ':' . $node['type']] = $node;
         }
     }
     /**
@@ -60,11 +60,11 @@ class navigation_json {
      * @param int $depth Pointlessly used to track the depth of the XML structure
      * @return string JSON
      */
-    protected function convert_child($child, $depth=1) {
+    protected function convert_child($child, $depth = 1) {
         if (!$child->display) {
             return '';
         }
-        $attributes = array();
+        $attributes = [];
         $attributes['id'] = $child->id;
         $attributes['name'] = (string)$child->text; // This can be lang_string object so typecast it.
         $attributes['type'] = $child->type;
@@ -73,17 +73,16 @@ class navigation_json {
         $attributes['requiresajaxloading'] = $child->requiresajaxloading;
 
         if ($child->icon instanceof pix_icon) {
-            $attributes['icon'] = array(
+            $attributes['icon'] = [
                 'component' => $child->icon->component,
                 'pix' => $child->icon->pix,
-            );
-            foreach ($child->icon->attributes as $key=>$value) {
+            ];
+            foreach ($child->icon->attributes as $key => $value) {
                 if ($key == 'class') {
                     $attributes['icon']['classes'] = explode(' ', $value);
                 } else if (!array_key_exists($key, $attributes['icon'])) {
                     $attributes['icon'][$key] = $value;
                 }
-
             }
         } else if (!empty($child->icon)) {
             $attributes['icon'] = (string)$child->icon;
@@ -92,13 +91,13 @@ class navigation_json {
         if ($child->forcetitle || $child->title !== $child->text) {
             $attributes['title'] = htmlentities($child->title ?? '', ENT_QUOTES, 'UTF-8');
         }
-        if (array_key_exists($child->key.':'.$child->type, $this->expandable)) {
+        if (array_key_exists($child->key . ':' . $child->type, $this->expandable)) {
             $attributes['expandable'] = $child->key;
-            $child->add_class($this->expandable[$child->key.':'.$child->type]['id']);
+            $child->add_class($this->expandable[$child->key . ':' . $child->type]['id']);
         }
 
-        if (count($child->classes)>0) {
-            $attributes['class'] .= ' '.join(' ',$child->classes);
+        if (count($child->classes) > 0) {
+            $attributes['class'] .= ' ' . join(' ', $child->classes);
         }
         if (is_string($child->action)) {
             $attributes['link'] = $child->action;
@@ -108,13 +107,13 @@ class navigation_json {
             $attributes['link'] = $child->action->url->out();
         }
         $attributes['hidden'] = ($child->hidden);
-        $attributes['haschildren'] = ($child->children->count()>0 || $child->type == navigation_node::TYPE_CATEGORY);
+        $attributes['haschildren'] = ($child->children->count() > 0 || $child->type == navigation_node::TYPE_CATEGORY);
         $attributes['haschildren'] = $attributes['haschildren'] || $child->type == navigation_node::TYPE_MY_CATEGORY;
 
         if ($child->children->count() > 0) {
-            $attributes['children'] = array();
+            $attributes['children'] = [];
             foreach ($child->children as $subchild) {
-                $attributes['children'][] = $this->convert_child($subchild, $depth+1);
+                $attributes['children'][] = $this->convert_child($subchild, $depth + 1);
             }
         }
 

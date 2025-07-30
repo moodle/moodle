@@ -19,13 +19,14 @@ namespace core\tests\navigation;
 use core\exception\coding_exception;
 use core\navigation\global_navigation;
 
+// phpcs:disable
 /**
  * This is a dummy object that allows us to call protected methods within the
  * global navigation class by prefixing the methods with `exposed_`
  */
 class exposed_global_navigation extends global_navigation {
     protected $exposedkey = 'exposed_';
-    public function __construct(?\moodle_page $page=null) {
+    public function __construct(?\moodle_page $page = null) {
         global $PAGE;
         if ($page === null) {
             $page = $PAGE;
@@ -37,9 +38,12 @@ class exposed_global_navigation extends global_navigation {
             $method = substr($method, strlen($this->exposedkey));
         }
         if (method_exists($this, $method)) {
-            return call_user_func_array(array($this, $method), $arguments);
+            return call_user_func_array([$this, $method], $arguments);
         }
-        throw new coding_exception('You have attempted to access a method that does not exist for the given object '.$method, DEBUG_DEVELOPER);
+        throw new coding_exception(
+            'You have attempted to access a method that does not exist for the given object ' . $method,
+            DEBUG_DEVELOPER,
+        );
     }
     public function set_initialised() {
         $this->initialised = true;

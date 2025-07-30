@@ -40,45 +40,45 @@ use core\url;
  */
 class navigation_node implements renderable {
     /** @var int Used to identify this node a leaf (default) 0 */
-    const NODETYPE_LEAF =   0;
+    public const NODETYPE_LEAF = 0;
     /** @var int Used to identify this node a branch, happens with children  1 */
-    const NODETYPE_BRANCH = 1;
+    public const NODETYPE_BRANCH = 1;
     /** @var null Unknown node type null */
-    const TYPE_UNKNOWN =    null;
+    public const TYPE_UNKNOWN = null;
     /** @var int System node type 0 */
-    const TYPE_ROOTNODE =   0;
+    public const TYPE_ROOTNODE = 0;
     /** @var int System node type 1 */
-    const TYPE_SYSTEM =     1;
+    public const TYPE_SYSTEM = 1;
     /** @var int Category node type 10 */
-    const TYPE_CATEGORY =   10;
+    public const TYPE_CATEGORY = 10;
     /** var int Category displayed in MyHome navigation node */
-    const TYPE_MY_CATEGORY = 11;
+    public const TYPE_MY_CATEGORY = 11;
     /** @var int Course node type 20 */
-    const TYPE_COURSE =     20;
+    public const TYPE_COURSE = 20;
     /** @var int Course Structure node type 30 */
-    const TYPE_SECTION =    30;
+    public const TYPE_SECTION = 30;
     /** @var int Activity node type, e.g. Forum, Quiz 40 */
-    const TYPE_ACTIVITY =   40;
+    public const TYPE_ACTIVITY = 40;
     /** @var int Resource node type, e.g. Link to a file, or label 50 */
-    const TYPE_RESOURCE =   50;
+    public const TYPE_RESOURCE = 50;
     /** @var int A custom node type, default when adding without specifing type 60 */
-    const TYPE_CUSTOM =     60;
+    public const TYPE_CUSTOM = 60;
     /** @var int Setting node type, used only within settings nav 70 */
-    const TYPE_SETTING =    70;
+    public const TYPE_SETTING = 70;
     /** @var int site admin branch node type, used only within settings nav 71 */
-    const TYPE_SITE_ADMIN = 71;
+    public const TYPE_SITE_ADMIN = 71;
     /** @var int Setting node type, used only within settings nav 80 */
-    const TYPE_USER =       80;
+    public const TYPE_USER = 80;
     /** @var int Setting node type, used for containers of no importance 90 */
-    const TYPE_CONTAINER =  90;
+    public const TYPE_CONTAINER = 90;
     /** var int Course the current user is not enrolled in */
-    const COURSE_OTHER = 0;
+    public const COURSE_OTHER = 0;
     /** var int Course the current user is enrolled in but not viewing */
-    const COURSE_MY = 1;
+    public const COURSE_MY = 1;
     /** var int Course the current user is currently viewing */
-    const COURSE_CURRENT = 2;
+    public const COURSE_CURRENT = 2;
     /** var string The course index page navigation node */
-    const COURSE_INDEX_PAGE = 'courseindexpage';
+    public const COURSE_INDEX_PAGE = 'courseindexpage';
 
     /** @var int Parameter to aid the coder in tracking [optional] */
     public $id = null;
@@ -92,7 +92,7 @@ class navigation_node implements renderable {
     public $title = null;
     /** @var string A string that can be used to build a help button */
     public $helpbutton = null;
-    /** @var moodle_url|action_link|null An action for the node (link) */
+    /** @var url|action_link|null An action for the node (link) */
     public $action = null;
     /** @var pix_icon The path to an icon to use for this node */
     public $icon = null;
@@ -105,11 +105,11 @@ class navigation_node implements renderable {
     /** @var bool If set to true the node will be expanded by default */
     public $forceopen = false;
     /** @var array An array of CSS classes for the node */
-    public $classes = array();
+    public $classes = [];
     /** @var array An array of HTML attributes for the node */
     public $attributes = [];
     /** @var navigation_node_collection An array of child nodes */
-    public $children = array();
+    public $children = [];
     /** @var bool If set to true the node will be recognised as active */
     public $isactive = false;
     /** @var bool If set to true the node will be dimmed */
@@ -129,10 +129,10 @@ class navigation_node implements renderable {
     /** @var bool Set to true if we KNOW that this node can be expanded.  */
     public $isexpandable = false;
     /** @var array */
-    protected $namedtypes = array(0 => 'system', 10 => 'category', 20 => 'course', 30 => 'structure', 40 => 'activity',
+    protected $namedtypes = [0 => 'system', 10 => 'category', 20 => 'course', 30 => 'structure', 40 => 'activity',
                                   50 => 'resource', 60 => 'custom', 70 => 'setting', 71 => 'siteadmin', 80 => 'user',
-                                  90 => 'container');
-    /** @var moodle_url */
+                                  90 => 'container'];
+    /** @var url */
     protected static $fullmeurl = null;
     /** @var bool toogles auto matching of active node */
     public static $autofindactive = true;
@@ -166,13 +166,13 @@ class navigation_node implements renderable {
     public function __construct($properties) {
         if (is_array($properties)) {
             // Check the array for each property that we allow to set at construction.
-            // text         - The main content for the node
-            // shorttext    - A short text if required for the node
-            // icon         - The icon to display for the node
-            // type         - The type of the node
-            // key          - The key to use to identify the node
-            // parent       - A reference to the nodes parent
-            // action       - The action to attribute to this node, usually a URL to link to
+            // text         - The main content for the node.
+            // shorttext    - A short text if required for the node.
+            // icon         - The icon to display for the node.
+            // type         - The type of the node.
+            // key          - The key to use to identify the node.
+            // parent       - A reference to the nodes parent.
+            // action       - The action to attribute to this node, usually a URL to link to.
             if (array_key_exists('text', $properties)) {
                 $this->text = $properties['text'];
             }
@@ -198,11 +198,12 @@ class navigation_node implements renderable {
             if (array_key_exists('key', $properties)) {
                 $this->key = $properties['key'];
             }
-            // This needs to happen last because of the check_if_active call that occurs
+
+            // This needs to happen last because of the check_if_active call that occurs.
             if (array_key_exists('action', $properties)) {
                 $this->action = $properties['action'];
                 if (is_string($this->action)) {
-                    $this->action = new moodle_url($this->action);
+                    $this->action = new url($this->action);
                 }
                 if (self::$autofindactive) {
                     $this->check_if_active();
@@ -217,7 +218,7 @@ class navigation_node implements renderable {
         if ($this->text === null) {
             throw new coding_exception('You must set the text for the node when you create it.');
         }
-        // Instantiate a new navigation node collection for this nodes children
+        // Instantiate a new navigation node collection for this nodes children.
         $this->children = new navigation_node_collection();
     }
 
@@ -230,19 +231,20 @@ class navigation_node implements renderable {
      * @param int $strength One of URL_MATCH_EXACT, URL_MATCH_PARAMS, or URL_MATCH_BASE
      * @return bool
      */
-    public function check_if_active($strength=URL_MATCH_EXACT) {
+    public function check_if_active($strength = URL_MATCH_EXACT) {
         global $FULLME, $PAGE;
-        // Set fullmeurl if it hasn't already been set
+
+        // Set fullmeurl if it hasn't already been set.
         if (self::$fullmeurl == null) {
             if ($PAGE->has_set_url()) {
-                self::override_active_url(new moodle_url($PAGE->url));
+                self::override_active_url(new url($PAGE->url));
             } else {
-                self::override_active_url(new moodle_url($FULLME));
+                self::override_active_url(new url($FULLME));
             }
         }
 
-        // Compare the action of this node against the fullmeurl
-        if ($this->action instanceof moodle_url && $this->action->compare(self::$fullmeurl, $strength)) {
+        // Compare the action of this node against the fullmeurl.
+        if ($this->action instanceof url && $this->action->compare(self::$fullmeurl, $strength)) {
             $this->make_active();
             return true;
         }
@@ -288,18 +290,17 @@ class navigation_node implements renderable {
     }
 
     /**
-     * This sets the URL that the URL of new nodes get compared to when locating
-     * the active node.
+     * This sets the URL that the URL of new nodes get compared to when locating the active node.
      *
      * The active node is the node that matches the URL set here. By default this
      * is either $PAGE->url or if that hasn't been set $FULLME.
      *
-     * @param moodle_url $url The url to use for the fullmeurl.
+     * @param url $url The url to use for the fullmeurl.
      * @param bool $loadadmintree use true if the URL point to administration tree
      */
-    public static function override_active_url(moodle_url $url, $loadadmintree = false) {
+    public static function override_active_url(url $url, $loadadmintree = false) {
         // Clone the URL, in case the calling script changes their URL later.
-        self::$fullmeurl = new moodle_url($url);
+        self::$fullmeurl = new url($url);
         // True means we do not want AJAX loaded admin tree, required for all admin pages.
         if ($loadadmintree) {
             // Do not change back to false if already set.
@@ -308,6 +309,8 @@ class navigation_node implements renderable {
     }
 
     /**
+     * Require the admin tree.
+     *
      * Use when page is linked from the admin tree,
      * if not used navigation could not find the page using current URL
      * because the tree is not fully loaded.
@@ -317,43 +320,53 @@ class navigation_node implements renderable {
     }
 
     /**
-     * Creates a navigation node, ready to add it as a child using add_node
-     * function. (The created node needs to be added before you can use it.)
+     * Creates a navigation node, ready to add it as a child using add_node function.
+     *
+     * The created node needs to be added before you can use it.
+     *
      * @param string $text
-     * @param moodle_url|action_link $action
+     * @param url|action_link $action
      * @param int $type
      * @param string $shorttext
      * @param string|int $key
      * @param pix_icon $icon
      * @return navigation_node
      */
-    public static function create($text, $action=null, $type=self::TYPE_CUSTOM,
-            $shorttext=null, $key=null, ?pix_icon $icon=null) {
-        if ($action && !($action instanceof moodle_url || $action instanceof action_link)) {
+    public static function create(
+        $text,
+        $action = null,
+        $type = self::TYPE_CUSTOM,
+        $shorttext = null,
+        $key = null,
+        ?pix_icon $icon = null
+    ) {
+        if ($action && !($action instanceof url || $action instanceof action_link)) {
             debugging(
-                "It is required that the action provided be either an action_url|moodle_url." .
-                " Please update your definition.", E_NOTICE);
+                "It is required that the action provided be either an action_url|url." .
+                " Please update your definition.",
+                E_NOTICE
+            );
         }
-        // Properties array used when creating the new navigation node
-        $itemarray = array(
+        // Properties array used when creating the new navigation node.
+        $itemarray = [
             'text' => $text,
-            'type' => $type
-        );
-        // Set the action if one was provided
-        if ($action!==null) {
+            'type' => $type,
+        ];
+        // Set the action if one was provided.
+        if ($action !== null) {
             $itemarray['action'] = $action;
         }
-        // Set the shorttext if one was provided
-        if ($shorttext!==null) {
+        // Set the shorttext if one was provided.
+        if ($shorttext !== null) {
             $itemarray['shorttext'] = $shorttext;
         }
-        // Set the icon if one was provided
-        if ($icon!==null) {
+        // Set the icon if one was provided.
+        if ($icon !== null) {
             $itemarray['icon'] = $icon;
         }
-        // Set the key
+        // Set the key.
         $itemarray['key'] = $key;
-        // Construct and return
+        // Construct and return.
         return new navigation_node($itemarray);
     }
 
@@ -361,21 +374,21 @@ class navigation_node implements renderable {
      * Adds a navigation node as a child of this node.
      *
      * @param string $text
-     * @param moodle_url|action_link|string $action
+     * @param url|action_link|string $action
      * @param ?int $type
      * @param string $shorttext
      * @param string|int $key
      * @param pix_icon $icon
      * @return navigation_node
      */
-    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, ?pix_icon $icon=null) {
+    public function add($text, $action = null, $type = self::TYPE_CUSTOM, $shorttext = null, $key = null, ?pix_icon $icon = null) {
         if ($action && is_string($action)) {
-            $action = new moodle_url($action);
+            $action = new url($action);
         }
-        // Create child node
+        // Create child node.
         $childnode = self::create($text, $action, $type, $shorttext, $key, $icon);
 
-        // Add the child to end and return
+        // Add the child to end and return.
         return $this->add_node($childnode);
     }
 
@@ -386,34 +399,36 @@ class navigation_node implements renderable {
      * @param string $beforekey
      * @return navigation_node The added node
      */
-    public function add_node(navigation_node $childnode, $beforekey=null) {
-        // First convert the nodetype for this node to a branch as it will now have children
+    public function add_node(navigation_node $childnode, $beforekey = null) {
+        // First convert the nodetype for this node to a branch as it will now have children.
         if ($this->nodetype !== self::NODETYPE_BRANCH) {
             $this->nodetype = self::NODETYPE_BRANCH;
         }
-        // Set the parent to this node
+        // Set the parent to this node.
         $childnode->set_parent($this);
 
-        // Default the key to the number of children if not provided
+        // Default the key to the number of children if not provided.
         if ($childnode->key === null) {
             $childnode->key = $this->children->count();
         }
 
-        // Add the child using the navigation_node_collections add method
+        // Add the child using the navigation_node_collections add method.
         $node = $this->children->add($childnode, $beforekey);
 
         // If added node is a category node or the user is logged in and it's a course
-        // then mark added node as a branch (makes it expandable by AJAX)
+        // then mark added node as a branch (makes it expandable by AJAX).
         $type = $childnode->type;
-        if (($type == self::TYPE_CATEGORY) || (isloggedin() && ($type == self::TYPE_COURSE)) || ($type == self::TYPE_MY_CATEGORY) ||
-                ($type === self::TYPE_SITE_ADMIN)) {
+        if (
+            ($type == self::TYPE_CATEGORY) || (isloggedin() && ($type == self::TYPE_COURSE)) || ($type == self::TYPE_MY_CATEGORY) ||
+                ($type === self::TYPE_SITE_ADMIN)
+        ) {
             $node->nodetype = self::NODETYPE_BRANCH;
         }
-        // If this node is hidden mark it's children as hidden also
+        // If this node is hidden mark it's children as hidden also.
         if ($this->hidden) {
             $node->hidden = true;
         }
-        // Return added node (reference returned by $this->children->add()
+        // Return added node (reference returned by $this->children->add().
         return $node;
     }
 
@@ -474,7 +489,7 @@ class navigation_node implements renderable {
      * @param int $type One of navigation_node::TYPE_*
      * @return navigation_node|false
      */
-    public function get($key, $type=null) {
+    public function get($key, $type = null) {
         return $this->children->get($key, $type);
     }
 
@@ -493,7 +508,7 @@ class navigation_node implements renderable {
      * @return bool Returns true if it has children or could have (by AJAX expansion)
      */
     public function has_children() {
-        return ($this->nodetype === navigation_node::NODETYPE_BRANCH || $this->children->count()>0 || $this->isexpandable);
+        return ($this->nodetype === self::NODETYPE_BRANCH || $this->children->count() > 0 || $this->isexpandable);
     }
 
     /**
@@ -569,8 +584,8 @@ class navigation_node implements renderable {
      */
     public function remove_class($class) {
         if (in_array($class, $this->classes)) {
-            $key = array_search($class,$this->classes);
-            if ($key!==false) {
+            $key = array_search($class, $this->classes);
+            if ($key !== false) {
                 // Remove the class' array element.
                 unset($this->classes[$key]);
                 // Reindex the array to avoid failures when the classes array is iterated later in mustache templates.
@@ -603,7 +618,7 @@ class navigation_node implements renderable {
     /**
      * Resets the page specific information on this node if it is being unserialised.
      */
-    public function __wakeup(){
+    public function __wakeup() {
         $this->forceopen = false;
         $this->isactive = false;
         $this->remove_class('active_tree_node');
@@ -698,11 +713,11 @@ class navigation_node implements renderable {
      * @param bool $shorttext If true shorttext is used rather than the normal text
      * @return string
      */
-    public function get_content($shorttext=false) {
-        $navcontext = \context_helper::get_navigation_filter_context(null);
+    public function get_content($shorttext = false) {
+        $navcontext = context_helper::get_navigation_filter_context(null);
         $options = !empty($navcontext) ? ['context' => $navcontext] : null;
 
-        if ($shorttext && $this->shorttext!==null) {
+        if ($shorttext && $this->shorttext !== null) {
             return format_string($this->shorttext, null, $options);
         } else {
             return format_string($this->text, null, $options);
@@ -715,7 +730,7 @@ class navigation_node implements renderable {
      * @return string
      */
     public function get_title() {
-        if ($this->forcetitle || $this->action != null){
+        if ($this->forcetitle || $this->action != null) {
             return $this->title;
         } else {
             return '';
@@ -744,7 +759,7 @@ class navigation_node implements renderable {
                 $url = $this->action()->url;
             }
 
-            if (($url->out() === $CFG->wwwroot) || (strpos($url->out(), $CFG->wwwroot.'/') === 0)) {
+            if (($url->out() === $CFG->wwwroot) || (strpos($url->out(), $CFG->wwwroot . '/') === 0)) {
                 return true;
             }
         }
@@ -767,7 +782,7 @@ class navigation_node implements renderable {
      */
     public function get_css_type() {
         if (array_key_exists($this->type, $this->namedtypes)) {
-            return 'type_'.$this->namedtypes[$this->type];
+            return 'type_' . $this->namedtypes[$this->type];
         }
         return 'type_unknown';
     }
@@ -780,10 +795,10 @@ class navigation_node implements renderable {
     public function find_expandable(array &$expandable) {
         foreach ($this->children as &$child) {
             if ($child->display && $child->has_children() && $child->children->count() == 0) {
-                $child->id = 'expandable_branch_'.$child->type.'_'.clean_param($child->key, PARAM_ALPHANUMEXT);
+                $child->id = 'expandable_branch_' . $child->type . '_' . clean_param($child->key, PARAM_ALPHANUMEXT);
                 $this->add_class('canexpand');
                 $child->requiresajaxloading = true;
-                $expandable[] = array('id' => $child->id, 'key' => $child->key, 'type' => $child->type);
+                $expandable[] = ['id' => $child->id, 'key' => $child->key, 'type' => $child->type];
             }
             $child->find_expandable($expandable);
         }
@@ -823,11 +838,11 @@ class navigation_node implements renderable {
      * @param bool $return
      * @return array Array (tabs, selected, inactive, activated, return)
      */
-    public function get_tabs_array(array $inactive=array(), $return=false) {
-        $tabs = array();
-        $rows = array();
+    public function get_tabs_array(array $inactive = [], $return = false) {
+        $tabs = [];
+        $rows = [];
         $selected = null;
-        $activated = array();
+        $activated = [];
         foreach ($this->children as $node) {
             $tabs[] = new tabobject($node->key, $node->action, $node->get_content(), $node->get_title());
             if ($node->contains_active_node()) {
@@ -844,7 +859,7 @@ class navigation_node implements renderable {
                 }
             }
         }
-        return array(array($tabs, $rows), $selected, $inactive, $activated, $return);
+        return [[$tabs, $rows], $selected, $inactive, $activated, $return];
     }
 
     /**
@@ -854,11 +869,11 @@ class navigation_node implements renderable {
      * @param navigation_node $parent
      */
     public function set_parent(navigation_node $parent) {
-        // Set the parent (thats the easy part)
+        // Set the parent (thats the easy part).
         $this->parent = $parent;
-        // Check if this node is active (this is checked during construction)
+        // Check if this node is active (this is checked during construction).
         if ($this->isactive) {
-            // Force all of the parent nodes open so you can see this node
+            // Force all of the parent nodes open so you can see this node.
             $this->parent->force_open();
             // Make all parents inactive so that its clear where we are.
             $this->parent->make_inactive();
@@ -892,7 +907,7 @@ class navigation_node implements renderable {
      * @since Moodle 3.2
      */
     public function action() {
-        if ($this->action instanceof moodle_url) {
+        if ($this->action instanceof url) {
             return $this->action;
         } else if ($this->action instanceof action_link) {
             return $this->action->url;
@@ -907,10 +922,10 @@ class navigation_node implements renderable {
      */
     public function actionattributes() {
         if ($this->action instanceof action_link) {
-            return array_map(function($key, $value) {
+            return array_map(function ($key, $value) {
                 return [
                     'name' => $key,
-                    'value' => $value
+                    'value' => $value,
                 ];
             }, array_keys($this->action->attributes), $this->action->attributes);
         }
@@ -940,7 +955,7 @@ class navigation_node implements renderable {
         }
 
         $actionid = $this->action->attributes['id'];
-        $actionsdata = array_map(function($action) use ($PAGE, $actionid) {
+        $actionsdata = array_map(function ($action) use ($PAGE, $actionid) {
             $data = $action->export_for_template($PAGE->get_renderer('core'));
             $data->id = $actionid;
             return $data;
@@ -994,7 +1009,7 @@ class navigation_node implements renderable {
                 }
                 $node->add(
                     $lockstring,
-                    new moodle_url(
+                    new url(
                         '/admin/lock.php',
                         [
                             'id' => $context->id,
@@ -1003,11 +1018,10 @@ class navigation_node implements renderable {
                     self::TYPE_SETTING,
                     null,
                     'contextlocking',
-                     new pix_icon($lockicon, '')
+                    new pix_icon($lockicon, '')
                 );
             }
         }
-
     }
 
     /**

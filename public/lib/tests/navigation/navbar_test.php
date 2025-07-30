@@ -26,7 +26,6 @@ namespace core\navigation;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(navbar::class)]
 final class navbar_test extends \advanced_testcase {
-
     public function test_navbar_prepend_and_add(): \moodle_page {
         global $PAGE;
         // Unfortunate hack needed because people use global $PAGE around the place.
@@ -37,12 +36,12 @@ final class navbar_test extends \advanced_testcase {
 
         $generator = self::getDataGenerator();
         $cat1 = $generator->create_category();
-        $cat2 = $generator->create_category(array('parent' => $cat1->id));
-        $course = $generator->create_course(array('category' => $cat2->id));
+        $cat2 = $generator->create_category(['parent' => $cat1->id]);
+        $course = $generator->create_course(['category' => $cat2->id]);
 
         $page = new \moodle_page();
         $page->set_course($course);
-        $page->set_url(new \moodle_url('/course/view.php', array('id' => $course->id)));
+        $page->set_url(new \moodle_url('/course/view.php', ['id' => $course->id]));
         $page->navbar->prepend('test 1');
         $page->navbar->prepend('test 2');
         $page->navbar->add('test 3');
@@ -67,10 +66,7 @@ final class navbar_test extends \advanced_testcase {
         return $page;
     }
 
-    /**
-     * @depends test_navbar_prepend_and_add
-     * @param $node
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_navbar_prepend_and_add')]
     public function test_navbar_has_items(\moodle_page $page): void {
         $this->resetAfterTest();
 

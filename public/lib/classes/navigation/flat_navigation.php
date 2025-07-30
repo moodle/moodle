@@ -30,6 +30,10 @@ use moodle_page;
  * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\deprecated(
+    since: '4.0',
+    reason: 'Do not use this class any more. Leverage secondary/tertiary navigation concepts.'
+)]
 class flat_navigation extends navigation_node_collection {
     /** @var moodle_page the moodle page that the navigation belongs to */
     protected $page;
@@ -66,7 +70,7 @@ class flat_navigation extends navigation_node_collection {
         // First walk the nav tree looking for "flat_navigation" nodes.
         if ($course->id > 1) {
             // It's a real course.
-            $url = new url('/course/view.php', array('id' => $course->id));
+            $url = new url('/course/view.php', ['id' => $course->id]);
 
             $coursecontext = context_course::instance($course->id, MUST_EXIST);
             $displaycontext = context_helper::get_navigation_filter_context($coursecontext);
@@ -123,9 +127,11 @@ class flat_navigation extends navigation_node_collection {
         }
 
         // Add-a-block in editing mode.
-        if (isset($this->page->theme->addblockposition) &&
+        if (
+            isset($this->page->theme->addblockposition) &&
                 $this->page->theme->addblockposition == BLOCK_ADDBLOCK_POSITION_FLATNAV &&
-                $PAGE->user_is_editing() && $PAGE->user_can_edit_blocks()) {
+                $PAGE->user_is_editing() && $PAGE->user_can_edit_blocks()
+        ) {
             $url = new url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
             $addablock = navigation_node::create(get_string('addblock'), $url);
             $flat = new flat_navigation_node($addablock, 0);
@@ -136,8 +142,11 @@ class flat_navigation extends navigation_node_collection {
 
             $addblockurl = "?{$url->get_query_string(false)}";
 
-            $PAGE->requires->js_call_amd('core_block/add_modal', 'init',
-                [$addblockurl, $this->page->get_edited_page_hash()]);
+            $PAGE->requires->js_call_amd(
+                'core_block/add_modal',
+                'init',
+                [$addblockurl, $this->page->get_edited_page_hash()]
+            );
         }
     }
 
@@ -149,7 +158,7 @@ class flat_navigation extends navigation_node_collection {
      *   otherwise adds at end
      * @return navigation_node Added node
      */
-    public function add(navigation_node $node, $beforekey=null) {
+    public function add(navigation_node $node, $beforekey = null) {
         $result = parent::add($node, $beforekey);
         // Extend the parent to get a name for the collection of nodes if required.
         if (empty($this->collectionlabel)) {

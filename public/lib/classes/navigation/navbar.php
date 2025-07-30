@@ -40,7 +40,7 @@ class navbar extends navigation_node {
     /** @var bool A switch for whether the navbar is initialised or not */
     protected $initialised = false;
     /** @var mixed keys used to reference the nodes on the navbar */
-    protected $keys = array();
+    protected $keys = [];
     /** @var null|string content of the navbar */
     protected $content = null;
     /** @var moodle_page object the moodle page that this navbar belongs to */
@@ -54,11 +54,11 @@ class navbar extends navigation_node {
     /** @var array An array of navigation nodes for the navbar */
     protected $items;
     /** @var array An array of child node objects */
-    public $children = array();
+    public $children = [];
     /** @var bool A switch for whether we want to include the root node in the navbar */
     public $includesettingsbase = false;
     /** @var breadcrumb_navigation_node[] $prependchildren */
-    protected $prependchildren = array();
+    protected $prependchildren = [];
 
     /**
      * The almighty constructor
@@ -71,10 +71,11 @@ class navbar extends navigation_node {
             $this->duringinstall = true;
             return;
         }
+
         $this->page = $page;
         $this->text = get_string('home');
         $this->shorttext = get_string('home');
-        $this->action = new moodle_url($CFG->wwwroot);
+        $this->action = new url($CFG->wwwroot);
         $this->nodetype = self::NODETYPE_BRANCH;
         $this->type = self::TYPE_SYSTEM;
     }
@@ -108,7 +109,7 @@ class navbar extends navigation_node {
      *
      * @param bool $setting
      */
-    public function ignore_active($setting=true) {
+    public function ignore_active($setting = true) {
         $this->ignoreactive = ($setting);
     }
 
@@ -139,8 +140,8 @@ class navbar extends navigation_node {
      */
     public function get_items() {
         global $CFG;
-        $items = array();
-        // Make sure that navigation is initialised
+        $items = [];
+        // Make sure that navigation is initialised.
         if (!$this->has_items()) {
             return $items;
         }
@@ -153,7 +154,7 @@ class navbar extends navigation_node {
             $items = array_reverse($this->children);
         }
 
-        // Check if navigation contains the active node
+        // Check if navigation contains the active node.
         if (!$this->ignoreactive) {
             // We will need to ensure the navigation has been initialised.
             $this->page->navigation->initialise($this->page);
@@ -162,7 +163,7 @@ class navbar extends navigation_node {
             $settingsactivenode = $this->page->settingsnav->find_active_node();
 
             if ($navigationactivenode && $settingsactivenode) {
-                // Parse a combined navigation tree
+                // Parse a combined navigation tree.
                 while ($settingsactivenode && $settingsactivenode->parent !== null) {
                     if (!$settingsactivenode->mainnavonly) {
                         $items[] = new breadcrumb_navigation_node($settingsactivenode);
@@ -170,16 +171,18 @@ class navbar extends navigation_node {
                     $settingsactivenode = $settingsactivenode->parent;
                 }
                 if (!$this->includesettingsbase) {
-                    // Removes the first node from the settings (root node) from the list
+                    // Removes the first node from the settings (root node) from the list.
                     array_pop($items);
                 }
                 while ($navigationactivenode && $navigationactivenode->parent !== null) {
                     if (!$navigationactivenode->mainnavonly) {
                         $items[] = new breadcrumb_navigation_node($navigationactivenode);
                     }
-                    if (!empty($CFG->navshowcategories) &&
+                    if (
+                        !empty($CFG->navshowcategories) &&
                             $navigationactivenode->type === self::TYPE_COURSE &&
-                            $navigationactivenode->parent->key === 'currentcourse') {
+                            $navigationactivenode->parent->key === 'currentcourse'
+                    ) {
                         foreach ($this->get_course_categories() as $item) {
                             $items[] = new breadcrumb_navigation_node($item);
                         }
@@ -187,14 +190,16 @@ class navbar extends navigation_node {
                     $navigationactivenode = $navigationactivenode->parent;
                 }
             } else if ($navigationactivenode) {
-                // Parse the navigation tree to get the active node
+                // Parse the navigation tree to get the active node.
                 while ($navigationactivenode && $navigationactivenode->parent !== null) {
                     if (!$navigationactivenode->mainnavonly) {
                         $items[] = new breadcrumb_navigation_node($navigationactivenode);
                     }
-                    if (!empty($CFG->navshowcategories) &&
+                    if (
+                        !empty($CFG->navshowcategories) &&
                             $navigationactivenode->type === self::TYPE_COURSE &&
-                            $navigationactivenode->parent->key === 'currentcourse') {
+                            $navigationactivenode->parent->key === 'currentcourse'
+                    ) {
                         foreach ($this->get_course_categories() as $item) {
                             $items[] = new breadcrumb_navigation_node($item);
                         }
@@ -202,7 +207,7 @@ class navbar extends navigation_node {
                     $navigationactivenode = $navigationactivenode->parent;
                 }
             } else if ($settingsactivenode) {
-                // Parse the settings navigation to get the active node
+                // Parse the settings navigation to get the active node.
                 while ($settingsactivenode && $settingsactivenode->parent !== null) {
                     if (!$settingsactivenode->mainnavonly) {
                         $items[] = new breadcrumb_navigation_node($settingsactivenode);
@@ -212,15 +217,15 @@ class navbar extends navigation_node {
             }
         }
 
-        $items[] = new breadcrumb_navigation_node(array(
+        $items[] = new breadcrumb_navigation_node([
             'text' => $this->page->navigation->text,
             'shorttext' => $this->page->navigation->shorttext,
             'key' => $this->page->navigation->key,
-            'action' => $this->page->navigation->action
-        ));
+            'action' => $this->page->navigation->action,
+        ]);
 
         if (count($this->prependchildren) > 0) {
-            // Add the custom children
+            // Add the custom children.
             $items = array_merge($items, array_reverse($this->prependchildren));
         }
 
@@ -243,9 +248,9 @@ class navbar extends navigation_node {
      */
     private function get_course_categories() {
         global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
 
-        $categories = array();
+        $categories = [];
         $cap = 'moodle/category:viewhiddencategories';
         $showcategories = !core_course_category::is_simple_site();
 
@@ -256,8 +261,8 @@ class navbar extends navigation_node {
                     continue;
                 }
 
-                $displaycontext = \context_helper::get_navigation_filter_context($context);
-                $url = new moodle_url('/course/index.php', ['categoryid' => $category->id]);
+                $displaycontext = context_helper::get_navigation_filter_context($context);
+                $url = new url('/course/index.php', ['categoryid' => $category->id]);
                 $name = format_string($category->name, true, ['context' => $displaycontext]);
                 $categorynode = breadcrumb_navigation_node::create($name, $url, self::TYPE_CATEGORY, null, $category->id);
                 if (!$category->visible) {
@@ -275,7 +280,7 @@ class navbar extends navigation_node {
                 // Courses node may not be present.
                 $courses = breadcrumb_navigation_node::create(
                     get_string('courses'),
-                    new moodle_url('/course/index.php'),
+                    new url('/course/index.php'),
                     self::TYPE_CONTAINER
                 );
             }
@@ -293,44 +298,44 @@ class navbar extends navigation_node {
      * end of the navbar
      *
      * @param string $text
-     * @param string|moodle_url|action_link $action An action to associate with this node.
+     * @param string|url|action_link $action An action to associate with this node.
      * @param int $type One of navigation_node::TYPE_*
      * @param string $shorttext
      * @param string|int $key A key to identify this node with. Key + type is unique to a parent.
      * @param pix_icon $icon An optional icon to use for this node.
      * @return navigation_node
      */
-    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, ?pix_icon $icon=null) {
+    public function add($text, $action = null, $type = self::TYPE_CUSTOM, $shorttext = null, $key = null, ?pix_icon $icon = null) {
         if ($this->content !== null) {
             debugging('Nav bar items must be printed before $OUTPUT->header() has been called', DEBUG_DEVELOPER);
         }
 
-        // Properties array used when creating the new navigation node
-        $itemarray = array(
+        // Properties array used when creating the new navigation node.
+        $itemarray = [
             'text' => $text,
-            'type' => $type
-        );
-        // Set the action if one was provided
-        if ($action!==null) {
+            'type' => $type,
+        ];
+        // Set the action if one was provided.
+        if ($action !== null) {
             $itemarray['action'] = $action;
         }
-        // Set the shorttext if one was provided
-        if ($shorttext!==null) {
+        // Set the shorttext if one was provided.
+        if ($shorttext !== null) {
             $itemarray['shorttext'] = $shorttext;
         }
-        // Set the icon if one was provided
-        if ($icon!==null) {
+        // Set the icon if one was provided.
+        if ($icon !== null) {
             $itemarray['icon'] = $icon;
         }
-        // Default the key to the number of children if not provided
+        // Default the key to the number of children if not provided.
         if ($key === null) {
             $key = count($this->children);
         }
-        // Set the key
+        // Set the key.
         $itemarray['key'] = $key;
-        // Set the parent to this node
+        // Set the parent to this node.
         $itemarray['parent'] = $this;
-        // Add the child using the navigation_node_collections add method
+        // Add the child using the navigation_node_collections add method.
         $this->children[] = new breadcrumb_navigation_node($itemarray);
         return $this;
     }
@@ -339,32 +344,39 @@ class navbar extends navigation_node {
      * Prepends a new navigation_node to the start of the navbar
      *
      * @param string $text
-     * @param string|moodle_url|action_link $action An action to associate with this node.
+     * @param string|url|action_link $action An action to associate with this node.
      * @param int $type One of navigation_node::TYPE_*
      * @param string $shorttext
      * @param string|int $key A key to identify this node with. Key + type is unique to a parent.
      * @param pix_icon $icon An optional icon to use for this node.
      * @return navigation_node
      */
-    public function prepend($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, ?pix_icon $icon=null) {
+    public function prepend(
+        $text,
+        $action = null,
+        $type = self::TYPE_CUSTOM,
+        $shorttext = null,
+        $key = null,
+        ?pix_icon $icon = null,
+    ) {
         if ($this->content !== null) {
             debugging('Nav bar items must be printed before $OUTPUT->header() has been called', DEBUG_DEVELOPER);
         }
         // Properties array used when creating the new navigation node.
-        $itemarray = array(
+        $itemarray = [
             'text' => $text,
-            'type' => $type
-        );
+            'type' => $type,
+        ];
         // Set the action if one was provided.
-        if ($action!==null) {
+        if ($action !== null) {
             $itemarray['action'] = $action;
         }
         // Set the shorttext if one was provided.
-        if ($shorttext!==null) {
+        if ($shorttext !== null) {
             $itemarray['shorttext'] = $shorttext;
         }
         // Set the icon if one was provided.
-        if ($icon!==null) {
+        if ($icon !== null) {
             $itemarray['icon'] = $icon;
         }
         // Default the key to the number of children if not provided.
