@@ -76,7 +76,7 @@ class settings_navigation extends navigation_node {
         $this->page->navigation->initialise();
 
         // Initialise the navigation cache.
-        $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
+        $this->cache = new navigation_cache(self::CACHE_NAME);
         $this->children = new navigation_node_collection();
     }
 

@@ -80,6 +80,12 @@ class navigation_node implements renderable {
     /** var string The course index page navigation node */
     public const COURSE_INDEX_PAGE = 'courseindexpage';
 
+    /** @var string The name that will be used for the navigation cache */
+    protected const CACHE_NAME = 'navigation';
+
+    /** @var string The name that will be used for the site admin navigation cache */
+    protected const SITE_ADMIN_CACHE_NAME = 'navigationsiteadmin';
+
     /** @var int Parameter to aid the coder in tracking [optional] */
     public $id = null;
     /** @var string|int The identifier for the node, used to retrieve the node */

@@ -23,8 +23,23 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+// This file is deprecated, but it should never have been manually included by anything outside of a few select core libraries.
+// Throwing an exception here should be fine because removing the manual inclusion should have no impact.
+// @deprecated Since Moodle 5.1 MDL-82159.
+// The constants NAVIGATION_CACHE_NAME and NAVIGATION_SITE_ADMIN_CACHE_NAME are deprecated and should not be used anymore.
+// They are defined here for autocompletion within IDEs but should not be used outside of \core\navigation anyway.
+throw new \core\exception\coding_exception(
+    'This file should not be manually included by any component.',
+);
+
 /**
- * The name that will be used to separate the navigation cache within SESSION
+ * @deprecated Since Moodle 5.1 MDL-82159.
  */
 define('NAVIGATION_CACHE_NAME', 'navigation');
+
+/**
+ * @deprecated Since Moodle 5.1 MDL-82159.
+ */
 define('NAVIGATION_SITE_ADMIN_CACHE_NAME', 'navigationsiteadmin');

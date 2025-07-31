@@ -1,0 +1,12 @@
+issueNumber: MDL-82159
+notes:
+  core:
+    - message: |
+        The following global constants have been deprecated in favour of class
+        constants:
+
+         | Old constant                       | New constant                                              |
+         | ---                                | ---                                                       |
+         | `NAVIGATION_CACHE_NAME`            | `\core\navigation\navigation_node::CACHE_NAME`            |
+         | `NAVIGATION_SITE_ADMIN_CACHE_NAME` | `\core\navigation\navigation_node::SITE_ADMIN_CACHE_NAME` |
+      type: deprecated

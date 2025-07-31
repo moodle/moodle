@@ -34,7 +34,7 @@ class settings_navigation_ajax extends settings_navigation {
      */
     public function __construct(moodle_page &$page) {
         $this->page = $page;
-        $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
+        $this->cache = new navigation_cache(self::CACHE_NAME);
         $this->children = new navigation_node_collection();
         $this->initialise();
     }

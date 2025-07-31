@@ -138,7 +138,7 @@ class global_navigation extends navigation_node {
         // Initalise and set defaults.
         $this->page = $page;
         $this->forceopen = true;
-        $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
+        $this->cache = new navigation_cache(self::CACHE_NAME);
     }
 
     /**

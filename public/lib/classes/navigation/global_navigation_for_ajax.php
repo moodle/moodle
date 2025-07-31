@@ -56,7 +56,7 @@ class global_navigation_for_ajax extends global_navigation {
      */
     public function __construct($page, $branchtype, $id) {
         $this->page = $page;
-        $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
+        $this->cache = new navigation_cache(self::CACHE_NAME);
         $this->children = new navigation_node_collection();
         $this->branchtype = $branchtype;
         $this->instanceid = $id;

@@ -80,7 +80,6 @@ return new class extends phpunit_coverage_info {
         'modinfolib.php',
         'moodlelib.php',
         'myprofilelib.php',
-        'navigationlib.php',
         'oauthlib.php',
         'outputlib.php',
         'pagelib.php',
