@@ -45,26 +45,9 @@ define('CHOICE_DISPLAY_VERTICAL',    '1');
 define('CHOICE_EVENT_TYPE_OPEN', 'open');
 define('CHOICE_EVENT_TYPE_CLOSE', 'close');
 
-/** @global array $CHOICE_PUBLISH */
-global $CHOICE_PUBLISH;
-$CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
-                         CHOICE_PUBLISH_NAMES      => get_string('publishnames', 'choice'));
-
-/** @global array $CHOICE_SHOWRESULTS */
-global $CHOICE_SHOWRESULTS;
-$CHOICE_SHOWRESULTS = array (CHOICE_SHOWRESULTS_NOT          => get_string('publishnot', 'choice'),
-                         CHOICE_SHOWRESULTS_AFTER_ANSWER => get_string('publishafteranswer', 'choice'),
-                         CHOICE_SHOWRESULTS_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
-                         CHOICE_SHOWRESULTS_ALWAYS       => get_string('publishalways', 'choice'));
-
-/** @global array $CHOICE_DISPLAY */
-global $CHOICE_DISPLAY;
-$CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
-                         CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical','choice'));
-
 require_once(__DIR__ . '/deprecatedlib.php');
 
-/// Standard functions /////////////////////////////////////////////////////////
+// Standard functions.
 
 /**
  * @global object
