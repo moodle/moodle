@@ -10,6 +10,18 @@
 - A new interface, `main_activity_interface`, is now available. Course format plugins should implement it if they intend to display only a single activity in the course page.
 
   For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
+- The core_courseformat\local\overview\overviewfactory now includes a new method, activity_has_overview_integration, which determines if a module supports overview integration.
+
+  For more information see [MDL-85509](https://tracker.moodle.org/browse/MDL-85509)
+- New needs_filtering_by_groups() and get_groups_for_filtering() had been created in activityoverviewbase class for a better management of groups filtering in Activities overview page by activities.   needs_filtering_by_groups() returns whether the user needs to filter by groups in the current module, and get_groups_for_filtering() returns which is the filter the user should use with groups API.
+
+  For more information see [MDL-85852](https://tracker.moodle.org/browse/MDL-85852)
+- A new has_error() function has been created in activityoverviewbase class to raise when a user is trying to check information about a module set as SEPARATE_GROUPS but the user is not in any group.
+
+  For more information see [MDL-85852](https://tracker.moodle.org/browse/MDL-85852)
+- New optional $nogroupserror parameter has been added to activityname class constructor. A set_nogroupserror() setter to change the value after the constructor has been also added.
+
+  For more information see [MDL-85852](https://tracker.moodle.org/browse/MDL-85852)
 
 ### Changed
 

@@ -18,6 +18,9 @@
 - Added support for configurable `aspectRatio` in charts rendered using Chart.js. This enables developers to control chart sizing more precisely via the `chart_base` API and the frontend renderer.
 
   For more information see [MDL-85158](https://tracker.moodle.org/browse/MDL-85158)
+- Output classes can now implement the core\output\externable interface. This allows these classes to define methods for exporting their data in a format suitable for use in web services.
+
+  For more information see [MDL-85509](https://tracker.moodle.org/browse/MDL-85509)
 
 ### Changed
 
@@ -30,9 +33,20 @@
 - The `\core\attribute\deprecated` attribute constructor `$replacement` parameter now defaults to null, and can be omitted
 
   For more information see [MDL-84531](https://tracker.moodle.org/browse/MDL-84531)
+- Added a new `\core\deprecation::emit_deprecation()` method which should be used in places where a deprecation is known to occur. This method will throw debugging if no deprecation notice was found, for example:
+  ```php
+  public function deprecated_method(): void {
+      \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+  }
+  ```
+
+  For more information see [MDL-85897](https://tracker.moodle.org/browse/MDL-85897)
 
 ### Deprecated
 
+- The following function has been deprecated and should no longer be used: `file_encode_url`. Please consider using the `core\url` factory methods instead.
+
+  For more information see [MDL-31071](https://tracker.moodle.org/browse/MDL-31071)
 - The following `core/checkbox-toggleall` templates have been deprecated:
 
   - `core/checkbox-toggleall-master-button` - This is replaced with `core/checkbox-toggleall-toggler-button`
