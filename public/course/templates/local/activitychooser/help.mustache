@@ -65,6 +65,25 @@
             <div
                 class="activitychooser-option-details"
             >
+                {{! Purposes panel. }}
+                <div class="modchooser-detail">
+                    <p class="visually-hidden">
+                        {{#str}} supports, course{{/str}}
+                    </p>
+                    <ul class="list-unstyled modchoosernav nav nav-pills d-flex gap-2 flex-column">
+                        {{#purposes}}
+                        <li>
+                            <button
+                                class="nav-item nav-link border"
+                                data-action="chooser-display-category"
+                                data-category="{{purposename}}"
+                            >
+                                {{purposelabel}}
+                            </button>
+                        </li>
+                        {{/purposes}}
+                    </ul>
+                </div>
                 {{#details}}
                 <div class="modchooser-detail">
                     {{! Detail name and value. }}

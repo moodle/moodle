@@ -50,6 +50,20 @@ export default class {
      */
 
     /**
+     * @typedef {Object} ModuleHelpData
+     * @property {String} name The name of the module.
+     * @property {String} description The description of the module.
+     * @property {Array<ModulePurposeData>} purposes The purposes of the module.
+     * @property {Array} details Additional details about the module.
+     */
+
+    /**
+     * @typedef {Object} ModulePurposeData
+     * @property {String} purposename The name of the purpose.
+     * @property {String} purposelabel The label of the purpose.
+     */
+
+    /**
      * Generate a tab data object for the activity chooser.
      *
      * @private
@@ -127,7 +141,7 @@ export default class {
         ];
 
         activityCategories.forEach((category) => {
-            const categoryModules = modulesData.filter(mod => mod.purpose == category);
+            const categoryModules = modulesData.filter(mod => mod.purpose == category || mod.otherpurpose == category);
             if (categoryModules.length === 0) {
                 return;
             }
@@ -151,19 +165,29 @@ export default class {
      * Get the module help template data.
      *
      * @param {Object} moduleData Data of the module to get help for.
-     * @return {Promise<Object>} Promise resolved with the module help data.
+     * @return {Promise<ModuleHelpData>} Promise resolved with the module help data.
      */
     async getModuleHelpTemplateData(moduleData) {
-        const purposeKey = `mod_purpose_${moduleData.purpose}`;
         const allStrings = await loadNecessaryStrings();
         const data = {
             ...moduleData,
+            purposes: [],
         };
+        // Add purpose information from all related fields.
+        for (const purposeField of ['purpose', 'otherpurpose']) {
+            if (
+                !moduleData[purposeField]
+                || !activityCategories.includes(moduleData[purposeField])
+            ) {
+                continue;
+            }
+            data.purposes.push({
+                purposename: moduleData[purposeField],
+                purposelabel: allStrings[`mod_purpose_${moduleData[purposeField]}`],
+            });
+        }
+        // The rest of details are displayed as a simpler list.
         data.details = [
-            {
-                label: allStrings['supports'],
-                value: allStrings[purposeKey] || '',
-            },
             {
                 label: allStrings['gradable'],
                 value: moduleData.gradable ? allStrings['yes'] : allStrings['no'],
@@ -253,7 +277,6 @@ async function loadNecessaryStrings() {
         {key: 'recommended', component: 'core'},
         {key: 'gradable', component: 'core'},
         {key: 'recommended_help', component: 'core_course'},
-        {key: 'supports', component: 'core_course'},
         ...activityCategories.map(
             (key) => ({
                 key: 'mod_purpose_' + key,

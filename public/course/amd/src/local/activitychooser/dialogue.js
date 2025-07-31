@@ -293,6 +293,11 @@ class ActivityChooserDialogue {
             return;
         }
 
+        if (target.closest(selectors.actions.displayCategory)) {
+            this.handleDisplayCategory(target);
+            return;
+        }
+
         if (target.closest(selectors.actions.optionActions.manageFavourite)) {
             await this.handleFavouriteClick(target);
             return;
@@ -343,6 +348,21 @@ class ActivityChooserDialogue {
         moduleData.showFooter = this.modal.hasFooterContent();
         this.dialogueDom.setBackButtonModuleData(moduleData);
         this.dialogueDom.showModuleHelp(moduleData, this.modal);
+    }
+
+    /**
+     * Handle the display of a category when the user clicks on the "display category" button.
+     * @param {HTMLElement} target The target element that triggered the event
+     */
+    handleDisplayCategory(target) {
+        const category = target.dataset.category;
+        if (!category) {
+            return;
+        }
+        this.dialogueDom.hideModuleHelp();
+        const tabNav = this.dialogueDom.showCategoryTab(category);
+        tabNav.focus();
+        tabNav.scrollIntoView();
     }
 
     /**
