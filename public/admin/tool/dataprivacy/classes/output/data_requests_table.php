@@ -162,7 +162,7 @@ class data_requests_table extends table_sql {
      */
     public function col_userid($data) {
         $user = $data->foruser;
-        return html_writer::link($user->profileurl, $user->fullname, ['title' => get_string('viewprofile')]);
+        return html_writer::link($user->profileurl, $user->fullname);
     }
 
     /**
@@ -183,7 +183,7 @@ class data_requests_table extends table_sql {
      */
     public function col_requestedby($data) {
         $user = $data->requestedbyuser;
-        return html_writer::link($user->profileurl, $user->fullname, ['title' => get_string('viewprofile')]);
+        return html_writer::link($user->profileurl, $user->fullname);
     }
 
     /**
