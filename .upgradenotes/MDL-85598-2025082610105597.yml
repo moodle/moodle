@@ -1,0 +1,8 @@
+issueNumber: MDL-85598
+notes:
+  core_course:
+    - message: >-
+        Activities can now specify an additional purpose in their
+        PLUGINNAME_supports function by using the new FEATURE_MOD_OTHERPURPOSE
+        feature.
+      type: improved

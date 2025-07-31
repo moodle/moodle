@@ -51,6 +51,7 @@ final class content_item_test extends \advanced_testcase {
             purpose: MOD_PURPOSE_CONTENT,
             branded: true,
             gradable: true,
+            otherpurpose: MOD_PURPOSE_INTERACTIVECONTENT,
         );
 
         $this->assertEquals(22, $contentitem->get_id());
@@ -64,6 +65,39 @@ final class content_item_test extends \advanced_testcase {
         $this->assertEquals('content', $contentitem->get_purpose());
         $this->assertTrue($contentitem->is_branded());
         $this->assertTrue($contentitem->is_gradable());
+        $this->assertEquals(MOD_PURPOSE_INTERACTIVECONTENT, $contentitem->get_other_purpose());
+    }
+
+    /**
+     * Test class when only the mandatory fields are set.
+     */
+    public function test_content_item_without_optional_params(): void {
+        $this->resetAfterTest();
+
+        $contentitem = new content_item(
+            id: 22,
+            name: 'Item name',
+            title: new lang_string_title('modulename', 'mod_assign'),
+            link: new \moodle_url('mod_edit.php'),
+            icon: '<img src="test">',
+            help: 'Description of the module',
+            archetype: MOD_ARCHETYPE_RESOURCE,
+            componentname: 'mod_page',
+            purpose: MOD_PURPOSE_CONTENT,
+        );
+
+        $this->assertEquals(22, $contentitem->get_id());
+        $this->assertEquals('Item name', $contentitem->get_name());
+        $this->assertEquals('Assignment', $contentitem->get_title()->get_value());
+        $this->assertEquals(new \moodle_url('mod_edit.php'), $contentitem->get_link());
+        $this->assertEquals('<img src="test">', $contentitem->get_icon());
+        $this->assertEquals('Description of the module', $contentitem->get_help());
+        $this->assertEquals(MOD_ARCHETYPE_RESOURCE, $contentitem->get_archetype());
+        $this->assertEquals('mod_page', $contentitem->get_component_name());
+        $this->assertEquals('content', $contentitem->get_purpose());
+        $this->assertFalse($contentitem->is_branded());
+        $this->assertFalse($contentitem->is_gradable());
+        $this->assertNull($contentitem->get_other_purpose());
     }
 
     /**
