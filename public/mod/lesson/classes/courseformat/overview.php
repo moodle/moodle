@@ -124,6 +124,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 'core',
                 ['count' => $attemptedusers, 'total' => $totalusers]
             ),
+            textalign: text_align::END,
         );
     }
 
@@ -161,7 +162,6 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('totalattepmts', 'mod_lesson'),
             value: !empty($overviewdialog) ? $totalattempts : null,
             content: $overviewdialog ?? $totalattempts,
-            textalign: text_align::START,
         );
     }
 }

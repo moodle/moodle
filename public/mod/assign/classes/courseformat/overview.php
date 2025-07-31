@@ -149,7 +149,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 'core',
                 ['count' => $submissions, 'total' => $total]
             ),
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 

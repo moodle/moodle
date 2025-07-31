@@ -189,7 +189,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 name: get_string('submissions', 'workshop'),
                 value: 0,
                 content: '-',
-                textalign: text_align::CENTER,
+                textalign: text_align::END,
             );
         }
 
@@ -203,7 +203,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: get_string('submissions', 'workshop'),
             value: $submissions,
             content: $content,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 
@@ -227,7 +227,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 name: get_string('assessments', 'workshop'),
                 value: 0,
                 content: '-',
-                textalign: text_align::CENTER,
+                textalign: text_align::END,
             );
         }
 
@@ -241,7 +241,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: get_string('assessments', 'workshop'),
             value: $assessments,
             content: $content,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 }

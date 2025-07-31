@@ -184,7 +184,6 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: get_string('studentwhoresponded', 'choice'),
             value: $studentwhoanswered,
             content: $overviewdialog,
-            textalign: text_align::CENTER,
         );
     }
 }

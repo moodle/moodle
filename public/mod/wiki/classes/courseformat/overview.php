@@ -124,7 +124,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: get_string('myentries', 'wiki'),
             value: $entriescount,
             content: $entriescount,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 
@@ -144,7 +144,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $label,
             value: $entriescount,
             content: $entriescount,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 }
