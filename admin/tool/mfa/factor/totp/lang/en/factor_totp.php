@@ -71,7 +71,7 @@ $string['setupfactor:instructionsverification'] = '3. Enter the verification cod
 $string['setupfactor:intro'] = 'To set up this method, you need to have a device with an authenticator app. If you don\'t have an app, you can download one. For example, <a href="https://2fas.com/" target="_blank">2FAS Auth</a>, <a href="https://freeotp.github.io/" target="_blank">FreeOTP</a>, Google Authenticator, Microsoft Authenticator or Twilio Authy.';
 $string['setupfactor:key'] = 'Secret key: ';
 $string['setupfactor:link'] = 'Or enter details manually.';
-$string['setupfactor:link_help'] = 'If you are on a mobile device and already have an authenticator app installed this link may work. Note that using TOTP on the same device as you login on can weaken the benefits of MFA.';
+$string['setupfactor:link_help'] = 'If you are on a mobile device and already have an authenticator app installed this link may work. Note that using TOTP on the same device as you log in on can weaken the benefits of MFA.';
 $string['setupfactor:linklabel'] = 'Open app already installed on this device';
 $string['setupfactor:mode'] = 'Mode:';
 $string['setupfactor:mode:timebased'] = 'Time-based';

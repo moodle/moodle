@@ -87,7 +87,7 @@ Please log in as before, using the link on the login page.
 $string['emailpasswordchangeinfosubject'] = '{$a}: Change password information';
 $string['info'] = 'External account';
 $string['issuer'] = 'OAuth 2 service';
-$string['issuernologin'] = 'This issuer can not be used to login';
+$string['issuernologin'] = 'This issuer can not be used to log in.';
 $string['key'] = 'Key';
 $string['linkedlogins'] = 'Linked logins';
 $string['linkedloginshelp'] = 'Help with linked logins';
