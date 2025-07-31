@@ -621,7 +621,7 @@ $string['enroladminnewcourse_help'] = 'When an admin adds a new course, should t
 $string['enrolinstancedefaults'] = 'Enrolment instance defaults';
 $string['enrolinstancedefaults_desc'] = 'Default enrolment settings in new courses.';
 $string['enrolmultipleusers'] = 'Enrol the users';
-$string['ensureauroraversion'] = 'Your site is running on Amazon Aurora database engine. Please ensure that the MySQL version in Amazon Aurora is compatible with the Moodle version you are installing or upgrading to. You can check the compatibility in the <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraMySQLReleaseNotes/AuroraMySQL.Updates.30Updates.html" target="_blank">Database engine updates for Amazon Aurora MySQL version 3</a>.';
+$string['ensureauroraversion'] = 'Your site is running on the Amazon Aurora database engine. The MySQL version in Amazon Aurora must be compatible with the Moodle version you are installing or upgrading to. Check compatibility in <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraMySQLReleaseNotes/AuroraMySQL.Updates.30Updates.html">Database engine updates for Amazon Aurora MySQL version 3</a>.';
 $string['environment'] = 'Environment';
 $string['environmenterrortodo'] = 'You must solve all the environmental problems (errors) found above before proceeding to install this Moodle version!';
 $string['environmenterrorupgrade'] = 'Warning: you should solve all the environmental problems (errors) found above before proceeding to upgrade this Moodle version!  Upgrading without fixing these requirements could cause problems such as data loss.  Are you sure you want to continue with the upgrade?';
@@ -979,7 +979,7 @@ $string['notifyloginthreshold'] = 'Threshold for email notifications';
 $string['notloggedinroleid'] = 'Role for visitors';
 $string['numberofmissingstrings'] = 'Number of missing strings: {$a}';
 $string['numberofstrings'] = 'Total number of strings: {$a->strings}<br />Missing: {$a->missing} ({$a->missingpercent}&nbsp;%)';
-$string['oauthrefreshtokenexpired'] = 'The refresh token for one of the OAuth services {$a->issuer} on your site {$a->siteurl} has expired. This will limit the functionality of any plugins that use this service. To fix this issue, visit the OAuth 2 Services configuration page and click on the "Connect system account" icon in the table row for this service. Be sure to login using the same service account for the OAuth system each time.';
+$string['oauthrefreshtokenexpired'] = 'The refresh token for an OAuth 2 service {$a->issuer} on your site {$a->siteurl} has expired. This will limit the functionality of any plugins that use this service. To fix it, go to the OAuth 2 Services configuration page and click the "Connect system account" icon in the table row for this service. Be sure to log in using the same service account for the OAuth 2 system each time.';
 $string['oauthrefreshtokenexpiredshort'] = 'OAuth refresh token expired for {$a->issuer} on your site {$a->siteurl}.';
 $string['onlynoreply'] = 'Only when from a no-reply address';
 $string['opcacherecommended'] = 'PHP opcode caching improves performance and lowers memory requirements, OPcache extension is recommended and fully supported.';

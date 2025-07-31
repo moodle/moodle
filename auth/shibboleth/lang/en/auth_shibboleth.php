@@ -31,7 +31,7 @@ $string['auth_shib_contact_administrator'] = 'In case you are not associated wit
 $string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using Shibboleth. For set-up details, see the <a href="{$a}">Shibboleth README</a>.';
 $string['auth_shibboleth_errormsg'] = 'Please select the organization you are member of!';
 $string['auth_shibboleth_login'] = 'Shibboleth login';
-$string['auth_shibboleth_login_long'] = 'Login to Moodle via Shibboleth';
+$string['auth_shibboleth_login_long'] = 'Log in via Shibboleth';
 $string['auth_shibboleth_manual_login'] = 'Manual login';
 $string['auth_shibboleth_select_member'] = 'I\'m a member of ...';
 $string['auth_shibboleth_select_organization'] = 'For authentication via Shibboleth, please select your organisation from the drop-down menu:';

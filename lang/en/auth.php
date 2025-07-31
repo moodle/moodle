@@ -44,7 +44,7 @@ $string['auth_invalidnewemailkey'] = 'Error: if you are trying to confirm a chan
 $string['auth_loginpasswordtoggle'] = 'Password visibility toggle';
 $string['auth_loginpasswordtoggle_desc'] = 'Add an icon to the password field on the login screen that allows users to show or hide their entered password.';
 $string['auth_loginrecaptcha'] = 'Enable reCAPTCHA for login';
-$string['auth_loginrecaptcha_desc'] = 'Add a visual/audio confirmation form element to the login page. This reduces the risk of unwarranted login attempts. See <a target="_blank" href="https://www.google.com/recaptcha">Google reCAPTCHA</a> for more details. ';
+$string['auth_loginrecaptcha_desc'] = 'Add a visual/audio confirmation form element to the login page. This reduces the risk of unwarranted login attempts. For more details see <a href="https://www.google.com/recaptcha">Google reCAPTCHA</a>.';
 $string['auth_multiplehosts'] = 'Multiple hosts OR addresses can be specified (eg host1.com;host2.com;host3.com) or (eg xxx.xxx.xxx.xxx;xxx.xxx.xxx.xxx)';
 $string['auth_notconfigured'] = 'The authentication method {$a} is not configured.';
 $string['auth_outofnewemailupdateattempts'] = 'You have run out of allowed attempts to update your email address. Your update request has been cancelled.';
@@ -141,7 +141,7 @@ $string['pluginnotinstalled'] = 'Authentication plugin \'{$a}\' is not installed
 $string['privacy:metadata:userpref:createpassword'] = 'Indicates that a password should be generated for the user';
 $string['privacy:metadata:userpref:forcepasswordchange'] = 'Indicates whether the user should change their password upon logging in';
 $string['privacy:metadata:userpref:loginfailedcount'] = 'The number of times the user failed to log in';
-$string['privacy:metadata:userpref:loginfailedcountsincesuccess'] = 'The number of times the user failed to login since their last successful login';
+$string['privacy:metadata:userpref:loginfailedcountsincesuccess'] = 'The number of times the user failed to log in since their last successful login.';
 $string['privacy:metadata:userpref:loginfailedlast'] = 'The date when the last failed login attempt was recorded';
 $string['privacy:metadata:userpref:loginlockout'] = 'Whether the user\'s account is locked due to failed login attempts, and the date when the account was locked';
 $string['privacy:metadata:userpref:loginlockoutignored'] = 'Indicates that a user\'s account should never be subject to lockouts';
