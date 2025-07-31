@@ -147,7 +147,7 @@ class renderer extends \plugin_renderer_base {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.4', mdl: 'MDL-79920', final: true)]
     public function setup_factor(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

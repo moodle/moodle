@@ -45,7 +45,7 @@ class enrol_guest_enrol_form extends moodleform {
      */
     public function __construct($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
                                 $ajaxformdata=null) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 

@@ -101,7 +101,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function __construct($type='ul', $attributes='', $editable = false, $pageurl=null, $page = 0, $pageparamname = 'page', $itemsperpage = 20) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $PAGE;
 
         $this->editable = $editable;
@@ -126,7 +126,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function to_html($indent=0, $extraargs=array()) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         if (count($this->items)) {
             $tabs = str_repeat("\t", $indent);
             $first = true;
@@ -171,7 +171,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function find_item($id, $suppresserror = false) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         if (isset($this->items)) {
             foreach ($this->items as $key => $child) {
                 if ($child->id == $id) {
@@ -202,7 +202,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function add_item($item) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->items[] = $item;
     }
 
@@ -215,7 +215,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function set_parent($parent) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->parentitem = $parent;
     }
 
@@ -232,7 +232,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function list_from_records($paged = false, $offset = 0) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->paged = $paged;
         $this->offset = $offset;
         $this->get_records();
@@ -296,7 +296,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function display_page_numbers() {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $html = '';
         $topcount = count($this->items);
         $this->pagecount = (integer) ceil(($topcount + $this->offset)/ QUESTION_PAGE_LENGTH );
@@ -325,7 +325,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function get_items_peers($itemid) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $itemref = $this->find_item($itemid);
         $peerids = $itemref->parentlist->get_child_ids();
         return $peerids;
@@ -339,7 +339,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function get_child_ids() {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $childids = array();
         foreach ($this->items as $child) {
            $childids[] = $child->id;
@@ -357,7 +357,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function get_top_level_parent_id($item) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return 0; // Top level items have no parent.
     }
 
@@ -370,7 +370,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function move_item_up_down($direction, $id) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $peers = $this->get_items_peers($id);
         $itemkey = array_search($id, $peers);
         switch ($direction) {
@@ -407,7 +407,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function reorder_peers($peers) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $DB;
         foreach ($peers as $key => $peer) {
             $DB->set_field($this->table, "sortorder", $key, array("id"=>$peer));
@@ -423,7 +423,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function move_item_left($id) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $DB;
 
         $item = $this->find_item($id);
@@ -452,7 +452,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function move_item_right($id) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $DB;
 
         $peers = $this->get_items_peers($id);
@@ -484,7 +484,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function process_actions($left, $right, $moveup, $movedown) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         //should this action be processed by this list object?
         if (!(array_key_exists($left, $this->records) || array_key_exists($right, $this->records) || array_key_exists($moveup, $this->records) || array_key_exists($movedown, $this->records))) {
             return false;
@@ -532,7 +532,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function item_is_first_on_page($itemid) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->page && isset($this->items[$this->firstitem]) &&
                 $itemid == $this->items[$this->firstitem]->id;
     }
@@ -545,7 +545,7 @@ abstract class moodle_list {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function item_is_last_on_page($itemid) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->page && isset($this->items[$this->lastitem]) &&
                 $itemid == $this->items[$this->lastitem]->id;
     }
@@ -592,7 +592,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function __construct($item, $parent, $attributes = '', $display = true) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->item = $item;
         if (is_object($this->item)) {
             $this->id = $this->item->id;
@@ -613,7 +613,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function item_html($extraargs = array()) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         if (is_string($this->item)) {
             $html = $this->item;
         } elseif (is_object($this->item)) {
@@ -635,7 +635,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function to_html($indent = 0, $extraargs = array()) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         if (!$this->display) {
             return '';
         }
@@ -660,7 +660,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function set_icon_html($first, $last, $lastitem) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $CFG;
         $strmoveup = get_string('moveup');
         $strmovedown = get_string('movedown');
@@ -721,7 +721,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function image_icon($action, $url, $icon) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $OUTPUT;
         return '<a title="' . s($action) .'" href="'.$url.'">' .
                 $OUTPUT->pix_icon('t/' . $icon, $action) . '</a> ';
@@ -735,7 +735,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function image_spacer() {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $OUTPUT;
         return $OUTPUT->spacer();
     }
@@ -750,7 +750,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function create_children(&$records, &$children, $thisrecordid) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         //keys where value is $thisrecordid
         $thischildren = moodle_array_keys_filter($children, $thisrecordid);
         foreach ($thischildren as $child) {
@@ -770,7 +770,7 @@ abstract class list_item {
      * @todo Final removal in Moodle 6.0 MDL-80804.
      */
     public function set_parent($parent) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->parentlist = $parent;
     }
 }

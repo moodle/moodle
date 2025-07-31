@@ -50,7 +50,7 @@ class behat_gradereport_grader extends behat_base {
      */
     #[\core\attribute\deprecated('behat_grades::get_grade_item_id', since: '4.2', mdl: 'MDL-77033', final: true)]
     protected function get_grade_item_id() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

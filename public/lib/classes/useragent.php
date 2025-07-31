@@ -211,7 +211,7 @@ class core_useragent {
      */
     #[\core\attribute\deprecated('core_useragent::devicetypes', since: '4.3', mdl: 'MDL-78468', final: true)]
     public static function get_device_type_list($includecustomtypes = true) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -225,7 +225,7 @@ class core_useragent {
         final: true
     )]
     public static function get_device_type_theme($devicetype = null) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -239,7 +239,7 @@ class core_useragent {
         final: true
     )]
     public static function get_device_type_cfg_var_name($devicetype = null) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

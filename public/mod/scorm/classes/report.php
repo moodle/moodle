@@ -87,7 +87,7 @@ class report {
      */
     #[\core\attribute\deprecated(replacement: '\mod_scorm\report::generate_toggler_checkbox()', since: '5.1', mdl: 'MDL-79756')]
     protected function generate_master_checkbox(): string {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         return $this->generate_toggler_checkbox();
     }
 

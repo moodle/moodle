@@ -407,7 +407,7 @@ class mod_quiz_external extends external_api {
     )]
     public static function get_user_attempts($quizid, $userid = 0, $status = 'finished', $includepreviews = false) {
         global $USER;
-        \core\deprecation::emit_deprecation_if_present(__METHOD__);
+        \core\deprecation::emit_deprecation(__METHOD__);
 
         $warnings = [];
 

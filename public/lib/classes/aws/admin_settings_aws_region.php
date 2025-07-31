@@ -45,7 +45,7 @@ class admin_settings_aws_region extends \admin_setting_configtext {
         mdl: 'MDL-80962',
     )]
     public function output_html($data, $query='') {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $CFG, $OUTPUT;
 
         $default = $this->get_defaultsetting();

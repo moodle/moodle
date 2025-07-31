@@ -31,6 +31,6 @@
 #[\core\attribute\deprecated('is_role_switched', since: '4.5', mdl: 'MDL-72424')]
 function feedback_check_is_switchrole(): bool {
     global $USER;
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return isset($USER->switchrole) && is_array($USER->switchrole) && count($USER->switchrole) > 0;
 }

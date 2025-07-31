@@ -1231,7 +1231,7 @@ class renderer extends \plugin_renderer_base {
         reason: 'The assign_course_index_summary class is not used anymore.',
     )]
     public function render_assign_course_index_summary(\assign_course_index_summary $indexsummary) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
 
         $o = '';
 

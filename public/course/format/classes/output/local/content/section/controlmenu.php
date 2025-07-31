@@ -295,7 +295,7 @@ class controlmenu extends basecontrolmenu {
         mdl: 'MDL-83562',
     )]
     protected function get_section_moveup_item(): ?link {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         if (
             $this->section->sectionnum <= 1
             || $this->format->get_sectionid()
@@ -344,7 +344,7 @@ class controlmenu extends basecontrolmenu {
         mdl: 'MDL-83562',
     )]
     protected function get_section_movedown_item(): ?link {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         $numsections = $this->format->get_last_section_number();
 
         if (
@@ -455,7 +455,7 @@ class controlmenu extends basecontrolmenu {
     )]
     protected function section_control_items_legacy(): array {
         global $USER, $PAGE;
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         $format = $this->format;
         $section = $this->section;

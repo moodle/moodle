@@ -36,7 +36,7 @@ class renderer extends \plugin_renderer_base {
      */
     #[\core\attribute\deprecated('qbank_bulkmove\output\bulk_move', since: '5.0', mdl: 'MDL-71378')]
     public function render_bulk_move_form($displaydata) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         return $this->render_from_template('qbank_bulkmove/bulk_move', $displaydata);
     }
 

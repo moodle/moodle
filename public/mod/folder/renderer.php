@@ -95,7 +95,7 @@ class mod_folder_renderer extends plugin_renderer_base {
      */
     #[\core\attribute\deprecated('renderable_tree_elements()', since: '4.3', mdl: 'MDL-78847', final: true)]
     protected function htmllize_tree() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

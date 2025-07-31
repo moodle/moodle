@@ -78,7 +78,7 @@ class controlmenu extends controlmenu_base {
         reason: 'Not used anymore, use $this->format->get_update_url instead',
     )]
     protected function get_course_url(): url {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         $format = $this->format;
         $section = $this->section;
         $course = $format->get_course();
@@ -166,7 +166,7 @@ class controlmenu extends controlmenu_base {
         reason: 'Wrong return type',
     )]
     protected function get_highlight_control(): array {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         $format = $this->format;
         $section = $this->section;
         $course = $format->get_course();

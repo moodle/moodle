@@ -71,7 +71,7 @@ class completion {
      */
     #[\core\attribute\deprecated(null, mdl: 'MDL-82467', since: '4.5')]
     public static function get_days(?int $value, stdClass $row): ?int {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         // Do not show anything if there is no userid.
         if (!$row->userid) {

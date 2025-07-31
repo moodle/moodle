@@ -68,7 +68,7 @@ abstract class base {
      */
     #[\core\attribute\deprecated('::get_default_tables', since: '4.4', mdl: 'MDL-79397', final: true)]
     protected function get_default_table_aliases(): array {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         return [];
     }
 

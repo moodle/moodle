@@ -62,7 +62,7 @@ class activity_sender extends resource_sender {
      */
     #[\core\attribute\deprecated('share_resource()', since: '4.3', mdl: 'MDL-75318', final: true)]
     public function share_activity() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

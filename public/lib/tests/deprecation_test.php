@@ -205,11 +205,17 @@ final class deprecation_test extends \advanced_testcase {
 
             deprecation::emit_deprecation_if_present($reference);
             $this->assertDebuggingCalled(deprecation::get_deprecation_string($attribute));
+
+            deprecation::emit_deprecation($reference);
+            $this->assertDebuggingCalled(deprecation::get_deprecation_string($attribute));
         } else {
             $this->assertNull($attribute);
             $this->assertFalse(deprecation::is_deprecated($reference));
             deprecation::emit_deprecation_if_present($reference);
             $this->assertDebuggingNotCalled();
+
+            deprecation::emit_deprecation($reference);
+            $this->assertDebuggingCalled("Deprecation notice requested but object is not deprecated.");
         }
     }
 

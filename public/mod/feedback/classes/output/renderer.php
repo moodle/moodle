@@ -48,7 +48,7 @@ class renderer extends plugin_renderer_base {
      */
     #[\core\attribute\deprecated(replacement: null, since: '4.5')]
     public function create_template_form(int $id) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
         return $this->render_from_template('mod_feedback/create_template', ['id' => $id]);
     }

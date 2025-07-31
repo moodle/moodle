@@ -66,7 +66,7 @@ class hook_listener {
     public static function before_course_viewed(before_course_viewed $hook): void {
         global $CFG;
         if (file_exists($CFG->dirroot . '/course/externservercourse.php')) {
-            \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+            \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
             include($CFG->dirroot . '/course/externservercourse.php');
             if (function_exists('extern_server_course')) {
                 if ($externurl = extern_server_course($hook->course)) {

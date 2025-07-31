@@ -46,7 +46,7 @@ class helper {
         final: true
     )]
     public static function calculate_average_question_facility(int $questionid): ?float {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -59,7 +59,7 @@ class helper {
         final: true
     )]
     public static function calculate_average_question_discriminative_efficiency(int $questionid): ?float {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -72,7 +72,7 @@ class helper {
         final: true
     )]
     public static function calculate_average_question_discrimination_index(int $questionid): ?float {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

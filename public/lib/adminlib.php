@@ -5436,7 +5436,7 @@ class admin_settings_num_course_sections extends admin_setting_configselect {
         mdl: 'MDL-84291',
     )]
     public function __construct($name, $visiblename, $description, $defaultsetting) {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         parent::__construct($name, $visiblename, $description, $defaultsetting, array());
     }
 

@@ -69,7 +69,7 @@ class helper {
         mdl: 'MDL-71378'
     )]
     public static function get_displaydata(array $addcontexts, \moodle_url $moveurl, \moodle_url $returnurl): array {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         $displaydata = [];
         $displaydata ['categorydropdown'] = \qbank_managecategories\helper::question_category_select_menu($addcontexts,
             false, 0, '', -1, true);

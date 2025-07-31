@@ -589,7 +589,7 @@ final class manager implements
      */
     #[\core\attribute\deprecated('get_hooks_deprecating_plugin_callback', since: '4.4', mdl: 'MDL-80099', final: true)]
     public function is_deprecated_plugin_callback(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

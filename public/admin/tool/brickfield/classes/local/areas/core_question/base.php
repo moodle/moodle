@@ -111,7 +111,7 @@ abstract class base extends area_base {
      */
     #[\core\attribute\deprecated(null, since: '5.0', reason: 'This method should not be used', mdl: 'MDL-71378')]
     public function find_system_areas(): ?\moodle_recordset {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         global $DB;
         $params = [
             'syscontext' => CONTEXT_SYSTEM,

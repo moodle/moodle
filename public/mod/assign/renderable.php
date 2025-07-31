@@ -652,7 +652,7 @@ class assign_course_index_summary implements renderable {
         reason: 'The assign_course_index_summary class is not used anymore.',
     )]
     public function __construct($usesections, $courseformatname) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->usesections = $usesections;
         $this->courseformatname = $courseformatname;
     }
@@ -677,7 +677,7 @@ class assign_course_index_summary implements renderable {
         reason: 'The assign_course_index_summary class is not used anymore.',
     )]
     public function add_assign_info($cmid, $cmname, $sectionname, $timedue, $submissioninfo, $gradeinfo, $cangrade = false) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->assignments[] = ['cmid' => $cmid,
                                'cmname' => $cmname,
                                'sectionname' => $sectionname,

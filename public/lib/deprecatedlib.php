@@ -47,7 +47,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 #[\core\attribute\deprecated('core_component::get_core_subsystems', since: '4.5', mdl: 'MDL-82287')]
 function get_core_subsystems($fullpaths = false) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $CFG;
 
     $subsystems = core_component::get_core_subsystems();
@@ -79,7 +79,7 @@ function get_core_subsystems($fullpaths = false) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_types', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_types($fullpaths = true) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $CFG;
 
     $types = core_component::get_plugin_types();
@@ -112,7 +112,7 @@ function get_plugin_types($fullpaths = true) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_list', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_list($plugintype) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     if ($plugintype === '') {
         $plugintype = 'mod';
@@ -137,7 +137,7 @@ function get_plugin_list($plugintype) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_list_with_class', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_list_with_class($plugintype, $class, $file) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return core_component::get_plugin_list_with_class($plugintype, $class, $file);
 }
 
@@ -151,7 +151,7 @@ function get_plugin_list_with_class($plugintype, $class, $file) {
  */
 #[\core\attribute\deprecated('core_component::get_plugin_directory', since: '4.5', mdl: 'MDL-82287')]
 function get_plugin_directory($plugintype, $name) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     if ($plugintype === '') {
         $plugintype = 'mod';
     }
@@ -168,7 +168,7 @@ function get_plugin_directory($plugintype, $name) {
  */
 #[\core\attribute\deprecated('core_component::normalize_component', since: '4.5', mdl: 'MDL-82287')]
 function normalize_component($component) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return core_component::normalize_component($component);
 }
 
@@ -182,7 +182,7 @@ function normalize_component($component) {
  */
 #[\core\attribute\deprecated('core_component::get_component_directory', since: '4.5', mdl: 'MDL-82287')]
 function get_component_directory($component) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return core_component::get_component_directory($component);
 }
 
@@ -191,7 +191,7 @@ function get_component_directory($component) {
  */
 #[\core\attribute\deprecated('\core\context::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
 function get_context_instance() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -199,7 +199,7 @@ function get_context_instance() {
  */
 #[\core\attribute\deprecated('Not replaced', since: '2.0', mdl: 'MDL-19756', final: true)]
 function can_use_rotated_text() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -207,7 +207,7 @@ function can_use_rotated_text() {
  */
 #[\core\attribute\deprecated('\core\context\system::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
 function get_system_context() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -218,7 +218,7 @@ function get_system_context() {
  */
 #[\core\attribute\deprecated('OUTPUT->[l|r]arrow', since: '2.0', mdl: 'MDL-19756', final: true)]
 function print_arrow() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -226,7 +226,7 @@ function print_arrow() {
  */
 #[\core\attribute\deprecated('category_action_bar tertiary navigation', since: '4.0', mdl: 'MDL-73462', final: true)]
 function print_course_request_buttons() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -234,7 +234,7 @@ function print_course_request_buttons() {
  */
 #[\core\attribute\deprecated('\core\cron::run_main_process()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_run() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -242,7 +242,7 @@ function cron_run() {
  */
 #[\core\attribute\deprecated('\core\cron::run_scheduled_tasks()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_run_scheduled_tasks() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -250,7 +250,7 @@ function cron_run_scheduled_tasks() {
  */
 #[\core\attribute\deprecated('\core\cron::run_adhoc_tasks()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_run_adhoc_tasks() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -258,7 +258,7 @@ function cron_run_adhoc_tasks() {
  */
 #[\core\attribute\deprecated('\core\cron::run_inner_scheduled_task()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_run_inner_scheduled_task() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -266,7 +266,7 @@ function cron_run_inner_scheduled_task() {
  */
 #[\core\attribute\deprecated('\core\cron::run_inner_adhoc_task()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_run_inner_adhoc_task() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -275,7 +275,7 @@ function cron_run_inner_adhoc_task() {
  */
 #[\core\attribute\deprecated('\core\cron::set_process_title()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_set_process_title() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -283,7 +283,7 @@ function cron_set_process_title() {
  */
 #[\core\attribute\deprecated('\core\cron::trace_time_and_memory()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_trace_time_and_memory() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -291,7 +291,7 @@ function cron_trace_time_and_memory() {
  */
 #[\core\attribute\deprecated('\core\cron::prepare_core_renderer()', since: '4.2', mdl: 'MDL-77186', final: true)]
 function cron_prepare_core_renderer() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -299,7 +299,7 @@ function cron_prepare_core_renderer() {
  */
 #[\core\attribute\deprecated('\core\cron::setup_user()', since: '4.2', mdl: 'MDL-77837', final: true)]
 function cron_setup_user() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -307,7 +307,7 @@ function cron_setup_user() {
  */
 #[\core\attribute\deprecated(since: '4.3', mdl: 'MDL-77837', final: true)]
 function badges_get_oauth2_service_options() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -321,7 +321,7 @@ function badges_get_oauth2_service_options() {
     final: true,
 )]
 function theme_is_device_locked() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -335,7 +335,7 @@ function theme_is_device_locked() {
     final: true,
 )]
 function theme_get_locked_theme_for_device() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -349,7 +349,7 @@ function theme_get_locked_theme_for_device() {
     final: true,
 )]
 function random_bytes_emulate() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -392,7 +392,7 @@ function rc4decrypt($data) {
  */
 #[\core\attribute\deprecated(\core\encryption::class, since: '4.5', mdl: 'MDL-81940')]
 function endecrypt($pwd, $data, $case) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     if ($case == 'de') {
         $data = urldecode($data);
@@ -446,7 +446,7 @@ function endecrypt($pwd, $data, $case) {
  */
 #[\core\attribute\deprecated('This method should not be used', since: '4.5', mdl: 'MDL-80275', final: true)]
 function disable_output_buffering(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 
@@ -466,7 +466,7 @@ function disable_output_buffering(): void {
  */
 #[\core\attribute\deprecated('This method should not be used', since: '4.5', mdl: 'MDL-82157')]
 function print_grade_menu($courseid, $name, $current, $includenograde=true, $return=false) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $OUTPUT;
 
     $output = '';
@@ -513,7 +513,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     reason: 'It is no longer used',
 )]
 function reset_password_and_mail($user) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $CFG;
 
     $site  = get_site();
@@ -560,7 +560,7 @@ function reset_password_and_mail($user) {
     final: true,
 )]
 function plagiarism_get_file_results(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -573,7 +573,7 @@ function plagiarism_get_file_results(): void {
     final: true,
 )]
 function plagiarism_update_status(): void {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -592,7 +592,7 @@ function plagiarism_update_status(): void {
     reason: 'The function is no longer used with the removal of the unused and non-functioning admin/process_email.php.',
 )]
 function moodle_process_email($modargs, $body) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     global $DB;
 
     // The first char should be an unencoded letter. We'll take this as an action.
@@ -677,7 +677,7 @@ function question_make_default_categories($contexts): object {
  */
 #[\core\attribute\deprecated('This method should not be used', since: '5.0', mdl: 'MDL-71378')]
 function question_delete_course($course, $notused = false): bool {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     $coursecontext = context_course::instance($course->id);
     question_delete_context($coursecontext->id);
@@ -698,7 +698,7 @@ function question_delete_course($course, $notused = false): bool {
 #[\core\attribute\deprecated('This method should not be used', since: '5.0', mdl: 'MDL-71378')]
 function question_delete_course_category($category, $newcategory, $notused = false): bool {
     global $DB;
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     $context = context_coursecat::instance($category->id);
     if (empty($newcategory)) {
@@ -752,7 +752,7 @@ function question_delete_course_category($category, $newcategory, $notused = fal
     reason: 'Remove all the old php version checks from core',
 )]
 function check_igbinary322_version(environment_results $result) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return null;
 }
 
@@ -761,7 +761,7 @@ function check_igbinary322_version(environment_results $result) {
  */
 #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79313', final: true)]
 function calendar_top_controls() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -769,7 +769,7 @@ function calendar_top_controls() {
  */
 #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79432', final: true)]
 function calendar_get_link_previous() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -777,7 +777,7 @@ function calendar_get_link_previous() {
  */
 #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79432', final: true)]
 function calendar_get_link_next() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
@@ -797,7 +797,7 @@ function calendar_get_link_next() {
     mdl: 'MDL-79434'
 )]
 function calendar_sub_month($month, $year) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return \core_calendar\type_factory::get_calendar_instance()->get_prev_month($year, $month);
 }
 
@@ -818,7 +818,7 @@ function calendar_sub_month($month, $year) {
     mdl: 'MDL-84657'
 )]
 function calendar_add_month($month, $year) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return \core_calendar\type_factory::get_calendar_instance()->get_next_month($year, $month);
 }
 
@@ -851,7 +851,7 @@ function calendar_add_month($month, $year) {
     reason: 'GD is a strict requirement, so use imagecopyresampled() instead.'
 )]
 function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     return imagecopyresampled($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
 }
 

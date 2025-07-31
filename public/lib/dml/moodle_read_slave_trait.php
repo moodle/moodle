@@ -160,7 +160,7 @@ trait moodle_read_slave_trait {
         reason: 'Renamed trait'
     )]
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, ?array $dboptions = null) {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         $this->pdbhost = $dbhost;
         $this->pdbuser = $dbuser;
         $this->pdbpass = $dbpass;
@@ -288,7 +288,7 @@ trait moodle_read_slave_trait {
         reason: 'Renamed trait'
     )]
     public function want_read_slave(): bool {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return $this->wantreadslave;
     }
 
@@ -305,7 +305,7 @@ trait moodle_read_slave_trait {
         reason: 'Renamed trait'
     )]
     public function perf_get_reads_slave(): int {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return $this->readsslave;
     }
 
@@ -322,7 +322,7 @@ trait moodle_read_slave_trait {
         reason: 'Renamed trait'
     )]
     public function start_delegated_transaction() {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         $this->set_dbhwrite();
         return parent::start_delegated_transaction();
     }
@@ -457,7 +457,7 @@ trait moodle_read_slave_trait {
         reason: 'Renamed trait'
     )]
     public function commit_delegated_transaction(moodle_transaction $transaction) {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         if ($this->written) {
             // Adjust the written time.
             $now = microtime(true);
