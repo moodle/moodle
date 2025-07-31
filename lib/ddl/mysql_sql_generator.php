@@ -642,6 +642,9 @@ class mysql_sql_generator extends sql_generator {
             // Added in Amazon Aurora MySQL version 3.06.0:
             // https://docs.aws.amazon.com/AmazonRDS/latest/AuroraMySQLReleaseNotes/AuroraMySQL.Updates.3060.html .
             'accept', 'aws_bedrock_invoke_model', 'aws_sagemaker_invoke_endpoint', 'content_type', 'timeout_ms',
+            // Added in MySQL 8.4:
+            // https://dev.mysql.com/doc/refman/8.4/en/mysql-nutshell.html.
+            'auto', 'bernoulli', 'gtids', 'log', 'manual', 'parallel', 'parse_tree', 'qualify', 's3', 'tablesample',
         );
         return $reserved_words;
     }
