@@ -151,7 +151,7 @@ $string['searchresults'] = 'Search results: {$a}';
 $string['sectionlink'] = 'Permalink';
 $string['showstartedcoursestask'] = 'Show courses on start date';
 $string['submitsearch'] = 'Submit search';
-$string['supports'] = 'Supports';
+$string['supports'] = 'This activity supports';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';
 $string['studentsatriskinfomessage'] = 'Hi {$a->userfirstname},
 <p>Students in the {$a->coursename} course have been identified as being at risk.</p>';
