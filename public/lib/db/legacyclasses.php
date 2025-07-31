@@ -346,4 +346,8 @@ $legacyclasses = [
         'core_comment',
         'comment_exception.php',
     ],
+    \course_request::class => [
+        'core_course',
+        'course_request.php',
+    ],
 ];
