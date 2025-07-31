@@ -132,7 +132,7 @@ final class process_generate_image_test extends \advanced_testcase {
             actionconfig: [
                 'model' => 'dall-e-3',
                 'temperature' => '0.5',
-                'max_tokens' => '100',
+                'max_completion_tokens' => '100',
             ],
         );
         $processor = new process_generate_image($this->provider, $this->action);
@@ -145,13 +145,13 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $this->assertEquals('dall-e-3', $body->model);
         $this->assertEquals('0.5', $body->temperature);
-        $this->assertEquals('100', $body->max_tokens);
+        $this->assertEquals('100', $body->max_completion_tokens);
 
         $this->provider = $this->create_provider(
             actionclass: \core_ai\aiactions\generate_image::class,
             actionconfig: [
                 'model' => 'my-custom-gpt',
-                'modelextraparams' => '{"temperature": 0.5,"max_tokens": 100}',
+                'modelextraparams' => '{"temperature": 0.5,"max_completion_tokens": 100}',
             ],
         );
         $processor = new process_generate_image($this->provider, $this->action);
@@ -164,7 +164,7 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $this->assertEquals('my-custom-gpt', $body->model);
         $this->assertEquals('0.5', $body->temperature);
-        $this->assertEquals('100', $body->max_tokens);
+        $this->assertEquals('100', $body->max_completion_tokens);
     }
 
     /**

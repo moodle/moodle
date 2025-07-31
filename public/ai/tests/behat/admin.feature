@@ -157,40 +157,34 @@ Feature: An administrator can manage AI subsystem settings
     # Configure model settings for 'GPT-4o'.
     And I click on the "Settings" link in the table row containing "Generate text"
     And I set the following fields to these values:
-      | AI model          | GPT-4o |
-      | top_p             | 11     |
-      | max_tokens        | 12     |
-      | frequency_penalty | 13     |
-      | presence_penalty  | 14     |
+      | AI model              | GPT-4o |
+      | top_p                 | 11     |
+      | max_completion_tokens | 12     |
+      | frequency_penalty     | 13     |
+      | presence_penalty      | 14     |
     And I press "Save changes"
     And I click on the "Settings" link in the table row containing "Generate text"
     And the field "top_p" matches value "11"
-    And the field "max_tokens" matches value "12"
+    And the field "max_completion_tokens" matches value "12"
     And the field "frequency_penalty" matches value "13"
     And the field "presence_penalty" matches value "14"
     # Change the model and check fields are empty.
     And I set the following fields to these values:
       | AI model | O1 |
     And the field "top_p" matches value ""
-    And the field "max_tokens" matches value ""
-    And the field "frequency_penalty" matches value ""
-    And the field "presence_penalty" matches value ""
+    And the field "max_completion_tokens" matches value ""
     # Set model settings for 'O1'.
     And I set the following fields to these values:
-      | top_p             | 21 |
-      | max_tokens        | 22 |
-      | frequency_penalty | 23 |
-      | presence_penalty  | 24 |
+      | top_p                 | 21 |
+      | max_completion_tokens | 22 |
     And I press "Save changes"
     # Go back and check both models have their settings stored.
     And I click on the "Settings" link in the table row containing "Generate text"
     And the field "top_p" matches value "21"
-    And the field "max_tokens" matches value "22"
-    And the field "frequency_penalty" matches value "23"
-    And the field "presence_penalty" matches value "24"
+    And the field "max_completion_tokens" matches value "22"
     And I set the following fields to these values:
       | AI model | GPT-4o |
     And the field "top_p" matches value "11"
-    And the field "max_tokens" matches value "12"
+    And the field "max_completion_tokens" matches value "12"
     And the field "frequency_penalty" matches value "13"
     And the field "presence_penalty" matches value "14"

@@ -48,7 +48,7 @@ $string['extraparams_help'] = 'Extra parameters can be configured here. We suppo
 <pre>
 {
     "temperature": 0.5,
-    "max_tokens": 100
+    "max_completion_tokens": 100
 }
 </pre>';
 $string['invalidjson'] = 'Invalid JSON string';
@@ -65,8 +65,8 @@ $string['settings'] = 'Settings';
 $string['settings_frequency_penalty'] = 'frequency_penalty';
 $string['settings_frequency_penalty_help'] = 'The frequency penalty adjusts how often words are repeated. The higher the penalty, the less repetitions in the generated text.';
 $string['settings_help'] = 'Adjust the settings below to customise how requests are sent to OpenAI.';
-$string['settings_max_tokens'] = 'max_tokens';
-$string['settings_max_tokens_help'] = 'The maximum number of tokens used in the generated text.';
+$string['settings_max_completion_tokens'] = 'max_completion_tokens';
+$string['settings_max_completion_tokens_help'] = 'The maximum number of tokens used in the generated text.';
 $string['settings_presence_penalty'] = 'presence_penalty';
 $string['settings_presence_penalty_help'] = 'The presence penalty encourages the model to use new words by increasing the likelihood of choosing words it hasn\'t used before. A higher value makes the generated text more diverse, while a lower value allows more repetition.';
 $string['settings_top_p'] = 'top_p';
@@ -88,3 +88,7 @@ $string['globalratelimit_desc'] = 'The number of site-wide requests allowed per 
 $string['orgid_desc'] = 'Get an OpenAI organization ID from your <a href="https://platform.openai.com/account/org-settings">OpenAI Platform account</a>.';
 $string['userratelimit'] = 'Maximum number of requests per user';
 $string['userratelimit_desc'] = 'The number of requests allowed per hour, per user.';
+
+// Deprecated since Moodle 5.1.
+$string['settings_max_tokens'] = 'max_tokens';
+$string['settings_max_tokens_help'] = 'The maximum number of tokens used in the generated text.';

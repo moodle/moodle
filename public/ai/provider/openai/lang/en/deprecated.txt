@@ -13,3 +13,5 @@ globalratelimit_desc,aiprovider_openai
 orgid_desc,aiprovider_openai
 userratelimit,aiprovider_openai
 userratelimit_desc,aiprovider_openai
+settings_max_tokens,aiprovider_openai
+settings_max_tokens_help,aiprovider_openai

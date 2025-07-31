@@ -89,12 +89,16 @@ class action_form extends action_settings_form {
                 $modelclass = helper::get_model_class($data->model);
                 if ($modelclass) {
                     if ($modelclass->has_model_settings()) {
-                        $modelsettings = array_keys($modelclass->get_model_settings());
+                        $modelsettings = $modelclass->get_model_settings();
+                        $modelsettingskeys = array_keys($modelclass->get_model_settings());
                         // Process the model settings.
                         $modeldata = [];
                         foreach ($data as $key => $value) {
-                            if (in_array($key, $modelsettings)) {
-                                $modeldata[$key] = $value;
+                            if (in_array($key, $modelsettingskeys)) {
+                                $type = $modelsettings[$key]['type'];
+                                // Cast form values to their intended types.
+                                $modeldata[$key] = $this->cast_value_to_type($value, $type);
+                                $data->$key = $this->cast_value_to_type($value, $type);
                             }
                         }
                         if (!empty($modeldata)) {
@@ -222,5 +226,34 @@ class action_form extends action_settings_form {
             }
         }
         return $models;
+    }
+
+    /**
+     * Cast a value to its intended type.
+     *
+     * When form values are submitted they come through as strings.
+     * We need to reassign the types for correct use with model requests.
+     *
+     * @param string $value Value to cast
+     * @param string $type Intended type
+     * @return mixed Cast value (string, int, float, null)
+     */
+    protected function cast_value_to_type(string $value, string $type): mixed {
+        switch ($type) {
+            case PARAM_INT:
+                $castvalue = $value !== '' ? intval($value) : null;
+                break;
+
+            case PARAM_FLOAT:
+            case PARAM_RAW:
+                $castvalue = $value !== '' ? floatval($value) : null;
+                break;
+
+            default:
+                $castvalue = $value;
+                break;
+        }
+
+        return $castvalue;
     }
 }

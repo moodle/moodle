@@ -53,15 +53,15 @@ class gpt4o extends base implements openai_base {
                     'component' => 'aiprovider_openai',
                 ],
             ],
-            'max_tokens' => [
+            'max_completion_tokens' => [
                 'elementtype' => 'text',
                 'label' => [
-                    'identifier' => 'settings_max_tokens',
+                    'identifier' => 'settings_max_completion_tokens',
                     'component' => 'aiprovider_openai',
                 ],
                 'type' => PARAM_INT,
                 'help' => [
-                    'identifier' => 'settings_max_tokens',
+                    'identifier' => 'settings_max_completion_tokens',
                     'component' => 'aiprovider_openai',
                 ],
             ],
