@@ -102,7 +102,7 @@ final class process_generate_text_test extends \advanced_testcase {
             actionconfig: [
                 'systeminstruction' => get_string('action_generate_text_instruction', 'core_ai'),
                 'temperature' => '0.5',
-                'max_tokens' => '100',
+                'max_completion_tokens' => '100',
             ],
         );
         $processor = new process_generate_text($this->provider, $this->action);
@@ -115,14 +115,14 @@ final class process_generate_text_test extends \advanced_testcase {
 
         $this->assertEquals('gpt-4o', $body->model);
         $this->assertEquals('0.5', $body->temperature);
-        $this->assertEquals('100', $body->max_tokens);
+        $this->assertEquals('100', $body->max_completion_tokens);
 
         $this->provider = $this->create_provider(
             actionclass: \core_ai\aiactions\generate_text::class,
             actionconfig: [
                 'model' => 'my-custom-gpt',
                 'systeminstruction' => get_string('action_generate_text_instruction', 'core_ai'),
-                'modelextraparams' => '{"temperature": 0.5,"max_tokens": 100}',
+                'modelextraparams' => '{"temperature": 0.5,"max_completion_tokens": 100}',
             ],
         );
         $processor = new process_generate_text($this->provider, $this->action);
@@ -135,7 +135,7 @@ final class process_generate_text_test extends \advanced_testcase {
 
         $this->assertEquals('my-custom-gpt', $body->model);
         $this->assertEquals('0.5', $body->temperature);
-        $this->assertEquals('100', $body->max_tokens);
+        $this->assertEquals('100', $body->max_completion_tokens);
     }
 
     /**

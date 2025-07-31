@@ -84,8 +84,23 @@ class action_form extends action_settings_form {
                 } else {
                     // Set the model to the selected model template.
                     $data->model = $data->modeltemplate;
-                }
 
+                    // Cast settings to their intended types.
+                    if ($data->model === 'gpt-4o' || $data->model === 'o1') {
+                        if (isset($data->top_p)) {
+                            $data->top_p = floatval($data->top_p);
+                        }
+                        if (isset($data->max_completion_tokens)) {
+                            $data->max_completion_tokens = intval($data->max_completion_tokens);
+                        }
+                        if (isset($data->presence_penalty)) {
+                            $data->presence_penalty = floatval($data->presence_penalty);
+                        }
+                        if (isset($data->frequency_penalty)) {
+                            $data->frequency_penalty = floatval($data->frequency_penalty);
+                        }
+                    }
+                }
             }
             // Unset the model template.
             unset($data->custommodel);
