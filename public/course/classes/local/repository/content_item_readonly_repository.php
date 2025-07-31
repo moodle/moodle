@@ -147,6 +147,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             $help = $this->get_core_module_help_string($mod->name);
             $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $purpose = plugin_supports('mod', $mod->name, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
+            $otherpurpose = plugin_supports('mod', $mod->name, FEATURE_MOD_OTHERPURPOSE);
             $isbranded = component_callback('mod_' . $mod->name, 'is_branded', [], false);
             $gradable = plugin_supports('mod', $mod->name, FEATURE_GRADE_HAS_GRADE, false);
 
@@ -162,6 +163,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 purpose: $purpose,
                 branded: $isbranded,
                 gradable: $gradable,
+                otherpurpose: $otherpurpose,
             );
 
             $modcontentitemreference = clone($contentitem);
@@ -215,6 +217,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             $help = $this->get_core_module_help_string($mod->name);
             $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $purpose = plugin_supports('mod', $mod->name, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
+            $otherpurpose = plugin_supports('mod', $mod->name, FEATURE_MOD_OTHERPURPOSE);
             $isbranded = component_callback('mod_' . $mod->name, 'is_branded', [], false);
             $gradable = plugin_supports('mod', $mod->name, FEATURE_GRADE_HAS_GRADE, false);
 
@@ -238,6 +241,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 purpose: $purpose,
                 branded: $isbranded,
                 gradable: $gradable,
+                otherpurpose: $otherpurpose,
             );
 
             $modcontentitemreference = clone($contentitem);

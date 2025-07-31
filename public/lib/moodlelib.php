@@ -484,6 +484,8 @@ define('MOD_ARCHETYPE_SYSTEM', 3);
 
 /** Type of module */
 define('FEATURE_MOD_PURPOSE', 'mod_purpose');
+/** Type of module alternative purpose */
+define('FEATURE_MOD_OTHERPURPOSE', 'mod_otherpurpose');
 /** Module purpose administration */
 define('MOD_PURPOSE_ADMINISTRATION', 'administration');
 /** Module purpose assessment */

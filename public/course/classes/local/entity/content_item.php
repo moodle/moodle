@@ -47,6 +47,7 @@ class content_item {
      * @param string $purpose the purpose type of this component.
      * @param bool $branded whether or not this item is branded.
      * @param bool $gradable whether or not this item is gradable.
+     * @param string|null $otherpurpose the alternative purpose type of this component.
      */
     public function __construct(
         /** @var int $id the id. */
@@ -71,6 +72,8 @@ class content_item {
         private bool $branded = false,
         /** @var bool $gradable whether or not this component is gradable. */
         private bool $gradable = false,
+        /** @var string|null $otherpurpose the alternative purpose type of this component. */
+        private ?string $otherpurpose = null,
     ) {
     }
 
@@ -152,6 +155,15 @@ class content_item {
      */
     public function get_purpose(): string {
         return $this->purpose;
+    }
+
+    /**
+     * Get alternative purpose for this item.
+     *
+     * @return string|null
+     */
+    public function get_other_purpose(): ?string {
+        return $this->otherpurpose;
     }
 
     /**
