@@ -1,0 +1,17 @@
+issueNumber: MDL-86168
+notes:
+  core:
+    - message: >
+        The `user_preference_allow_ajax_update()` has been removed. It was
+        deprecated without replacement in Moodle 4.3.
+      type: deprecated
+    - message: |
+        The following functions have been replaced with class methods.
+
+         | Old function name               | New method name                       |
+         | ---                             | ---                                   |
+         | `\ajax_capture_output()`        | `\core\ajax::capture_output()`        |
+         | `\ajax_check_captured_output()` | `\core\ajax::check_captured_output()` |
+
+        It is no longer necessary to include `lib/ajax/ajaxlib.php` in any code.
+      type: improved

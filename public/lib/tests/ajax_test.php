@@ -22,14 +22,14 @@ namespace core;
  * @package    core
  * @category   test
  * @copyright  2013 Andrew Nicols
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @covers ::ajax_capture_output
- * @covers ::ajax_check_captured_output
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class ajaxlib_test extends \advanced_testcase {
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\ajax::class)]
+final class ajax_test extends \advanced_testcase {
     /** @var string Original error log */
-    protected $oldlog;
+    protected string $oldlog;
 
+    #[\Override]
     protected function setUp(): void {
         global $CFG;
 
@@ -39,32 +39,41 @@ final class ajaxlib_test extends \advanced_testcase {
         ini_set('error_log', "$CFG->dataroot/testlog.log");
     }
 
+    #[\Override]
     protected function tearDown(): void {
         ini_set('error_log', $this->oldlog);
         parent::tearDown();
     }
 
-    protected function helper_test_clean_output() {
+    /**
+     * Assert that the output buffer is clean.
+     */
+    protected function assert_clean_output(): void {
         $this->resetAfterTest();
 
-        $result = ajax_capture_output();
+        $result = ajax::capture_output();
 
-        // ob_start should normally return without issue.
+        // The ob_start function should normally return without issue.
         $this->assertTrue($result);
 
-        $result = ajax_check_captured_output();
+        $result = ajax::check_captured_output();
         $this->assertEmpty($result);
     }
 
-    protected function helper_test_dirty_output($expectexception = false) {
+    /**
+     * Assert that the output buffer is dirty.
+     *
+     * @param bool $expectexception Whether to expect an exception to be thrown.
+     */
+    protected function assert_dirty_output(bool $expectexception = false): void {
         $this->resetAfterTest();
 
         // Keep track of the content we will output.
         $content = "Some example content";
 
-        $result = ajax_capture_output();
+        $result = ajax::capture_output();
 
-        // ob_start should normally return without issue.
+        // The ob_start function should normally return without issue.
         $this->assertTrue($result);
 
         // Fill the output buffer.
@@ -72,59 +81,58 @@ final class ajaxlib_test extends \advanced_testcase {
 
         if ($expectexception) {
             $this->expectException('coding_exception');
-            ajax_check_captured_output();
+            ajax::check_captured_output();
         } else {
-            $result = ajax_check_captured_output();
-            $this->assertEquals($result, $content);
+            $result = ajax::check_captured_output();
+            $this->assertEquals($content, $result);
         }
     }
 
     public function test_output_capture_normal_debug_none(): void {
         // In normal conditions, and with DEBUG_NONE set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_NONE);
-        $this->helper_test_clean_output();
+        $this->assert_clean_output();
     }
 
     public function test_output_capture_normal_debug_normal(): void {
         // In normal conditions, and with DEBUG_NORMAL set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_NORMAL);
-        $this->helper_test_clean_output();
+        $this->assert_clean_output();
     }
 
     public function test_output_capture_normal_debug_all(): void {
         // In normal conditions, and with DEBUG_ALL set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_ALL);
-        $this->helper_test_clean_output();
+        $this->assert_clean_output();
     }
 
     public function test_output_capture_normal_debugdeveloper(): void {
         // In normal conditions, and with DEBUG_DEVELOPER set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_DEVELOPER);
-        $this->helper_test_clean_output();
+        $this->assert_clean_output();
     }
 
     public function test_output_capture_error_debug_none(): void {
         // With DEBUG_NONE set, we should not throw any exception, but the output will be returned.
         set_debugging(DEBUG_NONE);
-        $this->helper_test_dirty_output();
+        $this->assert_dirty_output();
     }
 
     public function test_output_capture_error_debug_normal(): void {
         // With DEBUG_NORMAL set, we should not throw any exception, but the output will be returned.
         set_debugging(DEBUG_NORMAL);
-        $this->helper_test_dirty_output();
+        $this->assert_dirty_output();
     }
 
     public function test_output_capture_error_debug_all(): void {
         // In error conditions, and with DEBUG_ALL set, we should throw an exceptions.
         set_debugging(DEBUG_ALL);
-        $this->helper_test_dirty_output(true);
+        $this->assert_dirty_output(true);
     }
 
     public function test_output_capture_error_debugdeveloper(): void {
         // With DEBUG_DEVELOPER set, we should throw an exception.
         set_debugging(DEBUG_DEVELOPER);
-        $this->helper_test_dirty_output(true);
+        $this->assert_dirty_output(true);
     }
-
 }
