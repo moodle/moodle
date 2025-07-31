@@ -55,7 +55,7 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         mdl: 'MDL-80750'
     )]
     public function definition() {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
 
         global $CFG;
         $mform = $this->_form;

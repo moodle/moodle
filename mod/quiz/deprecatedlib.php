@@ -324,7 +324,7 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
  */
 #[\core\attribute\deprecated('override_manager::delete_override_by_id', since: '4.4')]
 function quiz_delete_override($quiz, $overrideid, $log = true) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     $quizsettings = quiz_settings::create($quiz->id);
     $quizsettings->get_override_manager()->delete_overrides_by_id(
         ids: [$overrideid],
@@ -344,7 +344,7 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
  */
 #[\core\attribute\deprecated('override_manager::delete_all_overrides', since: '4.4')]
 function quiz_delete_all_overrides($quiz, $log = true) {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     $quizsettings = quiz_settings::create($quiz->id);
     $quizsettings->get_override_manager()->delete_all_overrides(shouldlog: $log);
 }

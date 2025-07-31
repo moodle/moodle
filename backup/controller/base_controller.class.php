@@ -111,7 +111,7 @@ abstract class base_controller extends backup implements loggable {
      */
     #[\core\attribute\deprecated(since: '4.1', mdl: 'MDL-74548', final: true)]
     public function set_copy(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -119,6 +119,6 @@ abstract class base_controller extends backup implements loggable {
      */
     #[\core\attribute\deprecated('restore_controller::get_copy()', since: '4.1', mdl: 'MDL-74548', final: true)]
     public function get_copy() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 }

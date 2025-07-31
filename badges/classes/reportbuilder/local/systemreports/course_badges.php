@@ -51,7 +51,7 @@ class course_badges extends system_report {
      */
     #[\core\attribute\deprecated('course_badges::initialise', since: '4.5', mdl: 'MDL-82503')]
     protected function initialise(): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         global $USER;
         // Our main entity, it contains all of the column definitions that we need.
         $badgeentity = new badge();
@@ -103,7 +103,7 @@ class course_badges extends system_report {
      */
     #[\core\attribute\deprecated('course_badges::can_view', since: '4.5', mdl: 'MDL-82503')]
     protected function can_view(): bool {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return has_capability('moodle/badges:viewbadges', $this->get_context());
     }
 
@@ -118,7 +118,7 @@ class course_badges extends system_report {
      */
     #[\core\attribute\deprecated('course_badges::add_columns', since: '4.5', mdl: 'MDL-82503')]
     protected function add_columns(): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $badgeissuedalias = $this->get_entity('badge_issued')->get_table_alias('badge_issued');
 
         $this->add_columns_from_entities([
@@ -156,7 +156,7 @@ class course_badges extends system_report {
      */
     #[\core\attribute\deprecated('course_badges::add_filters', since: '4.5', mdl: 'MDL-82503')]
     protected function add_filters(): void {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $this->add_filters_from_entities([
             'badge:name',
             'badge_issued:issued',

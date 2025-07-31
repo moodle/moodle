@@ -58,7 +58,7 @@ class core_grades_renderer extends plugin_renderer_base {
     public function group_selector(object $course, ?string $groupactionbaseurl = null): ?string {
         global $USER;
 
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
 
         if ($groupactionbaseurl !== null) {
             debugging(
@@ -139,7 +139,7 @@ class core_grades_renderer extends plugin_renderer_base {
     ): stdClass {
         global $SESSION, $COURSE;
 
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         // User search.
         $searchvalue = optional_param('gpr_search', null, PARAM_NOTAGS);
         $userid = optional_param('grp_userid', null, PARAM_INT);

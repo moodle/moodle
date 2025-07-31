@@ -2536,7 +2536,7 @@ class global_navigation extends navigation_node {
         mdl: 'MDL-82845',
     )]
     protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, array $activities, $course = null) {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         if (!is_object($course)) {
             $activity = reset($activities);
             $courseid = $activity->course;

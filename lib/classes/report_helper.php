@@ -96,7 +96,7 @@ class report_helper {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
     public static function save_selected_report() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

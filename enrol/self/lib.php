@@ -420,7 +420,7 @@ class enrol_self_plugin extends enrol_plugin {
      */
     #[\core\attribute\deprecated('enrol_plugin::send_course_welcome_message_to_user', since: '4.4', mdl: 'MDL-4188')]
     protected function email_welcome_message($instance, $user) {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         $this->send_course_welcome_message_to_user(
             instance: $instance,
             userid: $user->id,
@@ -1193,7 +1193,7 @@ class enrol_self_plugin extends enrol_plugin {
      */
     #[\core\attribute\deprecated('enrol_plugin::get_welcome_message_contact', since: '4.4', mdl: 'MDL-4188')]
     public function get_welcome_email_contact($sendoption, $context) {
-        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        \core\deprecation::emit_deprecation(__FUNCTION__);
         return $this->get_welcome_message_contact(
             sendoption: $sendoption,
             context: $context,

@@ -131,7 +131,7 @@ abstract class task_base {
         reason: 'Blocking tasks are no longer supported',
     )]
     public function set_blocking($blocking) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
     }
 
     /**
@@ -147,7 +147,7 @@ abstract class task_base {
         reason: 'Blocking tasks are no longer supported',
     )]
     public function is_blocking() {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return false;
     }
 
