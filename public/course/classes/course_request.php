@@ -14,6 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_course;
+
+use core\context;
+use core\context\course as context_course;
+use core\context\coursecat as context_coursecat;
+use core\context\system as context_system;
+use core\exception\coding_exception;
+use core\exception\moodle_exception;
+use core_course_category;
+use restore_dbops;
+use stdClass;
+
 /**
  * This class pertains to course requests and contains methods associated with
  * create, approving, and removing course requests.
@@ -152,7 +164,7 @@ class course_request {
         }
         if (empty($properties->requester)) {
             if (!($this->properties = $DB->get_record('course_request', array('id' => $properties->id)))) {
-                throw new \moodle_exception('unknowncourserequest');
+                throw new moodle_exception('unknowncourserequest');
             }
         } else {
             $this->properties = $properties;
@@ -431,3 +443,8 @@ class course_request {
         return false;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(course_request::class, \course_request::class);

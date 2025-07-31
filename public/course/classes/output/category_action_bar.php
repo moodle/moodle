@@ -20,7 +20,7 @@ use action_menu;
 use action_menu_link_secondary;
 use context_coursecat;
 use core_course_category;
-use course_request;
+use core_course\course_request;
 use moodle_page;
 use moodle_url;
 
