@@ -7,7 +7,7 @@ Feature: Reset my profile page to default
   @javascript
   Scenario: Add blocks to page and reset
     When I log in as "admin"
-    And I follow "View profile"
+    And I follow "Profile" in the user menu
     And I turn editing mode on
     And I add the "Latest announcements" block
     And I press "Reset page to default"
