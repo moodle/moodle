@@ -30,27 +30,23 @@
  * @return bool|string|null True if module supports feature, false if not, null if it doesn't know or string for the module purpose.
  */
 function qbank_supports(string $feature) {
-    switch ($feature) {
-        case FEATURE_BACKUP_MOODLE2:
-        case FEATURE_PUBLISHES_QUESTIONS:
-        case FEATURE_SHOW_DESCRIPTION:
-        case FEATURE_USES_QUESTIONS:
-            return true;
-        case FEATURE_CAN_DISPLAY:
-        case FEATURE_CAN_UNINSTALL:
-        case FEATURE_COMMENT:
-        case FEATURE_COMPLETION:
-        case FEATURE_COMPLETION_HAS_RULES:
-        case FEATURE_COMPLETION_TRACKS_VIEWS:
-        case FEATURE_CONTROLS_GRADE_VISIBILITY:
-        case FEATURE_GRADE_OUTCOMES:
-        case FEATURE_MODEDIT_DEFAULT_COMPLETION:
-            return false;
-        case FEATURE_MOD_PURPOSE:
-            return MOD_PURPOSE_CONTENT;
-        default:
-            return null;
-    }
+    return match ($feature) {
+        FEATURE_BACKUP_MOODLE2 => true,
+        FEATURE_PUBLISHES_QUESTIONS => true,
+        FEATURE_SHOW_DESCRIPTION => true,
+        FEATURE_USES_QUESTIONS => true,
+        FEATURE_CAN_DISPLAY => false,
+        FEATURE_CAN_UNINSTALL => false,
+        FEATURE_COMMENT => false,
+        FEATURE_COMPLETION => false,
+        FEATURE_COMPLETION_HAS_RULES => false,
+        FEATURE_COMPLETION_TRACKS_VIEWS => false,
+        FEATURE_CONTROLS_GRADE_VISIBILITY => false,
+        FEATURE_GRADE_OUTCOMES => false,
+        FEATURE_MODEDIT_DEFAULT_COMPLETION => false,
+        FEATURE_MOD_PURPOSE => MOD_PURPOSE_CONTENT,
+        default => null,
+    };
 }
 
 /**

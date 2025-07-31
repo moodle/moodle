@@ -61,10 +61,7 @@ global $CFG;
  * @uses FEATURE_SHOW_DESCRIPTION
  */
 function bigbluebuttonbn_supports($feature) {
-    if (!$feature) {
-        return null;
-    }
-    $features = [
+    return match ($feature) {
         FEATURE_IDNUMBER => true,
         FEATURE_GROUPS => true,
         FEATURE_GROUPINGS => true,
@@ -76,11 +73,8 @@ function bigbluebuttonbn_supports($feature) {
         FEATURE_GRADE_OUTCOMES => false,
         FEATURE_SHOW_DESCRIPTION => true,
         FEATURE_MOD_PURPOSE => MOD_PURPOSE_COMMUNICATION,
-    ];
-    if (isset($features[(string) $feature])) {
-        return $features[$feature];
-    }
-    return null;
+        default => null,
+    };
 }
 
 /**
