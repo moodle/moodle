@@ -481,7 +481,7 @@ class controlmenu extends basecontrolmenu {
         mdl: 'MDL-83527',
     )]
     protected function cm_control_items() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         $format = $this->format;
         $mod = $this->mod;
         $sectionreturn = $format->get_sectionnum();

@@ -95,7 +95,7 @@ class question_history_view extends view {
      */
     #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
     protected function display_advanced_search_form($advancedsearch): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     public function allow_add_questions(): bool {

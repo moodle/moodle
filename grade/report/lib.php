@@ -337,7 +337,7 @@ abstract class grade_report {
      */
     #[\core\attribute\deprecated('get_string', since: '4.2', mdl: 'MDL-77033', final: true)]
     public function get_lang_string(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

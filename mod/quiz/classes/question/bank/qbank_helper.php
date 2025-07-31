@@ -53,7 +53,7 @@ class qbank_helper {
         mdl: 'MDL-77713')
     ]
     public static function get_version_options(int $questionid): array {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         return version_options::get_version_options($questionid);
     }
 

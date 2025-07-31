@@ -466,7 +466,7 @@ class core_renderer extends renderer_base {
      */
     #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-78744', final: true)]
     public function activity_information() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1386,7 +1386,7 @@ class core_renderer extends renderer_base {
         mdl: 'MDL-83164',
     )]
     protected function render_action_menu_link(\action_menu_link $action) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->render_action_menu__link($action);
     }
 
@@ -1399,7 +1399,7 @@ class core_renderer extends renderer_base {
         mdl: 'MDL-83164',
     )]
     protected function render_action_menu_filler(\action_menu_filler $action) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->render_action_menu__filler($action);
     }
 
@@ -1412,7 +1412,7 @@ class core_renderer extends renderer_base {
         mdl: 'MDL-83164',
     )]
     protected function render_action_menu_primary(\action_menu_link $action) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->render_action_menu__link_primary($action);
     }
 
@@ -1425,7 +1425,7 @@ class core_renderer extends renderer_base {
         mdl: 'MDL-83164',
     )]
     protected function render_action_menu_secondary(\action_menu_link $action) {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->render_action_menu__link_secondary($action);
     }
 
@@ -2896,7 +2896,7 @@ EOD;
      */
     #[\core\attribute\deprecated('core_renderer::visually_hidden_text()', since: '5.0', mdl: 'MDL-81825')]
     public function sr_text(string $contents): string {
-        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         return $this->visually_hidden_text($contents);
     }
 

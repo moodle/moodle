@@ -77,7 +77,7 @@ class report_eventlist_list_generator {
      */
     #[\core\attribute\deprecated('::get_all_events_list', since: '4.0', mdl: 'MDL-72498', final: true)]
     public static function get_core_events_list() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -135,7 +135,7 @@ class report_eventlist_list_generator {
      */
     #[\core\attribute\deprecated('::get_all_events_list', since: '4.0', mdl: 'MDL-72498', final: true)]
     public static function get_non_core_event_list() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

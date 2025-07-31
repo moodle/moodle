@@ -1020,7 +1020,7 @@ class repository_onedrive extends repository {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
     public static function can_import_skydrive_files() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1028,7 +1028,7 @@ class repository_onedrive extends repository {
      */
     #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
     public static function import_skydrive_files() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

@@ -138,6 +138,27 @@ class deprecation {
     }
 
     /**
+     * Emit a deprecation notice for a reference.
+     *
+     * This will emit a deprecation notice if the reference is deprecated.
+     * If the reference is not deprecated, the function will emit debugging information.
+     *
+     * @param array|string|object $reference
+     */
+    public static function emit_deprecation(array|string|object $reference): void {
+        if ($attribute = self::from($reference)) {
+            self::emit_deprecation_notice($attribute);
+        } else {
+            // If the reference is not deprecated, we should not emit a notice.
+            // This is to prevent false positives in tests.
+            debugging(
+                "Deprecation notice requested but object is not deprecated.",
+                DEBUG_DEVELOPER,
+            );
+        }
+    }
+
+    /**
      * Fetch a referenced deprecation attribute from a reflected object.
      *
      * @param \ReflectionClass $rc The reflected object

@@ -27,5 +27,5 @@
  */
 #[\core\attribute\deprecated('book_get_nav_classes', since: '4.4', final: true)]
 function book_get_nav_classes() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }

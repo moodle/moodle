@@ -39,7 +39,7 @@ class helper {
      */
     #[\core\attribute\deprecated(replacement: 'qbank_history\helper::get_question_history_url', since: '5.0', mdl: 'MDL-71378')]
     public static function question_history_url(int $entryid, string $returnrul, int $courseid, ?string $filter): \moodle_url {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         $params = [
             'entryid' => $entryid,
             'returnurl' => $returnrul,

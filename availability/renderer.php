@@ -31,6 +31,6 @@ class core_availability_renderer extends plugin_renderer_base {
      */
     #[\core\attribute\deprecated(availability_info::class, since: '4.0', mdl: 'MDL-71691', final: true)]
     public function render_core_availability_multiple_messages(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 }

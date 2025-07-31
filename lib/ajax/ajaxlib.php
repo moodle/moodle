@@ -28,7 +28,7 @@
  */
 #[\core\attribute\deprecated('\'core_user/repository\' module', since: '4.3', mdl: 'MDL-76974', final: true)]
 function user_preference_allow_ajax_update() {
-    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**

@@ -2736,7 +2736,7 @@ abstract class enrol_plugin {
      */
     #[\core\attribute\deprecated(null, reason: 'Replaced with hooks', since: '4.4', mdl: 'MDL-78551', final: true)]
     public function update_communication(): void {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

@@ -206,7 +206,7 @@ class site_registration_form extends \moodleform {
         final: true,
     )]
     protected function add_select_with_email() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

@@ -7393,7 +7393,7 @@ class assign {
         mdl: 'MDL-82681',
     )]
     protected function process_save_grading_options() {
-        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
