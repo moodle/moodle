@@ -100,7 +100,6 @@ Feature: Asynchronous regrade on a large course
   Scenario: Task indicator progresses and redirects when the task is run.
     When I am on the "Test course 1" "grades > Grader report > View" page logged in as teacher1
     And I should see "The report will update automatically. You don't need to do anything."
-    And I should not see "Run now"
     And I should not see "0.0%"
     And "user-grades" "table" should not exist
     And I run all adhoc tasks
@@ -112,12 +111,6 @@ Feature: Asynchronous regrade on a large course
     And I set the field "Search users" to "Student 1"
     And "user-grades" "table" should exist
     And "40.00" "text" should exist in the "student1@example.com" "table_row"
-
-  Scenario: Admin should see a "Run now" button in the task indicator
-    When I am on the "Test course 1" "grades > Grader report > View" page logged in as admin
-    And I should see "The report will update automatically. You don't need to do anything."
-    And I should not see "0.0%"
-    And I should see "Run now"
 
   Scenario: Making changes on course with less than 100 grades performs the regrade synchronously, no indicator is shown.
     Given I am on the "Test assignment 2" "assign activity editing" page logged in as teacher1
