@@ -8,7 +8,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_choice_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CFG, $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY, $DB;
+        global $CFG, $DB;
 
         $mform    =& $this->_form;
 
@@ -26,7 +26,10 @@ class mod_choice_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements(get_string('description', 'choice'));
 
-        $mform->addElement('select', 'display', get_string("displaymode","choice"), $CHOICE_DISPLAY);
+        $mform->addElement('select', 'display', get_string("displaymode", "choice"), [
+            CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
+            CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical', 'choice'),
+        ]);
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'optionhdr', get_string('options', 'choice'));
@@ -94,9 +97,18 @@ class mod_choice_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'resultshdr', get_string('results', 'choice'));
 
-        $mform->addElement('select', 'showresults', get_string("publish", "choice"), $CHOICE_SHOWRESULTS);
+        $mform->addElement('select', 'showresults', get_string("publish", "choice"), [
+            CHOICE_SHOWRESULTS_NOT          => get_string('publishnot', 'choice'),
+            CHOICE_SHOWRESULTS_AFTER_ANSWER => get_string('publishafteranswer', 'choice'),
+            CHOICE_SHOWRESULTS_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
+            CHOICE_SHOWRESULTS_ALWAYS       => get_string('publishalways', 'choice'),
+        ]);
 
-        $mform->addElement('select', 'publish', get_string("privacy", "choice"), $CHOICE_PUBLISH);
+        $mform->addElement('select', 'publish', get_string("privacy", "choice"), [
+            CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
+            CHOICE_PUBLISH_NAMES      => get_string('publishnames', 'choice'),
+        ]);
+
         $mform->hideIf('publish', 'showresults', 'eq', 0);
 
         $mform->addElement('selectyesno', 'showunanswered', get_string("showunanswered", "choice"));
