@@ -14,17 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Condition on grades of current user.
- *
- * @package availability_grade
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace availability_grade;
 
-defined('MOODLE_INTERNAL') || die();
+use grade_helper;
+use core\output\html_writer;
 
 /**
  * Condition on grades of current user.
@@ -121,7 +114,6 @@ class condition extends \core_availability\condition {
     }
 
     public function get_description($full, $not, \core_availability\info $info) {
-        $course = $info->get_course();
         // String depends on type of requirement. We are coy about
         // the actual numbers, in case grades aren't released to
         // students.
@@ -183,9 +175,12 @@ class condition extends \core_availability\condition {
      * Obtains the name of a grade item, also checking that it exists. Uses a
      * cache. The name returned is suitable for display.
      *
+     * If the grade item has an activity link, the returned value will be wrapped
+     * in a link to the activity
+     *
      * @param int $courseid Course id
      * @param int $gradeitemid Grade item id
-     * @return string Grade name or empty string if no grade with that id
+     * @return string Grade name/link or empty string if no grade with that id
      */
     private static function get_cached_grade_name($courseid, $gradeitemid) {
         global $DB, $CFG;
@@ -208,6 +203,12 @@ class condition extends \core_availability\condition {
         $gradeitemobj = $cacheditems[$gradeitemid];
         $item = new \grade_item;
         \grade_object::set_properties($item, $gradeitemobj);
+
+        $gradeitemlink = grade_helper::get_activity_link(['object' => $item->get_record_data()]);
+        if ($gradeitemlink !== null) {
+            return html_writer::link($gradeitemlink, $item->get_name());
+        }
+
         return $item->get_name();
     }
 
