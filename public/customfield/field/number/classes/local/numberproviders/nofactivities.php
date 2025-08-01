@@ -71,7 +71,6 @@ class nofactivities extends provider_base {
         $mform->hideIf('configdata[activitytypes]', 'configdata[fieldtype]', 'ne', get_class($this));
         $mform->hideIf('configdata[decimalplaces]', 'configdata[fieldtype]', 'eq', get_class($this));
         $mform->hideIf('configdata[display]', 'configdata[fieldtype]', 'eq', get_class($this));
-        $mform->hideIf('str_display_format', 'configdata[fieldtype]', 'eq', get_class($this));
         $mform->hideIf('configdata[defaultvalue]', 'configdata[fieldtype]', 'eq', get_class($this));
         $mform->hideIf('configdata[minimumvalue]', 'configdata[fieldtype]', 'eq', get_class($this));
         $mform->hideIf('configdata[maximumvalue]', 'configdata[fieldtype]', 'eq', get_class($this));
