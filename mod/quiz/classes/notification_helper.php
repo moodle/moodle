@@ -154,9 +154,9 @@ class notification_helper {
         $stringparams = [
             'firstname' => $user->firstname,
             'quizname' => format_string($quiz->name,
-                options: ['context' => $quizobj->get_context()]),
+                options: ['context' => $quizobj->get_context(), 'escape' => false]),
             'coursename' => format_string($quizobj->get_course()->fullname,
-                options: ['context' => \context_course::instance($quizobj->get_course()->id)]),
+                options: ['context' => \context_course::instance($quizobj->get_course()->id), 'escape' => false]),
             'timeopen' => userdate($user->timeopen),
             'timeclose' => !empty($user->timeclose) ? userdate($user->timeclose) : get_string('statusna'),
             'url' => $url,
