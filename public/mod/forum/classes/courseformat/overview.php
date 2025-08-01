@@ -18,11 +18,10 @@ namespace mod_forum\courseformat;
 
 use cm_info;
 use core\url;
-use action_link;
 use core_calendar\output\humandate;
-use core\output\local\properties\button;
 use core\output\local\properties\text_align;
 use core_courseformat\local\overview\overviewitem;
+use core_courseformat\output\local\overview\overviewaction;
 
 /**
  * Forum overview integration.
@@ -124,21 +123,12 @@ class overview extends \core_courseformat\activityoverviewbase {
         $totalreplies += $totaldiscussions; // Add the discussions to the replies count.
 
         $alertlabel = get_string('unreadposts', 'mod_forum');
-
-        $badge = '';
         $unread = forum_tp_count_forum_unread_posts($this->cm, $this->course);
-        if ($totalreplies > 0 && $unread > 0) {
-            $renderer = $this->rendererhelper->get_core_renderer();
-            $badge = $renderer->notice_badge(
-                contents: $unread,
-                title: $alertlabel,
-            );
-        }
-
-        $content = new action_link(
+        $content = new overviewaction(
             url: new url('/mod/forum/view.php', ['id' => $this->cm->id]),
-            text: $totalreplies .' ' . $badge,
-            attributes: ['class' => button::BODY_OUTLINE->classes()],
+            text: $totalreplies,
+            badgevalue: ($totalreplies > 0 && $unread > 0) ? $unread : null,
+            badgetitle: ($totalreplies > 0 && $unread > 0) ? $alertlabel : null,
         );
 
         return new overviewitem(

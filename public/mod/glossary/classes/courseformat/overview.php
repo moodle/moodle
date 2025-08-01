@@ -16,13 +16,11 @@
 
 namespace mod_glossary\courseformat;
 
-use cm_info;
 use core\url;
-use core\output\action_link;
 use mod_glossary_entry_query_builder;
-use core\output\local\properties\button;
 use core\output\local\properties\text_align;
 use core_courseformat\local\overview\overviewitem;
+use core_courseformat\output\local\overview\overviewaction;
 
 /**
  * Glossary overview integration class.
@@ -32,19 +30,6 @@ use core_courseformat\local\overview\overviewitem;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class overview extends \core_courseformat\activityoverviewbase {
-    /**
-     * Constructor.
-     *
-     * @param cm_info $cm the course module instance.
-     * @param \core\output\renderer_helper $rendererhelper the renderer helper.
-     */
-    public function __construct(
-        cm_info $cm,
-        /** @var \core\output\renderer_helper $rendererhelper the renderer helper */
-        protected readonly \core\output\renderer_helper $rendererhelper,
-    ) {
-        parent::__construct($cm);
-    }
 
     #[\Override]
     public function get_extra_overview_items(): array {
@@ -64,24 +49,20 @@ class overview extends \core_courseformat\activityoverviewbase {
         $qb = new mod_glossary_entry_query_builder($this->cm->get_instance_record());
         $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ONLY);
         $entriescount = $qb->count_records();
-
         if ($entriescount > 0) {
-            $renderer = $this->rendererhelper->get_core_renderer();
-            $badge = $renderer->notice_badge(
-                contents: $entriescount,
-                title: get_string('numberofentriesneedapprove', 'mod_glossary'),
-            );
             $url = new url('/mod/glossary/view.php', ['id' => $this->cm->id, 'mode' => 'approval']);
-            $text = get_string('approve', 'mod_glossary') . $badge;
+            $text = get_string('approve', 'mod_glossary');
         } else {
             $url = new url('/mod/glossary/view.php', ['id' => $this->cm->id]);
             $text = get_string('view');
         }
 
-        $content = new action_link(
+        $alertlabel = get_string('numberofentriesneedapprove', 'mod_glossary');
+        $content = new overviewaction(
             url: $url,
             text: $text,
-            attributes: ['class' => button::BODY_OUTLINE->classes()],
+            badgevalue: $entriescount > 0 ? $entriescount : null,
+            badgetitle: $entriescount > 0 ? $alertlabel : null,
         );
 
         return new overviewitem(
@@ -89,6 +70,8 @@ class overview extends \core_courseformat\activityoverviewbase {
             value: $entriescount,
             content: $content,
             textalign: text_align::CENTER,
+            alertcount: $entriescount,
+            alertlabel: $alertlabel,
         );
     }
 

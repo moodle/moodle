@@ -16,15 +16,14 @@
 
 namespace mod_data\courseformat;
 
-use core_calendar\output\humandate;
 use cm_info;
-use core_courseformat\local\overview\overviewitem;
-use core\output\action_link;
-use core\output\local\properties\text_align;
-use core\output\local\properties\button;
 use core\url;
 use mod_data\dates;
 use mod_data\manager;
+use core_calendar\output\humandate;
+use core\output\local\properties\text_align;
+use core_courseformat\local\overview\overviewitem;
+use core_courseformat\output\local\overview\overviewaction;
 
 /**
  * Database activity overview integration.
@@ -45,12 +44,9 @@ class overview extends \core_courseformat\activityoverviewbase {
      * Constructor.
      *
      * @param cm_info $cm the course module instance.
-     * @param \core\output\renderer_helper $rendererhelper the renderer helper.
      */
     public function __construct(
         cm_info $cm,
-        /** @var \core\output\renderer_helper $rendererhelper the renderer helper */
-        protected readonly \core\output\renderer_helper $rendererhelper,
     ) {
         parent::__construct($cm);
 
@@ -89,29 +85,23 @@ class overview extends \core_courseformat\activityoverviewbase {
             return null;
         }
 
-        $text = get_string('view', 'moodle');
+        $name = get_string('view', 'moodle');
         $toapprove = 0;
-        $alertlabel = get_string('numberofentriestoapprove', 'data');
         if ($this->manager->get_approval_requested()) {
             // Let's calculate how many entries need to be approved.
             $entries = $this->manager->filter_entries_by_approval($this->manager->get_all_entries(), 0);
             $toapprove = count($entries);
-
-            $name = get_string('approve', 'data');
             if ($toapprove > 0) {
-                $renderer = $this->rendererhelper->get_core_renderer();
-                $badge = $renderer->notice_badge(
-                    contents: $toapprove,
-                    title: $alertlabel,
-                );
-                $text = $name . $badge;
+                $name = get_string('approve', 'data');
             }
         }
+        $alertlabel = get_string('numberofentriestoapprove', 'data', $toapprove);
 
-        $content = new action_link(
+        $content = new overviewaction(
             url: new url('/mod/data/view.php', ['id' => $this->cm->id]),
-            text: $text,
-            attributes: ['class' => button::BODY_OUTLINE->classes()],
+            text: $name,
+            badgevalue: $toapprove > 0 ? $toapprove : null,
+            badgetitle: $toapprove > 0 ? $alertlabel : null,
         );
 
         return new overviewitem(
