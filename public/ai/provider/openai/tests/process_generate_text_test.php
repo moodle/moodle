@@ -401,7 +401,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $result = $processor->process();
         $this->assertEquals(429, $result->get_errorcode());
         $this->assertEquals(
-            expected: 'You have reached the maximum number of AI requests you can make in an hour. Try again later',
+            expected: 'You have reached the maximum number of AI requests you can make in an hour. Try again later.',
             actual: $result->get_errormessage(),
         );
         $this->assertFalse($result->get_success());
@@ -498,7 +498,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $result = $processor->process();
         $this->assertEquals(429, $result->get_errorcode());
         $this->assertEquals(
-            expected: 'AI has reached the maximum number of site-wide requests per hour. Try again later',
+            expected: 'The AI service has reached the maximum number of site-wide requests per hour. Try again later.',
             actual: $result->get_errormessage(),
         );
         $this->assertFalse($result->get_success());

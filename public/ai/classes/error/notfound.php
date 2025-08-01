@@ -19,7 +19,7 @@ namespace core_ai\error;
 /**
  * Error 404 handler class.
  *
- * The HTTP 404 Not Found error code indicates that the server could not find the requested resource.
+ * The HTTP 404 Not found error code indicates that the server could not find the requested resource.
  *
  * @package    core_ai
  * @copyright  Meirza <meirza.arson@moodle.com>

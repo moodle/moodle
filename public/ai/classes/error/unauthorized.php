@@ -19,7 +19,7 @@ namespace core_ai\error;
 /**
  * Error 401 handler class.
  *
- * The HTTP 401 Unauthorized error code is used when a request requires user authentication,
+ * The HTTP 401 Unauthorised error code is used when a request requires user authentication,
  * but the authentication has either not been provided or failed.
  *
  * @package    core_ai

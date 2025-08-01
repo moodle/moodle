@@ -29,7 +29,7 @@ $string['accessibilitycheckerinfo'] = 'The TinyMCE Premium Accessibility Checker
 $string['apikey'] = 'API key';
 $string['apikey_desc'] = 'Your API key is available on your <a href="https://www.tiny.cloud">Tiny Cloud</a> account page if you have purchased a subscription, or if you are on a free trial.';
 $string['emptyapikeywarning'] = 'Enabled TinyMCE Premium plugins will not be available until an API key is added.';
-$string['invalidurl'] = 'Entered URL is invalid';
+$string['invalidurl'] = 'Wrong URL';
 $string['pluginname'] = 'TinyMCE Premium';
 $string['pluginnotfound'] = 'Tiny Premium plugin {$a} not found.';
 $string['premium:use'] = 'Use TinyMCE Premium';
@@ -69,7 +69,7 @@ $string['premiumplugin:tinymcespellchecker'] = 'Spell Checker Pro';
 $string['premiumplugin:typography'] = 'Advanced Typography';
 $string['premiumplugins'] = 'Premium plugins';
 $string['premiumplugins_desc'] = 'Access to TinyMCE Premium plugins requires an API key. Not all listed plugins may be available with your TinyMCE Premium subscription. You can check available plugins on your <a href="https://www.tiny.cloud">Tiny Cloud</a> account page.';
-$string['premiumplugins_settings'] = 'TinyMCE Premium plugins settings';
+$string['premiumplugins_settings'] = 'TinyMCE Premium plugin settings';
 $string['privacy:metadata'] = 'The Tiny Premium plugin for TinyMCE does not store any personal data.';
 $string['serverside:desc'] = 'The {$a} plugin uses a server-side service to process data. You can choose to use the Tiny Cloud service, or connect to your own self-hosted instance using a service URL.';
 $string['serverside:service'] = 'Server-side service';

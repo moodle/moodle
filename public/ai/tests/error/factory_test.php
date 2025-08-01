@@ -96,7 +96,7 @@ final class factory_test extends \advanced_testcase {
             'ratelimit case' => [
                 'input' => [
                     'errorcode' => 429,
-                    'errormessage' => 'Too Many Requests',
+                    'errormessage' => 'Too many requests',
                     'errorsource' => 'internal',
                 ],
                 'expectedclass' => ratelimit::class,
@@ -121,7 +121,7 @@ final class factory_test extends \advanced_testcase {
                 'expected' => [
                     'errorcode' => 400,
                     'error' => 'Something went wrong',
-                    'errormessage' => 'There was an error processing your request. Try again later',
+                    'errormessage' => 'There was an error processing your request. Try again later.',
                 ],
             ],
             'case 2: Error 400, DEBUG_ALL, upstream' => [
@@ -133,7 +133,7 @@ final class factory_test extends \advanced_testcase {
                 ],
                 'expected' => [
                     'errorcode' => 400,
-                    'error' => '400: Bad Request',
+                    'error' => '400: Bad request',
                     'errormessage' => 'Malformed request syntax.',
                 ],
             ],
@@ -147,7 +147,7 @@ final class factory_test extends \advanced_testcase {
                 'expected' => [
                     'errorcode' => 401,
                     'error' => 'Something went wrong',
-                    'errormessage' => 'Unable to connect to the AI service. Try again later',
+                    'errormessage' => 'Unable to connect to the AI service. Try again later.',
                 ],
             ],
             'case 4: Error 401, DEBUG_ALL, upstream' => [
@@ -159,7 +159,7 @@ final class factory_test extends \advanced_testcase {
                 ],
                 'expected' => [
                     'errorcode' => 401,
-                    'error' => '401: Unauthorized',
+                    'error' => '401: Unauthorised',
                     'errormessage' => 'Your API key or token was invalid, expired, or revoked.',
                 ],
             ],
@@ -173,7 +173,7 @@ final class factory_test extends \advanced_testcase {
                 'expected' => [
                     'errorcode' => 404,
                     'error' => 'Something went wrong',
-                    'errormessage' => 'The AI service is temporarily unavailable. Try again later',
+                    'errormessage' => 'The AI service is temporarily unavailable. Try again later.',
                 ],
             ],
             'case 6: Error 404, DEBUG_ALL, upstream' => [
@@ -185,7 +185,7 @@ final class factory_test extends \advanced_testcase {
                 ],
                 'expected' => [
                     'errorcode' => 404,
-                    'error' => '404: Not Found',
+                    'error' => '404: Not found',
                     'errormessage' => 'Cannot find the requested resource.',
                 ],
             ],
@@ -199,7 +199,7 @@ final class factory_test extends \advanced_testcase {
                 'expected' => [
                     'errorcode' => 505,
                     'error' => 'Something went wrong',
-                    'errormessage' => 'Try again later',
+                    'errormessage' => 'Try again later.',
                 ],
             ],
             'case 8: Error 505, DEBUG_ALL, upstream' => [
