@@ -69,10 +69,26 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
             "recordings_preview" => 0,
             "grade" => 0,
         ];
-
         $record = (array) $record;
 
         $record['participants'] = json_encode($this->get_participants_from_record($record));
+
+        if (!empty($record['openingtime'])) {
+            if (is_numeric($record['openingtime'])) {
+                $record['openingtime'] = intval($record['openingtime']);
+            } else {
+                // If it is a string, we assume it is a timestamp.
+                $record['openingtime'] = strtotime($record['openingtime']);
+            }
+        }
+        if (!empty($record['closingtime'])) {
+            if (is_numeric($record['closingtime'])) {
+                $record['closingtime'] = intval($record['closingtime']);
+            } else {
+                // If it is a string, we assume it is a timestamp.
+                $record['closingtime'] = strtotime($record['closingtime']);
+            }
+        }
 
         foreach ($defaults as $key => $value) {
             if (!isset($record[$key])) {

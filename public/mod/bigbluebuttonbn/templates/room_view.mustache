@@ -40,25 +40,6 @@
                     <span>{{#userdate}} {{startedat}}, {{#str}} strftimetime, core_langconfig{{/str}} {{/userdate}}.</span>
                     <span class="status-message">{{statusmessage}}</span>
                 </div>
-            {{/statusrunning}}
-            {{^statusrunning}}
-                <div class="status-message">{{statusmessage}}</div>
-            {{/statusrunning}}
-            <div class="conf-opening-time">
-                {{#openingtime}}
-                    <span class="conf-opening">
-                        <span class="fw-bold">{{#str}}mod_form_field_openingtime, bigbluebuttonbn{{/str}}:</span>
-                        {{#userdate}} {{.}}, {{#str}} strftimedaydatetime, langconfig {{/str}} {{/userdate}}
-                  </span>
-                {{/openingtime}}
-                {{#closingtime}}
-                    <div class="conf-closing">
-                        <span class="fw-bold">{{#str}}mod_form_field_closingtime, bigbluebuttonbn{{/str}}:</span>
-                        {{#userdate}} {{.}}, {{#str}} strftimedaydatetime, langconfig {{/str}} {{/userdate}}
-                    </div>
-                {{/closingtime}}
-            </div>
-            {{#statusrunning}}
                 <div>
                         <span class="fw-bold">
                             {{#moderatorplural}}{{#str}}view_message_moderators, mod_bigbluebuttonbn{{/str}}{{/moderatorplural}}
@@ -73,6 +54,9 @@
                         </span>
                     <span>{{participantcount}}</span>
                 </div>
+            {{/statusrunning}}
+            {{^statusrunning}}
+                <div class="status-message">{{statusmessage}}</div>
             {{/statusrunning}}
         </div>
 
