@@ -105,6 +105,7 @@ final class courses_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:coursefullnamewithlink']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:courseshortnamewithlink']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:courseidnumberewithlink']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:url']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:summary']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:format']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:startdate']);
@@ -133,6 +134,7 @@ final class courses_test extends core_reportbuilder_testcase {
             $coursenamewithlink,
             $courseshortnamewithlink,
             $courseidnumberwithlink,
+            $courseurl,
             $coursesummary,
             $courseformat,
             $coursestartdate,
@@ -152,9 +154,11 @@ final class courses_test extends core_reportbuilder_testcase {
         ] = array_values($content[0]);
 
         // Course.
-        $this->assertStringContainsString($course->fullname, $coursenamewithlink);
-        $this->assertStringContainsString($course->shortname, $courseshortnamewithlink);
-        $this->assertStringContainsString($course->idnumber, $courseidnumberwithlink);
+        $expectedcourseurl = (string) course_get_url($course);
+        $this->assertEquals("<a href=\"{$expectedcourseurl}\">{$course->fullname}</a>", $coursenamewithlink);
+        $this->assertEquals("<a href=\"{$expectedcourseurl}\">{$course->shortname}</a>", $courseshortnamewithlink);
+        $this->assertEquals("<a href=\"{$expectedcourseurl}\">{$course->idnumber}</a>", $courseidnumberwithlink);
+        $this->assertEquals($expectedcourseurl, $courseurl);
         $this->assertEquals(format_text($course->summary, $course->summaryformat), $coursesummary);
         $this->assertEquals('Custom sections', $courseformat);
         $this->assertEquals(userdate($course->startdate), $coursestartdate);
