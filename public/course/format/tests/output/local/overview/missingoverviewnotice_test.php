@@ -63,7 +63,7 @@ final class missingoverviewnotice_test extends \advanced_testcase {
     public static function overview_integrations_provider(): array {
         return [
             'assign' => ['modname' => 'assign', 'expectempty' => true],
-            'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'expectempty' => false],
+            'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'expectempty' => true],
             'book' => ['modname' => 'book', 'expectempty' => false],
             'choice' => ['modname' => 'choice', 'expectempty' => true],
             'data' => ['modname' => 'data', 'expectempty' => true],

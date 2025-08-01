@@ -92,7 +92,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'bigbluebuttonbn' => [
                 'resourcetype' => 'bigbluebuttonbn',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_bigbluebuttonbn\courseformat\overview::class,
             ],
             'choice' => [
                 'resourcetype' => 'choice',
@@ -198,7 +198,7 @@ final class overviewfactory_test extends \advanced_testcase {
     public static function activity_has_overview_integration_provider(): array {
         return [
             'assign' => ['modname' => 'assign', 'hasintegration' => true],
-            'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'hasintegration' => false],
+            'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'hasintegration' => true],
             'book' => ['modname' => 'book', 'hasintegration' => false],
             'choice' => ['modname' => 'choice', 'hasintegration' => true],
             'data' => ['modname' => 'data', 'hasintegration' => true],

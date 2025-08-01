@@ -24,36 +24,10 @@
  * @author    Fred Dixon  (ffdixon [at] blindsidenetworks [dt] com)
  */
 
-use core\notification;
-use mod_bigbluebuttonbn\instance;
-use mod_bigbluebuttonbn\output\index;
-use mod_bigbluebuttonbn\plugin;
+require_once("../../config.php");
+global $CFG;
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+// For this type of page this is the course id.
+$courseid = required_param('id', PARAM_INT);
 
-require(__DIR__.'/../../config.php');
-global $PAGE, $OUTPUT;
-$id = required_param('id', PARAM_INT);
-$course = get_course($id);
-require_login($course, true);
-
-$PAGE->set_url('/mod/bigbluebuttonbn/index.php', ['id' => $id]);
-$PAGE->set_title(get_string('modulename', plugin::COMPONENT));
-$PAGE->set_heading($course->fullname);
-$PAGE->set_cacheable(false);
-$PAGE->set_pagelayout('incourse');
-
-$PAGE->navbar->add($PAGE->title, $PAGE->url);
-
-$instances = instance::get_all_instances_in_course($course->id);
-if (empty($instances)) {
-    notification::add(
-        get_string('index_error_noinstances', plugin::COMPONENT),
-        notification::ERROR
-    );
-    redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
-}
-
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('index_heading', plugin::COMPONENT));
-$renderer = $PAGE->get_renderer(plugin::COMPONENT);
-echo $renderer->render(new index($course, $instances));
-echo $OUTPUT->footer();
+\core_courseformat\activityoverviewbase::redirect_to_overview_page($courseid, 'bigbluebuttonbn');
