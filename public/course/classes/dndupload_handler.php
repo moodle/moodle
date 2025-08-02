@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_course;
+
+use core\component;
+use core\context\course as context_course;
+use core\exception\coding_exception;
+use repository;
+use stdClass;
+
 /**
  * Stores all the information about the available dndupload handlers
  *
@@ -63,7 +71,7 @@ class dndupload_handler {
         // Loop through all modules to find handlers.
         $mods = get_plugin_list_with_function('mod', 'dndupload_register');
         foreach ($mods as $component => $funcname) {
-            list($modtype, $modname) = core_component::normalize_component($component);
+            list($modtype, $modname) = component::normalize_component($component);
             if ($modnames && !array_key_exists($modname, $modnames)) {
                 continue; // Module is deactivated (hidden) at the site level.
             }
@@ -301,3 +309,8 @@ class dndupload_handler {
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(dndupload_handler::class, \dndupload_handler::class);

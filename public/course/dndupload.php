@@ -26,7 +26,6 @@
 define('AJAX_SCRIPT', true);
 
 require_once(__DIR__ . '/../config.php');
-require_once($CFG->dirroot.'/course/dnduploadlib.php');
 
 $courseid = required_param('course', PARAM_INT);
 $section = required_param('section', PARAM_INT);
@@ -37,5 +36,5 @@ $contents = optional_param('contents', null, PARAM_RAW); // It will be up to eac
 
 $PAGE->set_url('/course/dndupload.php');
 
-$dndproc = new dndupload_ajax_processor($courseid, $section, $type, $modulename);
+$dndproc = new \core_course\dndupload_ajax_processor($courseid, $section, $type, $modulename);
 $dndproc->process($displayname, $contents);

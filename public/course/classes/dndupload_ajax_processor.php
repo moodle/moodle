@@ -14,6 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_course;
+
+use cm_info;
+use core\context\course as context_course;
+use core\exception\coding_exception;
+use core\exception\moodle_exception;
+use core_text;
+use course_modinfo;
+use navigation_cache;
+use repository;
+use stdClass;
+
 /**
  * Processes the upload, creating the course module and returning the result
  *
@@ -261,7 +273,7 @@ class dndupload_ajax_processor {
 
         $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
 
-        \course_modinfo::purge_course_module_cache($this->course->id, $this->cm->id);
+        course_modinfo::purge_course_module_cache($this->course->id, $this->cm->id);
         // Rebuild the course cache after update action
         rebuild_course_cache($this->course->id, true, true);
 
@@ -314,3 +326,8 @@ class dndupload_ajax_processor {
         die();
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(dndupload_ajax_processor::class, \dndupload_ajax_processor::class);
