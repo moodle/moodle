@@ -92,8 +92,12 @@ final class course_request_test extends \advanced_testcase {
         // Create a user and allow course requests for him.
         $requester = $this->getDataGenerator()->create_user();
         $roleid = create_role('Course requestor role', 'courserequestor', '');
-        assign_capability('moodle/course:request', CAP_ALLOW, $roleid,
-            \context_system::instance()->id);
+        assign_capability(
+            'moodle/course:request',
+            CAP_ALLOW,
+            $roleid,
+            \context_system::instance()->id
+        );
         role_assign($roleid, $requester->id, \context_system::instance()->id);
         accesslib_clear_all_caches_for_unit_testing();
 
@@ -112,7 +116,7 @@ final class course_request_test extends \advanced_testcase {
         $id = $cr->approve();
         $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
-        $course = $DB->get_record('course', array('id' => $id));
+        $course = $DB->get_record('course', ['id' => $id]);
         $this->assertEquals($data->fullname, $course->fullname);
         $this->assertEquals($data->shortname, $course->shortname);
         $this->assertEquals($data->summary_editor['text'], $course->summary);
@@ -132,7 +136,7 @@ final class course_request_test extends \advanced_testcase {
         $id = $cr->approve();
         $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
-        $course = $DB->get_record('course', array('id' => $id));
+        $course = $DB->get_record('course', ['id' => $id]);
         $this->assertEquals($data->category, $course->category);
     }
 
@@ -149,8 +153,12 @@ final class course_request_test extends \advanced_testcase {
         // Create a user and allow course requests for him.
         $requester = $this->getDataGenerator()->create_user();
         $roleid = create_role('Course requestor role', 'courserequestor', '');
-        assign_capability('moodle/course:request', CAP_ALLOW, $roleid,
-            \context_system::instance()->id);
+        assign_capability(
+            'moodle/course:request',
+            CAP_ALLOW,
+            $roleid,
+            \context_system::instance()->id
+        );
         role_assign($roleid, $requester->id, \context_system::instance()->id);
         accesslib_clear_all_caches_for_unit_testing();
 
@@ -163,12 +171,12 @@ final class course_request_test extends \advanced_testcase {
 
         $this->setUser($requester);
         $cr = course_request::create($data);
-        $this->assertTrue($DB->record_exists('course_request', array('id' => $cr->id)));
+        $this->assertTrue($DB->record_exists('course_request', ['id' => $cr->id]));
 
         $this->setAdminUser();
         $sink = $this->redirectMessages();
         $cr->reject('Sorry!');
-        $this->assertFalse($DB->record_exists('course_request', array('id' => $cr->id)));
+        $this->assertFalse($DB->record_exists('course_request', ['id' => $cr->id]));
         $this->assertCount(1, $sink->get_messages());
         $sink->close();
     }
@@ -197,8 +205,12 @@ final class course_request_test extends \advanced_testcase {
 
         // Allow for the 'user' role the capability to request courses.
         $userroleid = $DB->get_field('role', 'id', ['shortname' => 'user']);
-        assign_capability('moodle/course:request', CAP_ALLOW, $userroleid,
-            context_system::instance()->id);
+        assign_capability(
+            'moodle/course:request',
+            CAP_ALLOW,
+            $userroleid,
+            context_system::instance()->id
+        );
         accesslib_clear_all_caches_for_unit_testing();
 
         // Lock category selection.
@@ -219,8 +231,13 @@ final class course_request_test extends \advanced_testcase {
 
         // Remove cap from cat2.
         $roleid = create_role('Test role', 'testrole', 'Test role description');
-        assign_capability('moodle/course:request', CAP_PROHIBIT, $roleid,
-            $context2->id, true);
+        assign_capability(
+            'moodle/course:request',
+            CAP_PROHIBIT,
+            $roleid,
+            $context2->id,
+            true
+        );
         role_assign($roleid, $user->id, $context2->id);
         accesslib_clear_all_caches_for_unit_testing();
 
@@ -262,8 +279,13 @@ final class course_request_test extends \advanced_testcase {
         $this->setUser($user);
         // Add capability to approve courses.
         $roleid = create_role('Test role', 'testrole', 'Test role description');
-        assign_capability('moodle/site:approvecourse', CAP_ALLOW, $roleid,
-            context_system::instance()->id, true);
+        assign_capability(
+            'moodle/site:approvecourse',
+            CAP_ALLOW,
+            $roleid,
+            context_system::instance()->id,
+            true
+        );
         role_assign($roleid, $user->id, context_coursecat::instance($cat2)->id);
         accesslib_clear_all_caches_for_unit_testing();
 

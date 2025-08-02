@@ -30,15 +30,21 @@ require_once("{$CFG->libdir}/formslib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class reject_course_request extends moodleform {
-    function definition() {
+    #[\Override]
+    public function definition() {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'reject', 0);
         $mform->setType('reject', PARAM_INT);
 
-        $mform->addElement('header','coursedetails', get_string('coursereasonforrejecting'));
+        $mform->addElement('header', 'coursedetails', get_string('coursereasonforrejecting'));
 
-        $mform->addElement('textarea', 'rejectnotice', get_string('coursereasonforrejectingemail'), array('rows'=>'15', 'cols'=>'50'));
+        $mform->addElement(
+            'textarea',
+            'rejectnotice',
+            get_string('coursereasonforrejectingemail'),
+            ['rows' => '15', 'cols' => '50'],
+        );
         $mform->addRule('rejectnotice', get_string('missingreqreason'), 'required', null, 'client');
         $mform->setType('rejectnotice', PARAM_TEXT);
 

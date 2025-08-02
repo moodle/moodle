@@ -27,21 +27,20 @@ use stdClass;
  *
  * @package    core
  * @copyright  2012 Davo Smith
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dndupload_handler {
-
     /**
      * @var array A list of all registered mime types that can be dropped onto a course
      *            along with the modules that will handle them.
      */
-    protected $types = array();
+    protected $types = [];
 
     /**
      * @var array  A list of the different file types (extensions) that different modules
      *             will handle.
      */
-    protected $filehandlers = array();
+    protected $filehandlers = [];
 
     /**
      * @var context_course|null
@@ -52,6 +51,7 @@ class dndupload_handler {
      * Gather a list of dndupload handlers from the different mods
      *
      * @param object $course The course this is being added to (to check course_allowed_module() )
+     * @param array|null $modnames An array of module names that are allowed in this course.
      */
     public function __construct($course, $modnames = null) {
         global $CFG, $PAGE;
@@ -59,19 +59,37 @@ class dndupload_handler {
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
-        $this->register_type('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
-                        get_string('nameforlink', 'moodle'), get_string('whatforlink', 'moodle'), 10);
-        $this->register_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
-                        get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 20);
-        $this->register_type('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
-                        get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 30);
+        $this->register_type(
+            identifier: 'url',
+            datatransfertypes: ['url', 'text/uri-list', 'text/x-moz-url'],
+            addmessage: get_string('addlinkhere', 'moodle'),
+            namemessage: get_string('nameforlink', 'moodle'),
+            handlermessage: get_string('whatforlink', 'moodle'),
+            priority: 10,
+        );
+        $this->register_type(
+            identifier: 'text/html',
+            datatransfertypes: ['text/html'],
+            addmessage: get_string('addpagehere', 'moodle'),
+            namemessage: get_string('nameforpage', 'moodle'),
+            handlermessage: get_string('whatforpage', 'moodle'),
+            priority: 20,
+        );
+        $this->register_type(
+            identifier: 'text',
+            datatransfertypes: ['text', 'text/plain'],
+            addmessage: get_string('addpagehere', 'moodle'),
+            namemessage: get_string('nameforpage', 'moodle'),
+            handlermessage: get_string('whatforpage', 'moodle'),
+            priority: 30,
+        );
 
         $this->context = context_course::instance($course->id);
 
         // Loop through all modules to find handlers.
         $mods = get_plugin_list_with_function('mod', 'dndupload_register');
         foreach ($mods as $component => $funcname) {
-            list($modtype, $modname) = component::normalize_component($component);
+            [$modtype, $modname] = component::normalize_component($component);
             if ($modnames && !array_key_exists($modname, $modnames)) {
                 continue; // Module is deactivated (hidden) at the site level.
             }
@@ -97,8 +115,14 @@ class dndupload_handler {
                     if (!isset($type['handlermessage'])) {
                         $type['handlermessage'] = '';
                     }
-                    $this->register_type($type['identifier'], $type['datatransfertypes'],
-                                    $type['addmessage'], $type['namemessage'], $type['handlermessage'], $priority);
+                    $this->register_type(
+                        identifier: $type['identifier'],
+                        datatransfertypes: $type['datatransfertypes'],
+                        addmessage: $type['addmessage'],
+                        namemessage: $type['namemessage'],
+                        handlermessage: $type['handlermessage'],
+                        priority: $priority,
+                    );
                 }
             }
             if (isset($resp['types'])) {
@@ -126,19 +150,20 @@ class dndupload_handler {
      * @param int $priority Controls the order in which types are checked by the browser (mainly
      *                      needed to check for 'text' last as that is usually given as fallback)
      */
-    protected function register_type($identifier, $datatransfertypes, $addmessage, $namemessage, $handlermessage, $priority=100) {
+    protected function register_type($identifier, $datatransfertypes, $addmessage, $namemessage, $handlermessage, $priority = 100) {
         if ($this->is_known_type($identifier)) {
             throw new coding_exception("Type $identifier is already registered");
         }
 
-        $add = new stdClass;
-        $add->identifier = $identifier;
-        $add->datatransfertypes = $datatransfertypes;
-        $add->addmessage = $addmessage;
-        $add->namemessage = $namemessage;
-        $add->handlermessage = $handlermessage;
-        $add->priority = $priority;
-        $add->handlers = array();
+        $add = (object) [
+            'identifier' => $identifier,
+            'datatransfertypes' => $datatransfertypes,
+            'addmessage' => $addmessage,
+            'namemessage' => $namemessage,
+            'handlermessage' => $handlermessage,
+            'priority' => $priority,
+            'handlers' => [],
+        ];
 
         $this->types[$identifier] = $add;
     }
@@ -159,11 +184,12 @@ class dndupload_handler {
             throw new coding_exception("Trying to add handler for unknown type $type");
         }
 
-        $add = new stdClass;
-        $add->type = $type;
-        $add->module = $module;
-        $add->message = $message;
-        $add->noname = $noname ? 1 : 0;
+        $add = (object) [
+            'type' => $type,
+            'module' => $module,
+            'message' => $message,
+            'noname' => $noname ? 1 : 0,
+        ];
 
         $this->types[$type]->handlers[] = $add;
     }
@@ -180,10 +206,11 @@ class dndupload_handler {
     protected function register_file_handler($extension, $module, $message) {
         $extension = strtolower($extension);
 
-        $add = new stdClass;
-        $add->extension = $extension;
-        $add->module = $module;
-        $add->message = $message;
+        $add = (object) [
+            'extension' => $extension,
+            'module' => $module,
+            'message' => $message,
+        ];
 
         $this->filehandlers[] = $add;
     }
@@ -245,14 +272,14 @@ class dndupload_handler {
      * @return array of file extensions or string '*'
      */
     public function get_handled_file_types($module) {
-        $types = array();
+        $types = [];
         foreach ($this->filehandlers as $handler) {
             if ($handler->module == $module) {
                 if ($handler->extension == '*') {
                     return '*';
                 } else {
                     // Prepending '.' as otherwise mimeinfo fails.
-                    $types[] = '.'.$handler->extension;
+                    $types[] = '.' . $handler->extension;
                 }
             }
         }
@@ -268,12 +295,12 @@ class dndupload_handler {
     public function get_js_data() {
         global $CFG;
 
-        $ret = new stdClass;
+        $ret = new stdClass();
 
         // Sort the types by priority.
-        uasort($this->types, array($this, 'type_compare'));
+        uasort($this->types, [$this, 'type_compare']);
 
-        $ret->types = array();
+        $ret->types = [];
         if (!empty($CFG->dndallowtextandlinks)) {
             foreach ($this->types as $type) {
                 if (empty($type->handlers)) {
@@ -284,9 +311,9 @@ class dndupload_handler {
         }
 
         $ret->filehandlers = $this->filehandlers;
-        $uploadrepo = repository::get_instances(array('type' => 'upload', 'currentcontext' => $this->context));
+        $uploadrepo = repository::get_instances(['type' => 'upload', 'currentcontext' => $this->context]);
         if (empty($uploadrepo)) {
-            $ret->filehandlers = array(); // No upload repo => no file handlers.
+            $ret->filehandlers = []; // No upload repo => no file handlers.
         }
 
         return $ret;
@@ -307,7 +334,6 @@ class dndupload_handler {
         }
         return 0;
     }
-
 }
 
 // Alias this class to the old name.

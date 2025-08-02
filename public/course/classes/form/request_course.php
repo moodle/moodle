@@ -33,14 +33,14 @@ require_once("{$CFG->libdir}/formslib.php");
  */
 class request_course extends moodleform {
     #[\Override]
-    function definition() {
+    public function definition() {
         global $CFG, $DB, $USER;
 
         $mform =& $this->_form;
 
-        if ($pending = $DB->get_records('course_request', array('requester' => $USER->id))) {
+        if ($pending = $DB->get_records('course_request', ['requester' => $USER->id])) {
             $mform->addElement('header', 'pendinglist', get_string('coursespending'));
-            $list = array();
+            $list = [];
             foreach ($pending as $cp) {
                 $list[] = format_string($cp->fullname);
             }
@@ -48,16 +48,24 @@ class request_course extends moodleform {
             $mform->addElement('static', 'pendingcourses', get_string('courses'), $list);
         }
 
-        $mform->addElement('header','coursedetails', get_string('courserequestdetails'));
+        $mform->addElement('header', 'coursedetails', get_string('courserequestdetails'));
 
-        $mform->addElement('text', 'fullname', get_string('fullnamecourse'),
-            ['maxlength' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH, 'size' => 50]);
+        $mform->addElement(
+            'text',
+            'fullname',
+            get_string('fullnamecourse'),
+            ['maxlength' => \core_course\constants::FULLNAME_MAXIMUM_LENGTH, 'size' => 50],
+        );
         $mform->addHelpButton('fullname', 'fullnamecourse');
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_TEXT);
 
-        $mform->addElement('text', 'shortname', get_string('shortnamecourse'),
-            ['maxlength' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH, 'size' => 20]);
+        $mform->addElement(
+            'text',
+            'shortname',
+            get_string('shortnamecourse'),
+            ['maxlength' => \core_course\constants::SHORTNAME_MAXIMUM_LENGTH, 'size' => 20],
+        );
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
@@ -70,20 +78,32 @@ class request_course extends moodleform {
             $mform->addHelpButton('category', 'coursecategory');
         }
 
-        $mform->addElement('editor', 'summary_editor', get_string('summary'), null, course_request::summary_editor_options());
+        $mform->addElement(
+            'editor',
+            'summary_editor',
+            get_string('summary'),
+            null,
+            course_request::summary_editor_options(),
+        );
         $mform->addHelpButton('summary_editor', 'coursesummary');
         $mform->setType('summary_editor', PARAM_RAW);
 
-        $mform->addElement('header','requestreason', get_string('courserequestreason'));
+        $mform->addElement('header', 'requestreason', get_string('courserequestreason'));
 
-        $mform->addElement('textarea', 'reason', get_string('courserequestsupport'), array('rows'=>'15', 'cols'=>'50'));
+        $mform->addElement(
+            'textarea',
+            'reason',
+            get_string('courserequestsupport'),
+            ['rows' => '15', 'cols' => '50'],
+        );
         $mform->addRule('reason', get_string('missingreqreason'), 'required', null, 'client');
         $mform->setType('reason', PARAM_TEXT);
 
         $this->add_action_buttons(true, get_string('requestcourse'));
     }
 
-    function validation($data, $files) {
+    #[\Override]
+    public function validation($data, $files) {
         global $DB;
 
         $errors = parent::validation($data, $files);
@@ -91,8 +111,8 @@ class request_course extends moodleform {
         $foundreqcourses = null;
 
         if (!empty($data['shortname'])) {
-            $foundcourses = $DB->get_records('course', array('shortname'=>$data['shortname']));
-            $foundreqcourses = $DB->get_records('course_request', array('shortname'=>$data['shortname']));
+            $foundcourses = $DB->get_records('course', ['shortname' => $data['shortname']]);
+            $foundreqcourses = $DB->get_records('course_request', ['shortname' => $data['shortname']]);
         }
         if (!empty($foundreqcourses)) {
             if (!empty($foundcourses)) {
@@ -106,7 +126,7 @@ class request_course extends moodleform {
             foreach ($foundcourses as $foundcourse) {
                 if (!empty($foundcourse->requester)) {
                     $pending = 1;
-                    $foundcoursenames[] = $foundcourse->fullname.' [*]';
+                    $foundcoursenames[] = $foundcourse->fullname . ' [*]';
                 } else {
                     $foundcoursenames[] = $foundcourse->fullname;
                 }

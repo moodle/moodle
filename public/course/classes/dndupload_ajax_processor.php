@@ -34,9 +34,8 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dndupload_ajax_processor {
-
     /** Returned when no error has occurred */
-    const ERROR_OK = 0;
+    public const ERROR_OK = 0;
 
     /** @var object The course that we are uploading to */
     protected $course = null;
@@ -51,7 +50,7 @@ class dndupload_ajax_processor {
     protected $type = null;
 
     /** @var object The details of the module type that will be created */
-    protected $module= null;
+    protected $module = null;
 
     /** @var object The course module that has been created */
     protected $cm = null;
@@ -77,7 +76,7 @@ class dndupload_ajax_processor {
             throw new coding_exception('dndupload_ajax_processor should only be used within AJAX requests');
         }
 
-        $this->course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        $this->course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
         require_login($this->course, false);
         $this->context = context_course::instance($this->course->id);
@@ -88,7 +87,7 @@ class dndupload_ajax_processor {
         $this->section = $section;
         $this->type = $type;
 
-        if (!$this->module = $DB->get_record('modules', array('name' => $modulename))) {
+        if (!$this->module = $DB->get_record('modules', ['name' => $modulename])) {
             throw new coding_exception("Module $modulename does not exist");
         }
 
@@ -146,7 +145,7 @@ class dndupload_ajax_processor {
         $draftitemid = file_get_unused_draft_itemid();
         $maxbytes = get_user_max_upload_file_size($this->context, $CFG->maxbytes, $this->course->maxbytes);
         $types = $this->dnduploadhandler->get_handled_file_types($this->module->name);
-        $repo = repository::get_instances(array('type' => 'upload', 'currentcontext' => $this->context));
+        $repo = repository::get_instances(['type' => 'upload', 'currentcontext' => $this->context]);
         if (empty($repo)) {
             throw new moodle_exception('errornouploadrepo', 'moodle');
         }
@@ -163,9 +162,13 @@ class dndupload_ajax_processor {
 
         // Ask the module to set itself up.
         $moduledata = $this->prepare_module_data($draftitemid);
-        $instanceid = plugin_callback('mod', $this->module->name, 'dndupload', 'handle', array($moduledata), 'invalidfunction');
+        $instanceid = plugin_callback('mod', $this->module->name, 'dndupload', 'handle', [$moduledata], 'invalidfunction');
         if ($instanceid === 'invalidfunction') {
-            throw new coding_exception("{$this->module->name} does not support drag and drop upload (missing {$this->module->name}_dndupload_handle function");
+            throw new coding_exception(sprintf(
+                "%s does not support drag and drop upload (missing %s_dndupload_handle function",
+                $this->module->name,
+                $this->module->name,
+            ));
         }
 
         // Finish setting up the course module.
@@ -179,9 +182,9 @@ class dndupload_ajax_processor {
      * @param string $content the content uploaded to the browser
      */
     protected function handle_other_upload($content) {
-        // Check this plugin is registered to handle this type of upload
+        // Check this plugin is registered to handle this type of upload.
         if (!$this->dnduploadhandler->has_type_handler($this->module->name, $this->type)) {
-            $info = (object)array('modname' => $this->module->name, 'type' => $this->type);
+            $info = (object)['modname' => $this->module->name, 'type' => $this->type];
             throw new moodle_exception('moddoesnotsupporttype', 'moodle', $info);
         }
 
@@ -190,9 +193,13 @@ class dndupload_ajax_processor {
 
         // Ask the module to set itself up.
         $moduledata = $this->prepare_module_data(null, $content);
-        $instanceid = plugin_callback('mod', $this->module->name, 'dndupload', 'handle', array($moduledata), 'invalidfunction');
+        $instanceid = plugin_callback('mod', $this->module->name, 'dndupload', 'handle', [$moduledata], 'invalidfunction');
         if ($instanceid === 'invalidfunction') {
-            throw new coding_exception("{$this->module->name} does not support drag and drop upload (missing {$this->module->name}_dndupload_handle function");
+            throw new coding_exception(sprintf(
+                "%s does not support drag and drop upload (missing %s_dndupload_handle function",
+                $this->module->name,
+                $this->module->name,
+            ));
         }
 
         // Finish setting up the course module.
@@ -219,8 +226,8 @@ class dndupload_ajax_processor {
      */
     protected function create_course_module() {
         global $CFG;
-        require_once($CFG->dirroot.'/course/modlib.php');
-        list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($this->course, $this->module->name, $this->section);
+        require_once($CFG->dirroot . '/course/modlib.php');
+        [$module, $context, $cw, $cm, $data] = prepare_new_moduleinfo_data($this->course, $this->module->name, $this->section);
 
         $data->coursemodule = $data->id = add_course_module($data);
         $this->cm = $data;
@@ -268,23 +275,23 @@ class dndupload_ajax_processor {
             throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
 
-        // Note the section visibility
+        // Note the section visibility.
         $visible = get_fast_modinfo($this->course)->get_section_info($this->section)->visible;
 
-        $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
+        $DB->set_field('course_modules', 'instance', $instanceid, ['id' => $this->cm->id]);
 
         course_modinfo::purge_course_module_cache($this->course->id, $this->cm->id);
-        // Rebuild the course cache after update action
+        // Rebuild the course cache after update action.
         rebuild_course_cache($this->course->id, true, true);
 
         $sectionid = course_add_cm_to_section($this->course, $this->cm->id, $this->section, modname: $this->module->name);
 
         set_coursemodule_visible($this->cm->id, $visible);
         if (!$visible) {
-            $DB->set_field('course_modules', 'visibleold', 1, array('id' => $this->cm->id));
+            $DB->set_field('course_modules', 'visibleold', 1, ['id' => $this->cm->id]);
         }
 
-        // retrieve the final info about this module.
+        // Retrieve the final info about this module.
         $info = get_fast_modinfo($this->course);
         if (!isset($info->cms[$this->cm->id])) {
             // The course module has not been properly created in the course - undo everything.

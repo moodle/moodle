@@ -33,6 +33,7 @@ use stdClass;
  * Please note we do not allow embedded images here because there is no context
  * to store them with proper access control.
  *
+ * @package   core_course
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
@@ -47,7 +48,6 @@ use stdClass;
  * @property-read int $requester
  */
 class course_request {
-
     /**
      * This is the stdClass that stores the properties for the course request
      * and is externally accessed through the __get magic method
@@ -57,26 +57,24 @@ class course_request {
 
     /**
      * An array of options for the summary editor used by course request forms.
-     * This is initially set by {@link summary_editor_options()}
+     *
+     * This is initially set by {@see summary_editor_options()}
      * @var array
-     * @static
      */
     protected static $summaryeditoroptions;
 
     /**
-     * Static function to prepare the summary editor for working with a course
-     * request.
+     * Static function to prepare the summary editor for working with a course request.
      *
-     * @static
      * @param null|stdClass $data Optional, an object containing the default values
      *                       for the form, these may be modified when preparing the
      *                       editor so this should be called before creating the form
      * @return stdClass An object that can be used to set the default values for
      *                   an mforms form
      */
-    public static function prepare($data=null) {
+    public static function prepare($data = null) {
         if ($data === null) {
-            $data = new stdClass;
+            $data = new stdClass();
         }
         $data = file_prepare_standard_editor($data, 'summary', self::summary_editor_options());
         return $data;
@@ -88,7 +86,6 @@ class course_request {
      *
      * This function also handles saving any files that may have been used in the editor
      *
-     * @static
      * @param stdClass $data
      * @return course_request The newly created course request
      */
@@ -101,19 +98,18 @@ class course_request {
             $data->category = $CFG->defaultrequestcategory;
         }
 
-        // Summary is a required field so copy the text over
+        // Summary is a required field so copy the text over.
         $data->summary       = $data->summary_editor['text'];
         $data->summaryformat = $data->summary_editor['format'];
 
         $data->id = $DB->insert_record('course_request', $data);
 
-        // Create a new course_request object and return it
+        // Create a new course_request object and return it.
         $request = new course_request($data);
 
         // Notify the admin if required.
         if ($users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse')) {
-
-            $a = new stdClass;
+            $a = new stdClass();
             $a->link = "$CFG->wwwroot/course/pending.php";
             $a->user = fullname($USER);
             $a->shortname = s($data->shortname) ?? '';
@@ -139,7 +135,7 @@ class course_request {
     public static function summary_editor_options() {
         global $CFG;
         if (self::$summaryeditoroptions === null) {
-            self::$summaryeditoroptions = array('maxfiles' => 0, 'maxbytes'=>0);
+            self::$summaryeditoroptions = ['maxfiles' => 0, 'maxbytes' => 0];
         }
         return self::$summaryeditoroptions;
     }
@@ -158,12 +154,12 @@ class course_request {
                 throw new coding_exception('You must provide a course request id when creating a course_request object');
             }
             $id = $properties;
-            $properties = new stdClass;
+            $properties = new stdClass();
             $properties->id = (int)$id;
             unset($id);
         }
         if (empty($properties->requester)) {
-            if (!($this->properties = $DB->get_record('course_request', array('id' => $properties->id)))) {
+            if (!($this->properties = $DB->get_record('course_request', ['id' => $properties->id]))) {
                 throw new moodle_exception('unknowncourserequest');
             }
         } else {
@@ -195,18 +191,17 @@ class course_request {
     }
 
     /**
-     * Returns the user who requested this course
+     * Returns the user who requested this course.
      *
      * Uses a static var to cache the results and cut down the number of db queries
      *
-     * @staticvar array $requesters An array of cached users
      * @return stdClass The user who requested the course
      */
     public function get_requester() {
         global $DB;
-        static $requesters= array();
+        static $requesters = [];
         if (!array_key_exists($this->properties->requester, $requesters)) {
-            $requesters[$this->properties->requester] = $DB->get_record('user', array('id'=>$this->properties->requester));
+            $requesters[$this->properties->requester] = $DB->get_record('user', ['id' => $this->properties->requester]);
         }
         return $requesters[$this->properties->requester];
     }
@@ -229,9 +224,9 @@ class course_request {
         if (empty($this->properties->shortname)) {
             debugging('Attempting to check a course request shortname before it has been set', DEBUG_DEVELOPER);
             $this->properties->collision = false;
-        } else if ($DB->record_exists('course', array('shortname' => $this->properties->shortname))) {
+        } else if ($DB->record_exists('course', ['shortname' => $this->properties->shortname])) {
             if (!empty($shortnamemark)) {
-                $this->properties->shortname .= ' '.$shortnamemark;
+                $this->properties->shortname .= ' ' . $shortnamemark;
             }
             $this->properties->collision = true;
         } else {
@@ -276,10 +271,15 @@ class course_request {
      */
     public function get_category() {
         global $CFG;
-        if ($this->properties->category && ($category = core_course_category::get($this->properties->category, IGNORE_MISSING))) {
+        if (
+            $this->properties->category
+            && ($category = core_course_category::get($this->properties->category, IGNORE_MISSING))
+        ) {
             return $category;
-        } else if ($CFG->defaultrequestcategory &&
-                ($category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING))) {
+        } else if (
+            $CFG->defaultrequestcategory
+            && ($category = core_course_category::get($CFG->defaultrequestcategory, IGNORE_MISSING))
+        ) {
             return $category;
         } else {
             return core_course_category::get_default();
@@ -300,23 +300,24 @@ class course_request {
 
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
-        $user = $DB->get_record('user', array('id' => $this->properties->requester, 'deleted'=>0), '*', MUST_EXIST);
+        $user = $DB->get_record('user', ['id' => $this->properties->requester, 'deleted' => 0], '*', MUST_EXIST);
 
         $courseconfig = get_config('moodlecourse');
 
-        // Transfer appropriate settings
+        // Transfer appropriate settings.
         $data = clone($this->properties);
         unset($data->id);
         unset($data->reason);
         unset($data->requester);
 
-        // Set category
+        // Set category.
         $category = $this->get_category();
         $data->category = $category->id;
-        // Set misc settings
+
+        // Set misc settings.
         $data->requested = 1;
 
-        // Apply course default settings
+        // Apply course default settings.
         $data->format             = $courseconfig->format;
         $data->newsitems          = $courseconfig->newsitems;
         $data->showgrades         = $courseconfig->showgrades;
@@ -334,20 +335,24 @@ class course_request {
             $data->enddate        = usergetmidnight(time()) + $courseconfig->courseduration;
         }
 
-        list($data->fullname, $data->shortname) = restore_dbops::calculate_course_names(0, $data->fullname, $data->shortname);
+        [$data->fullname, $data->shortname] = restore_dbops::calculate_course_names(0, $data->fullname, $data->shortname);
 
         $course = create_course($data);
         $context = context_course::instance($course->id, MUST_EXIST);
 
-        // add enrol instances
-        if (!$DB->record_exists('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'))) {
+        // Add enrol instances.
+        if (!$DB->record_exists('enrol', ['courseid' => $course->id, 'enrol' => 'manual'])) {
             if ($manual = enrol_get_plugin('manual')) {
                 $manual->add_default_instance($course);
             }
         }
 
-        // enrol the requester as teacher if necessary
-        if (!empty($CFG->creatornewroleid) and !is_viewing($context, $user, 'moodle/role:assign') and !is_enrolled($context, $user, 'moodle/role:assign')) {
+        // Enrol the requester as teacher if necessary.
+        if (
+            !empty($CFG->creatornewroleid)
+            && !is_viewing($context, $user, 'moodle/role:assign')
+            && !is_enrolled($context, $user, 'moodle/role:assign')
+        ) {
             enrol_try_internal_enrol($course->id, $user->id, $CFG->creatornewroleid);
         }
 
@@ -362,7 +367,14 @@ class course_request {
             $a->{$field} = $value;
         }
 
-        $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a), $course->id);
+        $this->notify(
+            touser: $user,
+            fromuser: $USER,
+            name: 'courserequestapproved',
+            subject: get_string('courseapprovedsubject'),
+            message: get_string('courseapprovedemail2', 'moodle', $a),
+            courseid: $course->id,
+        );
 
         return $course->id;
     }
@@ -377,8 +389,14 @@ class course_request {
      */
     public function reject($notice) {
         global $USER, $DB;
-        $user = $DB->get_record('user', array('id' => $this->properties->requester), '*', MUST_EXIST);
-        $this->notify($user, $USER, 'courserequestrejected', get_string('courserejectsubject'), get_string('courserejectemail', 'moodle', $notice));
+        $user = $DB->get_record('user', ['id' => $this->properties->requester], '*', MUST_EXIST);
+        $this->notify(
+            touser: $user,
+            fromuser: $USER,
+            name: 'courserequestrejected',
+            subject: get_string('courserejectsubject'),
+            message: get_string('courserejectemail', 'moodle', $notice),
+        );
         $this->delete();
     }
 
@@ -387,7 +405,7 @@ class course_request {
      */
     public function delete() {
         global $DB;
-        $DB->delete_records('course_request', array('id' => $this->properties->id));
+        $DB->delete_records('course_request', ['id' => $this->properties->id]);
     }
 
     /**
@@ -433,8 +451,7 @@ class course_request {
 
         if ($context instanceof context_system) {
             $defaultcontext = context_coursecat::instance($CFG->defaultrequestcategory, IGNORE_MISSING);
-            return $defaultcontext &&
-                has_capability('moodle/course:request', $defaultcontext);
+            return $defaultcontext && has_capability('moodle/course:request', $defaultcontext);
         } else if ($context instanceof context_coursecat) {
             if (!$CFG->lockrequestcategory || $CFG->defaultrequestcategory == $context->instanceid) {
                 return has_capability('moodle/course:request', $context);
