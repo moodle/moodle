@@ -30,6 +30,13 @@
  * @package course
  */
 
+use core\context\course as context_course;
+use core\context\system as context_system;
+use core\exception\moodle_exception;
+use core\url;
+use core\output\html_writer;
+use core_course\form\reject_course_request as reject_course_request_form;
+
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/course/lib.php');
@@ -76,7 +83,7 @@ if (!empty($reject)) {
     $course = new course_request($reject);
 
     // Prepare the form.
-    $rejectform = new reject_request_form($baseurl);
+    $rejectform = new reject_course_request_form($baseurl);
     $default = new stdClass();
     $default->reject = $course->id;
     $rejectform->set_data($default);

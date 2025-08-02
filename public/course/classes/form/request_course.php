@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_course\form;
+
+use core_course\course_request;
+use core_course_category;
 use moodleform;
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,7 +31,8 @@ require_once("{$CFG->libdir}/formslib.php");
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_request_form extends moodleform {
+class request_course extends moodleform {
+    #[\Override]
     function definition() {
         global $CFG, $DB, $USER;
 

@@ -24,6 +24,7 @@
  */
 
 use core_course\course_request;
+use core_course\form\request_course as request_course_form;
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
@@ -67,7 +68,7 @@ require_capability('moodle/course:request', $context);
 // Set up the form.
 $data = $categoryid ? (object)['category' => $categoryid] : null;
 $data = course_request::prepare($data);
-$requestform = new course_request_form($url);
+$requestform = new request_course_form($url);
 $requestform->set_data($data);
 
 $strtitle = get_string('courserequest');
