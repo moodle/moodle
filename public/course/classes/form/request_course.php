@@ -1,46 +1,31 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+use moodleform;
 
-/**
- * Forms associated with requesting courses, and having requests approved.
- * Note that several related forms are defined in this one file.
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package course
- */
+defined('MOODLE_INTERNAL') || die();
 
-use core_course\course_request;
-
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
-
-require_once($CFG->libdir.'/formslib.php');
+require_once("{$CFG->libdir}/formslib.php");
 
 /**
  * A form for a user to request a course.
+ *
+ * @package    core_course
+ * @copyright  Andrew Lyons <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_request_form extends moodleform {
     function definition() {
@@ -132,24 +117,3 @@ class course_request_form extends moodleform {
         return $errors;
     }
 }
-
-/**
- * A form for an administrator to reject a course request.
- */
-class reject_request_form extends moodleform {
-    function definition() {
-        $mform =& $this->_form;
-
-        $mform->addElement('hidden', 'reject', 0);
-        $mform->setType('reject', PARAM_INT);
-
-        $mform->addElement('header','coursedetails', get_string('coursereasonforrejecting'));
-
-        $mform->addElement('textarea', 'rejectnotice', get_string('coursereasonforrejectingemail'), array('rows'=>'15', 'cols'=>'50'));
-        $mform->addRule('rejectnotice', get_string('missingreqreason'), 'required', null, 'client');
-        $mform->setType('rejectnotice', PARAM_TEXT);
-
-        $this->add_action_buttons(true, get_string('reject'));
-    }
-}
-

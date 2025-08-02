@@ -27,7 +27,6 @@ use core_course\course_request;
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
-require_once($CFG->dirroot . '/course/request_form.php');
 
 // Where we came from. Used in a number of redirects.
 $url = new moodle_url('/course/request.php');
