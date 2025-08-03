@@ -13,6 +13,14 @@ $PAGE->set_heading(get_string('pluginname', 'tool_bruteforce'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('activeblocks', 'tool_bruteforce'));
 
+echo html_writer::div(
+    html_writer::link(new moodle_url('/admin/tool/bruteforce/lists.php', ['list' => 'white']),
+        get_string('whitelist', 'tool_bruteforce')) . ' | ' .
+    html_writer::link(new moodle_url('/admin/tool/bruteforce/lists.php', ['list' => 'black']),
+        get_string('blacklist', 'tool_bruteforce')),
+    'mb-3'
+);
+
 $blocks = $DB->get_records('tool_bruteforce_block');
 
 if (empty($blocks)) {
