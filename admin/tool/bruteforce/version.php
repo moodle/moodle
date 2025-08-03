@@ -4,7 +4,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_bruteforce';
-$plugin->version   = 2025031200; // YYYYMMDDXX
+$plugin->version   = 2025031500; // YYYYMMDDXX
 $plugin->requires  = 2024100700; // Requires Moodle 4.5 or later.
 $plugin->maturity  = MATURITY_ALPHA;
 $plugin->release   = '0.1';

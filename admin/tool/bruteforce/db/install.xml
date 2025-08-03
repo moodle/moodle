@@ -41,6 +41,7 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="listuniq" TYPE="unique" FIELDS="listtype,type,value"/>
             </KEYS>
         </TABLE>
         <TABLE NAME="tool_bruteforce_audit" COMMENT="Administrative actions">
