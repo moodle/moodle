@@ -1,11 +1,16 @@
 <?php
 // English language strings for tool_bruteforce.
+
 $string['pluginname'] = 'Brute force protection';
 $string['activeblocks'] = 'Active blocks';
 $string['noblocks'] = 'There are no active blocks.';
 $string['type'] = 'Type';
 $string['value'] = 'Value';
 $string['timerelease'] = 'Release time';
+$string['comment'] = 'Comment';
+$string['addedby'] = 'Added by';
+$string['timecreated'] = 'Time created';
+$string['actions'] = 'Actions';
 $string['usersettings'] = 'User protection';
 $string['enableuserlock'] = 'Enable user blocking';
 $string['userfailthreshold'] = 'User fail threshold';
@@ -25,3 +30,11 @@ $string['notifyemail'] = 'Notification email';
 $string['taskpurge'] = 'Purge expired brute force blocks';
 $string['cli_listblocks_header'] = 'Type | Value | Release time';
 $string['cli_no_blocks'] = 'No active blocks.';
+$string['whitelist'] = 'Whitelist';
+$string['blacklist'] = 'Blacklist';
+$string['addentry'] = 'Add entry';
+$string['nolistentries'] = 'No entries found.';
+$string['invalidip'] = 'Invalid IP address';
+$string['invaliduserid'] = 'Invalid user ID';
+$string['cli_importcount'] = '{$a} entries imported';
+$string['cli_exportcount'] = '{$a} entries exported';

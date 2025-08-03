@@ -30,4 +30,10 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configtext('tool_bruteforce/notifyemail', get_string('notifyemail', 'tool_bruteforce'), '', '', PARAM_EMAIL));
 
     $ADMIN->add('tools', $settings);
+
+    // External pages for managing white and black lists.
+    $ADMIN->add('tools', new admin_externalpage('tool_bruteforce_whitelist', get_string('whitelist', 'tool_bruteforce'),
+        new moodle_url('/admin/tool/bruteforce/lists.php', ['list' => 'white']), 'tool/bruteforce:manage'));
+    $ADMIN->add('tools', new admin_externalpage('tool_bruteforce_blacklist', get_string('blacklist', 'tool_bruteforce'),
+        new moodle_url('/admin/tool/bruteforce/lists.php', ['list' => 'black']), 'tool/bruteforce:manage'));
 }

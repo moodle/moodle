@@ -74,4 +74,54 @@ class api {
             ['listtype' => 'black', 'type' => $type, 'value' => $value]
         );
     }
+
+    /**
+     * Add an entry to white/black list if it does not already exist.
+     *
+     * @param string $listtype 'white' or 'black'
+     * @param string $type 'user' or 'ip'
+     * @param string $value Value to store
+     * @param string|null $comment Optional note
+     * @param int|null $userid User performing the action
+     * @return int New record id or existing id
+     */
+    public static function add_list_entry(string $listtype, string $type, string $value,
+            ?string $comment = null, ?int $userid = null): int {
+        global $DB;
+        if ($existing = $DB->get_record('tool_bruteforce_list',
+                ['listtype' => $listtype, 'type' => $type, 'value' => $value], 'id')) {
+            return (int)$existing->id;
+        }
+        $record = (object) [
+            'listtype' => $listtype,
+            'type' => $type,
+            'value' => $value,
+            'comment' => $comment,
+            'userid' => $userid,
+            'timecreated' => time(),
+        ];
+        return (int) $DB->insert_record('tool_bruteforce_list', $record);
+    }
+
+    /**
+     * Remove a list entry by id.
+     *
+     * @param int $id
+     * @return void
+     */
+    public static function remove_list_entry(int $id): void {
+        global $DB;
+        $DB->delete_records('tool_bruteforce_list', ['id' => $id]);
+    }
+
+    /**
+     * Retrieve entries for a given list type.
+     *
+     * @param string $listtype 'white' or 'black'
+     * @return array
+     */
+    public static function get_list_entries(string $listtype): array {
+        global $DB;
+        return $DB->get_records('tool_bruteforce_list', ['listtype' => $listtype], 'timecreated DESC');
+    }
 }

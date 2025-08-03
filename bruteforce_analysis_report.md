@@ -5,6 +5,7 @@
 - No se encontró `config.php`; se asume configuración por defecto.
 
 ## Plugins instalados
+- **Autenticación**: `cas`, `db`, `email`, `ldap`, `manual`, `nologin`, `oauth2`, `shibboleth`, `webservice`, entre otros.
 - **Autenticación**: cas, db, email, ldap, lti, manual, mnet, nologin, none, oauth2, shibboleth, webservice.
 - **Inscripción**: category, cohort, database, fee (tercero), flatfile, guest, imsenterprise, ldap, lti, manual, meta, mnet, paypal, self.
 - **Módulos de actividad**: assign, bigbluebuttonbn, book, chat, choice, data, feedback, folder, forum, glossary, h5pactivity, imscp, label, lesson, lti, page, quiz, resource, scorm, subsection (tercero), survey, url, wiki, workshop.
@@ -14,22 +15,28 @@
 - **Reportes**: backups, competency, completion, configlog, courseoverview, eventlist, infectedfiles, insights, log, loglive, outline, participation, performance, progress, questioninstances, security, stats, status, themeusage, usersessions.
 - **Herramientas administrativas**: admin_presets, analytics, availabilityconditions, behat, brickfield, bruteforce (tercero), capability, cohortroles, componentlibrary, customlang, dataprivacy, dbtransfer, filetypes, generator, httpsreplace, installaddon, langimport, licensemanager, log, lp, lpimportcsv, lpmigrate, messageinbound, mfa, mobile, monitor, moodlenet, multilangupgrade, oauth2, phpunit, policy, profiling, recyclebin, replace, spamcleaner, task, templatelibrary, unsuproles, uploadcourse, uploaduser, usertours, xmldb.
 - **Locales**: no se detectaron plugins en `local/`.
+- Resto de módulos (`mod`, `blocks`, etc.) corresponden al núcleo estándar de Moodle.
 
 ## Mecanismos de autenticación
 - Dado que `config.php` no está presente, no se puede determinar cuáles están activos.
+- Los plugins disponibles permiten autenticación manual, por correo, OAuth2, LDAP, CAS, SAML/Shibboleth y web services.
 - Los plugins disponibles permiten autenticación manual, por correo, OAuth2, LDAP, CAS, SAML/Shibboleth, LTI y web services.
 
 ## Personalizaciones de login o seguridad
 - No se hallaron overrides ni hooks personalizados que alteren el flujo de login.
+- No existen plugins locales que modifiquen sesiones o autenticación.
 - Plugins de terceros detectados: `enrol_fee`, `mod_subsection` y `tool_bruteforce`; ninguno interfiere actualmente con el proceso de autenticación.
 
 ## Roles y capacidades
 - Se asume la estructura estándar de roles: administrador, manager, teacher, student.
+- No se detectaron definiciones personalizadas en archivos de código.
 - El plugin propuesto añadirá capacidades `tool/bruteforce:manage` y `tool/bruteforce:viewreports` para su administración.
 
 ## Recomendaciones y riesgos
 - Implementar un sistema de protección contra fuerza bruta para reforzar la seguridad de autenticación.
 - Mantener vigilancia sobre intentos fallidos de login y bloquear IPs/usuarios sospechosos.
+- Definir claramente capacidades para administrar la herramienta (`tool/bruteforce:manage` y `tool/bruteforce:viewreports`).
+- Documentar posibles integraciones con sistemas de notificación y listas blancas/negra.
 - Definir claramente capacidades para administrar la herramienta y roles exentos.
 - Documentar integraciones con listas blanca/negra y sistemas de notificación.
 
@@ -39,19 +46,21 @@
   - Registro de intentos de login y bloqueos básicos por usuario o IP.
   - Límite diario de intentos por IP.
   - Página de administración mínima que lista bloqueos activos.
-  - Script CLI para purgar bloqueos expirados.
+  - Script CLI para purgar bloqueos expirados y listar bloqueos.
+  - API para consultar listas blanca/negra y bloqueos.
+  - Tarea programada que purga bloqueos expirados.
   - Configuración inicial con umbrales y ventanas de bloqueo.
+  - Gestión básica de listas blanca/negra desde UI y CLI.
 
 - **Brechas respecto a la especificación**
-  - **Críticas**: falta manejo de listas blanca/negra, API pública, tareas programadas completas, notificaciones, desbloqueo manual, protección a administradores, pruebas automatizadas.
-  - **Importantes**: dashboard con historiales y tendencias, gestión de listas desde la UI, CLI para listar y exportar datos, bloqueo extendido por abuso, soporte de roles/contextos.
+  - **Críticas** pendientes: API pública extendida, notificaciones, desbloqueo manual, protección a administradores, pruebas automatizadas integrales.
+  - **Importantes**: dashboard con historiales y tendencias, CLI extendido (import/export de listas ya disponible), bloqueo extendido por abuso, soporte de roles/contextos.
   - **Opcionales**: Geo-IP, CAPTCHA, rate limiting suave, reportes PDF.
 
 - **Deficiencias de código**
-  - Ausencia de verificación de whitelist o roles privilegiados antes de bloquear.
+  - Verificación de roles privilegiados antes de bloquear aún limitada.
   - Falta de sanitización explícita de IPs y campos de texto en la base de datos.
-  - No se implementa la tarea programada declarada en `tasks.php`.
-  - Cobertura de pruebas inexistente.
+  - Cobertura de pruebas limitada.
 
 - **Riesgos de seguridad**
   - Posible bloqueo de administradores legítimos.
