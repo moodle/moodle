@@ -1,6 +1,5 @@
 <?php
 // English language strings for tool_bruteforce.
-
 $string['pluginname'] = 'Brute force protection';
 $string['activeblocks'] = 'Active blocks';
 $string['noblocks'] = 'There are no active blocks.';

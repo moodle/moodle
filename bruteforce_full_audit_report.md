@@ -2,7 +2,7 @@
 
 ## Environment analysis
 - Moodle core: version 4.5.2+ (Build: 20250227). Base system inspected: authentication flows, roles/capabilities, logging, scheduled tasks and caching follow standard core behavior. No overrides found.
-- Authentication: core login uses `пала` events `user_login_failed` and `user_loggedin`. Plugin must hook into these events.
+- Authentication: core login uses events `user_login_failed` and `user_loggedin`. Plugin must hook into these events.
 - Roles: standard roles (admin, manager, teacher, student). Administrators must never be blocked inadvertently.
 - Logging: moodle uses events/mdl_logstore_standard. Plugin's own tables integrate with DB API.
 - Scheduled tasks: handled via `core\task\scheduled_task` API. Caches must be invalidated via `cache_helper` when necessary.
@@ -34,8 +34,6 @@
 ## Pending work (high level)
 - Implement notifications, dashboard, extended CLI operations, scheduled metrics, tests, and hardening.
 
-(partially addressed: schema fix, CIDR support, CLI management, privilege exemption)
-
 ## Residual risks
 - Notifications, dashboard metrics and extended hardening remain absent, leaving monitoring gaps and potential race conditions.
 
@@ -50,4 +48,3 @@
 - Commit: *feat: add audit logging and manual unblock*
 - Manual test: install plugin, create a block then navigate to the brute force dashboard and use the **Unblock** action; confirm the block is removed and an entry is written in *tool_bruteforce_audit*.
 - Automated test: `vendor/bin/phpunit admin/tool/bruteforce/tests/api_test.php`
-

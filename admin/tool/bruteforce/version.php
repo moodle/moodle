@@ -1,6 +1,5 @@
 <?php
 // Version details for tool_bruteforce plugin.
-
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_bruteforce';

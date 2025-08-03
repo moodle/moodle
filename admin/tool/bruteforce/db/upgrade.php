@@ -1,11 +1,9 @@
 <?php
 // Upgrade script for tool_bruteforce.
-
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_tool_bruteforce_upgrade(int $oldversion): bool {
     global $DB;
-
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2025031500) {
@@ -21,17 +19,14 @@ function xmldb_tool_bruteforce_upgrade(int $oldversion): bool {
     if ($oldversion < 2025031600) {
         // Ensure non-unique indexes exist on log table for userid and ip.
         $table = new xmldb_table('tool_bruteforce_log');
-
         $useridx = new xmldb_index('userix', XMLDB_INDEX_NOTUNIQUE, ['userid']);
         if (!$dbman->index_exists($table, $useridx)) {
             $dbman->add_index($table, $useridx);
         }
-
         $ipidx = new xmldb_index('ipix', XMLDB_INDEX_NOTUNIQUE, ['ip']);
         if (!$dbman->index_exists($table, $ipidx)) {
             $dbman->add_index($table, $ipidx);
         }
-
         upgrade_plugin_savepoint(true, 2025031600, 'tool', 'bruteforce');
     }
 
@@ -43,35 +38,35 @@ function xmldb_tool_bruteforce_upgrade(int $oldversion): bool {
     if ($oldversion < 2025031800) {
         // Restructure audit table for detailed logging.
         $table = new xmldb_table('tool_bruteforce_audit');
-
+        
         // Rename userid to actorid.
         $field = new xmldb_field('userid');
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, 'actorid');
         }
-
+        
         // Add new fields if missing.
         $field = new xmldb_field('targettype', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, 'actorid');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
+        
         $field = new xmldb_field('targetvalue', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'targettype');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
+        
         $field = new xmldb_field('reason', XMLDB_TYPE_TEXT, null, null, null, null, null, 'action');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
+        
         // Adjust action field length.
         $field = new xmldb_field('action', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'targetvalue');
         if ($dbman->field_exists($table, $field)) {
             $dbman->change_field_precision($table, $field);
         }
-
+        
         upgrade_plugin_savepoint(true, 2025031800, 'tool', 'bruteforce');
     }
 
