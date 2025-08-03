@@ -52,4 +52,19 @@ class api_test extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('tool_bruteforce_block'));
     }
+
+    /**
+     * CIDR whitelist and blacklist entries should match IP ranges.
+     */
+    public function test_cidr_matching(): void {
+        $this->resetAfterTest(true);
+
+        api::add_list_entry('white', 'ip', '10.0.0.0/24');
+        $this->assertTrue(api::is_whitelisted('ip', '10.0.0.42'));
+        $this->assertFalse(api::is_whitelisted('ip', '10.0.1.5'));
+
+        api::add_list_entry('black', 'ip', '192.168.1.0/24');
+        $this->assertTrue(api::is_blacklisted('ip', '192.168.1.99'));
+        $this->assertFalse(api::is_blacklisted('ip', '192.168.2.1'));
+    }
 }

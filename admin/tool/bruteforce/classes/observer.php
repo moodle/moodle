@@ -67,8 +67,10 @@ class observer {
 
         self::log_attempt($userid, $ip, 'fail');
 
-        // Skip blocking for site administrators or whitelisted entries.
+        // Skip blocking for privileged or whitelisted entries.
+        $syscontext = \context_system::instance();
         if (($userid && is_siteadmin($userid)) ||
+            ($userid && has_capability('tool/bruteforce:exempt', $syscontext, $userid)) ||
             ($userid && api::is_whitelisted('user', (string) $userid)) ||
             api::is_whitelisted('ip', $ip)) {
             return;

@@ -35,5 +35,10 @@ function xmldb_tool_bruteforce_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2025031600, 'tool', 'bruteforce');
     }
 
+    if ($oldversion < 2025031700) {
+        // Version bump for added capability and CLI enhancements.
+        upgrade_plugin_savepoint(true, 2025031700, 'tool', 'bruteforce');
+    }
+
     return true;
 }

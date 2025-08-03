@@ -13,8 +13,8 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
             <INDEXES>
-                <INDEX NAME="userix" FIELDS="userid"/>
-                <INDEX NAME="ipix" FIELDS="ip"/>
+                <INDEX NAME="userix" UNIQUE="false" FIELDS="userid"/>
+                <INDEX NAME="ipix" UNIQUE="false" FIELDS="ip"/>
             </INDEXES>
         </TABLE>
         <TABLE NAME="tool_bruteforce_block" COMMENT="Active blocks for users or IPs">

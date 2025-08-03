@@ -54,10 +54,10 @@ class api {
      */
     public static function is_whitelisted(string $type, string $value): bool {
         global $DB;
-        return $DB->record_exists(
-            'tool_bruteforce_list',
-            ['listtype' => 'white', 'type' => $type, 'value' => $value]
-        );
+        if ($type === 'ip') {
+            return self::ip_list_match('white', $value);
+        }
+        return $DB->record_exists('tool_bruteforce_list', ['listtype' => 'white', 'type' => $type, 'value' => $value]);
     }
 
     /**
@@ -69,10 +69,74 @@ class api {
      */
     public static function is_blacklisted(string $type, string $value): bool {
         global $DB;
-        return $DB->record_exists(
-            'tool_bruteforce_list',
-            ['listtype' => 'black', 'type' => $type, 'value' => $value]
-        );
+        if ($type === 'ip') {
+            return self::ip_list_match('black', $value);
+        }
+        return $DB->record_exists('tool_bruteforce_list', ['listtype' => 'black', 'type' => $type, 'value' => $value]);
+    }
+
+    /**
+     * Check if IP is within list entries.
+     *
+     * @param string $listtype
+     * @param string $ip
+     * @return bool
+     */
+    protected static function ip_list_match(string $listtype, string $ip): bool {
+        global $DB;
+        $records = $DB->get_records('tool_bruteforce_list', ['listtype' => $listtype, 'type' => 'ip']);
+        foreach ($records as $record) {
+            if (self::ip_matches($ip, $record->value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determine if an IP matches an entry value (exact or CIDR).
+     *
+     * @param string $ip
+     * @param string $value
+     * @return bool
+     */
+    protected static function ip_matches(string $ip, string $value): bool {
+        if ($ip === $value) {
+            return true;
+        }
+        if (strpos($value, '/') !== false) {
+            return self::cidr_match($ip, $value);
+        }
+        return false;
+    }
+
+    /**
+     * Compare an IP against a CIDR range.
+     *
+     * @param string $ip
+     * @param string $cidr
+     * @return bool
+     */
+    protected static function cidr_match(string $ip, string $cidr): bool {
+        list($subnet, $mask) = explode('/', $cidr, 2);
+        $mask = (int) $mask;
+        $ipbin = @inet_pton($ip);
+        $subnetbin = @inet_pton($subnet);
+        if ($ipbin === false || $subnetbin === false) {
+            return false;
+        }
+        $ipbytes = unpack('C*', $ipbin);
+        $subnetbytes = unpack('C*', $subnetbin);
+        $bits = $mask;
+        for ($i = 1; $bits > 0; $i++) {
+            $shift = $bits >= 8 ? 0 : 8 - $bits;
+            $maskbyte = $bits >= 8 ? 0xff : (~((1 << $shift) - 1) & 0xff);
+            if (($ipbytes[$i] & $maskbyte) !== ($subnetbytes[$i] & $maskbyte)) {
+                return false;
+            }
+            $bits -= 8;
+        }
+        return true;
     }
 
     /**
