@@ -43,8 +43,10 @@ class listentry extends \moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if ($data['type'] === 'ip' && !\core\ip_utils::is_valid_ipv4($data['value'])
-                && !\core\ip_utils::is_valid_ipv6($data['value'])) {
+        if ($data['type'] === 'ip'
+                && !\core\ip_utils::is_ip_address($data['value'])
+                && !\core\ip_utils::is_ipv4_range($data['value'])
+                && !\core\ip_utils::is_ipv6_range($data['value'])) {
             $errors['value'] = get_string('invalidip', 'tool_bruteforce');
         }
         if ($data['type'] === 'user' && !is_numeric($data['value'])) {

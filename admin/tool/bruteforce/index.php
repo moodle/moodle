@@ -31,12 +31,15 @@ if (empty($blocks)) {
         get_string('type', 'tool_bruteforce'),
         get_string('value', 'tool_bruteforce'),
         get_string('timerelease', 'tool_bruteforce'),
+        get_string('actions', 'tool_bruteforce'),
     ];
     foreach ($blocks as $block) {
+        $unblockurl = new moodle_url('/admin/tool/bruteforce/unblock.php', ['id' => $block->id]);
         $table->data[] = [
             s($block->type),
             s($block->value),
             userdate($block->timerelease),
+            html_writer::link($unblockurl, get_string('unblock', 'tool_bruteforce')),
         ];
     }
     echo html_writer::table($table);
