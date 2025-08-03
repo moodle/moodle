@@ -68,6 +68,6 @@ export default class Component extends DndSectionItem {
      * @param {Object} state the initial state
      */
     stateReady(state) {
-        this.configDragDrop(this.id, state, this.fullregion);
+        this.configDragDrop(this.id, state, this.fullregion, !!document.querySelector(`[data-courseindexdndallowed="true"]`));
     }
 }
