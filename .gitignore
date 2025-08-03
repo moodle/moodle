@@ -12,7 +12,6 @@
 !local/kalturamediagallery/**/*
 !local/mymedia/**/*
 
-!lib/editor/atto/plugins/kalturamedia/**/*
 !lib/editor/tinymce/plugins/kalturamedia/**/*
 
 !createPackage.sh
