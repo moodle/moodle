@@ -1,11 +1,11 @@
 <?php
-// Capabilities for tool_bruteforce.
+// Capabilities for tool_bruteforce plugin.
 
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
     'tool/bruteforce:manage' => [
-        'riskbitmask' => RISK_CONFIG,
+        'riskbitmask' => RISK_DATALOSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
