@@ -67,6 +67,24 @@ class observer {
 
         self::log_attempt($userid, $ip, 'fail');
 
+        // Skip blocking for site administrators or whitelisted entries.
+        if (($userid && is_siteadmin($userid)) ||
+            ($userid && api::is_whitelisted('user', (string) $userid)) ||
+            api::is_whitelisted('ip', $ip)) {
+            return;
+        }
+
+        // Immediate block for blacklisted users or IPs.
+        $dayduration = (int) get_config('tool_bruteforce', 'dayblockduration');
+        if (($userid && api::is_blacklisted('user', (string) $userid))) {
+            self::block('user', (string) $userid, $dayduration);
+            return;
+        }
+        if (api::is_blacklisted('ip', $ip)) {
+            self::block('ip', $ip, $dayduration);
+            return;
+        }
+
         // User based blocking.
         if ($userid && get_config('tool_bruteforce', 'enableuserlock')) {
             $since = time() - ((int) get_config('tool_bruteforce', 'userfailwindow') * 60);

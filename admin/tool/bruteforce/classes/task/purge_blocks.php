@@ -22,6 +22,6 @@ class purge_blocks extends \core\task\scheduled_task {
      */
     public function execute(): void {
         global $DB;
-        // TODO: Delete expired blocks from tool_bruteforce_blocks table.
+        $DB->delete_records_select('tool_bruteforce_block', 'timerelease < ?', [time()]);
     }
 }

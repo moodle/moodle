@@ -32,3 +32,39 @@
 - Mantener vigilancia sobre intentos fallidos de login y bloquear IPs/usuarios sospechosos.
 - Definir claramente capacidades para administrar la herramienta y roles exentos.
 - Documentar integraciones con listas blanca/negra y sistemas de notificación.
+
+## Estado actual del plugin `tool_bruteforce`
+
+- **Funcionalidades presentes**
+  - Registro de intentos de login y bloqueos básicos por usuario o IP.
+  - Límite diario de intentos por IP.
+  - Página de administración mínima que lista bloqueos activos.
+  - Script CLI para purgar bloqueos expirados.
+  - Configuración inicial con umbrales y ventanas de bloqueo.
+
+- **Brechas respecto a la especificación**
+  - **Críticas**: falta manejo de listas blanca/negra, API pública, tareas programadas completas, notificaciones, desbloqueo manual, protección a administradores, pruebas automatizadas.
+  - **Importantes**: dashboard con historiales y tendencias, gestión de listas desde la UI, CLI para listar y exportar datos, bloqueo extendido por abuso, soporte de roles/contextos.
+  - **Opcionales**: Geo-IP, CAPTCHA, rate limiting suave, reportes PDF.
+
+- **Deficiencias de código**
+  - Ausencia de verificación de whitelist o roles privilegiados antes de bloquear.
+  - Falta de sanitización explícita de IPs y campos de texto en la base de datos.
+  - No se implementa la tarea programada declarada en `tasks.php`.
+  - Cobertura de pruebas inexistente.
+
+- **Riesgos de seguridad**
+  - Posible bloqueo de administradores legítimos.
+  - Acumulación de datos en tablas sin purga automática efectiva.
+  - Bloqueo o desbloqueo manual sin auditoría.
+
+- **Sugerencias de refactorización y rendimiento**
+  - Centralizar la lógica de verificación de bloqueos en una API dedicada.
+  - Añadir índices y constraints a tablas de listas para evitar duplicados.
+  - Implementar clases de servicio para separar lógica de presentación.
+
+- **Casos de prueba necesarios**
+  - Conteo de intentos fallidos y activación de bloqueos por usuario/IP.
+  - Respeto de whitelist y blacklist.
+  - Purga automática de bloqueos expirados.
+  - API pública para consultar estado de bloqueo.

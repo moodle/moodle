@@ -1,6 +1,5 @@
 <?php
 // English language strings for tool_bruteforce.
-
 $string['pluginname'] = 'Brute force protection';
 $string['activeblocks'] = 'Active blocks';
 $string['noblocks'] = 'There are no active blocks.';
@@ -23,3 +22,6 @@ $string['dayblockduration'] = 'Daily block duration (minutes)';
 $string['notificationsettings'] = 'Notifications';
 $string['notificationsettings_desc'] = 'Configure email alerts for brute force events.';
 $string['notifyemail'] = 'Notification email';
+$string['taskpurge'] = 'Purge expired brute force blocks';
+$string['cli_listblocks_header'] = 'Type | Value | Release time';
+$string['cli_no_blocks'] = 'No active blocks.';
