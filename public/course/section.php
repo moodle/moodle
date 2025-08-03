@@ -198,15 +198,21 @@ if (core_communication\api::is_available() && has_capability('moodle/course:upda
     $communication->show_communication_room_status_notification();
 }
 
-// Display a warning if asynchronous backups are pending for this course.
+$containerattributes = [];
 if ($PAGE->user_is_editing()) {
     require_once($CFG->dirroot . '/backup/util/helper/async_helper.class.php');
+    // Display a warning if asynchronous backups are pending for this course.
     if (async_helper::is_async_pending($course->id, 'course', 'backup')) {
         echo $OUTPUT->notification(get_string('pendingasyncedit', 'backup'), 'warning');
     }
+
+    // Allow drag and drop in the course index.
+    $containerattributes = [
+        'data-courseindexdndallowed' => 'true',
+    ];
 }
 
-echo $renderer->container_start('course-content');
+echo $renderer->container_start('course-content', attributes: $containerattributes);
 
 // Include course AJAX.
 include_course_ajax($course, $modinfo->get_used_module_names());
