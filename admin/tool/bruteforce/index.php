@@ -1,33 +1,37 @@
 <?php
-// Admin dashboard for tool_bruteforce.
+// Minimal dashboard for tool_bruteforce showing active blocks.
 
-require(__DIR__ . '/../../../config.php');
-
+require(__DIR__.'/../../../config.php');
 require_login();
-$context = context_system::instance();
-require_capability('tool/bruteforce:viewreports', $context);
+require_capability('tool/bruteforce:manage', context_system::instance());
 
 $PAGE->set_url(new moodle_url('/admin/tool/bruteforce/index.php'));
-$PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('pluginname', 'tool_bruteforce'));
 $PAGE->set_heading(get_string('pluginname', 'tool_bruteforce'));
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('activeblocks', 'tool_bruteforce'));
 
-$blocks = $DB->get_records('tool_bruteforce_blocks');
-if ($blocks) {
+$blocks = $DB->get_records('tool_bruteforce_block');
+
+if (empty($blocks)) {
+    echo $OUTPUT->notification(get_string('noblocks', 'tool_bruteforce'), 'info');
+} else {
     $table = new html_table();
     $table->head = [
-        get_string('userid'),
-        get_string('ip', 'tool_bruteforce'),
-        get_string('expires', 'tool_bruteforce'),
+        get_string('type', 'tool_bruteforce'),
+        get_string('value', 'tool_bruteforce'),
+        get_string('timerelease', 'tool_bruteforce'),
     ];
     foreach ($blocks as $block) {
-        $table->data[] = [$block->userid, $block->ip, userdate($block->expires)];
+        $table->data[] = [
+            s($block->type),
+            s($block->value),
+            userdate($block->timerelease),
+        ];
     }
     echo html_writer::table($table);
-} else {
-    echo $OUTPUT->notification(get_string('noblocks', 'tool_bruteforce'), 'notifymessage');
 }
 
 echo $OUTPUT->footer();
