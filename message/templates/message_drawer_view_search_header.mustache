@@ -45,7 +45,8 @@
         >
             {{> core_message/message_drawer_icon_back }}
         </a>
-        <div class="input-group simplesearchform">
+        <div class="input-group simplesearchform" role="group" aria-labelledby="messagesearchgrouplabel">
+            <span class="visually-hidden" id="messagesearchgrouplabel">{{#str}}searchcombined, message{{/str}}</span>
             <input
                 type="text"
                 class="form-control"
@@ -57,7 +58,8 @@
                 class="btn btn-submit icon-no-margin"
                 type="button"
                 data-action="search"
-                aria-label="{{#str}} search, core_search {{/str}}"
+                aria-label="{{#str}} performsearch, core_search {{/str}}"
+                title="{{#str}} performsearch, core_search {{/str}}"
             >
                 <span data-region="search-icon-container">
                     {{#pix}} a/search, core {{/pix}}
