@@ -80,7 +80,7 @@ $other = array('badgeid' => $badge->badgeid, 'badgehash' => $id);
 $eventparams = array('context' => $PAGE->context, 'other' => $other);
 
 // If the badge does not belong to this user, log it appropriately.
-if (($badge->recipient->id != $USER->id)) {
+if ($badge->recipient && $badge->recipient->id != $USER->id) {
     $eventparams['relateduserid'] = $badge->recipient->id;
 }
 
