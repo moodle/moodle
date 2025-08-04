@@ -90,6 +90,7 @@ Feature: An administrator can browse user accounts
       | username | firstname | lastname | email             | confirmed |
       | user3    | User      | Three    | three@example.com | 0         |
     And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I change window size to "large"
     Then I should see "Confirmation pending" in the "User Three" "table_row"
     And I press "Resend confirmation email" action in the "User Three" report row
     And I should see "Confirmation email sent successfully"
