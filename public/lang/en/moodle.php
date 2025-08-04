@@ -2068,6 +2068,7 @@ $string['showmore'] = 'Show more';
 $string['showoncoursepage'] = 'Show on course page';
 $string['showonly'] = 'Show only';
 $string['showperpage'] = 'Show {$a} per page';
+$string['showpopovermenu'] = 'Open popover';
 $string['showpopoverwindow'] = 'Show popover window';
 $string['showrecent'] = 'Show recent activity';
 $string['showreports'] = 'Show activity reports';
