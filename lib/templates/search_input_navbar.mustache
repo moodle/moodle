@@ -38,7 +38,10 @@
             {{#hiddenfields}}
                 <input type="hidden" name="{{ name }}" value="{{ value }}">
             {{/hiddenfields}}
-            <div class="input-group">
+            <div class="input-group" {{#grouplabel}}role="group" aria-labelledby="searchgrouplabel-{{uniqid}}"{{/grouplabel}}>
+                {{#grouplabel}}
+                    <span id="searchgrouplabel-{{uniqid}}" class="sr-only">{{{ . }}}</span>
+                {{/grouplabel}}
                 <label for="searchinput-{{uniqid}}">
                     <span class="sr-only">{{{ searchstring }}}</span>
                 </label>
@@ -56,14 +59,15 @@
                         data-toggle="collapse"
                         href="#searchform-navbar"
                         role="button"
+                        title="{{#str}} closebuttontitle {{/str}}"
                     >
                         {{#pix}} e/cancel, core {{/pix}}
                         <span class="sr-only">{{#str}} closebuttontitle {{/str}}</span>
                     </a>
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-submit" data-action="submit">
+                    <button type="submit" class="btn btn-submit" data-action="submit" title="{{#str}}performsearch, search{{/str}}">
                         {{#pix}} a/search, core {{/pix}}
-                        <span class="sr-only">{{{ searchstring }}}</span>
+                        <span class="sr-only">{{#str}}performsearch, search{{/str}}</span>
                     </button>
                 </div>
             </div>
