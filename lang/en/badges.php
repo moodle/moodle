@@ -300,6 +300,9 @@ $string['error:cannotact'] = 'Cannot activate the badge. ';
 $string['error:cannotawardbadge'] = 'Cannot award badge to a user.';
 $string['error:cannotrevokebadge'] = 'Cannot revoke badge from a user.';
 $string['error:cannotdeletecriterion'] = 'This criterion cannot be deleted. ';
+$string['error:cannotsendtobackpack'] = '<strong>Can\'t add badge to backpack</strong><br />
+Your backpack provider is sending this message: \'{$a}\'.<br /><br />
+You can try downloading the badge and adding it manually to your backpack, or try again later.';
 $string['error:connectionunknownreason'] = 'The connection was unsuccessful but no reason was given.';
 $string['error:clone'] = 'Cannot clone the badge.';
 $string['error:duplicatename'] = 'Badge with such name already exists in the system.';
