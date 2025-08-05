@@ -35,6 +35,12 @@
 
 .dropdown-menu {
     width: fit-content;
+    &:has(.dropdown-item-active) {
+        .dropdown-item {
+            // Make space for active item indicator.
+            padding-left: map-get($spacers, 4);
+        }
+    }
 }
 
 // Add dropdown menu items styles for each theme color mantainning default hover colour for contrast.

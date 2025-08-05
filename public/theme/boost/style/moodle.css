@@ -29650,9 +29650,6 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
     width: 100%;
   }
 }
-.block_myoverview .dropdown-item {
-  padding-left: 1.5rem;
-}
 
 .block_timeline .paged-content-page-container {
   background-color: var(--bs-body-bg);
@@ -29660,10 +29657,6 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 
 .block_timeline .event-action {
   padding-left: 5.55em;
-}
-
-.block_timeline .dropdown-menu .dropdown-item {
-  padding-left: 1.5rem;
 }
 
 .block_settings .block_tree [aria-expanded=true],
@@ -40745,9 +40738,6 @@ div.editor_atto_toolbar button .icon {
 .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-divider {
   display: none;
 }
-.moremenu .dropdown-item {
-  padding-left: 1.5rem;
-}
 .moremenu .dropdown-item[aria-current=true],
 .moremenu .dropdown-item.active {
   background-color: transparent;
@@ -41033,6 +41023,9 @@ div.editor_atto_toolbar button .icon {
 
 .dropdown-menu {
   width: fit-content;
+}
+.dropdown-menu:has(.dropdown-item-active) .dropdown-item {
+  padding-left: 1.5rem;
 }
 
 .dropdown-item:hover.text-primary,
