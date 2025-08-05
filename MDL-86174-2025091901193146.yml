@@ -1,0 +1,14 @@
+issueNumber: MDL-86174
+notes:
+  core_badges:
+    - message: >-
+        A number of new static methods have been added to
+        `core_badges\backpack_api` to support the new Canvas Credentials
+        backpack provider. These methods allow you to retrieve lists of
+        providers and regions, check if Canvas Credentials fields should be
+        displayed, and get a region URL or API URL based on a given region ID.
+        The new methods include `get_providers`, `get_regions`,
+        `display_canvas_credentials_fields`, `get_region_url`,
+        `get_region_api_url`, `get_regionid_from_url`, and
+        `is_canvas_credentials_region`.
+      type: improved
