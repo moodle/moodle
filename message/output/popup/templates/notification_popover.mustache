@@ -56,12 +56,16 @@
             {{unreadcount}}
         </div>
     {{/togglecontent}}
-
+    {{$containerrole}}dialog{{/containerrole}}
+    {{$containerattributes}}
+        aria-modal="true"
+        tabindex="-1"
+    {{/containerattributes}}
     {{$containerlabel}}{{#str}} notificationwindow, message {{/str}}{{/containerlabel}}
 
     {{$headertext}}{{#str}} notifications, message {{/str}}{{/headertext}}
     {{$headeractions}}
-        <a class="mark-all-read-button"
+        <a class="mark-all-read-button btn btn-sm btn-link m-0 py-0 icon-no-margin"
            href="#"
            title="{{#str}} markallread {{/str}}"
            data-action="mark-all-read"
@@ -75,9 +79,13 @@
         {{# urls.preferences }}
             <a href="{{{ . }}}"
                title="{{#str}} notificationpreferences, message {{/str}}"
-               aria-label="{{#str}} notificationpreferences, message {{/str}}">
+               aria-label="{{#str}} notificationpreferences, message {{/str}}"
+               class="btn btn-sm btn-link m-0 py-0 icon-no-margin" >
                 {{#pix}} i/settings, core {{/pix}}</a>
         {{/ urls.preferences }}
+        <button type="button" class="btn btn-sm btn-link m-0 py-0 icon-no-margin" aria-label="{{#str}}closebuttontitle{{/str}}" title="{{#str}}closebuttontitle{{/str}}" data-action="close-notification-popover">
+            {{#pix}}i/window_close{{/pix}}
+        </button>
     {{/headeractions}}
 
     {{$content}}
