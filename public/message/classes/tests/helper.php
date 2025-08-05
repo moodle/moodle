@@ -14,21 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains a helper class providing util methods for testing.
- *
- * @package    core_message
- * @copyright  2018 Jake Dallimore <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_message\tests;
 
+use core\{clock, di};
 use stdClass;
 
 /**
  * The helper class providing util methods for testing.
  *
+ * @package    core_message
  * @copyright  2018 Jake Dallimore <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,7 +51,7 @@ class helper {
         global $DB;
 
         if (empty($time)) {
-            $time = time();
+            $time = di::get(clock::class)->time();
         }
 
         if ($notification) {
@@ -122,7 +116,7 @@ class helper {
         global $DB;
         $conversationrec = $DB->get_record('message_conversations', ['id' => $convid], 'id', MUST_EXIST);
         $conversationid = $conversationrec->id;
-        $time = $time ?? time();
+        $time = $time ?? di::get(clock::class)->time();
         $record = new \stdClass();
         $record->useridfrom = $userfrom->id;
         $record->conversationid = $conversationid;
@@ -157,7 +151,7 @@ class helper {
         $record->subject = 'No subject';
         $record->fullmessage = $message;
         $record->smallmessage = $message;
-        $record->timecreated = $timecreated ? $timecreated : time();
+        $record->timecreated = $timecreated ?: di::get(clock::class)->time();
         $record->customdata  = json_encode(['datakey' => 'data']);
 
         return $DB->insert_record('notifications', $record);
@@ -188,8 +182,8 @@ class helper {
         $record->subject = 'No subject';
         $record->fullmessage = $message;
         $record->smallmessage = $message;
-        $record->timecreated = $timecreated ? $timecreated : time();
-        $record->timeread = $timeread ? $timeread : time();
+        $record->timecreated = $timecreated ?: di::get(clock::class)->time();
+        $record->timeread = $timeread ?: di::get(clock::class)->time();
 
         $record->id = $DB->insert_record('notifications', $record);
 
