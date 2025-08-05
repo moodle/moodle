@@ -49,6 +49,8 @@ class send_new_user_passwords_task extends scheduled_task {
             mtrace('Creating passwords for new users...');
             $userfieldsapi = \core_user\fields::for_name();
             $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+            $emailisnotempty = $DB->sql_isnotempty('user', 'email', false, false);
+            [$sort, $sortparams] = users_order_by_sql('u');
             $newusers = $DB->get_recordset_sql("SELECT u.id as id, u.email, u.auth, u.deleted,
                                                      u.suspended, u.emailstop, u.mnethostid, u.mailformat,
                                                      $usernamefields, u.username, u.lang,
@@ -56,8 +58,9 @@ class send_new_user_passwords_task extends scheduled_task {
                                                 FROM {user} u
                                                 JOIN {user_preferences} p ON u.id=p.userid
                                                WHERE p.name='create_password' AND p.value='1' AND
-                                                     u.email !='' AND u.suspended = 0 AND
-                                                     u.auth != 'nologin' AND u.deleted = 0");
+                                                     $emailisnotempty AND u.suspended = 0 AND
+                                                     u.auth != 'nologin' AND u.deleted = 0
+                                            ORDER BY $sort ASC", $sortparams);
 
             // Note: we can not send emails to suspended accounts.
             foreach ($newusers as $newuser) {
