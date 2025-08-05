@@ -93,12 +93,111 @@ Feature: Backpack badges
     And "Add to backpack" "link" should exist
 
   @javascript
-  Scenario: Add a new site backpack
+  Scenario: Add a new site OBv2.1 backpack
+    Given I am on homepage
+    And I log in as "admin"
+    And I navigate to "Badges > Manage backpacks" in site administration
+    When I press "Add a new backpack"
+    And I set the field "apiversion" to "2.1"
+    And I should see "Backpack URL"
+    And I set the field "backpackweburlv2p1" to "http://backpackweburl.cat"
+    And I should not see "Backpack API URL"
+    Then "Connect to backpack provider account" "checkbox" should not be visible
+    And "Connect to a Canvas Credentials issuer account" "checkbox" should not be visible
+    And I should not see "Email"
+    And I should not see "Password"
+
+  @javascript
+  Scenario: Add a new site OBv2.0 backpack with Canvas provider
     Given I am on homepage
     And I log in as "admin"
     And I navigate to "Badges > Manage backpacks" in site administration
     When I press "Add a new backpack"
     And I set the field "apiversion" to "2"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "provider" to "Canvas Credentials"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "region" to "Singapore"
+    And I should not see "Backpack web URL"
+    And I should not see "Backpack API URL"
+    And I press "Save changes"
+    Then I should see "https://sg.badgr.io"
+    And "Delete" "icon" should exist in the "https://sg.badgr.io" "table_row"
+    And "Edit settings" "icon" should exist in the "https://sg.badgr.io" "table_row"
+    And "Test settings" "icon" should exist in the "https://sg.badgr.io" "table_row"
+    # Check that editing the backpack shows the correct values.
+    And I click on "Edit settings" "link" in the "https://sg.badgr.io" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And I should see "Provider"
+    And the field "provider" matches value "Canvas Credentials"
+    And I should see "Region"
+    And the field "region" matches value "Singapore"
+    And I should see "Connect to a Canvas Credentials issuer account"
+    And the field "Connect to a Canvas Credentials issuer account" matches value "0"
+    And I should not see "Connect to backpack provider account"
+
+  @javascript
+  Scenario: Add a new site OBv2.0 backpack with Canvas provider and issuer authentication details
+    Given I am on homepage
+    And I log in as "admin"
+    And I navigate to "Badges > Manage backpacks" in site administration
+    When I press "Add a new backpack"
+    And I set the field "apiversion" to "2"
+    And I set the field "provider" to "Canvas Credentials"
+    And I set the field "region" to "Canada"
+    And I should see "Connect to a Canvas Credentials issuer account"
+    And I should not see "Connect to backpack provider account"
+    And the field "Connect to a Canvas Credentials issuer account" matches value "0"
+    And I click on "includeauthdetailscanvas" "checkbox"
+    And I should see "Email"
+    And I should see "Password"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "backpackemailcanvas" to "test@test.com"
+    And I should see "You must supply a value here"
+    And I press "Save changes"
+    And I set the field "backpackpasswordcanvas" to "123456"
+    And I press "Save changes"
+    Then I should see "https://ca.badgr.io"
+    # Check that editing the backpack shows the correct values.
+    And I click on "Edit settings" "link" in the "https://ca.badgr.io" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And I should see "Provider"
+    And the field "provider" matches value "Canvas Credentials"
+    And I should see "Region"
+    And the field "region" matches value "Canada"
+    And I should see "Connect to a Canvas Credentials issuer account"
+    And the field "Connect to a Canvas Credentials issuer account" matches value "1"
+    And the field "backpackemailcanvas" matches value "test@test.com"
+    And the field "backpackpasswordcanvas" matches value "123456"
+    # Disable authentication details and check that email and password are cleared.
+    But I click on "includeauthdetailscanvas" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit settings" "link" in the "https://ca.badgr.io" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And I should see "Provider"
+    And the field "provider" matches value "Canvas Credentials"
+    And I should see "Region"
+    And the field "region" matches value "Canada"
+    And I should see "Connect to a Canvas Credentials issuer account"
+    And the field "Connect to a Canvas Credentials issuer account" matches value "0"
+    And the field "backpackemailcanvas" matches value ""
+    And the field "backpackpasswordcanvas" matches value ""
+
+  @javascript
+  Scenario: Add a new site OBv2.0 backpack with Other provider
+    Given I am on homepage
+    And I log in as "admin"
+    And I navigate to "Badges > Manage backpacks" in site administration
+    When I press "Add a new backpack"
+    And I set the field "apiversion" to "2"
+    And I set the field "provider" to "Other"
+    And I should not see "Region"
     And I set the field "backpackweburl" to "aaa"
     And I press "Save changes"
     And I should see "Invalid URL"
@@ -110,6 +209,115 @@ Feature: Backpack badges
     Then I should see "http://backpackweburl.cat"
     And "Delete" "icon" should exist in the "http://backpackweburl.cat" "table_row"
     And "Edit settings" "icon" should exist in the "http://backpackweburl.cat" "table_row"
+    And "Test settings" "icon" should exist in the "http://backpackweburl.cat" "table_row"
+    # Check that editing the backpack shows the correct values.
+    And I click on "Edit settings" "link" in the "http://backpackweburl.cat" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And I should see "Provider"
+    And the field "provider" matches value "Other"
+    And I should not see "Region"
+    And the field "backpackweburl" matches value "http://backpackweburl.cat"
+    And the field "backpackapiurl" matches value "http://backpackapiurl.cat"
+    And the field "Connect to backpack provider account" matches value "0"
+    And I should not see "Connect to a Canvas Credentials issuer account"
+
+  @javascript
+  Scenario: Add a new site OBv2.0 backpack with Other provider and issuer authentication details
+    Given I am on homepage
+    And I log in as "admin"
+    And I navigate to "Badges > Manage backpacks" in site administration
+    When I press "Add a new backpack"
+    And I set the field "apiversion" to "2"
+    And I set the field "provider" to "Other"
+    And I set the field "backpackweburl" to "http://backpackweburl.cat"
+    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
+    And I should see "Connect to backpack provider account"
+    And I should not see "Connect to a Canvas Credentials issuer account"
+    And the field "Connect to backpack provider account" matches value "0"
+    And I click on "includeauthdetails" "checkbox"
+    And I should see "Email"
+    And I should see "Password"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "backpackemail" to "test@test.com"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "password" to "123456"
+    And I press "Save changes"
+    Then I should see "http://backpackweburl.cat"
+    # Check that editing the backpack shows the correct values.
+    And I click on "Edit settings" "link" in the "http://backpackweburl.cat" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And the field "provider" matches value "Other"
+    And the field "backpackweburl" matches value "http://backpackweburl.cat"
+    And the field "backpackapiurl" matches value "http://backpackapiurl.cat"
+    And the field "Connect to backpack provider account" matches value "1"
+    And the field "backpackemail" matches value "test@test.com"
+    And the field "password" matches value "123456"
+    # Disable authentication details and check that email and password are cleared.
+    But I click on "includeauthdetails" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit settings" "link" in the "http://backpackweburl.cat" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And the field "provider" matches value "Other"
+    And the field "backpackweburl" matches value "http://backpackweburl.cat"
+    And the field "backpackapiurl" matches value "http://backpackapiurl.cat"
+    And the field "Connect to backpack provider account" matches value "0"
+    And the field "backpackemail" matches value ""
+    And the field "password" matches value ""
+
+  @javascript
+  Scenario: Add a new site OBv2.0 backpack without providers
+    Given the following config values are set as admin:
+      | badges_canvasregions |  |
+    And I am on homepage
+    And I log in as "admin"
+    And I navigate to "Badges > Manage backpacks" in site administration
+    When I press "Add a new backpack"
+    And I set the field "apiversion" to "2"
+    And I should not see "Provider"
+    And I should see "Backpack URL"
+    And I should see "Backpack API URL"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "backpackweburl" to "https://eu.badgr.io"
+    And I set the field "backpackapiurl" to "https://api.eu.badgr.io/v2"
+    And I should see "Connect to backpack provider account"
+    And I should not see "Connect to a Canvas Credentials issuer account"
+    And I press "Save changes"
+    Then I should see "https://eu.badgr.io"
+    And "Delete" "icon" should exist in the "https://eu.badgr.io" "table_row"
+    And "Edit settings" "icon" should exist in the "https://eu.badgr.io" "table_row"
+    And "Test settings" "icon" should exist in the "https://eu.badgr.io" "table_row"
+    # Check that editing the backpack shows the correct values.
+    And I click on "Edit settings" "link" in the "https://eu.badgr.io" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And I should not see "Provider"
+    And the field "backpackweburl" matches value "https://eu.badgr.io"
+    And the field "backpackapiurl" matches value "https://api.eu.badgr.io/v2"
+    And I should see "Connect to backpack provider account"
+    And the field "Connect to backpack provider account" matches value "0"
+    And I should not see "Connect to a Canvas Credentials issuer account"
+    And I press "Cancel"
+    # Add Europe to the providers list and check that editing the backpack shows the correct values.
+    But the following config values are set as admin:
+      | badges_canvasregions | Europe\|https://eu.badgr.io\|https://api.eu.badgr.io/v2 |
+    And I click on "Edit settings" "link" in the "https://eu.badgr.io" "table_row"
+    And I should see "API version supported"
+    And the field "apiversion" matches value "2"
+    And I should see "Provider"
+    And the field "provider" matches value "Canvas Credentials"
+    And I should see "Region"
+    And the field "region" matches value "Europe"
+    And I should see "Connect to a Canvas Credentials issuer account"
+    And the field "Connect to a Canvas Credentials issuer account" matches value "0"
+    And I should not see "Connect to backpack provider account"
+    And I should not see "Backpack URL"
+    And I should not see "Backpack API URL"
 
   @javascript
   Scenario: Remove a site backpack
@@ -139,47 +347,17 @@ Feature: Backpack badges
     And "Move down" "icon" should not exist in the "https://dc.imsglobal.org" "table_row"
 
   @javascript
-  Scenario: Add a new site backpack with authentication details checkbox
-    Given I am on homepage
-    And I log in as "admin"
-    And I navigate to "Badges > Manage backpacks" in site administration
-    When I press "Add a new backpack"
-    And I set the field "apiversion" to "2.1"
-    And I set the field "backpackweburl" to "http://backpackweburl.cat"
-    And I should not see "Backpack API URL"
-    Then "Include authentication details with the backpack" "checkbox" should not be visible
-    And I should not see "Badge issuer email address"
-    And I should not see "Badge issuer password"
-    And I set the field "apiversion" to "2"
-    And "Include authentication details with the backpack" "checkbox" should be visible
-    And I click on "includeauthdetails" "checkbox"
-    And I should see "Badge issuer email address"
-    And I should see "Badge issuer password"
-    And I set the field "backpackemail" to "test@test.com"
-    And I set the field "password" to "123456"
-    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
-    And I press "Save changes"
-    And I click on "Edit" "link" in the "http://backpackweburl.cat" "table_row"
-    And the field "Include authentication details with the backpack" matches value "1"
-    And I click on "includeauthdetails" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit" "link" in the "http://backpackweburl.cat" "table_row"
-    And the field "Include authentication details with the backpack" matches value "0"
-    And I click on "includeauthdetails" "checkbox"
-    And I should not see "test@test.com"
-
-  @javascript
   Scenario: View backpack form as a student
     Given I log in as "student1"
     And I follow "Preferences" in the user menu
     And I follow "Backpack settings"
     When I set the field "externalbackpackid" to "https://dc.imsglobal.org"
     Then I should not see "Log in to your backpack"
-    And I should not see "Email address"
+    And I should not see "Email"
     And I should not see "Password"
     But I set the field "externalbackpackid" to "https://test.com/"
     And I should see "Log in to your backpack"
-    And I should see "Email address"
+    And I should see "Email"
     And I should see "Password"
 
   @javascript
