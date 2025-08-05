@@ -125,11 +125,6 @@ if ($options['list']) {
     exit(0);
 }
 
-if (moodle_needs_upgrading()) {
-    mtrace("Moodle upgrade pending, cannot manage tasks.");
-    exit(1);
-}
-
 if ($disable = $options['disable']) {
     if (!$task = \core\task\manager::get_scheduled_task($disable)) {
         mtrace("Task '$disable' not found");
@@ -157,6 +152,11 @@ if ($disable = $options['disable']) {
         exit(1);
     }
 } else if ($execute = $options['execute']) {
+    if (moodle_needs_upgrading()) {
+        mtrace("Moodle upgrade pending, cannot execute tasks.");
+        exit(1);
+    }
+
     if (!$task = \core\task\manager::get_scheduled_task($execute)) {
         mtrace("Task '$execute' not found");
         exit(1);
