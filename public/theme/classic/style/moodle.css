@@ -38283,12 +38283,12 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
  * Reset the Bootstrap _reboot.scss styles for tables.
  * That reboot mainly affects tables added by the tiny editor.
  */
-table:not(.table) thead,
-table:not(.table) tbody,
-table:not(.table) tfoot,
-table:not(.table) tr,
-table:not(.table) td,
-table:not(.table) th {
+table:not(.table):not(.ygtvtable) thead,
+table:not(.table):not(.ygtvtable) tbody,
+table:not(.table):not(.ygtvtable) tfoot,
+table:not(.table):not(.ygtvtable) tr,
+table:not(.table):not(.ygtvtable) td,
+table:not(.table):not(.ygtvtable) th {
   border-color: var(--bs-border-color);
   border-style: solid;
   border-width: var(--bs-border-width);
