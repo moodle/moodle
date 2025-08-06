@@ -1,0 +1,24 @@
+issueNumber: MDL-86231
+notes:
+  core:
+    - message: >
+        The Behat `::execute()` method now accepts an array-style callable in
+        addition to the string `classname::method` format.
+
+
+        The following formats are now accepted:
+
+
+        ```php
+
+        // String format:
+
+        $this->execute('behat_general::i_click_on', [...]);
+
+
+        // Array format:
+
+        $this->execute([behat_general::class,' i_click_on'], [...]);
+
+        ```
+      type: improved
