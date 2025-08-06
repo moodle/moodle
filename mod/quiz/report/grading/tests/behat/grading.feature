@@ -237,29 +237,22 @@ Feature: Basic use of the Manual grading report
     And I press "Save" and switch to main window
     When I am on the "Quiz 2" "mod_quiz > Manual grading report" page
     And I click on "Also show questions that have been graded automatically" "link"
-    # Confirm that Essay 1 is already graded.
-    Then "Essay 1" row "To grade" column of "questionstograde" table should contain "0"
-    And "Essay 1" row "Already graded" column of "questionstograde" table should contain "1"
-    And "Essay 1" row "Automatically graded" column of "questionstograde" table should contain "0"
-    # Confirm that Essay 2 is not yet graded.
-    And "Essay 2" row "To grade" column of "questionstograde" table should contain "1"
-    And "Essay 2" row "Already graded" column of "questionstograde" table should contain "0"
-    And "Essay 2" row "Automatically graded" column of "questionstograde" table should contain "0"
-    # Confirm that TF1 is automatically graded.
-    And "TF1" row "To grade" column of "questionstograde" table should contain "0"
-    And "TF1" row "Already graded" column of "questionstograde" table should contain "0"
-    And "TF1" row "Automatically graded" column of "questionstograde" table should contain "1"
+    # Confirm that Essay 1 is already graded, Essay 2 is not yet graded and that TF1 is automatically graded.
+    Then the following should exist in the "questionstograde" table:
+      | Question name | To grade | Already graded | Automatically graded |
+      | Essay 1       | 0        | 1              | 0                    |
+      | Essay 2       | 1        | 0              | 0                    |
+      | TF1           | 0        | 0              | 1                    |
     # Grade the not yet graded Essay 2.
-    And I click on "Grade" "link" in the "2" "table_row"
+    And I click on "grade" "link" in the "Essay 2" "table_row"
     And I set the field "Mark" to "20"
     And I press "Save and show next"
-    And I am on the "Quiz 2" "mod_quiz > Manual grading report" page
     # Update the already graded Essay 1.
-    And I click on "grade all" "link" in the "1" "table_row"
+    And I click on "grade all" "link" in the "Essay 1" "table_row"
     And I set the field "Mark" to "5"
     And I press "Save and show next"
     # Confirm that each question is graded for the corresponding student.
     And I am on the "Quiz 2" "mod_quiz > Grades report" page
-    And "S1 Student1" row "Q. 1" column of "generaltable" table should contain "12.50"
-    And "S1 Student1" row "Q. 2" column of "generaltable" table should contain "50.00"
-    And "S1 Student1" row "Q. 3" column of "generaltable" table should contain "-"
+    And the following should exist in the "generaltable" table:
+      | Username | Q. 1  | Q. 2  | Q. 3 |
+      | student1 | 12.50 | 50.00 | -    |
