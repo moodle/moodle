@@ -767,4 +767,196 @@ final class lib_test extends \advanced_testcase {
         sort($returnedaliases);
         $this->assertEquals($aliases, $returnedaliases);
     }
+
+    /**
+     * Test get_comments function.
+     *
+     * @covers ::mod_glossary_get_comments
+     * @dataProvider provider_test_get_comments
+     *
+     * @param string $role The role of the current user.
+     * @param bool $requireapproval Whether approval is required for entries.
+     * @param bool $hasentries Whether there are entries in the glossary.
+     * @param int|null $expected Expected count of comments.
+     * @param bool $allowcomments Whether comments are allowed in the glossary.
+     * @param bool $usecomments Whether comments are enabled in the system.
+     * @param bool $commentcapability Whether the user has the capability to comment.
+     */
+    public function test_get_comments(
+        string $role,
+        bool $requireapproval,
+        bool $hasentries,
+        ?int $expected,
+        bool $allowcomments = true,
+        bool $usecomments = true,
+        bool $commentcapability = true,
+    ): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        set_config('usecomments', $usecomments);
+
+        $course = $this->getDataGenerator()->create_course();
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher1 = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
+        $this->setUser($currentuser);
+
+        $activity = $this->getDataGenerator()->create_module(
+            'glossary',
+            ['course' => $course->id, 'defaultapproval' => !$requireapproval, 'allowcomments' => $allowcomments],
+        );
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+
+        if (!$commentcapability) {
+            $userrole = $DB->get_field('role', 'id', ['shortname' => 'user'], MUST_EXIST);
+            assign_capability('mod/glossary:comment', CAP_PROHIBIT, $userrole, \context_module::instance($activity->cmid));
+        }
+
+        if ($hasentries) {
+            /** @var \mod_glossary_generator $glossarygenerator */
+            $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+            $entry1 = $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $currentuser->id,
+                'approved' => 1,
+            ]);
+            $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $teacher1->id,
+                'approved' => 1,
+            ]);
+            $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $student1->id,
+                'approved' => 1,
+            ]);
+            $entry4 = $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $student2->id,
+                'approved' => (int)!$requireapproval,
+            ]);
+            $entry5 = $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $currentuser->id,
+                'approved' => (int)!$requireapproval,
+            ]);
+
+            /** @var \core_comment_generator $generator */
+            $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
+            $cmtoptions = new \stdClass();
+            $cmtoptions->context = \context_module::instance($activity->cmid);
+            $cmtoptions->instanceid = $activity->cmid;
+            $cmtoptions->component = 'mod_glossary';
+            $cmtoptions->area = 'glossary_entry';
+            $cmtoptions->content = 'My comment';
+
+            $cmtoptions->itemid = $entry1->id;
+            $cmtoptions->userid = $teacher1->id;
+            $generator->create_comment($cmtoptions);
+
+            $cmtoptions->itemid = $entry1->id;
+            $cmtoptions->userid = $currentuser->id;
+            $generator->create_comment($cmtoptions);
+
+            $cmtoptions->itemid = $entry4->id;
+            $cmtoptions->userid = $teacher1->id;
+            $generator->create_comment($cmtoptions);
+
+            // This comment won't be displayed when the current user is a student.
+            $cmtoptions->itemid = $entry5->id;
+            $cmtoptions->userid = $teacher1->id;
+            $generator->create_comment($cmtoptions);
+
+            $cmtoptions->itemid = $entry5->id;
+            $cmtoptions->userid = $currentuser->id;
+            $generator->create_comment($cmtoptions);
+        }
+
+        $comments = mod_glossary_get_comments($cm);
+        $this->assertCount($expected, $comments);
+    }
+
+    /**
+     * Data provider for test_get_comments.
+     *
+     * @return array
+     */
+    public static function provider_test_get_comments(): array {
+        return [
+            'Teacher without responses' => [
+                'role' => 'editingteacher',
+                'requireapproval' => false,
+                'hasentries' => false,
+                'expected' => 0,
+            ],
+            'Teacher with responses (non-require approval)' => [
+                'role' => 'editingteacher',
+                'requireapproval' => false,
+                'hasentries' => true,
+                'expected' => 5,
+            ],
+            'Teacher with responses (require approval)' => [
+                'role' => 'editingteacher',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => 5,
+            ],
+            'Teacher with responses (require approval) - Usecomments disabled' => [
+                'role' => 'editingteacher',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => 0,
+                'usecomments' => false,
+            ],
+            'Teacher with responses (require approval) - Allow comments disabled' => [
+                'role' => 'editingteacher',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => 0,
+                'allowcomments' => false,
+            ],
+            'Student without responses' => [
+                'role' => 'student',
+                'requireapproval' => false,
+                'hasentries' => false,
+                'expected' => 0,
+            ],
+            'Student with responses (non-require approval)' => [
+                'role' => 'student',
+                'requireapproval' => false,
+                'hasentries' => true,
+                'expected' => 5,
+            ],
+            'Student with responses (require approval)' => [
+                'role' => 'student',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => 4, // One comment is from an unapproved entry created by a different user.
+            ],
+            'Student with responses (require approval) - Usecomments disabled' => [
+                'role' => 'student',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => 0,
+                'usecomments' => false,
+            ],
+            'Student with responses (require approval) - Allow comments disabled' => [
+                'role' => 'student',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => 0,
+                'allowcomments' => false,
+            ],
+            'Student with responses (require approval) - No comment capability' => [
+                'role' => 'student',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => 0,
+                'commentcapability' => false,
+            ],
+        ];
+    }
 }

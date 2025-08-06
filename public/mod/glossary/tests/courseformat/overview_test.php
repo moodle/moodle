@@ -94,10 +94,9 @@ final class overview_test extends \advanced_testcase {
             return;
         }
 
-        $this->assertEquals(
-            $expected,
-            ['name' => $item->get_name(), 'value' => $item->get_value()]
-        );
+        $this->assertEquals($expected['name'], $item->get_name());
+        $this->assertEquals($expected['value'], $item->get_value());
+        $this->assertStringContainsString($expected['content'], $item->get_content()->text);
     }
 
     /**
@@ -120,6 +119,7 @@ final class overview_test extends \advanced_testcase {
                 'expected' => [
                     'name' => get_string('actions'),
                     'value' => 0,
+                    'content' => get_string('view'),
                 ],
             ],
             'Teacher without entries (require approval)' => [
@@ -129,6 +129,7 @@ final class overview_test extends \advanced_testcase {
                 'expected' => [
                     'name' => get_string('actions'),
                     'value' => 0,
+                    'content' => get_string('view'),
                 ],
             ],
             'Teacher with entries (require approval)' => [
@@ -138,7 +139,230 @@ final class overview_test extends \advanced_testcase {
                 'expected' => [
                     'name' => get_string('actions'),
                     'value' => 2,
+                    'content' => get_string('approve', 'mod_glossary'),
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * Test get_extra_comments_overview.
+     *
+     * @covers ::get_extra_comments_overview
+     * @dataProvider provider_test_get_extra_comments_overview
+     *
+     * @param string $role The role of the current user.
+     * @param bool $requireapproval Whether approval is required for entries.
+     * @param bool $hasentries Whether there are entries in the glossary.
+     * @param string|null $expected Expected value for the overview item.
+     */
+    public function test_get_extra_comments_overview(
+        string $role,
+        bool $requireapproval,
+        bool $hasentries,
+        ?string $expected
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher1 = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
+        $this->setUser($currentuser);
+
+        $activity = $this->getDataGenerator()->create_module(
+            'glossary',
+            ['course' => $course->id, 'defaultapproval' => !$requireapproval, 'allowcomments' => true],
+        );
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+
+        if ($hasentries) {
+            /** @var \mod_glossary_generator $glossarygenerator */
+            $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+            $entry1 = $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $currentuser->id,
+                'approved' => 1,
+            ]);
+            $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $teacher1->id,
+                'approved' => 1,
+            ]);
+            $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $student1->id,
+                'approved' => 1,
+            ]);
+            $entry4 = $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $student2->id,
+                'approved' => (int)!$requireapproval,
+            ]);
+            $entry5 = $glossarygenerator->create_entry([
+                'glossaryid' => $activity->id,
+                'userid' => $currentuser->id,
+                'approved' => (int)!$requireapproval,
+            ]);
+
+            /** @var \core_comment_generator $generator */
+            $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
+            $cmtoptions = new \stdClass();
+            $cmtoptions->context = \context_module::instance($activity->cmid);
+            $cmtoptions->instanceid = $activity->cmid;
+            $cmtoptions->component = 'mod_glossary';
+            $cmtoptions->area = 'glossary_entry';
+            $cmtoptions->content = 'My comment';
+
+            $cmtoptions->itemid = $entry1->id;
+            $cmtoptions->userid = $teacher1->id;
+            $generator->create_comment($cmtoptions);
+
+            $cmtoptions->itemid = $entry1->id;
+            $cmtoptions->userid = $currentuser->id;
+            $generator->create_comment($cmtoptions);
+
+            $cmtoptions->itemid = $entry4->id;
+            $cmtoptions->userid = $teacher1->id;
+            $generator->create_comment($cmtoptions);
+
+            // This comment won't be displayed when the current user is a student.
+            $cmtoptions->itemid = $entry5->id;
+            $cmtoptions->userid = $teacher1->id;
+            $generator->create_comment($cmtoptions);
+
+            $cmtoptions->itemid = $entry5->id;
+            $cmtoptions->userid = $currentuser->id;
+            $generator->create_comment($cmtoptions);
+        }
+
+        $overview = overviewfactory::create($cm);
+        $reflection = new \ReflectionClass($overview);
+        $method = $reflection->getMethod('get_extra_comments_overview');
+        $method->setAccessible(true);
+        $item = $method->invoke($overview);
+
+        if ($expected === null) {
+            $this->assertNull($item);
+            return;
+        }
+
+        $this->assertEquals(get_string('comments', 'glossary'), $item->get_name());
+        $this->assertEquals($expected, $item->get_value());
+    }
+
+    /**
+     * Data provider for test_get_extra_comments_overview.
+     *
+     * @return array
+     */
+    public static function provider_test_get_extra_comments_overview(): array {
+        return [
+            'Teacher without responses' => [
+                'role' => 'editingteacher',
+                'requireapproval' => false,
+                'hasentries' => false,
+                'expected' => '0',
+            ],
+            'Teacher with responses (non-require approval)' => [
+                'role' => 'editingteacher',
+                'requireapproval' => false,
+                'hasentries' => true,
+                'expected' => '5',
+            ],
+            'Teacher with responses (require approval)' => [
+                'role' => 'editingteacher',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => '5',
+            ],
+            'Student without responses' => [
+                'role' => 'student',
+                'requireapproval' => false,
+                'hasentries' => false,
+                'expected' => '0',
+            ],
+            'Student with responses (non-require approval)' => [
+                'role' => 'student',
+                'requireapproval' => false,
+                'hasentries' => true,
+                'expected' => '5',
+            ],
+            'Student with responses (require approval)' => [
+                'role' => 'student',
+                'requireapproval' => true,
+                'hasentries' => true,
+                'expected' => '4', // One comment is from an unapproved entry created by a different user.
+            ],
+        ];
+    }
+
+    /**
+     * Test get_extra_comments_overview when comments are not allowed.
+     *
+     * @covers ::get_extra_comments_overview
+     * @dataProvider provider_test_get_extra_comments_overview_with_comments_disabled
+     *
+     * @param bool $usecomments Whether comments are allowed globally.
+     * @param bool $allowcomments Whether comments are allowed in the glossary.
+     * @param string $expected Expected value for the overview item.
+     */
+    public function test_get_extra_comments_overview_with_comments_disabled(
+        bool $usecomments,
+        bool $allowcomments,
+        string $expected,
+    ): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('usecomments', $usecomments);
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(
+            'glossary',
+            ['course' => $course->id, 'allowcomments' => $allowcomments],
+        );
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+
+        $overview = overviewfactory::create($cm);
+        $reflection = new \ReflectionClass($overview);
+        $method = $reflection->getMethod('get_extra_comments_overview');
+        $method->setAccessible(true);
+        $item = $method->invoke($overview);
+
+        $this->assertEquals(get_string('comments', 'glossary'), $item->get_name());
+        $this->assertEquals(0, $item->get_value());
+        $this->assertEquals($expected, $item->get_content());
+    }
+
+    /**
+     * Data provider for test_get_extra_comments_overview_with_comments_disabled.
+     *
+     * @return array
+     */
+    public static function provider_test_get_extra_comments_overview_with_comments_disabled(): array {
+        return [
+            'Use comments disabled, allow comments disabled' => [
+                'usecomments' => false,
+                'allowcomments' => false,
+                'expected' => '-',
+            ],
+            'Use comments enabled, allow comments disabled' => [
+                'usecomments' => true,
+                'allowcomments' => false,
+                'expected' => '-',
+            ],
+            'Use comments disabled, allow comments enabled' => [
+                'usecomments' => false,
+                'allowcomments' => true,
+                'expected' => '-',
+            ],
+            'Use comments enabled, allow comments enabled' => [
+                'usecomments' => true,
+                'allowcomments' => true,
+                'expected' => '0',
             ],
         ];
     }

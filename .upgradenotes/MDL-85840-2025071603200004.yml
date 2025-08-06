@@ -1,0 +1,7 @@
+issueNumber: MDL-85840
+notes:
+  mod_glossary:
+    - message: >-
+        Added mod_glossary_get_comments(): a method for retrieving comments
+        linked to a glossary.
+      type: improved
