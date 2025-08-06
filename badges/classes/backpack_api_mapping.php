@@ -81,6 +81,9 @@ class backpack_api_mapping {
     /** @var int OpenBadges version. */
     protected $backpackapiversion;
 
+    /** @var array Errors encountered during the request. */
+    protected $errors = [];
+
     /**
      * Create a mapping.
      *
@@ -144,6 +147,26 @@ class backpack_api_mapping {
      */
     public static function get_authentication_error() {
         return self::$authenticationerror;
+    }
+
+    /**
+     * Get the errors encountered during the request.
+     *
+     * @return array The list of errors.
+     */
+    public function get_errors() {
+        return $this->errors;
+    }
+
+    /**
+     * Add an error to the list of errors.
+     *
+     * @param string $error The error message.
+     * @return self This instance for method chaining.
+     */
+    public function add_error(string $error): self {
+        $this->errors[] = $error;
+        return $this;
     }
 
     /**
@@ -342,6 +365,23 @@ class backpack_api_mapping {
             $response = $curl->put($url, $post, $options);
         }
         $response = json_decode($response);
+        if ($response === null) {
+            $this->add_error(get_string('invalidrequest', 'error'));
+            return null;
+        }
+        if (isset($response->status) && isset($response->status->success) && $response->status->success != true) {
+            // If the response wasn't successful, store the errors and return null.
+            if (isset($response->validationErrors)) {
+                $error = implode(', ', $response->validationErrors);
+            } else if (isset($response->status->description)) {
+                $error = $response->status->description;
+            } else {
+                $error = get_string('invalidrequest', 'error');
+            }
+            $this->add_error($error);
+            return null;
+        }
+
         if (isset($response->result)) {
             $response = $response->result;
         }
