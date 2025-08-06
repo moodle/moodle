@@ -1,0 +1,9 @@
+issueNumber: MDL-85850
+notes:
+  mod_feedback:
+    - message: >-
+        Two new methods, `feedback_get_completeds` and
+        `feedback_get_completeds_count`, have been added to the feedback API.
+        These methods allow you to retrieve completed items based on multiple
+        groups.
+      type: improved

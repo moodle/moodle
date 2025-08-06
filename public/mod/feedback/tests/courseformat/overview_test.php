@@ -241,6 +241,219 @@ final class overview_test extends \advanced_testcase {
     }
 
     /**
+     * Test get_extra_responses_overview_with_groups().
+     *
+     * @dataProvider provider_feedback_get_extra_responses_overview_with_groups
+     * @param int $groupmode The group mode of the course.
+     * @param string $currentuser The user to set for the test.
+     * @param int $expectedcount The expected number of completeds.
+     *
+     * @covers ::get_extra_responses_overview
+     */
+    public function test_get_extra_responses_overview_with_groups(
+        int $groupmode,
+        string $currentuser,
+        int $expectedcount,
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course([
+            'groupmode' => $groupmode,
+            'groupmodeforce' => true,
+        ]);
+        $allgroups = [
+            'groupa' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupb' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupc' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+        ];
+
+        // Participant:  Role:           Groups:
+        // student1a     student         groupa
+        // student2a     student         groupa
+        // student3b     student         groupb
+        // teacher1      editingteacher  groupa
+        // teacher2      teacher         groupa
+        // teacher3      teacher         groupb
+        // teacher4      teacher         groupc
+        // teacher5      teacher         (no group)
+        // teacher6      editingteacher  (no group) .
+        $student1a = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->getDataGenerator()->create_group_member([
+            'groupid' => $allgroups['groupa']->id,
+            'userid' => $student1a->id,
+        ]);
+        $student2a = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->getDataGenerator()->create_group_member([
+            'groupid' => $allgroups['groupa']->id,
+            'userid' => $student2a->id,
+        ]);
+        $student3b = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->getDataGenerator()->create_group_member([
+            'groupid' => $allgroups['groupb']->id,
+            'userid' => $student3b->id,
+        ]);
+        $teachers['teacher1'] = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $this->getDataGenerator()->create_group_member([
+            'groupid' => $allgroups['groupa']->id,
+            'userid' => $teachers['teacher1']->id,
+        ]);
+        $teachers['teacher2'] = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->getDataGenerator()->create_group_member([
+            'groupid' => $allgroups['groupa']->id,
+            'userid' => $teachers['teacher2']->id,
+        ]);
+        $teachers['teacher3'] = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->getDataGenerator()->create_group_member([
+            'groupid' => $allgroups['groupb']->id,
+            'userid' => $teachers['teacher3']->id,
+        ]);
+        $teachers['teacher4'] = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->getDataGenerator()->create_group_member([
+            'groupid' => $allgroups['groupc']->id,
+            'userid' => $teachers['teacher4']->id,
+        ]);
+        $teachers['teacher5'] = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $teachers['teacher6'] = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        $activity = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+
+        // Add a multichoice item to the feedback and create responses for it.
+        /** @var  \mod_feedback_generator $feedbackgenerator */
+        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+        $item = $feedbackgenerator->create_item_multichoice($activity, ['values' => "y\nn"]);
+        $feedbackgenerator->create_response([
+            'userid' => $student1a->id,
+            'cmid' => $cm->id,
+            'anonymous' => false,
+            $item->name => 'y',
+        ]);
+        $feedbackgenerator->create_response([
+            'userid' => $student2a->id,
+            'cmid' => $cm->id,
+            'anonymous' => false,
+            $item->name => 'n',
+        ]);
+        $feedbackgenerator->create_response([
+            'userid' => $student3b->id,
+            'cmid' => $cm->id,
+            'anonymous' => false,
+            $item->name => 'y',
+        ]);
+
+        $this->setUser($teachers[$currentuser]);
+
+        $overview = overviewfactory::create($cm);
+        $reflection = new \ReflectionClass($overview);
+        $method = $reflection->getMethod('get_extra_responses_overview');
+        $method->setAccessible(true);
+        $item = $method->invoke($overview);
+
+        $this->assertEquals(get_string('responses', 'mod_feedback'), $item->get_name());
+        $this->assertEquals($expectedcount, $item->get_value());
+    }
+
+    /**
+     * Data provider for feedback_get_extra_responses_overview_with_groups.
+     *
+     * @return array
+     */
+    public static function provider_feedback_get_extra_responses_overview_with_groups(): array {
+        return [
+            'Separate groups - Editing teacher' => [
+                'groupmode' => SEPARATEGROUPS,
+                'currentuser' => 'teacher1',
+                'expectedcount' => 3,
+            ],
+            'Separate groups - Non-editing teacher (groupa)' => [
+                'groupmode' => SEPARATEGROUPS,
+                'currentuser' => 'teacher2',
+                'expectedcount' => 2,
+            ],
+            'Separate groups - Non-editing teacher (groupb)' => [
+                'groupmode' => SEPARATEGROUPS,
+                'currentuser' => 'teacher3',
+                'expectedcount' => 1,
+            ],
+            'Separate groups - Non-editing teacher (groupc)' => [
+                'groupmode' => SEPARATEGROUPS,
+                'currentuser' => 'teacher4',
+                'expectedcount' => 0,
+            ],
+            'Separate groups - Non-editing teacher (no group)' => [
+                'groupmode' => SEPARATEGROUPS,
+                'currentuser' => 'teacher5',
+                'expectedcount' => 3, // Although the expected count should be 0, this information will never be shown to the user.
+            ],
+            'Separate groups - Editing teacher (no group)' => [
+                'groupmode' => SEPARATEGROUPS,
+                'currentuser' => 'teacher6',
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Editing teacher' => [
+                'groupmode' => VISIBLEGROUPS,
+                'currentuser' => 'teacher1',
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Non-editing teacher (groupa)' => [
+                'groupmode' => VISIBLEGROUPS,
+                'currentuser' => 'teacher2',
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Non-editing teacher (groupb)' => [
+                'groupmode' => VISIBLEGROUPS,
+                'currentuser' => 'teacher3',
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Non-editing teacher (groupc)' => [
+                'groupmode' => VISIBLEGROUPS,
+                'currentuser' => 'teacher4',
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Non-editing teacher (no group)' => [
+                'groupmode' => VISIBLEGROUPS,
+                'currentuser' => 'teacher5',
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Editing teacher (no group)' => [
+                'groupmode' => VISIBLEGROUPS,
+                'currentuser' => 'teacher6',
+                'expectedcount' => 3,
+            ],
+            'No groups - Editing teacher' => [
+                'groupmode' => NOGROUPS,
+                'currentuser' => 'teacher1',
+                'expectedcount' => 3,
+            ],
+            'No groups - Non-editing teacher (groupa)' => [
+                'groupmode' => NOGROUPS,
+                'currentuser' => 'teacher2',
+                'expectedcount' => 3,
+            ],
+            'No groups - Non-editing teacher (groupb)' => [
+                'groupmode' => NOGROUPS,
+                'currentuser' => 'teacher3',
+                'expectedcount' => 3,
+            ],
+            'No groups - Non-editing teacher (groupc)' => [
+                'groupmode' => NOGROUPS,
+                'currentuser' => 'teacher4',
+                'expectedcount' => 3,
+            ],
+            'No groups - Non-editing teacher (no group)' => [
+                'groupmode' => NOGROUPS,
+                'currentuser' => 'teacher5',
+                'expectedcount' => 3,
+            ],
+            'No groups - Editing teacher (no group)' => [
+                'groupmode' => NOGROUPS,
+                'currentuser' => 'teacher6',
+                'expectedcount' => 3,
+            ],
+        ];
+    }
+
+    /**
      * Test get_extra_submitted_overview.
      *
      * @covers ::get_extra_submitted_overview

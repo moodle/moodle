@@ -2132,6 +2132,44 @@ function feedback_is_already_submitted($feedbackid, $courseid = false) {
 }
 
 /**
+ * Get the completeds depending on the given groups.
+ * This method doesn't check if the user has the capability to view the defined groups,
+ * so this should be checked before calling this function.
+ *
+ * @param stdClass $feedback The feedback object.
+ * @param array $groups Identifiers of the groups to filter by.
+ * @return array Array of completed records.
+ */
+function feedback_get_completeds(stdClass $feedback, array $groups = []) {
+    $db = \core\di::get(\moodle_database::class);
+
+    if (empty($groups)) {
+        // If no groups are specified, return all completeds for the feedback.
+        return $db->get_records('feedback_completed', ['feedback' => $feedback->id]);
+    }
+
+    [$sql, $params] = $db->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+    $query = 'SELECT fbc.*
+                FROM {feedback_completed} fbc, {groups_members} gm
+               WHERE fbc.feedback = :feedbackid
+                     AND (gm.groupid ' . $sql . ' OR gm.groupid = 0)
+                     AND fbc.userid = gm.userid';
+    $params['feedbackid'] = $feedback->id;
+    return $db->get_records_sql($query, $params);
+}
+
+/**
+ * Get the count of completeds depending on the given group identifiers.
+ *
+ * @param stdClass $feedback The feedback object.
+ * @param array $groups Identifiers of the groups to filter by.
+ * @return int Count of completeds.
+ */
+function feedback_get_completeds_count(stdClass $feedback, array $groups = []): int {
+    return count(feedback_get_completeds($feedback, $groups));
+}
+
+/**
  * get the completeds depending on the given groupid.
  *
  * @global object
@@ -2142,39 +2180,26 @@ function feedback_is_already_submitted($feedbackid, $courseid = false) {
  * @return mixed array of found completeds otherwise false
  */
 function feedback_get_completeds_group($feedback, $groupid = false, $courseid = false) {
-    global $CFG, $DB;
+    global $DB;
 
-    if (intval($groupid) > 0) {
-        $query = "SELECT fbc.*
-                    FROM {feedback_completed} fbc, {groups_members} gm
-                   WHERE fbc.feedback = ?
-                         AND gm.groupid = ?
-                         AND fbc.userid = gm.userid";
-        if ($values = $DB->get_records_sql($query, array($feedback->id, $groupid))) {
-            return $values;
-        } else {
+    if (intval($groupid) > 0 || !$courseid) {
+        $values = feedback_get_completeds($feedback, [$groupid]);
+        if (empty($values)) {
             return false;
         }
+        return $values;
+    }
+
+    $query = "SELECT DISTINCT fbc.*
+                FROM {feedback_completed} fbc, {feedback_value} fbv
+                WHERE fbc.id = fbv.completed
+                    AND fbc.feedback = ?
+                    AND fbv.course_id = ?
+                ORDER BY random_response";
+    if ($values = $DB->get_records_sql($query, [$feedback->id, $courseid])) {
+        return $values;
     } else {
-        if ($courseid) {
-            $query = "SELECT DISTINCT fbc.*
-                        FROM {feedback_completed} fbc, {feedback_value} fbv
-                        WHERE fbc.id = fbv.completed
-                            AND fbc.feedback = ?
-                            AND fbv.course_id = ?
-                        ORDER BY random_response";
-            if ($values = $DB->get_records_sql($query, array($feedback->id, $courseid))) {
-                return $values;
-            } else {
-                return false;
-            }
-        } else {
-            if ($values = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id))) {
-                return $values;
-            } else {
-                return false;
-            }
-        }
+        return false;
     }
 }
 
