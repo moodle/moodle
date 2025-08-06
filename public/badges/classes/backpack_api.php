@@ -513,6 +513,20 @@ class backpack_api {
     }
 
     /**
+     * List all errors occurred during the requests to the backpack.
+     *
+     * @return array The list of errors.
+     */
+    public function get_errors(): array {
+        $errors = [];
+        foreach ($this->mappings as $mapping) {
+            $errors = array_merge($errors, $mapping->get_errors());
+        }
+
+        return $errors;
+    }
+
+    /**
      * Get the list of badges in a collection.
      *
      * @param stdClass $collection The collection to deal with.
