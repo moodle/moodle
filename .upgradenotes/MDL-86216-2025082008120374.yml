@@ -1,0 +1,8 @@
+issueNumber: MDL-86216
+notes:
+  mod_scorm:
+    - message: >-
+        Add group id list to \mod_scorm\manager::count_users_who_attempted and
+        \mod_scorm\manager::count_participants so we can filter by groups. Empty
+        array means no filtering.
+      type: improved

@@ -136,12 +136,28 @@ class manager {
     /**
      * Count the number of users who have attempted the SCORM activity.
      *
+     * The filter will work with provided groups without validating group selection. For example,
+     * if a user isn't a group member in separate groups mode, no group filtering
+     * is applied (user should see no groups). Verify user can view actually access any content
+     * before calling this method.
+     *
+     * @param array $groupids optional group id array, empty array means no group filtering.
      * @return int the number of users who have attempted the SCORM activity
      */
-    public function count_users_who_attempted(): int {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/scorm/locallib.php');
-        return scorm_get_count_users($this->instance->id);
+    public function count_users_who_attempted(array $groupids = []): int {
+        $params = ['scormid' => $this->instance->id];
+        $joins = '';
+        $where = "WHERE st.scormid = :scormid";
+
+        if ($groupids) {
+            $sqljoin = groups_get_members_join($groupids, 'st.userid', $this->context);
+            $joins = $sqljoin->joins;
+            $where .= " AND $sqljoin->wheres";
+            $params += $sqljoin->params;
+        }
+
+        $query = "SELECT COUNT(DISTINCT st.userid) FROM {scorm_attempt} st $joins $where";
+        return $this->db->count_records_sql($query, $params);
     }
 
     /**
@@ -158,19 +174,22 @@ class manager {
     /**
      * Count the users who can potentially participate in the SCORM activity excluding teachers.
      *
+     *  The filter will work with provided groups without validating group selection. For example,
+     *  if a user isn't a group member in separate groups mode, no group filtering
+     *  is applied (user should see no groups). Verify user can view actually access any content
+     *  before calling this method.
+     *
+     * @param array $groupids groupid array, if empty then do not filter by groups.
      * @return int
      */
-    public function count_participants(): int {
-        if ($this->potentialparticipantscount !== null) {
-            return $this->potentialparticipantscount;
-        }
-        $students = get_enrolled_users(
+    public function count_participants(array $groupids = []): int {
+        $students = get_users_by_capability(
             context: $this->context,
-            withcapability: 'mod/scorm:savetrack',
-            userfields: 'u.id',
+            capability: 'mod/scorm:savetrack',
+            // Filter by groups if provided, if not provides empty string to not filter by groups.
+            groups: $groupids,
         );
-        $this->potentialparticipantscount = count($students);
-        return $this->potentialparticipantscount;
+        return count($students);
     }
 
     /**
