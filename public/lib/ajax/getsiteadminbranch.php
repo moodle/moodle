@@ -38,7 +38,7 @@ if ($branchtype !== navigation_node::TYPE_SITE_ADMIN) {
 }
 
 // Start capturing output in case of broken plugins.
-ajax_capture_output();
+\core\ajax::capture_output();
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/lib/ajax/getsiteadminbranch.php', array('type'=>$branchtype));
@@ -49,5 +49,5 @@ $sitenavigation = new settings_navigation_ajax($PAGE);
 $converter = new navigation_json();
 $branch = $sitenavigation->get('root');
 
-ajax_check_captured_output();
+\core\ajax::check_captured_output();
 echo $converter->convert($branch);

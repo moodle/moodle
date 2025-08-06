@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Library functions to facilitate the use of ajax JavaScript in Moodle.
@@ -24,24 +25,22 @@
  */
 
 /**
- * @deprecated since Moodle 4.3
- */
-#[\core\attribute\deprecated('\'core_user/repository\' module', since: '4.3', mdl: 'MDL-76974', final: true)]
-function user_preference_allow_ajax_update() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
  * Starts capturing output whilst processing an AJAX request.
  *
  * This should be used in combination with ajax_check_captured_output to
  * report any captured output to the user.
  *
- * @return Boolean Returns true on success or false on failure.
+ * @return bool Returns true on success or false on failure.
+ * @deprecated since Moodle 5.1, use \core\ajax::capture_output() instead.
  */
-function ajax_capture_output() {
-    // Start capturing output in case of broken plugins.
-    return ob_start();
+#[\core\attribute\deprecated(
+    replacement: "\core\ajax::capture_output()",
+    since: '5.1',
+    mdl: 'MDL-86168',
+)]
+function ajax_capture_output(): bool {
+    \core\deprecation::emit_deprecation(__FUNCTION__);
+    return \core\ajax::capture_output();
 }
 
 /**
@@ -50,24 +49,15 @@ function ajax_capture_output() {
  * exception which can be captured by the Y.IO request and displayed to the
  * user.
  *
- * @return Any output that was captured.
+ * @return bool|string Any output that was captured.
+ * @deprecated since Moodle 5.1, use \core\ajax::check_captured_output() instead.
  */
-function ajax_check_captured_output() {
-    global $CFG;
-
-    // Retrieve the output - there should be none.
-    $output = ob_get_contents();
-    ob_end_clean();
-
-    if (!empty($output)) {
-        $message = 'Unexpected output whilst processing AJAX request. ' .
-                'This could be caused by trailing whitespace. Output received: ' .
-                var_export($output, true);
-        if ($CFG->debugdeveloper && !empty($output)) {
-            // Only throw an error if the site is in debugdeveloper.
-            throw new coding_exception($message);
-        }
-        error_log('Potential coding error: ' . $message);
-    }
-    return $output;
+#[\core\attribute\deprecated(
+    replacement: "\core\ajax::check_captured_output()",
+    since: '5.1',
+    mdl: 'MDL-86168',
+)]
+function ajax_check_captured_output(): bool|string {
+    \core\deprecation::emit_deprecation(__FUNCTION__);
+    return \core\ajax::check_captured_output();
 }

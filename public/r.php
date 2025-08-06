@@ -33,7 +33,6 @@ require_once("{$CFG->libdir}/setuplib.php");        // Functions that MUST be lo
 
 // Load up standard libraries.
 require_once("{$CFG->libdir}/filterlib.php");       // Functions for filtering test as it is output.
-require_once("{$CFG->libdir}/ajax/ajaxlib.php");    // Functions for managing our use of JavaScript and YUI.
 require_once("{$CFG->libdir}/weblib.php");          // Functions relating to HTTP and content.
 require_once("{$CFG->libdir}/outputlib.php");       // Functions for generating output.
 require_once("{$CFG->libdir}/navigationlib.php");   // Class for generating Navigation structure.
