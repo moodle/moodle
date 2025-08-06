@@ -78,7 +78,7 @@ class behat_general extends behat_base {
      * @Given /^I am on homepage$/
      */
     public function i_am_on_homepage() {
-        $this->execute('behat_general::i_visit', ['/']);
+        $this->execute([self::class, 'i_visit'], ['/']);
     }
 
     /**
@@ -87,7 +87,7 @@ class behat_general extends behat_base {
      * @Given /^I am on site homepage$/
      */
     public function i_am_on_site_homepage() {
-        $this->execute('behat_general::i_visit', ['/?redirect=0']);
+        $this->execute([self::class, 'i_visit'], ['/?redirect=0']);
     }
 
     /**
@@ -96,7 +96,7 @@ class behat_general extends behat_base {
      * @Given /^I am on course index$/
      */
     public function i_am_on_course_index() {
-        $this->execute('behat_general::i_visit', ['/course/index.php']);
+        $this->execute([self::class, 'i_visit'], ['/course/index.php']);
     }
 
     /**
@@ -462,7 +462,7 @@ class behat_general extends behat_base {
      */
     public function i_click_on_confirming_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
-        $this->execute('behat_general::accept_currently_displayed_alert_dialog', []);
+        $this->execute([self::class, 'accept_currently_displayed_alert_dialog'], []);
         $this->wait_until_the_page_is_ready();
     }
 
@@ -476,7 +476,7 @@ class behat_general extends behat_base {
      */
     public function i_click_on_dismissing_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
-        $this->execute('behat_general::dismiss_currently_displayed_alert_dialog', []);
+        $this->execute([self::class, 'dismiss_currently_displayed_alert_dialog'], []);
         $this->wait_until_the_page_is_ready();
     }
 
@@ -1165,7 +1165,7 @@ EOF;
      * @Given /^I trigger cron$/
      */
     public function i_trigger_cron() {
-        $this->execute('behat_general::i_visit', ['/admin/cron.php']);
+        $this->execute([self::class, 'i_visit'], ['/admin/cron.php']);
     }
 
     /**
@@ -2150,8 +2150,8 @@ EOF;
         }
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_selected_node($selectortype, $element);
-        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
-        $this->execute('behat_general::i_press_named_key', ['', 'tab']);
+        $this->execute([self::class, 'i_click_on'], [$node, 'NodeElement']);
+        $this->execute([self::class, 'i_press_named_key'], ['', 'tab']);
     }
 
     /**
@@ -2264,9 +2264,9 @@ EOF;
      */
     public function i_manually_press_tab($shift = '') {
         if (empty($shift)) {
-            $this->execute('behat_general::i_press_named_key', ['', 'tab']);
+            $this->execute([self::class, 'i_press_named_key'], ['', 'tab']);
         } else {
-            $this->execute('behat_general::i_press_named_key', ['shift', 'tab']);
+            $this->execute([self::class, 'i_press_named_key'], ['shift', 'tab']);
         }
     }
 
@@ -2362,7 +2362,7 @@ EOF;
      * @throws DriverException
      */
     public function i_manually_press_enter() {
-        $this->execute('behat_general::i_press_named_key', ['', 'enter']);
+        $this->execute([self::class, 'i_press_named_key'], ['', 'enter']);
     }
 
     /**
@@ -2397,7 +2397,7 @@ EOF;
      */
     public function i_click_on_the_dynamic_tab(string $tabname): void {
         $xpath = "//*[@id='dynamictabs-tabs'][descendant::a[contains(text(), '" . $this->escape($tabname) . "')]]";
-        $this->execute('behat_general::i_click_on_in_the',
+        $this->execute([self::class, 'i_click_on_in_the'],
             [$tabname, 'link', $xpath, 'xpath_element']);
     }
 
