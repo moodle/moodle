@@ -45,6 +45,7 @@ define(
     'core/local/aria/focuslock',
     'core/modal_backdrop',
     'core/templates',
+    'core/local/aria/selectors',
 ],
 function(
     $,
@@ -70,6 +71,7 @@ function(
     FocusLock,
     ModalBackdrop,
     Templates,
+    AriaSelectors,
 ) {
 
     var SELECTORS = {
@@ -478,6 +480,32 @@ function(
             Router.back(namespace);
 
             data.originalEvent.preventDefault();
+        });
+
+        // Close the message drawer if the drawer is visible and the click happened outside the drawer and the toggle button.
+        $(document).on(CustomEvents.events.activate, e => {
+            var drawer = $(e.target).closest(SELECTORS.DRAWER);
+            var toggleButtonId = $(SELECTORS.DRAWER)?.attr('data-origin');
+            var toggleButton = '';
+            if (toggleButtonId !== undefined && toggleButtonId) {
+                toggleButton = $(e.target).closest("#" + toggleButtonId);
+            }
+
+            if (!drawer.length && !toggleButton.length && isVisible(root)) {
+                // Determine if the element that was clicked is focusable.
+                var focusableElement = $(e.target).closest(AriaSelectors.elements.focusable);
+                if (focusableElement.length) {
+                    // We need to move the focus to the clicked element after the drawer is hidden,
+                    // so we need to clear the `data-origin` attribute first.
+                    $(SELECTORS.DRAWER).attr('data-origin', '');
+                }
+                // Hide the drawer.
+                hide(root);
+                // Move the focus to the clicked element if it is focusable.
+                if (focusableElement.length) {
+                    focusableElement.focus();
+                }
+            }
         });
 
         // These are theme-specific to help us fix random behat fails.
