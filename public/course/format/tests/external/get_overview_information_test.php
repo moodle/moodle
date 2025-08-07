@@ -143,4 +143,87 @@ final class get_overview_information_test extends \externallib_advanced_testcase
         }
         return null;
     }
+
+    /**
+     * Test the webservice when the group configuration is erroneous.
+     * In those cases, the table should only return the activity name.
+     *
+     * @return void
+     */
+    public function test_execute_when_group_error(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $activityfail = $generator->create_module('assign', ['course' => $course->id, 'groupmode' => SEPARATEGROUPS]);
+        $user = $generator->create_and_enrol($course, 'student');
+        $generator->create_group(['courseid' => $course->id, 'name' => 'g1']);
+        $generator->create_group(['courseid' => $course->id, 'name' => 'g2']);
+
+        $this->setUser($user);
+
+        $result = get_overview_information::execute($course->id, 'assign');
+        $result = external_api::clean_returnvalue(get_overview_information::execute_returns(), $result);
+
+        $this->assertEquals($course->id, $result['courseid']);
+        $this->assertEquals(true, $result['hasintegration']);
+
+        $this->assertCount(1, $result['headers']);
+        $headertelement = $this->find_by_attribute($result['headers'], 'key', 'name');
+        $this->assertEquals(get_string('name'), $headertelement['name']);
+        $this->assertEquals('name', $headertelement['key']);
+
+        $this->assertCount(1, $result['activities']);
+        $activity = $this->find_by_attribute($result['activities'], 'cmid', (int) $activityfail->cmid);
+        $this->assertCount(1, $activity['items']);
+        $this->assertEquals(true, $activity['haserror']);
+        $namecell = $activity['items'][0];
+        $namecell = $activity['items'][0];
+        $this->assertEquals('name', $namecell['key']);
+        $this->assertEquals(get_string('name'), $namecell['name']);
+
+        // Add a second activity to validate the overview table is populated with all columns now.
+        $activityok = $generator->create_module('assign', ['course' => $course->id, 'groupmode' => VISIBLEGROUPS]);
+
+        $result = get_overview_information::execute($course->id, 'assign');
+        $result = external_api::clean_returnvalue(get_overview_information::execute_returns(), $result);
+
+        $this->assertEquals($course->id, $result['courseid']);
+        $this->assertEquals(true, $result['hasintegration']);
+
+        $this->assertCount(3, $result['headers']);
+        $headertelement = $this->find_by_attribute($result['headers'], 'key', 'name');
+        $this->assertEquals(get_string('name'), $headertelement['name']);
+        $this->assertEquals('name', $headertelement['key']);
+        $headertelement = $this->find_by_attribute($result['headers'], 'key', 'submissionstatus');
+        $this->assertEquals(get_string('submissionstatus', 'assign'), $headertelement['name']);
+        $this->assertEquals('submissionstatus', $headertelement['key']);
+        $headertelement = $this->find_by_attribute($result['headers'], 'key', 'Grade');
+        $this->assertEquals(get_string('gradenoun'), $headertelement['name']);
+        $this->assertEquals('Grade', $headertelement['key']);
+
+        $this->assertCount(2, $result['activities']);
+
+        // The activity with the group error should be the same.
+        $activity = $this->find_by_attribute($result['activities'], 'cmid', (int) $activityfail->cmid);
+        $this->assertCount(1, $activity['items']);
+        $this->assertEquals(true, $activity['haserror']);
+        $namecell = $activity['items'][0];
+        $namecell = $activity['items'][0];
+        $this->assertEquals('name', $namecell['key']);
+        $this->assertEquals(get_string('name'), $namecell['name']);
+
+        $activity = $this->find_by_attribute($result['activities'], 'cmid', (int) $activityok->cmid);
+        $this->assertCount(3, $activity['items']);
+        $this->assertEquals(false, $activity['haserror']);
+        $namecell = $activity['items'][0];
+        $this->assertEquals('name', $namecell['key']);
+        $this->assertEquals(get_string('name'), $namecell['name']);
+        $submissionstatuscell = $this->find_by_attribute($activity['items'], 'key', 'submissionstatus');
+        $this->assertEquals('submissionstatus', $submissionstatuscell['key']);
+        $this->assertEquals(get_string('submissionstatus', 'assign'), $submissionstatuscell['name']);
+        $gradecell = $this->find_by_attribute($activity['items'], 'key', 'Grade');
+        $this->assertEquals('Grade', $gradecell['key']);
+        $this->assertEquals(get_string('gradenoun'), $gradecell['name']);
+    }
 }
