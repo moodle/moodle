@@ -1559,6 +1559,7 @@ $string['noneditingteacher'] = 'Non-editing teacher';
 $string['noneditingteacherdescription'] = 'Non-editing teachers can teach in courses and grade students, but may not alter activities.';
 $string['nonstandard'] = 'Non-standard';
 $string['noresultsfor'] = 'No results for "{$a}"';
+$string['noresultsfor_help'] = 'Check your spelling or try different words.';
 $string['nopendingcourses'] = 'There are no courses pending approval';
 $string['nopotentialadmins'] = 'No potential admins';
 $string['nopotentialcreators'] = 'No potential course creators';

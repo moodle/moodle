@@ -93,13 +93,14 @@ export default class ChooserDialogueDOM {
     /**
      * Show the search results.
      *
+     * @param {String} searchQuery The search query string.
      * @param {Object} searchResultsData Data containing the module items that satisfy the search criteria
      */
-    async refreshSearchResults(searchResultsData) {
+    async refreshSearchResults(searchQuery, searchResultsData) {
         const searchResultsContainer = this.modalBody.querySelector(selectors.regions.searchResults);
         const clearSearchButton = this.modalBody.querySelector(selectors.actions.clearSearch);
 
-        await this.renderSearchResults(searchResultsContainer, searchResultsData);
+        await this.renderSearchResults(searchResultsContainer, searchQuery, searchResultsData);
         const chooserOptionsContainer = searchResultsContainer.querySelector(selectors.regions.chooserOptions);
         const firstSearchResultItem = chooserOptionsContainer.querySelector(selectors.regions.chooserOption.container);
         if (firstSearchResultItem) {
@@ -136,10 +137,11 @@ export default class ChooserDialogueDOM {
      * @private
      * @method renderSearchResults
      * @param {HTMLElement} searchResultsContainer The container where the data should be rendered
+     * @param {String} searchQuery The search query string
      * @param {Object} searchResultsData Data containing the module items that satisfy the search criteria
      */
-    async renderSearchResults(searchResultsContainer, searchResultsData) {
-        const templateData = this.exporter.getSearchResultData(searchResultsData);
+    async renderSearchResults(searchResultsContainer, searchQuery, searchResultsData) {
+        const templateData = this.exporter.getSearchResultData(searchQuery, searchResultsData);
         // Build up the html & js ready to place into the help section.
         const {html, js} = await Templates.renderForPromise(
             'core_course/local/activitychooser/search_results',

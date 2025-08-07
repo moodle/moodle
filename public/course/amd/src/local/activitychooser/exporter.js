@@ -225,14 +225,17 @@ export default class {
     /**
      * Get the search result template data.
      *
+     * @param {String} searchQuery The search query string.
      * @param {Array|Map} resultsModulesData Modules data to be used in the chooser.
      * @return {Object} The template data.
      */
-    getSearchResultData(resultsModulesData) {
+    getSearchResultData(searchQuery, resultsModulesData) {
         resultsModulesData = this.normaliseModulesData(resultsModulesData);
         return {
             'searchresultsnumber': resultsModulesData.length,
             'searchresults': resultsModulesData,
+            'hasresults': resultsModulesData.length > 0,
+            'searchquery': searchQuery,
         };
     }
 

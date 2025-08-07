@@ -491,7 +491,7 @@ class ActivityChooserDialogue {
         const searchResultsData = this.searchModules(searchQuery);
 
         if (searchQuery.length > 0) {
-            await this.dialogueDom.refreshSearchResults(searchResultsData);
+            await this.dialogueDom.refreshSearchResults(searchQuery, searchResultsData);
             this.dialogueDom.showAllActivitiesTab(true);
         } else {
             this.dialogueDom.cleanSearchResults();

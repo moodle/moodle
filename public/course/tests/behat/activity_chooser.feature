@@ -169,7 +169,8 @@ Feature: Display and choose from the available activities in course
     And I should see "Lesson" in the "Add an activity or resource" "dialogue"
     # Test non matching search.
     And I set the field "search" to "Random search query"
-    And I should see "0 results found" in the "Add an activity or resource" "dialogue"
+    And I should see "No results for \"Random search query\"" in the "Add an activity or resource" "dialogue"
+    And I should see "Check your spelling or try different words." in the "Add an activity or resource" "dialogue"
 
   Scenario: Teacher can return to the default activity chooser state by manually removing the search query
     Given I open the activity chooser
@@ -195,16 +196,16 @@ Feature: Display and choose from the available activities in course
 
   Scenario: Teacher can instantly remove the search query from the activity search bar by clicking on the clear button
     Given I open the activity chooser
-    And I set the field "search" to "Search query"
+    And I set the field "search" to "create quizzes"
     And I should see "results found" in the "Add an activity or resource" "dialogue"
     When I click on "Clear search input" "button"
-    Then I should not see "Search query"
+    Then I should not see "create quizzes"
     And ".searchresultscontainer" "css_element" should not be visible
     And ".optionscontainer" "css_element" should exist
 
   Scenario: Click on an activity chooser category should cancel the current search
     Given I open the activity chooser
-    And I set the field "search" to "Search query"
+    And I set the field "search" to "create quizzes"
     And I should see "results found" in the "Add an activity or resource" "dialogue"
     And "Clear search input" "button" should be visible
     When I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
