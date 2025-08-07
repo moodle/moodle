@@ -254,6 +254,25 @@ final class column {
     }
 
     /**
+     * Return effective column type, that being one of the column TYPE_* constants like {@see get_type}
+     *
+     * By default, return the value from the column itself. However, if the column is being aggregated then return the value of
+     * the applied aggregation method per {@see base::get_column_type}
+     *
+     * @return int
+     */
+    public function get_effective_type(): int {
+        $type = $this->get_type();
+
+        // Defer to aggregation type if column is being aggregated.
+        if ($this->aggregation !== null) {
+            $type = $this->aggregation::get_column_type($type);
+        }
+
+        return $type;
+    }
+
+    /**
      * Adds a field to be queried from the database that is necessary for this column
      *
      * Multiple fields can be added per column, this method may be called several times. Field aliases must be unique inside
@@ -703,13 +722,12 @@ final class column {
      */
     public function format_value(array $row) {
         $values = $this->get_values($row);
+        $value = self::get_default_value($values, $this->get_effective_type());
 
         // If column is being aggregated then defer formatting to them, otherwise loop through all column callbacks.
         if ($this->aggregation !== null) {
-            $value = self::get_default_value($values, $this->aggregation::get_column_type($this->get_type()));
             $value = $this->aggregation->format_value($value, $values, $this->callbacks, $this->get_type());
         } else {
-            $value = self::get_default_value($values, $this->get_type());
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;
                 $value = ($callable)($value, (object) $values, $arguments, null);
