@@ -3081,7 +3081,8 @@ EOD;
             'hiddenfields' => (object) ['name' => 'context', 'value' => $this->page->context->id],
             'inputname' => 'q',
             'searchstring' => get_string('search'),
-            ];
+            'grouplabel' => get_string('sitewidesearch', 'search'),
+        ];
         return $this->render_from_template('core/search_input_navbar', $data);
     }
 
