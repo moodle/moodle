@@ -17,14 +17,14 @@
 namespace mod_assign\courseformat;
 
 use assign;
-use core_calendar\output\humandate;
 use cm_info;
-use core_courseformat\local\overview\overviewitem;
-use core\output\action_link;
-use core\output\local\properties\text_align;
-use core\output\local\properties\button;
 use core\url;
 use mod_assign\dates;
+use core\output\action_link;
+use core_calendar\output\humandate;
+use core\output\local\properties\button;
+use core\output\local\properties\text_align;
+use core_courseformat\local\overview\overviewitem;
 
 /**
  * Assignment overview integration.
@@ -90,7 +90,9 @@ class overview extends \core_courseformat\activityoverviewbase {
         $needgrading = 0;
 
         if (is_gradable(courseid: $this->course->id, itemtype: 'mod', itemmodule: 'assign', iteminstance: $this->cm->instance)) {
-            $needgrading = $this->assign->count_submissions_need_grading();
+            $needgrading = $this->assign->count_submissions_need_grading_with_groups(
+                array_keys($this->get_groups_for_filtering()),
+            );
             if ($needgrading > 0) {
                 $name = get_string('gradeverb');
                 $renderer = $this->rendererhelper->get_core_renderer();
@@ -131,15 +133,25 @@ class overview extends \core_courseformat\activityoverviewbase {
      * @return overviewitem|null An overview item c, or null if the user lacks the required capability.
      */
     private function get_extra_submissions_overview(): ?overviewitem {
-        global $USER;
-
         if (!has_capability('mod/assign:grade', $this->cm->context)) {
             return null;
         }
 
-        $activitygroup = groups_get_activity_group($this->cm);
-        $submissions = $this->assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED);
-        $total = $this->assign->count_participants($activitygroup);
+        $groups = array_keys($this->get_groups_for_filtering());
+        $submissions = $this->assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            $groups,
+        );
+        if ($this->assign->get_instance()->teamsubmission) {
+            // For team submissions, total represents the number of groups (instead of participants).
+            if (!empty($groups)) {
+                $total = count($groups);
+            } else {
+                $total = $this->assign->count_teams();
+            }
+        } else {
+            $total = $this->assign->count_participants_by_groups($groups);
+        }
 
         return new overviewitem(
             name: get_string('submissions', 'assign'),

@@ -31,10 +31,10 @@ Feature: Testing overview integration in mod_assign
       | student8 | C1     | student        |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity | name           | course | idnumber | duedate              | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | submissiondrafts |
-      | assign   | Date assign    | C1     | assign1  | ##1 Jan 2040 08:00## | 1                                   | 0                             | 0                |
-      | assign   | No submissions | C1     | assign2  | ##tomorrow noon##    | 1                                   | 0                             | 0                |
-      | assign   | Pending grades | C1     | assign3  |                      | 1                                   | 0                             | 0                |
+      | activity | name           | course | idnumber | duedate              | assignsubmission_onlinetext_enabled | submissiondrafts |
+      | assign   | Date assign    | C1     | assign1  | ##1 Jan 2040 08:00## | 1                                   | 0                |
+      | assign   | No submissions | C1     | assign2  | ##tomorrow noon##    | 1                                   | 0                |
+      | assign   | Pending grades | C1     | assign3  |                      | 1                                   | 0                |
     And the following "mod_assign > submissions" exist:
       | assign         | user     | onlinetext                          |
       | Date assign    | student1 | This is a submission for assignment |
@@ -53,42 +53,21 @@ Feature: Testing overview integration in mod_assign
     Then I should see "Course activities overview page viewed"
     And I should see "viewed the instance list for the module 'assign'"
 
-  @javascript
   Scenario: Teachers can see relevant columns in the assign overview
     When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
-    # Check columns.
-    Then I should see "Name" in the "assign_overview_collapsible" "region"
-    And I should see "Due date" in the "assign_overview_collapsible" "region"
-    And I should see "Submissions" in the "assign_overview_collapsible" "region"
-    And I should see "Actions" in the "assign_overview_collapsible" "region"
-    # Check Due dates.
-    And I should see "1 January 2040" in the "Date assign" "table_row"
-    And I should see "Tomorrow" in the "No submissions" "table_row"
-    And I should see "-" in the "Pending grades" "table_row"
-    # Check Submissions.
-    And I should see "1 of 8" in the "Date assign" "table_row"
-    And I should see "0 of 8" in the "No submissions" "table_row"
-    And I should see "2 of 8" in the "Pending grades" "table_row"
-    # Check main actions.
-    And I should see "Grade" in the "Date assign" "table_row"
-    And I should see "View" in the "No submissions" "table_row"
-    And I should see "Grade" in the "Pending grades" "table_row"
-    And I should see "(2)" in the "Pending grades" "table_row"
+    Then the following should exist in the "Table listing all Assignment activities" table:
+      | Name           | Due date       | Submissions | Actions   |
+      | Date assign    | 1 January 2040 | 1 of 8      | Grade (1) |
+      | No submissions | Tomorrow       | 0 of 8      | View      |
+      | Pending grades | -              | 2 of 8      | Grade (2) |
     # Check grade link.
-    And I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     And I click on "Grade" "link" in the "Date assign" "table_row"
     And I should see "Submitted for grading" in the "Username 1" "table_row"
     And I should see "No submission" in the "Username 2" "table_row"
 
   @javascript
   Scenario: The assign overview actions has information about the number of pending elements to grade
-    When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
-    # Check main actions.
-    And I should see "Grade" in the "Date assign" "table_row"
-    And I should see "(1)" in the "Date assign" "table_row"
-    And I should see "View" in the "No submissions" "table_row"
-    And I should see "Grade" in the "Pending grades" "table_row"
-    And I should see "(2)" in the "Pending grades" "table_row"
+    Given I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     # Validate the grade alert count data attribute.
     And "[data-mdl-overview-alertcount='1']" "css_element" should exist in the "Date assign" "table_row"
     And "[data-mdl-overview-alertlabel='Needs grading']" "css_element" should exist in the "Date assign" "table_row"
@@ -101,13 +80,12 @@ Feature: Testing overview integration in mod_assign
       | gradeitem      | user     | grade |
       | Date assign    | student1 | 50    |
       | Pending grades | student1 | 50    |
-    And I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
-    And I should see "View" in the "Date assign" "table_row"
-    And I should not see "Grade" in the "Date assign" "table_row"
-    And I should not see "(1)" in the "Date assign" "table_row"
-    And I should see "View" in the "No submissions" "table_row"
-    And I should see "Grade" in the "Pending grades" "table_row"
-    And I should see "(1)" in the "Pending grades" "table_row"
+    When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
+    Then the following should exist in the "Table listing all Assignment activities" table:
+      | Name           | Due date       | Submissions | Actions   |
+      | Date assign    | 1 January 2040 | 1 of 8      | View      |
+      | No submissions | Tomorrow       | 0 of 8      | View      |
+      | Pending grades | -              | 2 of 8      | Grade (1) |
     # Validate the grade alert count data attribute update.
     And "[data-mdl-overview-alertcount]" "css_element" should not exist in the "Date assign" "table_row"
     And "[data-mdl-overview-alertlabel]" "css_element" should not exist in the "Date assign" "table_row"
@@ -139,7 +117,7 @@ Feature: Testing overview integration in mod_assign
       | assign                       | user     | onlinetext                              |
       | Feedback only                | student1 | Feedback only assignment                |
       | Neither grading nor feedback | student1 | Neither grading nor feedback submission |
-    When I am on the "Feedback only" "assign activity editing" page logged in as "teacher1"
+    And I am on the "Feedback only" "assign activity editing" page logged in as "teacher1"
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "None"
     And I press "Save and return to course"
@@ -147,30 +125,17 @@ Feature: Testing overview integration in mod_assign
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "None"
     And I press "Save and return to course"
-    And I am on the "Course 1" "course > activities > assign" page
-    And I should see "Grade" in the "Date assign" "table_row"
-    And I should see "View" in the "Feedback only" "table_row"
-    And I should see "View" in the "Neither grading nor feedback" "table_row"
-    And I should see "1 of 8" in the "Feedback only" "table_row"
-    And I should see "1 of 8" in the "Neither grading nor feedback" "table_row"
+    When I am on the "Course 1" "course > activities > assign" page
+    Then the following should exist in the "Table listing all Assignment activities" table:
+      | Name                         | Submissions | Actions   |
+      | Date assign                  | 1 of 8      | Grade (1) |
+      | Feedback only                | 1 of 8      | View      |
+      | Neither grading nor feedback | 1 of 8      | View      |
 
-  @javascript
   Scenario: Students can see relevant columns in the assign overview
     When I am on the "Course 1" "course > activities > assign" page logged in as "student1"
-    # Check columns.
-    Then I should see "Name" in the "assign_overview_collapsible" "region"
-    And I should see "Due date" in the "assign_overview_collapsible" "region"
-    And I should see "Submission status" in the "assign_overview_collapsible" "region"
-    And I should see "Grade" in the "assign_overview_collapsible" "region"
-    # Check Due dates.
-    And I should see "1 January 2040" in the "Date assign" "table_row"
-    And I should see "Tomorrow" in the "No submissions" "table_row"
-    And I should see "-" in the "Pending grades" "table_row"
-    # Check Submission status.
-    And I should see "Submitted for grading" in the "Date assign" "table_row"
-    And I should see "No submission" in the "No submissions" "table_row"
-    And I should see "-" in the "Submitted for grading" "table_row"
-    # Check Grade.
-    And I should see "-" in the "Date assign" "table_row"
-    And I should see "-" in the "No submissions" "table_row"
-    And I should see "50.00" in the "Pending grades" "table_row"
+    Then the following should exist in the "Table listing all Assignment activities" table:
+      | Name           | Due date       | Submission status     | Grade |
+      | Date assign    | 1 January 2040 | Submitted for grading | -     |
+      | No submissions | Tomorrow       | No submission         | -     |
+      | Pending grades | -              | Submitted for grading | 50.00 |
