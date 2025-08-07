@@ -213,3 +213,47 @@ Feature: Basic use of the Manual grading report
     Then I should see "Grading attempts 1 to 1 of 2"
     And I press "Save and show next"
     And I should see "Grading attempts 2 to 2 of 2"
+
+  @javascript
+  Scenario: Manually grade quiz with multiple questions
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name    | questiontext    | defaultmark |
+      | Test questions   | essay       | Essay 1 | First question  | 20          |
+      | Test questions   | essay       | Essay 2 | Second question | 20          |
+      | Test questions   | truefalse   | TF1     | Third question  |             |
+    And quiz "Quiz 2" contains the following questions:
+      | question | page |
+      | Essay 1  | 1    |
+      | Essay 2  | 2    |
+      | TF1      | 2    |
+    And user "student1" has attempted "Quiz 2" with responses:
+      | slot | response          |
+      | 1    | Answer to Essay 1 |
+      | 2    | Answer to Essay 2 |
+      | 3    | True              |
+    And I am on the "Quiz 2 > student1 > Attempt 1" "mod_quiz > Attempt review" page logged in as "teacher1"
+    And I follow "Make comment or override mark"
+    And I switch to "commentquestion" window
+    And I set the field "Mark" to "15"
+    And I press "Save" and switch to main window
+    When I am on the "Quiz 2" "mod_quiz > Manual grading report" page
+    And I click on "Also show questions that have been graded automatically" "link"
+    # Confirm that Essay 1 is already graded, Essay 2 is not yet graded and that TF1 is automatically graded.
+    Then the following should exist in the "questionstograde" table:
+      | Question name | To grade | Already graded | Automatically graded |
+      | Essay 1       | 0        | 1              | 0                    |
+      | Essay 2       | 1        | 0              | 0                    |
+      | TF1           | 0        | 0              | 1                    |
+    # Grade the not yet graded Essay 2.
+    And I click on "Grade" "link" in the "Essay 2" "table_row"
+    And I set the field "Mark" to "20"
+    And I press "Save and show next"
+    # Update the already graded Essay 1.
+    And I click on "grade all" "link" in the "Essay 1" "table_row"
+    And I set the field "Mark" to "5"
+    And I press "Save and show next"
+    # Confirm that each question is graded for the corresponding student.
+    And I am on the "Quiz 2" "mod_quiz > Grades report" page
+    And the following should exist in the "generaltable" table:
+      | Username | Q. 1  | Q. 2  | Q. 3 |
+      | student1 | 12.50 | 50.00 | -    |
