@@ -1419,11 +1419,7 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
             if (!isset($rawmods[$cm->id])) {
                 continue;
             }
-            $instance = $rawmods[$cm->id];
-            if (!empty($cm->extra)) {
-                $instance->extra = $cm->extra;
-            }
-            $outputarray[] = $instance;
+            $outputarray[] = $rawmods[$cm->id];
         }
     }
 
