@@ -35,7 +35,8 @@
 }}
 <div class="border-bottom p-1 px-sm-2" aria-hidden="false" {{^isdrawer}}data-in-panel="true"{{/isdrawer}} data-region="view-overview">
     <div class="d-flex align-items-center">
-        <div class="input-group simplesearchform">
+        <div class="input-group simplesearchform" role="group" aria-labelledby="messageoverviewgrouplabel">
+            <span class="visually-hidden" id="messageoverviewgrouplabel">{{#str}}searchcombined, message{{/str}}</span>
             <input
                 type="text"
                 class="form-control"
