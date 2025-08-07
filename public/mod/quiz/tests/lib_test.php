@@ -139,6 +139,47 @@ final class lib_test extends \advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question_set_references', ['usingcontextid' => $context->id]));
     }
 
+    /**
+     * Test deleting a quiz when the course is deleted.
+     *
+     * @covers ::quiz_delete_instance
+     */
+    public function test_quiz_when_delete_course(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Step 1: Create one course and a user with editing teacher capabilities.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $teacher = $USER;
+        $generator->enrol_user($teacher->id, $course->id, 'editingteacher');
+
+        // Create a quiz with questions in the first course.
+        $quiz = $this->create_test_quiz($course);
+        $context = \context_module::instance($quiz->cmid);
+        // Create questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+
+        // Add to the quiz.
+        quiz_add_quiz_question($saq->id, $quiz);
+        // Delete the course.
+        delete_course($course, false);
+
+        // Check that the question was deleted.
+        $this->assertFalse($DB->record_exists('question', ['id' => $saq->id]));
+        // Check that all the slots were removed.
+        $this->assertFalse($DB->record_exists('quiz_slots', ['quizid' => $quiz->id]));
+        // Check that the quiz was removed.
+        $this->assertFalse($DB->record_exists('quiz', ['id' => $quiz->id]));
+        // Check that any question references linked to this quiz are gone.
+        $this->assertFalse($DB->record_exists('question_references', ['usingcontextid' => $context->id]));
+        $this->assertFalse($DB->record_exists('question_set_references', ['usingcontextid' => $context->id]));
+    }
+
     public function test_quiz_get_user_attempts(): void {
         global $DB;
         $this->resetAfterTest();
