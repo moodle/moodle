@@ -20,7 +20,7 @@ namespace core_course\reportbuilder\datasource;
 
 use core_course_category;
 use core_reportbuilder_generator;
-use core_reportbuilder\local\filters\{category, select, text};
+use core_reportbuilder\local\filters\{category, number, select, text};
 use core_reportbuilder\tests\core_reportbuilder_testcase;
 
 /**
@@ -86,16 +86,23 @@ final class categories_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'My report', 'source' => categories::class, 'default' => 0]);
 
+        // Category.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:namewithlink',
             'sortenabled' => 1]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:path']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:description']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:theme']);
 
-        // Add column from each of our entities.
+        // Course.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
+
+        // Cohort.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:name']);
+
+        // Role.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'role:name']);
+
+        // User.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
 
         $content = $this->get_custom_report_content($report->get('id'));
@@ -165,6 +172,14 @@ final class categories_test extends core_reportbuilder_testcase {
             'Filter category theme (no match)' => ['course_category:theme', [
                 'course_category:theme_operator' => select::EQUAL_TO,
                 'course_category:theme_value' => 'classic',
+            ], false],
+            'Filter category course count' => ['course_category:coursecount', [
+                'course_category:coursecount_operator' => number::EQUAL_TO,
+                'course_category:coursecount_value1' => 1,
+            ], true],
+            'Filter category course count (no match)' => ['course_category:coursecount', [
+                'course_category:coursecount_operator' => number::GREATER_THAN,
+                'course_category:coursecount_value1' => 1,
             ], false],
 
             // Course.
