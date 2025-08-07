@@ -7,6 +7,9 @@
 - The `report_action` class now accepts a `pix_icon` to include inside the rendered action element
 
   For more information see [MDL-85216](https://tracker.moodle.org/browse/MDL-85216)
+- The report column class has a new `get_effective_type()` method to determine the returned column type, taking into account applied aggregation method
+
+  For more information see [MDL-86151](https://tracker.moodle.org/browse/MDL-86151)
 
 ## 5.0
 
