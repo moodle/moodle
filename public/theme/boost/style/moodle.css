@@ -34892,6 +34892,9 @@ body.path-question-type .mform fieldset.hidden {
   width: auto;
   max-width: 100%;
 }
+.form-select.dropdown-toggle::after {
+  content: none;
+}
 
 #jump-to-activity.form-select {
   width: 100%;
