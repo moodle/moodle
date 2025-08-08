@@ -26,24 +26,23 @@ use stdClass;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class xml_format_exception extends moodle_exception {
-
-    /** @var string */
-    public $errorstring;
-    /** @var string */
-    public $char;
     /**
      * Constructor function
      *
-     * @param string $errorstring Errorstring
-     * @param int $line Linenumber
-     * @param string $char Errorcharacter
+     * @param string|null $errorstring Error string
+     * @param int $line Line number
+     * @param int $char Character number
      * @param string $link Link
      */
-    public function __construct($errorstring, $line, $char, $link = '') {
-        $this->errorstring = $errorstring;
-        $this->line = $line;
-        $this->char = $char;
-
+    public function __construct(
+        /** @var ?string Error string */
+        public ?string $errorstring,
+        /** @var int Line number */
+        public int $line,
+        /** @var int Character number */
+        public int $char,
+        string $link = '',
+    ) {
         $a = new stdClass();
         $a->errorstring = $errorstring;
         $a->errorline = $line;
