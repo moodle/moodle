@@ -116,7 +116,7 @@ class overview extends \core_courseformat\activityoverviewbase {
     #[\Override]
     public function get_extra_overview_items(): array {
         return [
-            'studentwhoresponded' => $this->get_students_who_responded(),
+            'studentwhoresponded' => $this->get_extra_students_who_responded(),
             'responded' => $this->get_extra_status_for_user(),
         ];
     }
@@ -159,12 +159,13 @@ class overview extends \core_courseformat\activityoverviewbase {
      *
      * @return overviewitem|null An overview item or null if for students.
      */
-    private function get_students_who_responded(): ?overviewitem {
+    private function get_extra_students_who_responded(): ?overviewitem {
         if (!has_capability('mod/choice:readresponses', $this->cm->context)) {
             return null;
         }
 
-        $studentwhoanswered = $this->manager->count_all_users_answered();
+        $groupids = array_keys($this->get_groups_for_filtering());
+        $studentwhoanswered = $this->manager->count_all_users_answered($groupids);
         $overviewdialog = new overviewdialog(
             buttoncontent: $studentwhoanswered,
             title: get_string('totalresponses', 'mod_choice'),
@@ -176,7 +177,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         foreach ($options as $option) {
             $overviewdialog->add_item(
                 $option->text,
-                $this->manager->count_all_users_answered($option->id),
+                $this->manager->count_all_users_answered($groupids, $option->id),
             );
         }
 

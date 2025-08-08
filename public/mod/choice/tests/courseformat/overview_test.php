@@ -17,7 +17,6 @@
 namespace mod_choice\courseformat;
 
 use core_courseformat\local\overview\overviewfactory;
-use core_courseformat\output\local\overview\overviewdialog;
 
 /**
  * Tests for Choice integration.
@@ -174,7 +173,7 @@ final class overview_test extends \advanced_testcase {
             ],
             'Teacher' => [
                 'username' => 't1',
-                'expectedcount' => 2,
+                'expectedcount' => 3,
             ],
         ];
     }
@@ -182,28 +181,32 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview method.
      *
-     * @param string $username The username of the user to test.
+     * @param string $currentuser The current user to test.
      * @param bool $allowmultiple whether the choice allows multiple answers
      * @param bool $withanswers whether the choice will be created with answers
+     * @param int $groupmode The group mode for the choice activity.
      * @param int|null $expectedcount the expected count of users who responded
      *
      * @covers ::get_actions_overview
-     * @dataProvider provider_get_student_responded_count
+     * @dataProvider provider_get_extra_students_who_responded
      */
-    public function test_get_students_who_responded(
-        string $username,
+    public function test_get_extra_students_who_responded(
+        string $currentuser,
         bool $allowmultiple = false,
         bool $withanswers = true,
+        int $groupmode = NOGROUPS,
         ?int $expectedcount = null,
     ): void {
         $this->resetAfterTest();
         [
             'users' => $users,
             'course' => $course,
-            'instance' => $instance
-        ] = $this->setup_users_and_activity($allowmultiple, $withanswers);
+            'instance' => $instance,
+        ] = $this->setup_users_and_activity($allowmultiple, $withanswers, $groupmode);
         $cm = get_fast_modinfo($course)->get_cm($instance->cmid);
-        $this->setUser($users[$username]);
+
+        $this->setUser($users[$currentuser]);
+
         $overview = overviewfactory::create($cm);
         $result = $overview->get_extra_overview_items();
 
@@ -239,37 +242,125 @@ final class overview_test extends \advanced_testcase {
     }
 
     /**
-     * Data provider for test_get_students_who_responded.
+     * Data provider for test_get_extra_students_who_responded.
      *
      * @return array the data provider array
      */
-    public static function provider_get_student_responded_count(): array {
+    public static function provider_get_extra_students_who_responded(): array {
         return [
             'Student' => [
-                'username' => 's1',
+                'currentuser' => 's1',
                 'expectedcount' => null,
             ],
-            'Teacher - With answers - No multiple' => [
-                'username' => 't1',
+            // No groups.
+            'No groups - Teacher - With answers - No multiple' => [
+                'currentuser' => 't2',
                 'allowmultiple' => false,
                 'withanswers' => true,
-                'expectedcount' => 2,
+                'groupmode' => NOGROUPS,
+                'expectedcount' => 3,
             ],
-            'Teacher - Without answers - No multiple' => [
-                'username' => 't1',
+            'No groups - Teacher - Without answers - No multiple' => [
+                'currentuser' => 't2',
                 'withanswers' => false,
+                'groupmode' => NOGROUPS,
                 'expectedcount' => 0,
             ],
-            'Teacher - With answers - Multiple' => [
-                'username' => 't1',
+            'No groups - Teacher - With answers - Multiple' => [
+                'currentuser' => 't2',
                 'allowmultiple' => true,
                 'withanswers' => true,
-                'expectedcount' => 2,
+                'groupmode' => NOGROUPS,
+                'expectedcount' => 3,
             ],
-            'Teacher - Without answers - Multiple' => [
-                'username' => 't1',
+            'No groups - Teacher - Without answers - Multiple' => [
+                'currentuser' => 't2',
                 'allowmultiple' => true,
                 'withanswers' => false,
+                'groupmode' => NOGROUPS,
+                'expectedcount' => 0,
+            ],
+            // Visible groups.
+            'Visible groups - Teacher - With answers - No multiple' => [
+                'currentuser' => 't2',
+                'allowmultiple' => false,
+                'withanswers' => true,
+                'groupmode' => VISIBLEGROUPS,
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Teacher - Without answers - No multiple' => [
+                'currentuser' => 't2',
+                'withanswers' => false,
+                'groupmode' => VISIBLEGROUPS,
+                'expectedcount' => 0,
+            ],
+            'Visible groups - Teacher - With answers - Multiple' => [
+                'currentuser' => 't2',
+                'allowmultiple' => true,
+                'withanswers' => true,
+                'groupmode' => VISIBLEGROUPS,
+                'expectedcount' => 3,
+            ],
+            'Visible groups - Teacher - Without answers - Multiple' => [
+                'currentuser' => 't2',
+                'allowmultiple' => true,
+                'withanswers' => false,
+                'groupmode' => VISIBLEGROUPS,
+                'expectedcount' => 0,
+            ],
+            // Separate groups.
+            'Separate groups - Editing teacher - With answers - No multiple' => [
+                'currentuser' => 't1',
+                'allowmultiple' => false,
+                'withanswers' => true,
+                'groupmode' => SEPARATEGROUPS,
+                'expectedcount' => 3,
+            ],
+            'Separate groups - Editing teacher - Without answers - No multiple' => [
+                'currentuser' => 't1',
+                'withanswers' => false,
+                'groupmode' => SEPARATEGROUPS,
+                'expectedcount' => 0,
+            ],
+            'Separate groups - Editing teacher - With answers - Multiple' => [
+                'currentuser' => 't1',
+                'allowmultiple' => true,
+                'withanswers' => true,
+                'groupmode' => SEPARATEGROUPS,
+                'expectedcount' => 3,
+            ],
+            'Separate groups - Editing teacher - Without answers - Multiple' => [
+                'currentuser' => 't1',
+                'allowmultiple' => true,
+                'withanswers' => false,
+                'groupmode' => SEPARATEGROUPS,
+                'expectedcount' => 0,
+            ],
+            'Separate groups - Non-editing teacher - With answers - No multiple' => [
+                'currentuser' => 't2',
+                'allowmultiple' => false,
+                'withanswers' => true,
+                'groupmode' => SEPARATEGROUPS,
+                'expectedcount' => 1,
+            ],
+            'Separate groups - Non-editing teacher - Without answers - No multiple' => [
+                'currentuser' => 't2',
+                'withanswers' => false,
+                'groupmode' => SEPARATEGROUPS,
+                'expectedcount' => 0,
+            ],
+            'Separate groups - Non-editing teacher - With answers - Multiple' => [
+                'currentuser' => 't2',
+                'allowmultiple' => true,
+                'withanswers' => true,
+                'groupmode' => SEPARATEGROUPS,
+                'expectedcount' => 1,
+            ],
+            'Separate groups - Non-editing teacher - Without answers - Multiple' => [
+                'currentuser' => 't2',
+                'allowmultiple' => true,
+                'withanswers' => false,
+                'groupmode' => SEPARATEGROUPS,
                 'expectedcount' => 0,
             ],
         ];
@@ -278,21 +369,50 @@ final class overview_test extends \advanced_testcase {
     /**
      * Setup users and activity for the tests.
      *
+     * @param bool $allowmultiple whether the choice allows multiple answers.
      * @param bool $withanswers whether to create answers for the users.
-     *
-     * @return array
+     * @param int $groupmode the group mode to use for the course.
+     * @return array indexed array with 'users', 'course', 'instance' and 'groups'
      */
     private function setup_users_and_activity(
         bool $allowmultiple = false,
-        bool $withanswers = true
+        bool $withanswers = true,
+        int $groupmode = NOGROUPS,
     ): array {
         $this->setAdminUser();
-        $db = \core\di::get(\moodle_database::class);
+
         $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        foreach (['s1' => 'student', 's2' => 'student', 't1' => 'teacher'] as $uname => $role) {
-            $users[$uname] = $generator->create_and_enrol($course, $role, ['username' => $uname]);
+        // Force the group mode for the course.
+        $course = $generator->create_course(['groupmode' => $groupmode, 'groupmodeforce' => 1]);
+
+        $data = [
+            's1' => 'student',
+            's2' => 'student',
+            's3' => 'student', // This user does not belong to any group.
+            's4' => 'student',
+            't1' => 'editingteacher',
+            't2' => 'teacher',
+            't3' => 'teacher', // This user does not belong to any group.
+        ];
+        foreach ($data as $username => $role) {
+            $users[$username] = $generator->create_and_enrol($course, $role, ['username' => $username]);
         }
+
+        // Create groups.
+        $groups = [
+            'group1' => $generator->create_group(['courseid' => $course->id]),
+            'group2' => $generator->create_group(['courseid' => $course->id]),
+        ];
+
+        // Add users to groups:
+        // - group1: s1, t1, t2.
+        // - group2: s2, s4.
+        groups_add_member($groups['group1'], $users['s1']->id);
+        groups_add_member($groups['group1'], $users['t1']->id);
+        groups_add_member($groups['group1'], $users['t2']->id);
+        groups_add_member($groups['group2'], $users['s2']->id);
+        groups_add_member($groups['group2'], $users['s4']->id);
+
         $instance = $generator->create_module('choice', [
             'course' => $course,
             'option' => ['A', 'B', 'C'],
@@ -300,24 +420,44 @@ final class overview_test extends \advanced_testcase {
         ]);
 
         if ($withanswers) {
-            // Create responses for the first two users.
+            // Create options and responses:
+            // s1: No multiple: A - Multiple: A, C.
+            // s2: B.
+            // s4: B.
+            $db = \core\di::get(\moodle_database::class);
             $choicesid = $db->get_fieldset('choice_options', 'id', ['choiceid' => $instance->id]);
             $currentchoiceid = array_shift($choicesid); // Get the first choice.
-            $generator->get_plugin_generator('mod_choice')->create_response([
+            /** @var \mod_choice_generator $plugingenerator */
+            $plugingenerator = $generator->get_plugin_generator('mod_choice');
+            $plugingenerator->create_response([
                 'choiceid' => $instance->id,
                 'responses' => $currentchoiceid,
                 'userid' => $users['s1']->id,
             ]);
-            $generator->get_plugin_generator('mod_choice')->create_response([
+            if ($allowmultiple) {
+                $plugingenerator->create_response([
+                    'choiceid' => $instance->id,
+                    'responses' => end($choicesid), // Get the last choice.
+                    'userid' => $users['s1']->id,
+                ]);
+            }
+            $plugingenerator->create_response([
                 'choiceid' => $instance->id,
                 'responses' => $currentchoiceid,
                 'userid' => $users['s2']->id,
             ]);
+            $plugingenerator->create_response([
+                'choiceid' => $instance->id,
+                'responses' => $currentchoiceid,
+                'userid' => $users['s4']->id,
+            ]);
         }
+
         return [
             'users' => $users,
             'course' => $course,
             'instance' => $instance,
+            'groups' => $groups,
         ];
     }
 }

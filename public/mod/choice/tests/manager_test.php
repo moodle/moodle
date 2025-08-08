@@ -22,9 +22,10 @@ use context_module;
  * Generator tests class.
  *
  * @package    mod_choice
+ * @category   test
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_choice\manager
+ * @covers     \mod_choice\manager
  */
 final class manager_test extends \advanced_testcase {
     /**
@@ -51,70 +52,6 @@ final class manager_test extends \advanced_testcase {
         $this->assertEquals($context->id, $managercontext->id);
         $cm = get_coursemodule_from_id(manager::MODULE, $manageractivity->cmid, 0, false, MUST_EXIST);
         $this->assertEquals($cm->id, $manager->get_coursemodule()->id);
-    }
-
-    /**
-     * Setup users and activity for testing answers retrieval.
-     *
-     * @param int $groupmode the group mode to use for the course.
-     * @return array indexed array with 'users', 'course' and  'instance'.
-     */
-    private function setup_users_and_activity(int $groupmode = NOGROUPS): array {
-        $db = \core\di::get(\moodle_database::class);
-        $users = [];
-        $generator = $this->getDataGenerator();
-        $courseparams = [];
-        if ($groupmode !== NOGROUPS) {
-            // Set the group mode for the course.
-            $courseparams['groupmode'] = $groupmode;
-            $courseparams['groupmodeforce'] = 1; // Force the group mode.
-        }
-        $course = $generator->create_course($courseparams);
-        $data = [
-            's1' => 'student',
-            's2' => 'student',
-            's3' => 'student',
-            't1' => 'teacher',
-            't2' => 'teacher',
-        ];
-        foreach ($data as $username => $role) {
-            $users[$username] = $generator->create_and_enrol($course, $role, ['username' => $username]);
-        }
-
-        $groups = [];
-        if ($groupmode !== NOGROUPS) {
-            // Create a group if the group mode is not NOGROUPS.
-            $groups['g1'] = $generator->create_group(['courseid' => $course->id]);
-            $groups['g2'] = $generator->create_group(['courseid' => $course->id]);
-            // Add users to groups: s1, and t1 to group 1, s2 to group 2.
-            groups_add_member($groups['g1'], $users['s1']->id);
-            groups_add_member($groups['g2'], $users['s2']->id);
-            groups_add_member($groups['g1'], $users['t1']->id);
-        }
-        $instance = $generator->create_module('choice', [
-            'course' => $course,
-            'option' => ['A', 'B', 'C'],
-            'allowmultiple' => 1,
-        ]);
-
-        $choicesid = $db->get_records_menu('choice_options',  ['choiceid' => $instance->id], '', 'id, text');
-        $choicestoid = array_flip($choicesid);
-        $generator->get_plugin_generator('mod_choice')->create_response([
-            'choiceid' => $instance->id,
-            'responses' => [$choicestoid['A'], $choicestoid['B']], // Choose option A and B.
-            'userid' => $users['s1']->id,
-        ]);
-        $generator->get_plugin_generator('mod_choice')->create_response([
-            'choiceid' => $instance->id,
-            'responses' => $choicestoid['B'], // Choose option B.
-            'userid' => $users['s2']->id,
-        ]);
-        return [
-            'users' => $users,
-            'course' => $course,
-            'instance' => $instance,
-            'groups' => $groups,
-        ];
     }
 
     /**
@@ -150,52 +87,50 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test retrieving answers count for all users.
      *
-     * @param string $username the username of the user to retrieve answers count for.
-     * @param int $coursegroupmode the group mode of the course.
-     * @param string|null $currentgroup the current group for the user.
-     * @param int $expectedcount the expected count of answers for the user.
+     * @param string $currentuser The current user to filter answers for.
+     * @param int $groupmode The group mode.
+     * @param array $selectedgroups The groups to filter by, empty array means no filtering.
+     * @param array $expectedcount The expected count of answers for the user.
      *
-     * @covers       \mod_choice\manager::count_all_users_answered
+     * @covers       ::count_all_users_answered
      * @dataProvider provider_count_all_answers
      */
     public function test_count_all_users_answered(
-        string $username,
-        int $coursegroupmode,
-        ?string $currentgroup,
-        int $expectedcount
+        string $currentuser,
+        int $groupmode,
+        array $selectedgroups,
+        array $expectedcount
     ): void {
-        global $SESSION;
-
-        $db = \core\di::get(\moodle_database::class);
         [
             'users' => $users,
             'instance' => $instance,
-            'course' => $course,
-            'groups' => $groups,
-        ] = $this->setup_users_and_activity($coursegroupmode);
-        $manager = \mod_choice\manager::create_from_instance($instance);
-        $this->setUser($users[$username]);
-        if (!is_null($currentgroup) && $coursegroupmode !== NOGROUPS) {
-            $group = $groups[$currentgroup];
-            $SESSION->activegroup[$course->id][$coursegroupmode][$course->defaultgroupingid] = $group->id;
-        }
-        $count = $manager->count_all_users_answered();
-        $this->assertEquals($expectedcount, $count);
+            'groups' => $allgroups,
+        ] = $this->setup_users_and_activity($groupmode);
 
-        // Check answers count for each option.
-        $options = $db->get_records_menu('choice_options', ['choiceid' => $instance->id], '', 'id, text');
-        foreach ($options as $optionid => $optiontext) {
-            $count = $manager->count_all_users_answered($optionid);
-            if ($optiontext === 'A') {
-                $this->assertEquals(1, $count);
-            } else if ($optiontext === 'B') {
-                $this->assertEquals(2, $count);
-            } else {
-                // Option C has no answers.
-                $this->assertEquals(0, $count);
+        $this->setUser($users[$currentuser]);
+        $manager = \mod_choice\manager::create_from_instance($instance);
+
+        $groups = [];
+        if (!empty($selectedgroups)) {
+            foreach ($selectedgroups as $group) {
+                if ($group === 'unexisting') {
+                    $groups = [666];
+                } else {
+                    $groups[] = $allgroups[$group]->id;
+                }
             }
         }
 
+        $count = $manager->count_all_users_answered($groups);
+        $this->assertEquals($expectedcount['all'], $count);
+
+        // Check answers count for each option.
+        $db = \core\di::get(\moodle_database::class);
+        $options = $db->get_records_menu('choice_options', ['choiceid' => $instance->id], '', 'id, text');
+        foreach ($options as $optionid => $optiontext) {
+            $count = $manager->count_all_users_answered($groups, $optionid);
+            $this->assertEquals($expectedcount[$optiontext], $count);
+        }
     }
 
     /**
@@ -205,50 +140,93 @@ final class manager_test extends \advanced_testcase {
      */
     public static function provider_count_all_answers(): array {
         return [
-            'Teacher in a group - No group mode' => [
-                'username' => 't1',
-                'coursegroupmode' => NOGROUPS,
-                'currentgroup' => null,
-                'expectedcount' => 2,
+            'Teacher - No group' => [
+                'currentuser' => 't1',
+                'groupmode' => NOGROUPS,
+                'selectedgroups' => [],
+                'expectedcount' => [
+                    'all' => 3,
+                    'A' => 1,
+                    'B' => 3,
+                    'C' => 0,
+                ],
             ],
-            // This test about SEPARATEGROUPS it will be the subject of an follow up ticket (MDL-85852).
-            'Teacher in a group - Separate group mode' => [
-                'username' => 't1',
-                'coursegroupmode' => SEPARATEGROUPS,
-                'currentgroup' => null,
-                'expectedcount' => 2,
+            'Teacher - Visible groups' => [
+                'currentuser' => 't1',
+                'groupmode' => VISIBLEGROUPS,
+                'selectedgroups' => [],
+                'expectedcount' => [
+                    'all' => 3,
+                    'A' => 1,
+                    'B' => 3,
+                    'C' => 0,
+                ],
             ],
-            'Teacher in a group - Separate group mode - Group1' => [
-                'username' => 't1',
-                'coursegroupmode' => SEPARATEGROUPS,
-                'currentgroup' => 'g1',
-                'expectedcount' => 2,
+            'Teacher - Separate groups (all)' => [
+                'currentuser' => 't1',
+                'groupmode' => SEPARATEGROUPS,
+                'selectedgroups' => [],
+                'expectedcount' => [
+                    'all' => 3,
+                    'A' => 1,
+                    'B' => 3,
+                    'C' => 0,
+                ],
             ],
-            'Teacher in a group - Visible group mode' => [
-                'username' => 't1',
-                'coursegroupmode' => VISIBLEGROUPS,
-                'currentgroup' => null,
-                'expectedcount' => 2,
+            'Teacher - Separate groups (group1)' => [
+                'currentuser' => 't1',
+                'groupmode' => SEPARATEGROUPS,
+                'selectedgroups' => ['group1'],
+                'expectedcount' => [
+                    'all' => 1,
+                    'A' => 1,
+                    'B' => 1,
+                    'C' => 0,
+                ],
             ],
-            // Teacher 2 does not belong to any group.
-            'Teacher without group - No group mode' => [
-                'username' => 't2',
-                'coursegroupmode' => NOGROUPS,
-                'currentgroup' => null,
-                'expectedcount' => 2,
+            'Teacher - Separate groups (group2)' => [
+                'currentuser' => 't1',
+                'groupmode' => SEPARATEGROUPS,
+                'selectedgroups' => ['group2'],
+                'expectedcount' => [
+                    'all' => 2,
+                    'A' => 0,
+                    'B' => 2,
+                    'C' => 0,
+                ],
             ],
-            // These tests about SEPARATEGROUPS will be the subject of an follow up ticket (MDL-85852).
-            'Teacher without group - Separate group mode' => [
-                'username' => 't2',
-                'coursegroupmode' => SEPARATEGROUPS,
-                'currentgroup' => null,
-                'expectedcount' => 2,
+            'Teacher - Separate groups (group1, group2)' => [
+                'currentuser' => 't1',
+                'groupmode' => SEPARATEGROUPS,
+                'selectedgroups' => ['group1', 'group2'],
+                'expectedcount' => [
+                    'all' => 3,
+                    'A' => 1,
+                    'B' => 3,
+                    'C' => 0,
+                ],
             ],
-            'Teacher without group - Visible group mode' => [
-                'username' => 't2',
-                'coursegroupmode' => VISIBLEGROUPS,
-                'currentgroup' => null,
-                'expectedcount' => 2,
+            'Student' => [
+                'currentuser' => 's1',
+                'groupmode' => NOGROUPS,
+                'selectedgroups' => [],
+                'expectedcount' => [
+                    'all' => 0, // Students cannot see the answers count.
+                    'A' => 0,
+                    'B' => 0,
+                    'C' => 0,
+                ],
+            ],
+            'Unexisting group - Separate groups' => [
+                'currentuser' => 't1',
+                'groupmode' => SEPARATEGROUPS,
+                'selectedgroups' => ['unexisting'],
+                'expectedcount' => [
+                    'all' => 0,
+                    'A' => 0,
+                    'B' => 0,
+                    'C' => 0,
+                ],
             ],
         ];
     }
@@ -289,5 +267,82 @@ final class manager_test extends \advanced_testcase {
         $manager = \mod_choice\manager::create_from_instance($instance2);
         $options = $manager->get_options();
         $this->assertCount(1, $options);
+    }
+
+    /**
+     * Setup users and activity for testing answers retrieval.
+     *
+     * @param int $groupmode the group mode to use for the course.
+     * @return array indexed array with 'users', 'course', 'instance' and 'groups'.
+     */
+    private function setup_users_and_activity(int $groupmode = NOGROUPS): array {
+        $db = \core\di::get(\moodle_database::class);
+        $users = [];
+        $generator = $this->getDataGenerator();
+
+        // Force the group mode for the course.
+        $course = $generator->create_course(['groupmode' => $groupmode, 'groupmodeforce' => 1]);
+        $data = [
+            's1' => 'student',
+            's2' => 'student',
+            's3' => 'student', // This user does not belong to any group.
+            's4' => 'student',
+            't1' => 'editingteacher',
+            't2' => 'teacher', // This user does not belong to any group.
+        ];
+        foreach ($data as $username => $role) {
+            $users[$username] = $generator->create_and_enrol($course, $role, ['username' => $username]);
+        }
+
+        // Create groups.
+        $groups = [
+            'group1' => $generator->create_group(['courseid' => $course->id]),
+            'group2' => $generator->create_group(['courseid' => $course->id]),
+        ];
+
+        // Add users to groups:
+        // - group1: s1, t1.
+        // - group2: s2, s4.
+        groups_add_member($groups['group1'], $users['s1']->id);
+        groups_add_member($groups['group1'], $users['t1']->id);
+        groups_add_member($groups['group2'], $users['s2']->id);
+        groups_add_member($groups['group2'], $users['s4']->id);
+
+        $instance = $generator->create_module('choice', [
+            'course' => $course,
+            'option' => ['A', 'B', 'C'],
+            'allowmultiple' => 1,
+        ]);
+
+        // Create options and responses:
+        // s1: A, B.
+        // s2: B.
+        // s4: B.
+        $choicesid = $db->get_records_menu('choice_options', ['choiceid' => $instance->id], '', 'id, text');
+        $choicestoid = array_flip($choicesid);
+        /** @var \mod_choice_generator $plugingenerator */
+        $plugingenerator = $generator->get_plugin_generator('mod_choice');
+        $plugingenerator->create_response([
+            'choiceid' => $instance->id,
+            'responses' => [$choicestoid['A'], $choicestoid['B']],
+            'userid' => $users['s1']->id,
+        ]);
+        $plugingenerator->create_response([
+            'choiceid' => $instance->id,
+            'responses' => $choicestoid['B'],
+            'userid' => $users['s2']->id,
+        ]);
+        $plugingenerator->create_response([
+            'choiceid' => $instance->id,
+            'responses' => $choicestoid['B'],
+            'userid' => $users['s4']->id,
+        ]);
+
+        return [
+            'users' => $users,
+            'course' => $course,
+            'instance' => $instance,
+            'groups' => $groups,
+        ];
     }
 }

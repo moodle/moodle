@@ -42,11 +42,6 @@ class manager {
     private \moodle_database $db;
 
     /**
-     * @var int $groupmode as defined in SEPARATEGROUPS, VISIBLEGROUPS, or NOGROUPS.
-     */
-    private int $groupmode;
-
-    /**
      * Class constructor.
      *
      * @param cm_info $cm course module info object
@@ -61,7 +56,6 @@ class manager {
         $this->context = context_module::instance($cm->id);
         $this->db = \core\di::get(\moodle_database::class);
         $this->course = $cm->get_course();
-        $this->groupmode = groups_get_activity_groupmode($cm, $this->course);
     }
 
     /**
@@ -121,23 +115,41 @@ class manager {
     /**
      * Return the current count of users who have answered this choice module, that the current user can see.
      *
+     * @param int[] $groupids the group identifiers to filter by, empty array means no filtering
      * @param int|null $optionid the option ID to filter by, or null to count all answers
      * @return int the number of answers that the user can see
      */
-    public function count_all_users_answered(?int $optionid = null): int {
-        if (!has_any_capability(['mod/choice:view', 'mod/choice:readresponses'], $this->context)) {
+    public function count_all_users_answered(
+        array $groupids = [],
+        ?int $optionid = null,
+    ): int {
+        if (!has_all_capabilities(['mod/choice:view', 'mod/choice:readresponses'], $this->context)) {
             return 0;
         }
-        $where = ' WHERE ca.choiceid = :choiceid';
-        $params = ['choiceid' => $this->instance->id];
+
+        $tableprefix = empty($groupids) ? '' : 'ca.';
+        $select =  $tableprefix . 'choiceid = :choiceid';
+        $params = [
+            'choiceid' => $this->instance->id,
+        ];
         if ($optionid) {
-            $where .= ' AND ca.optionid = :optionid';
+            $select .= ' AND ' . $tableprefix . 'optionid = :optionid ';
             $params['optionid'] = $optionid;
         }
-        return $this->db->count_records_sql(
-            'SELECT COUNT(DISTINCT ca.userid) FROM {choice_answers} ca' .  $where,
-            $params
-        );
+
+        if (empty($groupids)) {
+            // No groups filtering, count all users answered.
+            return $this->db->count_records_select('choice_answers', $select, $params, 'COUNT(DISTINCT userid)');
+        }
+
+        // Groups filtering is applied.
+        [$gsql, $gparams] = $this->db->get_in_or_equal($groupids, SQL_PARAMS_NAMED);
+        $query = "SELECT COUNT(DISTINCT ca.userid)
+                FROM {choice_answers} ca, {groups_members} gm
+               WHERE $select
+                     AND (gm.groupid $gsql OR gm.groupid = 0)
+                     AND ca.userid = gm.userid";
+        return $this->db->count_records_sql($query, $params + $gparams);
     }
 
     /**
