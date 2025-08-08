@@ -16,20 +16,27 @@
 
 namespace core;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/xmlize.php');
+use core\exception\xml_format_exception;
 
 /**
  * This test compares library against the original xmlize XML importer.
  *
  * @package    core
  * @category   test
+ * @covers     \xmlize
  * @copyright  2017 Kilian Singer {@link http://quantumtechnology.info}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class xmlize_test extends \basic_testcase {
+    /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->libdir}/xmlize.php");
+        parent::setUpBeforeClass();
+    }
+
     /**
      * Test an XML import using a valid XML file.
      *
@@ -47,7 +54,7 @@ final class xmlize_test extends \basic_testcase {
      */
     public function test_xmlimport_of_wrong_file(): void {
         $xml = file_get_contents(__DIR__ . '/sample_questions_wrong.xml');
-        $this->expectException('xml_format_exception');
+        $this->expectException(xml_format_exception::class);
         $this->expectExceptionMessage('Error parsing XML: Mismatched tag at line 18, char 23');
         $xmlnew = xmlize($xml, 1, "UTF-8", true);
     }

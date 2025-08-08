@@ -42,4 +42,7 @@ $renamedclasses = [
     'core_reportbuilder\\source_unavailable_exception' => 'core_reportbuilder\\exception\\source_unavailable_exception',
     // Since Moodle 5.0.
     'PNG_MetaDataHandler' => 'core_badges\\png_metadata_handler',
+    // Since Moodle 5.1.
+    'core_xml_parser' => 'core\\xml_parser',
+    'xml_format_exception' => 'core\\exception\\xml_format_exception',
 ];

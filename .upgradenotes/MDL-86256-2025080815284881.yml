@@ -1,0 +1,16 @@
+issueNumber: MDL-86256
+notes:
+  core:
+    - message: >
+        The following classes have been moved into namespaces and now support
+        autoloading:
+
+
+        | Old class name          | New class name                         |
+
+        | ---                     | ---                                    |
+
+        | `\core_xml_parser`      | `\core\xml_parser`                     |
+
+        | `\xml_format_exception` | `\core\exception\xml_format_exception` |
+      type: improved
