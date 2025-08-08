@@ -1,0 +1,12 @@
+issueNumber: MDL-86254
+notes:
+  core_comment:
+    - message: |
+        The following classes have been renamed and now support autoloading.
+              Existing classes are currently unaffected.
+
+              | Old class name       | New class name                    |
+              | ---                  | ---                               |
+              | `\comment`           | `\core_comment\manager`           |
+              | `\comment_exception` | `\core_comment\comment_exception` |
+      type: improved

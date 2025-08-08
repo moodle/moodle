@@ -14,14 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_comment;
+
 /**
- * Functions and classes for commenting
+ * Comment exception class
  *
  * @package   core
  * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
+class comment_exception extends \moodle_exception {
+}
 
-// Nothing to do here, both \comment and \comment_exception will be autoloaded by the legacyclasses autoload system.
-// They are fully replaced by core_comment\manager and core_comment\comment_exception respectively.
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(comment_exception::class, \comment_exception::class);
