@@ -182,8 +182,6 @@ class blog_entry implements renderable {
 
         // Entry comments.
         if (!empty($CFG->usecomments) and $CFG->blogusecomments) {
-            require_once($CFG->dirroot . '/comment/lib.php');
-
             $cmt = new stdClass();
             $cmt->context = context_user::instance($this->userid);
             $cmt->courseid = $PAGE->course->id;
@@ -191,7 +189,7 @@ class blog_entry implements renderable {
             $cmt->itemid = $this->id;
             $cmt->showcount = $CFG->blogshowcommentscount;
             $cmt->component = 'blog';
-            $this->renderable->comment = new comment($cmt);
+            $this->renderable->comment = new \core_comment\manager($cmt);
         }
 
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);

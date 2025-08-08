@@ -22,10 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('../config.php');
-require_once($CFG->dirroot . '/comment/lib.php');
 
 if (empty($CFG->usecomments)) {
-    throw new comment_exception('commentsnotenabled', 'moodle');
+    throw new \core_comment\comment_exception('commentsnotenabled', 'moodle');
 }
 
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
@@ -60,7 +59,7 @@ $cmt->cm        = $cm;
 $cmt->area      = $area;
 $cmt->itemid    = $itemid;
 $cmt->component = $component;
-$comment = new comment($cmt);
+$comment = new \core_comment\manager($cmt);
 
 if ($comment->can_post()) {
     $cmt = $comment->add($content);

@@ -24,16 +24,12 @@
 class block_comments extends block_base {
 
     function init() {
-        global $CFG;
-
-        require_once($CFG->dirroot . '/comment/lib.php');
-
         $this->title = get_string('pluginname', 'block_comments');
     }
 
     function specialization() {
         // require js for commenting
-        comment::init();
+        \core_comment\manager::init();
     }
     function applicable_formats() {
         return array('all' => true);
@@ -75,7 +71,7 @@ class block_comments extends block_base {
         $args->notoggle  = true;
         $args->autostart = true;
         $args->displaycancel = false;
-        $comment = new comment($args);
+        $comment = new \core_comment\manager($args);
         $comment->set_view_permission(true);
         $comment->set_fullwidth();
 

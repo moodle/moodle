@@ -32,8 +32,6 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
 
-require_once($CFG->dirroot . '/comment/lib.php');
-
 /**
  * Privacy class for requesting user data.
  *

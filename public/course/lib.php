@@ -4427,7 +4427,6 @@ function course_check_module_updates_since($cm, $from, $fileareas = array(), $fi
     // Check comments.
     if (plugin_supports('mod', $cm->modname, FEATURE_COMMENT) and (empty($filter) or in_array('comments', $filter))) {
         $updates->comments = (object) array('updated' => false);
-        require_once($CFG->dirroot . '/comment/lib.php');
         require_once($CFG->dirroot . '/comment/locallib.php');
         $manager = new comment_manager();
         $comments = $manager->get_component_comments_since($course, $context, $component, $from, $cm);

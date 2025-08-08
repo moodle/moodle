@@ -31,7 +31,6 @@ use mod_glossary\privacy\provider;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/comment/lib.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
 /**
@@ -427,11 +426,11 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Get the comment area for glossary module.
      *
-     * @param context $context The context.
+     * @param \context $context The context.
      * @param int $itemid The item ID.
-     * @return comment
+     * @return \core_comment\manager
      */
-    protected function get_comment_object(\context $context, $itemid) {
+    protected function get_comment_object(\context $context, $itemid): \core_comment\manager {
         $args = new \stdClass();
 
         $args->context = $context;
@@ -439,7 +438,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $args->area = 'glossary_entry';
         $args->itemid = $itemid;
         $args->component = 'mod_glossary';
-        $comment = new \comment($args);
+        $comment = new \core_comment\manager($args);
         $comment->set_post_permission(true);
 
         return $comment;

@@ -57,10 +57,6 @@ final class events_test extends \advanced_testcase {
      * Test comment_created event.
      */
     public function test_comment_created(): void {
-        global $CFG;
-
-        require_once($CFG->dirroot . '/comment/lib.php');
-
         // Comment on course page.
         $context = \context_course::instance($this->course->id);
         $args = new \stdClass;
@@ -73,7 +69,7 @@ final class events_test extends \advanced_testcase {
         $args->notoggle = true;
         $args->autostart = true;
         $args->displaycancel = false;
-        $comment = new \comment($args);
+        $comment = new \core_comment\manager($args);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -100,7 +96,7 @@ final class events_test extends \advanced_testcase {
         $args->notoggle  = true;
         $args->autostart = true;
         $args->displaycancel = false;
-        $comment = new \comment($args);
+        $comment = new \core_comment\manager($args);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -121,10 +117,6 @@ final class events_test extends \advanced_testcase {
      * Test comment_deleted event.
      */
     public function test_comment_deleted(): void {
-        global $CFG;
-
-        require_once($CFG->dirroot . '/comment/lib.php');
-
         // Comment on course page.
         $context = \context_course::instance($this->course->id);
         $args = new \stdClass;
@@ -137,7 +129,7 @@ final class events_test extends \advanced_testcase {
         $args->notoggle  = true;
         $args->autostart = true;
         $args->displaycancel = false;
-        $comment = new \comment($args);
+        $comment = new \core_comment\manager($args);
         $newcomment = $comment->add('New comment');
 
         // Triggering and capturing the event.
@@ -165,7 +157,7 @@ final class events_test extends \advanced_testcase {
         $args->notoggle  = true;
         $args->autostart = true;
         $args->displaycancel = false;
-        $comment = new \comment($args);
+        $comment = new \core_comment\manager($args);
         $newcomment = $comment->add('New comment 1');
 
         // Triggering and capturing the event.

@@ -16,7 +16,7 @@
 
 namespace core_comment;
 
-use comment_exception;
+use core_comment\comment_exception;
 use core_comment_external;
 use core_external\external_api;
 use externallib_advanced_testcase;
@@ -53,8 +53,6 @@ final class externallib_test extends externallib_advanced_testcase {
      */
     protected function setup_course_and_users_basic() {
         global $CFG, $DB;
-
-        require_once($CFG->dirroot . '/comment/lib.php');
 
         $CFG->usecomments = true;
 

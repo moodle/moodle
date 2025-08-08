@@ -382,11 +382,10 @@ final class events_test extends \advanced_testcase {
      * Test comment_created event.
      */
     public function test_blog_comment_created_event(): void {
-        global $USER, $CFG;
+        global $USER;
 
         $this->setAdminUser();
 
-        require_once($CFG->dirroot . '/comment/lib.php');
         $context = \context_user::instance($USER->id);
 
         $cmt = new \stdClass();
@@ -396,7 +395,7 @@ final class events_test extends \advanced_testcase {
         $cmt->itemid = $this->postid;
         $cmt->showcount = 1;
         $cmt->component = 'blog';
-        $manager = new \comment($cmt);
+        $manager = new \core_comment\manager($cmt);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -418,11 +417,10 @@ final class events_test extends \advanced_testcase {
      * Test comment_deleted event.
      */
     public function test_blog_comment_deleted_event(): void {
-        global $USER, $CFG;
+        global $USER;
 
         $this->setAdminUser();
 
-        require_once($CFG->dirroot . '/comment/lib.php');
         $context = \context_user::instance($USER->id);
 
         $cmt = new \stdClass();
@@ -432,7 +430,7 @@ final class events_test extends \advanced_testcase {
         $cmt->itemid = $this->postid;
         $cmt->showcount = 1;
         $cmt->component = 'blog';
-        $manager = new \comment($cmt);
+        $manager = new \core_comment\manager($cmt);
         $newcomment = $manager->add("New comment");
 
         // Triggering and capturing the event.

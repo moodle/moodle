@@ -25,13 +25,12 @@ define('AJAX_SCRIPT', true);
 define('NO_DEBUG_DISPLAY', true);
 
 require_once('../config.php');
-require_once($CFG->dirroot . '/comment/lib.php');
 
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 $action    = optional_param('action', '', PARAM_ALPHA);
 
 if (empty($CFG->usecomments)) {
-    throw new comment_exception('commentsnotenabled', 'moodle');
+    throw new \core_comment\comment_exception('commentsnotenabled', 'moodle');
 }
 
 list($context, $course, $cm) = get_context_info_array($contextid);
@@ -73,7 +72,7 @@ $args->area      = $area;
 $args->itemid    = $itemid;
 $args->client_id = $client_id;
 $args->component = $component;
-$manager = new comment($args);
+$manager = new \core_comment\manager($args);
 
 echo $OUTPUT->header(); // send headers
 

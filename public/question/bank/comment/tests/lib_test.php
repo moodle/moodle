@@ -16,11 +16,6 @@
 
 namespace qbank_comment;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/question/bank/comment/lib.php');
-
 
 /**
  * Comment lib unit tests.

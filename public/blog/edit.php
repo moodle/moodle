@@ -26,7 +26,6 @@
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/blog/lib.php');
 require_once($CFG->dirroot . '/blog/locallib.php');
-require_once($CFG->dirroot . '/comment/lib.php');
 require_once($CFG->dirroot . '/blog/edit_form.php');
 
 $action   = required_param('action', PARAM_ALPHA);
@@ -120,7 +119,7 @@ $strblogs = get_string('blogs', 'blog');
 
 if ($action === 'delete') {
     // Init comment JS strings.
-    comment::init();
+    \core_comment\manager::init();
 
     if (empty($entry->id)) {
         throw new \moodle_exception('wrongentryid');

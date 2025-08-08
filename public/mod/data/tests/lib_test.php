@@ -184,8 +184,7 @@ final class lib_test extends \advanced_testcase {
      * Test comment_created event.
      */
     public function test_data_comment_created_event(): void {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/comment/lib.php');
+        global $DB;
 
         $this->resetAfterTest();
 
@@ -226,7 +225,7 @@ final class lib_test extends \advanced_testcase {
         $cmt->itemid = $recordid;
         $cmt->showcount = true;
         $cmt->component = 'mod_data';
-        $comment = new \comment($cmt);
+        $comment = new \core_comment\manager($cmt);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -247,8 +246,7 @@ final class lib_test extends \advanced_testcase {
      * Test comment_deleted event.
      */
     public function test_data_comment_deleted_event(): void {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/comment/lib.php');
+        global $DB;
 
         $this->resetAfterTest();
 
@@ -289,7 +287,7 @@ final class lib_test extends \advanced_testcase {
         $cmt->itemid = $recordid;
         $cmt->showcount = true;
         $cmt->component = 'mod_data';
-        $comment = new \comment($cmt);
+        $comment = new \core_comment\manager($cmt);
         $newcomment = $comment->add('New comment 1');
 
         // Triggering and capturing the event.

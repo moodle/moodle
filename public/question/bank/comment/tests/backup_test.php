@@ -21,7 +21,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
-require_once($CFG->dirroot. '/comment/lib.php');
 
 /**
  * Question comment backup and restore unit tests.
@@ -140,8 +139,7 @@ final class backup_test extends \advanced_testcase {
      * across the backup and restore process.
      */
     public function test_backup_restore(): void {
-        global $DB, $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
+        global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -165,13 +163,13 @@ final class backup_test extends \advanced_testcase {
         $args->displaycancel = false;
 
         // Two comments for question 1.
-        $commentobj1 = new \comment($args);
+        $commentobj1 = new \core_comment\manager($args);
         $commentobj1->add('new \comment for question 1 _ 1');
         $comment1 = $commentobj1->add('new \comment for question 1 _ 2');
 
         // One comment for question 2.
         $args->itemid = $question2->id;
-        $commentobj2 = new \comment($args);
+        $commentobj2 = new \core_comment\manager($args);
         $comment2 = $commentobj2->add('new \comment for question 2');
 
         // Create a quiz and the questions to that.
@@ -206,12 +204,12 @@ final class backup_test extends \advanced_testcase {
                WHERE qbe.idnumber = ?';
         $newquestion1 = $DB->get_record_sql($sql, ['idnumber' => 'q1']);
         $args->itemid = $newquestion1->id;
-        $commentobj = new \comment($args);
+        $commentobj = new \core_comment\manager($args);
         $this->assertEquals($commentobj->count(), 2);
 
         $newquestion2 = $DB->get_record_sql($sql, ['idnumber' => 'q2']);
         $args->itemid = $newquestion2->id;
-        $commentobj = new \comment($args);
+        $commentobj = new \core_comment\manager($args);
         $this->assertEquals($commentobj->count(), 1);
     }
 }

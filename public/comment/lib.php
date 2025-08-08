@@ -17,11 +17,14 @@
 /**
  * Functions and classes for commenting
  *
- * @package   core
+ * @package   core_comment
  * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 5.1, please use core_comment\manager and core_comment\comment_exception instead.
+ * @todo Remove this file in Moodle 6.0 (MDL-86257)
  */
-defined('MOODLE_INTERNAL') || die();
 
 // Nothing to do here, both \comment and \comment_exception will be autoloaded by the legacyclasses autoload system.
 // They are fully replaced by core_comment\manager and core_comment\comment_exception respectively.
+// However, we cannot add any deprecation message here as this file is autoloaded by
+// the before_standard_top_of_body_html_generation hook.

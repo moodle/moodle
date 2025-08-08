@@ -18,7 +18,6 @@ namespace qbank_comment\event;
 
 use advanced_testcase;
 use cache;
-use comment;
 use context;
 use context_course;
 use context_module;
@@ -51,8 +50,6 @@ final class comment_created_deleted_test extends advanced_testcase {
      * Setup test data.
      */
     public function setUp(): void {
-        global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
         parent::setUp();
 
         $this->resetAfterTest();
@@ -88,7 +85,7 @@ final class comment_created_deleted_test extends advanced_testcase {
         $args->notoggle = true;
         $args->autostart = true;
         $args->displaycancel = false;
-        $this->comment = new comment($args);
+        $this->comment = new \core_comment\manager($args);
     }
 
     /**

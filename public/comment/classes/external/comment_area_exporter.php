@@ -26,9 +26,7 @@
 namespace core_comment\external;
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/comment/lib.php');
-
-use comment;
+use core_comment\manager;
 use renderer_base;
 use stdClass;
 
@@ -41,10 +39,16 @@ use stdClass;
  */
 class comment_area_exporter extends \core\external\exporter {
 
-    /** @var comment The comment instance. */
+    /** @var manager The comment instance. */
     protected $comment = null;
 
-    public function __construct(comment $comment, $related = array()) {
+    /**
+     * Constructor.
+     *
+     * @param manager $comment The comment instance.
+     * @param array $related Related data.
+     */
+    public function __construct(manager $comment, $related = []) {
         $this->comment = $comment;
         $data = new stdClass();
         $data->component = $comment->get_component();

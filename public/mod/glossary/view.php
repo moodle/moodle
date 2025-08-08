@@ -57,8 +57,7 @@ $hassecondary = $PAGE->has_secondary_navigation();
 $fmtoptions = array(
     'context' => $context);
 
-require_once($CFG->dirroot . '/comment/lib.php');
-comment::init();
+\core_comment\manager::init();
 
 /// redirecting if adding a new entry
 if ($tab == GLOSSARY_ADDENTRY_VIEW ) {

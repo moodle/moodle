@@ -34,8 +34,6 @@ use core_external\external_warnings;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->dirroot/comment/lib.php");
-
 /**
  * External comment API functions
  *
@@ -114,7 +112,7 @@ class core_comment_external extends external_api {
         $args->itemid    = $params['itemid'];
         $args->component = $params['component'];
 
-        $commentobject = new comment($args);
+        $commentobject = new \core_comment\manager($args);
         $comments = $commentobject->get_comments($params['page'], $sortdirection);
 
         // False means no permissions to see comments.
@@ -224,7 +222,7 @@ class core_comment_external extends external_api {
         global $CFG, $SITE;
 
         if (empty($CFG->usecomments)) {
-            throw new comment_exception('commentsnotenabled', 'moodle');
+            throw new \core_comment\comment_exception('commentsnotenabled', 'moodle');
         }
 
         $params = self::validate_parameters(self::add_comments_parameters(), ['comments' => $comments]);
@@ -248,9 +246,9 @@ class core_comment_external extends external_api {
             $args->itemid    = $comment['itemid'];
             $args->area      = $comment['area'];
 
-            $manager = new comment($args);
+            $manager = new \core_comment\manager($args);
             if (!$manager->can_post()) {
-                throw new comment_exception('nopermissiontocomment');
+                throw new \core_comment\comment_exception('nopermissiontocomment');
             }
 
             $params['comments'][$index]['preparedcomment'] = $manager;
@@ -301,14 +299,14 @@ class core_comment_external extends external_api {
      *
      * @param array $comments array of comment ids to be deleted
      * @return array
-     * @throws comment_exception
+     * @throws \core_comment\comment_exception
      * @since Moodle 3.8
      */
     public static function delete_comments(array $comments) {
         global $CFG, $DB, $USER, $SITE;
 
         if (empty($CFG->usecomments)) {
-            throw new comment_exception('commentsnotenabled', 'moodle');
+            throw new \core_comment\comment_exception('commentsnotenabled', 'moodle');
         }
 
         $params = self::validate_parameters(self::delete_comments_parameters(), ['comments' => $comments]);
@@ -321,7 +319,7 @@ class core_comment_external extends external_api {
         if (count($commentrecords) != count($comments)) {
             $invalidcomments = array_diff($commentids, array_column($commentrecords, 'id'));
             $invalidcommentsstr = implode(',', $invalidcomments);
-            throw new comment_exception("One or more comments could not be found by id: $invalidcommentsstr");
+            throw new \core_comment\comment_exception("One or more comments could not be found by id: $invalidcommentsstr");
         }
 
         // Make sure we can delete every one of the comments before actually doing so.
@@ -342,10 +340,10 @@ class core_comment_external extends external_api {
             $args->component = $commentrecord->component;
             $args->itemid    = $commentrecord->itemid;
             $args->area      = $commentrecord->commentarea;
-            $manager = new comment($args);
+            $manager = new \core_comment\manager($args);
 
             if (!$manager->can_delete($commentrecord)) {
-                throw new comment_exception('nopermissiontodelentry');
+                throw new \core_comment\comment_exception('nopermissiontodelentry');
             }
 
             // User is allowed to delete it, so store the comment object, for use below in final deletion.

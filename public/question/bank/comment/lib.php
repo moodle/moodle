@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core_comment\comment_exception;
+
 /**
  * Helper functions and callbacks.
  *
@@ -22,10 +24,6 @@
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot. '/comment/lib.php');
 
 /**
  * Validate comment parameter before perform other comments actions.
@@ -82,7 +80,7 @@ function qbank_comment_preview_display($question, $courseid): string {
     global $CFG, $PAGE;
     if (question_has_capability_on($question, 'comment') && $CFG->usecomments
             && core\plugininfo\qbank::is_plugin_enabled('qbank_comment')) {
-        \comment::init($PAGE);
+        \core_comment\manager::init($PAGE);
         $args = new \stdClass;
         $args->contextid = context_system::instance()->id; // Static data to bypass comment sql as context is not needed.
         $args->courseid  = $courseid;
@@ -93,7 +91,7 @@ function qbank_comment_preview_display($question, $courseid): string {
         $args->autostart = true;
         $args->displaycancel = false;
         $args->linktext = get_string('commentheader', 'qbank_comment');
-        $comment = new \comment($args);
+        $comment = new \core_comment\manager($args);
         $comment->set_view_permission(true);
         $comment->set_fullwidth();
         return $comment->output();

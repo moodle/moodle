@@ -16,8 +16,6 @@
 
 namespace core_comment;
 
-use comment;
-use comment_exception;
 use core_comment_external;
 
 /**
@@ -59,8 +57,8 @@ final class context_freeze_test extends \advanced_testcase {
 
         // Create a comment by the student.
         $this->setUser($student);
-        $comment = new comment($args);
-        $newcomment = $comment->add('New comment');
+        $comment = new manager($args);
+        $newcomment = $comment->add('New manager');
 
         // Freeze the context.
         $this->setAdminUser();
@@ -74,7 +72,6 @@ final class context_freeze_test extends \advanced_testcase {
      */
     public function test_delete_student_external(): void {
         global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
 
         $this->resetAfterTest();
 
@@ -84,7 +81,7 @@ final class context_freeze_test extends \advanced_testcase {
 
         // Check that a student cannot delete their own comment.
         $this->setUser($student);
-        $studentcomment = new comment($args);
+        $studentcomment = new manager($args);
         $this->assertFalse($studentcomment->can_delete($newcomment->id));
         $this->assertFalse($studentcomment->can_post());
         $this->expectException(comment_exception::class);
@@ -97,7 +94,6 @@ final class context_freeze_test extends \advanced_testcase {
      */
     public function test_delete_student(): void {
         global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
 
         $this->resetAfterTest();
 
@@ -107,7 +103,7 @@ final class context_freeze_test extends \advanced_testcase {
 
         // Check that a student cannot delete their own comment.
         $this->setUser($student);
-        $studentcomment = new comment($args);
+        $studentcomment = new manager($args);
         $this->assertFalse($studentcomment->can_delete($newcomment->id));
         $this->assertFalse($studentcomment->can_post());
         $this->expectException(comment_exception::class);
@@ -120,7 +116,6 @@ final class context_freeze_test extends \advanced_testcase {
      */
     public function test_delete_admin_external(): void {
         global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
 
         $this->resetAfterTest();
 
@@ -129,7 +124,7 @@ final class context_freeze_test extends \advanced_testcase {
         list($newcomment, $student, $args) = $this->create_student_comment_and_freeze_course($course);
 
         // Check that the admin user cannot delete the comment.
-        $admincomment = new comment($args);
+        $admincomment = new manager($args);
         $this->assertFalse($admincomment->can_delete($newcomment->id));
         $this->assertFalse($admincomment->can_post());
         $this->expectException(comment_exception::class);
@@ -142,7 +137,6 @@ final class context_freeze_test extends \advanced_testcase {
      */
     public function test_delete_admin(): void {
         global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
 
         $this->resetAfterTest();
 
@@ -151,7 +145,7 @@ final class context_freeze_test extends \advanced_testcase {
         list($newcomment, $student, $args) = $this->create_student_comment_and_freeze_course($course);
 
         // Check that the admin user cannot delete the comment.
-        $admincomment = new comment($args);
+        $admincomment = new manager($args);
         $this->assertFalse($admincomment->can_delete($newcomment->id));
         $this->assertFalse($admincomment->can_post());
         $this->expectException(comment_exception::class);

@@ -1,0 +1,7 @@
+issueNumber: MDL-86254
+notes:
+  core_comment:
+    - message: >-
+        The `public/comment/lib.php` file is now empty and will be removed in
+        Moodle 6.0. Please, do not include in your code anymore.
+      type: deprecated

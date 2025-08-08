@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 use coding_exception;
 use context_course;
 use context_user;
-use comment;
 use lang_string;
 
 /**
@@ -183,23 +182,20 @@ class user_competency extends persistent {
     /**
      * Get the comment object.
      *
-     * @return comment
+     * @return \core_comment\manager
      */
     public function get_comment_object() {
-        global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
-
         if (!$this->get('id')) {
             throw new coding_exception('The user competency record must exist.');
         }
 
-        $comment = new comment((object) array(
+        $comment = new \core_comment\manager((object) [
             'context' => $this->get_context(),
             'component' => 'competency',    // This cannot be named 'core_competency'.
             'itemid' => $this->get('id'),
             'area' => 'user_competency',
             'showcount' => true,
-        ));
+        ]);
         $comment->set_fullwidth(true);
         return $comment;
     }

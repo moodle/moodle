@@ -16,11 +16,6 @@
 
 declare(strict_types=1);
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/comment/lib.php");
-
 /**
  * Comment test generator
  *
@@ -42,7 +37,7 @@ class core_comment_generator extends component_generator_base {
         $content = (string) ($record['content'] ?? '');
         unset($record['content']);
 
-        $comment = new comment((object) $record);
+        $comment = new \core_comment\manager((object) $record);
         if ($content !== '') {
             $comment->add($content);
         }

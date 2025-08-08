@@ -68,8 +68,7 @@ $context = $manager->get_context();
 
 require_login($course, true, $cm);
 
-require_once($CFG->dirroot . '/comment/lib.php');
-comment::init();
+\core_comment\manager::init();
 
 require_capability('mod/data:viewentry', $context);
 

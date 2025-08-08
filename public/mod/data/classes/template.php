@@ -679,7 +679,6 @@ class template {
             return '';
         }
         $context = $this->manager->get_context();
-        require_once($CFG->dirroot  . '/comment/lib.php');
         list($context, $course, $cm) = get_context_info_array($context->id);
         $cmdata = (object)[
             'context' => $context,
@@ -690,7 +689,7 @@ class template {
             'showcount' => true,
             'component' => 'mod_data',
         ];
-        $comment = new comment($cmdata);
+        $comment = new \core_comment\manager($cmdata);
         return $comment->output(true);
     }
 

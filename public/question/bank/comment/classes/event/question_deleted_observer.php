@@ -16,10 +16,6 @@
 
 namespace qbank_comment\event;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/comment/lib.php');
-
 use core\event\question_deleted;
 
 /**
@@ -39,7 +35,7 @@ class question_deleted_observer {
      * @return void
      */
     public static function delete_question_comments(question_deleted $event): void {
-        \comment::delete_comments([
+        \core_comment\manager::delete_comments([
             'contextid' => \context_system::instance()->id,
             'component' => 'qbank_comment',
             'commentarea' => 'question',

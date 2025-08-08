@@ -24,7 +24,6 @@
 
  defined('MOODLE_INTERNAL') || die();
 
- require_once($CFG->dirroot . '/comment/lib.php');
  require_once($CFG->dirroot . '/mod/assign/submissionplugin.php');
 
 /**
@@ -57,7 +56,7 @@ class assign_submission_comments extends assign_submission_plugin {
         // Never show a link to view full submission.
         $showviewlink = false;
         // Need to used this init() otherwise it does not have the javascript includes.
-        comment::init();
+        \core_comment\manager::init();
 
         $options = new stdClass();
         $options->area    = 'submission_comments';
@@ -68,7 +67,7 @@ class assign_submission_comments extends assign_submission_plugin {
         $options->showcount = true;
         $options->displaycancel = true;
 
-        $comment = new comment($options);
+        $comment = new \core_comment\manager($options);
 
         $o = $this->assignment->get_renderer()->container($comment->output(true), 'commentscontainer');
         return $o;
@@ -138,7 +137,7 @@ class assign_submission_comments extends assign_submission_plugin {
         if ($oldsubmission->data1 != '') {
 
             // Need to used this init() otherwise it does not have the javascript includes.
-            comment::init();
+            \core_comment\manager::init();
 
             $options = new stdClass();
             $options->area = 'submission_comments_upgrade';
@@ -149,7 +148,7 @@ class assign_submission_comments extends assign_submission_plugin {
             $options->showcount = true;
             $options->displaycancel = true;
 
-            $comment = new comment($options);
+            $comment = new \core_comment\manager($options);
             $comment->add($oldsubmission->data1);
             $comment->set_view_permission(true);
 

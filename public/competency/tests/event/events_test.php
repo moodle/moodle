@@ -21,8 +21,6 @@ use core_competency\plan;
 use core_competency\url;
 
 defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot . '/comment/lib.php');
 
 /**
  * Event tests.
@@ -1239,7 +1237,7 @@ final class events_test extends \advanced_testcase {
         $cmt->itemid = $plan->get('id');
         $cmt->component = 'competency';
         $cmt->showcount = 1;
-        $manager = new \comment($cmt);
+        $manager = new \core_comment\manager($cmt);
         $manager->set_post_permission(true);
 
         // Triggering and capturing the event.
@@ -1276,7 +1274,7 @@ final class events_test extends \advanced_testcase {
         $cmt->area = 'plan';
         $cmt->itemid = $plan->get('id');
         $cmt->component = 'competency';
-        $manager = new \comment($cmt);
+        $manager = new \core_comment\manager($cmt);
         $newcomment = $manager->add("Comment to be deleted");
 
         // Triggering and capturing the event.
@@ -1632,7 +1630,7 @@ final class events_test extends \advanced_testcase {
         $cmt->itemid = $uc->get('id');
         $cmt->component = 'competency';
         $cmt->showcount = 1;
-        $manager = new \comment($cmt);
+        $manager = new \core_comment\manager($cmt);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -1672,7 +1670,7 @@ final class events_test extends \advanced_testcase {
         $cmt->area = 'user_competency';
         $cmt->itemid = $uc->get('id');
         $cmt->component = 'competency';
-        $manager = new \comment($cmt);
+        $manager = new \core_comment\manager($cmt);
         $newcomment = $manager->add("Comment to be deleted");
 
         // Triggering and capturing the event.

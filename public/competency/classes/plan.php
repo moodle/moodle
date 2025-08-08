@@ -24,7 +24,6 @@
 namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
-use comment;
 use context_user;
 use dml_missing_record_exception;
 use lang_string;
@@ -187,24 +186,21 @@ class plan extends persistent {
     /**
      * Get the comment object.
      *
-     * @return comment
+     * @return \core_comment\manager
      */
     public function get_comment_object() {
-        global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
-
         if (!$this->get('id')) {
             throw new \coding_exception('The plan must exist.');
         }
 
-        $comment = new comment((object) array(
+        $comment = new \core_comment\manager((object) [
             'client_id' => 'plancommentarea' . $this->get('id'),
             'context' => $this->get_context(),
             'component' => 'competency',    // This cannot be named 'core_competency'.
             'itemid' => $this->get('id'),
             'area' => 'plan',
             'showcount' => true,
-        ));
+        ]);
         $comment->set_fullwidth(true);
         return $comment;
     }

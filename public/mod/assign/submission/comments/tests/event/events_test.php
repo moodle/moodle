@@ -32,7 +32,6 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/assign/lib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
-require_once($CFG->dirroot . '/comment/lib.php');
 
 /**
  * Events tests class.
@@ -71,7 +70,7 @@ final class events_test extends \advanced_testcase {
         $options->showcount = true;
         $options->displaycancel = true;
 
-        $comment = new \comment($options);
+        $comment = new \core_comment\manager($options);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -112,7 +111,7 @@ final class events_test extends \advanced_testcase {
         $options->component = 'assignsubmission_comments';
         $options->showcount = true;
         $options->displaycancel = true;
-        $comment = new \comment($options);
+        $comment = new \core_comment\manager($options);
         $newcomment = $comment->add('New comment 1');
 
         // Triggering and capturing the event.

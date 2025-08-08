@@ -44,9 +44,6 @@ final class events_test extends \advanced_testcase {
      * Test comment_created event.
      */
     public function test_comment_created(): void {
-        global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
-
         // Create a record for adding comment.
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
@@ -65,7 +62,7 @@ final class events_test extends \advanced_testcase {
         $cmt->area = 'glossary_entry';
         $cmt->itemid = $entry->id;
         $cmt->showcount = true;
-        $comment = new \comment($cmt);
+        $comment = new \core_comment\manager($cmt);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -86,9 +83,6 @@ final class events_test extends \advanced_testcase {
      * Test comment_deleted event.
      */
     public function test_comment_deleted(): void {
-        global $CFG;
-        require_once($CFG->dirroot . '/comment/lib.php');
-
         // Create a record for deleting comment.
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
@@ -107,7 +101,7 @@ final class events_test extends \advanced_testcase {
         $cmt->area = 'glossary_entry';
         $cmt->itemid = $entry->id;
         $cmt->showcount = true;
-        $comment = new \comment($cmt);
+        $comment = new \core_comment\manager($cmt);
         $newcomment = $comment->add('New comment 1');
 
         // Triggering and capturing the event.

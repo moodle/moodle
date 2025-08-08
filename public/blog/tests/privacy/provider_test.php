@@ -35,7 +35,6 @@ use core_privacy\local\request\writer;
 use core_blog\privacy\provider;
 
 require_once($CFG->dirroot . '/blog/locallib.php');
-require_once($CFG->dirroot . '/comment/lib.php');
 
 /**
  * Data provider testcase class.
@@ -918,16 +917,16 @@ final class provider_test extends provider_testcase {
      * @param int $itemid The item ID.
      * @param string $component The component.
      * @param string $area The area.
-     * @return comment
+     * @return \core_comment\manager
      */
-    protected function get_comment_object(\context $context, $itemid) {
+    protected function get_comment_object(\context $context, $itemid): \core_comment\manager {
         $args = new \stdClass();
         $args->context = $context;
         $args->course = get_course(SITEID);
         $args->area = 'format_blog';
         $args->itemid = $itemid;
         $args->component = 'blog';
-        $comment = new \comment($args);
+        $comment = new \core_comment\manager($args);
         $comment->set_post_permission(true);
         return $comment;
     }

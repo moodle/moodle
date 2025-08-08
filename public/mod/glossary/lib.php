@@ -1312,7 +1312,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     $return .= '</span>';
 
     if (!empty($CFG->usecomments) && has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
-        require_once($CFG->dirroot . '/comment/lib.php');
         $cmt = new stdClass();
         $cmt->component = 'mod_glossary';
         $cmt->context  = $context;
@@ -1321,7 +1320,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $cmt->area     = 'glossary_entry';
         $cmt->itemid   = $entry->id;
         $cmt->showcount = true;
-        $comment = new comment($cmt);
+        $comment = new \core_comment\manager($cmt);
         $return .= '<div>'.$comment->output(true).'</div>';
         $output = true;
     }
@@ -3271,10 +3270,10 @@ function glossary_comment_validate($comment_param) {
     global $DB;
     // validate comment area
     if ($comment_param->commentarea != 'glossary_entry') {
-        throw new comment_exception('invalidcommentarea');
+        throw new \core_comment\comment_exception('invalidcommentarea');
     }
     if (!$record = $DB->get_record('glossary_entries', array('id'=>$comment_param->itemid))) {
-        throw new comment_exception('invalidcommentitemid');
+        throw new \core_comment\comment_exception('invalidcommentitemid');
     }
     if ($record->sourceglossaryid && $record->sourceglossaryid == $comment_param->cm->instance) {
         $glossary = $DB->get_record('glossary', array('id'=>$record->sourceglossaryid));
@@ -3282,37 +3281,37 @@ function glossary_comment_validate($comment_param) {
         $glossary = $DB->get_record('glossary', array('id'=>$record->glossaryid));
     }
     if (!$glossary) {
-        throw new comment_exception('invalidid', 'data');
+        throw new \core_comment\comment_exception('invalidid', 'data');
     }
     if (!$course = $DB->get_record('course', array('id'=>$glossary->course))) {
-        throw new comment_exception('coursemisconf');
+        throw new \core_comment\comment_exception('coursemisconf');
     }
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id, $course->id)) {
-        throw new comment_exception('invalidcoursemodule');
+        throw new \core_comment\comment_exception('invalidcoursemodule');
     }
     $context = context_module::instance($cm->id);
 
     if ($glossary->defaultapproval and !$record->approved and !has_capability('mod/glossary:approve', $context)) {
-        throw new comment_exception('notapproved', 'glossary');
+        throw new \core_comment\comment_exception('notapproved', 'glossary');
     }
     // validate context id
     if ($context->id != $comment_param->context->id) {
-        throw new comment_exception('invalidcontext');
+        throw new \core_comment\comment_exception('invalidcontext');
     }
     // validation for comment deletion
     if (!empty($comment_param->commentid)) {
         if ($comment = $DB->get_record('comments', array('id'=>$comment_param->commentid))) {
             if ($comment->commentarea != 'glossary_entry') {
-                throw new comment_exception('invalidcommentarea');
+                throw new \core_comment\comment_exception('invalidcommentarea');
             }
             if ($comment->contextid != $comment_param->context->id) {
-                throw new comment_exception('invalidcontext');
+                throw new \core_comment\comment_exception('invalidcontext');
             }
             if ($comment->itemid != $comment_param->itemid) {
-                throw new comment_exception('invalidcommentitemid');
+                throw new \core_comment\comment_exception('invalidcommentitemid');
             }
         } else {
-            throw new comment_exception('invalidcommentid');
+            throw new \core_comment\comment_exception('invalidcommentid');
         }
     }
     return true;
@@ -4704,8 +4703,6 @@ function mod_glossary_get_comments(cm_info $cm): array {
         return [];
     }
 
-    require_once($CFG->dirroot . '/comment/lib.php');
-
     // Initilising comment object.
     $cmtoptions = new stdClass();
     $cmtoptions->context = $context;
@@ -4726,7 +4723,7 @@ function mod_glossary_get_comments(cm_info $cm): array {
     $entries = $qb->get_records();
     foreach ($entries as $entry) {
         $cmtoptions->itemid = $entry->id;
-        $comment = new \comment($cmtoptions);
+        $comment = new \core_comment\manager($cmtoptions);
         $comments = array_merge($comments, $comment->get_comments());
     }
 

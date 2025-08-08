@@ -4761,7 +4761,6 @@ function remove_course_contents($courseid, $showfeedback = true, ?array $options
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
-    require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
     require_once($CFG->dirroot.'/notes/lib.php');
 
@@ -4946,7 +4945,7 @@ function remove_course_contents($courseid, $showfeedback = true, ?array $options
     note_delete_all($course->id);
 
     // Die comments!
-    comment::delete_comments($coursecontext->id);
+    \core_comment\manager::delete_comments($coursecontext->id);
 
     // Ratings are history too.
     $delopt = new stdclass();
@@ -5351,8 +5350,7 @@ function reset_course_userdata($data) {
     }
     // Reset comments.
     if (!empty($data->reset_comments)) {
-        require_once($CFG->dirroot.'/comment/lib.php');
-        comment::reset_course_page_comments($context);
+        \core_comment\manager::reset_course_page_comments($context);
     }
 
     $event = \core\event\course_reset_ended::create($eventparams);

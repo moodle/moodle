@@ -23,7 +23,6 @@ use blog_entry;
 use cache;
 use calendar_event;
 use coding_exception;
-use comment;
 use completion_criteria_date;
 use completion_completion;
 use context_course;
@@ -3873,7 +3872,6 @@ final class courselib_test extends advanced_testcase {
         global $CFG, $DB, $USER;
         require_once($CFG->dirroot . '/mod/glossary/lib.php');
         require_once($CFG->dirroot . '/rating/lib.php');
-        require_once($CFG->dirroot . '/comment/lib.php');
 
         $this->resetAfterTest(true);
 
@@ -3943,7 +3941,7 @@ final class courselib_test extends advanced_testcase {
         $args->itemid    = $entry->id;
         $args->client_id = 1;
         $args->component = 'mod_glossary';
-        $manager = new comment($args);
+        $manager = new \core_comment\manager($args);
         $manager->add('blah blah blah');
 
         // Check upgrade status.
