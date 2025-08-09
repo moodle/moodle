@@ -23,11 +23,6 @@
  */
 namespace core_comment\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-require_once($CFG->dirroot . '/comment/locallib.php');
-
 use core_privacy\local\request\approved_userlist;
 use core_privacy\tests\provider_testcase;
 use core_privacy\tests\request\approved_contextlist;

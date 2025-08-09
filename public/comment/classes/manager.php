@@ -1073,6 +1073,56 @@ class manager {
     }
 
     /**
+     * Get comments created since a given time.
+     *
+     * @param  stdClass $course    course object
+     * @param  stdClass $context   context object
+     * @param  string $component   component name
+     * @param  int $since          the time to check
+     * @param  \cm_info|null $cm optional course module object
+     * @return array list of comments db records since the given timelimit
+     * @since Moodle 3.2
+     */
+    public static function get_component_comments_since(
+        stdClass $course,
+        stdClass $context,
+        string $component,
+        int $since,
+        ?\cm_info $cm = null
+    ): array {
+        global $DB;
+
+        $result = [];
+        $where = 'contextid = ? AND component = ? AND timecreated > ?';
+        $comments = $DB->get_records_select('comments', $where, [$context->id, $component, $since]);
+
+        // Check item by item if we have permissions.
+        $managersviewstatus = [];
+        foreach ($comments as $comment) {
+            $cachedkey = $comment->commentarea . '/' . $comment->itemid;
+
+            if (!isset($managersviewstatus[$cachedkey])) {
+                $args = (object)[
+                    'area' => $comment->commentarea,
+                    'itemid' => $comment->itemid,
+                    'context' => $context,
+                    'course' => $course,
+                    'client_id' => 0,
+                    'component' => $component,
+                    'cm' => $cm,
+                ];
+                $manager = new self($args);
+                $managersviewstatus[$cachedkey] = $manager->can_view();
+            }
+
+            if ($managersviewstatus[$cachedkey]) {
+                $result[$comment->id] = $comment;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Returns the component associated with the comment.
      *
      * @return string

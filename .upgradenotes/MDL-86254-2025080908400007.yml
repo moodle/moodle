@@ -1,0 +1,8 @@
+issueNumber: MDL-86254
+notes:
+  core_comment:
+    - message: >-
+        The `public/comment/locallib.php` file and the `comment_manager` class
+        have been deprecated. All related functionality should now be accessed
+        via the `\core_comment\manager` class.
+      type: deprecated

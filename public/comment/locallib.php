@@ -15,12 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
+debugging(
+    'This file has been deprecated. Please, use \core_comment\manager instead',
+    DEBUG_DEVELOPER,
+);
+
 /**
  * comment_manager is helper class to manage moodle comments in admin page (Reports->Comments)
  *
  * @package   core_comment
  * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo Remove this class and the file in Moodle 6.0 (MDL-86257)
  */
 class comment_manager {
 
@@ -48,8 +56,16 @@ class comment_manager {
     /**
      * Constructs the comment_manage object
      */
+    #[\core\attribute\deprecated(
+        replacement: 'core_comment\manager',
+        since: '5.1',
+        mdl: 'MDL-86254',
+    )]
     public function __construct() {
         global $CFG;
+
+        \core\deprecation::emit_deprecation(__FUNCTION__);
+
         $this->perpage = $CFG->commentsperpage;
     }
 
@@ -245,9 +261,17 @@ class comment_manager {
      * @param  stdClass|\cm_info|null $cm course module object
      * @return array list of comments db records since the given timelimit
      * @since Moodle 3.2
+     *
      */
+    #[\core\attribute\deprecated(
+        replacement: 'core_comment\manager::get_component_comments_since',
+        since: '5.1',
+        mdl: 'MDL-86254',
+    )]
     public function get_component_comments_since($course, $context, $component, $since, $cm = null) {
         global $DB;
+
+        \core\deprecation::emit_deprecation(__FUNCTION__);
 
         $commentssince = array();
         $where = 'contextid = ? AND component = ? AND timecreated > ?';
