@@ -202,7 +202,7 @@
     <location>tcpdf</location>
     <name>TCPDF</name>
     <description>Class to generate PDF files</description>
-    <version>6.8.2</version>
+    <version>6.10.0</version>
     <license>LGPL</license>
     <licenseversion>3.0-or-later</licenseversion>
     <repository>https://github.com/tecnickcom/TCPDF</repository>
