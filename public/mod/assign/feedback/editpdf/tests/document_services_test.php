@@ -119,7 +119,7 @@ final class document_services_test extends \advanced_testcase {
         $retfile = $method->invoke(null, $assign, $user->id, 1, $files['/heic.jpg']);
         $this->assertNull($retfile);
         $this->assertDebuggingCalled("Could not convert {$files['/heic.jpg']->get_contenthash()} jpg to pdf: " .
-            "TCPDF ERROR: [Image] Unable to get the size of the image: ", DEBUG_ALL);
+            "TCPDF ERROR: ", DEBUG_ALL);
     }
 
     /**
