@@ -112,7 +112,7 @@ Feature: Managers can manage course custom fields number
     And I should not see "Minimum value"
     And I should not see "Maximum value"
     And I should not see "Decimal places"
-    And I should not see "Display format"
+    And I should see "Display format"
     And I should not see "Display template"
     And I should see "Display when zero"
     And I should not see "Display when empty"
