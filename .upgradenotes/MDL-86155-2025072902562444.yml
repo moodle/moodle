@@ -1,0 +1,12 @@
+issueNumber: MDL-86155
+notes:
+  core_course:
+    - message: >
+        Removed fictitious `__empty()` magic method.
+
+
+        The `empty()` method does not make use of any `__empty()` method. It is
+        not a
+
+        defined magic method.
+      type: improved

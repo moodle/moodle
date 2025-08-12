@@ -1,0 +1,7 @@
+issueNumber: MDL-86155
+notes:
+  core_course:
+    - message: >-
+        The `MAX_MODINFO_CACHE_SIZE` constant has been deprecated and replaced
+        with a class constant.
+      type: deprecated
