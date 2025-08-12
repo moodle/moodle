@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy provider tests.
- *
- * @package    core_question
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_question\privacy;
 
 use core_privacy\local\metadata\collection;
@@ -31,7 +24,6 @@ use core_question\privacy\provider;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir . '/xmlize.php');
 require_once(__DIR__ . '/../privacy_helper.php');
 require_once(__DIR__ . '/../../engine/tests/helpers.php');
 
@@ -39,6 +31,7 @@ require_once(__DIR__ . '/../../engine/tests/helpers.php');
  * Privacy provider tests class.
  *
  * @package    core_question
+ * @covers     \core_question\privacy\provider
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -261,7 +254,7 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $exportfile = $writer->get_custom_file($subcontext, 'questions.xml');
         $this->assertNotEmpty($exportfile);
 
-        $xmlized = xmlize($exportfile);
+        $xmlized = (new \core\xml_parser())->parse($exportfile);
         $xmlquestions = $xmlized['quiz']['#']['question'];
 
         $this->assertCount(2, $xmlquestions);

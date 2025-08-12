@@ -24,10 +24,6 @@
 
 use core\exception\xml_format_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/xmlize.php');
-
 /**
  * Blackboard 6.0 question importer.
  *
@@ -47,7 +43,7 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
         // This converts xml to big nasty data structure,
         // the 0 means keep white space as it is.
         try {
-            $xml = xmlize($text, 0, 'UTF-8', true);
+            $xml = (new \core\xml_parser())->parse($text, 0, 'UTF-8', true);
         } catch (xml_format_exception $e) {
             $this->error($e->getMessage(), '');
             return false;

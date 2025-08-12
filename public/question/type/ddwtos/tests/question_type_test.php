@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
  * @package   qtype_ddwtos
+ * @covers    \qtype_ddwtos
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -224,7 +225,7 @@ final class question_type_test extends \question_testcase {
       <clearwrong />
     </hint>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new \qformat_xml();
         $q = $importer->try_importing_using_qtypes(

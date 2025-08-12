@@ -185,9 +185,10 @@ class behat_mod_feedback extends behat_base {
      * @throws ExpectationException
      */
     protected function compare_exports($expected, $actual) {
-        $dataexpected = xmlize($expected, 1, 'UTF-8');
+        $xmlparser = new \core\xml_parser();
+        $dataexpected = $xmlparser->parse($expected);
         $dataexpected = $dataexpected['FEEDBACK']['#']['ITEMS'][0]['#']['ITEM'];
-        $dataactual = xmlize($actual, 1, 'UTF-8');
+        $dataactual = $xmlparser->parse($actual);
         $dataactual = $dataactual['FEEDBACK']['#']['ITEMS'][0]['#']['ITEM'];
 
         if (count($dataexpected) != count($dataactual)) {

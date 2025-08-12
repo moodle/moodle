@@ -148,7 +148,7 @@ class xmldb_file extends xmldb_object {
             }
             // File exists, so let's process it
             // Load everything to a big array
-            $xmlarr = xmlize($contents);
+            $xmlarr = (new \core\xml_parser())->parse($contents);
             // Convert array to xmldb structure
             $this->xmldb_structure = $this->arr2xmldb_structure($xmlarr);
             // Analyze results

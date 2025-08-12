@@ -25,8 +25,15 @@
  * @param bool $reporterrors if set to true, then a {@link xml_format_exception}
  *      exception will be thrown if the XML is not well-formed. Otherwise errors are ignored.
  * @return array representation of the parsed XML.
+ * @deprecated since Moodle 5.1 - please use {@see \core\xml_parser} instead
  */
+#[\core\attribute\deprecated(
+    \core\xml_parser::class,
+    since: '5.1',
+    mdl: 'MDL-86256',
+)]
 function xmlize($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false) {
+    \core\deprecation::emit_deprecation(__FUNCTION__);
     $hxml = new \core\xml_parser();
     return $hxml->parse($data, $whitespace, $encoding, $reporterrors);
 }

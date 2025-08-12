@@ -1,0 +1,7 @@
+issueNumber: MDL-86256
+notes:
+  core:
+    - message: >-
+        The `xmlize()` method from `lib/xmlize.php` has been deprecated, please
+        instead use the `\core\xml_parser` class
+      type: deprecated

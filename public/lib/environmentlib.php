@@ -31,12 +31,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/// Add required files
-/**
- * Include the necessary
- */
-    require_once($CFG->libdir.'/xmlize.php');
-
 /// Define a bunch of XML processing errors
     /** XML Processing Error */
     define('NO_ERROR',                           0);
@@ -311,7 +305,7 @@ function load_environment_xml($env_select=ENV_SELECT_NEWER) {
     }
     // XML the whole file.
     if ($contents !== false) {
-        $contents = xmlize($contents);
+        $contents = (new \core\xml_parser())->parse($contents);
     }
 
     $data[$env_select] = $contents;

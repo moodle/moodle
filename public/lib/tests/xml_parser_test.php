@@ -23,20 +23,11 @@ use core\exception\xml_format_exception;
  *
  * @package    core
  * @category   test
- * @covers     \xmlize
+ * @covers     \core\xml_parser
  * @copyright  2017 Kilian Singer {@link http://quantumtechnology.info}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class xmlize_test extends \basic_testcase {
-    /**
-     * Load required test libraries
-     */
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-        require_once("{$CFG->libdir}/xmlize.php");
-        parent::setUpBeforeClass();
-    }
-
+final class xml_parser_test extends \basic_testcase {
     /**
      * Test an XML import using a valid XML file.
      *
@@ -46,7 +37,7 @@ final class xmlize_test extends \basic_testcase {
     public function test_xmlimport_of_proper_file(): void {
         $xml = file_get_contents(__DIR__ . '/sample_questions.xml');
         $serialised = file_get_contents(__DIR__ . '/sample_questions.ser');
-        $this->assertEquals(unserialize($serialised), xmlize($xml));
+        $this->assertEquals(unserialize($serialised), (new xml_parser())->parse($xml));
     }
 
     /**
@@ -56,7 +47,7 @@ final class xmlize_test extends \basic_testcase {
         $xml = file_get_contents(__DIR__ . '/sample_questions_wrong.xml');
         $this->expectException(xml_format_exception::class);
         $this->expectExceptionMessage('Error parsing XML: Mismatched tag at line 18, char 23');
-        $xmlnew = xmlize($xml, 1, "UTF-8", true);
+        (new xml_parser())->parse($xml, 1, "UTF-8", true);
     }
 
     /**
@@ -67,7 +58,7 @@ final class xmlize_test extends \basic_testcase {
         $serialised = file_get_contents(__DIR__ . '/sample_questions_with_old_image_tag.ser');
 
         // Compare the legacy representation in its serialized state and after unserialization.
-        $this->assertEquals($serialised, serialize(xmlize($xml)));
-        $this->assertEquals(unserialize($serialised), xmlize($xml));
+        $this->assertEquals($serialised, serialize((new xml_parser())->parse($xml)));
+        $this->assertEquals(unserialize($serialised), (new xml_parser())->parse($xml));
     }
 }

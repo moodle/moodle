@@ -238,7 +238,7 @@ final class questiontype_test extends \question_testcase {
         $this->resetAfterTest();
         // Import a question from XML.
         $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'testimport.moodle.xml'));
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
         $format = new qformat_xml();
         $imported = $format->try_importing_using_qtypes(
             $xmldata['question'], null, null, 'ordering');
@@ -250,7 +250,7 @@ final class questiontype_test extends \question_testcase {
         $this->resetAfterTest();
         // Import a question from XML.
         $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, 'testimportlong.moodle.xml'));
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
         $format = new qformat_xml();
         $imported = $format->try_importing_using_qtypes(
             $xmldata['question'], null, null, 'ordering');

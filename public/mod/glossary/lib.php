@@ -2431,14 +2431,11 @@ function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
  * Read import file and convert to current charset
  *
  * @global object
- * @param string $file
- * @return string
+ * @param string $filecontent
+ * @return array|false
  */
-function glossary_read_imported_file($file_content) {
-    global $CFG;
-    require_once "../../lib/xmlize.php";
-
-    return xmlize($file_content, 0);
+function glossary_read_imported_file($filecontent): array|false {
+    return (new \core\xml_parser())->parse($filecontent, 0);
 }
 
 /**

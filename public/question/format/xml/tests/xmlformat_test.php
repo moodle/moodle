@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the Moodle XML format.
- *
- * @package    qformat_xml
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace qformat_xml;
 
 use qformat_xml;
@@ -40,9 +32,10 @@ require_once($CFG->dirroot . '/question/format/xml/format.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 /**
- * Unit tests for the matching question definition class.
+ * Unit tests for the Moodle XML format.
  *
  * @package    qformat_xml
+ * @covers     \qformat_xml
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -233,7 +226,7 @@ final class xmlformat_test extends \question_testcase {
 </question>
 END;
 
-        $questionxml = xmlize($xml);
+        $questionxml = (new \core\xml_parser())->parse($xml);
         $qo = new \stdClass();
 
         $importer = new qformat_xml();
@@ -263,7 +256,7 @@ END;
 </question>
 END;
 
-        $questionxml = xmlize($xml);
+        $questionxml = (new \core\xml_parser())->parse($xml);
         $qo = new \stdClass();
 
         $importer = new qformat_xml();
@@ -285,7 +278,7 @@ END;
 </question>
 END;
 
-        $questionxml = xmlize($xml);
+        $questionxml = (new \core\xml_parser())->parse($xml);
         $qo = new \stdClass();
 
         $importer = new qformat_xml();
@@ -313,7 +306,7 @@ END;
       <tag><text>tagTest</text></tag>
     </tags>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_description($xmldata['question']);
@@ -392,7 +385,7 @@ END;
       <tag><text>tagTest</text></tag>
     </tags>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_essay($xmldata['question']);
@@ -457,7 +450,7 @@ END;
       <tag><text>tagTest</text></tag>
     </tags>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_essay($xmldata['question']);
@@ -526,7 +519,7 @@ END;
       <tag><text>tagTest</text></tag>
     </tags>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_essay($xmldata['question']);
@@ -692,7 +685,7 @@ END;
       <tag><text>tagTest</text></tag>
     </tags>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_match($xmldata['question']);
@@ -915,7 +908,7 @@ END;
       <text>Hint 2.</text>
     </hint>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_multichoice($xmldata['question']);
@@ -1110,7 +1103,7 @@ END;
       <tolerance></tolerance>
     </answer>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_numerical($xmldata['question']);
@@ -1249,7 +1242,7 @@ END;
       <text>Hint 2</text>
     </hint>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_shortanswer($xmldata['question']);
@@ -1373,7 +1366,7 @@ END;
       </feedback>
     </answer>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_truefalse($xmldata['question']);
@@ -1425,7 +1418,7 @@ END;
       </feedback>
     </answer>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_truefalse($xmldata['question']);
@@ -1596,7 +1589,7 @@ END;
     </tags>
   </question>
 ';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_multianswer($xmldata['question']);
@@ -1748,7 +1741,7 @@ END;
 </questiontext>
 END;
 
-        $textxml = xmlize($xml);
+        $textxml = (new \core\xml_parser())->parse($xml);
         $qo = new \stdClass();
 
         $importer = new qformat_xml();
@@ -1794,7 +1787,7 @@ END;
       </feedback>
     </answer>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new qformat_xml();
         $q = $importer->import_truefalse($xmldata['question']);
