@@ -1082,8 +1082,8 @@ function question_get_default_category($contextid, bool $createifnotexists = fal
         // We don't have one, so we need to make one.
         $defaultcat = new stdClass();
         $contextname = $context->get_context_name(false, true);
-        // Max length of name field is 255.
-        $defaultcat->name = shorten_text(get_string('defaultfor', 'question', $contextname), 255);
+        // Max length of name field is 1333.
+        $defaultcat->name = shorten_text(get_string('defaultfor', 'question', $contextname), 1333);
         $defaultcat->info = get_string('defaultinfofor', 'question', $contextname);
         $defaultcat->contextid = $context->id;
         $defaultcat->parent = $topcategory->id;
