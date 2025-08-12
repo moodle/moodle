@@ -254,7 +254,7 @@ final class activityoverviewbase_test extends \advanced_testcase {
         $cm = $modinfo->get_cm($assign->cmid);
         $overview = new \core_courseformat\fake_activityoverview($cm);
         $result = $overview->get_grades_overviews();
-        $this->assertEmpty($result);;
+        $this->assertEmpty($result);
 
         // Validate workshop gradeitems (having two grade, they should return an empty array).
         $cm = $modinfo->get_cm($workshop->cmid);

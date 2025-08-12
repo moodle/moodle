@@ -60,8 +60,9 @@ final class sectiondelegate_test extends \advanced_testcase {
         // Highlight is only present in section menu (not module), so they shouldn't be found in the result.
         // Duplicate is not implemented yet, so they shouldn't be found in the result.
         // The possible options are: View, Edit, Show, Hide, Delete and Permalink.
-        if (get_string_manager()->string_exists('editsection', 'format_'.$format->get_format())) {
-            $streditsection = get_string('editsection', 'format_'.$format->get_format());
+        $formatprovider = 'format_' . $format->get_format();
+        if (get_string_manager()->string_exists('editsection', $formatprovider)) {
+            $streditsection = get_string('editsection', $formatprovider);
         } else {
             $streditsection = get_string('editsection');
         }

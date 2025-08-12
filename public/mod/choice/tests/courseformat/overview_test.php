@@ -28,7 +28,6 @@ use core_courseformat\local\overview\overviewfactory;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
-
     /**
      * Test get_extra_status_for_user method.
      *

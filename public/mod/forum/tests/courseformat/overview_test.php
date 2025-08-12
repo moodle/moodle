@@ -16,11 +16,6 @@
 
 namespace mod_forum\courseformat;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/forum/lib.php');
-
 use core_courseformat\local\overview\overviewfactory;
 use mod_forum\subscriptions;
 
@@ -34,6 +29,13 @@ use mod_forum\subscriptions;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+        require_once($CFG->dirroot . '/mod/forum/lib.php');
+    }
 
     #[\Override]
     protected function setUp(): void {
@@ -53,7 +55,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_actions_overview method.
-     *
      */
     public function test_get_actions_overview(): void {
         $this->resetAfterTest();
@@ -293,8 +294,8 @@ final class overview_test extends \advanced_testcase {
         $this->assertEquals(get_string('tracking', 'forum'), $item->get_name());
         $this->assertStringContainsString('data-type="forum-track-toggle"', $item->get_content());
         $this->assertStringContainsString('data-action="toggle"', $item->get_content());
-        $this->assertStringContainsString('data-forumid="'.$activity->id.'"', $item->get_content());
-        $this->assertStringContainsString('data-targetstate="'.((int)!$tracked).'"', $item->get_content());
+        $this->assertStringContainsString('data-forumid="' . $activity->id . '"', $item->get_content());
+        $this->assertStringContainsString('data-targetstate="' . ((int)!$tracked) . '"', $item->get_content());
         if ($disabled) {
             $this->assertStringContainsString('disabled', $item->get_content());
         } else {
@@ -455,8 +456,8 @@ final class overview_test extends \advanced_testcase {
         $this->assertEquals(get_string('subscribed', 'forum'), $item->get_name());
         $this->assertStringContainsString('data-type="forum-subscription-toggle"', $item->get_content());
         $this->assertStringContainsString('data-action="toggle"', $item->get_content());
-        $this->assertStringContainsString('data-forumid="'.$activity->id.'"', $item->get_content());
-        $this->assertStringContainsString('data-targetstate="'.((int)!$subscribed).'"', $item->get_content());
+        $this->assertStringContainsString('data-forumid="' . $activity->id . '"', $item->get_content());
+        $this->assertStringContainsString('data-targetstate="' . ((int)!$subscribed) . '"', $item->get_content());
         if ($disabled) {
             $this->assertStringContainsString('disabled', $item->get_content());
         } else {
@@ -659,7 +660,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_discussions_overview method.
-     *
      */
     public function test_get_extra_discussions_overview(): void {
         $this->resetAfterTest();

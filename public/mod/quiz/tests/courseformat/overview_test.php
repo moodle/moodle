@@ -35,7 +35,7 @@ final class overview_test extends \advanced_testcase {
      *
      * @param int|null $timeincrement the time increment in seconds to add to the current time for the deadline.
      * @return void
-     **/
+     */
     #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_due_date_overview')]
     public function test_get_due_date_overview(?int $timeincrement): void {
         $this->resetAfterTest();

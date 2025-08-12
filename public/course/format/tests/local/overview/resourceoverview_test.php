@@ -26,7 +26,6 @@ namespace core_courseformat\local\overview;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(resourceoverview::class)]
 final class resourceoverview_test extends \advanced_testcase {
-
     /**
      * Test get_actions_overview.
      *

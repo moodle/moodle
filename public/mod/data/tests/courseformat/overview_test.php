@@ -340,7 +340,7 @@ final class overview_test extends \advanced_testcase {
             $g1->id,
             [],
             null,
-            $student->id
+            $student->id,
         );
         $generator->create_entry(
             $activity,
@@ -348,7 +348,7 @@ final class overview_test extends \advanced_testcase {
             $g2->id,
             [],
             null,
-            $otherstudent->id
+            $otherstudent->id,
         );
 
         // Editing teachers can see everything.

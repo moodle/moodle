@@ -28,7 +28,6 @@ use core_courseformat\local\overview\overviewfactory;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
-
     #[\Override]
     public static function setUpBeforeClass(): void {
         global $CFG;
@@ -53,7 +52,7 @@ final class overview_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
-        $activity = $this->getDataGenerator()->create_module( 'feedback', ['course' => $course->id]);
+        $activity = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
 
         $this->setUser($currentuser);
 

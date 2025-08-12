@@ -30,10 +30,8 @@ use stdClass;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(sectiondelegatemodule::class)]
 final class sectiondelegatemodule_test extends \advanced_testcase {
-
     /**
      * Test get_parent_section.
-     *
      */
     public function test_get_parent_section(): void {
         $this->resetAfterTest();
@@ -55,7 +53,6 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
 
     /**
      * Test get_cm.
-     *
      */
     public function test_get_cm(): void {
         $this->resetAfterTest();
@@ -77,7 +74,6 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
 
     /**
      * Test get_course.
-     *
      */
     public function test_get_course(): void {
         $this->resetAfterTest();

@@ -120,7 +120,7 @@ final class overview_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
-        $lesson = $this->getDataGenerator()->create_module( 'lesson', ['course' => $course->id]);
+        $lesson = $this->getDataGenerator()->create_module('lesson', ['course' => $course->id]);
 
         $this->setUser($currentuser);
 

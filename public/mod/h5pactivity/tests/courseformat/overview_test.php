@@ -28,10 +28,8 @@ use core_courseformat\local\overview\overviewfactory;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
-
     /**
      * Test get_actions_overview.
-     *
      */
     public function test_get_actions_overview(): void {
         $this->resetAfterTest();
@@ -39,8 +37,8 @@ final class overview_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $activity = $this->getDataGenerator()->create_module(
-                'h5pactivity',
-                ['course' => $course, 'enabletracking' => 1],
+            'h5pactivity',
+            ['course' => $course, 'enabletracking' => 1],
         );
         $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
 
@@ -48,7 +46,7 @@ final class overview_test extends \advanced_testcase {
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+        $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
 
         // Students have no action column.
         $this->setUser($student);
@@ -71,9 +69,9 @@ final class overview_test extends \advanced_testcase {
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_h5type_overview')]
     public function test_get_extra_h5ptype_overview(
-            string $h5pfile,
-            bool $iscorrect,
-            string $expected
+        string $h5pfile,
+        bool $iscorrect,
+        string $expected
     ): void {
         global $CFG;
 
@@ -82,9 +80,9 @@ final class overview_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $params = [
-                'course' => $course->id,
-                'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/'.$h5pfile,
-                'introformat' => 1,
+            'course' => $course->id,
+            'packagefilepath' => "{$CFG->dirroot}/h5p/tests/fixtures/{$h5pfile}",
+            'introformat' => 1,
         ];
         $activity = $this->getDataGenerator()->create_module('h5pactivity', $params);
         // Add filename and contextid to make easier the asserts.
@@ -126,27 +124,26 @@ final class overview_test extends \advanced_testcase {
      */
     public static function provider_test_get_extra_h5type_overview(): array {
         return [
-                'Basic package' => [
-                        'h5pfile' => 'basic_essay.h5p',
-                        'iscorrect' => true,
-                        'expected' => 'Essay',
-                ],
-                'No json file' => [
-                        'h5pfile' => 'no-json-file.h5p',
-                        'iscorrect' => false,
-                        'expected' => get_string('unknowntype', 'mod_h5pactivity'),
-                ],
-                'Unzippable package' => [
-                        'h5pfile' => 'unzippable.h5p',
-                        'iscorrect' => false,
-                        'expected' => get_string('unknowntype', 'mod_h5pactivity'),
-                ],
+            'Basic package' => [
+                'h5pfile' => 'basic_essay.h5p',
+                'iscorrect' => true,
+                'expected' => 'Essay',
+            ],
+            'No json file' => [
+                'h5pfile' => 'no-json-file.h5p',
+                'iscorrect' => false,
+                'expected' => get_string('unknowntype', 'mod_h5pactivity'),
+            ],
+            'Unzippable package' => [
+                'h5pfile' => 'unzippable.h5p',
+                'iscorrect' => false,
+                'expected' => get_string('unknowntype', 'mod_h5pactivity'),
+            ],
         ];
     }
 
     /**
      * Test get_extra_overview_items.
-     *
      */
     public function test_get_extra_attempts_overview(): void {
         $this->resetAfterTest();
@@ -154,8 +151,8 @@ final class overview_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $activity = $this->getDataGenerator()->create_module(
-                'h5pactivity',
-                ['course' => $course, 'enabletracking' => 1],
+            'h5pactivity',
+            ['course' => $course, 'enabletracking' => 1],
         );
         $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
 
@@ -210,7 +207,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_studentsattempted_overview.
-     *
      */
     public function test_get_extra_studentsattempted_overview(): void {
         $this->resetAfterTest();
@@ -218,15 +214,15 @@ final class overview_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $activity = $this->getDataGenerator()->create_module(
-                'h5pactivity',
-                ['course' => $course, 'enabletracking' => 1],
+            'h5pactivity',
+            ['course' => $course, 'enabletracking' => 1],
         );
         $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
 
         // Prepare users: 1 teacher, 2 students, 1 unenroled user.
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $other = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->getDataGenerator()->create_and_enrol($course, 'student');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
 

@@ -16,11 +16,6 @@
 
 namespace mod_workshop\courseformat;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/workshop/locallib.php');
-
 use core_courseformat\local\overview\overviewfactory;
 
 /**
@@ -33,6 +28,14 @@ use core_courseformat\local\overview\overviewfactory;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+
+        require_once($CFG->dirroot . '/mod/workshop/locallib.php');
+    }
 
     /**
      * Test get_grade_item_names method.

@@ -430,7 +430,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_submission_status_overview method.
-     *
      */
     public function test_get_extra_submission_status_overview(): void {
         $this->resetAfterTest();
@@ -508,7 +507,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_submission_status_overview method in group submissions.
-     *
      */
     public function test_get_extra_submission_status_overview_groups(): void {
         $this->resetAfterTest();
