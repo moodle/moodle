@@ -47,6 +47,7 @@ if (!isset($SESSION->xmldb)) {
 // Some previous checks
 $site = get_site();
 
+$PAGE->set_primary_active_tab('siteadminnode');
 
 // Body of the script, based on action, we delegate the work
 $action = optional_param ('action', 'main_view', PARAM_ALPHAEXT);
