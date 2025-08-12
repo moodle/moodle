@@ -27,6 +27,7 @@ use lesson;
  * @copyright   2025 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     /**
      * Helper function to create lesson pages with multichoice questions.
@@ -54,12 +55,10 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_due_date_overview.
      *
-     * @covers ::get_due_date_overview
-     * @dataProvider provider_test_get_due_date_overview
-     *
      * @param int|null $timeincrement the time increment in seconds to add to the current time for the deadline.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_due_date_overview')]
     public function test_get_due_date_overview(?int $timeincrement): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -107,13 +106,11 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview.
      *
-     * @covers ::get_actions_overview
-     * @dataProvider provider_test_get_actions_overview
-     *
      * @param string $role
      * @param array|null $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(
         string $role,
         ?array $expected
@@ -165,9 +162,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_totalattempts_overview.
      *
-     * @covers ::get_extra_totalattempts_overview
-     * @dataProvider provider_test_get_extra_totalattempts_overview
-     *
      * @param string $role
      * @param int $groupmode
      * @param bool $hasentries
@@ -175,6 +169,7 @@ final class overview_test extends \advanced_testcase {
      * @param array|null $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_totalattempts_overview')]
     public function test_get_extra_totalattempts_overview(
         string $role,
         int $groupmode,
@@ -342,15 +337,13 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_attemptedstudents_overview.
      *
-     * @covers ::get_extra_attemptedstudents_overview
-     * @dataProvider provider_test_get_extra_attemptedstudents_overview
-     *
      * @param string $role
      * @param bool $groupmode
      * @param bool $hasentries
      * @param array|null $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_attemptedstudents_overview')]
     public function test_get_extra_attemptedstudents_overview(
         string $role,
         int $groupmode,

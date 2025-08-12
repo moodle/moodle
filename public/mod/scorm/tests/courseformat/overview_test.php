@@ -21,12 +21,12 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for SCORM activity overview
  *
- * @covers     \mod_scorm\courseformat\overview
  * @package    mod_scorm
  * @category   test
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview.
@@ -51,9 +51,8 @@ final class overview_test extends \advanced_testcase {
      * Test get_due_date_overview method.
      *
      * @param int|null $timeincrement
-     *
-     * @dataProvider get_due_date_overview_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_due_date_overview_data')]
     public function test_get_due_date_overview(?int $timeincrement = null): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -105,9 +104,8 @@ final class overview_test extends \advanced_testcase {
      * @param string $activity the activity name to run this test with (there is one created with attemts ('withattempts') and one
      * created without attempts ('withoutattempts')).
      * @param array $expected
-     *
-     * @dataProvider get_extra_overview_items_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_overview_items_data')]
     public function test_get_extra_totalattempts_overview(
         string $username,
         string $activity,
@@ -159,9 +157,8 @@ final class overview_test extends \advanced_testcase {
      * @param string $activity the activity name to run this test with (there is one created with attemts ('withattempts') and one
      *  created without attempts ('withoutattempts')).
      * @param array $expected
-     *
-     * @dataProvider get_extra_overview_items_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_overview_items_data')]
     public function test_get_extra_studentsattempted_overview(
         string $username,
         string $activity,

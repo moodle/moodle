@@ -21,12 +21,12 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for Assignment overview integration.
  *
- * @covers \mod_assign\course\overview
  * @package    mod_assign
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     #[\Override]
     public static function setUpBeforeClass(): void {
@@ -41,9 +41,8 @@ final class overview_test extends \advanced_testcase {
      *
      * @param int $groupmode The group mode of the course.
      * @param bool $teamsubmission Whether the assignment is a team submission.
-     *
-     * @dataProvider provider_get_actions_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_get_actions_overview')]
     public function test_get_actions_overview(int $groupmode, bool $teamsubmission): void {
         $this->resetAfterTest();
 
@@ -196,10 +195,9 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_due_date_overview method.
      *
-     * @covers ::get_due_date_overview
-     * @dataProvider get_due_date_overview_provider
      * @param int|null $timeincrement null if no due date, or due date increment.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_due_date_overview_provider')]
     public function test_get_due_date_overview(
         int|null $timeincrement,
     ): void {
@@ -433,7 +431,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_submission_status_overview method.
      *
-     * @covers ::get_extra_submission_status_overview
      */
     public function test_get_extra_submission_status_overview(): void {
         $this->resetAfterTest();
@@ -512,7 +509,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_submission_status_overview method in group submissions.
      *
-     * @covers ::get_extra_submission_status_overview
      */
     public function test_get_extra_submission_status_overview_groups(): void {
         $this->resetAfterTest();

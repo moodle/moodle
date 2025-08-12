@@ -22,15 +22,12 @@ namespace mod_subsection\courseformat;
  * @package    mod_subsection
  * @copyright  2024 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_subsection\courseformat\sectiondelegate
- * @coversDefaultClass \mod_subsection\courseformat\sectiondelegate
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(sectiondelegate::class)]
 final class sectiondelegate_test extends \advanced_testcase {
-
     /**
      * Test has_delegate_class().
      *
-     * @covers ::has_delegate_class
      */
     public function test_has_delegate_class(): void {
         $this->assertTrue(sectiondelegate::has_delegate_class('mod_subsection'));
@@ -39,7 +36,6 @@ final class sectiondelegate_test extends \advanced_testcase {
     /**
      * Test get_section_action_menu().
      *
-     * @covers ::get_section_action_menu
      */
     public function test_get_section_action_menu(): void {
         global $PAGE;

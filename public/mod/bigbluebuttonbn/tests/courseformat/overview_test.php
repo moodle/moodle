@@ -24,12 +24,12 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
 /**
  * Tests for bigbluebuttonbn activity overview
  *
- * @covers     \mod_bigbluebuttonbn\courseformat\overview
  * @package    mod_bigbluebuttonbn
  * @category   test
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     use testcase_helper_trait;
     /**
@@ -90,9 +90,8 @@ final class overview_test extends \advanced_testcase {
      * Test get_extra_date_open method.
      *
      * @param int|null $timeincrement
-     *
-     * @dataProvider get_extra_date_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_date_data')]
     public function test_get_extra_date_open(?int $timeincrement): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -118,9 +117,8 @@ final class overview_test extends \advanced_testcase {
      * Test get_extra_date_close method.
      *
      * @param int|null $timeincrement
-     *
-     * @dataProvider get_extra_date_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_date_data')]
     public function test_get_extra_date_close(?int $timeincrement): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -169,9 +167,8 @@ final class overview_test extends \advanced_testcase {
      *
      * @param int $roomtype
      * @param string $expectedtype
-     *
-     * @dataProvider get_extra_room_type_overview_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_room_type_overview_data')]
     public function test_get_extra_room_type_overview(int $roomtype, string $expectedtype): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -219,9 +216,8 @@ final class overview_test extends \advanced_testcase {
      *
      * @param string $activityname
      * @param int $recordingcount
-     *
-     * @dataProvider get_extra_recordings_overview_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_recordings_overview_data')]
     public function test_get_extra_recordings_overview(string $activityname, int $recordingcount): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -275,8 +271,8 @@ final class overview_test extends \advanced_testcase {
      * @param string $activityname
      * @param int $groupmode
      * @param array $recordingcounts Array of recording counts per user in the form of ['group' => string|null, status=> int].
-     * @dataProvider get_extra_recordings_overview_with_groups_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_recordings_overview_with_groups_data')]
     public function test_get_extra_recordings_overview_with_groups(
         string $activityname,
         int $groupmode,

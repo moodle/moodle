@@ -21,18 +21,17 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for H5P activity overview
  *
- * @covers     \mod_h5pactivity\courseformat\overview
  * @package    mod_h5pactivity
  * @category   test
  * @copyright  2025 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_actions_overview.
      *
-     * @covers ::get_actions_overview
      */
     public function test_get_actions_overview(): void {
         $this->resetAfterTest();
@@ -65,14 +64,12 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_h5ptype_overview.
      *
-     * @covers ::get_extra_h5ptype_overview
-     * @dataProvider provider_test_get_extra_h5type_overview
-     *
      * @param string $h5pfile
      * @param bool $iscorrect
      * @param string $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_h5type_overview')]
     public function test_get_extra_h5ptype_overview(
             string $h5pfile,
             bool $iscorrect,
@@ -150,7 +147,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_overview_items.
      *
-     * @covers ::get_extra_overview_items
      */
     public function test_get_extra_attempts_overview(): void {
         $this->resetAfterTest();
@@ -215,7 +211,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_studentsattempted_overview.
      *
-     * @covers ::get_extra_studentsattempted_overview
      */
     public function test_get_extra_studentsattempted_overview(): void {
         $this->resetAfterTest();
@@ -258,8 +253,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_studentsattempted_overview filtering by groups.
-     *
-     * @covers ::get_extra_studentsattempted_overview
      */
     public function test_get_extra_studentsattempted_overview_by_groups(): void {
         $this->resetAfterTest();
@@ -322,8 +315,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_totalattempts_overview filtering by groups.
-     *
-     * @covers ::get_extra_totalattempts_overview
      */
     public function test_get_extra_totalattempts_overview_by_groups(): void {
         $this->resetAfterTest();

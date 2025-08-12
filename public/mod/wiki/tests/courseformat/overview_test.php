@@ -22,12 +22,12 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for Wiki integration.
  *
- * @covers \mod_wiki\courseformat\overview
  * @package    mod_wiki
  * @category   test
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
 
     /**
@@ -48,10 +48,8 @@ final class overview_test extends \advanced_testcase {
      * @param string $username
      * @param int|null $expectedcount
      * @return void
-     *
-     * @covers ::get_extra_my_entries
-     * @dataProvider get_extra_my_entries_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_my_entries_provider')]
     public function test_get_extra_my_entries(string $username, ?int $expectedcount = null): void {
         $this->resetAfterTest();
         ['users' => $users, 'instance' => $instance, 'course' => $course] = $this->setup_users_and_activity();
@@ -84,10 +82,8 @@ final class overview_test extends \advanced_testcase {
      * Test the wiki mode of the wiki instance.
      *
      * @param wiki_mode $mode the expected wiki mode.
-     *
-     * @covers      ::get_extra_wiki_type
-     * @dataProvider get_wiki_mode_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_wiki_mode_provider')]
     public function test_wiki_mode(wiki_mode $mode): void {
         $this->resetAfterTest();
         ['users' => $users, 'instance' => $instance, 'course' => $course] =
@@ -195,10 +191,8 @@ final class overview_test extends \advanced_testcase {
      * @param string $username
      * @param int $coursegroupmode
      * @param int $expectedcount
-     *
-     * @covers ::get_extra_entries
-     * @dataProvider data_provider_get_extra_entries
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_provider_get_extra_entries')]
     public function test_get_extra_entries(
         string $username,
         int $coursegroupmode,
@@ -240,7 +234,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_entries method.
      *
-     * @covers ::get_actions_overview
      */
     public function test_get_actions_overview(): void {
         $this->resetAfterTest();

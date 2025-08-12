@@ -21,22 +21,21 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for Choice integration.
  *
- * @covers \mod_choice\courseformat\overview
  * @package    mod_choice
  * @category   test
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_status_for_user method.
      *
-     * @covers ::get_extra_status_for_user
-     * @dataProvider data_provider_get_extra_status_for_user
      * @param string $user
      * @param bool|null $answered
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_provider_get_extra_status_for_user')]
     public function test_get_extra_status_for_user(string $user, ?bool $answered): void {
         $this->resetAfterTest();
         ['users' => $users, 'course' => $course, 'instance' => $instance] =
@@ -81,10 +80,8 @@ final class overview_test extends \advanced_testcase {
      * Test get_extra_status_for_user method.
      *
      * @param int|null $timeincrement
-     *
-     * @covers ::get_due_date_overview
-     * @dataProvider data_provider_get_due_date_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_provider_get_due_date_overview')]
     public function test_get_due_date_overview(?int $timeincrement = null): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -138,10 +135,8 @@ final class overview_test extends \advanced_testcase {
      *
      * @param string $username The username of the user to test.
      * @param int|null $expectedcount the expected count of users who responded
-     *
-     * @covers ::get_actions_overview
-     * @dataProvider provider_test_get_actions_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(string $username, ?int $expectedcount = null): void {
         $this->resetAfterTest();
         ['users' => $users, 'course' => $course, 'instance' => $instance] = $this->setup_users_and_activity();
@@ -186,10 +181,8 @@ final class overview_test extends \advanced_testcase {
      * @param bool $withanswers whether the choice will be created with answers
      * @param int $groupmode The group mode for the choice activity.
      * @param int|null $expectedcount the expected count of users who responded
-     *
-     * @covers ::get_actions_overview
-     * @dataProvider provider_get_extra_students_who_responded
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_get_extra_students_who_responded')]
     public function test_get_extra_students_who_responded(
         string $currentuser,
         bool $allowmultiple = false,

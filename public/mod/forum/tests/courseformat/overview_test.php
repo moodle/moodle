@@ -31,8 +31,8 @@ use mod_forum\subscriptions;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_forum\course\overview
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
 
     #[\Override]
@@ -54,7 +54,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview method.
      *
-     * @covers ::get_actions_overview
      */
     public function test_get_actions_overview(): void {
         $this->resetAfterTest();
@@ -106,10 +105,9 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_due_date_overview method.
      *
-     * @covers ::get_due_date_overview
-     * @dataProvider get_due_date_overview_provider
      * @param int|null $timeincrement null if no due date, or due date increment.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_due_date_overview_provider')]
     public function test_get_due_date_overview(
         int|null $timeincrement,
     ): void {
@@ -167,12 +165,10 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_forumtype_overview method.
      *
-     * @dataProvider get_extra_forumtype_overview_provider
-     * @covers ::get_extra_forumtype_overview
-     *
      * @param string $forumtype Forum type to test.
      * @param string $expected Expected string for the forum type.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_forumtype_overview_provider')]
     public function test_get_extra_forumtype_overview(
         string $forumtype,
         string $expected,
@@ -251,9 +247,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_track_overview method.
      *
-     * @dataProvider get_extra_track_overview_provider
-     * @covers ::get_extra_track_overview
-     *
      * @param string $role User role to test, 'student' or 'teacher'.
      * @param int $forumtype Forum tracking type to test.
      * @param int $tracked Expected tracked state of the forum.
@@ -261,6 +254,7 @@ final class overview_test extends \advanced_testcase {
      * @param bool $allowforced Whether the $CFG->forum_allowforcedreadtracking setting is enabled.
      * @param int $trackforums Whether the user has the trackforums setting enabled.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_track_overview_provider')]
     public function test_get_extra_track_overview(
         string $role = 'student',
         int $forumtype = FORUM_TRACKING_OPTIONAL,
@@ -423,14 +417,12 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_subscribed_overview method.
      *
-     * @dataProvider get_extra_subscribed_overview_provider
-     * @covers ::get_extra_subscribed_overview
-     *
      * @param string $role User role to test, 'student' or 'teacher'.
      * @param int $forumtype Forum subscribe type to test.
      * @param int $subscribed Expected subscribed state of the forum.
      * @param bool $disabled Whether the toggle should be disabled.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_subscribed_overview_provider')]
     public function test_get_extra_subscribed_overview(
         string $role = 'student',
         int $forumtype = FORUM_CHOOSESUBSCRIBE,
@@ -531,14 +523,12 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_emaildigest_overview method.
      *
-     * @dataProvider get_extra_emaildigest_overview_provider
-     * @covers ::get_extra_emaildigest_overview
-     *
      * @param string $role User role to test, 'student' or 'teacher'.
      * @param int $forumtype Forum subscribe type to test.
      * @param string $emaildigestvalue Expected email digest value for the forum.
      * @param int $usermaildigest User's email digest setting.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_emaildigest_overview_provider')]
     public function test_get_extra_emaildigest_overview(
         string $role = 'student',
         int $forumtype = FORUM_CHOOSESUBSCRIBE,
@@ -670,7 +660,6 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_discussions_overview method.
      *
-     * @covers ::get_extra_discussions_overview
      */
     public function test_get_extra_discussions_overview(): void {
         $this->resetAfterTest();

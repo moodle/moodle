@@ -21,12 +21,12 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for Feedback
  *
- * @covers \mod_feedback\courseformat\overview
  * @package    mod_feedback
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
 
     #[\Override]
@@ -40,12 +40,10 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview.
      *
-     * @covers ::get_actions_overview
-     * @dataProvider provider_test_get_actions_overview
-     *
      * @param string $role
      * @param array|null $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(
         string $role,
         ?array $expected
@@ -96,11 +94,11 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_due_date_overview.
-     * @covers ::get_due_date_overview
-     * @dataProvider provider_test_get_due_date_overview
+     *
      * @param string $user
      * @param bool $hasduedate
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_due_date_overview')]
     public function test_get_due_date_overview(string $user, bool $hasduedate): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -155,13 +153,11 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_responses_overview.
      *
-     * @covers ::get_extra_responses_overview
-     * @dataProvider provider_get_extra_responses_overview
-     *
      * @param string $user
      * @param bool $expectnull
      * @param bool $hasresponses
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_get_extra_responses_overview')]
     public function test_get_extra_responses_overview(string $user, bool $expectnull, bool $hasresponses): void {
         $this->resetAfterTest();
 
@@ -243,13 +239,11 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_responses_overview_with_groups().
      *
-     * @dataProvider provider_feedback_get_extra_responses_overview_with_groups
      * @param int $groupmode The group mode of the course.
      * @param string $currentuser The user to set for the test.
      * @param int $expectedcount The expected number of completeds.
-     *
-     * @covers ::get_extra_responses_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_feedback_get_extra_responses_overview_with_groups')]
     public function test_get_extra_responses_overview_with_groups(
         int $groupmode,
         string $currentuser,
@@ -456,13 +450,11 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_submitted_overview.
      *
-     * @covers ::get_extra_submitted_overview
-     * @dataProvider provider_test_get_extra_submitted_overview
-     *
      * @param string $user
      * @param bool $expectnull
      * @param bool $hasresponses
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_submitted_overview')]
     public function test_get_extra_submitted_overview(string $user, bool $expectnull, bool $hasresponses): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();

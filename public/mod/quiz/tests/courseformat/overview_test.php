@@ -27,16 +27,16 @@ use mod_quiz\quiz_settings;
  * @category   test
  * @copyright   2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\courseformat\overview
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     /**
      * Test get_due_date_overview.
      *
      * @param int|null $timeincrement the time increment in seconds to add to the current time for the deadline.
      * @return void
-     * @dataProvider provider_test_get_due_date_overview
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_due_date_overview')]
     public function test_get_due_date_overview(?int $timeincrement): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -87,8 +87,8 @@ final class overview_test extends \advanced_testcase {
      * @param string $currentuser
      * @param array|null $expected
      * @return void
-     * @dataProvider provider_test_get_actions_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(
         string $currentuser,
         ?array $expected
@@ -146,8 +146,8 @@ final class overview_test extends \advanced_testcase {
      * @param int $groupmode
      * @param array $expected
      * @return void
-     * @dataProvider provider_test_get_total_attempts_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_total_attempts_overview')]
     public function test_get_extra_totalattempts_overview(
         int $groupmode,
         array $expected,
@@ -219,8 +219,8 @@ final class overview_test extends \advanced_testcase {
      * @param int $groupmode
      * @param array $expected
      * @return void
-     * @dataProvider provider_test_get_students_who_attempted_overview
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_students_who_attempted_overview')]
     public function test_get_extra_studentswhoattempted_overview(
         int $groupmode,
         array $expected,
