@@ -141,14 +141,13 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = new action_link(
             url: new url('/mod/forum/view.php', ['id' => $this->cm->id]),
             text: $totalreplies .' ' . $badge,
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
 
         return new overviewitem(
             name: $this->stringmanager->get_string('posts', 'mod_forum'),
             value: $totalreplies ? : '0',
             content: $content,
-            textalign: text_align::CENTER,
             alertcount: $unread,
             alertlabel: $alertlabel,
         );
@@ -335,7 +334,6 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('digesttype', 'mod_forum'),
             value: $options[$this->forum->maildigest] ?? '-',
             content: $content ?? '-',
-            textalign: text_align::CENTER,
         );
     }
 
@@ -352,7 +350,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('discussions', 'mod_forum'),
             value: $totaldiscussions,
             content: $totaldiscussions,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 

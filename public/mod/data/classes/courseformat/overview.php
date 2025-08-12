@@ -161,7 +161,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('totalentries', 'data'),
             value: $totalentries,
             content: $totalentries,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 
@@ -180,7 +180,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('myentries', 'data'),
             value: $totalmyentries,
             content: $totalmyentries,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 
@@ -198,7 +198,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('entries', 'data'),
             value: $totalentries,
             content: $totalentries,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 
@@ -216,7 +216,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 name: $this->stringmanager->get_string('comments', 'data'),
                 value: 0,
                 content: '-',
-                textalign: text_align::CENTER,
+                textalign: text_align::END,
             );
         }
 
@@ -227,7 +227,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: $this->stringmanager->get_string('comments', 'data'),
             value: $totalcomments,
             content: $totalcomments,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 }

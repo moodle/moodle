@@ -7,8 +7,21 @@ $overviewdialogmaxwidth: 20rem !default;
 
 #course-overview-page {
     .table {
+        margin-bottom: 0;
         border-top: none;
+
+        td,
+        th {
+            padding: map-get($spacers, 2) map-get($spacers, 4);
+        }
+
+        tr:last-child {
+            td {
+                border-bottom: none;
+            }
+        }
     }
+
     table tbody td {
         align-content: center;
 

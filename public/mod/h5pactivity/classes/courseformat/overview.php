@@ -107,7 +107,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: get_string('attempts', 'mod_h5pactivity'),
             value: $attempts,
             content: $attempts ?? '-',
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 
@@ -132,7 +132,7 @@ class overview extends \core_courseformat\activityoverviewbase {
             name: get_string('attempted', 'mod_h5pactivity'),
             value: count($attempts),
             content: get_string('count_of_total', 'core', $params),
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 

@@ -107,7 +107,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         return new overviewitem(
             name: get_string('responses', 'mod_feedback'),
             value: $submissions,
-            textalign: text_align::CENTER,
+            textalign: text_align::END,
         );
     }
 

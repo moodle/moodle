@@ -31806,7 +31806,15 @@ table.calendartable caption {
  * Course Overview page styles.
  */
 #course-overview-page .table {
+  margin-bottom: 0;
   border-top: none;
+}
+#course-overview-page .table td,
+#course-overview-page .table th {
+  padding: 0.5rem 1.5rem;
+}
+#course-overview-page .table tr:last-child td {
+  border-bottom: none;
 }
 #course-overview-page table tbody td {
   align-content: center;
