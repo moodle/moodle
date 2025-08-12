@@ -103,6 +103,7 @@ Feature: Add URL to Additional activities block
     And I click on "Add content" "button" in the "Additional activities" "block"
     And I click on "Activity or resource" "button" in the ".dropdown-menu.show" "css_element"
     And I click on "Add a new URL" "link" in the "Add an activity or resource" "dialogue"
+    And I click on "Add selected activity" "button" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
       | name            | reference link        |
       | externalurl     | http://www.moodle.com |
