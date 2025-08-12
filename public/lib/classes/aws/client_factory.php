@@ -24,7 +24,7 @@ use Aws\AwsClient;
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated Since Moodle 4.5
- * @todo       MDL-82459 Final deprecation in Moodle 5.0.
+ * @todo       MDL-82459 Final deprecation in Moodle 6.0.
  */
 class client_factory {
     /**
@@ -36,12 +36,12 @@ class client_factory {
      * @deprecated Since Moodle 4.5
      */
     #[\core\attribute\deprecated(
-        'client_factory::get_client()',
+        'aws_helper::configure_client_proxy()',
         since: '4.5',
         mdl: 'MDL-80962',
     )]
     public static function get_client(string $class, array $opts): AwsClient {
-        \core\deprecation::emit_deprecation(__FUNCTION__);
+        \core\deprecation::emit_deprecation([static::class, __FUNCTION__]);
         // Modify the opts to add HTTP timeouts.
         if (empty($opts['http'])) {
             $opts['http'] = ['connect_timeout' => HOURSECS];
