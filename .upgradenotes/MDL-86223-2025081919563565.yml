@@ -1,0 +1,7 @@
+issueNumber: MDL-86223
+notes:
+  mod_quiz:
+    - message: >-
+        Add a groupidlist option to quiz_num_attempt_summary, quiz_num_attempts and quiz_num_users_who_can_attempt
+        to filter those number by groups (the new argument is a list of ids for groups)
+      type: improved

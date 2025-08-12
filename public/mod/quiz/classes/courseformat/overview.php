@@ -123,8 +123,9 @@ class overview extends \core_courseformat\activityoverviewbase {
         if (!has_capability('mod/quiz:viewreports', $this->cm->context)) {
             return null;
         }
-        $numstudentattempted = quiz_num_users_who_attempted($this->cm);
-        $numstudentwhocanattempt = quiz_num_users_who_can_attempt($this->cm);
+        $groups = array_map(fn($group) => $group->id, $this->get_groups_for_filtering());
+        $numstudentattempted = quiz_num_users_who_attempted($this->cm, $groups);
+        $numstudentwhocanattempt = quiz_num_users_who_can_attempt($this->cm, $groups);
         $studentattemptedvalue = get_string(
             'count_of_total',
             'core',
@@ -148,10 +149,11 @@ class overview extends \core_courseformat\activityoverviewbase {
         if (!has_capability('mod/quiz:viewreports', $this->cm->context)) {
             return null;
         }
-        $numattempts = quiz_num_attempts($this->cm);
+        $groups = array_map(fn($group) => $group->id, $this->get_groups_for_filtering());
 
+        $total = quiz_num_attempts($this->cm, $groups);
         $overviewdialog = new overviewdialog(
-            buttoncontent:  $numattempts->total,
+            buttoncontent: $total,
             description: get_string('totalattempts', 'mod_quiz'),
             definition: ['buttonclasses' => button::SECONDARY_OUTLINE->classes() . ' dropdown-toggle'],
         );
@@ -165,8 +167,8 @@ class overview extends \core_courseformat\activityoverviewbase {
             $allowedattempts,
         );
 
-        $numstudentattempted = quiz_num_users_who_attempted($this->cm);
-        $numstudentwhocanattempt = quiz_num_users_who_can_attempt($this->cm);
+        $numstudentattempted = quiz_num_users_who_attempted($this->cm, $groups);
+        $numstudentwhocanattempt = quiz_num_users_who_can_attempt($this->cm, $groups);
         if ($numstudentwhocanattempt > 0 && $numstudentattempted > 0) {
             $overviewdialog->add_item(
                 get_string('averageattemptsperstudent', 'mod_quiz'),
@@ -176,7 +178,7 @@ class overview extends \core_courseformat\activityoverviewbase {
 
         return new overviewitem(
             name: get_string('totalattempts', 'mod_quiz'),
-            value: $numattempts->total,
+            value: $total,
             content: $overviewdialog,
             textalign: text_align::START,
         );
