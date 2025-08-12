@@ -56,12 +56,14 @@ class block_site_main_menu extends block_base {
 
         $this->content->text = $courserenderer->render($output);
 
-        $this->content->footer = $courserenderer->course_section_add_cm_control(
-            course: $course,
-            section: 0,
-            sectionreturn: null,
-            displayoptions: ['inblock' => true],
-        );
+        if ($this->page->course->id === SITEID) {
+            $this->content->footer = $courserenderer->course_section_add_cm_control(
+                course: $course,
+                section: 0,
+                sectionreturn: null,
+                displayoptions: ['inblock' => true],
+            );
+        }
         return $this->content;
     }
 }
