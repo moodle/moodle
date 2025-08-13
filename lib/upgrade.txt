@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 4.4.11 ===
 
 * Moodle's Behat `::execute()` method now supports the use of array callable syntax for calling other steps.
+* The `\externallib_advanced_testcase` class has been replaced by `\core_external\tests\externallib_testcase` which is now autoloadable.
+  The old class and location remain but will be removed in Moodle 6.0.
 
 === 4.4.10 ===
 
