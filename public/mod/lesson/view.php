@@ -242,8 +242,9 @@ if ($pageid != LESSON_EOL) {
     echo $lessonoutput->render($editbuttons);
 
     if ($attemptflag) {
-        // We are using level 3 header because attempt heading is a sub-heading of lesson title (MDL-30911).
-        echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries), 3);
+        // Get correct heading level for the attempts heading.
+        $headinglevel = $PAGE->activityheader->get_heading_level();
+        echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries), $headinglevel);
     }
     // This calculates and prints the ongoing score.
     if ($lesson->ongoing && !empty($pageid) && !$reviewmode) {
