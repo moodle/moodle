@@ -600,6 +600,12 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_courseformat_log_view_overview_information' => [
+        'classname'     => 'core_courseformat\external\log_view_overview_information',
+        'description'   => 'Logs the course overview information page has been visited on an external application.',
+        'type'          => 'write',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_courseformat_new_module' => [
         'classname'     => 'core_courseformat\external\new_module',
         'methodname'    => 'execute',
