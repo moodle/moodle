@@ -32,7 +32,6 @@ $string['activitydate:closed'] = 'Closed:';
 $string['activitydate:closes'] = 'Closes:';
 $string['activitydate:opened'] = 'Opened:';
 $string['activitydate:opens'] = 'Opens:';
-$string['activitydetails'] = 'Activity details';
 $string['addselectedactivity'] = 'Add selected activity';
 $string['aria:coursecategory'] = 'Course category';
 $string['aria:courseshortname'] = 'Course short name';
@@ -152,6 +151,7 @@ $string['searchresults'] = 'Search results: {$a}';
 $string['sectionlink'] = 'Permalink';
 $string['showstartedcoursestask'] = 'Show courses on start date';
 $string['submitsearch'] = 'Submit search';
+$string['supports'] = 'Supports';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';
 $string['studentsatriskinfomessage'] = 'Hi {$a->userfirstname},
 <p>Students in the {$a->coursename} course have been identified as being at risk.</p>';

@@ -31,18 +31,34 @@
         "branded": 0
     }
 }}
-<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option card m-1 bg-white" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
-    <div class="optioninfo card-body d-flex flex-column text-center p-1" data-region="chooser-option-info-container">
-        <a class="d-flex flex-column justify-content-between flex-fill" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
-            <div class="optionicon mt-2 mb-1 mx-auto icon-no-margin modicon_{{name}} activityiconcontainer smaller
-                    {{purpose}} {{#branded}}isbranded{{/branded}}">
-                {{{icon}}}
-            </div>
-            <div class="optionname clamp-2">{{title}}</div>
-        </a>
-        <div class="optionactions d-flex justify-content-center" role="group" data-region="chooser-option-actions-container">
-            {{^legacyitem}}
-                <button class="btn btn-icon m-0 optionaction {{#favourite}}text-primary{{/favourite}}{{^favourite}}text-muted{{/favourite}}"
+<div role="menuitem"
+    tabindex="-1"
+    aria-label="{{title}}"
+    class="option btn m-sm-1 position-relative"
+    data-region="chooser-option-container"
+    data-internal="{{name}}"
+    data-modname="{{componentname}}_{{link}}"
+>
+    <div class="d-flex gap-2 rounded" data-region="chooser-option-info-container">
+        <div class="optionicon icon-no-margin modicon_{{name}} activityiconcontainer smaller
+            {{purpose}} {{#branded}}isbranded{{/branded}}">
+            {{{icon}}}
+        </div>
+        <div>
+            <a href="{{link}}"
+                title="{{#str}} addnew, moodle, {{title}} {{/str}}"
+                tabindex="-1"
+                data-action="add-chooser-option"
+                class="optioninfo text-decoration-none text-body stretched-link"
+            >
+                <div class="optionname clamp-2">{{title}}</div>
+            </a>
+            <div class="optionactions d-flex align-items-start" role="group" data-region="chooser-option-actions-container">
+                <button class="btn btn-icon m-0 optionaction" data-action="show-option-summary" tabindex="-1" title="{{#str}} informationformodule, core_course, {{title}} {{/str}}">
+                    <span aria-hidden="true">{{#pix}} docs, core {{/pix}}</span>
+                </button>
+                {{^legacyitem}}
+                <button class="btn btn-icon m-0 optionaction"
                         data-action="manage-module-favourite"
                         data-favourited="{{favourite}}"
                         data-id="{{id}}"
@@ -51,10 +67,12 @@
                         {{^favourite}}
                             aria-pressed="false"
                             aria-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                            title="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
                         {{/favourite}}
                         {{#favourite}}
                             aria-pressed="true"
                             aria-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                            title="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
                         {{/favourite}}
                         tabindex="-1"
                 >
@@ -73,11 +91,8 @@
                         {{#pix}} i/star-o, core {{/pix}}
                     </span>
                 </button>
-            {{/legacyitem}}
-            <button class="btn btn-icon m-0 optionaction" data-action="show-option-summary" tabindex="-1">
-                <span aria-hidden="true">{{#pix}} docs, core {{/pix}}</span>
-                <span class="visually-hidden">{{#str}} informationformodule, core_course, {{title}} {{/str}}</span>
-            </button>
+                {{/legacyitem}}
+            </div>
         </div>
     </div>
 </div>
