@@ -39,3 +39,5 @@ $string['cliunknowoption'] = 'Noma\'lum parametrlar:
  {$a}
 Iltimos, -- help parametridan foydalaning';
 $string['cliyesnoprompt'] = 'y tugmasini bosing (ha degani) yoki n tugmasini bosing (yo‘q degani)';
+$string['environmentrequireinstall'] = 'o‘rnatilishi va yoqilishi shart.';
+$string['environmentrequireversion'] = '{$a->needed} versiyasi talab etiladi, sizda esa hozirda {$a->current} ishlatilmoqda';
