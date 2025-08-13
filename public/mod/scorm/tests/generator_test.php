@@ -66,4 +66,135 @@ final class generator_test extends \advanced_testcase {
         $fs->create_file_from_pathname($filerecord, $CFG->dirroot.'/mod/scorm/tests/packages/singlescobasic.zip');
         $scorm = $this->getDataGenerator()->create_module('scorm', $params);
     }
+
+    /**
+     * Test creating a SCORM attempt.
+     *
+     * @param array $attemptdata Data for the attempt to create.
+     * @param string|null $expectedexception Expected exception class name, if any.
+     * @dataProvider get_create_attempt_data
+     */
+    public function test_create_attempt(
+        array $attemptdata,
+        ?string $expectedexception = null,
+    ): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $datagenerator = $this->getDataGenerator();
+        $course = $datagenerator->create_course();
+        $user = $datagenerator->create_user();
+        $scorm = $datagenerator->create_module('scorm', ['course' => $course]);
+
+        if (array_key_exists('scormid', $attemptdata) && $attemptdata['scormid'] === 'SETSCORMID') {
+            $attemptdata['scormid'] = $scorm->id;
+        }
+        if (array_key_exists('userid', $attemptdata) && $attemptdata['userid'] === 'SETUSERID') {
+            $attemptdata['userid'] = $user->id;
+        }
+
+        // Check there are no attempts before creating one.
+        $this->assertEquals(
+            0,
+            $DB->count_records('scorm_attempt'),
+        );
+
+        if ($expectedexception !== null) {
+            $this->expectException($expectedexception);
+        }
+
+        /** @var \mod_scorm_generator $scormgenerator */
+        $scormgenerator = $datagenerator->get_plugin_generator('mod_scorm');
+        $scormgenerator->create_attempt($attemptdata);
+        $this->assertEquals(1, $DB->count_records('scorm_attempt'));
+    }
+
+    /**
+     * Data provider for test_create_attempt.
+     *
+     * @return array
+     */
+    public static function get_create_attempt_data(): array {
+        return [
+            'Correct attempt data' => [
+                'attemptdata' => [
+                    'scormid' => 'SETSCORMID',
+                    'userid' => 'SETUSERID',
+                ],
+                'expectedexception' => null,
+            ],
+            'Without scormid (which is required)' => [
+                'attemptdata' => [
+                    'userid' => 'SETUSERID',
+                ],
+                'expectedexception' => \coding_exception::class,
+            ],
+            'Without userid (current is used)' => [
+                'attemptdata' => [
+                    'scormid' => 'SETSCORMID',
+                ],
+                'expectedexception' => null,
+            ],
+            'With wrong scormid' => [
+                'attemptdata' => [
+                    'scormid' => 3,
+                    'userid' => 'SETUSERID',
+                ],
+                'expectedexception' => \dml_missing_record_exception::class,
+            ],
+            'With wrong userid' => [
+                'attemptdata' => [
+                    'scormid' => 'SETSCORMID',
+                    'userid' => 999,
+                ],
+                'expectedexception' => \dml_missing_record_exception::class,
+            ],
+        ];
+    }
+
+    /**
+     * Test creating several SCORM attempts.
+     */
+    public function test_create_attempts(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $course = $dg->create_course();
+        $user = $dg->create_user();
+        $scorm = $dg->create_module('scorm', ['course' => $course]);
+        $scormgenerator = $dg->get_plugin_generator('mod_scorm');
+        $scormgenerator->create_attempt(['scormid' => $scorm->id, 'userid' => $user->id]);
+        $records = $DB->get_records('scorm_attempt', ['scormid' => $scorm->id], 'id');
+        $this->assertEquals(1, count($records));
+        $scormgenerator->create_attempt(['scormid' => $scorm->id, 'userid' => $user->id]);
+        $records = $DB->get_records('scorm_attempt', ['scormid' => $scorm->id], 'id');
+        $this->assertEquals(2, count($records));
+    }
+
+    /**
+     * Test creating a SCORM attempt.
+     */
+    public function test_create_instance_timeopen_timeclose(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $course = $dg->create_course();
+        $clock = $this->mock_clock_with_frozen();
+        $timeopen = $clock->time();
+        $timeclose = $clock->time() + 10;
+        $scorm = $dg->create_module(
+            'scorm',
+            [
+                'course' => $course,
+                'timeopen' => $timeopen,
+                'timeclose' => $timeclose,
+            ]
+        );
+        $record = $DB->get_record('scorm', ['id' => $scorm->id]);
+        $this->assertEquals($timeopen, $record->timeopen);
+        $this->assertEquals($timeclose, $record->timeclose);
+    }
 }
