@@ -48,6 +48,13 @@
 .form-select {
     width: auto;
     max-width: 100%;
+    // Remove the default caret from the dropdown toggle button.
+    // This is needed to avoid the double caret when using alongside form-select.
+    &.dropdown-toggle {
+        &::after {
+            content: none;
+        }
+    }
 }
 
 #jump-to-activity.form-select {
