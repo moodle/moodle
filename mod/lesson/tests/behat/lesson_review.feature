@@ -4,6 +4,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
   As a student
   I need to complete a lesson answering all of the questions.
 
+  @javascript @accessibility
   Scenario: Student answers questions and then reviews them.
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -89,3 +90,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
     And I should see "Correct answer 2"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
+    # Check assessibility at the lesson start page.
+    # Attempts heading should be at correct heading level.
+    And I am on the "Test lesson name" "lesson activity" page
+    And the "[role=main]" "css_element" should meet accessibility standards with "best-practice" extra tests
