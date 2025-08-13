@@ -1,0 +1,7 @@
+issueNumber: MDL-86283
+notes:
+  core:
+    - message: >
+        The `\externallib_advanced_testcase` has been replaced by
+        `\core_external\tests\externallib_testcase` and is now autoloadable.
+      type: improved
