@@ -637,6 +637,98 @@ final class transfer_question_categories_test extends \advanced_testcase {
         );
     }
 
+    /**
+     * Assert the installation task handles the missing contexts correctly.
+     *
+     * @return void
+     */
+    public function test_qbank_install_with_missing_context(): void {
+        global $DB;
+        $this->resetAfterTest();
+        self::setAdminUser();
+
+        $questiongenerator = self::getDataGenerator()->get_plugin_generator('core_question');
+
+        // The problem is that question categories that used to related to contextids
+        // which no longer exist are now all moved to the new system-level shared
+        // question bank. This moving categories together can cause unique key violations.
+
+        // Create 2 orphaned categories where the contextid no longer exists, with the same stamp and idnumber.
+        // We need to do this by creating in a real context, then deleting the context,
+        // because create category logs, which needs a valid context id.
+        $tamperedstamp = make_unique_id_code();
+        $context1 = context_course::instance(self::getDataGenerator()->create_course()->id);
+        $oldcat1 = $this->create_question_category('Lost category 1', $context1->id);
+        $oldcat1->stamp = $tamperedstamp;
+        $oldcat1->idnumber = 'tamperedidnumber';
+        $DB->update_record('question_categories', $oldcat1);
+        $DB->delete_records('context', ['id' => $context1->id]);
+
+        $context2 = context_course::instance(self::getDataGenerator()->create_course()->id);
+        $oldcat2 = $this->create_question_category('Lost category 2', $context2->id);
+        $oldcat2->stamp = $tamperedstamp;
+        $oldcat2->idnumber = 'tamperedidnumber';
+        $DB->update_record('question_categories', $oldcat2);
+        $DB->delete_records('context', ['id' => $context2->id]);
+
+        // Add a question to each category.
+        $question1 = $questiongenerator->create_question('shortanswer', null, ['category' => $oldcat1->id]);
+        $question2 = $questiongenerator->create_question('shortanswer', null, ['category' => $oldcat2->id]);
+
+        // Make the questions 'in use'.
+        $quizcourse = self::getDataGenerator()->create_course();
+        $quiz = self::getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(
+            ['course' => $quizcourse->id, 'grade' => 100.0, 'sumgrades' => 2, 'layout' => '1,0']
+        );
+        quiz_add_quiz_question($question1->id, $quiz);
+        quiz_add_quiz_question($question2->id, $quiz);
+
+        // Make sure the caches are reset so that the contexts are not cached.
+        \core\context_helper::reset_caches();
+
+        // Run the task.
+        $task = new transfer_question_categories();
+        $task->execute();
+        // An important thing to verify is that the task completes without errors,
+        // for example unique key violations.
+
+        // Verify - there should be a single question bank in the site course with the expected name.
+        $sitemodinfo = get_fast_modinfo(get_site());
+        $siteqbanks = $sitemodinfo->get_instances_of('qbank');
+        $this->assertCount(1, $siteqbanks);
+        $siteqbank = reset($siteqbanks);
+        $this->assertEquals('System shared question bank', $siteqbank->name);
+
+        // The two previously orphaned categories should now be in this site questions bank, with a top category.
+        $sitemodcontext = context_module::instance($siteqbank->get_course_module_record()->id);
+        $sitemodcats = $DB->get_records_select(
+            'question_categories',
+            'parent <> 0 AND contextid = :contextid',
+            ['contextid' => $sitemodcontext->id],
+            'id ASC',
+        );
+
+        // Work out which category is which.
+        $movedcat1 = null;
+        $movedcat2 = null;
+        foreach ($sitemodcats as $movedcat) {
+            if ($movedcat->name === $oldcat1->name) {
+                $movedcat1 = $movedcat;
+            }
+            if ($movedcat->name === $oldcat2->name) {
+                $movedcat2 = $movedcat;
+            }
+        }
+        $this->assertNotNull($movedcat1);
+        $this->assertNotNull($movedcat2);
+
+        // Verify the properties of the moved categories.
+        $this->assertNotEquals($movedcat1->stamp, $movedcat2->stamp);
+        $this->assertNotEquals($movedcat1->idnumber, $movedcat2->idnumber);
+        $this->assertEquals(question_get_top_category($sitemodcontext->id)->id, $movedcat1->parent);
+        $this->assertEquals(question_get_top_category($sitemodcontext->id)->id, $movedcat2->parent);
+    }
+
     public function test_fix_wrong_parents(): void {
         $this->resetAfterTest();
         $this->setup_pre_install_data();
