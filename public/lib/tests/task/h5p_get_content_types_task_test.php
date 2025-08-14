@@ -73,6 +73,6 @@ final class h5p_get_content_types_task_test extends \advanced_testcase {
             ->willReturn($core);
 
         $mocktask->execute();
-        $this->expectOutputRegex('/1 new content types/');
+        $this->expectOutputRegex('/1 new content types installed\s+- H5P.Accordion 1.0/');
     }
 }
