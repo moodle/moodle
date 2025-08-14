@@ -107,7 +107,7 @@ Feature: Add links to TinyMCE
     And I select "Private files" repository in file picker
     And I click on "moodle-logo.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "How would you describe this image to someone who can't see it?" to "It's the Moodle"
+    And I set the field "How would you describe this image to someone who cannot see it?" to "It's the Moodle"
     And I click on "Save" "button" in the "Image details" "dialogue"
     And I select the "img" element in position "0" of the "Description" TinyMCE editor
     And I click on the "Link" button for the "Description" TinyMCE editor
@@ -129,7 +129,7 @@ Feature: Add links to TinyMCE
     And I click on "Edit profile" "link" in the "region-main" "region"
     And I select the "img" element in position "0" of the "Description" TinyMCE editor
     And I click on the "Image" button for the "Description" TinyMCE editor
-    And the field "How would you describe this image to someone who can't see it?" matches value "It's the Moodle"
+    And the field "How would you describe this image to someone who cannot see it?" matches value "It's the Moodle"
     And I click on "Close" "button" in the "Image details" "dialogue"
     And I click on the "Link" button for the "Description" TinyMCE editor
     And the field "Text to display" matches value "Moodle - Open-source learning platform"

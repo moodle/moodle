@@ -45,7 +45,7 @@ Feature: Tiny editor autosave
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "tinyscreenshot.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "How would you describe this image to someone who can't see it?" to "It's the Moodle"
+    And I set the field "How would you describe this image to someone who cannot see it?" to "It's the Moodle"
     And I click on "Save" "button" in the "Image details" "dialogue"
     And I click on "Save and display" "button"
     When I am on the "Course 1" course page logged in as teacher1
