@@ -31,7 +31,7 @@ class renderer extends section_renderer {
      * Displays the activities list in cases when course view page is not
      * redirected to the activity page.
      *
-     * @param stdClass $course record from table course
+     * @param \stdClass $course record from table course
      * @param bool $orphaned if false displays the main activity (if present)
      *     if true displays all other activities
      */
@@ -57,7 +57,7 @@ class renderer extends section_renderer {
 
             if (empty($modinfo->sections[0]) && course_get_format($course)->activity_has_subtypes()) {
                 // Course format was unable to automatically redirect to add module page.
-                $output .= $this->course_section_add_cm_control($course, 0, 0);
+                $output .= $this->section_add_cm_controls($format, $section);
             }
         }
         return $output;
