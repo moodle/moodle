@@ -48,7 +48,7 @@ final class restore_test extends \advanced_testcase {
         $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
 
         // Create a quiz containing a multichoice question from the qbank.
-        $quiz = $this->getDataGenerator()->get_plugin_generator('quiz')->create_instance(['course' => $course1->id]);
+        $quiz = $this->getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(['course' => $course1->id]);
         $question = $questiongenerator->create_question('multichoice', 'one_of_four', ['category' => $cat->id]);
         quiz_add_quiz_question($question->id, $quiz);
 
@@ -71,6 +71,13 @@ final class restore_test extends \advanced_testcase {
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
+
+        // Executing the precheck and plan will each emit debugging related to missing options.
+        $this->assertDebuggingCalledCount(
+            2,
+            array_fill(0, 2, "Question ID {$question->id} was missing an options record. Using default."),
+            array_fill(0, 2, DEBUG_DEVELOPER),
+        );
 
         // Both quizzes should refer to the same original question.
         $quizzes = get_fast_modinfo($course1->id)->get_instances_of('quiz');
