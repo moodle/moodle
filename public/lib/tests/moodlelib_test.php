@@ -5481,6 +5481,7 @@ EOT;
         $this->assertEquals(true, html_is_blank('<p> </p>'));
         $this->assertEquals(false, html_is_blank('<p>.</p>'));
         $this->assertEquals(false, html_is_blank('<img src="#">'));
+        $this->assertEquals(false, html_is_blank('<iframe></iframe>'));
     }
 
     /**
