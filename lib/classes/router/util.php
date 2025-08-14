@@ -293,14 +293,11 @@ class util {
     public static function normalise_component_path(
         string $component,
     ): string {
-        if ($component === 'core') {
-            return $component;
-        }
         [$type, $subsystem] = \core\component::normalize_component($component);
-        if ($type === 'core') {
+        if ($type === 'core' && $subsystem !== null) {
             return str_replace('core_', '', $subsystem);
         }
 
-        return $component ?? '';
+        return $component;
     }
 }
