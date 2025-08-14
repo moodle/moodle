@@ -21,6 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import ajax from 'core/ajax';
+import Log from 'core/log';
 
 // A promises map for caching specific section modules data.
 const sectionsModulesPromises = new Map();
@@ -32,16 +33,38 @@ const sectionsFooterPromises = new Map();
  * Fetch all the information on modules we'll need in the activity chooser.
  *
  * @method activityModules
+ * @deprecated since Moodle 5.1
+ * @todo Remove in Moodle 6.0 (MDL-86310)
  * @param {Number} courseid What course to fetch the modules for
  * @param {Number} sectionnum What course section to fetch the modules for
  * @return {object} jQuery promise
  */
 export const activityModules = (courseid, sectionnum) => {
+    Log.debug('The activityModules function is deprecated. Use sectionActivityModules instead.');
     const request = {
         methodname: 'core_course_get_course_content_items',
         args: {
             courseid: courseid,
             sectionnum: sectionnum,
+        },
+    };
+    return ajax.call([request])[0];
+};
+
+/**
+ * Fetch all the information on modules that can be added to a section.
+ *
+ * @method sectionActivityModules
+ * @param {Number} courseId What course to fetch the modules for
+ * @param {Number} sectionId What course section to fetch the modules for
+ * @return {object} jQuery promise
+ */
+export const sectionActivityModules = (courseId, sectionId) => {
+    const request = {
+        methodname: 'core_courseformat_get_section_content_items',
+        args: {
+            courseid: courseId,
+            sectionid: sectionId,
         },
     };
     return ajax.call([request])[0];
@@ -118,11 +141,12 @@ export const fetchFooterData = (courseid, sectionid) => {
 };
 
 /**
- * Fetch all the information on modules we'll need in the activity chooser.
+ * Legacy method to fetch all the information on modules using section number.
  *
  * @method fetchSectionModules
  *
- * @private
+ * @deprecated since Moodle 5.1
+ * @todo Remove in Moodle 6.0 (MDL-86310)
  * @param {Number} courseId Course ID.
  * @param {Number} sectionNum Section number.
  * @param {Number} sectionReturnNum Section return.
@@ -130,6 +154,7 @@ export const fetchFooterData = (courseid, sectionid) => {
  * @return {Object} Tab data.
  */
 export async function getModulesData(courseId, sectionNum, sectionReturnNum, beforeMod) {
+    Log.debug('The getModulesData function is deprecated. Use getSectionModulesData instead.');
     const cacheKey = `${courseId}-${sectionNum}`;
     if (!sectionsModulesPromises.has(cacheKey)) {
         sectionsModulesPromises.set(
@@ -150,9 +175,48 @@ export async function getModulesData(courseId, sectionNum, sectionReturnNum, bef
     // Apply the section num to all the module instance links.
     return sectionMapper(
         moduleData,
-        sectionNum,
+        null, // We do not have a section ID here.
         sectionReturnNum,
-        beforeMod
+        beforeMod,
+        sectionNum, // Legacy section number.
+    );
+}
+
+/**
+ * Fetch all the information on modules we'll need in the activity chooser.
+ *
+ * @method fetchSectionModules
+ *
+ * @param {Number} courseId Course ID.
+ * @param {Number} sectionId Section ID.
+ * @param {Number} sectionReturnNum Section return.
+ * @param {Number} beforeMod Before module number to be used in the module.
+ * @return {Object} Tab data.
+ */
+export async function getSectionModulesData(courseId, sectionId, sectionReturnNum, beforeMod) {
+    const cacheKey = `${courseId}-${sectionId}`;
+    if (!sectionsModulesPromises.has(cacheKey)) {
+        sectionsModulesPromises.set(
+            cacheKey,
+            new Promise((resolve) => {
+                resolve(sectionActivityModules(courseId, sectionId));
+            })
+        );
+    }
+
+    const moduleData = await sectionsModulesPromises.get(cacheKey);
+
+    // Early return if there is no module data.
+    if (!moduleData) {
+        throw new Error('Cannot fetch module data');
+    }
+
+    // Apply the section num to all the module instance links.
+    return sectionMapper(
+        moduleData,
+        sectionId,
+        sectionReturnNum,
+        beforeMod,
     );
 }
 
@@ -161,20 +225,30 @@ export async function getModulesData(courseId, sectionNum, sectionReturnNum, bef
  * of the WS data then add on the section num to the addoption URL
  *
  * @method sectionMapper
+ * @TODO remove legacySectionNum param in Moodle 6.0 (MDL-86310)
  * @param {Object} webServiceData Our original data from the Web service call
- * @param {Number} sectionNum The number of the section we need to append to the links
+ * @param {Number} sectionId The number of the section we need to append to the links
  * @param {Number|null} sectionReturnNum The number of the section return we need to append to the links
  * @param {Number|null} beforeMod The ID of the cm we need to append to the links
+ * @param {Number|null} legacySectionNum The legacy section number to append to the links
  * @return {Array} [modules] with URL's built
  */
-function sectionMapper(webServiceData, sectionNum, sectionReturnNum, beforeMod) {
+function sectionMapper(webServiceData, sectionId, sectionReturnNum, beforeMod, legacySectionNum = null) {
     // We need to take a fresh deep copy of the original data as an object is a reference type.
     const newData = JSON.parse(JSON.stringify(webServiceData));
+    let urlParams = '&beforemod=' + (beforeMod ?? 0);
+    if (sectionId) {
+        urlParams += `&sectionid=${sectionId}`;
+    }
+    // Todo: Remove legacySectionNum in Moodle 6.0 (MDL-86310).
+    if (legacySectionNum) {
+        urlParams += `&section=${legacySectionNum}`;
+    }
+    if (sectionReturnNum) {
+        urlParams += `&sr=${sectionReturnNum}`;
+    }
     newData.content_items.forEach((module) => {
-        module.link += '&section=' + sectionNum + '&beforemod=' + (beforeMod ?? 0);
-        if (sectionReturnNum) {
-            module.link += '&sr=' + sectionReturnNum;
-        }
+        module.link += urlParams;
     });
     return newData.content_items;
 }

@@ -1,0 +1,8 @@
+issueNumber: MDL-80295
+notes:
+  core_course:
+    - message: >-
+        The getModulesData and activityModules methods from
+        core_course/local/activitychooser/repository are deprecated. Use
+        getSectionModulesData and sectionActivityModules instead
+      type: deprecated
