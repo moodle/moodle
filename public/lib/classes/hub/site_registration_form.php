@@ -77,10 +77,10 @@ class site_registration_form extends \moodleform {
 
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));
 
-        $mform->addElement('text', 'name', get_string('sitename', 'hub'),
+        $mform->addElement('text', 'name', get_string('organisationname', 'hub'),
             array('class' => 'registration_textfield', 'maxlength' => 255));
         $mform->setType('name', PARAM_TEXT);
-        $mform->addHelpButton('name', 'sitename', 'hub');
+        $mform->addHelpButton('name', 'organisationname', 'hub');
 
         $organisationtypes = registration::get_site_organisation_type_options();
         \core_collator::asort($organisationtypes);
@@ -140,17 +140,47 @@ class site_registration_form extends \moodleform {
         $mform->setType('contactemail', PARAM_EMAIL);
         $mform->addHelpButton('contactemail', 'siteemail', 'hub');
 
-        $this->add_checkbox_with_email('emailalert', 'siteregistrationemail', false, get_string('registrationyes'));
+        $mform->addElement('html', html_writer::empty_tag('hr'));
 
+        // Admin notification emails.
+        $mform->addElement('checkbox', 'emailalert', get_string('siteregistrationemail', 'hub'), get_string('registrationyes'));
+        $mform->setDefault('emailalert', 1);
+        $mform->addElement('checkbox', 'emailalertdifferentemail', get_string('email'),
+            get_string('usedifferentemail', 'hub'));
+        $mform->hideif('emailalertdifferentemail', 'emailalert', 'notchecked');
+
+        $mform->addElement('text', 'emailalertemail', '', ['maxlength' => 100]);
+        $mform->setType('emailalertemail', PARAM_RAW_TRIMMED);
+        $mform->hideif('emailalertemail', 'emailalertdifferentemail', 'notchecked');
+        $mform->hideif('emailalertemail', 'emailalert', 'notchecked');
+
+        $mform->addElement('html', html_writer::empty_tag('hr'));
+
+        // Communication news emails (expert tips).
         $privacyurl = new moodle_url('https://moodle.com/privacy-notice/');
         $experttipsandinsightsdesc = html_writer::span(get_string('experttipsandinsightsdesc', 'hub', $privacyurl->out()));
-        $this->add_checkbox_with_email(
-            elementname: 'commnews',
-            stridentifier: 'experttipsandinsights',
-            highlight: in_array('commnews', $highlightfields),
-            checkboxtext: $experttipsandinsightsdesc,
-            showhelp: false,
-        );
+        $mform->addElement('checkbox', 'commnews', get_string('experttipsandinsights', 'hub'), $experttipsandinsightsdesc);
+
+        $mform->addElement('text', 'commnewsfirstname', get_string('firstname'), ['maxlength' => 100]);
+        $mform->setType('commnewsfirstname', PARAM_TEXT);
+        $mform->hideif('commnewsfirstname', 'commnews', 'notchecked');
+        $mform->setDefault('commnewsfirstname', $admin->firstname);
+
+        $mform->addElement('text', 'commnewslastname', get_string('lastname'), ['maxlength' => 100]);
+        $mform->setType('commnewslastname', PARAM_TEXT);
+        $mform->hideif('commnewslastname', 'commnews', 'notchecked');
+        $mform->setDefault('commnewslastname', $admin->lastname);
+
+        $mform->addElement('checkbox', 'commnewsdifferentemail', get_string('email'),
+            get_string('usedifferentemail', 'hub'));
+        $mform->hideif('commnewsdifferentemail', 'commnews', 'notchecked');
+
+        $mform->addElement('text', 'commnewsemail', '', ['maxlength' => 100]);
+        $mform->setType('commnewsemail', PARAM_RAW_TRIMMED);
+        $mform->hideif('commnewsemail', 'commnewsdifferentemail', 'notchecked');
+        $mform->hideif('commnewsemail', 'commnews', 'notchecked');
+
+        $mform->addElement('html', html_writer::empty_tag('hr'));
 
         // TODO site logo.
         $mform->addElement('hidden', 'imageurl', ''); // TODO: temporary.
@@ -183,12 +213,13 @@ class site_registration_form extends \moodleform {
         $mform->setType('returnurl', PARAM_LOCALURL);
 
         // Prepare and set data.
-        $siteinfo['emailalertnewemail'] = !empty($siteinfo['emailalert']) && !empty($siteinfo['emailalertemail']);
-        if (empty($siteinfo['emailalertnewemail'])) {
+        // We don't store some checkbox values. Set the checkboxes depending on other stored settings.
+        $siteinfo['emailalertdifferentemail'] = !empty($siteinfo['emailalert']) && !empty($siteinfo['emailalertemail']);
+        if (empty($siteinfo['emailalertdifferentemail'])) {
             $siteinfo['emailalertemail'] = '';
         }
-        $siteinfo['commnewsnewemail'] = !empty($siteinfo['commnews']) && !empty($siteinfo['commnewsemail']);
-        if (empty($siteinfo['commnewsnewemail'])) {
+        $siteinfo['commnewsdifferentemail'] = !empty($siteinfo['commnews']) && !empty($siteinfo['commnewsemail']);
+        if (empty($siteinfo['commnewsdifferentemail'])) {
             $siteinfo['commnewsemail'] = '';
         }
 
@@ -261,11 +292,11 @@ class site_registration_form extends \moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         // Validate optional emails. We do not use PARAM_EMAIL because it blindly clears the field if it is not a valid email.
-        if (!empty($data['emailalert']) && !empty($data['emailalertnewemail']) && !validate_email($data['emailalertemail'])) {
-            $errors['emailalertgroup'] = get_string('invalidemail');
+        if (!empty($data['emailalert']) && !empty($data['emailalertdifferentemail']) && !validate_email($data['emailalertemail'])) {
+            $errors['emailalertemail'] = get_string('invalidemail');
         }
-        if (!empty($data['commnews']) && !empty($data['commnewsnewemail']) && !validate_email($data['commnewsemail'])) {
-            $errors['commnewsgroup'] = get_string('invalidemail');
+        if (!empty($data['commnews']) && !empty($data['commnewsdifferentemail']) && !validate_email($data['commnewsemail'])) {
+            $errors['commnewsemail'] = get_string('invalidemail');
         }
         return $errors;
     }
@@ -277,15 +308,33 @@ class site_registration_form extends \moodleform {
      */
     public function get_data() {
         if ($data = parent::get_data()) {
-            // Never return '*newemail' checkboxes, always return 'emailalertemail' and 'commnewsemail' even if not applicable.
-            if (empty($data->emailalert) || empty($data->emailalertnewemail)) {
-                $data->emailalertemail = null;
+            // Ensure emailalert values are sent to the hub (when checkbox is unticked).
+            if (!isset($data->emailalert)) {
+                $data->emailalert = 0;
             }
-            unset($data->emailalertnewemail);
-            if (empty($data->commnews) || empty($data->commnewsnewemail)) {
-                $data->commnewsemail = null;
+
+            // Ensure commnews values are sent to the hub (when checkbox is unticked).
+            if (!isset($data->commnews)) {
+                $data->commnews = 0;
             }
-            unset($data->commnewsnewemail);
+
+            // Reset the emailalertemail email address if emailalertdifferentemail is not ticked.
+            if (empty($data->emailalertdifferentemail)) {
+                $data->emailalertemail = '';
+            }
+            unset($data->emailalertdifferentemail);
+
+            // Reset the commnewsemail email address if commnewsdifferentemail is not ticked.
+            if (empty($data->commnewsdifferentemail)) {
+                $data->commnewsemail = '';
+            }
+            unset($data->commnewsdifferentemail);
+
+            // Reset contact details if commnews is not ticked.
+            if (empty($data->commnews)) {
+                $data->commnewsfirstname = '';
+                $data->commnewslastname = '';
+            }
 
             if (debugging('', DEBUG_DEVELOPER)) {
                 // Display debugging message for developers who added fields to the form and forgot to add them to registration::FORM_FIELDS.

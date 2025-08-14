@@ -95,6 +95,8 @@ $string['nocheckstatusfromunreghub'] = 'The site is not registered on the hub so
 $string['nohubselected'] = 'No hub selected';
 $string['none'] = 'None';
 $string['operation'] = 'Actions';
+$string['organisationname'] = 'Organisation name';
+$string['organisationname_help'] = 'The name of the organisation registering this site. If you choose to have your site listed, this will be the name that is listed.';
 $string['participantnumberaverage'] = 'Average number of participants ({$a})';
 $string['pluginusagedata'] = 'Plugin usage data collected from: <a href="{$a->overview}">Plugins overview</a>, <a href="{$a->activities}">Manage activities</a>, and <a href="{$a->blocks}">Manage blocks</a>';
 $string['policyagreed'] = 'Privacy notice and data processing agreement';
@@ -147,8 +149,6 @@ $string['siteemail'] = 'Admin email address';
 $string['siteemail_help'] = 'An email address is necessary so that Moodle HQ can contact you if required.  It may also be used for other purposes as you allow below.    We recommend a generic email address related to a position (eg.: sitemanager@example.com), not a personal address.';
 $string['sitelang'] = 'Language';
 $string['sitelang_help'] = 'What is the main language used on your Moodle site?';
-$string['sitename'] = 'Name';
-$string['sitename_help'] = 'The name of the site will be shown on the site listing if the hub allows that.';
 $string['siteorganisationtype'] = 'Organisation type';
 $string['siteorganisationtype:charityornotforprofit'] = 'Charity or Not For Profit';
 $string['siteorganisationtype:charterschool'] = 'Charter school';
@@ -174,9 +174,9 @@ $string['sitephone'] = 'Phone';
 $string['sitephone_help'] = 'Your phone number will only be seen by the hub administrator.';
 $string['siteprivacy'] = 'Site listing';
 $string['siteprivacy_help'] = 'You can choose to have your site listed publicly in the list of registered sites, with or without a link to your site.';
+$string['siteprivacylinked'] = 'Display my organisation name with a link';
 $string['siteprivacynotpublished'] = 'Do not list my site';
-$string['siteprivacypublished'] = 'Only display my site name';
-$string['siteprivacylinked'] = 'Display my site name with the link';
+$string['siteprivacypublished'] = 'Only display my organisation name';
 $string['siteregistrationemail'] = 'Notifications of new Moodle releases, security alerts and other important news';
 $string['siteregistrationemail_help'] = 'You have the option of subscribing to our low-volume mailing list for notifications of new Moodle releases, security alerts and other important news. You may unsubscribe at any time.';
 $string['siteregistrationupdated'] = 'Site registration updated';
@@ -218,3 +218,7 @@ $string['aiusagestats'] = 'AI usage stats ({$a->timefrom} - {$a->timeto})';
 $string['sitecommnews'] = 'Moodle newsletter';
 $string['sitecommnews_help'] = 'You have the option of subscribing to our Moodle newsletter. You may unsubscribe at any time.';
 $string['sitecommnewsyes'] = 'Yes, I would like to receive the Moodle newsletter';
+
+// Deprecated since 5.1.
+$string['sitename'] = 'Name';
+$string['sitename_help'] = 'The name of the site will be shown on the site listing if the hub allows that.';

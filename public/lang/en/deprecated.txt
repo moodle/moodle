@@ -88,3 +88,5 @@ activities_help,core
 resources_help,core
 unabletomessage,core_message
 notificationimage,core_message
+sitename,core_hub
+sitename_help,core_hub
