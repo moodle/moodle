@@ -310,11 +310,7 @@ class section implements named_templatable, renderable {
             $data->controlmenu = $controlmenu->export_for_template($output);
         }
         if (!$this->isstealth) {
-            $data->cmcontrols = $output->course_section_add_cm_control(
-                $course,
-                $this->section->section,
-                $this->format->get_sectionnum()
-            );
+            $data->cmcontrols = $output->section_add_cm_controls($this->format, $this->section);
         }
         return true;
     }

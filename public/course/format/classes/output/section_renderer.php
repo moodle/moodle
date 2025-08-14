@@ -229,4 +229,39 @@ abstract class section_renderer extends core_course_renderer {
         $o .= html_writer::end_tag('li');
         return $o;
     }
+
+    /**
+     * Renders the controls to add activities and resources to the course.
+     *
+     * @param course_format $format The course format.
+     * @param section_info $section The section to add controls to.
+     * @param cm_info|null $mod The module before which the controls should be added.
+     * @return string HTML for the controls.
+     */
+    public function add_cm_controls(
+        course_format $format,
+        section_info $section,
+        ?cm_info $mod = null,
+    ): string {
+        if (!$format->show_editor()) {
+            return '';
+        }
+
+        $activitychooserbutton = new \core_course\output\activitychooserbutton(
+            section: $section,
+            mod: $mod,
+            sectionreturn: $format->get_return_section(),
+        );
+
+        // Load the JS for the modal.
+        $this->course_activitychooser($format->get_courseid());
+
+        return $this->render_from_template(
+            'core_courseformat/local/content/divider',
+            [
+                'content' => $this->render($activitychooserbutton),
+                'extraclasses' => 'always-visible my-3',
+            ]
+        );
+    }
 }

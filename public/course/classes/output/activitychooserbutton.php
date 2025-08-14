@@ -38,9 +38,10 @@ class activitychooserbutton implements templatable, renderable {
     /**
      * Constructor.
      *
+     * @todo remove $sectionreturn int support in 6.0 (MDL-86310)
      * @param section_info $section the section info
      * @param cm_info|null $mod the course module ionfo
-     * @param int|null $sectionreturn the section to return to
+     * @param int|section_info|null $sectionreturn the section to return to
      * @param array|null $actionlinks the action links
      */
     public function __construct(
@@ -49,10 +50,17 @@ class activitychooserbutton implements templatable, renderable {
         /** @var cm_info|null the course module instance */
         protected ?cm_info $mod = null,
         /** @var int|null the section to return to */
-        protected ?int $sectionreturn = null,
+        protected section_info|int|null $sectionreturn = null,
         /** @var array|null action_link[] the action links */
         protected ?array $actionlinks = [],
     ) {
+        if (is_int($this->sectionreturn)) {
+            debugging(
+                'Using int as sectionreturn in activitychooserbutton is deprecated, use a section_info instance instead',
+                DEBUG_DEVELOPER
+            );
+            $this->sectionreturn = get_fast_modinfo($this->section->course)->get_section_info($this->sectionreturn);
+        }
     }
 
     /**
@@ -70,11 +78,16 @@ class activitychooserbutton implements templatable, renderable {
                 $this->mod,
             ),
         );
+        /** @var section_info|null $sectionreturn */
+        $sectionreturn = $this->sectionreturn;
 
         return (object)[
-            'sectionnum' => $this->section->section,
+            // We keep the old sectionnum properties for backwards compatibility.
+            'sectionnum' => $this->section->sectionnum,
+            'sectionid' => $this->section->id,
             'sectionname' => get_section_name($this->section->course, $this->section),
-            'sectionreturn' => $this->sectionreturn ?? false,
+            'sectionreturn' => $sectionreturn?->sectionnum ?? false,
+            'sectionreturnid' => $sectionreturn?->id ?? false,
             'modid' => $this->mod ? $this->mod->id : false,
             'activityname' => $this->mod ? $this->mod->get_formatted_name() : false,
             'hasactionlinks' => !empty($this->actionlinks),

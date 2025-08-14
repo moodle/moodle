@@ -647,7 +647,7 @@ abstract class base {
             throw new coding_exception('Invalid sectionid: '. $sectionid);
         }
 
-        $this->singlesection = $sectioninfo->section;
+        $this->singlesection = $sectioninfo->sectionnum;
         $this->singlesectionid = $sectionid;
     }
 
@@ -710,6 +710,21 @@ abstract class base {
      */
     public function get_sectionnum(): ?int {
         return $this->singlesection;
+    }
+
+    /**
+     * Returns the section info for the current single section.
+     *
+     * If the course format is not a single section format, this will return null.
+     *
+     * @return section_info|null
+     */
+    public function get_return_section(): section_info|null {
+        if ($this->singlesectionid === null) {
+            return null;
+        }
+        $modinfo = get_fast_modinfo($this->courseid);
+        return $modinfo->get_section_info_by_id($this->singlesectionid);
     }
 
     /**
