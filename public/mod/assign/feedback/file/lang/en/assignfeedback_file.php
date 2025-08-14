@@ -33,6 +33,7 @@ $string['default'] = 'Enabled by default';
 $string['default_help'] = 'If set, this feedback method will be enabled by default for all new assignments.';
 $string['enabled'] = 'File feedback';
 $string['enabled_help'] = 'If enabled, the teacher will be able to upload files with feedback when marking assignment submissions. These files may be, but are not limited to, marked-up student submissions, documents with comments or spoken audio feedback.';
+$string['eventfeedback_downloaded'] = 'Feedback file downloaded';
 $string['feedbackzip'] = 'Zip file with feedback files';
 $string['feedbackfileadded'] = 'New feedback file "{$a->filename}" for student "{$a->student}"';
 $string['feedbackfileupdated'] = 'Modified feedback file "{$a->filename}" for student "{$a->student}"';

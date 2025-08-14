@@ -74,6 +74,10 @@ function assignfeedback_file_pluginfile($course,
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }
+
+    // Log event so that we can later track if students downloaded their feedback files.
+    \assignfeedback_file\event\feedback_downloaded::create_for_file($file)->trigger();
+
     // Download MUST be forced - security!
     send_stored_file($file, 0, 0, true, $options);
 }
