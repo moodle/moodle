@@ -1,0 +1,11 @@
+issueNumber: MDL-85146
+notes:
+  theme_boost:
+    - message: >-
+        The `core:e/text_highlight` and `core:e/text_highlight_picker` icons are
+        deprecated and will be removed in Moodle 6.0.
+        The UX team recommended this change to reduce visual clutter and improve
+        readability. The icons were removed because they didn't indicate status
+        changes, were repetitive across all notifications, and took up space that
+        could be used for more content.
+      type: deprecated
