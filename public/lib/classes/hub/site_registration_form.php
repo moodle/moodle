@@ -228,60 +228,6 @@ class site_registration_form extends \moodleform {
     }
 
     /**
-     * @deprecated since Moodle 3.11 - MDL-71460 The form elements using this have been converted to checkboxes
-     */
-    #[\core\attribute\deprecated(
-        '\core\hub\site_registration_form::add_checkbox_with_email()',
-        since: '3.11',
-        mdl: 'MDL-71460',
-        final: true,
-    )]
-    protected function add_select_with_email() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * Add yes/no checkbox with additional checkbox allowing to specify another email
-     *
-     * @param string $elementname
-     * @param string $stridentifier
-     * @param bool $highlight highlight as a new field
-     * @param string $checkboxtext The text to show after the text.
-     * @param bool $showhelp Show the help icon.
-     */
-    protected function add_checkbox_with_email(
-        string $elementname,
-        string $stridentifier,
-        bool $highlight = false,
-        string $checkboxtext = '',
-        bool $showhelp = true,
-    ): void {
-        $mform = $this->_form;
-
-        $group = [
-            $mform->createElement('advcheckbox', $elementname, '', $checkboxtext, ['class' => 'pt-2']),
-            $mform->createElement('static', $elementname . 'sep', '', '<br/>'),
-            $mform->createElement('advcheckbox', $elementname . 'newemail', '', get_string('usedifferentemail', 'hub'),
-                ['onchange' => "this.form.elements['{$elementname}email'].focus();"]),
-            $mform->createElement('text', $elementname . 'email', get_string('email'))
-        ];
-
-        $element = $mform->addElement('group', $elementname . 'group', get_string($stridentifier, 'hub'), $group, '', false);
-        if ($highlight) {
-            $element->setAttributes(['class' => $element->getAttribute('class') . ' needsconfirmation mark']);
-        }
-        $mform->hideif($elementname . 'email', $elementname, 'eq', 0);
-        $mform->hideif($elementname . 'newemail', $elementname, 'eq', 0);
-        $mform->hideif($elementname . 'email', $elementname . 'newemail', 'notchecked');
-        $mform->setType($elementname, PARAM_INT);
-        $mform->setType($elementname . 'email', PARAM_RAW_TRIMMED); // E-mail will be validated in validation().
-        if ($showhelp) {
-            $mform->addHelpButton($elementname . 'group', $stridentifier, 'hub');
-        }
-
-    }
-
-    /**
      * Validation of the form data
      *
      * @param array $data array of ("fieldname"=>value) of submitted data
