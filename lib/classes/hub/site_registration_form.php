@@ -293,11 +293,11 @@ class site_registration_form extends \moodleform {
         if ($data = parent::get_data()) {
             // Never return '*newemail' checkboxes, always return 'emailalertemail' and 'commnewsemail' even if not applicable.
             if (empty($data->emailalert) || empty($data->emailalertnewemail)) {
-                $data->emailalertemail = null;
+                $data->emailalertemail = '';
             }
             unset($data->emailalertnewemail);
             if (empty($data->commnews) || empty($data->commnewsnewemail)) {
-                $data->commnewsemail = null;
+                $data->commnewsemail = '';
             }
             unset($data->commnewsnewemail);
 
