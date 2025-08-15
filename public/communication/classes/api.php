@@ -698,8 +698,8 @@ class api {
             return;
         }
 
-        // No userids? don't bother doing anything.
-        if (empty($userids)) {
+        // No user IDs or this provider does not manage users? No action required.
+        if (empty($userids) || !$this->communication->supports_user_features()) {
             return;
         }
 
