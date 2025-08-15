@@ -159,6 +159,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_course
 
+#### Added
+
+- - The following classes have been renamed and now support autoloading.
+    Existing classes are currently unaffected.
+
+    | Old class name    | New class name           |
+    | ---               | ---                      |
+    | `\cm_info`        | `\course\cm_info
+    | `\cached_cm_info` | `\course\cached_cm_info` |
+    | `\section_info`   | `\course\section_info`   |
+    | `\course_modinfo` | `\course\modinfo`        |
+
+  For more information see [MDL-86155](https://tracker.moodle.org/browse/MDL-86155)
+- Removed fictitious `__empty()` magic method.
+
+  The `empty()` method does not make use of any `__empty()` method. It is not a
+  defined magic method.
+
+  For more information see [MDL-86155](https://tracker.moodle.org/browse/MDL-86155)
+
 #### Changed
 
 - The 'Show description' checkbox is now present in all course formats. Activity descriptions can be displayed via the Additional activities block (formerly the Main menu block), regardless of whether the course format's has_view_page() function returns false.
@@ -170,6 +190,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The duplicatesection param in course/view.php is deprecated. Use course/format/update.php with action section_duplicate instead.
 
   For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
+- The `\course\cm_info::$extra` and `\course\cm_info::$score` properties will now
+  emit appropriate debugging.
+
+  These have been deprecated for a long time, but did not emit any debugging.
+
+  For more information see [MDL-86155](https://tracker.moodle.org/browse/MDL-86155)
+- The `MAX_MODINFO_CACHE_SIZE` constant has been deprecated and replaced with a class constant.
+
+  For more information see [MDL-86155](https://tracker.moodle.org/browse/MDL-86155)
 
 #### Removed
 
@@ -485,6 +514,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-80327](https://tracker.moodle.org/browse/MDL-80327)
 
 ### mod_scorm
+
+#### Added
+
+- Create a manager class to regroup common functionalities for course overview page
+
+  For more information see [MDL-83899](https://tracker.moodle.org/browse/MDL-83899)
+- Add a new generator for scorm attempts to simulate user's attempt.
+
+  For more information see [MDL-83899](https://tracker.moodle.org/browse/MDL-83899)
 
 #### Deprecated
 
