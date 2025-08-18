@@ -104,7 +104,7 @@ class qtype_numerical_renderer extends qtype_renderer {
                         'menu' . $qa->get_qt_field_name('unit'), false, array('class' => 'accesshide'));
                 $unitchoice .= html_writer::select($question->ap->get_unit_options(),
                         $qa->get_qt_field_name('unit'), $selectedunit, array(''=>'choosedots'),
-                        array('disabled' => $options->readonly));
+                        ['disabled' => $options->readonly, 'class' => 'd-inline-block']);
             }
 
             if ($question->ap->are_units_before()) {
