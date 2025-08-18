@@ -1,0 +1,8 @@
+issueNumber: MDL-85727
+notes:
+  tiny_premium:
+    - message: >
+        The `tiny_premium_get_api_key` web service now returns an additional
+        field `usecloud` to indicate whether the cloud version or self-hosted
+        version of Tiny Premium plugins should be used.
+      type: improved

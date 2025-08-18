@@ -31,6 +31,10 @@ class manager {
 
     /** @var string Tiny Premium plugin prefix. */
     const PLUGIN_NAME_PREFIX = 'tiny_premium_';
+    /** @var int Indicates usage of self-hosted TinyMCE packages. */
+    public const PACKAGE_SELF_HOSTED = 2;
+    /** @var int Indicates usage of cloud-hosted TinyMCE packages. */
+    public const PACKAGE_CLOUD = 1;
 
     /**
      * Get all Tiny Premium plugins currently supported.
