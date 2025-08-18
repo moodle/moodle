@@ -1,0 +1,116 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/activitychooser/help
+
+    Chooser help / more information template.
+
+    Example context (json):
+    {
+        "id": 125,
+        "name": "assign",
+        "title": "Assignment",
+        "link": "http://yourmoodle/modedit.php?id=x&itemtype=y",
+        "icon": "<img class='icon' src='http://urltooptionicon' alt='Icon'>",
+        "help": "This is a description of the assignment activity",
+        "archetype": 0,
+        "componentname": "mod_assign",
+        "favourite": 1,
+        "purpose": "collaboration",
+        "categories": "Collaboration, Communication"
+    }
+}}
+<div
+    class="optionsummary"
+    tabindex="-1"
+    data-region="chooser-option-summary-container"
+    aria-labelledby="optionsummary_label-{{uniqid}}"
+    aria-describedby="optionsumary_desc-{{uniqid}}"
+>
+    <div
+        data-region="chooser-option-summary-content-container"
+    >
+        <div
+            class=""
+            id="optionsummary_label-{{uniqid}}"
+            data-region="summary-header"
+            tabindex="0"
+        >
+            <h6 class="h3 d-flex align-self-stretch align-items-center mb-4 gap-2">
+                <span
+                    class="modicon_{{name}} activityiconcontainer smaller {{!
+                        }} {{purpose}} {{#branded}}isbranded{{/branded}}"
+                >
+                    {{{icon}}}
+                </span>
+                {{title}}
+            </h6>
+        </div>
+        <div class="d-flex flex-column flex-md-row-reverse gap-3 gap-md-5">
+            {{! Details panel. }}
+            <div
+                class="activitychooser-option-details"
+            >
+                {{! Purposes panel. }}
+                <div class="modchooser-detail">
+                    <p class="visually-hidden">
+                        {{#str}} supports, course{{/str}}
+                    </p>
+                    <ul class="list-unstyled modchoosernav nav nav-pills d-flex gap-2 flex-column">
+                        {{#purposes}}
+                        <li>
+                            <button
+                                class="nav-item nav-link border"
+                                data-action="chooser-display-category"
+                                data-category="{{purposename}}"
+                            >
+                                {{purposelabel}}
+                            </button>
+                        </li>
+                        {{/purposes}}
+                    </ul>
+                </div>
+                {{#details}}
+                <div class="modchooser-detail">
+                    {{! Detail name and value. }}
+                    <div
+                        class="modchooser-detail-name {{!
+                        }} d-flex align-items-center text-muted fw-medium"
+                    >
+                        <div>
+                            <small>{{label}}</small>
+                        </div>
+                    </div>
+                    <div class="modchooser-detail-value mt-2 fw-medium">
+                        {{value}}
+                    </div>
+                </div>
+                {{/details}}
+            </div>
+            {{! Repsonsive divider. }}
+            <hr class="d-block d-md-none my-2">
+            {{! General helps text. }}
+            <div
+                class="flex-grow-1 pe-md-5"
+                id="optionsumary_desc-{{uniqid}}"
+                tabindex="0"
+            >
+                {{{help}}}
+            </div>
+        </div>
+    </div>
+</div>

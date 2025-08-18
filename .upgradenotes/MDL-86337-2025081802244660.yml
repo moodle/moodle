@@ -1,0 +1,22 @@
+issueNumber: MDL-86337
+notes:
+  core_course:
+    - message: >-
+        The course renderer method course_activitychooser is now deprecated. Its
+        logic is not part of the new section_renderer::add_cm_controls method.
+      type: deprecated
+  core_courseformat:
+    - message: >-
+        The `core_course\output\activitychooserbutton` has been moved to
+        `core_courseformat\output\local\activitychooserbutton` . From now on,
+        format plugins can provide alternative outputs for this element. Also,
+        all the javascript and templates related to the activity chooser are now
+        located inside the core_courseformat subsystem.
+      type: improved
+  core_courseformat:
+    - message: >-
+        All activity chooser related code has been moved to the
+        `core_courseformat` subsystem. This includes all templates,
+        javascript, and the main output class. If your theme overrides any
+        of these, you will need to update your code accordingly.
+      type: improved
