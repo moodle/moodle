@@ -22,79 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
+require_once("../../config.php");
 
-$id = required_param('id', PARAM_INT); // Course id.
+$courseid = required_param('id', PARAM_INT);
 
-$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
-
-require_course_login($course, true);
-$PAGE->set_pagelayout('incourse');
-
-$params = array(
-    'context' => context_course::instance($course->id)
-);
-$event = \mod_imscp\event\course_module_instance_list_viewed::create($params);
-$event->trigger();
-
-$strimscp       = get_string('modulename', 'imscp');
-$strimscps      = get_string('modulenameplural', 'imscp');
-$strname         = get_string('name');
-$strintro        = get_string('moduleintro');
-$strlastmodified = get_string('lastmodified');
-
-$PAGE->set_url('/mod/imscp/index.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname.': '.$strimscps);
-$PAGE->set_heading($course->fullname);
-$PAGE->navbar->add($strimscps);
-echo $OUTPUT->header();
-echo $OUTPUT->heading($strimscps);
-
-if (!$imscps = get_all_instances_in_course('imscp', $course)) {
-    notice(get_string('thereareno', 'moodle', $strimscps), "$CFG->wwwroot/course/view.php?id=$course->id");
-    exit;
-}
-
-$usesections = course_format_uses_sections($course->format);
-
-$table = new html_table();
-$table->attributes['class'] = 'table generaltable mod_index';
-
-if ($usesections) {
-    $strsectionname = course_get_format($course)->get_generic_section_name();
-    $table->head  = array ($strsectionname, $strname, $strintro);
-    $table->align = array ('center', 'left', 'left');
-} else {
-    $table->head  = array ($strlastmodified, $strname, $strintro);
-    $table->align = array ('left', 'left', 'left');
-}
-
-$modinfo = get_fast_modinfo($course);
-$currentsection = '';
-foreach ($imscps as $imscp) {
-    $cm = $modinfo->cms[$imscp->coursemodule];
-    if ($usesections) {
-        $printsection = '';
-        if ($imscp->section !== $currentsection) {
-            if ($imscp->section) {
-                $printsection = get_section_name($course, $imscp->section);
-            }
-            if ($currentsection !== '') {
-                $table->data[] = 'hr';
-            }
-            $currentsection = $imscp->section;
-        }
-    } else {
-        $printsection = '<span class="smallinfo">'.userdate($imscp->timemodified)."</span>";
-    }
-
-    $class = $imscp->visible ? '' : 'class="dimmed"'; // Hidden modules are dimmed.
-    $table->data[] = array (
-        $printsection,
-        "<a $class href=\"view.php?id=$cm->id\">" . format_string($imscp->name)."</a>",
-        format_module_intro('imscp', $imscp, $cm->id));
-}
-
-echo html_writer::table($table);
-
-echo $OUTPUT->footer();
+\core_courseformat\activityoverviewbase::redirect_to_overview_page($courseid, 'resource');
