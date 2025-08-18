@@ -95,26 +95,18 @@ class schedule extends persistent {
             ],
             'audiences' => [
                 'type' => PARAM_RAW,
-                'default' => '[]',
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
+            'classname' => [
+                'type' => PARAM_TEXT,
+            ],
+            'configdata' => [
+                'type' => PARAM_RAW,
+                'default' => '{}',
             ],
             'format' => [
                 'type' => PARAM_PLUGIN,
-            ],
-            'subject' => [
-                'type' => PARAM_TEXT,
-            ],
-            'message' => [
-                'type' => PARAM_CLEANHTML,
-            ],
-            'messageformat' => [
-                'type' => PARAM_INT,
-                'default' => FORMAT_HTML,
-                'choices' => [
-                    FORMAT_MOODLE,
-                    FORMAT_HTML,
-                    FORMAT_PLAIN,
-                    FORMAT_MARKDOWN,
-                ],
             ],
             'userviewas' => [
                 'type' => PARAM_INT,
@@ -134,15 +126,6 @@ class schedule extends persistent {
                     self::RECURRENCE_WEEKLY,
                     self::RECURRENCE_MONTHLY,
                     self::RECURRENCE_ANNUALLY,
-                ],
-            ],
-            'reportempty' => [
-                'type' => PARAM_INT,
-                'default' => self::REPORT_EMPTY_SEND_EMPTY,
-                'choices' => [
-                    self::REPORT_EMPTY_SEND_EMPTY,
-                    self::REPORT_EMPTY_SEND_WITHOUT,
-                    self::REPORT_EMPTY_DONT_SEND,
                 ],
             ],
             'timelastsent' => [

@@ -25,6 +25,7 @@ use core_cohort\reportbuilder\audience\cohortmember;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\models\schedule as model;
 use core_reportbuilder\reportbuilder\audience\manual;
+use core_reportbuilder\reportbuilder\schedule\message;
 use core_user\reportbuilder\datasource\users;
 
 /**
@@ -64,17 +65,17 @@ final class schedule_test extends advanced_testcase {
         $schedule = schedule::create_schedule((object) [
             'name' => 'My schedule',
             'reportid' => $report->get('id'),
+            'classname' => message::class,
+            'configdata' => json_encode(['subject' => 'Hello', 'message' => 'Hola']),
             'format' => 'csv',
-            'subject' => 'Hello',
-            'message' => 'Hola',
             'timescheduled' => $timescheduled,
         ]);
 
         $this->assertEquals('My schedule', $schedule->get('name'));
         $this->assertEquals($report->get('id'), $schedule->get('reportid'));
+        $this->assertEquals(message::class, $schedule->get('classname'));
+        $this->assertEquals('{"subject":"Hello","message":"Hola"}', $schedule->get('configdata'));
         $this->assertEquals('csv', $schedule->get('format'));
-        $this->assertEquals('Hello', $schedule->get('subject'));
-        $this->assertEquals('Hola', $schedule->get('message'));
         $this->assertEquals($timescheduled, $schedule->get('timescheduled'));
         $this->assertEquals($timescheduled, $schedule->get('timenextsend'));
     }

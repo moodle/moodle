@@ -113,7 +113,7 @@ class schedule {
     public static function get_schedule_report_users(model $schedule): array {
         global $DB;
 
-        $audienceids = (array) json_decode($schedule->get('audiences'));
+        $audienceids = (array) json_decode((string) $schedule->get('audiences'));
 
         // Retrieve all selected audience records for the schedule.
         [$audienceselect, $audienceparams] = $DB->get_in_or_equal($audienceids, SQL_PARAMS_NAMED, 'aid', true, null);

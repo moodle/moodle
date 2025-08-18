@@ -205,12 +205,6 @@ class core_reportbuilder_generator extends component_generator_base {
         if (!array_key_exists('format', $record)) {
             $record['format'] = 'csv';
         }
-        if (!array_key_exists('subject', $record)) {
-            $record['subject'] = $record['name'] . ' subject';
-        }
-        if (!array_key_exists('message', $record)) {
-            $record['message'] = $record['name'] . ' message';
-        }
         if (!array_key_exists('timescheduled', $record)) {
             $record['timescheduled'] = usergetmidnight(di::get(clock::class)->time() + DAYSECS);
         }
