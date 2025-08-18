@@ -53,7 +53,13 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
-        $paths[] = new restore_path_element('assign', '/activity/assign');
+        $assign = new restore_path_element('assign', '/activity/assign');
+        $paths[] = $assign;
+
+        // Allow subplugins to restore data at assign level.
+        $this->add_subplugin_structure('assignsubmission', $assign);
+        $this->add_subplugin_structure('assignfeedback', $assign);
+
         if ($userinfo) {
             $submission = new restore_path_element('assign_submission',
                                                    '/activity/assign/submissions/submission');
