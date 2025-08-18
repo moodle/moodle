@@ -26,6 +26,10 @@ use context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
+    /** @var int Indicates that the standalone TinyMCE package should be used instead of the bundled version. */
+    public const PACKAGE_SOURCE_STANDALONE = 2;
+    /** @var int Indicates that the shipped TinyMCE package bundled with Moodle should be used. */
+    public const PACKAGE_SOURCE_SHIPPED = 1;
 
     /**
      * Get the configuration for all plugins.
