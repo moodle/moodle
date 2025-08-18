@@ -247,4 +247,126 @@ class mod_quiz_generator extends testing_module_generator {
         $gradeitem->id = $DB->insert_record('quiz_grade_items', $gradeitem);
         return $gradeitem;
     }
+
+    /**
+     * Create the structure of a quiz according to the provided layout.
+     *
+     * @param stdClass $quiz The quiz object.
+     * @param array $layout Layout describing questions and sections.
+     * @param int|null $categoryid Optional question category id.
+     */
+    public function create_quiz_structure($quiz, array $layout, ?int $categoryid = null): void {
+        $questiongenerator = $this->datagenerator->get_plugin_generator('core_question');
+        $catid = $categoryid ?? $questiongenerator->create_question_category()->id;
+
+        $headings = [];
+        $lastpage = 0;
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+        $course = get_course($quiz->course);
+        $quizobj = new quiz_settings($quiz, $cm, $course);
+
+        foreach ($layout as $item) {
+            if (is_string($item)) {
+                if (isset($headings[$lastpage + 1])) {
+                    throw new \coding_exception('Sections cannot be empty.');
+                }
+                $headings[$lastpage + 1] = $item;
+            } else {
+                [$name, $page, $qtype] = $item;
+                $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+                if ($page === 0) {
+                    $slots = $structure->get_slots();
+                    $lastslot = end($slots);
+                    $page = $lastslot ? $lastslot->page : 1;
+                }
+                if ($page < 1 || !($page == $lastpage + 1 || (!isset($headings[$lastpage + 1]) && $page == $lastpage))) {
+                    throw new \coding_exception('Page numbers wrong.');
+                }
+                $q = $questiongenerator->create_question($qtype, null, ['name' => $name, 'category' => $catid]);
+                quiz_add_quiz_question($q->id, $quiz, $page);
+                $lastpage = $page;
+            }
+        }
+
+        // Section heading logic.
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        if (isset($headings[1])) {
+            [$heading, $shuffle] = $this->parse_section_name($headings[1]);
+            $sections = $structure->get_sections();
+            $firstsection = reset($sections);
+            $structure->set_section_heading($firstsection->id, $heading);
+            $structure->set_section_shuffle($firstsection->id, $shuffle);
+            unset($headings[1]);
+        }
+        foreach ($headings as $startpage => $heading) {
+            [$heading, $shuffle] = $this->parse_section_name($heading);
+            $id = $structure->add_section_heading($startpage, $heading);
+            $structure->set_section_shuffle($id, $shuffle);
+        }
+    }
+
+    /**
+     * Creat a test quiz.
+     *
+     * $layout looks like this:
+     * $layout = [
+     *     'Heading 1'
+     *     ['TF1', 1, 'truefalse'],
+     *     'Heading 2*'
+     *     ['TF2', 2, 'truefalse'],
+     * ];
+     * That is, either a string, which represents a section heading,
+     * or an array that represents a question.
+     *
+     * If the section heading ends with *, that section is shuffled.
+     *
+     * The elements in the question array are name, page number, and question type.
+     *
+     * @param array $layout as above.
+     * @param array $settings optional quiz settings to override defaults.
+     * @return quiz_settings the created quiz.
+     */
+    public function create_test_quiz(array $layout, array $settings = []): quiz_settings {
+
+        // Default settings - only set defaults for keys not provided by the caller.
+        $defaults = [
+            'questionsperpage' => 0,
+            'grade' => 100.0,
+            'sumgrades' => 2,
+            'preferredbehaviour' => 'immediatefeedback',
+        ];
+
+        // Preserve any settings passed in, only add missing defaults.
+        $settings += $defaults;
+
+        // Create the course if needed.
+        if (empty($settings['course'])) {
+            $course = $this->datagenerator->create_course();
+            $settings['course'] = $course->id;
+        } else {
+            $course = get_course($settings['course']);
+        }
+
+        // Create the quiz, structure it, and return the quiz settings.
+        $quiz = $this->create_instance($settings);
+        $this->create_quiz_structure($quiz, $layout);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $settings['course']);
+
+        return new quiz_settings($quiz, $cm, $course);
+    }
+
+    /**
+     * Parse the section name, optionally followed by a * to mean shuffle, as
+     * used by create_test_quiz as assert_quiz_layout.
+     *
+     * @param string $heading the heading.
+     * @return array with two elements, the heading and the shuffle setting.
+     */
+    public function parse_section_name($heading): array {
+        if (str_ends_with($heading, '*')) {
+            return [substr($heading, 0, -1), 1];
+        } else {
+            return [$heading, 0];
+        }
+    }
 }
