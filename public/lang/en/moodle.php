@@ -991,6 +991,7 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the Moodle License information page for full details: https://moodledev.io/general/license';
+$string['gradable'] = 'Gradable';
 $string['grades'] = 'Grades';
 $string['gradenoun'] = 'Grade';
 $string['gradeverb'] = 'Grade';

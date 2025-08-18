@@ -47,7 +47,18 @@ Feature: Display and choose from the available activities in course
     When I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
     Then I should see "Assignment" in the "help" "core_course > Activity chooser screen"
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
+    And I should see "Supports" in the "help" "core_course > Activity chooser screen"
     And I should see "Assessment" in the "help" "core_course > Activity chooser screen"
+    And I should see "Gradable" in the "help" "core_course > Activity chooser screen"
+    And I should see "Yes" in the "help" "core_course > Activity chooser screen"
+    And I click on "Back" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Information about the Book activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should see "Book" in the "help" "core_course > Activity chooser screen"
+    And I should see "The book module enables a teacher to create a multi-page resource in a book-like format"
+    And I should see "Supports" in the "help" "core_course > Activity chooser screen"
+    And I should see "Resources" in the "help" "core_course > Activity chooser screen"
+    And I should see "Gradable" in the "help" "core_course > Activity chooser screen"
+    And I should see "No" in the "help" "core_course > Activity chooser screen"
     # Confirm show summary also works for weekly format course
     And I am on "C2" course homepage with editing mode on
     And I click on "Add content" "button" in the "13 January - 19 January" "section"

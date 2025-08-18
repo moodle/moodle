@@ -33,36 +33,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class content_item {
-    /** @var int $id the id. */
-    private $id;
-
-    /** @var string $name the name. */
-    private $name;
-
-    /** @var title $title the title. */
-    private $title;
-
-    /** @var \moodle_url $link the url for the content item's setup page (usually mod/edit.php). */
-    private $link;
-
-    /** @var string $icon an html string containing the icon for this item. */
-    private $icon;
-
-    /** @var string $help the description/help text for this content item. */
-    private $help;
-
-    /** @var int $achetype a module archetype, e.g. MOD_ARCHETYPE_RESOURCE, MOD_ARCHETYPE_OTHER. */
-    private $archetype;
-
-    /** @var string $componentname the name of the component from which this content item originates. */
-    private $componentname;
-
-    /** @var string $purpose the purpose type of this component. */
-    private $purpose;
-
-    /** @var bool $branded whether or not this component is branded. */
-    private $branded;
-
     /**
      * The content_item constructor.
      *
@@ -76,19 +46,32 @@ class content_item {
      * @param string $componentname the name of the component/plugin with which this content item is associated.
      * @param string $purpose the purpose type of this component.
      * @param bool $branded whether or not this item is branded.
+     * @param bool $gradable whether or not this item is gradable.
      */
-    public function __construct(int $id, string $name, title $title, \moodle_url $link, string $icon, string $help,
-            int $archetype, string $componentname, string $purpose, bool $branded = false) {
-        $this->id = $id;
-        $this->name = $name;
-        $this->title = $title;
-        $this->link = $link;
-        $this->icon = $icon;
-        $this->help = $help;
-        $this->archetype = $archetype;
-        $this->componentname = $componentname;
-        $this->purpose = $purpose;
-        $this->branded = $branded;
+    public function __construct(
+        /** @var int $id the id. */
+        private int $id,
+        /** @var string $name the name. */
+        private string $name,
+        /** @var title $title the title. */
+        private title $title,
+        /** @var \moodle_url $link the url for the content item's setup page (usually mod/edit.php). */
+        private \moodle_url $link,
+        /** @var string $icon an html string containing the icon for this item. */
+        private string $icon,
+        /** @var string $help the description/help text for this content item. */
+        private string $help,
+        /** @var int $archetype a module archetype, e.g. MOD_ARCHETYPE_RESOURCE, MOD_ARCHETYPE_OTHER. */
+        private int $archetype,
+        /** @var string $componentname the name of the component from which this content item originates. */
+        private string $componentname,
+        /** @var string $purpose the purpose type of this component. */
+        private string $purpose,
+        /** @var bool $branded whether or not this component is branded. */
+        private bool $branded = false,
+        /** @var bool $gradable whether or not this component is gradable. */
+        private bool $gradable = false,
+    ) {
     }
 
     /**
@@ -178,5 +161,14 @@ class content_item {
      */
     public function is_branded(): bool {
         return $this->branded;
+    }
+
+    /**
+     * Whether this item is gradable.
+     *
+     * @return bool true if this item is gradable, false otherwise.
+     */
+    public function is_gradable(): bool {
+        return $this->gradable;
     }
 }
