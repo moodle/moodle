@@ -168,16 +168,6 @@ class course extends base {
             case 'summary':
                 $fieldtype = column::TYPE_LONGTEXT;
                 break;
-            case 'groupmode':
-                $fieldtype = column::TYPE_INTEGER;
-                break;
-            case 'calendartype':
-            case 'idnumber':
-            case 'format':
-            case 'fullname':
-            case 'lang':
-            case 'shortname':
-            case 'theme':
             default:
                 $fieldtype = column::TYPE_TEXT;
                 break;
@@ -241,15 +231,13 @@ class course extends base {
         }
 
         foreach ($coursefields as $coursefield => $coursefieldlang) {
-            $columntype = $this->get_course_field_type($coursefield);
-
             $column = (new column(
                 $coursefield,
                 $coursefieldlang,
                 $this->get_entity_name()
             ))
                 ->add_joins($this->get_joins())
-                ->set_type($columntype)
+                ->set_type($this->get_course_field_type($coursefield))
                 ->add_field("{$tablealias}.{$coursefield}")
                 ->add_callback([$this, 'format'], $coursefield)
                 ->set_is_sortable(true);
