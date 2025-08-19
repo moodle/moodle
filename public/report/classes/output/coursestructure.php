@@ -276,8 +276,6 @@ class coursestructure implements \renderable, \templatable {
             return [];
         }
 
-        $modulename = get_string('modulename', $cm->modname);
-
         $dataactivity = [
             'isactivity' => true,
             'indelegated' => $indelegated,
@@ -286,7 +284,7 @@ class coursestructure implements \renderable, \templatable {
         ];
 
         $activityicon = activity_icon::from_cm_info($cm)
-            ->set_icon_size(iconsize::SIZE4);
+            ->set_extra_classes('smaller');
 
         $dataactivity['activitycolumn'] = [
                 'activityicon' => $output->render($activityicon),
