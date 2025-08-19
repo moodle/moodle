@@ -1,0 +1,8 @@
+issueNumber: MDL-86332
+notes:
+  core_completion:
+    - message: >-
+        The `completion_info::clear_criteria` method takes an optional
+        `$removetypecriteria` to determine whether to remove course type
+        criteria from other courses that refer to the current course
+      type: changed
