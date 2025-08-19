@@ -161,6 +161,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- Added new `gradable` property to `core_course\local\entity\content_item`
+
+  For more information see [MDL-86036](https://tracker.moodle.org/browse/MDL-86036)
 - - The following classes have been renamed and now support autoloading.
     Existing classes are currently unaffected.
 
