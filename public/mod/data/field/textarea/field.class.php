@@ -31,12 +31,53 @@ require_once($CFG->dirroot.'/repository/lib.php');
 class data_field_textarea extends data_field_base {
 
     var $type = 'textarea';
+
+    /**
+     * Prefix for the field name to split field id and the random part.
+     * @var string
+     */
+    protected const RND_PREFIX = 'xZx';
+
     /**
      * priority for globalsearch indexing
      *
      * @var int
      */
     protected static $priority = self::LOW_PRIORITY;
+
+    /**
+     * The field name for the content field.
+     *
+     * @var string|null
+     */
+    protected $fieldname = null;
+
+    /**
+     * Returns a random field name for the content field.
+     *
+     * @return string
+     */
+    protected function get_content_field_name(): string {
+        if ($this->fieldname === null) {
+            $this->fieldname = sprintf(
+                'field_%s_%s%s',
+                $this->field->id,
+                self::RND_PREFIX,
+                bin2hex(random_bytes(5))
+            );
+        }
+        return $this->fieldname;
+    }
+
+    /**
+     * Check if the given field name is the content field that contains the actual data.
+     *
+     * @param string $name
+     * @return bool
+     */
+    protected function is_content_field(string $name): bool {
+        return (strlen($name) === 13 && substr($name, 0, 3) === self::RND_PREFIX);
+    }
 
     public function supports_preview(): bool {
         return true;
@@ -82,7 +123,7 @@ class data_field_textarea extends data_field_base {
         $text   = '';
         $format = 0;
         $str = '<div title="' . s($this->field->description) . '" class="d-inline-flex">';
-        $str .= '<label for="field_' . $this->field->id . '">';
+        $str .= '<label for="' . $this->get_content_field_name() . '">';
         $str .= html_writer::span($this->field->name, 'accesshide');
         if ($this->field->required) {
             $image = $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
@@ -109,9 +150,12 @@ class data_field_textarea extends data_field_base {
             } else {
                 $draftitemid = file_get_unused_draft_itemid();
             }
-            $fieldname = 'field_' . $this->field->id;
-            if (isset($formdata->$fieldname)) {
-                $text = $formdata->$fieldname;
+            $fieldname = 'field_' . $this->field->id . '_' . self::RND_PREFIX;
+            foreach (array_keys(get_object_vars($formdata)) as $prop) {
+                if (strpos($prop, $fieldname) === 0) {
+                    $text = $formdata->$prop;
+                    break;
+                }
             }
         } else if ($recordid &&
                    $content = $DB->get_record('data_content', array('fieldid' => $this->field->id, 'recordid' => $recordid))) {
@@ -181,11 +225,11 @@ class data_field_textarea extends data_field_base {
             $formats[$fid] = $strformats[$fid];
         }
         $editor->set_text($text);
-        $editor->use_editor($field, $options, $fpoptions);
+        $editor->use_editor($this->get_content_field_name(), $options, $fpoptions);
         $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.s($draftitemid).'" />';
         $str .= '<div class="mod-data-input">';
-        $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="'.$this->field->param3.'" class="form-control" ' .
-            'data-fieldtype="editor" ' .
+        $str .= '<div><textarea id="' . $this->get_content_field_name() . '" name="' . $this->get_content_field_name() . '" ' .
+            'rows="'.$this->field->param3 . '" class="form-control" data-fieldtype="editor" ' .
             'cols="'.$this->field->param2.'" spellcheck="true">'.s($text).'</textarea></div>';
         $str .= '<div><label class="accesshide" for="' . $field . '_content1">' . get_string('format') . '</label>';
         $str .= '<select id="' . $field . '_content1" name="'.$field.'_content1" class="form-select mt-2">';
@@ -200,7 +244,6 @@ class data_field_textarea extends data_field_base {
         $str .= '</div>';
         return $str;
     }
-
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_' . $this->field->id . '">' . s($this->field->name) . '</label>' .
@@ -241,11 +284,13 @@ class data_field_textarea extends data_field_base {
             if ($names[2] == 'itemid') {
                 // the value will be retrieved by file_get_submitted_draft_itemid, do not need to save in DB
                 return true;
+            } else if ($this->is_content_field($names[2])) {
+                $content->content = clean_param($value, PARAM_RAW_TRIMMED);
             } else {
                 $content->{$names[2]} = clean_param($value, PARAM_NOTAGS);  // content[1-4]
             }
         } else {
-            $content->content = clean_param($value, PARAM_CLEAN);
+            $content->content = clean_param($value, PARAM_RAW_TRIMMED);
         }
 
         if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
@@ -317,6 +362,9 @@ class data_field_textarea extends data_field_base {
         // Clean first.
         if (count($names) == 2) {
             // Don't assume that this is coming from a text editor with tags.
+            return strval($value) !== '';
+        }
+        if ($this->is_content_field($names[2])) {
             return strval($value) !== '';
         }
         return false;
