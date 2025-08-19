@@ -26,14 +26,10 @@ use stdClass;
 use core_reportbuilder\permission;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\filters\{boolean_select, date, text};
 use core_reportbuilder\local\helpers\format;
-use core_reportbuilder\local\models\report;
-use core_reportbuilder\local\models\schedule;
-use core_reportbuilder\local\report\action;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\models\{report, schedule};
+use core_reportbuilder\local\report\{action, column, filter};
 use core_reportbuilder\output\schedule_name_editable;
 
 /**
@@ -253,14 +249,23 @@ class report_schedules extends system_report {
     protected function add_filters(): void {
         $tablealias = $this->get_main_table_alias();
 
+        // Enabled filter.
+        $this->add_filter(new filter(
+            boolean_select::class,
+            'enabled',
+            new lang_string('enabled', 'core_admin'),
+            $this->get_schedule_entity_name(),
+            "{$tablealias}.enabled",
+        ));
+
         // Name filter.
-        $this->add_filter((new filter(
+        $this->add_filter(new filter(
             text::class,
             'name',
             new lang_string('name'),
             $this->get_schedule_entity_name(),
             "{$tablealias}.name"
-        )));
+        ));
 
         // Time last sent filter.
         $this->add_filter((new filter(
