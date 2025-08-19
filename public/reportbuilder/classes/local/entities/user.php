@@ -601,7 +601,7 @@ class user extends base {
      * @return string[]
      */
     public static function get_options_for_theme(): array {
-        return array_map(
+        return ['' => get_string('default')] + array_map(
             fn(theme_config $theme) => $theme->get_theme_name(),
             get_list_of_themes(),
         );

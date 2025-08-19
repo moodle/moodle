@@ -95,35 +95,41 @@ final class cohorts_test extends core_reportbuilder_testcase {
         $field = $generator->create_field(['categoryid' => $fieldcategory->get('id'), 'shortname' => 'hi']);
 
         // Test subject.
-        $cohort = $this->getDataGenerator()->create_cohort([
-            'name' => 'Legends',
-            'idnumber' => 'C101',
-            'description' => 'Cohort for the legends',
+        $cohortone = $this->getDataGenerator()->create_cohort([
+            'name' => 'Cohort 1',
             'theme' => 'boost',
             'customfield_hi' => 'Hello',
         ]);
+        $cohorttwo = $this->getDataGenerator()->create_cohort(['name' => 'Cohort 2']);
 
         $user = $this->getDataGenerator()->create_user(['firstname' => 'Lionel', 'lastname' => 'Richards']);
-        cohort_add_member($cohort->id, $user->id);
+        cohort_add_member($cohortone->id, $user->id);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Cohorts', 'source' => cohorts::class, 'default' => 0]);
 
+        // Cohort.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:name',
+            'sortenabled' => true]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:visible']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:timecreated']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:timemodified']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:component']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:theme']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:customfield_hi']);
+
+        // Cohort member.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort_member:timeadded']);
+
+        // User.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
+        $this->assertCount(2, $content);
 
-        [$visible, $timecreated, $timemodified, $component, $theme, $custom, $timeadded, $fullname] = array_values($content[0]);
-
+        [, $visible, $timecreated, $timemodified, $component, $theme, $custom, $timeadded, $fullname] =
+            array_values($content[0]);
         $this->assertEquals('Yes', $visible);
         $this->assertNotEmpty($timecreated);
         $this->assertNotEmpty($timemodified);
@@ -132,6 +138,17 @@ final class cohorts_test extends core_reportbuilder_testcase {
         $this->assertEquals('Hello', $custom);
         $this->assertNotEmpty($timeadded);
         $this->assertEquals(fullname($user), $fullname);
+
+        [, $visible, $timecreated, $timemodified, $component, $theme, $custom, $timeadded, $fullname] =
+            array_values($content[1]);
+        $this->assertEquals('Yes', $visible);
+        $this->assertNotEmpty($timecreated);
+        $this->assertNotEmpty($timemodified);
+        $this->assertEquals('Created manually', $component);
+        $this->assertEquals('Do not force', $theme);
+        $this->assertEmpty($custom);
+        $this->assertEmpty($timeadded);
+        $this->assertEmpty($fullname);
     }
 
     /**
@@ -190,7 +207,7 @@ final class cohorts_test extends core_reportbuilder_testcase {
             ], true],
             'Filter theme (no match)' => ['cohort:theme', [
                 'cohort:theme_operator' => select::EQUAL_TO,
-                'cohort:theme_value' => 'classic',
+                'cohort:theme_value' => '',
             ], false],
             'Filter visible' => ['cohort:visible', [
                 'cohort:visible_operator' => boolean_select::CHECKED,
