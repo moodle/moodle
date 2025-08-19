@@ -239,6 +239,7 @@ class provider implements
             $params = (isset($user)) ? ['userid' => $user->id, 'coursemoduleid' => $cmid] : ['coursemoduleid' => $cmid];
             // Only delete the record for course modules completion.
             $DB->delete_records('course_modules_completion', $params);
+            $DB->delete_records('course_modules_viewed', $params);
             return;
         }
 
