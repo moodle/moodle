@@ -31,7 +31,6 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class overview_test extends \advanced_testcase {
-
     use testcase_helper_trait;
     /**
      * Test get_actions_overview.
@@ -91,6 +90,7 @@ final class overview_test extends \advanced_testcase {
      * Test get_extra_date_open method.
      *
      * @param int|null $timeincrement
+     *
      * @dataProvider get_extra_date_data
      */
     public function test_get_extra_date_open(?int $timeincrement): void {
@@ -118,6 +118,7 @@ final class overview_test extends \advanced_testcase {
      * Test get_extra_date_close method.
      *
      * @param int|null $timeincrement
+     *
      * @dataProvider get_extra_date_data
      */
     public function test_get_extra_date_close(?int $timeincrement): void {
@@ -218,8 +219,7 @@ final class overview_test extends \advanced_testcase {
      *
      * @param string $activityname
      * @param int $recordingcount
-     * @throws \coding_exception
-     * @throws \moodle_exception
+     *
      * @dataProvider get_extra_recordings_overview_data
      */
     public function test_get_extra_recordings_overview(string $activityname, int $recordingcount): void {
