@@ -8,7 +8,7 @@ Feature: Welcome message on boost
     Given the following config values are set as admin:
       | defaulthomepage | 0 |
     When I log in as "admin"
-    Then I should not see "Acceptance test site" in the "page-header" "region"
+    Then I should see "Acceptance test site" in the "page-header" "region"
     And I should see "Welcome, Admin!" in the "page-header" "region"
     And I reload the page
     And I should not see "Welcome, Admin!" in the "page-header" "region"
@@ -18,7 +18,7 @@ Feature: Welcome message on boost
     Given the following config values are set as admin:
       | defaulthomepage | 1 |
     When I log in as "admin"
-    Then I should not see "Dashboard" in the "page-header" "region"
+    Then I should see "Dashboard" in the "page-header" "region"
     And I should see "Welcome, Admin!" in the "page-header" "region"
     And I reload the page
     And I should not see "Welcome, Admin!" in the "page-header" "region"
@@ -28,7 +28,7 @@ Feature: Welcome message on boost
     Given the following config values are set as admin:
       | defaulthomepage | 3 |
     When I log in as "admin"
-    Then I should not see "My courses" in the "page-header" "region"
+    Then I should see "My courses" in the "page-header" "region"
     And I should see "Welcome, Admin!" in the "page-header" "region"
     And I reload the page
     And I should not see "Welcome, Admin!" in the "page-header" "region"
