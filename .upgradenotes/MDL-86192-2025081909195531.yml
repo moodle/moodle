@@ -1,0 +1,9 @@
+issueNumber: MDL-86192
+notes:
+  mod_bigbluebuttonbn:
+    - message: >-
+        Add a new parameter to the
+        mod_bigbluebuttonbn\recording::get_recordings_for_instance so to ignore
+        instance group settings and return all recordings. This is an optional
+        argement and no change is expected from existing calls.
+      type: improved
