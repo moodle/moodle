@@ -45,17 +45,19 @@
             </div>
         </div>
         <div class="d-flex align-items-center">
-            {{^welcomemessage}}
+            <div class="me-auto d-flex flex-column">
                 {{#contextheader}}
-                    <div class="me-auto">
-                        {{{contextheader}}}
-                    </div>
+                <div>
+                    {{{contextheader}}}
+                </div>
                 {{/contextheader}}
-            {{/welcomemessage}}
-            {{> core/welcome }}
+                <div>
+                    {{> core/welcome }}
+                </div>
+            </div>
             <div class="header-actions-container ms-auto" data-region="header-actions-container">
                 {{#headeractions}}
-                    <div class="header-action ms-2">{{{.}}}</div>
+                <div class="header-action ms-2">{{{.}}}</div>
                 {{/headeractions}}
             </div>
         </div>
