@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for block_activity_modules.
+ * Privacy Subsystem implementation for calendartype_gregorian.
  *
  * @package    calendartype_gregorian
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
