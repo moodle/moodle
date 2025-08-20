@@ -528,6 +528,8 @@ class icon_system_fontawesome extends icon_system_font {
                 'core:e/insert_col_before',
                 'core:e/split_cells',
                 'core:e/text_color',
+                'core:e/text_highlight',
+                'core:e/text_highlight_picker',
                 'core:t/locktime',
             ],
         );
