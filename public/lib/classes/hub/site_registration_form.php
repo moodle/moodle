@@ -77,8 +77,12 @@ class site_registration_form extends \moodleform {
 
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));
 
-        $mform->addElement('text', 'name', get_string('organisationname', 'hub'),
-            array('class' => 'registration_textfield', 'maxlength' => 255));
+        $mform->addElement(
+            'text',
+            'name',
+            get_string('organisationname', 'hub'),
+            ['class' => 'registration_textfield', 'maxlength' => 255],
+        );
         $mform->setType('name', PARAM_TEXT);
         $mform->addHelpButton('name', 'organisationname', 'hub');
 
@@ -95,8 +99,7 @@ class site_registration_form extends \moodleform {
         $mform->addHelpButton('privacy', 'siteprivacy', 'hub');
         unset($options);
 
-        $mform->addElement('textarea', 'description', get_string('sitedesc', 'hub'),
-            array('rows' => 3, 'cols' => 41));
+        $mform->addElement('textarea', 'description', get_string('sitedesc', 'hub'), ['rows' => 3, 'cols' => 41]);
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'sitedesc', 'hub');
 
@@ -134,8 +137,7 @@ class site_registration_form extends \moodleform {
         $mform->setType('contactphone', PARAM_TEXT);
         $mform->addHelpButton('contactphone', 'sitephone', 'hub');
 
-        $mform->addElement('text', 'contactemail', get_string('siteemail', 'hub'),
-            array('class' => 'registration_textfield'));
+        $mform->addElement('text', 'contactemail', get_string('siteemail', 'hub'), ['class' => 'registration_textfield']);
         $mform->addRule('contactemail', $strrequired, 'required', null, 'client');
         $mform->setType('contactemail', PARAM_EMAIL);
         $mform->addHelpButton('contactemail', 'siteemail', 'hub');
@@ -145,8 +147,7 @@ class site_registration_form extends \moodleform {
         // Admin notification emails.
         $mform->addElement('checkbox', 'emailalert', get_string('siteregistrationemail', 'hub'), get_string('registrationyes'));
         $mform->setDefault('emailalert', 1);
-        $mform->addElement('checkbox', 'emailalertdifferentemail', get_string('email'),
-            get_string('usedifferentemail', 'hub'));
+        $mform->addElement('checkbox', 'emailalertdifferentemail', get_string('email'), get_string('usedifferentemail', 'hub'));
         $mform->hideif('emailalertdifferentemail', 'emailalert', 'notchecked');
 
         $mform->addElement('text', 'emailalertemail', '', ['maxlength' => 100]);
@@ -171,8 +172,7 @@ class site_registration_form extends \moodleform {
         $mform->hideif('commnewslastname', 'commnews', 'notchecked');
         $mform->setDefault('commnewslastname', $admin->lastname);
 
-        $mform->addElement('checkbox', 'commnewsdifferentemail', get_string('email'),
-            get_string('usedifferentemail', 'hub'));
+        $mform->addElement('checkbox', 'commnewsdifferentemail', get_string('email'), get_string('usedifferentemail', 'hub'));
         $mform->hideif('commnewsdifferentemail', 'commnews', 'notchecked');
 
         $mform->addElement('text', 'commnewsemail', '', ['maxlength' => 100]);
@@ -186,8 +186,12 @@ class site_registration_form extends \moodleform {
         $mform->addElement('hidden', 'imageurl', ''); // TODO: temporary.
         $mform->setType('imageurl', PARAM_URL);
 
-        $mform->addElement('checkbox', 'policyagreed', get_string('policyagreed', 'hub'),
-            get_string('policyagreeddesc', 'hub', HUB_MOODLEORGHUBURL . '/privacy'));
+        $mform->addElement(
+            'checkbox',
+            'policyagreed',
+            get_string('policyagreed', 'hub'),
+            get_string('policyagreeddesc', 'hub', HUB_MOODLEORGHUBURL . '/privacy'),
+        );
         $mform->addRule('policyagreed', $strrequired, 'required', null, 'client');
 
         $mform->addElement('header', 'sitestats', get_string('sendfollowinginfo', 'hub'));
@@ -196,7 +200,12 @@ class site_registration_form extends \moodleform {
         $mform->addHelpButton('urlstring', 'siteurl', 'hub');
 
         // Display statistic that are going to be retrieve by the sites directory.
-        $mform->addElement('static', 'siteinfosummary', get_string('sendfollowinginfo', 'hub'), registration::get_stats_summary($siteinfo));
+        $mform->addElement(
+            'static',
+            'siteinfosummary',
+            get_string('sendfollowinginfo', 'hub'),
+            registration::get_stats_summary($siteinfo),
+        );
 
         // Check if it's a first registration or update.
         if ($registered) {
