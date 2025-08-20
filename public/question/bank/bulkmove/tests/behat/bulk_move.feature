@@ -221,3 +221,58 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "move" "button"
     And I open the autocomplete suggestions list in the ".search-banks" "css_element"
     Then "New question bank" "autocomplete_suggestions" should exist
+
+  @javascript
+  Scenario: Clicking the dummy option for showing the reached limit in course does not throw an error
+    Given the following "activities" exist:
+      | activity | name                      | course | idnumber  |
+      | qbank    | Question bank Course 1 1  | C1     | qbankc101 |
+      | qbank    | Question bank Course 1 2  | C1     | qbankc102 |
+      | qbank    | Question bank Course 1 3  | C1     | qbankc103 |
+      | qbank    | Question bank Course 1 4  | C1     | qbankc104 |
+      | qbank    | Question bank Course 1 5  | C1     | qbankc105 |
+      | qbank    | Question bank Course 1 6  | C1     | qbankc106 |
+      | qbank    | Question bank Course 1 7  | C1     | qbankc107 |
+      | qbank    | Question bank Course 1 8  | C1     | qbankc108 |
+      | qbank    | Question bank Course 1 9  | C1     | qbankc109 |
+      | qbank    | Question bank Course 1 10 | C1     | qbankc110 |
+      | qbank    | Question bank Course 2 1  | C2     | qbankc201 |
+      | qbank    | Question bank Course 2 2  | C2     | qbankc202 |
+      | qbank    | Question bank Course 2 3  | C2     | qbankc203 |
+      | qbank    | Question bank Course 2 4  | C2     | qbankc204 |
+      | qbank    | Question bank Course 2 5  | C2     | qbankc205 |
+      | qbank    | Question bank Course 2 6  | C2     | qbankc206 |
+      | qbank    | Question bank Course 2 7  | C2     | qbankc207 |
+      | qbank    | Question bank Course 2 8  | C2     | qbankc208 |
+      | qbank    | Question bank Course 2 9  | C2     | qbankc209 |
+      | qbank    | Question bank Course 2 10 | C2     | qbankc210 |
+      | qbank    | Question bank Course 3 1  | C3     | qbankc301 |
+      | qbank    | Question bank Course 3 2  | C3     | qbankc302 |
+      | qbank    | Question bank Course 3 2  | C3     | qbankc303 |
+      | qbank    | Question bank Course 3 4  | C3     | qbankc304 |
+      | qbank    | Question bank Course 3 5  | C3     | qbankc305 |
+      | qbank    | Question bank Course 3 6  | C3     | qbankc306 |
+      | qbank    | Question bank Course 3 7  | C3     | qbankc307 |
+      | qbank    | Question bank Course 3 8  | C3     | qbankc308 |
+      | qbank    | Question bank Course 3 9  | C3     | qbankc309 |
+      | qbank    | Question bank Course 3 10 | C3     | qbankc310 |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C3     | editingteacher |
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Question banks" in current page administration
+    And I follow "Question bank 1"
+    And I select "Categories" from the "Question bank tertiary navigation" singleselect
+    And I follow "Test questions 5"
+    And I click on "Fifth question" "checkbox"
+    And I click on "With selected" "button"
+    And I click on "move" "button"
+    And I wait until the page is ready
+    And "Question bank" "autocomplete_selection" should exist
+    And I press the tab key
+    And I press the tab key
+    And I press the tab key
+    And I type "Question bank Course"
+    Then I click on "More than 20 results. You need to refine your search." item in the autocomplete list
+    And "More than 20 results. You need to refine your search." "autocomplete_selection" should exist
+    And I should see "You must select a question bank before you can select a category."
