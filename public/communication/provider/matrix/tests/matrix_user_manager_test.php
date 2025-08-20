@@ -147,7 +147,7 @@ final class matrix_user_manager_test extends \advanced_testcase {
                 null,
                 'https://matrix.example.org',
                 '123456',
-                '@' . matrix_user_manager::MATRIX_USER_PREFIX . '123456:matrix.example.org',
+                '@user123456:matrix.example.org',
             ],
         ];
     }

@@ -43,4 +43,11 @@ if ($hassiteconfig) {
     // Element web URL.
     $name = new lang_string('matrixelementurl', 'communication_matrix');
     $settings->add(new admin_setting_configtext('communication_matrix/matrixelementurl', $name, '', ''));
+
+    // User prefix for numeric usernames.
+    $name = new lang_string('matrixuserprefix', 'communication_matrix');
+    $desc = new lang_string('matrixuserprefix_desc', 'communication_matrix');
+    $default = \communication_matrix\matrix_user_manager::MATRIX_USER_PREFIX;
+    $settings->add(new communication_matrix_admin_setting_user_prefix_configtext('communication_matrix/matrixuserprefix',
+        $name, $desc, $default, PARAM_RAW_TRIMMED));
 }
