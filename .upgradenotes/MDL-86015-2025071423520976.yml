@@ -1,0 +1,8 @@
+issueNumber: MDL-86015
+notes:
+  core:
+    - message: >-
+        The `\core\output\local\dropdown\dialog` class constructor now accepts a
+        `$definition['autoclose']` parameter to define autoclose behaviour of
+        the element
+      type: changed

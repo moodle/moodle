@@ -71,7 +71,7 @@
         <input type="hidden" name="action" value="{{action}}">
         {{#filters}}
             {{#markingworkflow}}
-                <div class="d-flex flex-wrap m-0 pb-3">
+                <div class="d-flex flex-wrap gap-2 m-0 pb-3">
                     <label class="w-100" for="filter-workflow-{{uniqid}}">
                         {{#str}}markingstate, mod_assign{{/str}}
                     </label>
@@ -83,7 +83,7 @@
                 </div>
             {{/markingworkflow}}
             {{#markingallocation}}
-                <div class="d-flex flex-wrap m-0 pb-3">
+                <div class="d-flex flex-wrap gap-2 m-0 pb-3">
                     <label class="w-100" for="filter-marking-allocation-{{uniqid}}">
                         {{#str}}marker, mod_assign{{/str}}
                     </label>
@@ -95,7 +95,7 @@
                 </div>
             {{/markingallocation}}
             {{#suspendedparticipants}}
-                <div class="d-flex flex-wrap m-0 pb-3 pt-2 mx-1 align-items-center">
+                <div class="d-flex flex-wrap gap-2 m-0 pb-3 pt-2 mx-1 align-items-center">
                     <input type="hidden" name="suspendedparticipantsfilter" value="0" {{#active}}disabled{{/active}}>
                     <input type="checkbox" id="filter-suspended-participants-{{uniqid}}" name="suspendedparticipantsfilter" value="1" {{#active}}checked{{/active}}>
                     <label for="filter-suspended-participants-{{uniqid}}" class='m-0' >{{#str}} includesuspendedparticipants, mod_assign {{/str}}</label>
