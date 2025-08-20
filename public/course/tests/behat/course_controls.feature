@@ -69,14 +69,6 @@ Feature: Course activity controls works as expected
     And section "1" should be visible
     And I am on the "C1 > Section 1" "course > section" page
     And <belowpage> "section" should not exist
-    And the following config values are set as admin:
-      | showsectionname | 0 | block_section_links |
-      | unaddableblocks |   | theme_boost         |
-    And I add the "Section links" block
-    And <belowpage> "section" should not exist
-    And I should see "1 2 3 4 5" in the "Section links" "block"
-    And I click on "2" "link" in the "Section links" "block"
-    And I should not see "Test forum name 2"
 
     Examples:
       | courseformat | coursedisplay | initsections | targetsectionnum | targetpage              | belowpage                |
@@ -135,13 +127,6 @@ Feature: Course activity controls works as expected
     And all activities in section "1" should be hidden
     And I show section "1"
     And section "1" should be visible
-    And the following config values are set as admin:
-      | showsectionname | 0 | block_section_links |
-      | unaddableblocks |   | theme_boost         |
-    And I add the "Section links" block
-    And I should see "1 2 3 4 5" in the "Section links" "block"
-    And I click on "2" "link" in the "Section links" "block"
-    And I should not see "Test forum name 2"
 
     Examples:
       | courseformat | coursedisplay | initsections | targetsectionnum | targetpage              | belowpage                |

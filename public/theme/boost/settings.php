@@ -27,9 +27,8 @@ if ($ADMIN->fulltree) {
     $page = new admin_settingpage('theme_boost_general', get_string('generalsettings', 'theme_boost'));
 
     // Unaddable blocks.
-    // Blocks to be excluded when this theme is enabled in the "Add a block" list: Administration, Navigation, Courses and
-    // Section links.
-    $default = 'navigation,settings,course_list,section_links';
+    // Blocks to be excluded when this theme is enabled in the "Add a block" list: Administration, Navigation and Courses.
+    $default = 'navigation,settings,course_list';
     $setting = new admin_setting_configtext('theme_boost/unaddableblocks',
         get_string('unaddableblocks', 'theme_boost'), get_string('unaddableblocks_desc', 'theme_boost'), $default, PARAM_TEXT);
     $page->add($setting);

@@ -846,11 +846,10 @@ final class blocklib_test extends \advanced_testcase {
         $blockmanager->load_blocks();
         $blocks = $blockmanager->get_unaddable_by_theme_block_types();
         // Assert that a few blocks are excluded for boost theme.
-        $this->assertCount(4, $blocks);
+        $this->assertCount(3, $blocks);
         $this->assertContains('navigation', $blocks);
         $this->assertContains('settings', $blocks);
         $this->assertContains('course_list', $blocks);
-        $this->assertContains('section_links', $blocks);
 
         // Change to a theme without unaddable blocks.
         $PAGE->reset_theme_and_output();
