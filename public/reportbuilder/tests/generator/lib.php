@@ -18,13 +18,10 @@ declare(strict_types=1);
 
 use core\{clock, di};
 use core_reportbuilder\manager;
-use core_reportbuilder\local\helpers\report as helper;
-use core_reportbuilder\local\helpers\schedule as schedule_helper;
-use core_reportbuilder\local\models\column;
-use core_reportbuilder\local\models\filter;
-use core_reportbuilder\local\models\report;
-use core_reportbuilder\local\models\schedule;
 use core_reportbuilder\local\audiences\base as audience_base;
+use core_reportbuilder\local\helpers\report as helper;
+use core_reportbuilder\local\models\{column, filter, report, schedule};
+use core_reportbuilder\local\schedules\base as schedule_base;
 
 /**
  * Report builder test generator
@@ -177,10 +174,9 @@ class core_reportbuilder_generator extends component_generator_base {
 
         // Default to all users if not specified, for convenience.
         /** @var audience_base $classname */
-        $classname = $record['classname'] ??
-            \core_reportbuilder\reportbuilder\audience\allusers::class;
+        $classname = $record['classname'] ?? \core_reportbuilder\reportbuilder\audience\allusers::class;
 
-        return ($classname)::create($record['reportid'], $record['configdata']);
+        return $classname::create($record['reportid'], $record['configdata']);
     }
 
     /**
@@ -209,6 +205,10 @@ class core_reportbuilder_generator extends component_generator_base {
             $record['timescheduled'] = usergetmidnight(di::get(clock::class)->time() + DAYSECS);
         }
 
-        return schedule_helper::create_schedule((object) $record);
+        // Default to message schedule if not specified, for convenience.
+        /** @var schedule_base $classname */
+        $classname = $record['classname'] ?? \core_reportbuilder\reportbuilder\schedule\message::class;
+
+        return $classname::create((object) $record)->get_persistent();
     }
 }

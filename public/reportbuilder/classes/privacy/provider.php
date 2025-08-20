@@ -30,6 +30,7 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\schedule as schedule_helper;
+use core_reportbuilder\local\schedules\base;
 use core_reportbuilder\local\models\{audience, column, filter, report, schedule, user_filter};
 
 /**
@@ -95,13 +96,12 @@ class provider implements
             'name' => 'privacy:metadata:schedule:name',
             'enabled' => 'privacy:metadata:schedule:enabled',
             'audiences' => 'privacy:metadata:schedule:audiences',
+            'classname' => 'privacy:metadata:schedule:classname',
+            'configdata' => 'privacy:metadata:schedule:configdata',
             'format' => 'privacy:metadata:schedule:format',
-            'subject' => 'privacy:metadata:schedule:subject',
-            'message' => 'privacy:metadata:schedule:message',
             'userviewas' => 'privacy:metadata:schedule:userviewas',
             'timescheduled' => 'privacy:metadata:schedule:timescheduled',
             'recurrence' => 'privacy:metadata:schedule:recurrence',
-            'reportempty' => 'privacy:metadata:schedule:reportempty',
             'usercreated' => 'privacy:metadata:schedule:usercreated',
             'usermodified' => 'privacy:metadata:schedule:usermodified',
             'timecreated' => 'privacy:metadata:schedule:timecreated',
@@ -367,31 +367,38 @@ class provider implements
         $formatoptions = schedule_helper::get_format_options();
         $recurrenceoptions = schedule_helper::get_recurrence_options();
         $viewasoptions = schedule_helper::get_viewas_options();
-        $reportemptyoptions = schedule_helper::get_report_empty_options();
 
-        $scheduledata = array_map(static function(schedule $schedule) use (
-                $context, $formatoptions, $recurrenceoptions, $viewasoptions, $reportemptyoptions): stdClass {
+        $scheduledata = array_map(
+            static function (schedule $schedule) use (
+                $context,
+                $formatoptions,
+                $recurrenceoptions,
+                $viewasoptions,
+            ): stdClass {
+                // Show the schedule name, if it exists.
+                $scheduleinstance = base::from_persistent($schedule);
 
-            // The "User view as" property will be either creator, recipient or a specific userid.
-            $userviewas = $schedule->get('userviewas');
+                // The "User view as" property will be either creator, recipient or a specific userid.
+                $userviewas = $schedule->get('userviewas');
 
-            return (object) [
-                'name' => $schedule->get_formatted_name($context),
-                'enabled' => transform::yesno($schedule->get('enabled')),
-                'format' => $formatoptions[$schedule->get('format')],
-                'timescheduled' => transform::datetime($schedule->get('timescheduled')),
-                'recurrence' => $recurrenceoptions[$schedule->get('recurrence')],
-                'userviewas' => $viewasoptions[$userviewas] ?? transform::user($userviewas),
-                'audiences' => $schedule->get('audiences'),
-                'subject' => $schedule->get('subject'),
-                'message' => format_text($schedule->get('message'), $schedule->get('messageformat'), ['context' => $context]),
-                'reportempty' => $reportemptyoptions[$schedule->get('reportempty')],
-                'usercreated' => transform::user($schedule->get('usercreated')),
-                'usermodified' => transform::user($schedule->get('usermodified')),
-                'timecreated' => transform::datetime($schedule->get('timecreated')),
-                'timemodified' => transform::datetime($schedule->get('timemodified')),
-            ];
-        }, $schedules);
+                return (object) [
+                    'name' => $schedule->get_formatted_name($context),
+                    'enabled' => transform::yesno($schedule->get('enabled')),
+                    'classname' => $scheduleinstance?->get_name() ?? $schedule->get('classname'),
+                    'configdata' => $schedule->get('configdata'),
+                    'format' => $formatoptions[$schedule->get('format')],
+                    'timescheduled' => transform::datetime($schedule->get('timescheduled')),
+                    'recurrence' => $recurrenceoptions[$schedule->get('recurrence')],
+                    'userviewas' => $viewasoptions[$userviewas] ?? transform::user($userviewas),
+                    'audiences' => $schedule->get('audiences'),
+                    'usercreated' => transform::user($schedule->get('usercreated')),
+                    'usermodified' => transform::user($schedule->get('usermodified')),
+                    'timecreated' => transform::datetime($schedule->get('timecreated')),
+                    'timemodified' => transform::datetime($schedule->get('timemodified')),
+                ];
+            },
+            $schedules,
+        );
 
         writer::with_context($context)->export_related_data($subcontext, 'schedules', (object) ['data' => $scheduledata]);
     }

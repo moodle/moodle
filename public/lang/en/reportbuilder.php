@@ -214,13 +214,12 @@ $string['privacy:metadata:report:usercreated'] = 'The ID of the user who created
 $string['privacy:metadata:report:usermodified'] = 'The ID of the user who last modified the report';
 $string['privacy:metadata:schedule'] = 'Report schedule definitions';
 $string['privacy:metadata:schedule:audiences'] = 'The audiences this schedule is for';
+$string['privacy:metadata:schedule:classname'] = 'The class used by the schedule';
+$string['privacy:metadata:schedule:configdata'] = 'Configuration data used by the schedule';
 $string['privacy:metadata:schedule:enabled'] = 'The status of the schedule';
 $string['privacy:metadata:schedule:format'] = 'The format of the scheduled report';
-$string['privacy:metadata:schedule:message'] = 'The message of the schedule';
 $string['privacy:metadata:schedule:name'] = 'The name of the schedule';
 $string['privacy:metadata:schedule:recurrence'] = 'The recurrence of the schedule';
-$string['privacy:metadata:schedule:reportempty'] = 'Action to take if scheduled report is empty';
-$string['privacy:metadata:schedule:subject'] = 'The subject of the schedule';
 $string['privacy:metadata:schedule:timecreated'] = 'The time when the schedule was created';
 $string['privacy:metadata:schedule:timemodified'] = 'The time when the schedule was last modified';
 $string['privacy:metadata:schedule:timescheduled'] = 'The time the schedule will begin';
@@ -255,6 +254,8 @@ $string['resetconditions'] = 'Reset conditions';
 $string['resetconditionsconfirm'] = 'Are you sure you want to reset all conditions for this report?';
 $string['schedulecreated'] = 'Schedule created';
 $string['scheduledeleted'] = 'Schedule deleted';
+$string['scheduleemail'] = 'Schedule an email';
+$string['scheduleemaildescription'] = 'Set up a recurring email to share this report with your chosen audience';
 $string['scheduleempty'] = 'If the report is empty';
 $string['scheduleemptydontsend'] = 'Don\'t send message';
 $string['scheduleemptysendwithattachment'] = 'Send message with empty report';
@@ -302,3 +303,8 @@ $string['filterdateto'] = 'Date to';
 // Deprecated since Moodle 5.0.
 $string['privacy:metadata:preference:reportfilter'] = 'Stored report filter values';
 $string['userpicture'] = 'User picture';
+
+// Deprecated since Moodle 5.1.
+$string['privacy:metadata:schedule:message'] = 'The message of the schedule';
+$string['privacy:metadata:schedule:reportempty'] = 'Action to take if scheduled report is empty';
+$string['privacy:metadata:schedule:subject'] = 'The subject of the schedule';

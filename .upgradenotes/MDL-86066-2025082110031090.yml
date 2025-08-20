@@ -1,0 +1,19 @@
+issueNumber: MDL-86066
+notes:
+  core_reportbuilder:
+    - message: >
+        The following methods from the `schedule` helper class have been
+        deprecated, in favour of usage of the new schedule type system:
+
+
+        * `create_schedule`
+
+        * `get_report_empty_options`
+
+        * `send_schedule_message`
+      type: deprecated
+    - message: >-
+        Report schedule types are now extendable by third-party plugins by
+        extending the `core_reportbuilder\local\schedules\base` class in your
+        component namespace: `<component>\reportbuilder\schedule\<type>`
+      type: improved

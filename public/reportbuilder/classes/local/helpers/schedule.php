@@ -29,6 +29,7 @@ use core\message\message;
 use core\plugininfo\dataformat;
 use core_reportbuilder\local\models\audience as audience_model;
 use core_reportbuilder\local\models\schedule as model;
+use core_reportbuilder\local\schedules\base;
 use core_reportbuilder\table\custom_report_table_view;
 
 /**
@@ -39,6 +40,15 @@ use core_reportbuilder\table\custom_report_table_view;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class schedule {
+    /**
+     * Determine whether given class is a valid schedule type
+     *
+     * @param string $scheduleclass
+     * @return bool
+     */
+    public static function valid(string $scheduleclass): bool {
+        return class_exists($scheduleclass) && is_subclass_of($scheduleclass, base::class);
+    }
 
     /**
      * Create report schedule, calculate when it should be next sent
@@ -46,18 +56,18 @@ class schedule {
      * @param stdClass $data
      * @param int|null $timenow Deprecated since Moodle 4.5 - please use {@see clock} dependency injection
      * @return model
+     *
+     * @deprecated since Moodle 5.1 - please do not use this function any more, {@see base::create}
      */
+    #[\core\attribute\deprecated(base::class . '::create', since: '5.1', mdl: 'MDL-86066')]
     public static function create_schedule(stdClass $data, ?int $timenow = null): model {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         if ($timenow !== null) {
             debugging('Passing $timenow is deprecated, please use \core\clock dependency injection', DEBUG_DEVELOPER);
         }
 
-        $data->name = trim($data->name);
-
-        $schedule = (new model(0, $data));
-        $schedule->set('timenextsend', self::calculate_next_send_time($schedule));
-
-        return $schedule->create();
+        return base::create($data)->get_persistent();
     }
 
     /**
