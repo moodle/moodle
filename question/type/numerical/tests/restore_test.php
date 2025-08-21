@@ -48,7 +48,7 @@ final class restore_test extends \advanced_testcase {
         $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
 
         // Create a quiz containing a multichoice question from the qbank.
-        $quiz = $this->getDataGenerator()->get_plugin_generator('quiz')->create_instance(['course' => $course1->id]);
+        $quiz = $this->getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(['course' => $course1->id]);
         $question = $questiongenerator->create_question('numerical', 'pi', ['category' => $cat->id]);
         quiz_add_quiz_question($question->id, $quiz);
 

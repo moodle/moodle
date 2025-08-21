@@ -6,6 +6,8 @@
   processIsolation="false"
   backupGlobals="false"
   cacheResult="false"
+  failOnDeprecation="true"
+  failOnWarning="true"
   stopOnError="false"
   stopOnFailure="false"
   stopOnIncomplete="false"
