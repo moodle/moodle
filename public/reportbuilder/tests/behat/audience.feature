@@ -204,6 +204,7 @@ Feature: Configure access to reports based on intended audience
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
     And I press "New schedule"
+    And I click on "Schedule an email" "link" in the ".dropdown" "css_element"
     And I set the following fields in the "New schedule" "dialogue" to these values:
       | Name          | My schedule                     |
       | Starting from | ##tomorrow 11:00##              |

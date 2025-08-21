@@ -19,13 +19,14 @@ declare(strict_types=1);
 namespace core_reportbuilder\output\dynamictabs;
 
 use context_system;
-use renderer_base;
+use core\output\{choicelist, renderer_base};
+use core\output\local\dropdown\{dialog, status};
 use core\output\dynamic_tabs\base;
 use core_reportbuilder\permission;
 use core_reportbuilder\system_report_factory;
+use core_reportbuilder\local\helpers\schedule;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\systemreports\report_schedules;
-use core_reportbuilder\output\report_action;
 
 /**
  * Schedules dynamic tab
@@ -45,12 +46,38 @@ class schedules extends base {
     public function export_for_template(renderer_base $output): array {
         $report = system_report_factory::create(report_schedules::class, context_system::instance(), '', '', 0,
             ['reportid' => $this->data['reportid']]);
-        $report->set_report_action(new report_action(
+
+        // Schedule type menu.
+        $choicelist = new choicelist();
+        $choicelist->set_allow_empty(true);
+
+        // Include those schedule types the user can add.
+        foreach (schedule::get_schedules() as $schedule) {
+            $instance = $schedule::instance();
+            if ($instance->user_can_add()) {
+                $choicelist->add_option(
+                    $instance::class,
+                    $instance->get_name(),
+                    [
+                        'description' => $instance->get_description(),
+                        'extras' => ['data-action' => 'schedule-create', 'data-schedule-class' => $instance::class],
+                    ]
+                );
+            }
+        }
+
+        $dialog = new status(
             get_string('newschedule', 'core_reportbuilder'),
-            ['class' => 'btn btn-primary ms-auto', 'data-action' => 'schedule-create'],
-        ));
+            $choicelist,
+            [
+                'classes' => 'd-flex justify-content-end mb-2',
+                'buttonclasses' => 'btn btn-primary dropdown-toggle',
+            ],
+        );
+        $dialog->set_dialog_width(dialog::WIDTH['small']);
 
         return [
+            'menu' => $dialog->export_for_template($output),
             'reportid' => $this->data['reportid'],
             'report' => $report->output(),
         ];

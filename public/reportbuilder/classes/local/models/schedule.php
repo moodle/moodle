@@ -67,15 +67,6 @@ class schedule extends persistent {
     /** @var int Annual recurrence */
     public const RECURRENCE_ANNUALLY = 5;
 
-    /** @var int Send schedule with empty report */
-    public const REPORT_EMPTY_SEND_EMPTY = 0;
-
-    /** @var int Send schedule without report */
-    public const REPORT_EMPTY_SEND_WITHOUT = 1;
-
-    /** @var int Don't send schedule if report is empty */
-    public const REPORT_EMPTY_DONT_SEND = 2;
-
     /**
      * Return the definition of the properties of this model.
      *

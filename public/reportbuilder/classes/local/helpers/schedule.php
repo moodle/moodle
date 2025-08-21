@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\helpers;
 
 use context_user;
-use core\{clock, di};
+use core\{component, clock, di};
 use core\exception\{coding_exception, invalid_parameter_exception};
 use core_user;
 use stdClass;
@@ -48,6 +48,17 @@ class schedule {
      */
     public static function valid(string $scheduleclass): bool {
         return class_exists($scheduleclass) && is_subclass_of($scheduleclass, base::class);
+    }
+
+    /**
+     * Return list of all available/valid schedule types
+     *
+     * @return base[]
+     */
+    public static function get_schedules(): array {
+        $classes = component::get_component_classes_in_namespace(null, 'reportbuilder\\schedule');
+
+        return array_filter(array_keys($classes), [static::class, 'valid']);
     }
 
     /**
@@ -327,8 +338,13 @@ class schedule {
      * @param stdClass $user
      * @param stored_file $attachment
      * @return bool
+     *
+     * @deprecated since Moodle 5.1 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(reason: 'It is no longer used', since: '5.1', mdl: 'MDL-86066')]
     public static function send_schedule_message(model $schedule, stdClass $user, stored_file $attachment): bool {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         $message = new message();
         $message->component = 'moodle';
         $message->name = 'reportbuilderschedule';
@@ -412,12 +428,17 @@ class schedule {
      * Return list of options for when report is empty
      *
      * @return string[]
+     *
+     * @deprecated since Moodle 5.1 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(reason: 'It is no longer used', since: '5.1', mdl: 'MDL-86066')]
     public static function get_report_empty_options(): array {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         return [
-            model::REPORT_EMPTY_SEND_EMPTY => get_string('scheduleemptysendwithattachment', 'core_reportbuilder'),
-            model::REPORT_EMPTY_SEND_WITHOUT => get_string('scheduleemptysendwithoutattachment', 'core_reportbuilder'),
-            model::REPORT_EMPTY_DONT_SEND => get_string('scheduleemptydontsend', 'core_reportbuilder'),
+            0 => get_string('scheduleemptysendwithattachment', 'core_reportbuilder'),
+            1 => get_string('scheduleemptysendwithoutattachment', 'core_reportbuilder'),
+            2 => get_string('scheduleemptydontsend', 'core_reportbuilder'),
         ];
     }
 }
