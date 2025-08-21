@@ -71,7 +71,9 @@ $string['add_ltiadv'] = 'Add LTI Advantage';
 $string['add_ltilegacy'] = 'Add Legacy LTI';
 $string['addnewapp'] = 'Enable external application';
 $string['addserver'] = 'Add new trusted server';
+// BEGIN LSU - changing the wording for.....them people.
 $string['addtool'] = 'Add new tool';
+// END LSU - changing the wording for.....them people.
 $string['addtype'] = 'Add preconfigured tool';
 $string['allow'] = 'Allow';
 $string['allowsetting'] = 'Allow tool to store 8K of settings in Moodle';
