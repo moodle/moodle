@@ -187,6 +187,16 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
         $subqueryparams = [];
         $allusercourses = [];
 
+        $groupcourses = [];
+        if (is_array($groups) && !empty($groups)) {
+            $groupcourses = $DB->get_fieldset_sql(
+                "SELECT DISTINCT courseid
+                   FROM {groups}
+                  WHERE id $insqlgroups",
+                $inparamsgroups,
+            );
+        }
+
         if (is_array($users) && !empty($users)) {
             $userrecords = $DB->get_records_sql("SELECT * FROM {user} WHERE id $insqlusers", $inparamsusers);
             foreach ($userrecords as $userrecord) {
@@ -194,13 +204,14 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
                 $usercourses = calendar_get_default_courses(null, 'id, category, groupmode, groupmodeforce',
                         false, $userrecord->id);
 
-                // Set calendar filters.
-                list($usercourses, $usergroups, $user) = calendar_set_filters($usercourses, true, $userrecord);
+                $filteredcourses = array_merge(
+                    is_array($courses) ? $courses : [$courses],
+                    $groupcourses, // Include courses for any groups we've specified.
+                );
+                $filteredcourses = array_filter($usercourses, fn($course) => in_array($course->id, $filteredcourses));
 
-                $filteredcourses = is_array($courses) ? $courses : [$courses];
-                $filteredcourses = array_filter($usercourses, function($course) use ($filteredcourses) {
-                    return in_array($course, $filteredcourses);
-                });
+                // Set calendar filters.
+                [$filteredcourses, $usergroups, $user] = calendar_set_filters($filteredcourses, true, $userrecord);
 
                 $allusercourses = array_merge($allusercourses, $filteredcourses);
 
@@ -215,7 +226,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
                     $subqueryconditions[] = $condition;
                     $subqueryparams = array_merge($subqueryparams, $inuserparams);
 
-                    foreach ($usercourses as $courseid) {
+                    foreach ($filteredcourses as $courseid) {
                         if (has_capability('moodle/site:accessallgroups', \context_course::instance($courseid), $userrecord)) {
                             $usergroupmembership = groups_get_all_groups($courseid, $user, 0, 'g.id');
                             if (count($usergroupmembership) == 0) {
