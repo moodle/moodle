@@ -51,7 +51,9 @@ class content_item_readonly_repository implements content_item_readonly_reposito
         if ($sm->string_exists('modulename_help', $modname)) {
             $help = get_string('modulename_help', $modname);
             if ($sm->string_exists('modulename_link', $modname)) { // Link to further info in Moodle docs.
-                $link = get_string('modulename_link', $modname);
+                // The link is stored in a language file but should not be translated, use value for English.
+                $link = $sm->get_string('modulename_link', $modname, null, 'en');
+                // The text 'More help' and other strings should be in the current language.
                 $linktext = get_string('morehelp');
                 $arialabel = get_string('morehelpaboutmodule', '', get_string('modulename', $modname));
                 $doclink = $OUTPUT->doc_link($link, $linktext, true, ['aria-label' => $arialabel]);
