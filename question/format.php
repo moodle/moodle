@@ -312,8 +312,8 @@ class qformat_default {
         // function to handle this question
         foreach (question_bank::get_all_qtypes() as $qtype) {
             if (method_exists($qtype, $methodname)) {
-                if ($question = $qtype->$methodname($data, $question, $this, $extra)) {
-                    return $question;
+                if ($qtemp = $qtype->$methodname($data, $question, $this, $extra)) {
+                    return $qtemp;
                 }
             }
         }

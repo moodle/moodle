@@ -580,6 +580,14 @@ define(['jquery', 'core/log', 'core/aria', 'theme_snap/headroom', 'theme_snap/ut
                     if ($(this).attr('aria-expanded') === 'true') {
                         $(this).attr('aria-expanded', false);
                     } else {
+                        // BEGIN LSU - Fix to activate the first tab otherwise it's blank until clicked.
+                        // The drawer opens.
+                        var first_li = $('.snap-feeds-mobile-menu li:first');
+                        first_li.addClass('active');
+                        var target = first_li.data('target');
+                        $('.snap-feeds-mobile-menu #snap-feeds-section-' + target).addClass('active');
+                        // BEGIN LSU - Fix to activate the first tab otherwise it's blank until clicked.
+
                         $(this).attr('aria-expanded', true);
                     }
                 }

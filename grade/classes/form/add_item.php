@@ -300,7 +300,7 @@ class add_item extends dynamic_form {
                 if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
                     // The advcheckbox is not compatible with disabledIf!
                     $coefstring = 'aggregationcoefextrasum';
-                    $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
+                    $element =& $mform->createElement('advcheckbox', 'aggregationcoef', get_string($coefstring, 'grades'));
                 } else {
                     $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
                     $mform->setType('aggregationcoef', PARAM_FLOAT);
