@@ -42,10 +42,8 @@ $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 // accept single id values for simplicity.
 $ids = optional_param_array('ids', [], PARAM_INT);
 if (empty($ids)) {
-    $ids = [required_param('id', PARAM_INT)];
-}
-if (empty($ids)) {
-    throw new moodle_exception('missingparam', '', '', 'ids');
+    $idparam = optional_param('id', null, PARAM_INT);
+    $ids = $idparam ? [$idparam] : [];
 }
 
 $format = course_get_format($courseid);
