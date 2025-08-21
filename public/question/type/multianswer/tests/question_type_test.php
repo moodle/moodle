@@ -447,6 +447,7 @@ final class question_type_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
+        /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category([]);
         $question = $generator->create_question('multianswer', 'twosubq', ['category' => $cat->id]);
@@ -465,6 +466,7 @@ final class question_type_test extends \advanced_testcase {
         $editedquestion = test_question_maker::get_question_data('multianswer', 'twosubq');
         $editedquestion->id = $question->id;
         $editedquestion->category = $cat->id;
+        $editedquestion->context = \context_helper::instance_by_id($cat->contextid);
         $editedsubq1 = test_question_maker::get_question_form_data('multichoice', 'one_of_four');
         $editedsubq1->id = $originalsubq1->id;
         $editedsubq1->qtype = 'multichoice';

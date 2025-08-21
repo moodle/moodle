@@ -1,0 +1,13 @@
+issueNumber: MDL-86311
+notes:
+  core:
+    - message: >-
+        The default PHPUnit configuration now enables the following properties,
+        ensuring PHP warnings will cause test failures (restoring pre-PHPUnit
+        version 10 behaviour):
+
+
+        * `failOnDeprecation`
+
+        * `failOnWarning`
+      type: changed
