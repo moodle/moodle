@@ -95,6 +95,7 @@ switch ($action) {
         $roleid = optional_param('roletoassign', null, PARAM_INT);
         $duration = optional_param('duration', 0, PARAM_INT);
         $startdate = optional_param('startdate', 0, PARAM_INT);
+        $startdateselect = optional_param_array('startdateselect', [], PARAM_INT);
         $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
         $timeend = optional_param_array('timeend', [], PARAM_INT);
 
@@ -124,6 +125,16 @@ switch ($action) {
                 // We mimic get_enrolled_sql round(time(), -2) but always floor as we want users to always access their
                 // courses once they are enrolled.
                 $timestart = intval(substr(time(), 0, 8) . '00') - 1;
+                break;
+            case 5:
+                // User has made explicit selection of start date.
+                $timestart = make_timestamp(
+                    $startdateselect['year'],
+                    $startdateselect['month'],
+                    $startdateselect['day'],
+                    $startdateselect['hour'],
+                    $startdateselect['minute'],
+                );
                 break;
             case 3:
             default:
