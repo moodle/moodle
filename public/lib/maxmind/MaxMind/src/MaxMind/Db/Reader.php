@@ -356,8 +356,8 @@ class Reader
         }
 
         throw new InvalidDatabaseException(
-            "Error opening database file ($filename). " .
-            'Is this a valid MaxMind DB file?'
+            "Error opening database file ($filename). "
+            . 'Is this a valid MaxMind DB file?'
         );
     }
 

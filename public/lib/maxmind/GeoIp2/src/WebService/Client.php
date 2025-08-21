@@ -51,14 +51,10 @@ use MaxMind\WebService\Client as WsClient;
  */
 class Client implements ProviderInterface
 {
-    /**
-     * @var array<string>
-     */
-    private array $locales;
-    private WsClient $client;
+    private readonly WsClient $client;
     private static string $basePath = '/geoip/v2.1';
 
-    public const VERSION = 'v3.1.0';
+    public const VERSION = 'v3.2.0';
 
     /**
      * Constructor.
@@ -86,11 +82,10 @@ class Client implements ProviderInterface
     public function __construct(
         int $accountId,
         string $licenseKey,
-        array $locales = ['en'],
+        /** @var list<string> */
+        public readonly array $locales = ['en'], // Promoted and readonly
         array $options = []
     ) {
-        $this->locales = $locales;
-
         // This is for backwards compatibility. Do not remove except for a
         // major version bump.
         // @phpstan-ignore-next-line
@@ -98,9 +93,7 @@ class Client implements ProviderInterface
             $options = ['host' => $options];
         }
 
-        if (!isset($options['host'])) {
-            $options['host'] = 'geoip.maxmind.com';
-        }
+        $options['host'] ??= 'geoip.maxmind.com';
 
         $options['userAgent'] = $this->userAgent();
 
@@ -139,7 +132,6 @@ class Client implements ProviderInterface
      */
     public function city(string $ipAddress = 'me'): City
     {
-        // @phpstan-ignore-next-line
         return $this->responseFor('city', City::class, $ipAddress);
     }
 
@@ -201,11 +193,29 @@ class Client implements ProviderInterface
      */
     public function insights(string $ipAddress = 'me'): Insights
     {
-        // @phpstan-ignore-next-line
         return $this->responseFor('insights', Insights::class, $ipAddress);
     }
 
-    private function responseFor(string $endpoint, string $class, string $ipAddress): Country
+    /**
+     * Generic helper method to call an endpoint and return the corresponding model.
+     *
+     * @template TModel of City|Country|Insights
+     *
+     * @param 'city'|'country'|'insights' $endpoint  the endpoint name
+     * @param class-string<TModel>        $class     The specific model class string (e.g., City::class)
+     * @param string                      $ipAddress the IP address or 'me'
+     *
+     * @throws AddressNotFoundException
+     * @throws AuthenticationException
+     * @throws OutOfQueriesException
+     * @throws InvalidRequestException
+     * @throws HttpException
+     * @throws GeoIp2Exception
+     * @throws \InvalidArgumentException
+     *
+     * @return TModel the corresponding model object, matching the passed class string
+     */
+    private function responseFor(string $endpoint, string $class, string $ipAddress): City|Country|Insights
     {
         if ($ipAddress !== 'me' && !filter_var($ipAddress, \FILTER_VALIDATE_IP)) {
             throw new \InvalidArgumentException(

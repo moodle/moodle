@@ -6,6 +6,7 @@ namespace GeoIp2\Database;
 
 use GeoIp2\Exception\AddressNotFoundException;
 use GeoIp2\Model\AnonymousIp;
+use GeoIp2\Model\AnonymousPlus;
 use GeoIp2\Model\Asn;
 use GeoIp2\Model\City;
 use GeoIp2\Model\ConnectionType;
@@ -44,14 +45,8 @@ use MaxMind\Db\Reader\Metadata;
  */
 class Reader implements ProviderInterface
 {
-    private DbReader $dbReader;
-
-    private string $dbType;
-
-    /**
-     * @var array<string>
-     */
-    private array $locales;
+    private readonly DbReader $dbReader;
+    private readonly string $dbType;
 
     /**
      * Constructor.
@@ -64,11 +59,11 @@ class Reader implements ProviderInterface
      */
     public function __construct(
         string $filename,
-        array $locales = ['en']
+        /** @var array<string> */
+        public readonly array $locales = ['en']
     ) {
         $this->dbReader = new DbReader($filename);
         $this->dbType = $this->dbReader->metadata()->databaseType;
-        $this->locales = $locales;
     }
 
     /**
@@ -78,6 +73,7 @@ class Reader implements ProviderInterface
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function city(string $ipAddress): City
     {
@@ -91,6 +87,7 @@ class Reader implements ProviderInterface
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function country(string $ipAddress): Country
     {
@@ -104,6 +101,7 @@ class Reader implements ProviderInterface
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function anonymousIp(string $ipAddress): AnonymousIp
     {
@@ -115,12 +113,31 @@ class Reader implements ProviderInterface
     }
 
     /**
+     * This method returns a GeoIP Anonymous Plus model.
+     *
+     * @param string $ipAddress an IPv4 or IPv6 address as a string
+     *
+     * @throws AddressNotFoundException if the address is not in the database
+     * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
+     */
+    public function anonymousPlus(string $ipAddress): AnonymousPlus
+    {
+        return $this->flatModelFor(
+            AnonymousPlus::class,
+            'GeoIP-Anonymous-Plus',
+            $ipAddress
+        );
+    }
+
+    /**
      * This method returns a GeoLite2 ASN model.
      *
      * @param string $ipAddress an IPv4 or IPv6 address as a string
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function asn(string $ipAddress): Asn
     {
@@ -138,6 +155,7 @@ class Reader implements ProviderInterface
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function connectionType(string $ipAddress): ConnectionType
     {
@@ -155,6 +173,7 @@ class Reader implements ProviderInterface
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function domain(string $ipAddress): Domain
     {
@@ -172,6 +191,7 @@ class Reader implements ProviderInterface
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function enterprise(string $ipAddress): Enterprise
     {
@@ -185,6 +205,7 @@ class Reader implements ProviderInterface
      *
      * @throws AddressNotFoundException if the address is not in the database
      * @throws InvalidDatabaseException if the database is corrupt or invalid
+     * @throws \BadMethodCallException  if this database type is not supported
      */
     public function isp(string $ipAddress): Isp
     {

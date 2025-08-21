@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+3.2.0 (2025-05-05)
+------------------
+
+* Support for the GeoIP Anonymous Plus database has been added. To do a
+  lookup in this database, use the `anonymousPlus` method on
+  `GeoIP2\Database\Reader`.
+* `metroCode` on `GeoIp2\Record\Location` has been deprecated. The code
+  values are no longer being maintained.
+
 3.1.0 (2024-11-15)
 ------------------
 
@@ -15,7 +24,7 @@ CHANGELOG
 * IMPORTANT: PHP 8.1 or greater is now required.
 * BREAKING: Read-only properties are now used for the model and record
   classes rather than magic methods. This significantly improves performance.
-* BREAKING: The `raw` property on model classess and the `record` property on
+* BREAKING: The `raw` property on model classes and the `record` property on
   record classes have been removed.
 * BREAKING: On `GeoIp2\Record\Traits`, the deprecated `isAnonymousProxy` and
   `isSatelliteProvider` properties have been removed.

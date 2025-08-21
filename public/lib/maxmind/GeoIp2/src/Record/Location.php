@@ -43,10 +43,10 @@ class Location implements \JsonSerializable
     public readonly ?float $longitude;
 
     /**
-     * @var int|null The metro code of the location if the location
-     *               is in the US. MaxMind returns the same metro codes as the
-     *               Google AdWords API. See
-     *               https://developers.google.com/adwords/api/docs/appendix/cities-DMAregions.
+     * @var int|null the metro code is a no-longer-maintained code for targeting
+     *               advertisements in Google
+     *
+     * @deprecated
      */
     public readonly ?int $metroCode;
 
