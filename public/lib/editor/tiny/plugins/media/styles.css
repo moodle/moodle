@@ -50,7 +50,7 @@ iframe.mm_iframe {
 }
 
 .tiny_image_form  .tiny_image_preview_box {
-    height: 300px;
+    height: 100%;
 }
 
 .tiny_media_form  .tiny_media_preview_box {
@@ -95,10 +95,6 @@ iframe.mm_iframe {
     .tiny_media_form .tiny_media_properties_col {
         padding: 0;
     }
-}
-
-.subtitle-caption {
-    text-decoration: underline;
 }
 
 .upload-custom-thumbnail,

@@ -14,19 +14,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Image Modal for Tiny.
+ * Embedded Media Management Modal for Tiny.
  *
- * @module      tiny_media/imagemodal
- * @copyright   2022 Huong Nguyen <huongnv13@gmail.com>
+ * @module      tiny_media/embed/embedmodal
+ * @copyright   2022 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Modal from 'core/modal';
-import {component} from './common';
+import {component} from '../common';
 
-export default class ImageModal extends Modal {
-    static TYPE = `${component}/imagemodal`;
-    static TEMPLATE = `${component}/insert_image_modal`;
+export default class EmbedModal extends Modal {
+    static TYPE = `${component}/embed/embedmodal`;
+    static TEMPLATE = `${component}/embed/embed_media_modal`;
 
     registerEventListeners() {
         // Call the parent registration.
@@ -38,12 +38,9 @@ export default class ImageModal extends Modal {
     }
 
     configure(modalConfig) {
-        modalConfig.large = true;
         modalConfig.removeOnClose = true;
         modalConfig.show = true;
 
         super.configure(modalConfig);
     }
 }
-
-ImageModal.registerModalType();

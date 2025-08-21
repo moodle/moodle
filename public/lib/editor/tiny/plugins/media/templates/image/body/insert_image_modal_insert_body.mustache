@@ -30,14 +30,14 @@
     <div class="tiny_image_dropzone d-flex flex-column justify-content-center">
         {{#showdropzone}}
             <div class="tiny_image_dropzone_container"></div>
-            <!-- File input -->
+            {{! File input }}
             <input type="file" id="tiny_image_fileinput" accept="image/*" class="d-none">
         {{/showdropzone}}
         {{^showdropzone}}
             <div class="text-center">
-                <!-- Dropzone icon -->
+                {{! Dropzone icon }}
                 <i class="fa-6x pb-2 text-secondary fa fa-cloud"></i>
-                <!-- Dropzone string -->
+                {{! Dropzone string }}
                 <div class="lead text-center">
                     <p class="mb-0">
                     {{#showfilepicker}}

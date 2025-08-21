@@ -28,8 +28,8 @@ Feature: Tiny editor accessibility checker
     And I click on "View" "link" in the "Accessibility checker" "dialogue"
     And I click on the "Image" button for the "Description" TinyMCE editor
     And I wait "1" seconds
-    And I click on "This image is decorative only" "checkbox"
-    And I set the field "How would you describe this image to someone who can't see it?" to "No more warning!"
+    And I click on "Decorative image" "checkbox"
+    And I set the field "How would you describe this image to someone who cannot see it?" to "No more warning!"
     And I press "Save"
     And I click on the "Tools > Accessibility checker" menu item for the "Description" TinyMCE editor
     And I should see "Congratulations, no accessibility issues found!" in the "Accessibility checker" "dialogue"
@@ -39,8 +39,8 @@ Feature: Tiny editor accessibility checker
     And I set the field "URL" to "http://download.moodle.org/unittest/test.jpg"
     And I click on "Add" "button" in the "Insert image" "dialogue"
     And I wait "1" seconds
-    And I set the field "How would you describe this image to someone who can't see it?" to ""
-    And I click on "This image is decorative only" "checkbox"
+    And I set the field "How would you describe this image to someone who cannot see it?" to ""
+    And I click on "Decorative image" "checkbox"
     When I press "Save"
     And I click on the "Tools > Accessibility checker" menu item for the "Description" TinyMCE editor
     Then I should see "Congratulations, no accessibility issues found!" in the "Accessibility checker" "dialogue"

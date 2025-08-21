@@ -48,7 +48,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
-    And I set the field "How would you describe this image to someone who can't see it?" to "It's the logo"
+    And I set the field "How would you describe this image to someone who cannot see it?" to "It's the logo"
     And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save page"
     And I set the field "qtype" to "Add a question page"
@@ -68,7 +68,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
-    And I set the field "How would you describe this image to someone who can't see it?" to "It's the logo"
+    And I set the field "How would you describe this image to someone who cannot see it?" to "It's the logo"
     And I click on "Save" "button" in the "Image details" "dialogue"
     And I press "Save page"
     When I am on the "Test lesson name" "lesson activity" page logged in as student1

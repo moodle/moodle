@@ -16,7 +16,7 @@
 /**
  * Tiny media plugin image details class for Moodle.
  *
- * @module      tiny_media/imagedetails
+ * @module      tiny_media/image/imagedetails
  * @copyright   2024 Meirza <meirza.arson@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,18 +25,18 @@ import Config from 'core/config';
 import ModalEvents from 'core/modal_events';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
-import Selectors from './selectors';
+import Selectors from '../selectors';
 import Templates from 'core/templates';
 import {getString} from 'core/str';
-import {ImageInsert} from 'tiny_media/imageinsert';
-import {MediaBase} from './mediabase';
+import {ImageInsert} from './imageinsert';
+import {MediaBase} from '../mediabase';
 import {
     body,
     footer,
     hideElements,
     showElements,
     isPercentageValue,
-} from './helpers';
+} from '../helpers';
 
 export class ImageDetails extends MediaBase {
     DEFAULTS = {
@@ -137,20 +137,6 @@ export class ImageDetails extends MediaBase {
         const preview = this.root.querySelector(Selectors.IMAGE.elements.preview);
         preview.setAttribute('src', image.src);
         preview.style.display = '';
-
-        // Ensure the checkbox always in unchecked status when an image loads at first.
-        const constrain = this.root.querySelector(Selectors.IMAGE.elements.constrain);
-        if (isPercentageValue(currentWidth) && isPercentageValue(currentHeight)) {
-            constrain.checked = currentWidth === currentHeight;
-        } else if (image.width === 0 || image.height === 0) {
-            // If we don't have both dimensions of the image, we can't auto-size it, so disable control.
-            constrain.disabled = 'disabled';
-        } else {
-            // This is the same as comparing to 3 decimal places.
-            const widthRatio = Math.round(100 * parseInt(currentWidth, 10) / image.width);
-            const heightRatio = Math.round(100 * parseInt(currentHeight, 10) / image.height);
-            constrain.checked = widthRatio === heightRatio;
-        }
 
         /**
          * Sets the selected size option based on current width and height values.
@@ -290,41 +276,6 @@ export class ImageDetails extends MediaBase {
         return imageAltError;
     }
 
-    updateWarning() {
-        const urlError = this.hasErrorUrlField();
-        const imageAltError = this.hasErrorAltField();
-
-        return urlError || imageAltError;
-    }
-
-    getImageContext() {
-        // Check if there are any accessibility issues.
-        if (this.updateWarning()) {
-            return null;
-        }
-
-        const classList = [];
-        const constrain = this.root.querySelector(Selectors.IMAGE.elements.constrain).checked;
-        const sizeOriginal = this.root.querySelector(Selectors.IMAGE.elements.sizeOriginal).checked;
-        if (constrain || sizeOriginal) {
-            // If the Auto size checkbox is checked or the Original size is checked, then apply the responsive class.
-            classList.push(Selectors.IMAGE.styles.responsive);
-        } else {
-            // Otherwise, remove it.
-            classList.pop(Selectors.IMAGE.styles.responsive);
-        }
-
-        return {
-            url: this.currentUrl,
-            alt: this.root.querySelector(Selectors.IMAGE.elements.alt).value,
-            width: this.root.querySelector(Selectors.IMAGE.elements.width).value,
-            height: this.root.querySelector(Selectors.IMAGE.elements.height).value,
-            presentation: this.root.querySelector(Selectors.IMAGE.elements.presentation).checked,
-            customStyle: this.root.querySelector(Selectors.IMAGE.elements.customStyle).value,
-            classlist: classList.join(' '),
-        };
-    }
-
     setImage() {
         const pendingPromise = new Pending('tiny_media:setImage');
         const url = this.currentUrl;
@@ -333,7 +284,7 @@ export class ImageDetails extends MediaBase {
         }
 
         // Check if there are any accessibility issues.
-        if (this.updateWarning()) {
+        if (this.hasErrorUrlField() || this.hasErrorAltField()) {
             pendingPromise.resolve();
             return;
         }
@@ -353,7 +304,16 @@ export class ImageDetails extends MediaBase {
             return;
         }
 
-        Templates.render('tiny_media/image', this.getImageContext())
+        const imageContext = {
+            url: this.currentUrl,
+            alt: this.root.querySelector(Selectors.IMAGE.elements.alt).value,
+            width: this.root.querySelector(Selectors.IMAGE.elements.width).value,
+            height: this.root.querySelector(Selectors.IMAGE.elements.height).value,
+            presentation: this.root.querySelector(Selectors.IMAGE.elements.presentation).checked,
+            customStyle: this.root.querySelector(Selectors.IMAGE.elements.customStyle).value,
+        };
+
+        Templates.render('tiny_media/image/image', imageContext)
         .then((html) => {
             this.editor.insertContent(html);
             this.currentModal.destroy();
@@ -378,8 +338,9 @@ export class ImageDetails extends MediaBase {
             // Removing the image in the preview will bring the user to the insert page.
             this.loadInsertImage();
             return;
-        }).catch(error => {
-            window.console.log(error);
+        }).catch(() => {
+            // User cancelled the delete action.
+            return;
         });
     }
 
@@ -405,22 +366,23 @@ export class ImageDetails extends MediaBase {
             if (presentationEle) {
                 await this.presentationChanged();
             }
-
-            const constrainEle = e.target.closest(Selectors.IMAGE.elements.constrain);
-            if (constrainEle) {
-                this.autoAdjustSize();
-            }
-
-            const sizeOriginalEle = e.target.closest(Selectors.IMAGE.elements.sizeOriginal);
-            if (sizeOriginalEle) {
-                this.sizeChecked('original');
-            }
-
-            const sizeCustomEle = e.target.closest(Selectors.IMAGE.elements.sizeCustom);
-            if (sizeCustomEle) {
-                this.sizeChecked('custom');
-            }
         });
+
+        const customSize = this.root.querySelector(Selectors.IMAGE.elements.customSizeToggle);
+        if (customSize) {
+            customSize.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.sizeChecked('custom');
+            });
+        }
+
+        const originalSize = this.root.querySelector(Selectors.IMAGE.elements.originalSizeToggle);
+        if (originalSize) {
+            originalSize.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.sizeChecked('original');
+            });
+        }
 
         this.root.addEventListener('blur', async(e) => {
             if (e.target.nodeType === Node.ELEMENT_NODE) {

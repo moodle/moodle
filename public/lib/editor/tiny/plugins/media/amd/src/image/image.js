@@ -16,17 +16,17 @@
 /**
  * Tiny Media plugin Image class for Moodle.
  *
- * @module      tiny_media/image
+ * @module      tiny_media/image/image
  * @copyright   2022 Huong Nguyen <huongnv13@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Selectors from './selectors';
+import Selectors from '../selectors';
 import ImageModal from './imagemodal';
-import {getImagePermissions} from './options';
+import {getImagePermissions} from '../options';
 import {getFilePicker} from 'editor_tiny/options';
-import {ImageInsert} from 'tiny_media/imageinsert';
-import {ImageDetails} from 'tiny_media/imagedetails';
+import {ImageInsert} from './imageinsert';
+import {ImageDetails} from './imagedetails';
 import {prefetchStrings} from 'core/prefetch';
 import {getString} from 'core/str';
 import {
@@ -35,7 +35,7 @@ import {
     hideElements,
     showElements,
     isPercentageValue,
-} from './helpers';
+} from '../helpers';
 import {MAX_LENGTH_ALT} from './imagehelpers';
 
 prefetchStrings('tiny_media', [
@@ -157,6 +157,7 @@ export default class MediaImage {
             const currentImageData = await this.getCurrentImageData();
             let templateContext = await this.getTemplateContext(currentImageData);
             templateContext.sizecustomhelpicon = {text: await getString('sizecustom_help', 'tiny_media')};
+            templateContext.alttexthelpicon = {text: await getString('alttext_help', 'tiny_media')};
             templateContext.bodyTemplate = Selectors.IMAGE.template.body.insertImageDetailsBody;
             templateContext.footerTemplate = Selectors.IMAGE.template.footer.insertImageDetailsFooter;
             templateContext.selector = Selectors.IMAGE.type;

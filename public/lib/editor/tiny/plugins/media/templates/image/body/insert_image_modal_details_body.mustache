@@ -1,0 +1,115 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_media/insert_image_modal_details
+
+    Insert image details body template.
+
+    Example context (json):
+    {
+        "elementid": "exampleId",
+        "alt": "Image description",
+        "presentation": true,
+        "width": 600,
+        "height": 400,
+        "customStyle": "",
+        "sizecustomhelpicon": {
+            "text": "Help text"
+        },
+        "maxlengthalt": 750
+    }
+
+}}
+<div class="tiny_image_image_details">
+    <div class="container">
+        <div class="row">
+            {{! Checkbox and radio buttons }}
+            <div class="tiny_image_properties_col col-lg-5">
+                {{! Image description }}
+                <div class="mb-2">
+                    <span class="fw-bold">{{#str}} imagealternativetext, tiny_media {{/str}}</span>
+                    <label for="{{elementid}}_tiny_image_altentry">{{#str}} enteralt, tiny_media {{/str}}</label>
+                    <textarea class="tiny_image_altentry form-control fullwidth" rows="5" id="{{elementid}}_tiny_image_altentry" name="altentry" maxlength="{{maxlengthalt}}">{{alt}}</textarea>
+                    {{! Character counter }}
+                    <div id="the-count" class="d-flex justify-content-end small">
+                        <span id="currentcount">0</span>
+                        <span class="mx-1">/</span>
+                        <span id="maximumcount">{{maxlengthalt}}</span>
+                        <span id="maxlength_feedback" class="visually-hidden" role="status"></span>
+                    </div>
+                </div>
+                {{! Image presentation checkbox }}
+                <div class="form-check mb-2">
+                    <input type="checkbox" class="tiny_image_presentation form-check-input" id="{{elementid}}_tiny_image_presentation" {{# presentation }}checked{{/ presentation }}>
+                    <label class="form-check-label" for="{{elementid}}_tiny_image_presentation">{{#str}} presentation, tiny_media {{/str}}</label>
+                    <span>{{#alttexthelpicon}}{{> core/help_icon }}{{/alttexthelpicon}}</span>
+                </div>
+                <hr>
+                <div class="fw-bold">{{#str}} imagesize, tiny_media {{/str}}</div>
+                {{! Original size radio button }}
+                <div class="mt-1 mb-1">
+                    <div class="btn-group" role="group" aria-label="{{#str}} imagesize, tiny_media{{/str}}">
+                        <button class="btn btn-outline-primary image-original-size-toggle">{{#str}} sizeoriginal, tiny_media {{/str}}</button>
+                        <button class="btn btn-outline-primary image-custom-size-toggle">{{#str}} sizecustom, tiny_media {{/str}}</button>
+                    </div>
+                </div>
+                {{! Image size }}
+                <div class="tiny_image_properties mb-2">
+                    {{! Image width and height }}
+                    <div id="{{elementid}}_tiny_image_size" class="tiny_image_size">
+                        <div class="d-flex justify-content-start">
+                            {{! Width input }}
+                            <div class="flex-item me-2 col-5">
+                                <div>
+                                    <label for="{{elementid}}_tiny_image_widthentry">{{#str}} width, tiny_media {{/str}}</label>
+                                    <div class="d-flex align-items-start">
+                                        <input type="number" min="0" class="tiny_image_widthentry form-control input-mini me-1 w-100" id="{{elementid}}_tiny_image_widthentry" value="{{width}}">
+                                        <span class="mt-1">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {{! Height input }}
+                            <div class="flex-item me-1 col-5">
+                                <div>
+                                    <label for="{{elementid}}_tiny_image_heightentry">{{#str}} height, tiny_media {{/str}}</label>
+                                    <div class="d-flex align-items-start">
+                                        <input type="number" min="0" class="tiny_image_heightentry form-control input-mini me-1 w-100" id="{{elementid}}_tiny_image_heightentry" value="{{height}}">
+                                        <span class="mt-1">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tiny_image_customhelpicon flex-item ms-1">{{#sizecustomhelpicon}}{{> core/help_icon }}{{/sizecustomhelpicon}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{! Image preview and description }}
+            <div class="tiny_image_preview_col col-lg-7 p-0">
+                <input type="hidden" class="tiny_image_customstyle" value="{{customStyle}}">
+                {{! Image preview }}
+                <div class="tiny_image_preview_box border rounded position-relative">
+                    {{! Delete image icon }}
+                    <div class="tiny_image_deleteicon" tabindex="0" title="{{#str}} deleteimage, tiny_media {{/str}}">
+                        <i class="fa fa-trash-o" title="{{#str}} deleteimage, tiny_media {{/str}}"></i>
+                    </div>
+                    {{! Image placeholder }}
+                    <img class="tiny_image_preview" src="data:," alt>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

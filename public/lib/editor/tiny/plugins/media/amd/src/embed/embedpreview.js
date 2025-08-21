@@ -37,7 +37,7 @@ import {
 import {EmbedHandler} from './embedhandler';
 import {MediaBase} from '../mediabase';
 import Notification from 'core/notification';
-import EmbedModal from '../embedmodal';
+import EmbedModal from './embedmodal';
 import {
     getEmbeddedMediaDetails,
     insertMediaThumbnailTemplateContext,
@@ -275,17 +275,19 @@ export class EmbedPreview extends MediaBase {
      */
     registerMediaDetailsEventListeners = async() => {
         // Handle the original size when selected.
-        const sizeOriginalEle = this.root.querySelector(Selectors.EMBED.elements.sizeOriginal);
-        if (sizeOriginalEle) {
-            sizeOriginalEle.addEventListener('change', () => {
+        const originalSize = this.root.querySelector(Selectors.EMBED.elements.originalSizeToggle);
+        if (originalSize) {
+            originalSize.addEventListener('click', (e) => {
+                e.preventDefault();
                 this.sizeChecked('original');
             });
         }
 
         // Handle the custom size when selected.
-        const sizeCustomEle = this.root.querySelector(Selectors.EMBED.elements.sizeCustom);
-        if (sizeCustomEle) {
-            sizeCustomEle.addEventListener('change', () => {
+        const customSize = this.root.querySelector(Selectors.EMBED.elements.customSizeToggle);
+        if (customSize) {
+            customSize.addEventListener('click', (e) => {
+                e.preventDefault();
                 this.sizeChecked('custom');
             });
         }
