@@ -299,6 +299,7 @@ $string['config_hideuserlist_editable'] = 'Hide user list can be edited';
 $string['config_hideuserlist_editable_description'] = 'Hide user list by default can be edited when the instance is added or updated.';
 
 $string['config_experimental_features'] = 'Experimental features';
+$string['closes'] = 'Closes';
 $string['config_experimental_features_description'] = 'Configuration for experimental features.';
 
 $string['general_error_unable_connect'] = 'Unable to connect. Please check the url of the BigBlueButton server AND check to see if the BigBlueButton server is running.
@@ -420,6 +421,7 @@ $string['mod_form_field_disablepublicchat'] = 'Disable public chat';
 $string['mod_form_field_disablenote'] = 'Disable shared notes';
 $string['mod_form_field_hideuserlist'] = 'Hide user list';
 $string['mod_form_locksettings'] = 'Lock settings';
+$string['opens'] = 'Opens';
 $string['report_join_info']  = '{$a} meeting(s)';
 $string['report_play_recording_info']  = '{$a} recording(s) played';
 $string['report_room_view']  = 'viewed';
@@ -645,10 +647,9 @@ $string['taskname:check_pending_recordings'] = 'Fetch pending recordings';
 $string['taskname:check_dismissed_recordings'] = 'Check for recordings that haven\'t been found yet';
 $string['userlimitreached'] = 'The number of users allowed in a session has been reached.';
 $string['waitformoderator'] = 'Waiting for a moderator to join.';
-
 $string['recordingnotfound'] = 'The recording was not found.';
+$string['recordings'] = 'Recordings';
 $string['recordingurlnotfound'] = 'The recording URL is invalid.';
-
 $string['subplugintype_bbbext'] = 'BigBlueButton activity extension';
 $string['subplugintype_bbbext_plural'] = 'BigBlueButton activity extensions';
 

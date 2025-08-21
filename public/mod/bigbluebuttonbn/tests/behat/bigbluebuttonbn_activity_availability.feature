@@ -28,9 +28,9 @@ Feature: Manage BigBlueButton session timings
       | C1     | bigbluebuttonbn | BBB 1 | <openingtime> | <closingtime> |
     When I am on the "BBB 1" "bigbluebuttonbn activity" page logged in as student1
     And "Join session" "link" <buttonvisibility> exist
-    And I should see "Open:"
+    And I should see "<opens>:"
     And I should see "<openingtime>%A, %d %B %Y##"
-    And I should see "Close:"
+    And I should see "<closes>:"
     And I should see "<closingtime>%A, %d %B %Y##"
     And I am viewing calendar in "month" view
     And I <calendarvisibility> see "BBB 1"
@@ -39,7 +39,7 @@ Feature: Manage BigBlueButton session timings
     And I <upcomingeventvisibility> see "BBB 1" in the "Upcoming events" "block"
 
     Examples:
-      | openingtime       | closingtime            | calendarvisibility | buttonvisibility | upcomingeventvisibility |
-      | ##now +1 minute## | ##now +5 minutes##     | should             | should not       | should                  |
-      | ##1 hour ago##    | ##+2 hours##           | should             | should           | should not              |
-      | ##yesterday##     | ##yesterday +3 hours## | should not         | should not       | should not              |
+      | opens  | closes | openingtime       | closingtime            | calendarvisibility | buttonvisibility | upcomingeventvisibility |
+      | Opens  | Closes | ##now +1 minute## | ##now +5 minutes##     | should             | should not       | should                  |
+      | Opened | Closes | ##1 hour ago##    | ##+2 hours##           | should             | should           | should not              |
+      | Opened | Closed | ##yesterday##     | ##yesterday +3 hours## | should not         | should not       | should not              |

@@ -1,0 +1,5 @@
+issueNumber: MDL-83889
+notes:
+  mod_bigbluebuttonbn:
+    - message: Add activity_dates class to BigblueButton module.
+      type: improved
