@@ -707,4 +707,53 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
 
         return $rcp->getValue($this);
     }
+
+    /**
+     * Convenience method to get the path to a fixture.
+     *
+     * @param string $component
+     * @param string $path
+     * @throws coding_exception
+     */
+    protected static function get_fixture_path(
+        string $component,
+        string $path,
+    ): string {
+        return sprintf(
+            "%s/tests/fixtures/%s",
+            \core_component::get_component_directory($component),
+            $path,
+        );
+    }
+
+    /**
+     * Convenience method to load a fixture from a component's fixture directory.
+     *
+     * @param string $component
+     * @param string $path
+     * @throws coding_exception
+     */
+    protected static function load_fixture(
+        string $component,
+        string $path,
+    ): void {
+        global $ADMIN;
+        global $CFG;
+        global $DB;
+        global $SITE;
+        global $USER;
+        global $OUTPUT;
+        global $PAGE;
+        global $SESSION;
+        global $COURSE;
+        global $SITE;
+
+        $fullpath = static::get_fixture_path($component, $path);
+
+        if (!file_exists($fullpath)) {
+            throw new \coding_exception("Fixture file not found: $fullpath");
+        }
+
+        require_once($fullpath);
+    }
 }
