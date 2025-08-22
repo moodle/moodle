@@ -300,9 +300,10 @@ class gradeimport_csv_load_data {
      * @param int $key The line that we are currently working on.
      * @param bool $verbosescales Form setting for grading with scales.
      * @param string $value The grade value.
+     * @param int $linenumber The line number that we are currently working on.
      * @return array grades to be updated.
      */
-    protected function update_grade_item($courseid, $map, $key, $verbosescales, $value) {
+    protected function update_grade_item($courseid, $map, $key, $verbosescales, $value, int $linenumber) {
         // Case of an id, only maps id of a grade_item.
         // This was idnumber.
         if (!$gradeitem = new grade_item(array('id' => $map[$key], 'courseid' => $courseid))) {
@@ -330,7 +331,10 @@ class gradeimport_csv_load_data {
                 array_unshift($scales, '-'); // Scales start at key 1.
                 $key = array_search($value, $scales);
                 if ($key === false) {
-                    $this->cleanup_import(get_string('badgrade', 'grades'));
+                    $this->cleanup_import(get_string('badgrade', 'gradeimport_csv', [
+                        'badgrade' => $value,
+                        'linenumber' => $linenumber,
+                    ]));
                     return null;
                 }
                 $value = $key;
@@ -346,7 +350,10 @@ class gradeimport_csv_load_data {
                     $value = $validvalue;
                 } else {
                     // Non numeric grade value supplied, possibly mapped wrong column.
-                    $this->cleanup_import(get_string('badgrade', 'grades'));
+                    $this->cleanup_import(get_string('badgrade', 'gradeimport_csv', [
+                        'badgrade' => $value,
+                        'linenumber' => $linenumber,
+                    ]));
                     return null;
                 }
             }
@@ -378,9 +385,19 @@ class gradeimport_csv_load_data {
      * @param int $courseid The course ID.
      * @param int $feedbackgradeid The ID of the grade item that the feedback relates to.
      * @param bool $verbosescales Form setting for grading with scales.
+     * @param int $linenumber The line number that we are currently working on.
      */
-    protected function map_user_data_with_value($mappingidentifier, $value, $header, $map, $key, $courseid, $feedbackgradeid,
-            $verbosescales) {
+    protected function map_user_data_with_value(
+        $mappingidentifier,
+        $value,
+        $header,
+        $map,
+        $key,
+        $courseid,
+        $feedbackgradeid,
+        $verbosescales,
+        int $linenumber
+    ) {
 
         // Fields that the user can be mapped from.
         $userfields = array(
@@ -423,8 +440,14 @@ class gradeimport_csv_load_data {
             default:
                 // Existing grade items.
                 if (!empty($map[$key])) {
-                    $this->newgrades = $this->update_grade_item($courseid, $map, $key, $verbosescales, $value,
-                            $mappingidentifier);
+                    $this->newgrades = $this->update_grade_item(
+                        $courseid,
+                        $map,
+                        $key,
+                        $verbosescales,
+                        $value,
+                        $linenumber
+                    );
                 }
                 // Otherwise, we ignore this column altogether because user has chosen
                 // to ignore them (e.g. institution, address etc).
@@ -493,11 +516,13 @@ class gradeimport_csv_load_data {
 
         $csvimport->init();
 
+        $linenumber = 1;
         while ($line = $csvimport->next()) {
             if (count($line) <= 1) {
                 // There is no data on this line, move on.
                 continue;
             }
+            $linenumber++;
 
             // Array to hold all grades to be inserted.
             $this->newgrades = array();
@@ -527,8 +552,17 @@ class gradeimport_csv_load_data {
                     $feedbackgradeid = '';
                 }
 
-                $this->map_user_data_with_value($mappingidentifier, $value, $header, $map, $key, $courseid, $feedbackgradeid,
-                        $verbosescales);
+                $this->map_user_data_with_value(
+                    $mappingidentifier,
+                    $value,
+                    $header,
+                    $map,
+                    $key,
+                    $courseid,
+                    $feedbackgradeid,
+                    $verbosescales,
+                    $linenumber
+                );
                 if ($this->status === false) {
                     return $this->status;
                 }

@@ -80,27 +80,71 @@ class phpunit_gradeimport_csv_load_data extends gradeimport_csv_load_data {
 
     /**
      * Method to open up the appropriate method for unit testing.
-     */
-    public function test_update_grade_item($courseid, $map, $key, $verbosescales, $value) {
-        return $this->update_grade_item($courseid, $map, $key, $verbosescales, $value);
-    }
-
-    /**
-     * Method to open up the appropriate method for unit testing.
      *
      * @param int $courseid The course ID.
      * @param array $map Mapping information provided by the user.
      * @param int $key The line that we are currently working on.
      * @param bool $verbosescales Form setting for grading with scales.
-     * @param string $value The grade value .
+     * @param string $value The grade value.
+     * @param int $linenumber The line number that we are currently working on.
      * @return array grades to be updated.
      */
-    public function test_map_user_data_with_value($mappingidentifier, $value, $header, $map, $key, $courseid, $feedbackgradeid,
-            $verbosescales) {
+    public function test_update_grade_item(
+        int $courseid,
+        array $map,
+        int $key,
+        bool $verbosescales,
+        string $value,
+        int $linenumber
+    ) {
+        return $this->update_grade_item(
+            $courseid,
+            $map,
+            $key,
+            $verbosescales,
+            $value,
+            $linenumber
+        );
+    }
+
+    /**
+     * Method to open up the appropriate method for unit testing.
+     *
+     * @param string $mappingidentifier The user field that we are matching together.
+     * @param string $value The value we are checking / importing.
+     * @param array $header The column headers of the csv file.
+     * @param array $map Mapping information provided by the user.
+     * @param int $key Current row identifier.
+     * @param int $courseid The course ID.
+     * @param int $feedbackgradeid The ID of the grade item that the feedback relates to.
+     * @param bool $verbosescales Form setting for grading with scales.
+     * @param int $linenumber The line number that we are currently working on.
+     * @return mixed Returns an integer representing a user ID, an array of feedbacks or an array of grades.
+     */
+    public function test_map_user_data_with_value(
+        string $mappingidentifier,
+        string $value,
+        array $header,
+        array $map,
+        int $key,
+        int $courseid,
+        int $feedbackgradeid,
+        bool $verbosescales,
+        int $linenumber
+    ) {
         // Set an import code.
         $this->importcode = 00001;
-        $this->map_user_data_with_value($mappingidentifier, $value, $header, $map, $key, $courseid, $feedbackgradeid,
-                $verbosescales);
+        $this->map_user_data_with_value(
+            $mappingidentifier,
+            $value,
+            $header,
+            $map,
+            $key,
+            $courseid,
+            $feedbackgradeid,
+            $verbosescales,
+            $linenumber
+        );
 
         switch ($mappingidentifier) {
             case 'userid':
@@ -108,16 +152,11 @@ class phpunit_gradeimport_csv_load_data extends gradeimport_csv_load_data {
             case 'useremail':
             case 'username':
                 return $this->studentid;
-            break;
-            case 'new':
-                return $this->newgrades;
-            break;
             case 'feedback':
                 return $this->newfeedbacks;
-            break;
+            case 'new':
             default:
                 return $this->newgrades;
-            break;
         }
     }
 }
