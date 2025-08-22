@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1.21 ===
+
+* Moodle's Behat `::execute()` method now supports the use of array callable syntax for calling other steps.
+
 === 4.1.20 ===
 
 * Add a new method has_valid_group in \core\report_helper that will return true or false depending if the user has a valid group. This is mainly
