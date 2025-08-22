@@ -1109,19 +1109,37 @@ EOF;
     /**
      * Helper function to execute api in a given context.
      *
-     * @param string $contextapi context in which api is defined.
+     * Note: The contextapi does not support a callback.
+     *
+     * @param string|array $contextapi context in which api is defined.
      * @param array|mixed $params list of params to pass or a single parameter
      * @throws Exception
+     * @throws DriverException
      */
-    protected function execute($contextapi, $params = array()) {
+    protected function execute(
+        string|array $contextapi,
+        mixed $params = [],
+    ): void {
         if (!is_array($params)) {
-            $params = array($params);
+            $params = [$params];
+        }
+
+        if (is_string($contextapi)) {
+            $contextapi = explode('::', $contextapi);
+        }
+
+        if (count($contextapi) !== 2) {
+            throw new DriverException('Invalid contextapi format, expected "context::api" or ["context", "api"]');
         }
 
         // Get required context and execute the api.
-        $contextapi = explode("::", $contextapi);
-        $context = behat_context_helper::get($contextapi[0]);
-        call_user_func_array(array($context, $contextapi[1]), $params);
+        [$classname, $method] = $contextapi;
+        if (!is_string($classname) || !is_string($method)) {
+            throw new DriverException('Invalid contextapi format, expected "context::api" or ["context", "api"]');
+        }
+
+        $context = behat_context_helper::get($classname);
+        call_user_func_array([$context, $method], $params);
 
         // NOTE: Wait for pending js and look for exception are not optional, as this might lead to unexpected results.
         // Don't make them optional for performance reasons.
