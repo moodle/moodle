@@ -34,13 +34,13 @@ class require_login {
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        /** @var bool Whether login is required */
-        public bool $requirelogin = false,
-        /** @var bool Whether a course login is required */
+        /** @var bool Whether to require login or not */
+        public bool $requirelogin = true,
+        /** @var bool Whether to require course login or not */
         public bool $requirecourselogin = false,
-        /** @var bool The name of the route attribute that the course object can be found in */
+        /** @var string|null The route attribute name used for the course */
         protected ?string $courseattributename = null,
-        /** @var bool Whether to automatically log in as guest */
+        /** @var bool Whether to autologin guest users */
         public bool $autologinguest = true,
     ) {
         if ($requirelogin && $requirecourselogin) {
@@ -49,11 +49,13 @@ class require_login {
     }
 
     /**
-     * Get the course attribute name.
+     * Get the attribute name used for the course.
      *
-     * @return string
+     * A null value is returned if the course attribute name is not set.
+     *
+     * @return null|string
      */
-    public function get_course_attribute_name(): string {
+    public function get_course_attribute_name(): ?string {
         return $this->courseattributename;
     }
 

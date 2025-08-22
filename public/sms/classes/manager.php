@@ -18,6 +18,7 @@ namespace core_sms;
 
 use Generator;
 use stdClass;
+use core\url;
 
 /**
  * SMS manager.
@@ -439,5 +440,61 @@ class manager {
         }
 
         return $phonenumber;
+    }
+
+    /**
+     * Create a shortlink for the specified user.
+     *
+     * To create a global shortlink, a userid of 0 can be used.
+     *
+     * @param string $component
+     * @param string $linktype
+     * @param int|string $identifier
+     * @param int $userid
+     * @throws \coding_exception
+     * @return url
+     */
+    public static function create_shortlink(
+        string $component,
+        string $linktype,
+        null|int|string $identifier,
+        int $userid,
+    ): url {
+        return \core\di::get(\core\shortlink::class)->create_shortlink(
+            component: $component,
+            linktype: $linktype,
+            identifier: $identifier,
+            userid: $userid,
+            minlength: 4,
+            maxlength: 4,
+        );
+    }
+
+    /**
+     * Create a shortlink for a set of users.
+     *
+     * The shortlink returned will be the same for all specified users.
+     *
+     * @param string $component
+     * @param string $linktype
+     * @param string $identifier
+     * @param array $userids
+     * @throws \coding_exception
+     * @return url
+     */
+    public static function create_shortlink_for_users(
+        string $component,
+        string $linktype,
+        string $identifier,
+        array $userids,
+    ): url {
+        return \core\di::get(\core\shortlink::class)->create_shortlink_for_users(
+            component: $component,
+            linktype: $linktype,
+            identifier: $identifier,
+            userids: $userids,
+            minlength: 4,
+            maxlength: 4,
+        );
     }
 }

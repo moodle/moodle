@@ -40,20 +40,30 @@ final class provider_test extends provider_testcase {
      */
     public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
-        $user = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
 
         // Check that there are no contexts used for the user yet.
-        $this->assertEmpty(provider::get_contexts_for_userid($user->id));
+        $this->assertEmpty(provider::get_contexts_for_userid($user1->id));
 
         // Insert a record.
-        $this->insert_dummy_moodlenet_share_progress_record($user->id);
+        $this->insert_dummy_moodlenet_share_progress_record($user1->id);
+        $this->insert_dummy_shortlink_record($user2->id);
 
-        // Check that we only get back one context.
-        $contextlist = provider::get_contexts_for_userid($user->id);
+        // Check that we only get back one context for user1.
+        $contextlist = provider::get_contexts_for_userid($user1->id);
         $this->assertCount(1, $contextlist);
 
         // Check that the context returned is the expected one.
-        $usercontext = \context_user::instance($user->id);
+        $usercontext = \context_user::instance($user1->id);
+        $this->assertEquals($usercontext->id, $contextlist->get_contextids()[0]);
+
+        // Check that we only get back one context for user2.
+        $contextlist = provider::get_contexts_for_userid($user2->id);
+        $this->assertCount(1, $contextlist);
+
+        // Check that the context returned is the expected one.
+        $usercontext = \context_user::instance($user2->id);
         $this->assertEquals($usercontext->id, $contextlist->get_contextids()[0]);
     }
 
@@ -68,8 +78,10 @@ final class provider_test extends provider_testcase {
         // Create some users.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
         $usercontext1 = \context_user::instance($user1->id);
         $usercontext2 = \context_user::instance($user2->id);
+        $usercontext3 = \context_user::instance($user3->id);
 
         // Get userlists and check they are empty for now.
         $userlist1 = new \core_privacy\local\request\userlist($usercontext1, 'core');
@@ -80,9 +92,14 @@ final class provider_test extends provider_testcase {
         provider::get_users_in_context($userlist2);
         $this->assertCount(0, $userlist2);
 
+        $userlist3 = new \core_privacy\local\request\userlist($usercontext3, 'core');
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(0, $userlist3);
+
         // Insert records for both users.
         $this->insert_dummy_moodlenet_share_progress_record($user1->id);
         $this->insert_dummy_moodlenet_share_progress_record($user2->id);
+        $this->insert_dummy_shortlink_record($user3->id);
 
         // Check the userlists contain the correct users.
         $userlist1 = new \core_privacy\local\request\userlist($usercontext1, 'core');
@@ -94,6 +111,11 @@ final class provider_test extends provider_testcase {
         provider::get_users_in_context($userlist2);
         $this->assertCount(1, $userlist2);
         $this->assertEquals($user2->id, $userlist2->get_userids()[0]);
+
+        $userlist3 = new \core_privacy\local\request\userlist($usercontext3, 'core');
+        provider::get_users_in_context($userlist3);
+        $this->assertCount(1, $userlist3);
+        $this->assertEquals($user3->id, $userlist3->get_userids()[0]);
     }
 
     /**
@@ -108,10 +130,12 @@ final class provider_test extends provider_testcase {
         // Create some users.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
 
         // Insert a record for each user.
         $this->insert_dummy_moodlenet_share_progress_record($user1->id);
         $this->insert_dummy_moodlenet_share_progress_record($user2->id);
+        $this->insert_dummy_shortlink_record($user3->id);
 
         $subcontexts = [
             get_string('privacy:metadata:moodlenet_share_progress', 'moodle')
@@ -140,6 +164,32 @@ final class provider_test extends provider_testcase {
         $this->assertEquals($userdata->timecreated, reset($data)->timecreated);
         $this->assertEquals($userdata->resourceurl, reset($data)->resourceurl);
         $this->assertEquals($userdata->status, reset($data)->status);
+
+        $subcontexts = [
+            get_string('privacy:metadata:shortlink', 'moodle')
+        ];
+
+        // Check if user3 has any exported data yet.
+        $usercontext3 = \context_user::instance($user3->id);
+        $writer = writer::with_context($usercontext3);
+        $this->assertFalse($writer->has_any_data());
+
+        // Export user3's data and check the count.
+        $approvedlist = new approved_contextlist($user3, 'core', [$usercontext3->id]);
+        provider::export_user_data($approvedlist);
+        $data = (array)$writer->get_data($subcontexts);
+        $this->assertCount(1, $data);
+
+        // Get the inserted data.
+        $userdata = $DB->get_record('shortlink', ['userid' => $user3->id]);
+
+        // Check exported data against the inserted data.
+        $this->assertEquals($userdata->id, reset($data)->id);
+        $this->assertEquals($userdata->shortcode, reset($data)->shortcode);
+        $this->assertEquals($userdata->userid, reset($data)->userid);
+        $this->assertEquals($userdata->component, reset($data)->component);
+        $this->assertEquals($userdata->linktype, reset($data)->linktype);
+        $this->assertEquals($userdata->identifier, reset($data)->identifier);
     }
 
     /**
@@ -158,9 +208,13 @@ final class provider_test extends provider_testcase {
         // Insert a record for each user.
         $this->insert_dummy_moodlenet_share_progress_record($user1->id);
         $this->insert_dummy_moodlenet_share_progress_record($user2->id);
+        $this->insert_dummy_shortlink_record($user1->id);
+        $this->insert_dummy_shortlink_record($user2->id);
 
         // Get all users' data.
         $usersdata = $DB->get_records('moodlenet_share_progress', []);
+        $this->assertCount(2, $usersdata);
+        $usersdata = $DB->get_records('shortlink', []);
         $this->assertCount(2, $usersdata);
 
         // Delete everything for a user1 in context.
@@ -169,6 +223,9 @@ final class provider_test extends provider_testcase {
 
         // Check what is remaining belongs to user2.
         $usersdata = $DB->get_records('moodlenet_share_progress', []);
+        $this->assertCount(1, $usersdata);
+        $this->assertEquals($user2->id, reset($usersdata)->userid);
+        $usersdata = $DB->get_records('shortlink', []);
         $this->assertCount(1, $usersdata);
         $this->assertEquals($user2->id, reset($usersdata)->userid);
     }
@@ -189,9 +246,13 @@ final class provider_test extends provider_testcase {
         // Insert a record for each user.
         $this->insert_dummy_moodlenet_share_progress_record($user1->id);
         $this->insert_dummy_moodlenet_share_progress_record($user2->id);
+        $this->insert_dummy_shortlink_record($user1->id);
+        $this->insert_dummy_shortlink_record($user2->id);
 
         // Get all users' data.
         $usersdata = $DB->get_records('moodlenet_share_progress', []);
+        $this->assertCount(2, $usersdata);
+        $usersdata = $DB->get_records('shortlink', []);
         $this->assertCount(2, $usersdata);
 
         // Delete everything for user1.
@@ -201,6 +262,9 @@ final class provider_test extends provider_testcase {
 
         // Check what is remaining belongs to user2.
         $usersdata = $DB->get_records('moodlenet_share_progress', []);
+        $this->assertCount(1, $usersdata);
+        $this->assertEquals($user2->id, reset($usersdata)->userid);
+        $usersdata = $DB->get_records('shortlink', []);
         $this->assertCount(1, $usersdata);
         $this->assertEquals($user2->id, reset($usersdata)->userid);
     }
@@ -223,15 +287,21 @@ final class provider_test extends provider_testcase {
         // Insert a record for each user.
         $this->insert_dummy_moodlenet_share_progress_record($user1->id);
         $this->insert_dummy_moodlenet_share_progress_record($user2->id);
+        $this->insert_dummy_shortlink_record($user1->id);
+        $this->insert_dummy_shortlink_record($user2->id);
 
         // Check the count on all user's data.
         $usersdata = $DB->get_records('moodlenet_share_progress', []);
+        $this->assertCount(2, $usersdata);
+        $usersdata = $DB->get_records('shortlink', []);
         $this->assertCount(2, $usersdata);
 
         // Attempt to delete data for user1 using user2's context (should have no effect).
         $approvedlist = new approved_userlist($usercontext2, 'core', [$user1->id]);
         provider::delete_data_for_users($approvedlist);
         $usersdata = $DB->get_records('moodlenet_share_progress', []);
+        $this->assertCount(2, $usersdata);
+        $usersdata = $DB->get_records('shortlink', []);
         $this->assertCount(2, $usersdata);
 
         // Delete data for user1 using its correct context.
@@ -240,6 +310,9 @@ final class provider_test extends provider_testcase {
 
         // Check what is remaining belongs to user2.
         $usersdata = $DB->get_records('moodlenet_share_progress', []);
+        $this->assertCount(1, $usersdata);
+        $this->assertEquals($user2->id, reset($usersdata)->userid);
+        $usersdata = $DB->get_records('shortlink', []);
         $this->assertCount(1, $usersdata);
         $this->assertEquals($user2->id, reset($usersdata)->userid);
     }
@@ -254,5 +327,30 @@ final class provider_test extends provider_testcase {
         $courseid = 123;
         $cmid = 456;
         share_recorder::insert_share_progress($sharetype, $userid, $courseid, $cmid);
+    }
+
+    /**
+     * Helper function to insert a shortlink record for use in the tests.
+     *
+     * @param int $userid The ID of the user to link the record to.
+     */
+    protected function insert_dummy_shortlink_record(
+        int $userid,
+    ): void {
+        // Mock the handler.
+        $handler = $this->createMock(\core\shortlink_handler_interface::class);
+        $handler->method('get_valid_linktypes')
+            ->willReturn(['view']);
+        $handler->method('process_shortlink')
+            ->with(
+                $this->equalTo('view'),
+                $this->equalTo(123),
+            )
+            ->willReturn(new \core\url('https://example.com'));
+        \core\di::set("mod_example\\shortlink_handler", $handler);
+
+        // Create a shortlink for the user.
+        $manager = \core\di::get(\core\shortlink::class);
+        $manager->create_shortlink('mod_example', 'view', 123, $userid);
     }
 }
