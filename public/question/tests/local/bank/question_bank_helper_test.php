@@ -161,6 +161,54 @@ final class question_bank_helper_test extends \advanced_testcase {
     }
 
     /**
+     * Tests if applying the limit and capability checks are interacting properly.
+     *
+     * @covers ::get_activity_instances_with_shareable_questions
+     * @covers ::get_activity_instances_with_private_questions
+     */
+    public function test_get_instances_with_limit_and_capabilities(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = self::getDataGenerator()->create_user();
+        self::setUser($teacher);
+        $editingteacherroleid = $DB->get_record('role', ['shortname' => 'editingteacher'])->id;
+
+        $sharedmodgen = self::getDataGenerator()->get_plugin_generator('mod_qbank');
+        // Create 20 question banks, and give the teacher permission to edit only in the last 5.
+        for ($i = 0; $i < 20; $i++) {
+            $sharedmod = $sharedmodgen->create_instance(['course' => $course]);
+            if ($i >= 15) {
+                role_assign($editingteacherroleid, $teacher->id, \context_module::instance($sharedmod->cmid));
+            }
+        }
+
+        // We now have created 20 banks. If the limit is below 20, we have to make sure that the code does NOT first apply a limit
+        // of, for example, 15 and check capabilities afterward. This would mean we end up returning 0 qbanks.
+        $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
+            havingcap: ['moodle/question:add'],
+            limit: 15
+        );
+        $this->assertCount(5, $sharedbanks);
+
+        // On the other hand, check if the limit parameter works at all and is being applied correctly.
+        $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
+            havingcap: ['moodle/question:add'],
+            limit: 2
+        );
+        $this->assertCount(2, $sharedbanks);
+
+        $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(limit: 10);
+        $this->assertCount(10, $sharedbanks);
+
+        $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(limit: 30);
+        $this->assertCount(20, $sharedbanks);
+
+        $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(limit: 0);
+        $this->assertCount(20, $sharedbanks);
+    }
+
+    /**
      * We should be able to filter sharable question bank instances by name.
      *
      * @covers ::get_activity_instances_with_shareable_questions
