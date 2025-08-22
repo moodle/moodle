@@ -24,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/xmlize.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/formatbase.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/formatqti.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/formatpool.php');

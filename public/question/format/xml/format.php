@@ -22,10 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\exception\xml_format_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/xmlize.php');
 if (!class_exists('qformat_default')) {
     // This is ugly, but this class is also (ab)used by mod/lesson, which defines
     // a different base class in mod/lesson/format.php. Thefore, we can only
@@ -1001,7 +1001,7 @@ class qformat_xml extends qformat_default {
         // This converts xml to big nasty data structure
         // the 0 means keep white space as it is (important for markdown format).
         try {
-            $xml = xmlize($lines, 0, 'UTF-8', true);
+            $xml = (new \core\xml_parser())->parse($lines, 0, 'UTF-8', true);
         } catch (xml_format_exception $e) {
             $this->error($e->getMessage(), '');
             return false;

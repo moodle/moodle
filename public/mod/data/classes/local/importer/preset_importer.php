@@ -126,9 +126,6 @@ abstract class preset_importer {
      * @return stdClass Settings to be imported.
      */
     public function get_preset_settings(): stdClass {
-        global $CFG;
-        require_once($CFG->libdir.'/xmlize.php');
-
         $fs = null;
         $fileobj = null;
         if (!preset::is_directory_a_preset($this->directory)) {
@@ -178,7 +175,7 @@ abstract class preset_importer {
 
         // Grab XML.
         $presetxml = $this->get_file_contents($fs, $fileobj, $this->directory, 'preset.xml');
-        $parsedxml = xmlize($presetxml, 0);
+        $parsedxml = (new \core\xml_parser())->parse($presetxml, 0);
 
         // First, do settings. Put in user friendly array.
         $settingsarray = $parsedxml['preset']['#']['settings'][0]['#'];

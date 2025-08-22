@@ -126,14 +126,11 @@ $mform->display();
 echo $OUTPUT->footer();
 
 function feedback_load_xml_data($xmlcontent) {
-    global $CFG;
-    require_once($CFG->dirroot.'/lib/xmlize.php');
-
     if (!$xmlcontent = feedback_check_xml_utf8($xmlcontent)) {
         return false;
     }
 
-    $data = xmlize($xmlcontent, 1, 'UTF-8');
+    $data = (new \core\xml_parser())->parse($xmlcontent, 1, 'UTF-8');
 
     if (intval($data['FEEDBACK']['@']['VERSION']) != 200701) {
         return false;

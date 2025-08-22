@@ -16,7 +16,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once $CFG->libdir.'/gradelib.php';
-require_once($CFG->libdir.'/xmlize.php');
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/import/lib.php';
 
@@ -27,7 +26,7 @@ function import_xml_grades($text, $course, &$error) {
 
     $status = true;
 
-    $content = xmlize($text);
+    $content = (new \core\xml_parser())->parse($text);
 
     if (!empty($content['results']['#']['result'])) {
         $results = $content['results']['#']['result'];

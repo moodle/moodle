@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * Unit tests for the select missing words question definition class.
  *
  * @package   qtype_gapselect
+ * @covers    \qtype_gapselect
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -172,7 +173,7 @@ final class question_type_test extends \question_testcase {
       <clearwrong />
     </hint>
   </question>';
-        $xmldata = xmlize($xml);
+        $xmldata = (new \core\xml_parser())->parse($xml);
 
         $importer = new \qformat_xml();
         $q = $importer->try_importing_using_qtypes(

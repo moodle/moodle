@@ -140,7 +140,7 @@ final class environment_test extends \advanced_testcase {
     </PLUGIN>
 </COMPATIBILITY_MATRIX>
 END;
-        $environemt = xmlize($xml);
+        $environemt = (new \core\xml_parser())->parse($xml);
         $versions = get_list_of_environment_versions($environemt);
         $this->assertCount(5, $versions);
         $this->assertContains('1.9', $versions);
@@ -156,6 +156,7 @@ END;
     public function test_verify_plugin(): void {
         global $CFG;
         require_once($CFG->libdir.'/environmentlib.php');
+        $xmlparser = new \core\xml_parser();
         // Build sample xmlised environment file fragments.
         $plugin1xml = <<<END
 <PLUGIN name="block_testcase">
@@ -164,7 +165,7 @@ END;
     </PHP_EXTENSIONS>
 </PLUGIN>
 END;
-        $plugin1 = xmlize($plugin1xml);
+        $plugin1 = $xmlparser->parse($plugin1xml);
         $plugin2xml = <<<END
 <PLUGIN>
     <PHP_EXTENSIONS>
@@ -172,7 +173,7 @@ END;
     </PHP_EXTENSIONS>
 </PLUGIN>
 END;
-        $plugin2 = xmlize($plugin2xml);
+        $plugin2 = $xmlparser->parse($plugin2xml);
         $this->assertTrue(environment_verify_plugin('block_testcase', $plugin1['PLUGIN']));
         $this->assertFalse(environment_verify_plugin('block_testcase', $plugin2['PLUGIN']));
         $this->assertFalse(environment_verify_plugin('mod_someother', $plugin1['PLUGIN']));

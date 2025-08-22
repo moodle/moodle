@@ -34,9 +34,6 @@ require_once('actions/XMLDBCheckAction.class.php');
 
 admin_externalpage_setup('toolxmld');
 
-// Add other used libraries
-require_once($CFG->libdir . '/xmlize.php');
-
 // Handle session data
 global $XMLDB;
 

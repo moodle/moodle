@@ -108,7 +108,6 @@ defined('MOODLE_INTERNAL') || die();
 
 /// Add libraries
 require_once($CFG->libdir.'/ddllib.php');
-require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/messagelib.php');
 
 // Add classes, traits, and interfaces which should be autoloaded.
