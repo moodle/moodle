@@ -6,6 +6,38 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 5.0.2+
+
+### core
+
+#### Added
+
+- The Behat `::execute()` method now accepts an array-style callable in addition to the string `classname::method` format.
+
+  The following formats are now accepted:
+
+  ```php
+  // String format:
+  $this->execute('behat_general::i_click_on', [...]);
+
+  // Array format:
+  $this->execute([behat_general::class,' i_click_on'], [...]);
+  ```
+
+  For more information see [MDL-86231](https://tracker.moodle.org/browse/MDL-86231)
+
+#### Changed
+
+- The `\core\output\local\dropdown\dialog` class constructor now accepts a `$definition['autoclose']` parameter to define autoclose behaviour of the element
+
+  For more information see [MDL-86015](https://tracker.moodle.org/browse/MDL-86015)
+- The default PHPUnit configuration now enables the following properties, ensuring PHP warnings will cause test failures (restoring pre-PHPUnit version 10 behaviour):
+
+  * `failOnDeprecation`
+  * `failOnWarning`
+
+  For more information see [MDL-86311](https://tracker.moodle.org/browse/MDL-86311)
+
 ## 5.0.2
 
 ### core
