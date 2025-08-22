@@ -39,7 +39,7 @@ function xmldb_enrol_database_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2025070500) {
+    if ($oldversion < 2025070501) {
         // Remove duplicated enrolment records, keeping only the earliest records.
         $transaction = $DB->start_delegated_transaction();
         $courses = $DB->get_records_sql(
@@ -57,18 +57,28 @@ function xmldb_enrol_database_upgrade($oldversion) {
             [$insql, $inparams] = $DB->get_in_or_equal($idstodelete, SQL_PARAMS_NAMED);
 
             // Migrate enrolments where possible.
-            $DB->execute(
-                "
-                UPDATE {user_enrolments} ue
-                   SET enrolid = :idtokeep1
-                 WHERE ue.enrolid $insql
-                   AND NOT EXISTS (
-                       SELECT 1
-                         FROM {user_enrolments} ue2
-                        WHERE ue2.userid  = ue.userid
-                          AND ue2.enrolid = :idtokeep2)",
-                array_merge($inparams, ['idtokeep1' => $idtokeep, 'idtokeep2' => $idtokeep])
+            // First, get the user enrolments that can be migrated.
+            $migrateusers = $DB->get_records_sql(
+                "SELECT ue.id
+                   FROM {user_enrolments} ue
+                  WHERE ue.enrolid $insql
+                        AND NOT EXISTS (
+                            SELECT 1
+                              FROM {user_enrolments} ue2
+                             WHERE ue2.userid  = ue.userid
+                                   AND ue2.enrolid = :idtokeep)",
+                    array_merge($inparams, ['idtokeep' => $idtokeep]),
             );
+
+            // Then update them if any exist.
+            if (!empty($migrateusers)) {
+                $migrateids = array_keys($migrateusers);
+                [$migratein, $migrateparams] = $DB->get_in_or_equal($migrateids, SQL_PARAMS_NAMED);
+                $DB->execute(
+                    "UPDATE {user_enrolments} SET enrolid = :idtokeep WHERE id $migratein",
+                    array_merge($migrateparams, ['idtokeep' => $idtokeep]),
+                );
+            }
 
             $DB->delete_records_select('user_enrolments', "enrolid $insql", $inparams);
 
@@ -86,7 +96,7 @@ function xmldb_enrol_database_upgrade($oldversion) {
             $DB->delete_records_list('enrol', 'id', $idstodelete);
         }
         $transaction->allow_commit();
-        upgrade_plugin_savepoint(true, 2025070500, 'enrol', 'database');
+        upgrade_plugin_savepoint(true, 2025070501, 'enrol', 'database');
     }
 
     return true;
