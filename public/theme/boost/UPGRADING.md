@@ -1,12 +1,18 @@
 # theme_boost Upgrade notes
 
-## 5.1dev
+## 5.1dev+
 
 ### Added
 
 - Theme can now inherit from their grand-parent and parents.  So if a child theme inherit from a parent theme that declares a new layout, the child theme can use it without redeclaring it. Also inheritance for layout uses the expected grandparent > parent > child with precedence to the child theme.
 
   For more information see [MDL-79319](https://tracker.moodle.org/browse/MDL-79319)
+
+### Deprecated
+
+- The `core:e/text_highlight` and `core:e/text_highlight_picker` icons are deprecated and will be removed in Moodle 6.0. The UX team recommended this change to reduce visual clutter and improve readability. The icons were removed because they didn't indicate status changes, were repetitive across all notifications, and took up space that could be used for more content.
+
+  For more information see [MDL-85146](https://tracker.moodle.org/browse/MDL-85146)
 
 ## 5.0
 

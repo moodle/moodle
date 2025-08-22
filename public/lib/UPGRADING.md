@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 5.1dev
+## 5.1dev+
 
 ### Added
 
@@ -33,6 +33,27 @@
   It is no longer necessary to include `lib/ajax/ajaxlib.php` in any code.
 
   For more information see [MDL-86168](https://tracker.moodle.org/browse/MDL-86168)
+- The Behat `::execute()` method now accepts an array-style callable in addition to the string `classname::method` format.
+
+  The following formats are now accepted:
+
+  ```php
+  // String format:
+  $this->execute('behat_general::i_click_on', [...]);
+
+  // Array format:
+  $this->execute([behat_general::class,' i_click_on'], [...]);
+  ```
+
+  For more information see [MDL-86231](https://tracker.moodle.org/browse/MDL-86231)
+- The following classes have been moved into namespaces and now support autoloading:
+
+  | Old class name          | New class name                         |
+  | ---                     | ---                                    |
+  | `\core_xml_parser`      | `\core\xml_parser`                     |
+  | `\xml_format_exception` | `\core\exception\xml_format_exception` |
+
+  For more information see [MDL-86256](https://tracker.moodle.org/browse/MDL-86256)
 
 ### Changed
 
@@ -53,6 +74,15 @@
   ```
 
   For more information see [MDL-85897](https://tracker.moodle.org/browse/MDL-85897)
+- The `\core\output\local\dropdown\dialog` class constructor now accepts a `$definition['autoclose']` parameter to define autoclose behaviour of the element
+
+  For more information see [MDL-86015](https://tracker.moodle.org/browse/MDL-86015)
+- The default PHPUnit configuration now enables the following properties, ensuring PHP warnings will cause test failures (restoring pre-PHPUnit version 10 behaviour):
+
+  * `failOnDeprecation`
+  * `failOnWarning`
+
+  For more information see [MDL-86311](https://tracker.moodle.org/browse/MDL-86311)
 
 ### Deprecated
 
@@ -80,6 +110,9 @@
 - The `user_preference_allow_ajax_update()` has been removed. It was deprecated without replacement in Moodle 4.3.
 
   For more information see [MDL-86168](https://tracker.moodle.org/browse/MDL-86168)
+- The `xmlize()` method from `lib/xmlize.php` has been deprecated, please instead use the `\core\xml_parser` class
+
+  For more information see [MDL-86256](https://tracker.moodle.org/browse/MDL-86256)
 
 ### Removed
 

@@ -1,12 +1,21 @@
 # core_block (subsystem / plugintype) Upgrade notes
 
-## 5.1dev
+## 5.1dev+
 
 ### Changed
 
 - Subcontext visibility is now turned on by default when adding blocks. This change makes it much easier to manage blocks, for example, in courses that lack a view page.
 
   For more information see [MDL-85433](https://tracker.moodle.org/browse/MDL-85433)
+
+### Removed
+
+- Removed block_section_links from Moodle 5.1.
+
+  For more information see [MDL-80556](https://tracker.moodle.org/browse/MDL-80556)
+- Removed block_activity_modules from Moodle 5.1.
+
+  For more information see [MDL-83887](https://tracker.moodle.org/browse/MDL-83887)
 
 ## 5.0
 

@@ -1,6 +1,6 @@
 # qtype_multichoice Upgrade notes
 
-## 5.1dev
+## 5.1dev+
 
 ### Changed
 

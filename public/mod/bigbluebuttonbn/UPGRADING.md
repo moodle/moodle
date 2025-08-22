@@ -1,5 +1,13 @@
 # mod_bigbluebuttonbn Upgrade notes
 
+## 5.1dev+
+
+### Added
+
+- Add activity_dates class to BigblueButton module.
+
+  For more information see [MDL-83889](https://tracker.moodle.org/browse/MDL-83889)
+
 ## 4.5
 
 ### Added
