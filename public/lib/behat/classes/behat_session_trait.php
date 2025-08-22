@@ -28,13 +28,14 @@ use Behat\Mink\Element\Element;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException;
-use Behat\Mink\Exception\NoSuchWindowException;
 use Behat\Mink\Session;
 use Behat\Testwork\Hook\Scope\HookScope;
+use Facebook\WebDriver\Exception\NoSuchWindowException;
 use Facebook\WebDriver\Exception\ScriptTimeoutException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 
+// phpcs:disable moodle.Files.MoodleInternal.MoodleInternalGlobalState
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/component_named_replacement.php');
@@ -57,7 +58,6 @@ class_alias('Facebook\WebDriver\WebDriverKeys', 'behat_keys');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait behat_session_trait {
-
     /**
      * Locates url, based on provided path.
      * Override to provide custom routing mechanism.
@@ -110,7 +110,7 @@ trait behat_session_trait {
         // Throw exception, so dev knows it is not supported.
         if ($selector === 'named') {
             $exception = 'Using the "named" selector is deprecated as of 3.1. '
-                .' Use the "named_partial" or use the "named_exact" selector instead.';
+                . ' Use the "named_partial" or use the "named_exact" selector instead.';
             throw new ExpectationException($exception, $this->getSession());
         }
 
@@ -125,7 +125,6 @@ trait behat_session_trait {
                 if ($this->running_javascript()) {
                     $locator[1] = html_entity_decode($locator[1], ENT_NOQUOTES);
                 }
-
             } else {
                 $exceptiontype = $selector;
                 $exceptionlocator = $locator;
@@ -154,9 +153,13 @@ trait behat_session_trait {
 
         // Waits for the node to appear if it exists, otherwise will timeout and throw the provided exception.
         return $this->spin(
-            function() use ($selector, $locator, $container) {
+            function () use ($selector, $locator, $container) {
                 return $container->findAll($selector, $locator);
-            }, [], $timeout, $exception, $microsleep
+            },
+            [],
+            $timeout,
+            $exception,
+            $microsleep
         );
     }
 
@@ -194,11 +197,13 @@ trait behat_session_trait {
         if ($converttonamed) {
             if (behat_partial_named_selector::is_deprecated_selector($selector)) {
                 if ($replacement = behat_partial_named_selector::get_deprecated_replacement($selector)) {
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                     error_log("The '{$selector}' selector has been replaced with {$replacement}");
                     $selector = $replacement;
                 }
             } else if (behat_exact_named_selector::is_deprecated_selector($selector)) {
                 if ($replacement = behat_exact_named_selector::get_deprecated_replacement($selector)) {
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                     error_log("The '{$selector}' selector has been replaced with {$replacement}");
                     $selector = $replacement;
                 }
@@ -213,7 +218,10 @@ trait behat_session_trait {
                 $locator = behat_selectors::normalise_named_selector($allowedexactselectors[$selector], $locator);
                 $selector = 'named_exact';
             } else {
-                throw new ExpectationException("The '{$selector}' selector type is not registered.", $this->getSession()->getDriver());
+                throw new ExpectationException(
+                    "The '{$selector}' selector type is not registered.",
+                    $this->getSession()->getDriver(),
+                );
             }
         }
 
@@ -384,7 +392,6 @@ trait behat_session_trait {
             }
 
             usleep(100000);
-
         } while (microtime(true) < $end);
 
         // Using coding_exception as is a development issue if no exception has been provided.
@@ -420,7 +427,7 @@ trait behat_session_trait {
      */
     protected function get_text_selector_node($selectortype, $element) {
         // Getting Mink selector and locator.
-        list($selector, $locator) = $this->transform_text_selector($selectortype, $element);
+        [$selector, $locator] = $this->transform_text_selector($selectortype, $element);
 
         // Returns the NodeElement.
         return $this->find($selector, $locator);
@@ -496,7 +503,10 @@ trait behat_session_trait {
 
         $selectors = behat_selectors::get_allowed_text_selectors();
         if (empty($selectors[$selectortype])) {
-            throw new ExpectationException('The "' . $selectortype . '" selector can not be used to select text nodes', $this->getSession());
+            throw new ExpectationException(
+                "The \"{$selectortype}\" selector can not be used to select text nodes",
+                $this->getSession(),
+            );
         }
 
         return $this->transform_selector($selectortype, $element);
@@ -587,7 +597,7 @@ trait behat_session_trait {
 
         // It will stop spinning once the find() method returns true.
         $this->spin(
-            function() use ($selector, $locator, $container) {
+            function () use ($selector, $locator, $container) {
                 if ($container->find($selector, $locator)) {
                     return true;
                 }
@@ -622,7 +632,7 @@ trait behat_session_trait {
 
         // It will stop spinning once the find() method returns false.
         $this->spin(
-            function() use ($selector, $locator, $container) {
+            function () use ($selector, $locator, $container) {
                 if ($container->find($selector, $locator)) {
                     return false;
                 }
@@ -655,7 +665,7 @@ trait behat_session_trait {
 
         // It will stop spinning once the isVisible() method returns true.
         $this->spin(
-            function($context, $args) {
+            function ($context, $args) {
                 if ($args->isVisible()) {
                     return true;
                 }
@@ -690,13 +700,13 @@ trait behat_session_trait {
 
         // It will stop spinning once the $args[1]) == $args[2], and method returns true.
         $this->spin(
-            function($context, $args) {
+            function ($context, $args) {
                 if ($args[0]->getAttribute($args[1]) == $args[2]) {
                     return true;
                 }
                 return false;
             },
-            array($node, $attribute, $attributevalue),
+            [$node, $attribute, $attributevalue],
             self::get_extended_timeout(),
             $exception,
             true
@@ -912,7 +922,6 @@ EOF;
     public function look_for_exceptions() {
         // Wrap in try in case we were interacting with a closed window.
         try {
-
             // Exceptions.
             $exceptionsxpath = "//div[@data-rel='fatalerror']";
             // Debugging messages.
@@ -922,7 +931,7 @@ EOF;
             // Any other backtrace.
             $othersxpath = "(//*[contains(., ': call to ')])[1]";
 
-            $xpaths = array($exceptionsxpath, $debuggingxpath, $phperrorxpath, $othersxpath);
+            $xpaths = [$exceptionsxpath, $debuggingxpath, $phperrorxpath, $othersxpath];
             $joinedxpath = implode(' | ', $xpaths);
 
             // Joined xpath expression. Most of the time there will be no exceptions, so this pre-check
@@ -933,7 +942,7 @@ EOF;
                 if (!empty($phperrors)) {
                     foreach ($phperrors as $error) {
                         $errnostring = behat_get_error_string($error['type']);
-                        $msgs[] = $errnostring . ": " .$error['message'] . " at " . $error['file'] . ": " . $error['line'];
+                        $msgs[] = $errnostring . ": " . $error['message'] . " at " . $error['file'] . ": " . $error['line'];
                     }
                     $msg = "PHP errors found:\n" . implode("\n", $msgs);
                     throw new \Exception(htmlentities($msg, ENT_COMPAT));
@@ -944,7 +953,6 @@ EOF;
 
             // Exceptions.
             if ($errormsg = $this->getSession()->getPage()->find('xpath', $exceptionsxpath)) {
-
                 // Getting the debugging info and the backtrace.
                 $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-error');
                 // If errorinfoboxes is empty, try find alert-danger (bootstrap4) class.
@@ -964,7 +972,6 @@ EOF;
                     if ($errorinfoboxes) {
                         $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml());
                     }
-
                 } else {
                     $errorinfo = implode("\n", [
                         $this->get_debug_text($errorinfoboxes[0]->getHtml()),
@@ -979,7 +986,7 @@ EOF;
 
             // Debugging messages.
             if ($debuggingmessages = $this->getSession()->getPage()->findAll('xpath', $debuggingxpath)) {
-                $msgs = array();
+                $msgs = [];
                 foreach ($debuggingmessages as $debuggingmessage) {
                     $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
                 }
@@ -989,8 +996,7 @@ EOF;
 
             // PHP debug messages.
             if ($phpmessages = $this->getSession()->getPage()->findAll('xpath', $phperrorxpath)) {
-
-                $msgs = array();
+                $msgs = [];
                 foreach ($phpmessages as $phpmessage) {
                     $msgs[] = $this->get_debug_text($phpmessage->getHtml());
                 }
@@ -1004,7 +1010,7 @@ EOF;
             if ($this->getSession()->getDriver()->find($othersxpath)) {
                 $backtracespattern = '/(line [0-9]* of [^:]*: call to [\->&;:a-zA-Z_\x7f-\xff][\->&;:a-zA-Z0-9_\x7f-\xff]*)/';
                 if (preg_match_all($backtracespattern, $this->getSession()->getPage()->getContent(), $backtraces)) {
-                    $msgs = array();
+                    $msgs = [];
                     foreach ($backtraces[0] as $backtrace) {
                         $msgs[] = $backtrace . '()';
                     }
@@ -1012,9 +1018,10 @@ EOF;
                     throw new \Exception(htmlentities($msg, ENT_COMPAT));
                 }
             }
-
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (NoSuchWindowException $e) {
             // If we were interacting with a popup window it will not exists after closing it.
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (DriverException $e) {
             // Same reason as above.
         }
@@ -1109,19 +1116,37 @@ EOF;
     /**
      * Helper function to execute api in a given context.
      *
-     * @param string $contextapi context in which api is defined.
+     * Note: The contextapi does not support a callback.
+     *
+     * @param string|array $contextapi context in which api is defined.
      * @param array|mixed $params list of params to pass or a single parameter
      * @throws Exception
+     * @throws DriverException
      */
-    protected function execute($contextapi, $params = array()) {
+    protected function execute(
+        string|array $contextapi,
+        mixed $params = [],
+    ): void {
         if (!is_array($params)) {
-            $params = array($params);
+            $params = [$params];
+        }
+
+        if (is_string($contextapi)) {
+            $contextapi = explode('::', $contextapi);
+        }
+
+        if (count($contextapi) !== 2) {
+            throw new DriverException('Invalid contextapi format, expected "context::api" or ["context", "api"]');
         }
 
         // Get required context and execute the api.
-        $contextapi = explode("::", $contextapi);
-        $context = behat_context_helper::get($contextapi[0]);
-        call_user_func_array(array($context, $contextapi[1]), $params);
+        [$classname, $method] = $contextapi;
+        if (!is_string($classname) || !is_string($method)) {
+            throw new DriverException('Invalid contextapi format, expected "context::api" or ["context", "api"]');
+        }
+
+        $context = behat_context_helper::get($classname);
+        call_user_func_array([$context, $method], $params);
 
         // NOTE: Wait for pending js and look for exception are not optional, as this might lead to unexpected results.
         // Don't make them optional for performance reasons.
@@ -1176,7 +1201,7 @@ EOF;
         }
         $session = \core\session\manager::get_session_by_sid($sid);
         if (empty($session->userid)) {
-            throw new coding_exception('failed to get user from session id: '.$sid);
+            throw new coding_exception('failed to get user from session id: ' . $sid);
         }
         return $DB->get_record('user', ['id' => $session->userid]);
     }
@@ -1196,9 +1221,9 @@ EOF;
             $user = clone($user);
         } else if (!$user) {
             // Assign valid data to admin user (some generator-related code needs a valid user).
-            $user = $DB->get_record('user', array('username' => 'admin'));
+            $user = $DB->get_record('user', ['username' => 'admin']);
         } else {
-            $user = $DB->get_record('user', array('id' => $user));
+            $user = $DB->get_record('user', ['id' => $user]);
         }
         unset($user->description);
         unset($user->access);
