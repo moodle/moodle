@@ -133,7 +133,8 @@ class course_content_item_exporter extends exporter {
             'title' => $this->contentitem->get_title()->get_value(),
             'link' => $this->contentitem->get_link()->out(false),
             'icon' => $this->contentitem->get_icon(),
-            'help' => format_text($this->contentitem->get_help(), FORMAT_MARKDOWN),
+            // Help text should not be parsed using course filters.
+            'help' => format_text($this->contentitem->get_help(), FORMAT_MARKDOWN, ['filter' => false]),
             'archetype' => $this->contentitem->get_archetype(),
             'componentname' => $this->contentitem->get_component_name(),
             'favourite' => $favourite,
