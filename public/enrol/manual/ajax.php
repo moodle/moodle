@@ -98,6 +98,7 @@ switch ($action) {
         $startdateselect = optional_param_array('startdateselect', [], PARAM_INT);
         $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
         $timeend = optional_param_array('timeend', [], PARAM_INT);
+        $group = optional_param('group', null, PARAM_INT);
 
         if (empty($roleid)) {
             $roleid = null;
@@ -153,6 +154,7 @@ switch ($action) {
 
         $mform = new enrol_manual_enrol_users_form(null, (object)["context" => $context]);
         $userenroldata = [
+                'group' => $group,
                 'startdate' => $timestart,
                 'timeend' => $timeend,
         ];
@@ -175,6 +177,9 @@ switch ($action) {
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
             foreach ($users as $user) {
                 $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend, null, $recovergrades);
+                if ($group && has_capability('moodle/course:managegroups', $context)) {
+                    groups_add_member($group, $user->id);
+                }
             }
             $outcome->count += count($users);
             foreach ($cohorts as $cohort) {

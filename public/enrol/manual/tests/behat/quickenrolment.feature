@@ -212,6 +212,26 @@ Feature: Teacher can search and enrol users one by one into the course
     And I type "Q994"
     And I should see "No suggestions"
 
+  @javascript
+  Scenario: Add participant to a group
+    Given I navigate to course participants
+    When I press "Enrol users"
+    # No group created yet.
+    Then I should not see "Add to group" in the "Enrol users" "dialogue"
+    And I should not see "Show groups" in the "Enrol users" "dialogue"
+    And I click on "Cancel" "button" in the "Enrol users" "dialogue"
+    And I navigate to course participants
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group 1 | C001   | G1       |
+    # Now we have a group, we can test adding a user.
+    And I press "Enrol users"
+    And I set the field "Select users" to "student001"
+    And I click on "showgroups" "checkbox"
+    And I set the field "Add to group" to "Group 1"
+    And I click on "Enrol users" "button" in the "Enrol users" "dialogue"
+    And I should see "Group 1" in the "Student 001" "table_row"
+
 # The following tests are commented out as a result of MDL-66339.
 #  @javascript
 #  Scenario: Enrol user from participants page
