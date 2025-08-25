@@ -834,6 +834,12 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+    'core_course_view_module_instance_list' => [
+        'classname' => 'core_course\external\view_module_instance_list',
+        'description' => 'Logs that a module instance list has been viewed on an external application.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
