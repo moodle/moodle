@@ -19,6 +19,7 @@ namespace core_admin\admin;
 use admin_setting;
 use core_plugin_manager;
 use core_text;
+use core_admin\admin_search;
 
 /**
  * Admin setting plugin manager.
@@ -98,11 +99,13 @@ class admin_setting_plugin_manager extends admin_setting {
         foreach (array_keys($plugins) as $plugin) {
             $plugin = "{$this->plugintype}_{$plugin}";
             if (str_contains($plugin, $query)) {
+                $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
 
             $pluginname = get_string('pluginname', $plugin);
             if (strpos(core_text::strtolower($pluginname), $query) !== false) {
+                $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
         }

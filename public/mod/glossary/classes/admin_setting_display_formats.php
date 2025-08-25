@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core_admin\admin_search;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -78,10 +80,12 @@ class mod_glossary_admin_setting_display_formats extends admin_setting {
         $formats = $DB->get_records("glossary_formats");
         foreach ($formats as $format) {
             if (strpos(core_text::strtolower($format->name), $query) !== false) {
+                $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
             $localised = get_string("displayformat$format->name", "glossary");
             if (strpos(core_text::strtolower($localised), $query) !== false) {
+                $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
         }

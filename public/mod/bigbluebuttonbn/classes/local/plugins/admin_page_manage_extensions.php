@@ -25,6 +25,7 @@ use core_component;
 use core_text;
 use mod_bigbluebuttonbn\extension;
 use moodle_url;
+use core_admin\admin_search;
 
 /**
  * Admin external page that displays a list of the installed extension plugins.
@@ -72,6 +73,7 @@ class admin_page_manage_extensions extends admin_externalpage {
                 $result = (object)[
                     'page' => $this,
                     'settings' => [],
+                    'searchmatchtype' => admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME,
                 ];
                 return [$this->name => $result];
             }

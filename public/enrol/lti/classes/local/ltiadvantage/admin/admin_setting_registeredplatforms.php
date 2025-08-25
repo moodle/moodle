@@ -16,6 +16,7 @@
 
 namespace enrol_lti\local\ltiadvantage\admin;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
+use core_admin\admin_search;
 
 /**
  * The admin_setting_registeredplatforms class, for rendering a table of platforms which have been registered.
@@ -79,6 +80,7 @@ class admin_setting_registeredplatforms extends \admin_setting {
         $registrations = $appregistrationrepo->find_all();
         foreach ($registrations as $reg) {
             if (stripos($reg->get_name(), $query) !== false) {
+                $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
         }
