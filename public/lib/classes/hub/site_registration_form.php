@@ -190,7 +190,7 @@ class site_registration_form extends \moodleform {
             'checkbox',
             'policyagreed',
             get_string('policyagreed', 'hub'),
-            get_string('policyagreeddesc', 'hub', HUB_MOODLEORGHUBURL . '/privacy'),
+            get_string('policyagreeddesc', 'hub', $privacyurl->out()),
         );
         $mform->addRule('policyagreed', $strrequired, 'required', null, 'client');
 
