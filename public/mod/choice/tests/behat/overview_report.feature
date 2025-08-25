@@ -42,38 +42,30 @@ Feature: Testing overview integration in mod_choice
     And I should see "viewed the instance list for the module 'choice'"
 
   Scenario: Students can see relevant columns and content in the choice overview
-    Given I am on the "Course 1" "course > activities > choice" page logged in as "student1"
-    # Check columns.
-    Then I should see "Name" in the "choice_overview_collapsible" "region"
-    And I should see "Due date" in the "choice_overview_collapsible" "region"
-    And I should see "Status" in the "choice_overview_collapsible" "region"
-    And I should see "Responded" in the "choice_overview_collapsible" "region"
-    # Check Responded.
+    When I am on the "Course 1" "course > activities > choice" page logged in as "student1"
+    Then the following should exist in the "Table listing all Choice activities" table:
+      | Name     | Due date       | Status       | Responded |
+      | Choice 1 | 1 January 2040 | Mark as done |           |
+      | Choice 2 | -              | -            | -         |
+      | Choice 3 | -              | -            | -         |
+      | Choice 4 | -              | -            | -         |
+    And I should not see "Actions" in the "choice_overview_collapsible" "region"
+    # Check Responded column.
     And "Answered" "icon" should exist in the "Choice 1" "table_row"
     And "Answered" "icon" should not exist in the "Choice 2" "table_row"
-    # Check allow responses until.
-    And the following should exist in the "course-overview-table" table:
-      | Name     | Due date       |
-      | Choice 1 | 1 January 2040 |
-      | Choice 2 | -              |
-      | Choice 3 | -              |
-      | Choice 4 | -              |
 
   @javascript
   Scenario: Teachers can see relevant columns and content in the choice overview
     Given I am on the "Course 1" "course > activities > choice" page logged in as "teacher1"
-    # Check columns.
-    Then I should see "Name" in the "choice_overview_collapsible" "region"
-    And I should see "Due date" in the "choice_overview_collapsible" "region"
+    Then the following should exist in the "Table listing all Choice activities" table:
+      | Name     | Due date       | Students who responded | Actions |
+      | Choice 1 | 1 January 2040 | 2                      | View    |
+      | Choice 2 | -              | 1                      | View    |
+      | Choice 3 | -              | 0                      | View    |
+      | Choice 4 | -              | 0                      | View    |
     And I should not see "Status" in the "choice_overview_collapsible" "region"
-    And I should see "Students who responded" in the "choice_overview_collapsible" "region"
-    And I should see "Actions" in the "choice_overview_collapsible" "region"
-    And the following should exist in the "course-overview-table" table:
-      | Name     | Students who responded | Actions |
-      | Choice 1 | 2                      | View    |
-      | Choice 2 | 1                      | View    |
-      | Choice 3 | 0                      | View    |
-      | Choice 4 | 0                      | View    |
+    And I should not see "Responded" in the "choice_overview_collapsible" "region"
+    # Check dropdown.
     And I click on "2" "button" in the "Choice 1" "table_row"
     And I should see "Allow more than one choice to be selected"
     And I should see "Option 1: 1"
