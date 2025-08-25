@@ -255,4 +255,128 @@ final class overview_test extends \advanced_testcase {
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertNull($items['attempted']);
     }
+
+    /**
+     * Test get_extra_studentsattempted_overview filtering by groups.
+     *
+     * @covers ::get_extra_studentsattempted_overview
+     */
+    public function test_get_extra_studentsattempted_overview_by_groups(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $g2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $activity = $this->getDataGenerator()->create_module(
+            'h5pactivity',
+            ['course' => $course, 'enabletracking' => 1, 'groupmode' => SEPARATEGROUPS],
+        );
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+
+        // Prepare users: 1 editing teacher, 1 non-editing teacher, 2 students, 1 unenroled user.
+        $editing = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $nonediting = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $studentingroups = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($g1, $editing->id);
+        groups_add_member($g1, $nonediting->id);
+        groups_add_member($g1, $studentingroups->id);
+        groups_add_member($g2, $student->id);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+
+        // Attempts by student not in the non-editing teacher's group.
+        $params = ['cmid' => $cm->id, 'userid' => $student->id];
+        $generator->create_content($activity, $params);
+        $generator->create_content($activity, $params);
+
+        // No visible attempts for the non-editing teacher yet.
+        $this->setUser($nonediting);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(0, $items['attempted']->get_value());
+        $this->assertEquals('<strong>0</strong> of 1', $items['attempted']->get_content());
+
+        // Editing teacher can see all the attempts and users, whatever the group is.
+        $this->setUser($editing);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(1, $items['attempted']->get_value());
+        $this->assertEquals('<strong>1</strong> of 2', $items['attempted']->get_content());
+
+        // Attempts by student in non-editing teacher's group.
+        $params = ['cmid' => $cm->id, 'userid' => $studentingroups->id];
+        $generator->create_content($activity, $params);
+        $generator->create_content($activity, $params);
+
+        // Editing teacher can see all the attempts and users, whatever the group is.
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(2, $items['attempted']->get_value());
+        $this->assertEquals('<strong>2</strong> of 2', $items['attempted']->get_content());
+
+        // Non-editing teacher can see their group activity and users.
+        $this->setUser($nonediting);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(1, $items['attempted']->get_value());
+        $this->assertEquals('<strong>1</strong> of 1', $items['attempted']->get_content());
+    }
+
+    /**
+     * Test get_extra_totalattempts_overview filtering by groups.
+     *
+     * @covers ::get_extra_totalattempts_overview
+     */
+    public function test_get_extra_totalattempts_overview_by_groups(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $g2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $activity = $this->getDataGenerator()->create_module(
+            'h5pactivity',
+            ['course' => $course, 'enabletracking' => 1, 'groupmode' => SEPARATEGROUPS],
+        );
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+
+        // Prepare users: 1 editing teacher, 1 non-editing teacher, 2 students, 1 unenroled user.
+        $editing = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $nonediting = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $studentingroups = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        groups_add_member($g1, $editing->id);
+        groups_add_member($g1, $nonediting->id);
+        groups_add_member($g1, $studentingroups->id);
+        groups_add_member($g2, $student->id);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+
+        // Attempts by student not in the non-editing teacher's group.
+        $params = ['cmid' => $cm->id, 'userid' => $student->id];
+        $generator->create_content($activity, $params);
+        $generator->create_content($activity, $params);
+
+        // No visible attempts for the non-editing teacher yet.
+        $this->setUser($nonediting);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(0, $items['totalattempts']->get_value());
+
+        // Editing teacher can see all the attempts, whatever the group is.
+        $this->setUser($editing);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(2, $items['totalattempts']->get_value());
+
+        // Attempts by student in non-editing teacher's group.
+        $params = ['cmid' => $cm->id, 'userid' => $studentingroups->id];
+        $generator->create_content($activity, $params);
+        $generator->create_content($activity, $params);
+
+        // Editing teacher can see all the attempts, whatever the group is.
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(4, $items['totalattempts']->get_value());
+
+        // Non-editing teacher can see their group activity.
+        $this->setUser($nonediting);
+        $items = overviewfactory::create($cm)->get_extra_overview_items();
+        $this->assertEquals(2, $items['totalattempts']->get_value());
+    }
 }

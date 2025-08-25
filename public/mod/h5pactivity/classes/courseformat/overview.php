@@ -122,8 +122,13 @@ class overview extends \core_courseformat\activityoverviewbase {
             return null;
         }
 
-        $attempts = $this->manager->count_users_attempts();
-        $participants = get_users_by_capability($this->context, 'mod/h5pactivity:submit');
+        $groups = $this->get_groups_for_filtering();
+        $attempts = $this->manager->count_users_attempts($groups);
+        $participants = get_users_by_capability(
+            context: $this->context,
+            capability: 'mod/h5pactivity:submit',
+            groups: array_keys($groups),
+        );
         $params = [
             'count' => count($attempts),
             'total' => count($participants),
@@ -147,8 +152,9 @@ class overview extends \core_courseformat\activityoverviewbase {
             return null;
         }
 
-        $totalattempts = $this->manager->count_attempts();
-        $totalusers = $this->manager->count_users_attempts();
+        $groups = $this->get_groups_for_filtering();
+        $totalattempts = $this->manager->count_attempts(groups: $groups);
+        $totalusers = $this->manager->count_users_attempts(groups: $groups);
 
         $averageattempts = 0;
         if ($totalusers && count($totalusers) > 0 && $totalattempts) {

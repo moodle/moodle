@@ -91,6 +91,8 @@ Feature: Testing overview integration in H5P activity
     And I click on "0" "button" in the "Empty H5P activity" "table_row"
     And I should see "Grading method: Highest grade"
     And I should see "Average attempts per student: 0"
+    # Close the dropdown.
+    And I press the escape key
     # Check the View link.
     And I click on "View" "link" in the "H5P activity" "table_row"
     And I should see "Attempts (5)"

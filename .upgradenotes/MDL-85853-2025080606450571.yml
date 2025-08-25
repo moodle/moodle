@@ -1,0 +1,7 @@
+issueNumber: MDL-85853
+notes:
+  mod_h5pactivity:
+    - message: >-
+        count_attempts() and count_users_attempts() in manager class accept 
+        a new parameter to filter by groups.
+      type: improved

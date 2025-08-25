@@ -559,6 +559,49 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Test static count_attempts filtering by groups.
+     */
+    public function test_count_attempts_by_groups(): void {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $g2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $g3 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $activity = $this->getDataGenerator()->create_module(
+            'h5pactivity',
+            ['course' => $course, 'enabletracking' => 1, 'groupmode' => SEPARATEGROUPS]
+        );
+
+        $manager = manager::create_from_instance($activity);
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        groups_add_member($g1->id, $user1->id);
+        groups_add_member($g1->id, $user2->id);
+        groups_add_member($g2->id, $user3->id);
+
+        // User1 in G1 with 3 attempt.
+        $this->generate_fake_attempts($activity, $user1, 1);
+
+        // User2 in G1 with 3 attempt.
+        $this->generate_fake_attempts($activity, $user2, 1);
+
+        // User3 a different group with 3 attempts.
+        $this->generate_fake_attempts($activity, $user3, 1);
+
+        // Incomplete user2 and 3 has only 3 attempts completed.
+        $this->assertEquals(9, $manager->count_attempts());
+        $this->assertEquals(0, $manager->count_attempts(groups: [$g3->id => $g3]));
+        $this->assertEquals(6, $manager->count_attempts(groups: [$g1->id => $g1]));
+        $this->assertEquals(9, $manager->count_attempts(groups: [$g1->id => $g1, $g2->id => $g2]));
+    }
+
+    /**
      * Test static count_attempts of all active participants.
      *
      * @dataProvider count_attempts_all_data
@@ -808,8 +851,10 @@ final class manager_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
-        $activity = $this->getDataGenerator()->create_module('h5pactivity',
-                ['course' => $course]);
+        $activity = $this->getDataGenerator()->create_module(
+            'h5pactivity',
+            ['course' => $course]
+        );
 
         $manager = manager::create_from_instance($activity);
 
@@ -826,6 +871,69 @@ final class manager_test extends \advanced_testcase {
 
         $attempts = $manager->count_users_attempts();
         $this->assertArrayNotHasKey($user1->id, $attempts);
+        $this->assertArrayHasKey($user2->id, $attempts);
+        $this->assertEquals(4, $attempts[$user2->id]);
+        $this->assertArrayHasKey($user3->id, $attempts);
+        $this->assertEquals(4, $attempts[$user3->id]);
+    }
+
+    /**
+     * Test static count_attempts filtering by groups.
+     */
+    public function test_count_users_attempts_by_groups(): void {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $g2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $g3 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $activity = $this->getDataGenerator()->create_module(
+            'h5pactivity',
+            ['course' => $course, 'enabletracking' => 1, 'groupmode' => SEPARATEGROUPS]
+        );
+
+        $manager = manager::create_from_instance($activity);
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        groups_add_member($g1->id, $user1->id);
+        groups_add_member($g1->id, $user2->id);
+        groups_add_member($g2->id, $user3->id);
+
+        // User1 in G1 with 4 attempt.
+        $this->generate_fake_attempts($activity, $user1, 1);
+
+        // User2 in G1 with 4 attempt.
+        $this->generate_fake_attempts($activity, $user2, 1);
+
+        // User3 a different group with 4 attempts.
+        $this->generate_fake_attempts($activity, $user3, 1);
+
+        $attempts = $manager->count_users_attempts();
+        $this->assertArrayHasKey($user1->id, $attempts);
+        $this->assertEquals(4, $attempts[$user1->id]);
+        $this->assertArrayHasKey($user2->id, $attempts);
+        $this->assertEquals(4, $attempts[$user2->id]);
+        $this->assertArrayHasKey($user3->id, $attempts);
+        $this->assertEquals(4, $attempts[$user3->id]);
+
+        $attempts = $manager->count_users_attempts([$g3->id => $g3]);
+        $this->assertEmpty($attempts);
+
+        $attempts = $manager->count_users_attempts([$g1->id => $g1]);
+        $this->assertArrayHasKey($user1->id, $attempts);
+        $this->assertEquals(4, $attempts[$user1->id]);
+        $this->assertArrayHasKey($user2->id, $attempts);
+        $this->assertEquals(4, $attempts[$user2->id]);
+        $this->assertArrayNotHasKey($user3->id, $attempts);
+
+        $attempts = $manager->count_users_attempts([$g1->id => $g1, $g2->id => $g2]);
+        $this->assertArrayHasKey($user1->id, $attempts);
+        $this->assertEquals(4, $attempts[$user1->id]);
         $this->assertArrayHasKey($user2->id, $attempts);
         $this->assertEquals(4, $attempts[$user2->id]);
         $this->assertArrayHasKey($user3->id, $attempts);
