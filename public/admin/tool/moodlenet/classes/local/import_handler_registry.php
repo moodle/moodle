@@ -22,6 +22,8 @@
  */
 namespace tool_moodlenet\local;
 
+use core_course\dndupload_handler;
+
 /**
  * The import_handler_registry class.
  *
@@ -113,9 +115,7 @@ class import_handler_registry {
     protected function populate_handlers() {
         // Generate a dndupload_handler object, just so we can call ->is_known_type() on the types being registered by plugins.
         // We must vet each type which is reported to be handled against the list of known, supported types.
-        global $CFG;
-        require_once($CFG->dirroot . '/course/dnduploadlib.php');
-        $dndhandlers = new \dndupload_handler($this->course);
+        $dndhandlers = new dndupload_handler($this->course);
 
         // Get the list of mods enabled at site level first. We need to cross check this.
         $pluginman = \core_plugin_manager::instance();
@@ -185,4 +185,3 @@ class import_handler_registry {
         $this->filehandlers[$extension][] = ['module' => $module, 'message' => $message];
     }
 }
-

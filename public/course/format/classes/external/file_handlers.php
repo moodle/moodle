@@ -16,17 +16,12 @@
 
 namespace core_courseformat\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/course/dnduploadlib.php');
-
+use core_course\dndupload_handler;
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
-use dndupload_handler;
 
 /**
  * Class for exporting a course file handlers.

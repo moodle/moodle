@@ -24,6 +24,7 @@
  */
 
 use core\exception\moodle_exception;
+use core_course\course_request;
 
 /**
  * Class to store, cache, render and manage course category
@@ -3117,9 +3118,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_request_course() {
-        global $CFG;
-        require_once($CFG->dirroot . '/course/lib.php');
-
         return course_request::can_request($this->get_context());
     }
 

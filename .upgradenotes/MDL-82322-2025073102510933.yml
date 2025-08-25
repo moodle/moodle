@@ -1,0 +1,11 @@
+issueNumber: MDL-82322
+notes:
+  core_course:
+    - message: |
+        The following classes have been renamed and now support autoloading.
+        Existing classes are currently unaffected.
+
+         | Old class name    | New class name                |
+         | ---               | ---                           |
+         | `\course_request` | `\core_course\course_request` |
+      type: improved

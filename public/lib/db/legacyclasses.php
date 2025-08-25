@@ -287,6 +287,16 @@ $legacyclasses = [
         'dataformat_export_format.php',
     ],
 
+    // Course drag-and-drop upload system.
+    \dndupload_handler::class => [
+        'core_course',
+        'dndupload_handler.php',
+    ],
+    \dndupload_ajax_processor::class => [
+        'core_course',
+        'dndupload_ajax_processor.php',
+    ],
+
     // The progress_trace classes.
     \combined_progress_trace::class => 'output/progress_trace/combined_progress_trace.php',
     \error_log_progress_trace::class => 'output/progress_trace/error_log_progress_trace.php',
@@ -345,5 +355,9 @@ $legacyclasses = [
     \comment_exception::class => [
         'core_comment',
         'comment_exception.php',
+    ],
+    \course_request::class => [
+        'core_course',
+        'course_request.php',
     ],
 ];

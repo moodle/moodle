@@ -16,14 +16,8 @@
 
 namespace core_courseformat\external;
 
+use core_course\dndupload_handler;
 use core_external\external_api;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
-use dndupload_handler;
 
 /**
  * Tests for the file_hanlders class.
@@ -42,7 +36,6 @@ final class file_handlers_test extends \externallib_advanced_testcase {
     public static function setupBeforeClass(): void { // phpcs:ignore
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
-        require_once($CFG->dirroot . '/course/dnduploadlib.php');
     }
 
     /**
