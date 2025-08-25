@@ -1,0 +1,6 @@
+issueNumber: MDL-86422
+notes:
+  tool_task:
+    - message: The `\core\task\manager::task_is_scheduled()` method has been deprecated.
+               Use `\core\task\manager::get_queued_adhoc_task_record()` directly instead.
+      type: deprecated

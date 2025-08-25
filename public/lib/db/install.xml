@@ -3522,6 +3522,7 @@
         <FIELD NAME="pid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="PHP process ID that is running the task"/>
         <FIELD NAME="attemptsavailable" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The remaining attempts for this task"/>
         <FIELD NAME="firststartingtime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The start time of the first run of the task"/>
+        <FIELD NAME="identityhash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Identity key for adhoc tasks, shared when logical duplicate detection is enabled"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -3531,6 +3532,7 @@
         <INDEX NAME="nextruntime_idx" UNIQUE="false" FIELDS="nextruntime"/>
         <INDEX NAME="timestarted_idx" UNIQUE="false" FIELDS="timestarted"/>
         <INDEX NAME="nextruntime_classname" UNIQUE="false" FIELDS="nextruntime, classname"/>
+        <INDEX NAME="identityhash_uix" UNIQUE="true" FIELDS="identityhash"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="task_log" COMMENT="The log table for all tasks">

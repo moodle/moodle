@@ -2178,5 +2178,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026080700.01);
     }
 
+    if ($oldversion < 2026081800.01) {
+        // Define field identityhash to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('identityhash', XMLDB_TYPE_CHAR, '40', null, null, null, null, 'firststartingtime');
+
+        // Conditionally launch add field identityhash.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add a unique index on identityhash to enforce one row per non-null key.
+        $index = new xmldb_index('identityhash_uix', XMLDB_INDEX_UNIQUE, ['identityhash']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2026081800.01);
+    }
+
     return true;
 }
