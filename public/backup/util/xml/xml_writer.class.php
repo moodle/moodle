@@ -216,6 +216,7 @@ class xml_writer {
             $this->lastwastext = true;
             $this->end_tag($tag);
         }
+        $this->nullcontent = false; // Reset nullcontent flag.
     }
 
 
