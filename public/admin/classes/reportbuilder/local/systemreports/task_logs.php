@@ -134,6 +134,8 @@ class task_logs extends system_report {
             'task_log:result',
             'task_log:timestart',
             'task_log:duration',
+            'task_log:dbreads',
+            'task_log:dbwrites',
         ]);
     }
 
