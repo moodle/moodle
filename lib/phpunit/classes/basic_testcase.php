@@ -39,8 +39,11 @@ abstract class basic_testcase extends base_testcase {
         $this->setRunTestInSeparateProcess(false);
     }
 
+    /**
+     * Teardown method to reset data after tests.
+     */
     #[After]
-    final public function test_teardown(): void {
+    final public function teardown_after_test(): void {
         global $DB;
 
         if ($DB->is_transaction_started()) {
