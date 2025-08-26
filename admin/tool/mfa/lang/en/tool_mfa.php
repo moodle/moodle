@@ -149,6 +149,7 @@ $string['settings:redir_exclusions'] = 'URLS which should not redirect the MFA c
 $string['settings:redir_exclusions_help'] = 'Each new line is a relative URL from the siteroot for which the MFA check will not redirect from';
 $string['settings:weight'] = 'Factor weight';
 $string['settings:weight_help'] = 'The weight of this factor if passed. A user needs at least 100 points to log in.';
+$string['setup'] = 'Setup';
 $string['setupfactor'] = 'Set up factor';
 $string['setupfactorbuttonadditional'] = 'Add additional factor';
 $string['state:fail'] = 'Fail';
