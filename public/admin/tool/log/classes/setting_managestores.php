@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_admin\admin_search;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/adminlib.php");
@@ -79,10 +81,12 @@ class tool_log_setting_managestores extends admin_setting {
         $plugins = \tool_log\log\manager::get_store_plugins();
         foreach ($plugins as $plugin => $fulldir) {
             if (strpos(core_text::strtolower($plugin), $query) !== false) {
+                $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
             $localised = get_string('pluginname', $plugin);
             if (strpos(core_text::strtolower($localised), $query) !== false) {
+                $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
         }

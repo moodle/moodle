@@ -1,0 +1,10 @@
+issueNumber: MDL-85518
+notes:
+  core_admin:
+  - message: >
+        - Added `searchmatchtype` property to `admin_settings`
+          to track search match type.
+        - Plugins that extend either `admin_settings` or `admin_externalpage`
+          are encouraged to specify a search match type from the available
+          types in `admin_search`.
+    type: improved
