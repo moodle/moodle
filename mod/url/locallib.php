@@ -182,8 +182,8 @@ function url_print_header($url, $cm, $course) {
  */
 function url_get_intro(object $url, object $cm, bool $ignoresettings = false): string {
     $options = empty($url->displayoptions) ? [] : (array) unserialize_array($url->displayoptions);
-    if ($ignoresettings or !empty($options['printintro'])) {
-        if (trim(strip_tags($url->intro))) {
+    if ($ignoresettings || !empty($options['printintro'])) {
+        if (!html_is_blank($url->intro)) {
             return format_module_intro('url', $url, $cm->id);
         }
     }
@@ -255,7 +255,7 @@ EOF;
 function url_print_workaround($url, $cm, $course) {
     global $OUTPUT, $PAGE, $USER;
 
-    $PAGE->activityheader->set_description(url_get_intro($url, $cm, true));
+    $PAGE->activityheader->set_description(url_get_intro($url, $cm));
     url_print_header($url, $cm, $course);
 
     $fullurl = new moodle_url(url_get_full_url($url, $cm, $course));
