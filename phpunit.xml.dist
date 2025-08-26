@@ -30,6 +30,10 @@
         uncomment and alter to fetch external test files from alternative location-->
   </php>
 
+  <extensions>
+    <bootstrap class="core\tests\phpunit\moodle_extension"/>
+  </extensions>
+
   <!--All core suites need to be manually added here-->
 
   <testsuites>
