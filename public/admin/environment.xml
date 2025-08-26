@@ -5024,7 +5024,6 @@
       <CUSTOM_CHECK function="\core\environment::check_composer_dependencies_installed" level="optional" />
       <CUSTOM_CHECK function="\core\environment::check_composer_developer_dependencies_not_installed" level="optional" />
       <CUSTOM_CHECK function="\core\environment::check_composer_dependencies_optimised" level="optional" />
-      </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_database_storage_engine" level="required">
         <FEEDBACK>
           <ON_ERROR message="unsupporteddbstorageengine" />
