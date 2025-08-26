@@ -2,4 +2,3 @@ created,tool_mfa
 createdfromip,tool_mfa
 lastverified,tool_mfa
 revoke,tool_mfa
-setup,tool_mfa
