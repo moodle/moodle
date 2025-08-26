@@ -17,14 +17,13 @@
 namespace mod_assign\courseformat;
 
 use assign;
-use core_calendar\output\humandate;
 use cm_info;
-use core_courseformat\local\overview\overviewitem;
-use core\output\action_link;
-use core\output\local\properties\text_align;
-use core\output\local\properties\button;
 use core\url;
 use mod_assign\dates;
+use core_calendar\output\humandate;
+use core\output\local\properties\text_align;
+use core_courseformat\local\overview\overviewitem;
+use core_courseformat\output\local\overview\overviewaction;
 
 /**
  * Assignment overview integration.
@@ -41,15 +40,13 @@ class overview extends \core_courseformat\activityoverviewbase {
      * Constructor.
      *
      * @param cm_info $cm the course module instance.
-     * @param \core\output\renderer_helper $rendererhelper the renderer helper.
      */
     public function __construct(
         cm_info $cm,
-        /** @var \core\output\renderer_helper $rendererhelper the renderer helper */
-        protected readonly \core\output\renderer_helper $rendererhelper,
     ) {
         global $CFG;
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
         parent::__construct($cm);
         $this->assign = new assign($this->context, $this->cm, $this->cm->get_course());
     }
@@ -86,25 +83,20 @@ class overview extends \core_courseformat\activityoverviewbase {
 
         $alertlabel = get_string('numberofsubmissionsneedgrading', 'assign');
         $name = get_string('view');
-        $badge = '';
         $needgrading = 0;
 
         if (is_gradable(courseid: $this->course->id, itemtype: 'mod', itemmodule: 'assign', iteminstance: $this->cm->instance)) {
             $needgrading = $this->assign->count_submissions_need_grading();
             if ($needgrading > 0) {
                 $name = get_string('gradeverb');
-                $renderer = $this->rendererhelper->get_core_renderer();
-                $badge = $renderer->notice_badge(
-                    contents: $needgrading,
-                    title: $alertlabel,
-                );
             }
         }
 
-        $content = new action_link(
+        $content = new overviewaction(
             url: new url('/mod/assign/view.php', ['id' => $this->cm->id, 'action' => 'grading']),
-            text: $name . $badge,
-            attributes: ['class' => button::BODY_OUTLINE->classes()],
+            text: $name,
+            badgevalue: $needgrading > 0 ? $needgrading : null,
+            badgetitle: $needgrading > 0 ? $alertlabel : null,
         );
 
         return new overviewitem(
