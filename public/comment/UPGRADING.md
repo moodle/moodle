@@ -22,4 +22,3 @@
 - The `public/comment/lib.php` file is now empty and will be removed in Moodle 6.0. Please, do not include in your code anymore.
 
   For more information see [MDL-86254](https://tracker.moodle.org/browse/MDL-86254)
-

@@ -1,5 +1,13 @@
 # mod_h5pactivity Upgrade notes
 
+## 5.1dev+
+
+### Added
+
+- count_attempts() and count_users_attempts() in manager class accept  a new parameter to filter by groups.
+
+  For more information see [MDL-85853](https://tracker.moodle.org/browse/MDL-85853)
+
 ## 5.0
 
 ### Changed

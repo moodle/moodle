@@ -4,6 +4,14 @@
 
 ### Added
 
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+
+   | Old class name    | New class name                |
+   | ---               | ---                           |
+   | `\course_request` | `\core_course\course_request` |
+
+  For more information see [MDL-82322](https://tracker.moodle.org/browse/MDL-82322)
 - Added new `gradable` property to `core_course\local\entity\content_item`
 
   For more information see [MDL-86036](https://tracker.moodle.org/browse/MDL-86036)

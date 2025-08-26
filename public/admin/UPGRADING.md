@@ -1,9 +1,13 @@
 # core_admin (subsystem) Upgrade notes
 
-## 4.5rc1
+## 5.1dev+
 
-### Removed
+### Added
 
-- The HTTP Server setting "Use slash arguments" (slasharguments) configuration setting and related to it has been removed. Calling the option with $CFG->slasharguments or get_config('slasharguments') is no longer available.
+- - Added `searchmatchtype` property to `admin_settings`
+    to track search match type.
+  - Plugins that extend either `admin_settings` or `admin_externalpage`
+    are encouraged to specify a search match type from the available
+    types in `admin_search`.
 
-  For more information see [MDL-62640](https://tracker.moodle.org/browse/MDL-62640)
+  For more information see [MDL-85518](https://tracker.moodle.org/browse/MDL-85518)

@@ -140,6 +140,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80327](https://tracker.moodle.org/browse/MDL-80327)
 
+### core_admin
+
+#### Added
+
+- - Added `searchmatchtype` property to `admin_settings`
+    to track search match type.
+  - Plugins that extend either `admin_settings` or `admin_externalpage`
+    are encouraged to specify a search match type from the available
+    types in `admin_search`.
+
+  For more information see [MDL-85518](https://tracker.moodle.org/browse/MDL-85518)
+
 ### core_ai
 
 #### Added
@@ -226,6 +238,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+
+   | Old class name    | New class name                |
+   | ---               | ---                           |
+   | `\course_request` | `\core_course\course_request` |
+
+  For more information see [MDL-82322](https://tracker.moodle.org/browse/MDL-82322)
 - Added new `gradable` property to `core_course\local\entity\content_item`
 
   For more information see [MDL-86036](https://tracker.moodle.org/browse/MDL-86036)
@@ -498,6 +518,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added mod_glossary_get_comments(): a method for retrieving comments linked to a glossary.
 
   For more information see [MDL-85840](https://tracker.moodle.org/browse/MDL-85840)
+
+### mod_h5pactivity
+
+#### Added
+
+- count_attempts() and count_users_attempts() in manager class accept  a new parameter to filter by groups.
+
+  For more information see [MDL-85853](https://tracker.moodle.org/browse/MDL-85853)
 
 ### mod_label
 
