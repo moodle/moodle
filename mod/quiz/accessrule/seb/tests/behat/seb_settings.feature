@@ -33,3 +33,25 @@ Feature: SEB settings in quiz access rule
       | sebsetting | messagevisibility | attemptbuttonvisibility |
       | 0          | should not        | should                  |
       | 1          | should            | should not              |
+
+  Scenario Outline: Show Safe Exam Browser download button setting controls visibility of download link
+    Given the following "activities" exist:
+      | activity | course | name   | idnumber | seb_requiresafeexambrowser | seb_showsebdownloadlink   |
+      | quiz     | C1     | Quiz 1 | quiz1    | 1                          | <seb_showsebdownloadlink> |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name           |
+      | Activity module | quiz1     | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name      | questiontext       |
+      | Test questions   | truefalse | Reading   | Can you read this? |
+    And quiz "Quiz 1" contains the following questions:
+      | question  | page |
+      | Reading   | 1    |
+    When I am on the "Quiz 1" "quiz activity" page logged in as student1
+    Then "Download Safe Exam Browser" "button" <downloadseblinkvisibility> exist
+    And I should see "This quiz has been configured so that students may only attempt it using the Safe Exam Browser."
+
+    Examples:
+      | seb_showsebdownloadlink | downloadseblinkvisibility |
+      | 0                       | should not                |
+      | 1                       | should                    |
