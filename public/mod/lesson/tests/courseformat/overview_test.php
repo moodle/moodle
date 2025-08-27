@@ -169,6 +169,7 @@ final class overview_test extends \advanced_testcase {
      * @dataProvider provider_test_get_extra_totalattempts_overview
      *
      * @param string $role
+     * @param int $groupmode
      * @param bool $hasentries
      * @param bool $hasretakes
      * @param array|null $expected
@@ -176,6 +177,7 @@ final class overview_test extends \advanced_testcase {
      */
     public function test_get_extra_totalattempts_overview(
         string $role,
+        int $groupmode,
         bool $hasentries,
         bool $hasretakes,
         ?array $expected
@@ -185,11 +187,18 @@ final class overview_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
+
+        if ($groupmode != NOGROUPS) {
+            $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+            $this->getDataGenerator()->create_group_member(['userid' => $currentuser->id, 'groupid' => $group1->id]);
+            $this->getDataGenerator()->create_group_member(['userid' => $student1->id, 'groupid' => $group1->id]);
+        }
 
         $lessonmodule = $this->getDataGenerator()->create_module(
             'lesson',
-            ['course' => $course, 'retake' => $hasretakes]
+            ['course' => $course, 'retake' => $hasretakes, 'groupmode' => $groupmode]
         );
         $cm = get_fast_modinfo($course)->get_cm($lessonmodule->cmid);
         $lesson = new lesson($lessonmodule);
@@ -201,6 +210,11 @@ final class overview_test extends \advanced_testcase {
             $lessongenerator->create_submission([
                 'lessonid' => $lesson->id,
                 'userid' => $student1->id,
+                'grade' => 100,
+            ]);
+            $lessongenerator->create_submission([
+                'lessonid' => $lesson->id,
+                'userid' => $student2->id,
                 'grade' => 100,
             ]);
             $lessongenerator->create_submission([
@@ -237,15 +251,37 @@ final class overview_test extends \advanced_testcase {
         return [
             'Teacher (with attempts)' => [
                 'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => [
                     'name' => get_string('totalattepmts', 'mod_lesson'),
-                    'value' => 2,
+                    'value' => 3,
+                ],
+            ],
+            'Teacher (with attempts) (Separate Groups)' => [
+                'role' => 'editingteacher',
+                'groupmode' => SEPARATEGROUPS,
+                'hasentries' => true,
+                'hasretakes' => true,
+                'expected' => [
+                    'name' => get_string('totalattepmts', 'mod_lesson'),
+                    'value' => 3,
+                ],
+            ],
+            'Teacher (with attempts) (Visible Groups)' => [
+                'role' => 'editingteacher',
+                'groupmode' => VISIBLEGROUPS,
+                'hasentries' => true,
+                'hasretakes' => true,
+                'expected' => [
+                    'name' => get_string('totalattepmts', 'mod_lesson'),
+                    'value' => 3,
                 ],
             ],
             'Teacher (with attempts without retakes)' => [
                 'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
                 'hasentries' => true,
                 'hasretakes' => false,
                 'expected' => [
@@ -255,6 +291,7 @@ final class overview_test extends \advanced_testcase {
             ],
             'Teacher (without attempts)' => [
                 'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
                 'hasentries' => false,
                 'hasretakes' => true,
                 'expected' => [
@@ -262,8 +299,39 @@ final class overview_test extends \advanced_testcase {
                     'value' => 0,
                 ],
             ],
+            'Non-editing Teacher (with attempts)' => [
+                'role' => 'teacher',
+                'groupmode' => NOGROUPS,
+                'hasentries' => true,
+                'hasretakes' => true,
+                'expected' => [
+                    'name' => get_string('totalattepmts', 'mod_lesson'),
+                    'value' => 3,
+                ],
+            ],
+            'Non-editing Teacher (with attempts) (Separate Groups)' => [
+                'role' => 'teacher',
+                'groupmode' => SEPARATEGROUPS,
+                'hasentries' => true,
+                'hasretakes' => true,
+                'expected' => [
+                    'name' => get_string('totalattepmts', 'mod_lesson'),
+                    'value' => 2,
+                ],
+            ],
+            'Non-editing Teacher (with attempts) (Visible Groups)' => [
+                'role' => 'teacher',
+                'groupmode' => VISIBLEGROUPS,
+                'hasentries' => true,
+                'hasretakes' => true,
+                'expected' => [
+                    'name' => get_string('totalattepmts', 'mod_lesson'),
+                    'value' => 3,
+                ],
+            ],
             'Student' => [
                 'role' => 'student',
+                'groupmode' => NOGROUPS,
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => null,
@@ -278,12 +346,14 @@ final class overview_test extends \advanced_testcase {
      * @dataProvider provider_test_get_extra_attemptedstudents_overview
      *
      * @param string $role
+     * @param bool $groupmode
      * @param bool $hasentries
      * @param array|null $expected
      * @return void
      */
     public function test_get_extra_attemptedstudents_overview(
         string $role,
+        int $groupmode,
         bool $hasentries,
         ?array $expected
     ): void {
@@ -295,7 +365,16 @@ final class overview_test extends \advanced_testcase {
         $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $currentuser = $this->getDataGenerator()->create_and_enrol($course, $role);
 
-        $lessonmodule = $this->getDataGenerator()->create_module('lesson', ['course' => $course]);
+        if ($groupmode != NOGROUPS) {
+            $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+            $this->getDataGenerator()->create_group_member(['userid' => $currentuser->id, 'groupid' => $group1->id]);
+            $this->getDataGenerator()->create_group_member(['userid' => $student1->id, 'groupid' => $group1->id]);
+        }
+
+        $lessonmodule = $this->getDataGenerator()->create_module(
+            'lesson',
+            ['course' => $course, 'groupmode' => $groupmode]
+        );
         $cm = get_fast_modinfo($course)->get_cm($lessonmodule->cmid);
         $lesson = new lesson($lessonmodule);
         /** @var  \mod_lesson_generator $lessongenerator */
@@ -306,6 +385,11 @@ final class overview_test extends \advanced_testcase {
             $lessongenerator->create_submission([
                 'lessonid' => $lesson->id,
                 'userid' => $student1->id,
+                'grade' => 100,
+            ]);
+            $lessongenerator->create_submission([
+                'lessonid' => $lesson->id,
+                'userid' => $student2->id,
                 'grade' => 100,
             ]);
             $lessongenerator->create_submission([
@@ -342,22 +426,70 @@ final class overview_test extends \advanced_testcase {
         return [
             'Teacher (with attempts)' => [
                 'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
                 'hasentries' => true,
                 'expected' => [
                     'name' => get_string('studentswhoattempted', 'mod_lesson'),
-                    'value' => 2,
+                    'value' => 3,
+                ],
+            ],
+            'Teacher (with attempts) (Separate Groups)' => [
+                'role' => 'editingteacher',
+                'groupmode' => SEPARATEGROUPS,
+                'hasentries' => true,
+                'expected' => [
+                    'name' => get_string('studentswhoattempted', 'mod_lesson'),
+                    'value' => 3,
+                ],
+            ],
+            'Teacher (with attempts) (Visible Groups)' => [
+                'role' => 'editingteacher',
+                'groupmode' => VISIBLEGROUPS,
+                'hasentries' => true,
+                'expected' => [
+                    'name' => get_string('studentswhoattempted', 'mod_lesson'),
+                    'value' => 3,
                 ],
             ],
             'Teacher (without attempts)' => [
                 'role' => 'editingteacher',
+                'groupmode' => NOGROUPS,
                 'hasentries' => false,
                 'expected' => [
                     'name' => get_string('studentswhoattempted', 'mod_lesson'),
                     'value' => 0,
                 ],
             ],
+            'Non-editing Teacher (with attempts)' => [
+                'role' => 'teacher',
+                'groupmode' => NOGROUPS,
+                'hasentries' => true,
+                'expected' => [
+                    'name' => get_string('studentswhoattempted', 'mod_lesson'),
+                    'value' => 3,
+                ],
+            ],
+            'Non-editing Teacher (with attempts) (Separate Groups)' => [
+                'role' => 'teacher',
+                'groupmode' => SEPARATEGROUPS,
+                'hasentries' => true,
+                'expected' => [
+                    'name' => get_string('studentswhoattempted', 'mod_lesson'),
+                    'value' => 2,
+                ],
+            ],
+            'Non-editing Teacher (with attempts) (Visible Groups)' => [
+                'role' => 'teacher',
+                'groupmode' => VISIBLEGROUPS,
+                'hasentries' => true,
+                'expected' => [
+                    'name' => get_string('studentswhoattempted', 'mod_lesson'),
+                    'value' => 3,
+                ],
+            ],
             'Student' => [
                 'role' => 'student',
+                'groupmode' => NOGROUPS,
                 'hasentries' => true,
                 'expected' => null,
             ],

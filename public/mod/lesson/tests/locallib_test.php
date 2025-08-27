@@ -365,15 +365,15 @@ final class locallib_test extends \advanced_testcase {
 
         $this->setUser($teacher->id);
 
-        $this->assertEquals(5, $lesson->count_all_submissions());
-        $this->assertEquals(3, $lesson->count_submitted_participants());
-        $this->assertEquals(4, $lesson->count_all_participants());
+        $this->assertEquals(5, $lesson->count_all_submissions([]));
+        $this->assertEquals(3, $lesson->count_submitted_participants([]));
+        $this->assertEquals(4, $lesson->count_all_participants([]));
 
         // Check that the lesson is not counting teachers as participants.
         $teacher2 = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $this->assertEquals(4, $lesson->count_all_participants());
+        $this->assertEquals(4, $lesson->count_all_participants([]));
         $student5 = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $this->assertEquals(5, $lesson->count_all_participants());
+        $this->assertEquals(5, $lesson->count_all_participants([]));
 
         // Prohibit mod/lesson:view capability on student role to ensure it does not count students as participants/submissions.
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
@@ -383,8 +383,64 @@ final class locallib_test extends \advanced_testcase {
             $studentrole->id,
             context_module::instance($lesson->get_cm()->id)
         );
-        $this->assertEquals(0, $lesson->count_all_submissions());
-        $this->assertEquals(0, $lesson->count_submitted_participants());
-        $this->assertEquals(0, $lesson->count_all_participants());
+        $this->assertEquals(0, $lesson->count_all_submissions([]));
+        $this->assertEquals(0, $lesson->count_submitted_participants([]));
+        $this->assertEquals(0, $lesson->count_all_participants([]));
+    }
+
+    /**
+     * Test the count_all_attempts, count_attempted_participants and count_all_participants methods with groups.
+     *
+     * @covers \lesson::count_all_submissions
+     * @covers \lesson::count_submitted_participants
+     * @covers \lesson::count_all_participants
+     */
+    public function test_count_attempts_and_participants_with_groups(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student4 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $lessonrecord = $this->getDataGenerator()->create_module(
+            'lesson',
+            ['course' => $course, 'retake' => 1, 'groupmode' => SEPARATEGROUPS]
+        );
+
+        $lesson = new lesson($lessonrecord);
+        $this->create_lesson_pages($lesson, 2);
+        $this->create_user_submissions($lesson, $student1->id, 1);
+        $this->create_user_submissions($lesson, $student2->id, 2);
+        $this->create_user_submissions($lesson, $student3->id, 2);
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student1->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student4->id, 'groupid' => $group2->id]);
+
+        // The following data was created for the lesson:
+        // Student 1: group 1, with 1 submission.
+        // Student 2: group 1, with 2 submissions.
+        // Student 3: not in a group, with 2 submissions.
+        // Student 4: group 2, with no submissions.
+
+        $this->assertEquals(3, $lesson->count_all_submissions([$group1->id]));
+        $this->assertEquals(2, $lesson->count_submitted_participants([$group1->id]));
+        $this->assertEquals(2, $lesson->count_all_participants([$group1->id]));
+
+        $this->assertEquals(3, $lesson->count_all_submissions([$group1->id, $group2->id]));
+        $this->assertEquals(2, $lesson->count_submitted_participants([$group1->id, $group2->id]));
+        $this->assertEquals(3, $lesson->count_all_participants([$group1->id, $group2->id]));
+
+        // Check that the lesson is not counting teachers as participants.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->getDataGenerator()->create_group_member(['userid' => $teacher->id, 'groupid' => $group1->id]);
+        $this->assertEquals(2, $lesson->count_all_participants([$group1->id]));
     }
 }

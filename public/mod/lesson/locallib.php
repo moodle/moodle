@@ -3036,12 +3036,17 @@ class lesson extends lesson_base {
     /**
      * Count all submissions by all users in the lesson.
      *
+     * @param array $groups the groups to filter by.
      * @return int the number of submissions (grades table) by all users in the lesson
      */
-    public function count_all_submissions(): int {
+    public function count_all_submissions(array $groups): int {
         $db = \core\di::get(\moodle_database::class);
 
-        [$esql, $eparams] = get_enrolled_sql($this->get_context(), 'mod/lesson:view');
+        [$esql, $eparams] = get_enrolled_sql(
+            context: $this->get_context(),
+            withcapability: 'mod/lesson:view',
+            groupids: $groups,
+        );
         $sql = "SELECT COUNT(lg.id)
                   FROM {lesson_grades} lg
                   JOIN ($esql) e ON e.id = lg.userid
@@ -3053,11 +3058,16 @@ class lesson extends lesson_base {
     /**
      * Count the number of participants that have attempted the lesson.
      *
+     * @param array $groups the groups to filter by.
      * @return int the number of users that have attempted the lesson
      */
-    public function count_submitted_participants(): int {
+    public function count_submitted_participants(array $groups): int {
         $db = \core\di::get(\moodle_database::class);
-        [$esql, $eparams] = get_enrolled_sql($this->get_context(), 'mod/lesson:view');
+        [$esql, $eparams] = get_enrolled_sql(
+            context: $this->get_context(),
+            withcapability: 'mod/lesson:view',
+            groupids: $groups,
+        );
         $sql = "SELECT COUNT(DISTINCT lg.userid)
                   FROM {lesson_grades} lg
                   JOIN ($esql) e ON e.id = lg.userid
@@ -3069,12 +3079,18 @@ class lesson extends lesson_base {
     /**
      * Count the number of participants that have access to the lesson.
      *
+     * @param array $groups the groups to filter by.
      * @return int the number of users that have access to view the lesson
      */
-    public function count_all_participants(): int {
+    public function count_all_participants(array $groups): int {
         $db = \core\di::get(\moodle_database::class);
 
-        $join = get_enrolled_with_capabilities_join($this->get_context(), '', 'mod/lesson:view');
+        $join = get_enrolled_with_capabilities_join(
+            context: $this->get_context(),
+            prefix: '',
+            capability: 'mod/lesson:view',
+            groupids: $groups
+        );
         $managersjoin = get_with_capability_join($this->get_context(), 'mod/lesson:manage', 'u.id');
         if (!$managersjoin->cannotmatchanyrows) {
             $join = new \core\dml\sql_join(
