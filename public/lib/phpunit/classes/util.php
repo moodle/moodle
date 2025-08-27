@@ -18,23 +18,25 @@
  * Utility class.
  *
  * @package    core
- * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// phpcs:disable moodle.Commenting.ValidTags.Invalid
+// phpcs:disable moodle.PHP.ForbiddenFunctions.FoundWithAlternative
+// phpcs:disable moodle.Files.MoodleInternal.MoodleInternalGlobalState
+
 use core\di;
 use core\hook;
 
-require_once(__DIR__.'/../../testing/classes/util.php');
+require_once(__DIR__ . '/../../testing/classes/util.php');
 require_once(__DIR__ . "/coverage_info.php");
 
 /**
  * Collection of utility methods.
  *
  * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @copyright  Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class phpunit_util extends testing_util {
@@ -44,10 +46,10 @@ class phpunit_util extends testing_util {
     public static $lastdbwrites = null;
 
     /** @var array An array of original globals, restored after each test */
-    protected static $globals = array();
+    protected static $globals = [];
 
     /** @var array list of debugging messages triggered during the last test execution */
-    protected static $debuggings = array();
+    protected static $debuggings = [];
 
     /** @var phpunit_message_sink alternative target for moodle messaging */
     protected static $messagesink = null;
@@ -61,34 +63,34 @@ class phpunit_util extends testing_util {
     /**
      * @var array Files to skip when resetting dataroot folder
      */
-    protected static $datarootskiponreset = array('.', '..', 'phpunittestdir.txt', 'phpunit', '.htaccess');
+    protected static $datarootskiponreset = ['.', '..', 'phpunittestdir.txt', 'phpunit', '.htaccess'];
 
     /**
      * @var array Files to skip when dropping dataroot folder
      */
-    protected static $datarootskipondrop = array('.', '..', 'lock');
+    protected static $datarootskipondrop = ['.', '..', 'lock'];
 
     /**
      * Load global $CFG;
+     *
      * @internal
-     * @static
-     * @return void
      */
     public static function initialise_cfg() {
         global $DB;
+
         $dbhash = false;
         try {
-            $dbhash = $DB->get_field('config', 'value', array('name'=>'phpunittest'));
+            $dbhash = $DB->get_field('config', 'value', ['name' => 'phpunittest']);
         } catch (Exception $e) {
-            // not installed yet
+            // Not installed yet.
             initialise_cfg();
             return;
         }
         if ($dbhash !== core_component::get_all_versions_hash()) {
-            // do not set CFG - the only way forward is to drop and reinstall
+            // Do not set CFG - the only way forward is to drop and reinstall.
             return;
         }
-        // standard CFG init
+        // Standard CFG init.
         initialise_cfg();
     }
 
@@ -97,12 +99,10 @@ class phpunit_util extends testing_util {
      *
      * Note: this is relatively slow (cca 2 seconds for pg and 7 for mysql) - please use with care!
      *
-     * @static
      * @param bool $detectchanges
      *      true  - changes in global state and database are reported as errors
      *      false - no errors reported
      *      null  - only critical problems are reported as errors
-     * @return void
      */
     public static function reset_all_data($detectchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME, $FILTERLIB_PRIVATE;
@@ -129,17 +129,17 @@ class phpunit_util extends testing_util {
         self::display_debugging_messages();
         self::reset_debugging();
 
-        // reset global $DB in case somebody mocked it
+        // Reset global $DB in case somebody mocked it.
         $DB = self::get_global_backup('DB');
 
         if ($DB->is_transaction_started()) {
-            // we can not reset inside transaction
+            // We can not reset inside transaction.
             $DB->force_transaction_rollback();
         }
 
         $resetdb = self::reset_database();
         $localename = self::get_locale_name();
-        $warnings = array();
+        $warnings = [];
 
         if ($detectchanges === true) {
             if ($resetdb) {
@@ -148,18 +148,17 @@ class phpunit_util extends testing_util {
 
             $oldcfg = self::get_global_backup('CFG');
             $oldsite = self::get_global_backup('SITE');
-            foreach($CFG as $k=>$v) {
+            foreach ($CFG as $k => $v) {
                 if (!property_exists($oldcfg, $k)) {
-                    $warnings[] = 'Warning: unexpected new $CFG->'.$k.' value';
+                    $warnings[] = 'Warning: unexpected new $CFG->' . $k . ' value';
                 } else if ($oldcfg->$k !== $CFG->$k) {
-                    $warnings[] = 'Warning: unexpected change of $CFG->'.$k.' value';
+                    $warnings[] = 'Warning: unexpected change of $CFG->' . $k . ' value';
                 }
                 unset($oldcfg->$k);
-
             }
             if ($oldcfg) {
-                foreach($oldcfg as $k=>$v) {
-                    $warnings[] = 'Warning: unexpected removal of $CFG->'.$k;
+                foreach ($oldcfg as $k => $v) {
+                    $warnings[] = 'Warning: unexpected removal of $CFG->' . $k;
                 }
             }
 
@@ -186,23 +185,23 @@ class phpunit_util extends testing_util {
             // Our PHPUnit integration is not supposed to change it either.
 
             if ($detectchanges !== false) {
-                $warnings[] = 'Warning: max_execution_time was changed to '.ini_get('max_execution_time');
+                $warnings[] = 'Warning: max_execution_time was changed to ' . ini_get('max_execution_time');
             }
             set_time_limit(0);
         }
 
-        // restore original globals
+        // Restore original globals.
         $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
         $FULLME = self::get_global_backup('FULLME');
-        $_GET = array();
-        $_POST = array();
-        $_FILES = array();
-        $_REQUEST = array();
+        $_GET = [];
+        $_POST = [];
+        $_FILES = [];
+        $_REQUEST = [];
         $COURSE = $SITE;
 
-        // reinitialise following globals
+        // Reinitialise following globals.
         $OUTPUT = new bootstrap_renderer();
         $PAGE = new moodle_page();
         \navigation_node::reset_all_data();
@@ -217,7 +216,7 @@ class phpunit_util extends testing_util {
         // Empty sessison and set fresh new not-logged-in user.
         \core\session\manager::init_empty_session();
 
-        // reset all static caches
+        // Reset all static caches.
         \core\event\manager::phpunit_reset();
         accesslib_clear_all_caches(true);
         accesslib_reset_role_cache();
@@ -246,7 +245,7 @@ class phpunit_util extends testing_util {
             core_calendar\local\event\container::reset_caches();
         }
 
-        //TODO MDL-25290: add more resets here and probably refactor them to new core function
+        // TODO MDL-25290: add more resets here and probably refactor them to new core function.
 
         // Reset course and module caches.
         core_courseformat\base::reset_course_cache(0);
@@ -283,16 +282,16 @@ class phpunit_util extends testing_util {
             restore_section_structure_step::reset_caches();
         }
 
-        // purge dataroot directory
+        // Purge dataroot directory.
         self::reset_dataroot();
 
-        // restore original config once more in case resetting of caches changed CFG
+        // Restore original config once more in case resetting of caches changed CFG.
         $CFG = self::get_global_backup('CFG');
 
-        // inform data generator
+        // Inform data generator.
         self::get_data_generator()->reset();
 
-        // fix PHP settings
+        // Fix PHP settings.
         error_reporting($CFG->debug);
 
         // Reset the date/time class.
@@ -310,7 +309,7 @@ class phpunit_util extends testing_util {
         // Reset the DI container.
         \core\di::reset_container();
 
-        // verify db writes just in case something goes wrong in reset
+        // Verify db writes just in case something goes wrong in reset.
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
             error_log('Unexpected DB writes in phpunit_util::reset_all_data()');
             self::$lastdbwrites = $DB->perf_get_writes();
@@ -324,7 +323,7 @@ class phpunit_util extends testing_util {
 
     /**
      * Reset all database tables to default values.
-     * @static
+     *
      * @return bool true if reset done, false if skipped
      */
     public static function reset_database() {
@@ -352,28 +351,27 @@ class phpunit_util extends testing_util {
     /**
      * Called during bootstrap only!
      * @internal
-     * @static
+     *
      * @return void
      */
     public static function bootstrap_init() {
         global $CFG, $SITE, $DB, $FULLME;
 
-        // backup the globals
+        // Backup the globals.
         self::$globals['_SERVER'] = $_SERVER;
         self::$globals['CFG'] = clone($CFG);
         self::$globals['SITE'] = clone($SITE);
         self::$globals['DB'] = $DB;
         self::$globals['FULLME'] = $FULLME;
 
-        // refresh data in all tables, clear caches, etc.
+        // Refresh data in all tables, clear caches, etc.
         self::reset_all_data();
     }
 
     /**
      * Print some Moodle related info to console.
+     *
      * @internal
-     * @static
-     * @return void
      */
     public static function bootstrap_moodle_info() {
         echo self::get_site_info();
@@ -381,14 +379,14 @@ class phpunit_util extends testing_util {
 
     /**
      * Returns original state of global variable.
-     * @static
+     *
      * @param string $name
      * @return mixed
      */
     public static function get_global_backup($name) {
         if ($name === 'DB') {
-            // no cloning of database object,
-            // we just need the original reference, not original state
+            // No cloning of database object,
+            // We just need the original reference, not original state.
             return self::$globals['DB'];
         }
         if (isset(self::$globals[$name])) {
@@ -405,32 +403,31 @@ class phpunit_util extends testing_util {
     /**
      * Is this site initialised to run unit tests?
      *
-     * @static
-     * @return int array errorcode=>message, 0 means ok
+     * @return array<int,string> errorcode=>message, 0 means ok
      */
     public static function testing_ready_problem() {
         global $DB;
 
         $localename = self::get_locale_name();
         if (setlocale(LC_TIME, $localename) === false) {
-            return array(PHPUNIT_EXITCODE_CONFIGERROR, "Required locale '$localename' is not installed.");
+            return [PHPUNIT_EXITCODE_CONFIGERROR, "Required locale '$localename' is not installed."];
         }
 
         if (!self::is_test_site()) {
-            // dataroot was verified in bootstrap, so it must be DB
-            return array(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not use database for testing, try different prefix');
+            // Dataroot was verified in bootstrap, so it must be DB.
+            return [PHPUNIT_EXITCODE_CONFIGERROR, 'Can not use database for testing, try different prefix'];
         }
 
         $tables = $DB->get_tables(false);
         if (empty($tables)) {
-            return array(PHPUNIT_EXITCODE_INSTALL, '');
+            return [PHPUNIT_EXITCODE_INSTALL, ''];
         }
 
         if (!self::is_test_data_updated()) {
-            return array(PHPUNIT_EXITCODE_REINSTALL, '');
+            return [PHPUNIT_EXITCODE_REINSTALL, ''];
         }
 
-        return array(0, '');
+        return [0, ''];
     }
 
     /**
@@ -438,7 +435,6 @@ class phpunit_util extends testing_util {
      *
      * Note: To be used from CLI scripts only.
      *
-     * @static
      * @param bool $displayprogress if true, this method will echo progress information.
      * @return void may terminate execution with exit code
      */
@@ -449,7 +445,7 @@ class phpunit_util extends testing_util {
             phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not drop non-test site!!');
         }
 
-        // Purge dataroot
+        // Purge dataroot.
         if ($displayprogress) {
             echo "Purging dataroot:\n";
         }
@@ -469,7 +465,6 @@ class phpunit_util extends testing_util {
      *
      * Note: To be used from CLI scripts only.
      *
-     * @static
      * @return void may terminate execution with exit code
      */
     public static function install_site() {
@@ -480,15 +475,18 @@ class phpunit_util extends testing_util {
         }
 
         if ($DB->get_tables()) {
-            list($errorcode, $message) = self::testing_ready_problem();
+            [$errorcode, $message] = self::testing_ready_problem();
             if ($errorcode) {
-                phpunit_bootstrap_error(PHPUNIT_EXITCODE_REINSTALL, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
+                phpunit_bootstrap_error(
+                    PHPUNIT_EXITCODE_REINSTALL,
+                    'Database tables already present, Moodle PHPUnit test environment can not be initialised',
+                );
             } else {
                 phpunit_bootstrap_error(0, 'Moodle PHPUnit test environment is already initialised');
             }
         }
 
-        $options = array();
+        $options = [];
         $options['adminpass'] = 'admin';
         $options['shortname'] = 'phpunit';
         $options['fullname'] = 'PHPUnit test site';
@@ -496,7 +494,7 @@ class phpunit_util extends testing_util {
         install_cli_database($options, false);
 
         // Set the admin email address.
-        $DB->set_field('user', 'email', 'admin@example.com', array('username' => 'admin'));
+        $DB->set_field('user', 'email', 'admin@example.com', ['username' => 'admin']);
 
         // Disable all logging for performance and sanity reasons.
         set_config('enabled_stores', '', 'tool_log');
@@ -524,7 +522,7 @@ class phpunit_util extends testing_util {
 
     /**
      * Builds root/phpunit.xml file using defaults from /phpunit.xml.dist
-     * @static
+     *
      * @return bool true means main config file created, false means only dataroot file created
      */
     public static function build_config_file() {
@@ -583,7 +581,6 @@ class phpunit_util extends testing_util {
                 $suites .= $suite;
 
                 if ($coverageinfo = self::get_coverage_info($plugindir)) {
-
                     $includelists = array_merge($includelists, $coverageinfo->get_includelists("public/{$dir}"));
                     $excludelists = array_merge($excludelists, $coverageinfo->get_excludelists("public/{$dir}"));
                 }
@@ -599,7 +596,8 @@ class phpunit_util extends testing_util {
         $data = str_replace(
             '<const name="PHPUNIT_SEQUENCE_START" value=""/>',
             '<const name="PHPUNIT_SEQUENCE_START" value="' . $sequencestart . '"/>',
-            $data);
+            $data
+        );
 
         $coverages = self::get_coverage_config($includelists, $excludelists);
         $data = preg_replace('| *<!--@coveragelist@-->|s', trim($coverages, "\n"), $data);
@@ -617,7 +615,6 @@ class phpunit_util extends testing_util {
     /**
      * Builds phpunit.xml files for all components using defaults from /phpunit.xml.dist
      *
-     * @static
      * @return void, stops if can not write files
      */
     public static function build_component_config_files() {
@@ -646,16 +643,16 @@ class phpunit_util extends testing_util {
         // end up being placed in phpunit or behat test code.
         $sequencestart = 100000 + mt_rand(0, 99) * 1000;
 
-        // Use the upstream file as source for the distributed configurations
+        // Use the upstream file as source for the distributed configurations.
         $ftemplate = file_get_contents("$CFG->root/phpunit.xml.dist");
         $ftemplate = preg_replace('| *<!--All core suites.*</testsuites>|s', '<!--@component_suite@-->', $ftemplate);
 
-        // Gets all the components with tests
+        // Gets all the components with tests.
         $components = tests_finder::get_components_with_tests('phpunit');
 
-        // Create the corresponding phpunit.xml file for each component
+        // Create the corresponding phpunit.xml file for each component.
         foreach ($components as $cname => $cpath) {
-            // Calculate the component suite
+            // Calculate the component suite.
             $ctemplate = $template;
             $ctemplate = str_replace('@component@', $cname, $ctemplate);
 
@@ -673,22 +670,26 @@ class phpunit_util extends testing_util {
             $fcontents = str_replace(
                 '<const name="PHPUNIT_SEQUENCE_START" value=""/>',
                 '<const name="PHPUNIT_SEQUENCE_START" value="' . $sequencestart . '"/>',
-                $fcontents);
+                $fcontents
+            );
 
-            // fix link to schema
+            // Fix link to schema.
             $level = substr_count(str_replace('\\', '/', $cpath), '/') - substr_count(str_replace('\\', '/', $CFG->dirroot), '/');
-            $fcontents = str_replace('public/lib/phpunit/', str_repeat('../', $level).'lib/phpunit/', $fcontents);
+            $fcontents = str_replace('public/lib/phpunit/', str_repeat('../', $level) . 'lib/phpunit/', $fcontents);
 
-            // Write the file
+            // Write the file.
             $result = false;
             if (is_writable($cpath)) {
                 if ($result = (bool)file_put_contents("$cpath/phpunit.xml", $fcontents)) {
                     testing_fix_file_permissions("$cpath/phpunit.xml");
                 }
             }
-            // Problems writing file, throw error
+            // Problems writing file, throw error.
             if (!$result) {
-                phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, "Can not create $cpath/phpunit.xml configuration file, verify dir permissions");
+                phpunit_bootstrap_error(
+                    PHPUNIT_EXITCODE_CONFIGWARNING,
+                    "Can not create $cpath/phpunit.xml configuration file, verify dir permissions",
+                );
             }
         }
     }
@@ -709,10 +710,12 @@ class phpunit_util extends testing_util {
         // PHPUnit execution will catch that unexpected output properly.
         $sinksupport = false;
         foreach ($backtrace as $bt) {
-            if (isset($bt['object']) && is_object($bt['object'])
+            if (
+                isset($bt['object'])
+                && is_object($bt['object'])
                 && (
-                    $bt['object'] instanceof advanced_testcase ||
-                    $bt['object'] instanceof database_driver_testcase)
+                    $bt['object'] instanceof advanced_testcase
+                    || $bt['object'] instanceof database_driver_testcase)
             ) {
                 $sinksupport = true;
                 break;
@@ -726,8 +729,10 @@ class phpunit_util extends testing_util {
         // we already have checked above that this is an advanced/database_driver
         // testcase, but let's keep things double safe for now).
         foreach ($backtrace as $bt) {
-            if (isset($bt['object']) && is_object($bt['object'])
-                    && $bt['object'] instanceof PHPUnit\Framework\TestCase) {
+            if (
+                isset($bt['object']) && is_object($bt['object'])
+                    && $bt['object'] instanceof PHPUnit\Framework\TestCase
+            ) {
                 $debug = new stdClass();
                 $debug->message = $message;
                 $debug->level   = $level;
@@ -745,7 +750,7 @@ class phpunit_util extends testing_util {
      * Resets the list of debugging messages.
      */
     public static function reset_debugging() {
-        self::$debuggings = array();
+        self::$debuggings = [];
         set_debugging(DEBUG_DEVELOPER);
     }
 
@@ -769,7 +774,7 @@ class phpunit_util extends testing_util {
         }
 
         $debugstring = '';
-        foreach(self::$debuggings as $debug) {
+        foreach (self::$debuggings as $debug) {
             $debugstring .= 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
         }
 
@@ -1052,7 +1057,7 @@ class phpunit_util extends testing_util {
             return $coverageinfo;
         }
 
-        return new phpunit_coverage_info();;
+        return new phpunit_coverage_info();
     }
 
     /**
