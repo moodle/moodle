@@ -145,6 +145,27 @@ STRING;
         self::assertTag(['id' => 'testid'], "<div><div>");
     }
 
+    /**
+     * Test that the navigation node URL is overridden correctly.
+     */
+    public function test_set_navigation_url(): void {
+        \navigation_node::override_active_url(new \moodle_url('/foo/bar/baz'));
+        $this->assertNotNull(
+            (new \ReflectionClass(\navigation_node::class))->getStaticPropertyValue('fullmeurl', null)
+        );
+    }
+
+    /**
+     * Test that the after-test teardown correctly resets the navigation node URL.
+     *
+     * @depends test_set_navigation_url
+     */
+    public function test_navigation_url_reset(): void {
+        $this->assertNull(
+            (new \ReflectionClass(\navigation_node::class))->getStaticPropertyValue('fullmeurl', null)
+        );
+    }
+
     // Uncomment following tests to see logging of unexpected changes in global state and database.
     /*
         public function test_db_modification() {
