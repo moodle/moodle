@@ -1029,4 +1029,170 @@ final class lib_test extends \advanced_testcase {
             $this->assertEquals($newvalue, $result['value']);
         }
     }
+
+    /**
+     * Test the quiz_num_attempt_summary function.
+     * @covers ::quiz_num_attempt_summary
+     */
+    public function test_quiz_num_attempt_summary(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [
+            'users' => $users,
+            'groups' => $groups,
+            'quiz' => $quiz,
+            'cm' => $cm,
+        ] = $this->setup_users_course_groups(
+            [
+                'user1' => ['student', 'g1', 2],
+                'user2' => ['student', null, 1],
+                'teacher1' => ['editingteacher', null, null],
+                'teacher2' => ['teacher', 'g1', null],
+            ]
+        );
+        // Check the summary.
+        $this->setUser($users['teacher1']);
+        $this->assertEquals('Attempts: 3', quiz_num_attempt_summary($quiz, $cm));
+        $this->assertEquals('Attempts: 3 (2 from this group)', quiz_num_attempt_summary($quiz, $cm, false, $groups['g1']->id));
+
+        $this->setUser($users['teacher2']);
+        $this->assertEquals('Attempts: 3 (2 from your groups)', quiz_num_attempt_summary($quiz, $cm));
+    }
+
+    /**
+     * Test the quiz_num_attempts function.
+     * @covers ::quiz_num_attempts
+     */
+    public function test_quiz_num_attempts(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [
+            'users' => $users,
+            'groups' => $groups,
+            'quiz' => $quiz,
+            'cm' => $cm,
+        ] = $this->setup_users_course_groups(
+            [
+                'user1' => ['student', 'g1', 2],
+                'user2' => ['student', null, 1],
+                'teacher1' => ['editingteacher', null, null],
+                'teacher2' => ['teacher', 'g1', null],
+            ]
+        );
+        // Check the summary.
+        $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
+        $this->setUser($users['teacher1']);
+        $this->assertEquals(['total' => 3], (array) quiz_num_attempts($cminfo));
+        $this->assertEquals(['total' => 3, 'group' => 2], (array) quiz_num_attempts($cminfo, $groups['g1']->id));
+
+        $this->setUser($users['teacher2']);
+        $this->assertEquals(['total' => 3, 'group' => 2], (array) quiz_num_attempts($cminfo));
+    }
+
+    /**
+     * Test the quiz_num_users_who_attempted function.
+     * @covers ::quiz_num_users_who_attempted
+     */
+    public function test_quiz_num_users_who_attempted(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [
+            'cm' => $cm,
+        ] = $this->setup_users_course_groups(
+            [
+                'user1' => ['student', 'g1', 2],
+                'user2' => ['student', null, 1],
+                'teacher1' => ['editingteacher', null, null],
+                'teacher2' => ['teacher', 'g1', 1],
+            ]
+        );
+        // Check the summary.
+        $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
+        $this->assertEquals(2, quiz_num_users_who_attempted($cminfo));
+    }
+
+    /**
+     * Test the quiz_num_users_who_can_attempt function.
+     * @covers ::quiz_num_users_who_can_attempt
+     */
+    public function test_quiz_num_users_who_can_attempt(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [
+            'cm' => $cm,
+        ] = $this->setup_users_course_groups(
+            [
+                'user1' => ['student', 'g1', 2],
+                'user2' => ['student', null, 1],
+                'user3' => ['student', 'g2', 1],
+                'user4' => ['student', 'g2', 0],
+                'teacher1' => ['editingteacher', null, null],
+                'teacher2' => ['teacher', 'g1', null],
+            ]
+        );
+        // Check the summary.
+        $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
+        $this->assertEquals(4, quiz_num_users_who_can_attempt($cminfo));
+    }
+
+    /**
+     * Set up users, course, groups and quiz for testing.
+     *
+     * @param array $data Array of user data with username as key and an array of role, group and attempts number as value.
+     * @return array An array containing users, groups, quiz, course module and attempts.
+     */
+    private function setup_users_course_groups(array $data): array {
+        $generator = $this->getDataGenerator();
+
+        // Create a course and a quiz.
+        $course = $generator->create_course(['groupmodeforce' => 1, 'groupmode' => SEPARATEGROUPS]);
+        $quiz = $generator->create_module('quiz', ['course' => $course->id, 'sumgrades' => 1]);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+
+        // Add a question to the quiz.
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Create users and groups.
+        $groups = [
+            'g1' => $generator->create_group(['courseid' => $course->id, 'name' => 'g1']),
+            'g2' => $generator->create_group(['courseid' => $course->id, 'name' => 'g2']),
+        ];
+        $users = [];
+        $attempts = [];
+
+        foreach ($data as $username => [$role, $group, $attemptsnum]) {
+            $users[$username] = $generator->create_and_enrol($course, $role, ['username' => $username]);
+            if ($group) {
+                $generator->create_group_member(['userid' => $users[$username]->id, 'groupid' => $groups[$group]->id]);
+            }
+            if ($attemptsnum) {
+                for ($acount = 1; $acount <= $attemptsnum; $acount++) {
+                    $quizobj = quiz_settings::create($quiz->id, $users[$username]->id);
+                    // Create an attempt for the student in the quiz.
+                    $timenow = time();
+                    $attempt = quiz_create_attempt($quizobj, $acount, false, $timenow, false, $users[$username]->id);
+                    $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+                    $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+                    quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+                    quiz_attempt_save_started($quizobj, $quba, $attempt);
+                    // Finish the attempt.
+                    $attemptobj = quiz_attempt::create($attempt->id);
+                    $attemptobj->process_submit($timenow, false);
+                    $attemptobj->process_grade_submission($timenow);
+                    $attempts[] = $attempt;
+                }
+            }
+        }
+
+        return [
+            'users' => $users,
+            'groups' => $groups,
+            'quiz' => $quiz,
+            'cm' => $cm,
+            'attempts' => $attempts,
+        ];
+    }
 }

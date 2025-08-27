@@ -1,0 +1,9 @@
+issueNumber: MDL-83898
+notes:
+  mod_quiz:
+    - message: >-
+        Add helper methods in the mod/quiz/lib.php to count the number of
+        attempts (quiz_num_attempts), the number of users who attempted a quiz
+        (quiz_num_users_who_attempted) and users who can attempt
+        (quiz_num_users_who_can_attempt)
+      type: improved

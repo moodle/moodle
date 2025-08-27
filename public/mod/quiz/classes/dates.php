@@ -36,6 +36,9 @@ use core\activity_dates;
  */
 class dates extends activity_dates {
 
+    /** @var int|null timeclose the activity closing date */
+    private ?int $timeclose;
+
     /**
      * Returns a list of important dates in mod_quiz
      *
@@ -44,6 +47,8 @@ class dates extends activity_dates {
     protected function get_dates(): array {
         $timeopen = $this->cm->customdata['timeopen'] ?? null;
         $timeclose = $this->cm->customdata['timeclose'] ?? null;
+        $this->timeclose = $timeclose ? (int) $timeclose : null;
+
         $now = time();
         $dates = [];
 
@@ -66,5 +71,16 @@ class dates extends activity_dates {
         }
 
         return $dates;
+    }
+
+    /**
+     * Returns the dues date data, if any.
+     * @return int|null the close timestamp or null if not set.
+     */
+    public function get_due_date(): ?int {
+        if (!isset($this->timeclose)) {
+            $this->get_dates();
+        }
+        return $this->timeclose;
     }
 }

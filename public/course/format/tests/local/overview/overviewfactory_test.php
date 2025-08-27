@@ -132,7 +132,7 @@ final class overviewfactory_test extends \advanced_testcase {
             ],
             'quiz' => [
                 'resourcetype' => 'quiz',
-                'expected' => resourceoverview::class,
+                'expected' => \mod_quiz\courseformat\overview::class,
             ],
             'scorm' => [
                 'resourcetype' => 'scorm',
@@ -213,7 +213,7 @@ final class overviewfactory_test extends \advanced_testcase {
             'lti' => ['modname' => 'lti', 'hasintegration' => false],
             'page' => ['modname' => 'page', 'hasintegration' => false],
             'qbank' => ['modname' => 'qbank', 'hasintegration' => false],
-            'quiz' => ['modname' => 'quiz', 'hasintegration' => false],
+            'quiz' => ['modname' => 'quiz', 'hasintegration' => true],
             'resource' => ['modname' => 'resource', 'hasintegration' => true],
             'scorm' => ['modname' => 'scorm', 'hasintegration' => true],
             'url' => ['modname' => 'url', 'hasintegration' => false],
