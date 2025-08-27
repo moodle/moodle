@@ -1,0 +1,13 @@
+issueNumber: MDL-85284
+notes:
+  core_course:
+    - message: >-
+        The changenumsections.php script is deprecated. Please use
+        course/format/update.php instead.
+      type: deprecated
+  core_courseformat:
+    - message: >-
+        The course format "numsections" option to increment and decrement the
+        number of sections of the course one by one is now deprecated and will
+        be removed in Moodle 6.0.
+      type: deprecated

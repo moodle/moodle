@@ -23,6 +23,8 @@
  * @copyright 2012 Dan Poltawski
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.3
+ * @todo Remove file in Moodle 6.0 (MDL-86395).
+ * @deprecated since Moodle 5.1 (MDL-85284)
  */
 
 require_once(__DIR__.'/../config.php');
@@ -44,6 +46,11 @@ $PAGE->set_url('/course/changenumsections.php', array('courseid' => $courseid));
 require_login($course);
 require_capability('moodle/course:update', context_course::instance($course->id));
 require_sesskey();
+
+debugging(
+    'The changenumsections.php script is deprecated. Please use course/format/update.php instead.',
+    DEBUG_DEVELOPER,
+);
 
 $desirednumsections = 0;
 $courseformat = course_get_format($course);

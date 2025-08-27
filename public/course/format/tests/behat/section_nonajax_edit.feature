@@ -49,3 +49,18 @@ Feature: Validate some section editing has a non-ajax alternative
     And I should see "This will delete Section 1 and all the activities it contains."
     And I click on "Delete" "button"
     And I should not see "Section 1"
+
+  Scenario: Adding a section at the end of the course can be done without ajax
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    When I click on "Add section" "link" in the "course-addsection" "region"
+    Then I should see "New section" in the "New section" "section"
+    And "Section 3" "text" should appear before "New section" "text"
+
+  Scenario: Adding a section between sections can be done without ajax
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    When I click on "Add section" "link" in the "Section 2" "section"
+    Then I should see "New section" in the "New section" "section"
+    And "Section 2" "text" should appear before "New section" "text"
+    And "New section" "text" should appear before "Section 3" "text"

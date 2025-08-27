@@ -40,6 +40,7 @@
 }}
 {{#showaddsection}}
 <div id="course-addsection" class="changenumsections bulk-hidden mt-5">
+    {{! Remove the increase and decrease buttons in Moodle 6.0 (MDL-86395) }}
     {{#increase}}
     <a href="{{{url}}}" class="increase-sections">
         {{#pix}}t/switch_plus, moodle, {{#str}} increasesections, moodle {{/str}}{{/pix}}
