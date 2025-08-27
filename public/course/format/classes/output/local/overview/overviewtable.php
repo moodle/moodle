@@ -228,6 +228,34 @@ class overviewtable implements externable, named_templatable, renderable {
      * @return array An associative array containing the overview items for the activity.
      */
     private function load_overview_items_from_activity(activityoverviewbase $overview): array {
+        $row = $this->get_activity_columns($overview);
+        $row = array_filter($row, function ($item) {
+            return $item !== null;
+        });
+
+        $this->register_columns($row);
+        $result = [];
+        foreach ($row as $key => $item) {
+            $item->set_key($key);
+            $result[$key] = $item;
+        }
+        return $result;
+    }
+
+    /**
+     * Get the columns for the activity overview.
+     *
+     * This method retrieves the columns that can be displayed in the overview table
+     * for a specific activity. However, column with null values may be filtered if
+     * all the activities do not have any content for that column.
+     *
+     * @param activityoverviewbase $overview The activity overview instance.
+     * @return array An associative array of column data.
+     */
+    private function get_activity_columns(activityoverviewbase $overview): array {
+        // It is highly improbable that an activity has an error (usually because of an erroneous group
+        // configuration). For those cases, we only use the activity name and prevent the plugin from
+        // doing any more calculations.
         if ($overview->has_error()) {
             return ['name' => $overview->get_name_overview()];
         }
@@ -250,18 +278,7 @@ class overviewtable implements externable, named_templatable, renderable {
         // Actions are always the last column, if any.
         $row['actions'] = $overview->get_actions_overview();
 
-        $row = array_filter($row, function ($item) {
-            return $item !== null;
-        });
-
-        $this->register_columns($row);
-
-        $result = [];
-        foreach ($row as $key => $item) {
-            $item->set_key($key);
-            $result[$key] = $item;
-        }
-        return $result;
+        return $row;
     }
 
     /**
