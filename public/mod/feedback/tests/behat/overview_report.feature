@@ -15,7 +15,7 @@ Feature: Testing overview integration in mod_feedback
       | student6 | Username  | 6        |
       | student7 | Username  | 7        |
       | student8 | Username  | 8        |
-      | teacher1  | Teacher  | T        |
+      | teacher1 | Teacher   | T        |
     And the following "courses" exist:
       | fullname | shortname | groupmode |
       | Course 1 | C1        | 1         |
@@ -55,29 +55,23 @@ Feature: Testing overview integration in mod_feedback
 
   Scenario: Teacher can see the feedback relevant information in the feedback overview
     When I am on the "Course 1" "course > activities > feedback" page logged in as "teacher1"
-    Then I should see "Responses" in the "feedback_overview_collapsible" "region"
+    Then the following should exist in the "Table listing all Feedback activities" table:
+      | Name                   | Due date       | Responses | Actions  |
+      | Date feedback          | 1 January 2040 | 4         | View     |
+      | Not responded feedback | Tomorrow       | 0         | View     |
+      | No date feedback       | -              | 3         | View     |
     And I should not see "Responded" in the "feedback_overview_collapsible" "region"
-    And I should see "Due date" in the "feedback_overview_collapsible" "region"
-    And I should see "1 January 2040" in the "Date feedback" "table_row"
-    And I should see "4" in the "Date feedback" "table_row"
-    And I should see "Tomorrow" in the "Not responded feedback" "table_row"
-    And I should see "0" in the "Not responded feedback" "table_row"
-    And I should see "-" in the "No date feedback" "table_row"
-    And I should see "3" in the "No date feedback" "table_row"
     And I click on "View" "link" in the "Date feedback" "table_row"
     And I should see "Show responses"
 
   Scenario: Students can see the feedback relevant information in the feedback overview
     When I am on the "Course 1" "course > activities > feedback" page logged in as "student1"
-    Then I should not see "Responses" in the "feedback_overview_collapsible" "region"
-    And I should not see "Actions" in the "feedback_overview_collapsible" "region"
-    And I should see "Responded" in the "feedback_overview_collapsible" "region"
-    And I should see "Due date" in the "feedback_overview_collapsible" "region"
-    And I should see "1 January 2040" in the "Date feedback" "table_row"
+    Then the following should exist in the "Table listing all Feedback activities" table:
+      | Name                   | Due date       | Responded |
+      | Date feedback          | 1 January 2040 |           |
+      | Not responded feedback | Tomorrow       | -         |
+      | No date feedback       | -              |           |
     And "You have already submitted this feedback" "icon" should exist in the "Date feedback" "table_row"
-    And I should see "Tomorrow" in the "Not responded feedback" "table_row"
-    And I should see "-" in the "Not responded feedback" "table_row"
-    And I should see "-" in the "No date feedback" "table_row"
     And "You have already submitted this feedback" "icon" should exist in the "No date feedback" "table_row"
 
   Scenario: The feedback overview report should generate log events

@@ -96,8 +96,9 @@ class overview extends \core_courseformat\activityoverviewbase {
 
         require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
-        $submissions = feedback_get_completeds_group_count(
-            $this->cm->get_instance_record()
+        $submissions = feedback_get_completeds_count(
+            $this->cm->get_instance_record(),
+            $this->get_groups_for_filtering(),
         );
         // Normalize the value.
         if (!$submissions) {
