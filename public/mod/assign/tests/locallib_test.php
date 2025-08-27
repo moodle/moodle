@@ -39,6 +39,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  *
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \assign
  */
 final class locallib_test extends \advanced_testcase {
     // Use the generator helper.
@@ -1032,6 +1033,53 @@ final class locallib_test extends \advanced_testcase {
         $this->assertEquals(2, count($assign->list_participants(null, true)));
     }
 
+    public function test_count_participants_by_groups(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+
+        $allgroups = [
+            'groupa' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupb' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupc' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+        ];
+
+        // Create 10 students: s1 to s3 in groupa, s4 to s8 in groupb and s9 and s10 no group.
+        for ($i = 0; $i < 10; $i++) {
+            $group = $i < 3 ? $allgroups['groupa'] : ($i < 8 ? $allgroups['groupb'] : null);
+            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+            if ($group) {
+                $this->getDataGenerator()->create_group_member([
+                    'groupid' => $group->id,
+                    'userid' => $student->id,
+                ]);
+            }
+        }
+
+        $this->setUser($teacher);
+        $assign = $this->create_instance($course);
+
+        $this->assertEquals(10, $assign->count_participants_by_groups([]));
+        $this->assertEquals(3, $assign->count_participants_by_groups([$allgroups['groupa']->id]));
+        $this->assertEquals(5, $assign->count_participants_by_groups([$allgroups['groupb']->id]));
+        $this->assertEquals(0, $assign->count_participants_by_groups([$allgroups['groupc']->id]));
+        $this->assertEquals(8, $assign->count_participants_by_groups([$allgroups['groupa']->id, $allgroups['groupb']->id]));
+        $this->assertEquals(3, $assign->count_participants_by_groups([$allgroups['groupa']->id, $allgroups['groupc']->id]));
+        $this->assertEquals(0, $assign->count_participants_by_groups([666])); // Non-existing group.
+
+        // When students cannot submit, they are not counted as participants.
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        $cm = get_coursemodule_from_instance('assign', $assign->get_instance()->id);
+        $context = \context_module::instance($cm->id);
+        assign_capability('mod/assign:submit', CAP_PROHIBIT, $studentroleid, $context->id);
+
+        $this->assertEquals(0, $assign->count_participants_by_groups([$allgroups['groupa']->id]));
+    }
+
+
     public function test_get_participant_user_not_exist(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -1472,6 +1520,275 @@ final class locallib_test extends \advanced_testcase {
         // The user should still be listed when fetching just their group.
         $SESSION->activegroup[$course->id]['aag'][0] = $othergroup->id;
         $this->assertEquals(0, $assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
+    }
+
+    public function test_count_submissions_with_status_and_groups(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+
+        $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $allgroups = [
+            'groupa' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupb' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupc' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+        ];
+
+        // Create 10 students:
+        // - groupa (3): s1 to s3 - 2 submitted.
+        // - groupb (5): s4 to s8 - 1 submitted.
+        // - groupc (0).
+        // - no group (2): s9 and s10 - 1 submitted.
+        for ($i = 0; $i < 10; $i++) {
+            $group = $i < 3 ? $allgroups['groupa'] : ($i < 8 ? $allgroups['groupb'] : null);
+            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+            if ($group) {
+                $this->getDataGenerator()->create_group_member([
+                    'groupid' => $group->id,
+                    'userid' => $student->id,
+                ]);
+            }
+
+            if ($i < 2 || $i == 5 || $i > 8) {
+                $this->add_submission($student, $assign);
+                $this->submit_for_grading($student, $assign);
+            }
+        }
+
+        $this->assertEquals(4, $assign->count_submissions());
+        $this->assertEquals(4, $assign->count_submissions_need_grading_with_groups());
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_NEW));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_DRAFT));
+        $this->assertEquals(4, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_REOPENED));
+
+        $this->assertEquals(2, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupa']->id],
+        ));
+        $this->assertEquals(1, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupb']->id],
+        ));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupc']->id],
+        ));
+        $this->assertEquals(3, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupa']->id, $allgroups['groupb']->id, $allgroups['groupc']->id],
+        ));
+    }
+
+    public function test_count_submissions_with_status_and_groups_team_submission(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 1,
+            'requireallteammemberssubmit' => 0,
+        ]);
+
+        $allgroups = [
+            'groupa' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupb' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupc' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupd' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+        ];
+
+        // Create 10 students:
+        // - groupa (3): s1 to s3 - submitted.
+        // - groupb (4): s4 to s7 - submitted.
+        // - groupc (3): s8 to s10.
+        // - groupd (0).
+        for ($i = 0; $i < 10; $i++) {
+            $group = $i < 3 ? $allgroups['groupa'] : ($i < 7 ? $allgroups['groupb'] : $allgroups['groupc']);
+            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+            if ($group) {
+                $this->getDataGenerator()->create_group_member([
+                    'groupid' => $group->id,
+                    'userid' => $student->id,
+                ]);
+            }
+            if ($i < 7) {
+                // Only groupa and groupb students will submit.
+                $this->setUser($student);
+                $this->add_submission($student, $assign);
+                $this->submit_for_grading($student, $assign);
+            }
+        }
+
+        $this->assertEquals(2, $assign->count_submissions());
+        $this->assertEquals(2, $assign->count_submissions_need_grading_with_groups());
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_NEW));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_DRAFT));
+        $this->assertEquals(2, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_REOPENED));
+
+        $this->assertEquals(1, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupa']->id],
+        ));
+        $this->assertEquals(1, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupb']->id],
+        ));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupc']->id],
+        ));
+        $this->assertEquals(2, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupa']->id, $allgroups['groupb']->id, $allgroups['groupc']->id],
+        ));
+    }
+
+    public function test_count_submissions_need_grading_with_groups(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $allgroups = [
+            'groupa' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupb' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupc' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+        ];
+
+        // Create 10 students:
+        // - groupa (3): s1 to s3 - 3 submitted, 1 graded.
+        // - groupb (5): s4 to s8 - 1 submitted, 1 graded.
+        // - groupc (0).
+        // - no group (2): s9 and s10 - 1 submitted.
+        for ($i = 0; $i < 10; $i++) {
+            $group = $i < 3 ? $allgroups['groupa'] : ($i < 8 ? $allgroups['groupb'] : null);
+            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+            if ($group) {
+                $this->getDataGenerator()->create_group_member([
+                    'groupid' => $group->id,
+                    'userid' => $student->id,
+                ]);
+            }
+
+            if ($i < 3 || $i == 5 || $i > 8) {
+                $this->add_submission($student, $assign);
+                $this->submit_for_grading($student, $assign);
+            }
+            if ($i == 0 || $i == 5) {
+                $this->mark_submission($teacher, $assign, $student, 50.0);
+            }
+        }
+
+        $this->assertEquals(5, $assign->count_submissions());
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_NEW));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_DRAFT));
+        $this->assertEquals(5, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
+        $this->assertEquals(0, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_REOPENED));
+        $this->assertEquals(3, $assign->count_submissions_need_grading_with_groups());
+        $this->assertEquals(2, $assign->count_submissions_need_grading_with_groups([$allgroups['groupa']->id]));
+        $this->assertEquals(0, $assign->count_submissions_need_grading_with_groups([$allgroups['groupb']->id]));
+        $this->assertEquals(0, $assign->count_submissions_need_grading_with_groups([$allgroups['groupc']->id]));
+        $this->assertEquals(2, $assign->count_submissions_need_grading_with_groups([
+            $allgroups['groupa']->id,
+            $allgroups['groupb']->id,
+            $allgroups['groupc']->id,
+        ]));
+    }
+
+    public function test_count_submissions_need_grading_with_groups_team_submission(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 1,
+            'requireallteammemberssubmit' => 0,
+        ]);
+
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $students = [];
+        $allgroups = [
+            'groupa' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupb' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupc' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+            'groupd' => $this->getDataGenerator()->create_group(['courseid' => $course->id]),
+        ];
+
+        // Create 10 students:
+        // - groupa (3): s1 to s3 - submitted.
+        // - groupb (4): s4 to s7 - submitted.
+        // - groupc (3): s8 to s10.
+        // - groupd (0).
+        for ($i = 0; $i < 10; $i++) {
+            $group = $i < 3 ? $allgroups['groupa'] : ($i < 7 ? $allgroups['groupb'] : $allgroups['groupc']);
+            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+            $students['s' . ($i + 1)] = $student;
+            if ($group) {
+                $this->getDataGenerator()->create_group_member([
+                    'groupid' => $group->id,
+                    'userid' => $student->id,
+                ]);
+            }
+            if ($i < 7) {
+                // Only groupa and groupb students will submit.
+                $this->setUser($student);
+                $this->add_submission($student, $assign);
+                $this->submit_for_grading($student, $assign);
+            }
+        }
+
+        $this->setUser($teacher);
+
+        $this->assertEquals(2, $assign->count_submissions());
+        $this->assertEquals(1, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupa']->id],
+        ));
+        $this->assertEquals(1, $assign->count_submissions_with_status_and_groups(
+            ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            [$allgroups['groupb']->id],
+        ));
+
+        $this->assertEquals(2, $assign->count_submissions_need_grading_with_groups());
+        $this->assertEquals(1, $assign->count_submissions_need_grading_with_groups([$allgroups['groupa']->id]));
+        $this->assertEquals(1, $assign->count_submissions_need_grading_with_groups([$allgroups['groupb']->id]));
+        $this->assertEquals(0, $assign->count_submissions_need_grading_with_groups([$allgroups['groupc']->id]));
+        $this->assertEquals(2, $assign->count_submissions_need_grading_with_groups([
+            $allgroups['groupa']->id,
+            $allgroups['groupb']->id,
+            $allgroups['groupc']->id,
+        ]));
+
+        // Now grade the groupa submission.
+        $this->mark_submission($teacher, $assign, $students['s1'], 50.0);
+        $this->setUser($teacher);
+        $data = (object)[
+            'sendstudentnotifications' => false,
+            'attemptnumber' => 1,
+            'grade' => 90,
+        ];
+        $assign->save_grade($students['s1']->id, $data);
+
+        $this->assertEquals(1, $assign->count_submissions_need_grading_with_groups());
+        $this->assertEquals(0, $assign->count_submissions_need_grading_with_groups([$allgroups['groupa']->id]));
+        $this->assertEquals(1, $assign->count_submissions_need_grading_with_groups([$allgroups['groupb']->id]));
+        $this->assertEquals(0, $assign->count_submissions_need_grading_with_groups([$allgroups['groupc']->id]));
+        $this->assertEquals(1, $assign->count_submissions_need_grading_with_groups([
+            $allgroups['groupa']->id,
+            $allgroups['groupb']->id,
+            $allgroups['groupc']->id,
+        ]));
     }
 
     // TODO
