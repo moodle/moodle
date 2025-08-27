@@ -1034,9 +1034,10 @@ $string['hiddenassign'] = 'Hidden assignment';
 $string['hiddenfromstudents'] = 'Hidden from students';
 $string['hiddenoncoursepage'] = 'Available but not shown on course page';
 $string['hiddensections'] = 'Hidden sections';
-$string['hiddensections_help'] = 'Hidden sections can be displayed to students as \'not available\' on the course page, or kept completely hidden.';
-$string['hiddensectionscollapsed'] = 'Hidden sections are shown as not available';
-$string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
+$string['hiddensectionscollapsed'] = 'Show section names only';
+$string['hiddensectionscollapsed_description'] = 'Section names are displayed to students, but section contents are hidden.';
+$string['hiddensectionsinvisible'] = 'Hide completely';
+$string['hiddensectionsinvisible_description'] = 'Hidden sections are not displayed to students.';
 $string['hiddenwithbrackets'] = '(hidden)';
 $string['hide'] = 'Hide';
 $string['hideadvancedsettings'] = 'Hide advanced settings';
@@ -2502,5 +2503,6 @@ $string['failedtaskcontexturlname'] = 'Status report';
 
 // Deprecated since Moodle 5.1.
 $string['activities_help'] = 'Activities, such as forums, quizzes and wikis, enable interactive content to be added to the course.';
+$string['hiddensections_help'] = 'Hidden sections can be displayed to students as \'not available\' on the course page, or kept completely hidden.';
 $string['maxsectionslimit'] = 'Cannot create new section as it would exceed the maximum number of sections allowed for this course ({$a}).';
 $string['resources_help'] = 'Resource types enable almost any kind of web content to be inserted into the course.';

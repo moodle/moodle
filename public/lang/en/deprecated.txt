@@ -88,3 +88,4 @@ activities_help,core
 resources_help,core
 unabletomessage,core_message
 notificationimage,core_message
+hiddensections_help,core

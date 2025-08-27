@@ -170,8 +170,8 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     ));
 
     $choices = array();
-    $choices['0'] = new lang_string('hiddensectionscollapsed');
     $choices['1'] = new lang_string('hiddensectionsinvisible');
+    $choices['0'] = new lang_string('hiddensectionscollapsed');
     $temp->add(new admin_setting_configselect('moodlecourse/hiddensections', new lang_string('hiddensections'),
         new lang_string('coursehelphiddensections'), 1, $choices));
 
