@@ -45,32 +45,6 @@ final class events_test extends \advanced_testcase {
     }
 
     /**
-     * Test course_module_instance_list_viewed event.
-     */
-    public function test_course_module_instance_list_viewed(): void {
-        // There is no proper API to call to trigger this event, so what we are
-        // doing here is simply making sure that the events returns the right information.
-
-        $course = $this->getDataGenerator()->create_course();
-        $params = array(
-            'context' => \context_course::instance($course->id)
-        );
-        $event = \mod_resource\event\course_module_instance_list_viewed::create($params);
-
-        // Triggering and capturing the event.
-        $sink = $this->redirectEvents();
-        $event->trigger();
-        $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
-
-        // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_resource\event\course_module_instance_list_viewed', $event);
-        $this->assertEquals(\context_course::instance($course->id), $event->get_context());
-        $this->assertEventContextNotUsed($event);
-    }
-
-    /**
      * Test course_module_viewed event.
      */
     public function test_course_module_viewed(): void {

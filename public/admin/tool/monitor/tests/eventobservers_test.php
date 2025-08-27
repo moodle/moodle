@@ -147,8 +147,8 @@ final class eventobservers_test extends \advanced_testcase {
         // Now, let's create a rule so an event can be stored.
         $rule = new \stdClass();
         $rule->courseid = $course->id;
-        $rule->plugin = 'mod_book';
-        $rule->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rule->plugin = 'mod_assign';
+        $rule->eventname = '\mod_assign\event\course_module_instance_list_viewed';
         $rule = $monitorgenerator->create_rule($rule);
 
         // Let's subscribe to this rule.
@@ -166,7 +166,7 @@ final class eventobservers_test extends \advanced_testcase {
         }
 
         // Fire the event we want to capture.
-        $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+        $event = \mod_assign\event\course_module_instance_list_viewed::create_from_course($course);
         $event->trigger();
 
         // Check that the event data is valid.
@@ -186,8 +186,8 @@ final class eventobservers_test extends \advanced_testcase {
         // Now, let's create a site wide rule.
         $rule = new \stdClass();
         $rule->courseid = 0;
-        $rule->plugin = 'mod_book';
-        $rule->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rule->plugin = 'mod_assign';
+        $rule->eventname = '\mod_assign\event\course_module_instance_list_viewed';
         $rule = $monitorgenerator->create_rule($rule);
 
         // Let's subscribe to this rule.
@@ -198,7 +198,7 @@ final class eventobservers_test extends \advanced_testcase {
         $monitorgenerator->create_subscription($sub);
 
         // Fire the event we want to capture - but in a different course.
-        $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course2);
+        $event = \mod_assign\event\course_module_instance_list_viewed::create_from_course($course2);
         $event->trigger();
 
         // Check that the event data is valid.
@@ -230,7 +230,7 @@ final class eventobservers_test extends \advanced_testcase {
 
         $rulerecord = new \stdClass();
         $rulerecord->courseid = $course->id;
-        $rulerecord->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rulerecord->eventname = '\mod_assign\event\course_module_instance_list_viewed';
         $rulerecord->frequency = 1;
 
         $rule = $toolgenerator->create_rule($rulerecord);
@@ -245,7 +245,7 @@ final class eventobservers_test extends \advanced_testcase {
         $this->assertFalse($recordexists);
 
         // Now let us trigger the event.
-        $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+        $event = \mod_assign\event\course_module_instance_list_viewed::create_from_course($course);
         $event->trigger();
 
         $this->verify_processed_data($msgsink);
@@ -262,7 +262,7 @@ final class eventobservers_test extends \advanced_testcase {
 
         // Let us trigger events.
         for ($i = 0; $i < 5; $i++) {
-            $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+            $event = \mod_assign\event\course_module_instance_list_viewed::create_from_course($course);
             $event->trigger();
             if ($i != 4) {
                 $this->verify_message_not_sent_yet($msgsink);
@@ -278,20 +278,20 @@ final class eventobservers_test extends \advanced_testcase {
         // Now let us create a rule specific to a module instance.
         $cm = new \stdClass();
         $cm->course = $course->id;
-        $book = $this->getDataGenerator()->create_module('book', $cm);
-        $rulerecord->eventname = '\mod_book\event\course_module_viewed';
-        $rulerecord->cmid = $book->cmid;
+        $assign = $this->getDataGenerator()->create_module('assign', $cm);
+        $rulerecord->eventname = '\mod_assign\event\course_module_viewed';
+        $rulerecord->cmid = $assign->cmid;
         $rule = $toolgenerator->create_rule($rulerecord);
         $subrecord->ruleid = $rule->id;
         $toolgenerator->create_subscription($subrecord);
 
         // Let us trigger events.
-        $params = array(
-            'context' => \context_module::instance($book->cmid),
-            'objectid' => $book->id
-        );
+        $params = [
+            'context' => \context_module::instance($assign->cmid),
+            'objectid' => $assign->id,
+        ];
         for ($i = 0; $i < 5; $i++) {
-            $event = \mod_book\event\course_module_viewed::create($params);
+            $event = \mod_assign\event\course_module_viewed::create($params);
             $event->trigger();
             if ($i != 4) {
                 $this->verify_message_not_sent_yet($msgsink);
@@ -366,7 +366,7 @@ final class eventobservers_test extends \advanced_testcase {
 
         $rulerecord = new \stdClass();
         $rulerecord->courseid = $course->id;
-        $rulerecord->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rulerecord->eventname = '\mod_assign\event\course_module_instance_list_viewed';
         $rulerecord->frequency = 5;
 
         $rule = $toolgenerator->create_rule($rulerecord);
@@ -379,7 +379,7 @@ final class eventobservers_test extends \advanced_testcase {
 
         for ($i = 0; $i < 7; $i++) {
             // Now let us trigger 7 instances of the event.
-            $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+            $event = \mod_assign\event\course_module_instance_list_viewed::create_from_course($course);
             $event->trigger();
             $this->waitForSecond(); // Add a second delay, to prevent time collisions.
         }
@@ -388,7 +388,7 @@ final class eventobservers_test extends \advanced_testcase {
         $this->assertCount(1, $messages); // There should be only one message not 3.
         for ($i = 0; $i < 3; $i++) {
             // Now let us trigger 5 more instances of the event.
-            $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+            $event = \mod_assign\event\course_module_instance_list_viewed::create_from_course($course);
             $event->trigger();
         }
 
@@ -453,17 +453,17 @@ final class eventobservers_test extends \advanced_testcase {
         $toolgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $context = \context_user::instance($USER->id, IGNORE_MISSING);
 
-        // Creating book.
+        // Creating assign.
         $cm = new \stdClass();
         $cm->course = $course->id;
-        $cm->name = 'Observed book';
-        $book = $this->getDataGenerator()->create_module('book', $cm);
+        $cm->name = 'Observed assign';
+        $assign = $this->getDataGenerator()->create_module('assign', $cm);
 
         // Creating rule.
         $rulerecord = new \stdClass();
         $rulerecord->courseid = $course->id;
-        $rulerecord->eventname = '\mod_book\event\course_module_viewed';
-        $rulerecord->cmid = $book->cmid;
+        $rulerecord->eventname = '\mod_assign\event\course_module_viewed';
+        $rulerecord->cmid = $assign->cmid;
         $rulerecord->frequency = 1;
         $rulerecord->template = '## {link} ##
 
@@ -486,18 +486,18 @@ final class eventobservers_test extends \advanced_testcase {
         $toolgenerator->create_subscription($subrecord);
 
         // Now let us trigger the event.
-        $params = array(
-            'context' => \context_module::instance($book->cmid),
-            'objectid' => $book->id
-        );
+        $params = [
+            'context' => \context_module::instance($assign->cmid),
+            'objectid' => $assign->id,
+        ];
 
-        $event = \mod_book\event\course_module_viewed::create($params);
+        $event = \mod_assign\event\course_module_viewed::create($params);
         $event->trigger();
         $this->run_adhock_tasks();
         $msgs = $msgsink->get_messages();
         $msg = array_pop($msgs);
 
-        $modurl = new \moodle_url('/mod/book/view.php', array('id' => $book->cmid));
+        $modurl = new \moodle_url('/mod/assign/view.php', ['id' => $assign->cmid]);
 
         $this->assertMatchesRegularExpression('~<h2>.*' . preg_quote($event->get_url()->out(), '~') . '.*</h2>~',
             $msg->fullmessagehtml);
@@ -595,7 +595,7 @@ final class eventobservers_test extends \advanced_testcase {
         // Now let us create a rule specific to a module instance.
         $cm = new \stdClass();
         $cm->course = $course1->id;
-        $book = $this->getDataGenerator()->create_module('book', $cm);
+        $assign = $this->getDataGenerator()->create_module('assign', $cm);
 
         $rule = new \stdClass();
         $rule->userid = $user->id;
@@ -605,7 +605,7 @@ final class eventobservers_test extends \advanced_testcase {
         $sub = new \stdClass();
         $sub->courseid = $course1->id;
         $sub->userid = $user->id;
-        $sub->cmid = $book->cmid;
+        $sub->cmid = $assign->cmid;
 
         // Add 10 rules for this course with subscriptions for this module.
         for ($i = 0; $i < 10; $i++) {
@@ -631,7 +631,7 @@ final class eventobservers_test extends \advanced_testcase {
         $this->assertCount(20, $totalsubs);
 
         // Let us delete the user now.
-        course_delete_module($book->cmid);
+        course_delete_module($assign->cmid);
 
         // Verify data after course delete.
         $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');

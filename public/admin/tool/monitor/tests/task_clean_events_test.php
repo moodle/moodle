@@ -65,7 +65,7 @@ final class task_clean_events_test extends \advanced_testcase {
         // Let's add a few rules we want to monitor.
         $rule1 = $monitorgenerator->create_rule($rule);
 
-        $rule->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rule->eventname = '\mod_assign\event\course_module_instance_list_viewed';
         $rule2 = $monitorgenerator->create_rule($rule);
 
         // Add the same rules for the same course, but this time with a lower timewindow (used to test that we do not
@@ -74,7 +74,7 @@ final class task_clean_events_test extends \advanced_testcase {
         $rule->timewindow = 200;
         $rule3 = $monitorgenerator->create_rule($rule);
 
-        $rule->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rule->eventname = '\mod_assign\event\course_module_instance_list_viewed';
         $rule4 = $monitorgenerator->create_rule($rule);
 
         // Add another rule in a different course.
@@ -116,13 +116,13 @@ final class task_clean_events_test extends \advanced_testcase {
 
         // Now let's populate the tool_monitor table with the events associated with those rules.
         \mod_book\event\course_module_viewed::create_from_book($book, $bookcontext)->trigger();
-        \mod_book\event\course_module_instance_list_viewed::create_from_course($course)->trigger();
+        \mod_assign\event\course_module_instance_list_viewed::create_from_course($course)->trigger();
         \mod_book\event\chapter_viewed::create_from_chapter($book, $bookcontext, $bookchapter)->trigger();
 
         // Let's trigger the viewed events again, but in another course. The rules created for these events are
         // associated with another course, so these events should get deleted when we trigger the cleanup task.
         \mod_book\event\course_module_viewed::create_from_book($book2, $book2context)->trigger();
-        \mod_book\event\course_module_instance_list_viewed::create_from_course($course2)->trigger();
+        \mod_assign\event\course_module_instance_list_viewed::create_from_course($course2)->trigger();
         // Trigger a chapter_viewed event in this course - this should not get deleted as the rule is site wide.
         \mod_book\event\chapter_viewed::create_from_chapter($book2, $book2context, $book2chapter)->trigger();
 
@@ -151,7 +151,7 @@ final class task_clean_events_test extends \advanced_testcase {
         $event4 = array_shift($events);
         $this->assertEquals('\mod_book\event\course_module_viewed', $event1->eventname);
         $this->assertEquals($course->id, $event1->courseid);
-        $this->assertEquals('\mod_book\event\course_module_instance_list_viewed', $event2->eventname);
+        $this->assertEquals('\mod_assign\event\course_module_instance_list_viewed', $event2->eventname);
         $this->assertEquals($course->id, $event2->courseid);
         $this->assertEquals('\mod_book\event\chapter_viewed', $event3->eventname);
         $this->assertEquals($course->id, $event3->courseid);

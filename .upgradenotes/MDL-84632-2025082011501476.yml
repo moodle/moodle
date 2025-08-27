@@ -1,0 +1,7 @@
+issueNumber: MDL-84632
+notes:
+  mod_imscp:
+    - message: >-
+        The \mod_imscp\event\course_module_instance_list_viewed event is now
+        deprecated. Use \core\event\course_resources_list_viewed instead.
+      type: deprecated
