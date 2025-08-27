@@ -260,7 +260,8 @@ class EvalMath {
                     if (is_null($o2)) return $this->trigger(get_string('unexpectedclosingbracket', 'mathslib'));
                     else $output[] = $o2;
                 }
-                if (preg_match('/^('.self::$namepat.')\($/', $stack->last(2) ?? '', $matches)) { // did we just close a function?
+                $nextOp = $stack->last(2);
+                if ($nextOp !== null && preg_match('/^('.self::$namepat.')\($/', $nextOp, $matches)) { // did we just close a function?
                     $fnn = $matches[1]; // get the function name
                     $arg_count = $stack->pop(); // see how many arguments there were (cleverly stored on the stack, thank you)
                     $fn = $stack->pop();

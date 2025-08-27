@@ -1,5 +1,7 @@
 Description of EvalMath library import into Moodle
 
+The EvalMath class used in this library has been heavily modified.
+
 Our changes:
 * implicit multiplication (optionally) not allowed
 * new custom calc emulation functions
@@ -13,12 +15,11 @@ Our changes:
 * added round, ceil and floor functions.
 * EvalMath::EvalMath() changed to EvalMath::__construct() and there is a new EvalMath::EvalMath
   function to maintain backwards compatibility
-* Ensure a string is passed to preg_match in EvalMath::nfx.
 
-To see all changes diff against version 1.1, available from:
-http://www.phpclasses.org/browse/package/2695.html
+When upgrading EvalMath library, compare versions using this link (update to suit):
+https://github.com/dbojdo/eval-math/compare/1.0.1...1.0.2
 
-skodak, Tim Hunt
+Update evalmath.class.php with the identified changes.
 
 Changes by Juan Pablo de Castro (MDL-14274):
 * operators >,<,>=,<=,== added.
@@ -50,3 +51,6 @@ Changes by Meirza (MDL-75464)
   After:
   ```
   '=a%b', // 9%3 => 0
+
+Changes by Yusuf Wibisono (MDL-86344)
+* Ensure preg_match subject is a string (avoid null) in EvalMath::nfx
