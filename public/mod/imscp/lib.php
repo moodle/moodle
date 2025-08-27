@@ -32,21 +32,20 @@ require_once(__DIR__ . '/deprecatedlib.php');
  * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function imscp_supports($feature) {
-    switch($feature) {
-        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return false;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-        case FEATURE_MOD_PURPOSE:
-            return MOD_PURPOSE_INTERACTIVECONTENT;
-
-        default: return null;
-    }
+    return match ($feature) {
+        FEATURE_MOD_ARCHETYPE => MOD_ARCHETYPE_RESOURCE,
+        FEATURE_GROUPS => false,
+        FEATURE_GROUPINGS => false,
+        FEATURE_MOD_INTRO => true,
+        FEATURE_COMPLETION_TRACKS_VIEWS => true,
+        FEATURE_GRADE_HAS_GRADE => false,
+        FEATURE_GRADE_OUTCOMES => false,
+        FEATURE_BACKUP_MOODLE2 => true,
+        FEATURE_SHOW_DESCRIPTION => true,
+        FEATURE_MOD_PURPOSE => MOD_PURPOSE_INTERACTIVECONTENT,
+        FEATURE_MOD_OTHERPURPOSE => MOD_PURPOSE_CONTENT,
+        default => null,
+    };
 }
 
 /**

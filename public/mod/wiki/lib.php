@@ -277,33 +277,20 @@ function wiki_reset_course_form_definition(&$mform) {
  * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function wiki_supports($feature) {
-    switch ($feature) {
-    case FEATURE_GROUPS:
-        return true;
-    case FEATURE_GROUPINGS:
-        return true;
-    case FEATURE_MOD_INTRO:
-        return true;
-    case FEATURE_COMPLETION_TRACKS_VIEWS:
-        return true;
-    case FEATURE_GRADE_HAS_GRADE:
-        return false;
-    case FEATURE_GRADE_OUTCOMES:
-        return false;
-    case FEATURE_RATE:
-        return false;
-    case FEATURE_BACKUP_MOODLE2:
-        return true;
-    case FEATURE_SHOW_DESCRIPTION:
-        return true;
-    case FEATURE_COMMENT:
-        return true;
-    case FEATURE_MOD_PURPOSE:
-        return MOD_PURPOSE_COLLABORATION;
-
-    default:
-        return null;
-    }
+    return match ($feature) {
+        FEATURE_GROUPS => true,
+        FEATURE_GROUPINGS => true,
+        FEATURE_MOD_INTRO => true,
+        FEATURE_COMPLETION_TRACKS_VIEWS => true,
+        FEATURE_GRADE_HAS_GRADE => false,
+        FEATURE_GRADE_OUTCOMES => false,
+        FEATURE_RATE => false,
+        FEATURE_BACKUP_MOODLE2 => true,
+        FEATURE_SHOW_DESCRIPTION => true,
+        FEATURE_COMMENT => true,
+        FEATURE_MOD_PURPOSE => MOD_PURPOSE_COLLABORATION,
+        default => null,
+    };
 }
 
 /**

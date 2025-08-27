@@ -155,16 +155,27 @@ export default class ChooserDialogueDOM {
      * @return {HTMLElement} The "All activities" tab element.
      */
     showAllActivitiesTab() {
-        const navTab = this.modalBody.querySelector(selectors.regions.allTabNav);
+        return this.showCategoryTab('all');
+    }
+
+    /**
+     * Show a specific category tab.
+     * @method showCategoryTab
+     * @param {String} category The category to show.
+     * @return {HTMLElement} The category tab element.
+     */
+    showCategoryTab(category) {
+        const navTab = this.modalBody.querySelector(selectors.regions.categoryTabNav(category));
 
         if (navTab.classList.contains('active')) {
             return navTab;
         }
 
-        const pendingPromise = new Pending('core_course/activitychooser:alltab');
-        navTab.addEventListener('shown.bs.tab', pendingPromise.resolve, {once: true});
+        const pendingPromise = new Pending(`core_course/activitychooser:${category}-tab`);
 
+        navTab.addEventListener('shown.bs.tab', pendingPromise.resolve, {once: true});
         Tab.getOrCreateInstance(navTab).show();
+
         return navTab;
     }
 

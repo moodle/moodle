@@ -86,16 +86,19 @@ final class exporters_content_item_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         $contentitem = new \core_course\local\entity\content_item(
-            -1,
-            'test_name',
-            new \core_course\local\entity\string_title('test_title'),
-            new \moodle_url(''),
-            '',
-            '* First point
+            id: -1,
+            name: 'test_name',
+            title: new \core_course\local\entity\string_title('test_title'),
+            link: new \moodle_url(''),
+            icon: '',
+            help: '* First point
             * Another point',
-            MOD_ARCHETYPE_OTHER,
-            'core_test',
-            MOD_PURPOSE_CONTENT
+            archetype: MOD_ARCHETYPE_OTHER,
+            componentname: 'core_test',
+            purpose: MOD_PURPOSE_CONTENT,
+            branded: false,
+            gradable: false,
+            otherpurpose: MOD_PURPOSE_INTERACTIVECONTENT,
         );
 
         $ciexporter = new course_content_item_exporter($contentitem, ['context' => \context_course::instance($course->id)]);
@@ -118,6 +121,10 @@ final class exporters_content_item_test extends \advanced_testcase {
         $this->assertEquals($exporteditem->archetype, $contentitem->get_archetype());
         $this->assertObjectHasProperty('componentname', $exporteditem);
         $this->assertEquals($exporteditem->componentname, $contentitem->get_component_name());
+        $this->assertEquals($exporteditem->purpose, $contentitem->get_purpose());
+        $this->assertEquals($exporteditem->branded, $contentitem->is_branded());
+        $this->assertEquals($exporteditem->gradable, $contentitem->is_gradable());
+        $this->assertEquals($exporteditem->otherpurpose, $contentitem->get_other_purpose());
         // Most important, is this a legacy item?
         $this->assertObjectHasProperty('legacyitem', $exporteditem);
         $this->assertTrue($exporteditem->legacyitem);

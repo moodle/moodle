@@ -44,29 +44,49 @@ Feature: Display and choose from the available activities in course
 
   Scenario: The teacher can see the activity summary in the activity chooser
     Given I open the activity chooser
-    When I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    Then I should see "Assignment" in the "help" "core_course > Activity chooser screen"
-    And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
-    And I should see "Supports" in the "help" "core_course > Activity chooser screen"
-    And I should see "Assessment" in the "help" "core_course > Activity chooser screen"
+    When I click on "Information about the Forum activity" "button" in the "Add an activity or resource" "dialogue"
+    Then I should see "Forum" in the "help" "core_course > Activity chooser screen"
+    And I should see "The forum activity module enables participants to have asynchronous discussions"
+    # Confirm more help link exists and it has a correct format.
+    And "More help" "link" should exist
+    And "Opens in new window" "link" should be visible
+    # Validate information panel.
+    And I should see "Collaboration" in the "help" "core_course > Activity chooser screen"
+    And I should see "Communication" in the "help" "core_course > Activity chooser screen"
     And I should see "Gradable" in the "help" "core_course > Activity chooser screen"
     And I should see "Yes" in the "help" "core_course > Activity chooser screen"
     And I click on "Back" "button" in the "Add an activity or resource" "dialogue"
     And I click on "Information about the Book activity" "button" in the "Add an activity or resource" "dialogue"
     Then I should see "Book" in the "help" "core_course > Activity chooser screen"
     And I should see "The book module enables a teacher to create a multi-page resource in a book-like format"
-    And I should see "Supports" in the "help" "core_course > Activity chooser screen"
     And I should see "Resources" in the "help" "core_course > Activity chooser screen"
     And I should see "Gradable" in the "help" "core_course > Activity chooser screen"
     And I should see "No" in the "help" "core_course > Activity chooser screen"
-    # Confirm show summary also works for weekly format course
+    # Validate everything again in weekly format course.
     And I am on "C2" course homepage with editing mode on
     And I click on "Add content" "button" in the "13 January - 19 January" "section"
     And I click on "Activity or resource" "button" in the "13 January - 19 January" "section"
-    And I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    And I should see "Assignment" in the "help" "core_course > Activity chooser screen"
-    And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback."
-    And I should see "Assessment" in the "help" "core_course > Activity chooser screen"
+    And I click on "Information about the Forum activity" "button" in the "Add an activity or resource" "dialogue"
+    And I should see "Forum" in the "help" "core_course > Activity chooser screen"
+    And I should see "The forum activity module enables participants to have asynchronous discussions"
+    And "More help" "link" should exist
+    And "Opens in new window" "link" should be visible
+    And I should see "Collaboration" in the "help" "core_course > Activity chooser screen"
+    And I should see "Communication" in the "help" "core_course > Activity chooser screen"
+    And I should see "Gradable" in the "help" "core_course > Activity chooser screen"
+    And I should see "Yes" in the "help" "core_course > Activity chooser screen"
+
+  Scenario: The teacher use the activity chooser help panel to go to the specific purpose category
+    Given I open the activity chooser
+    When I click on "Information about the Forum activity" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Collaboration" "button" in the "help" "core_course > Activity chooser screen"
+    Then I should see "Tools for collaborative learning" in the "Add an activity or resource" "dialogue"
+    And "Assignment" "link" should not exist in the "collaboration" "core_course > Activity chooser tab"
+    And "Database" "link" should exist in the "collaboration" "core_course > Activity chooser tab"
+    And I click on "Information about the Forum activity" "button" in the "collaboration" "core_course > Activity chooser tab"
+    And I click on "Communication" "button" in the "help" "core_course > Activity chooser screen"
+    And I should see "Activities that facilitate real-time communication" in the "Add an activity or resource" "dialogue"
+    And "Choice" "link" should exist in the "communication" "core_course > Activity chooser tab"
 
   Scenario: The teacher can hide the activity summary in the activity chooser
     Given I open the activity chooser
@@ -305,25 +325,3 @@ Feature: Display and choose from the available activities in course
     # Confirm escape key closes the modal
     And I press the escape key
     And "Add an activity or resource" "dialogue" should not be visible
-
-  Scenario: Teacher can access 'More help' from activity information in activity chooser
-    Given I open the activity chooser
-    When I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    # Confirm more help link exists
-    Then "More help" "link" should exist
-    # Confirm that corresponding help icon exist
-    And ".fa-book" "css_element" should exist
-    # Confirm that link opens in new window
-    And "Opens in new window" "link" should be visible
-    # Confirm the same behaviour for weekly format course
-    And I am on "C2" course homepage with editing mode on
-    And I click on "Add content" "button" in the "13 January - 19 January" "section"
-    And I click on "Activity or resource" "button" in the "13 January - 19 January" "section"
-    And I should see "All" in the "Add an activity or resource" "dialogue"
-    And I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
-    # Confirm more help link exists
-    And "More help" "link" should exist
-    # Confirm that corresponding help icon exist
-    And ".fa-book" "css_element" should exist
-    # Confirm that link opens in new window
-    And "Opens in new window" "link" should be visible
