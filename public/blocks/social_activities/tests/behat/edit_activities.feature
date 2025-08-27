@@ -5,7 +5,8 @@ Feature: Edit activities in social activities block
   I need to add and edit activities there
 
   Background:
-    Given the following "course" exists:
+    Given I enable "social" "format" plugin
+    And the following "course" exists:
       | fullname    | Course 1 |
       | shortname   | C1       |
       | format      | social   |

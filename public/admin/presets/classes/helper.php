@@ -236,9 +236,6 @@ class helper {
         static::add_plugin($presetid, 'block', 'recentlyaccessedcourses', false);
         static::add_plugin($presetid, 'block', 'starredcourses', false);
 
-        // Course formats: Disable Social format.
-        static::add_plugin($presetid, 'format', 'social', false);
-
         // Data formats: Disable Javascript Object Notation (.json).
         static::add_plugin($presetid, 'dataformat', 'json', false);
 
@@ -331,9 +328,6 @@ class helper {
         static::add_plugin($presetid, 'block', 'online_users', true);
         static::add_plugin($presetid, 'block', 'recentlyaccessedcourses', true);
         static::add_plugin($presetid, 'block', 'starredcourses', true);
-
-        // Course formats: Enable Social format.
-        static::add_plugin($presetid, 'format', 'social', true);
 
         // Data formats: Enable Javascript Object Notation (.json).
         static::add_plugin($presetid, 'dataformat', 'json', true);

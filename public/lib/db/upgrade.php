@@ -2067,5 +2067,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025081900.04);
     }
 
+    if ($oldversion < 2025082600.01) {
+        if (get_config('moodlecourse', 'format') === 'social') {
+            // If the social course format is set as default, change it to topics.
+            set_config('format', 'topics', 'moodlecourse');
+        }
+        $DB->delete_records('adminpresets_plug', ['plugin' => 'format', 'name' => 'social']);
+
+        // Disable Social course format.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('format');
+        $manager::enable_plugin('social', 0);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025082600.01);
+    }
+
     return true;
 }

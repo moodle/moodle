@@ -189,11 +189,13 @@ class format_singleactivity extends core_courseformat\base implements core_cours
             $activitytype = $this->get_activitytype();
             if (!empty($activitytype) && !empty($modinfo->sections)) {
                 // Get the first activity of the specified type, but only if it is in the 0-section.
-                $cmlist = $modinfo->sections[0];
-                foreach ($cmlist as $cmid) {
-                    if ($modinfo->cms[$cmid]->modname === $activitytype) {
-                        $this->activity = $modinfo->cms[$cmid];
-                        break;
+                if (isset($modinfo->sections[0])) {
+                    $cmlist = $modinfo->sections[0];
+                    foreach ($cmlist as $cmid) {
+                        if ($modinfo->cms[$cmid]->modname === $activitytype) {
+                            $this->activity = $modinfo->cms[$cmid];
+                            break;
+                        }
                     }
                 }
             }
