@@ -658,6 +658,24 @@ class workshop {
     }
 
     /**
+     * Returns the total number of participants in the workshop
+     *
+     * This is a convenience method that uses {@see count_enrolled_users()} to count all users
+     * with the capabilities mod/workshop:submit and mod/workshop:peerassess.
+     *
+     * @param array $groupids If not empty, return only participants in the specified groups
+     * @return int
+     */
+    public function count_all_participants(array $groupids = []): int {
+        return count_enrolled_users(
+            context: $this->context,
+            withcapability: ['mod/workshop:submit', 'mod/workshop:peerassess'],
+            groupids: $groupids,
+            onlyactive: true,
+        );
+    }
+
+    /**
      * Checks if the given user is an actively enrolled participant in the workshop
      *
      * @param int $userid, defaults to the current $USER
@@ -743,66 +761,151 @@ class workshop {
     /**
      * Returns the total number of records that would be returned by {@link self::get_submissions()}
      *
+     * @deprecated since Moodle 5.1
+     * @todo Remove this method in Moodle 6.0 (MDL-86399).
+     *
      * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param int $groupid If non-zero, return only submissions by authors in the specified group
      * @return int number of records
      */
+    #[\core\attribute\deprecated(
+        replacement: 'count_all_submissions',
+        since: '5.1',
+        mdl: 'MDL-84809',
+    )]
     public function count_submissions($authorid='all', $groupid=0) {
-        global $DB;
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
-        $params = array('workshopid' => $this->id);
-        $sql = "SELECT COUNT(s.id)
-                  FROM {workshop_submissions} s
-                  JOIN {user} u ON (s.authorid = u.id)";
+        $authorids = [];
+        $groupids = [];
+
+        if (is_array($authorid)) {
+            $authorids = $authorid;
+        } else if ($authorid !== 'all') {
+            $authorids[] = $authorid;
+        }
+
         if ($groupid) {
-            $sql .= " JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
-            $params['groupid'] = $groupid;
-        }
-        $sql .= " WHERE s.example = 0 AND s.workshopid = :workshopid";
-
-        if ('all' === $authorid) {
-            // no additional conditions
-        } elseif (!empty($authorid)) {
-            list($usql, $uparams) = $DB->get_in_or_equal($authorid, SQL_PARAMS_NAMED);
-            $sql .= " AND authorid $usql";
-            $params = array_merge($params, $uparams);
-        } else {
-            // $authorid is empty
-            return 0;
+            $groupids[] = $groupid;
         }
 
-        return $DB->count_records_sql($sql, $params);
+        return $this->count_all_submissions($authorids, $groupids);
+    }
+
+    /**
+     * Returns the total number of submissions in the workshop
+     *
+     * @param array $authorids If not empty, return only submissions by the given authors
+     * @param array $groupids If not empty, return only submissions by authors in the specified groups
+     * @return int Number of submissions
+     */
+    public function count_all_submissions(array $authorids = [], array $groupids = []): int {
+        $db = \core\di::get(\moodle_database::class);
+
+        $authorwhere = '';
+        $authorparams = [];
+        if ($authorids) {
+            [$authorsql, $authorparams] = $db->get_in_or_equal($authorids, SQL_PARAMS_NAMED);
+            $authorwhere = " AND authorid $authorsql";
+        }
+
+        $groupjoin = '';
+        $groupwhere = '';
+        $groupparams = [];
+        if ($groupids) {
+            $groupsqljoin = groups_get_members_join($groupids, 'u.id', $this->context);
+            $groupjoin = $groupsqljoin->joins;
+            $groupwhere = !empty($groupsqljoin->wheres) ? " AND {$groupsqljoin->wheres}" : '';
+            $groupparams = $groupsqljoin->params;
+        }
+
+        $sql = "SELECT COUNT(ws.id)
+                  FROM {workshop_submissions} ws
+                  JOIN {user} u ON (ws.authorid = u.id)
+                $groupjoin
+                 WHERE ws.example = 0 AND ws.workshopid = :workshopid
+                $authorwhere
+                $groupwhere";
+
+        return $db->count_records_sql(
+            $sql,
+            [
+                'workshopid' => $this->id,
+                ...$authorparams,
+                ...$groupparams,
+            ],
+        );
+    }
+
+    /**
+     * Returns the total number of assessments in the workshop.
+     *
+     * @deprecated since Moodle 5.1
+     * @todo Remove this method in Moodle 6.0 (MDL-86399).
+     *
+     * @param bool $onlygraded If true, count only graded assessments
+     * @param int|null $groupid If not null, return only assessments by reviewers in the specified group
+     * @return int Number of assessments
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'count_all_assessments',
+        since: '5.1',
+        mdl: 'MDL-84809',
+    )]
+    public function count_assessments(bool $onlygraded = false, ?int $groupid = null): int {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
+        $groupids = [];
+
+        if ($groupid) {
+            $groupids[] = $groupid;
+        }
+
+        return $this->count_all_assessments($onlygraded, $groupids);
     }
 
     /**
      * Returns the total number of assessments in the workshop.
      *
      * @param bool $onlygraded If true, count only graded assessments
-     * @param int|null $groupid If not null, return only assessments by reviewers in the specified group
+     * @param array $groupids If not empty, return only assessments by reviewers in the specified groups
      * @return int Number of assessments
      */
-    public function count_assessments(bool $onlygraded = false, ?int $groupid = null): int {
-        global $DB;
+    public function count_all_assessments(bool $onlygraded = false, array $groupids = []): int {
+        $db = \core\di::get(\moodle_database::class);
 
-        $params = ['workshopid' => $this->id];
+        $groupjoin = '';
+        $groupwhere = '';
+        $groupparams = [];
+        if ($groupids) {
+            $groupsqljoin = groups_get_members_join($groupids, 'u.id', $this->context);
+            $groupjoin = $groupsqljoin->joins;
+            $groupwhere = !empty($groupsqljoin->wheres) ? " AND {$groupsqljoin->wheres}" : '';
+            $groupparams = $groupsqljoin->params;
+        }
+
+        $onlygradedwhere = '';
+        if ($onlygraded) {
+            $onlygradedwhere = " AND s.grade IS NOT NULL";
+        }
+
         $sql = "SELECT COUNT(s.id)
                   FROM {workshop_assessments} s
                   JOIN {workshop_submissions} ws ON (s.submissionid = ws.id)
                   JOIN {user} u ON (ws.authorid = u.id)
-                  JOIN {workshop} w ON (ws.workshopid = w.id)";
+                  JOIN {workshop} w ON (ws.workshopid = w.id)
+                $groupjoin
+                 WHERE w.id = :workshopid
+                $onlygradedwhere
+                $groupwhere";
 
-        if ($groupid) {
-            $sql .= " JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
-            $params['groupid'] = $groupid;
-        }
-
-        if ($onlygraded) {
-            $sql .= " WHERE s.grade IS NOT NULL AND w.id = :workshopid";
-        } else {
-            $sql .= " WHERE w.id = :workshopid";
-        }
-
-        return $DB->count_records_sql($sql, $params);
+        return $db->count_records_sql(
+            $sql,
+            [
+                'workshopid' => $this->id,
+                ...$groupparams,
+            ],
+        );
     }
 
 
@@ -812,7 +915,7 @@ class workshop {
      * Fetches data from {workshop_submissions} and adds some useful information from other
      * tables. Does not return textual fields to prevent possible memory lack issues.
      *
-     * @see self::count_submissions()
+     * @see self::count_all_submissions()
      * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param int $groupid If non-zero, return only submissions by authors in the specified group
      * @param int $limitfrom Return a subset of records, starting at this point (optional)

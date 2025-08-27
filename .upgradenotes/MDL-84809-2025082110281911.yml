@@ -1,0 +1,12 @@
+issueNumber: MDL-84809
+notes:
+  mod_workshop:
+    - message: >-
+        The function `workshop::count_submissions` has been deprecated and
+        should no longer be used, use `workshop::count_all_submissions`
+        instead.
+      type: deprecated
+    - message: >-
+        The function `workshop::count_assessments` has been deprecated and
+        should no longer be used, use `workshop::count_all_assessments` instead.
+      type: deprecated

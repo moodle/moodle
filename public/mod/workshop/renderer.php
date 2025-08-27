@@ -1388,7 +1388,10 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
                     if ($data) {
                         $countparticipants = $workshop->count_participants();
-                        $countsubmissions = $workshop->count_submissions(array_keys($data->grades), $groupid);
+                        $countsubmissions = $workshop->count_all_submissions(
+                            array_keys($data->grades),
+                            $groupid ? [$groupid] : [],
+                        );
                         $a = new stdClass();
                         $a->submitted = $countsubmissions;
                         $a->notsubmitted = $data->totalcount - $countsubmissions;
