@@ -377,4 +377,25 @@ STRING;
         $this->assertFalse($DB->is_transaction_started());
         $this->assertEquals($originalname, $DB->get_field('course', 'fullname', ['id' => $COURSE->id]));
     }
+
+    /**
+     * Test that the navigation node URL is overridden correctly.
+     */
+    public function test_set_navigation_url(): void {
+        \navigation_node::override_active_url(new \core\url('/foo/bar/baz'));
+        $this->assertNotNull(
+            (new \ReflectionClass(\navigation_node::class))->getStaticPropertyValue('fullmeurl', null),
+        );
+    }
+
+    /**
+     * Test that the after-test teardown correctly resets the navigation node URL.
+     *
+     * @depends test_set_navigation_url
+     */
+    public function test_navigation_url_reset(): void {
+        $this->assertNull(
+            (new \ReflectionClass(\navigation_node::class))->getStaticPropertyValue('fullmeurl', null),
+        );
+    }
 }
