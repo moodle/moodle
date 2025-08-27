@@ -205,6 +205,7 @@ class phpunit_util extends testing_util {
         // reinitialise following globals
         $OUTPUT = new bootstrap_renderer();
         $PAGE = new moodle_page();
+        \navigation_node::reset_all_data();
         $FULLME = null;
         $ME = null;
         $SCRIPT = null;

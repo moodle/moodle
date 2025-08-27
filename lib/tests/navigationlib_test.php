@@ -48,6 +48,9 @@ final class navigationlib_test extends \advanced_testcase {
     protected function setup_node() {
         global $PAGE, $SITE;
 
+        // Perform a reset between tests to reset the PAGE.
+        $this->resetAfterTest();
+
         $PAGE->set_url('/');
         $PAGE->set_course($SITE);
 
