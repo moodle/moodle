@@ -21,11 +21,6 @@ use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 use require_login_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Tests for the view_bigbluebuttonbn class.
  *
@@ -36,7 +31,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @author    Laurent David (laurent@call-learning.fr)
  * @covers \mod_bigbluebuttonbn\external\view_bigbluebuttonbn
  */
-final class view_bigbluebuttonbn_test extends \externallib_advanced_testcase {
+final class view_bigbluebuttonbn_test extends \core_external\tests\externallib_testcase {
     use testcase_helper_trait;
 
     /**
@@ -123,4 +118,3 @@ final class view_bigbluebuttonbn_test extends \externallib_advanced_testcase {
         $this->assertTrue($returnvalue['status']);
     }
 }
-

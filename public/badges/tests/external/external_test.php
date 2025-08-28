@@ -30,13 +30,11 @@ use core_badges_external;
 use core_badges\tests\external_helper;
 use core_external\external_api;
 use core_external\external_settings;
-use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 /**
@@ -48,7 +46,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
-final class external_test extends externallib_advanced_testcase {
+final class external_test extends \core_external\tests\externallib_testcase {
     use external_helper;
 
     /**

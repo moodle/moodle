@@ -22,16 +22,10 @@ use context_system;
 use core\output\pix_icon;
 use core_reportbuilder_generator;
 use core_external\external_api;
-use externallib_advanced_testcase;
 use core_reportbuilder\exception\report_access_exception;
 use core_reportbuilder\manager;
 use core_reportbuilder\output\report_action;
 use core_user\reportbuilder\datasource\users;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->dirroot}/webservice/tests/helpers.php");
 
 /**
  * Unit tests of external class for getting reports
@@ -41,8 +35,7 @@ require_once("{$CFG->dirroot}/webservice/tests/helpers.php");
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class get_test extends externallib_advanced_testcase {
-
+final class get_test extends \core_external\tests\externallib_testcase {
     /**
      * Text execute method for edit mode
      */

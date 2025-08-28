@@ -16,11 +16,6 @@
 
 namespace core_courseformat\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 use core_external\external_api;
 
 /**
@@ -32,7 +27,7 @@ use core_external\external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(log_view_overview_information::class)]
-final class log_view_overview_information_test extends \externallib_advanced_testcase {
+final class log_view_overview_information_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for webservice log_view_overview_information base cases.
      *

@@ -14,25 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Core h5p external functions tests.
- *
- * @package    core_h5p
- * @category   external
- * @copyright  2019 Carlos Escobedo <carlos@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.8
- */
-
 namespace core_h5p\external;
-
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use core_h5p\external;
 use core_h5p\local\library\autoloader;
@@ -46,8 +28,8 @@ use core_h5p\local\library\autoloader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.8
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
+    #[\Override]
     protected function setUp(): void {
         parent::setUp();
         autoloader::register();

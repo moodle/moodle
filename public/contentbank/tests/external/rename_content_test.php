@@ -31,7 +31,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use core_external\external_api;
 
@@ -43,8 +42,7 @@ use core_external\external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\external\rename_content
  */
-final class rename_content_test extends \externallib_advanced_testcase {
-
+final class rename_content_test extends \core_external\tests\externallib_testcase {
     /**
      * Data provider for test_rename_content.
      *

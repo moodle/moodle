@@ -21,11 +21,6 @@ use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 use require_login_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Tests for the completion_validate class.
  *
@@ -36,7 +31,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @author    Laurent David (laurent@call-learning.fr)
  * @covers \mod_bigbluebuttonbn\external\completion_validate
  */
-final class completion_validate_test extends \externallib_advanced_testcase {
+final class completion_validate_test extends \core_external\tests\externallib_testcase {
     use testcase_helper_trait;
 
     /**
@@ -152,4 +147,3 @@ final class completion_validate_test extends \externallib_advanced_testcase {
         $this->assertEmpty($returnvalue['warnings']);
     }
 }
-

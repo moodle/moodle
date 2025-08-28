@@ -36,12 +36,6 @@ use core_competency\template_competency;
 use core_competency\user_competency;
 use core_competency\user_competency_plan;
 use core_external\external_api;
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External testcase.
@@ -50,8 +44,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     /** @var \stdClass $creator User with enough permissions to create insystem context. */
     protected $creator = null;
 

@@ -16,11 +16,6 @@
 
 namespace core_competency;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Competency rule testcase.
  *
@@ -28,8 +23,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class competency_rule_test extends \externallib_advanced_testcase {
-
+final class competency_rule_test extends \core_external\tests\externallib_testcase {
     public function test_rule_all_matching(): void {
         $this->resetAfterTest(true);
 

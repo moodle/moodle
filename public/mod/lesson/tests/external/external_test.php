@@ -26,17 +26,15 @@
 
 namespace mod_lesson\external;
 
-use externallib_advanced_testcase;
-use mod_lesson_external;
-use lesson;
 use core_external\external_api;
 use core_external\external_settings;
+use lesson;
+use mod_lesson_external;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
 /**
@@ -72,8 +70,7 @@ class testable_mod_lesson_external extends mod_lesson_external {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.3
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     /** @var \stdClass course record. */
     protected \stdClass $course;
 

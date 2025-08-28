@@ -14,35 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External functions test for record_feedback_action.
- *
- * @package    core
- * @category   test
- * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-use externallib_advanced_testcase;
 use context_system;
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Class record_userfeedback_action_testcase
  *
+ * @package core
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\external\record_userfeedback_action
  */
-final class record_userfeedback_action_test extends externallib_advanced_testcase {
-
+final class record_userfeedback_action_test extends \core_external\tests\externallib_testcase {
     /**
      * Data provider for test_record_userfeedback_action.
      *

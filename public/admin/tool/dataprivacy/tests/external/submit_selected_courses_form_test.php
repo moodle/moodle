@@ -14,20 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This is the external method for submit selected courses.
- *
- * @package    tool_dataprivacy
- * @copyright  2021 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_dataprivacy\external;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use tool_dataprivacy\api;
 
@@ -39,7 +26,7 @@ use tool_dataprivacy\api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \tool_dataprivacy\api
  */
-final class submit_selected_courses_form_test extends \externallib_advanced_testcase {
+final class submit_selected_courses_form_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for submit_selected_courses_form().
      */

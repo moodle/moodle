@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/choice/lib.php');
 
 /**
@@ -41,8 +40,7 @@ require_once($CFG->dirroot . '/mod/choice/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-final class lib_test extends \externallib_advanced_testcase {
-
+final class lib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test choice_view
      * @return void

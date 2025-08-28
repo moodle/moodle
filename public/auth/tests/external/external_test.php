@@ -14,28 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Auth external functions tests.
- *
- * @package    core_auth
- * @category   external
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.2
- */
-
 namespace core_auth\external;
 
 use auth_email_external;
 use core_auth_external;
 use core_external\external_api;
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External auth API tests.
@@ -45,8 +28,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.2
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     /** @var string Original error log */
     protected $oldlog;
 

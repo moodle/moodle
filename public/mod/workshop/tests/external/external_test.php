@@ -27,7 +27,6 @@
 namespace mod_workshop\external;
 
 use core_external\external_api;
-use externallib_advanced_testcase;
 use mod_workshop_external;
 use workshop;
 
@@ -35,7 +34,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/workshop/lib.php');
 
 /**
@@ -47,8 +45,7 @@ require_once($CFG->dirroot . '/mod/workshop/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.4
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     /** @var stdClass course object */
     private $course;
     /** @var stdClass workshop object */

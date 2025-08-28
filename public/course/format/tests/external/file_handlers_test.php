@@ -28,8 +28,8 @@ use core_external\external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_courseformat\external\file_handlers
  */
-final class file_handlers_test extends \externallib_advanced_testcase {
-
+#[\PHPUnit\Framework\Attributes\CoversClass(file_handlers::class)]
+final class file_handlers_test extends \core_external\tests\externallib_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */
@@ -40,8 +40,6 @@ final class file_handlers_test extends \externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_state::execute().
-     *
-     * @covers ::execute
      */
     public function test_execute(): void {
         $this->resetAfterTest();
@@ -63,8 +61,6 @@ final class file_handlers_test extends \externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_state::execute() in a wrong course.
-     *
-     * @covers ::execute
      */
     public function test_execute_wrong_course(): void {
         $this->resetAfterTest();

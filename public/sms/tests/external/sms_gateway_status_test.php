@@ -18,11 +18,6 @@ declare(strict_types=1);
 
 namespace core_sms\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Test the webservice to change the status of a gateway.
  *
@@ -31,8 +26,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_sms\external\sms_gateway_status::execute
  */
-final class sms_gateway_status_test extends \externallib_advanced_testcase {
-
+final class sms_gateway_status_test extends \core_external\tests\externallib_testcase {
     public function test_execute(): void {
         $this->resetAfterTest();
         $this->setAdminUser();

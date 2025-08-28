@@ -26,17 +26,10 @@
 
 namespace mod_h5pactivity\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
-use core_external\external_api;
-use externallib_advanced_testcase;
-use stdClass;
 use context_module;
+use core_external\external_api;
 use course_modinfo;
+use stdClass;
 
 /**
  * External function test for view_h5pactivity.
@@ -45,8 +38,7 @@ use course_modinfo;
  * @copyright  2020 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class view_h5pactivity_test extends externallib_advanced_testcase {
-
+final class view_h5pactivity_test extends \core_external\tests\externallib_testcase {
     /**
      * Test test_view_h5pactivity invalid id.
      */

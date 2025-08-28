@@ -16,17 +16,10 @@
 
 namespace mod_quiz\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/../../../../webservice/tests/helpers.php');
-
 use coding_exception;
 use core_question_generator;
-use externallib_advanced_testcase;
-use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 use required_capability_exception;
-use stdClass;
 
 /**
  * Test for the grade_items CRUD service.
@@ -40,8 +33,7 @@ use stdClass;
  * @covers \mod_quiz\external\update_grade_items
  * @covers \mod_quiz\structure
  */
-final class grade_items_test extends externallib_advanced_testcase {
-
+final class grade_items_test extends \core_external\tests\externallib_testcase {
     public function test_create_grade_items_service_works(): void {
         $quizobj = $this->create_quiz_with_two_grade_items();
 

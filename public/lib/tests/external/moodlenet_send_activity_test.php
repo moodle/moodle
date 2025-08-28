@@ -18,14 +18,12 @@ namespace core\external;
 
 use core\oauth2\api;
 use core_external\external_api;
-use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/lib/tests/moodlenet/helpers.php');
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External functions test for moodlenet_send_activity.
@@ -36,8 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\external\moodlenet_send_activity
  */
-final class moodlenet_send_activity_test extends externallib_advanced_testcase {
-
+final class moodlenet_send_activity_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the behaviour of moodlenet_send_activity().
      *

@@ -19,7 +19,7 @@ namespace mod_forum\external;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 use core_external\external_api;
@@ -35,8 +35,7 @@ use mod_forum\subscriptions;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \mod_forum\external\set_forum_subscription
  */
-final class set_forum_subscription_test extends \externallib_advanced_testcase {
-
+final class set_forum_subscription_test extends \core_external\tests\externallib_testcase {
     #[\Override]
     public function setUp(): void {
         parent::setUp();

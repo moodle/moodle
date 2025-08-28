@@ -16,12 +16,6 @@
 
 namespace core_grades\external;
 
-defined('MOODLE_INTERNAL') || die;
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Unit tests for the core_grades\external\get_feedback webservice.
  *
@@ -32,8 +26,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since      Moodle 4.2
  * @covers \core_grades\external\get_feedback
  */
-final class get_feedback_test extends \externallib_advanced_testcase {
-
+final class get_feedback_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_feedback.
      *

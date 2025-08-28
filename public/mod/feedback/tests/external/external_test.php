@@ -17,7 +17,6 @@
 namespace mod_feedback\external;
 
 use core_external\external_api;
-use externallib_advanced_testcase;
 use feedback_item_multichoice;
 use mod_feedback_external;
 use moodle_exception;
@@ -26,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/feedback/lib.php');
 
 /**
@@ -39,8 +37,7 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  * @since      Moodle 3.3
  * @covers     \mod_feedback_external
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     // TODO These should be removed.
     // Testcase classes should not have any properties or store state.
     protected $course;

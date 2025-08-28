@@ -18,13 +18,8 @@ declare(strict_types=1);
 
 namespace core_courseformat\external;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_courseformat\stateactions;
 use core_courseformat\stateupdates;
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Tests for the delete section test class.
@@ -35,8 +30,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_courseformat\stateactions
  */
-final class delete_section_test extends \externallib_advanced_testcase {
-
+final class delete_section_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the webservice can execute the section_delete action.
      *

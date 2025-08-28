@@ -17,18 +17,11 @@
 namespace core_xapi\external;
 
 use core\context\module;
-use core_external\external_api;
 use core_xapi\iri;
 use core_xapi\local\statement\item_activity;
 use core_xapi\local\statement\item_agent;
 use core_xapi\test_helper;
 use core_xapi\xapi_exception;
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Unit tests for xAPI delete states webservice.
@@ -39,8 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2023 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class delete_states_test extends externallib_advanced_testcase {
-
+final class delete_states_test extends \core_external\tests\externallib_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */

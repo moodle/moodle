@@ -18,11 +18,6 @@ namespace core_search\external;
 
 use core_external\external_api;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Tests for the get_results external function.
  *
@@ -32,8 +27,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_search\external\get_results
  */
-final class get_results_test extends \externallib_advanced_testcase {
-
+final class get_results_test extends \core_external\tests\externallib_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
