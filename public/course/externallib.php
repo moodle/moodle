@@ -4537,6 +4537,8 @@ class core_course_external extends external_api {
     /**
      * Returns description of method result value
      *
+     * @deprecated Since Moodle 5.1
+     * @todo Remove this method in Moodle 6.0 (MDL-86310).
      * @return \core_external\external_description
      */
     public static function get_course_content_items_returns() {
@@ -4550,6 +4552,8 @@ class core_course_external extends external_api {
     /**
      * Returns description of method parameters
      *
+     * @deprecated Since Moodle 5.1
+     * @todo Remove this method in Moodle 6.0 (MDL-86310).
      * @return external_function_parameters
      */
     public static function get_course_content_items_parameters() {
@@ -4562,6 +4566,8 @@ class core_course_external extends external_api {
     /**
      * Given a course ID fetch all accessible modules for that course
      *
+     * @deprecated Since Moodle 5.1
+     * @todo Remove this method in Moodle 6.0 (MDL-86310).
      * @param int $courseid The course we want to fetch the modules for
      * @param int|null $sectionnum The section we want to fetch the modules for
      * @return array Contains array of modules and their metadata
@@ -4587,6 +4593,16 @@ class core_course_external extends external_api {
 
         $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course, [], $sectioninfo);
         return ['content_items' => $contentitems];
+    }
+
+    /**
+     * Mark get_course_content_items as deprecated.
+     *
+     * @todo Remove this method in Moodle 6.0 (MDL-86310).
+     * @return bool
+     */
+    public static function get_course_content_items_is_deprecated() {
+        return true;
     }
 
     /**

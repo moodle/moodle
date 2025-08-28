@@ -593,6 +593,12 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true,
     ],
+    'core_courseformat_get_section_content_items' => [
+        'classname'     => 'core_courseformat\external\get_section_content_items',
+        'description'   => 'Fetch all the content items (activities, resources and their subtypes) for the activity picker',
+        'type'          => 'read',
+        'ajax' => true,
+    ],
     'core_courseformat_get_overview_information' => [
         'classname'     => 'core_courseformat\external\get_overview_information',
         'description'   => 'Get the course overview information for an specific activity type.',
@@ -814,7 +820,9 @@ $functions = array(
         'classname' => 'core_course_external',
         'methodname' => 'get_course_content_items',
         'classpath' => 'course/externallib.php',
-        'description' => 'Fetch all the content items (activities, resources and their subtypes) for the activity picker',
+        'description' => '** DEPRECATED ** Please do not call this function any more. ' .
+            'Use core_courseformat_get_section_content_items instead. ' .
+            'Fetch all the content items (activities, resources and their subtypes) for the activity picker',
         'type' => 'read',
         'ajax' => true,
     ),
