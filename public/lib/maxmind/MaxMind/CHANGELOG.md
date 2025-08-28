@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+1.12.1 (2025-05-05)
+-------------------
+
+* The C extension now checks that the database metadata lookup was
+  successful.
+
 1.12.0 (2024-11-14)
 -------------------
 

@@ -45,8 +45,8 @@ class Asn implements \JsonSerializable
     public function __construct(array $raw)
     {
         $this->autonomousSystemNumber = $raw['autonomous_system_number'] ?? null;
-        $this->autonomousSystemOrganization =
-            $raw['autonomous_system_organization'] ?? null;
+        $this->autonomousSystemOrganization
+            = $raw['autonomous_system_organization'] ?? null;
         $ipAddress = $raw['ip_address'];
         $this->ipAddress = $ipAddress;
         $this->network = Util::cidr($ipAddress, $raw['prefix_len']);
