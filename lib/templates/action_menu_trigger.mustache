@@ -88,7 +88,7 @@
         tabindex="0"
         class="{{triggerextraclasses}} dropdown-toggle icon-no-margin"
         id="action-menu-toggle-{{instance}}"
-        aria-label="{{title}}"
+        {{#title}}aria-label="{{title}}"{{/title}}
         data-toggle="dropdown"
         role="{{triggerrole}}"
         aria-haspopup="true"
@@ -102,7 +102,7 @@
         {{{menutrigger}}}
             {{#icon}}
                 {{#pix}}
-                    {{key}},{{component}},{{title}}
+                    {{key}},{{component}}
                 {{/pix}}
             {{/icon}}
             {{#rawicon}}{{{.}}}{{/rawicon}}

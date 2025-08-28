@@ -259,10 +259,7 @@ class system_report_table extends base_report_table {
         global $OUTPUT;
 
         $menu = new action_menu();
-        $menu->set_menu_trigger(
-            $OUTPUT->pix_icon('i/menu', get_string('actions', 'core_reportbuilder')),
-            'btn btn-icon d-flex align-items-center justify-content-center no-caret',
-        );
+        $menu->set_kebab_trigger(get_string('actions', 'core_reportbuilder'));
 
         $actions = array_filter($this->report->get_actions(), function($action) use ($row) {
             // Only return dividers and action items who can be displayed for current users.

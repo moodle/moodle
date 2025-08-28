@@ -218,7 +218,8 @@ class action_menu implements renderable, templatable {
         }
         $label = $triggername ?? get_string('actions');
         $triggerclasses = self::DEFAULT_KEBAB_TRIGGER_CLASSES . ' ' . $extraclasses;
-        $icon = $output->pix_icon('i/menu', $label);
+        $icon = $output->pix_icon('i/menu', '') . html_writer::span($label, 'sr-only');
+        $this->triggerattributes += ['title' => $label];
         $this->set_menu_trigger($icon, $triggerclasses);
     }
 
