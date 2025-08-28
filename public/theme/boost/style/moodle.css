@@ -33523,7 +33523,7 @@ a.ygtvspacer:hover {
   line-height: 10px;
   margin: 0;
   color: #666;
-  margin-left: 30px;
+  padding-left: 5px;
 }
 .notification-area .content-area .header:empty {
   display: none;
@@ -38819,7 +38819,6 @@ body {
   line-height: 10px;
   margin: 0;
   color: inherit;
-  margin-left: 24px;
 }
 .content-item-container .view-more {
   position: absolute;
