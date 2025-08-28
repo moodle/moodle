@@ -450,7 +450,7 @@ class JS extends Minify
      * This will prepare the given array by escaping all characters.
      *
      * @param string[] $operators
-     * @param string   $delimiter
+     * @param string $delimiter
      *
      * @return string[]
      */
@@ -481,7 +481,7 @@ class JS extends Minify
      * This will prepare the given array by escaping all characters.
      *
      * @param string[] $keywords
-     * @param string   $delimiter
+     * @param string $delimiter
      *
      * @return string[]
      */
