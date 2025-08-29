@@ -285,8 +285,10 @@ final class api_test extends \advanced_testcase {
      */
     public function test_adding_and_removing_of_room_membership(): void {
         $course = $this->get_course();
-        $userid = $this->get_user()->id;
-
+        $userids = [];
+        for ($i = 0; $i < 40; $i++) {
+            $userids[] = $this->get_user('Samplefn' . $i, 'Sampleln' . $i, 'sampleun' . $i)->id;
+        }
         // First test the adding members to a room.
         $communication = \core_communication\api::load_by_instance(
             context: \core\context\course::instance($course->id),
@@ -294,18 +296,18 @@ final class api_test extends \advanced_testcase {
             instancetype: 'coursecommunication',
             instanceid: $course->id,
         );
-        $communication->add_members_to_room([$userid]);
+        $communication->add_members_to_room($userids);
 
         // Test the tasks added.
         $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\add_members_to_room_task');
-        $this->assertCount(1, $adhoctask);
+        $this->assertCount(2, $adhoctask);
 
         // Now test the removing members from a room.
-        $communication->remove_members_from_room([$userid]);
+        $communication->remove_members_from_room($userids);
 
         // Test the tasks added.
         $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\remove_members_from_room');
-        $this->assertCount(1, $adhoctask);
+        $this->assertCount(2, $adhoctask);
     }
 
     /**
@@ -441,7 +443,7 @@ final class api_test extends \advanced_testcase {
             users: [$userid],
         );
 
-        // Test that no communicaiton task is added.
+        // Test that no communication task is added.
         $adhoctask = \core\task\manager::get_adhoc_tasks(create_and_configure_room_task::class);
         $this->assertCount(0, $adhoctask);
 
