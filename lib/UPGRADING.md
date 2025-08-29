@@ -17,6 +17,9 @@
   ```
 
   For more information see [MDL-86231](https://tracker.moodle.org/browse/MDL-86231)
+- The `\externallib_advanced_testcase` has been replaced by `\core_external\tests\externallib_testcase` and is now autoloadable.
+
+  For more information see [MDL-86283](https://tracker.moodle.org/browse/MDL-86283)
 
 ## 4.5.6
 
