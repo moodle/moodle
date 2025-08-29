@@ -207,7 +207,7 @@ if ($award && data_submitted() && has_capability('moodle/badges:awardbadge', $co
     $users = $existingselector->get_selected_users();
 
     foreach ($users as $user) {
-        if (!process_manual_revoke($user->id, $USER->id, $issuerrole->roleid, $badgeid)) {
+        if (!process_manual_revoke($user->id, 0, $issuerrole->roleid, $badgeid)) {
             echo $OUTPUT->error_text(get_string('error:cannotrevokebadge', 'badges'));
         }
     }
