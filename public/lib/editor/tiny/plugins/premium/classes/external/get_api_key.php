@@ -21,6 +21,7 @@ use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
+use tiny_premium\manager;
 
 /**
  * External API for Tiny Premium.
@@ -61,6 +62,7 @@ class get_api_key extends external_api {
         self::validate_context($context);
         return [
             'apikey' => get_config('tiny_premium', 'apikey'),
+            'usecloud' => get_config('tiny_premium', 'plugin_source') !== manager::PACKAGE_SELF_HOSTED,
         ];
     }
 
@@ -73,6 +75,7 @@ class get_api_key extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'apikey' => new external_value(PARAM_ALPHANUM, 'The API key for Tiny Premium'),
+            'usecloud' => new external_value(PARAM_BOOL, 'Whether to use the cloud version of Tiny Premium plugins or self-hosted'),
         ]);
     }
 }

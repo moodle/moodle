@@ -23,11 +23,38 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tiny_premium\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
     if ($ADMIN->fulltree) {
+        $sourcepathurl = new moodle_url('/admin/settings.php', ['section' => 'editorsettingstiny']);
+        $setting = new admin_setting_configselect(
+            'tiny_premium/plugin_source',
+            new lang_string('pluginsource', 'tiny_premium'),
+            new lang_string('pluginsource_desc', 'tiny_premium', $sourcepathurl->out(false)),
+            manager::PACKAGE_CLOUD,
+            [
+                manager::PACKAGE_CLOUD => new lang_string('pluginsource:cloud', 'tiny_premium'),
+                manager::PACKAGE_SELF_HOSTED => new lang_string('pluginsource:selfhosted', 'tiny_premium'),
+            ],
+        );
+        $setting->set_validate_function(function(int $value): string {
+            if ($value == manager::PACKAGE_SELF_HOSTED) {
+                // If the self-hosted package is selected, we need to check if the standalone path is set.
+                // If not, we return a warning message.
+                $packagesource = get_config('editor_tiny', 'package_source');
+                $standalonepath = get_config('editor_tiny', 'package_source_standalone_path');
+                if ($packagesource != manager::PACKAGE_SELF_HOSTED || empty($standalonepath)) {
+                    return get_string('package_source_standalone_path_invalid', 'editor_tiny');
+                }
+            }
+            return '';
+        });
+        $settings->add($setting);
+
         // Set API key.
         $setting = new admin_setting_configpasswordunmask(
             'tiny_premium/apikey',
@@ -36,6 +63,12 @@ if ($hassiteconfig) {
             '',
         );
         $settings->add($setting);
+        $settings->hide_if(
+            'tiny_premium/apikey',
+            'tiny_premium/plugin_source',
+            'eq',
+            manager::PACKAGE_SELF_HOSTED,
+        );
 
         // Set individual Tiny Premium plugins.
         $settings->add(new \tiny_premium\local\admin_setting_tiny_premium_plugins());

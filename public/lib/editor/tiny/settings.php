@@ -22,6 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use editor_tiny\editor_tiny_admin_setting_package_source;
+use editor_tiny\manager;
+
 defined('MOODLE_INTERNAL') || die;
 
 $ADMIN->add('editorsettings', new admin_category('editortiny', $editor->displayname, $editor->is_enabled() === false));
@@ -52,6 +55,32 @@ if ($ADMIN->fulltree) {
     );
 
     $settings->add($setting);
+
+    $setting = new admin_setting_configselect(
+        'editor_tiny/package_source',
+        new lang_string('package_source', 'editor_tiny'),
+        new lang_string('package_source_desc', 'editor_tiny'),
+        manager::PACKAGE_SOURCE_SHIPPED,
+        [
+            manager::PACKAGE_SOURCE_SHIPPED => new lang_string('package_source_shipped', 'editor_tiny'),
+            manager::PACKAGE_SOURCE_STANDALONE => new lang_string('package_source_standalone', 'editor_tiny'),
+        ],
+    );
+    $settings->add($setting);
+
+    $setting = new editor_tiny_admin_setting_package_source(
+        'editor_tiny/package_source_standalone_path',
+        new lang_string('package_source_standalone_path', 'editor_tiny'),
+        new lang_string('package_source_standalone_path_desc', 'editor_tiny'),
+        '',
+    );
+    $settings->add($setting);
+    $settings->hide_if(
+        'editor_tiny/package_source_standalone_path',
+        'editor_tiny/package_source',
+        'eq',
+        manager::PACKAGE_SOURCE_SHIPPED,
+    );
 }
 
 // Note: We add editortiny to the settings page here manually rather than deferring to the plugininfo class.

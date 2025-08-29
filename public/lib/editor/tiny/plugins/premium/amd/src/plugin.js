@@ -46,8 +46,10 @@ export default new Promise(async(resolve) => {
         return pluginMetadata;
     });
 
-    // Load the Tiny Premium script using the provided API key.
-    await getTinyPremium(tinyMCE, externalData.apikey);
+    if (externalData.usecloud) {
+        // Load the Tiny Premium script using the provided API key.
+        await getTinyPremium(tinyMCE, externalData.apikey);
+    }
 
     resolve([`${component}/plugin`, Configuration]);
 });

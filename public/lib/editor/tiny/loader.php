@@ -27,11 +27,9 @@ namespace editor_tiny;
 // Disable moodle specific debug messages and any errors in output.
 define('NO_DEBUG_DISPLAY', true);
 
-// We need just the values from config.php and minlib.php.
-define('ABORT_AFTER_CONFIG', true);
-
 // This stops immediately at the beginning of lib/setup.php.
 require('../../../config.php');
+require_once("$CFG->dirroot/lib/configonlylib.php");
 
 /**
  * An anonymous class to handle loading and serving TinyMCE JavaScript.
@@ -147,6 +145,13 @@ class loader {
             $rootdir .= "/plugins/{$this->component}/js";
         } else {
             $rootdir .= "/js/tinymce";
+        }
+
+        $packagesource = get_config('editor_tiny', 'package_source');
+        if ($packagesource == manager::PACKAGE_SOURCE_STANDALONE) {
+            $packagesourcepath = get_config('editor_tiny', 'package_source_standalone_path');
+            $packagesourcepath = trim($packagesourcepath, '/'); // Kill leading slash.
+            $rootdir = "{$CFG->dirroot}/{$packagesourcepath}";
         }
 
         $filepath = "{$rootdir}/{$this->filepath}";

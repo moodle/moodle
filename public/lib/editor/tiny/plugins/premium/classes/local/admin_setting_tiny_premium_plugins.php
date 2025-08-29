@@ -72,7 +72,8 @@ class admin_setting_tiny_premium_plugins extends \admin_setting {
         $return = '';
 
         // Warn users about an empty API key when displaying enabled plugins.
-        if (empty(get_config('tiny_premium', 'apikey')) && !empty(manager::get_enabled_plugins())) {
+        if (get_config('tiny_premium', 'plugin_source') == manager::PACKAGE_CLOUD && empty(get_config('tiny_premium', 'apikey')) &&
+                !empty(manager::get_enabled_plugins())) {
             $return .= \core\notification::warning(get_string('emptyapikeywarning', 'tiny_premium'));
         }
 
