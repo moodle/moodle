@@ -184,16 +184,6 @@ class course extends base {
             case 'summary':
                 $fieldtype = column::TYPE_LONGTEXT;
                 break;
-            case 'groupmode':
-                $fieldtype = column::TYPE_INTEGER;
-                break;
-            case 'calendartype':
-            case 'idnumber':
-            case 'format':
-            case 'fullname':
-            case 'lang':
-            case 'shortname':
-            case 'theme':
             default:
                 $fieldtype = column::TYPE_TEXT;
                 break;
