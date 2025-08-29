@@ -23,6 +23,7 @@ Feature: Display badges
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
 
+  @accessibility
   Scenario: Display badge without expired date
     # Enable the badge.
     Given I press "Enable access" action in the "Testing system badge" report row
@@ -43,6 +44,7 @@ Feature: Display badges
     And I follow "More details"
     And I should see "Catalan"
     And I should see "1.1"
+    And the page should meet accessibility standards with "best-practice" extra tests
 
   Scenario: Display badge with ALL criteria
     # Add another criterion and enable the badge.
