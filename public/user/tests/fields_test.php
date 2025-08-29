@@ -104,7 +104,6 @@ final class fields_test extends \advanced_testcase {
 
         // Give the student the basic identity fields permission (also makes them count as 'teacher'
         // for the teacher-restricted field).
-        $COURSE = $course; // Horrible hack, because PROFILE_VISIBLE_TEACHERS relies on this global.
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
         role_change_permission($roleid, $coursecontext, 'moodle/site:viewuseridentity', CAP_ALLOW);
         $this->assertEquals(['department', 'profile_field_a', 'profile_field_d'],
@@ -132,6 +131,7 @@ final class fields_test extends \advanced_testcase {
         $this->assertEquals([], fields::get_identity_fields($usercontext));
 
         // Give them basic permission.
+        $COURSE = $course; // Horrible hack, because PROFILE_VISIBLE_TEACHERS relies on this global.
         role_change_permission($roleid, $usercontext, 'moodle/site:viewuseridentity', CAP_ALLOW);
         $this->assertEquals(['department', 'profile_field_a', 'profile_field_d'],
                 fields::get_identity_fields($usercontext));
