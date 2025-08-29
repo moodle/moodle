@@ -131,6 +131,7 @@ class core_customfield_external extends external_api {
                                     )
                                 )
                             , '', VALUE_OPTIONAL),
+                            'toggle' => new external_value(PARAM_RAW, 'toggle'),
                         )
                     )
                 ),

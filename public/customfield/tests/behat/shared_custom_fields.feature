@@ -53,3 +53,31 @@ Feature: Create shared categories and fields
     # Check that the move field option exists for course fields but not for shared fields.
     And "//tr[@data-field-name='Course field 1']//span[@title='Move \"Course field 1\"']" "xpath_element" should exist
     And "//tr[@data-field-name='Shared field 1']//span[@title='Move \"Shared field 1\"']" "xpath_element" should not exist
+
+  Scenario: Select which shared custom fields categories are used in the course entity
+    Given the following "custom field categories" exist:
+      | name                 | component        | area   | itemid |
+      | My shared category 1 | core_customfield | shared | 0      |
+      | My shared category 2 | core_customfield | shared | 0      |
+      | My course category   | core_course      | course | 0      |
+    And the following "custom fields" exist:
+      | name            | category             | type | shortname |
+      | Shared field 1  | My shared category 1 | text | f1        |
+      | Shared field 2  | My shared category 2 | text | f2        |
+      | Course field 1  | My course category   | text | f3        |
+    And the following "courses" exist:
+      | shortname | fullname |
+      | C1        | Course 1 |
+    And I log in as "admin"
+    When I am on the "C1" "Course" page
+    And I navigate to "Settings" in current page administration
+    Then I should see "My course category"
+    And I should not see "My shared category 1"
+    And I should not see "My shared category 2"
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
+    And I toggle the "Enable My shared category 1" admin switch "on"
+    And I am on the "C1" "Course" page
+    And I navigate to "Settings" in current page administration
+    And I should see "My course category"
+    And I should see "My shared category 1"
+    And I should not see "My shared category 2"

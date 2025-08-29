@@ -519,15 +519,27 @@ abstract class handler {
     /**
      * Returns array of categories, each of them contains a list of fields definitions.
      *
+     * @param bool $ismanagementpage Whether we are on the management page to show all shared categories or not.
      * @return category_controller[]
      */
-    public function get_categories_with_fields(): array {
+    public function get_categories_with_fields(bool $ismanagementpage = false): array {
         if ($this->categories === null) {
             $sharedcategories = [];
             $this->categories = api::get_categories_with_fields($this->get_component(), $this->get_area(), $this->get_itemid());
             // Avoid duplication when  we are in the shared custom fields page.
             if ($this->get_component() !== 'core_customfield' && $this->get_area() !== 'shared') {
                 $sharedcategories = api::get_categories_with_fields('core_customfield', 'shared', 0);
+                // Filter only by enabled shared categories.
+                if (!$ismanagementpage) {
+                    $sharedcategories = array_filter($sharedcategories, function (category_controller $cc) {
+                        return api::is_shared_category_enabled(
+                            $cc->get('id'),
+                            $this->get_component(),
+                            $this->get_area(),
+                            $this->get_itemid()
+                        );
+                    });
+                }
             }
             $this->categories = array_merge($this->categories, $sharedcategories);
         }

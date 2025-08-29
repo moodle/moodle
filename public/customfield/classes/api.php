@@ -467,4 +467,24 @@ class api {
         }
         return $ret;
     }
+
+    /**
+     * Checks if a shared category is enabled for the given entity
+     *
+     * @param int $categoryid
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
+     * @return bool
+     */
+    public static function is_shared_category_enabled(int $categoryid, string $component, string $area, int $itemid): bool {
+        $sql = "categoryid = :categoryid AND component = :component AND area = :area AND itemid = :itemid";
+        $params = [
+            'categoryid' => $categoryid,
+            'component' => $component,
+            'area' => $area,
+            'itemid' => $itemid,
+        ];
+        return shared::record_exists_select($sql, $params);
+    }
 }

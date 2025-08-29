@@ -26,6 +26,7 @@ namespace core_customfield\output;
 
 use core_customfield\api;
 use core_customfield\handler;
+use core_customfield\shared;
 use renderable;
 use templatable;
 
@@ -65,6 +66,7 @@ class management implements renderable, templatable {
      * @return array|object|\stdClass
      */
     public function export_for_template(\renderer_base $output) {
+        global $DB;
         $data = new \stdClass();
 
         $fieldtypes = $this->handler->get_available_field_types();
@@ -73,7 +75,14 @@ class management implements renderable, templatable {
         $data->area = $this->handler->get_area();
         $data->itemid = $this->handler->get_itemid();
         $data->usescategories = $this->handler->uses_categories();
-        $categories = $this->handler->get_categories_with_fields();
+        $categories = $this->handler->get_categories_with_fields(true);
+
+        // Get all enabled shared categories at once.
+        $sharedcategoriesenabled = shared::get_records([
+            'component' => $data->component,
+            'area' => $data->area,
+            'itemid' => $data->itemid,
+        ]);
 
         $categoriesarray = array();
 
@@ -88,6 +97,26 @@ class management implements renderable, templatable {
             $categoryarray['movetitle'] = get_string('movecategory', 'core_customfield',
                 $category->get_formatted_name());
             $categoryarray['canedit'] = $canedit;
+
+            $toggleenabled = (bool) array_filter(
+                $sharedcategoriesenabled,
+                fn($record) => $record->get('categoryid') === $category->get('id')
+            );
+            $attributes = [
+                ['name' => 'data-id', 'value' => $category->get('id')],
+                ['name' => 'data-action', 'value' => 'shared-toggle'],
+                ['name' => 'data-state', 'value' => $toggleenabled],
+                ['name' => 'data-component', 'value' => $data->component],
+                ['name' => 'data-area', 'value' => $data->area],
+                ['name' => 'data-itemid', 'value' => $data->itemid],
+            ];
+            $categoryarray['toggle'] = $output->render_from_template('core/toggle', [
+                    'id' => 'shared-toggle-' . $category->get('id'),
+                    'checked' => $toggleenabled,
+                    'extraattributes' => $attributes,
+                    'label' => get_string('enableplugin', 'core_admin', $category->get_formatted_name()),
+                    'labelclasses' => 'visually-hidden',
+                ]);
 
             $categoryarray['fields'] = array();
 
