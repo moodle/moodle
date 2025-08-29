@@ -14,22 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External course functions unit tests
- *
- * @package    core_course
- * @category   external
- * @copyright  2012 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use \core_external\external_api;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+use core_external\external_api;
 
 /**
  * External course functions unit tests
@@ -39,8 +24,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class externallib_test extends externallib_advanced_testcase {
-
+final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Tests set up
      */

@@ -21,13 +21,6 @@ namespace customfield_number\external;
 use core_customfield_generator;
 use core_external\external_api;
 use moodle_exception;
-use stdClass;
-
-defined('MOODLE_INTERNAL') || die;
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Unit tests for the customfield_number\external\recalculate.
@@ -38,8 +31,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \customfield_number\external\recalculate
  */
-final class recalculate_test extends \externallib_advanced_testcase {
-
+final class recalculate_test extends \core_external\tests\externallib_testcase {
     /**
      * Tests when teacher can not edit locked field.
      */

@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/blog/locallib.php');
 require_once($CFG->dirroot . '/blog/lib.php');
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+
 
 /**
  * Unit tests for blog external API.
@@ -40,8 +40,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2018 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class external_test extends \externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     private $courseid;
     private $cmid;
     private $userid;

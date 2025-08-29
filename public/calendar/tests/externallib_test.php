@@ -17,14 +17,7 @@
 namespace core_calendar;
 
 use core_calendar_external;
-use externallib_advanced_testcase;
 use core_external\external_api;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External course functions unit tests
@@ -35,8 +28,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.5
  */
-final class externallib_test extends externallib_advanced_testcase {
-
+final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Tests set up
      */

@@ -20,7 +20,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 /**
@@ -31,8 +30,7 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class mod_lti_testcase extends externallib_advanced_testcase  {
-
+abstract class mod_lti_testcase extends \core_external\tests\externallib_testcase {
     /**
      * Generate a tool type.
      *

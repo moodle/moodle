@@ -28,7 +28,6 @@ namespace mod_quiz\external;
 
 use core_external\external_api;
 use core_question\local\bank\question_version_status;
-use externallib_advanced_testcase;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
@@ -40,7 +39,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
@@ -86,8 +84,7 @@ class testable_mod_quiz_external extends mod_quiz_external {
  * @since      Moodle 3.1
  * @covers \mod_quiz_external
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     use \quiz_question_helper_test_trait;
 
     /** @var \stdClass course record. */

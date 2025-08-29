@@ -14,26 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External function test for get_h5pactivity_access_information.
- *
- * @package    mod_h5pactivity
- * @category   external
- * @since      Moodle 3.9
- * @copyright  2020 Carlos Escobedo <carlos@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_h5pactivity\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
-use dml_missing_record_exception;
 use core_external\external_api;
-use externallib_advanced_testcase;
+use dml_missing_record_exception;
 
 /**
  * External function test for get_h5pactivity_access_information.
@@ -42,8 +26,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class get_h5pactivity_access_information_test extends externallib_advanced_testcase {
-
+final class get_h5pactivity_access_information_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the behaviour of get_h5pactivity_access_information().
      *

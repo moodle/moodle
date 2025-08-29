@@ -16,14 +16,8 @@
 
 namespace core_message\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
-use core_external\external_api;
+use core_message\tests\helper as testhelper;
 use externallib_advanced_testcase;
-use \core_message\tests\helper as testhelper;
 
 /**
  * External function test for get_unread_notification_count.
@@ -34,8 +28,7 @@ use \core_message\tests\helper as testhelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.0
  */
-final class get_unread_notification_count_test extends externallib_advanced_testcase {
-
+final class get_unread_notification_count_test extends \core_external\tests\externallib_testcase {
     /**
      * get_unread_notification should throw an exception for an invalid user.
      */

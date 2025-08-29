@@ -16,11 +16,6 @@
 
 namespace core_courseformat\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 use core_external\external_api;
 use stdClass;
 
@@ -33,7 +28,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \core_courseformat\external\get_overview_information
  */
-final class get_overview_information_test extends \externallib_advanced_testcase {
+final class get_overview_information_test extends \core_external\tests\externallib_testcase {
     public function test_get_overview_information(): void {
         $this->resetAfterTest();
 

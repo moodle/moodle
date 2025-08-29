@@ -17,13 +17,6 @@
 namespace core_badges\external;
 
 use core_badges\tests\external_helper;
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Tests for external function get_badge.
@@ -36,7 +29,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since      Moodle 4.5
  * @coversDefaultClass \core_badges\external\get_badge
  */
-final class get_badge_test extends externallib_advanced_testcase {
+final class get_badge_test extends \core_external\tests\externallib_testcase {
     use external_helper;
 
     /**

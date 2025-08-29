@@ -14,26 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External filter functions unit tests.
- *
- * @package    core_filters
- * @category   external
- * @copyright  2017 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.4
- */
-
 namespace core_filters\external;
 
 use core_external\external_api;
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External filter functions unit tests.
@@ -45,7 +28,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since      Moodle 3.4
  * @covers \core_filters\external\get_available_in_context
  */
-final class get_available_in_context_test extends externallib_advanced_testcase {
+final class get_available_in_context_test extends \core_external\tests\externallib_testcase {
     /**
      * Test execute
      */

@@ -16,17 +16,11 @@
 
 namespace mod_glossary\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
-use core_external\external_api;
-use externallib_advanced_testcase;
-use mod_glossary_external;
 use context_module;
 use context_user;
+use core_external\external_api;
 use core_external\util as external_util;
+use mod_glossary_external;
 
 /**
  * External function test for update_entry.
@@ -38,8 +32,7 @@ use core_external\util as external_util;
  * @copyright  2020 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class update_entry_test extends externallib_advanced_testcase {
-
+final class update_entry_test extends \core_external\tests\externallib_testcase {
     /**
      * test_update_entry_without_optional_settings
      */

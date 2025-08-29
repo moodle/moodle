@@ -16,14 +16,6 @@
 
 namespace core_my\external;
 
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Test Class for external function core_my_view_page.
  *
@@ -34,8 +26,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @since     Moodle 4.3
  * @covers \core_my\external\view_page
  */
-final class view_page_test extends externallib_advanced_testcase {
-
+final class view_page_test extends \core_external\tests\externallib_testcase {
     /**
      * Set up for every test.
      */

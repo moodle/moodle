@@ -18,11 +18,6 @@ namespace core_search\external;
 
 use core_external\external_api;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Tests for the get_search_areas_list external function.
  *
@@ -32,8 +27,8 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_search\external\get_search_areas_list
  */
-final class get_search_areas_list_test extends \externallib_advanced_testcase {
-
+final class get_search_areas_list_test extends \core_external\tests\externallib_testcase {
+    #[\Override]
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();

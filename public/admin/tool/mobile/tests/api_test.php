@@ -16,12 +16,6 @@
 
 namespace tool_mobile;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Moodle Mobile admin tool api tests.
  *
@@ -30,8 +24,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
-final class api_test extends \externallib_advanced_testcase {
-
+final class api_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_autologin_key.
      */

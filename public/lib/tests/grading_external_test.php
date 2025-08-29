@@ -19,12 +19,6 @@ namespace core;
 use core_grading_external;
 use core_external\external_api;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Unit tests for the grading API defined in core_grading_external class.
  *
@@ -33,8 +27,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright 2013 Paul Charsley
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class grading_external_test extends \externallib_advanced_testcase {
-
+final class grading_external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_definitions
      */

@@ -19,7 +19,7 @@ namespace mod_assign;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+
 require_once($CFG->dirroot . '/mod/assign/externallib.php');
 require_once(__DIR__ . '/fixtures/testable_assign.php');
 
@@ -31,8 +31,7 @@ require_once(__DIR__ . '/fixtures/testable_assign.php');
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class externallib_advanced_testcase extends \externallib_advanced_testcase {
-
+abstract class externallib_advanced_testcase extends \core_external\tests\externallib_testcase {
     /**
      * Create a submission for testing the get_submission_status function.
      * @param  bool $submitforgrading whether to submit for grading the submission

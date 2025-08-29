@@ -16,14 +16,12 @@
 
 namespace tool_mobile;
 
-use externallib_advanced_testcase;
 use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/admin/tool/mobile/tests/fixtures/output/mobile.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 
@@ -35,8 +33,7 @@ require_once($CFG->dirroot . '/webservice/lib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
-final class externallib_test extends externallib_advanced_testcase {
-
+final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_plugins_supporting_mobile.
      * This is a very basic test because currently there aren't plugins supporting Mobile in core.

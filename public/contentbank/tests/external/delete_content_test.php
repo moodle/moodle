@@ -29,12 +29,10 @@ namespace core_contentbank\external;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 
-use dml_missing_record_exception;
 use core_external\external_api;
-use externallib_advanced_testcase;
 
 /**
  * External function test for delete_content.
@@ -43,8 +41,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class delete_content_test extends externallib_advanced_testcase {
-
+final class delete_content_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the behaviour of delete_content().
      */

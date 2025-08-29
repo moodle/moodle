@@ -14,26 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Self enrol external PHPunit tests
- *
- * @package   enrol_guest
- * @copyright 2015 Juan Leyva <juan@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 3.1
- */
-
 namespace enrol_guest\external;
 
 use core_external\external_api;
 use enrol_guest_external;
-use externallib_advanced_testcase;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Guest enrolment external functions tests
@@ -44,8 +28,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_instance_info
      */

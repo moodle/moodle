@@ -14,25 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External glossary functions unit tests
- *
- * @package    mod_glossary
- * @category   external
- * @copyright  2015 Costantino Cito <ccito@cvaconsulting.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_glossary\external;
 
 use core_external\external_api;
 use core_external\util as external_util;
-use externallib_advanced_testcase;
 use mod_glossary_external;
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External glossary functions unit tests
@@ -42,8 +28,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2015 Costantino Cito <ccito@cvaconsulting.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_glossaries_by_courses
      */

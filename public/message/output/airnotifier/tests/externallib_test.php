@@ -17,14 +17,7 @@
 namespace message_airnotifier;
 
 use core_external\external_api;
-use externallib_advanced_testcase;
 use message_airnotifier_external;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External airnotifier functions unit tests
@@ -34,8 +27,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class externallib_test extends externallib_advanced_testcase {
-
+final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Tests set up
      */

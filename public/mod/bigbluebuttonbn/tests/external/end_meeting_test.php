@@ -24,11 +24,6 @@ use moodle_exception;
 use require_login_exception;
 use core_external\restricted_context_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Tests for the update_course class.
  *
@@ -37,7 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_bigbluebuttonbn\external\end_meeting
  */
-final class end_meeting_test extends \externallib_advanced_testcase {
+final class end_meeting_test extends \core_external\tests\externallib_testcase {
     use testcase_helper_trait;
     /**
      * Setup for test

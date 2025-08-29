@@ -14,27 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External tests.
- *
- * @package    tool_dataprivacy
- * @copyright  2018 Jun Pataleta
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_dataprivacy\external;
 
 use core_external\external_api;
-use externallib_advanced_testcase;
 use tool_dataprivacy\api;
 use tool_dataprivacy\data_request;
 use tool_dataprivacy\context_instance;
 use tool_dataprivacy\external;
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * External testcase.
@@ -43,8 +29,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class external_test extends externallib_advanced_testcase {
-
+final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for external::approve_data_request() with the user not logged in.
      */

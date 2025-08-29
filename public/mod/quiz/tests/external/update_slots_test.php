@@ -16,12 +16,7 @@
 
 namespace mod_quiz\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/../../../../webservice/tests/helpers.php');
-
 use core_question_generator;
-use externallib_advanced_testcase;
 use mod_quiz\quiz_settings;
 use required_capability_exception;
 
@@ -34,8 +29,7 @@ use required_capability_exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\external\update_slots
  */
-final class update_slots_test extends externallib_advanced_testcase {
-
+final class update_slots_test extends \core_external\tests\externallib_testcase {
     public function test_update_slots_service_works(): void {
         global $DB;
 

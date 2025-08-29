@@ -18,13 +18,11 @@ namespace core_badges\external;
 
 use core_badges_generator;
 use core_badges\badge;
-use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 /**
@@ -36,8 +34,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @since      Moodle 4.5
  * @covers     \core_badges\external\disable_badges
  */
-final class disable_badges_test extends externallib_advanced_testcase {
-
+final class disable_badges_test extends \core_external\tests\externallib_testcase {
     /**
      * Test execute method.
      */

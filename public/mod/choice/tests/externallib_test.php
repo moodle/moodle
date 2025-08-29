@@ -17,14 +17,12 @@
 namespace mod_choice;
 
 use core_external\external_api;
-use externallib_advanced_testcase;
 use mod_choice_external;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/choice/lib.php');
 
 /**
@@ -36,8 +34,7 @@ require_once($CFG->dirroot . '/mod/choice/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \mod_choice_external
  */
-final class externallib_test extends externallib_advanced_testcase {
-
+final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_choice_results
      */

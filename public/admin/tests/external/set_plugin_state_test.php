@@ -18,11 +18,6 @@ declare(strict_types=1);
 
 namespace core_admin\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
 /**
  * Unit tests to configure the enabled/disabled state of a plugin.
  *
@@ -31,7 +26,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class set_plugin_state_test extends \externallib_advanced_testcase {
+final class set_plugin_state_test extends \core_external\tests\externallib_testcase {
     /**
      * Text execute method.
      *
