@@ -54,18 +54,14 @@ class block_social_activities extends block_base {
             include_course_ajax($course);
         }
 
+        /** @var \core_course_renderer $courserenderer */
         $courserenderer = $format->get_renderer($this->page);
 
         $output = new block_social_activities\output\blocksection($format, $section);
 
         $this->content->text = $courserenderer->render($output);
 
-        $this->content->footer = $courserenderer->course_section_add_cm_control(
-            course: $course,
-            section: 0,
-            sectionreturn: null,
-            displayoptions: ['inblock' => true],
-        );
+        $this->content->footer = $courserenderer->section_add_cm_controls($format, $section);
         return $this->content;
     }
 }

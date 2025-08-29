@@ -1,0 +1,7 @@
+issueNumber: MDL-80295
+notes:
+  core_course:
+    - message: >-
+        The course_section_add_cm_control course renderer method is deprecated.
+        Use section_add_cm_controls instead.
+      type: deprecated

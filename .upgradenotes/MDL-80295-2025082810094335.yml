@@ -1,0 +1,8 @@
+issueNumber: MDL-80295
+notes:
+  core_course:
+    - message: >-
+        Passing the section number (integer) to the
+        core_course\output\activitychooserbutton is deprecated. You must use a
+        core_course\section_info instead.
+      type: deprecated

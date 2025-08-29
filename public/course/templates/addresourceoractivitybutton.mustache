@@ -22,9 +22,11 @@
     Example context (json):
     {
         "sectionnum": 0,
+        "sectionid": 0,
         "modid": 1,
         "activityname": "Activity example",
-        "sectionreturn": 0
+        "sectionreturnnum": 0,
+        "sectionreturnid": 0
     }
 }}
 <button class="section-modchooser section-modchooser-link {{!
@@ -32,7 +34,13 @@
     }}{{#hasactionlinks}}dropdown-item{{/hasactionlinks}}"
     data-action="open-chooser"
     data-sectionnum="{{sectionnum}}"
-    {{#sectionreturn}}data-sectionreturnnum="{{.}}"{{/sectionreturn}}
+    {{!
+        data-sectionid was wrongly used for the section number in Moodle 4.4,
+        so we use data-section-id instead for now.
+    }}
+    data-section-id="{{sectionid}}"
+    {{#sectionreturnnum}}data-sectionreturnnum="{{.}}"{{/sectionreturnnum}}
+    {{#sectionreturnid}}data-sectionreturnid="{{.}}"{{/sectionreturnid}}
     {{#modid}}
         data-beforemod="{{modid}}"
         aria-label="{{#str}}insertresourceoractivitybefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"

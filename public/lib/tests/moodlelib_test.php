@@ -17,6 +17,7 @@
 namespace core;
 
 use core\tests\fake_plugins_test_trait;
+use function PHPUnit\Framework\assertEquals;
 
 /**
  * Unit tests for (some of) ../moodlelib.php.

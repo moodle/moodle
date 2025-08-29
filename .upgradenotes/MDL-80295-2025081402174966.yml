@@ -1,0 +1,13 @@
+issueNumber: MDL-80295
+notes:
+  core_course:
+    - message: >-
+        The core_course_get_course_content_items is now deprecated. Use
+        core_courseformat_get_section_content_items instead.
+      type: deprecated
+  core_courseformat:
+    - message: >-
+        From now on, the activity chooser will use
+        core_courseformat_get_section_content_items to get the available modules
+        for a specific section
+      type: improved

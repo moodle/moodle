@@ -76,16 +76,22 @@ require_login();
 //check if we are adding / editing a module that has new forms using formslib
 if (!empty($add)) {
     $id          = required_param('id', PARAM_INT);
-    $section     = required_param('section', PARAM_INT);
+    $sectionid   = optional_param('sectionid', null, PARAM_INT);
     $type        = optional_param('type', '', PARAM_ALPHA);
     $returntomod = optional_param('return', 0, PARAM_BOOL);
     $beforemod   = optional_param('beforemod', 0, PARAM_INT);
+
+    if (empty($sectionid)) {
+        $section = required_param('section', PARAM_INT);
+        $sectioninfo = get_fast_modinfo($id)->get_section_info($section);
+        $sectionid = $sectioninfo?->id;
+    }
 
     $params = [
         'add' => $add,
         'type' => $type,
         'course' => $id,
-        'section' => $section,
+        'sectionid' => $sectionid,
         'return' => $returntomod,
         'beforemod' => $beforemod,
     ];
