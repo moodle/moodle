@@ -145,6 +145,7 @@ $string['backpackapiurl'] = 'Backpack API URL';
 $string['backpackweburl'] = 'Backpack URL';
 $string['backpackprovider'] = 'Backpack provider';
 $string['badges'] = 'Badges';
+$string['badgesnavigation'] = 'Badges navigation';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
 $string['badgeimageinfo'] = 'For best results, upload a square image with a minimum size of 300 x 300 pixels.';
