@@ -1,5 +1,13 @@
 # mod_feedback Upgrade notes
 
+## 5.1dev+
+
+### Added
+
+- Two new methods, `feedback_get_completeds` and `feedback_get_completeds_count`, have been added to the feedback API. These methods allow you to retrieve completed items based on multiple groups.
+
+  For more information see [MDL-85850](https://tracker.moodle.org/browse/MDL-85850)
+
 ## 5.0
 
 ### Added

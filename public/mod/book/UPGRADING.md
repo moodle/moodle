@@ -1,5 +1,13 @@
 # mod_book Upgrade notes
 
+## 5.1dev+
+
+### Deprecated
+
+- The \mod_book\event\course_module_instance_list_viewed event is now deprecated. Use \core\event\course_resources_list_viewed instead.
+
+  For more information see [MDL-84632](https://tracker.moodle.org/browse/MDL-84632)
+
 ## 5.0
 
 ### Deprecated

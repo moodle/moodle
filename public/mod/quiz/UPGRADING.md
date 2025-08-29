@@ -2,6 +2,12 @@
 
 ## 5.1dev+
 
+### Added
+
+- Add helper methods in the mod/quiz/lib.php to count the number of attempts (quiz_num_attempts), the number of users who attempted a quiz (quiz_num_users_who_attempted) and users who can attempt (quiz_num_users_who_can_attempt)
+
+  For more information see [MDL-83898](https://tracker.moodle.org/browse/MDL-83898)
+
 ### Deprecated
 
 - Final deprecations for the quiz. The following functions have been removed:

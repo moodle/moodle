@@ -62,6 +62,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   | `\xml_format_exception` | `\core\exception\xml_format_exception` |
 
   For more information see [MDL-86256](https://tracker.moodle.org/browse/MDL-86256)
+- The `\externallib_advanced_testcase` has been replaced by `\core_external\tests\externallib_testcase` and is now autoloadable.
+
+  For more information see [MDL-86283](https://tracker.moodle.org/browse/MDL-86283)
 
 #### Changed
 
@@ -246,6 +249,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
    | `\course_request` | `\core_course\course_request` |
 
   For more information see [MDL-82322](https://tracker.moodle.org/browse/MDL-82322)
+- Activities can now specify an additional purpose in their PLUGINNAME_supports function by using the new FEATURE_MOD_OTHERPURPOSE feature.
+
+  For more information see [MDL-85598](https://tracker.moodle.org/browse/MDL-85598)
 - Added new `gradable` property to `core_course\local\entity\content_item`
 
   For more information see [MDL-86036](https://tracker.moodle.org/browse/MDL-86036)
@@ -275,9 +281,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
+- The core_course_get_course_content_items is now deprecated. Use core_courseformat_get_section_content_items instead.
+
+  For more information see [MDL-80295](https://tracker.moodle.org/browse/MDL-80295)
+- The course_section_add_cm_control course renderer method is deprecated. Use section_add_cm_controls instead.
+
+  For more information see [MDL-80295](https://tracker.moodle.org/browse/MDL-80295)
+- Passing the section number (integer) to the core_course\output\activitychooserbutton is deprecated. You must use a core_course\section_info instead.
+
+  For more information see [MDL-80295](https://tracker.moodle.org/browse/MDL-80295)
+- The getModulesData and activityModules methods from core_course/local/activitychooser/repository are deprecated. Use getSectionModulesData and sectionActivityModules instead
+
+  For more information see [MDL-80295](https://tracker.moodle.org/browse/MDL-80295)
 - The duplicatesection param in course/view.php is deprecated. Use course/format/update.php with action section_duplicate instead.
 
   For more information see [MDL-84216](https://tracker.moodle.org/browse/MDL-84216)
+- The changenumsections.php script is deprecated. Please use course/format/update.php instead.
+
+  For more information see [MDL-85284](https://tracker.moodle.org/browse/MDL-85284)
 - The `\course\cm_info::$extra` and `\course\cm_info::$score` properties will now
   emit appropriate debugging.
 
@@ -298,6 +319,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- From now on, the activity chooser will use core_courseformat_get_section_content_items to get the available modules for a specific section
+
+  For more information see [MDL-80295](https://tracker.moodle.org/browse/MDL-80295)
 - Added new core_courseformat\output\local\overview\overviewdialog output class to create dialog elements in the course overview page. Overview dialog will display a combination of title, description and a list of items (label: value).
 
   For more information see [MDL-83896](https://tracker.moodle.org/browse/MDL-83896)
@@ -316,6 +340,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New optional $nogroupserror parameter has been added to activityname class constructor. A set_nogroupserror() setter to change the value after the constructor has been also added.
 
   For more information see [MDL-85852](https://tracker.moodle.org/browse/MDL-85852)
+- Added new `core_courseformat\output\local\overview\overviewaction` output class to create action buttons that now include a badge right next to the button text. It essentially extends the existing action_link class to add a badge, making important actions stand out more on the course overview. Plus, this new structure also makes these badged action links easier to export this information for web services.
+
+  For more information see [MDL-85981](https://tracker.moodle.org/browse/MDL-85981)
 
 #### Changed
 
@@ -331,6 +358,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The format base method get_max_sections has been deprecated, as the maxsections setting is also deprecated and no longer in use.
 
   For more information see [MDL-84291](https://tracker.moodle.org/browse/MDL-84291)
+- The course format "numsections" option to increment and decrement the number of sections of the course one by one is now deprecated and will be removed in Moodle 6.0.
+
+  For more information see [MDL-85284](https://tracker.moodle.org/browse/MDL-85284)
 
 ### core_grades
 
@@ -438,6 +468,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-85392](https://tracker.moodle.org/browse/MDL-85392)
 
+### format_social
+
+#### Deprecated
+
+- The social course format is now disabled by default for all new and upgraded installations. Existing courses using this format will continue to function, but administrators must re-enable it to create new social courses.
+
+  For more information see [MDL-85660](https://tracker.moodle.org/browse/MDL-85660)
+
 ### format_topics
 
 #### Added
@@ -481,6 +519,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83889](https://tracker.moodle.org/browse/MDL-83889)
 
+### mod_book
+
+#### Deprecated
+
+- The \mod_book\event\course_module_instance_list_viewed event is now deprecated. Use \core\event\course_resources_list_viewed instead.
+
+  For more information see [MDL-84632](https://tracker.moodle.org/browse/MDL-84632)
+
 ### mod_choice
 
 #### Added
@@ -502,6 +548,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New get_approval_requested(), get_all_entries(), filter_entries_by_user(), filter_entries_by_approval() and get_comments() functions have been added to mod_data manager class.
 
   For more information see [MDL-83891](https://tracker.moodle.org/browse/MDL-83891)
+
+### mod_feedback
+
+#### Added
+
+- Two new methods, `feedback_get_completeds` and `feedback_get_completeds_count`, have been added to the feedback API. These methods allow you to retrieve completed items based on multiple groups.
+
+  For more information see [MDL-85850](https://tracker.moodle.org/browse/MDL-85850)
+
+### mod_folder
+
+#### Deprecated
+
+- The \mod_folder\event\course_module_instance_list_viewed event is now deprecated. Use \core\event\course_resources_list_viewed instead.
+
+  For more information see [MDL-84632](https://tracker.moodle.org/browse/MDL-84632)
 
 ### mod_forum
 
@@ -527,6 +589,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-85853](https://tracker.moodle.org/browse/MDL-85853)
 
+### mod_imscp
+
+#### Deprecated
+
+- The \mod_imscp\event\course_module_instance_list_viewed event is now deprecated. Use \core\event\course_resources_list_viewed instead.
+
+  For more information see [MDL-84632](https://tracker.moodle.org/browse/MDL-84632)
+
 ### mod_label
 
 #### Removed
@@ -543,6 +613,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-83896](https://tracker.moodle.org/browse/MDL-83896)
 
+### mod_page
+
+#### Deprecated
+
+- The \mod_page\event\course_module_instance_list_viewed event is now deprecated. Use \core\event\course_resources_list_viewed instead.
+
+  For more information see [MDL-84632](https://tracker.moodle.org/browse/MDL-84632)
+
 ### mod_qbank
 
 #### Changed
@@ -552,6 +630,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-84548](https://tracker.moodle.org/browse/MDL-84548)
 
 ### mod_quiz
+
+#### Added
+
+- Add helper methods in the mod/quiz/lib.php to count the number of attempts (quiz_num_attempts), the number of users who attempted a quiz (quiz_num_users_who_attempted) and users who can attempt (quiz_num_users_who_can_attempt)
+
+  For more information see [MDL-83898](https://tracker.moodle.org/browse/MDL-83898)
 
 #### Deprecated
 
@@ -617,6 +701,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-80327](https://tracker.moodle.org/browse/MDL-80327)
 
+### mod_resource
+
+#### Deprecated
+
+- The \mod_resource\event\course_module_instance_list_viewed event is now deprecated. Use \core\event\course_resources_list_viewed instead.
+
+  For more information see [MDL-84632](https://tracker.moodle.org/browse/MDL-84632)
+
 ### mod_scorm
 
 #### Added
@@ -634,6 +726,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
 
+### mod_url
+
+#### Deprecated
+
+- The \mod_url\event\course_module_instance_list_viewed event is now deprecated. Use \core\event\course_resources_list_viewed instead.
+
+  For more information see [MDL-84632](https://tracker.moodle.org/browse/MDL-84632)
+
 ### mod_wiki
 
 #### Added
@@ -641,6 +741,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Create a manager class to regroup common functionalities and a wiki_mode enum related to the two different modes
 
   For more information see [MDL-83900](https://tracker.moodle.org/browse/MDL-83900)
+
+### mod_workshop
+
+#### Deprecated
+
+- The function `workshop::count_submissions` has been deprecated and should no longer be used, use `workshop::count_all_submissions` instead.
+
+  For more information see [MDL-84809](https://tracker.moodle.org/browse/MDL-84809)
+- The function `workshop::count_assessments` has been deprecated and should no longer be used, use `workshop::count_all_assessments` instead.
+
+  For more information see [MDL-84809](https://tracker.moodle.org/browse/MDL-84809)
 
 ### qtype_multichoice
 
@@ -685,6 +796,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core:e/text_highlight` and `core:e/text_highlight_picker` icons are deprecated and will be removed in Moodle 6.0. The UX team recommended this change to reduce visual clutter and improve readability. The icons were removed because they didn't indicate status changes, were repetitive across all notifications, and took up space that could be used for more content.
 
   For more information see [MDL-85146](https://tracker.moodle.org/browse/MDL-85146)
+
+### tiny_premium
+
+#### Added
+
+- The `tiny_premium_get_api_key` web service now returns an additional field `usecloud` to indicate whether the cloud version or self-hosted version of Tiny Premium plugins should be used.
+
+  For more information see [MDL-85727](https://tracker.moodle.org/browse/MDL-85727)
 
 ## 5.0
 

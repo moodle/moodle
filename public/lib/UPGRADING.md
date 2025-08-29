@@ -54,6 +54,9 @@
   | `\xml_format_exception` | `\core\exception\xml_format_exception` |
 
   For more information see [MDL-86256](https://tracker.moodle.org/browse/MDL-86256)
+- The `\externallib_advanced_testcase` has been replaced by `\core_external\tests\externallib_testcase` and is now autoloadable.
+
+  For more information see [MDL-86283](https://tracker.moodle.org/browse/MDL-86283)
 
 ### Changed
 
