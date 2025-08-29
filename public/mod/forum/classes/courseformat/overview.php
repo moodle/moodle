@@ -201,12 +201,18 @@ class overview extends \core_courseformat\activityoverviewbase {
             $label = get_string('trackforum', 'mod_forum');
         }
 
+        $arialabel = $tracked
+            ? get_string('untrackforforum', 'mod_forum', $this->forum->name)
+            : get_string('trackforforum', 'mod_forum', $this->forum->name);
+
         $renderer = $this->rendererhelper->get_renderer('mod_forum');
-        $dataattributes = [
+        $extraattributes = [
             ['name' => 'data-type', 'value' => 'forum-track-toggle'],
             ['name' => 'data-action', 'value' => 'toggle'],
             ['name' => 'data-forumid', 'value' => $this->forum->id],
+            ['name' => 'data-forumname', 'value' => $this->forum->name],
             ['name' => 'data-targetstate', 'value' => !$tracked],
+            ['name' => 'aria-label', 'value' => $arialabel],
         ];
         $content = $renderer->render_from_template(
             'core/toggle',
@@ -214,7 +220,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 'id' => 'forum-track-toggle-' . $this->forum->id,
                 'checked' => $tracked,
                 'disabled' => $disabled,
-                'extraattributes' => $dataattributes,
+                'extraattributes' => $extraattributes,
                 'label' => $label,
                 'labelclasses' => 'visually-hidden',
             ],
@@ -265,20 +271,27 @@ class overview extends \core_courseformat\activityoverviewbase {
             }
         }
 
+        $arialabel = $subscribed
+            ? get_string('unsubscribefromforum', 'mod_forum', $this->forum->name)
+            : get_string('subscribetoforum', 'mod_forum', $this->forum->name);
+
         $renderer = $this->rendererhelper->get_renderer('mod_forum');
-        $dataattributes = [
+        $extraattributes = [
             ['name' => 'data-type', 'value' => 'forum-subscription-toggle'],
             ['name' => 'data-action', 'value' => 'toggle'],
             ['name' => 'data-forumid', 'value' => $this->forum->id],
+            ['name' => 'data-forumname', 'value' => $this->forum->name],
             ['name' => 'data-targetstate', 'value' => !$subscribed],
+            ['name' => 'aria-label', 'value' => $arialabel],
         ];
+
         $content = $renderer->render_from_template(
             'core/toggle',
             [
                 'id' => 'forum-subscription-toggle-' . $this->forum->id,
                 'checked' => $subscribed,
                 'disabled' => $disabled,
-                'extraattributes' => $dataattributes,
+                'extraattributes' => $extraattributes,
                 'label' => $label,
                 'labelclasses' => 'visually-hidden',
             ],
