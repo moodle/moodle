@@ -187,7 +187,7 @@ Feature: Course index depending on role
     And I should see "Section 3" in the "courseindex-content" "region"
     And I should see "Activity sample 3" in the "courseindex-content" "region"
 
-  @javascript
+  @javascript @accessibility
   Scenario: Course index toggling all sections
     When I am on the "Course 1" course page logged in as teacher1
     # Sections should be opened by default.
@@ -199,6 +199,7 @@ Feature: Course index depending on role
     And I should see "Activity sample 3" in the "courseindex-content" "region"
     # Collapse all sections
     And I click on "Course index options" "button" in the "#courseindexdrawercontrols" "css_element"
+    And the page should meet accessibility standards
     And I click on "Collapse all" "link" in the "#courseindexdrawercontrols" "css_element"
     And I should see "Section 1" in the "courseindex-content" "region"
     And I should not see "Activity sample 1" in the "courseindex-content" "region"
