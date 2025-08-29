@@ -164,6 +164,7 @@ Feature: Saving, using and deleting feedback templates
     # Save feedback as both public and course template
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
     And I navigate to "Questions" in current page administration
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
     And I press "Actions"
     And I choose "Save as template" in the open action menu
     And I set the field "Name" to "My public template"
