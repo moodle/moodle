@@ -69,7 +69,9 @@ class manage_badge_action_bar extends base_action_bar {
         $elements['button'] = new single_button(new moodle_url('/badges/index.php', $params), get_string('back'), 'get');
         $badgenav = $this->generate_badge_navigation();
         if ($badgenav) {
-            $elements['urlselect'] = new url_select($badgenav, $this->page->url->out(false), null);
+            $badgenavselect = new url_select($badgenav, $this->page->url->out(false), null);
+            $badgenavselect->set_label(get_string('badgesnavigation', 'badges'), ['class' => 'sr-only']);
+            $elements['urlselect'] = $badgenavselect;
         }
         foreach ($elements as $key => $element) {
             $elements[$key] = $element->export_for_template($output);
