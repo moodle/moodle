@@ -1651,9 +1651,9 @@ class flexible_table {
         }
 
         if ($order == SORT_ASC) {
-            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'));
+            return $OUTPUT->pix_icon('t/sort_asc', '', attributes: ['title' => get_string('asc')]);
         } else {
-            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'));
+            return $OUTPUT->pix_icon('t/sort_desc', '', attributes: ['title' => get_string('desc')]);
         }
     }
 
