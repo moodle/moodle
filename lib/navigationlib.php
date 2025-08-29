@@ -1017,7 +1017,21 @@ class navigation_node implements renderable {
                 );
             }
         }
+    }
 
+    /**
+     * Reset all static data.
+     *
+     * @throws coding_exception if called outside of a unit test
+     */
+    public static function reset_all_data(): void {
+        if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
+            throw new coding_exception('Resetting all data is not allowed outside of PHPUnit tests.');
+        }
+
+        self::$fullmeurl = null;
+        self::$autofindactive = true;
+        self::$loadadmintree = false;
     }
 }
 
