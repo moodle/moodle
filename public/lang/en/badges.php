@@ -596,6 +596,7 @@ $string['viewbadge'] = 'View issued badge';
 $string['visible'] = 'Visible';
 $string['version'] = 'Version';
 $string['warnexpired'] = ' (This badge has expired!)';
+$string['wrongrole'] = 'The role you want to use is not assigned to you.';
 $string['year'] = 'Year(s)';
 
 // Deprecated since Moodle 4.5.
