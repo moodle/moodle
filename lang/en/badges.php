@@ -579,6 +579,7 @@ $string['visible'] = 'Visible';
 $string['version'] = 'Version';
 $string['version_help'] = 'The version field may be used to keep track of the badge\'s development. If specified, the version is displayed on the badge page.';
 $string['warnexpired'] = ' (This badge has expired!)';
+$string['wrongrole'] = 'The role you want to use is not assigned to you.';
 $string['year'] = 'Year(s)';
 $string['includeauthdetails'] = "Include authentication details with the backpack";
 
