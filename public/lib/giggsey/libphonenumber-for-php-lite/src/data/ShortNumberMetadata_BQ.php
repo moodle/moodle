@@ -7,45 +7,44 @@
  * @internal
  */
 
-return [
-    'id' => 'BQ',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '[19]\\d\\d',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '112|911',
-        'example' => '112',
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '112|911',
-        'example' => '112',
-    ],
-    'shortCode' => [
-        'pattern' => '1(?:12|76)|911',
-        'example' => '112',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'pattern' => '176',
-        'example' => '176',
-    ],
-    'smsServices' => [
-        'pattern' => '176',
-        'example' => '176',
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_BQ extends PhoneMetadata
+{
+    protected const ID = 'BQ';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[19]\d\d')
+            ->setPossibleLength([3]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('112|911')
+            ->setExampleNumber('112');
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('112|911')
+            ->setExampleNumber('112');
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:12|76)|911')
+            ->setExampleNumber('112');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('176')
+            ->setExampleNumber('176');
+        $this->smsServices = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('176')
+            ->setExampleNumber('176');
+    }
+}

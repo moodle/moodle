@@ -7,58 +7,48 @@
  * @internal
  */
 
-return [
-    'id' => 'MW',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '[189]\\d\\d(?:\\d{2})?',
-        'posLength' => [
-            3,
-            5,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '199|99[7-9]',
-        'example' => '199',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '199|99[7-9]',
-        'example' => '199',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'shortCode' => [
-        'pattern' => '199|80400|99[7-9]',
-        'example' => '199',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'pattern' => '804\\d\\d',
-        'example' => '80400',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'smsServices' => [
-        'pattern' => '804\\d\\d',
-        'example' => '80400',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_MW extends PhoneMetadata
+{
+    protected const ID = 'MW';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[189]\d\d(?:\d{2})?')
+            ->setPossibleLength([3, 5]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('199|99[7-9]')
+            ->setExampleNumber('199')
+            ->setPossibleLength([3]);
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('199|99[7-9]')
+            ->setExampleNumber('199')
+            ->setPossibleLength([3]);
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('199|80400|99[7-9]')
+            ->setExampleNumber('199');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('804\d\d')
+            ->setExampleNumber('80400')
+            ->setPossibleLength([5]);
+        $this->smsServices = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('804\d\d')
+            ->setExampleNumber('80400')
+            ->setPossibleLength([5]);
+    }
+}

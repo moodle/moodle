@@ -26,14 +26,7 @@
   "autoload": {
     "psr-4": {
       "libphonenumber\\": "src/"
-    },
-    "exclude-from-classmap": [
-        "/src/data/",
-        "/src/carrier/data/",
-        "/src/geocoding/data/",
-        "/src/timezone/data/"
-    ]
-
+    }
   },
   "autoload-dev": {
     "psr-4": {
@@ -64,18 +57,19 @@
   },
   "require-dev": {
     "ext-dom": "*",
-    "friendsofphp/php-cs-fixer": "^3.12",
-    "infection/infection": "^0.28",
-    "pear/pear-core-minimal": "^1.10.11",
-    "pear/pear_exception": "^1.0.2",
-    "pear/versioncontrol_git": "^0.7",
-    "phing/phing": "^2.17.4",
-    "phpstan/extension-installer": "^1.2",
-    "phpstan/phpstan": "^1.8",
-    "phpstan/phpstan-phpunit": "^1.2",
-    "phpunit/phpunit": "^10.5",
-    "symfony/console": "^6.0",
-    "symfony/var-exporter": "^6.0"
+    "friendsofphp/php-cs-fixer": "^3.71",
+    "infection/infection": "^0.29|^0.31.0",
+    "nette/php-generator": "^4.1",
+    "php-coveralls/php-coveralls": "^2.7",
+    "phpstan/extension-installer": "^1.4.3",
+    "phpstan/phpstan": "^2.1.7",
+    "phpstan/phpstan-deprecation-rules": "^2.0.1",
+    "phpstan/phpstan-phpunit": "^2.0.4",
+    "phpstan/phpstan-strict-rules": "^2.0.3",
+    "phpunit/phpunit": "^10.5.45",
+    "symfony/console": "^6.4",
+    "symfony/filesystem": "^6.4",
+    "symfony/process": "^6.4"
   },
   "conflict": {
     "giggsey/libphonenumber-for-php": "*"
@@ -85,14 +79,20 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "8.x-dev"
+      "dev-master": "9.x-dev"
     }
   },
   "scripts": {
     "cs": "vendor/bin/php-cs-fixer fix",
     "phpstan": "vendor/bin/phpstan",
     "test": "vendor/bin/phpunit",
-    "metadata": "vendor/bin/phing compile"
+    "metadata": "@php build/build.php build",
+    "build": [
+      "@metadata",
+      "@cs",
+      "@test",
+      "@phpstan"
+    ]
   },
   "config": {
     "sort-packages": true,

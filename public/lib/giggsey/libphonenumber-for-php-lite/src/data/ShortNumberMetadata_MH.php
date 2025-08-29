@@ -7,47 +7,40 @@
  * @internal
  */
 
-return [
-    'id' => 'MH',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '9\\d\\d',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '911',
-        'example' => '911',
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '911',
-        'example' => '911',
-    ],
-    'shortCode' => [
-        'pattern' => '911',
-        'example' => '911',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'smsServices' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_MH extends PhoneMetadata
+{
+    protected const ID = 'MH';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('9\d\d')
+            ->setPossibleLength([3]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('911')
+            ->setExampleNumber('911');
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('911')
+            ->setExampleNumber('911');
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('911')
+            ->setExampleNumber('911');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = PhoneNumberDesc::empty();
+        $this->smsServices = PhoneNumberDesc::empty();
+    }
+}

@@ -7,47 +7,40 @@
  * @internal
  */
 
-return [
-    'id' => 'LS',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '1\\d\\d',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '11[257]',
-        'example' => '112',
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '11[257]',
-        'example' => '112',
-    ],
-    'shortCode' => [
-        'pattern' => '11[257]',
-        'example' => '112',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'smsServices' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_LS extends PhoneMetadata
+{
+    protected const ID = 'LS';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1\d\d')
+            ->setPossibleLength([3]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('11[257]')
+            ->setExampleNumber('112');
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('11[257]')
+            ->setExampleNumber('112');
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('11[257]')
+            ->setExampleNumber('112');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = PhoneNumberDesc::empty();
+        $this->smsServices = PhoneNumberDesc::empty();
+    }
+}

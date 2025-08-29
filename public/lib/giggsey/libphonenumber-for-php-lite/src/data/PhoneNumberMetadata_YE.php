@@ -7,104 +7,63 @@
  * @internal
  */
 
-return [
-    'id' => 'YE',
-    'countryCode' => 967,
-    'generalDesc' => [
-        'pattern' => '(?:1|7\\d)\\d{7}|[1-7]\\d{6}',
-        'posLength' => [
-            7,
-            8,
-            9,
-        ],
-        'posLengthLocal' => [
-            6,
-        ],
-    ],
-    'fixedLine' => [
-        'pattern' => '78[0-7]\\d{4}|17\\d{6}|(?:[12][2-68]|3[2358]|4[2-58]|5[2-6]|6[3-58]|7[24-6])\\d{5}',
-        'example' => '1234567',
-        'posLength' => [
-            7,
-            8,
-        ],
-        'posLengthLocal' => [
-            6,
-        ],
-    ],
-    'mobile' => [
-        'pattern' => '7[01378]\\d{7}',
-        'example' => '712345678',
-        'posLength' => [
-            9,
-        ],
-    ],
-    'tollFree' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'sharedCost' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'personalNumber' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voip' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'pager' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'uan' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voicemail' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'noInternationalDialling' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '00',
-    'nationalPrefix' => '0',
-    'nationalPrefixForParsing' => '0',
-    'numberFormat' => [
-        [
-            'pattern' => '(\\d)(\\d{3})(\\d{3,4})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '[1-6]|7(?:[24-6]|8[0-7])',
-            ],
-            'nationalPrefixFormattingRule' => '0$1',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{3})(\\d{3})(\\d{3})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '7',
-            ],
-            'nationalPrefixFormattingRule' => '0$1',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-    ],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\NumberFormat;
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class PhoneNumberMetadata_YE extends PhoneMetadata
+{
+    protected const ID = 'YE';
+    protected const COUNTRY_CODE = 967;
+    protected const NATIONAL_PREFIX = '0';
+
+    protected ?string $nationalPrefixForParsing = '0';
+    protected ?string $internationalPrefix = '00';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('(?:1|7\d)\d{7}|[1-7]\d{6}')
+            ->setPossibleLengthLocalOnly([6])
+            ->setPossibleLength([7, 8, 9]);
+        $this->mobile = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('7[01378]\d{7}')
+            ->setExampleNumber('712345678')
+            ->setPossibleLength([9]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->fixedLine = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('78[0-7]\d{4}|17\d{6}|(?:[12][2-68]|3[2358]|4[2-58]|5[2-6]|6[3-58]|7[24-6])\d{5}')
+            ->setExampleNumber('1234567')
+            ->setPossibleLengthLocalOnly([6])
+            ->setPossibleLength([7, 8]);
+        $this->numberFormat = [
+            (new NumberFormat())
+                ->setPattern('(\d)(\d{3})(\d{3,4})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern(['[1-6]|7(?:[24-6]|8[0-7])'])
+                ->setNationalPrefixFormattingRule('0$1')
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{3})(\d{3})(\d{3})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern(['7'])
+                ->setNationalPrefixFormattingRule('0$1')
+                ->setNationalPrefixOptionalWhenFormatting(false),
+        ];
+        $this->tollFree = PhoneNumberDesc::empty();
+        $this->sharedCost = PhoneNumberDesc::empty();
+        $this->personalNumber = PhoneNumberDesc::empty();
+        $this->voip = PhoneNumberDesc::empty();
+        $this->pager = PhoneNumberDesc::empty();
+        $this->uan = PhoneNumberDesc::empty();
+        $this->voicemail = PhoneNumberDesc::empty();
+        $this->noInternationalDialling = PhoneNumberDesc::empty();
+    }
+}

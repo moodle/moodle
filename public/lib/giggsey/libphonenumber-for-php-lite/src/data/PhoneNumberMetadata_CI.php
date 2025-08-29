@@ -7,87 +7,55 @@
  * @internal
  */
 
-return [
-    'id' => 'CI',
-    'countryCode' => 225,
-    'generalDesc' => [
-        'pattern' => '[02]\\d{9}',
-        'posLength' => [
-            10,
-        ],
-    ],
-    'fixedLine' => [
-        'pattern' => '2(?:[15]\\d{3}|7(?:2(?:0[23]|1[2357]|2[245]|3[45]|4[3-5])|3(?:06|1[69]|[2-6]7)))\\d{5}',
-        'example' => '2123456789',
-    ],
-    'mobile' => [
-        'pattern' => '0[157]\\d{8}',
-        'example' => '0123456789',
-    ],
-    'tollFree' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'sharedCost' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'personalNumber' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voip' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'pager' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'uan' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voicemail' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'noInternationalDialling' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '00',
-    'numberFormat' => [
-        [
-            'pattern' => '(\\d{2})(\\d{2})(\\d)(\\d{5})',
-            'format' => '$1 $2 $3 $4',
-            'leadingDigitsPatterns' => [
-                '2',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{2})(\\d{2})(\\d{2})(\\d{4})',
-            'format' => '$1 $2 $3 $4',
-            'leadingDigitsPatterns' => [
-                '0',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-    ],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\NumberFormat;
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class PhoneNumberMetadata_CI extends PhoneMetadata
+{
+    protected const ID = 'CI';
+    protected const COUNTRY_CODE = 225;
+
+    protected ?string $internationalPrefix = '00';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[02]\d{9}')
+            ->setPossibleLength([10]);
+        $this->mobile = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('0[157]\d{8}')
+            ->setExampleNumber('0123456789');
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->fixedLine = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('2(?:[15]\d{3}|7(?:2(?:0[23]|1[2357]|2[245]|3[45]|4[3-5])|3(?:06|1[69]|[2-6]7)))\d{5}')
+            ->setExampleNumber('2123456789');
+        $this->numberFormat = [
+            (new NumberFormat())
+                ->setPattern('(\d{2})(\d{2})(\d)(\d{5})')
+                ->setFormat('$1 $2 $3 $4')
+                ->setLeadingDigitsPattern(['2'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{2})(\d{2})(\d{2})(\d{4})')
+                ->setFormat('$1 $2 $3 $4')
+                ->setLeadingDigitsPattern(['0'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+        ];
+        $this->tollFree = PhoneNumberDesc::empty();
+        $this->sharedCost = PhoneNumberDesc::empty();
+        $this->personalNumber = PhoneNumberDesc::empty();
+        $this->voip = PhoneNumberDesc::empty();
+        $this->pager = PhoneNumberDesc::empty();
+        $this->uan = PhoneNumberDesc::empty();
+        $this->voicemail = PhoneNumberDesc::empty();
+        $this->noInternationalDialling = PhoneNumberDesc::empty();
+    }
+}

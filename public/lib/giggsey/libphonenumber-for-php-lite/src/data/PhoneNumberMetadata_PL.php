@@ -7,161 +7,104 @@
  * @internal
  */
 
-return [
-    'id' => 'PL',
-    'countryCode' => 48,
-    'generalDesc' => [
-        'pattern' => '(?:6|8\\d\\d)\\d{7}|[1-9]\\d{6}(?:\\d{2})?|[26]\\d{5}',
-        'posLength' => [
-            6,
-            7,
-            8,
-            9,
-            10,
-        ],
-    ],
-    'fixedLine' => [
-        'pattern' => '47\\d{7}|(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])(?:[02-9]\\d{6}|1(?:[0-8]\\d{5}|9\\d{3}(?:\\d{2})?))',
-        'example' => '123456789',
-        'posLength' => [
-            7,
-            9,
-        ],
-    ],
-    'mobile' => [
-        'pattern' => '2131[89]\\d{4}|21(?:1[013-5]|2\\d|3[2-9])\\d{5}|(?:45|5[0137]|6[069]|7[2389]|88)\\d{7}',
-        'example' => '512345678',
-        'posLength' => [
-            9,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '800\\d{6,7}',
-        'example' => '800123456',
-        'posLength' => [
-            9,
-            10,
-        ],
-    ],
-    'premiumRate' => [
-        'pattern' => '70[01346-8]\\d{6}',
-        'example' => '701234567',
-        'posLength' => [
-            9,
-        ],
-    ],
-    'sharedCost' => [
-        'pattern' => '801\\d{6}',
-        'example' => '801234567',
-        'posLength' => [
-            9,
-        ],
-    ],
-    'personalNumber' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voip' => [
-        'pattern' => '39\\d{7}',
-        'example' => '391234567',
-        'posLength' => [
-            9,
-        ],
-    ],
-    'pager' => [
-        'pattern' => '64\\d{4,7}',
-        'example' => '641234567',
-        'posLength' => [
-            6,
-            7,
-            8,
-            9,
-        ],
-    ],
-    'uan' => [
-        'pattern' => '804\\d{6}',
-        'example' => '804123456',
-        'posLength' => [
-            9,
-        ],
-    ],
-    'voicemail' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'noInternationalDialling' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '00',
-    'numberFormat' => [
-        [
-            'pattern' => '(\\d{5})',
-            'format' => '$1',
-            'leadingDigitsPatterns' => [
-                '19',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{3})(\\d{3})',
-            'format' => '$1 $2',
-            'leadingDigitsPatterns' => [
-                '11|20|64',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{2})(\\d{2})(\\d{3})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])1',
-                '(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])19',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{3})(\\d{2})(\\d{2,3})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '64',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{3})(\\d{3})(\\d{3})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '21|39|45|5[0137]|6[0469]|7[02389]|8(?:0[14]|8)',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{2})(\\d{3})(\\d{2})(\\d{2})',
-            'format' => '$1 $2 $3 $4',
-            'leadingDigitsPatterns' => [
-                '1[2-8]|[2-7]|8[1-79]|9[145]',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-        [
-            'pattern' => '(\\d{3})(\\d{3})(\\d{3,4})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '8',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-    ],
-    'mobileNumberPortableRegion' => true,
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\NumberFormat;
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class PhoneNumberMetadata_PL extends PhoneMetadata
+{
+    protected const ID = 'PL';
+    protected const COUNTRY_CODE = 48;
+
+    protected ?string $internationalPrefix = '00';
+    protected bool $mobileNumberPortableRegion = true;
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('(?:6|8\d\d)\d{7}|[1-9]\d{6}(?:\d{2})?|[26]\d{5}')
+            ->setPossibleLength([6, 7, 8, 9, 10]);
+        $this->mobile = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('2131[89]\d{4}|21(?:1[013-5]|2\d|3[2-9])\d{5}|(?:45|5[0137]|6[069]|7[2389]|88)\d{7}')
+            ->setExampleNumber('512345678')
+            ->setPossibleLength([9]);
+        $this->premiumRate = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('70[01346-8]\d{6}')
+            ->setExampleNumber('701234567')
+            ->setPossibleLength([9]);
+        $this->fixedLine = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('47\d{7}|(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])(?:[02-9]\d{6}|1(?:[0-8]\d{5}|9\d{3}(?:\d{2})?))')
+            ->setExampleNumber('123456789')
+            ->setPossibleLength([7, 9]);
+        $this->numberFormat = [
+            (new NumberFormat())
+                ->setPattern('(\d{5})')
+                ->setFormat('$1')
+                ->setLeadingDigitsPattern(['19'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{3})(\d{3})')
+                ->setFormat('$1 $2')
+                ->setLeadingDigitsPattern(['11|20|64'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{2})(\d{2})(\d{3})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern([
+                    '(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])1',
+                    '(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])19',
+                ])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{3})(\d{2})(\d{2,3})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern(['64'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{3})(\d{3})(\d{3})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern(['21|39|45|5[0137]|6[0469]|7[02389]|8(?:0[14]|8)'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{2})(\d{3})(\d{2})(\d{2})')
+                ->setFormat('$1 $2 $3 $4')
+                ->setLeadingDigitsPattern(['1[2-8]|[2-7]|8[1-79]|9[145]'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+            (new NumberFormat())
+                ->setPattern('(\d{3})(\d{3})(\d{3,4})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern(['8'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+        ];
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('800\d{6,7}')
+            ->setExampleNumber('800123456')
+            ->setPossibleLength([9, 10]);
+        $this->sharedCost = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('801\d{6}')
+            ->setExampleNumber('801234567')
+            ->setPossibleLength([9]);
+        $this->personalNumber = PhoneNumberDesc::empty();
+        $this->voip = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('39\d{7}')
+            ->setExampleNumber('391234567')
+            ->setPossibleLength([9]);
+        $this->pager = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('64\d{4,7}')
+            ->setExampleNumber('641234567')
+            ->setPossibleLength([6, 7, 8, 9]);
+        $this->uan = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('804\d{6}')
+            ->setExampleNumber('804123456')
+            ->setPossibleLength([9]);
+        $this->voicemail = PhoneNumberDesc::empty();
+        $this->noInternationalDialling = PhoneNumberDesc::empty();
+    }
+}

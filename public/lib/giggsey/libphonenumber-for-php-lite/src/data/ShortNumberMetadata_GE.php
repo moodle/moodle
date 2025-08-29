@@ -7,58 +7,48 @@
  * @internal
  */
 
-return [
-    'id' => 'GE',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '[014]\\d\\d(?:\\d{2})?',
-        'posLength' => [
-            3,
-            5,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '0(?:11|33)|11[1-3]|[01]22',
-        'example' => '011',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '0(?:11|33)|11[1-3]|[01]22',
-        'example' => '011',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'shortCode' => [
-        'pattern' => '0(?:11|33)|11[1-3]|40404|[01]22',
-        'example' => '011',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'pattern' => '404\\d\\d',
-        'example' => '40400',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'smsServices' => [
-        'pattern' => '404\\d\\d',
-        'example' => '40400',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_GE extends PhoneMetadata
+{
+    protected const ID = 'GE';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[014]\d\d(?:\d{2})?')
+            ->setPossibleLength([3, 5]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('0(?:11|33)|11[1-3]|[01]22')
+            ->setExampleNumber('011')
+            ->setPossibleLength([3]);
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('0(?:11|33)|11[1-3]|[01]22')
+            ->setExampleNumber('011')
+            ->setPossibleLength([3]);
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('0(?:11|33)|11[1-3]|40404|[01]22')
+            ->setExampleNumber('011');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('404\d\d')
+            ->setExampleNumber('40400')
+            ->setPossibleLength([5]);
+        $this->smsServices = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('404\d\d')
+            ->setExampleNumber('40400')
+            ->setPossibleLength([5]);
+    }
+}

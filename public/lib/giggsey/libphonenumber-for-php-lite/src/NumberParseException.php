@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace libphonenumber;
 
+use Exception;
+use Stringable;
+use Throwable;
+
 /**
  * Generic exception class for errors encountered when parsing phone numbers.
  */
-class NumberParseException extends \Exception implements \Stringable
+class NumberParseException extends Exception implements Stringable
 {
     /**
      * The country code supplied did not belong to a supported country or non-geographical entity.
@@ -38,7 +42,7 @@ class NumberParseException extends \Exception implements \Stringable
 
     protected int $errorType;
 
-    public function __construct(int $errorType, string $message, ?\Throwable $previous = null)
+    public function __construct(int $errorType, string $message, ?Throwable $previous = null)
     {
         parent::__construct($message, $errorType, $previous);
         $this->message = $message;

@@ -7,47 +7,40 @@
  * @internal
  */
 
-return [
-    'id' => 'TT',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '9\\d\\d',
-        'posLength' => [
-            3,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '9(?:88|9[09])',
-        'example' => '988',
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '99[09]',
-        'example' => '990',
-    ],
-    'shortCode' => [
-        'pattern' => '9(?:88|9[09])',
-        'example' => '988',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'smsServices' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_TT extends PhoneMetadata
+{
+    protected const ID = 'TT';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('9\d\d')
+            ->setPossibleLength([3]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('9(?:88|9[09])')
+            ->setExampleNumber('988');
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('99[09]')
+            ->setExampleNumber('990');
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('9(?:88|9[09])')
+            ->setExampleNumber('988');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = PhoneNumberDesc::empty();
+        $this->smsServices = PhoneNumberDesc::empty();
+    }
+}

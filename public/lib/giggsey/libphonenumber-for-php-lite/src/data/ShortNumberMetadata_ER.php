@@ -7,48 +7,40 @@
  * @internal
  */
 
-return [
-    'id' => 'ER',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '[12]\\d\\d(?:\\d{3})?',
-        'posLength' => [
-            3,
-            6,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '11[2-46]|(?:12[47]|20[12])\\d{3}',
-        'example' => '112',
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '1(?:1[2-46]|24422)|20(?:1(?:606|917)|2914)|(?:1277|2020)99',
-        'example' => '112',
-    ],
-    'shortCode' => [
-        'pattern' => '1(?:1[2-6]|24422)|20(?:1(?:606|917)|2914)|(?:1277|2020)99',
-        'example' => '112',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'smsServices' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_ER extends PhoneMetadata
+{
+    protected const ID = 'ER';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[12]\d\d(?:\d{3})?')
+            ->setPossibleLength([3, 6]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('11[2-46]|(?:12[47]|20[12])\d{3}')
+            ->setExampleNumber('112');
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:1[2-46]|24422)|20(?:1(?:606|917)|2914)|(?:1277|2020)99')
+            ->setExampleNumber('112');
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:1[2-6]|24422)|20(?:1(?:606|917)|2914)|(?:1277|2020)99')
+            ->setExampleNumber('112');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = PhoneNumberDesc::empty();
+        $this->smsServices = PhoneNumberDesc::empty();
+    }
+}

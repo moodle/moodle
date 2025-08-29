@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace libphonenumber;
 
+use InvalidArgumentException;
+use RuntimeException;
+use TypeError;
+
 /**
  * Utility for international phone numbers. Functionality includes formatting, parsing and
  * validation.
@@ -16,6 +20,7 @@ namespace libphonenumber;
  * can be found here:
  * http://www.unicode.org/cldr/charts/30/supplemental/territory_information.html
  * @phpstan-consistent-constructor
+ * @no-named-arguments
  */
 class PhoneNumberUtil
 {
@@ -37,13 +42,9 @@ class PhoneNumberUtil
      * @internal
      */
     public const REGION_CODE_FOR_NON_GEO_ENTITY = '001';
-    /**
-     * @internal
-     */
-    public const META_DATA_FILE_PREFIX = __DIR__ . '/data/PhoneNumberMetadata';
 
     // Region-code for the unknown region.
-    protected const UNKNOWN_REGION = 'ZZ';
+    public const UNKNOWN_REGION = 'ZZ';
 
     protected const NANPA_COUNTRY_CODE = 1;
     // The PLUS_SIGN signifies the international prefix.
@@ -113,10 +114,9 @@ class PhoneNumberUtil
     protected const UNWANTED_END_CHAR_PATTERN = '[^' . self::DIGITS . self::VALID_ALPHA . '#]+$';
     protected const DIALLABLE_CHAR_MAPPINGS = self::ASCII_DIGIT_MAPPINGS
         + [self::PLUS_SIGN => self::PLUS_SIGN]
-    + ['*' => '*', '#' => '#'];
+        + ['*' => '*', '#' => '#'];
 
-
-    protected static ?PhoneNumberUtil $instance = null;
+    protected static ?PhoneNumberUtil $instance;
 
     /**
      * Only upper-case variants of alpha characters are stored.
@@ -188,7 +188,8 @@ class PhoneNumberUtil
         54, // Argentina
         55, // Brazil
         62, // Indonesia: some prefixes only (fixed CMDA wireless)
-    ] + self::GEO_MOBILE_COUNTRIES_WITHOUT_MOBILE_AREA_CODES;
+        86, // China
+    ];
 
     /**
      * For performance reasons, amalgamate both into one map.
@@ -199,7 +200,7 @@ class PhoneNumberUtil
      * Separate map of all symbols that we wish to retain when formatting alpha numbers. This
      * includes digits, ASCII letters and number grouping symbols such as "-" and " ".
      *
-     * @var array<string,string>
+     * @var array<string|int,string>
      */
     protected static array $ALL_PLUS_NUMBER_GROUPING_SYMBOLS;
 
@@ -261,9 +262,6 @@ class PhoneNumberUtil
      * Note VALID_PUNCTUATION starts with a -, so must be the first in the range.
      */
     protected static string $VALID_PHONE_NUMBER;
-    /**
-     * @var array<string,int>
-     */
     protected const NUMERIC_CHARACTERS = [
         "\xef\xbc\x90" => 0,
         "\xef\xbc\x91" => 1,
@@ -338,9 +336,7 @@ class PhoneNumberUtil
      * @var string[]
      */
     protected array $nanpaRegions = [];
-
     protected MetadataSourceInterface $metadataSource;
-
     protected MatcherAPIInterface $matcherAPI;
 
     /**
@@ -352,7 +348,7 @@ class PhoneNumberUtil
         $this->metadataSource = $metadataSource;
         $this->countryCallingCodeToRegionCodeMap = $countryCallingCodeToRegionCodeMap;
         $this->init();
-        $this->matcherAPI = RegexBasedMatcher::create();
+        $this->matcherAPI = new RegexBasedMatcher();
         static::initExtnPatterns();
         static::initExtnPattern();
         static::initRFC3966Patterns();
@@ -392,27 +388,15 @@ class PhoneNumberUtil
      * <p>The {@link PhoneNumberUtil} is implemented as a singleton. Therefore, calling getInstance
      * multiple times will only result in one instance being created.
      *
-     * @param array<int,array<int|string>>|null $countryCallingCodeToRegionCodeMap
+     * @param array<int,string[]> $countryCallingCodeToRegionCodeMap
      * @return PhoneNumberUtil instance
      */
     public static function getInstance(
-        string $baseFileLocation = self::META_DATA_FILE_PREFIX,
-        ?array $countryCallingCodeToRegionCodeMap = null,
-        ?MetadataLoaderInterface $metadataLoader = null,
-        ?MetadataSourceInterface $metadataSource = null
+        string $metadataLocation = __NAMESPACE__ . '\data\PhoneNumberMetadata_',
+        array $countryCallingCodeToRegionCodeMap = CountryCodeToRegionCodeMap::COUNTRY_CODE_TO_REGION_CODE_MAP,
     ): PhoneNumberUtil {
-        if (static::$instance === null) {
-            if ($countryCallingCodeToRegionCodeMap === null) {
-                $countryCallingCodeToRegionCodeMap = CountryCodeToRegionCodeMap::COUNTRY_CODE_TO_REGION_CODE_MAP;
-            }
-
-            if ($metadataLoader === null) {
-                $metadataLoader = new DefaultMetadataLoader();
-            }
-
-            if ($metadataSource === null) {
-                $metadataSource = new MultiFileMetadataSourceImpl($metadataLoader, $baseFileLocation);
-            }
+        if (!isset(static::$instance)) {
+            $metadataSource = new MultiFileMetadataSourceImpl($metadataLocation);
 
             static::$instance = new static($metadataSource, $countryCallingCodeToRegionCodeMap);
         }
@@ -440,7 +424,7 @@ class PhoneNumberUtil
         // If the non-geo entity still got added to the set of supported regions it must be because
         // there are entries that list the non-geo entity alongside normal regions (which is wrong).
         // If we discover this, remove the non-geo entity from the set of supported regions and log.
-        $idx_region_code_non_geo_entity = array_search(static::REGION_CODE_FOR_NON_GEO_ENTITY, $this->supportedRegions);
+        $idx_region_code_non_geo_entity = array_search(static::REGION_CODE_FOR_NON_GEO_ENTITY, $this->supportedRegions, true);
         if ($idx_region_code_non_geo_entity !== false) {
             unset($this->supportedRegions[$idx_region_code_non_geo_entity]);
         }
@@ -591,10 +575,10 @@ class PhoneNumberUtil
      * removeNonMatches is true.
      *
      * @param string $number a string of characters representing a phone number
-     * @param array<string,string> $normalizationReplacements a mapping of characters to what they should be replaced by in
-     * the normalized version of the phone number.
+     * @param array<string|int,string> $normalizationReplacements a mapping of characters to what they should be replaced by in
+     *                                                            the normalized version of the phone number.
      * @param bool $removeNonMatches indicates whether characters that are not able to be replaced.
-     * should be stripped from the number. If this is false, they will be left unchanged in the number.
+     *                               should be stripped from the number. If this is false, they will be left unchanged in the number.
      * @return string the normalized string version of the phone number.
      */
     protected static function normalizeHelper(string $number, array $normalizationReplacements, bool $removeNonMatches): string
@@ -632,7 +616,7 @@ class PhoneNumberUtil
      * Returns all regions the library has metadata for.
      *
      * @return string[] An unordered array of the two-letter region codes for every geographical region the
-     *  library supports
+     *                  library supports
      */
     public function getSupportedRegions(): array
     {
@@ -643,7 +627,7 @@ class PhoneNumberUtil
      * Returns all global network calling codes the library has metadata for.
      *
      * @return int[] An unordered array of the country calling codes for every non-geographical entity
-     *  the library supports
+     *               the library supports
      */
     public function getSupportedGlobalNetworkCallingCodes(): array
     {
@@ -652,12 +636,12 @@ class PhoneNumberUtil
 
     /**
      * Returns all country calling codes the library has metadata for, covering both non-geographical
-     * entities (global network calling codes) and those used for geographical entities. This could be
+     * entities (global network calling codes) and those used for geographical entities. The could be
      * used to populate a drop-down box of country calling codes for a phone-number widget, for
      * instance.
      *
      * @return int[] An unordered array of the country calling codes for every geographical and
-     *      non-geographical entity the library supports
+     *               non-geographical entity the library supports
      */
     public function getSupportedCallingCodes(): array
     {
@@ -691,13 +675,12 @@ class PhoneNumberUtil
 
     /**
      * Returns the types we have metadata for based on the PhoneMetadata object passed in.
-     *
-     * @return array<int>
+     * @return array<PhoneNumberType::*>
      */
     private function getSupportedTypesForMetadata(PhoneMetadata $metadata): array
     {
         $types = [];
-        foreach (array_keys(PhoneNumberType::values()) as $type) {
+        foreach (PhoneNumberType::cases() as $type) {
             if ($type === PhoneNumberType::FIXED_LINE_OR_MOBILE || $type === PhoneNumberType::UNKNOWN) {
                 // Never return FIXED_LINE_OR_MOBILE (it is a convenience type, and represents that a
                 // particular number type can't be determined) or UNKNOWN (the non-type).
@@ -719,16 +702,14 @@ class PhoneNumberUtil
      *
      * No types will be returned for invalid or unknown region codes.
      *
-     * @return array<int> Array of PhoneNumberType's
+     * @return array<PhoneNumberType::*>
      */
     public function getSupportedTypesForRegion(string $regionCode): array
     {
-        $metadata = $this->getMetadataForRegion($regionCode);
-
-        if ($metadata === null) {
+        if (!$this->isValidRegionCode($regionCode)) {
             return [];
         }
-
+        $metadata = $this->getMetadataForRegion($regionCode);
         return $this->getSupportedTypesForMetadata($metadata);
     }
 
@@ -737,7 +718,8 @@ class PhoneNumberUtil
      * has metadata for. Will not include FIXED_LINE_OR_MOBILE (if numbers for this non-geographical
      * entity could be classified as FIXED_LINE_OR_MOBILE, both FIXED_LINE and MOBILE would be
      * present) and UNKNOWN.
-     * @return array<int> Array of PhoneNumberType's
+     *
+     * @return array<PhoneNumberType::*>
      */
     public function getSupportedTypesForNonGeoEntity(int $countryCallingCode): array
     {
@@ -797,12 +779,14 @@ class PhoneNumberUtil
 
         $countryCallingCode = $number->getCountryCode();
 
-
         // If a country doesn't use a national prefix, and this number doesn't have an Italian leading
         // zero, we assume it is a closed dialling plan with no area codes.
         // Note:this is our general assumption, but there are exceptions which are tracked in
         // COUNTRIES_WITHOUT_NATIONAL_PREFIX_WITH_AREA_CODES.
-        if (!$metadata->hasNationalPrefix() && !$number->isItalianLeadingZero() && !in_array($countryCallingCode, static::COUNTRIES_WITHOUT_NATIONAL_PREFIX_WITH_AREA_CODES)) {
+        if (!$metadata->hasNationalPrefix()
+            && !$number->isItalianLeadingZero()
+            && !in_array($countryCallingCode, static::COUNTRIES_WITHOUT_NATIONAL_PREFIX_WITH_AREA_CODES, true)
+        ) {
             return 0;
         }
 
@@ -812,7 +796,7 @@ class PhoneNumberUtil
             // Note this is a rough heuristic; it doesn't cover Indonesia well, for example, where area
             // codes are present for some mobile phones but not for others. We have no better way of
             // representing this in the metadata at this point.
-            && in_array($countryCallingCode, static::GEO_MOBILE_COUNTRIES_WITHOUT_MOBILE_AREA_CODES)
+            && in_array($countryCallingCode, static::GEO_MOBILE_COUNTRIES_WITHOUT_MOBILE_AREA_CODES, true)
         ) {
             return 0;
         }
@@ -842,7 +826,7 @@ class PhoneNumberUtil
      */
     protected function isValidRegionCode(?string $regionCode): bool
     {
-        return $regionCode !== null && in_array(strtoupper($regionCode), $this->supportedRegions);
+        return $regionCode !== null && in_array(strtoupper($regionCode), $this->supportedRegions, true);
     }
 
     /**
@@ -851,8 +835,8 @@ class PhoneNumberUtil
      * numbers).
      *
      * @param PhoneNumber $number the phone number whose origin we want to know
-     * @return null|string  the region where the phone number is from, or null if no region matches this calling
-     * code
+     * @return null|string the region where the phone number is from, or null if no region matches this calling
+     *                     code
      */
     public function getRegionCodeForNumber(PhoneNumber $number): ?string
     {
@@ -870,7 +854,6 @@ class PhoneNumberUtil
 
     /**
      * Returns the region code for a number from the list of region codes passing in.
-     *
      * @param string[] $regionCodes
      */
     protected function getRegionCodeForNumberFromRegionList(PhoneNumber $number, array $regionCodes): ?string
@@ -879,7 +862,6 @@ class PhoneNumberUtil
         foreach ($regionCodes as $regionCode) {
             // If leadingDigits is present, use this. Otherwise, do full validation.
             // Metadata cannot be null because the region codes come from the country calling code map.
-            /** @var PhoneMetadata $metadata */
             $metadata = $this->getMetadataForRegion($regionCode);
             if ($metadata->hasLeadingDigits()) {
                 $nbMatches = preg_match(
@@ -899,7 +881,7 @@ class PhoneNumberUtil
     }
 
     /**
-     * Gets the national significant number of the phone number. Note a national significant number
+     * Gets the national significant number of the a phone number. Note a national significant number
      * doesn't contain a national prefix or any formatting.
      *
      * @param PhoneNumber $number the phone number for which the national significant number is needed
@@ -917,12 +899,7 @@ class PhoneNumberUtil
         return $nationalNumber;
     }
 
-    /**
-     * Returns the type of number passed in i.e Toll free, premium.
-     *
-     * @return int PhoneNumberType constant
-     */
-    protected function getNumberTypeHelper(string $nationalNumber, PhoneMetadata $metadata): int
+    protected function getNumberTypeHelper(string $nationalNumber, PhoneMetadata $metadata): PhoneNumberType
     {
         if (!$this->isNumberMatchingDesc($nationalNumber, $metadata->getGeneralDesc())) {
             return PhoneNumberType::UNKNOWN;
@@ -972,14 +949,17 @@ class PhoneNumberUtil
         return PhoneNumberType::UNKNOWN;
     }
 
-    public function isNumberMatchingDesc(string $nationalNumber, PhoneNumberDesc $numberDesc): bool
+    protected function isNumberMatchingDesc(string $nationalNumber, ?PhoneNumberDesc $numberDesc): bool
     {
+        if ($numberDesc === null) {
+            return false;
+        }
         // Check if any possible number lengths are present; if so, we use them to avoid checking the
         // validation pattern if they don't match. If they are absent, this means they match the general
         // description, which we have already checked before checking a specific number type.
         $actualLength = mb_strlen($nationalNumber);
         $possibleLengths = $numberDesc->getPossibleLength();
-        if (count($possibleLengths) > 0 && !in_array($actualLength, $possibleLengths)) {
+        if (count($possibleLengths) > 0 && !in_array($actualLength, $possibleLengths, true)) {
             return false;
         }
 
@@ -1001,10 +981,10 @@ class PhoneNumberUtil
      * This version exists since calculating the phone number type is expensive; if we have already
      * done this, we don't want to do it again.
      *
-     * @param PhoneNumber|int $phoneNumberObjOrType A PhoneNumber object, or a PhoneNumberType integer
+     * @param PhoneNumber|PhoneNumberType $phoneNumberObjOrType A PhoneNumber object, or a PhoneNumberType integer
      * @param int|null $countryCallingCode Used when passing a PhoneNumberType
      */
-    public function isNumberGeographical(PhoneNumber|int $phoneNumberObjOrType, ?int $countryCallingCode = null): bool
+    public function isNumberGeographical(PhoneNumber|PhoneNumberType $phoneNumberObjOrType, ?int $countryCallingCode = null): bool
     {
         if ($phoneNumberObjOrType instanceof PhoneNumber) {
             return $this->isNumberGeographical($this->getNumberType($phoneNumberObjOrType), $phoneNumberObjOrType->getCountryCode());
@@ -1012,24 +992,19 @@ class PhoneNumberUtil
 
         return $phoneNumberObjOrType === PhoneNumberType::FIXED_LINE
             || $phoneNumberObjOrType === PhoneNumberType::FIXED_LINE_OR_MOBILE
-            || (
-                in_array($countryCallingCode, static::GEO_MOBILE_COUNTRIES)
-                && $phoneNumberObjOrType === PhoneNumberType::MOBILE
-            );
+            || (in_array($countryCallingCode, static::GEO_MOBILE_COUNTRIES, true)
+                && $phoneNumberObjOrType === PhoneNumberType::MOBILE);
     }
 
     /**
      * Gets the type of a valid phone number.
      *
      * @param PhoneNumber $number the number the phone number that we want to know the type
-     * @return int PhoneNumberType the type of the phone number, or UNKNOWN if it is invalid
+     * @return PhoneNumberType the type of the phone number, or PhoneNumberType::UNKNOWN if it is invalid
      */
-    public function getNumberType(PhoneNumber $number): int
+    public function getNumberType(PhoneNumber $number): PhoneNumberType
     {
         $regionCode = $this->getRegionCodeForNumber($number);
-        if ($regionCode === null) {
-            return PhoneNumberType::UNKNOWN;
-        }
         $metadata = $this->getMetadataForRegionOrCallingCode($number->getCountryCode(), $regionCode);
         if ($metadata === null) {
             return PhoneNumberType::UNKNOWN;
@@ -1038,7 +1013,7 @@ class PhoneNumberUtil
         return $this->getNumberTypeHelper($nationalSignificantNumber, $metadata);
     }
 
-    protected function getMetadataForRegionOrCallingCode(int $countryCallingCode, string $regionCode): ?PhoneMetadata
+    protected function getMetadataForRegionOrCallingCode(int $countryCallingCode, ?string $regionCode): ?PhoneMetadata
     {
         return static::REGION_CODE_FOR_NON_GEO_ENTITY === $regionCode ?
             $this->getMetadataForNonGeographicalRegion($countryCallingCode) : $this->getMetadataForRegion($regionCode);
@@ -1081,7 +1056,7 @@ class PhoneNumberUtil
      * </code>
      *
      * Refer to the unit tests to see the difference between this function and
-     * {@link #getLengthOfGeographicalAreaCode}.
+     * {@see getLengthOfGeographicalAreaCode}.
      *
      * @param PhoneNumber $number the PhoneNumber object for which clients want to know the length of the NDC.
      * @return int the length of NDC of the PhoneNumber object passed in, which could be zero
@@ -1133,12 +1108,8 @@ class PhoneNumberUtil
      * country calling code of 0 or an otherwise invalid country calling code, we cannot work out
      * which formatting rules to apply so we return the national significant number with no formatting
      * applied.
-     *
-     * @param PhoneNumber $number the phone number to be formatted
-     * @param int $numberFormat the PhoneNumberFormat the phone number should be formatted into
-     * @return string the formatted phone number
      */
-    public function format(PhoneNumber $number, int $numberFormat): string
+    public function format(PhoneNumber $number, PhoneNumberFormat $numberFormat): string
     {
         if ($number->getNationalNumber() === '0' && $number->hasRawInput()) {
             // Unparseable numbers that kept their raw input just use that.
@@ -1155,6 +1126,10 @@ class PhoneNumberUtil
         $formattedNumber = '';
         $countryCallingCode = $number->getCountryCode();
         $nationalSignificantNumber = $this->getNationalSignificantNumber($number);
+
+        if ($countryCallingCode === null) {
+            return $nationalSignificantNumber;
+        }
 
         if ($numberFormat === PhoneNumberFormat::E164) {
             // Early exit for E164 case (even if the country calling code is invalid) since no formatting
@@ -1175,7 +1150,6 @@ class PhoneNumberUtil
         $regionCode = $this->getRegionCodeForCountryCode($countryCallingCode);
         // Metadata cannot be null because the country calling code is valid (which means that the
         // region code cannot be ZZ and must be one of our supported region codes).
-        /** @var PhoneMetadata $metadata */
         $metadata = $this->getMetadataForRegionOrCallingCode($countryCallingCode, $regionCode);
         $formattedNumber .= $this->formatNsn($nationalSignificantNumber, $metadata, $numberFormat);
         $this->maybeAppendFormattedExtension($number, $metadata, $numberFormat, $formattedNumber);
@@ -1185,9 +1159,8 @@ class PhoneNumberUtil
 
     /**
      * A helper function that is used by format and formatByPattern.
-     * @param int $numberFormat PhoneNumberFormat
      */
-    protected function prefixNumberWithCountryCallingCode(int $countryCallingCode, int $numberFormat, string &$formattedNumber): void
+    protected function prefixNumberWithCountryCallingCode(int $countryCallingCode, PhoneNumberFormat $numberFormat, string &$formattedNumber): void
     {
         switch ($numberFormat) {
             case PhoneNumberFormat::E164:
@@ -1198,6 +1171,8 @@ class PhoneNumberUtil
                 return;
             case PhoneNumberFormat::RFC3966:
                 $formattedNumber = static::RFC3966_PREFIX . static::PLUS_SIGN . $countryCallingCode . '-' . $formattedNumber;
+                return;
+            case PhoneNumberFormat::NATIONAL:
                 return;
         }
     }
@@ -1229,14 +1204,13 @@ class PhoneNumberUtil
      * depending on whether it forms part of the NATIONAL format or INTERNATIONAL format. The
      * numberFormat parameter here is used to specify which format to use for those cases. If a
      * carrierCode is specified, this will be inserted into the formatted string to replace $CC.
-     * @param int $numberFormat PhoneNumberFormat
      */
-    protected function formatNsn(string $number, PhoneMetadata $metadata, int $numberFormat, ?string $carrierCode = null): string
+    protected function formatNsn(string $number, PhoneMetadata $metadata, PhoneNumberFormat $numberFormat, ?string $carrierCode = null): string
     {
         $intlNumberFormats = $metadata->intlNumberFormats();
         // When the intlNumberFormats exists, we use that to format national number for the
         // INTERNATIONAL format instead of using the numberDesc.numberFormats.
-        $availableFormats = (empty($intlNumberFormats) || $numberFormat === PhoneNumberFormat::NATIONAL)
+        $availableFormats = (count($intlNumberFormats) === 0 || $numberFormat === PhoneNumberFormat::NATIONAL)
             ? $metadata->numberFormats()
             : $metadata->intlNumberFormats();
         $formattingPattern = $this->chooseFormattingPatternForNumber($availableFormats, $number);
@@ -1273,13 +1247,12 @@ class PhoneNumberUtil
     /**
      * Note that carrierCode is optional - if null or an empty string, no carrier code replacement
      * will take place.
-     * @param int $numberFormat PhoneNumberFormat
      */
     public function formatNsnUsingPattern(
         string $nationalNumber,
         NumberFormat $formattingPattern,
-        int $numberFormat,
-        ?string $carrierCode = null
+        PhoneNumberFormat $numberFormat,
+        ?string $carrierCode = null,
     ): string {
         $numberFormatRule = $formattingPattern->getFormat();
         $m = new Matcher($formattingPattern->getPattern(), $nationalNumber);
@@ -1298,9 +1271,7 @@ class PhoneNumberUtil
         } else {
             // Use the national prefix formatting rule instead.
             $nationalPrefixFormattingRule = $formattingPattern->getNationalPrefixFormattingRule();
-            if ($numberFormat === PhoneNumberFormat::NATIONAL &&
-                $nationalPrefixFormattingRule !== ''
-            ) {
+            if ($numberFormat === PhoneNumberFormat::NATIONAL && $nationalPrefixFormattingRule !== '') {
                 $firstGroupMatcher = new Matcher(static::FIRST_GROUP_PATTERN, $numberFormatRule);
                 $formattedNationalNumber = $m->replaceAll(
                     $firstGroupMatcher->replaceFirst($nationalPrefixFormattingRule)
@@ -1324,10 +1295,8 @@ class PhoneNumberUtil
     /**
      * Appends the formatted extension of a phone number to formattedNumber, if the phone number had
      * an extension specified.
-     *
-     * @param int $numberFormat PhoneNumberFormat
      */
-    protected function maybeAppendFormattedExtension(PhoneNumber $number, ?PhoneMetadata $metadata, int $numberFormat, string &$formattedNumber): void
+    protected function maybeAppendFormattedExtension(PhoneNumber $number, ?PhoneMetadata $metadata, PhoneNumberFormat $numberFormat, string &$formattedNumber): void
     {
         if ($number->hasExtension() && $number->getExtension() !== '') {
             if ($numberFormat === PhoneNumberFormat::RFC3966) {
@@ -1357,8 +1326,8 @@ class PhoneNumberUtil
      * Checks if the number is a valid vanity (alpha) number such as 800 MICROSOFT. A valid vanity
      * number will start with at least 3 digits and will have three or more alpha characters. This
      * does not do region-specific checks - to work out if this number is actually valid for a region,
-     * it should be parsed and methods such as {@link #isPossibleNumberWithReason} and
-     * {@link #isValidNumber} should be used.
+     * it should be parsed and methods such as {@see isPossibleNumberWithReason} and
+     * {@see isValidNumber} should be used.
      *
      * @param string $number the number that needs to be checked
      * @return bool true if the number is a valid vanity number
@@ -1381,7 +1350,7 @@ class PhoneNumberUtil
      * leading non-number symbols have been removed, such as by the method extractPossibleNumber.
      *
      * @param string $number to be checked for viability as a phone number
-     * @return boolean true if the number could be a phone number of some sort, otherwise false
+     * @return bool true if the number could be a phone number of some sort, otherwise false
      */
     public static function isViablePhoneNumber(string $number): bool
     {
@@ -1438,18 +1407,18 @@ class PhoneNumberUtil
     }
 
     /**
-     * Parses a string and returns it in proto buffer format. This method differs from {@link #parse}
+     * Parses a string and returns it in proto buffer format. This method differs from {@see parse}
      * in that it always populates the raw_input field of the protocol buffer with numberToParse as
      * well as the country_code_source field.
      *
      * @param string $numberToParse number that we are attempting to parse. This can contain formatting
-     *                                  such as +, ( and -, as well as a phone number extension. It can also
-     *                                  be provided in RFC3966 format.
+     *                              such as +, ( and -, as well as a phone number extension. It can also
+     *                              be provided in RFC3966 format.
      * @param string|null $defaultRegion region that we are expecting the number to be from. This is only used
-     *                                  if the number being parsed is not written in international format.
-     *                                  The country calling code for the number in this case would be stored
-     *                                  as that of the default region supplied.
-     * @return PhoneNumber              a phone number proto buffer filled with the parsed number
+     *                                   if the number being parsed is not written in international format.
+     *                                   The country calling code for the number in this case would be stored
+     *                                   as that of the default region supplied.
+     * @return PhoneNumber a phone number proto buffer filled with the parsed number
      */
     public function parseAndKeepRawInput(string $numberToParse, ?string $defaultRegion, ?PhoneNumber $phoneNumber = null): PhoneNumber
     {
@@ -1471,7 +1440,7 @@ class PhoneNumberUtil
             // Note that if the national number is all "0"s, the last "0" is not counted as a leading
             // zero.
             while ($numberOfLeadingZeros < (strlen($nationalNumber) - 1) &&
-                substr($nationalNumber, $numberOfLeadingZeros, 1) === '0') {
+                $nationalNumber[$numberOfLeadingZeros] === '0') {
                 $numberOfLeadingZeros++;
             }
 
@@ -1641,9 +1610,10 @@ class PhoneNumberUtil
      * Extracts the value of the phone-context parameter of numberToExtractFrom where the index of
      * ";phone-context=" is the parameter indexOfPhoneContext, following the syntax defined in
      * RFC3966.
+     *
      * @return string|null the extracted string (possibly empty), or null if no phone-context parameter is found.
      */
-    protected function extractPhoneContext(string $numberToExtractFrom, int|false $indexOfPhoneContext): ?string
+    protected function extractPhoneContext(string $numberToExtractFrom, false|int $indexOfPhoneContext): ?string
     {
         // If no phone-context parameter is present
         if ($indexOfPhoneContext === false) {
@@ -1682,7 +1652,7 @@ class PhoneNumberUtil
         $domainNamePattern = '/' . static::$RFC3966_DOMAINNAME . '/' . static::REGEX_FLAGS;
 
         // Does phone-context value match pattern of global-number-digits or domainname
-        return preg_match($numberDigitsPattern, $phoneContext) || preg_match($domainNamePattern, $phoneContext);
+        return preg_match($numberDigitsPattern, $phoneContext) === 1 || preg_match($domainNamePattern, $phoneContext) === 1;
     }
 
     /**
@@ -1695,7 +1665,7 @@ class PhoneNumberUtil
         $phoneNumber = new PhoneNumber();
         $phoneNumber->setCountryCode($phoneNumberIn->getCountryCode());
         $phoneNumber->setNationalNumber($phoneNumberIn->getNationalNumber());
-        if ($phoneNumberIn->hasExtension() && $phoneNumberIn->getExtension() !== '') {
+        if ($phoneNumberIn->hasExtension()) {
             $phoneNumber->setExtension($phoneNumberIn->getExtension());
         }
         if ($phoneNumberIn->isItalianLeadingZero()) {
@@ -1717,7 +1687,7 @@ class PhoneNumberUtil
         $phoneContext = $this->extractPhoneContext($numberToParse, $indexOfPhoneContext);
 
         if (!$this->isPhoneContextValid($phoneContext)) {
-            throw new NumberParseException(NumberParseException::NOT_A_NUMBER, 'The phone-context valid is invalid.');
+            throw new NumberParseException(NumberParseException::NOT_A_NUMBER, 'The phone-context value is invalid.');
         }
 
         if ($phoneContext !== null) {
@@ -1734,13 +1704,12 @@ class PhoneNumberUtil
             // the national number, an optional extension or isdn-subaddress component. Note we also
             // handle the case when "tel:" is missing, as we have seen in some of the phone number inputs.
             // In that case, we append everything from the beginning.
-
             $indexOfRfc3966Prefix = strpos($numberToParse, static::RFC3966_PREFIX);
             $indexOfNationalNumber = ($indexOfRfc3966Prefix !== false) ? $indexOfRfc3966Prefix + strlen(static::RFC3966_PREFIX) : 0;
             $nationalNumber .= substr(
                 $numberToParse,
                 $indexOfNationalNumber,
-                $indexOfPhoneContext - $indexOfNationalNumber
+                (int) $indexOfPhoneContext - $indexOfNationalNumber
             );
         } else {
             // Extract a possible number from the string passed in (this strips leading characters that
@@ -1804,12 +1773,12 @@ class PhoneNumberUtil
      * parse starts with a + symbol so that we can attempt to infer the region from the number.
      * Returns false if it cannot use the region provided and the region cannot be inferred.
      */
-    protected function checkRegionForParsing(?string $numberToParse, ?string $defaultRegion): bool
+    protected function checkRegionForParsing(string $numberToParse, ?string $defaultRegion): bool
     {
         if (!$this->isValidRegionCode($defaultRegion)) {
             // If the number is null or empty, we can't infer the region.
             $plusCharsPatternMatcher = new Matcher(static::PLUS_CHARS_PATTERN, $numberToParse);
-            if ($numberToParse === null || $numberToParse === '' || !$plusCharsPatternMatcher->lookingAt()) {
+            if ($numberToParse === '' || !$plusCharsPatternMatcher->lookingAt()) {
                 return false;
             }
         }
@@ -1835,25 +1804,25 @@ class PhoneNumberUtil
      * code supplied after this does not match that of any known region.
      *
      * @param string $number non-normalized telephone number that we wish to extract a country calling
-     *     code from - may begin with '+'
+     *                       code from - may begin with '+'
      * @param PhoneMetadata|null $defaultRegionMetadata metadata about the region this number may be from
      * @param string $nationalNumber a string buffer to store the national significant number in, in the case
-     *     that a country calling code was extracted. The number is appended to any existing contents.
-     *     If no country calling code was extracted, this will be left unchanged.
+     *                               that a country calling code was extracted. The number is appended to any existing contents.
+     *                               If no country calling code was extracted, this will be left unchanged.
      * @param bool $keepRawInput true if the country_code_source and preferred_carrier_code fields of
-     *     phoneNumber should be populated.
+     *                           phoneNumber should be populated.
      * @param PhoneNumber $phoneNumber the PhoneNumber object where the country_code and country_code_source need
-     *     to be populated. Note the country_code is always populated, whereas country_code_source is
-     *     only populated when keepCountryCodeSource is true.
+     *                                 to be populated. Note the country_code is always populated, whereas country_code_source is
+     *                                 only populated when keepCountryCodeSource is true.
      * @return int the country calling code extracted or 0 if none could be extracted
      * @throws NumberParseException
      */
     public function maybeExtractCountryCode(
-        string $number,
+        string         $number,
         ?PhoneMetadata $defaultRegionMetadata,
-        string &$nationalNumber,
-        bool $keepRawInput,
-        PhoneNumber $phoneNumber
+        string         &$nationalNumber,
+        bool           $keepRawInput,
+        PhoneNumber    $phoneNumber
     ): int {
         if ($number === '') {
             return 0;
@@ -1902,7 +1871,7 @@ class PhoneNumberUtil
                 $potentialNationalNumber = substr($normalizedNumber, mb_strlen($defaultCountryCodeString));
                 $generalDesc = $defaultRegionMetadata->getGeneralDesc();
                 // Don't need the carrier code.
-                $carrierCode = null;
+                $carrierCode = '';
                 $this->maybeStripNationalPrefixAndCarrierCode(
                     $potentialNationalNumber,
                     $defaultRegionMetadata,
@@ -1934,14 +1903,14 @@ class PhoneNumberUtil
      * the resulting number, and indicates if an international prefix was present.
      *
      * @param string $number the non-normalized telephone number that we wish to strip any international
-     *     dialing prefix from.
+     *                       dialing prefix from.
      * @param string $possibleIddPrefix string the international direct dialing prefix from the region we
-     *     think this number may be dialed in
-     * @return int the corresponding CountryCodeSource if an international dialing prefix could be
-     *     removed from the number, otherwise CountryCodeSource.FROM_DEFAULT_COUNTRY if the number did
-     *     not seem to be in international format.
+     *                                  think this number may be dialed in
+     * @return CountryCodeSource the corresponding CountryCodeSource if an international dialing prefix could be
+     *                           removed from the number, otherwise CountryCodeSource::FROM_DEFAULT_COUNTRY if the number did
+     *                           not seem to be in international format.
      */
-    public function maybeStripInternationalPrefixAndNormalize(string &$number, string $possibleIddPrefix): int
+    public function maybeStripInternationalPrefixAndNormalize(string &$number, string $possibleIddPrefix): CountryCodeSource
     {
         if ($number === '') {
             return CountryCodeSource::FROM_DEFAULT_COUNTRY;
@@ -1994,7 +1963,7 @@ class PhoneNumberUtil
      * Normalizes a string of characters representing a phone number. This converts wide-ascii and
      * arabic-indic numerals to European numerals, and strips punctuation and alpha characters.
      *
-     * @param string $number a string of characters representing a phone number
+     * @param $number string  a string of characters representing a phone number
      * @return string the normalized string version of the phone number
      */
     public static function normalizeDigitsOnly(string $number): string
@@ -2002,18 +1971,16 @@ class PhoneNumberUtil
         return static::normalizeDigits($number, false /* strip non-digits */);
     }
 
-    /**
-     */
     public static function normalizeDigits(string $number, bool $keepNonDigits): string
     {
         $normalizedDigits = '';
         $numberAsArray = preg_split('/(?<!^)(?!$)/u', $number);
         if ($numberAsArray === false) {
-            return $normalizedDigits;
+            throw new RuntimeException('Error splitting string into characters: ' . preg_last_error_msg());
         }
         foreach ($numberAsArray as $character) {
             // Check if we are in the unicode number range
-            if (array_key_exists($character, static::NUMERIC_CHARACTERS)) {
+            if (isset(static::NUMERIC_CHARACTERS[$character])) {
                 $normalizedDigits .= static::NUMERIC_CHARACTERS[$character];
             } elseif (is_numeric($character)) {
                 $normalizedDigits .= $character;
@@ -2054,13 +2021,13 @@ class PhoneNumberUtil
      * Returns 0 if fullNumber doesn't start with a valid country calling code, and leaves nationalNumber unmodified.
      * @internal
      */
-    protected function extractCountryCode(string $fullNumber, string &$nationalNumber): int
+    public function extractCountryCode(string $fullNumber, string &$nationalNumber): int
     {
         if (($fullNumber === '') || ($fullNumber[0] === '0')) {
             // Country codes do not begin with a '0'.
             return 0;
         }
-        $numberLength = strlen($fullNumber);
+        $numberLength = mb_strlen($fullNumber);
         for ($i = 1; $i <= static::MAX_LENGTH_COUNTRY_CODE && $i <= $numberLength; $i++) {
             $potentialCountryCode = (int) substr($fullNumber, 0, $i);
             if (isset($this->countryCallingCodeToRegionCodeMap[$potentialCountryCode])) {
@@ -2075,12 +2042,12 @@ class PhoneNumberUtil
      * Strips any national prefix (such as 0, 1) present in the number provided.
      *
      * @param string $number the normalized telephone number that we wish to strip any national
-     *     dialing prefix from
+     *                       dialing prefix from
      * @param PhoneMetadata $metadata the metadata for the region that we think this number is from
-     * @param string|null $carrierCode a place to insert the carrier code if one is extracted
+     * @param string $carrierCode a place to insert the carrier code if one is extracted
      * @return bool true if a national prefix or carrier code (or both) could be extracted.
      */
-    public function maybeStripNationalPrefixAndCarrierCode(string &$number, PhoneMetadata $metadata, ?string &$carrierCode): bool
+    public function maybeStripNationalPrefixAndCarrierCode(string &$number, PhoneMetadata $metadata, string &$carrierCode): bool
     {
         $possibleNationalPrefix = $metadata->getNationalPrefixForParsing();
         if ($number === '' || $possibleNationalPrefix === null || $possibleNationalPrefix === '') {
@@ -2112,7 +2079,7 @@ class PhoneNumberUtil
                     )) {
                     return false;
                 }
-                if ($carrierCode !== null && $numOfGroups > 0 && $prefixMatcher->group($numOfGroups) !== null) {
+                if ($numOfGroups > 0 && $prefixMatcher->group($numOfGroups) !== null) {
                     $carrierCode .= $prefixMatcher->group(1);
                 }
 
@@ -2134,7 +2101,7 @@ class PhoneNumberUtil
                 && !$this->matcherAPI->matchNationalNumber($transformedNumber, $generalDesc, false)) {
                 return false;
             }
-            if ($carrierCode !== null && $numOfGroups > 1) {
+            if ($numOfGroups > 1) {
                 $carrierCode .= $prefixMatcher->group(1);
             }
             $number = substr_replace($number, $transformedNumber, 0, mb_strlen($number));
@@ -2152,10 +2119,10 @@ class PhoneNumberUtil
      * connect, the number is not considered possible without it.
      *
      * @param PhoneNumber $number The number that needs to be checked
-     * @param int $type PhoneNumberType The type we are interested in
+     * @param PhoneNumberType $type PhoneNumberType The type we are interested in
      * @return bool true if the number is possible for this particular type
      */
-    public function isPossibleNumberForType(PhoneNumber $number, int $type): bool
+    public function isPossibleNumberForType(PhoneNumber $number, PhoneNumberType $type): bool
     {
         $result = $this->isPossibleNumberForTypeWithReason($number, $type);
         return $result === ValidationResult::IS_POSSIBLE
@@ -2165,11 +2132,8 @@ class PhoneNumberUtil
     /**
      * Helper method to check a number against possible lengths for this number type, and determine
      * whether it matches, or is too short or too long.
-     *
-     * @param int $type PhoneNumberType
-     * @return int ValidationResult
      */
-    protected function testNumberLength(string $number, PhoneMetadata $metadata, int $type = PhoneNumberType::UNKNOWN): int
+    protected function testNumberLength(string $number, PhoneMetadata $metadata, PhoneNumberType $type = PhoneNumberType::UNKNOWN): ValidationResult
     {
         $descForType = $this->getNumberDescByType($metadata, $type);
         // There should always be "possibleLengths" set for every element. This is declared in the XML
@@ -2227,7 +2191,7 @@ class PhoneNumberUtil
         // This is safe because there is never an overlap between the possible lengths and the local-only
         // lengths; this is checked at build time.
 
-        if (in_array($actualLength, $localLengths)) {
+        if (in_array($actualLength, $localLengths, true)) {
             return ValidationResult::IS_POSSIBLE_LOCAL_ONLY;
         }
 
@@ -2246,7 +2210,7 @@ class PhoneNumberUtil
 
         // We skip the first element; we've already checked it.
         array_shift($possibleLengths);
-        return in_array($actualLength, $possibleLengths) ? ValidationResult::IS_POSSIBLE : ValidationResult::INVALID_LENGTH;
+        return in_array($actualLength, $possibleLengths, true) ? ValidationResult::IS_POSSIBLE : ValidationResult::INVALID_LENGTH;
     }
 
     /**
@@ -2265,10 +2229,10 @@ class PhoneNumberUtil
      * Returns the country calling code for a specific region. For example, this would be 1 for the
      * United States, and 64 for New Zealand. Assumes the region is already valid.
      *
-     * @param string|null $regionCode the region that we want to get the country calling code for
+     * @param string $regionCode the region that we want to get the country calling code for
      * @return int the country calling code for the region denoted by regionCode
      */
-    public function getCountryCodeForRegion(?string $regionCode): int
+    public function getCountryCodeForRegion(string $regionCode): int
     {
         if (!$this->isValidRegionCode($regionCode)) {
             return 0;
@@ -2282,13 +2246,13 @@ class PhoneNumberUtil
      *
      * @param string $regionCode the region that we want to get the country calling code for
      * @return int the country calling code for the region denoted by regionCode
-     * @throws \InvalidArgumentException if the region is invalid
+     * @throws InvalidArgumentException if the region is invalid
      */
     protected function getCountryCodeForValidRegion(string $regionCode): int
     {
         $metadata = $this->getMetadataForRegion($regionCode);
         if ($metadata === null) {
-            throw new \InvalidArgumentException('Invalid region code: ' . $regionCode);
+            throw new InvalidArgumentException('Invalid region code: ' . $regionCode);
         }
         return $metadata->getCountryCode();
     }
@@ -2301,8 +2265,8 @@ class PhoneNumberUtil
      *
      * @param PhoneNumber $number the phone number to be formatted
      * @param string $regionCallingFrom the region where the call is being placed
-     * @param boolean $withFormatting whether the number should be returned with formatting symbols, such as
-     *     spaces and dashes.
+     * @param bool $withFormatting whether the number should be returned with formatting symbols, such as
+     *                             spaces and dashes.
      * @return string the formatted phone number
      */
     public function formatNumberForMobileDialing(PhoneNumber $number, string $regionCallingFrom, bool $withFormatting): string
@@ -2383,11 +2347,11 @@ class PhoneNumberUtil
      * contains an empty string, returns the number in national format without any carrier code.
      *
      * @param PhoneNumber $number the phone number to be formatted
-     * @param string $carrierCode the carrier selection code to be used
+     * @param string|null $carrierCode the carrier selection code to be used
      * @return string the formatted phone number in national format for dialing using the carrier as
-     * specified in the {@code carrierCode}
+     *                specified in the {@code carrierCode}
      */
-    public function formatNationalNumberWithCarrierCode(PhoneNumber $number, string $carrierCode): string
+    public function formatNationalNumberWithCarrierCode(PhoneNumber $number, ?string $carrierCode): string
     {
         $countryCallingCode = $number->getCountryCode();
         $nationalSignificantNumber = $this->getNationalSignificantNumber($number);
@@ -2424,15 +2388,15 @@ class PhoneNumberUtil
      * {@code preferredDomesticCarrierCode}, and the {@code fallbackCarrierCode} contains an empty
      * string, return the number in national format without any carrier code.
      *
-     * <p>Use {@link #formatNationalNumberWithCarrierCode} instead if the carrier code passed in
+     * <p>Use {@see formatNationalNumberWithCarrierCode} instead if the carrier code passed in
      * should take precedence over the number's {@code preferredDomesticCarrierCode} when formatting.
      *
      * @param PhoneNumber $number the phone number to be formatted
      * @param string $fallbackCarrierCode the carrier selection code to be used, if none is found in the
-     *     phone number itself
+     *                                    phone number itself
      * @return string the formatted phone number in national format for dialing using the number's
-     *     {@code preferredDomesticCarrierCode}, or the {@code fallbackCarrierCode} passed in if
-     *     none is found
+     *                {@code preferredDomesticCarrierCode}, or the {@code fallbackCarrierCode} passed in if
+     *                none is found
      */
     public function formatNationalNumberWithPreferredCarrierCode(PhoneNumber $number, string $fallbackCarrierCode): string
     {
@@ -2500,7 +2464,7 @@ class PhoneNumberUtil
      * </ul>
      *
      * @param PhoneNumber $number the phone number that needs to be formatted
-     * @param string $regionCallingFrom the region where the call is being placed
+     * @param $regionCallingFrom string the region where the call is being placed
      * @return string the formatted phone number
      */
     public function formatOutOfCountryKeepingAlphaChars(PhoneNumber $number, string $regionCallingFrom): string
@@ -2525,7 +2489,7 @@ class PhoneNumberUtil
         // trim anything at all. Similarly, if the national number was less than three digits, we don't
         // trim anything at all.
         $nationalNumber = $this->getNationalSignificantNumber($number);
-        if (strlen($nationalNumber) > 3) {
+        if (mb_strlen($nationalNumber) > 3) {
             $firstNationalNumberDigit = strpos($rawInput, substr($nationalNumber, 0, 3));
             if ($firstNationalNumberDigit !== false) {
                 $rawInput = substr($rawInput, $firstNationalNumberDigit);
@@ -2586,7 +2550,7 @@ class PhoneNumberUtil
             PhoneNumberFormat::INTERNATIONAL,
             $formattedNumber
         );
-        if (isset($internationalPrefixForFormatting) && $internationalPrefixForFormatting !== '') {
+        if ($internationalPrefixForFormatting !== null && $internationalPrefixForFormatting !== '') {
             $formattedNumber = $internationalPrefixForFormatting . ' ' . $countryCode . ' ' . $formattedNumber;
         } else {
             // Invalid region entered as country-calling-from (so no metadata was found for it) or the
@@ -2615,7 +2579,7 @@ class PhoneNumberUtil
      *
      * @param PhoneNumber $number the phone number to be formatted
      * @param string $regionCallingFrom the region where the call is being placed
-     * @return string  the formatted phone number
+     * @return string the formatted phone number
      */
     public function formatOutOfCountryCallingNumber(PhoneNumber $number, string $regionCallingFrom): string
     {
@@ -2692,11 +2656,11 @@ class PhoneNumberUtil
 
     /**
      * Checks if this is a region under the North American Numbering Plan Administration (NANPA).
-     * @return boolean true if regionCode is one of the regions under NANPA
+     * @return bool true if regionCode is one of the regions under NANPA
      */
     public function isNANPACountry(string $regionCode): bool
     {
-        return in_array(strtoupper($regionCode), $this->nanpaRegions);
+        return in_array(strtoupper($regionCode), $this->nanpaRegions, true);
     }
 
     /**
@@ -2713,7 +2677,7 @@ class PhoneNumberUtil
      *
      * @param PhoneNumber $number the phone number that needs to be formatted in its original number format
      * @param string $regionCallingFrom the region whose IDD needs to be prefixed if the original number
-     *     has one
+     *                                  has one
      * @return string the formatted phone number in its original number format
      */
     public function formatInOriginalFormat(PhoneNumber $number, string $regionCallingFrom): string
@@ -2803,7 +2767,7 @@ class PhoneNumberUtil
         $rawInput = $number->getRawInput();
         // If no digit is inserted/removed/modified as a result of our formatting, we return the
         // formatted phone number; otherwise we return the raw input the user entered.
-        if ($formattedNumber !== null && $rawInput !== '') {
+        if ($rawInput !== '') {
             $normalizedFormattedNumber = static::normalizeDiallableCharsOnly($formattedNumber);
             $normalizedRawInput = static::normalizeDiallableCharsOnly($rawInput);
             if ($normalizedFormattedNumber !== $normalizedRawInput) {
@@ -2813,8 +2777,6 @@ class PhoneNumberUtil
         return $formattedNumber;
     }
 
-    /**
-     */
     protected function hasFormattingPatternForNumber(PhoneNumber $number): bool
     {
         $countryCallingCode = $number->getCountryCode();
@@ -2839,7 +2801,7 @@ class PhoneNumberUtil
      * formatting functions to prefix the national prefix when required.
      *
      * @param string $regionCode the region that we want to get the dialling prefix for
-     * @param boolean $stripNonDigits true to strip non-digits from the national dialling prefix
+     * @param bool $stripNonDigits true to strip non-digits from the national dialling prefix
      * @return string|null the dialling prefix for the region denoted by regionCode
      */
     public function getNddPrefixForRegion(string $regionCode, bool $stripNonDigits): ?string
@@ -2893,16 +2855,11 @@ class PhoneNumberUtil
      * significant number "789272696". This is valid, while the original string is not diallable.
      *
      * @param PhoneNumber $number the phone number that we want to validate
-     * @return boolean that indicates whether the number is of a valid pattern
+     * @return bool that indicates whether the number is of a valid pattern
      */
     public function isValidNumber(PhoneNumber $number): bool
     {
         $regionCode = $this->getRegionCodeForNumber($number);
-
-        if ($regionCode === null) {
-            return false;
-        }
-
         return $this->isValidNumberForRegion($number, $regionCode);
     }
 
@@ -2913,18 +2870,21 @@ class PhoneNumberUtil
      * immediately exits with false. After this, the specific number pattern rules for the region are
      * examined. This is useful for determining for example whether a particular number is valid for
      * Canada, rather than just a valid NANPA number.
-     * Warning: In most cases, you want to use {@link #isValidNumber} instead. For example, this
+     * Warning: In most cases, you want to use {@see isValidNumber} instead. For example, this
      * method will mark numbers from British Crown dependencies such as the Isle of Man as invalid for
      * the region "GB" (United Kingdom), since it has its own region code, "IM", which may be
      * undesirable.
      *
      * @param PhoneNumber $number the phone number that we want to validate
-     * @param string $regionCode the region that we want to validate the phone number for
-     * @return boolean that indicates whether the number is of a valid pattern
+     * @param string|null $regionCode the region that we want to validate the phone number for
+     * @return bool that indicates whether the number is of a valid pattern
      */
-    public function isValidNumberForRegion(PhoneNumber $number, string $regionCode): bool
+    public function isValidNumberForRegion(PhoneNumber $number, ?string $regionCode): bool
     {
         $countryCode = $number->getCountryCode();
+        if ($countryCode === null) {
+            return false;
+        }
         $metadata = $this->getMetadataForRegionOrCallingCode($countryCode, $regionCode);
         if (($metadata === null) ||
             (static::REGION_CODE_FOR_NON_GEO_ENTITY !== $regionCode &&
@@ -2950,27 +2910,27 @@ class PhoneNumberUtil
      *
      * <p> This method will throw a {@link NumberParseException} if the number is not considered to
      * be a possible number. Note that validation of whether the number is actually a valid number
-     * for a particular region is not performed. This can be done separately with {@link #isValidNumber}.
+     * for a particular region is not performed. This can be done separately with {@see isValidNumber}.
      *
      * <p> Note this method canonicalizes the phone number such that different representations can be
      * easily compared, no matter what form it was originally entered in (e.g. national,
      * international). If you want to record context about the number being parsed, such as the raw
-     * input that was entered, how the country code was derived etc. then call {@link
-     * #parseAndKeepRawInput} instead.
+     * input that was entered, how the country code was derived etc. then call {@see parseAndKeepRawInput}
+     * instead.
      *
      * @param string $numberToParse number that we are attempting to parse. This can contain formatting
-     *                          such as +, ( and -, as well as a phone number extension.
+     *                              such as +, ( and -, as well as a phone number extension.
      * @param string|null $defaultRegion region that we are expecting the number to be from. This is only used
-     *                          if the number being parsed is not written in international format.
-     *                          The country_code for the number in this case would be stored as that
-     *                          of the default region supplied. If the number is guaranteed to
-     *                          start with a '+' followed by the country calling code, then
-     *                          "ZZ" or null can be supplied.
+     *                                   if the number being parsed is not written in international format.
+     *                                   The country_code for the number in this case would be stored as that
+     *                                   of the default region supplied. If the number is guaranteed to
+     *                                   start with a '+' followed by the country calling code, then
+     *                                   "ZZ" or null can be supplied.
      * @return PhoneNumber a phone number proto buffer filled with the parsed number
-     * @throws NumberParseException  if the string is not considered to be a viable phone number (e.g.
-     *                               too few or too many digits) or if no default region was supplied
-     *                               and the number is not in international format (does not start
-     *                               with +)
+     * @throws NumberParseException if the string is not considered to be a viable phone number (e.g.
+     *                              too few or too many digits) or if no default region was supplied
+     *                              and the number is not in international format (does not start
+     *                              with +)
      */
     public function parse(string $numberToParse, ?string $defaultRegion = null, ?PhoneNumber $phoneNumber = null, bool $keepRawInput = false): PhoneNumber
     {
@@ -2987,12 +2947,10 @@ class PhoneNumberUtil
      * code, we cannot work out things like whether there should be a national prefix applied, or how
      * to format extensions, so we return the national significant number with no formatting applied.
      *
-     * @param PhoneNumber $number the phone number to be formatted
-     * @param int $numberFormat the format the phone number should be formatted into
      * @param NumberFormat[] $userDefinedFormats formatting rules specified by clients
-     * @return String the formatted phone number
+     * @return string the formatted phone number
      */
-    public function formatByPattern(PhoneNumber $number, int $numberFormat, array $userDefinedFormats): string
+    public function formatByPattern(PhoneNumber $number, PhoneNumberFormat $numberFormat, array $userDefinedFormats): string
     {
         $countryCallingCode = $number->getCountryCode();
         $nationalSignificantNumber = $this->getNationalSignificantNumber($number);
@@ -3021,7 +2979,7 @@ class PhoneNumberUtil
             $nationalPrefixFormattingRule = $formattingPattern->getNationalPrefixFormattingRule();
             if ($nationalPrefixFormattingRule !== '') {
                 $nationalPrefix = $metadata->getNationalPrefix();
-                if (isset($nationalPrefix) && $nationalPrefix !== '') {
+                if ($nationalPrefix !== null && $nationalPrefix !== '') {
                     // Replace $NP with national prefix and $FG with the first group ($1).
                     $nationalPrefixFormattingRule = str_replace(
                         [static::NP_STRING, static::FG_STRING],
@@ -3044,10 +3002,10 @@ class PhoneNumberUtil
     /**
      * Gets a valid number for the specified region.
      *
-     * @param string $regionCode the region for which an example number is needed
+     * @param $regionCode string the region for which an example number is needed
      * @return PhoneNumber|null a valid fixed-line number for the specified region. Returns null when the metadata
-     *    does not contain such information, or the region 001 is passed in. For 001 (representing
-     *    non-geographical numbers), call {@link #getExampleNumberForNonGeoEntity} instead.
+     *                          does not contain such information, or the region 001 is passed in. For 001 (representing
+     *                          non-geographical numbers), call {@see getExampleNumberForNonGeoEntity} instead.
      */
     public function getExampleNumber(string $regionCode): ?PhoneNumber
     {
@@ -3063,7 +3021,7 @@ class PhoneNumberUtil
      *
      * @param string $regionCode The region for which an example number is needed
      * @return PhoneNumber|null An invalid number for the specified region. Returns null when an unsupported region
-     * or the region 001 (Earth) is passed in.
+     *                          or the region 001 (Earth) is passed in.
      */
     public function getInvalidExampleNumber(string $regionCode): ?PhoneNumber
     {
@@ -3115,19 +3073,23 @@ class PhoneNumberUtil
     /**
      * Gets a valid number for the specified region and number type.
      *
-     * @param string|int $regionCodeOrType the region for which an example number is needed
-     * @param int $type the PhoneNumberType of number that is needed
+     * @param string|PhoneNumberType $regionCodeOrType the region for which an example number is needed or the
+     *                                                 PhoneNumberType when not passing in $type
      * @return PhoneNumber|null a valid number for the specified region and type. Returns null when the metadata
-     *     does not contain such information or if an invalid region or region 001 was entered.
-     *     For 001 (representing non-geographical numbers), call
-     *     {@link #getExampleNumberForNonGeoEntity} instead.
+     *                          does not contain such information or if an invalid region or region 001 was entered.
+     *                          For 001 (representing non-geographical numbers), call
+     *                          {@see getExampleNumberForNonGeoEntity} instead.
      *
      * If $regionCodeOrType is the only parameter supplied, then a valid number for the specified number type
      * will be returned that may belong to any country.
      */
-    public function getExampleNumberForType(string|int $regionCodeOrType, ?int $type = null): ?PhoneNumber
+    public function getExampleNumberForType(string|PhoneNumberType $regionCodeOrType, ?PhoneNumberType $type = null): ?PhoneNumber
     {
-        if (is_int($regionCodeOrType) && $type === null) {
+        if ($type === null) {
+            if (!$regionCodeOrType instanceof PhoneNumberType) {
+                throw new TypeError('$regionCodeOrType must be a PhoneNumberType');
+            }
+
             /*
              * Gets a valid number for the specified number type (it may belong to any country).
              */
@@ -3153,9 +3115,8 @@ class PhoneNumberUtil
             return null;
         }
 
-        if (is_int($regionCodeOrType)) {
-            // This should be a string by now
-            return null;
+        if (!is_string($regionCodeOrType)) {
+            throw new TypeError('$regionCodeOrType must be a string if $type is null');
         }
 
         // Check the region code is valid.
@@ -3173,10 +3134,7 @@ class PhoneNumberUtil
         return null;
     }
 
-    /**
-     * @param int $type PhoneNumberType
-     */
-    protected function getNumberDescByType(PhoneMetadata $metadata, int $type): PhoneNumberDesc
+    protected function getNumberDescByType(PhoneMetadata $metadata, PhoneNumberType $type): PhoneNumberDesc
     {
         return match ($type) {
             PhoneNumberType::PREMIUM_RATE => $metadata->getPremiumRate(),
@@ -3198,8 +3156,8 @@ class PhoneNumberUtil
      *
      * @param int $countryCallingCode the country calling code for a non-geographical entity
      * @return PhoneNumber|null a valid number for the non-geographical entity. Returns null when the metadata
-     *    does not contain such information, or the country calling code passed in does not belong
-     *    to a non-geographical entity.
+     *                          does not contain such information, or the country calling code passed in does not belong
+     *                          to a non-geographical entity.
      */
     public function getExampleNumberForNonGeoEntity(int $countryCallingCode): ?PhoneNumber
     {
@@ -3246,16 +3204,15 @@ class PhoneNumberUtil
      * the numbers +1 345 657 1234 and 657 1234 are a SHORT_NSN_MATCH. The numbers
      * +1 345 657 1234 and 345 657 are a NO_MATCH.
      *
-     * @param $firstNumberIn PhoneNumber|string First number to compare. If it is a
-     * string it can contain formatting, and can have country calling code specified
-     * with + at the start.
-     * @param $secondNumberIn PhoneNumber|string Second number to compare. If it is a
-     * string it can contain formatting, and can have country calling code specified
-     * with + at the start.
-     * @throws \InvalidArgumentException
-     * @return int {MatchType} NOT_A_NUMBER, NO_MATCH,
+     * @param $firstNumberIn string|PhoneNumber First number to compare. If it is a
+     *                      string it can contain formatting, and can have country calling code specified
+     *                      with + at the start.
+     * @param $secondNumberIn string|PhoneNumber Second number to compare. If it is a
+     *                       string it can contain formatting, and can have country calling code specified
+     *                       with + at the start.
+     * @throws InvalidArgumentException
      */
-    public function isNumberMatch(PhoneNumber|string $firstNumberIn, PhoneNumber|string $secondNumberIn): int
+    public function isNumberMatch(PhoneNumber|string $firstNumberIn, PhoneNumber|string $secondNumberIn): MatchType
     {
         if (is_string($firstNumberIn) && is_string($secondNumberIn)) {
             try {
@@ -3284,8 +3241,6 @@ class PhoneNumberUtil
             return MatchType::NOT_A_NUMBER;
         }
         if ($firstNumberIn instanceof PhoneNumber && is_string($secondNumberIn)) {
-            // First see if the second number has an implicit country calling code, by attempting to parse
-            // it.
             try {
                 $secondNumberAsProto = $this->parse($secondNumberIn, static::UNKNOWN_REGION);
                 return $this->isNumberMatch($firstNumberIn, $secondNumberAsProto);
@@ -3369,8 +3324,8 @@ class PhoneNumberUtil
     {
         $firstNumberNationalNumber = trim((string) $firstNumber->getNationalNumber());
         $secondNumberNationalNumber = trim((string) $secondNumber->getNationalNumber());
-        return str_ends_with($firstNumberNationalNumber, $secondNumberNationalNumber) ||
-        str_ends_with($secondNumberNationalNumber, $firstNumberNationalNumber);
+
+        return str_ends_with($firstNumberNationalNumber, $secondNumberNationalNumber) || str_ends_with($secondNumberNationalNumber, $firstNumberNationalNumber);
     }
 
     /**
@@ -3378,7 +3333,7 @@ class PhoneNumberUtil
      * invalid, unknown or regions that don't support mobile number portability.
      *
      * @param string $regionCode the region for which we want to know whether it supports mobile number
-     *                    portability or not.
+     *                           portability or not.
      */
     public function isMobileNumberPortableRegion(string $regionCode): bool
     {
@@ -3393,10 +3348,10 @@ class PhoneNumberUtil
     /**
      * Check whether a phone number is a possible number given a number in the form of a string, and
      * the region where the number could be dialed from. It provides a more lenient check than
-     * {@link #isValidNumber}. See {@link #isPossibleNumber(PhoneNumber)} for details.
+     * {@see isValidNumber}. See {@see isPossibleNumber(PhoneNumber)} for details.
      *
-     * Convenience wrapper around {@link #isPossibleNumberWithReason}. Instead of returning the reason
-     * for failure, this method returns a boolean value.
+     * Convenience wrapper around {@see isPossibleNumberWithReason}. Instead of returning the reason
+     * for failure, this method returns a bool value.
      * For failure, this method returns true if the number is either a possible fully-qualified number
      * (containing the area code and country code), or if the number could be a possible local number
      * (with a country code, but missing an area code). Local numbers are considered possible if they
@@ -3408,16 +3363,16 @@ class PhoneNumberUtil
      * isPossibleNumber(PhoneNumber $numberObject)
      * isPossibleNumber(string '+441174960126', string 'GB')
      *
-     * @param PhoneNumber|string $number the number that needs to be checked, in the form of a string
+     * @param string|PhoneNumber $number the number that needs to be checked, in the form of a string
      * @param string|null $regionDialingFrom the region that we are expecting the number to be dialed from.
-     *     Note this is different from the region where the number belongs.  For example, the number
-     *     +1 650 253 0000 is a number that belongs to US. When written in this form, it can be
-     *     dialed from any region. When it is written as 00 1 650 253 0000, it can be dialed from any
-     *     region which uses an international dialling prefix of 00. When it is written as
-     *     650 253 0000, it can only be dialed from within the US, and when written as 253 0000, it
-     *     can only be dialed from within a smaller area in the US (Mountain View, CA, to be more
-     *     specific).
-     * @return boolean true if the number is possible
+     *                                       Note this is different from the region where the number belongs.  For example, the number
+     *                                       +1 650 253 0000 is a number that belongs to US. When written in this form, it can be
+     *                                       dialed from any region. When it is written as 00 1 650 253 0000, it can be dialed from any
+     *                                       region which uses an international dialling prefix of 00. When it is written as
+     *                                       650 253 0000, it can only be dialed from within the US, and when written as 253 0000, it
+     *                                       can only be dialed from within a smaller area in the US (Mountain View, CA, to be more
+     *                                       specific).
+     * @return bool true if the number is possible
      */
     public function isPossibleNumber(PhoneNumber|string $number, ?string $regionDialingFrom = null): bool
     {
@@ -3437,7 +3392,7 @@ class PhoneNumberUtil
 
     /**
      * Check whether a phone number is a possible number. It provides a more lenient check than
-     * {@link #isValidNumber} in the following sense:
+     * {@see isValidNumber} in the following sense:
      * <ol>
      *   <li> It only checks the length of phone numbers. In particular, it doesn't check starting
      *        digits of the number.
@@ -3453,6 +3408,7 @@ class PhoneNumberUtil
      *        length (obviously includes the length of area codes for fixed line numbers), it will
      *        return false for the subscriber-number-only version.
      * </ol>
+     *
      * There is a known <a href="https://issuetracker.google.com/issues/335892662">issue</a> with this
      * method: if a number is possible only in a certain region among several regions that share the
      * same country calling code, this method will consider only the "main" region. For example,
@@ -3460,9 +3416,9 @@ class PhoneNumberUtil
      * this method will return IS_POSSIBLE_LOCAL_ONLY for +1310xxxx.
      *
      * @param PhoneNumber $number the number that needs to be checked
-     * @return int a ValidationResult object which indicates whether the number is possible
+     * @return ValidationResult object which indicates whether the number is possible
      */
-    public function isPossibleNumberWithReason(PhoneNumber $number): int
+    public function isPossibleNumberWithReason(PhoneNumber $number): ValidationResult
     {
         return $this->isPossibleNumberForTypeWithReason($number, PhoneNumberType::UNKNOWN);
     }
@@ -3470,11 +3426,11 @@ class PhoneNumberUtil
     /**
      * Check whether a phone number is a possible number of a particular type. For types that don't
      * exist in a particular region, this will return a result that isn't so useful; it is recommended
-     * that you use {@link #getSupportedTypesForRegion} or {@link #getSupportedTypesForNonGeoEntity}
+     * that you use {@see getSupportedTypesForRegion} or {@see getSupportedTypesForNonGeoEntity}
      * respectively before calling this method to determine whether you should call it for this number
      * at all.
      *
-     * This provides a more lenient check than {@link #isValidNumber} in the following sense:
+     * This provides a more lenient check than {@see isValidNumber} in the following sense:
      *
      * <ol>
      *   <li> It only checks the length of phone numbers. In particular, it doesn't check starting
@@ -3496,10 +3452,10 @@ class PhoneNumberUtil
      * this method will return IS_POSSIBLE_LOCAL_ONLY for +1310xxxx.
      *
      * @param PhoneNumber $number the number that needs to be checked
-     * @param int $type the PhoneNumberType we are interested in
-     * @return int a ValidationResult object which indicates whether the number is possible
+     * @param PhoneNumberType $type the PhoneNumberType we are interested in
+     * @return ValidationResult object which indicates whether the number is possible
      */
-    public function isPossibleNumberForTypeWithReason(PhoneNumber $number, int $type): int
+    public function isPossibleNumberForTypeWithReason(PhoneNumber $number, PhoneNumberType $type): ValidationResult
     {
         $nationalNumber = $this->getNationalSignificantNumber($number);
         $countryCode = $number->getCountryCode();
@@ -3526,7 +3482,7 @@ class PhoneNumberUtil
      * the PhoneNumber object passed in will not be modified.
      *
      * @param PhoneNumber $number a PhoneNumber object which contains a number that is too long to be valid.
-     * @return boolean true if a valid phone number can be successfully extracted.
+     * @return bool true if a valid phone number can be successfully extracted.
      */
     public function truncateTooLongNumber(PhoneNumber $number): bool
     {
@@ -3537,7 +3493,7 @@ class PhoneNumberUtil
         $numberCopy->mergeFrom($number);
         $nationalNumber = $number->getNationalNumber();
         do {
-            $nationalNumber = substr($nationalNumber, 0, -1);
+            $nationalNumber = (string) floor((int) $nationalNumber / 10);
             $numberCopy->setNationalNumber($nationalNumber);
             if ($nationalNumber === '0' || $this->isPossibleNumberWithReason($numberCopy) === ValidationResult::TOO_SHORT) {
                 return false;

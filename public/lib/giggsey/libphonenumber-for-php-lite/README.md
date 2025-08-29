@@ -36,7 +36,7 @@ You can also use any other [PSR-4](http://www.php-fig.org/psr/psr-4/) compliant 
 
 ### PHP Version Policy
 
-This library will be updated to use [supported versions of PHP](https://www.php.net/supported-versions.php) only. At the moment, the main [giggsey/libphonenumber-for-php](https://github.com/giggsey/libphonenumber-for-php) library supports older PHP versions.
+This library will be updated to use [supported versions of PHP](https://www.php.net/supported-versions.php) only.
 
 ## Documentation
 
@@ -135,12 +135,12 @@ If [giggsey/libphonenumber-for-php](https://github.com/giggsey/libphonenumber-fo
 
 ## Generating data
 
-Generating the data is not normally needed, as this repository will generally always have the up to data metadata.
+Generating the data is not normally needed, as this repository will generally always have the up to date metadata.
 
-If you do need to generate the data, the commands are provided by [Phing](https://www.phing.info). Ensure you have all the dev composer dependencies installed, then run
+To compile the data, run the composer script 'build'
 
 ```bash
-$ vendor/bin/phing compile
+composer run build
 ```
 
-This compile task clones the [libphonenumber](https://github.com/google/libphonenumber) project at the version specified in [METADATA-VERSION.php](METADATA-VERSION.php).
+This build process clones the [libphonenumber](https://github.com/google/libphonenumber) project at the version specified in [METADATA-VERSION.php](METADATA-VERSION.php).

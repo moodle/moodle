@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace libphonenumber;
 
-class PhoneNumber implements \Serializable, \Stringable
+use Serializable;
+
+/**
+ * It is not recommended to create PhoneNumber objects directly, instead you should
+ * use PhoneNumberUtil::parse() to parse the number and return a PhoneNumber object
+ * @no-named-arguments
+ */
+class PhoneNumber implements Serializable
 {
     /**
      * The country calling code for this number, as defined by the International Telecommunication Union
      * (ITU). For example, this would be 1 for NANPA countries, and 33 for France.
      */
-    protected int $countryCode = 0;
+    protected ?int $countryCode = null;
     /**
      * National (significant) Number is defined in International Telecommunication Union (ITU)
      * Recommendation E.164. It is a language/country-neutral representation of a phone number at a
@@ -53,12 +60,8 @@ class PhoneNumber implements \Serializable, \Stringable
     /**
      * The source from which the country_code is derived. This is not set in the general parsing method,
      * but in the method that parses and keeps raw_input. New fields could be added upon request.
-     *
-     * @see CountryCodeSource
-     *
-     * This must be one of the CountryCodeSource constants.
      */
-    protected int $countryCodeSource = CountryCodeSource::UNSPECIFIED;
+    protected ?CountryCodeSource $countryCodeSource = CountryCodeSource::UNSPECIFIED;
     /**
      * The carrier selection code that is preferred when calling this phone number domestically. This
      * also includes codes that need to be dialed in some countries when calling from landlines to
@@ -76,16 +79,8 @@ class PhoneNumber implements \Serializable, \Stringable
      * The number of leading zeros of this phone number.
      */
     protected int $numberOfLeadingZeros = 1;
-    private bool $hasCountryCode = false;
 
-    /**
-     * Clears this phone number.
-     *
-     * This effectively resets this phone number to the state of a new instance.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clear(): PhoneNumber
+    public function clear(): static
     {
         $this->clearCountryCode();
         $this->clearNationalNumber();
@@ -98,91 +93,50 @@ class PhoneNumber implements \Serializable, \Stringable
         return $this;
     }
 
-    /**
-     * Clears the country code of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearCountryCode(): PhoneNumber
+    public function clearCountryCode(): static
     {
-        $this->countryCode = 0;
-        $this->hasCountryCode = false;
+        $this->countryCode = null;
         return $this;
     }
 
-    /**
-     * Clears the national number of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearNationalNumber(): PhoneNumber
+    public function clearNationalNumber(): static
     {
         $this->nationalNumber = null;
         return $this;
     }
 
-    /**
-     * Clears the extension of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearExtension(): PhoneNumber
+    public function clearExtension(): static
     {
         $this->extension = null;
         return $this;
     }
 
-    /**
-     * Clears the italian leading zero information of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearItalianLeadingZero(): PhoneNumber
+    public function clearItalianLeadingZero(): static
     {
         $this->italianLeadingZero = null;
         return $this;
     }
 
-    /**
-     * Clears the number of leading zeros of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearNumberOfLeadingZeros(): PhoneNumber
+    public function clearNumberOfLeadingZeros(): static
     {
         $this->hasNumberOfLeadingZeros = false;
         $this->numberOfLeadingZeros = 1;
         return $this;
     }
 
-    /**
-     * Clears the raw input of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearRawInput(): PhoneNumber
+    public function clearRawInput(): static
     {
         $this->rawInput = null;
         return $this;
     }
 
-    /**
-     * Clears the country code source of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearCountryCodeSource(): PhoneNumber
+    public function clearCountryCodeSource(): static
     {
         $this->countryCodeSource = CountryCodeSource::UNSPECIFIED;
         return $this;
     }
 
-    /**
-     * Clears the preferred domestic carrier code of this phone number.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function clearPreferredDomesticCarrierCode(): PhoneNumber
+    public function clearPreferredDomesticCarrierCode(): static
     {
         $this->preferredDomesticCarrierCode = null;
         return $this;
@@ -190,12 +144,8 @@ class PhoneNumber implements \Serializable, \Stringable
 
     /**
      * Merges the information from another phone number into this phone number.
-     *
-     * @param PhoneNumber $other The phone number to copy.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
      */
-    public function mergeFrom(PhoneNumber $other): PhoneNumber
+    public function mergeFrom(PhoneNumber $other): static
     {
         if ($other->hasCountryCode()) {
             $this->setCountryCode($other->getCountryCode());
@@ -224,114 +174,60 @@ class PhoneNumber implements \Serializable, \Stringable
         return $this;
     }
 
-    /**
-     * Returns whether this phone number has a country code set.
-     *
-     * @return bool True if a country code is set, false otherwise.
-     */
     public function hasCountryCode(): bool
     {
-        return $this->hasCountryCode;
+        return $this->countryCode !== null;
     }
 
-    public function getCountryCode(): int
+    public function getCountryCode(): ?int
     {
         return $this->countryCode;
     }
 
-    /**
-     * Sets the country code of this phone number.
-     *
-     * @param int $value The country code.
-     *
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setCountryCode(int $value): PhoneNumber
+    public function setCountryCode(int $value): static
     {
-        $this->hasCountryCode = true;
         $this->countryCode = $value;
         return $this;
     }
 
-    /**
-     * Returns whether this phone number has a national number set.
-     *
-     * @return bool True if a national number is set, false otherwise.
-     */
     public function hasNationalNumber(): bool
     {
         return $this->nationalNumber !== null;
     }
 
-    /**
-     * Returns the national number of this phone number.
-     *
-     * @return string|null The national number, or null if not set.
-     */
     public function getNationalNumber(): ?string
     {
         return $this->nationalNumber;
     }
 
-    /**
-     * Sets the national number of this phone number.
-     *
-     * @param string $value The national number.
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setNationalNumber(string $value): PhoneNumber
+    public function setNationalNumber(string $value): static
     {
         $this->nationalNumber = $value;
         return $this;
     }
 
-    /**
-     * Returns whether this phone number has an extension set.
-     *
-     * @return bool True if an extension is set, false otherwise.
-     */
     public function hasExtension(): bool
     {
-        return $this->extension !== null;
+        return isset($this->extension) && $this->extension !== '';
     }
 
-    /**
-     * Returns the extension of this phone number.
-     *
-     * @return string|null The extension, or null if not set.
-     */
     public function getExtension(): ?string
     {
         return $this->extension;
     }
 
-    /**
-     * Sets the extension of this phone number.
-     *
-     * @param string $value The extension.
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setExtension(string $value): PhoneNumber
+    public function setExtension(string $value): static
     {
         $this->extension = $value;
         return $this;
     }
 
-    /**
-     * Returns whether this phone number has the italian leading zero information set.
-     */
     public function hasItalianLeadingZero(): bool
     {
-        return $this->italianLeadingZero !== null;
+        return isset($this->italianLeadingZero);
     }
 
-    /**
-     * Sets whether this phone number uses an italian leading zero.
-     *
-     * @param bool $value True to use italian leading zero, false otherwise.
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setItalianLeadingZero(bool $value): PhoneNumber
+    public function setItalianLeadingZero(bool $value): static
     {
         $this->italianLeadingZero = $value;
         return $this;
@@ -340,137 +236,73 @@ class PhoneNumber implements \Serializable, \Stringable
     /**
      * Returns whether this phone number uses an italian leading zero.
      *
-     * @return bool|null True if it uses an italian leading zero, false if it does not, null if not set.
+     * @return bool|null True if it uses an italian leading zero, false it it does not, null if not set.
      */
     public function isItalianLeadingZero(): ?bool
     {
-        return $this->italianLeadingZero;
+        return $this->italianLeadingZero ?? null;
     }
 
-    /**
-     * Returns whether this phone number has a number of leading zeros set.
-     *
-     * @return bool True if a number of leading zeros is set, false otherwise.
-     */
     public function hasNumberOfLeadingZeros(): bool
     {
         return $this->hasNumberOfLeadingZeros;
     }
 
-    /**
-     * Returns the number of leading zeros of this phone number.
-     *
-     * @return int The number of leading zeros.
-     */
     public function getNumberOfLeadingZeros(): int
     {
         return $this->numberOfLeadingZeros;
     }
 
-    /**
-     * Sets the number of leading zeros of this phone number.
-     *
-     * @param int $value The number of leading zeros.
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setNumberOfLeadingZeros(int $value): PhoneNumber
+    public function setNumberOfLeadingZeros(int $value): static
     {
         $this->hasNumberOfLeadingZeros = true;
         $this->numberOfLeadingZeros = $value;
         return $this;
     }
 
-    /**
-     * Returns whether this phone number has a raw input.
-     *
-     * @return bool True if a raw input is set, false otherwise.
-     */
     public function hasRawInput(): bool
     {
-        return $this->rawInput !== null;
+        return isset($this->rawInput);
     }
 
-    /**
-     * Returns the raw input of this phone number.
-     *
-     * @return string|null The raw input, or null if not set.
-     */
     public function getRawInput(): ?string
     {
         return $this->rawInput;
     }
 
-    /**
-     * Sets the raw input of this phone number.
-     *
-     * @param string $value The raw input.
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setRawInput(string $value): PhoneNumber
+    public function setRawInput(string $value): static
     {
         $this->rawInput = $value;
         return $this;
     }
 
-    /**
-     * Returns whether this phone number has a country code source.
-     *
-     * @return bool True if a country code source is set, false otherwise.
-     */
     public function hasCountryCodeSource(): bool
     {
         return $this->countryCodeSource !== CountryCodeSource::UNSPECIFIED;
     }
 
-    /**
-     * Returns the country code source of this phone number.
-     *
-     * @return int|null A CountryCodeSource constant, or null if not set.
-     */
-    public function getCountryCodeSource(): ?int
+    public function getCountryCodeSource(): ?CountryCodeSource
     {
         return $this->countryCodeSource;
     }
 
-    /**
-     * Sets the country code source of this phone number.
-     *
-     * @param int $value A CountryCodeSource constant.
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setCountryCodeSource(int $value): PhoneNumber
+    public function setCountryCodeSource(CountryCodeSource $value): static
     {
         $this->countryCodeSource = $value;
         return $this;
     }
 
-    /**
-     * Returns whether this phone number has a preferred domestic carrier code.
-     *
-     * @return bool True if a preferred domestic carrier code is set, false otherwise.
-     */
     public function hasPreferredDomesticCarrierCode(): bool
     {
-        return $this->preferredDomesticCarrierCode !== null;
+        return isset($this->preferredDomesticCarrierCode);
     }
 
-    /**
-     * Returns the preferred domestic carrier code of this phone number.
-     *
-     * @return string|null The preferred domestic carrier code, or null if not set.
-     */
     public function getPreferredDomesticCarrierCode(): ?string
     {
         return $this->preferredDomesticCarrierCode;
     }
 
-    /**
-     * Sets the preferred domestic carrier code of this phone number.
-     *
-     * @param string $value The preferred domestic carrier code.
-     * @return PhoneNumber This PhoneNumber instance, for chaining method calls.
-     */
-    public function setPreferredDomesticCarrierCode(string $value): PhoneNumber
+    public function setPreferredDomesticCarrierCode(string $value): static
     {
         $this->preferredDomesticCarrierCode = $value;
         return $this;
@@ -516,7 +348,7 @@ class PhoneNumber implements \Serializable, \Stringable
             $outputString .= ' Extension: ' . $this->extension;
         }
         if ($this->hasCountryCodeSource()) {
-            $outputString .= ' Country Code Source: ' . $this->countryCodeSource;
+            $outputString .= ' Country Code Source: ' . $this->countryCodeSource->name;
         }
         if ($this->hasPreferredDomesticCarrierCode()) {
             $outputString .= ' Preferred Domestic Carrier Code: ' . $this->preferredDomesticCarrierCode;
@@ -524,17 +356,11 @@ class PhoneNumber implements \Serializable, \Stringable
         return $outputString;
     }
 
-    /**
-     *
-     */
     public function serialize(): ?string
     {
         return serialize($this->__serialize());
     }
 
-    /**
-     * @return array{?int,?string,?string,?bool,int,?string,int,?string}
-     */
     public function __serialize(): array
     {
         return [
@@ -549,16 +375,13 @@ class PhoneNumber implements \Serializable, \Stringable
         ];
     }
 
-    /**
-     *
-     */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
         $this->__unserialize(unserialize($data, ['allowed_classes' => [__CLASS__]]));
     }
 
     /**
-     * @param array{int,?string,?string,?bool,int,?string,int,?string} $data
+     * @param array{int,string,string,bool|null,int,string|null,CountryCodeSource|null,string|null} $data
      */
     public function __unserialize(array $data): void
     {
@@ -569,9 +392,15 @@ class PhoneNumber implements \Serializable, \Stringable
             $this->italianLeadingZero,
             $this->numberOfLeadingZeros,
             $this->rawInput,
-            $this->countryCodeSource,
+            $countryCodeSource,
             $this->preferredDomesticCarrierCode
         ] = $data;
+
+        // BC layer to allow this method to unserialize "old" phonenumbers
+        if (is_int($countryCodeSource)) {
+            $countryCodeSource = CountryCodeSource::from($countryCodeSource);
+        }
+        $this->countryCodeSource = $countryCodeSource;
 
         if ($this->numberOfLeadingZeros > 1) {
             $this->hasNumberOfLeadingZeros = true;

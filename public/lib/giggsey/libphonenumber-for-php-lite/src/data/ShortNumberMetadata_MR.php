@@ -7,47 +7,40 @@
  * @internal
  */
 
-return [
-    'id' => 'MR',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '1\\d',
-        'posLength' => [
-            2,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '1[78]',
-        'example' => '17',
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '1[78]',
-        'example' => '17',
-    ],
-    'shortCode' => [
-        'pattern' => '1[78]',
-        'example' => '17',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'smsServices' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_MR extends PhoneMetadata
+{
+    protected const ID = 'MR';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1\d')
+            ->setPossibleLength([2]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1[78]')
+            ->setExampleNumber('17');
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1[78]')
+            ->setExampleNumber('17');
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1[78]')
+            ->setExampleNumber('17');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = PhoneNumberDesc::empty();
+        $this->smsServices = PhoneNumberDesc::empty();
+    }
+}

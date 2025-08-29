@@ -7,55 +7,42 @@
  * @internal
  */
 
-return [
-    'id' => 'NA',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '[19]\\d{2,4}',
-        'posLength' => [
-            3,
-            4,
-            5,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '10111',
-        'example' => '10111',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '10111',
-        'example' => '10111',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'shortCode' => [
-        'pattern' => '(?:10|93)111|(?:1\\d|9)\\d\\d',
-        'example' => '900',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'smsServices' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_NA extends PhoneMetadata
+{
+    protected const ID = 'NA';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[19]\d{2,4}')
+            ->setPossibleLength([3, 4, 5]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('10111')
+            ->setExampleNumber('10111')
+            ->setPossibleLength([5]);
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('10111')
+            ->setExampleNumber('10111')
+            ->setPossibleLength([5]);
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('(?:10|93)111|(?:1\d|9)\d\d')
+            ->setExampleNumber('900');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = PhoneNumberDesc::empty();
+        $this->smsServices = PhoneNumberDesc::empty();
+    }
+}

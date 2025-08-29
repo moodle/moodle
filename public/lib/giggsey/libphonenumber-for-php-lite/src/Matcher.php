@@ -7,7 +7,7 @@ namespace libphonenumber;
 /**
  * Matcher for various regex matching
  *
- * Note that this is NOT the same as Google's java PhoneNumberMatcher class.
+ * Note that this is NOT the same as google's java PhoneNumberMatcher class.
  * This class is a minimal port of java's built-in matcher class, whereas PhoneNumberMatcher
  * is designed to recognize phone numbers embedded in any text.
  *
@@ -16,25 +16,22 @@ namespace libphonenumber;
 class Matcher
 {
     protected string $pattern;
+
     protected string $subject = '';
 
     /**
-     * @var array<array{string,int}>
+     * @var array<int,mixed>
      */
     protected array $groups = [];
 
     private int $searchIndex = 0;
 
-    /**
-     */
     public function __construct(string $pattern, string $subject)
     {
         $this->pattern = str_replace('/', '\/', $pattern);
         $this->subject = $subject;
     }
 
-    /**
-     */
     protected function doMatch(string $type = 'find', int $offset = 0): bool
     {
         $final_pattern = '(?:' . $this->pattern . ')';
@@ -97,7 +94,7 @@ class Matcher
 
     public function groupCount(): ?int
     {
-        if (empty($this->groups)) {
+        if ($this->groups === []) {
             return null;
         }
 
@@ -123,8 +120,11 @@ class Matcher
         return $this->groups[$group][1] + mb_strlen($this->groups[$group][0]);
     }
 
-    public function start(int $group = 0): ?int
+    public function start(?int $group = null): mixed
     {
+        if ($group === null) {
+            $group = 0;
+        }
         if (!isset($this->groups[$group])) {
             return null;
         }
@@ -142,7 +142,7 @@ class Matcher
         return preg_replace('/' . $this->pattern . '/x', $replacement, $this->subject);
     }
 
-    public function reset(string $input = ''): self
+    public function reset(string $input = ''): static
     {
         $this->subject = $input;
 

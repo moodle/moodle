@@ -7,48 +7,40 @@
  * @internal
  */
 
-return [
-    'id' => 'GA',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '1\\d(?:\\d{2})?',
-        'posLength' => [
-            2,
-            4,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '18|1(?:3\\d|73)\\d',
-        'example' => '18',
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '1(?:3\\d\\d|730|8)',
-        'example' => '18',
-    ],
-    'shortCode' => [
-        'pattern' => '1(?:3\\d\\d|730|8)',
-        'example' => '18',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'smsServices' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_GA extends PhoneMetadata
+{
+    protected const ID = 'GA';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1\d(?:\d{2})?')
+            ->setPossibleLength([2, 4]);
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('18|1(?:3\d|73)\d')
+            ->setExampleNumber('18');
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:3\d\d|730|8)')
+            ->setExampleNumber('18');
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:3\d\d|730|8)')
+            ->setExampleNumber('18');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = PhoneNumberDesc::empty();
+        $this->smsServices = PhoneNumberDesc::empty();
+    }
+}
