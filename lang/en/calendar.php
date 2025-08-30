@@ -55,6 +55,7 @@ $string['categoryevents'] = 'Category events';
 $string['courses'] = 'Courses';
 $string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
 $string['daily'] = 'Daily';
+$string['datepicker'] = 'Date picker';
 $string['day'] = 'Day';
 $string['dayeventsmany'] = '{$a->num} events, {$a->day}';
 $string['dayeventsnone'] = 'No events, {$a}';

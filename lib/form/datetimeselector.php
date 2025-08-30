@@ -158,9 +158,20 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
         }
         // The YUI2 calendar only supports the gregorian calendar type so only display the calendar image if this is being used.
         if ($calendartype->get_name() === 'gregorian') {
-            $image = $OUTPUT->pix_icon('i/calendar', get_string('calendar', 'calendar'), 'moodle');
-            $this->_elements[] = $this->createFormElement('link', 'calendar',
-                    null, '#', $image);
+            $image = $OUTPUT->pix_icon('i/calendar', '');
+            $this->_elements[] = $this->createFormElement(
+                'button',
+                'calendar',
+                $image,
+                [
+                    'type' => 'button',
+                    'title' => get_string('datepicker', 'calendar'),
+                    'aria-label' => get_string('datepicker', 'calendar'),
+                ],
+                [
+                    'customclassoverride' => 'btn-link btn-sm icon-no-margin',
+                ],
+            );
         }
         foreach ($this->_elements as $element){
             if (method_exists($element, 'setHiddenLabel')){
