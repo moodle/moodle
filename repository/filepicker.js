@@ -1624,6 +1624,8 @@ M.core_filepicker.init = function(Y, options) {
             this.active_repo.message = (data.message || '');
             this.active_repo.help = data.help?data.help:null;
             this.active_repo.manage = data.manage?data.manage:null;
+            this.active_repo.uploadfile = data.uploadfile ? data.uploadfile : null;
+            this.active_repo.uploadurl = data.uploadurl ? data.uploadurl : null;
             // Warning message related to the file reference option, if applicable to the given repository.
             this.active_repo.filereferencewarning = data.filereferencewarning ? data.filereferencewarning : null;
             this.print_header();
@@ -1987,6 +1989,219 @@ M.core_filepicker.init = function(Y, options) {
                     managelnk.simulate('click')
                 });
 
+            // New Upload functionality.
+            toolbar.one('.fp-tb-uploadfile').one('a,button').on('click', function(e) {
+                e.preventDefault();
+                var repoId = this.active_repo.id;
+                var contextId = this.options.context.id;
+                var draftidRef = {value: null}; // Store draftid between uploads.
+                var uploadurl = this.active_repo.uploadurl;
+
+                require([
+                    'core/modal_factory',
+                    'core/modal_events',
+                    'core/dropzone',
+                    'core/notification',
+                    'core/str',
+                    'core/templates'
+                ],
+                function(ModalFactory, ModalEvents, DropZone, Notification, Str, Templates) {
+                    // Create a Modal box with a dropzone where files can be uploaded.
+                    function openUploadModal() {
+                        Templates.render('core/dropzone', {}).then(function(bodyHtml) {
+                            ModalFactory.create({
+                                type: ModalFactory.types.SAVE_CANCEL,
+                                title: Str.get_string('upload'),
+                                body: bodyHtml,
+                                large: true
+                            }).then(function(modal) {
+                                modal.getRoot().on(ModalEvents.shown, function() {
+                                    initDropzone(modal);
+                                });
+                                modal.getRoot().on(ModalEvents.hidden, function() {
+                                    modal.destroy();
+                                });
+                                modal.getRoot().on(ModalEvents.save, function(ev) {
+                                    commitFiles(ev, modal, toolbar);
+                                });
+                                modal.getRoot().on(ModalEvents.cancel, function() {
+                                    modal.hide();
+                                });
+                                modal.show();
+                            });
+                        });
+                    }
+                    openUploadModal();
+
+                    // Create dropzone inside the modal.
+                    function initDropzone(modal) {
+                        const $body = modal.getBody();
+
+                        const dropzoneContainer = $body.find('.dropzone-container').get(0);
+                        const dz = new DropZone(dropzoneContainer, '*', function(files) {
+                            handleDroppedFiles(files, modal);
+                        });
+
+                        // Asynchronously load and set the label.
+                        Str.get_string('dropfiles', 'repository').then(function(label) {
+                            dz.setLabel(label);
+                        });
+
+                        dz.init();
+                    }
+
+                    // Handle file upload to save it as draft.
+                    function handleDroppedFiles(files, modal) {
+                        var currentIndex = 0;
+
+                        function uploadNextFile() {
+                            if (currentIndex >= files.length) {
+                                return;
+                            }
+
+                            var file = files[currentIndex];
+                            currentIndex++;
+
+                            var formData = new FormData();
+                            formData.append('repo_upload_file', file);
+                            formData.append('repo_id', repoId);
+                            formData.append('contextid', contextId);
+                            formData.append('sesskey', M.cfg.sesskey);
+                            formData.append('action', 'upload');
+
+                            if (draftidRef.value) {
+                                formData.append('itemid', draftidRef.value);
+                            }
+
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('POST', M.cfg.wwwroot + uploadurl, true);
+
+                            xhr.onload = function() {
+                                var response = JSON.parse(this.responseText);
+                                if (response.error) {
+                                    Notification.alert(
+                                        Str.get_string('uploaderror', 'repository'),
+                                        response.error,
+                                        Str.get_string('close', 'repository')
+                                    );
+                                } else {
+                                    if (response.draftid && !draftidRef.value) {
+                                        draftidRef.value = response.draftid;
+                                    }
+                                    renderUploadedFile(modal, response);
+
+                                    // Upload next file after this one finishes.
+                                    uploadNextFile();
+                                }
+                            };
+
+                            xhr.send(formData);
+                        }
+
+                        // Start uploading files.
+                        uploadNextFile();
+                    }
+
+                    // Render the uploaded file in a given modal.
+                    function renderUploadedFile(modal, response) {
+                        const $body = modal.getBody();
+                        let uploadFilesClass = 'uploaded-files';
+                        let $fileList = $body.find(`.${uploadFilesClass} ul`);
+
+                        if ($fileList.length === 0) {
+                            // Load the string asynchronously.
+                            Str.get_string('attachedfiles', 'repository').then(function(label) {
+                                const uploadedFiles = document.createElement('div');
+                                uploadedFiles.className = uploadFilesClass + ' pt-4';
+                                const headingElement = document.createElement('h5');
+                                headingElement.textContent = label;
+                                uploadedFiles.appendChild(headingElement);
+                                uploadedFiles.appendChild(document.createElement('ul'));
+                                $body.append(uploadedFiles);
+
+                                $fileList = $body.find(`.${uploadFilesClass} ul`);
+                                $fileList.append(`<li>${response.file}</li>`);
+                            });
+                        }
+
+                        $fileList.append(`<li>${response.file}</li>`);
+                    }
+
+                    // Commit uploaded draft files when user clicks save.
+                    function commitFiles(ev, modal, toolbar) {
+                        ev.preventDefault();
+
+                        if (!draftidRef.value) {
+                            Notification.alert(
+                                Str.get_string('uploaderror', 'repository'),
+                                Str.get_string('nofilesattached', 'repository'),
+                                Str.get_string('close', 'repository')
+                            );
+                            return;
+                        }
+
+                        // Show loading spinner using Moodle's core/loading template.
+                        Templates.render('core/loading', {size: 'lg'}).then(function(html) {
+                            // Create a full-page overlay with Moodle classes.
+                            const loadingOverlay = document.createElement('div');
+                            loadingOverlay.className = 'loading-overlay';
+                            loadingOverlay.className = 'fixed-top w-100 h-100 d-flex justify-content-center align-items-center';
+                            loadingOverlay.style.zIndex = '9999';
+                            loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+
+                            // Create container for the loading spinner.
+                            const loadingContainer = document.createElement('div');
+                            loadingContainer.className = 'd-flex flex-column align-items-center';
+                            loadingContainer.innerHTML = html;
+
+                            // Add text below the spinner.
+                            Str.get_string('uploading', 'repository').then(function(loadingText) {
+                                const loadingTextElement = document.createElement('p');
+                                loadingTextElement.className = 'mt-2';
+                                loadingTextElement.textContent = loadingText;
+                                loadingContainer.appendChild(loadingTextElement);
+                            });
+
+                            loadingOverlay.appendChild(loadingContainer);
+                            document.body.appendChild(loadingOverlay);
+
+                            var formData = new FormData();
+                            formData.append('action', 'commit');
+                            formData.append('repo_id', repoId);
+                            formData.append('contextid', contextId);
+                            formData.append('sesskey', M.cfg.sesskey);
+                            formData.append('itemid', draftidRef.value);
+
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('POST', M.cfg.wwwroot + uploadurl, true);
+
+                            xhr.onload = function() {
+                                // Remove loading overlay.
+                                if (loadingOverlay && loadingOverlay.parentNode) {
+                                    loadingOverlay.parentNode.removeChild(loadingOverlay);
+                                }
+
+                                let response = JSON.parse(xhr.responseText);
+                                if (response.error) {
+                                    Notification.alert(
+                                        Str.get_string('uploaderror', 'repository'),
+                                        response.error,
+                                        Str.get_string('close', 'repository')
+                                    );
+                                } else {
+                                    modal.hide();
+                                    var refreshButton = toolbar.one('.fp-tb-refresh').one('a,button');
+                                    if (refreshButton) {
+                                        refreshButton.simulate('click');
+                                    }
+                                }
+                            };
+                            xhr.send(formData);
+                        });
+                    }
+                });
+            }, this);
+
             // same with .fp-tb-help
             var helplnk = Y.Node.create('<a/>').
                 setAttrs({id:'fp-tb-help-'+client_id+'-link', target:'_blank'}).
@@ -2062,6 +2277,9 @@ M.core_filepicker.init = function(Y, options) {
             // manage url
             enable_tb_control(toolbar.one('.fp-tb-manage'), r.manage);
             Y.one('#fp-tb-manage-'+client_id+'-link').set('href', r.manage);
+
+            // Upload file.
+            enable_tb_control(toolbar.one('.fp-tb-uploadfile'), r.uploadfile);
 
             // help url
             enable_tb_control(toolbar.one('.fp-tb-help'), r.help);
