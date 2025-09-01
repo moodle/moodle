@@ -50,6 +50,7 @@ class core_shutdown_manager {
     public static function initialize() {
         if (self::$registered) {
             debugging('Shutdown manager is already initialised!');
+            return;
         }
         self::$registered = true;
         register_shutdown_function(array('core_shutdown_manager', 'shutdown_handler'));
