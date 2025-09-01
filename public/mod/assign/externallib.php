@@ -2553,7 +2553,6 @@ class mod_assign_external extends \mod_assign\external\external_api {
                     array(
                         'participantcount' => new external_value(PARAM_INT, 'Number of users who can submit.'),
                         'submissiondraftscount' => new external_value(PARAM_INT, 'Number of submissions in draft status.'),
-                        'submissiondraftscount' => new external_value(PARAM_INT, 'Number of submissions in draft status.'),
                         'submissionsenabled' => new external_value(PARAM_BOOL, 'Whether submissions are enabled or not.'),
                         'submissionssubmittedcount' => new external_value(PARAM_INT, 'Number of submissions in submitted status.'),
                         'submissionsneedgradingcount' => new external_value(PARAM_INT, 'Number of submissions that need grading.'),
