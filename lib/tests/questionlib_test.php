@@ -1676,11 +1676,11 @@ final class questionlib_test extends \advanced_testcase {
         ]);
 
         // Create a cloze question.
-        $question = $questiongenerator->create_question('multianswer', null, [
+        $question = $questiongenerator->create_question('ddwtos', null, [
             'category' => $questioncat->id,
         ]);
         // Now, break the question.
-        $DB->delete_records('question_multianswer', ['question' => $question->id]);
+        $DB->delete_records('question_ddwtos', ['questionid' => $question->id]);
 
         $this->setAdminUser();
 
