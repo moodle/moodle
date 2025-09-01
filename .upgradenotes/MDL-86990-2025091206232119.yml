@@ -1,0 +1,7 @@
+issueNumber: MDL-86990
+notes:
+  core:
+    - message: >-
+        In toggle.mustache `dataattributes` parameter is deprecated. Use
+        `extraattributes` instead
+      type: deprecated

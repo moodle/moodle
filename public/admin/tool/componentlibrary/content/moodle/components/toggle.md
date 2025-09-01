@@ -18,7 +18,7 @@ The parameters for the template context are:
 * extraclasses: Any extra classes added to the toggle input outer container.
 * checked: If the initial status is checked.
 * disabled: If toggle input is disabled.
-* dataattributes: Array of name/value elements added as data-attributes.
+* extraattributes: Array of name/value elements added as attributes.
 * title: Title text.
 * label: Label text.
 * labelclasses: Any extra classes added to the label container.
@@ -32,8 +32,8 @@ Checked toggle and with "visually-hidden" label.
     {
         "id": "example-toggle-1",
         "checked": true,
-        "dataattributes": [{
-            "name": "action",
+        "extraattributes": [{
+            "name": "data-action",
             "value": "toggle-status"
         }],
         "title": "Toggle Enabled",
@@ -50,8 +50,8 @@ Disabled toggle with extra classes.
         "id": "example-toggle-2",
         "disabled": true,
         "extraclasses": "mt-2 ms-2",
-        "dataattributes": [{
-            "name": "action",
+        "extraattributes": [{
+            "name": "data-action",
             "value": "toggle-status"
         }],
         "title": "Toggle Disabled",

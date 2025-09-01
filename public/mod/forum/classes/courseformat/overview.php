@@ -203,10 +203,10 @@ class overview extends \core_courseformat\activityoverviewbase {
 
         $renderer = $this->rendererhelper->get_renderer('mod_forum');
         $dataattributes = [
-            ['name' => 'type', 'value' => 'forum-track-toggle'],
-            ['name' => 'action', 'value' => 'toggle'],
-            ['name' => 'forumid', 'value' => $this->forum->id],
-            ['name' => 'targetstate', 'value' => !$tracked],
+            ['name' => 'data-type', 'value' => 'forum-track-toggle'],
+            ['name' => 'data-action', 'value' => 'toggle'],
+            ['name' => 'data-forumid', 'value' => $this->forum->id],
+            ['name' => 'data-targetstate', 'value' => !$tracked],
         ];
         $content = $renderer->render_from_template(
             'core/toggle',
@@ -214,7 +214,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 'id' => 'forum-track-toggle-' . $this->forum->id,
                 'checked' => $tracked,
                 'disabled' => $disabled,
-                'dataattributes' => $dataattributes,
+                'extraattributes' => $dataattributes,
                 'label' => $label,
                 'labelclasses' => 'visually-hidden',
             ],
@@ -267,10 +267,10 @@ class overview extends \core_courseformat\activityoverviewbase {
 
         $renderer = $this->rendererhelper->get_renderer('mod_forum');
         $dataattributes = [
-            ['name' => 'type', 'value' => 'forum-subscription-toggle'],
-            ['name' => 'action', 'value' => 'toggle'],
-            ['name' => 'forumid', 'value' => $this->forum->id],
-            ['name' => 'targetstate', 'value' => !$subscribed],
+            ['name' => 'data-type', 'value' => 'forum-subscription-toggle'],
+            ['name' => 'data-action', 'value' => 'toggle'],
+            ['name' => 'data-forumid', 'value' => $this->forum->id],
+            ['name' => 'data-targetstate', 'value' => !$subscribed],
         ];
         $content = $renderer->render_from_template(
             'core/toggle',
@@ -278,7 +278,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 'id' => 'forum-subscription-toggle-' . $this->forum->id,
                 'checked' => $subscribed,
                 'disabled' => $disabled,
-                'dataattributes' => $dataattributes,
+                'extraattributes' => $dataattributes,
                 'label' => $label,
                 'labelclasses' => 'visually-hidden',
             ],
