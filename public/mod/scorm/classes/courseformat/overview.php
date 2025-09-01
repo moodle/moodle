@@ -123,8 +123,10 @@ class overview extends \core_courseformat\activityoverviewbase {
         if (!$this->manager->can_view_reports()) {
             return null;
         }
-        $attemptcount = $this->manager->count_users_who_attempted();
-        $participantscount = $this->manager->count_participants();
+        // Get the number of users who attempted the SCORM activity depending on group mode.
+        $groups = array_map(fn($group) => $group->id, $this->get_groups_for_filtering());
+        $attemptcount = $this->manager->count_users_who_attempted($groups);
+        $participantscount = $this->manager->count_participants($groups);
         $params = [
             'count' => $attemptcount,
             'total' => $participantscount,
@@ -147,8 +149,9 @@ class overview extends \core_courseformat\activityoverviewbase {
         if (!$this->manager->can_view_reports()) {
             return null;
         }
-        $totalattempts = $this->manager->count_users_who_attempted();
-        $userswhocanattempt = $this->manager->count_participants();
+        $groups = array_map(fn($group) => $group->id, $this->get_groups_for_filtering());
+        $totalattempts = $this->manager->count_users_who_attempted($groups);
+        $userswhocanattempt = $this->manager->count_participants($groups);
         $maxattempts = $this->manager->get_max_attempts();
         if ($maxattempts === 0) {
             $maxattemptstext = get_string('unlimited');

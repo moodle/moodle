@@ -33,11 +33,11 @@ final class manager_test extends \advanced_testcase {
     public function test_create_from_instance(): void {
         $this->resetAfterTest();
         ['instances' => $instances] = $this->setup_users_and_activity();
-        $manager = \mod_scorm\manager::create_from_instance($instances[0]);
+        $manager = \mod_scorm\manager::create_from_instance($instances['withattempts']);
         $manageractivity = $manager->get_instance();
-        $this->assertEquals($instances[0]->id, $manageractivity->id);
+        $this->assertEquals($instances['withattempts']->id, $manageractivity->id);
         $managercontext = $manager->get_context();
-        $context = context_module::instance($instances[0]->cmid);
+        $context = context_module::instance($instances['withattempts']->cmid);
         $this->assertEquals($context->id, $managercontext->id);
         $cm = get_coursemodule_from_id(
             manager::MODULE,
@@ -69,7 +69,7 @@ final class manager_test extends \advanced_testcase {
     public function test_create_from_coursemodule(): void {
         $this->resetAfterTest();
         ['instances' => $instances] = $this->setup_users_and_activity();
-        $cm = get_coursemodule_from_instance('scorm', $instances[0]->id);
+        $cm = get_coursemodule_from_instance('scorm', $instances['withattempts']->id);
         $manager = \mod_scorm\manager::create_from_coursemodule($cm);
         $managercm = $manager->get_coursemodule();
         $this->assertEquals($cm->id, $managercm->id);
@@ -99,7 +99,7 @@ final class manager_test extends \advanced_testcase {
     public function test_can_view_reports(): void {
         $this->resetAfterTest();
         ['users' => $users, 'course' => $course, 'instances' => $instances] = $this->setup_users_and_activity();
-        $manager = \mod_scorm\manager::create_from_instance($instances[0]);
+        $manager = \mod_scorm\manager::create_from_instance($instances['withattempts']);
         // Create an attempt for the current user.
         $this->assertTrue($manager->can_view_reports($users['t1']));
         $this->assertFalse($manager->can_view_reports($users['s1']));
@@ -123,15 +123,74 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Count the number of user who attempted the SCORM activity.
+     *
+     * @param int $groupmode the group mode to use for the course.
+     * @param string $activity the activity name to test.
+     * @param array $expected the expected participant counts for each activity and user.
+     *
+     * @dataProvider get_count_users_who_attempted_data
      */
-    public function test_count_users_who_attempted(): void {
+    public function test_count_users_who_attempted(int $groupmode, string $activity, array $expected): void {
         $this->resetAfterTest();
-        ['users' => $users, 'course' => $course, 'instances' => $instances] = $this->setup_users_and_activity();
-        $manager = \mod_scorm\manager::create_from_instance($instances[0]);
-        // Check the count of attempts.
-        $this->assertEquals(2, $manager->count_users_who_attempted());
-        $manager = \mod_scorm\manager::create_from_instance($instances[1]);
-        $this->assertEquals(0, $manager->count_users_who_attempted());
+        ['users' => $users, 'course' => $course, 'instances' => $instances] =
+            $this->setup_users_and_activity(groupmode: $groupmode);
+
+        $manager = \mod_scorm\manager::create_from_instance($instances[$activity]);
+        // Check the count of users who attempted.
+        foreach ($expected as $username => $count) {
+            $this->setUser($users[$username]);
+            $groups = [];
+            if ($groupmode !== NOGROUPS) {
+                // If group mode is not NOGROUPS, we need to get the groups for the user.
+                $groups = groups_get_activity_allowed_groups($manager->get_coursemodule());
+            }
+            $groupids = array_map(
+                fn($group) => $group->id,
+                $groups
+            );
+            $this->assertEquals(
+                $count,
+                $manager->count_users_who_attempted($groupids),
+                "Failed asserting that user {$username} can count {$count} users who attempted."
+            );
+        }
+    }
+
+    /**
+     * Data provider for participant count tests.
+     *
+     * @return array
+     */
+    public static function get_count_users_who_attempted_data(): array {
+        return [
+            'No groups' => [
+                'groupmode' => NOGROUPS,
+                'activity' => 'withattempts',
+                'expected' => [
+                    't1' => 2, // We count s1 and s2.
+                    't2' => 2,
+                    's1' => 2, // Same here.
+                ],
+            ],
+            'Separate groups' => [
+                'groupmode' => SEPARATEGROUPS,
+                'activity' => 'withattempts',
+                'expected' => [
+                    't1' => 1, // We count only the participants in group g1 (so s1).
+                    't2' => 2, // Here is a false positive, we have no groups so no filtering is applied.
+                    's1' => 1, // User s1 is in group g1 and has mod/scorm:savetrack permission, same for t1.
+                ],
+            ],
+            'Visible groups' => [
+                'groupmode' => VISIBLEGROUPS,
+                'activity' => 'withattempts',
+                'expected' => [
+                    't1' => 2, // We count only the participants in group g1 and g2 (so s1 and s2).
+                    't2' => 2, // Same for t2, we count the participants in group g1 and g2 (so s1 and s2).
+                    's1' => 2, // User s1 is in group g1 and has mod/scorm:savetrack permission, same for t1.
+                ],
+            ],
+        ];
     }
 
     /**
@@ -145,13 +204,22 @@ final class manager_test extends \advanced_testcase {
     public function test_count_participants(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         ['users' => $users, 'instances' => $instances] = $this->setup_users_and_activity($groupmode);
-        $manager = \mod_scorm\manager::create_from_instance($instances[0]);
+        $manager = \mod_scorm\manager::create_from_instance($instances['withattempts']);
         // Check the count of participants.
         foreach ($expected as $username => $count) {
             $this->setUser($users[$username]);
+            $groups = [];
+            if ($groupmode !== NOGROUPS) {
+                // If group mode is not NOGROUPS, we need to get the groups for the user.
+                $groups = groups_get_activity_allowed_groups($manager->get_coursemodule());
+            }
+            $groupids = array_map(
+                fn($group) => $group->id,
+                $groups
+            );
             $this->assertEquals(
                 $count,
-                $manager->count_participants(),
+                $manager->count_participants($groupids),
                 "Failed asserting that user {$username} can count {$count} participants."
             );
         }
@@ -172,6 +240,27 @@ final class manager_test extends \advanced_testcase {
                     's1' => 4,
                     's2' => 4,
                     's3' => 4, // User s3 is a test role that does not have mod/scorm:savetrack permission.
+                ],
+            ],
+            'Separate groups' => [
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => [
+                    't1' => 2, // Only the participants in group g1 that have mod/scorm:savetrack permission (so s1 and t1).
+                    't2' => 4, // Here is a false positive, we have no groups so no filtering is applied.
+                    's1' => 2, // User s1 is in group g1 and has mod/scorm:savetrack permission, same for t1.
+                    's2' => 1, // Only s2 and s3 are in group g2, but s3 does not have mod/scorm:savetrack permission.
+                    's3' => 3, // User s3 is a test role that does not have mod/scorm:savetrack permission,
+                    // so we count only s1, s2 and t1.
+                ],
+            ],
+            'Visible groups' => [
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => [
+                    't1' => 3, // We count the participants in group g1 and also in other groups like s2.
+                    't2' => 3, // Same for t2, we count the participants in group g1 and also in other groups like s2.
+                    's1' => 3,
+                    's2' => 3,
+                    's3' => 3, // User s3 is a test role that does not have mod/scorm:savetrack permission.
                 ],
             ],
         ];
@@ -276,29 +365,29 @@ final class manager_test extends \advanced_testcase {
         ];
         $groups = [];
         foreach ($data as $username => $userinfo) {
-            ['role' => $role, 'groups' => $groups] = $userinfo;
+            ['role' => $role, 'groups' => $groupstoassign] = $userinfo;
             $users[$username] = $generator->create_and_enrol($course, $role, ['username' => $username]);
-            foreach ($groups as $group) {
-                if (!isset($groups[$group])) {
+            foreach ($groupstoassign as $grouptoassign) {
+                if (!isset($groups[$grouptoassign])) {
                     // Create the group if it does not exist.
-                    $groups[$group] = $generator->create_group(['courseid' => $course->id, 'name' => $group]);
+                    $groups[$grouptoassign] = $generator->create_group(['courseid' => $course->id, 'name' => $grouptoassign]);
                 }
                 // Add the user to the group.
-                groups_add_member($groups[$group], $users[$username]->id);
+                groups_add_member($groups[$grouptoassign], $users[$username]->id);
             }
         }
         $this->setAdminUser();
         $instances = [];
-        $instances[] = $generator->create_module('scorm', [
+        $instances['withattempts'] = $generator->create_module('scorm', [
             'course' => $course,
         ]);
-        $instances[] = $generator->create_module('scorm', [
+        $instances['withoutattempts'] = $generator->create_module('scorm', [
             'course' => $course,
         ]);
         $scormgenerator = $this->getDataGenerator()->get_plugin_generator('mod_scorm');
-        $scormgenerator->create_attempt(['scormid' => $instances[0]->id, 'userid' => $users['s1']->id]);
-        $scormgenerator->create_attempt(['scormid' => $instances[0]->id, 'userid' => $users['s1']->id]);
-        $scormgenerator->create_attempt(['scormid' => $instances[0]->id, 'userid' => $users['s2']->id]);
+        $scormgenerator->create_attempt(['scormid' => $instances['withattempts']->id, 'userid' => $users['s1']->id]);
+        $scormgenerator->create_attempt(['scormid' => $instances['withattempts']->id, 'userid' => $users['s1']->id]);
+        $scormgenerator->create_attempt(['scormid' => $instances['withattempts']->id, 'userid' => $users['s2']->id]);
         return [
             'users' => $users,
             'course' => $course,
