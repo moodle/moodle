@@ -18,7 +18,6 @@ namespace mod_bigbluebuttonbn\courseformat;
 
 use core_courseformat\local\overview\overviewfactory;
 use mod_bigbluebuttonbn\instance;
-use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\recording;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 
@@ -33,14 +32,13 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  */
 final class overview_test extends \advanced_testcase {
     use testcase_helper_trait;
-
     /**
      * Test get_actions_overview.
      */
     public function test_get_actions_overview(): void {
         $this->resetAfterTest();
         ['users' => $users, 'course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(createrecordings: false);
+            $this->setup_users_and_activity();
         ['withoutrecordings' => $instancewa] = $instances;
         $cm = get_fast_modinfo($course)->get_cm($instancewa->cmid);
         // Students or non moderators have no action column.
@@ -79,7 +77,7 @@ final class overview_test extends \advanced_testcase {
         $timeincrement = DAYSECS;
         $bigbluebuttonbntemplate['timeclose'] = $clock->time() + $timeincrement;
         ['users' => $users, 'course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate, createrecordings: false);
+            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate);
         ['withoutrecordings' => $instancewa] = $instances;
 
         $cm = get_fast_modinfo($course)->get_cm($instancewa->cmid);
@@ -92,6 +90,7 @@ final class overview_test extends \advanced_testcase {
      * Test get_extra_date_open method.
      *
      * @param int|null $timeincrement
+     *
      * @dataProvider get_extra_date_data
      */
     public function test_get_extra_date_open(?int $timeincrement): void {
@@ -103,7 +102,7 @@ final class overview_test extends \advanced_testcase {
             $bigbluebuttonbntemplate['openingtime'] = $clock->time() + $timeincrement;
         }
         ['users' => $users, 'course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate, createrecordings: false);
+            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate);
         ['withoutrecordings' => $instancewa] = $instances;
 
         $cm = get_fast_modinfo($course)->get_cm($instancewa->cmid);
@@ -114,10 +113,12 @@ final class overview_test extends \advanced_testcase {
             $overview->get_extra_date_open()->get_value(),
         );
     }
+
     /**
      * Test get_extra_date_close method.
      *
      * @param int|null $timeincrement
+     *
      * @dataProvider get_extra_date_data
      */
     public function test_get_extra_date_close(?int $timeincrement): void {
@@ -129,7 +130,7 @@ final class overview_test extends \advanced_testcase {
             $bigbluebuttonbntemplate['closingtime'] = $clock->time() + $timeincrement;
         }
         ['users' => $users, 'course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate, createrecordings: false);
+            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate);
         ['withoutrecordings' => $instancewa] = $instances;
 
         $cm = get_fast_modinfo($course)->get_cm($instancewa->cmid);
@@ -140,6 +141,7 @@ final class overview_test extends \advanced_testcase {
             $overview->get_extra_date_close()->get_value(),
         );
     }
+
     /**
      * Data provider for test_get_due_date_overview.
      *
@@ -176,19 +178,20 @@ final class overview_test extends \advanced_testcase {
         $bigbluebuttonbntemplate = [];
         $bigbluebuttonbntemplate['type'] = $roomtype;
         ['users' => $users, 'course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate, createrecordings: false);
+            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate);
         ['withoutrecordings' => $instancewa] = $instances;
 
         $cm = get_fast_modinfo($course)->get_cm($instancewa->cmid);
         $this->setUser($users['t3']);
         $overview = overviewfactory::create($cm);
-        $overviewitem  = $overview->get_extra_overview_items();
+        $overviewitem = $overview->get_extra_overview_items();
         $this->assertArrayHasKey('roomtype', $overviewitem);
         $this->assertEquals(
             $expectedtype,
             $overviewitem['roomtype']->get_value(),
         );
     }
+
     /**
      * Data provider for test_get_due_date_overview.
      *
@@ -216,8 +219,7 @@ final class overview_test extends \advanced_testcase {
      *
      * @param string $activityname
      * @param int $recordingcount
-     * @throws \coding_exception
-     * @throws \moodle_exception
+     *
      * @dataProvider get_extra_recordings_overview_data
      */
     public function test_get_extra_recordings_overview(string $activityname, int $recordingcount): void {
@@ -225,17 +227,26 @@ final class overview_test extends \advanced_testcase {
         $this->setAdminUser();
         $bigbluebuttonbntemplate = [];
         ['users' => $users, 'course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(instancedata: $bigbluebuttonbntemplate);
+            $this->setup_users_and_activity(
+                instancedata: $bigbluebuttonbntemplate,
+                recordingstocreate: [
+                    ['status' => recording::RECORDING_STATUS_AWAITING],
+                    ['status' => recording::RECORDING_STATUS_PROCESSED],
+                    ['status' => recording::RECORDING_STATUS_PROCESSED],
+                    ['status' => recording::RECORDING_STATUS_DISMISSED],
+                ]
+            );
         [$activityname => $instance] = $instances;
 
         $cm = get_fast_modinfo($course)->get_cm($instance->cmid);
         $this->setUser($users['t3']);
         $overview = overviewfactory::create($cm);
-        $overviewitem  = $overview->get_extra_overview_items();
+        $overviewitem = $overview->get_extra_overview_items();
         $this->assertArrayHasKey('recordings', $overviewitem);
         $this->assertEquals(
             $recordingcount,
             $overviewitem['recordings']->get_value(),
+            'User t3 should see ' . $recordingcount . ' recordings, but got: ' . $overviewitem['recordings']->get_value()
         );
     }
 
@@ -259,6 +270,111 @@ final class overview_test extends \advanced_testcase {
     }
 
     /**
+     * Test test_get_extra_recordings_overview.
+     *
+     * @param string $activityname
+     * @param int $groupmode
+     * @param array $recordingcounts Array of recording counts per user in the form of ['group' => string|null, status=> int].
+     * @dataProvider get_extra_recordings_overview_with_groups_data
+     */
+    public function test_get_extra_recordings_overview_with_groups(
+        string $activityname,
+        int $groupmode,
+        array $recordingcounts
+    ): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $bigbluebuttonbntemplate = [];
+        ['users' => $users, 'course' => $course, 'instances' => $instances] =
+            $this->setup_users_and_activity(
+                groupmode: $groupmode,
+                instancedata: $bigbluebuttonbntemplate,
+                recordingstocreate: [
+                    ['group' => 'g1', 'status' => recording::RECORDING_STATUS_PROCESSED],
+                    ['group' => 'g1', 'status' => recording::RECORDING_STATUS_PROCESSED],
+                    ['group' => 'g2', 'status' => recording::RECORDING_STATUS_PROCESSED],
+                    ['group' => null, 'status' => recording::RECORDING_STATUS_PROCESSED], // No group for the this recording.
+                ],
+                moderators: 'user:t1,user:t2,user:t3,user:t4,user:t5'
+            );
+        [$activityname => $instance] = $instances;
+
+        $cm = get_fast_modinfo($course)->get_cm($instance->cmid);
+        foreach ($recordingcounts as $username => $recordingcount) {
+            if (!isset($users[$username])) {
+                continue; // Skip if user does not exist.
+            }
+            $this->setUser($users[$username]);
+            $overview = overviewfactory::create($cm);
+            $overviewitem = $overview->get_extra_overview_items();
+            if ($overview->has_error()) {
+                $this->assertNull($recordingcount);
+                continue; // If there is an error we should not check the recording count because it is not displayed.
+            }
+            $this->assertArrayHasKey('recordings', $overviewitem);
+            $this->assertNotNull($overviewitem['recordings']);
+            $this->assertEquals(
+                $recordingcount,
+                $overviewitem['recordings']->get_value(),
+                "Failed for user: {$username}"
+            );
+        }
+    }
+
+    /**
+     * Data provider for test_get_extra_studentsattempted_overview and test_get_extra_totalattempts_overview
+     *
+     * @return array
+     */
+    public static function get_extra_recordings_overview_with_groups_data(): array {
+        // The setup is as follows:
+        // - T1 is in group but is editing teacher so can see recordings from group g1 and g2.
+        // - T2 is not in any group but is editing teacher so can see recordings from group g1 and g2.
+        // - T3 is in group g1.
+        // - T4 is not in any group.
+        // - T5 is in group g2.
+        // - T1, T2, T3, T4 and T5 are all moderators in the room.
+        // We have 3 recordings in total (all processed:
+        // - 2 recordings in group g1.
+        // - 1 recording in group g2.
+        return [
+            'With separate groups' => [
+                'activityname' => 'withrecordings',
+                'groupmode' => SEPARATEGROUPS,
+                'recordingcounts' => [
+                    't1' => 4, // T1 is in group g1 and can see recordings from group g2 (as has all access as editing teacher).
+                    't2' => 4, // T2 is not in any group but can see recordings from group g1 and g2 as editing teacher.
+                    't3' => 2, // T3 is in group g1 so can see recordings from group g1.
+                    't4' => null, // T4 is not in any group so should not see any recording.
+                    't5' => 1, // T5 is in group g2 and can see recordings from group g2.
+                ],
+            ],
+            'With no groups' => [
+                'activityname' => 'withrecordings',
+                'groupmode' => NOGROUPS,
+                'recordingcounts' => [
+                    't1' => 4,
+                    't2' => 4,
+                    't3' => 4,
+                    't4' => 4,
+                    't5' => 4,
+                ],
+            ],
+            'With visible groups' => [
+                'activityname' => 'withrecordings',
+                'groupmode' => VISIBLEGROUPS,
+                'recordingcounts' => [
+                    't1' => 4,
+                    't2' => 4,
+                    't3' => 4,
+                    't4' => 4,
+                    't5' => 4,
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Test get_extra_overview_items when there are no users in the course
      *
      * @return void
@@ -266,7 +382,7 @@ final class overview_test extends \advanced_testcase {
     public function test_get_extra_overview_no_users(): void {
         $this->resetAfterTest();
         ['course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(createusers: false, createrecordings: false);
+            $this->setup_users_and_activity(createusers: false);
         ['withoutrecordings' => $instancewa] = $instances; // This has no user so no attempt too.
         $cm = get_fast_modinfo($course)->get_cm($instancewa->cmid);
         $this->setAdminUser();
@@ -276,7 +392,6 @@ final class overview_test extends \advanced_testcase {
         $this->assertArrayHasKey('roomtype', $items);
     }
 
-
     /**
      * Test check columns and content depeding on role (moderator, admin, other (viewer)).
      *
@@ -285,7 +400,7 @@ final class overview_test extends \advanced_testcase {
     public function test_all_get_extra_overview_items(): void {
         $this->resetAfterTest();
         ['course' => $course, 'instances' => $instances, 'users' => $users] =
-            $this->setup_users_and_activity(createusers: true);
+            $this->setup_users_and_activity();
         ['withoutrecordings' => $instancewa] = $instances; // This has no user so no attempt too.
         $cm = get_fast_modinfo($course)->get_cm($instancewa->cmid);
         $this->setAdminUser();
@@ -319,19 +434,24 @@ final class overview_test extends \advanced_testcase {
      * Setup users and activity for testing answers retrieval.
      *
      * @param int $groupmode the group mode to use for the course.
-     * @param bool $createrecordings whether to create an attempt for the student.
      * @param array|null $instancedata additional data for the instance.
      * @param array|null $grades the grade to set for the student.
      * @param bool $createusers whether to enrol users in the course.
+     * @param array $recordingstocreate create recordings for the instance in the form of
+     *  ['group' => null, 'status' => recording::RECORDING_STATUS_PROCESSED].
+     * @param string $moderators the moderators to set for the instance.
      * @return array indexed array with 'users', 'course' and 'instance'.
      */
     private function setup_users_and_activity(
         int $groupmode = NOGROUPS,
-        bool $createrecordings = true,
         ?array $instancedata = null,
         ?array $grades = null,
         bool $createusers = true,
+        array $recordingstocreate = [],
+        string $moderators = 'user:t3'
     ): array {
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/grade/constants.php');
         $users = [];
         $generator = $this->getDataGenerator();
         $courseparams = [];
@@ -348,19 +468,21 @@ final class overview_test extends \advanced_testcase {
                 's2' => ['role' => 'student', 'groups' => ['g2']],
                 't1' => ['role' => 'editingteacher', 'groups' => ['g1']],
                 't2' => ['role' => 'editingteacher', 'groups' => []],
-                't3' => ['role' => 'teacher', 'groups' => ['g1']], // T3 will be a moderator in the room.
+                't3' => ['role' => 'teacher', 'groups' => ['g1']],
+                't4' => ['role' => 'teacher', 'groups' => []],
+                't5' => ['role' => 'teacher', 'groups' => ['g2']],
             ];
             // Enrol users in the course.
             foreach ($data as $username => $userinfo) {
-                ['role' => $role, 'groups' => $groups] = $userinfo;
+                ['role' => $role, 'groups' => $usergroups] = $userinfo;
                 $users[$username] = $generator->create_and_enrol($course, $role, ['username' => $username]);
-                foreach ($groups as $group) {
-                    if (!isset($groups[$group])) {
+                foreach ($usergroups as $usergroup) {
+                    if (!isset($groups[$usergroup])) {
                         // Create the group if it does not exist.
-                        $groups[$group] = $generator->create_group(['courseid' => $course->id, 'name' => $group]);
+                        $groups[$usergroup] = $generator->create_group(['courseid' => $course->id, 'name' => $usergroup]);
                     }
                     // Add the user to the group.
-                    groups_add_member($groups[$group], $users[$username]->id);
+                    groups_add_member($groups[$usergroup], $users[$username]->id);
                 }
             }
         }
@@ -372,40 +494,53 @@ final class overview_test extends \advanced_testcase {
         ]);
         if ($createusers) {
             // Add the users to the instance data.
-            $instancedata['moderators'] = 'user:t3';// Set T3 as moderator in the room.
+            // By default, the moderators are set to t3.
+            $instancedata['moderators'] = $moderators;
         }
         $instances = [];
         $instances['withoutrecordings'] =
             $generator->create_module('bigbluebuttonbn', $instancedata); // Create a second instance with no recordings.
         $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
         $recordings = [];
-        if ($createrecordings) {
+        if (!empty($recordingstocreate)) {
             // We do that only when we want to create recordings.
             $this->initialise_mock_server();
             $instances['withrecordings'] = $generator->create_module('bigbluebuttonbn', $instancedata);
             $instance = instance::get_from_instanceid($instances['withrecordings']->id);
             // We need to create a meeting for the instance in order to create recordings.
-            $bbbgenerator->create_meeting([
-                'instanceid' => $instance->get_instance_id(),
-                'groupid' => $instance->get_group_id(),
-            ]);
-            $now = time();
-            $recordingstatus = [
-                recording::RECORDING_STATUS_AWAITING,
-                recording::RECORDING_STATUS_PROCESSED,
-                recording::RECORDING_STATUS_PROCESSED,
-                recording::RECORDING_STATUS_DISMISSED,
-            ];
-            foreach ($recordingstatus as $status) {
-                $recordings[] = $bbbgenerator->create_recording(
-                    array_merge([
-                        'bigbluebuttonbnid' => $instance->get_instance_id(),
-                        'groupid' => $instance->get_group_id(),
-                        'starttime' => $now,
-                        'endtime' => $now + HOURSECS,
-                        'status' => $status,
-                    ])
-                );
+            $now = $this->mock_clock_with_frozen()->time();
+            $hasmeetingforgroup = [];
+            foreach ($recordingstocreate as $recordinginfo) {
+                if ($groupmode === NOGROUPS) {
+                    $groupname = null;
+                } else {
+                    $groupname = $recordinginfo['group'] ?? null;
+                }
+
+                $status = $recordinginfo['status'] ?? recording::RECORDING_STATUS_PROCESSED;
+                $currentgroupid = $groups[$groupname]->id ?? 0;
+                $instance = instance::get_from_instanceid($instances['withrecordings']->id);
+                if (!isset($hasmeetingforgroup[$currentgroupid])) {
+                    // Create a meeting for the group if it does not exist.
+                    $meetingdata = [
+                        'instanceid' => $instance->get_instance_id(),
+                    ];
+                    if ($currentgroupid) {
+                        $meetingdata['groupid'] = $currentgroupid;
+                    }
+                    $bbbgenerator->create_meeting($meetingdata);
+                    $hasmeetingforgroup[$currentgroupid] = true;
+                }
+                $recordingdata = [
+                    'bigbluebuttonbnid' => $instance->get_instance_id(),
+                    'starttime' => $now,
+                    'endtime' => $now + HOURSECS,
+                    'status' => $status,
+                ];
+                if (!empty($currentgroupid)) {
+                    $recordingdata['groupid'] = $currentgroupid;
+                }
+                $recordings[$currentgroupid] = $bbbgenerator->create_recording($recordingdata);
             }
         }
         if ($grades) {

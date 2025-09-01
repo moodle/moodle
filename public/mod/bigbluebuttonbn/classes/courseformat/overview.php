@@ -166,10 +166,14 @@ class overview extends \core_courseformat\activityoverviewbase {
         $content = '-';
         $recordingcount = 0;
         if ($this->bigbluebuttonbn->get_type() !== strval(instance::TYPE_ROOM_ONLY)) {
-            $recordings = recording::get_recordings_for_instance(
-                $this->bigbluebuttonbn,
-                includeimported: true,
-            );
+            $groups = $this->get_groups_for_filtering();
+            $recordings = recording::get_recordings_for_instance(instance: $this->bigbluebuttonbn, filterbygroups: false);
+            if (!empty($groups)) {
+                $recordings = array_filter(
+                    $recordings,
+                    fn($rec) => isset($groups[$rec->get('groupid')]),
+                );
+            }
             $recordingcount = count($recordings);
             $content = strval($recordingcount);
         }
