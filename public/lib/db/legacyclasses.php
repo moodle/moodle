@@ -374,4 +374,8 @@ $legacyclasses = [
         'core_course',
         'course_request.php',
     ],
+    \core_course\output\activitychooserbutton::class => [
+        'core_courseformat',
+        'output/local/content/activitychooserbutton.php',
+    ],
 ];

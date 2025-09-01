@@ -1,0 +1,98 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/activitychooser/item
+
+    Chooser item template.
+
+    Example context (json):
+    {
+        "label": "Option name",
+        "description": "Option description",
+        "urls": {
+            "addoption": "http://addoptionurl.com"
+        },
+        "icon": "<img class='icon' src='http://urltooptionicon' alt='icon'>",
+        "purpose": "content",
+        "branded": 0
+    }
+}}
+<div role="menuitem"
+    tabindex="-1"
+    aria-label="{{title}}"
+    class="option btn m-sm-1 position-relative"
+    data-region="chooser-option-container"
+    data-internal="{{name}}"
+    data-modname="{{componentname}}_{{link}}"
+>
+    <div class="d-flex gap-2 rounded" data-region="chooser-option-info-container">
+        <div class="optionicon icon-no-margin modicon_{{name}} activityiconcontainer smaller
+            {{purpose}} {{#branded}}isbranded{{/branded}}">
+            {{{icon}}}
+        </div>
+        <div>
+            <a href="{{link}}"
+                title="{{#str}} addnew, moodle, {{title}} {{/str}}"
+                tabindex="-1"
+                data-action="add-chooser-option"
+                class="optioninfo text-decoration-none text-body stretched-link"
+            >
+                <div class="optionname clamp-2">{{title}}</div>
+            </a>
+            <div class="optionactions d-flex align-items-start" role="group" data-region="chooser-option-actions-container">
+                <button class="btn btn-icon m-0 optionaction" data-action="show-option-summary" tabindex="-1" title="{{#str}} informationformodule, core_course, {{title}} {{/str}}">
+                    <span aria-hidden="true">{{#pix}} docs, core {{/pix}}</span>
+                </button>
+                {{^legacyitem}}
+                <button class="btn btn-icon m-0 optionaction"
+                        data-action="manage-module-favourite"
+                        data-favourited="{{favourite}}"
+                        data-id="{{id}}"
+                        data-name="{{componentname}}"
+                        data-internal="{{name}}"
+                        {{^favourite}}
+                            aria-pressed="false"
+                            aria-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                            title="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                        {{/favourite}}
+                        {{#favourite}}
+                            aria-pressed="true"
+                            aria-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                            title="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                        {{/favourite}}
+                        tabindex="-1"
+                >
+                    <span
+                        class="{{^favourite}}d-none{{/favourite}}"
+                        data-icon="favourite-active"
+                        data-action-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                    >
+                        {{#pix}} i/star, core {{/pix}}
+                    </span>
+                    <span
+                        class="{{#favourite}}d-none{{/favourite}}"
+                        data-icon="favourite-inactive"
+                        data-action-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                    >
+                        {{#pix}} i/star-o, core {{/pix}}
+                    </span>
+                </button>
+                {{/legacyitem}}
+            </div>
+        </div>
+    </div>
+</div>

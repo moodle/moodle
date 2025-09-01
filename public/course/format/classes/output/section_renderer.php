@@ -247,14 +247,21 @@ abstract class section_renderer extends core_course_renderer {
             return '';
         }
 
-        $activitychooserbutton = new \core_course\output\activitychooserbutton(
+        if ($this->page->requires->should_create_one_time_item_now('core_courseformat_modchooser')) {
+            $this->page->requires->js_call_amd(
+                'core_courseformat/activitychooser',
+                'init',
+                [$format->get_courseid()],
+            );
+        }
+
+        $classname = $format->get_output_classname('content\\activitychooserbutton');
+        /** @var  \core_courseformat\output\local\content\activitychooserbutton $activitychooserbutton */
+        $activitychooserbutton = new $classname(
             section: $section,
             mod: $mod,
             sectionreturn: $format->get_return_section(),
         );
-
-        // Load the JS for the modal.
-        $this->course_activitychooser($format->get_courseid());
 
         return $this->render_from_template(
             'core_courseformat/local/content/divider',

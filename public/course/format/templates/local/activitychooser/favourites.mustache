@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/activitychooser/favourites
+
+    Chooser favourite template partial.
+
+    Example context (json):
+    {
+        "tabLabel": "Favourites",
+        "tabHelp": "This is the help text for the favourites tab.",
+        "items": [
+            {
+                "label": "Option name",
+                "description": "Option description",
+                "urls": {
+                    "addoption": "http://addoptionurl.com"
+                },
+                "icon": "<img class='icon' alt='' src='http://urltooptionicon'>"
+            }
+        ]
+    }
+}}
+<h6>{{tabLabel}}</h6>
+{{#tabHelp}}
+<p class="activitychooser_help">{{tabHelp}}</p>
+{{/tabHelp}}
+<div
+    class="optionscontainer mw-100 position-relative"
+    role="menubar"
+    data-region="chooser-options-container"
+>
+    {{#items}}
+        {{>core_courseformat/local/activitychooser/item}}
+    {{/items}}
+</div>

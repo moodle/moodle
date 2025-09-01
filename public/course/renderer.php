@@ -166,18 +166,26 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Build the HTML for the module chooser javascript popup.
      *
+     * @deprecated since Moodle 5.1.
+     * @todo final deprecation in 6.0 (MDL-85655)
      * @param int $courseid The course id to fetch modules for.
      * @return string
      */
+    #[\core\attribute\deprecated(
+        reason: 'Now activity chooser init is called from section_renderer::add_cm_controls',
+        since: '5.1',
+        mdl: 'MDL-86337',
+    )]
     public function course_activitychooser($courseid) {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
 
-        if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
+        if (!$this->page->requires->should_create_one_time_item_now('core_courseformat_modchooser')) {
             return '';
         }
 
         // Build an object of config settings that we can then hook into in the Activity Chooser.
         $chooserconfig = (object) [];
-        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid, $chooserconfig]);
+        $this->page->requires->js_call_amd('core_courseformat/activitychooser', 'init', [$courseid, $chooserconfig]);
 
         return '';
     }
