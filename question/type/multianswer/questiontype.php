@@ -110,8 +110,7 @@ class qtype_multianswer extends question_type {
 
         parent::get_question_options($question);
         // Get relevant data indexed by positionkey from the multianswers table.
-        $sequence = $DB->get_field('question_multianswer', 'sequence',
-                array('question' => $question->id), MUST_EXIST);
+        $sequence = $DB->get_field('question_multianswer', 'sequence', ['question' => $question->id]);
 
         if (empty($sequence)) {
             $question->options->questions = [];
