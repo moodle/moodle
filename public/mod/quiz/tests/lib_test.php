@@ -422,7 +422,7 @@ final class lib_test extends \advanced_testcase {
         $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
 
         $now = 100;
-        $override1 = (object)[
+        $override1 = (object) [
             'quiz' => $quiz->id,
             'groupid' => $group1->id,
             'timeopen' => $now,
@@ -430,7 +430,7 @@ final class lib_test extends \advanced_testcase {
         ];
         $DB->insert_record('quiz_overrides', $override1);
 
-        $override2 = (object)[
+        $override2 = (object) [
             'quiz' => $quiz->id,
             'groupid' => $group2->id,
             'timeopen' => $now - 10,
@@ -877,7 +877,7 @@ final class lib_test extends \advanced_testcase {
     private function create_action_event($courseid, $instanceid, $eventtype) {
         $event = new \stdClass();
         $event->name = 'Calendar event';
-        $event->modulename  = 'quiz';
+        $event->modulename = 'quiz';
         $event->courseid = $courseid;
         $event->instance = $instanceid;
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
@@ -1032,9 +1032,13 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the quiz_num_attempt_summary function.
+     *
+     * @param int $groupmode The group mode to use for the test.
+     * @param array $expected The expected results for each user.
      * @covers ::quiz_num_attempt_summary
+     * @dataProvider num_attempts_data_provider
      */
-    public function test_quiz_num_attempt_summary(): void {
+    public function test_quiz_num_attempt_summary(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         [
@@ -1042,28 +1046,120 @@ final class lib_test extends \advanced_testcase {
             'groups' => $groups,
             'quiz' => $quiz,
             'cm' => $cm,
-        ] = $this->setup_users_course_groups(
-            [
-                'user1' => ['student', 'g1', 2],
-                'user2' => ['student', null, 1],
-                'teacher1' => ['editingteacher', null, null],
-                'teacher2' => ['teacher', 'g1', null],
-            ]
-        );
-        // Check the summary.
-        $this->setUser($users['teacher1']);
-        $this->assertEquals('Attempts: 3', quiz_num_attempt_summary($quiz, $cm));
-        $this->assertEquals('Attempts: 3 (2 from this group)', quiz_num_attempt_summary($quiz, $cm, false, $groups['g1']->id));
+        ] = $this->setup_users_course_groups([], $groupmode);
+        $cm->groupmode = $groupmode; // This is because quiz_num_attempt_summary expects the cm to have groupmode set.
+        foreach ($expected as $username => $data) {
+            $this->setUser($users[$username]);
+            foreach ($data as $result) {
+                $group = 0;
+                if (!is_null($result->group)) {
+                    // If groups are set, we need to get the group id.
+                    $group = $groups[$result->group]->id;
+                }
+                $attemptsummary = quiz_num_attempt_summary($quiz, $cm, false, $group);
+                $this->assertEquals(
+                    $result->summary,
+                    $attemptsummary,
+                    "Failed for user $username with group {$result->group}"
+                );
+            }
+        }
+    }
 
-        $this->setUser($users['teacher2']);
-        $this->assertEquals('Attempts: 3 (2 from your groups)', quiz_num_attempt_summary($quiz, $cm));
+    /**
+     * Data provider for test_quiz_num_attempt_summary.
+     *
+     * @return array
+     */
+    public static function num_attempts_data_provider(): array {
+        return [
+            'With separate groups' => [
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => [
+                    't1' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                    ],
+                    't2' => [
+                            (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                            (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                            (object) ['group' => null, 'summary' => 'Attempts: 5 (3 from your groups)'],
+                        ],
+                    't3' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                    ],
+                    's1' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5 (3 from your groups)'],
+                    ],
+                ],
+            ],
+            'With no groups groups' => [
+                'groupmode' => NOGROUPS,
+                'expected' => [
+                    't1' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                    ],
+                    't2' => [
+                            (object) ['group' => 'g1', 'summary' => 'Attempts: 5'],
+                            (object) ['group' => 'g2', 'summary' => 'Attempts: 5'],
+                            (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                        ],
+                    't3' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                    ],
+                    's1' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                    ],
+                ],
+            ],
+            'With visible groups' => [
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => [
+                    't1' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                    ],
+                    't2' => [
+                            (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                            (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                            (object) ['group' => null, 'summary' => 'Attempts: 5 (3 from your groups)'],
+                        ],
+                    't3' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5'],
+                    ],
+                    's1' => [
+                        (object) ['group' => 'g1', 'summary' => 'Attempts: 5 (3 from this group)'],
+                        (object) ['group' => 'g2', 'summary' => 'Attempts: 5 (1 from this group)'],
+                        (object) ['group' => null, 'summary' => 'Attempts: 5 (3 from your groups)'],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
      * Test the quiz_num_attempts function.
+     *
+     * @param int $groupmode The group mode to use for the test.
+     * @param array $expected The expected results for each group setting.
      * @covers ::quiz_num_attempts
+     * @dataProvider quiz_num_attempts_data_provider
      */
-    public function test_quiz_num_attempts(): void {
+    public function test_quiz_num_attempts(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         [
@@ -1071,81 +1167,211 @@ final class lib_test extends \advanced_testcase {
             'groups' => $groups,
             'quiz' => $quiz,
             'cm' => $cm,
-        ] = $this->setup_users_course_groups(
-            [
-                'user1' => ['student', 'g1', 2],
-                'user2' => ['student', null, 1],
-                'teacher1' => ['editingteacher', null, null],
-                'teacher2' => ['teacher', 'g1', null],
-            ]
-        );
-        // Check the summary.
+        ] = $this->setup_users_course_groups([], $groupmode);
         $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
-        $this->setUser($users['teacher1']);
-        $this->assertEquals(['total' => 3], (array) quiz_num_attempts($cminfo));
-        $this->assertEquals(['total' => 3, 'group' => 2], (array) quiz_num_attempts($cminfo, $groups['g1']->id));
+        foreach ($expected as $result) {
+            $groupsstring = $result->groups ? implode(',', $result->groups) : '[]';
+            $groupstocheck = array_map(fn($g) => $groups[$g]->id, $result->groups);
+            $numattempts = quiz_num_attempts($cminfo, $groupstocheck);
 
-        $this->setUser($users['teacher2']);
-        $this->assertEquals(['total' => 3, 'group' => 2], (array) quiz_num_attempts($cminfo));
+            $this->assertEquals(
+                $result->numattempts,
+                $numattempts,
+                "Failed for group {$groupsstring}"
+            );
+        }
+    }
+
+    /**
+     * Data provider for test_quiz_num_attempt_summary.
+     *
+     * @return array
+     */
+    public static function quiz_num_attempts_data_provider(): array {
+        return [
+            'With separate groups' => [
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numattempts' => 3], // We count teachers.
+                    (object) ['groups' => ['g1', 'g2'], 'numattempts' => 4],
+                    (object) ['groups' => [], 'numattempts' => 5],
+                ],
+            ],
+            'With no groups' => [
+                'groupmode' => NOGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numattempts' => 3],
+                    (object) ['groups' => ['g1', 'g2'], 'numattempts' => 4],
+                    (object) ['groups' => [], 'numattempts' => 5],
+                ],
+            ],
+            'With visible groups' => [
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numattempts' => 3],
+                    (object) ['groups' => ['g1', 'g2'], 'numattempts' => 4],
+                    (object) ['groups' => [], 'numattempts' => 5],
+                ],
+            ],
+        ];
     }
 
     /**
      * Test the quiz_num_users_who_attempted function.
+     *
+     * @param int $groupmode The group mode to use for the test.
+     * @param array $expected The expected results for each user.
      * @covers ::quiz_num_users_who_attempted
+     * @dataProvider quiz_num_users_who_attempted_data_provider
      */
-    public function test_quiz_num_users_who_attempted(): void {
+    public function test_quiz_num_users_who_attempted(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         [
             'cm' => $cm,
-        ] = $this->setup_users_course_groups(
-            [
-                'user1' => ['student', 'g1', 2],
-                'user2' => ['student', null, 1],
-                'teacher1' => ['editingteacher', null, null],
-                'teacher2' => ['teacher', 'g1', 1],
-            ]
-        );
-        // Check the summary.
+            'groups' => $groups,
+        ] = $this->setup_users_course_groups([], $groupmode);
         $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
-        $this->assertEquals(2, quiz_num_users_who_attempted($cminfo));
+        foreach ($expected as $result) {
+            $groupsstring = $result->groups ? implode(',', $result->groups) : '[]';
+            $groupstocheck = array_map(fn($g) => $groups[$g]->id, $result->groups);
+            $numuserattempted = quiz_num_users_who_attempted($cminfo, $groupstocheck);
+            $this->assertEquals(
+                $result->numusers,
+                $numuserattempted,
+                "Failed for group {$groupsstring}"
+            );
+        }
+    }
+    /**
+     * Data provider for test_quiz_num_attempt_summary.
+     *
+     * @return array
+     */
+    public static function quiz_num_users_who_attempted_data_provider(): array {
+        return [
+            'With separate groups' => [
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numusers' => 1], // Teacher not counted.
+                    (object) ['groups' => ['g2'], 'numusers' => 1], // Student 3 only.
+                    (object) ['groups' => ['g1', 'g2'], 'numusers' => 2],
+                    (object) ['groups' => [], 'numusers' => 3],
+                ],
+            ],
+            'With no groups' => [
+                'groupmode' => NOGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numusers' => 1],
+                    (object) ['groups' => ['g2'], 'numusers' => 1],
+                    (object) ['groups' => ['g1', 'g2'], 'numusers' => 2],
+                    (object) ['groups' => [], 'numusers' => 3],
+                ],
+            ],
+            'With visible groups' => [
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numusers' => 1],
+                    (object) ['groups' => ['g2'], 'numusers' => 1],
+                    (object) ['groups' => ['g1', 'g2'], 'numusers' => 2],
+                    (object) ['groups' => [], 'numusers' => 3],
+                ],
+            ],
+        ];
     }
 
     /**
      * Test the quiz_num_users_who_can_attempt function.
+     *
+     * We test here that the function returns the correct number of users who can attempt the quiz (i.e. users with the
+     * within the specified groups who have the capability to attempt the quiz).
+     *
+     * @param int $groupmode The group mode to use for the test.
+     * @param array $expected The expected results for each user.
      * @covers ::quiz_num_users_who_can_attempt
+     * @dataProvider quiz_num_users_who_can_attempt_data_provider
      */
-    public function test_quiz_num_users_who_can_attempt(): void {
+    public function test_quiz_num_users_who_can_attempt(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         [
             'cm' => $cm,
-        ] = $this->setup_users_course_groups(
-            [
-                'user1' => ['student', 'g1', 2],
-                'user2' => ['student', null, 1],
-                'user3' => ['student', 'g2', 1],
-                'user4' => ['student', 'g2', 0],
-                'teacher1' => ['editingteacher', null, null],
-                'teacher2' => ['teacher', 'g1', null],
-            ]
-        );
+            'groups' => $groups,
+        ] = $this->setup_users_course_groups([], $groupmode);
         // Check the summary.
         $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
-        $this->assertEquals(4, quiz_num_users_who_can_attempt($cminfo));
+        foreach ($expected as $result) {
+            $groupsstring = $result->groups ? implode(',', $result->groups) : '[]';
+            $groupstocheck = array_map(fn($g) => $groups[$g]->id, $result->groups);
+            $numusercanattempt = quiz_num_users_who_can_attempt($cminfo, $groupstocheck);
+            $this->assertEquals(
+                $result->numusers,
+                $numusercanattempt,
+                "Failed for group {$groupsstring}"
+            );
+        }
+    }
+
+    /**
+     * Data provider for test_quiz_num_attempt_summary.
+     *
+     * @return array
+     */
+    public static function quiz_num_users_who_can_attempt_data_provider(): array {
+        return [
+            'With separate groups' => [
+                'groupmode' => SEPARATEGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numusers' => 1], // Teacher not counted.
+                    (object) ['groups' => ['g2'], 'numusers' => 2],
+                    (object) ['groups' => ['g1', 'g2'], 'numusers' => 3],
+                    (object) ['groups' => [], 'numusers' => 4], // All students.
+                ],
+            ],
+            'With no groups' => [
+                'groupmode' => NOGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numusers' => 1],
+                    (object) ['groups' => ['g2'], 'numusers' => 2],
+                    (object) ['groups' => ['g1', 'g2'], 'numusers' => 3],
+                    (object) ['groups' => [], 'numusers' => 4],
+                ],
+            ],
+            'With visible groups' => [
+                'groupmode' => VISIBLEGROUPS,
+                'expected' => [
+                    (object) ['groups' => ['g1'], 'numusers' => 1],
+                    (object) ['groups' => ['g2'], 'numusers' => 2],
+                    (object) ['groups' => ['g1', 'g2'], 'numusers' => 3],
+                    (object) ['groups' => [], 'numusers' => 4],
+                ],
+            ],
+        ];
     }
 
     /**
      * Set up users, course, groups and quiz for testing.
      *
      * @param array $data Array of user data with username as key and an array of role, group and attempts number as value.
+     * @param int $groupmode Group mode for the course, defaults to SEPARATEGROUPS.
      * @return array An array containing users, groups, quiz, course module and attempts.
      */
-    private function setup_users_course_groups(array $data): array {
+    private function setup_users_course_groups(array $data, int $groupmode = SEPARATEGROUPS): array {
         $generator = $this->getDataGenerator();
 
+        if (empty($data)) {
+            $data = [
+                's1' => ['student', 'g1', 2],
+                's2' => ['student', null, 1],
+                's3' => ['student', 'g2', 1],
+                's4' => ['student', 'g2', 0],
+                't1' => ['editingteacher', null, null],
+                't2' => ['teacher', 'g1', 1],
+                't3' => ['teacher', null, 0],
+            ];
+        }
         // Create a course and a quiz.
-        $course = $generator->create_course(['groupmodeforce' => 1, 'groupmode' => SEPARATEGROUPS]);
+        $course = $generator->create_course(['groupmodeforce' => 1, 'groupmode' => $groupmode]);
         $quiz = $generator->create_module('quiz', ['course' => $course->id, 'sumgrades' => 1]);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
