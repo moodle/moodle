@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Xato, “{$a->option}” uchun noto‘g‘ri “{$a->value}” qiymati';
-$string['cliincorrectvalueretry'] = 'Noto\'g\'ri qiymat, iltimos qayta urinib ko\'ring';
+$string['cliincorrectvalueretry'] = 'Noto‘g‘ri qiymat, iltimos qayta urinib ko‘ring';
 $string['clitypevalue'] = 'qiymatni kiritish';
 $string['clitypevaluedefault'] = 'qiymatni kiriting, ({$a}) odatiy qiymatni ishlatish uchun Enter tumgasini bosing';
 $string['cliunknowoption'] = 'Noma\'lum parametrlar:
@@ -41,3 +41,4 @@ Iltimos, -- help parametridan foydalaning';
 $string['cliyesnoprompt'] = 'y tugmasini bosing (ha degani) yoki n tugmasini bosing (yo‘q degani)';
 $string['environmentrequireinstall'] = 'o‘rnatilishi va yoqilishi shart.';
 $string['environmentrequireversion'] = '{$a->needed} versiyasi talab etiladi, sizda esa hozirda {$a->current} ishlatilmoqda';
+$string['upgradekeyset'] = 'Yangilash kaliti (o‘rnatmaslik uchun bo‘sh qoldiring)';
