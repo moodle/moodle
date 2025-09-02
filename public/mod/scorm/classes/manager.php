@@ -161,6 +161,26 @@ class manager {
     }
 
     /**
+     * Count the total number of attempts for the SCORM activity.
+     *
+     * @param array $groupids optional group id array, empty array means no group filtering.
+     * @return int the total number of attempts for the SCORM activity
+     */
+    public function count_all_attempts(array $groupids = []): int {
+        $params = ['scormid' => $this->instance->id];
+        $joins = '';
+        $where = "WHERE a.scormid = :scormid";
+        if ($groupids) {
+            $sqljoin = groups_get_members_join($groupids, 'a.userid', $this->context);
+            $joins = $sqljoin->joins;
+            $where .= " AND $sqljoin->wheres";
+            $params += $sqljoin->params;
+        }
+        $sql = "SELECT COUNT(DISTINCT a.id) FROM {scorm_attempt} a $joins $where";
+        return $this->db->count_records_sql($sql, $params);
+    }
+
+    /**
      * Get the max attempt setting.
      *
      * Just a wrapper around the instance property.

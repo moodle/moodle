@@ -150,14 +150,15 @@ class overview extends \core_courseformat\activityoverviewbase {
             return null;
         }
         $groups = array_map(fn($group) => $group->id, $this->get_groups_for_filtering());
-        $totalattempts = $this->manager->count_users_who_attempted($groups);
-        $userswhocanattempt = $this->manager->count_participants($groups);
         $maxattempts = $this->manager->get_max_attempts();
         if ($maxattempts === 0) {
             $maxattemptstext = get_string('unlimited');
         } else {
             $maxattemptstext = (string) $maxattempts;
         }
+        $totalattempts = $this->manager->count_all_attempts($groups);
+        $attemptedusers = $this->manager->count_users_who_attempted($groups);
+        $averageattempts = $totalattempts ? round($totalattempts / $attemptedusers, 1) : 0;
 
         $content = new overviewdialog(
             buttoncontent: $totalattempts,
@@ -171,10 +172,6 @@ class overview extends \core_courseformat\activityoverviewbase {
         );
 
         $content->add_item(get_string('allowedattemptsstudent', 'mod_scorm'), $maxattemptstext);
-        $averageattempts = 0;
-        if ($userswhocanattempt > 0) {
-            $averageattempts = (int) round($totalattempts / $userswhocanattempt);
-        }
         $content->add_item(get_string('averageattemptperstudent', 'mod_scorm'), $averageattempts);
 
         return new overviewitem(

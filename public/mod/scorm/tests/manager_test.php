@@ -98,7 +98,7 @@ final class manager_test extends \advanced_testcase {
      */
     public function test_can_view_reports(): void {
         $this->resetAfterTest();
-        ['users' => $users, 'course' => $course, 'instances' => $instances] = $this->setup_users_and_activity();
+        ['users' => $users, 'instances' => $instances] = $this->setup_users_and_activity();
         $manager = \mod_scorm\manager::create_from_instance($instances['withattempts']);
         // Create an attempt for the current user.
         $this->assertTrue($manager->can_view_reports($users['t1']));
@@ -132,8 +132,7 @@ final class manager_test extends \advanced_testcase {
      */
     public function test_count_users_who_attempted(int $groupmode, string $activity, array $expected): void {
         $this->resetAfterTest();
-        ['users' => $users, 'course' => $course, 'instances' => $instances] =
-            $this->setup_users_and_activity(groupmode: $groupmode);
+        ['users' => $users, 'instances' => $instances] = $this->setup_users_and_activity(groupmode: $groupmode);
 
         $manager = \mod_scorm\manager::create_from_instance($instances[$activity]);
         // Check the count of users who attempted.
@@ -190,6 +189,80 @@ final class manager_test extends \advanced_testcase {
                     's1' => 2, // User s1 is in group g1 and has mod/scorm:savetrack permission, same for t1.
                 ],
             ],
+        ];
+    }
+
+    /**
+     * Count the number of attempts for the SCORM activity.
+     *
+     * @param int $groupmode the group mode to use for the course.
+     * @param string $activity the activity name to test.
+     * @param array $currentgroups
+     * @param int $expectedcount
+     * @throws \moodle_exception
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_count_all_attempts_data')]
+    public function test_count_all_attempts(int $groupmode, string $activity, array $currentgroups, int $expectedcount): void {
+        $this->resetAfterTest();
+        ['instances' => $instances, 'groups' => $groups] = $this->setup_users_and_activity(groupmode: $groupmode);
+        $manager = \mod_scorm\manager::create_from_instance($instances[$activity]);
+        $groupids = array_map(
+                fn($gname) => $groups[$gname]->id,
+                $currentgroups
+        );
+        $this->assertEquals(
+                $expectedcount,
+                $manager->count_all_attempts($groupids),
+        );
+    }
+
+    /**
+     * Data provider for participant count tests.
+     *
+     * @return \Generator
+     */
+    public static function get_count_all_attempts_data(): \Generator {
+        yield 'No groups' => [
+                'groupmode' => NOGROUPS,
+                'activity' => 'withattempts',
+                'currentgroups' => [],
+                'expectedcount' => 3,
+        ];
+        yield 'Separate groups, g1 selected' => [
+                'groupmode' => SEPARATEGROUPS,
+                'activity' => 'withattempts',
+                'currentgroups' => ['g1'],
+                'expectedcount' => 2,
+        ];
+        yield 'Separate groups, g2 selected' => [
+                'groupmode' => SEPARATEGROUPS,
+                'activity' => 'withattempts',
+                'currentgroups' => ['g2'],
+                'expectedcount' => 1,
+        ];
+        yield 'Separate groups, g1 and g2 selected' => [
+                'groupmode' => SEPARATEGROUPS,
+                'activity' => 'withattempts',
+                'currentgroups' => ['g1', 'g2'],
+                'expectedcount' => 3,
+        ];
+        yield 'Separate groups, no group selected' => [
+                'groupmode' => SEPARATEGROUPS,
+                'activity' => 'withattempts',
+                'currentgroups' => [],
+                'expectedcount' => 3, // Seems counter-intuitive but with no group selected we count all attempts.
+        ];
+        yield 'Visible groups' => [
+                'groupmode' => VISIBLEGROUPS,
+                'activity' => 'withattempts',
+                'currentgroups' => ['g1', 'g2'],
+                'expectedcount' => 3,
+        ];
+        yield 'Visible groups g1 selected' => [
+                'groupmode' => VISIBLEGROUPS,
+                'activity' => 'withattempts',
+                'currentgroups' => ['g1'],
+                'expectedcount' => 2,
         ];
     }
 
@@ -392,6 +465,7 @@ final class manager_test extends \advanced_testcase {
             'users' => $users,
             'course' => $course,
             'instances' => $instances,
+            'groups' => $groups,
         ];
     }
 }

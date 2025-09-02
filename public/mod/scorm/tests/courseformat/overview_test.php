@@ -261,7 +261,7 @@ final class overview_test extends \advanced_testcase {
                     'content' => '<strong>2</strong> of 4',
                 ],
                 'totalattempts' => [
-                    'value' => 2,
+                    'value' => 3,
                     'items' => [
                         [
                             'label' => 'Grading method',
@@ -273,12 +273,10 @@ final class overview_test extends \advanced_testcase {
                         ],
                         [
                             'label' => 'Average attempts per student',
-                            'value' => '1',
+                            'value' => '1.5',
                         ],
                     ],
-
                 ],
-
             ],
         ];
         yield 'teacher 1 - no groups without attempts' => [
@@ -320,7 +318,7 @@ final class overview_test extends \advanced_testcase {
                     'content' => '<strong>2</strong> of 4',
                 ],
                 'totalattempts' => [
-                    'value' => 2,
+                    'value' => 3,
                     'items' => [
                         [
                             'label' => 'Grading method',
@@ -332,7 +330,7 @@ final class overview_test extends \advanced_testcase {
                         ],
                         [
                             'label' => 'Average attempts per student',
-                            'value' => '1',
+                            'value' => '1.5',
                         ],
                     ],
                 ],
@@ -348,7 +346,7 @@ final class overview_test extends \advanced_testcase {
                     'content' => '<strong>1</strong> of 2', // Teacher can also attempt, so s1 and t1 are counted.
                 ],
                 'totalattempts' => [
-                    'value' => 1, // Attempt from s1 only.
+                    'value' => 2, // Attempt from s1 only.
                     'items' => [
                         [
                             'label' => 'Grading method',
@@ -360,7 +358,7 @@ final class overview_test extends \advanced_testcase {
                         ],
                         [
                             'label' => 'Average attempts per student',
-                            'value' => '1',
+                            'value' => '2', // Only student 1 in this group attempted twice.
                         ],
                     ],
                 ],
@@ -378,7 +376,7 @@ final class overview_test extends \advanced_testcase {
                     'content' => '<strong>2</strong> of 4',
                 ],
                 'totalattempts' => [
-                    'value' => 2,
+                    'value' => 3,
                     'items' => [
                         [
                             'label' => 'Grading method',
@@ -390,7 +388,7 @@ final class overview_test extends \advanced_testcase {
                         ],
                         [
                             'label' => 'Average attempts per student',
-                            'value' => '1',
+                            'value' => '1.5',
                         ],
                     ],
                 ],
@@ -406,7 +404,7 @@ final class overview_test extends \advanced_testcase {
                     'content' => '<strong>2</strong> of 4',
                 ],
                 'totalattempts' => [
-                    'value' => 2,
+                    'value' => 3,
                     'items' => [
                         [
                             'label' => 'Grading method',
@@ -418,7 +416,7 @@ final class overview_test extends \advanced_testcase {
                         ],
                         [
                             'label' => 'Average attempts per student',
-                            'value' => '1',
+                            'value' => '1.5',
                         ],
                     ],
                 ],
@@ -489,8 +487,7 @@ final class overview_test extends \advanced_testcase {
         // attempt for testing purposes.
         if ($createattempt && $createusers) {
             $scormgenerator = $this->getDataGenerator()->get_plugin_generator('mod_scorm');
-            // Create attempts for the students.
-            // Two attempts for the first student, one for the second.
+            // Create an attempt for each student, and two attempts for the student s1.
             foreach ($data as $username => $userinfo) {
                 $record = [
                     'userid' => $users[$username]->id,
@@ -500,8 +497,11 @@ final class overview_test extends \advanced_testcase {
                     $record['element'] = 'cmi.core.score.raw';
                     $record['value'] = $grades[$username];
                 }
-                // Create an attempt for each student.
+                // Create two attempts for the first student.
                 if ($userinfo['role'] === 'student') {
+                    if ($username === 's1') {
+                        $scormgenerator->create_attempt($record);
+                    }
                     $scormgenerator->create_attempt($record);
                 }
             }
