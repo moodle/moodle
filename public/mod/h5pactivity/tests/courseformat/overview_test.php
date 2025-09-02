@@ -342,24 +342,29 @@ final class overview_test extends \advanced_testcase {
         $this->setUser($nonediting);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(0, $items['totalattempts']->get_value());
+        $this->assertEquals(0, $items['totalattempts']->get_content()->get_items()[1]->value); // Average attempts (0).
 
         // Editing teacher can see all the attempts, whatever the group is.
         $this->setUser($editing);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
         $this->assertEquals(2, $items['totalattempts']->get_value());
+        $this->assertEquals(2, $items['totalattempts']->get_content()->get_items()[1]->value); // Average attempts (2/1).
 
         // Attempts by student in non-editing teacher's group.
         $params = ['cmid' => $cm->id, 'userid' => $studentingroups->id];
         $generator->create_content($activity, $params);
         $generator->create_content($activity, $params);
+        $generator->create_content($activity, $params);
 
         // Editing teacher can see all the attempts, whatever the group is.
         $items = overviewfactory::create($cm)->get_extra_overview_items();
-        $this->assertEquals(4, $items['totalattempts']->get_value());
+        $this->assertEquals(5, $items['totalattempts']->get_value());
+        $this->assertEquals(2.5, $items['totalattempts']->get_content()->get_items()[1]->value); // Average attempts (5/2).
 
         // Non-editing teacher can see their group activity.
         $this->setUser($nonediting);
         $items = overviewfactory::create($cm)->get_extra_overview_items();
-        $this->assertEquals(2, $items['totalattempts']->get_value());
+        $this->assertEquals(3, $items['totalattempts']->get_value());
+        $this->assertEquals(3, $items['totalattempts']->get_content()->get_items()[1]->value); // Average attempts (3/1).
     }
 }

@@ -86,7 +86,7 @@ Feature: Testing overview integration in H5P activity
       | Empty H5P activity | Unknown H5P type | 0 of 3                 | 0              | View    |
     When I click on "5" "button" in the "H5P activity" "table_row"
     Then I should see "Grading method: Average grade"
-    And I should see "Average attempts per student: 3"
+    And I should see "Average attempts per student: 2.5"
     And I press the escape key
     And I click on "0" "button" in the "Empty H5P activity" "table_row"
     And I should see "Grading method: Highest grade"

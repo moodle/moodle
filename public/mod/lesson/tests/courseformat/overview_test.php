@@ -240,7 +240,7 @@ final class overview_test extends \advanced_testcase {
         if ($expected['averageindialog'] === null) {
             $itemcontent = $item->get_content();
             $this->assertIsString($itemcontent); // In this case the content is a string instead of content object.
-            $this->assertEquals($expected['value'], $itemcontent);
+            $this->assertEquals($expected['value'], $item->get_value());
             return;
         }
         $this->assertEquals(

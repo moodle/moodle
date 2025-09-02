@@ -158,7 +158,7 @@ class overview extends \core_courseformat\activityoverviewbase {
 
         $averageattempts = 0;
         if ($totalusers && count($totalusers) > 0 && $totalattempts) {
-            $averageattempts = (int) round($totalattempts / count($totalusers));
+            $averageattempts = round($totalattempts / count($totalusers), 1);
         }
         $content = new overviewdialog(
             buttoncontent: $totalattempts,
