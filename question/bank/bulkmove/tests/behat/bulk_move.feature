@@ -50,12 +50,14 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I should see "Bulk move questions"
     And I click on "Disable" "link" in the "Bulk move questions" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I apply question bank filter "Category" with value "Test questions 1"
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
     Then I should not see question bulk action "move"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Bulk move questions" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I apply question bank filter "Category" with value "Test questions 1"
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
     And I should see question bulk action "move"
@@ -64,6 +66,7 @@ Feature: Use the qbank plugin manager page for bulkmove
   Scenario: Selecting a shared question bank limits the available categories to those belonging to the selected bank.
     Given I log in as "teacher1"
     And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I apply question bank filter "Category" with value "Test questions 1"
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
     And I click on "move" "button"
@@ -78,8 +81,9 @@ Feature: Use the qbank plugin manager page for bulkmove
     Then I should not see "C3 - Question bank 3" in the ".search-banks" "css_element"
     And I click on "C1 - Question bank 1" item in the autocomplete list
     Then I should not see "Test questions 1" in the ".search-categories .form-autocomplete-selection" "css_element"
-    And the field "selectcategory" matches value "Test questions 2 (1)"
+    And the field "selectcategory" matches value "Default for Question bank 1"
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
+    And "Test questions 2 (1)" "autocomplete_suggestions" should exist
     And "Test questions 3" "autocomplete_suggestions" should not exist
     And "Test questions 4" "autocomplete_suggestions" should not exist
     And "Test questions 5" "autocomplete_suggestions" should exist
@@ -88,6 +92,7 @@ Feature: Use the qbank plugin manager page for bulkmove
   Scenario: Move a question from one bank category to another.
     Given I log in as "teacher1"
     And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I apply question bank filter "Category" with value "Test questions 1"
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
     And I click on "move" "button"
@@ -107,6 +112,7 @@ Feature: Use the qbank plugin manager page for bulkmove
       | Test questions   | missingtype | Question 2 | Write something           |
       | Test questions   | essay       | Question 3 | frog                      |
     And I am on the "Course 1" "core_question > course question bank" page logged in as teacher1
+    And I apply question bank filter "Category" with value "Test questions"
     # Select questions to be moved.
     And I click on "Question 1" "checkbox"
     And I click on "Question 2" "checkbox"
@@ -129,6 +135,7 @@ Feature: Use the qbank plugin manager page for bulkmove
   @javascript
   Scenario: Unable to bulk move questions from history page
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions 1"
     And I choose "History" action for "First question" in the question bank
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
@@ -161,6 +168,7 @@ Feature: Use the qbank plugin manager page for bulkmove
       | reference    | qbank4           |
       | name         | Test questions 7 |
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions 1"
     And I press "Create a new question ..."
     And I set the field "item_qtype_truefalse" to "1"
     # Manually create a new question so additional parameters are included in the URL, and we can test they are handled correctly
@@ -174,14 +182,15 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Test quiz"
-    And the field "selectcategory" matches value "Test questions 1 (2)"
+    And the field "selectcategory" matches value "Default for Test quiz"
     And I open the autocomplete suggestions list in the ".search-banks" "css_element"
     And I should see "C1 - Question bank 1" in the ".search-banks .form-autocomplete-suggestions" "css_element"
     And I should see "C2 - Question bank 2" in the ".search-banks .form-autocomplete-suggestions" "css_element"
     And I should see "C4 - Question bank 4" in the ".search-banks .form-autocomplete-suggestions" "css_element"
     And I should not see "C3 - Question bank 3" in the ".search-banks .form-autocomplete-suggestions" "css_element"
     And I click on "C1 - Question bank 1" item in the autocomplete list
-    And the field "selectcategory" matches value "Test questions 2 (1)"
+    And I open the autocomplete suggestions list in the ".question_category_selector" "css_element"
+    And I click on "Test questions 2 (1)" item in the autocomplete list
     And I click on "Move questions" "button"
     And I should see "Are you sure you want to move these questions?"
     When I click on "Confirm" "button"
@@ -191,6 +200,24 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Question bank 1"
-    And the field "selectcategory" matches value "Test questions 2 (2)"
+    And the field "selectcategory" matches value "Default for Question bank 1 (1)"
     # The moved question should be highlighted
     And the "class" attribute of "Seventh question" "table_row" should contain "highlight"
+
+  @javascript
+  Scenario: A new question bank is available in the move dialogue immediately
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    And the following "user preferences" exist:
+      | user     | preference | value    |
+      | teacher1 | htmleditor | textarea |
+    And I navigate to "Question banks" in current page administration
+    And I press "Add"
+    And I set the field "Question bank name" to "New question bank"
+    And I press "Save and return to question bank list"
+    And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I apply question bank filter "Category" with value "Test questions 1"
+    And I click on "First question" "checkbox"
+    And I click on "With selected" "button"
+    And I click on "move" "button"
+    And I open the autocomplete suggestions list in the ".search-banks" "css_element"
+    Then "New question bank" "autocomplete_suggestions" should exist

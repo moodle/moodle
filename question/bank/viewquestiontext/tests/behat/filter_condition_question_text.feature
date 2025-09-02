@@ -22,6 +22,7 @@ Feature: Filter questions by text found in the question text or general feedback
       | Test questions   | truefalse     | Question 4      | GHI           | CDEZ             |
       | Test questions   | truefalse     | Question 5      | IJK           | GHI              |
     And I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "Question 1"
     And I should see "Question 2"
     And I should see "Question 3"

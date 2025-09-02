@@ -17,13 +17,10 @@ Feature: Questions with invalid types should be clear and any actions which won'
     And the following "activities" exist:
       | activity   | name    | intro              | course | idnumber |
       | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name         | user      | questiontext    |
-      | Test questions   | essay     | Question 1   | teacher1  | A text          |
-      | Test questions   | essay     | Question 2   | teacher1  | B text          |
+      | questioncategory    | qtype     | name         | user      | questiontext    |
+      | Default for Qbank 1 | essay     | Question 1   | teacher1  | A text          |
+      | Default for Qbank 1 | essay     | Question 2   | teacher1  | B text          |
     And question "Question 2" is changed to simulate being of an uninstalled type
 
   Scenario: Questions of invalid types should be highlighted and labelled as invalid

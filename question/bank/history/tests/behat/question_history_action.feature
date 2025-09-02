@@ -17,9 +17,9 @@ Feature: Use the qbank plugin manager page for question history
       | Activity module | qbank1    | Share questions   |
       | Activity module | qbank2    | Share questions 2 |
     And the following "questions" exist:
-      | questioncategory | qtype     | name                       | questiontext                  |
-      | Test questions   | truefalse | First question             | Answer the first question     |
-      | Share questions  | essay     | Test question to be edited | Write about whatever you want |
+      | questioncategory      | qtype     | name                       | questiontext                  |
+      | Default for Test quiz | truefalse | First question             | Answer the first question     |
+      | Default for Qbank 1   | essay     | Test question to be edited | Write about whatever you want |
 
   Scenario: Enable/disable question history column from the base view
     Given I log in as "admin"
@@ -100,8 +100,8 @@ Feature: Use the qbank plugin manager page for question history
       | user  | preference                       | value                                                           |
       | admin | qbank_columnsortorder_hiddencols | qbank_usage\question_last_used_column-question_last_used_column |
     And the following "questions" exist:
-      | questioncategory | qtype     | name            | questiontext               |
-      | Test questions   | truefalse | Second question | Answer the second question |
+      | questioncategory      | qtype     | name            | questiontext               |
+      | Default for Test quiz | truefalse | Second question | Answer the second question |
     When I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
     And "Last used" "qbank_columnsortorder > column header" should not exist
     Then I should see "First question"

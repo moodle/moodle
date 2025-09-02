@@ -17,12 +17,9 @@ Feature: A teacher can preview questions in the question bank
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name                          |
-      | Test questions   | numerical | Test question to be previewed |
+      | questioncategory      | qtype     | name                          |
+      | Default for Test quiz | numerical | Test question to be previewed |
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Preview" action for "Test question to be previewed" in the question bank
 
@@ -115,8 +112,8 @@ Feature: A teacher can preview questions in the question bank
 
   Scenario: The preview always uses the latest question version by default.
     Given the following "core_question > updated questions" exist:
-      | questioncategory | question                      | questiontext       |
-      | Test questions   | Test question to be previewed | Question version 2 |
+      | questioncategory      | question                      | questiontext       |
+      | Default for Test quiz | Test question to be previewed | Question version 2 |
     And I should see "Version 1 (latest)"
     And I expand all fieldsets
     And the field "Question version" matches value "Always latest"
@@ -130,8 +127,8 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Detect a newer version during always latest preview and offer to switch to the latest
     Given I should not see "This preview is using version 1"
     And the following "core_question > updated questions" exist:
-      | questioncategory | question                      | questiontext       |
-      | Test questions   | Test question to be previewed | Question version 2 |
+      | questioncategory      | question                      | questiontext       |
+      | Default for Test quiz | Test question to be previewed | Question version 2 |
     And I should see "Version 1 (latest)"
     And I set the field "Answer:" to "3.14"
     When I press "Submit and finish"
@@ -143,8 +140,8 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Previewing from the question history will not always show the latest version
     Given I press "Close preview"
     And the following "core_question > updated questions" exist:
-      | questioncategory | question                      | questiontext       |
-      | Test questions   | Test question to be previewed | Question version 2 |
+      | questioncategory      | question                      | questiontext       |
+      | Default for Test quiz | Test question to be previewed | Question version 2 |
     And I choose "History" action for "Test question to be previewed" in the question bank
     And I choose "Preview" action for "Test question to be previewed" in the question bank
     And I should see "Version 1 (of 2)"
@@ -155,8 +152,8 @@ Feature: A teacher can preview questions in the question bank
     And I should see "Version 1 (of 2)"
     And I should not see "The latest version is 2."
     And the following "core_question > updated questions" exist:
-      | questioncategory | question                      | questiontext       |
-      | Test questions   | Test question to be previewed | Question version 3 |
+      | questioncategory      | question                      | questiontext       |
+      | Default for Test quiz | Test question to be previewed | Question version 3 |
     When I press "Start again"
     Then I should see "Version 1 (of 3)"
     And I should not see "Version 3 (latest)"

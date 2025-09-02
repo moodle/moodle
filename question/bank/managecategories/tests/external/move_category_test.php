@@ -80,9 +80,13 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
         $this->create_course_category();
 
         // Question categories.
-        $qcat1 = $this->create_question_category_for_a_qbank($qbank);
+        $qcat1 = question_get_default_category($context->id);
         $qcat2 = $this->create_question_category_for_a_qbank($qbank);
         $qcat3 = $this->create_question_category_for_a_qbank($qbank);
+
+        $this->assertEquals(999, $qcat1->sortorder);
+        $this->assertEquals(1000, $qcat2->sortorder);
+        $this->assertEquals(1001, $qcat3->sortorder);
 
         // Check current order.
         $currentorder = $this->get_current_order($context);
@@ -111,7 +115,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
                 'action' => 'put',
                 'fields' => (object)[
                     'id' => $qcat1->id,
-                    'sortorder' => 3,
+                    'sortorder' => 1001,
                 ],
             ],
             (object)[
@@ -119,7 +123,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
                 'action' => 'put',
                 'fields' => (object)[
                     'id' => $qcat3->id,
-                    'sortorder' => 4,
+                    'sortorder' => 1002,
                 ],
             ],
         ];
@@ -142,7 +146,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
         $this->create_course_category();
 
         // Question categories.
-        $qcat1 = $this->create_question_category_for_a_qbank($qbank);
+        $qcat1 = question_get_default_category($context->id);
         $qcat2 = $this->create_question_category_for_a_qbank($qbank);
         $qcat3 = $this->create_question_category_for_a_qbank($qbank);
 
@@ -211,7 +215,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
         $this->create_course_category();
 
         // Question categories.
-        $qcat1 = $this->create_question_category_for_a_qbank($qbank);
+        $qcat1 = question_get_default_category($context->id);
         $qcat2 = $this->create_question_category_for_a_qbank($qbank);
         $qcat3 = $this->create_question_category_for_a_qbank($qbank);
 
@@ -284,7 +288,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
         $this->create_course_category();
 
         // Question categories.
-        $qcat1 = $this->create_question_category_for_a_qbank($qbank);
+        $qcat1 = question_get_default_category($context->id);
         $qcat2 = $this->create_question_category_for_a_qbank($qbank);
         $qcat3 = $this->create_question_category_for_a_qbank($qbank, ['parent' => $qcat1->id]);
         $qcat4 = $this->create_question_category_for_a_qbank($qbank, ['parent' => $qcat2->id]);
@@ -347,7 +351,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
         $this->create_course_category();
 
         // Question categories.
-        $qcat1 = $this->create_question_category_for_a_qbank($qbank);
+        $qcat1 = question_get_default_category($context->id);
         $qcat2 = $this->create_question_category_for_a_qbank($qbank);
         $qcat3 = $this->create_question_category_for_a_qbank($qbank);
         $qcat4 = $this->create_question_category_for_a_qbank($qbank, ['parent' => $qcat3->id]);
@@ -385,7 +389,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
                 'action' => 'put',
                 'fields' => (object)[
                     'id' => $qcat3->id,
-                    'sortorder' => 2,
+                    'sortorder' => 1000,
                 ],
             ],
             (object)[
@@ -393,7 +397,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
                 'action' => 'put',
                 'fields' => (object)[
                     'id' => $qcat2->id,
-                    'sortorder' => 3,
+                    'sortorder' => 1001,
                 ],
             ],
         ];
@@ -417,7 +421,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
         $this->create_course_category();
 
         // Question categories.
-        $qcat1 = $this->create_question_category_for_a_qbank($qbank);
+        $qcat1 = question_get_default_category($context->id);
         $qcat2 = $this->create_question_category_for_a_qbank($qbank);
         $qcat3 = $this->create_question_category_for_a_qbank($qbank);
         $qcat4 = $this->create_question_category_for_a_qbank($qbank, ['parent' => $qcat3->id]);

@@ -40,12 +40,14 @@ Feature: Editing random questions already in a quiz based on category and tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     And I open the "last" add to quiz menu
     And I follow "a random question"
+    And I apply question bank filter "Category" with value "Questions Category 1"
     # To actually reproduce MDL-68733 it would be better to set tags easy,essay here, and then below just delete one tag.
     # However, the state of Behat for autocomplete fields does not let us actually do that.
     And I apply question bank filter "Tag" with value "easy"
     And I press "Add random question"
     And I open the "Page 1" add to quiz menu
     And I follow "a random question"
+    And I apply question bank filter "Category" with value "Questions Category 1"
     And I apply question bank filter "Tag" with value "hard"
     And I press "Add random question"
     And I follow "Add page break"
@@ -61,6 +63,7 @@ Feature: Editing random questions already in a quiz based on category and tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     And I open the "last" add to quiz menu
     And I follow "a random question"
+    And I apply question bank filter "Category" with value "Questions Category 1"
     And I apply question bank filter "Tag" with value "essay"
     And I press "Add random question"
     When I click on "Configure question" "link" in the "Random (Questions Category 1) based on filter condition with tags: essay" "list_item"
@@ -76,6 +79,7 @@ Feature: Editing random questions already in a quiz based on category and tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     And I open the "last" add to quiz menu
     And I follow "a random question"
+    And I apply question bank filter "Category" with value "Questions Category 1"
     And I apply question bank filter "Tag" with value "essay"
     And I press "Add random question"
     When I click on "Configure question" "link" in the "Random (Questions Category 1) based on filter condition with tags: essay" "list_item"

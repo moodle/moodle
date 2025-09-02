@@ -30,6 +30,7 @@ Feature: Filter questions by creator name
       | truefalse | Test questions   | Second question | bb   |
       | truefalse | Test questions   | Third question  | cc   |
     And I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "First question"
     And I should see "Second question"
     And I should see "Third question"

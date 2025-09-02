@@ -24,6 +24,7 @@ Feature: A teacher can manage tags on questions in the question bank
       | questioncategory | qtype | name                       | questiontext                  |
       | Test questions   | essay | Test question to be tagged | Write about whatever you want |
     And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions"
 
   @javascript
   Scenario: Manage tags on a question

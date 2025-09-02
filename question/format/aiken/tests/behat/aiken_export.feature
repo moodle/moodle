@@ -21,9 +21,9 @@ Feature: Test exporting questions using Aiken format.
       | contextlevel    | reference | name           |
       | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype        | name             | template    |
-      | Test questions   | multichoice  | Multi-choice-001 | two_of_four |
-      | Test questions   | multichoice  | Multi-choice-002 | one_of_four |
+      | questioncategory    | qtype        | name             | template    |
+      | Default for Qbank 1 | multichoice  | Multi-choice-001 | two_of_four |
+      | Default for Qbank 1 | multichoice  | Multi-choice-002 | one_of_four |
 
   Scenario: Aiken export
     When I am on the "Qbank 1" "core_question > question export" page logged in as "teacher1"
