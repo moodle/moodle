@@ -141,7 +141,7 @@ final class backup_test extends \advanced_testcase {
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
         $context = \context_module::instance($qbank->cmid);
-        $qcat = $qgen->create_question_category(['contextid' => $context->id]);
+        $qcat = question_get_default_category($context->id);
         $question1 = $qgen->create_question('shortanswer', null, ['category' => $qcat->id, 'idnumber' => 'q1']);
         $question2 = $qgen->create_question('shortanswer', null, ['category' => $qcat->id, 'idnumber' => 'q2']);
 
@@ -174,7 +174,7 @@ final class backup_test extends \advanced_testcase {
         $this->assertCount(1, $qbanks);
         $qbank = reset($qbanks);
         $qbankcontext = \context_module::instance($qbank->id);
-        $cats = $DB->get_records_select('question_categories' , 'parent <> 0', ['contextid' => $qbankcontext->id]);
+        $cats = $DB->get_records_select('question_categories', 'parent <> 0 AND contextid = ?', [$qbankcontext->id]);
         $this->assertCount(1, $cats);
         $cat = reset($cats);
 
@@ -515,7 +515,7 @@ final class backup_test extends \advanced_testcase {
             ['type' => question_bank_helper::TYPE_STANDARD, 'course' => $course->id]
         );
         $qbankcontext = \context_module::instance($qbank->cmid);
-        $bankqcat = $qgen->create_question_category(['contextid' => $qbankcontext->id]);
+        $bankqcat = question_get_default_category($qbankcontext->id);
         $bankquestion = $qgen->create_question('shortanswer',
             null,
             ['name' => 'bank question', 'category' => $bankqcat->id, 'idnumber' => 'bankq1']
@@ -524,7 +524,7 @@ final class backup_test extends \advanced_testcase {
         // Create a quiz module instance, a category for that module, and a question for that category.
         $quiz = self::getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         $quizcontext = \context_module::instance($quiz->cmid);
-        $quizqcat = $qgen->create_question_category(['contextid' => $quizcontext->id]);
+        $quizqcat = question_get_default_category($quizcontext->id);
         $quizquestion = $qgen->create_question('shortanswer',
             null,
             ['name' => 'quiz question', 'category' => $quizqcat->id, 'idnumber' => 'quizq1']

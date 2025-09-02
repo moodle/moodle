@@ -116,6 +116,7 @@ Feature: A Teacher can comment in a question
     Given I am on the "Test quiz" "mod_quiz > edit" page logged in as "teacher1"
     And I press "Add"
     And I follow "from question bank"
+    And I apply question bank filter "Category" with value "Test questions"
     And I click on "Select" "checkbox" in the "First question" "table_row"
     And I click on "Add selected questions to the quiz" "button"
     And I click on "Preview question" "link"
@@ -126,6 +127,7 @@ Feature: A Teacher can comment in a question
     And I should see "Some new comment"
     And I switch to the main window
     And I am on the "Test quiz" "mod_quiz > question bank" page
+    And I apply question bank filter "Category" with value "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     And I click on "Comments" "link"
     And I should see "Some new comment"
@@ -140,9 +142,8 @@ Feature: A Teacher can comment in a question
 
   @javascript
   Scenario: Comments modal can change the version using dropdown
-    Given I log in as "teacher1"
-    And I am on the "Test quiz" "quiz activity" page
-    When I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "First question"
     And I choose "Edit question" action for "First question" in the question bank
     And I set the field "id_name" to "Renamed question v2"

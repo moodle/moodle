@@ -2082,5 +2082,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025082600.01);
     }
 
+    if ($oldversion < 2025082900.01) {
+        // Changing precision of field name on table question_categories to (1333).
+        $table = new xmldb_table('question_categories');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025082900.01);
+    }
+
     return true;
 }

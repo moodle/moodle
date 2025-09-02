@@ -11,14 +11,11 @@ Feature: Filter questions by status
     And the following "activities" exist:
       | activity   | name    | intro              | course | idnumber |
       | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name            | questiontext               | status |
-      | Test questions   | truefalse | First question  | Answer the first question  | ready  |
-      | Test questions   | numerical | Second question | Answer the second question | draft  |
-      | Test questions   | essay     | Third question  | Answer the third question  | ready  |
+      | questioncategory     | qtype     | name            | questiontext               | status |
+      | Default for Qbank 1 | truefalse | First question  | Answer the first question  | ready  |
+      | Default for Qbank 1 | numerical | Second question | Answer the second question | draft  |
+      | Default for Qbank 1 | essay     | Third question  | Answer the third question  | ready  |
 
   Scenario: Filter by ready status
     Given I am on the "Qbank 1" "core_question > question bank" page logged in as "admin"

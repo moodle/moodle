@@ -433,6 +433,11 @@ function edit_module_post_actions($moduleinfo, $course) {
         }
     }
 
+    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_USES_QUESTIONS) && empty($moduleinfo->skipdefaultcategory)) {
+        // Create the default question category.
+        question_get_default_category($modcontext->id, true);
+    }
+
     return $moduleinfo;
 }
 

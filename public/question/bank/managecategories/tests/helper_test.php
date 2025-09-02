@@ -275,7 +275,8 @@ final class helper_test extends manage_category_test_base {
 
         // Create categories.
         $quiz = $this->create_quiz();
-        $qcategory1 = $this->create_question_category_for_a_quiz($quiz);
+        $context = \context_module::instance($quiz->cmid);
+        $qcategory1 = question_get_default_category($context->id);
         $this->create_question_category_for_a_quiz($quiz, ['parent' => $qcategory1->id]);
         $this->create_question_category_for_a_quiz($quiz);
 
@@ -307,7 +308,8 @@ final class helper_test extends manage_category_test_base {
 
         // Create categories.
         $quiz = $this->create_quiz();
-        $qcategory1 = $this->create_question_category_for_a_quiz($quiz);
+        $context = \context_module::instance($quiz->cmid);
+        $qcategory1 = question_get_default_category($context->id);
         $qcategory2 = $this->create_question_category_for_a_quiz($quiz, ['parent' => $qcategory1->id]);
         $qcategory3 = $this->create_question_category_for_a_quiz($quiz);
 
@@ -339,12 +341,13 @@ final class helper_test extends manage_category_test_base {
         global $DB;
         // Create quiz.
         $quiz = $this->quiz;
-        // Create category 1 and one hidden question.
-        $qcat = $this->create_question_category_for_a_quiz($quiz);
+        $context = \context_module::instance($quiz->cmid);
+        // Get the question category and create one hidden question.
+        $qcat = question_get_default_category($context->id);
         $q1 = $this->create_question_in_a_category('shortanswer', $qcat->id);
         $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q1->id]);
 
-        $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
+        $contexts = new \core_question\local\bank\question_edit_contexts($context);
         $contexts = $contexts->having_cap('moodle/question:add');
         foreach ($contexts as $context) {
             $contextslist[] = $context->id;

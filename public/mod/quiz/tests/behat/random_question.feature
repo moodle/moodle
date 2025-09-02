@@ -21,7 +21,6 @@ Feature: Moving a question to another category should not affect random question
       | qbank      | Qbank 1 | Question bank 1                                 | C1     | qbank1   |
     And the following "question categories" exist:
       | contextlevel    | reference     | questioncategory    | name                |
-      | Activity module | qbank1        | Top                 | top                 |
       | Activity module | qbank1        | top                 | Default for Qbank 1 |
       | Activity module | qbank1        | Default for Qbank 1 | Subcategory         |
       | Activity module | qbank1        | top                 | Used category       |

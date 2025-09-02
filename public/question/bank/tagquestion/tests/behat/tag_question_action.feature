@@ -9,12 +9,9 @@ Feature: Use the qbank plugin manager page for tagquestion
     And the following "activities" exist:
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | quiz1     | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name           | questiontext              |
-      | Test questions   | truefalse | First question | Answer the first question |
+      | questioncategory      | qtype     | name           | questiontext              |
+      | Default for Test quiz | truefalse | First question | Answer the first question |
 
   Scenario: Enable/disable tagquestion column from the base view
     Given I log in as "admin"

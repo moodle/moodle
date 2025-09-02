@@ -21,15 +21,12 @@ Feature: Show statistics in question bank
       | quiz       | Quiz 1  | Quiz 1 description | C1     | quiz1    |
       | quiz       | Quiz 2  | Quiz 2 description | C1     | quiz2    |
       | qbank      | Qbank 1 | Question bank 1    | C1     | qbank1   |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | qbank1    | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype       | name  | questiontext    |
-      | Test questions   | truefalse   | TF1   | First question  |
-      | Test questions   | truefalse   | TF2   | Second question |
-      | Test questions   | truefalse   | TF3   | Third question  |
-      | Test questions   | truefalse   | TF4   | Fourth question |
+      | questioncategory    | qtype       | name  | questiontext    |
+      | Default for Qbank 1 | truefalse   | TF1   | First question  |
+      | Default for Qbank 1 | truefalse   | TF2   | Second question |
+      | Default for Qbank 1 | truefalse   | TF3   | Third question  |
+      | Default for Qbank 1 | truefalse   | TF4   | Fourth question |
     And quiz "Quiz 1" contains the following questions:
       | question | page | maxmark |
       | TF1      | 1    | 1.0     |
@@ -151,16 +148,13 @@ Feature: Show statistics in question bank
     And the following "activities" exist:
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 3 | C2     | quiz3    |
-    And the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | quiz3     | Quiz questions |
     And the following "questions" exist:
-      | questioncategory | qtype       | template    | name |
-      | Quiz questions   | multichoice | one_of_four | MCA  |
-      | Quiz questions   | multichoice | one_of_four | MCB  |
-      | Quiz questions   | multichoice | one_of_four | MCC  |
-      | Quiz questions   | multichoice | one_of_four | MCD  |
-      | Quiz questions   | multichoice | one_of_four | MCE  |
+      | questioncategory   | qtype       | template    | name |
+      | Default for Quiz 3 | multichoice | one_of_four | MCA  |
+      | Default for Quiz 3 | multichoice | one_of_four | MCB  |
+      | Default for Quiz 3 | multichoice | one_of_four | MCC  |
+      | Default for Quiz 3 | multichoice | one_of_four | MCD  |
+      | Default for Quiz 3 | multichoice | one_of_four | MCE  |
     And quiz "Quiz 3" contains the following questions:
       | question | page | maxmark |
       | MCA      | 1    | 1.0     |

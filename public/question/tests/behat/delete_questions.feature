@@ -24,6 +24,7 @@ Feature: A teacher can delete questions in the question bank
       | questioncategory | qtype | name                        | questiontext                  |
       | Test questions   | essay | Test question to be deleted | Write about whatever you want |
     And I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Test questions"
 
   @javascript
   Scenario: A question not used anywhere can really be deleted
@@ -32,6 +33,7 @@ Feature: A teacher can delete questions in the question bank
     And I apply question bank filter "Show hidden questions" with value "Yes"
     Then I should not see "Test question to be deleted"
 
+  @javascript
   Scenario: Deleting a question can be cancelled
     When I choose "Delete" action for "Test question to be deleted" in the question bank
     And I press "Cancel"
@@ -53,6 +55,7 @@ Feature: A teacher can delete questions in the question bank
       | question                         | page | requireprevious |
       | Test used question to be deleted | 1    | 0               |
     When I am on the "Qbank 1" "core_question > question bank" page
+    And I apply question bank filter "Category" with value "Test questions"
     And I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I should see "This will delete the following question and all its versions:"
     And I should see "* Denotes questions which can't be deleted because they are in use. Instead, they will be hidden in the question bank unless you set 'Show hidden questions' to 'Yes'."
@@ -77,7 +80,6 @@ Feature: A teacher can delete questions in the question bank
 
   @javascript
   Scenario: Delete question has multiple versions in question bank page
-    Given I am on the "Qbank 1" "core_question > question bank" page logged in as "teacher1"
     When the following "core_question > updated questions" exist:
       | questioncategory | question                    | questiontext                          |
       | Test questions   | Test question to be deleted | Test question to be deleted version 2 |
