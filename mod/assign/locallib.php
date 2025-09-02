@@ -1316,12 +1316,13 @@ class assign {
 
             // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
             // See MDL-9367.
-            shift_course_mod_dates(
-                'assign',
-                ['duedate', 'allowsubmissionsfromdate', 'cutoffdate'],
-                $data->timeshift,
-                $data->courseid, $this->get_instance()->id,
-            );
+            shift_course_mod_dates('assign', [
+                'allowsubmissionsfromdate',
+                'duedate',
+                'cutoffdate',
+                'gradingduedate',
+            ], $data->timeshift, $data->courseid, $this->get_instance()->id);
+
             $status[] = [
                 'component' => $componentstr,
                 'item' => get_string('date'),
