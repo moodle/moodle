@@ -201,8 +201,16 @@ final class overview_test extends \advanced_testcase {
             $lessongenerator->create_submission([
                 'lessonid' => $lesson->id,
                 'userid' => $student1->id,
-                'grade' => 100,
+                'grade' => 50,
             ]);
+            if ($hasretakes) {
+                // If we can retake, create another attempt for student1.
+                $lessongenerator->create_submission([
+                    'lessonid' => $lesson->id,
+                    'userid' => $student1->id,
+                    'grade' => 100,
+                ]);
+            }
             $lessongenerator->create_submission([
                 'lessonid' => $lesson->id,
                 'userid' => $student2->id,
@@ -227,9 +235,17 @@ final class overview_test extends \advanced_testcase {
             return;
         }
 
+        $this->assertEquals(get_string('totalattepmts', 'mod_lesson'), $item->get_name());
+        $this->assertEquals($expected['value'], $item->get_value());
+        if ($expected['averageindialog'] === null) {
+            $itemcontent = $item->get_content();
+            $this->assertIsString($itemcontent); // In this case the content is a string instead of content object.
+            $this->assertEquals($expected['value'], $itemcontent);
+            return;
+        }
         $this->assertEquals(
-            $expected,
-            ['name' => $item->get_name(), 'value' => $item->get_value()]
+            $expected['averageindialog'],
+            $item->get_content()->get_items()[0]->value
         );
     }
 
@@ -246,8 +262,8 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
-                    'value' => 3,
+                    'value' => 4,
+                    'averageindialog' => 1.3,
                 ],
             ],
             'Teacher (with attempts) (Separate Groups)' => [
@@ -256,8 +272,8 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
-                    'value' => 3,
+                    'value' => 4,
+                    'averageindialog' => 1.3,
                 ],
             ],
             'Teacher (with attempts) (Visible Groups)' => [
@@ -266,8 +282,8 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
-                    'value' => 3,
+                    'value' => 4,
+                    'averageindialog' => 1.3,
                 ],
             ],
             'Teacher (with attempts without retakes)' => [
@@ -276,8 +292,8 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => true,
                 'hasretakes' => false,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
                     'value' => null,
+                    'averageindialog' => null,
                 ],
             ],
             'Teacher (without attempts)' => [
@@ -286,8 +302,8 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => false,
                 'hasretakes' => true,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
                     'value' => 0,
+                    'averageindialog' => 0,
                 ],
             ],
             'Non-editing Teacher (with attempts)' => [
@@ -296,8 +312,8 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
-                    'value' => 3,
+                    'value' => 4,
+                    'averageindialog' => 1.3,
                 ],
             ],
             'Non-editing Teacher (with attempts) (Separate Groups)' => [
@@ -306,9 +322,10 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
-                    'value' => 2,
+                    'value' => 3,
+                    'averageindialog' => 1.5,
                 ],
+
             ],
             'Non-editing Teacher (with attempts) (Visible Groups)' => [
                 'role' => 'teacher',
@@ -316,8 +333,8 @@ final class overview_test extends \advanced_testcase {
                 'hasentries' => true,
                 'hasretakes' => true,
                 'expected' => [
-                    'name' => get_string('totalattepmts', 'mod_lesson'),
-                    'value' => 3,
+                    'value' => 4,
+                    'averageindialog' => 1.3,
                 ],
             ],
             'Student' => [
@@ -334,7 +351,7 @@ final class overview_test extends \advanced_testcase {
      * Test get_extra_attemptedstudents_overview.
      *
      * @param string $role
-     * @param bool $groupmode
+     * @param int $groupmode
      * @param bool $hasentries
      * @param array|null $expected
      * @return void

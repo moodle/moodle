@@ -153,7 +153,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 definition: ['buttonclasses' => button::BODY_OUTLINE->classes() . ' dropdown-toggle'],
             );
 
-            $averageattempts = $totalattempts ? round($totalattempts / $attemptedusers) : 0;
+            $averageattempts = $totalattempts ? round($totalattempts / $attemptedusers, 1) : 0;
             $overviewdialog->add_item(
                 $this->stringmanager->get_string('averageattempts', 'mod_lesson'),
                 $averageattempts
