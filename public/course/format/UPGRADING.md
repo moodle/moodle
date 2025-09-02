@@ -28,6 +28,12 @@
 - Added new `core_courseformat\output\local\overview\overviewaction` output class to create action buttons that now include a badge right next to the button text. It essentially extends the existing action_link class to add a badge, making important actions stand out more on the course overview. Plus, this new structure also makes these badged action links easier to export this information for web services.
 
   For more information see [MDL-85981](https://tracker.moodle.org/browse/MDL-85981)
+- The `core_course\output\activitychooserbutton` has been moved to `core_courseformat\output\local\activitychooserbutton` . From now on, format plugins can provide alternative outputs for this element. Also, all the javascript and templates related to the activity chooser are now located inside the core_courseformat subsystem.
+
+  For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)
+- All activity chooser related code has been moved to the `core_courseformat` subsystem. This includes all templates, javascript, and the main output class. If your theme overrides any of these, you will need to update your code accordingly.
+
+  For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)
 
 ### Changed
 

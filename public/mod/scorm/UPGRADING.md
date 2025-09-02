@@ -10,6 +10,9 @@
 - Add a new generator for scorm attempts to simulate user's attempt.
 
   For more information see [MDL-83899](https://tracker.moodle.org/browse/MDL-83899)
+- Add group id list to \mod_scorm\manager::count_users_who_attempted and \mod_scorm\manager::count_participants so we can filter by groups. Empty array means no filtering.
+
+  For more information see [MDL-86216](https://tracker.moodle.org/browse/MDL-86216)
 
 ### Deprecated
 

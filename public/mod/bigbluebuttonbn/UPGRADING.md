@@ -7,6 +7,9 @@
 - Add activity_dates class to BigblueButton module.
 
   For more information see [MDL-83889](https://tracker.moodle.org/browse/MDL-83889)
+- Add a new parameter to the mod_bigbluebuttonbn\recording::get_recordings_for_instance so to ignore instance group settings and return all recordings. This is an optional argement and no change is expected from existing calls.
+
+  For more information see [MDL-86192](https://tracker.moodle.org/browse/MDL-86192)
 
 ## 4.5
 

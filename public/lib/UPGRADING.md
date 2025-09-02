@@ -4,6 +4,25 @@
 
 ### Added
 
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+
+  | Old class name                  | New class name                                  |
+  | ---                             | ---                                             |
+  | `\breadcrumb_navigation_node`   | `\core\navigation\breadcrumb_navigation_node`   |
+  | `\flat_navigation_node`         | `\core\navigation\flat_navigation_node`         |
+  | `\flat_navigation`              | `\core\navigation\flat_navigation_node`         |
+  | `\global_navigation_for_ajax`   | `\core\navigation\global_navigation_for_ajax`   |
+  | `\global_navigation`            | `\core\navigation\global_navigation`            |
+  | `\navbar`                       | `\core\navigation\navbar`                       |
+  | `\navigation_cache`             | `\core\navigation\navigation_cache`             |
+  | `\navigation_json`              | `\core\navigation\navigation_json`              |
+  | `\navigation_node_collection`   | `\core\navigation\navigation_node_collection`   |
+  | `\navigation_node`              | `\core\navigation\navigation_node`              |
+  | `\settings_navigation_for_ajax` | `\core\navigation\settings_navigation_for_ajax` |
+  | `\settings_navigation`          | `\core\navigation\settings_navigation`          |
+
+  For more information see [MDL-82159](https://tracker.moodle.org/browse/MDL-82159)
 - - Added is_site_registered_in_hub method in lib/classes/hub/api.php to
     check if the site is registered or not.
   - Added get_secret method in lib/classes/hub/registration.php to get site's secret.
@@ -110,6 +129,15 @@
   The usage of these selectors will continue to be supported until they are removed by final deprecation. In the meantime, a deprecation warning in the JavaScript console will be shown if usage of these selectors is detected.
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
+- The following global constants have been deprecated in favour of class
+  constants:
+
+   | Old constant                       | New constant                                              |
+   | ---                                | ---                                                       |
+   | `NAVIGATION_CACHE_NAME`            | `\core\navigation\navigation_node::CACHE_NAME`            |
+   | `NAVIGATION_SITE_ADMIN_CACHE_NAME` | `\core\navigation\navigation_node::SITE_ADMIN_CACHE_NAME` |
+
+  For more information see [MDL-82159](https://tracker.moodle.org/browse/MDL-82159)
 - The `user_preference_allow_ajax_update()` has been removed. It was deprecated without replacement in Moodle 4.3.
 
   For more information see [MDL-86168](https://tracker.moodle.org/browse/MDL-86168)

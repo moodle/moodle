@@ -7,6 +7,9 @@
 - Add helper methods in the mod/quiz/lib.php to count the number of attempts (quiz_num_attempts), the number of users who attempted a quiz (quiz_num_users_who_attempted) and users who can attempt (quiz_num_users_who_can_attempt)
 
   For more information see [MDL-83898](https://tracker.moodle.org/browse/MDL-83898)
+- Add a groupidlist option to quiz_num_attempt_summary, quiz_num_attempts and quiz_num_users_who_can_attempt to filter those number by groups (the new argument is a list of ids for groups)
+
+  For more information see [MDL-86223](https://tracker.moodle.org/browse/MDL-86223)
 
 ### Deprecated
 

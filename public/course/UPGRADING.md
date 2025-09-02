@@ -71,6 +71,9 @@
 - The `MAX_MODINFO_CACHE_SIZE` constant has been deprecated and replaced with a class constant.
 
   For more information see [MDL-86155](https://tracker.moodle.org/browse/MDL-86155)
+- The course renderer method course_activitychooser is now deprecated. Its logic is not part of the new section_renderer::add_cm_controls method.
+
+  For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)
 
 ### Removed
 

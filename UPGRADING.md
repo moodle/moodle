@@ -12,6 +12,25 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+
+  | Old class name                  | New class name                                  |
+  | ---                             | ---                                             |
+  | `\breadcrumb_navigation_node`   | `\core\navigation\breadcrumb_navigation_node`   |
+  | `\flat_navigation_node`         | `\core\navigation\flat_navigation_node`         |
+  | `\flat_navigation`              | `\core\navigation\flat_navigation_node`         |
+  | `\global_navigation_for_ajax`   | `\core\navigation\global_navigation_for_ajax`   |
+  | `\global_navigation`            | `\core\navigation\global_navigation`            |
+  | `\navbar`                       | `\core\navigation\navbar`                       |
+  | `\navigation_cache`             | `\core\navigation\navigation_cache`             |
+  | `\navigation_json`              | `\core\navigation\navigation_json`              |
+  | `\navigation_node_collection`   | `\core\navigation\navigation_node_collection`   |
+  | `\navigation_node`              | `\core\navigation\navigation_node`              |
+  | `\settings_navigation_for_ajax` | `\core\navigation\settings_navigation_for_ajax` |
+  | `\settings_navigation`          | `\core\navigation\settings_navigation`          |
+
+  For more information see [MDL-82159](https://tracker.moodle.org/browse/MDL-82159)
 - - Added is_site_registered_in_hub method in lib/classes/hub/api.php to
     check if the site is registered or not.
   - Added get_secret method in lib/classes/hub/registration.php to get site's secret.
@@ -118,6 +137,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   The usage of these selectors will continue to be supported until they are removed by final deprecation. In the meantime, a deprecation warning in the JavaScript console will be shown if usage of these selectors is detected.
 
   For more information see [MDL-79756](https://tracker.moodle.org/browse/MDL-79756)
+- The following global constants have been deprecated in favour of class
+  constants:
+
+   | Old constant                       | New constant                                              |
+   | ---                                | ---                                                       |
+   | `NAVIGATION_CACHE_NAME`            | `\core\navigation\navigation_node::CACHE_NAME`            |
+   | `NAVIGATION_SITE_ADMIN_CACHE_NAME` | `\core\navigation\navigation_node::SITE_ADMIN_CACHE_NAME` |
+
+  For more information see [MDL-82159](https://tracker.moodle.org/browse/MDL-82159)
 - The `user_preference_allow_ajax_update()` has been removed. It was deprecated without replacement in Moodle 4.3.
 
   For more information see [MDL-86168](https://tracker.moodle.org/browse/MDL-86168)
@@ -308,6 +336,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `MAX_MODINFO_CACHE_SIZE` constant has been deprecated and replaced with a class constant.
 
   For more information see [MDL-86155](https://tracker.moodle.org/browse/MDL-86155)
+- The course renderer method course_activitychooser is now deprecated. Its logic is not part of the new section_renderer::add_cm_controls method.
+
+  For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)
 
 #### Removed
 
@@ -343,6 +374,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added new `core_courseformat\output\local\overview\overviewaction` output class to create action buttons that now include a badge right next to the button text. It essentially extends the existing action_link class to add a badge, making important actions stand out more on the course overview. Plus, this new structure also makes these badged action links easier to export this information for web services.
 
   For more information see [MDL-85981](https://tracker.moodle.org/browse/MDL-85981)
+- The `core_course\output\activitychooserbutton` has been moved to `core_courseformat\output\local\activitychooserbutton` . From now on, format plugins can provide alternative outputs for this element. Also, all the javascript and templates related to the activity chooser are now located inside the core_courseformat subsystem.
+
+  For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)
+- All activity chooser related code has been moved to the `core_courseformat` subsystem. This includes all templates, javascript, and the main output class. If your theme overrides any of these, you will need to update your code accordingly.
+
+  For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)
 
 #### Changed
 
@@ -518,6 +555,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add activity_dates class to BigblueButton module.
 
   For more information see [MDL-83889](https://tracker.moodle.org/browse/MDL-83889)
+- Add a new parameter to the mod_bigbluebuttonbn\recording::get_recordings_for_instance so to ignore instance group settings and return all recordings. This is an optional argement and no change is expected from existing calls.
+
+  For more information see [MDL-86192](https://tracker.moodle.org/browse/MDL-86192)
 
 ### mod_book
 
@@ -636,6 +676,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add helper methods in the mod/quiz/lib.php to count the number of attempts (quiz_num_attempts), the number of users who attempted a quiz (quiz_num_users_who_attempted) and users who can attempt (quiz_num_users_who_can_attempt)
 
   For more information see [MDL-83898](https://tracker.moodle.org/browse/MDL-83898)
+- Add a groupidlist option to quiz_num_attempt_summary, quiz_num_attempts and quiz_num_users_who_can_attempt to filter those number by groups (the new argument is a list of ids for groups)
+
+  For more information see [MDL-86223](https://tracker.moodle.org/browse/MDL-86223)
 
 #### Deprecated
 
@@ -719,6 +762,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add a new generator for scorm attempts to simulate user's attempt.
 
   For more information see [MDL-83899](https://tracker.moodle.org/browse/MDL-83899)
+- Add group id list to \mod_scorm\manager::count_users_who_attempted and \mod_scorm\manager::count_participants so we can filter by groups. Empty array means no filtering.
+
+  For more information see [MDL-86216](https://tracker.moodle.org/browse/MDL-86216)
 
 #### Deprecated
 
