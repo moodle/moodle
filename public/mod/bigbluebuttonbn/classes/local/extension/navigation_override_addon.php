@@ -13,21 +13,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace mod_bigbluebuttonbn\local\extension;
+
 /**
- * Language File.
+ * Interface for overriding the settings navigation in BigBlueButtonBN subplugins.
+ *
+ * Implement this interface in a subplugin if you want to override the settings navigation.
+ * Only the first subplugin implementing this will be called, and it will replace the default logic.
  *
  * @package   mod_bigbluebuttonbn
- * @copyright 2023 onwards, Blindside Networks Inc
+ * @copyright 2025 Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Laurent David (laurent@call-learning.fr)
+ * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
  */
-
-defined('MOODLE_INTERNAL') || die();
-$string['config_extension'] = 'Sample config extension setting';
-$string['newfield'] = 'New field';
-$string['newfielderror'] = 'New field cannot be empty';
-$string['pluginname'] = 'Simple BigBlueButtonPlugin';
-$string['completionextraisehandtwice'] = 'Raise hand twice';
-$string['completionextraisehandtwice_desc'] = 'Raise hand twice in a meeting.';
-$string['completionextraisehandtwice_help'] = 'Raise hand twice in a meeting.';
-$string['settings_navigation_append'] = 'Append Navigation';
+interface navigation_override_addon {
+    /**
+     * Overrides the settings navigation.
+     *
+     * @param \settings_navigation $settingsnav
+     * @param \navigation_node $nodenav
+     * @return void
+     */
+    public function override_settings_navigation(\settings_navigation $settingsnav, \navigation_node $nodenav): void;
+}

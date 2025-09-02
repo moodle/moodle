@@ -42,7 +42,7 @@ Feature: BigBlueButtonBN Subplugins test
   Scenario: I check that new fields are not available when subplugin is disabled
     Given I log in as "admin"
     And I navigate to "Plugins > Activity modules > BigBlueButton > Manage BigBlueButton extension plugins" in site administration
-    And I click on "Disable" "link"
+    And I click on "Disable" "link" in the "Simple" "table_row"
     And I am on the "BBB Instance name" "bigbluebuttonbn activity editing" page
     When I expand all fieldsets
     Then I should not see "New field"
@@ -121,3 +121,19 @@ Feature: BigBlueButtonBN Subplugins test
     And I run all adhoc tasks
     When I am on fixture page "/mod/bigbluebuttonbn/tests/behat/fixtures/show_simpleplugin_values.php"
     Then I should see "(BBB Instance name): meetingevents: 1"
+
+  @javascript
+  Scenario: I check that subplugins can append or override the navigation settings
+    Given I log in as "admin"
+    And I am on the "BBB Instance name" "bigbluebuttonbn activity" page logged in as "admin"
+    And I should see "Append Navigation"
+    And I should not see "Override Navigation"
+
+  @javascript @with_bbbext_complex
+  Scenario: I check that subplugins can append or override the navigation settings
+    Given I log in as "admin"
+    And I navigate to "Plugins > Activity modules > BigBlueButton > Manage BigBlueButton extension plugins" in site administration
+    And I click on "Enable" "link" in the "Complex" "table_row"
+    And I am on the "BBB Instance name" "bigbluebuttonbn activity" page logged in as "admin"
+    Then I should see "Override Navigation"
+    And I should not see "Append Navigation"

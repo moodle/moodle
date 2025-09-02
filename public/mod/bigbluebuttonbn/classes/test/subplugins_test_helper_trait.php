@@ -50,7 +50,7 @@ trait subplugins_test_helper_trait {
 
         $mockedplugins = $mockedcomponent->getProperty('plugins');
         $plugins = $mockedplugins->getValue();
-        $plugins[extension::BBB_EXTENSION_PLUGIN_NAME] = [$pluginname => $bbbextpath . "/$pluginname"];
+        $plugins[extension::BBB_EXTENSION_PLUGIN_NAME][$pluginname] = $bbbextpath . "/$pluginname";
         $mockedplugins->setValue(null, $plugins);
 
         $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');

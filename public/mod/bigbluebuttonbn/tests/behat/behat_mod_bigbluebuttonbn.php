@@ -246,22 +246,19 @@ XPATH
     /**
      * Install the simple subplugin
      *
-     * Important note here. Originally we had a step that was installing the plugin, however
-     * because of race condition (mainly javascript calls), the hack to the core_component was
-     * randomly lost due to the component cache being cleared. So we have to install the plugin before
-     * any interaction with the site.
      * @BeforeScenario @with_bbbext_simple
      */
     public function install_simple_subplugin() {
-        $this->setup_fake_plugin("simple");
-        $mockedcomponent = new ReflectionClass(core_component::class);
-        $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
-        $mockedplugintypes->setValue(null, null);
-        $init = $mockedcomponent->getMethod('init');
-        $init->invoke(null);
-        // I enable the plugin.
-        $manager = core_plugin_manager::resolve_plugininfo_class(\mod_bigbluebuttonbn\extension::BBB_EXTENSION_PLUGIN_NAME);
-        $manager::enable_plugin("simple", true);
+        $this->install_bbbext_subplugin('simple');
+    }
+
+    /**
+     * Install the complex subplugin
+     *
+     * @BeforeScenario @with_bbbext_complex
+     */
+    public function install_complex_subplugin() {
+        $this->install_bbbext_subplugin('complex');
     }
 
     /**
@@ -271,5 +268,37 @@ XPATH
      */
     public function uninstall_simple_subplugin() {
         $this->uninstall_fake_plugin("simple");
+    }
+
+    /**
+     * Uninstall the complex subplugin
+     *
+     * @AfterScenario @with_bbbext_complex
+     */
+    public function uninstall_complex_subplugin() {
+        $this->uninstall_fake_plugin("complex");
+    }
+
+    /**
+     * Install subplugin
+     *
+     * Important note here. Originally we had a step that was installing the plugin, however
+     * because of race condition (mainly javascript calls), the hack to the core_component was
+     * randomly lost due to the component cache being cleared. So we have to install the plugin before
+     * any interaction with the site.
+     * @param string $subplugin The subplugin name
+     */
+    public function install_bbbext_subplugin(string $subplugin): void {
+        $this->setup_fake_plugin($subplugin);
+        $this->installedsubplugins[] = $subplugin;
+
+        $mockedcomponent = new ReflectionClass(core_component::class);
+        $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
+        $mockedplugintypes->setValue(null, null);
+        $init = $mockedcomponent->getMethod('init');
+        $init->invoke(null);
+        // I enable the plugin.
+        $manager = core_plugin_manager::resolve_plugininfo_class(\mod_bigbluebuttonbn\extension::BBB_EXTENSION_PLUGIN_NAME);
+        $manager::enable_plugin($subplugin, true);
     }
 }

@@ -22,6 +22,8 @@ use mod_bigbluebuttonbn\local\extension\broker_meeting_events_addons;
 use mod_bigbluebuttonbn\local\extension\custom_completion_addons;
 use mod_bigbluebuttonbn\local\extension\mod_form_addons;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
+use mod_bigbluebuttonbn\local\extension\navigation_append_addon;
+use mod_bigbluebuttonbn\local\extension\navigation_override_addon;
 use stdClass;
 use core_plugin_manager;
 use core_component;
@@ -258,5 +260,35 @@ class extension {
      */
     public static function broker_meeting_events_addons_instances(instance $instance, string $data): array {
         return self::get_instances_implementing(broker_meeting_events_addons::class, [$instance, $data]);
+    }
+
+    /**
+     * Append settings navigation.
+     *
+     * @param \settings_navigation $settingsnav
+     * @param \navigation_node $nodenav
+     */
+    public static function append_settings_navigation(\settings_navigation $settingsnav, \navigation_node $nodenav) {
+        $appends = self::get_instances_implementing(navigation_append_addon::class);
+        foreach ($appends as $addon) {
+            $addon->append_settings_navigation($settingsnav, $nodenav);
+        }
+    }
+
+    /**
+     * Override settings navigation.
+     *
+     * @param \settings_navigation $settingsnav
+     * @param \navigation_node $nodenav
+     * @return bool true if the settings navigation was overridden, false otherwise.
+     */
+    public static function override_settings_navigation(\settings_navigation $settingsnav, \navigation_node $nodenav) {
+        $overrides = self::get_instances_implementing(navigation_override_addon::class);
+        if (!empty($overrides)) {
+            $firstoverride = reset($overrides);
+            $firstoverride->override_settings_navigation($settingsnav, $nodenav);
+            return true;
+        }
+        return false;
     }
 }

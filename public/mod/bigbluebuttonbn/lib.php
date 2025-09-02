@@ -574,6 +574,13 @@ function mod_bigbluebuttonbn_core_calendar_is_event_visible(calendar_event $even
  * @param navigation_node $nodenav The node to add module settings to
  */
 function bigbluebuttonbn_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $nodenav) {
+    // Check for overrides.
+    $overriden = extension::override_settings_navigation($settingsnav, $nodenav);
+    if ($overriden) {
+        return;
+    }
+
+    // Run core/default logic here.
     global $USER;
     $context = context_module::instance($settingsnav->get_page()->cm->id);
     // Add validate completion if the callback for meetingevents is enabled and user is allowed to edit the activity.
@@ -588,6 +595,9 @@ function bigbluebuttonbn_extend_settings_navigation(settings_navigation $setting
             navigation_node::TYPE_CONTAINER
         );
     }
+
+    // Call all appends.
+    extension::append_settings_navigation($settingsnav, $nodenav);
 }
 
 /**
