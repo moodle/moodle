@@ -1606,24 +1606,47 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
  *
  * @param cm_info $cm
  * @param array $groupidlist array of group ids to count attempts from, if array is empty we return all records from all groups.
+ * @param array $withcapabilities if non-null, only count attempts from users who have any the given capabilities
+ * in the quiz context.
+ *
  * @return int the number of attempts filtered by group if groupidlist is not empty (or all attempts).
  */
-function quiz_num_attempts(cm_info $cm, array $groupidlist = []): int {
+function quiz_num_attempts(cm_info $cm, array $groupidlist = [], array $withcapabilities = []): int {
     global $DB;
     $context = context_module::instance($cm->id);
-    $groupjoins = groups_get_members_join($groupidlist, 'qa.userid', $context);
-    $groupjoins->wheres = !empty($groupjoins->wheres) ? "AND $groupjoins->wheres" : '';
-    $params = array_merge(['quizid' => $cm->instance], $groupjoins->params ?? []);
+
+    $groupjoins = groups_get_members_join($groupidlist, 'u.id', $context);
+    $params = array_merge(
+        ['quizid' => $cm->instance, 'preview' => 0],
+        $groupjoins->params ?? []
+    );
+    $joins = $groupjoins->joins;
+    $wheres = !empty($groupjoins->wheres) ? "AND $groupjoins->wheres" : "";
+
+    if ($withcapabilities) {
+        $studentsjoins = get_enrolled_with_capabilities_join(
+            $context,
+            '',
+            $withcapabilities
+        );
+        $wheres .= !empty($studentsjoins->wheres) ? " AND $studentsjoins->wheres" : "";
+        $joins .= $studentsjoins->joins;
+        $params = array_merge(
+            $params,
+            $studentsjoins->params ?? [],
+        );
+    }
 
     return $DB->count_records_sql(
         "SELECT
             COUNT(DISTINCT qa.id)
         FROM
             {quiz_attempts} qa
-            {$groupjoins->joins}
+            LEFT JOIN {user} u ON qa.userid = u.id
+            {$joins}
         WHERE
             quiz = :quizid
-            AND preview = 0 {$groupjoins->wheres}",
+            AND preview = :preview $wheres",
         $params
     );
 }

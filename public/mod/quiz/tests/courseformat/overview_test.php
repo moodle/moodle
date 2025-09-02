@@ -184,15 +184,15 @@ final class overview_test extends \advanced_testcase {
         yield 'Without groups' => [
             'groupmode' => NOGROUPS,
             'expected' => [
-                't1' => 5, // Count all attempts (even teacher's attempts).
-                't2' => 5,
+                't1' => 7, // Count all attempts (even teacher's attempts).
+                't2' => 7,
                 's1' => null,
             ],
         ];
         yield 'With separate groups' => [
             'groupmode' => SEPARATEGROUPS,
             'expected' => [
-                't1' => 5,
+                't1' => 7,
                 't2' => 3, // User 1 two attempts, teacher 2 one attempt (counted).
                 's1' => null,
             ],
@@ -200,11 +200,122 @@ final class overview_test extends \advanced_testcase {
         yield 'With visible groups' => [
             'groupmode' => VISIBLEGROUPS,
             'expected' => [
-                't1' => 5,
-                't2' => 5,
+                't1' => 7,
+                't2' => 7,
                 's1' => null,
             ],
         ];
+    }
+
+    /**
+     * Test get_total_attempts_overview dialog values.
+     *
+     * @param int $groupmode
+     * @param array $expected
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_total_attempts_overview_dialog')]
+    public function test_get_extra_totalattempts_overview_dialog(
+        int $groupmode,
+        array $expected,
+    ): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        ['users' => $users, 'cm' => $cm] = $this->setup_users_course_groups([], $groupmode);
+        foreach ($expected as $currentuser => $averageattempts) {
+            $this->setUser($users[$currentuser]);
+            $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
+            $overview = overviewfactory::create($cminfo);
+
+            $reflection = new \ReflectionClass($overview);
+            $method = $reflection->getMethod('get_extra_total_attempts_overview');
+            $method->setAccessible(true);
+            $item = $method->invoke($overview);
+
+            if ($averageattempts === null) {
+                $this->assertNull($item, 'Expected null for user: ' . $currentuser);
+                continue;
+            }
+
+            $items = $item->get_content()->get_items();
+            $this->assertCount(2, $items, "Expected 2 dialog items for user: $currentuser");
+            $this->assertEquals(get_string('attemptsunlimited', 'mod_quiz'), $items[0]->value);
+            $this->assertEquals($averageattempts, $items[1]->value);
+        }
+    }
+
+    /**
+     * Data provider for provider_test_get_total_attempts_overview.
+     *
+     * @return \Generator
+     */
+    public static function provider_test_get_total_attempts_overview_dialog(): \Generator {
+        yield 'Without groups' => [
+            'groupmode' => NOGROUPS,
+            'expected' => [
+                't1' => 1.5, // Here: 6 attempts / 4 students = 1.5.
+                't2' => 1.5, // Same as above.
+                's1' => null,
+            ],
+        ];
+        yield 'With separate groups' => [
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => [
+                't1' => 1.5, // Here: 5 attempts / 3 students = 1.7.
+                't2' => 2, // Here: (2 attempts) / 1 student = 2.
+                't3' => 1.5, // Here: 3 attempts / 2 students = 1.5.
+                's1' => null,
+            ],
+        ];
+        yield 'With visible groups' => [
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => [
+                't1' => 1.5,
+                't2' => 1.5,
+                's1' => null,
+            ],
+        ];
+    }
+
+    /**
+     * Specific test for allowed attempts per student value in the dialog.
+     *
+     * @return void
+     */
+    public function test_get_extra_totalattempts_overview_dialog_allowedattemptsperstudent(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        ['users' => $users, 'cm' => $cm, 'quiz' => $quiz] = $this->setup_users_course_groups(
+            [
+                's1' => ['student', 'g1', 2],
+                't1' => ['editingteacher', null, null],
+            ]
+        );
+        $this->setUser($users['t1']);
+        $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
+        $overview = overviewfactory::create($cminfo);
+
+        $reflection = new \ReflectionClass($overview);
+        $method = $reflection->getMethod('get_extra_total_attempts_overview');
+        $method->setAccessible(true);
+        $item = $method->invoke($overview);
+
+        $items = $item->get_content()->get_items();
+        $this->assertEquals(get_string('attemptsunlimited', 'mod_quiz'), $items[0]->value);
+
+        // Now update the quiz to have a limited number of attempts.
+        $DB->set_field('quiz', 'attempts', 3, ['id' => $quiz->id]);
+        // Recreate the overview item.
+        $overview = overviewfactory::create($cminfo);
+        $reflection = new \ReflectionClass($overview);
+        $method = $reflection->getMethod('get_extra_total_attempts_overview');
+        $method->setAccessible(true);
+        $item = $method->invoke($overview);
+
+        $items = $item->get_content()->get_items();
+        $this->assertEquals(3, $items[0]->value);
     }
 
     /**
@@ -253,15 +364,15 @@ final class overview_test extends \advanced_testcase {
         yield 'With no groups' => [
             'groupmode' => NOGROUPS,
             'expected' => [
-                't1' => "3 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
-                't2' => "3 of 4",
+                't1' => "4 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
+                't2' => "4 of 4",
                 's1' => null,
             ],
         ];
         yield 'With separate groups' => [
             'groupmode' => SEPARATEGROUPS,
             'expected' => [
-                't1' => "3 of 4", // Teacher 1 can see all groups.
+                't1' => "4 of 4", // Teacher 1 can see all groups.
                 't2' => "1 of 1", // Only student 1 in group 1 made at least one attempt.
                 's1' => null,
             ],
@@ -269,8 +380,8 @@ final class overview_test extends \advanced_testcase {
         yield 'With visible groups' => [
             'groupmode' => VISIBLEGROUPS,
             'expected' => [
-                't1' => "3 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
-                't2' => "3 of 4",
+                't1' => "4 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
+                't2' => "4 of 4",
                 's1' => null,
             ],
         ];
@@ -289,10 +400,11 @@ final class overview_test extends \advanced_testcase {
             $data = [
                 's1' => ['student', 'g1', 2],
                 's2' => ['student', null, 1],
-                's3' => ['student', 'g2', 1],
-                's4' => ['student', 'g2', 0],
+                's3' => ['student', 'g2', 2],
+                's4' => ['student', 'g2', 1],
                 't1' => ['editingteacher', null, null],
-                't2' => ['teacher', 'g1', 1],
+                't2' => ['teacher', 'g1', 1], // Non editing teacher without group and an attempt.
+                't3' => ['teacher', 'g2', 0], // Non editing teacher without group and not attempt.
                 // Teachers without groups are tested in the overview tests (as they produce a row with an error message).
             ];
         }

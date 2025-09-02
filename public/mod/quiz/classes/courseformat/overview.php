@@ -167,15 +167,20 @@ class overview extends \core_courseformat\activityoverviewbase {
             $allowedattempts,
         );
 
-        $numstudentattempted = quiz_num_users_who_attempted($this->cm, $groups);
-        $numstudentwhocanattempt = quiz_num_users_who_can_attempt($this->cm, $groups);
-        if ($numstudentwhocanattempt > 0 && $numstudentattempted > 0) {
-            $overviewdialog->add_item(
-                get_string('averageattemptsperstudent', 'mod_quiz'),
-                round($numstudentattempted / $numstudentwhocanattempt)
-            );
-        }
+        $totalattempts = quiz_num_attempts(
+            $this->cm,
+            $groups,
+            withcapabilities: ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts']
+        );
+        // Only attempts completed by students. If we count all attempts, including teachers,
+        // the average attempts per student would be misleading.
 
+        $attemptedusers = quiz_num_users_who_attempted($this->cm, $groups);
+        $averageattempts = $totalattempts ? round($totalattempts / $attemptedusers, 1) : 0;
+        $overviewdialog->add_item(
+            get_string('averageattemptsperstudent', 'mod_quiz'),
+            $averageattempts
+        );
         return new overviewitem(
             name: get_string('totalattempts', 'mod_quiz'),
             value: $total,

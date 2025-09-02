@@ -1217,6 +1217,26 @@ final class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Test the quiz_num_attempts function with the student only flag.
+     *
+     * @covers ::quiz_num_attempts
+     */
+    public function test_quiz_num_attempts_student_only(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        ['cm' => $cm] = $this->setup_users_course_groups([]);
+        $cminfo = get_fast_modinfo($cm->course)->get_cm($cm->id);
+        $this->assertEquals(5, quiz_num_attempts($cminfo)); // All attempts.
+        $this->assertEquals(
+            4,
+            quiz_num_attempts(
+                $cminfo,
+                withcapabilities: ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts'], // The student attempt only.
+            )
+        );
+    }
+
+    /**
      * Test the quiz_num_users_who_attempted function.
      *
      * @param int $groupmode The group mode to use for the test.

@@ -1,0 +1,6 @@
+issueNumber: MDL-86520
+notes:
+  mod_quiz:
+    - message: >-
+        Additional parameter for quiz_num_attempts so we only count users with specified capabilities
+      type: improved

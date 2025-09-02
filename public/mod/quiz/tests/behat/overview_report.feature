@@ -44,6 +44,9 @@ Feature: Testing overview_report in mod_quiz
     And user "student2" has attempted "Quiz 1" with responses:
       | slot | response |
       | 1    | True     |
+    And user "student2" has attempted "Quiz 1" with responses:
+      | slot | response |
+      | 1    | False     |
     And user "student2" has attempted "Quiz 2" with responses:
       | slot | response |
       | 1    | True     |
@@ -53,16 +56,16 @@ Feature: Testing overview_report in mod_quiz
     When I am on the "Course 1" "course > activities > quiz" page logged in as "teacher1"
     Then the following should exist in the "Table listing all Quiz activities" table:
       | Name   | Students who attempted | Total attempts | Due date |
-      | Quiz 1 | 2 of 3                 | 2              | Tomorrow |
+      | Quiz 1 | 2 of 3                 | 3              | Tomorrow |
       | Quiz 2 | 1 of 3                 | 1              | -        |
-    And I click on "2" "button" in the "Quiz 1" "table_row"
+    And I click on "3" "button" in the "Quiz 1" "table_row"
     And I should see "Allowed attempts per student: Unlimited attempts"
-    And I should see "Average attempts per student: 1"
+    And I should see "Average attempts per student: 1.5"
     And I press the escape key
     And "0" "button" should not exist in the "Quiz 2" "table_row"
     And I click on "1" "button" in the "Quiz 2" "table_row"
     And I should see "Allowed attempts per student: Unlimited attempts"
-    And I should see "Average attempts per student: 0"
+    And I should see "Average attempts per student: 1"
     And I press the escape key
     And I click on "View" "link" in the "Quiz 1" "table_row"
     And I should see "Results" in the "page-header" "region"
