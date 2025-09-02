@@ -13,7 +13,6 @@ notes:
         all the javascript and templates related to the activity chooser are now
         located inside the core_courseformat subsystem.
       type: improved
-  core_courseformat:
     - message: >-
         All activity chooser related code has been moved to the
         `core_courseformat` subsystem. This includes all templates,
