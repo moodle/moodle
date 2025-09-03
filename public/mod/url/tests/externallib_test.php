@@ -142,7 +142,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         // Create what we expect to be returned when querying the two courses.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
                 'externalurl', 'display', 'displayoptions', 'parameters', 'timemodified', 'section', 'visible', 'groupmode',
-                'groupingid');
+                'groupingid', 'enableaitools', 'enabledaiactions');
 
         // Add expected coursemodule and data.
         $url1->coursemodule = $url1->cmid;
@@ -153,6 +153,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $url1->groupingid = 0;
         $url1->introfiles = [];
         $url1->lang = '';
+        $url1->enableaitools = null;
+        $url1->enabledaiactions = null;
 
         $url2->coursemodule = $url2->cmid;
         $url2->introformat = 1;
@@ -162,6 +164,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $url2->groupingid = 0;
         $url2->introfiles = [];
         $url2->lang = '';
+        $url2->enableaitools = null;
+        $url2->enabledaiactions = null;
 
         foreach ($expectedfields as $field) {
             $expected1[$field] = $url1->{$field};

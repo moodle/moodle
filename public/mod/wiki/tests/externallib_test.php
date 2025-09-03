@@ -273,6 +273,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
+                'enableaitools', 'enabledaiactions',
                 'firstpagetitle', 'wikimode', 'defaultformat', 'forceformat', 'editbegin', 'editend', 'section', 'visible',
                 'groupmode', 'groupingid');
 
@@ -286,6 +287,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $wiki1->groupingid = 0;
         $wiki1->introfiles = [];
         $wiki1->lang = '';
+        $wiki1->enableaitools = null;
+        $wiki1->enabledaiactions = null;
 
         $wiki2->coursemodule = $wiki2->cmid;
         $wiki2->introformat = 1;
@@ -295,6 +298,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $wiki2->groupingid = 0;
         $wiki2->introfiles = [];
         $wiki2->lang = '';
+        $wiki2->enableaitools = null;
+        $wiki2->enabledaiactions = null;
 
         foreach ($expectedfields as $field) {
             $expected1[$field] = $wiki1->{$field};

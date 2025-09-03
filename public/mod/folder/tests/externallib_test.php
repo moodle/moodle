@@ -144,7 +144,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         // Create what we expect to be returned when querying the two courses.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang', 'revision',
                                 'timemodified', 'display', 'showexpanded', 'showdownloadfolder', 'section', 'visible',
-                                'forcedownload', 'groupmode', 'groupingid');
+                                'forcedownload', 'groupmode', 'groupingid', 'enableaitools', 'enabledaiactions');
 
         // Add expected coursemodule and data.
         $folder1->coursemodule = $folder1->cmid;
@@ -155,6 +155,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $folder1->groupingid = 0;
         $folder1->introfiles = [];
         $folder1->lang = '';
+        $folder1->enableaitools = null;
+        $folder1->enabledaiactions = null;
 
         $folder2->coursemodule = $folder2->cmid;
         $folder2->introformat = 1;
@@ -164,6 +166,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $folder2->groupingid = 0;
         $folder2->introfiles = [];
         $folder2->lang = '';
+        $folder2->enableaitools = null;
+        $folder2->enabledaiactions = null;
 
         foreach ($expectedfields as $field) {
             $expected1[$field] = $folder1->{$field};
