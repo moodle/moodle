@@ -66,7 +66,7 @@ class recipients extends system_report {
         $this->set_default_no_results_notice(new lang_string('nomatchingawards', 'core_badges'));
 
         // Set if report can be downloaded.
-        $this->set_downloadable(false);
+        $this->set_downloadable(true);
     }
 
     /**
