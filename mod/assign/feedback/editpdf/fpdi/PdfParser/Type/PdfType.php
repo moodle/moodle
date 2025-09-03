@@ -27,22 +27,33 @@ class PdfType
      * @param PdfType $value
      * @param PdfParser $parser
      * @param bool $stopAtIndirectObject
+     * @param array $ensuredObjectsList A list of all ensured indirect objects to prevent recursion
      * @return PdfType
      * @throws CrossReferenceException
      * @throws PdfParserException
      */
-    public static function resolve(PdfType $value, PdfParser $parser, $stopAtIndirectObject = false)
-    {
+    public static function resolve(
+        PdfType $value,
+        PdfParser $parser,
+        $stopAtIndirectObject = false,
+        array &$ensuredObjectsList = []
+    ) {
+        if ($value instanceof PdfIndirectObjectReference) {
+            $value = $parser->getIndirectObject($value->value);
+        }
+
         if ($value instanceof PdfIndirectObject) {
             if ($stopAtIndirectObject === true) {
                 return $value;
             }
 
-            return self::resolve($value->value, $parser, $stopAtIndirectObject);
-        }
-
-        if ($value instanceof PdfIndirectObjectReference) {
-            return self::resolve($parser->getIndirectObject($value->value), $parser, $stopAtIndirectObject);
+            if (\in_array($value->objectNumber, $ensuredObjectsList, true)) {
+                throw new PdfParserException(
+                    \sprintf('Indirect reference recursion detected (%s).', $value->objectNumber)
+                );
+            }
+            $ensuredObjectsList[] = $value->objectNumber;
+            return self::resolve($value->value, $parser, $stopAtIndirectObject, $ensuredObjectsList);
         }
 
         return $value;
