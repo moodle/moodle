@@ -2094,5 +2094,36 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025082900.01);
     }
 
+    if ($oldversion < 2025090200.01) {
+        // Define field enableaitools to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('enableaitools', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'pdfexportfont');
+
+        // Conditionally launch add field enableaitools.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field enableaitools to be added to course_modules.
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('enableaitools', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'lang');
+
+        // Conditionally launch add field enableaitools.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field enabledaiactions to be added to course_modules.
+        $field = new xmldb_field('enabledaiactions', XMLDB_TYPE_TEXT, null, null, null, null, null, 'enableaitools');
+
+        // Conditionally launch add field enabledaiactions.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025090200.01);
+    }
+
     return true;
 }

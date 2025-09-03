@@ -49,6 +49,7 @@ final class generate_text_test extends \advanced_testcase {
         $mockmanager->method('process_action')->willReturn($response);
         $mockmanager->method('is_action_available')->willReturn(true);
         $mockmanager->method('is_action_enabled')->willReturn(true);
+        $mockmanager->method('is_action_enabled_in_context')->willReturn(true);
         \core\di::set(\core_ai\manager::class, function() use ($mockmanager) {
             return $mockmanager;
         });

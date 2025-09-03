@@ -32,8 +32,8 @@ export default {
         ACTION: '.course-assist-controls [data-input-type="action"]',
     },
     ACTIONS: {
-        SUMMARY: '.course-assist-controls [data-action="summarise"]',
-        EXPLAIN: '.course-assist-controls [data-action="explain"]',
+        SUMMARY: '.course-assist-controls [data-action="summarise_text"]',
+        EXPLAIN: '.course-assist-controls [data-action="explain_text"]',
         RETRY: '.course-assist-controls [data-action="retry"]',
         DECLINE: '.ai-policy-block [data-action="decline"]',
         ACCEPT: '.ai-policy-block [data-action="accept"]',

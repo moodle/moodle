@@ -102,6 +102,6 @@ class assist_ui {
         }
 
         // Check if the user has permission to use the AI service.
-        return utils::is_course_assist_available($PAGE->context);
+        return utils::is_course_assist_available();
     }
 }

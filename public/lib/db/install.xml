@@ -106,6 +106,7 @@
         <FIELD NAME="showactivitydates" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to display activity dates to user. 0 = do not display, 1 = display activity dates"/>
         <FIELD NAME="showcompletionconditions" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to display completion conditions to user. 0 = do not display, 1 = display conditions"/>
         <FIELD NAME="pdfexportfont" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="enableaitools" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to allow the use of AI tools in this course. 1 = enabled, 0 = disabled."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -345,6 +346,8 @@
         <FIELD NAME="deletioninprogress" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="downloadcontent" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Whether the ability to download course module content is enabled for this activity"/>
         <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="Forced language for this activity. Null or '' means 'Do not force'. Otherwise a Moodle lang pack name like 'fr' or 'en_us'."/>
+        <FIELD NAME="enableaitools" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to allow the use of AI tools in this course module. 1 = enabled, 0 = disabled."/>
+        <FIELD NAME="enabledaiactions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="List of enabled AI actions on this course module"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
