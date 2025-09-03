@@ -50,6 +50,7 @@ if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
         $PAGE->set_context(context_system::instance());
+        $PAGE->set_title(get_string('user'));
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
                               get_login_url(),
@@ -63,6 +64,7 @@ if (!empty($CFG->forceloginforprofiles)) {
 
 if ((!$user = $DB->get_record('user', array('id' => $userid))) || ($user->deleted)) {
     $PAGE->set_context(context_system::instance());
+    $PAGE->set_title(get_string('user'));
     echo $OUTPUT->header();
     if (!$user) {
         echo $OUTPUT->notification(get_string('invaliduser', 'error'));
