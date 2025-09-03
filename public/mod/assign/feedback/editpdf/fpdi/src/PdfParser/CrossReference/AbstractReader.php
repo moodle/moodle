@@ -35,7 +35,6 @@ abstract class AbstractReader
      *
      * @param PdfParser $parser
      * @throws CrossReferenceException
-     * @throws PdfTypeException
      */
     public function __construct(PdfParser $parser)
     {
@@ -57,7 +56,6 @@ abstract class AbstractReader
      * Read the trailer dictionary.
      *
      * @throws CrossReferenceException
-     * @throws PdfTypeException
      */
     protected function readTrailer()
     {

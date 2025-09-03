@@ -34,7 +34,7 @@ use setasign\Fpdi\PdfParser\Type\PdfTypeException;
  *
  * @method _encrypt_data(int $n, string $s) string
  */
-class Fpdi extends \pdf
+class Fpdi extends \TCPDF
 {
     use FpdiTrait {
         writePdfType as fpdiWritePdfType;
@@ -46,7 +46,7 @@ class Fpdi extends \pdf
      *
      * @string
      */
-    const VERSION = '2.6.3';
+    const VERSION = '2.6.4';
 
     /**
      * A counter for template ids.

@@ -71,7 +71,7 @@ class FixedReader extends AbstractReader implements ReaderInterface
                 $position = $offset + 20 * ($objectNumber - $startObject);
                 $this->reader->ensure($position, 20);
                 $line = $this->reader->readBytes(20);
-                if ($line[17] === 'f') {
+                if ($line === false || $line[17] === 'f') {
                     return false;
                 }
 
