@@ -4373,4 +4373,34 @@ final class lib_test extends \advanced_testcase {
         $f3discussionscount = forum_count_discussions($forum3, $forum3cm, $course2);
         $this->assertEquals(0, $f3discussionscount);
     }
+
+    /**
+     * @covers ::forum_reset_userdata
+     */
+    public function test_forum_reset_userdata(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $now = time();
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', [
+            'course' => $course->id,
+            'duedate' => $now + HOURSECS,
+            'cutoffdate' => $now + DAYSECS,
+        ]);
+
+        forum_reset_userdata((object) [
+            'courseid' => $course->id,
+            'timeshift' => DAYSECS * 2,
+        ]);
+
+        // Reload the instance data.
+        $instance = $DB->get_record('forum', ['id' => $forum->id]);
+
+        $this->assertEquals($forum->duedate + (DAYSECS * 2), $instance->duedate);
+        $this->assertEquals($forum->cutoffdate + (DAYSECS * 2), $instance->cutoffdate);
+    }
 }

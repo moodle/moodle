@@ -5032,7 +5032,7 @@ function forum_reset_gradebook($courseid, $type='') {
  *
  * @global object
  * @global object
- * @param $data the data submitted from the reset course.
+ * @param stdClass $data the data submitted from the reset course.
  * @return array status array
  */
 function forum_reset_userdata($data) {
@@ -5235,7 +5235,13 @@ function forum_reset_userdata($data) {
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates('forum', ['assesstimestart', 'assesstimefinish'], $data->timeshift, $data->courseid);
+        shift_course_mod_dates('forum', [
+            'assesstimestart',
+            'assesstimefinish',
+            'duedate',
+            'cutoffdate',
+        ], $data->timeshift, $data->courseid);
+
         $status[] = [
             'component' => $componentstr,
             'item' => get_string('date'),
