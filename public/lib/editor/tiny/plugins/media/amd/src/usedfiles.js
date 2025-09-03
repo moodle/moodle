@@ -25,8 +25,8 @@ import * as Templates from 'core/templates';
 import Config from 'core/config';
 
 class UsedFileManager {
-    constructor(files, userContext, itemId, elementId) {
-        this.files = files;
+    constructor(userContext, itemId, elementId) {
+        this.files = this.getFiles();
         this.userContext = userContext;
         this.itemId = itemId;
         this.elementId = elementId;
@@ -84,6 +84,20 @@ class UsedFileManager {
             Templates.replaceNodeContents(form.querySelector('.missing-files'), html, js);
             return;
         });
+    }
+
+    /**
+     * Retrieves a list of existing files selected for deletion.
+     *
+     * @returns {Object} An object where the keys are filenames and the values are file hashes.
+     *
+     */
+     getFiles() {
+        const files = {};
+        document.querySelectorAll('input[type=checkbox][name^="deletefile"]').forEach(input => {
+            files[input.dataset.filename] = input.dataset.filehash;
+        });
+        return files;
     }
 }
 
