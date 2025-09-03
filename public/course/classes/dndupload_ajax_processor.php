@@ -141,6 +141,8 @@ class dndupload_ajax_processor {
     protected function handle_file_upload() {
         global $CFG;
 
+        $this->load_repository();
+
         // Add the file to a draft file area.
         $draftitemid = file_get_unused_draft_itemid();
         $maxbytes = get_user_max_upload_file_size($this->context, $CFG->maxbytes, $this->course->maxbytes);
@@ -332,6 +334,16 @@ class dndupload_ajax_processor {
         echo json_encode($resp);
         die();
     }
+
+    /**
+     * Load the repository libraries.
+     */
+    private function load_repository(): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/repository/lib.php");
+    }
+
 }
 
 // Alias this class to the old name.

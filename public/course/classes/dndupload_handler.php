@@ -295,6 +295,8 @@ class dndupload_handler {
     public function get_js_data() {
         global $CFG;
 
+        $this->load_repository();
+
         $ret = new stdClass();
 
         // Sort the types by priority.
@@ -333,6 +335,15 @@ class dndupload_handler {
             return 1;
         }
         return 0;
+    }
+
+    /**
+     * Load the repository libraries.
+     */
+    private function load_repository(): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/repository/lib.php");
     }
 }
 
