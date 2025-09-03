@@ -29,9 +29,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Administrator katalogi nomi';
+$string['admindirname'] = 'Admin katalogi';
 $string['availablelangs'] = 'Mavjud til paketlari';
-$string['dataroot'] = 'Ma\'lumotlar katalogi';
+$string['dataroot'] = 'Ma’lumotlar katalogi';
 $string['dbprefix'] = 'Jadvallar prefiksi';
-$string['dirroot'] = 'Moodle kataloglari';
+$string['dirroot'] = 'Moodle katalogi';
 $string['installation'] = 'O\'rnatish';
