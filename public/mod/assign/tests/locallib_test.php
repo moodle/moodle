@@ -2118,16 +2118,16 @@ You can see it appended to your assignment submission:
             $message->fullmessage,
         );
         $this->assertEquals(
-            '<p><font face="sans-serif">
+            '<p style="font-family: sans-serif">
     <a href="' . $courseurl . '">E&amp;U</a> ->
     <a href="' . $assignsurl . '">Assignment</a> ->
     <a href="' . $assignurl . '">Escaping &amp; Unescaping</a>
-</font></p>
+</p>
 <hr>
-<font face="sans-serif"><p>' . $teachername . ' has posted some feedback on your ' .
+<div style="font-family: sans-serif">' . $teachername . ' has posted some feedback on your ' .
             'assignment submission for \'Escaping &amp; Unescaping\'.
 You can see it appended to your <a href="' . $assignurl .
-            '">assignment submission</a>.</p></font>
+            '">assignment submission</a>.</div>
 <hr>',
             $message->fullmessagehtml
         );
