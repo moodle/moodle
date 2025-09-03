@@ -1058,6 +1058,8 @@ class modinfo {
                         $mods[$cmid]->deletioninprogress = $rawmods[$cmid]->deletioninprogress;
                         $mods[$cmid]->downloadcontent = $rawmods[$cmid]->downloadcontent;
                         $mods[$cmid]->lang = $rawmods[$cmid]->lang;
+                        $mods[$cmid]->enableaitools = $rawmods[$cmid]->enableaitools;
+                        $mods[$cmid]->enabledaiactions = $rawmods[$cmid]->enabledaiactions;
 
                         $modname = $mods[$cmid]->mod;
                         $functionname = $modname . "_get_coursemodule_info";

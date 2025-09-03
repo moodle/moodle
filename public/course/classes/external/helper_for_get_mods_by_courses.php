@@ -70,6 +70,8 @@ abstract class helper_for_get_mods_by_courses {
             $moddetails['visible'] = $modinstance->visible;
             $moddetails['groupmode'] = $modinstance->groupmode;
             $moddetails['groupingid'] = $modinstance->groupingid;
+            $moddetails['enableaitools'] = $modinstance->enableaitools;
+            $moddetails['enabledaiactions'] = $modinstance->enabledaiactions;
         }
 
         return $moddetails;
@@ -132,6 +134,8 @@ abstract class helper_for_get_mods_by_courses {
             'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
             'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
             'lang' => new external_value(PARAM_SAFEDIR, 'Forced activity language', VALUE_OPTIONAL),
+            'enableaitools' => new external_value(PARAM_INT, 'AI tools status', VALUE_OPTIONAL),
+            'enabledaiactions' => new external_value(PARAM_TEXT, 'Enabled AI actions', VALUE_OPTIONAL),
         ];
     }
 }

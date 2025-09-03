@@ -177,6 +177,8 @@ use core\output\html_writer;
  * @property-read bool $deletioninprogress True if this course module is scheduled for deletion, false otherwise.
  * @property-read bool $downloadcontent True if content download is enabled for this course module, false otherwise.
  * @property-read bool $lang the forced language for this activity (language pack name). Null means not forced.
+ * @property-read int|null $enableaitools AI tools for course_modules table
+ * @property-read string|null $enabledaiactions AI actions for course_modules table
  */
 class cm_info implements IteratorAggregate {
     /**
@@ -515,6 +517,16 @@ class cm_info implements IteratorAggregate {
     private $lang;
 
     /**
+     * @var int|null enable/disable AI tools for this course module
+     */
+    private $enableaitools;
+
+    /**
+     * @var string|null enabled AI actions for this course module
+     */
+    private $enabledaiactions;
+
+    /**
      * List of class read-only properties and their getter methods.
      * Used by magic functions __get(), __isset().
      *
@@ -573,6 +585,8 @@ class cm_info implements IteratorAggregate {
         'deletioninprogress' => false,
         'downloadcontent' => false,
         'lang' => false,
+        'enableaitools' => false,
+        'enabledaiactions' => false,
     ];
 
     /**
@@ -1091,7 +1105,9 @@ class cm_info implements IteratorAggregate {
         static $cmfields = ['id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
             'score', 'indent', 'visible', 'visibleoncoursepage', 'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected', 'completionpassgrade',
-            'showdescription', 'availability', 'deletioninprogress', 'downloadcontent', 'lang'];
+            'showdescription', 'availability', 'deletioninprogress', 'downloadcontent', 'lang',
+            'enableaitools', 'enabledaiactions',
+        ];
 
         foreach ($cmfields as $key) {
             $cmrecord->$key = $this->$key;

@@ -418,6 +418,17 @@ class course_edit_form extends moodleform {
                     array('itemtype' => 'course', 'component' => 'core'));
         }
 
+        // Add AI tools section if AI placement (course or editor) is available and at least one provider is enabled.
+        $courseplacementenabled = aiplacement_courseassist\utils::is_course_assist_available();
+        $editorplacementenabled = aiplacement_editor\utils::is_html_editor_placement_available();
+        $providerenabled = \core\di::get(core_ai\manager::class)->get_provider_instances(['enabled' => 1]);
+        if (($courseplacementenabled || $editorplacementenabled) && $providerenabled) {
+            $mform->addElement('header', 'aitoolshdr', get_string('aitools', 'ai'));
+            $mform->addElement('selectyesno', 'enableaitools', get_string('enableaitoolsincourse', 'ai'));
+            $mform->setDefault('enableaitools', $course->enableaitools ?? 1);
+            $mform->addElement('static', 'aitoolsincoursedesc', '', get_string('aitoolsincoursedesc', 'ai'));
+        }
+
         // Add custom fields to the form.
         $handler = core_course\customfield\course_handler::create();
         $handler->set_parent_context($categorycontext); // For course handler only.

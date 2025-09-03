@@ -510,7 +510,7 @@ abstract class moodleform_mod extends moodleform {
      * Adds all the standard elements to a form to edit the settings for an activity module.
      */
     protected function standard_coursemodule_elements() {
-        global $COURSE, $CFG, $DB, $OUTPUT;
+        global $COURSE, $CFG, $DB, $OUTPUT, $PAGE;
         $mform =& $this->_form;
 
         $this->_outcomesused = false;
@@ -675,6 +675,68 @@ abstract class moodleform_mod extends moodleform {
         $this->standard_hidden_coursemodule_elements();
 
         $this->plugin_extend_coursemodule_standard_elements();
+
+        $availableactions = [];
+        // Get available actions for the AI course placement.
+        if (aiplacement_courseassist\utils::is_course_assist_available()) {
+            $aicourseplacementactions = aiplacement_courseassist\utils::get_actions_available($this->get_context(), false);
+            $availableactions = array_merge($availableactions, $aicourseplacementactions);
+        }
+
+        // Get available actions for the AI editor placement.
+        if (aiplacement_editor\utils::is_html_editor_placement_available()) {
+            $aieditorplacementactions = aiplacement_editor\utils::get_actions_available($this->get_context(), false);
+            $availableactions = array_merge($availableactions, $aieditorplacementactions);
+        }
+
+        // Current set of enabled AI actions.
+        $enabledaiactions = ($this->_cm && $this->_cm->enabledaiactions)
+                            ? (array) json_decode($this->_cm->enabledaiactions)
+                            : true;
+
+        // Show AI tools in activity settings if AI course assist is available.
+        $aimanager = \core\di::get(core_ai\manager::class);
+        if (!empty($availableactions) && $aimanager->get_provider_instances(['enabled' => 1])) {
+            $mform->addElement('header', 'aitoolshdr', get_string('aitools', 'ai'));
+
+            // Check if AI tools is enabled in the course.
+            if (is_null($COURSE->enableaitools) || $COURSE->enableaitools) {
+                $mform->addElement('selectyesno', 'enableaitools', get_string('enableaitoolsincourseactivity', 'ai'));
+                $mform->setDefault('enableaitools', $this->_cm->enableaitools ?? 1);
+                $mform->addElement('static', 'aitoolsincourseactivitydesc', '', get_string('aitoolsincourseactivitydesc', 'ai'));
+
+                $mform->addElement('static', 'aiactionshdr', get_string('aiactionshdr', 'core_ai'), '');
+                $mform->hideIf('aiactionshdr', 'enableaitools', 'eq', 0);
+
+                // Get enabled AI actions.
+                if (is_array($enabledaiactions)) {
+                    $filteredenabledaiactions = array_filter($enabledaiactions, function ($value): bool {
+                        return $value === 1;
+                    });
+                }
+
+                foreach ($availableactions as $action) {
+                    $actionname = 'action-' . $action['action'];
+                    $actiontext = 'action_' . $action['action'];
+
+                    // Set actions option's default value.
+                    $defaultvalue = $this->_cm ? 0 : 1; // Default to 'On' for new activities.
+                    if ($enabledaiactions === true || array_key_exists($action['action'], $filteredenabledaiactions)) {
+                        $defaultvalue = 1;
+                    }
+
+                    $mform->addElement('select', $actionname, $action['buttontext'], [
+                        1 => get_string('on', 'core_ai'),
+                        0 => get_string('off', 'core_ai'),
+                    ]);
+                    $mform->addHelpButton($actionname, $actiontext, 'core_ai');
+                    $mform->setDefault($actionname, $defaultvalue);
+                    $mform->hideIf($actionname, 'enableaitools', 'eq', 0);
+                }
+            } else {
+                $mform->addElement('static', 'aiactionshdr', '', get_string('aitoolsnotenabled', 'ai'));
+            }
+        }
     }
 
     /**

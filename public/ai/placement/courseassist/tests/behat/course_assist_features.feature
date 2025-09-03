@@ -82,3 +82,19 @@ Feature: AI course assist features
     When I click on "AI features" "button"
     And I click on "Summarise" "button"
     Then I should see "Welcome to the new AI feature!" in the ".ai-drawer" "css_element"
+
+  Scenario: AI features are not available when AI tools is disabled at course level
+    Given I am on the "Course 1" "course editing" page logged in as teacher1
+    When I set the following fields to these values:
+      | Allow AI tools for this course | No |
+    And I press "Save and display"
+    And I am on the "PageName1" "page activity" page logged in as teacher1
+    Then "AI features" "button" should not exist
+
+  Scenario: AI features are not available when AI tools is disabled at module level
+    Given I am on the "PageName1" "page activity editing" page logged in as teacher1
+    When I set the following fields to these values:
+      | Allow AI tools in this activity | No |
+    And I press "Save and display"
+    And I am on the "PageName1" "page activity" page logged in as teacher1
+    Then "AI features" "button" should not exist
