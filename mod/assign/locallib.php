@@ -6524,7 +6524,7 @@ class assign {
         $info->courseassignsurl = $CFG->wwwroot . '/mod/assign/index.php?id=' . $course->id;
 
         // Time of the action.
-        $info->timeupdated = userdate($updatetime, get_string('strftimerecentfull'));
+        $info->timeupdated = userdate($updatetime);
 
         // Other data passed in.
         $info = (object) array_merge((array) $info, $extrainfo);
