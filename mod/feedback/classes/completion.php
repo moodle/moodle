@@ -545,7 +545,7 @@ class mod_feedback_completion extends mod_feedback_structure {
      * It is also responsible for sending email notifications when applicable.
      */
     public function save_response() {
-        global $SESSION, $DB, $USER;
+        global $DB, $USER;
 
         $feedbackcompleted = $this->find_last_completed();
         // If no record is found, change false to null for safe use in feedback_save_tmp_values.
@@ -562,8 +562,6 @@ class mod_feedback_completion extends mod_feedback_structure {
         } else {
             feedback_send_email_anonym($this->cm, $this->feedback, $this->cm->get_course());
         }
-
-        unset($SESSION->feedback->is_started);
 
         // Update completion state.
         $completion = new completion_info($this->cm->get_course());
@@ -680,7 +678,7 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @since  Moodle 3.3
      */
     public function process_page($gopage, $gopreviouspage = false) {
-        global $CFG, $PAGE, $SESSION;
+        global $PAGE;
 
         $urltogo = null;
 
@@ -696,9 +694,6 @@ class mod_feedback_completion extends mod_feedback_structure {
                 ($this->form->is_validated() || $gopreviouspage)) {
             // Form was submitted (skip validation for "Previous page" button).
             $data = $this->form->get_submitted_data();
-            if (!isset($SESSION->feedback->is_started) OR !$SESSION->feedback->is_started == true) {
-                throw new \moodle_exception('error', '', $CFG->wwwroot.'/course/view.php?id='.$this->courseid);
-            }
             $this->save_response_tmp($data);
             if (!empty($data->savevalues) || !empty($data->gonextpage)) {
                 if (($nextpage = $this->get_next_page($gopage)) !== null) {
@@ -731,10 +726,6 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @since Moodle 3.3
      */
     public function render_items() {
-        global $SESSION;
-
-        // Print the items.
-        $SESSION->feedback->is_started = true;
         return $this->form->render();
     }
 }
