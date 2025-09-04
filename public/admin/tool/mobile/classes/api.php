@@ -616,6 +616,7 @@ class api {
                 '$mmCoursesDelegate_search' => new lang_string('search'),
                 'NoDelegate_CoreCourseDownload' => new lang_string('downloadcourse', 'tool_mobile'),
                 'NoDelegate_CoreCoursesDownload' => new lang_string('downloadcourses', 'tool_mobile'),
+                'CoreCourseOptionsDelegate_CoreCourseOverview' => new lang_string('activitiesoverview', 'tool_mobile'),
             ),
             "$participants" => array(
                 '$mmUserDelegate_mmaGrades:viewGrades' => new lang_string('grades', 'grades'),
