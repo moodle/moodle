@@ -208,9 +208,31 @@ class transfer_question_categories extends adhoc_task {
         global $DB;
         $movedcategories = [];
 
-        $subcatids = $DB->get_fieldset('question_categories', 'id', ['parent' => $categoryid]);
-        foreach ($subcatids as $subcatid) {
-            $DB->set_field('question_categories', 'contextid', $newcontext->id, ['id' => $subcatid]);
+        $subcatids = $DB->get_records('question_categories', ['parent' => $categoryid]);
+        foreach ($subcatids as $subcatid => $data) {
+            // Because of the fallback above, where categories pointing to a
+            // missing contextid are all moved to the new shared system-level
+            // question bank, some categories are moved from previously
+            // separate contextids to the same context. This can violate
+            // unique indexes, so we fix this by ensuring uniqueness.
+
+            // For the stamp, we just generate a new stamp if required.
+            if ($DB->record_exists('question_categories', ['stamp' => $data->stamp, 'contextid' => $newcontext->id])) {
+                $data->stamp = make_unique_id_code();
+            }
+
+            // The idnumber we just reset duplicates to null, as is done in other places.
+            if (
+                $data->idnumber !== null &&
+                $DB->record_exists('question_categories', ['idnumber' => $data->idnumber, 'contextid' => $newcontext->id])
+            ) {
+                $data->idnumber = null;
+            }
+
+            // Update the contextid and save the category.
+            $data->contextid = $newcontext->id;
+            $DB->update_record('question_categories', $data);
+
             $movedcategories[] = $subcatid;
             $movedcategories = array_merge(
                 $this->move_subcategories_to_context($subcatid, $newcontext),
