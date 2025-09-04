@@ -510,7 +510,7 @@ abstract class moodleform_mod extends moodleform {
      * Adds all the standard elements to a form to edit the settings for an activity module.
      */
     protected function standard_coursemodule_elements() {
-        global $COURSE, $CFG, $DB, $OUTPUT, $PAGE;
+        global $COURSE, $CFG, $DB, $OUTPUT;
         $mform =& $this->_form;
 
         $this->_outcomesused = false;
