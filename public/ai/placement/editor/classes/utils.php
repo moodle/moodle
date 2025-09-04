@@ -16,6 +16,8 @@
 
 namespace aiplacement_editor;
 
+use core_ai\aiactions\generate_image;
+use core_ai\aiactions\generate_text;
 use core_ai\manager;
 
 /**
@@ -33,16 +35,16 @@ class utils {
      * @param \context $context The context.
      * @param string $actionname The name of the action.
      * @param string $actionclass The class name of the action.
-     * @return bool True if the action is available, false otherwise.
+     * @param bool $checkcontext If true, check the action is available in context.
+     * @return bool If the action is accessible, available, and enable.
      */
     public static function is_html_editor_placement_action_available(
         \context $context,
         string $actionname,
-        string $actionclass
+        string $actionclass,
+        bool $checkcontext = true,
     ): bool {
-        [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_editor'), 2);
-        $pluginmanager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
-        if (!$pluginmanager::is_plugin_enabled($pluginname)) {
+        if (!self::is_html_editor_placement_available()) {
             return false;
         }
 
@@ -51,9 +53,57 @@ class utils {
             has_capability("aiplacement/editor:{$actionname}", $context)
             && $aimanager->is_action_available($actionclass)
             && $aimanager->is_action_enabled('aiplacement_editor', $actionclass)
+            && (!$checkcontext || $aimanager->is_action_enabled_in_context($context, $actionclass))
         ) {
             return true;
         }
+
         return false;
+    }
+
+    /**
+     * Check if AI Placement HTML editor is available.
+     *
+     * @return bool If the placement is enabled.
+     */
+    public static function is_html_editor_placement_available(): bool {
+        [$plugintype, $pluginname] = explode('_', \core_component::normalize_componentname('aiplacement_editor'), 2);
+        $pluginmanager = \core_plugin_manager::resolve_plugininfo_class($plugintype);
+        if (!$pluginmanager::is_plugin_enabled($pluginname)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get all the actions available for HTML editor placement.
+     *
+     * @param \context $context The context.
+     * @param bool $checkcontext If true, check the action is available in context.
+     * @return array Return the actions available with data.
+     */
+    public static function get_actions_available(\context $context, bool $checkcontext = true): array {
+        $actions = [];
+
+        // Action generate_text.
+        if (self::is_html_editor_placement_action_available($context, 'generate_text', generate_text::class, $checkcontext)) {
+            $actions[] = [
+                'action' => 'generate_text',
+                'buttontext' => get_string('action_generate_text', 'core_ai'),
+                'title' => get_string('action_generate_text_desc', 'core_ai'),
+            ];
+        }
+
+        // Action generate_image.
+        if (self::is_html_editor_placement_action_available($context, 'generate_image', generate_image::class, $checkcontext)) {
+            $actions[] = [
+                'action' => 'generate_image',
+                'buttontext' => get_string('action_generate_image', 'core_ai'),
+                'title' => get_string('action_generate_image_desc', 'core_ai'),
+            ];
+        }
+
+        return $actions;
     }
 }

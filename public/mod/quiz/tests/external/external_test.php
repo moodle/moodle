@@ -251,7 +251,7 @@ final class external_test extends \core_external\tests\externallib_testcase {
         $allusersfields = ['id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang',
                                 'timeopen', 'timeclose', 'grademethod', 'section', 'visible', 'groupmode', 'groupingid',
                                 'attempts', 'timelimit', 'grademethod', 'decimalpoints', 'questiondecimalpoints', 'sumgrades',
-                                'grade', 'preferredbehaviour', 'hasfeedback'];
+                                'grade', 'preferredbehaviour', 'hasfeedback', 'enableaitools', 'enabledaiactions'];
         $userswithaccessfields = ['attemptonlast', 'reviewattempt', 'reviewcorrectness', 'reviewmaxmarks', 'reviewmarks',
                                         'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
                                         'reviewoverallfeedback', 'questionsperpage', 'navmethod',
@@ -274,6 +274,8 @@ final class external_test extends \core_external\tests\externallib_testcase {
         $quiz1->autosaveperiod = get_config('quiz', 'autosaveperiod');
         $quiz1->introfiles = [];
         $quiz1->lang = '';
+        $quiz1->enableaitools = null;
+        $quiz1->enabledaiactions = null;
 
         $quiz2->coursemodule = $quiz2->cmid;
         $quiz2->introformat = 1;
@@ -287,6 +289,8 @@ final class external_test extends \core_external\tests\externallib_testcase {
         $quiz2->autosaveperiod = get_config('quiz', 'autosaveperiod');
         $quiz2->introfiles = [];
         $quiz2->lang = '';
+        $quiz2->enableaitools = null;
+        $quiz2->enabledaiactions = null;
 
         foreach (array_merge($allusersfields, $userswithaccessfields) as $field) {
             $expected1[$field] = $quiz1->{$field};

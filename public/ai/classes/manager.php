@@ -28,6 +28,7 @@ use core\plugininfo\aiprovider as aiproviderplugin;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
+
     /**
      * Create a new AI manager.
      *
@@ -336,6 +337,36 @@ class manager {
             }
             return (bool) $value;
         }
+    }
+
+    /**
+     * Check if an action is enabled in a particular context.
+     *
+     * @param \context $context The context to use.
+     * @param string $actionclass The action class name to check.
+     * @return bool Return true enabled and allowed.
+     */
+    public function is_action_enabled_in_context(\context $context, string $actionclass): bool {
+        // Only check if we are in a supported context.
+        if (in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_COURSECAT, CONTEXT_MODULE])) {
+            // Return false if AI tools is not enabled at the course level.
+            if (!self::is_ai_tools_enabled_in_course($context)) {
+                return false;
+            }
+
+            if ($context->contextlevel == CONTEXT_MODULE) {
+                // Detect if this is a newly created module (doesn't have any AI settings yet).
+                $record = self::get_ai_fields_from_course_module($context->instanceid);
+                if (is_null($record->enabledaiactions)) {
+                    return true;
+                }
+                // Check if the action is one of our enabled ones.
+                $enabledactions = self::get_enabled_actions_in_course_module($record);
+                return in_array($actionclass, $enabledactions);
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -681,6 +712,71 @@ class manager {
                 add_to_config_log($key, $providerconf->$key, $newvalue, $plugin);
                 set_config($key, $newvalue, $plugin);
             }
+        }
+        return true;
+    }
+
+    /**
+     * Get the AI related fields from the course module.
+     *
+     * @param int $id The course module to check.
+     * @return \stdClass Return AI related fields.
+     */
+    public static function get_ai_fields_from_course_module(int $id): \stdClass {
+        global $DB;
+
+        return $DB->get_record(
+            table: 'course_modules',
+            conditions: ['id' => $id],
+            fields: 'enableaitools, enabledaiactions',
+        );
+    }
+
+    /**
+     * Get the enabled actions in a course module context.
+     *
+     * @param \stdClass $record AI related fields from course module.
+     * @return array An array of enabled actions in the course module.
+     */
+    public static function get_enabled_actions_in_course_module(\stdClass $record): array {
+        $enabledaiactions = [];
+
+        if (is_null($record->enableaitools) || $record->enableaitools) {
+            // Get AI action settings and determine which ones are enabled.
+            if (!empty($record->enabledaiactions)) {
+                $enabledaiactions = array_keys(
+                    array_filter((array) json_decode($record->enabledaiactions), function ($value): bool {
+                        return $value == 1;
+                    })
+                );
+                // Set to classname format.
+                foreach ($enabledaiactions as $key => $action) {
+                    $enabledaiactions[$key] = "core_ai\\aiactions\\{$action}";
+                }
+            }
+        }
+
+        return $enabledaiactions;
+    }
+
+    /**
+     * Check if AI tools are enabled in the course.
+     *
+     * @param \context $context The context to check.
+     * @return bool True if AI tools are enabled in the course, false otherwise.
+     */
+    public static function is_ai_tools_enabled_in_course(\context $context): bool {
+        global $DB;
+
+        if (in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_COURSECAT])) {
+            $courseid = $context->instanceid;
+        } else {
+            $courseid = $DB->get_field('course_modules', 'course', ['id' => $context->instanceid]);
+        }
+
+        $enableaitools = $DB->get_field('course', 'enableaitools', ['id' => $courseid]);
+        if (!is_null($enableaitools) && !$enableaitools) {
+            return false;
         }
         return true;
     }

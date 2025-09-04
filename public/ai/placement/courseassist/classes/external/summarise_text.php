@@ -78,7 +78,9 @@ class summarise_text extends external_api {
 
         // Check the user has permission to use the AI service.
         self::validate_context($context);
-        if (!utils::is_course_assist_available($context)) {
+
+        // Check if AI Placement course assist is available.
+        if (!utils::is_course_assist_available()) {
             throw new \moodle_exception('nocourseassist', 'aiplacement_courseassist');
         }
 

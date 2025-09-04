@@ -80,7 +80,7 @@ const AICourseAssist = class {
             if (summariseAction) {
                 e.preventDefault();
                 this.openAIDrawer();
-                this.lastAction = 'summarise';
+                this.lastAction = 'summarise_text';
                 this.actionElement.focus();
                 const isPolicyAccepted = await this.isPolicyAccepted();
                 if (!isPolicyAccepted) {
@@ -95,7 +95,7 @@ const AICourseAssist = class {
             if (explainAction) {
                 e.preventDefault();
                 this.openAIDrawer();
-                this.lastAction = 'explain';
+                this.lastAction = 'explain_text';
                 this.actionElement.focus();
                 const isPolicyAccepted = await this.isPolicyAccepted();
                 if (!isPolicyAccepted) {
@@ -126,20 +126,26 @@ const AICourseAssist = class {
             }
         });
 
-        // Focus on the AI drawer's close button when the jump-to element is focused.
-        this.jumpToElement.addEventListener('focus', () => {
-            this.aiDrawerCloseElement.focus();
-        });
+        // Check if there is course assist control region in the page.
+        if (this.jumpToElement) {
+            // Focus on the AI drawer's close button when the jump-to element is focused.
+            this.jumpToElement.addEventListener('focus', () => {
+                this.aiDrawerCloseElement.focus();
+            });
+        }
 
         // Focus on the action element when the AI drawer container receives focus.
         this.aiDrawerElement.addEventListener('focus', () => {
             this.actionElement.focus();
         });
 
-        // Remove active from the action element when it loses focus.
-        this.actionElement.addEventListener('blur', () => {
-            this.actionElement.classList.remove('active');
-        });
+        // Check if the action element exists.
+        if (this.actionElement) {
+            // Remove active from the action element when it loses focus.
+            this.actionElement.addEventListener('blur', () => {
+                this.actionElement.classList.remove('active');
+            });
+        }
     }
 
     /**
@@ -323,12 +329,12 @@ const AICourseAssist = class {
         let params = {};
 
         switch (action) {
-            case 'summarise':
+            case 'summarise_text':
                 params.method = 'aiplacement_courseassist_summarise_text';
                 params.heading = await getString('aisummary', 'aiplacement_courseassist');
                 break;
 
-            case 'explain':
+            case 'explain_text':
                 params.method = 'aiplacement_courseassist_explain_text';
                 params.heading = await getString('aiexplain', 'aiplacement_courseassist');
                 break;

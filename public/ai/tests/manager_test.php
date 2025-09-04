@@ -746,4 +746,142 @@ final class manager_test extends \advanced_testcase {
         $result = $manager->is_action_available($action);
         $this->assertFalse($result);
     }
+
+    /**
+     * Test is_ai_tools_enabled_in_course method.
+     *
+     * @return void
+     */
+    public function test_is_ai_tools_enabled_in_course(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $context = \context_course::instance($course->id);
+
+        $manager = \core\di::get(manager::class);
+        $aitoolsenabled = $manager::is_ai_tools_enabled_in_course($context);
+        $this->assertTrue($aitoolsenabled);
+
+        $course->enableaitools = 0;
+        $DB->update_record('course', $course);
+
+        $aitoolsenabled = $manager::is_ai_tools_enabled_in_course($context);
+        $this->assertFalse($aitoolsenabled);
+    }
+
+    /**
+     * Test get_enabled_actions_in_course_module method.
+     *
+     * @param string $enabledactions
+     * @param array $expectedactions
+     * @dataProvider ai_actions_provider
+     * @return void
+     */
+    public function test_get_enabled_actions_in_course_module(
+        string $enabledactions,
+        array $expectedactions,
+    ): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $manager = \core\di::get(manager::class);
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Create forum module and add enabled AI actions.
+        $module = $generator->create_module('forum', [
+            'course' => $course->id,
+            'enabledaiactions' => $enabledactions,
+        ]);
+
+        // Set the page context to the module context.
+        $ctx = \context_module::instance($module->cmid);
+        $PAGE->set_context($ctx);
+
+        // Get all enabled actions in a course module.
+        $record = $manager::get_ai_fields_from_course_module($module->cmid);
+        $allactions = $manager::get_enabled_actions_in_course_module($record);
+        foreach ($expectedactions as $expectedaction) {
+            $this->assertContains($expectedaction, $allactions);
+        }
+        $this->assertCount(count($expectedactions), $allactions);
+    }
+
+    /**
+     * Test is_action_enabled_in_context method.
+     *
+     * @return void
+     */
+    public function test_is_action_enabled_in_context(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $manager = \core\di::get(manager::class);
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Create forum module and enabled only the generate text action.
+        $module = $generator->create_module('forum', [
+            'course' => $course->id,
+            'enabledaiactions' => json_encode(['generate_text' => 1]),
+        ]);
+
+        // Set the page context to the module context.
+        $modulecontext = \context_module::instance($module->cmid);
+        $PAGE->set_context($modulecontext);
+
+        // Only the generate text action should be available.
+        $result = $manager->is_action_enabled_in_context($modulecontext, generate_text::class);
+        $this->assertTrue($result);
+        $result = $manager->is_action_enabled_in_context($modulecontext, explain_text::class);
+        $this->assertFalse($result);
+
+        // Explain text should be available outside the module context.
+        $systemcontext = \context_system::instance();
+        $result = $manager->is_action_enabled_in_context($systemcontext, explain_text::class);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Data provider for {@see test_get_enabled_actions_in_course_module}
+     *
+     * @return array
+     */
+    public static function ai_actions_provider(): array {
+        return [
+            'actioncombo1' => [
+                json_encode(['generate_text' => 1, 'generate_image' => 1]),
+                [
+                    generate_text::class,
+                    generate_image::class,
+                ],
+            ],
+            'actioncombo2' => [
+                json_encode(['summarise_text' => 1, 'explain_text' => 1]),
+                [
+                    summarise_text::class,
+                    explain_text::class,
+                ],
+            ],
+            'actioncombo3' => [
+                json_encode(['summarise_text' => 1, 'explain_text' => 0, 'generate_text' => 1, 'generate_image' => 1]),
+                [
+                    summarise_text::class,
+                    generate_text::class,
+                    generate_image::class,
+                ],
+            ],
+            'actioncombo4' => [
+                json_encode(['summarise_text' => 0, 'explain_text' => 1, 'generate_text' => 0, 'generate_image' => 0]),
+                [
+                    explain_text::class,
+                ],
+            ],
+        ];
+    }
 }
