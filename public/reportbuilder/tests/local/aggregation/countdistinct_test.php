@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\aggregation;
 
 use core_reportbuilder_generator;
+use core_reportbuilder\manager;
 use core_reportbuilder\tests\core_reportbuilder_testcase;
 use core_user\reportbuilder\datasource\users;
 
@@ -91,5 +92,44 @@ final class countdistinct_test extends core_reportbuilder_testcase {
         // There are two distinct fullnames ("Admin User" & "Admin Test").
         $countdistinct = reset($content[0]);
         $this->assertEquals(2, $countdistinct);
+    }
+
+    /**
+     * Test aggregation with custom callback option when applied to column
+     */
+    public function test_column_aggregation_callback_option(): void {
+        $this->resetAfterTest();
+
+        // Test subjects.
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Apple']);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Banana']);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Banana']);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        // Report columns, aggregated/sorted by user lastname.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:lastname',
+            'aggregation' => countdistinct::get_class_name(),
+            'sortenabled' => 1,
+            'sortdirection' => SORT_DESC,
+        ]);
+
+        // Set aggregation option for callback.
+        $instance = manager::get_report_from_persistent($report);
+        $instance->get_column('user:lastname')
+            ->set_aggregation_options(countdistinct::get_class_name(), [
+                'callback' => fn(int $count): string => "{$count} users",
+            ]);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            ['Bob', '2 users'],
+            ['Admin', '1 users'],
+        ], array_map('array_values', $content));
     }
 }

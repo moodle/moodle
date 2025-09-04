@@ -86,11 +86,13 @@ class avg extends base {
      * @return mixed
      */
     public function format_value($value, array $values, array $callbacks, int $columntype) {
-        if (reset($values) === null) {
+        $average = reset($values);
+        if ($average === null) {
             return null;
         }
+
         if ($columntype === column::TYPE_BOOLEAN || empty($callbacks)) {
-            return format_float((float) reset($values), 1);
+            return format_float((float) $average);
         }
 
         return parent::format_value($value, $values, $callbacks, $columntype);

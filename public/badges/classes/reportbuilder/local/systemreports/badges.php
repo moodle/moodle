@@ -19,15 +19,13 @@ declare(strict_types=1);
 namespace core_badges\reportbuilder\local\systemreports;
 
 use core\context\{course, system};
-use core_badges\reportbuilder\local\entities\badge;
-use core_badges\reportbuilder\local\entities\badge_issued;
+use core_badges\reportbuilder\local\entities\{badge, badge_issued};
+use core\lang_string;
+use core\output\{html_writer, pix_icon};
 use core_reportbuilder\local\helpers\database;
-use core_reportbuilder\local\report\{action, column};
+use core_reportbuilder\local\report\action;
 use core_reportbuilder\system_report;
-use html_writer;
-use lang_string;
 use moodle_url;
-use pix_icon;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
@@ -84,13 +82,19 @@ class badges extends system_report {
         $badgeissuedalias = $badgeissuedentity->get_table_alias('badge_issued');
         $this->add_entity($badgeissuedentity
             ->add_join("LEFT JOIN {badge_issued} {$badgeissuedalias}
-                ON {$entityalias}.id = {$badgeissuedalias}.badgeid AND {$badgeissuedalias}.userid = ".$USER->id)
-        );
+                               ON {$entityalias}.id = {$badgeissuedalias}.badgeid"));
 
-        $this->add_base_fields("{$badgeissuedalias}.uniquehash");
+        // Join the badge issued entity again, for current user.
+        $badgeissuedselfentity = (new badge_issued())
+            ->set_entity_name('badge_issued_self');
+        $badgeissuedselfalias = $badgeissuedselfentity->get_table_alias('badge_issued');
+        $this->add_entity($badgeissuedselfentity
+            ->add_join("LEFT JOIN {badge_issued} {$badgeissuedselfalias}
+                               ON {$entityalias}.id = {$badgeissuedselfalias}.badgeid
+                              AND {$badgeissuedselfalias}.userid = {$USER->id}"));
 
         // Now we can call our helper methods to add the content we want to include in the report.
-        $this->add_columns($badgeissuedalias);
+        $this->add_columns();
         $this->add_filters();
         $this->add_actions();
 
@@ -120,12 +124,8 @@ class badges extends system_report {
     /**
      * Adds the columns we want to display in the report
      *
-     * They are provided by the entities we previously added in the {@see initialise} method, referencing each by their
-     * unique identifier. If custom columns are needed just for this report, they can be defined here.
-     *
-     * @param string $badgeissuedalias
      */
-    public function add_columns(string $badgeissuedalias): void {
+    protected function add_columns(): void {
         $columns = [
             'badge:namewithimagelink',
             'badge:status',
@@ -143,37 +143,24 @@ class badges extends system_report {
         $this->get_column('badge:namewithimagelink')->set_title(new lang_string('name'));
 
         // Recipients column.
-        if ($canviewdraftbadges) {
-            $badgeentity = $this->get_entity('badge');
-            $tempbadgealias = database::generate_alias();
-            $badgeentityalias = $badgeentity->get_table_alias('badge');
-            $this->add_column((new column(
-                'issued',
-                new lang_string('awards', 'core_badges'),
-                $badgeentity->get_entity_name()
-            ))
-                ->add_joins($this->get_joins())
-                ->set_type(column::TYPE_INTEGER)
-                ->add_field("(SELECT COUNT({$tempbadgealias}.userid)
-                                FROM {badge_issued} {$tempbadgealias}
-                        INNER JOIN {user} u
-                                ON {$tempbadgealias}.userid = u.id
-                            WHERE {$tempbadgealias}.badgeid = {$badgeentityalias}.id AND u.deleted = 0)", 'issued')
-                ->set_is_sortable(true)
-                ->set_callback(function(int $count): string {
+        $this->add_column_from_entity('badge_issued:visible')
+            ->set_title(new lang_string('awards', 'core_badges'))
+            ->set_is_available($canviewdraftbadges)
+            ->set_aggregation('count', [
+                'callback' => function (int $count): string {
                     if (!has_capability('moodle/badges:viewawarded', $this->get_context())) {
                         return (string) $count;
                     }
 
                     return html_writer::link(new moodle_url('/badges/recipients.php', ['id' => $this->badgeid]), $count);
-                }));
-        }
+                },
+            ]);
 
         // Add the date the badge was issued at the end of the report.
-        $this->add_column_from_entity('badge_issued:issued');
-        $this->get_column('badge_issued:issued')
+        $badgeissuedselfalias = $this->get_entity('badge_issued_self')->get_table_alias('badge_issued');
+        $this->add_column_from_entity('badge_issued_self:issued')
             ->set_title(new lang_string('awardedtoyou', 'core_badges'))
-            ->add_fields("{$badgeissuedalias}.uniquehash")
+            ->add_fields("{$badgeissuedselfalias}.uniquehash")
             ->set_callback(static function(?int $value, stdClass $row) {
                 global $OUTPUT;
 

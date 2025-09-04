@@ -116,6 +116,7 @@ class badge_issued extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$badgeissuedalias}.visible")
+            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         return $columns;
