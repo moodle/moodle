@@ -24,6 +24,7 @@ use mod_bigbluebuttonbn\local\extension\mod_form_addons;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
 use mod_bigbluebuttonbn\local\extension\navigation_append_addon;
 use mod_bigbluebuttonbn\local\extension\navigation_override_addon;
+use mod_bigbluebuttonbn\local\extension\view_page_addons;
 use stdClass;
 use core_plugin_manager;
 use core_component;
@@ -290,5 +291,24 @@ class extension {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get rendered output for override in the instance.
+     *
+     * @param \renderer_base $renderer
+     * @param instance $instance
+     * @return string|null Rendered information for the instance, or null if no override found.
+     */
+    public static function get_rendered_output_override($renderer, $instance): ?string {
+        $classes = self::get_classes_implementing(view_page_addons::class);
+        if (!empty($classes)) {
+            $outputclass = reset($classes);
+            if (class_exists($outputclass)) {
+                return $renderer->render(new $outputclass($instance));
+            }
+        }
+        // Fallback to the default rendered output if no subplugin overrides it.
+        return null;
     }
 }

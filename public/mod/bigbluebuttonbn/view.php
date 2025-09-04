@@ -25,6 +25,7 @@
  * @author    Darko Miletic  (darko.miletic [at] gmail [dt] com)
  */
 
+use mod_bigbluebuttonbn\extension;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
@@ -81,7 +82,11 @@ $PAGE->set_heading($course->fullname);
 $renderer = $PAGE->get_renderer('mod_bigbluebuttonbn');
 
 try {
-    $renderedinfo = $renderer->render(new view_page($instance));
+    $renderedinfo = extension::get_rendered_output_override($renderer, $instance);
+    if (!$renderedinfo) {
+        // If no override is found, use the default view_page renderable.
+        $renderedinfo = $renderer->render(new view_page($instance));
+    }
 } catch (server_not_available_exception $e) {
     bigbluebutton_proxy::handle_server_not_available($instance);
 }
