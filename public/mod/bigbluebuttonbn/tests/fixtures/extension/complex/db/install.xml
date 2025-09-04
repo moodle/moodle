@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/bigbluebuttonbn/tests/fixtures/extension/complex/db" VERSION="2023020800" COMMENT="XMLDB file for bbbext_complex">
+    <TABLES>
+        <TABLE NAME="bbbext_complex" COMMENT="Default comment for bbbext_complex, please edit me">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+    </TABLES>
+</XMLDB>
