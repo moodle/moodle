@@ -417,3 +417,33 @@ Feature: Group assignment submissions
     Then I should see "Student 1"
     And I should see "Student 3"
     And I should not see "Student 2"
+
+  @javascript
+  Scenario: All groups including non-participation groups can be selected when viewing the grade summary
+    Given the following "groups" exist:
+      | name    | course | idnumber | participation | visibility |
+      | Group 2 | C1     | G2       | 0             | 0          |
+      | Group 3 | C1     | G3       | 0             | 3          |
+    And the following "group members" exist:
+      | group | user     |
+      | G1    | student1 |
+      | G2    | student1 |
+      | G1    | student2 |
+      | G2    | student3 |
+    And the following "activity" exists:
+      | activity         | assign               |
+      | course           | C1                   |
+      | name             | Test assignment name |
+      | submissiondrafts | 0                    |
+      | teamsubmission   | 1                    |
+      | groupmode        | 1                    |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                          |
+      | Test assignment name  | student1  | I'm the student's first submission  |
+      | Test assignment name  | student3  | I'm the student's first submission  |
+    When I am on the "Test assignment name" Activity page logged in as teacher1
+    Then "Non-participation" "optgroup" should exist in the "select[name=group]" "css_element"
+    And "Group 1" "option" should exist in the "select[name=group]" "css_element"
+    And "Group 2" "option" should exist in the "optgroup[label=Non-participation]" "css_element"
+    And "Group 3" "option" should exist in the "optgroup[label=Non-participation]" "css_element"
+    And "Group 1" "option" should not exist in the "optgroup[label=Non-participation]" "css_element"

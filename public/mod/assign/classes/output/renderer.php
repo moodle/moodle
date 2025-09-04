@@ -298,7 +298,7 @@ class renderer extends \plugin_renderer_base {
 
         if (isset($summary->cm)) {
             $currenturl = new \moodle_url('/mod/assign/view.php', array('id' => $summary->cm->id));
-            $o .= groups_print_activity_menu($summary->cm, $currenturl->out(), true);
+            $o .= groups_print_activity_menu($summary->cm, $currenturl->out(), true, participationonly: false);
         }
 
         $o .= $this->output->box_start('boxaligncenter gradingsummarytable');
