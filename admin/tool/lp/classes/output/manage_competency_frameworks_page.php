@@ -28,10 +28,12 @@ use renderable;
 use templatable;
 use renderer_base;
 use single_button;
+use action_link;
 use stdClass;
 use moodle_url;
 use context;
 use context_system;
+use core\output\local\properties\button;
 use core_competency\api;
 use core_competency\competency_framework;
 use core_competency\external\competency_framework_exporter;
@@ -65,6 +67,8 @@ class manage_competency_frameworks_page implements renderable, templatable {
      * @param context $pagecontext The page context
      */
     public function __construct(context $pagecontext) {
+        global $OUTPUT;
+
         $this->pagecontext = $pagecontext;
 
         if (competency_framework::can_manage_context($this->pagecontext)) {
@@ -74,10 +78,13 @@ class manage_competency_frameworks_page implements renderable, templatable {
                 'get'
             );
             $this->navigation[] = $addpage;
-            $competenciesrepository = new single_button(
+
+            $icon = $OUTPUT->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']);
+            $competenciesrepository = new action_link(
                 new moodle_url('https://moodle.net/search', ['q' => 'competency frameworks']),
-                get_string('competencyframeworksrepository', 'tool_lp'),
-                'get'
+                get_string('competencyframeworksrepository', 'tool_lp') . $icon,
+                null,
+                ['target' => '_blank', 'class' => button::SECONDARY->classes() . ' ms-sm-2'],
             );
             $this->navigation[] = $competenciesrepository;
         }
