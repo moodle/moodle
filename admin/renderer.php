@@ -2218,7 +2218,7 @@ class core_admin_renderer extends plugin_renderer_base {
     public function moodleorg_registration_message() {
         $a = new stdClass();
         $a->moreinformation = '#id_sitestats'; // More information anchor.
-        $a->moodleapp = HUB_MOODLEORGHUBURL . '/solutions/moodle-app/';
+        $a->moodleapp = MOODLE_PRODUCTURL . '/solutions/moodle-app/';
         $out = format_text(get_string('registerwithmoodleorginfo', 'core_hub', $a), FORMAT_MARKDOWN);
 
         $out .= html_writer::link(
