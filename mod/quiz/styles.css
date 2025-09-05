@@ -306,6 +306,12 @@ body.path-mod-quiz table tbody tr.gradedattempt > td.sticky-column {
     background-color: #d9edf7;
 }
 
+body.path-mod-quiz table tbody tr > td.sticky-column,
+body.path-mod-quiz table thead tr > th.sticky-column,
+body.path-mod-quiz table tbody tr:not(.gradedattempt):hover td.sticky-column {
+    background-color: #fff;
+}
+
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {
     text-align: center;
