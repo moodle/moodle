@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_tag\reportbuilder\local\systemreports;
 
 use core\context\system;
+use core_reportbuilder\local\aggregation\count;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\report\{action, column};
 use core_reportbuilder\system_report;
@@ -118,7 +119,7 @@ class tags extends system_report {
         // Instance count.
         $this->add_column_from_entity('instance:component')
             ->set_title(new lang_string('count', 'core_tag'))
-            ->set_aggregation('count');
+            ->set_aggregation(count::get_class_name());
 
         // Flag (editable).
         $this->add_column((new column(

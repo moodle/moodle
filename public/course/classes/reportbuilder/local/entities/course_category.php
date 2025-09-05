@@ -25,6 +25,7 @@ use lang_string;
 use stdClass;
 use theme_config;
 use core_course_category;
+use core_reportbuilder\local\aggregation\{groupconcat, groupconcatdistinct};
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{category, number, select, text};
 use core_reportbuilder\local\report\{column, filter};
@@ -149,7 +150,10 @@ class course_category extends base {
                 return empty($category->id) ? '' :
                     core_course_category::get($category->id, MUST_EXIST, true)->get_nested_name(false);
             })
-            ->set_disabled_aggregation(['groupconcat', 'groupconcatdistinct'])
+            ->set_disabled_aggregation([
+                groupconcat::get_class_name(),
+                groupconcatdistinct::get_class_name(),
+            ])
             ->set_is_sortable(true);
 
         // ID number column.
