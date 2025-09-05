@@ -531,11 +531,8 @@ class manager {
         }
 
         // WS/AJAX check.
+        // Prevents any potential bypassing of multi-factor authentication.
         if (WS_SERVER || AJAX_SCRIPT) {
-            if (isset($SESSION->mfa_pending) && !empty($SESSION->mfa_pending)) {
-                // Allow AJAX and WS, but never from auth.php.
-                return self::NO_REDIRECT;
-            }
             return self::REDIRECT_EXCEPTION;
         }
 
