@@ -2125,5 +2125,70 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025090200.01);
     }
 
+    if ($oldversion < 2025090200.02) {
+        $table = new xmldb_table('reportbuilder_schedule');
+
+        // Conditionally launch add field classname.
+        $field = new xmldb_field('classname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'enabled');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Conditionally launch add field configdata.
+        $field = new xmldb_field('configdata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'classname');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Migrate existing data to new structure.
+        $schedules = $DB->get_records('reportbuilder_schedule');
+        foreach ($schedules as $schedule) {
+            $DB->update_record('reportbuilder_schedule', [
+                'id' => $schedule->id,
+                'classname' => core_reportbuilder\reportbuilder\schedule\message::class,
+                'configdata' => json_encode([
+                    'subject' => $schedule->subject,
+                    'message' => ['text' => $schedule->message, 'format' => $schedule->messageformat],
+                    'reportempty' => $schedule->reportempty,
+                ]),
+            ]);
+        }
+
+        // Launch change of nullability for field configdata (after migrating data).
+        $field = new xmldb_field('configdata', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'classname');
+        $dbman->change_field_notnull($table, $field);
+
+        // Launch change of nullability for field audiences.
+        $field = new xmldb_field('audiences', XMLDB_TYPE_TEXT, null, null, null, null, null, 'enabled');
+        $dbman->change_field_notnull($table, $field);
+
+        // Conditionally launch drop field subject.
+        $field = new xmldb_field('subject');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Conditionally launch drop field message.
+        $field = new xmldb_field('message');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Conditionally launch drop field messageformat.
+        $field = new xmldb_field('messageformat');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Conditionally launch drop field reportempty.
+        $field = new xmldb_field('reportempty');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025090200.02);
+    }
+
     return true;
 }

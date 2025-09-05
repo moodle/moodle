@@ -30,6 +30,7 @@ use core_reportbuilder\local\filters\{boolean_select, date, text};
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\models\{report, schedule};
 use core_reportbuilder\local\report\{action, column, filter};
+use core_reportbuilder\local\schedules\base;
 use core_reportbuilder\output\schedule_name_editable;
 
 /**
@@ -60,7 +61,7 @@ class report_schedules extends system_report {
         $this->add_base_condition_simple('sc.reportid', $this->get_parameter('reportid', 0, PARAM_INT));
 
         // Select fields required for actions, permission checks, and row class callbacks.
-        $this->add_base_fields('sc.id, sc.name, sc.enabled, rb.contextid');
+        $this->add_base_fields('sc.id, sc.name, sc.enabled, sc.classname, rb.contextid');
 
         // Join user entity for "User modified" column.
         $entityuser = new user();
@@ -310,31 +311,38 @@ class report_schedules extends system_report {
      */
     protected function add_actions(): void {
         // Edit action.
-        $this->add_action(new action(
+        $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/edit', ''),
             ['data-action' => 'schedule-edit', 'data-schedule-id' => ':id'],
             false,
             new lang_string('editscheduledetails', 'core_reportbuilder')
-        ));
+        ))
+            ->add_callback(static function (stdClass $row): bool {
+                $instance = base::instance(0, $row);
+                return $instance !== null && $instance->user_can_add();
+            }));
 
         // Send now action.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('t/email', ''),
+            new pix_icon('t/play', ''),
             ['data-action' => 'schedule-send', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
             false,
             new lang_string('sendschedule', 'core_reportbuilder')
         ))
             ->add_callback(function(stdClass $row): bool {
+                $instance = base::instance(0, $row);
+                if ($instance === null || !$instance->user_can_add()) {
+                    return false;
+                }
 
                 // Ensure data name attribute is properly formatted.
-                $row->name = (new schedule(0, $row))->get_formatted_name(
+                $row->name = $instance->get_persistent()->get_formatted_name(
                     context::instance_by_id($row->contextid));
 
                 return true;
-            })
-        );
+            }));
 
         // Delete action.
         $this->add_action((new action(
@@ -350,13 +358,16 @@ class report_schedules extends system_report {
             new lang_string('deleteschedule', 'core_reportbuilder')
         ))
             ->add_callback(function(stdClass $row): bool {
+                $instance = base::instance(0, $row);
+                if ($instance !== null && !$instance->user_can_add()) {
+                    return false;
+                }
 
                 // Ensure data name attribute is properly formatted.
                 $row->name = (new schedule(0, $row))->get_formatted_name(
                     context::instance_by_id($row->contextid));
 
                 return true;
-            })
-        );
+            }));
     }
 }

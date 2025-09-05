@@ -261,14 +261,13 @@ final class provider_test extends provider_testcase {
 
         $this->assertEquals($schedule->get_formatted_name(), $scheduledata->name);
         $this->assertEquals('Yes', $scheduledata->enabled);
+        $this->assertEquals('Schedule an email', $scheduledata->classname);
+        $this->assertEquals('{}', $scheduledata->configdata);
         $this->assertEquals('Comma separated values (.csv)', $scheduledata->format);
         $this->assertNotEmpty($scheduledata->timescheduled);
         $this->assertEquals('None', $scheduledata->recurrence);
         $this->assertEquals('Schedule creator', $scheduledata->userviewas);
         $this->assertEquals(json_encode([$audiencepersistent->get('id')]), $scheduledata->audiences);
-        $this->assertEquals($schedule->get('subject'), $scheduledata->subject);
-        $this->assertEquals(format_text($schedule->get('message'), $schedule->get('messageformat')), $scheduledata->message);
-        $this->assertEquals('Send message with empty report', $scheduledata->reportempty);
         $this->assertEquals($user->id, $scheduledata->usercreated);
         $this->assertEquals($user->id, $scheduledata->usermodified);
         $this->assertNotEmpty($scheduledata->timecreated);

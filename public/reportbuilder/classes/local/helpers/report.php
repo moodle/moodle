@@ -171,7 +171,7 @@ class report {
                     // Map new audience ids with the old ones.
                     $audiences = array_map(
                         fn($audienceid) => $audiencemap[$audienceid] ?? 0,
-                        (array) json_decode($schedulerecord->audiences),
+                        (array) json_decode((string) $schedulerecord->audiences),
                     );
 
                     (new schedule(0, $schedulerecord))

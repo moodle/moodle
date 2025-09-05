@@ -75,7 +75,10 @@ export const init = reportId => {
         if (scheduleCreate) {
             event.preventDefault();
 
-            const scheduleModal = createScheduleModal(event.target, getString('newschedule', 'core_reportbuilder'), reportId);
+            const {scheduleClass} = scheduleCreate.dataset;
+
+            const scheduleModal = createScheduleModal(event.target, getString('newschedule', 'core_reportbuilder'), reportId, 0,
+                scheduleClass);
             scheduleModal.addEventListener(scheduleModal.events.FORM_SUBMITTED, () => {
                 getString('schedulecreated', 'core_reportbuilder')
                     .then(addToast)

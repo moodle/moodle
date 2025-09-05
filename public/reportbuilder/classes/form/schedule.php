@@ -26,10 +26,10 @@ use core\output\notification;
 use core_form\dynamic_form;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
-use core_reportbuilder\local\helpers\audience;
-use core_reportbuilder\local\helpers\schedule as helper;
+use core_reportbuilder\local\helpers\{audience, schedule as helper};
 use core_reportbuilder\local\models\schedule as model;
-use core_reportbuilder\local\report\base;
+use core_reportbuilder\local\schedules\base;
+use core_reportbuilder\local\report\base as report_base;
 
 /**
  * Schedule form
@@ -41,11 +41,30 @@ use core_reportbuilder\local\report\base;
 class schedule extends dynamic_form {
 
     /**
-     * Return instance of the system report using the filter form
+     * Return schedule instance
      *
      * @return base
      */
-    private function get_report(): base {
+    private function get_schedule(): base {
+        $reportid = $this->optional_param('reportid', 0, PARAM_INT);
+        $scheduleid = $this->optional_param('id', 0, PARAM_INT);
+
+        if ($scheduleid > 0) {
+            $schedule = model::get_record(['id' => $scheduleid, 'reportid' => $reportid], MUST_EXIST);
+            return base::from_persistent($schedule);
+        } else {
+            /** @var base $scheduleclass */
+            $scheduleclass = $this->optional_param('classname', '', PARAM_RAW);
+            return $scheduleclass::instance();
+        }
+    }
+
+    /**
+     * Return instance of the system report using the filter form
+     *
+     * @return report_base
+     */
+    private function get_report(): report_base {
         $reportid = $this->optional_param('reportid', 0, PARAM_INT);
         return manager::get_report_from_id($reportid);
     }
@@ -82,6 +101,9 @@ class schedule extends dynamic_form {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'classname');
+        $mform->setType('id', PARAM_RAW);
 
         // General fields.
         $mform->addElement('header', 'headergeneral', get_string('general'));
@@ -121,63 +143,47 @@ class schedule extends dynamic_form {
         }
 
         // Audience fields.
-        $mform->addElement('header', 'headeraudience', get_string('audience', 'core_reportbuilder'));
-        $mform->setExpanded('headeraudience', true);
+        $schedule = $this->get_schedule();
+        if ($schedule->requires_audience()) {
+            $mform->addElement('header', 'headeraudience', get_string('audience', 'core_reportbuilder'));
+            $mform->setExpanded('headeraudience', true);
 
-        $audiences = audience::get_base_records($this->optional_param('reportid', 0, PARAM_INT));
-        if (empty($audiences)) {
-            $notification = new notification(get_string('noaudiences', 'core_reportbuilder'), notification::NOTIFY_INFO, false);
-            $mform->addElement('static', 'noaudiences', '', $OUTPUT->render($notification));
-        }
-
-        $audiencecheckboxes = [];
-        foreach ($audiences as $audience) {
-            $persistent = $audience->get_persistent();
-
-            // Check for a custom name, otherwise fall back to default.
-            if ('' === $audiencelabel = $persistent->get_formatted_heading($context)) {
-                $audiencelabel = get_string('audiencelabel', 'core_reportbuilder', (object) [
-                    'name' => $audience->get_name(),
-                    'description' => $audience->get_description(),
-                ]);
+            $audiences = audience::get_base_records($this->optional_param('reportid', 0, PARAM_INT));
+            if (empty($audiences)) {
+                $notification = new notification(get_string('noaudiences', 'core_reportbuilder'), notification::NOTIFY_INFO, false);
+                $mform->addElement('static', 'noaudiences', '', $OUTPUT->render($notification));
             }
 
-            $audiencecheckboxes[] = $mform->createElement('checkbox', $persistent->get('id'), $audiencelabel);
+            $audiencecheckboxes = [];
+            foreach ($audiences as $audience) {
+                $persistent = $audience->get_persistent();
+
+                // Check for a custom name, otherwise fall back to default.
+                if ('' === $audiencelabel = $persistent->get_formatted_heading($context)) {
+                    $audiencelabel = get_string('audiencelabel', 'core_reportbuilder', (object) [
+                        'name' => $audience->get_name(),
+                        'description' => $audience->get_description(),
+                    ]);
+                }
+
+                $audiencecheckboxes[] = $mform->createElement('checkbox', $persistent->get('id'), $audiencelabel);
+            }
+
+            $mform->addElement('group', 'audiences', '', $audiencecheckboxes, html_writer::div('', 'w-100 mb-2'));
         }
 
-        $mform->addElement('group', 'audiences', '', $audiencecheckboxes, html_writer::div('', 'w-100 mb-2'));
-
-        // Message fields.
-        $mform->addElement('header', 'headermessage', get_string('messagecontent', 'core_reportbuilder'));
-
-        $mform->addElement('text', 'subject', get_string('messagesubject', 'core_reportbuilder'));
-        $mform->setType('subject', PARAM_TEXT);
-        $mform->addRule('subject', null, 'required', null, 'client');
-        $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255);
-
-        $mform->addElement('editor', 'message', get_string('messagebody', 'core_reportbuilder'), null, ['autosave' => false]);
-        $mform->setType('message', PARAM_RAW);
-        $mform->addRule('message', null, 'required', null, 'client');
-
-        // Advanced.
-        $mform->addElement('header', 'headeradvanced', get_string('advanced'));
-
-        $mform->addElement('select', 'reportempty', get_string('scheduleempty', 'core_reportbuilder'),
-            helper::get_report_empty_options());
-        $mform->setType('reportempty', PARAM_INT);
+        // Load schedule type form definition.
+        $schedule->definition($mform);
     }
 
     /**
      * Load form data if we are editing an existing schedule
      */
     public function set_data_for_dynamic_submission(): void {
-        $reportid = $this->optional_param('reportid', 0, PARAM_INT);
-        $scheduleid = $this->optional_param('id', 0, PARAM_INT);
+        $schedule = $this->get_schedule();
 
-        if ($scheduleid > 0) {
-            $schedule = model::get_record(['id' => $scheduleid, 'reportid' => $reportid]);
-
-            $data = (array) $schedule->to_record();
+        if ($schedule->get_persistent()->get('id') > 0) {
+            $data = (array) $schedule->get_persistent()->to_record();
 
             // Pre-process some of the form fields.
             if (!in_array($data['userviewas'], [model::REPORT_VIEWAS_CREATOR, model::REPORT_VIEWAS_RECIPIENT])) {
@@ -185,17 +191,18 @@ class schedule extends dynamic_form {
                 $data['userviewas'] = model::REPORT_VIEWAS_USER;
             }
 
-            $audiences = json_decode($data['audiences']);
-            $data['audiences'] = array_fill_keys($audiences, 1);
+            if ($schedule->requires_audience()) {
+                $audiences = (array) json_decode((string) $data['audiences']);
+                $data['audiences'] = array_fill_keys($audiences, 1);
+            }
 
-            $data['message'] = [
-                'text' => $data['message'],
-                'format' => $data['messageformat'],
-            ];
+            // Load schedule type form definition data.
+            $data['configdata'] = $schedule->get_configdata();
 
             $this->set_data($data);
         } else {
-            $this->set_data(['reportid' => $reportid]);
+            $reportid = $this->optional_param('reportid', 0, PARAM_INT);
+            $this->set_data(['reportid' => $reportid, 'classname' => $schedule::class]);
         }
     }
 
@@ -220,11 +227,13 @@ class schedule extends dynamic_form {
             $errors['user'] = get_string('required');
         }
 
-        if (empty($data['audiences'])) {
+        // Load schedule type form validation.
+        $schedule = $this->get_schedule();
+        if ($schedule->requires_audience() && empty($data['audiences'])) {
             $errors['audiences'] = get_string('required');
         }
 
-        return $errors;
+        return array_merge($errors, $schedule->validate($data, $files));
     }
 
     /**
@@ -238,13 +247,21 @@ class schedule extends dynamic_form {
             $data->userviewas = (int) $data->user;
         }
 
-        $data->audiences = json_encode(array_keys($data->audiences));
-        ['text' => $data->message, 'format' => $data->messageformat] = $data->message;
+        $schedule = $this->get_schedule();
 
-        if ($data->id) {
+        if ($schedule->requires_audience()) {
+            $data->audiences = json_encode(array_keys($data->audiences));
+        } else {
+            $data->audiences = null;
+        }
+
+        $data->configdata = json_encode((array) $data->configdata);
+
+        if ($schedule->get_persistent()->get('id') > 0) {
             helper::update_schedule($data);
         } else {
-            helper::create_schedule($data);
+            unset($data->id);
+            $schedule::create($data);
         }
     }
 

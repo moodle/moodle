@@ -264,7 +264,7 @@ class audience {
     public static function get_audiences_for_report_schedules(int $reportid): array {
         global $DB;
 
-        $audiences = $DB->get_fieldset_select(schedule::TABLE, 'audiences', 'reportid = ?', [$reportid]);
+        $audiences = $DB->get_fieldset_select(schedule::TABLE, 'audiences', 'reportid = ? AND audiences IS NOT NULL', [$reportid]);
 
         // Reduce JSON encoded audience data of each schedule to an array of audience IDs.
         $audienceids = array_reduce($audiences, static function(array $carry, string $audience): array {

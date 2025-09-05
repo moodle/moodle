@@ -21,7 +21,8 @@ namespace core_reportbuilder\task;
 use core\{clock, di};
 use core\task\adhoc_task;
 use core_user;
-use core_reportbuilder\local\helpers\{report, schedule as helper};
+use core_reportbuilder\local\schedules\base;
+use core_reportbuilder\local\helpers\schedule as helper;
 use core_reportbuilder\local\models\schedule;
 use moodle_exception;
 
@@ -62,14 +63,13 @@ class send_schedule extends adhoc_task {
         }
 
         $schedule = schedule::get_record(['id' => $scheduleid, 'reportid' => $reportid]);
-        if ($schedule === false) {
+        if ($schedule === false || !$instance = base::from_persistent($schedule)) {
             $this->log('Invalid schedule', 0);
             return;
         }
 
-        $this->log_start('Sending schedule: ' . $schedule->get_formatted_name());
+        $this->log_start('Sending schedule: ' . $schedule->get_formatted_name() . ' (' . $instance->get_name() . ')');
 
-        $scheduleattachment = null;
         $originaluser = $USER;
 
         // Get the schedule creator, ensure it's an active account.
@@ -84,70 +84,18 @@ class send_schedule extends adhoc_task {
         // Switch to schedule creator, and retrieve list of recipient users.
         \core\cron::setup_user($schedulecreator);
 
-        $users = helper::get_schedule_report_users($schedule);
-        if (count($users) > 0) {
-
-            $scheduleuserviewas = $schedule->get('userviewas');
-            $schedulereportempty = $schedule->get('reportempty');
-
-            // Handle schedule configuration as to who the report should be viewed as.
-            if ($scheduleuserviewas === schedule::REPORT_VIEWAS_CREATOR) {
-                $scheduleattachment = helper::get_schedule_report_file($schedule);
-            } else if ($scheduleuserviewas !== schedule::REPORT_VIEWAS_RECIPIENT) {
-
-                // Get the user to view the schedule report as, ensure it's an active account.
-                try {
-                    $scheduleviewas = core_user::get_user($scheduleuserviewas, '*', MUST_EXIST);
-                    core_user::require_active_user($scheduleviewas);
-                } catch (moodle_exception $exception) {
-                    $this->log('Invalid schedule view as user: ' . $exception->getMessage(), 0);
-                    return;
-                }
-
-                \core\cron::setup_user($scheduleviewas);
-                $scheduleattachment = helper::get_schedule_report_file($schedule);
-            }
-
-            // Apply special handling if report is empty (default is to send it anyway).
-            if ($schedulereportempty === schedule::REPORT_EMPTY_DONT_SEND && $scheduleattachment !== null &&
-                    report::get_report_row_count($schedule->get('reportid')) === 0) {
-
-                $this->log('Empty report, skipping');
-            } else {
-
-                // Now iterate over recipient users, send the report to each.
-                foreach ($users as $user) {
-                    $this->log('Sending to: ' . fullname($user, true));
-
-                    // If we already created the attachment, send that. Otherwise generate per recipient.
-                    if ($scheduleattachment !== null) {
-                        helper::send_schedule_message($schedule, $user, $scheduleattachment);
-                    } else {
-                        \core\cron::setup_user($user);
-
-                        if ($schedulereportempty === schedule::REPORT_EMPTY_DONT_SEND &&
-                                report::get_report_row_count($schedule->get('reportid')) === 0) {
-
-                            $this->log('Empty report, skipping', 2);
-                            continue;
-                        }
-
-                        $recipientattachment = helper::get_schedule_report_file($schedule);
-                        helper::send_schedule_message($schedule, $user, $recipientattachment);
-                        $recipientattachment->delete();
-                    }
-                }
-            }
+        $users = [];
+        if ($instance->requires_audience()) {
+            $users = helper::get_schedule_report_users($schedule);
         }
+
+        // Execute schedule type.
+        $instance->execute($users, $this->get_trace());
 
         // Finish, clean up (set persistent property manually to avoid updating it's user/time modified data).
         $DB->set_field($schedule::TABLE, 'timelastsent', di::get(clock::class)->time(), [
             'id' => $schedule->get('id'),
         ]);
-
-        if ($scheduleattachment !== null) {
-            $scheduleattachment->delete();
-        }
 
         $this->log_finish('Sending schedule complete');
 

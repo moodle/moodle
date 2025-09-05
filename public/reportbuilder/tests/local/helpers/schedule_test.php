@@ -24,7 +24,9 @@ use core\exception\{coding_exception, invalid_parameter_exception};
 use core_cohort\reportbuilder\audience\cohortmember;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\models\schedule as model;
+use core_reportbuilder\local\schedules\base;
 use core_reportbuilder\reportbuilder\audience\manual;
+use core_reportbuilder\reportbuilder\schedule\message;
 use core_user\reportbuilder\datasource\users;
 
 /**
@@ -49,6 +51,39 @@ final class schedule_test extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_valid}
+     *
+     * @return array[]
+     */
+    public static function valid_provider(): array {
+        return [
+            [message::class, true],
+            [base::class, false],
+            [\core\url::class, false],
+            ['doesntexist', false],
+        ];
+    }
+
+    /**
+     * Test validity of given classname as a schedule type
+     *
+     * @param string $classname
+     * @param bool $expected
+     *
+     * @dataProvider valid_provider
+     */
+    public function test_valid(string $classname, bool $expected): void {
+        $this->assertEquals($expected, schedule::valid($classname));
+    }
+
+    /**
+     * Test getting list of available schedules
+     */
+    public function test_get_schedules(): void {
+        $this->assertContains(message::class, schedule::get_schedules());
+    }
+
+    /**
      * Test create schedule
      */
     public function test_create_schedule(): void {
@@ -64,17 +99,19 @@ final class schedule_test extends advanced_testcase {
         $schedule = schedule::create_schedule((object) [
             'name' => 'My schedule',
             'reportid' => $report->get('id'),
+            'classname' => message::class,
+            'configdata' => json_encode(['subject' => 'Hello', 'message' => 'Hola']),
             'format' => 'csv',
-            'subject' => 'Hello',
-            'message' => 'Hola',
             'timescheduled' => $timescheduled,
         ]);
 
+        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
+
         $this->assertEquals('My schedule', $schedule->get('name'));
         $this->assertEquals($report->get('id'), $schedule->get('reportid'));
+        $this->assertEquals(message::class, $schedule->get('classname'));
+        $this->assertEquals('{"subject":"Hello","message":"Hola"}', $schedule->get('configdata'));
         $this->assertEquals('csv', $schedule->get('format'));
-        $this->assertEquals('Hello', $schedule->get('subject'));
-        $this->assertEquals('Hola', $schedule->get('message'));
         $this->assertEquals($timescheduled, $schedule->get('timescheduled'));
         $this->assertEquals($timescheduled, $schedule->get('timenextsend'));
     }
@@ -263,7 +300,7 @@ final class schedule_test extends advanced_testcase {
 
         // There is only one row in the report (the only user on the site).
         $count = schedule::get_schedule_report_count($schedule);
-        $this->assertDebuggingCalled();
+        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
         $this->assertEquals(1, $count);
     }
 

@@ -21,12 +21,16 @@
 
     Example context (json):
     {
+        "menu": {},
         "report": "The report content",
         "reportid": 10
     }
 }}
 <h2 class="visually-hidden">{{#str}} schedules, core_reportbuilder {{/str}}</h2>
 <div class="reportbuilder-schedules-container">
+    {{#menu}}
+        {{> core/local/dropdown/status}}
+    {{/menu}}
     {{{ report }}}
 </div>
 
