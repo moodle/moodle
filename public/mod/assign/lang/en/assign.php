@@ -150,6 +150,7 @@ $string['blindmarking'] = 'Anonymous submissions';
 $string['blindmarkingenabledwarning'] = 'Anonymous submissions are enabled for this activity.';
 $string['blindmarkingnogradewarning'] = 'Anonymous submissions are enabled for this activity. Grades will not be added to the gradebook until student identities are revealed via the "Actions" menu.';
 $string['blindmarking_help'] = 'Anonymous submissions hide the identity of students from markers. Anonymous submission settings will be locked once a submission or grade has been made in relation to this assignment.';
+$string['bulkactionsselection'] = 'Bulk actions selection';
 $string['cachedef_overrides'] = 'User and group override information';
 $string['calendardue'] = '{$a} is due';
 $string['calendarextension'] = '{$a} is due (extension)';
