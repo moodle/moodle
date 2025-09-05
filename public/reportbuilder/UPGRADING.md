@@ -4,12 +4,28 @@
 
 ### Added
 
+- The `count[distinct]` aggregation types support optional `'callback'` value to customise the formatted output when applied to columns
+
+  For more information see [MDL-82464](https://tracker.moodle.org/browse/MDL-82464)
 - The `report_action` class now accepts a `pix_icon` to include inside the rendered action element
 
   For more information see [MDL-85216](https://tracker.moodle.org/browse/MDL-85216)
+- Report schedule types are now extendable by third-party plugins by extending the `core_reportbuilder\local\schedules\base` class in your component namespace: `<component>\reportbuilder\schedule\<type>`
+
+  For more information see [MDL-86066](https://tracker.moodle.org/browse/MDL-86066)
 - The report column class has a new `get_effective_type()` method to determine the returned column type, taking into account applied aggregation method
 
   For more information see [MDL-86151](https://tracker.moodle.org/browse/MDL-86151)
+
+### Deprecated
+
+- The following methods from the `schedule` helper class have been deprecated, in favour of usage of the new schedule type system:
+
+  * `create_schedule`
+  * `get_report_empty_options`
+  * `send_schedule_message`
+
+  For more information see [MDL-86066](https://tracker.moodle.org/browse/MDL-86066)
 
 ## 5.0
 

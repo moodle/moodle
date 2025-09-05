@@ -196,6 +196,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
     Please see `core_ai\error\ratelimit` as an example.
 
   For more information see [MDL-83147](https://tracker.moodle.org/browse/MDL-83147)
+- - Added `get_enabled_actions_in_course_module` method in public/ai/classes/manager.php to get enabled AI actions in course module. - Added `is_ai_tools_enabled_in_course` method in public/ai/classes/manager.php to check if AI tools is enabled in course. - Added `is_action_enabled_in_context` method in public/ai/classes/manager.php to check if an action is enabled in a particular context. - Added `get_ai_fields_from_course_module` method in public/ai/classes/manager.php to get the AI related fields from the course module. - Added `is_html_editor_placement_available` method in public/ai/placement/editor/classes/utils.php to check if editor placement is enabled. - Added `get_actions_available` method in public/ai/placement/editor/classes/utils.php to get available actions for editor placement.
+
+  For more information see [MDL-85738](https://tracker.moodle.org/browse/MDL-85738)
 
 #### Changed
 
@@ -482,12 +485,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- The `count[distinct]` aggregation types support optional `'callback'` value to customise the formatted output when applied to columns
+
+  For more information see [MDL-82464](https://tracker.moodle.org/browse/MDL-82464)
 - The `report_action` class now accepts a `pix_icon` to include inside the rendered action element
 
   For more information see [MDL-85216](https://tracker.moodle.org/browse/MDL-85216)
+- Report schedule types are now extendable by third-party plugins by extending the `core_reportbuilder\local\schedules\base` class in your component namespace: `<component>\reportbuilder\schedule\<type>`
+
+  For more information see [MDL-86066](https://tracker.moodle.org/browse/MDL-86066)
 - The report column class has a new `get_effective_type()` method to determine the returned column type, taking into account applied aggregation method
 
   For more information see [MDL-86151](https://tracker.moodle.org/browse/MDL-86151)
+
+#### Deprecated
+
+- The following methods from the `schedule` helper class have been deprecated, in favour of usage of the new schedule type system:
+
+  * `create_schedule`
+  * `get_report_empty_options`
+  * `send_schedule_message`
+
+  For more information see [MDL-86066](https://tracker.moodle.org/browse/MDL-86066)
 
 ### core_user
 

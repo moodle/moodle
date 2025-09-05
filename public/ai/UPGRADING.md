@@ -13,6 +13,9 @@
     Please see `core_ai\error\ratelimit` as an example.
 
   For more information see [MDL-83147](https://tracker.moodle.org/browse/MDL-83147)
+- - Added `get_enabled_actions_in_course_module` method in public/ai/classes/manager.php to get enabled AI actions in course module. - Added `is_ai_tools_enabled_in_course` method in public/ai/classes/manager.php to check if AI tools is enabled in course. - Added `is_action_enabled_in_context` method in public/ai/classes/manager.php to check if an action is enabled in a particular context. - Added `get_ai_fields_from_course_module` method in public/ai/classes/manager.php to get the AI related fields from the course module. - Added `is_html_editor_placement_available` method in public/ai/placement/editor/classes/utils.php to check if editor placement is enabled. - Added `get_actions_available` method in public/ai/placement/editor/classes/utils.php to get available actions for editor placement.
+
+  For more information see [MDL-85738](https://tracker.moodle.org/browse/MDL-85738)
 
 ### Changed
 
