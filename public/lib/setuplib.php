@@ -634,10 +634,10 @@ function hash_local_config_cache() {
 function initialise_fullme() {
     global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
 
-    // Detect common config error.
-    if (substr($CFG->wwwroot, -1) == '/') {
-        throw new \moodle_exception('wwwrootslash', 'error');
-    }
+    $setuphelper = \core\di::get(\core\setup::class);
+
+    // Detect common config errors in the wwwroot.
+    $setuphelper->validate_wwwroot();
 
     if (CLI_SCRIPT) {
         initialise_fullme_cli();
