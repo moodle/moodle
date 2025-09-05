@@ -35,7 +35,8 @@ final class get_overview_information_test extends \core_external\tests\externall
         $course = $this->getDataGenerator()->create_course();
         $context = \core\context\course::instance($course->id);
 
-        $clock = $this->mock_clock_with_frozen();
+        // 26 February 2025 15:59:59 (GMT).
+        $clock = $this->mock_clock_with_frozen(1740585599);
         $end = $clock->time() + DAYSECS;
         $mod1 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id, 'duedate' => $end]);
         $mod2 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
