@@ -230,6 +230,22 @@ class course extends base {
                 });
         }
 
+        // Course URL.
+        $columns[] = (new column(
+            'url',
+            new lang_string('courseurl', 'core_course'),
+            $this->get_entity_name(),
+        ))
+            ->add_joins($this->get_joins())
+            ->add_fields("{$tablealias}.id, {$tablealias}.format")
+            ->add_callback(static function (?string $courseid, stdClass $course): string {
+                if ($courseid === null) {
+                    return '';
+                }
+
+                return (string) course_get_url($course);
+            });
+
         foreach ($coursefields as $coursefield => $coursefieldlang) {
             $column = (new column(
                 $coursefield,
