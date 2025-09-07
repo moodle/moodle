@@ -145,6 +145,8 @@ class core_cohort_external extends external_api {
 
             $cohort->id = cohort_add_cohort($cohort);
 
+            $cohort->name = \core_external\util::format_string($cohort->name, $context);
+
             list($cohort->description, $cohort->descriptionformat) =
                 \core_external\util::format_text($cohort->description, $cohort->descriptionformat,
                         $context, 'cohort', 'description', $cohort->id);
@@ -283,6 +285,8 @@ class core_cohort_external extends external_api {
             if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $context)) {
                 throw new required_capability_exception($context, 'moodle/cohort:view', 'nopermissions', '');
             }
+
+            $cohort->name = \core_external\util::format_string($cohort->name, $context);
 
             // Only return theme when $CFG->allowcohortthemes is enabled.
             if (!empty($cohort->theme) && empty($CFG->allowcohortthemes)) {
@@ -426,6 +430,8 @@ class core_cohort_external extends external_api {
 
         foreach ($results as $key => $cohort) {
             $cohortcontext = context::instance_by_id($cohort->contextid);
+
+            $cohort->name = \core_external\util::format_string($cohort->name, $cohortcontext);
 
             // Only return theme when $CFG->allowcohortthemes is enabled.
             if (!empty($cohort->theme) && empty($CFG->allowcohortthemes)) {
