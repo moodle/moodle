@@ -166,10 +166,12 @@ class provider implements
 
         // Retrieve the tool_cohortroles records created for the user.
         $sql = "SELECT cr.id as cohortroleid,
+                       cr.cohortid,
                        c.name as cohortname,
                        c.idnumber as cohortidnumber,
-                       c.description as cohortdescription,
-                       c.contextid as contextid,
+                       c.description,
+                       c.descriptionformat,
+                       c.contextid,
                        r.shortname as roleshortname,
                        cr.userid as userid,
                        cr.timecreated as timecreated,
@@ -185,27 +187,39 @@ class provider implements
         $cohortroles = $DB->get_records_sql($sql, $params);
 
         foreach ($cohortroles as $cohortrole) {
+            $context = \context::instance_by_id($cohortrole->contextid);
+
             // The tool_cohortroles data export is organised in:
             // {User Context}/Cohort roles management/{cohort name}/{role shortname}/data.json.
             $subcontext = [
                 get_string('pluginname', 'tool_cohortroles'),
-                $cohortrole->cohortname,
+                format_string($cohortrole->cohortname, options: ['context' => $context]),
                 $cohortrole->roleshortname
             ];
 
             $data = (object) [
-                'cohortname' => $cohortrole->cohortname,
+                'cohortname' => format_string($cohortrole->cohortname, options: ['context' => $context]),
                 'cohortidnumber' => $cohortrole->cohortidnumber,
-                'cohortdescription' => $cohortrole->cohortdescription,
+                'cohortdescription' => format_text(
+                    writer::with_context($context)->rewrite_pluginfile_urls(
+                        $subcontext,
+                        'cohort',
+                        'description',
+                        $cohortrole->cohortid,
+                        $cohortrole->description,
+                    ),
+                    $cohortrole->descriptionformat,
+                    ['context' => $context],
+                ),
                 'roleshortname' => $cohortrole->roleshortname,
                 'userid' => transform::user($cohortrole->userid),
                 'timecreated' => transform::datetime($cohortrole->timecreated),
                 'timemodified' => transform::datetime($cohortrole->timemodified)
             ];
 
-            $context = \context::instance_by_id($cohortrole->contextid);
-
-            writer::with_context($context)->export_data($subcontext, $data);
+            writer::with_context($context)
+                ->export_area_files($subcontext, 'cohort', 'description', $cohortrole->cohortid)
+                ->export_data($subcontext, $data);
         }
     }
 
