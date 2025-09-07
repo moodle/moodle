@@ -24,8 +24,7 @@ use html_writer;
 use moodle_url;
 use core\output\notification;
 use core_form\dynamic_form;
-use core_reportbuilder\manager;
-use core_reportbuilder\permission;
+use core_reportbuilder\{manager, permission};
 use core_reportbuilder\local\helpers\{audience, schedule as helper};
 use core_reportbuilder\local\models\schedule as model;
 use core_reportbuilder\local\schedules\base;
@@ -103,7 +102,7 @@ class schedule extends dynamic_form {
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'classname');
-        $mform->setType('id', PARAM_RAW);
+        $mform->setType('classname', PARAM_RAW);
 
         // General fields.
         $mform->addElement('header', 'headergeneral', get_string('general'));
