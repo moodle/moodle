@@ -86,7 +86,13 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_configtext_trim_lower('enrol_ldap/course_'.$field, get_string('course_'.$field.'_key', 'enrol_ldap'), get_string('course_'.$field, 'enrol_ldap'), '', true, true));
         }
 
-        $settings->add(new admin_setting_configcheckbox('enrol_ldap/ignorehiddencourses', get_string('ignorehiddencourses', 'enrol_database'), get_string('ignorehiddencourses_desc', 'enrol_database'), 0));
+        $settings->add(new admin_setting_configcheckbox(
+            'enrol_ldap/ignorehiddencourses',
+            get_string('ignorehiddencourses', 'enrol_ldap'),
+            get_string('ignorehiddencourses_desc', 'enrol_ldap'),
+            0,
+        ));
+
         $options = array(ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
                          ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
                          ENROL_EXT_REMOVED_SUSPEND        => get_string('extremovedsuspend', 'enrol'),
