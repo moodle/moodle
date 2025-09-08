@@ -64,7 +64,7 @@ function iplookup_find_location($ip) {
 
         return $info;
 
-    } else {
+    } else if (!empty($CFG->geopluginapikey)) {
         require_once($CFG->libdir.'/filelib.php');
 
         if (strpos($ip, ':') !== false) {
@@ -73,11 +73,13 @@ function iplookup_find_location($ip) {
             return $info;
         }
 
-        $ipdata = download_file_content('http://www.geoplugin.net/json.gp?ip='.$ip);
-        if ($ipdata) {
-            $ipdata = preg_replace('/^geoPlugin\((.*)\)\s*$/s', '$1', $ipdata);
-            $ipdata = json_decode($ipdata, true);
+        $requesturl = new moodle_url('https://api.geoplugin.com', ['ip' => $ip, 'auth' => $CFG->geopluginapikey]);
+        $response = download_file_content($requesturl->out(false), null, null, true);
+        if ($response->response_code != 200) {
+            $info['error'] = get_string('cannotgeoplugin', 'error');
+            return $info;
         }
+        $ipdata = json_decode($response->results, true);
         if (!is_array($ipdata)) {
             $info['error'] = get_string('cannotgeoplugin', 'error');
             return $info;
@@ -103,5 +105,8 @@ function iplookup_find_location($ip) {
 
         return $info;
     }
+
+    $info['error'] = get_string('iplookupfailed', 'error', $ip);
+    return $info;
 
 }
