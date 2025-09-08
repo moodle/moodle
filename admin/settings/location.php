@@ -70,6 +70,14 @@ if ($hassiteconfig) {
 
         $temp->add(new admin_setting_configtext('googlemapkey3', new lang_string('googlemapkey3', 'core_admin'),
             new lang_string('googlemapkey3_help', 'core_admin'), '', PARAM_RAW, 60));
+
+        $temp->add(new admin_setting_configtext(
+            'geopluginapikey',
+            new lang_string('geopluginapikey', 'core_admin'),
+            new lang_string('geopluginapikey_desc', 'core_admin'),
+            '',
+            PARAM_TEXT,
+        ));
     }
 
     $ADMIN->add('location', $temp);
