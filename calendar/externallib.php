@@ -915,10 +915,10 @@ class core_calendar_external extends external_api {
         $formoptions['eventtypes'] = $allowedeeventtypes;
         if ($courseid) {
             require_once($CFG->libdir . '/grouplib.php');
-            $groupcoursedata = groups_get_course_data($courseid);
-            if (!empty($groupcoursedata->groups)) {
+            $groupcoursedata = groups_get_all_groups($courseid);
+            if (!empty($groupcoursedata)) {
                 $formoptions['groups'] = [];
-                foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+                foreach ($groupcoursedata as $groupid => $groupdata) {
                     $formoptions['groups'][$groupid] = $groupdata->name;
                 }
             }
