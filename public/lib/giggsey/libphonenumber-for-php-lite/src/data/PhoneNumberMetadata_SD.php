@@ -7,80 +7,53 @@
  * @internal
  */
 
-return [
-    'id' => 'SD',
-    'countryCode' => 249,
-    'generalDesc' => [
-        'pattern' => '[19]\\d{8}',
-        'posLength' => [
-            9,
-        ],
-    ],
-    'fixedLine' => [
-        'pattern' => '1(?:5\\d|8[35-7])\\d{6}',
-        'example' => '153123456',
-    ],
-    'mobile' => [
-        'pattern' => '(?:1[0-2]|9[0-3569])\\d{7}',
-        'example' => '911231234',
-    ],
-    'tollFree' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'sharedCost' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'personalNumber' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voip' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'pager' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'uan' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voicemail' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'noInternationalDialling' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '00',
-    'nationalPrefix' => '0',
-    'nationalPrefixForParsing' => '0',
-    'numberFormat' => [
-        [
-            'pattern' => '(\\d{2})(\\d{3})(\\d{4})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '[19]',
-            ],
-            'nationalPrefixFormattingRule' => '0$1',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-    ],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\NumberFormat;
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class PhoneNumberMetadata_SD extends PhoneMetadata
+{
+    protected const ID = 'SD';
+    protected const COUNTRY_CODE = 249;
+    protected const NATIONAL_PREFIX = '0';
+
+    protected ?string $nationalPrefixForParsing = '0';
+    protected ?string $internationalPrefix = '00';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[19]\d{8}')
+            ->setPossibleLength([9]);
+        $this->mobile = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('(?:1[0-2]|9[0-3569])\d{7}')
+            ->setExampleNumber('911231234');
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->fixedLine = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:5\d|8[35-7])\d{6}')
+            ->setExampleNumber('153123456');
+        $this->numberFormat = [
+            (new NumberFormat())
+                ->setPattern('(\d{2})(\d{3})(\d{4})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern(['[19]'])
+                ->setNationalPrefixFormattingRule('0$1')
+                ->setNationalPrefixOptionalWhenFormatting(false),
+        ];
+        $this->tollFree = PhoneNumberDesc::empty();
+        $this->sharedCost = PhoneNumberDesc::empty();
+        $this->personalNumber = PhoneNumberDesc::empty();
+        $this->voip = PhoneNumberDesc::empty();
+        $this->pager = PhoneNumberDesc::empty();
+        $this->uan = PhoneNumberDesc::empty();
+        $this->voicemail = PhoneNumberDesc::empty();
+        $this->noInternationalDialling = PhoneNumberDesc::empty();
+    }
+}

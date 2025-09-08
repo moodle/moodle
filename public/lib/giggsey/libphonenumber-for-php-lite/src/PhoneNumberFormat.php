@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace libphonenumber;
 
 /**
@@ -14,10 +16,10 @@ namespace libphonenumber;
  * Note: If you are considering storing the number in a neutral format, you are highly advised to
  * use the PhoneNumber class.
  */
-class PhoneNumberFormat
+enum PhoneNumberFormat: int
 {
-    public const E164 = 0;
-    public const INTERNATIONAL = 1;
-    public const NATIONAL = 2;
-    public const RFC3966 = 3;
+    case E164 = 0;
+    case INTERNATIONAL = 1;
+    case NATIONAL = 2;
+    case RFC3966 = 3;
 }

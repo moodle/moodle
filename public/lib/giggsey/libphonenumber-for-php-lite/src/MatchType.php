@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace libphonenumber;
 
 /**
  * Types of phone number matches
  * See detailed description beside the isNumberMatch() method
  */
-class MatchType
+enum MatchType: int
 {
-    public const NOT_A_NUMBER = 0;
-    public const NO_MATCH = 1;
-    public const SHORT_NSN_MATCH = 2;
-    public const NSN_MATCH = 3;
-    public const EXACT_MATCH = 4;
+    case NOT_A_NUMBER = 0;
+    case NO_MATCH = 1;
+    case SHORT_NSN_MATCH = 2;
+    case NSN_MATCH = 3;
+    case EXACT_MATCH = 4;
 }

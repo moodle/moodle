@@ -7,78 +7,50 @@
  * @internal
  */
 
-return [
-    'id' => 'DJ',
-    'countryCode' => 253,
-    'generalDesc' => [
-        'pattern' => '(?:2\\d|77)\\d{6}',
-        'posLength' => [
-            8,
-        ],
-    ],
-    'fixedLine' => [
-        'pattern' => '2(?:1[2-5]|7[45])\\d{5}',
-        'example' => '21360003',
-    ],
-    'mobile' => [
-        'pattern' => '77\\d{6}',
-        'example' => '77831001',
-    ],
-    'tollFree' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'premiumRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'sharedCost' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'personalNumber' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voip' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'pager' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'uan' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voicemail' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'noInternationalDialling' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '00',
-    'numberFormat' => [
-        [
-            'pattern' => '(\\d{2})(\\d{2})(\\d{2})(\\d{2})',
-            'format' => '$1 $2 $3 $4',
-            'leadingDigitsPatterns' => [
-                '[27]',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-    ],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\NumberFormat;
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class PhoneNumberMetadata_DJ extends PhoneMetadata
+{
+    protected const ID = 'DJ';
+    protected const COUNTRY_CODE = 253;
+
+    protected ?string $internationalPrefix = '00';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('(?:2\d|77)\d{6}')
+            ->setPossibleLength([8]);
+        $this->mobile = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('77\d{6}')
+            ->setExampleNumber('77831001');
+        $this->premiumRate = PhoneNumberDesc::empty();
+        $this->fixedLine = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('2(?:1[2-5]|7[45])\d{5}')
+            ->setExampleNumber('21360003');
+        $this->numberFormat = [
+            (new NumberFormat())
+                ->setPattern('(\d{2})(\d{2})(\d{2})(\d{2})')
+                ->setFormat('$1 $2 $3 $4')
+                ->setLeadingDigitsPattern(['[27]'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+        ];
+        $this->tollFree = PhoneNumberDesc::empty();
+        $this->sharedCost = PhoneNumberDesc::empty();
+        $this->personalNumber = PhoneNumberDesc::empty();
+        $this->voip = PhoneNumberDesc::empty();
+        $this->pager = PhoneNumberDesc::empty();
+        $this->uan = PhoneNumberDesc::empty();
+        $this->voicemail = PhoneNumberDesc::empty();
+        $this->noInternationalDialling = PhoneNumberDesc::empty();
+    }
+}

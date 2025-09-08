@@ -7,67 +7,51 @@
  * @internal
  */
 
-return [
-    'id' => 'HR',
-    'countryCode' => 0,
-    'generalDesc' => [
-        'pattern' => '[19]\\d{1,5}',
-        'posLength' => [
-            2,
-            3,
-            4,
-            5,
-            6,
-        ],
-    ],
-    'tollFree' => [
-        'pattern' => '1(?:12|9[2-4])|9[34]|1(?:16\\d|39)\\d\\d',
-        'example' => '93',
-        'posLength' => [
-            2,
-            3,
-            5,
-            6,
-        ],
-    ],
-    'premiumRate' => [
-        'pattern' => '118\\d\\d',
-        'example' => '11800',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'emergency' => [
-        'pattern' => '1(?:12|9[2-4])|9[34]',
-        'example' => '93',
-        'posLength' => [
-            2,
-            3,
-        ],
-    ],
-    'shortCode' => [
-        'pattern' => '1(?:1(?:2|6(?:00[06]|1(?:1[17]|23))|8\\d\\d)|3977|9(?:[2-5]|87))|9[34]',
-        'example' => '93',
-    ],
-    'standardRate' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'carrierSpecific' => [
-        'pattern' => '139\\d\\d',
-        'example' => '13900',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'smsServices' => [
-        'pattern' => '139\\d\\d',
-        'example' => '13900',
-        'posLength' => [
-            5,
-        ],
-    ],
-    'internationalPrefix' => '',
-    'numberFormat' => [],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class ShortNumberMetadata_HR extends PhoneMetadata
+{
+    protected const ID = 'HR';
+    protected const COUNTRY_CODE = 0;
+
+    protected ?string $internationalPrefix = '';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[016-9]\d{1,5}')
+            ->setPossibleLength([2, 3, 4, 5, 6]);
+        $this->premiumRate = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('06\d|(?:118|[6-8]\d{3})\d\d')
+            ->setExampleNumber('060')
+            ->setPossibleLength([3, 5, 6]);
+        $this->tollFree = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:12|9[2-4])|9[34]|1(?:16\d|39)\d\d')
+            ->setExampleNumber('93')
+            ->setPossibleLength([2, 3, 5, 6]);
+        $this->emergency = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('1(?:12|9[2-4])|9[34]')
+            ->setExampleNumber('93')
+            ->setPossibleLength([2, 3]);
+        $this->short_code = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('(?:06|[6-8]\d{4})\d|1(?:1(?:2|6(?:00[06]|1(?:1[17]|23))|8\d\d)|3977|9(?:[2-5]|87))|9[34]')
+            ->setExampleNumber('93');
+        $this->standard_rate = PhoneNumberDesc::empty();
+        $this->carrierSpecific = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('139\d\d')
+            ->setExampleNumber('13900')
+            ->setPossibleLength([5]);
+        $this->smsServices = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('139\d\d')
+            ->setExampleNumber('13900')
+            ->setPossibleLength([5]);
+    }
+}

@@ -7,83 +7,54 @@
  * @internal
  */
 
-return [
-    'id' => 'KM',
-    'countryCode' => 269,
-    'generalDesc' => [
-        'pattern' => '[3478]\\d{6}',
-        'posLength' => [
-            7,
-        ],
-        'posLengthLocal' => [
-            4,
-        ],
-    ],
-    'fixedLine' => [
-        'pattern' => '7[4-7]\\d{5}',
-        'example' => '7712345',
-        'posLengthLocal' => [
-            4,
-        ],
-    ],
-    'mobile' => [
-        'pattern' => '[34]\\d{6}',
-        'example' => '3212345',
-    ],
-    'tollFree' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'premiumRate' => [
-        'pattern' => '8\\d{6}',
-        'example' => '8001234',
-    ],
-    'sharedCost' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'personalNumber' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voip' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'pager' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'uan' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'voicemail' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'noInternationalDialling' => [
-        'posLength' => [
-            -1,
-        ],
-    ],
-    'internationalPrefix' => '00',
-    'numberFormat' => [
-        [
-            'pattern' => '(\\d{3})(\\d{2})(\\d{2})',
-            'format' => '$1 $2 $3',
-            'leadingDigitsPatterns' => [
-                '[3478]',
-            ],
-            'nationalPrefixFormattingRule' => '',
-            'domesticCarrierCodeFormattingRule' => '',
-        ],
-    ],
-];
+declare(strict_types=1);
+
+namespace libphonenumber\data;
+
+use libphonenumber\NumberFormat;
+use libphonenumber\PhoneMetadata;
+use libphonenumber\PhoneNumberDesc;
+
+/**
+ * @internal
+ */
+class PhoneNumberMetadata_KM extends PhoneMetadata
+{
+    protected const ID = 'KM';
+    protected const COUNTRY_CODE = 269;
+
+    protected ?string $internationalPrefix = '00';
+
+    public function __construct()
+    {
+        $this->generalDesc = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[3478]\d{6}')
+            ->setPossibleLengthLocalOnly([4])
+            ->setPossibleLength([7]);
+        $this->mobile = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('[34]\d{6}')
+            ->setExampleNumber('3212345');
+        $this->premiumRate = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('8\d{6}')
+            ->setExampleNumber('8001234');
+        $this->fixedLine = (new PhoneNumberDesc())
+            ->setNationalNumberPattern('7[4-7]\d{5}')
+            ->setExampleNumber('7712345')
+            ->setPossibleLengthLocalOnly([4]);
+        $this->numberFormat = [
+            (new NumberFormat())
+                ->setPattern('(\d{3})(\d{2})(\d{2})')
+                ->setFormat('$1 $2 $3')
+                ->setLeadingDigitsPattern(['[3478]'])
+                ->setNationalPrefixOptionalWhenFormatting(false),
+        ];
+        $this->tollFree = PhoneNumberDesc::empty();
+        $this->sharedCost = PhoneNumberDesc::empty();
+        $this->personalNumber = PhoneNumberDesc::empty();
+        $this->voip = PhoneNumberDesc::empty();
+        $this->pager = PhoneNumberDesc::empty();
+        $this->uan = PhoneNumberDesc::empty();
+        $this->voicemail = PhoneNumberDesc::empty();
+        $this->noInternationalDialling = PhoneNumberDesc::empty();
+    }
+}
