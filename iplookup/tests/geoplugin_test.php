@@ -25,6 +25,8 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class geoplugin_test extends \advanced_testcase {
+    /** @var string Current Geoplugin API key. */
+    private string $currentgeopluginapikey = '';
 
     /**
      * Load required test libraries
@@ -35,12 +37,27 @@ final class geoplugin_test extends \advanced_testcase {
     }
 
     /**
-     * In order to execute this test PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
+     * In order to execute this test:
+     * - PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
+     * - GeoPlugin API key should be defined in config.php as TEST_GEOIP_APIKEY
      */
     public function setUp(): void {
+        global $CFG;
         if (!PHPUNIT_LONGTEST) {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
+
+        if (!defined('TEST_GEOIP_APIKEY') || empty(TEST_GEOIP_APIKEY)) {
+            $this->markTestSkipped('External geo tests are disabled.');
+        }
+        // Store the old value to restore later.
+        $this->currentgeopluginapikey = $CFG->geopluginapikey;
+        $CFG->geopluginapikey = TEST_GEOIP_APIKEY;
+    }
+
+    protected function tearDown(): void {
+        global $CFG;
+        $CFG->geopluginapikey = $this->currentgeopluginapikey;
     }
 
     /**
