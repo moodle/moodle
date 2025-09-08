@@ -282,9 +282,9 @@ class coursestructure implements \renderable, \templatable {
             'cells' => [],
         ];
         $dataactivity['activitycolumn'] = [
-                'activityicon' => $output->pix_icon('monologo', $modulename, $cm->modname, ['class' => 'icon']),
-                'link' => "$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id",
-                'text' => $cm->name,
+            'activityicon' => $output->pix_icon('monologo', $modulename, $cm->modname, ['class' => 'icon']),
+            'link' => "$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id",
+            'text' => $cm->get_formatted_name(),
         ];
         return $dataactivity;
     }
