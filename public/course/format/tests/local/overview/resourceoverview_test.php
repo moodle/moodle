@@ -66,65 +66,63 @@ final class resourceoverview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'role' => 'student',
-                'resourcetype' => 'url',
-                'expected' => null,
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'role' => 'student',
+            'resourcetype' => 'url',
+            'expected' => null,
+        ];
+        yield 'Teacher - Book' => [
+            'role' => 'editingteacher',
+            'resourcetype' => 'book',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
+                'content' => get_string('view'),
             ],
-            'Teacher - Book' => [
-                'role' => 'editingteacher',
-                'resourcetype' => 'book',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                    'content' => get_string('view'),
-                ],
+        ];
+        yield 'Teacher - Folder' => [
+            'role' => 'editingteacher',
+            'resourcetype' => 'folder',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
+                'content' => get_string('view'),
             ],
-            'Teacher - Folder' => [
-                'role' => 'editingteacher',
-                'resourcetype' => 'folder',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                    'content' => get_string('view'),
-                ],
+        ];
+        yield 'Teacher - Page' => [
+            'role' => 'editingteacher',
+            'resourcetype' => 'page',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
+                'content' => get_string('view'),
             ],
-            'Teacher - Page' => [
-                'role' => 'editingteacher',
-                'resourcetype' => 'page',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                    'content' => get_string('view'),
-                ],
+        ];
+        yield 'Teacher - Resource' => [
+            'role' => 'editingteacher',
+            'resourcetype' => 'resource',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
+                'content' => get_string('view'),
             ],
-            'Teacher - Resource' => [
-                'role' => 'editingteacher',
-                'resourcetype' => 'resource',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                    'content' => get_string('view'),
-                ],
+        ];
+        yield 'Teacher - URL' => [
+            'role' => 'editingteacher',
+            'resourcetype' => 'url',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
+                'content' => get_string('view'),
             ],
-            'Teacher - URL' => [
-                'role' => 'editingteacher',
-                'resourcetype' => 'url',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                    'content' => get_string('view'),
-                ],
-            ],
-            'Teacher - Non resource' => [
-                'role' => 'editingteacher',
-                'resourcetype' => 'lti',
-                'expected' => null,
-            ],
+        ];
+        yield 'Teacher - Non resource' => [
+            'role' => 'editingteacher',
+            'resourcetype' => 'lti',
+            'expected' => null,
         ];
     }
 
@@ -198,79 +196,77 @@ final class resourceoverview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_type_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_type_overview_provider(): array {
-        return [
-            'book' => [
-                'resourcetype' => 'book',
-                'expected' => 'Book',
-            ],
-            'folder' => [
-                'resourcetype' => 'folder',
-                'expected' => 'Folder',
-            ],
-            'page' => [
-                'resourcetype' => 'page',
-                'expected' => 'Page',
-            ],
-            'resource' => [
-                'resourcetype' => 'resource',
-                'expected' => 'File',
-            ],
-            'url' => [
-                'resourcetype' => 'url',
-                'expected' => 'URL',
-            ],
-            // Non-resource activities.
-            'bigbluebuttonbn' => [
-                'resourcetype' => 'bigbluebuttonbn',
-                'expected' => null,
-            ],
-            'choice' => [
-                'resourcetype' => 'choice',
-                'expected' => null,
-            ],
-            'data' => [
-                'resourcetype' => 'data',
-                'expected' => null,
-            ],
-            'forum' => [
-                'resourcetype' => 'forum',
-                'expected' => null,
-            ],
-            'glossary' => [
-                'resourcetype' => 'glossary',
-                'expected' => null,
-            ],
-            'h5pactivity' => [
-                'resourcetype' => 'h5pactivity',
-                'expected' => null,
-            ],
-            'lesson' => [
-                'resourcetype' => 'lesson',
-                'expected' => null,
-            ],
-            'lti' => [
-                'resourcetype' => 'lti',
-                'expected' => null,
-            ],
-            'qbank' => [
-                'resourcetype' => 'qbank',
-                'expected' => null,
-            ],
-            'quiz' => [
-                'resourcetype' => 'quiz',
-                'expected' => null,
-            ],
-            'scorm' => [
-                'resourcetype' => 'scorm',
-                'expected' => null,
-            ],
-            'wiki' => [
-                'resourcetype' => 'wiki',
-                'expected' => null,
-            ],
+    public static function get_extra_type_overview_provider(): \Generator {
+        yield 'book' => [
+            'resourcetype' => 'book',
+            'expected' => 'Book',
+        ];
+        yield 'folder' => [
+            'resourcetype' => 'folder',
+            'expected' => 'Folder',
+        ];
+        yield 'page' => [
+            'resourcetype' => 'page',
+            'expected' => 'Page',
+        ];
+        yield 'resource' => [
+            'resourcetype' => 'resource',
+            'expected' => 'File',
+        ];
+        yield 'url' => [
+            'resourcetype' => 'url',
+            'expected' => 'URL',
+        ];
+        // Non-resource activities.
+        yield 'bigbluebuttonbn' => [
+            'resourcetype' => 'bigbluebuttonbn',
+            'expected' => null,
+        ];
+        yield 'choice' => [
+            'resourcetype' => 'choice',
+            'expected' => null,
+        ];
+        yield 'data' => [
+            'resourcetype' => 'data',
+            'expected' => null,
+        ];
+        yield 'forum' => [
+            'resourcetype' => 'forum',
+            'expected' => null,
+        ];
+        yield 'glossary' => [
+            'resourcetype' => 'glossary',
+            'expected' => null,
+        ];
+        yield 'h5pactivity' => [
+            'resourcetype' => 'h5pactivity',
+            'expected' => null,
+        ];
+        yield 'lesson' => [
+            'resourcetype' => 'lesson',
+            'expected' => null,
+        ];
+        yield 'lti' => [
+            'resourcetype' => 'lti',
+            'expected' => null,
+        ];
+        yield 'qbank' => [
+            'resourcetype' => 'qbank',
+            'expected' => null,
+        ];
+        yield 'quiz' => [
+            'resourcetype' => 'quiz',
+            'expected' => null,
+        ];
+        yield 'scorm' => [
+            'resourcetype' => 'scorm',
+            'expected' => null,
+        ];
+        yield 'wiki' => [
+            'resourcetype' => 'wiki',
+            'expected' => null,
         ];
     }
 }

@@ -57,32 +57,96 @@ final class missingoverviewnotice_test extends \advanced_testcase {
     /**
      * Data provider for test_overview_integrations.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function overview_integrations_provider(): array {
-        return [
-            'assign' => ['modname' => 'assign', 'expectempty' => true],
-            'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'expectempty' => true],
-            'book' => ['modname' => 'book', 'expectempty' => false],
-            'choice' => ['modname' => 'choice', 'expectempty' => true],
-            'data' => ['modname' => 'data', 'expectempty' => true],
-            'feedback' => ['modname' => 'feedback', 'expectempty' => true],
-            'folder' => ['modname' => 'folder', 'expectempty' => false],
-            'forum' => ['modname' => 'forum', 'expectempty' => true],
-            'glossary' => ['modname' => 'glossary', 'expectempty' => true],
-            'h5pactivity' => ['modname' => 'h5pactivity', 'expectempty' => true],
-            'imscp' => ['modname' => 'imscp', 'expectempty' => false],
-            'label' => ['modname' => 'label', 'expectempty' => false],
-            'lesson' => ['modname' => 'lesson', 'expectempty' => true],
-            'lti' => ['modname' => 'lti', 'expectempty' => false],
-            'page' => ['modname' => 'page', 'expectempty' => false],
-            'qbank' => ['modname' => 'qbank', 'expectempty' => false],
-            'quiz' => ['modname' => 'quiz', 'expectempty' => true],
-            'resource' => ['modname' => 'resource', 'expectempty' => true],
-            'scorm' => ['modname' => 'scorm', 'expectempty' => true],
-            'url' => ['modname' => 'url', 'expectempty' => false],
-            'wiki' => ['modname' => 'wiki', 'expectempty' => true],
-            'workshop' => ['modname' => 'workshop', 'expectempty' => true],
+    public static function overview_integrations_provider(): \Generator {
+        yield 'assign' => [
+            'modname' => 'assign',
+            'expectempty' => true,
+        ];
+        yield 'bigbluebuttonbn' => [
+            'modname' => 'bigbluebuttonbn',
+            'expectempty' => true,
+        ];
+        yield 'book' => [
+            'modname' => 'book',
+            'expectempty' => false,
+        ];
+        yield 'choice' => [
+            'modname' => 'choice',
+            'expectempty' => true,
+        ];
+        yield 'data' => [
+            'modname' => 'data',
+            'expectempty' => true,
+        ];
+        yield 'feedback' => [
+            'modname' => 'feedback',
+            'expectempty' => true,
+        ];
+        yield 'folder' => [
+            'modname' => 'folder',
+            'expectempty' => false,
+        ];
+        yield 'forum' => [
+            'modname' => 'forum',
+            'expectempty' => true,
+        ];
+        yield 'glossary' => [
+            'modname' => 'glossary',
+            'expectempty' => true,
+        ];
+        yield 'h5pactivity' => [
+            'modname' => 'h5pactivity',
+            'expectempty' => true,
+        ];
+        yield 'imscp' => [
+            'modname' => 'imscp',
+            'expectempty' => false,
+        ];
+        yield 'label' => [
+            'modname' => 'label',
+            'expectempty' => false,
+        ];
+        yield 'lesson' => [
+            'modname' => 'lesson',
+            'expectempty' => true,
+        ];
+        yield 'lti' => [
+            'modname' => 'lti',
+            'expectempty' => false,
+        ];
+        yield 'page' => [
+            'modname' => 'page',
+            'expectempty' => false,
+        ];
+        yield 'qbank' => [
+            'modname' => 'qbank',
+            'expectempty' => false,
+        ];
+        yield 'quiz' => [
+            'modname' => 'quiz',
+            'expectempty' => true,
+        ];
+        yield 'resource' => [
+            'modname' => 'resource',
+            'expectempty' => true,
+        ];
+        yield 'scorm' => [
+            'modname' => 'scorm',
+            'expectempty' => true,
+        ];
+        yield 'url' => [
+            'modname' => 'url',
+            'expectempty' => false,
+        ];
+        yield 'wiki' => [
+            'modname' => 'wiki',
+            'expectempty' => true,
+        ];
+        yield 'workshop' => [
+            'modname' => 'workshop',
+            'expectempty' => true,
         ];
     }
 }

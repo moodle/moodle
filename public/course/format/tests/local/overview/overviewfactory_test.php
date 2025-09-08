@@ -60,92 +60,90 @@ final class overviewfactory_test extends \advanced_testcase {
     /**
      * Data provider for test_create_resource.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function create_resource_provider(): array {
-        return [
-            // Resource activities.
-            'book' => [
-                'resourcetype' => 'book',
-                'expected' => resourceoverview::class,
-            ],
-            'folder' => [
-                'resourcetype' => 'folder',
-                'expected' => resourceoverview::class,
-            ],
-            'page' => [
-                'resourcetype' => 'page',
-                'expected' => resourceoverview::class,
-            ],
-            'resource' => [
-                'resourcetype' => 'resource',
-                'expected' => resourceoverview::class,
-            ],
-            'url' => [
-                'resourcetype' => 'url',
-                'expected' => resourceoverview::class,
-            ],
-            // Fallbacks and integrations.
-            'assign' => [
-                'resourcetype' => 'assign',
-                'expected' => \mod_assign\courseformat\overview::class,
-            ],
-            'bigbluebuttonbn' => [
-                'resourcetype' => 'bigbluebuttonbn',
-                'expected' => \mod_bigbluebuttonbn\courseformat\overview::class,
-            ],
-            'choice' => [
-                'resourcetype' => 'choice',
-                'expected' => \mod_choice\courseformat\overview::class,
-            ],
-            'data' => [
-                'resourcetype' => 'data',
-                'expected' => \mod_data\courseformat\overview::class,
-            ],
-            'feedback' => [
-                'resourcetype' => 'feedback',
-                'expected' => \mod_feedback\courseformat\overview::class,
-            ],
-            'forum' => [
-                'resourcetype' => 'forum',
-                'expected' => \mod_forum\courseformat\overview::class,
-            ],
-            'glossary' => [
-                'resourcetype' => 'glossary',
-                'expected' => \mod_glossary\courseformat\overview::class,
-            ],
-            'h5pactivity' => [
-                'resourcetype' => 'h5pactivity',
-                'expected' => \mod_h5pactivity\courseformat\overview::class,
-            ],
-            'lesson' => [
-                'resourcetype' => 'lesson',
-                'expected' => \mod_lesson\courseformat\overview::class,
-            ],
-            'lti' => [
-                'resourcetype' => 'lti',
-                'expected' => resourceoverview::class,
-            ],
-            'qbank' => [
-                'resourcetype' => 'qbank',
-                'expected' => resourceoverview::class,
-            ],
-            'quiz' => [
-                'resourcetype' => 'quiz',
-                'expected' => \mod_quiz\courseformat\overview::class,
-            ],
-            'scorm' => [
-                'resourcetype' => 'scorm',
-                'expected' => \mod_scorm\courseformat\overview::class,
-            ],
-            'wiki' => [
-                'resourcetype' => 'wiki',
-                'expected' => \mod_wiki\courseformat\overview::class,
-            ],
-            'workshop' => [
-                'resourcetype' => 'workshop',
-                'expected' => \mod_workshop\courseformat\overview::class,
-            ],
+    public static function create_resource_provider(): \Generator {
+        // Resource activities.
+        yield 'book' => [
+            'resourcetype' => 'book',
+            'expected' => resourceoverview::class,
+        ];
+        yield 'folder' => [
+            'resourcetype' => 'folder',
+            'expected' => resourceoverview::class,
+        ];
+        yield 'page' => [
+            'resourcetype' => 'page',
+            'expected' => resourceoverview::class,
+        ];
+        yield 'resource' => [
+            'resourcetype' => 'resource',
+            'expected' => resourceoverview::class,
+        ];
+        yield 'url' => [
+            'resourcetype' => 'url',
+            'expected' => resourceoverview::class,
+        ];
+        yield  // Fallbacks and integrations.
+        'assign' => [
+            'resourcetype' => 'assign',
+            'expected' => \mod_assign\courseformat\overview::class,
+        ];
+        yield 'bigbluebuttonbn' => [
+            'resourcetype' => 'bigbluebuttonbn',
+            'expected' => \mod_bigbluebuttonbn\courseformat\overview::class,
+        ];
+        yield 'choice' => [
+            'resourcetype' => 'choice',
+            'expected' => \mod_choice\courseformat\overview::class,
+        ];
+        yield 'data' => [
+            'resourcetype' => 'data',
+            'expected' => \mod_data\courseformat\overview::class,
+        ];
+        yield 'feedback' => [
+            'resourcetype' => 'feedback',
+            'expected' => \mod_feedback\courseformat\overview::class,
+        ];
+        yield 'forum' => [
+            'resourcetype' => 'forum',
+            'expected' => \mod_forum\courseformat\overview::class,
+        ];
+        yield 'glossary' => [
+            'resourcetype' => 'glossary',
+            'expected' => \mod_glossary\courseformat\overview::class,
+        ];
+        yield 'h5pactivity' => [
+            'resourcetype' => 'h5pactivity',
+            'expected' => \mod_h5pactivity\courseformat\overview::class,
+        ];
+        yield 'lesson' => [
+            'resourcetype' => 'lesson',
+            'expected' => \mod_lesson\courseformat\overview::class,
+        ];
+        yield 'lti' => [
+            'resourcetype' => 'lti',
+            'expected' => resourceoverview::class,
+        ];
+        yield 'qbank' => [
+            'resourcetype' => 'qbank',
+            'expected' => resourceoverview::class,
+        ];
+        yield 'quiz' => [
+            'resourcetype' => 'quiz',
+            'expected' => \mod_quiz\courseformat\overview::class,
+        ];
+        yield 'scorm' => [
+            'resourcetype' => 'scorm',
+            'expected' => \mod_scorm\courseformat\overview::class,
+        ];
+        yield 'wiki' => [
+            'resourcetype' => 'wiki',
+            'expected' => \mod_wiki\courseformat\overview::class,
+        ];
+        yield 'workshop' => [
+            'resourcetype' => 'workshop',
+            'expected' => \mod_workshop\courseformat\overview::class,
         ];
     }
 
@@ -192,32 +190,96 @@ final class overviewfactory_test extends \advanced_testcase {
     /**
      * Data provider for test_overview_integrations.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function activity_has_overview_integration_provider(): array {
-        return [
-            'assign' => ['modname' => 'assign', 'hasintegration' => true],
-            'bigbluebuttonbn' => ['modname' => 'bigbluebuttonbn', 'hasintegration' => true],
-            'book' => ['modname' => 'book', 'hasintegration' => false],
-            'choice' => ['modname' => 'choice', 'hasintegration' => true],
-            'data' => ['modname' => 'data', 'hasintegration' => true],
-            'feedback' => ['modname' => 'feedback', 'hasintegration' => true],
-            'folder' => ['modname' => 'folder', 'hasintegration' => false],
-            'forum' => ['modname' => 'forum', 'hasintegration' => true],
-            'glossary' => ['modname' => 'glossary', 'hasintegration' => true],
-            'h5pactivity' => ['modname' => 'h5pactivity', 'hasintegration' => true],
-            'imscp' => ['modname' => 'imscp', 'hasintegration' => false],
-            'label' => ['modname' => 'label', 'hasintegration' => false],
-            'lesson' => ['modname' => 'lesson', 'hasintegration' => true],
-            'lti' => ['modname' => 'lti', 'hasintegration' => false],
-            'page' => ['modname' => 'page', 'hasintegration' => false],
-            'qbank' => ['modname' => 'qbank', 'hasintegration' => false],
-            'quiz' => ['modname' => 'quiz', 'hasintegration' => true],
-            'resource' => ['modname' => 'resource', 'hasintegration' => true],
-            'scorm' => ['modname' => 'scorm', 'hasintegration' => true],
-            'url' => ['modname' => 'url', 'hasintegration' => false],
-            'wiki' => ['modname' => 'wiki', 'hasintegration' => true],
-            'workshop' => ['modname' => 'workshop', 'hasintegration' => true],
+    public static function activity_has_overview_integration_provider(): \Generator {
+        yield 'assign' => [
+            'modname' => 'assign',
+            'hasintegration' => true,
+        ];
+        yield 'bigbluebuttonbn' => [
+            'modname' => 'bigbluebuttonbn',
+            'hasintegration' => true,
+        ];
+        yield 'book' => [
+            'modname' => 'book',
+            'hasintegration' => false,
+        ];
+        yield 'choice' => [
+            'modname' => 'choice',
+            'hasintegration' => true,
+        ];
+        yield 'data' => [
+            'modname' => 'data',
+            'hasintegration' => true,
+        ];
+        yield 'feedback' => [
+            'modname' => 'feedback',
+            'hasintegration' => true,
+        ];
+        yield 'folder' => [
+            'modname' => 'folder',
+            'hasintegration' => false,
+        ];
+        yield 'forum' => [
+            'modname' => 'forum',
+            'hasintegration' => true,
+        ];
+        yield 'glossary' => [
+            'modname' => 'glossary',
+            'hasintegration' => true,
+        ];
+        yield 'h5pactivity' => [
+            'modname' => 'h5pactivity',
+            'hasintegration' => true,
+        ];
+        yield 'imscp' => [
+            'modname' => 'imscp',
+            'hasintegration' => false,
+        ];
+        yield 'label' => [
+            'modname' => 'label',
+            'hasintegration' => false,
+        ];
+        yield 'lesson' => [
+            'modname' => 'lesson',
+            'hasintegration' => true,
+        ];
+        yield 'lti' => [
+            'modname' => 'lti',
+            'hasintegration' => false,
+        ];
+        yield 'page' => [
+            'modname' => 'page',
+            'hasintegration' => false,
+        ];
+        yield 'qbank' => [
+            'modname' => 'qbank',
+            'hasintegration' => false,
+        ];
+        yield 'quiz' => [
+            'modname' => 'quiz',
+            'hasintegration' => true,
+        ];
+        yield 'resource' => [
+            'modname' => 'resource',
+            'hasintegration' => true,
+        ];
+        yield 'scorm' => [
+            'modname' => 'scorm',
+            'hasintegration' => true,
+        ];
+        yield 'url' => [
+            'modname' => 'url',
+            'hasintegration' => false,
+        ];
+        yield 'wiki' => [
+            'modname' => 'wiki',
+            'hasintegration' => true,
+        ];
+        yield 'workshop' => [
+            'modname' => 'workshop',
+            'hasintegration' => true,
         ];
     }
 
