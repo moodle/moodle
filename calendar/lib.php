@@ -3639,9 +3639,9 @@ function calendar_output_fragment_event_form($args) {
 
     if (is_null($eventid)) {
         if (!empty($courseid)) {
-            $groupcoursedata = groups_get_course_data($courseid);
+            $groupcoursedata = groups_get_all_groups($courseid);
             $formoptions['groups'] = [];
-            foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+            foreach ($groupcoursedata as $groupid => $groupdata) {
                 $formoptions['groups'][$groupid] = format_string($groupdata->name, false, ['context' => $context]);
             }
         }
@@ -3683,9 +3683,9 @@ function calendar_output_fragment_event_form($args) {
         $formoptions['event'] = $event;
 
         if (!empty($event->courseid)) {
-            $groupcoursedata = groups_get_course_data($event->courseid);
+            $groupcoursedata = groups_get_all_groups($event->courseid);
             $formoptions['groups'] = [];
-            foreach ($groupcoursedata->groups as $groupid => $groupdata) {
+            foreach ($groupcoursedata as $groupid => $groupdata) {
                 $formoptions['groups'][$groupid] = format_string($groupdata->name, false, ['context' => $context]);
             }
         }
