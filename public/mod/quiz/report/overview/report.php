@@ -161,7 +161,7 @@ class quiz_overview_report extends attempts_report {
             }
 
             $this->set_up_table_columns($table, $columns, $headers, $this->get_base_url(), $options, false);
-            $table->set_attribute('class', 'table generaltable generalbox grades');
+            $table->set_attribute('class', 'generaltable generalbox grades');
 
             $table->out($options->pagesize, true);
 
