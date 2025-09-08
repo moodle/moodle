@@ -51,6 +51,14 @@ if ($hassiteconfig) {
 
         $temp->add(new admin_setting_countrycodes('allcountrycodes', new lang_string('allcountrycodes', 'core_admin'),
             new lang_string('configallcountrycodes', 'core_admin')));
+
+        $temp->add(new admin_setting_configtext(
+            'geopluginapikey',
+            new lang_string('geopluginapikey', 'core_admin'),
+            new lang_string('geopluginapikey_desc', 'core_admin'),
+            '',
+            PARAM_TEXT,
+        ));
     }
 
     $ADMIN->add('location', $temp);
