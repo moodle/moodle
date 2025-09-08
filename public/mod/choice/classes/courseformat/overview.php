@@ -17,6 +17,7 @@
 namespace mod_choice\courseformat;
 
 use cm_info;
+use core\output\pix_icon;
 use mod_choice\manager;
 use core\activity_dates;
 use core\output\action_link;
@@ -136,14 +137,13 @@ class overview extends \core_courseformat\activityoverviewbase {
         if ($status) {
             $statustext = get_string('answered', 'choice');
         }
-        $corerenderer = $this->rendererhelper->get_core_renderer();
         $submittedstatuscontent = "-";
         if ($status) {
-            $submittedstatuscontent = $corerenderer->pix_icon(
-                'i/checkedcircle',
-                $statustext,
-                'core',
-                ['class' => 'text-success'],
+            $submittedstatuscontent = new pix_icon(
+                pix: 'i/checkedcircle',
+                alt: $statustext,
+                component: 'core',
+                attributes: ['class' => 'text-success'],
             );
         }
         return new overviewitem(
