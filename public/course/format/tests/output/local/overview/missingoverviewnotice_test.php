@@ -23,17 +23,16 @@ namespace core_courseformat\output\local\overview;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\output\local\overview\missingoverviewnotice
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(missingoverviewnotice::class)]
 final class missingoverviewnotice_test extends \advanced_testcase {
     /**
      * Test overview integrations.
      *
-     * @covers ::export_for_template
-     * @dataProvider overview_integrations_provider
      * @param string $modname
      * @param bool $expectempty
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('overview_integrations_provider')]
     public function test_overview_integrations(
         string $modname,
         bool $expectempty,

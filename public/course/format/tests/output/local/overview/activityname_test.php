@@ -23,8 +23,8 @@ namespace core_courseformat\output\local\overview;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\output\local\overview\activityname
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(activityname::class)]
 final class activityname_test extends \advanced_testcase {
     /**
      * Test the exportable interface implementation.

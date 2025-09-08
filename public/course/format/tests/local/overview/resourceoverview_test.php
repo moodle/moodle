@@ -23,20 +23,18 @@ namespace core_courseformat\local\overview;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\local\overview\resourceoverview
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(resourceoverview::class)]
 final class resourceoverview_test extends \advanced_testcase {
 
     /**
      * Test get_actions_overview.
      *
-     * @covers ::get_actions_overview
-     * @dataProvider provider_test_get_actions_overview
-     *
      * @param string $role The role of the user to test.
      * @param string $resourcetype The type of resource to create.
      * @param array|null $expected Expected overview item data.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(
         string $role,
         string $resourcetype,
@@ -133,8 +131,6 @@ final class resourceoverview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_overview_items method.
-     *
-     * @covers ::get_extra_overview_items
      */
     public function test_get_extra_overview_items(): void {
         $this->resetAfterTest();
@@ -168,12 +164,10 @@ final class resourceoverview_test extends \advanced_testcase {
     /**
      * Test get_extra_type_overview method.
      *
-     * @covers ::get_extra_overview_items
-     * @covers ::get_extra_type_overview
-     * @dataProvider get_extra_type_overview_provider
      * @param string $resourcetype
      * @param string|null $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_type_overview_provider')]
     public function test_get_extra_type_overview(
         string $resourcetype,
         ?string $expected,

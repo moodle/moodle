@@ -23,8 +23,8 @@ namespace core_courseformat\output\local\overview;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\output\local\overview\overviewtable
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overviewtable::class)]
 final class overviewtable_test extends \advanced_testcase {
     /**
      * Test export_for_external method.

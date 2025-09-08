@@ -23,8 +23,8 @@ namespace core_courseformat\external;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_courseformat\external\activityname_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(activityname_exporter::class)]
 final class activityname_exporter_test extends \advanced_testcase {
     /**
      * Test export method.

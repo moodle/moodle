@@ -23,10 +23,10 @@ namespace core_courseformat\local\overview;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\local\overview\overviewfactory
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overviewfactory::class)]
 final class overviewfactory_test extends \advanced_testcase {
-    #[\Override()]
+    #[\Override]
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/course/format/tests/fixtures/wrongcm_activityoverview.php');
@@ -36,9 +36,9 @@ final class overviewfactory_test extends \advanced_testcase {
     /**
      * Test create method on resource activities.
      *
-     * @dataProvider create_resource_provider
      * @param string $resourcetype
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_resource_provider')]
     public function test_create_resource(
         string $resourcetype,
         ?string $expected,
@@ -149,8 +149,7 @@ final class overviewfactory_test extends \advanced_testcase {
         ];
     }
 
-    public function test_create_exception(
-    ): void {
+    public function test_create_exception(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -178,10 +177,10 @@ final class overviewfactory_test extends \advanced_testcase {
     /**
      * Test activity_has_overview_integration for existing modules.
      *
-     * @dataProvider activity_has_overview_integration_provider
      * @param string $modname
      * @param bool $hasintegration
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('activity_has_overview_integration_provider')]
     public function test_activity_has_overview_integration(
         string $modname,
         bool $hasintegration,

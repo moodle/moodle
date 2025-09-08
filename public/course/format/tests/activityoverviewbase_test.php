@@ -16,8 +16,6 @@
 
 namespace core_courseformat;
 
-use core_courseformat\local\overview\overviewfactory;
-
 /**
  * Tests for course
  *
@@ -25,8 +23,8 @@ use core_courseformat\local\overview\overviewfactory;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\activityoverviewbase
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(activityoverviewbase::class)]
 final class activityoverviewbase_test extends \advanced_testcase {
     #[\Override()]
     public static function setUpBeforeClass(): void {
@@ -39,8 +37,6 @@ final class activityoverviewbase_test extends \advanced_testcase {
 
     /**
      * Test get_name_overview method.
-     *
-     * @covers ::get_name_overview
      */
     public function test_get_name_overview(): void {
         $this->resetAfterTest();
@@ -63,10 +59,9 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Test get_completion_overview method.
      *
-     * @covers ::get_completion_overview
-     * @dataProvider provider_get_completion_overview
      * @param int $setcompletion the completion status
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_get_completion_overview')]
     public function test_get_completion_overview(
         int $setcompletion,
     ): void {
@@ -136,8 +131,6 @@ final class activityoverviewbase_test extends \advanced_testcase {
 
     /**
      * Test get_completion_overview method on an activity with no completion.
-     *
-     * @covers ::get_completion_overview
      */
     public function test_get_completion_overview_no_completion(): void {
         $this->resetAfterTest();
@@ -172,8 +165,6 @@ final class activityoverviewbase_test extends \advanced_testcase {
 
     /**
      * Test get_grades_overviews method.
-     *
-     * @covers ::get_grades_overviews
      */
     public function test_get_grades_overviews(): void {
         $this->resetAfterTest();
@@ -280,8 +271,6 @@ final class activityoverviewbase_test extends \advanced_testcase {
 
     /**
      * Test get_grades_overviews method.
-     *
-     * @covers ::get_grades_overviews
      */
     public function test_get_grades_overviews_hidden(): void {
         $this->resetAfterTest();
@@ -332,14 +321,13 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Test needs_filtering_by_groups method.
      *
-     * @covers ::needs_filtering_by_groups
-     * @dataProvider provider_needs_filtering_by_groups
      *
      * @param string $role of the user to test
      * @param int $groupmode of the activity to test
      * @param bool $expected result.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_needs_filtering_by_groups')]
     public function test_needs_filtering_by_groups(string $role, int $groupmode, bool $expected): void {
         $this->resetAfterTest();
 
@@ -414,14 +402,12 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Test needs_filtering_by_groups method.
      *
-     * @covers ::get_groups_for_filtering
-     * @dataProvider provider_get_groups_for_filtering
-     *
      * @param string $role of the user to test
      * @param int $groupmode of the activity to test
      * @param array $expected result
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_get_groups_for_filtering')]
     public function test_get_groups_for_filtering(string $role, int $groupmode, array $expected): void {
         $this->resetAfterTest();
 
@@ -512,14 +498,13 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Test has_error method.
      *
-     * @covers ::has_error
-     * @dataProvider provider_has_error
      *
      * @param string $role of the user to test
      * @param int $groupmode of the activity to test
      * @param bool $expected result
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_has_error')]
     public function test_has_error(string $role, int $groupmode, bool $expected): void {
         $this->resetAfterTest();
 

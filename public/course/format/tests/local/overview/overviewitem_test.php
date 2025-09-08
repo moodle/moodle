@@ -25,19 +25,11 @@ use core\output\local\properties\text_align;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core_courseformat\local\overview\overviewitem
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overviewitem::class)]
 final class overviewitem_test extends \advanced_testcase {
     /**
      * Tests the constructor.
-     *
-     * @covers ::__construct
-     * @covers ::get_name
-     * @covers ::get_value
-     * @covers ::get_content
-     * @covers ::get_text_align
-     * @covers ::get_alert_count
-     * @covers ::get_alert_label
      */
     public function test_constructor(): void {
         $name = 'Activity name';
@@ -65,19 +57,6 @@ final class overviewitem_test extends \advanced_testcase {
 
     /**
      * Test chained setters.
-     *
-     * @covers ::set_name
-     * @covers ::set_value
-     * @covers ::set_content
-     * @covers ::set_text_align
-     * @covers ::set_alert_count
-     * @covers ::set_alert_label
-     * @covers ::get_name
-     * @covers ::get_value
-     * @covers ::get_content
-     * @covers ::get_text_align
-     * @covers ::get_alert_count
-     * @covers ::get_alert_label
      */
     public function test_setters(): void {
         $item = new overviewitem('Sample', 1, 'Content', text_align::CENTER, 1, 'Alert label');
