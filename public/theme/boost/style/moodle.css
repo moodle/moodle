@@ -36952,19 +36952,19 @@ img.userpicture {
   font-size: 1.03125rem;
 }
 
-#page-report-outline-index .table tbody tr {
+#page-report-outline-index #outlinereport tbody tr {
   background-color: #fff;
 }
-#page-report-outline-index .table tbody tr.section {
+#page-report-outline-index #outlinereport tbody tr.section {
   padding-left: 2rem;
 }
-#page-report-outline-index .table tbody tr.section h3, #page-report-outline-index .table tbody tr.section .h3 {
+#page-report-outline-index #outlinereport tbody tr.section h3, #page-report-outline-index #outlinereport tbody tr.section .h3 {
   font-size: 1.171875rem;
 }
-#page-report-outline-index .table tbody tr.section h4, #page-report-outline-index .table tbody tr.section .h4 {
+#page-report-outline-index #outlinereport tbody tr.section h4, #page-report-outline-index #outlinereport tbody tr.section .h4 {
   font-size: 1.03125rem;
 }
-#page-report-outline-index .table tbody td.delegated {
+#page-report-outline-index #outlinereport tbody td.delegated {
   padding-left: 3.5rem;
 }
 
