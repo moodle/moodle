@@ -87,19 +87,17 @@ final class overview_test extends \advanced_testcase {
     /**
      * Provider for test_get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_due_date_overview(): array {
-        return [
-            'no_due' => [
-                'timeincrement' => null,
-            ],
-            'past_due' => [
-                'timeincrement' => -1 * (4 * DAYSECS),
-            ],
-            'future_due' => [
-                'timeincrement' => (4 * DAYSECS),
-            ],
+    public static function provider_test_get_due_date_overview(): \Generator {
+        yield 'no_due' => [
+            'timeincrement' => null,
+        ];
+        yield 'past_due' => [
+            'timeincrement' => -1 * (4 * DAYSECS),
+        ];
+        yield 'future_due' => [
+            'timeincrement' => (4 * DAYSECS),
         ];
     }
 
@@ -141,20 +139,18 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'role' => 'student',
-                'expected' => null,
-            ],
-            'Teacher' => [
-                'role' => 'editingteacher',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                ],
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'role' => 'student',
+            'expected' => null,
+        ];
+        yield 'Teacher' => [
+            'role' => 'editingteacher',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
             ],
         ];
     }

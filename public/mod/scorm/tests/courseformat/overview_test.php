@@ -77,22 +77,20 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_due_date_overview_data(): array {
-        return [
-            'tomorrow' => [
-                'timeincrement' => DAYSECS,
-            ],
-            'yesterday' => [
-                'timeincrement' => -1 * DAYSECS,
-            ],
-            'today' => [
-                'timeincrement' => 0,
-            ],
-            'No date' => [
-                'timeincrement' => null,
-            ],
+    public static function get_due_date_overview_data(): \Generator {
+        yield 'tomorrow' => [
+            'timeincrement' => DAYSECS,
+        ];
+        yield 'yesterday' => [
+            'timeincrement' => -1 * DAYSECS,
+        ];
+        yield 'today' => [
+            'timeincrement' => 0,
+        ];
+        yield 'No date' => [
+            'timeincrement' => null,
         ];
     }
 
@@ -248,181 +246,179 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_studentsattempted_overview and test_get_extra_totalattempts_overview
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_overview_items_data(): array {
+    public static function get_extra_overview_items_data(): \Generator {
         // Here we intentionally just test the case where course mode is set to NOGROUPS as groups are is not
         // yet supported by the overview page for SCORM module. This will be followed up in a future issue (MDL-85852).
-        return [
-            'teacher 1 - no groups with attempts' => [
-                'username' => 't1',
-                'activity' => 'withattempts',
-                'groupmode' => NOGROUPS,
-                'expected' => [
-                    'attempted' => [
-                        'value' => 2,
-                        'content' => '<strong>2</strong> of 4',
-                    ],
-                    'totalattempts' => [
-                        'value' => 2,
-                        'items' => [
-                            [
-                                'label' => 'Grading method',
-                                'value' => 'Highest attempt',
-                            ],
-                            [
-                                'label' => 'Allowed attempts per student',
-                                'value' => 'Unlimited',
-                            ],
-                            [
-                                'label' => 'Average attempts per student',
-                                'value' => '1',
-                            ],
-                        ],
-
-                    ],
-
+        yield 'teacher 1 - no groups with attempts' => [
+            'username' => 't1',
+            'activity' => 'withattempts',
+            'groupmode' => NOGROUPS,
+            'expected' => [
+                'attempted' => [
+                    'value' => 2,
+                    'content' => '<strong>2</strong> of 4',
                 ],
-            ],
-            'teacher 1 - no groups without attempts' => [
-                'username' => 't1',
-                'activity' => 'withoutattempts',
-                'groupmode' => NOGROUPS,
-                'expected' => [
-                    'attempted' => [
-                        'value' => 0,
-                        'content' => '<strong>0</strong> of 4',
-                    ],
-                    'totalattempts' => [
-                        'value' => 0,
-                        'items' => [
-                            [
-                                'label' => 'Grading method',
-                                'value' => 'Highest attempt',
-                            ],
-                            [
-                                'label' => 'Allowed attempts per student',
-                                'value' => 'Unlimited',
-                            ],
-                            [
-                                'label' => 'Average attempts per student',
-                                'value' => '0',
-                            ],
+                'totalattempts' => [
+                    'value' => 2,
+                    'items' => [
+                        [
+                            'label' => 'Grading method',
+                            'value' => 'Highest attempt',
+                        ],
+                        [
+                            'label' => 'Allowed attempts per student',
+                            'value' => 'Unlimited',
+                        ],
+                        [
+                            'label' => 'Average attempts per student',
+                            'value' => '1',
                         ],
                     ],
 
                 ],
+
             ],
-            'teacher 2 - no groups' => [
-                'username' => 't2',
-                'activity' => 'withattempts',
-                'groupmode' => NOGROUPS,
-                'expected' => [
-                    'attempted' => [
-                        'value' => 2,
-                        'content' => '<strong>2</strong> of 4',
+        ];
+        yield 'teacher 1 - no groups without attempts' => [
+            'username' => 't1',
+            'activity' => 'withoutattempts',
+            'groupmode' => NOGROUPS,
+            'expected' => [
+                'attempted' => [
+                    'value' => 0,
+                    'content' => '<strong>0</strong> of 4',
+                ],
+                'totalattempts' => [
+                    'value' => 0,
+                    'items' => [
+                        [
+                            'label' => 'Grading method',
+                            'value' => 'Highest attempt',
+                        ],
+                        [
+                            'label' => 'Allowed attempts per student',
+                            'value' => 'Unlimited',
+                        ],
+                        [
+                            'label' => 'Average attempts per student',
+                            'value' => '0',
+                        ],
                     ],
-                    'totalattempts' => [
-                        'value' => 2,
-                        'items' => [
-                            [
-                                'label' => 'Grading method',
-                                'value' => 'Highest attempt',
-                            ],
-                            [
-                                'label' => 'Allowed attempts per student',
-                                'value' => 'Unlimited',
-                            ],
-                            [
-                                'label' => 'Average attempts per student',
-                                'value' => '1',
-                            ],
+                ],
+
+            ],
+        ];
+        yield 'teacher 2 - no groups' => [
+            'username' => 't2',
+            'activity' => 'withattempts',
+            'groupmode' => NOGROUPS,
+            'expected' => [
+                'attempted' => [
+                    'value' => 2,
+                    'content' => '<strong>2</strong> of 4',
+                ],
+                'totalattempts' => [
+                    'value' => 2,
+                    'items' => [
+                        [
+                            'label' => 'Grading method',
+                            'value' => 'Highest attempt',
+                        ],
+                        [
+                            'label' => 'Allowed attempts per student',
+                            'value' => 'Unlimited',
+                        ],
+                        [
+                            'label' => 'Average attempts per student',
+                            'value' => '1',
                         ],
                     ],
                 ],
             ],
-            'teacher 1 - separate group' => [
-                'username' => 't1',
-                'activity' => 'withattempts',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => [
-                    'attempted' => [
-                        'value' => 1,
-                        'content' => '<strong>1</strong> of 2', // Teacher can also attempt, so s1 and t1 are counted.
-                    ],
-                    'totalattempts' => [
-                        'value' => 1, // Attempt from s1 only.
-                        'items' => [
-                            [
-                                'label' => 'Grading method',
-                                'value' => 'Highest attempt',
-                            ],
-                            [
-                                'label' => 'Allowed attempts per student',
-                                'value' => 'Unlimited',
-                            ],
-                            [
-                                'label' => 'Average attempts per student',
-                                'value' => '1',
-                            ],
+        ];
+        yield 'teacher 1 - separate group' => [
+            'username' => 't1',
+            'activity' => 'withattempts',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => [
+                'attempted' => [
+                    'value' => 1,
+                    'content' => '<strong>1</strong> of 2', // Teacher can also attempt, so s1 and t1 are counted.
+                ],
+                'totalattempts' => [
+                    'value' => 1, // Attempt from s1 only.
+                    'items' => [
+                        [
+                            'label' => 'Grading method',
+                            'value' => 'Highest attempt',
+                        ],
+                        [
+                            'label' => 'Allowed attempts per student',
+                            'value' => 'Unlimited',
+                        ],
+                        [
+                            'label' => 'Average attempts per student',
+                            'value' => '1',
                         ],
                     ],
                 ],
             ],
-            // Teacher 2 is not in any group, so no attempt can be counted and the overview will return an error.
-            // But still the attempts can be counted if we call directly the manager methods, so we just skip the test here.
-            'teacher 1 - visible group' => [
-                'username' => 't1',
-                'activity' => 'withattempts',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => [
-                    'attempted' => [
-                        'value' => 2,
-                        'content' => '<strong>2</strong> of 4',
-                    ],
-                    'totalattempts' => [
-                        'value' => 2,
-                        'items' => [
-                            [
-                                'label' => 'Grading method',
-                                'value' => 'Highest attempt',
-                            ],
-                            [
-                                'label' => 'Allowed attempts per student',
-                                'value' => 'Unlimited',
-                            ],
-                            [
-                                'label' => 'Average attempts per student',
-                                'value' => '1',
-                            ],
+        ];
+        // Teacher 2 is not in any group, so no attempt can be counted and the overview will return an error.
+        // But still the attempts can be counted if we call directly the manager methods, so we just skip the test here.
+        yield 'teacher 1 - visible group' => [
+            'username' => 't1',
+            'activity' => 'withattempts',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => [
+                'attempted' => [
+                    'value' => 2,
+                    'content' => '<strong>2</strong> of 4',
+                ],
+                'totalattempts' => [
+                    'value' => 2,
+                    'items' => [
+                        [
+                            'label' => 'Grading method',
+                            'value' => 'Highest attempt',
+                        ],
+                        [
+                            'label' => 'Allowed attempts per student',
+                            'value' => 'Unlimited',
+                        ],
+                        [
+                            'label' => 'Average attempts per student',
+                            'value' => '1',
                         ],
                     ],
                 ],
             ],
-            'teacher 2 - visible group' => [
-                'username' => 't2',
-                'activity' => 'withattempts',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => [
-                    'attempted' => [
-                        'value' => 2,
-                        'content' => '<strong>2</strong> of 4',
-                    ],
-                    'totalattempts' => [
-                        'value' => 2,
-                        'items' => [
-                            [
-                                'label' => 'Grading method',
-                                'value' => 'Highest attempt',
-                            ],
-                            [
-                                'label' => 'Allowed attempts per student',
-                                'value' => 'Unlimited',
-                            ],
-                            [
-                                'label' => 'Average attempts per student',
-                                'value' => '1',
-                            ],
+        ];
+        yield 'teacher 2 - visible group' => [
+            'username' => 't2',
+            'activity' => 'withattempts',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => [
+                'attempted' => [
+                    'value' => 2,
+                    'content' => '<strong>2</strong> of 4',
+                ],
+                'totalattempts' => [
+                    'value' => 2,
+                    'items' => [
+                        [
+                            'label' => 'Grading method',
+                            'value' => 'Highest attempt',
+                        ],
+                        [
+                            'label' => 'Allowed attempts per student',
+                            'value' => 'Unlimited',
+                        ],
+                        [
+                            'label' => 'Average attempts per student',
+                            'value' => '1',
                         ],
                     ],
                 ],

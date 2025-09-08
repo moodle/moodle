@@ -32,13 +32,11 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for wiki modes.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_wiki_mode_provider(): array {
-        return [
-            'collaborative' => ['mode' => wiki_mode::COLLABORATIVE],
-            'individual' => ['mode' => wiki_mode::INDIVIDUAL],
-        ];
+    public static function get_wiki_mode_provider(): \Generator {
+        yield 'collaborative' => ['mode' => wiki_mode::COLLABORATIVE];
+        yield 'individual' => ['mode' => wiki_mode::INDIVIDUAL];
     }
 
     /**
@@ -67,14 +65,12 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for get_extra_my_entries.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_my_entries_provider(): array {
-        return [
-            'student 1' => ['s1', 1],
-            'student 2' => ['s2', 1],
-            'teacher 1' => ['t1', null], // Teacher 1 does not have any entries.
-        ];
+    public static function get_extra_my_entries_provider(): \Generator {
+        yield 'student 1' => ['s1', 1];
+        yield 'student 2' => ['s2', 1];
+        yield 'teacher 1' => ['t1', null]; // Teacher 1 does not have any entries.
     }
 
     /**

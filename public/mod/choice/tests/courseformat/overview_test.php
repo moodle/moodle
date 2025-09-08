@@ -56,22 +56,20 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_status_for_user.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function data_provider_get_extra_status_for_user(): array {
-        return [
-            'teacher view answered' => [
-                'user' => 't1',
-                'answered' => null, // Teacher can not see the status column.
-            ],
-            'student view answered' => [
-                'user' => 's1',
-                'answered' => true,
-            ],
-            'student view not answered' => [
-                'user' => 's2',
-                'answered' => false,
-            ],
+    public static function data_provider_get_extra_status_for_user(): \Generator {
+        yield 'teacher view answered' => [
+            'user' => 't1',
+            'answered' => null, // Teacher can not see the status column.
+        ];
+        yield 'student view answered' => [
+            'user' => 's1',
+            'answered' => true,
+        ];
+        yield 'student view not answered' => [
+            'user' => 's2',
+            'answered' => false,
         ];
     }
 
@@ -110,22 +108,20 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function data_provider_get_due_date_overview(): array {
-        return [
-            'tomorrow' => [
-                'timeincrement' => 1 * DAYSECS,
-            ],
-            'yesterday' => [
-                'timeincrement' => -1 * DAYSECS,
-            ],
-            'today' => [
-                'timeincrement' => 0,
-            ],
-            'No date' => [
-                'timeincrement' => null,
-            ],
+    public static function data_provider_get_due_date_overview(): \Generator {
+        yield 'tomorrow' => [
+            'timeincrement' => 1 * DAYSECS,
+        ];
+        yield 'yesterday' => [
+            'timeincrement' => -1 * DAYSECS,
+        ];
+        yield 'today' => [
+            'timeincrement' => 0,
+        ];
+        yield 'No date' => [
+            'timeincrement' => null,
         ];
     }
 
@@ -157,18 +153,16 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array the data provider array
+     * @return \Generator the data provider array
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'username' => 's1',
-                'expectedcount' => null,
-            ],
-            'Teacher' => [
-                'username' => 't1',
-                'expectedcount' => 3,
-            ],
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'username' => 's1',
+            'expectedcount' => null,
+        ];
+        yield 'Teacher' => [
+            'username' => 't1',
+            'expectedcount' => 3,
         ];
     }
 
@@ -236,125 +230,123 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_students_who_responded.
      *
-     * @return array the data provider array
+     * @return \Generator the data provider array
      */
-    public static function provider_get_extra_students_who_responded(): array {
-        return [
-            'Student' => [
-                'currentuser' => 's1',
-                'expectedcount' => null,
-            ],
-            // No groups.
-            'No groups - Teacher - With answers - No multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => false,
-                'withanswers' => true,
-                'groupmode' => NOGROUPS,
-                'expectedcount' => 3,
-            ],
-            'No groups - Teacher - Without answers - No multiple' => [
-                'currentuser' => 't2',
-                'withanswers' => false,
-                'groupmode' => NOGROUPS,
-                'expectedcount' => 0,
-            ],
-            'No groups - Teacher - With answers - Multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => true,
-                'withanswers' => true,
-                'groupmode' => NOGROUPS,
-                'expectedcount' => 3,
-            ],
-            'No groups - Teacher - Without answers - Multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => true,
-                'withanswers' => false,
-                'groupmode' => NOGROUPS,
-                'expectedcount' => 0,
-            ],
-            // Visible groups.
-            'Visible groups - Teacher - With answers - No multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => false,
-                'withanswers' => true,
-                'groupmode' => VISIBLEGROUPS,
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Teacher - Without answers - No multiple' => [
-                'currentuser' => 't2',
-                'withanswers' => false,
-                'groupmode' => VISIBLEGROUPS,
-                'expectedcount' => 0,
-            ],
-            'Visible groups - Teacher - With answers - Multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => true,
-                'withanswers' => true,
-                'groupmode' => VISIBLEGROUPS,
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Teacher - Without answers - Multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => true,
-                'withanswers' => false,
-                'groupmode' => VISIBLEGROUPS,
-                'expectedcount' => 0,
-            ],
-            // Separate groups.
-            'Separate groups - Editing teacher - With answers - No multiple' => [
-                'currentuser' => 't1',
-                'allowmultiple' => false,
-                'withanswers' => true,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 3,
-            ],
-            'Separate groups - Editing teacher - Without answers - No multiple' => [
-                'currentuser' => 't1',
-                'withanswers' => false,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 0,
-            ],
-            'Separate groups - Editing teacher - With answers - Multiple' => [
-                'currentuser' => 't1',
-                'allowmultiple' => true,
-                'withanswers' => true,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 3,
-            ],
-            'Separate groups - Editing teacher - Without answers - Multiple' => [
-                'currentuser' => 't1',
-                'allowmultiple' => true,
-                'withanswers' => false,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 0,
-            ],
-            'Separate groups - Non-editing teacher - With answers - No multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => false,
-                'withanswers' => true,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 1,
-            ],
-            'Separate groups - Non-editing teacher - Without answers - No multiple' => [
-                'currentuser' => 't2',
-                'withanswers' => false,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 0,
-            ],
-            'Separate groups - Non-editing teacher - With answers - Multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => true,
-                'withanswers' => true,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 1,
-            ],
-            'Separate groups - Non-editing teacher - Without answers - Multiple' => [
-                'currentuser' => 't2',
-                'allowmultiple' => true,
-                'withanswers' => false,
-                'groupmode' => SEPARATEGROUPS,
-                'expectedcount' => 0,
-            ],
+    public static function provider_get_extra_students_who_responded(): \Generator {
+        yield 'Student' => [
+            'currentuser' => 's1',
+            'expectedcount' => null,
+        ];
+        // No groups.
+        yield 'No groups - Teacher - With answers - No multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => false,
+            'withanswers' => true,
+            'groupmode' => NOGROUPS,
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Teacher - Without answers - No multiple' => [
+            'currentuser' => 't2',
+            'withanswers' => false,
+            'groupmode' => NOGROUPS,
+            'expectedcount' => 0,
+        ];
+        yield 'No groups - Teacher - With answers - Multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => true,
+            'withanswers' => true,
+            'groupmode' => NOGROUPS,
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Teacher - Without answers - Multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => true,
+            'withanswers' => false,
+            'groupmode' => NOGROUPS,
+            'expectedcount' => 0,
+        ];
+        // Visible groups.
+        yield 'Visible groups - Teacher - With answers - No multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => false,
+            'withanswers' => true,
+            'groupmode' => VISIBLEGROUPS,
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Teacher - Without answers - No multiple' => [
+            'currentuser' => 't2',
+            'withanswers' => false,
+            'groupmode' => VISIBLEGROUPS,
+            'expectedcount' => 0,
+        ];
+        yield 'Visible groups - Teacher - With answers - Multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => true,
+            'withanswers' => true,
+            'groupmode' => VISIBLEGROUPS,
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Teacher - Without answers - Multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => true,
+            'withanswers' => false,
+            'groupmode' => VISIBLEGROUPS,
+            'expectedcount' => 0,
+        ];
+        // Separate groups.
+        yield 'Separate groups - Editing teacher - With answers - No multiple' => [
+            'currentuser' => 't1',
+            'allowmultiple' => false,
+            'withanswers' => true,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 3,
+        ];
+        yield 'Separate groups - Editing teacher - Without answers - No multiple' => [
+            'currentuser' => 't1',
+            'withanswers' => false,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 0,
+        ];
+        yield 'Separate groups - Editing teacher - With answers - Multiple' => [
+            'currentuser' => 't1',
+            'allowmultiple' => true,
+            'withanswers' => true,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 3,
+        ];
+        yield 'Separate groups - Editing teacher - Without answers - Multiple' => [
+            'currentuser' => 't1',
+            'allowmultiple' => true,
+            'withanswers' => false,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 0,
+        ];
+        yield 'Separate groups - Non-editing teacher - With answers - No multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => false,
+            'withanswers' => true,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 1,
+        ];
+        yield 'Separate groups - Non-editing teacher - Without answers - No multiple' => [
+            'currentuser' => 't2',
+            'withanswers' => false,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 0,
+        ];
+        yield 'Separate groups - Non-editing teacher - With answers - Multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => true,
+            'withanswers' => true,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 1,
+        ];
+        yield 'Separate groups - Non-editing teacher - Without answers - Multiple' => [
+            'currentuser' => 't2',
+            'allowmultiple' => true,
+            'withanswers' => false,
+            'groupmode' => SEPARATEGROUPS,
+            'expectedcount' => 0,
         ];
     }
 

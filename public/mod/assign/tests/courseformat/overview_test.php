@@ -161,34 +161,32 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array The data provider array.
+     * @return \Generator The data provider array.
      */
-    public static function provider_get_actions_overview(): array {
-        return [
-            'No groups - No team submission' => [
-                'groupmode' => NOGROUPS,
-                'teamsubmission' => false,
-            ],
-            'No groups - Team submission' => [
-                'groupmode' => NOGROUPS,
-                'teamsubmission' => true,
-            ],
-            'Visible groups - No team submission' => [
-                'groupmode' => VISIBLEGROUPS,
-                'teamsubmission' => false,
-            ],
-            'Visible groups - Team submission' => [
-                'groupmode' => VISIBLEGROUPS,
-                'teamsubmission' => true,
-            ],
-            'Separate groups - No team submission' => [
-                'groupmode' => SEPARATEGROUPS,
-                'teamsubmission' => false,
-            ],
-            'Separate groups - Team submission' => [
-                'groupmode' => SEPARATEGROUPS,
-                'teamsubmission' => true,
-            ],
+    public static function provider_get_actions_overview(): \Generator {
+        yield 'No groups - No team submission' => [
+            'groupmode' => NOGROUPS,
+            'teamsubmission' => false,
+        ];
+        yield 'No groups - Team submission' => [
+            'groupmode' => NOGROUPS,
+            'teamsubmission' => true,
+        ];
+        yield 'Visible groups - No team submission' => [
+            'groupmode' => VISIBLEGROUPS,
+            'teamsubmission' => false,
+        ];
+        yield 'Visible groups - Team submission' => [
+            'groupmode' => VISIBLEGROUPS,
+            'teamsubmission' => true,
+        ];
+        yield 'Separate groups - No team submission' => [
+            'groupmode' => SEPARATEGROUPS,
+            'teamsubmission' => false,
+        ];
+        yield 'Separate groups - Team submission' => [
+            'groupmode' => SEPARATEGROUPS,
+            'teamsubmission' => true,
         ];
     }
 
@@ -231,19 +229,17 @@ final class overview_test extends \advanced_testcase {
     /**
      * Provider for get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_due_date_overview_provider(): array {
-        return [
-            'no_due' => [
-                'timeincrement' => null,
-            ],
-            'past_due' => [
-                'timeincrement' => -1 * (4 * DAYSECS),
-            ],
-            'future_due' => [
-                'timeincrement' => (4 * DAYSECS),
-            ],
+    public static function get_due_date_overview_provider(): \Generator {
+        yield 'no_due' => [
+            'timeincrement' => null,
+        ];
+        yield 'past_due' => [
+            'timeincrement' => -1 * (4 * DAYSECS),
+        ];
+        yield 'future_due' => [
+            'timeincrement' => (4 * DAYSECS),
         ];
     }
 

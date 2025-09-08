@@ -46,8 +46,6 @@ final class overview_test extends \advanced_testcase {
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
-
         // Students have no action column.
         $this->setUser($student);
         $this->assertNull(overviewfactory::create($cm)->get_actions_overview());
@@ -120,25 +118,23 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test h5p type overview extra.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_extra_h5type_overview(): array {
-        return [
-            'Basic package' => [
-                'h5pfile' => 'basic_essay.h5p',
-                'iscorrect' => true,
-                'expected' => 'Essay',
-            ],
-            'No json file' => [
-                'h5pfile' => 'no-json-file.h5p',
-                'iscorrect' => false,
-                'expected' => get_string('unknowntype', 'mod_h5pactivity'),
-            ],
-            'Unzippable package' => [
-                'h5pfile' => 'unzippable.h5p',
-                'iscorrect' => false,
-                'expected' => get_string('unknowntype', 'mod_h5pactivity'),
-            ],
+    public static function provider_test_get_extra_h5type_overview(): \Generator {
+        yield 'Basic package' => [
+            'h5pfile' => 'basic_essay.h5p',
+            'iscorrect' => true,
+            'expected' => 'Essay',
+        ];
+        yield 'No json file' => [
+            'h5pfile' => 'no-json-file.h5p',
+            'iscorrect' => false,
+            'expected' => get_string('unknowntype', 'mod_h5pactivity'),
+        ];
+        yield 'Unzippable package' => [
+            'h5pfile' => 'unzippable.h5p',
+            'iscorrect' => false,
+            'expected' => get_string('unknowntype', 'mod_h5pactivity'),
         ];
     }
 

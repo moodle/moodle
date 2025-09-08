@@ -92,51 +92,49 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'expected' => null,
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'expected' => null,
+        ];
+        yield 'Teacher with entries (non-require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'expected' => [
+                'link' => get_string('view', 'moodle'),
+                'value' => 0,
             ],
-            'Teacher with entries (non-require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'expected' => [
-                    'link' => get_string('view', 'moodle'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Teacher without entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [],
+            'expected' => [
+                'link' => get_string('view', 'moodle'),
+                'value' => 0,
             ],
-            'Teacher without entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [],
-                'expected' => [
-                    'link' => get_string('view', 'moodle'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Teacher with entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 0],
+            'expected' => [
+                'link' => get_string('approve', 'data'),
+                'value' => 1,
             ],
-            'Teacher with entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 0],
-                'expected' => [
-                    'link' => get_string('approve', 'data'),
-                    'value' => 1,
-                ],
-            ],
-            'Teacher with approved entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 1],
-                'expected' => [
-                    'link' => get_string('view', 'moodle'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Teacher with approved entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 1],
+            'expected' => [
+                'link' => get_string('view', 'moodle'),
+                'value' => 0,
             ],
         ];
     }
@@ -218,69 +216,67 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test entry related extras.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_entries_overview(): array {
-        return [
-            'Student not needing approval' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => 2,
-                    'totalentries' => 4,
-                ],
+    public static function provider_test_get_entries_overview(): \Generator {
+        yield 'Student not needing approval' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => 2,
+                'totalentries' => 4,
             ],
-            'Student needing approval' => [
-                'role' => 'student',
-                'needsapproval' => true,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => 2,
-                    'totalentries' => 2,
-                ],
+        ];
+        yield 'Student needing approval' => [
+            'role' => 'student',
+            'needsapproval' => true,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => 2,
+                'totalentries' => 2,
             ],
-            'Teacher with entries (non-require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 4,
-                ],
+        ];
+        yield 'Teacher with entries (non-require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 4,
             ],
-            'Teacher without entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [],
-                'myentries' => [],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 0,
-                ],
+        ];
+        yield 'Teacher without entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [],
+            'myentries' => [],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 0,
             ],
-            'Teacher with entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 4,
-                ],
+        ];
+        yield 'Teacher with entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 4,
             ],
-            'Teacher with approved entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 1],
-                'myentries' => [1, 1],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 4,
-                ],
+        ];
+        yield 'Teacher with approved entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 1],
+            'myentries' => [1, 1],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 4,
             ],
         ];
     }
@@ -446,82 +442,80 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test comments extras.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_comments_overview(): array {
-        return [
-            'Student not needing approval with no comments' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [
+    public static function provider_test_get_comments_overview(): \Generator {
+        yield 'Student not needing approval with no comments' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [
                     ['approved' => 1, 'comments' => false],
                     ['approved' => 0, 'comments' => false],
                 ],
                 'expected' => 0,
+        ];
+        yield 'Student not needing approval with comments' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Student not needing approval with comments' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 1,
+            'expected' => 1,
+        ];
+        yield 'Student needing approval with no comments' => [
+            'role' => 'student',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => false],
+                ['approved' => 0, 'comments' => false],
             ],
-            'Student needing approval with no comments' => [
-                'role' => 'student',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => false],
-                    ['approved' => 0, 'comments' => false],
-                ],
-                'expected' => 0,
+            'expected' => 0,
+        ];
+        yield 'Student needing approval with comments' => [
+            'role' => 'student',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Student needing approval with comments' => [
-                'role' => 'student',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 1,
+            'expected' => 1,
+        ];
+        yield 'Teacher not needing approval with no comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [
+                ['approved' => 1, 'comments' => false],
+                ['approved' => 0, 'comments' => false],
             ],
-            'Teacher not needing approval with no comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [
-                    ['approved' => 1, 'comments' => false],
-                    ['approved' => 0, 'comments' => false],
-                ],
-                'expected' => 0,
+            'expected' => 0,
+        ];
+        yield 'Teacher not needing approval with comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Teacher not needing approval with comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 2,
+            'expected' => 2,
+        ];
+        yield 'Teacher needing approval with no comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => false],
+                ['approved' => 0, 'comments' => false],
             ],
-            'Teacher needing approval with no comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => false],
-                    ['approved' => 0, 'comments' => false],
-                ],
-                'expected' => 0,
+            'expected' => 0,
+        ];
+        yield 'Teacher needing approval with comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Teacher needing approval with comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 2,
-            ],
+            'expected' => 2,
         ];
     }
 }

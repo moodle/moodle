@@ -143,22 +143,20 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_date_data(): array {
-        return [
-            'tomorrow' => [
-                'timeincrement' => DAYSECS,
-            ],
-            'yesterday' => [
-                'timeincrement' => -1 * DAYSECS,
-            ],
-            'today' => [
-                'timeincrement' => 0,
-            ],
-            'No date' => [
-                'timeincrement' => null,
-            ],
+    public static function get_extra_date_data(): \Generator {
+        yield 'tomorrow' => [
+            'timeincrement' => DAYSECS,
+        ];
+        yield 'yesterday' => [
+            'timeincrement' => -1 * DAYSECS,
+        ];
+        yield 'today' => [
+            'timeincrement' => 0,
+        ];
+        yield 'No date' => [
+            'timeincrement' => null,
         ];
     }
 
@@ -192,22 +190,20 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_room_type_overview_data(): array {
-        return [
-            'All' => [
-                'roomtype' => instance::TYPE_ALL,
-                'expectedtype' => get_string('instance_type_default', 'bigbluebuttonbn'),
-            ],
-            'Room Only' => [
-                'roomtype' => instance::TYPE_ROOM_ONLY,
-                'expectedtype' => get_string('instance_type_room_only', 'bigbluebuttonbn'),
-            ],
-            'Recording Only' => [
-                'roomtype' => instance::TYPE_RECORDING_ONLY,
-                'expectedtype' => get_string('instance_type_recording_only', 'bigbluebuttonbn'),
-            ],
+    public static function get_extra_room_type_overview_data(): \Generator {
+        yield 'All' => [
+            'roomtype' => instance::TYPE_ALL,
+            'expectedtype' => get_string('instance_type_default', 'bigbluebuttonbn'),
+        ];
+        yield 'Room Only' => [
+            'roomtype' => instance::TYPE_ROOM_ONLY,
+            'expectedtype' => get_string('instance_type_room_only', 'bigbluebuttonbn'),
+        ];
+        yield 'Recording Only' => [
+            'roomtype' => instance::TYPE_RECORDING_ONLY,
+            'expectedtype' => get_string('instance_type_recording_only', 'bigbluebuttonbn'),
         ];
     }
 
@@ -249,19 +245,16 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_studentsattempted_overview and test_get_extra_totalattempts_overview
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_recordings_overview_data(): array {
-
-        return [
-            'with recordings' => [
-                'activityname' => 'withrecordings',
-                'recordingcount' => 2,
-            ],
-            'without recordings' => [
-                'activityname' => 'withoutrecordings',
-                'recordingcount' => 0,
-            ],
+    public static function get_extra_recordings_overview_data(): \Generator {
+        yield 'with recordings' => [
+            'activityname' => 'withrecordings',
+            'recordingcount' => 2,
+        ];
+        yield 'without recordings' => [
+            'activityname' => 'withoutrecordings',
+            'recordingcount' => 0,
         ];
     }
 
@@ -320,9 +313,9 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_studentsattempted_overview and test_get_extra_totalattempts_overview
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_recordings_overview_with_groups_data(): array {
+    public static function get_extra_recordings_overview_with_groups_data(): \Generator {
         // The setup is as follows:
         // - T1 is in group but is editing teacher so can see recordings from group g1 and g2.
         // - T2 is not in any group but is editing teacher so can see recordings from group g1 and g2.
@@ -333,39 +326,37 @@ final class overview_test extends \advanced_testcase {
         // We have 3 recordings in total (all processed:
         // - 2 recordings in group g1.
         // - 1 recording in group g2.
-        return [
-            'With separate groups' => [
-                'activityname' => 'withrecordings',
-                'groupmode' => SEPARATEGROUPS,
-                'recordingcounts' => [
-                    't1' => 4, // T1 is in group g1 and can see recordings from group g2 (as has all access as editing teacher).
-                    't2' => 4, // T2 is not in any group but can see recordings from group g1 and g2 as editing teacher.
-                    't3' => 2, // T3 is in group g1 so can see recordings from group g1.
-                    't4' => null, // T4 is not in any group so should not see any recording.
-                    't5' => 1, // T5 is in group g2 and can see recordings from group g2.
-                ],
+        yield 'With separate groups' => [
+            'activityname' => 'withrecordings',
+            'groupmode' => SEPARATEGROUPS,
+            'recordingcounts' => [
+                't1' => 4, // T1 is in group g1 and can see recordings from group g2 (as has all access as editing teacher).
+                't2' => 4, // T2 is not in any group but can see recordings from group g1 and g2 as editing teacher.
+                't3' => 2, // T3 is in group g1 so can see recordings from group g1.
+                't4' => null, // T4 is not in any group so should not see any recording.
+                't5' => 1, // T5 is in group g2 and can see recordings from group g2.
             ],
-            'With no groups' => [
-                'activityname' => 'withrecordings',
-                'groupmode' => NOGROUPS,
-                'recordingcounts' => [
-                    't1' => 4,
-                    't2' => 4,
-                    't3' => 4,
-                    't4' => 4,
-                    't5' => 4,
-                ],
+        ];
+        yield 'With no groups' => [
+            'activityname' => 'withrecordings',
+            'groupmode' => NOGROUPS,
+            'recordingcounts' => [
+                't1' => 4,
+                't2' => 4,
+                't3' => 4,
+                't4' => 4,
+                't5' => 4,
             ],
-            'With visible groups' => [
-                'activityname' => 'withrecordings',
-                'groupmode' => VISIBLEGROUPS,
-                'recordingcounts' => [
-                    't1' => 4,
-                    't2' => 4,
-                    't3' => 4,
-                    't4' => 4,
-                    't5' => 4,
-                ],
+        ];
+        yield 'With visible groups' => [
+            'activityname' => 'withrecordings',
+            'groupmode' => VISIBLEGROUPS,
+            'recordingcounts' => [
+                't1' => 4,
+                't2' => 4,
+                't3' => 4,
+                't4' => 4,
+                't5' => 4,
             ],
         ];
     }

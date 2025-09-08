@@ -73,20 +73,18 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'role' => 'student',
-                'expected' => null,
-            ],
-            'Teacher' => [
-                'role' => 'editingteacher',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => get_string('view'),
-                ],
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'role' => 'student',
+            'expected' => null,
+        ];
+        yield 'Teacher' => [
+            'role' => 'editingteacher',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => get_string('view'),
             ],
         ];
     }
@@ -126,26 +124,24 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_due_date_overview(): array {
-        return [
-            'Teacher with due date' => [
-                'user' => 'teacher',
-                'hasduedate' => true,
-            ],
-            'Student with due date' => [
-                'user' => 'student',
-                'hasduedate' => true,
-            ],
-            'Teacher without due date' => [
-                'user' => 'teacher',
-                'hasduedate' => false,
-            ],
-            'Student without due date' => [
-                'user' => 'student',
-                'hasduedate' => false,
-            ],
+    public static function provider_test_get_due_date_overview(): \Generator {
+        yield 'Teacher with due date' => [
+            'user' => 'teacher',
+            'hasduedate' => true,
+        ];
+        yield 'Student with due date' => [
+            'user' => 'student',
+            'hasduedate' => true,
+        ];
+        yield 'Teacher without due date' => [
+            'user' => 'teacher',
+            'hasduedate' => false,
+        ];
+        yield 'Student without due date' => [
+            'user' => 'student',
+            'hasduedate' => false,
         ];
     }
 
@@ -208,30 +204,28 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for get_extra_responses_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_get_extra_responses_overview(): array {
-        return [
-            'Teacher with responses' => [
-                'user' => 'teacher',
-                'expectnull' => false,
-                'hasresponses' => true,
-            ],
-            'Student with responses' => [
-                'user' => 'student',
-                'expectnull' => true,
-                'hasresponses' => true,
-            ],
-            'Teacher without responses' => [
-                'user' => 'teacher',
-                'expectnull' => false,
-                'hasresponses' => false,
-            ],
-            'Student without responses' => [
-                'user' => 'student',
-                'expectnull' => true,
-                'hasresponses' => false,
-            ],
+    public static function provider_get_extra_responses_overview(): \Generator {
+        yield 'Teacher with responses' => [
+            'user' => 'teacher',
+            'expectnull' => false,
+            'hasresponses' => true,
+        ];
+        yield 'Student with responses' => [
+            'user' => 'student',
+            'expectnull' => true,
+            'hasresponses' => true,
+        ];
+        yield 'Teacher without responses' => [
+            'user' => 'teacher',
+            'expectnull' => false,
+            'hasresponses' => false,
+        ];
+        yield 'Student without responses' => [
+            'user' => 'student',
+            'expectnull' => true,
+            'hasresponses' => false,
         ];
     }
 
@@ -349,100 +343,98 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for feedback_get_extra_responses_overview_with_groups.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_feedback_get_extra_responses_overview_with_groups(): array {
-        return [
-            'Separate groups - Editing teacher' => [
-                'groupmode' => SEPARATEGROUPS,
-                'currentuser' => 'teacher1',
-                'expectedcount' => 3,
-            ],
-            'Separate groups - Non-editing teacher (groupa)' => [
-                'groupmode' => SEPARATEGROUPS,
-                'currentuser' => 'teacher2',
-                'expectedcount' => 2,
-            ],
-            'Separate groups - Non-editing teacher (groupb)' => [
-                'groupmode' => SEPARATEGROUPS,
-                'currentuser' => 'teacher3',
-                'expectedcount' => 1,
-            ],
-            'Separate groups - Non-editing teacher (groupc)' => [
-                'groupmode' => SEPARATEGROUPS,
-                'currentuser' => 'teacher4',
-                'expectedcount' => 0,
-            ],
-            'Separate groups - Non-editing teacher (no group)' => [
-                'groupmode' => SEPARATEGROUPS,
-                'currentuser' => 'teacher5',
-                'expectedcount' => 3, // Although the expected count should be 0, this information will never be shown to the user.
-            ],
-            'Separate groups - Editing teacher (no group)' => [
-                'groupmode' => SEPARATEGROUPS,
-                'currentuser' => 'teacher6',
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Editing teacher' => [
-                'groupmode' => VISIBLEGROUPS,
-                'currentuser' => 'teacher1',
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Non-editing teacher (groupa)' => [
-                'groupmode' => VISIBLEGROUPS,
-                'currentuser' => 'teacher2',
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Non-editing teacher (groupb)' => [
-                'groupmode' => VISIBLEGROUPS,
-                'currentuser' => 'teacher3',
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Non-editing teacher (groupc)' => [
-                'groupmode' => VISIBLEGROUPS,
-                'currentuser' => 'teacher4',
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Non-editing teacher (no group)' => [
-                'groupmode' => VISIBLEGROUPS,
-                'currentuser' => 'teacher5',
-                'expectedcount' => 3,
-            ],
-            'Visible groups - Editing teacher (no group)' => [
-                'groupmode' => VISIBLEGROUPS,
-                'currentuser' => 'teacher6',
-                'expectedcount' => 3,
-            ],
-            'No groups - Editing teacher' => [
-                'groupmode' => NOGROUPS,
-                'currentuser' => 'teacher1',
-                'expectedcount' => 3,
-            ],
-            'No groups - Non-editing teacher (groupa)' => [
-                'groupmode' => NOGROUPS,
-                'currentuser' => 'teacher2',
-                'expectedcount' => 3,
-            ],
-            'No groups - Non-editing teacher (groupb)' => [
-                'groupmode' => NOGROUPS,
-                'currentuser' => 'teacher3',
-                'expectedcount' => 3,
-            ],
-            'No groups - Non-editing teacher (groupc)' => [
-                'groupmode' => NOGROUPS,
-                'currentuser' => 'teacher4',
-                'expectedcount' => 3,
-            ],
-            'No groups - Non-editing teacher (no group)' => [
-                'groupmode' => NOGROUPS,
-                'currentuser' => 'teacher5',
-                'expectedcount' => 3,
-            ],
-            'No groups - Editing teacher (no group)' => [
-                'groupmode' => NOGROUPS,
-                'currentuser' => 'teacher6',
-                'expectedcount' => 3,
-            ],
+    public static function provider_feedback_get_extra_responses_overview_with_groups(): \Generator {
+        yield 'Separate groups - Editing teacher' => [
+            'groupmode' => SEPARATEGROUPS,
+            'currentuser' => 'teacher1',
+            'expectedcount' => 3,
+        ];
+        yield 'Separate groups - Non-editing teacher (groupa)' => [
+            'groupmode' => SEPARATEGROUPS,
+            'currentuser' => 'teacher2',
+            'expectedcount' => 2,
+        ];
+        yield 'Separate groups - Non-editing teacher (groupb)' => [
+            'groupmode' => SEPARATEGROUPS,
+            'currentuser' => 'teacher3',
+            'expectedcount' => 1,
+        ];
+        yield 'Separate groups - Non-editing teacher (groupc)' => [
+            'groupmode' => SEPARATEGROUPS,
+            'currentuser' => 'teacher4',
+            'expectedcount' => 0,
+        ];
+        yield 'Separate groups - Non-editing teacher (no group)' => [
+            'groupmode' => SEPARATEGROUPS,
+            'currentuser' => 'teacher5',
+            'expectedcount' => 3, // Although the expected count should be 0, this information will never be shown to the user.
+        ];
+        yield 'Separate groups - Editing teacher (no group)' => [
+            'groupmode' => SEPARATEGROUPS,
+            'currentuser' => 'teacher6',
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Editing teacher' => [
+            'groupmode' => VISIBLEGROUPS,
+            'currentuser' => 'teacher1',
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Non-editing teacher (groupa)' => [
+            'groupmode' => VISIBLEGROUPS,
+            'currentuser' => 'teacher2',
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Non-editing teacher (groupb)' => [
+            'groupmode' => VISIBLEGROUPS,
+            'currentuser' => 'teacher3',
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Non-editing teacher (groupc)' => [
+            'groupmode' => VISIBLEGROUPS,
+            'currentuser' => 'teacher4',
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Non-editing teacher (no group)' => [
+            'groupmode' => VISIBLEGROUPS,
+            'currentuser' => 'teacher5',
+            'expectedcount' => 3,
+        ];
+        yield 'Visible groups - Editing teacher (no group)' => [
+            'groupmode' => VISIBLEGROUPS,
+            'currentuser' => 'teacher6',
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Editing teacher' => [
+            'groupmode' => NOGROUPS,
+            'currentuser' => 'teacher1',
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Non-editing teacher (groupa)' => [
+            'groupmode' => NOGROUPS,
+            'currentuser' => 'teacher2',
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Non-editing teacher (groupb)' => [
+            'groupmode' => NOGROUPS,
+            'currentuser' => 'teacher3',
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Non-editing teacher (groupc)' => [
+            'groupmode' => NOGROUPS,
+            'currentuser' => 'teacher4',
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Non-editing teacher (no group)' => [
+            'groupmode' => NOGROUPS,
+            'currentuser' => 'teacher5',
+            'expectedcount' => 3,
+        ];
+        yield 'No groups - Editing teacher (no group)' => [
+            'groupmode' => NOGROUPS,
+            'currentuser' => 'teacher6',
+            'expectedcount' => 3,
         ];
     }
 
@@ -502,30 +494,28 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_submitted_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_extra_submitted_overview(): array {
-        return [
-            'Teacher with responses' => [
-                'user' => 'teacher',
-                'expectnull' => true,
-                'hasresponses' => true,
-            ],
-            'Student with responses' => [
-                'user' => 'student',
-                'expectnull' => false,
-                'hasresponses' => true,
-            ],
-            'Teacher without responses' => [
-                'user' => 'teacher',
-                'expectnull' => true,
-                'hasresponses' => false,
-            ],
-            'Student without responses' => [
-                'user' => 'student',
-                'expectnull' => false,
-                'hasresponses' => false,
-            ],
+    public static function provider_test_get_extra_submitted_overview(): \Generator {
+        yield 'Teacher with responses' => [
+            'user' => 'teacher',
+            'expectnull' => true,
+            'hasresponses' => true,
+        ];
+        yield 'Student with responses' => [
+            'user' => 'student',
+            'expectnull' => false,
+            'hasresponses' => true,
+        ];
+        yield 'Teacher without responses' => [
+            'user' => 'teacher',
+            'expectnull' => true,
+            'hasresponses' => false,
+        ];
+        yield 'Student without responses' => [
+            'user' => 'student',
+            'expectnull' => false,
+            'hasresponses' => false,
         ];
     }
 }
