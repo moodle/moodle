@@ -14,17 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains helper class for the message area.
- *
- * @package    core_message
- * @copyright  2016 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_message;
+
+use core\{clock, di};
 use DOMDocument;
-use stdclass;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,6 +27,7 @@ require_once($CFG->dirroot . '/message/lib.php');
 /**
  * Helper class for the message area.
  *
+ * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -254,7 +249,7 @@ class helper {
         if (isset($CFG->block_online_users_timetosee)) {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
         }
-        $time = time() - $timetoshowusers;
+        $time = di::get(clock::class)->time() - $timetoshowusers;
 
         return $lastaccess >= $time;
     }
@@ -608,7 +603,7 @@ class helper {
             'contactrequestcount' => $requestcount,
             'loggedinuser' => [
                 'id' => $USER->id,
-                'midnight' => usergetmidnight(time())
+                'midnight' => usergetmidnight(di::get(clock::class)->time()),
             ],
             // The starting timeout value for message polling.
             'messagepollmin' => $CFG->messagingminpoll ?? MESSAGE_DEFAULT_MIN_POLL_IN_SECONDS,

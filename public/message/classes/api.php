@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains class used to return information to display for the message area.
- *
- * @package    core_message
- * @copyright  2016 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_message;
 
+use core\{clock, di};
 use core_favourites\local\entity\favourite;
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,6 +26,7 @@ require_once($CFG->dirroot . '/lib/messagelib.php');
 /**
  * Class used to return information to display for the message area.
  *
+ * @package    core_message
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1235,7 +1229,7 @@ class api {
             $mua->userid = $userid;
             $mua->messageid = $message->id;
             $mua->action = self::MESSAGE_ACTION_DELETED;
-            $mua->timecreated = time();
+            $mua->timecreated = di::get(clock::class)->time();
             $mua->id = $DB->insert_record('message_user_actions', $mua);
 
             \core\event\message_deleted::create_from_ids($userid, $USER->id,
@@ -1650,7 +1644,7 @@ class api {
         $eventdata->fullmessageformat = $format;
         $eventdata->smallmessage = $message; // Store the message unfiltered. Clean up on output.
 
-        $eventdata->timecreated     = time();
+        $eventdata->timecreated     = di::get(clock::class)->time();
         $eventdata->notification    = 0;
         // Custom data for event.
         $customdata = [
@@ -1894,7 +1888,7 @@ class api {
         global $DB;
 
         if (is_null($timeread)) {
-            $timeread = time();
+            $timeread = di::get(clock::class)->time();
         }
 
         $mua = new \stdClass();
@@ -1934,7 +1928,7 @@ class api {
         global $DB;
 
         if (is_null($timeread)) {
-            $timeread = time();
+            $timeread = di::get(clock::class)->time();
         }
 
         if (is_null($notification->timeread)) {
@@ -2008,7 +2002,7 @@ class api {
             $mua->userid = $userid;
             $mua->messageid = $messageid;
             $mua->action = self::MESSAGE_ACTION_DELETED;
-            $mua->timecreated = time();
+            $mua->timecreated = di::get(clock::class)->time();
             $mua->id = $DB->insert_record('message_user_actions', $mua);
 
             // Trigger event for deleting a message.
@@ -2139,7 +2133,7 @@ class api {
         $conversation->itemid = $itemid;
         $conversation->contextid = $contextid;
         $conversation->enabled = $enabled;
-        $conversation->timecreated = time();
+        $conversation->timecreated = di::get(clock::class)->time();
         $conversation->timemodified = $conversation->timecreated;
         $conversation->id = $DB->insert_record('message_conversations', $conversation);
 
@@ -2149,7 +2143,7 @@ class api {
             $member = new \stdClass();
             $member->conversationid = $conversation->id;
             $member->userid = $userid;
-            $member->timecreated = time();
+            $member->timecreated = di::get(clock::class)->time();
             $member->id = $DB->insert_record('message_conversation_members', $member);
 
             $arrmembers[] = $member;
@@ -2216,7 +2210,7 @@ class api {
         $request = new \stdClass();
         $request->userid = $userid;
         $request->requesteduserid = $requesteduserid;
-        $request->timecreated = time();
+        $request->timecreated = di::get(clock::class)->time();
 
         $request->id = $DB->insert_record('message_contact_requests', $request);
 
@@ -2359,7 +2353,7 @@ class api {
         $messagecontact = new \stdClass();
         $messagecontact->userid = $userid;
         $messagecontact->contactid = $contactid;
-        $messagecontact->timecreated = time();
+        $messagecontact->timecreated = di::get(clock::class)->time();
         $messagecontact->id = $DB->insert_record('message_contacts', $messagecontact);
 
         $eventparams = [
@@ -2408,7 +2402,7 @@ class api {
         $blocked = new \stdClass();
         $blocked->userid = $userid;
         $blocked->blockeduserid = $usertoblockid;
-        $blocked->timecreated = time();
+        $blocked->timecreated = di::get(clock::class)->time();
         $blocked->id = $DB->insert_record('message_users_blocked', $blocked);
 
         // Trigger event for blocking a contact.
@@ -2651,7 +2645,7 @@ class api {
             $member = new \stdClass();
             $member->conversationid = $convid;
             $member->userid = $userid;
-            $member->timecreated = time();
+            $member->timecreated = di::get(clock::class)->time();
             $members[] = $member;
         }
 
@@ -2752,7 +2746,7 @@ class api {
         $conversation = new \stdClass();
         $conversation->id = $conversationid;
         $conversation->enabled = self::MESSAGE_CONVERSATION_ENABLED;
-        $conversation->timemodified = time();
+        $conversation->timemodified = di::get(clock::class)->time();
         $DB->update_record('message_conversations', $conversation);
     }
 
@@ -2768,7 +2762,7 @@ class api {
         $conversation = new \stdClass();
         $conversation->id = $conversationid;
         $conversation->enabled = self::MESSAGE_CONVERSATION_DISABLED;
-        $conversation->timemodified = time();
+        $conversation->timemodified = di::get(clock::class)->time();
         $DB->update_record('message_conversations', $conversation);
     }
 
@@ -2785,7 +2779,7 @@ class api {
         if ($conversation = $DB->get_record('message_conversations', array('id' => $conversationid))) {
             if ($name <> $conversation->name) {
                 $conversation->name = $name;
-                $conversation->timemodified = time();
+                $conversation->timemodified = di::get(clock::class)->time();
                 $DB->update_record('message_conversations', $conversation);
             }
         }
@@ -2886,7 +2880,7 @@ class api {
         $mutedconversation->userid = $userid;
         $mutedconversation->conversationid = $conversationid;
         $mutedconversation->action = self::CONVERSATION_ACTION_MUTED;
-        $mutedconversation->timecreated = time();
+        $mutedconversation->timecreated = di::get(clock::class)->time();
 
         $DB->insert_record('message_conversation_actions', $mutedconversation);
     }
