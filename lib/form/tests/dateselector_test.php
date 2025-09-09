@@ -147,7 +147,7 @@ final class dateselector_test extends \advanced_testcase {
      * Testcase to check onQuickformEvent
      */
     public function test_onquickformevent(): void {
-        global $USER;
+        global $OUTPUT, $USER;
         $testvals = $this->testvals;
         // Get dummy form for data.
         $mform = $this->mform;
@@ -160,11 +160,12 @@ final class dateselector_test extends \advanced_testcase {
             $elparams = array('optional'=>false, 'timezone' => $vals['timezone']);
             $el = $this->mform->addElement('date_selector', 'dateselector', null, $elparams);
             $this->assertTrue($el instanceof MoodleQuickForm_date_selector);
-            $expectedvalues = array(
-                'day' => array($vals['day']),
-                'month' => array($vals['month']),
-                'year' => array($vals['year'])
-                );
+            $expectedvalues = [
+                'day' => [$vals['day']],
+                'month' => [$vals['month']],
+                'year' => [$vals['year']],
+                'calendar' => $OUTPUT->pix_icon('i/calendar', ''),
+            ];
             $mform->_submitValues = array('dateselector' => $vals['timestamp']);
             $el->onQuickFormEvent('updateValue', null, $mform);
             $this->assertSame($expectedvalues, $el->getValue());
