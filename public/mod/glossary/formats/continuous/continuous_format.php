@@ -4,7 +4,7 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='
 
     global $USER, $OUTPUT;
 
-    echo '<table class="glossarypost continuous" cellspacing="0">';
+    echo '<table class="glossarypost continuous table-reboot" cellspacing="0">';
     echo '<tr valign="top">';
     echo '<td class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);
