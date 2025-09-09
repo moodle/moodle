@@ -102,6 +102,13 @@ class modinfo {
     private ?array $delegatedbycm = null;
 
     /**
+     * Contains the course content weights so they can be sorted accordingly.
+     *
+     * @var array|null
+     */
+    private ?array $weights = null;
+
+    /**
      * User ID
      * @var int
      */
@@ -290,6 +297,40 @@ class modinfo {
             return [];
         }
         return $this->instances[$modname];
+    }
+
+    /**
+     * Obtains a single instance of a particular module on this course.
+     *
+     * @param string $modname Name of module (not full frankenstyle) e.g. 'label'
+     * @param int $instanceid Instance id
+     * @param int $strictness Use IGNORE_MISSING to return null if not found, or MUST_EXIST to throw exception
+     * @return cm_info|null cm_info for the instance on this course or null if not found
+     * @throws moodle_exception If the instance is not found
+     */
+    public function get_instance_of(string $modname, int $instanceid, int $strictness = IGNORE_MISSING): ?cm_info {
+        if (empty($this->instances[$modname]) || empty($this->instances[$modname][$instanceid])) {
+            if ($strictness === IGNORE_MISSING) {
+                return null;
+            }
+            throw new moodle_exception('invalidmoduleid', 'error', '', $instanceid);
+        }
+        return $this->instances[$modname][$instanceid];
+    }
+
+    /**
+     * Sorts the given array of course modules according to the order they appear on the course page.
+     *
+     * @param cm_info[] $cms Array of cm_info objects to sort by reference
+     * @return void
+     */
+    public function sort_cm_array(array &$cms): void {
+        $weights = $this->get_content_weights();
+        uasort($cms, function ($a, $b) use ($weights) {
+            $weighta = $weights['cm' . $a->id] ?? PHP_INT_MAX;
+            $weightb = $weights['cm' . $b->id] ?? PHP_INT_MAX;
+            return $weighta <=> $weightb;
+        });
     }
 
     /**
@@ -1192,6 +1233,58 @@ class modinfo {
      */
     public static function is_mod_type_visible_on_course(string $modname): bool {
         return plugin_supports('mod', $modname, FEATURE_CAN_DISPLAY, true);
+    }
+
+    /**
+     * Get content weights for all sections and modules in the course.
+     *
+     * The weights are calculated based on the order of sections and modules
+     * as they appear on the course page, including delegated sections.
+     *
+     * @return array Associative array with keys 'section{sectionid}' and 'cm{cmid}' and integer weights as values.
+     */
+    private function get_content_weights(): array {
+        if ($this->weights !== null) {
+            return $this->weights;
+        }
+        $result = [];
+        foreach ($this->sectioninfobynum as $section) {
+            // Delegated sections are always at the end of the course and they will
+            // be added only if they are part of any section sequence.
+            if ($section->is_delegated()) {
+                continue;
+            }
+            $sortedelements = $this->calculate_section_weights($section, count($result));
+            $result += $sortedelements;
+        }
+        $this->weights = $result;
+        return $result;
+    }
+
+    /**
+     * Calculate weights for a section and its modules, including delegated sections.
+     *
+     * @param section_info $section The section to calculate weights for.
+     * @param int $currentweight The starting weight to use for this section.
+     * @return section_info[] Associative array of section_info objects, indexed by the cmid of the delegating module.
+     */
+    private function calculate_section_weights(section_info $section, int $currentweight = 0): array {
+        $delegatedcms = $this->get_sections_delegated_by_cm();
+
+        $weights = [
+            'section' . $section->id => $currentweight++,
+        ];
+
+        foreach ($section->get_sequence_cm_infos() as $cm) {
+            $weights['cm' . $cm->id] = $currentweight++;
+
+            if (array_key_exists($cm->id, $delegatedcms)) {
+                $subweights = $this->calculate_section_weights($delegatedcms[$cm->id], $currentweight);
+                $weights += $subweights;
+                $currentweight += count($subweights);
+            }
+        }
+        return $weights;
     }
 }
 
