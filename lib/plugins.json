@@ -6,6 +6,7 @@
         ],
         "aiprovider": [
             "azureai",
+            "deepseek",
             "ollama",
             "openai"
         ],
