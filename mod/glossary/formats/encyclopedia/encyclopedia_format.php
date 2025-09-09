@@ -8,7 +8,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
     $strby = get_string('writtenby', 'glossary');
 
     if ($entry) {
-        echo '<table class="glossarypost encyclopedia" cellspacing="0">';
+        echo '<table class="glossarypost encyclopedia table-reboot" cellspacing="0">';
         echo '<tr valign="top">';
         echo '<td class="left picture">';
 

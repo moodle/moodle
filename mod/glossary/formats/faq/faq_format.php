@@ -4,7 +4,7 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
     global $USER, $OUTPUT;
     if ( $entry ) {
 
-        echo '<table class="glossarypost faq" cellspacing="0">';
+        echo '<table class="glossarypost faq table-reboot" cellspacing="0">';
 
         echo '<tr valign="top">';
         echo '<th class="entryheader">';

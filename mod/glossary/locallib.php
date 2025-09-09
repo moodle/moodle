@@ -407,7 +407,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $options->trusted = $entry->definitiontrust;
         $options->context = $context;
 
-        $output = '<table class="glossarypost dictionary" cellspacing="0">' . "\n";
+        $output = '<table class="glossarypost dictionary table-reboot" cellspacing="0">' . "\n";
         $output .= '<tr valign="top">' . "\n";
         $output .= '<td class="entry">' . "\n";
 
@@ -446,7 +446,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         }
         $fs = get_file_storage();
         if ($files = $fs->get_area_files($filecontext->id, 'mod_glossary', 'attachment', $entry->id, "timemodified", false)) {
-            $output .= '<table border="0" width="100%"><tr><td>' . "\n";
+            $output .= '<table border="0" width="100%" class="table-reboot"><tr><td>' . "\n";
 
             foreach ($files as $file) {
                 $output .= $format->file_output($file);
