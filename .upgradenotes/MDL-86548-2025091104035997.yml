@@ -1,0 +1,8 @@
+issueNumber: MDL-86548
+notes:
+  theme_boost:
+    - message: >-
+        Tables affected by unwanted styling (e.g., borders) from the reset of
+        Bootstrap _reboot.scss styles can now opt out and preserve the original
+        behavior by adding the styleless .table-reboot class.
+      type: improved

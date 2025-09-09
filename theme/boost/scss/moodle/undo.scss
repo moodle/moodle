@@ -242,8 +242,10 @@ $allow-reset-style: true !default;
 /**
  * Reset the Bootstrap _reboot.scss styles for tables.
  * That reboot mainly affects tables added by the tiny editor.
+ * If a table should continue using the original _reboot.scss styles, add the .table-reboot (styleless) class to opt out
+ * of this reset.
  */
-table:not(.table):not(.ygtvtable) {
+table:not(.table):not(.ygtvtable):not(.table-reboot) {
     thead,
     tbody,
     tfoot,
