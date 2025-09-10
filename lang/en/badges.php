@@ -145,6 +145,7 @@ $string['backpackapiurl'] = 'Backpack API URL';
 $string['backpackweburl'] = 'Backpack URL';
 $string['backpackprovider'] = 'Backpack provider';
 $string['badges'] = 'Badges';
+$string['badgesnavigation'] = 'Badges navigation';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
 $string['badgeimage_help'] = 'The image should be at least 300 x 300 pixels in size. It will be displayed as 300 x 300 pixels on the badge page and 100 x 100 pixels on the user\'s profile page.';
