@@ -25,18 +25,21 @@
 }}
 <div id="courseindexdrawercontrols" class="dropdown">
     <button class="btn btn-icon mx-2"
+            id="courseindexdrawercontrolsmenubutton"
             type="button"
             data-bs-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
             title="{{#str}}courseindexoptions, courseformat{{/str}}"
-    >
+            aria-label="{{#str}}courseindexoptions, courseformat{{/str}}"
+            aria-controls="courseindexdrawercontrolsmenu">
         <i class="icon fa fa-ellipsis-v fa-fw m-0" aria-hidden="true"></i>
     </button>
-    <div class="dropdown-menu dropdown-menu-end">
+    <div class="dropdown-menu dropdown-menu-end" role="menu" id="courseindexdrawercontrolsmenu" aria-labelledby="courseindexdrawercontrolsmenubutton">
         <a class="dropdown-item"
            href="#"
            data-action="expandallcourseindexsections"
+           role="menuitem"
         >
             {{#pix}} t/angles-down, core {{/pix}}
             {{#str}}expandall{{/str}}
@@ -44,6 +47,7 @@
         <a class="dropdown-item"
            href="#"
            data-action="collapseallcourseindexsections"
+           role="menuitem"
         >
             <span class="dir-rtl-hide">{{#pix}} t/angles-right, core {{/pix}}</span>
             <span class="dir-ltr-hide">{{#pix}} t/angles-left, core {{/pix}}</span>
