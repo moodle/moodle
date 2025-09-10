@@ -285,26 +285,29 @@ class ActivityChooserDialogue {
      * @return {Promise} A promise that resolves when the event is handled
      */
     async handleModalClick(event) {
-        event.preventDefault();
         const target = event.target;
 
         if (target.closest(selectors.actions.optionActions.showSummary)) {
+            event.preventDefault();
             this.handleShowSummary(target);
             return;
         }
 
         if (target.closest(selectors.actions.displayCategory)) {
+            event.preventDefault();
             this.handleDisplayCategory(target);
             return;
         }
 
         if (target.closest(selectors.actions.optionActions.manageFavourite)) {
+            event.preventDefault();
             await this.handleFavouriteClick(target);
             return;
         }
 
         // From the help screen go back to the module overview.
         if (target.matches(selectors.actions.closeOption)) {
+            event.preventDefault();
             this.dialogueDom.hideModuleHelp(target.dataset.modname);
             return;
         }
