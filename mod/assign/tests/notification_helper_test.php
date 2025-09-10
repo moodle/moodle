@@ -90,19 +90,23 @@ final class notification_helper_test extends \advanced_testcase {
         $clock = $this->mock_clock_with_frozen();
 
         // Create a course and enrol some users.
-        $course = $generator->create_course();
+        $course = $generator->create_course(['enablecompletion' => 1]);
         $user1 = $generator->create_user();
         $user2 = $generator->create_user();
         $user3 = $generator->create_user();
         $user4 = $generator->create_user();
         $user5 = $generator->create_user();
         $user6 = $generator->create_user();
+        $user7 = $generator->create_user();
+        $user8 = $generator->create_user();
         $generator->enrol_user($user1->id, $course->id, 'student');
         $generator->enrol_user($user2->id, $course->id, 'student');
         $generator->enrol_user($user3->id, $course->id, 'student');
         $generator->enrol_user($user4->id, $course->id, 'student');
         $generator->enrol_user($user5->id, $course->id, 'student');
-        $generator->enrol_user($user6->id, $course->id, 'teacher');
+        $generator->enrol_user($user6->id, $course->id, 'student');
+        $generator->enrol_user($user7->id, $course->id, 'student');
+        $generator->enrol_user($user8->id, $course->id, 'teacher');
 
         /** @var \mod_assign_generator $assignmentgenerator */
         $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
@@ -114,6 +118,9 @@ final class notification_helper_test extends \advanced_testcase {
             'duedate' => $duedate,
             'submissiondrafts' => 0,
             'assignsubmission_onlinetext_enabled' => 1,
+        ], [
+            'completion' => \COMPLETION_TRACKING_AUTOMATIC,
+            'completionview' => 1,
         ]);
 
         // User1 will have a user override, giving them an extra 1 hour for 'duedate'.
@@ -152,9 +159,28 @@ final class notification_helper_test extends \advanced_testcase {
             'assignsubmission_onlinetext_enabled' => 1,
         ]);
 
+        // User6 will exclude themselves by meeting completion conditions.
+        $completion = new \completion_info($course);
+        $assigncm = get_coursemodule_from_instance('assign', $assignment->id);
+        $completion->set_module_viewed($assigncm, $user6->id);
+
+        // User7 will exclude themselves b/c they already have a grade.
+        $context = \context_module::instance($assigncm->id);
+        $assign = new \assign($context, $assigncm, $course);
+        $this->setUser($user8);
+        $gradedata = new \stdClass();
+        $gradedata->grade = '80.0';
+        $gradedata->attemptnumber = 1;
+        $assign->save_grade($user7->id, $gradedata);
+
+        $this->setUser();
+
         // There should be 3 users with the teacher excluded.
         $users = $helper::get_users_within_assignment($assignment->id, $helper::TYPE_DUE_SOON);
         $this->assertCount(3, $users);
+        $this->assertArrayHasKey($user1->id, $users);
+        $this->assertArrayHasKey($user2->id, $users);
+        $this->assertArrayHasKey($user3->id, $users);
     }
 
     /**
@@ -416,7 +442,7 @@ final class notification_helper_test extends \advanced_testcase {
         $clock = $this->mock_clock_with_frozen();
 
         // Create a course and enrol some users.
-        $course = $generator->create_course();
+        $course = $generator->create_course(['enablecompletion' => 1]);
         $user1 = $generator->create_and_enrol($course, 'student');
         $user2 = $generator->create_and_enrol($course, 'student');
         $user3 = $generator->create_and_enrol($course, 'student');
@@ -488,6 +514,54 @@ final class notification_helper_test extends \advanced_testcase {
         $this->assertArrayHasKey($user1->id, $users);
         $this->assertArrayHasKey($user2->id, $users);
         $this->assertArrayHasKey($user3->id, $users);
+
+        // Create an overdue assignment with no submission plugins enabled.
+        $duedate = $clock->time() - HOURSECS;
+        $nosubassignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate,
+            'submissiondrafts' => 0,
+            'assignsubmission_onlinetext_enabled' => 0,
+            'assignsubmission_file_enabled' => 0,
+        ]);
+
+        // There should be 0 users b/c this assignment has no deliverables.
+        $users = $helper::get_users_within_assignment($nosubassignment->id, $helper::TYPE_OVERDUE);
+        $this->assertCount(0, $users);
+
+        // Create an assignment that requires a 'view' to be completed.
+        $viewassignment = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'name' => 'View, Grade Assignment',
+            'duedate' => $duedate,
+            'assignsubmission_onlinetext_enabled' => true,
+         ], [
+            'completion' => \COMPLETION_TRACKING_AUTOMATIC,
+            'completionview' => 1,
+         ]);
+
+        // Mark the assignment as viewed by User1, excluding them from the notification.
+        $completion = new \completion_info($course);
+        $assigncm = get_coursemodule_from_instance('assign', $viewassignment->id);
+        $completion->set_module_viewed($assigncm, $user1->id);
+
+        // Submit a grade for User2, excluding them from the notification, even though they don't have a submission.
+        $context = \context_module::instance($assigncm->id);
+        $assign = new \assign($context, $assigncm, $course);
+        $this->setUser($user7);
+        $gradedata = new \stdClass();
+        $gradedata->grade = '80.0';
+        $gradedata->attemptnumber = 1;
+        $assign->save_grade($user2->id, $gradedata);
+        $this->setUser();
+
+        // There should be 4 users, because user1 met activity completion and user2 has a grade.
+        $users = $helper::get_users_within_assignment($viewassignment->id, $helper::TYPE_OVERDUE);
+        $this->assertCount(4, $users);
+        $this->assertArrayHasKey($user3->id, $users);
+        $this->assertArrayHasKey($user4->id, $users);
+        $this->assertArrayHasKey($user5->id, $users);
+        $this->assertArrayHasKey($user6->id, $users);
     }
 
     /**
