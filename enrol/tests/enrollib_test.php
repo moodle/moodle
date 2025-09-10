@@ -43,6 +43,9 @@ final class enrollib_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        // Use a mock incrementing clock to ensure deterministic and testable time values.
+        $clock = $this->mock_clock_with_incrementing(1750000000);
+
         $studentrole = $DB->get_record('role', array('shortname'=>'student'));
         $this->assertNotEmpty($studentrole);
         $teacherrole = $DB->get_record('role', array('shortname'=>'teacher'));
@@ -96,13 +99,14 @@ final class enrollib_test extends advanced_testcase {
 
         $manual->enrol_user($maninstance2, $user1->id);
         $manual->enrol_user($maninstance2, $user2->id);
-        $manual->enrol_user($maninstance2, $user3->id, 0, 1, time()+(60*60));
+        $manual->enrol_user($maninstance2, $user3->id, 0, 1, $clock->time() + HOURSECS);
 
         $manual->enrol_user($maninstance3, $user1->id);
         $manual->enrol_user($maninstance3, $user2->id);
-        $manual->enrol_user($maninstance3, $user3->id, 0, 1, time()-(60*60));
+        $manual->enrol_user($maninstance3, $user3->id, 0, 1, $clock->time() - HOURSECS);
         $manual->enrol_user($maninstance3, $user4->id, 0, 0, 0, ENROL_USER_SUSPENDED);
 
+        $manual->enrol_user($maninstance4, $user5->id, 0, $clock->time());
 
         $courses = enrol_get_all_users_courses($CFG->siteguest);
         $this->assertSame(array(), $courses);
@@ -151,6 +155,10 @@ final class enrollib_test extends advanced_testcase {
         $courses = enrol_get_all_users_courses($user4->id, true);
         $this->assertCount(0, $courses);
         $this->assertEquals(array(), array_keys($courses));
+
+        $courses = enrol_get_all_users_courses($user5->id, true);
+        $this->assertCount(1, $courses);
+        $this->assertEquals([$course4->id], array_keys($courses));
 
         // Make sure sorting and columns work.
 
