@@ -96,7 +96,7 @@ $PAGE->add_body_class('limitedwidth');
 $PAGE->requires->js_call_amd('mod_feedback/edit', 'init', [$cm->id]);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('edit_items', 'mod_feedback'), 3);
+echo $OUTPUT->heading(get_string('edit_items', 'mod_feedback'), $PAGE->activityheader->get_heading_level());
 echo $renderer->main_action_bar($actionbar);
 $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_EDIT,
         $feedbackstructure, 'feedback_edit_form');
