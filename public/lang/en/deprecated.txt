@@ -92,3 +92,5 @@ hiddensections_help,core
 privacy:metadata:schedule:message,core_reportbuilder
 privacy:metadata:schedule:reportempty,core_reportbuilder
 privacy:metadata:schedule:subject,core_reportbuilder
+sitename,core_hub
+sitename_help,core_hub
