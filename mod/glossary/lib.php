@@ -1357,7 +1357,7 @@ function glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mo
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
     if ($aliases || $icons || !empty($entry->rating)) {
-        echo '<table>';
+        echo '<table class="table-reboot">';
         if ( $aliases ) {
             $id = "keyword-{$entry->id}";
             echo '<tr valign="top"><td class="aliases hstack gap-2">' .
@@ -1418,7 +1418,7 @@ function  glossary_print_entry_approval($cm, $entry, $mode, $align="right", $ins
 
     if ($mode == 'approval' and !$entry->approved) {
         if ($insidetable) {
-            echo '<table class="glossaryapproval" align="'.$align.'"><tr><td align="'.$align.'">';
+            echo '<table class="glossaryapproval table-reboot" align="' . $align . '"><tr><td align="' . $align . '">';
         }
         echo $OUTPUT->action_icon(
             new moodle_url('approve.php', array('eid' => $entry->id, 'mode' => $mode, 'sesskey' => sesskey())),
@@ -1905,7 +1905,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
     $fmtoptions = array(
         'context' => $context);
 
-     echo '<table border="0" width="100%">';
+     echo '<table class="table-reboot" border="0" width="100%">';
      echo '<tr>';
 
      echo '<td align="center" style="width:20%">';
@@ -2183,7 +2183,7 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     global $USER, $CFG, $DB;
 
     echo '<div class="boxaligncenter">';
-    echo '<table class="glossarypopup" cellspacing="0"><tr>';
+    echo '<table class="glossarypopup table-reboot" cellspacing="0"><tr>';
     echo '<td>';
     if ( $entries ) {
         foreach ( $entries as $entry ) {

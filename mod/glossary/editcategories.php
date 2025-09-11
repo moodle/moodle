@@ -162,7 +162,7 @@ if ( $hook >0 ) {
             echo "</p>";
 ?>
 
-                <table border="0" width="100" class="confirmbuttons">
+                <table border="0" width="100" class="confirmbuttons table-reboot">
                     <tr>
                         <td align="$rightalignment" style="width:50%">
                         <form id="form" method="post" action="editcategories.php">
@@ -235,7 +235,7 @@ echo $OUTPUT->heading(format_string($glossary->name), 2);
 ?>
 
 <form method="post" action="editcategories.php">
-<table width="40%" class="boxaligncenter generalbox" cellpadding="5">
+<table width="40%" class="boxaligncenter generalbox table-reboot" cellpadding="5">
         <tr>
           <th style="width:90%" align="center">
           <?php p(get_string("categories","glossary")) ?></th>
@@ -250,7 +250,7 @@ echo $OUTPUT->heading(format_string($glossary->name), 2);
     $categories = $DB->get_records("glossary_categories", array("glossaryid"=>$glossary->id), "name ASC");
 
     if ( $categories ) {
-        echo '<table width="100%">';
+        echo '<table class="table-reboot" width="100%">';
         foreach ($categories as $category) {
             $num_entries = $DB->count_records("glossary_entries_categories", array("categoryid"=>$category->id));
 ?>
@@ -286,7 +286,7 @@ echo $OUTPUT->heading(format_string($glossary->name), 2);
              $options['id'] = $cm->id;
              $options['action'] = "add";
 
-             echo "<table class=\"editbuttons\" border=\"0\"><tr><td align=\"$rightalignment\">";
+             echo "<table class=\"editbuttons table-reboot\" border=\"0\"><tr><td align=\"$rightalignment\">";
              echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("addcategory", "glossary"));
              echo "</td><td align=\"$leftalignment\">";
              unset($options['action']);
