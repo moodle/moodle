@@ -38,94 +38,106 @@ $CFG = new stdClass();
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
 
-$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'auroramysql', 'sqlsrv' or 'oci'
-$CFG->dblibrary = 'native';     // 'native' only at the moment
-$CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
-$CFG->dbname    = 'moodle';     // database name, eg moodle
-$CFG->dbuser    = 'username';   // your database username
-$CFG->dbpass    = 'password';   // your database password
-$CFG->prefix    = 'mdl_';       // prefix to use for all table names
-$CFG->dboptions = array(
-    'dbpersist' => false,       // should persistent database connections be
-                                //  used? set to 'false' for the most stable
-                                //  setting, 'true' can improve performance
-                                //  sometimes
-    'dbsocket'  => false,       // should connection via UNIX socket be used?
-                                //  if you set it to 'true' or custom path
-                                //  here set dbhost to 'localhost',
-                                //  (please note mysql is always using socket
-                                //  if dbhost is 'localhost' - if you need
-                                //  local port connection use '127.0.0.1')
-    'dbport'    => '',          // the TCP port number to use when connecting
-                                //  to the server. keep empty string for the
-                                //  default port
-    'dbhandlesoptions' => false,// On PostgreSQL poolers like pgbouncer don't
-                                // support advanced options on connection.
-                                // If you set those in the database then
-                                // the advanced settings will not be sent.
-    'dbcollation' => 'utf8mb4_unicode_ci', // MySQL has partial and full UTF-8
-                                // support. If you wish to use partial UTF-8
-                                // (three bytes) then set this option to
-                                // 'utf8_unicode_ci'. If using the recommended
-                                // settings with full UTF-8 support this should
-                                // be set to 'utf8mb4_unicode_ci'. This option
-                                // should be removed for all other databases.
-    // 'versionfromdb' => false,   // On MySQL and MariaDB, this can force
-                                // the DB version to be evaluated using
-                                // the VERSION function instead of the version
-                                // provided by the PHP client which could be
-                                // wrong based on the DB server infrastructure,
-                                // e.g. PaaS on Azure. Default is false/unset.
-                                // Uncomment and set to true to force MySQL and
-                                // MariaDB to use 'SELECT VERSION();'.
-    // 'extrainfo' => [],       // Extra information for the DB driver, e.g. SQL Server,
-                                // has additional configuration according to its environment,
-                                // which the administrator can specify to alter and
-                                // override any connection options.
-    // 'ssl' => '',             // A connection mode string from the list below.
-                                // Not supported by all drivers.
-                                //   prefer       Use SSL if available - postgres default  Postgres only
-                                //   disable      Force non secure connection              Postgres only
-                                //   require      Force SSL                                Postgres and MySQL
-                                //   verify-full  Force SSL and verify root CA             Postgres and MySQL
-                                // All mode names are adopted from Postgres
-                                // and other databases align where possible:
-                                //   Postgres: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE
-                                //   MySql:    https://www.php.net/manual/en/mysqli.real-connect.php
-                                // It is worth noting that for MySQL require and verify-full are the same - in both cases
-                                // verification will take place if you specify hostname as a name,
-                                // and it will be omitted if you put an IP address.
-    // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
-                                // on the number of rows that are fetched into
-                                // memory when doing a large recordset query
-                                // (e.g. search indexing). Default is 100000.
-                                // Uncomment and set to a value to change it,
-                                // or zero to turn off the limit. You need to
-                                // set to zero if you are using pg_bouncer in
-                                // 'transaction' mode (it is fine in 'session'
-                                // mode).
-    // 'clientcompress' => true // Use compression protocol to communicate with the database server.
-                                // Decreases traffic from the database server.
-                                // Not needed if the databse is on the same host.
-                                // Currently supported only with mysqli, mariadb, and aurora drivers.
+$CFG->dbtype    = 'pgsql';                  // 'pgsql', 'mariadb', 'mysqli', 'auroramysql', 'sqlsrv' or 'oci'
+$CFG->dblibrary = 'native';                 // 'native' only at the moment
+$CFG->dbhost    = 'localhost';              // eg 'localhost' or 'db.isp.com' or IP
+$CFG->dbname    = 'moodle';                 // database name, eg moodle
+$CFG->dbuser    = 'username';               // your database username
+$CFG->dbpass    = 'password';               // your database password
+$CFG->prefix    = 'mdl_';                   // prefix to use for all table names
+$CFG->dboptions = [
+    'dbpersist' => false,                   // Should persistent database connections be
+                                            //   used? Set to 'false' for the most stable
+                                            //   setting, 'true' can improve performance
+                                            //   sometimes
+    'dbsocket'  => false,                   // Should connection via UNIX socket be used?
+                                            //   if you set it to 'true' or custom path
+                                            //   here set dbhost to 'localhost',
+                                            //   (please note mysql is always using socket
+                                            //   if dbhost is 'localhost' - if you need
+                                            //   local port connection use '127.0.0.1')
+    'dbport'    => '',                      // The TCP port number to use when connecting
+                                            //   to the server. Keep empty string for the
+                                            //   default port
+    'dbhandlesoptions' => false,            // On PostgreSQL poolers like pgbouncer don't
+                                            //   support advanced options on connection.
+                                            //   If you set those in the database then
+                                            //   the advanced settings will not be sent.
+    'dbcollation' => 'utf8mb4_unicode_ci',  // MySQL has partial and full UTF-8
+                                            //   support. If you wish to use partial UTF-8
+                                            //   (three bytes) then set this option to
+                                            //   'utf8_unicode_ci'. If using the recommended
+                                            //   settings with full UTF-8 support this should
+                                            //   be set to 'utf8mb4_unicode_ci'. This option
+                                            //   should be removed for all other databases.
+    // 'dbschema'  => '',                   // On PostgreSQL this sets the database schema to use
+                                            //   for the connection.
+    // 'dbtransactions' => null             // Set this to true to explicitly enable database transactions
+                                            //   for MySQL. By default only the following storage engines are
+                                            //   configured to use transactions: InnoDB, INNOBASE, BDB, XtraDB,
+                                            //   Aria, Falcon.
+    // 'versionfromdb' => false,            // On MySQL and MariaDB, this can force
+                                            //   the DB version to be evaluated using
+                                            //   the VERSION function instead of the version
+                                            //   provided by the PHP client which could be
+                                            //   wrong based on the DB server infrastructure,
+                                            //   e.g. PaaS on Azure. Default is false/unset.
+                                            //   Uncomment and set to true to force MySQL and
+                                            //   MariaDB to use 'SELECT VERSION();'.
+    // 'extrainfo' => [],                   // Extra information for the DB driver, e.g. SQL Server,
+                                            //   has additional configuration according to its environment,
+                                            //   which the administrator can specify to alter and
+                                            //   override any connection options.
+    // 'ssl' => '',                         // A connection mode string from the list below.
+                                            //   Not supported by all drivers.
+                                            //     prefer       Use SSL if available - postgres default  Postgres only
+                                            //     disable      Force non secure connection              Postgres only
+                                            //     require      Force SSL                                Postgres and MySQL
+                                            //     verify-full  Force SSL and verify root CA             Postgres and MySQL
+                                            //   All mode names are adopted from Postgres
+                                            //   and other databases align where possible:
+                                            //     Postgres: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE
+                                            //     MySQL:    https://www.php.net/manual/en/mysqli.real-connect.php
+                                            //   It is worth noting that for MySQL require and verify-full are the same - in both cases
+                                            //   verification will take place if you specify hostname as a name,
+                                            //   and it will be omitted if you put an IP address.
+    // 'fetchbuffersize' => 100000,         // On PostgreSQL, this option sets a limit
+                                            //   on the number of rows that are fetched into
+                                            //   memory when doing a large recordset query
+                                            //   (e.g. search indexing). Default is 100000.
+                                            //   Uncomment and set to a value to change it,
+                                            //   or zero to turn off the limit. You need to
+                                            //   set to zero if you are using pg_bouncer in
+                                            //   'transaction' mode (it is fine in 'session'
+                                            //   mode).
+    // 'clientcompress' => true             // Use compression protocol to communicate with the database server.
+                                            //   Decreases traffic from the database server.
+                                            //   Not needed if the databse is on the same host.
+                                            //   Currently supported only with mysqli, mariadb, and aurora drivers.
+    // 'connecttimeout' => null,            // Set connect timeout in seconds. Not all drivers support it.
+    // 'logall' => false,                   // Log all queries to the database. They are stored in the table log_queries.
+    // 'logslow' => 0,                      // Log slow queries to the database. They are stored in the table log_queries.
+                                            //   This parameter controls the threshold in milliseconds and requires an integer,
+                                            //   not a string!
+    // 'logerror' => false,                 // Log erroneous queries to the database. They are stored in the table log_queries.
+    // 'bulkinsertsize' => null,            // Set the bulk insert size for database operations. MySQL has a relatively small
+                                            //   query length limit by default, make sure 'max_allowed_packet' in my.cnf is
+                                            //   high enough if you set this setting.
+    // 'readonly' => [                      // Set to read-only slave details, to get safe reads
+                                            //   from there instead of the master node. Optional.
+                                            //   Currently supported by pgsql and mysqli variety classes.
+                                            //   If not supported silently ignored.
+    //  'instance' => [                     // Readonly slave connection parameters
+    //    [
+    //      'dbhost' => 'slave.dbhost',
+    //      'dbport' => '',                 // Defaults to master port
+    //      'dbuser' => '',                 // Defaults to master user
+    //      'dbpass' => '',                 // Defaults to master password
+    //    ],
+    //    [...],
+    //  ],
     /*
-    'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
-    'readonly' => [          // Set to read-only slave details, to get safe reads
-                             // from there instead of the master node. Optional.
-                             // Currently supported by pgsql and mysqli variety classes.
-                             // If not supported silently ignored.
-      'instance' => [        // Readonly slave connection parameters
-        [
-          'dbhost' => 'slave.dbhost',
-          'dbport' => '',    // Defaults to master port
-          'dbuser' => '',    // Defaults to master user
-          'dbpass' => '',    // Defaults to master password
-        ],
-        [...],
-      ],
-
     Instance(s) can alternatively be specified as:
-
       'instance' => 'slave.dbhost',
       'instance' => ['slave.dbhost1', 'slave.dbhost2'],
       'instance' => ['dbhost' => 'slave.dbhost', 'dbport' => '', 'dbuser' => '', 'dbpass' => ''],
@@ -146,9 +158,8 @@ $CFG->dboptions = array(
 
     More info available in lib/dml/moodle_read_slave_trait.php where the feature is implemented.
     ]
-     */
-// For all database config settings see https://docs.moodle.org/en/Database_settings
-);
+    */
+];
 
 
 //=========================================================================
