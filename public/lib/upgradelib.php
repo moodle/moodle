@@ -455,6 +455,12 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
+        // Removed in 5.1.
+        '/badges/classes/observer.php',
+        '/course/request_form.php',
+        '/course/templates/activitychooser.mustache',
+        '/lib/tests/xmlize_test.php',
+        '/message/templates/message_drawer_view_conversation_footer_unable_to_message.mustache',
         // Removed in 5.0.
         '/admin/process_email.php',
         '/badges/preferences_form.php',
