@@ -38200,12 +38200,12 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
  * If a table should continue using the original _reboot.scss styles, add the .table-reboot (styleless) class to opt out
  * of this reset.
  */
-table:not(.table):not(.ygtvtable):not(.table-reboot) thead,
-table:not(.table):not(.ygtvtable):not(.table-reboot) tbody,
-table:not(.table):not(.ygtvtable):not(.table-reboot) tfoot,
-table:not(.table):not(.ygtvtable):not(.table-reboot) tr,
-table:not(.table):not(.ygtvtable):not(.table-reboot) td,
-table:not(.table):not(.ygtvtable):not(.table-reboot) th {
+table:not(.table):not(.ygtvtable):not(.table-reboot):not(.yui3-datatable-table) thead,
+table:not(.table):not(.ygtvtable):not(.table-reboot):not(.yui3-datatable-table) tbody,
+table:not(.table):not(.ygtvtable):not(.table-reboot):not(.yui3-datatable-table) tfoot,
+table:not(.table):not(.ygtvtable):not(.table-reboot):not(.yui3-datatable-table) tr,
+table:not(.table):not(.ygtvtable):not(.table-reboot):not(.yui3-datatable-table) td,
+table:not(.table):not(.ygtvtable):not(.table-reboot):not(.yui3-datatable-table) th {
   border-color: var(--bs-border-color);
   border-style: solid;
   border-width: var(--bs-border-width);
