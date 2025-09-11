@@ -184,7 +184,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         global $OUTPUT;
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
         if ($analysed_item) {
-            echo "<table class=\"analysis itemtype_{$item->typ}\">";
+            echo "<table class=\"analysis itemtype_{$item->typ} table-reboot\">";
             echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
