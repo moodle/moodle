@@ -270,7 +270,6 @@ $string['search:activity'] = 'Feedback - activity information';
 $string['search_course'] = 'Search course';
 $string['searchcourses'] = 'Search courses';
 $string['searchcourses_help'] = 'Search for the code or name of the course(s) that you wish to associate with this feedback.';
-$string['selected_dump'] = 'Selected indexes of $SESSION variable are dumped below:';
 $string['send'] = 'Send';
 $string['send_message'] = 'Send notification';
 $string['show_all'] = 'Show all';
@@ -310,3 +309,6 @@ $string['whatfor'] = 'How would you like to apply the template?';
 
 // Deprecated since Moodle 4.5.
 $string['public'] = 'Public';
+
+// Deprecated since Moodle 5.2.
+$string['selected_dump'] = 'Selected indexes of $SESSION variable are dumped below:';

@@ -34,3 +34,19 @@ function feedback_check_is_switchrole(): bool {
     \core\deprecation::emit_deprecation(__FUNCTION__);
     return isset($USER->switchrole) && is_array($USER->switchrole) && count($USER->switchrole) > 0;
 }
+
+/**
+ * Initialize the feedback session
+ *
+ * @deprecated since Moodle 5.2 - please do not use this function any more
+ */
+#[\core\attribute\deprecated(since: '5.2', mdl: 'MDL-86607')]
+function feedback_init_feedback_session() {
+    global $SESSION;
+    \core\deprecation::emit_deprecation(__FUNCTION__);
+    if (!empty($SESSION)) {
+        if (!isset($SESSION->feedback) || !is_object($SESSION->feedback)) {
+            $SESSION->feedback = new stdClass();
+        }
+    }
+}

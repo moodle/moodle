@@ -1,0 +1,7 @@
+issueNumber: MDL-86607
+notes:
+  mod_feedback:
+    - message: >-
+        The method `feedback_init_feedback_session()` has been deprecated, along
+        with all other direct access to `$SESSION` from the module
+      type: deprecated

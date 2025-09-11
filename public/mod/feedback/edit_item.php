@@ -25,8 +25,6 @@
 require_once("../../config.php");
 require_once("lib.php");
 
-feedback_init_feedback_session();
-
 $itemid = optional_param('id', false, PARAM_INT);
 if (!$itemid) {
     $cmid = required_param('cmid', PARAM_INT);
