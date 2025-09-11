@@ -245,7 +245,7 @@ $allow-reset-style: true !default;
  * If a table should continue using the original _reboot.scss styles, add the .table-reboot (styleless) class to opt out
  * of this reset.
  */
-table:not(.table):not(.ygtvtable):not(.table-reboot) {
+table:not(.table):not(.ygtvtable):not(.table-reboot):not(.yui3-datatable-table) {
     thead,
     tbody,
     tfoot,
