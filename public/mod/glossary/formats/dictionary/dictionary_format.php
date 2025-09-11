@@ -4,7 +4,7 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
 
     global $CFG, $USER, $OUTPUT;
 
-    echo '<table class="glossarypost dictionary" cellspacing="0">';
+    echo '<table class="glossarypost dictionary table-reboot" cellspacing="0">';
     echo '<tr valign="top">';
     echo '<td class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);

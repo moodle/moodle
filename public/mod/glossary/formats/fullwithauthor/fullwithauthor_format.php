@@ -8,7 +8,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
     $strby = get_string('writtenby', 'glossary');
 
     if ($entry) {
-        echo '<table class="glossarypost fullwithauthor" cellspacing="0">';
+        echo '<table class="glossarypost fullwithauthor table-reboot" cellspacing="0">';
         echo '<tr valign="top">';
 
         echo '<td class="picture">';

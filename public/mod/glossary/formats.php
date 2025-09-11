@@ -67,7 +67,7 @@ $yes = get_string("yes");
 $no  = get_string("no");
 
 echo '<form method="post" action="formats.php" id="form">';
-echo '<table width="90%" align="center" class="generalbox">';
+echo '<table width="90%" align="center" class="generalbox table-reboot">';
 ?>
 <tr>
     <td colspan="3" align="center"><strong>

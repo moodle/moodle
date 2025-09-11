@@ -329,7 +329,7 @@ if ($xml = glossary_read_imported_file($result)) {
 
     // processed entries
     echo $OUTPUT->box_start('glossarydisplay generalbox');
-    echo '<table class="glossaryimportexport">';
+    echo '<table class="glossaryimportexport table-reboot">';
     echo '<tr>';
     echo '<td width="50%" align="right">';
     echo get_string("totalentries","glossary");
@@ -364,7 +364,7 @@ if ($xml = glossary_read_imported_file($result)) {
     // rejected entries
     if ($rejections) {
         echo $OUTPUT->heading(get_string("rejectionrpt","glossary"), 4);
-        echo '<table class="glossaryimportexport">';
+        echo '<table class="glossaryimportexport table-reboot">';
         echo $rejections;
         echo '</table><hr />';
     }
