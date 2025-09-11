@@ -4840,6 +4840,8 @@ function course_output_fragment_new_base_form($args) {
  *
  * @param array $args the fragment arguments
  * @return string the course overview fragment
+ *
+ * @throws require_login_exception
  */
 function course_output_fragment_course_overview($args) {
     global $PAGE;
@@ -4849,7 +4851,10 @@ function course_output_fragment_course_overview($args) {
     $modname = $args['modname'];
     $course = get_course($args['courseid']);
     $context = context_course::instance($course->id, MUST_EXIST);
-    can_access_course($course);
+
+    if (!can_access_course($course, null, '', true)) {
+        throw new require_login_exception('Course is not available');
+    }
 
     // Some plugins may have a list view event.
     $eventclassname = 'mod_' . $modname . '\\event\\course_module_instance_list_viewed';
