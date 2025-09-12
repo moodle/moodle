@@ -7,6 +7,9 @@
 - Theme can now inherit from their grand-parent and parents.  So if a child theme inherit from a parent theme that declares a new layout, the child theme can use it without redeclaring it. Also inheritance for layout uses the expected grandparent > parent > child with precedence to the child theme.
 
   For more information see [MDL-79319](https://tracker.moodle.org/browse/MDL-79319)
+- Tables affected by unwanted styling (e.g., borders) from the reset of Bootstrap _reboot.scss styles can now opt out and preserve the original behavior by adding the styleless .table-reboot class.
+
+  For more information see [MDL-86548](https://tracker.moodle.org/browse/MDL-86548)
 
 ### Deprecated
 
