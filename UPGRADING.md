@@ -41,6 +41,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-86311](https://tracker.moodle.org/browse/MDL-86311)
 
+### theme_boost
+
+#### Added
+
+- Tables affected by unwanted styling (e.g., borders) from the reset of Bootstrap _reboot.scss styles can now opt out and preserve the original behavior by adding the styleless .table-reboot class.
+
+  For more information see [MDL-86548](https://tracker.moodle.org/browse/MDL-86548)
+
 ## 5.0.2
 
 ### core
