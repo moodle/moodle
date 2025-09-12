@@ -133,8 +133,20 @@ class cohort extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.name")
-            ->set_is_sortable(true);
+            ->add_join($this->get_context_join())
+            ->add_field("{$tablealias}.name")
+            ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
+            ->set_is_sortable(true)
+            ->set_callback(static function (?string $name, stdClass $cohort): string {
+                if ($name === null || $cohort->ctxid === null) {
+                    return '';
+                }
+
+                context_helper::preload_from_record(clone $cohort);
+                $context = context::instance_by_id($cohort->ctxid);
+
+                return format_string($name, options: ['context' => $context]);
+            });
 
         // ID number column.
         $columns[] = (new column(
