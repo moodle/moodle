@@ -1614,9 +1614,11 @@ class grade_structure {
 
         if ($menuitems) {
             $menu = new action_menu($menuitems);
-            $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+            $label = get_string('actions');
+            $icon = $OUTPUT->pix_icon('i/moremenu', '') . \core\output\html_writer::span($label, 'visually-hidden d-inline-block');
             $extraclasses = 'btn btn-link btn-icon d-flex no-caret';
             $menu->set_menu_trigger($icon, $extraclasses);
+            $menu->triggerattributes['title'] = $label;
             $menu->set_menu_left();
 
             return $OUTPUT->render($menu);
