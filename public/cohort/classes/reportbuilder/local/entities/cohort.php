@@ -18,20 +18,14 @@ declare(strict_types=1);
 
 namespace core_cohort\reportbuilder\local\entities;
 
-use lang_string;
 use stdClass;
 use theme_config;
 use core\{context, context_helper};
+use core\lang_string;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\cohort as cohort_filter;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\helpers\custom_fields;
-use core_reportbuilder\local\helpers\format;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\filters\{boolean_select, cohort as cohort_filter, date, select, text};
+use core_reportbuilder\local\helpers\{custom_fields, format};
+use core_reportbuilder\local\report\{column, filter};
 
 /**
  * Cohort entity
@@ -132,8 +126,20 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_fields("{$tablealias}.name")
-            ->set_is_sortable(true);
+            ->add_join($this->get_context_join())
+            ->add_field("{$tablealias}.name")
+            ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
+            ->set_is_sortable(true)
+            ->set_callback(static function (?string $name, stdClass $cohort): string {
+                if ($name === null || $cohort->ctxid === null) {
+                    return '';
+                }
+
+                context_helper::preload_from_record(clone $cohort);
+                $context = context::instance_by_id($cohort->ctxid);
+
+                return format_string($name, options: ['context' => $context]);
+            });
 
         // ID number column.
         $columns[] = (new column(
