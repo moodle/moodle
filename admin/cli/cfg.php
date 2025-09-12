@@ -128,7 +128,10 @@ if ($options['unset'] || $options['set'] !== null) {
         $settinginconfig = array_key_exists($options['name'], $CFG->config_php_settings);
     }
     if ($settinginconfig) {
-        cli_error('The configuration variable is hard-set in the config.php, unable to change.', 4);
+        $variablename = !empty($component)
+            ? "\$CFG->forced_plugin_settings['{$component}']['{$options['name']}']"
+            : "\$CFG->{$options['name']}";
+        cli_error("The configuration variable {$variablename} is set in config.php, unable to change.", 4);
     }
 
     $new = $options['set'];
