@@ -8,6 +8,8 @@ use ZipStream\Exception;
 
 /**
  * This Exception gets invoked if a file wasn't found
+ *
+ * @api
  */
 class FileNotFoundException extends Exception
 {

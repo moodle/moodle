@@ -10,7 +10,7 @@ use RuntimeException;
  * @internal
  * TODO: Make class readonly when requiring PHP 8.2 exclusively
  */
-class PackField
+final class PackField
 {
     public const MAX_V = 0xFFFFFFFF;
 

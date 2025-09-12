@@ -6,6 +6,8 @@ namespace ZipStream;
 
 /**
  * ZipStream execution operation modes
+ *
+ * @api
  */
 enum OperationMode
 {

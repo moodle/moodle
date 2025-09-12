@@ -9,6 +9,8 @@ use ZipStream\Exception;
 /**
  * This Exception gets invoked if a non seekable stream is
  * provided and zero headers are disabled.
+ *
+ * @api
  */
 class StreamNotSeekableException extends Exception
 {

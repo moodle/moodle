@@ -18,7 +18,7 @@ use ZipStream\Exception\StreamNotSeekableException;
 /**
  * @internal
  */
-class File
+final class File
 {
     private const CHUNKED_READ_BLOCK_SIZE = 0x1000000;
 

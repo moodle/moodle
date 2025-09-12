@@ -611,7 +611,7 @@ All rights reserved.</copyright>
     <location>zipstream</location>
     <name>ZipStream-PHP</name>
     <description>PHP ZIP Streaming Library</description>
-    <version>3.1.2</version>
+    <version>3.2.0</version>
     <license>MIT</license>
     <repository>https://github.com/maennchen/ZipStream-PHP</repository>
     <copyrights>

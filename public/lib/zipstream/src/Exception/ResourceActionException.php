@@ -8,6 +8,8 @@ use ZipStream\Exception;
 
 /**
  * This Exception gets invoked if a resource like `fread` returns false
+ *
+ * @api
  */
 class ResourceActionException extends Exception
 {
