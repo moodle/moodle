@@ -116,14 +116,17 @@ class mod_feedback_templates_table extends core_table\flexible_table {
         global $PAGE, $OUTPUT;
 
         $url = new moodle_url($this->baseurl, ['templateid' => $template->id, 'sesskey' => sesskey()]);
-        $strdeletefeedback = get_string('delete_template', 'feedback');
         $actions = new action_menu();
-        $actions->set_menu_trigger($OUTPUT->pix_icon('a/setting', get_string('actions')));
+        $label = get_string('actions');
+        $triggercontent = $OUTPUT->pix_icon('a/setting', '') .
+            \core\output\html_writer::span($label, 'visually-hidden d-inline-block');
+        $actions->set_menu_trigger($triggercontent, 'btn btn-link btn-sm');
+        $actions->triggerattributes['title'] = $label;
 
         // Preview.
         $actions->add(new link_secondary(
             new moodle_url($this->baseurl, ['templateid' => $template->id, 'sesskey' => sesskey()]),
-            new pix_icon('t/preview', get_string('preview')),
+            new pix_icon('t/preview', ''),
             get_string('preview'),
         ));
 
@@ -132,7 +135,7 @@ class mod_feedback_templates_table extends core_table\flexible_table {
             $PAGE->requires->js_call_amd('mod_feedback/usetemplate', 'init');
             $actions->add(new link_secondary(
                 new moodle_url('#'),
-                new pix_icon('i/files', get_string('preview')),
+                new pix_icon('i/files', ''),
                 get_string('use_this_template', 'mod_feedback'),
                 ['data-action' => 'usetemplate', 'data-dataid' => $this->cmid, 'data-templateid' => $template->id],
             ));
@@ -156,7 +159,7 @@ class mod_feedback_templates_table extends core_table\flexible_table {
                 get_string('delete'),
                 new confirm_action(get_string('confirmdeletetemplate', 'feedback')),
                 ['class' => 'text-danger'],
-                new pix_icon('t/delete', $strdeletefeedback),
+                new pix_icon('t/delete', ''),
             );
             $actions->add_secondary_action($deleteaction);
         }
