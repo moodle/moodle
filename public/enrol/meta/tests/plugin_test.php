@@ -1258,4 +1258,57 @@ final class plugin_test extends \advanced_testcase {
         $instance = $metaplugin->find_instance($enrolmentdata, $course1->id);
         $this->assertEquals($instance2->id, $instance->id);
     }
+
+    /**
+     * Test the display name is linked to the meta course depending on permissions.
+     *
+     * @covers ::get_instance_name_for_management_page
+     * @return void
+     */
+    public function test_get_instance_name_for_management_page(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $cat = $this->getDataGenerator()->create_category();
+        $course1 = $this->getDataGenerator()->create_course(['category' => $cat->id, 'shortname' => 'course1']);
+        $course2 = $this->getDataGenerator()->create_course(['category' => $cat->id, 'shortname' => 'course2']);
+        $course3 = $this->getDataGenerator()->create_course(['category' => $cat->id, 'shortname' => 'course3']);
+
+        $metaplugin = enrol_get_plugin('meta');
+
+        $teacher1 = $this->getDataGenerator()->create_and_enrol($course1, 'editingteacher');
+        $teacher2 = $this->getDataGenerator()->create_and_enrol($course2, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($teacher1->id, $course3->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($teacher2->id, $course3->id, 'editingteacher');
+
+        // Add two meta enrol instances.
+        $instanceid1 = $metaplugin->add_instance($course3, ['customint1' => $course1->id]);
+        $instanceid2 = $metaplugin->add_instance($course3, ['customint1' => $course2->id]);
+        $instance1 = $DB->get_record('enrol', ['id' => $instanceid1]);
+        $instance2 = $DB->get_record('enrol', ['id' => $instanceid2]);
+
+        $this->setUser($teacher1);
+        $this->assertMatchesRegularExpression(
+            '#<a href="[^"]+user/index.php\?id=' . $course1->id . '">Course meta link \(Test course 1\)<\/a>#',
+            $metaplugin->get_instance_name_for_management_page($instance1),
+            'Teacher1 has permissions to view Course 1 so should have a link'
+        );
+        $this->assertEquals(
+            'Course meta link (Test course 2)',
+            $metaplugin->get_instance_name_for_management_page($instance2),
+            "Teacher1 doesn't have permissions to view Course 2 so no link"
+        );
+
+        $this->setUser($teacher2);
+        $this->assertEquals(
+            'Course meta link (Test course 1)',
+            $metaplugin->get_instance_name_for_management_page($instance1),
+            "Teacher2 doesn't have permissions to view Course 1 so no link"
+        );
+        $this->assertMatchesRegularExpression(
+            '#<a href="[^"]+user/index.php\?id=' . $course2->id . '">Course meta link \(Test course 2\)<\/a>#',
+            $metaplugin->get_instance_name_for_management_page($instance2),
+            'Teacher2 has permissions to view Course 2 so should have a link'
+        );
+    }
 }

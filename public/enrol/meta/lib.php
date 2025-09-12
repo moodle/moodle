@@ -22,6 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\html_writer;
+use core\url;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -61,6 +64,22 @@ class enrol_meta_plugin extends enrol_plugin {
         } else {
             return format_string($instance->name);
         }
+    }
+
+    /**
+     * Display meta course name with link if user has permissions.
+     *
+     * @param stdClass $instance
+     * @return string
+     */
+    public function get_instance_name_for_management_page(stdClass $instance): string {
+        $displayname = $this->get_instance_name($instance);
+        $metacoursecontext = \core\context\course::instance($instance->customint1);
+        $canviewmetacourse = course_can_view_participants($metacoursecontext);
+        if ($canviewmetacourse) {
+            $displayname = html_writer::link(new url('/user/index.php', ['id' => $instance->customint1]), $displayname);
+        }
+        return $displayname;
     }
 
     /**
