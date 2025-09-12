@@ -49,6 +49,9 @@ require_once($CFG->dirroot . '/course/lib.php');
  */
 class course extends base {
 
+    /** @var custom_fields $customfields */
+    private custom_fields $customfields;
+
     /**
      * Database tables that this entity uses
      *
@@ -80,7 +83,7 @@ class course extends base {
     public function initialise(): base {
         $tablealias = $this->get_table_alias('course');
 
-        $customfields = (new custom_fields(
+        $this->customfields = (new custom_fields(
             "{$tablealias}.id",
             $this->get_entity_name(),
             'core_course',
@@ -88,20 +91,7 @@ class course extends base {
         ))
             ->add_joins($this->get_joins());
 
-        $columns = array_merge($this->get_all_columns(), $customfields->get_columns());
-        foreach ($columns as $column) {
-            $this->add_column($column);
-        }
-
-        // All the filters defined by the entity can also be used as conditions.
-        $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
-        foreach ($filters as $filter) {
-            $this
-                ->add_condition($filter)
-                ->add_filter($filter);
-        }
-
-        return $this;
+        return parent::initialise();
     }
 
     /**
@@ -192,7 +182,7 @@ class course extends base {
      *
      * @return column[]
      */
-    protected function get_all_columns(): array {
+    protected function get_available_columns(): array {
         $coursefields = $this->get_course_fields();
         $tablealias = $this->get_table_alias('course');
         $contexttablealias = $this->get_table_alias('context');
@@ -271,7 +261,8 @@ class course extends base {
             $columns[] = $column;
         }
 
-        return $columns;
+        // Merge with custom field columns.
+        return array_merge($columns, $this->customfields->get_columns());
     }
 
     /**
@@ -279,7 +270,7 @@ class course extends base {
      *
      * @return array
      */
-    protected function get_all_filters(): array {
+    protected function get_available_filters(): array {
         $filters = [];
         $tablealias = $this->get_table_alias('course');
 
@@ -323,7 +314,8 @@ class course extends base {
         ))
             ->add_joins($this->get_joins());
 
-        return $filters;
+        // Merge with custom field filters.
+        return array_merge($filters, $this->customfields->get_filters());
     }
 
     /**

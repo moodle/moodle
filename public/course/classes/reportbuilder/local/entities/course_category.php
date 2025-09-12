@@ -61,33 +61,11 @@ class course_category extends base {
     }
 
     /**
-     * Initialise the entity
-     *
-     * @return base
-     */
-    public function initialise(): base {
-        $columns = $this->get_all_columns();
-        foreach ($columns as $column) {
-            $this->add_column($column);
-        }
-
-        // All the filters defined by the entity can also be used as conditions.
-        $filters = $this->get_all_filters();
-        foreach ($filters as $filter) {
-            $this
-                ->add_filter($filter)
-                ->add_condition($filter);
-        }
-
-        return $this;
-    }
-
-    /**
      * Returns list of all available columns
      *
      * @return column[]
      */
-    protected function get_all_columns(): array {
+    protected function get_available_columns(): array {
         $tablealias = $this->get_table_alias('course_categories');
         $tablealiascontext = $this->get_table_alias('context');
 
@@ -231,7 +209,7 @@ class course_category extends base {
      *
      * @return filter[]
      */
-    protected function get_all_filters(): array {
+    protected function get_available_filters(): array {
         $tablealias = $this->get_table_alias('course_categories');
 
         // Select category filter.

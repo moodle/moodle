@@ -42,6 +42,9 @@ use core_reportbuilder\local\report\filter;
  */
 class cohort extends base {
 
+    /** @var custom_fields $customfields */
+    private custom_fields $customfields;
+
     /**
      * Database tables that this entity uses
      *
@@ -71,7 +74,7 @@ class cohort extends base {
     public function initialise(): base {
         $tablealias = $this->get_table_alias('cohort');
 
-        $customfields = (new custom_fields(
+        $this->customfields = (new custom_fields(
             "{$tablealias}.id",
             $this->get_entity_name(),
             'core_cohort',
@@ -79,20 +82,7 @@ class cohort extends base {
         ))
             ->add_joins($this->get_joins());
 
-        $columns = array_merge($this->get_all_columns(), $customfields->get_columns());
-        foreach ($columns as $column) {
-            $this->add_column($column);
-        }
-
-        // All the filters defined by the entity can also be used as conditions.
-        $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
-        foreach ($filters as $filter) {
-            $this
-                ->add_filter($filter)
-                ->add_condition($filter);
-        }
-
-        return $this;
+        return parent::initialise();
     }
 
     /**
@@ -100,7 +90,7 @@ class cohort extends base {
      *
      * @return column[]
      */
-    protected function get_all_columns(): array {
+    protected function get_available_columns(): array {
         $tablealias = $this->get_table_alias('cohort');
         $contextalias = $this->get_table_alias('context');
 
@@ -246,7 +236,8 @@ class cohort extends base {
                 };
             });
 
-        return $columns;
+        // Merge with custom field columns.
+        return array_merge($columns, $this->customfields->get_columns());
     }
 
     /**
@@ -254,7 +245,7 @@ class cohort extends base {
      *
      * @return filter[]
      */
-    protected function get_all_filters(): array {
+    protected function get_available_filters(): array {
         $tablealias = $this->get_table_alias('cohort');
 
         // Cohort select filter.
@@ -361,7 +352,8 @@ class cohort extends base {
         ))
             ->add_joins($this->get_joins());
 
-        return $filters;
+        // Merge with custom field filters.
+        return array_merge($filters, $this->customfields->get_filters());
     }
 
     /**
