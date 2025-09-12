@@ -345,7 +345,7 @@ EOF;
         $output = html_writer::table($table);
         $expected = <<<EOF
 <table class="generaltable table" id="whodat">
-<caption class="accesshide">Who even knows?</caption><tbody><tr class="">
+<caption class="visually-hidden">Who even knows?</caption><tbody><tr class="">
 <td class="cell c0" style="">fred</td>
 <td class="cell c1 lastcol" style="">MDK</td>
 </tr>
