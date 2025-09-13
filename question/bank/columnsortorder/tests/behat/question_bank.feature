@@ -70,8 +70,7 @@ Feature: Set question bank column order and size
     Given I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
     And I apply question bank filter "Category" with value "Question category 1"
     And "Comments" "qbank_columnsortorder > column header" should exist
-    And I click on "Actions menu" "link" in the "Comments" "qbank_columnsortorder > column header"
-    And I choose "Remove" in the open action menu
+    And I choose the "Remove" item in the "Actions menu" action menu of the "Comments" "qbank_columnsortorder > column header"
     Then "Comments" "qbank_columnsortorder > column header" should not exist
     And I reload the page
     And "Comments" "qbank_columnsortorder > column header" should not exist
@@ -90,8 +89,7 @@ Feature: Set question bank column order and size
     Given I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
     And I apply question bank filter "Category" with value "Question category 1"
     And the "style" attribute of "Question" "qbank_columnsortorder > column header" should contain "width: 300px"
-    When I click on "Actions menu" "link" in the "Question" "qbank_columnsortorder > column header"
-    And I choose "Resize" in the open action menu
+    When I choose the "Resize" item in the "Actions menu" action menu of the "Question" "qbank_columnsortorder > column header"
     And I set the field "Column width (pixels)" to "400"
     And I press "Save changes"
     Then the "style" attribute of "Question" "qbank_columnsortorder > column header" should contain "width: 400px"
@@ -113,8 +111,7 @@ Feature: Set question bank column order and size
     Given I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
     And I apply question bank filter "Category" with value "Question category 1"
     And "Comments" "qbank_columnsortorder > column header" should appear before "Question" "qbank_columnsortorder > column header"
-    When I click on "Actions menu" "link" in the "Comments" "qbank_columnsortorder > column header"
-    And I choose "Move" in the open action menu
+    When I choose the "Move" item in the "Actions menu" action menu of the "Comments" "qbank_columnsortorder > column header"
     And I follow "After \"Question\""
     Then "Comments" "qbank_columnsortorder > column header" should appear after "Question" "qbank_columnsortorder > column header"
     And I reload the page
@@ -152,10 +149,8 @@ Feature: Set question bank column order and size
       | Field 2 | Category for test | text | f2        | {"visibility":"2"} |
     And I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
     And I apply question bank filter "Category" with value "Question category 1"
-    And I click on "Actions menu" "link" in the "Field 1" "qbank_columnsortorder > column header"
-    And I choose "Remove" in the open action menu
-    And I click on "Actions menu" "link" in the "Field 2" "qbank_columnsortorder > column header"
-    And I choose "Remove" in the open action menu
+    And I choose the "Remove" item in the "Actions menu" action menu of the "Field 1" "qbank_columnsortorder > column header"
+    And I choose the "Remove" item in the "Actions menu" action menu of the "Field 2" "qbank_columnsortorder > column header"
     And "Field 2" "qbank_columnsortorder > column header" should not exist
 
     # Delete a question custom field.
