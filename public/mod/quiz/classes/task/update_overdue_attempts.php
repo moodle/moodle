@@ -108,8 +108,7 @@ class update_overdue_attempts extends \core\task\scheduled_task {
             } catch (moodle_exception $e) {
                 // If an error occurs while processing one attempt, don't let that kill cron.
                 mtrace("Error while processing attempt $attempt->id at $attempt->quiz quiz:");
-                mtrace($e->getMessage());
-                mtrace($e->getTraceAsString());
+                mtrace_exception($e);
                 // Close down any currently open transactions, otherwise one error
                 // will stop following DB changes from being committed.
                 $DB->force_transaction_rollback();
