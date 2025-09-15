@@ -64,7 +64,12 @@ foreach ($users as $user) {
     $fieldvalues = [];
     foreach ($extrafields as $field) {
         if ($user->{$field}) {
-            $fieldvalues[] = $user->{$field};
+            $fieldcontent = $user->{$field};
+            if ($field === 'country') {
+                $countries = get_string_manager()->get_list_of_countries();
+                $fieldcontent = $countries[$fieldcontent] ?? $fieldcontent;
+            }
+            $fieldvalues[] = $fieldcontent;
         }
     }
     $newuser->extrafields = implode(', ', $fieldvalues);
