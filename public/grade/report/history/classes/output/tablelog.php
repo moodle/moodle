@@ -214,6 +214,17 @@ class tablelog extends \table_sql implements \renderable {
     }
 
     /**
+     * Display name of country
+     *
+     * @param \stdClass $history
+     * @return string
+     */
+    public function col_country(\stdClass $history): string {
+        $countries = get_string_manager()->get_list_of_countries();
+        return $countries[$history->country] ?? $history->country;
+    }
+
+    /**
      * Method to display the final grade.
      *
      * @param \stdClass $history an entry of history record.
