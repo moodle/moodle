@@ -1487,6 +1487,11 @@ function scorm_delete_attempt($userid, $scorm, $attemptornumber) {
         $attempt = $attemptornumber;
     } else {
         $attempt = scorm_get_attempt($userid, $scorm->id, $attemptornumber, false);
+
+        // The attempt doesn't exist.
+        if ($attempt === null) {
+            return true;
+        }
     }
 
     scorm_delete_tracks($scorm->id, null, $userid, $attempt->id);
