@@ -33,21 +33,21 @@ Feature: Users can use the Journal preset
     When I am on the "Student reflections" "data activity" page logged in as student1
     Then I should see "Reflection created by student"
     And I should see "This is the content for the entry 1"
-    And "Actions" "icon" should exist in the "#journal-list" "css_element"
+    And "Actions" "button" should exist in the "#journal-list" "css_element"
     And I should see "Reflection created by teacher"
     And I should see "And this is the content for the entry 2"
     # Single view.
     And I select "Single view" from the "jump" singleselect
     And I should see "Reflection created by student"
     And I should see "This is the content for the entry 1"
-    And "Actions" "icon" should exist in the ".journal-single" "css_element"
+    And "Actions" "button" should exist in the ".journal-single" "css_element"
     And I should not see "Reflection created by teacher"
     And I should not see "And this is the content for the entry 2"
     And I follow "Next"
     And I should see "Reflection created by teacher"
     And I should see "And this is the content for the entry 2"
     # This student can't edit or delete this entry, so the Actions menu shouldn't be displayed.
-    And "Actions" "icon" should not exist in the ".journal-single" "css_element"
+    And "Actions" "button" should not exist in the ".journal-single" "css_element"
     And I should not see "Reflection created by student"
     And I should not see "This is the content for the entry 1"
 
