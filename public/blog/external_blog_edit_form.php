@@ -82,7 +82,7 @@ class blog_edit_external_form extends moodleform {
         $rssfile = $rss->registry->create('File', array($data['url']));
         $filetest = $rss->registry->create('Locator', array($rssfile));
 
-        if (!$filetest->is_feed($rssfile)) {
+        if (empty($rssfile->success) || !$filetest->is_feed($rssfile)) {
             $errors['url'] = get_string('feedisinvalid', 'blog');
         } else {
             $rss->set_feed_url($data['url']);
