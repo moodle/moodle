@@ -413,8 +413,8 @@ $tasks = array(
     [
         'classname' => 'core\task\task_lock_cleanup_task',
         'blocking' => 0,
-        'minute' => 'R',
-        'hour' => '0',
+        'minute' => '*/10',
+        'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'
