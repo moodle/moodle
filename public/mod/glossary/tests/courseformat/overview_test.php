@@ -21,18 +21,15 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for Glossary
  *
- * @covers     \mod_glossary\courseformat\overview
  * @package    mod_glossary
  * @category   test
  * @copyright  2025 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview.
-     *
-     * @covers ::get_actions_overview
-     * @dataProvider provider_test_get_actions_overview
      *
      * @param string $role
      * @param bool $requireapproval
@@ -40,6 +37,7 @@ final class overview_test extends \advanced_testcase {
      * @param array|null $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(
         string $role,
         bool $requireapproval,
@@ -102,45 +100,43 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'role' => 'student',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => null,
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'role' => 'student',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => null,
+        ];
+        yield 'Teacher with entries (non-require approval)' => [
+            'role' => 'editingteacher',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => 0,
+                'content' => get_string('view'),
             ],
-            'Teacher with entries (non-require approval)' => [
-                'role' => 'editingteacher',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => 0,
-                    'content' => get_string('view'),
-                ],
+        ];
+        yield 'Teacher without entries (require approval)' => [
+            'role' => 'editingteacher',
+            'requireapproval' => true,
+            'hasentries' => false,
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => 0,
+                'content' => get_string('view'),
             ],
-            'Teacher without entries (require approval)' => [
-                'role' => 'editingteacher',
-                'requireapproval' => true,
-                'hasentries' => false,
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => 0,
-                    'content' => get_string('view'),
-                ],
-            ],
-            'Teacher with entries (require approval)' => [
-                'role' => 'editingteacher',
-                'requireapproval' => true,
-                'hasentries' => true,
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => 2,
-                    'content' => get_string('approve', 'mod_glossary'),
-                ],
+        ];
+        yield 'Teacher with entries (require approval)' => [
+            'role' => 'editingteacher',
+            'requireapproval' => true,
+            'hasentries' => true,
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => 2,
+                'content' => get_string('approve', 'mod_glossary'),
             ],
         ];
     }
@@ -148,14 +144,12 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_comments_overview.
      *
-     * @covers ::get_extra_comments_overview
-     * @dataProvider provider_test_get_extra_comments_overview
-     *
      * @param string $role The role of the current user.
      * @param bool $requireapproval Whether approval is required for entries.
      * @param bool $hasentries Whether there are entries in the glossary.
      * @param string|null $expected Expected value for the overview item.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_comments_overview')]
     public function test_get_extra_comments_overview(
         string $role,
         bool $requireapproval,
@@ -256,59 +250,55 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_comments_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_extra_comments_overview(): array {
-        return [
-            'Teacher without responses' => [
-                'role' => 'editingteacher',
-                'requireapproval' => false,
-                'hasentries' => false,
-                'expected' => '0',
-            ],
-            'Teacher with responses (non-require approval)' => [
-                'role' => 'editingteacher',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => '5',
-            ],
-            'Teacher with responses (require approval)' => [
-                'role' => 'editingteacher',
-                'requireapproval' => true,
-                'hasentries' => true,
-                'expected' => '5',
-            ],
-            'Student without responses' => [
-                'role' => 'student',
-                'requireapproval' => false,
-                'hasentries' => false,
-                'expected' => '0',
-            ],
-            'Student with responses (non-require approval)' => [
-                'role' => 'student',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => '5',
-            ],
-            'Student with responses (require approval)' => [
-                'role' => 'student',
-                'requireapproval' => true,
-                'hasentries' => true,
-                'expected' => '4', // One comment is from an unapproved entry created by a different user.
-            ],
+    public static function provider_test_get_extra_comments_overview(): \Generator {
+        yield 'Teacher without responses' => [
+            'role' => 'editingteacher',
+            'requireapproval' => false,
+            'hasentries' => false,
+            'expected' => '0',
+        ];
+        yield 'Teacher with responses (non-require approval)' => [
+            'role' => 'editingteacher',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => '5',
+        ];
+        yield 'Teacher with responses (require approval)' => [
+            'role' => 'editingteacher',
+            'requireapproval' => true,
+            'hasentries' => true,
+            'expected' => '5',
+        ];
+        yield 'Student without responses' => [
+            'role' => 'student',
+            'requireapproval' => false,
+            'hasentries' => false,
+            'expected' => '0',
+        ];
+        yield 'Student with responses (non-require approval)' => [
+            'role' => 'student',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => '5',
+        ];
+        yield 'Student with responses (require approval)' => [
+            'role' => 'student',
+            'requireapproval' => true,
+            'hasentries' => true,
+            'expected' => '4', // One comment is from an unapproved entry created by a different user.
         ];
     }
 
     /**
      * Test get_extra_comments_overview when comments are not allowed.
      *
-     * @covers ::get_extra_comments_overview
-     * @dataProvider provider_test_get_extra_comments_overview_with_comments_disabled
-     *
      * @param bool $usecomments Whether comments are allowed globally.
      * @param bool $allowcomments Whether comments are allowed in the glossary.
      * @param string $expected Expected value for the overview item.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_comments_overview_with_comments_disabled')]
     public function test_get_extra_comments_overview_with_comments_disabled(
         bool $usecomments,
         bool $allowcomments,
@@ -340,38 +330,33 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_comments_overview_with_comments_disabled.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_extra_comments_overview_with_comments_disabled(): array {
-        return [
-            'Use comments disabled, allow comments disabled' => [
-                'usecomments' => false,
-                'allowcomments' => false,
-                'expected' => '-',
-            ],
-            'Use comments enabled, allow comments disabled' => [
-                'usecomments' => true,
-                'allowcomments' => false,
-                'expected' => '-',
-            ],
-            'Use comments disabled, allow comments enabled' => [
-                'usecomments' => false,
-                'allowcomments' => true,
-                'expected' => '-',
-            ],
-            'Use comments enabled, allow comments enabled' => [
-                'usecomments' => true,
-                'allowcomments' => true,
-                'expected' => '0',
-            ],
+    public static function provider_test_get_extra_comments_overview_with_comments_disabled(): \Generator {
+        yield 'Use comments disabled, allow comments disabled' => [
+            'usecomments' => false,
+            'allowcomments' => false,
+            'expected' => '-',
+        ];
+        yield 'Use comments enabled, allow comments disabled' => [
+            'usecomments' => true,
+            'allowcomments' => false,
+            'expected' => '-',
+        ];
+        yield 'Use comments disabled, allow comments enabled' => [
+            'usecomments' => false,
+            'allowcomments' => true,
+            'expected' => '-',
+        ];
+        yield 'Use comments enabled, allow comments enabled' => [
+            'usecomments' => true,
+            'allowcomments' => true,
+            'expected' => '0',
         ];
     }
 
     /**
      * Test get_extra_totalentries_overview.
-     *
-     * @covers ::get_extra_totalentries_overview
-     * @dataProvider provider_test_get_extra_totalentries_overview
      *
      * @param string $role
      * @param bool $requireapproval
@@ -379,6 +364,7 @@ final class overview_test extends \advanced_testcase {
      * @param array $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_totalentries_overview')]
     public function test_get_extra_totalentries_overview(
         string $role,
         bool $requireapproval,
@@ -441,45 +427,43 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_submitted_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_extra_totalentries_overview(): array {
-        return [
-            'Teacher with entries (non-require approval)' => [
-                'role' => 'editingteacher',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => [
-                    'name' => get_string('entries', 'mod_glossary'),
-                    'value' => 4,
-                ],
+    public static function provider_test_get_extra_totalentries_overview(): \Generator {
+        yield 'Teacher with entries (non-require approval)' => [
+            'role' => 'editingteacher',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => [
+                'name' => get_string('entries', 'mod_glossary'),
+                'value' => 4,
             ],
-            'Student without entries' => [
-                'role' => 'student',
-                'requireapproval' => false,
-                'hasentries' => false,
-                'expected' => [
-                    'name' => get_string('totalentries', 'mod_glossary'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Student without entries' => [
+            'role' => 'student',
+            'requireapproval' => false,
+            'hasentries' => false,
+            'expected' => [
+                'name' => get_string('totalentries', 'mod_glossary'),
+                'value' => 0,
             ],
-            'Student with entries (non-require approval)' => [
-                'role' => 'student',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => [
-                    'name' => get_string('totalentries', 'mod_glossary'),
-                    'value' => 4,
-                ],
+        ];
+        yield 'Student with entries (non-require approval)' => [
+            'role' => 'student',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => [
+                'name' => get_string('totalentries', 'mod_glossary'),
+                'value' => 4,
             ],
-            'Student with entries (require approval)' => [
-                'role' => 'student',
-                'requireapproval' => true,
-                'hasentries' => true,
-                'expected' => [
-                    'name' => get_string('totalentries', 'mod_glossary'),
-                    'value' => 3,
-                ],
+        ];
+        yield 'Student with entries (require approval)' => [
+            'role' => 'student',
+            'requireapproval' => true,
+            'hasentries' => true,
+            'expected' => [
+                'name' => get_string('totalentries', 'mod_glossary'),
+                'value' => 3,
             ],
         ];
     }
@@ -487,15 +471,13 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_myentries_overview.
      *
-     * @covers ::get_extra_myentries_overview
-     * @dataProvider provider_test_get_extra_myentries_overview
-     *
      * @param string $role
      * @param bool $requireapproval
      * @param bool $hasentries
      * @param array|null $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_myentries_overview')]
     public function test_get_extra_myentries_overview(
         string $role,
         bool $requireapproval,
@@ -563,42 +545,40 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_submitted_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_extra_myentries_overview(): array {
-        return [
-            'Teacher' => [
-                'role' => 'editingteacher',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => null,
+    public static function provider_test_get_extra_myentries_overview(): \Generator {
+        yield 'Teacher' => [
+            'role' => 'editingteacher',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => null,
+        ];
+        yield 'Student without responses' => [
+            'role' => 'student',
+            'requireapproval' => false,
+            'hasentries' => false,
+            'expected' => [
+                'name' => get_string('myentries', 'mod_glossary'),
+                'value' => 0,
             ],
-            'Student without responses' => [
-                'role' => 'student',
-                'requireapproval' => false,
-                'hasentries' => false,
-                'expected' => [
-                    'name' => get_string('myentries', 'mod_glossary'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Student with responses (non-require approval)' => [
+            'role' => 'student',
+            'requireapproval' => false,
+            'hasentries' => true,
+            'expected' => [
+                'name' => get_string('myentries', 'mod_glossary'),
+                'value' => 1,
             ],
-            'Student with responses (non-require approval)' => [
-                'role' => 'student',
-                'requireapproval' => false,
-                'hasentries' => true,
-                'expected' => [
-                    'name' => get_string('myentries', 'mod_glossary'),
-                    'value' => 1,
-                ],
-            ],
-            'Student with responses (require approval)' => [
-                'role' => 'student',
-                'requireapproval' => true,
-                'hasentries' => true,
-                'expected' => [
-                    'name' => get_string('myentries', 'mod_glossary'),
-                    'value' => 1,
-                ],
+        ];
+        yield 'Student with responses (require approval)' => [
+            'role' => 'student',
+            'requireapproval' => true,
+            'hasentries' => true,
+            'expected' => [
+                'name' => get_string('myentries', 'mod_glossary'),
+                'value' => 1,
             ],
         ];
     }

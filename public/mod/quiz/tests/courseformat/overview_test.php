@@ -27,16 +27,16 @@ use mod_quiz\quiz_settings;
  * @category   test
  * @copyright   2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\courseformat\overview
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     /**
      * Test get_due_date_overview.
      *
      * @param int|null $timeincrement the time increment in seconds to add to the current time for the deadline.
      * @return void
-     * @dataProvider provider_test_get_due_date_overview
-     **/
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_due_date_overview')]
     public function test_get_due_date_overview(?int $timeincrement): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -65,19 +65,17 @@ final class overview_test extends \advanced_testcase {
     /**
      * Provider for test_get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_due_date_overview(): array {
-        return [
-            'no_due' => [
-                'timeincrement' => null,
-            ],
-            'past_due' => [
-                'timeincrement' => -1 * (4 * DAYSECS),
-            ],
-            'future_due' => [
-                'timeincrement' => (4 * DAYSECS),
-            ],
+    public static function provider_test_get_due_date_overview(): \Generator {
+        yield 'no_due' => [
+            'timeincrement' => null,
+        ];
+        yield 'past_due' => [
+            'timeincrement' => -1 * (4 * DAYSECS),
+        ];
+        yield 'future_due' => [
+            'timeincrement' => (4 * DAYSECS),
         ];
     }
 
@@ -87,8 +85,8 @@ final class overview_test extends \advanced_testcase {
      * @param string $currentuser
      * @param array|null $expected
      * @return void
-     * @dataProvider provider_test_get_actions_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(
         string $currentuser,
         ?array $expected
@@ -115,27 +113,25 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'currentuser' => 's1',
-                'expected' => null,
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'currentuser' => 's1',
+            'expected' => null,
+        ];
+        yield 'Editing Teacher' => [
+            'currentuser' => 't1',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
             ],
-            'Editing Teacher' => [
-                'currentuser' => 't1',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                ],
-            ],
-            'Non editing Teacher' => [
-                'currentuser' => 't2',
-                'expected' => [
-                    'name' => get_string('actions'),
-                    'value' => '',
-                ],
+        ];
+        yield 'Non editing Teacher' => [
+            'currentuser' => 't2',
+            'expected' => [
+                'name' => get_string('actions'),
+                'value' => '',
             ],
         ];
     }
@@ -146,8 +142,8 @@ final class overview_test extends \advanced_testcase {
      * @param int $groupmode
      * @param array $expected
      * @return void
-     * @dataProvider provider_test_get_total_attempts_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_total_attempts_overview')]
     public function test_get_extra_totalattempts_overview(
         int $groupmode,
         array $expected,
@@ -182,33 +178,31 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for provider_test_get_total_attempts_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_total_attempts_overview(): array {
-        return [
-            'Without groups' => [
-                'groupmode' => NOGROUPS,
-                'expected' => [
-                    't1' => 5, // Count all attempts (even teacher's attempts).
-                    't2' => 5,
-                    's1' => null,
-                ],
+    public static function provider_test_get_total_attempts_overview(): \Generator {
+        yield 'Without groups' => [
+            'groupmode' => NOGROUPS,
+            'expected' => [
+                't1' => 5, // Count all attempts (even teacher's attempts).
+                't2' => 5,
+                's1' => null,
             ],
-            'With separate groups' => [
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => [
-                    't1' => 5,
-                    't2' => 3, // User 1 two attempts, teacher 2 one attempt (counted).
-                    's1' => null,
-                ],
+        ];
+        yield 'With separate groups' => [
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => [
+                't1' => 5,
+                't2' => 3, // User 1 two attempts, teacher 2 one attempt (counted).
+                's1' => null,
             ],
-            'With visible groups' => [
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => [
-                    't1' => 5,
-                    't2' => 5,
-                    's1' => null,
-                ],
+        ];
+        yield 'With visible groups' => [
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => [
+                't1' => 5,
+                't2' => 5,
+                's1' => null,
             ],
         ];
     }
@@ -219,8 +213,8 @@ final class overview_test extends \advanced_testcase {
      * @param int $groupmode
      * @param array $expected
      * @return void
-     * @dataProvider provider_test_get_students_who_attempted_overview
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_students_who_attempted_overview')]
     public function test_get_extra_studentswhoattempted_overview(
         int $groupmode,
         array $expected,
@@ -253,33 +247,31 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_students_who_attempted_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_students_who_attempted_overview(): array {
-        return [
-            'With no groups' => [
-                'groupmode' => NOGROUPS,
-                'expected' => [
-                    't1' => "3 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
-                    't2' => "3 of 4",
-                    's1' => null,
-                ],
+    public static function provider_test_get_students_who_attempted_overview(): \Generator {
+        yield 'With no groups' => [
+            'groupmode' => NOGROUPS,
+            'expected' => [
+                't1' => "3 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
+                't2' => "3 of 4",
+                's1' => null,
             ],
-            'With separate groups' => [
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => [
-                    't1' => "3 of 4", // Teacher 1 can see all groups.
-                    't2' => "1 of 1", // Only student 1 in group 1 made at least one attempt.
-                    's1' => null,
-                ],
+        ];
+        yield 'With separate groups' => [
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => [
+                't1' => "3 of 4", // Teacher 1 can see all groups.
+                't2' => "1 of 1", // Only student 1 in group 1 made at least one attempt.
+                's1' => null,
             ],
-            'With visible groups' => [
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => [
-                    't1' => "3 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
-                    't2' => "3 of 4",
-                    's1' => null,
-                ],
+        ];
+        yield 'With visible groups' => [
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => [
+                't1' => "3 of 4", // 3 students and one teacher out (not counted) of 4 made at least one attempt.
+                't2' => "3 of 4",
+                's1' => null,
             ],
         ];
     }

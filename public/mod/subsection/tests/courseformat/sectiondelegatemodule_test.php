@@ -27,15 +27,11 @@ use stdClass;
  * @package    mod_subsection
  * @copyright  2024 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\sectiondelegatemodule
- * @coversDefaultClass \core_courseformat\sectiondelegatemodule
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(sectiondelegatemodule::class)]
 final class sectiondelegatemodule_test extends \advanced_testcase {
-
     /**
      * Test get_parent_section.
-     *
-     * @covers ::get_parent_section
      */
     public function test_get_parent_section(): void {
         $this->resetAfterTest();
@@ -57,8 +53,6 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
 
     /**
      * Test get_cm.
-     *
-     * @covers ::get_cm
      */
     public function test_get_cm(): void {
         $this->resetAfterTest();
@@ -80,8 +74,6 @@ final class sectiondelegatemodule_test extends \advanced_testcase {
 
     /**
      * Test get_course.
-     *
-     * @covers ::get_course
      */
     public function test_get_course(): void {
         $this->resetAfterTest();

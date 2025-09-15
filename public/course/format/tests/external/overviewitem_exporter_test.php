@@ -26,8 +26,8 @@ use core_courseformat\local\overview\overviewitem;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_courseformat\external\overviewitem_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overviewitem_exporter::class)]
 final class overviewitem_exporter_test extends \advanced_testcase {
     /**
      * Test export with basic content.

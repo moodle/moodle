@@ -21,12 +21,12 @@ use core_courseformat\local\overview\overviewfactory;
 /**
  * Tests for Assignment overview integration.
  *
- * @covers \mod_assign\course\overview
  * @package    mod_assign
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     #[\Override]
     public static function setUpBeforeClass(): void {
@@ -41,9 +41,8 @@ final class overview_test extends \advanced_testcase {
      *
      * @param int $groupmode The group mode of the course.
      * @param bool $teamsubmission Whether the assignment is a team submission.
-     *
-     * @dataProvider provider_get_actions_overview
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_get_actions_overview')]
     public function test_get_actions_overview(int $groupmode, bool $teamsubmission): void {
         $this->resetAfterTest();
 
@@ -162,44 +161,41 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array The data provider array.
+     * @return \Generator The data provider array.
      */
-    public static function provider_get_actions_overview(): array {
-        return [
-            'No groups - No team submission' => [
-                'groupmode' => NOGROUPS,
-                'teamsubmission' => false,
-            ],
-            'No groups - Team submission' => [
-                'groupmode' => NOGROUPS,
-                'teamsubmission' => true,
-            ],
-            'Visible groups - No team submission' => [
-                'groupmode' => VISIBLEGROUPS,
-                'teamsubmission' => false,
-            ],
-            'Visible groups - Team submission' => [
-                'groupmode' => VISIBLEGROUPS,
-                'teamsubmission' => true,
-            ],
-            'Separate groups - No team submission' => [
-                'groupmode' => SEPARATEGROUPS,
-                'teamsubmission' => false,
-            ],
-            'Separate groups - Team submission' => [
-                'groupmode' => SEPARATEGROUPS,
-                'teamsubmission' => true,
-            ],
+    public static function provider_get_actions_overview(): \Generator {
+        yield 'No groups - No team submission' => [
+            'groupmode' => NOGROUPS,
+            'teamsubmission' => false,
+        ];
+        yield 'No groups - Team submission' => [
+            'groupmode' => NOGROUPS,
+            'teamsubmission' => true,
+        ];
+        yield 'Visible groups - No team submission' => [
+            'groupmode' => VISIBLEGROUPS,
+            'teamsubmission' => false,
+        ];
+        yield 'Visible groups - Team submission' => [
+            'groupmode' => VISIBLEGROUPS,
+            'teamsubmission' => true,
+        ];
+        yield 'Separate groups - No team submission' => [
+            'groupmode' => SEPARATEGROUPS,
+            'teamsubmission' => false,
+        ];
+        yield 'Separate groups - Team submission' => [
+            'groupmode' => SEPARATEGROUPS,
+            'teamsubmission' => true,
         ];
     }
 
     /**
      * Test get_due_date_overview method.
      *
-     * @covers ::get_due_date_overview
-     * @dataProvider get_due_date_overview_provider
      * @param int|null $timeincrement null if no due date, or due date increment.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_due_date_overview_provider')]
     public function test_get_due_date_overview(
         int|null $timeincrement,
     ): void {
@@ -233,19 +229,17 @@ final class overview_test extends \advanced_testcase {
     /**
      * Provider for get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_due_date_overview_provider(): array {
-        return [
-            'no_due' => [
-                'timeincrement' => null,
-            ],
-            'past_due' => [
-                'timeincrement' => -1 * (4 * DAYSECS),
-            ],
-            'future_due' => [
-                'timeincrement' => (4 * DAYSECS),
-            ],
+    public static function get_due_date_overview_provider(): \Generator {
+        yield 'no_due' => [
+            'timeincrement' => null,
+        ];
+        yield 'past_due' => [
+            'timeincrement' => -1 * (4 * DAYSECS),
+        ];
+        yield 'future_due' => [
+            'timeincrement' => (4 * DAYSECS),
         ];
     }
 
@@ -432,8 +426,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_submission_status_overview method.
-     *
-     * @covers ::get_extra_submission_status_overview
      */
     public function test_get_extra_submission_status_overview(): void {
         $this->resetAfterTest();
@@ -511,8 +503,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_extra_submission_status_overview method in group submissions.
-     *
-     * @covers ::get_extra_submission_status_overview
      */
     public function test_get_extra_submission_status_overview_groups(): void {
         $this->resetAfterTest();

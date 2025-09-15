@@ -25,8 +25,8 @@ use core_courseformat\output\local\overview\overviewdialog;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\external\overviewdialog_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overviewdialog_exporter::class)]
 final class overviewdialog_exporter_test extends \advanced_testcase {
     /**
      * Test export method.

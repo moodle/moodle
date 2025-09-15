@@ -16,11 +16,6 @@
 
 namespace mod_forum\courseformat;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/forum/lib.php');
-
 use core_courseformat\local\overview\overviewfactory;
 use mod_forum\subscriptions;
 
@@ -31,9 +26,16 @@ use mod_forum\subscriptions;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_forum\course\overview
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
+    #[\Override]
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        parent::setUpBeforeClass();
+        require_once($CFG->dirroot . '/mod/forum/lib.php');
+    }
 
     #[\Override]
     protected function setUp(): void {
@@ -53,8 +55,6 @@ final class overview_test extends \advanced_testcase {
 
     /**
      * Test get_actions_overview method.
-     *
-     * @covers ::get_actions_overview
      */
     public function test_get_actions_overview(): void {
         $this->resetAfterTest();
@@ -106,10 +106,9 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_due_date_overview method.
      *
-     * @covers ::get_due_date_overview
-     * @dataProvider get_due_date_overview_provider
      * @param int|null $timeincrement null if no due date, or due date increment.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_due_date_overview_provider')]
     public function test_get_due_date_overview(
         int|null $timeincrement,
     ): void {
@@ -148,31 +147,27 @@ final class overview_test extends \advanced_testcase {
     /**
      * Provider for get_due_date_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_due_date_overview_provider(): array {
-        return [
-            'no_due' => [
-                'timeincrement' => null,
-            ],
-            'past_due' => [
-                'timeincrement' => -1 * (4 * DAYSECS),
-            ],
-            'future_due' => [
-                'timeincrement' => (4 * DAYSECS),
-            ],
+    public static function get_due_date_overview_provider(): \Generator {
+        yield 'no_due' => [
+            'timeincrement' => null,
+        ];
+        yield 'past_due' => [
+            'timeincrement' => -1 * (4 * DAYSECS),
+        ];
+        yield 'future_due' => [
+            'timeincrement' => (4 * DAYSECS),
         ];
     }
 
     /**
      * Test get_extra_forumtype_overview method.
      *
-     * @dataProvider get_extra_forumtype_overview_provider
-     * @covers ::get_extra_forumtype_overview
-     *
      * @param string $forumtype Forum type to test.
      * @param string $expected Expected string for the forum type.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_forumtype_overview_provider')]
     public function test_get_extra_forumtype_overview(
         string $forumtype,
         string $expected,
@@ -217,42 +212,37 @@ final class overview_test extends \advanced_testcase {
     /**
      * Provider for get_extra_forumtype_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_forumtype_overview_provider(): array {
-        return [
-            'General' => [
-                'forumtype' => 'general',
-                'expected' => get_string('generalforum', 'forum'),
-            ],
-            'Single discussion' => [
-                'forumtype' => 'single',
-                'expected' => get_string('singleforum', 'forum'),
-            ],
-            'Each user' => [
-                'forumtype' => 'eachuser',
-                'expected' => get_string('eachuserforum', 'forum'),
-            ],
-            'Question&Answer' => [
-                'forumtype' => 'qanda',
-                'expected' => get_string('qandaforum', 'forum'),
-            ],
-            'Blog' => [
-                'forumtype' => 'blog',
-                'expected' => get_string('blogforum', 'forum'),
-            ],
-            'News' => [
-                'forumtype' => 'news',
-                'expected' => get_string('namenews', 'forum'),
-            ],
+    public static function get_extra_forumtype_overview_provider(): \Generator {
+        yield 'General' => [
+            'forumtype' => 'general',
+            'expected' => get_string('generalforum', 'forum'),
+        ];
+        yield 'Single discussion' => [
+            'forumtype' => 'single',
+            'expected' => get_string('singleforum', 'forum'),
+        ];
+        yield 'Each user' => [
+            'forumtype' => 'eachuser',
+            'expected' => get_string('eachuserforum', 'forum'),
+        ];
+        yield 'Question&Answer' => [
+            'forumtype' => 'qanda',
+            'expected' => get_string('qandaforum', 'forum'),
+        ];
+        yield 'Blog' => [
+            'forumtype' => 'blog',
+            'expected' => get_string('blogforum', 'forum'),
+        ];
+        yield 'News' => [
+            'forumtype' => 'news',
+            'expected' => get_string('namenews', 'forum'),
         ];
     }
 
     /**
      * Test get_extra_track_overview method.
-     *
-     * @dataProvider get_extra_track_overview_provider
-     * @covers ::get_extra_track_overview
      *
      * @param string $role User role to test, 'student' or 'teacher'.
      * @param int $forumtype Forum tracking type to test.
@@ -261,6 +251,7 @@ final class overview_test extends \advanced_testcase {
      * @param bool $allowforced Whether the $CFG->forum_allowforcedreadtracking setting is enabled.
      * @param int $trackforums Whether the user has the trackforums setting enabled.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_track_overview_provider')]
     public function test_get_extra_track_overview(
         string $role = 'student',
         int $forumtype = FORUM_TRACKING_OPTIONAL,
@@ -299,8 +290,8 @@ final class overview_test extends \advanced_testcase {
         $this->assertEquals(get_string('tracking', 'forum'), $item->get_name());
         $this->assertStringContainsString('data-type="forum-track-toggle"', $item->get_content());
         $this->assertStringContainsString('data-action="toggle"', $item->get_content());
-        $this->assertStringContainsString('data-forumid="'.$activity->id.'"', $item->get_content());
-        $this->assertStringContainsString('data-targetstate="'.((int)!$tracked).'"', $item->get_content());
+        $this->assertStringContainsString('data-forumid="' . $activity->id . '"', $item->get_content());
+        $this->assertStringContainsString('data-targetstate="' . ((int)!$tracked) . '"', $item->get_content());
         if ($disabled) {
             $this->assertStringContainsString('disabled', $item->get_content());
         } else {
@@ -311,126 +302,122 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_extra_track_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_track_overview_provider(): array {
-        return [
-            // Student role tests.
-            'Student. Tracking optional' => [
-                'forumtype' => FORUM_TRACKING_OPTIONAL,
-                'tracked' => 1,
-                'disabled' => false,
-            ],
-            'Student. Tracking forced off' => [
-                'forumtype' => FORUM_TRACKING_OFF,
-                'tracked' => 0,
-                'disabled' => true,
-            ],
-            'Student. Tracking forced on' => [
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 1,
-                'disabled' => true,
-            ],
-            'Student. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 1,
-                'disabled' => false,
-                'allowforced' => false,
-            ],
-            'Student. $USER->trackforums disabled. Tracking optional. ' => [
-                'forumtype' => FORUM_TRACKING_OPTIONAL,
-                'tracked' => 0,
-                'disabled' => true,
-                'trackforums' => 0,
-            ],
-            'Student. $USER->trackforums disabled. Tracking forced off' => [
-                'forumtype' => FORUM_TRACKING_OFF,
-                'tracked' => 0,
-                'disabled' => true,
-                'trackforums' => 0,
-            ],
-            'Student. $USER->trackforums disabled. Tracking forced on' => [
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 1,
-                'disabled' => true,
-                'trackforums' => 0,
-            ],
-            'Student. $USER->trackforums disabled. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 0,
-                'disabled' => true,
-                'allowforced' => false,
-                'trackforums' => 0,
-            ],
-            // Teacher role tests.
-            'Teacher. Tracking optional' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_OPTIONAL,
-                'tracked' => 1,
-                'disabled' => false,
-            ],
-            'Teacher. Tracking forced off' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_OFF,
-                'tracked' => 0,
-                'disabled' => true,
-            ],
-            'Teacher. Tracking forced on' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 1,
-                'disabled' => true,
-            ],
-            'Teacher. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 1,
-                'disabled' => false,
-                'allowforced' => false,
-            ],
-            'Teacher. $USER->trackforums disabled. Tracking optional' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_OPTIONAL,
-                'tracked' => 0,
-                'disabled' => true,
-                'trackforums' => 0,
-            ],
-            'Teacher. $USER->trackforums disabled. Tracking forced off' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_OFF,
-                'tracked' => 0,
-                'disabled' => true,
-                'trackforums' => 0,
-            ],
-            'Teacher. $USER->trackforums disabled. Tracking forced on' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 1,
-                'disabled' => true,
-                'trackforums' => 0,
-            ],
-            'Teacher. $USER->trackforums disabled. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_TRACKING_FORCED,
-                'tracked' => 0,
-                'disabled' => true,
-                'allowforced' => false,
-                'trackforums' => 0,
-            ],
+    public static function get_extra_track_overview_provider(): \Generator {
+        // Student role tests.
+        yield 'Student. Tracking optional' => [
+            'forumtype' => FORUM_TRACKING_OPTIONAL,
+            'tracked' => 1,
+            'disabled' => false,
+        ];
+        yield 'Student. Tracking forced off' => [
+            'forumtype' => FORUM_TRACKING_OFF,
+            'tracked' => 0,
+            'disabled' => true,
+        ];
+        yield 'Student. Tracking forced on' => [
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 1,
+            'disabled' => true,
+        ];
+        yield 'Student. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 1,
+            'disabled' => false,
+            'allowforced' => false,
+        ];
+        yield 'Student. $USER->trackforums disabled. Tracking optional. ' => [
+            'forumtype' => FORUM_TRACKING_OPTIONAL,
+            'tracked' => 0,
+            'disabled' => true,
+            'trackforums' => 0,
+        ];
+        yield 'Student. $USER->trackforums disabled. Tracking forced off' => [
+            'forumtype' => FORUM_TRACKING_OFF,
+            'tracked' => 0,
+            'disabled' => true,
+            'trackforums' => 0,
+        ];
+        yield 'Student. $USER->trackforums disabled. Tracking forced on' => [
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 1,
+            'disabled' => true,
+            'trackforums' => 0,
+        ];
+        yield 'Student. $USER->trackforums disabled. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 0,
+            'disabled' => true,
+            'allowforced' => false,
+            'trackforums' => 0,
+        ];
+        // Teacher role tests.
+        yield 'Teacher. Tracking optional' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_OPTIONAL,
+            'tracked' => 1,
+            'disabled' => false,
+        ];
+        yield 'Teacher. Tracking forced off' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_OFF,
+            'tracked' => 0,
+            'disabled' => true,
+        ];
+        yield 'Teacher. Tracking forced on' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 1,
+            'disabled' => true,
+        ];
+        yield 'Teacher. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 1,
+            'disabled' => false,
+            'allowforced' => false,
+        ];
+        yield 'Teacher. $USER->trackforums disabled. Tracking optional' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_OPTIONAL,
+            'tracked' => 0,
+            'disabled' => true,
+            'trackforums' => 0,
+        ];
+        yield 'Teacher. $USER->trackforums disabled. Tracking forced off' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_OFF,
+            'tracked' => 0,
+            'disabled' => true,
+            'trackforums' => 0,
+        ];
+        yield 'Teacher. $USER->trackforums disabled. Tracking forced on' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 1,
+            'disabled' => true,
+            'trackforums' => 0,
+        ];
+        yield 'Teacher. $USER->trackforums disabled. Tracking forced on, with $CFG->forum_allowforcedreadtracking disabled' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_TRACKING_FORCED,
+            'tracked' => 0,
+            'disabled' => true,
+            'allowforced' => false,
+            'trackforums' => 0,
         ];
     }
 
     /**
      * Test get_extra_subscribed_overview method.
      *
-     * @dataProvider get_extra_subscribed_overview_provider
-     * @covers ::get_extra_subscribed_overview
-     *
      * @param string $role User role to test, 'student' or 'teacher'.
      * @param int $forumtype Forum subscribe type to test.
      * @param int $subscribed Expected subscribed state of the forum.
      * @param bool $disabled Whether the toggle should be disabled.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_subscribed_overview_provider')]
     public function test_get_extra_subscribed_overview(
         string $role = 'student',
         int $forumtype = FORUM_CHOOSESUBSCRIBE,
@@ -463,8 +450,8 @@ final class overview_test extends \advanced_testcase {
         $this->assertEquals(get_string('subscribed', 'forum'), $item->get_name());
         $this->assertStringContainsString('data-type="forum-subscription-toggle"', $item->get_content());
         $this->assertStringContainsString('data-action="toggle"', $item->get_content());
-        $this->assertStringContainsString('data-forumid="'.$activity->id.'"', $item->get_content());
-        $this->assertStringContainsString('data-targetstate="'.((int)!$subscribed).'"', $item->get_content());
+        $this->assertStringContainsString('data-forumid="' . $activity->id . '"', $item->get_content());
+        $this->assertStringContainsString('data-targetstate="' . ((int)!$subscribed) . '"', $item->get_content());
         if ($disabled) {
             $this->assertStringContainsString('disabled', $item->get_content());
         } else {
@@ -475,70 +462,66 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for get_extra_subscribed_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_subscribed_overview_provider(): array {
-        return [
-            // Student role tests.
-            'Student. Tracking forced on' => [
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'subscribed' => 1,
-                'disabled' => true,
-            ],
-            'Student. Tracking forced off' => [
-                'forumtype' => FORUM_DISALLOWSUBSCRIBE,
-                'subscribed' => 0,
-                'disabled' => true,
-            ],
-            'Student. Tracking choose' => [
-                'forumtype' => FORUM_CHOOSESUBSCRIBE,
-                'subscribed' => 0,
-                'disabled' => false,
-            ],
-            'Student. Tracking initial on' => [
-                'forumtype' => FORUM_INITIALSUBSCRIBE,
-                'subscribed' => 1,
-                'disabled' => false,
-            ],
-            // Teacher role tests.
-            'Teacher. Tracking forced on' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'subscribed' => 1,
-                'disabled' => true,
-            ],
-            'Teacher. Tracking forced off' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_DISALLOWSUBSCRIBE,
-                'subscribed' => 0,
-                'disabled' => false,
-            ],
-            'Teacher. Tracking choose' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_CHOOSESUBSCRIBE,
-                'subscribed' => 0,
-                'disabled' => false,
-            ],
-            'Teacher. Tracking initial on' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_INITIALSUBSCRIBE,
-                'subscribed' => 1,
-                'disabled' => false,
-            ],
+    public static function get_extra_subscribed_overview_provider(): \Generator {
+        // Student role tests.
+        yield 'Student. Tracking forced on' => [
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'subscribed' => 1,
+            'disabled' => true,
+        ];
+        yield 'Student. Tracking forced off' => [
+            'forumtype' => FORUM_DISALLOWSUBSCRIBE,
+            'subscribed' => 0,
+            'disabled' => true,
+        ];
+        yield 'Student. Tracking choose' => [
+            'forumtype' => FORUM_CHOOSESUBSCRIBE,
+            'subscribed' => 0,
+            'disabled' => false,
+        ];
+        yield 'Student. Tracking initial on' => [
+            'forumtype' => FORUM_INITIALSUBSCRIBE,
+            'subscribed' => 1,
+            'disabled' => false,
+        ];
+        yield // Teacher role tests.
+        'Teacher. Tracking forced on' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'subscribed' => 1,
+            'disabled' => true,
+        ];
+        yield 'Teacher. Tracking forced off' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_DISALLOWSUBSCRIBE,
+            'subscribed' => 0,
+            'disabled' => false,
+        ];
+        yield 'Teacher. Tracking choose' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_CHOOSESUBSCRIBE,
+            'subscribed' => 0,
+            'disabled' => false,
+        ];
+        yield 'Teacher. Tracking initial on' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_INITIALSUBSCRIBE,
+            'subscribed' => 1,
+            'disabled' => false,
         ];
     }
 
     /**
      * Test get_extra_emaildigest_overview method.
      *
-     * @dataProvider get_extra_emaildigest_overview_provider
-     * @covers ::get_extra_emaildigest_overview
-     *
      * @param string $role User role to test, 'student' or 'teacher'.
      * @param int $forumtype Forum subscribe type to test.
      * @param string $emaildigestvalue Expected email digest value for the forum.
      * @param int $usermaildigest User's email digest setting.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extra_emaildigest_overview_provider')]
     public function test_get_extra_emaildigest_overview(
         string $role = 'student',
         int $forumtype = FORUM_CHOOSESUBSCRIBE,
@@ -600,77 +583,73 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for get_extra_emaildigest_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_extra_emaildigest_overview_provider(): array {
-        return [
-            // Student role tests.
-            'Student. Tracking forced on. No digest' => [
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-            ],
-            'Student. Tracking forced off' => [
-                'forumtype' => FORUM_DISALLOWSUBSCRIBE,
-                'emaildigestvalue' => '-',
-            ],
-            'Student. Tracking choose' => [
-                'forumtype' => FORUM_CHOOSESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-            ],
-            'Student. Tracking initial on' => [
-                'forumtype' => FORUM_INITIALSUBSCRIBE,
-                'emaildigestvalue' => 'default',
-            ],
-            'Student. Complete' => [
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-                'usermaildigest' => 1,
-            ],
-            'Student. Subjects' => [
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-                'usermaildigest' => 2,
-            ],
-            // Teacher role tests.
-            'Teacher. Tracking forced on. No digest' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-            ],
-            'Teacher. Tracking forced off' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_DISALLOWSUBSCRIBE,
-                'emaildigestvalue' => 'default',
-            ],
-            'Teacher. Tracking choose' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_CHOOSESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-            ],
-            'Teacher. Tracking initial on' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_INITIALSUBSCRIBE,
-                'emaildigestvalue' => 'default',
-            ],
-            'Teacher. Complete' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-                'usermaildigest' => 1,
-            ],
-            'Teacher. Subjects' => [
-                'role' => 'teacher',
-                'forumtype' => FORUM_FORCESUBSCRIBE,
-                'emaildigestvalue' => 'default',
-                'usermaildigest' => 2,
-            ],
+    public static function get_extra_emaildigest_overview_provider(): \Generator {
+        // Student role tests.
+        yield 'Student. Tracking forced on. No digest' => [
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+        ];
+        yield 'Student. Tracking forced off' => [
+            'forumtype' => FORUM_DISALLOWSUBSCRIBE,
+            'emaildigestvalue' => '-',
+        ];
+        yield 'Student. Tracking choose' => [
+            'forumtype' => FORUM_CHOOSESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+        ];
+        yield 'Student. Tracking initial on' => [
+            'forumtype' => FORUM_INITIALSUBSCRIBE,
+            'emaildigestvalue' => 'default',
+        ];
+        yield 'Student. Complete' => [
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+            'usermaildigest' => 1,
+        ];
+        yield 'Student. Subjects' => [
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+            'usermaildigest' => 2,
+        ];
+        // Teacher role tests.
+        yield 'Teacher. Tracking forced on. No digest' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+        ];
+        yield 'Teacher. Tracking forced off' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_DISALLOWSUBSCRIBE,
+            'emaildigestvalue' => 'default',
+        ];
+        yield 'Teacher. Tracking choose' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_CHOOSESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+        ];
+        yield 'Teacher. Tracking initial on' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_INITIALSUBSCRIBE,
+            'emaildigestvalue' => 'default',
+        ];
+        yield 'Teacher. Complete' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+            'usermaildigest' => 1,
+        ];
+        yield 'Teacher. Subjects' => [
+            'role' => 'teacher',
+            'forumtype' => FORUM_FORCESUBSCRIBE,
+            'emaildigestvalue' => 'default',
+            'usermaildigest' => 2,
         ];
     }
 
     /**
      * Test get_extra_discussions_overview method.
-     *
-     * @covers ::get_extra_discussions_overview
      */
     public function test_get_extra_discussions_overview(): void {
         $this->resetAfterTest();

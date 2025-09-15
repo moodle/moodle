@@ -22,18 +22,15 @@ use mod_data\manager;
 /**
  * Tests for Database activity overview
  *
- * @covers     \mod_data\courseformat\overview
  * @package    mod_data
  * @category   test
  * @copyright  2025 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overview::class)]
 final class overview_test extends \advanced_testcase {
     /**
      * Test get_actions_overview.
-     *
-     * @covers ::get_actions_overview
-     * @dataProvider provider_test_get_actions_overview
      *
      * @param string $role
      * @param bool $needsapproval
@@ -41,6 +38,7 @@ final class overview_test extends \advanced_testcase {
      * @param array|null $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_actions_overview')]
     public function test_get_actions_overview(
             string $role,
             bool $needsapproval,
@@ -94,60 +92,55 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test_get_actions_overview.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_actions_overview(): array {
-        return [
-            'Student' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'expected' => null,
+    public static function provider_test_get_actions_overview(): \Generator {
+        yield 'Student' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'expected' => null,
+        ];
+        yield 'Teacher with entries (non-require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'expected' => [
+                'link' => get_string('view', 'moodle'),
+                'value' => 0,
             ],
-            'Teacher with entries (non-require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'expected' => [
-                    'link' => get_string('view', 'moodle'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Teacher without entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [],
+            'expected' => [
+                'link' => get_string('view', 'moodle'),
+                'value' => 0,
             ],
-            'Teacher without entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [],
-                'expected' => [
-                    'link' => get_string('view', 'moodle'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Teacher with entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 0],
+            'expected' => [
+                'link' => get_string('approve', 'data'),
+                'value' => 1,
             ],
-            'Teacher with entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 0],
-                'expected' => [
-                    'link' => get_string('approve', 'data'),
-                    'value' => 1,
-                ],
-            ],
-            'Teacher with approved entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 1],
-                'expected' => [
-                    'link' => get_string('view', 'moodle'),
-                    'value' => 0,
-                ],
+        ];
+        yield 'Teacher with approved entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 1],
+            'expected' => [
+                'link' => get_string('view', 'moodle'),
+                'value' => 0,
             ],
         ];
     }
 
     /**
      * Test get_extra_overview_items.
-     *
-     * @covers ::get_extra_overview_items
-     * @dataProvider provider_test_get_entries_overview
      *
      * @param string $role
      * @param bool $needsapproval
@@ -156,6 +149,7 @@ final class overview_test extends \advanced_testcase {
      * @param array $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_entries_overview')]
     public function test_get_extra_entries_overview(
         string $role,
         bool $needsapproval,
@@ -222,77 +216,73 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test entry related extras.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_entries_overview(): array {
-        return [
-            'Student not needing approval' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => 2,
-                    'totalentries' => 4,
-                ],
+    public static function provider_test_get_entries_overview(): \Generator {
+        yield 'Student not needing approval' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => 2,
+                'totalentries' => 4,
             ],
-            'Student needing approval' => [
-                'role' => 'student',
-                'needsapproval' => true,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => 2,
-                    'totalentries' => 2,
-                ],
+        ];
+        yield 'Student needing approval' => [
+            'role' => 'student',
+            'needsapproval' => true,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => 2,
+                'totalentries' => 2,
             ],
-            'Teacher with entries (non-require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 4,
-                ],
+        ];
+        yield 'Teacher with entries (non-require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 4,
             ],
-            'Teacher without entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [],
-                'myentries' => [],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 0,
-                ],
+        ];
+        yield 'Teacher without entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [],
+            'myentries' => [],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 0,
             ],
-            'Teacher with entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 0],
-                'myentries' => [1, 0],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 4,
-                ],
+        ];
+        yield 'Teacher with entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 0],
+            'myentries' => [1, 0],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 4,
             ],
-            'Teacher with approved entries (require approval)' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [1, 1],
-                'myentries' => [1, 1],
-                'expected' => [
-                    'myentries' => null,
-                    'totalentries' => 4,
-                ],
+        ];
+        yield 'Teacher with approved entries (require approval)' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [1, 1],
+            'myentries' => [1, 1],
+            'expected' => [
+                'myentries' => null,
+                'totalentries' => 4,
             ],
         ];
     }
 
     /**
      * Test get_extra_overview_items with groups.
-     *
-     * @covers ::get_extra_overview_items
      */
     public function test_get_extra_entries_overview_with_groups(): void {
         $this->resetAfterTest();
@@ -346,7 +336,7 @@ final class overview_test extends \advanced_testcase {
             $g1->id,
             [],
             null,
-            $student->id
+            $student->id,
         );
         $generator->create_entry(
             $activity,
@@ -354,7 +344,7 @@ final class overview_test extends \advanced_testcase {
             $g2->id,
             [],
             null,
-            $otherstudent->id
+            $otherstudent->id,
         );
 
         // Editing teachers can see everything.
@@ -382,15 +372,13 @@ final class overview_test extends \advanced_testcase {
     /**
      * Test get_extra_comments_overview.
      *
-     * @covers ::get_extra_comments_overview
-     * @dataProvider provider_test_get_comments_overview
-     *
      * @param string $role
      * @param bool $needsapproval
      * @param array $entries
      * @param int $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_comments_overview')]
     public function test_get_extra_comments_overview(
         string $role,
         bool $needsapproval,
@@ -454,82 +442,80 @@ final class overview_test extends \advanced_testcase {
     /**
      * Data provider for test comments extras.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_get_comments_overview(): array {
-        return [
-            'Student not needing approval with no comments' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [
+    public static function provider_test_get_comments_overview(): \Generator {
+        yield 'Student not needing approval with no comments' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [
                     ['approved' => 1, 'comments' => false],
                     ['approved' => 0, 'comments' => false],
                 ],
                 'expected' => 0,
+        ];
+        yield 'Student not needing approval with comments' => [
+            'role' => 'student',
+            'needsapproval' => false,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Student not needing approval with comments' => [
-                'role' => 'student',
-                'needsapproval' => false,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 1,
+            'expected' => 1,
+        ];
+        yield 'Student needing approval with no comments' => [
+            'role' => 'student',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => false],
+                ['approved' => 0, 'comments' => false],
             ],
-            'Student needing approval with no comments' => [
-                'role' => 'student',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => false],
-                    ['approved' => 0, 'comments' => false],
-                ],
-                'expected' => 0,
+            'expected' => 0,
+        ];
+        yield 'Student needing approval with comments' => [
+            'role' => 'student',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Student needing approval with comments' => [
-                'role' => 'student',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 1,
+            'expected' => 1,
+        ];
+        yield 'Teacher not needing approval with no comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [
+                ['approved' => 1, 'comments' => false],
+                ['approved' => 0, 'comments' => false],
             ],
-            'Teacher not needing approval with no comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [
-                    ['approved' => 1, 'comments' => false],
-                    ['approved' => 0, 'comments' => false],
-                ],
-                'expected' => 0,
+            'expected' => 0,
+        ];
+        yield 'Teacher not needing approval with comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => false,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Teacher not needing approval with comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => false,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 2,
+            'expected' => 2,
+        ];
+        yield 'Teacher needing approval with no comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => false],
+                ['approved' => 0, 'comments' => false],
             ],
-            'Teacher needing approval with no comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => false],
-                    ['approved' => 0, 'comments' => false],
-                ],
-                'expected' => 0,
+            'expected' => 0,
+        ];
+        yield 'Teacher needing approval with comments' => [
+            'role' => 'editingteacher',
+            'needsapproval' => true,
+            'entries' => [
+                ['approved' => 1, 'comments' => true],
+                ['approved' => 0, 'comments' => true],
             ],
-            'Teacher needing approval with comments' => [
-                'role' => 'editingteacher',
-                'needsapproval' => true,
-                'entries' => [
-                    ['approved' => 1, 'comments' => true],
-                    ['approved' => 0, 'comments' => true],
-                ],
-                'expected' => 2,
-            ],
+            'expected' => 2,
         ];
     }
 }

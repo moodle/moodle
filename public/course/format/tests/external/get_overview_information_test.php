@@ -26,8 +26,8 @@ use stdClass;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\external\get_overview_information
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(get_overview_information::class)]
 final class get_overview_information_test extends \core_external\tests\externallib_testcase {
     public function test_get_overview_information(): void {
         $this->resetAfterTest();
