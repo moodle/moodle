@@ -39,8 +39,6 @@ class report extends \mod_scorm\report {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
         $contextmodule = \context_module::instance($cm->id);
-        $action = optional_param('action', '', PARAM_ALPHA);
-        $attemptids = optional_param_array('attemptid', array(), PARAM_RAW);
         $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_ALL_STUDENTS, PARAM_INT);
         $PAGE->set_url(new \moodle_url($PAGE->url, array('attemptsmode' => $attemptsmode)));
 
@@ -51,11 +49,6 @@ class report extends \mod_scorm\report {
             echo $renderer->report_actionbar($actionbar);
         }
 
-        if ($action == 'delete' && has_capability('mod/scorm:deleteresponses', $contextmodule) && confirm_sesskey()) {
-            if (scorm_delete_responses($attemptids, $scorm)) { // Delete responses.
-                echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
-            }
-        }
         // Find out current groups mode.
         $currentgroup = groups_get_activity_group($cm, true);
 
