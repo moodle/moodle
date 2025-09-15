@@ -143,7 +143,7 @@ class feedback_item_numeric extends feedback_item_base {
         $values = $this->get_analysed($item, $groupid, $courseid);
 
         if (isset($values->data) AND is_array($values->data)) {
-            echo "<table class=\"analysis itemtype_{$item->typ}\">";
+            echo "<table class=\"analysis itemtype_{$item->typ} table-reboot\">";
             echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
