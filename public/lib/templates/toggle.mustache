@@ -24,8 +24,8 @@
         "id": "reality-toggle-3",
         "checked": true,
         "disabled": false,
-        "dataattributes": [{
-            "name": "action",
+        "extraattributes": [{
+            "name": "data-action",
             "value": "toggle-reality"
         }],
         "title": "Title example",
@@ -37,9 +37,11 @@
 <div class="form-check form-switch {{$extraclasses}}{{extraclasses}}{{/extraclasses}}">
     <input type="checkbox" class="form-check-input" id="{{$id}}{{id}}{{/id}}"
         {{$attributes}}
-            {{#dataattributes}}data-{{name}}="{{value}}" {{/dataattributes}}
+            {{#extraattributes}}{{name}}="{{value}}" {{/extraattributes}}
             {{#checked}}checked{{/checked}}
             {{#disabled}}disabled{{/disabled}}
+            {{! TODO MDL-86619: dataattributes will be removed in 6.0. Use extraattributes instead. }}
+            {{#dataattributes}}data-{{name}}="{{value}}" {{/dataattributes}}
         {{/attributes}}>
     {{$labelmarkup}}
         <label class="form-check-label" for="{{$id}}{{id}}{{/id}}" {{#title}}data-bs-toggle="tooltip" data-bs-placement="top" title="{{title}}"{{/title}}>

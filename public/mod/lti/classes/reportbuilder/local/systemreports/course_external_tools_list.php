@@ -166,10 +166,10 @@ class course_external_tools_list extends system_report {
 
                 $renderer = $PAGE->get_renderer('core_reportbuilder');
                 $attributes = [
-                    ['name' => 'id', 'value' => $row->id],
-                    ['name' => 'courseid', 'value' => $courseid],
-                    ['name' => 'action', 'value' => 'showinactivitychooser-toggle'],
-                    ['name' => 'state', 'value' => $coursevisible],
+                    ['name' => 'data-id', 'value' => $row->id],
+                    ['name' => 'data-courseid', 'value' => $courseid],
+                    ['name' => 'data-action', 'value' => 'showinactivitychooser-toggle'],
+                    ['name' => 'data-state', 'value' => $coursevisible],
                 ];
                 $label = $coursevisible ? get_string('dontshowinactivitychooser', 'mod_lti')
                     : get_string('showinactivitychooser', 'mod_lti');
@@ -180,7 +180,7 @@ class course_external_tools_list extends system_report {
                     'id' => 'showinactivitychooser-toggle-' . $row->id,
                     'checked' => $coursevisible,
                     'disabled' => $disabled,
-                    'dataattributes' => $attributes,
+                    'extraattributes' => $attributes,
                     'label' => $label,
                     'labelclasses' => 'visually-hidden',
                 ]);

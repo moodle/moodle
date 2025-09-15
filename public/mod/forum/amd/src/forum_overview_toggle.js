@@ -23,6 +23,7 @@
 
 import Notification from 'core/notification';
 import {getString} from 'core/str';
+import SRLogger from 'core/local/reactive/srlogger';
 import Repository from 'mod_forum/repository';
 
 /**
@@ -48,6 +49,7 @@ function registerEventListeners(toggleElement) {
  */
 async function subscriptionToggleClickHandler(toggleElement) {
     const forumId = toggleElement.dataset.forumid;
+    const forumName = toggleElement.dataset.forumname;
     const newState = toggleElement.dataset.targetstate;
     if (!forumId || !newState) {
         return;
@@ -56,11 +58,18 @@ async function subscriptionToggleClickHandler(toggleElement) {
         const context = await Repository.setForumSubscriptionState(forumId, newState);
         const newTargetState = !!context.userstate.subscribed;
 
-        updateSwitchState(
+        await updateSwitchState(
             toggleElement,
             newTargetState,
             newTargetState ? 'subscribe' : 'unsubscribe',
         );
+
+        const feedbackMessage = await getString(
+            newTargetState ? 'subscribedtoforum' : 'unsubscribedfromforum',
+            'mod_forum',
+            forumName,
+        );
+        new SRLogger().add({feedbackMessage});
     } catch (error) {
         Notification.exception(error);
     }
@@ -74,6 +83,7 @@ async function subscriptionToggleClickHandler(toggleElement) {
  */
 async function trackToggleClickHanldler(toggleElement) {
     const forumId = toggleElement.dataset.forumid;
+    const forumName = toggleElement.dataset.forumname;
     const newState = toggleElement.dataset.targetstate;
     if (!forumId || !newState) {
         return;
@@ -82,11 +92,18 @@ async function trackToggleClickHanldler(toggleElement) {
         const context = await Repository.setForumTrackingState(forumId, newState);
         const newTargetState = !!context.userstate.tracked;
 
-        updateSwitchState(
+        await updateSwitchState(
             toggleElement,
             newTargetState,
             newTargetState ? 'trackingon' : 'trackingoff',
         );
+
+        const feedbackMessage = await getString(
+            newTargetState ? 'trackedforforum' : 'untrackedforforum',
+            'mod_forum',
+            forumName,
+        );
+        new SRLogger().add({feedbackMessage});
     } catch (error) {
         Notification.exception(error);
     }
