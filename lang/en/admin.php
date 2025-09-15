@@ -696,6 +696,8 @@ $string['geoipmaxmindaccid'] = 'MaxMind account ID';
 $string['geoipmaxmindaccid_desc'] = 'The account ID of the account created on the MaxMind API service.';
 $string['geoipmaxmindlicensekey'] = 'MaxMind license key';
 $string['geoipmaxmindlicensekey_desc'] = 'The license key of the account created on the MaxMind API service.';
+$string['geopluginapikey'] = 'GeoPlugin API key';
+$string['geopluginapikey_desc'] = 'The API key used to access the GeoPlugin service. Get your own key at <a href="https://www.geoplugin.com/" target="_blank">GeoPlugin page</a>.';
 $string['getremoteaddrconf'] = 'Logged IP address source';
 $string['globalsearch'] = 'Global search';
 $string['globalsearchmanage'] = 'Manage global search';
