@@ -136,7 +136,7 @@ class feedback_item_textarea extends feedback_item_base {
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if ($values) {
-            echo "<table class=\"analysis itemtype_{$item->typ}\">";
+            echo "<table class=\"analysis itemtype_{$item->typ} table-reboot\">";
             echo '<tr><th class="text-start">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
