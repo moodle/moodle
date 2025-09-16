@@ -89,9 +89,9 @@
                         {{/canmovecategories}}
                         {{{nameeditable}}}
                         {{#canedit}}
-                        <a class="icon-size-3" href="#" data-role="deletecategory" data-id="{{id}}">
-                            {{#pix}} t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}
-                        </a>
+                            <button type="button" class="btn btn-link btn-icon icon-size-3" data-role="deletecategory" data-id="{{id}}" title="{{#str}} delete {{/str}}" aria-label="{{#str}} delete {{/str}}">
+                                {{#pix}} t/delete, core {{/pix}}
+                            </button>
                         {{/canedit}}
                     </h3>
                     {{#toggle}}
@@ -128,10 +128,12 @@
                         <td class="col-2">{{{type}}}</td>
                         <td class="col-2 text-end">
                             {{#canedit}}
-                            <a href="#" data-role="editfield" data-name="{{name}}" data-id="{{id}}">{{#pix}}
-                                t/edit, core, {{#str}} edit, moodle {{/str}} {{/pix}}</a>
-                            <a href="#" data-id="{{id}}" data-role="deletefield">{{#pix}}
-                                t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}</a>
+                                <button type="button" class="btn btn-link btn-icon icon-no-margin" data-role="editfield" data-name="{{name}}" data-id="{{id}}" title="{{#str}} edit {{/str}}" aria-label="{{#str}} edit {{/str}}">
+                                    {{#pix}} t/edit, core {{/pix}}
+                                </button>
+                                <button type="button" class="btn btn-link btn-icon icon-no-margin" data-id="{{id}}" data-role="deletefield" title=" {{#str}} delete {{/str}}" aria-label="{{#str}} delete {{/str}}">
+                                    {{#pix}} t/delete, core {{/pix}}
+                                </button>
                             {{/canedit}}
                         </td>
                     </tr>
