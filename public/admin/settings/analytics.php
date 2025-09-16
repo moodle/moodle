@@ -69,19 +69,37 @@ if ($hassiteconfig && \core_analytics\manager::is_analytics_enabled()) {
     $ADMIN->add('analytics', $settings);
 
     if ($ADMIN->fulltree) {
-
-
         // Select the site prediction's processor.
         $predictionprocessors = \core_analytics\manager::get_all_prediction_processors();
-        $predictors = array();
+        $predictors = [];
         foreach ($predictionprocessors as $fullclassname => $predictor) {
             $pluginname = substr($fullclassname, 1, strpos($fullclassname, '\\', 1) - 1);
             $predictors[$fullclassname] = new lang_string('pluginname', $pluginname);
         }
-        $settings->add(new \core_analytics\admin_setting_predictor('analytics/predictionsprocessor',
-            new lang_string('defaultpredictionsprocessor', 'analytics'), new lang_string('predictionsprocessor_help', 'analytics'),
-            \core_analytics\manager::default_mlbackend(), $predictors)
+        $settings->add(
+            new \core_analytics\admin_setting_predictor(
+                'analytics/predictionsprocessor',
+                new lang_string('defaultpredictionsprocessor', 'analytics'),
+                new lang_string('predictionsprocessor_help', 'analytics'),
+                \core_analytics\manager::default_mlbackend(),
+                $predictors,
+            )
         );
+        // Warn if current processor is not configured.
+        // We are avoiding doing this check in write_config because it is likely the default
+        // mlbackend_python plugin is not configured and will output warnings during install.
+        $currentprocessor = get_config('analytics', 'predictionsprocessor');
+        if (!empty($currentprocessor)) {
+            $currentprocessor = new $currentprocessor;
+            $currentprocessorisready = $currentprocessor->is_ready();
+            if ($currentprocessorisready !== true) {
+                $settings->add(new admin_setting_description(
+                    'processornotready',
+                    '',
+                    html_writer::tag('div', $currentprocessorisready, ['class' => 'alert alert-danger'])
+                ));
+            }
+        }
 
         // Log store.
         $logmanager = get_log_manager();
