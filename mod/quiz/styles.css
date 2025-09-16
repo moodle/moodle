@@ -298,6 +298,18 @@ body.path-mod-quiz table tbody tr.gradedattempt > td.sticky-column {
     background-color: #d9edf7;
 }
 
+body.path-mod-quiz .generaltable tbody tr:not(.gradedattempt):nth-of-type(odd) > td.sticky-column {
+    background-color: #f7f7f7;
+}
+
+body.path-mod-quiz .generaltable tbody tr:not(.gradedattempt):nth-of-type(even) > td.sticky-column {
+    background-color: #fff;
+}
+
+body.path-mod-quiz .generaltable tbody tr:not(.gradedattempt):hover > td.sticky-column {
+    background-color: #ececec;
+}
+
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {
     text-align: center;
