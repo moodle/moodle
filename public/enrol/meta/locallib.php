@@ -619,10 +619,10 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     $affectedusers = groups_sync_with_enrolment('meta', $courseid);
     if ($verbose) {
         foreach ($affectedusers['removed'] as $gm) {
-            mtrace("removing user from group: $gm->userid ==> $gm->courseid - $gm->groupname", 1);
+            mtrace("removing user from group: $gm->userid ==> $gm->courseid - $gm->groupname");
         }
         foreach ($affectedusers['added'] as $ue) {
-            mtrace("adding user to group: $ue->userid ==> $ue->courseid - $ue->groupname", 1);
+            mtrace("adding user to group: $ue->userid ==> $ue->courseid - $ue->groupname");
         }
     }
 
