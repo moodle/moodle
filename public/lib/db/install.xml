@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20251205" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20251208" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3526,6 +3526,7 @@
       <INDEXES>
         <INDEX NAME="nextruntime_idx" UNIQUE="false" FIELDS="nextruntime"/>
         <INDEX NAME="timestarted_idx" UNIQUE="false" FIELDS="timestarted"/>
+        <INDEX NAME="nextruntime_classname" UNIQUE="false" FIELDS="nextruntime, classname"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="task_log" COMMENT="The log table for all tasks">
