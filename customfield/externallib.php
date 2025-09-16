@@ -133,6 +133,8 @@ class core_customfield_external extends external_api {
                         )
                     )
                 ),
+                'canmovefields' => new external_value(PARAM_BOOL, 'Whether fields can be moved', VALUE_DEFAULT, false),
+                'canmovecategories' => new external_value(PARAM_BOOL, 'Whether categories can be moved', VALUE_DEFAULT, false),
             )
         );
     }
