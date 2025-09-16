@@ -83,6 +83,30 @@ Feature: Assign user override
     And the activity date in "Test assignment name" should contain "Due: Wednesday, 1 January 2020, 8:00"
 
   @javascript
+  Scenario: Ensure an overridden due date is before any extension date
+    Given I am on the "Test assignment name" Activity page logged in as teacher1
+    When I navigate to "Settings" in current page administration
+    And I set the field "Due date" to "##1 Jan 2000 08:00##"
+    And I press "Save and display"
+    And I navigate to "Submissions" in current page administration
+    And I open the action menu in "Student1" "table_row"
+    And I follow "Grant extension"
+    And I set the field "Extension due date" to "##3 Jan 2000 08:00##"
+    And I press "Save changes"
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user | Student1             |
+      | Due date      | ##4 Jan 2000 08:00## |
+    And I press "Save"
+    Then I should see "Extension date must be after the due date"
+    And I set the field "Due date" to "##2 Jan 2000 08:00##"
+    And I press "Save"
+    And the following should exist in the "generaltable" table:
+      | User          | Overrides | -3-                          |
+      | Sam1 Student1 | Due date  | Sunday, 2 January 2000, 8:00 |
+
+  @javascript
   Scenario: Allow a user to have a different cut off date
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Settings" in current page administration
