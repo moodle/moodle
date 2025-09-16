@@ -1745,6 +1745,7 @@ $functions = array(
         'type' => 'read',
         'loginrequired' => false,
         'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ),
     // Question related functions.
     'core_question_update_flag' => array(
