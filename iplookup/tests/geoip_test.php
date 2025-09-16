@@ -55,8 +55,6 @@ final class geoip_test extends \advanced_testcase {
             $this->markTestSkipped('External geo tests are disabled.');
         }
         $this->resetAfterTest();
-        // Store the old value to restore later.
-        $oldvalue = $CFG->geopluginapikey;
         $CFG->geopluginapikey = TEST_GEOIP_APIKEY;
         $this->setup_geoip2file();
 
@@ -75,9 +73,6 @@ final class geoip_test extends \advanced_testcase {
         $this->assertIsString($result['title'][0]);
         $this->assertIsString($result['title'][1]);
         $this->assertNull($result['error']);
-
-        // Restore the old value.
-        $CFG->geopluginapikey = $oldvalue;
     }
 
     /**
