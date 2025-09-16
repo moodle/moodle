@@ -191,6 +191,7 @@ final class running_test extends \advanced_testcase {
 
         // Run the cleanup scheduled task one hour later.
         $clock->bump(HOURSECS);
+        $this->expectOutputRegex('/Marking orphaned/');
         $cleanuptask = manager::get_next_scheduled_task($clock->time());
         manager::scheduled_task_starting($cleanuptask);
         logmanager::start_logging($cleanuptask);
@@ -244,6 +245,7 @@ final class running_test extends \advanced_testcase {
 
         // Run the cleanup scheduled task one hour later.
         $clock->bump(HOURSECS);
+        $this->expectOutputRegex('/Marking orphaned/');
         $cleanuptask = manager::get_next_scheduled_task($clock->time());
         manager::scheduled_task_starting($cleanuptask);
         logmanager::start_logging($cleanuptask);
