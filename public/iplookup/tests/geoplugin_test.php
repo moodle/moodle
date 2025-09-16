@@ -25,8 +25,6 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class geoplugin_test extends \advanced_testcase {
-    /** @var string Current Geoplugin API key. */
-    private string $currentgeopluginapikey = '';
 
     /**
      * Load required test libraries
@@ -52,15 +50,7 @@ final class geoplugin_test extends \advanced_testcase {
         if (!defined('TEST_GEOIP_APIKEY') || empty(TEST_GEOIP_APIKEY)) {
             $this->markTestSkipped('External geo tests are disabled.');
         }
-        // Store the old value to restore later.
-        $this->currentgeopluginapikey = $CFG->geopluginapikey;
         $CFG->geopluginapikey = TEST_GEOIP_APIKEY;
-    }
-
-    protected function tearDown(): void {
-        global $CFG;
-        $CFG->geopluginapikey = $this->currentgeopluginapikey;
-        parent::tearDown();
     }
 
     /**
