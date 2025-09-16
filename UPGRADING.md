@@ -152,6 +152,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `xmlize()` method from `lib/xmlize.php` has been deprecated, please instead use the `\core\xml_parser` class
 
   For more information see [MDL-86256](https://tracker.moodle.org/browse/MDL-86256)
+- In toggle.mustache `dataattributes` parameter is deprecated. Use `extraattributes` instead
+
+  For more information see [MDL-86990](https://tracker.moodle.org/browse/MDL-86990)
 
 #### Removed
 
