@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addtogroup'] = 'Add to group';
 $string['advanced'] = 'Advanced';
 $string['alterstatus'] = 'Alter status';
 $string['altertimeend'] = 'Alter end time';
@@ -68,6 +69,7 @@ $string['selection'] = 'Selection';
 $string['selectusers'] = 'Select users';
 $string['selectcohorts'] = 'Select cohorts';
 $string['sendexpirynotificationstask'] = "Manual enrolment send expiry notifications task";
+$string['showgroups'] = 'Show groups';
 $string['status'] = 'Enable manual enrolments';
 $string['status_desc'] = 'Allow course access of internally enrolled users. This should be kept enabled in most cases.';
 $string['status_help'] = 'This setting determines whether users can be enrolled manually, via a link in the course administration settings, by a user with appropriate permissions such as a teacher.';
