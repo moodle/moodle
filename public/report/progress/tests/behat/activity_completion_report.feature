@@ -9,20 +9,20 @@ Feature: Teacher can view and override users' activity completion data via the p
       | fullname | shortname | format | enablecompletion |
       | Course 1 | C1        | topics | 1                |
     And the following "activities" exist:
-      | activity   | name            | intro   | course | idnumber    | section | completion | completionview | completionusegrade | assignsubmission_onlinetext_enabled | submissiondrafts |
-      | assign     | my assignment   | A1 desc | C1     | assign1     | 0       | 1          | 0              |                    | 0                                   | 0                |
-      | assign     | my assignment 2 | A2 desc | C1     | assign2     | 0       | 2          | 1              |                    | 0                                   | 0                |
-      | assign     | my assignment 3 | A3 desc | C1     | assign3     | 0       | 2          | 1              | 1                  | 1                                   | 0                |
+      | activity | name            | intro   | course | idnumber | section | completion | completionview | completionusegrade | assignsubmission_onlinetext_enabled | submissiondrafts |
+      | assign   | my assignment   | A1 desc | C1     | assign1  | 0       | 1          | 0              |                    | 0                                   | 0                |
+      | assign   | my assignment 2 | A2 desc | C1     | assign2  | 0       | 2          | 1              |                    | 0                                   | 0                |
+      | assign   | my assignment 3 | A3 desc | C1     | assign3  | 0       | 2          | 1              | 1                  | 1                                   | 0                |
     And the following "users" exist:
-      | username | firstname | lastname    | email                | idnumber | middlename | alternatename | firstnamephonetic | lastnamephonetic |
-      | teacher1 | Teacher   | One         | teacher1@example.com | t1       |            | fred          |                   |                  |
-      | student1 | Grainne   | Beauchamp   | student1@example.com | s1       | Ann        | Jill          | Gronya            | Beecham          |
+      | username | firstname | lastname  | email                | idnumber | middlename | alternatename | firstnamephonetic | lastnamephonetic |
+      | teacher1 | Teacher   | One       | teacher1@example.com | t1       |            | fred          |                   |                  |
+      | student1 | Grainne   | Beauchamp | student1@example.com | s1       | Ann        | Jill          | Gronya            | Beecham          |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
     And the following config values are set as admin:
-      | fullnamedisplay | firstname |
+      | fullnamedisplay           | firstname                                      |
       | alternativefullnameformat | middlename, alternatename, firstname, lastname |
 
   # Course comprising one activity with auto completion (student must view it) and one with manual completion.
@@ -108,3 +108,9 @@ Feature: Teacher can view and override users' activity completion data via the p
     And the manual completion button of "my assignment" overridden by "Teacher" is displayed as "Done"
     And I toggle the manual completion state of "my assignment"
     And the manual completion button of "my assignment" is displayed as "Mark as done"
+
+  Scenario: Download button exist activity completion report.
+    Given I am on the "Course 1" Course page logged in as teacher1
+    When I navigate to "Reports > Activity completion" in current page administration
+    # Without the ability to check the downloaded file, the absence of an exception being thrown here is considered a success.
+    Then I click on "Download" "button"

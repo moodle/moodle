@@ -139,8 +139,11 @@ class renderer extends plugin_renderer_base {
      * @param \moodle_url $url The base url.
      * @return string HTML
      * @throws \coding_exception
+     * @deprecated since 5.1 MDL-83838 -  Please do not use this function any more.
+     * #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '5.1', mdl: 'MDL-83838')]
      */
     public function render_download_buttons(\moodle_url $url): string {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         $downloadurl = fullclone($url);
         $downloadurl->remove_params(['page']);
         $downloadurl->param('format', 'csv');
