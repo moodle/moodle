@@ -1141,7 +1141,7 @@ class renderer extends plugin_renderer_base {
 
         // Prepare table header.
         $table = new html_table();
-        $table->attributes['class'] = 'generaltable quizattemptsummary table table-hover';
+        $table->attributes['class'] = 'generaltable table-striped quizattemptsummary table-hover';
         $table->caption = get_string('summaryofattempts', 'quiz');
         $table->captionhide = true;
         $table->head = [];
