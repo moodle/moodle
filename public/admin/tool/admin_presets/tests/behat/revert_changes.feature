@@ -25,9 +25,9 @@ Feature: I can revert changes after a load
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
     And "Disable Logged in user" "icon" should not exist in the "Logged in user" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration
-    And "Enabled" "icon" should not exist in the "Immediate feedback with CBM" "table_row"
+    And "Enabled" "link" should not exist in the "Immediate feedback with CBM" "table_row"
     And I navigate to "Plugins > Question types > Manage question types" in site administration
-    And "Enabled" "icon" should not exist in the "Calculated multichoice" "table_row"
+    And "Enabled" "link" should not exist in the "Calculated multichoice" "table_row"
     And I navigate to "Site admin presets" in site administration
     And I press "Show version history" action in the "Moodle with all of the most popular features" report row
     When I click on "Restore this version" "link"
@@ -41,6 +41,6 @@ Feature: I can revert changes after a load
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
     And I should see "Disable Logged in user"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration
-    And "Enabled" "icon" should exist in the "Immediate feedback with CBM" "table_row"
+    And "Enabled" "link" should exist in the "Immediate feedback with CBM" "table_row"
     And I navigate to "Plugins > Question types > Manage question types" in site administration
-    And "Enabled" "icon" should exist in the "Calculated multichoice" "table_row"
+    And "Enabled" "link" should exist in the "Calculated multichoice" "table_row"
