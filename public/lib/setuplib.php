@@ -471,8 +471,8 @@ function get_docs_url($path = null) {
  * @return string formatted backtrace, ready for output.
  */
 function format_backtrace($callers, $plaintext = false) {
-    // do not use $CFG->dirroot because it might not be available in destructors
-    $dirroot = dirname(__DIR__);
+    // Do not use $CFG->dirroot because it might not be available in destructors.
+    $dirroot = dirname(__DIR__, 2);
 
     if (empty($callers)) {
         return '';
@@ -481,21 +481,25 @@ function format_backtrace($callers, $plaintext = false) {
     $from = $plaintext ? '' : '<ul style="text-align: left" data-rel="backtrace">';
     foreach ($callers as $caller) {
         if (!isset($caller['line'])) {
-            $caller['line'] = '?'; // probably call_user_func()
+            $caller['line'] = '?'; // Probably call_user_func().
         }
         if (!isset($caller['file'])) {
-            $caller['file'] = 'unknownfile'; // probably call_user_func()
+            $caller['file'] = 'unknownfile'; // Probably call_user_func().
         }
         $line = $plaintext ? '* ' : '<li>';
-        $line .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
+        $line .= sprintf(
+            'line %d of %s',
+            $caller['line'],
+            str_replace($dirroot, '', $caller['file']),
+        );
         if (isset($caller['function'])) {
             $line .= ': call to ';
             if (isset($caller['class'])) {
                 $line .= $caller['class'] . $caller['type'];
             }
-            $line .= $caller['function'] . '()';
+            $line .= "{$caller['function']}()";
         } else if (isset($caller['exception'])) {
-            $line .= ': '.$caller['exception'].' thrown';
+            $line .= ": {$caller['exception']} thrown";
         }
 
         // Remove any non printable chars.
