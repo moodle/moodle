@@ -1580,7 +1580,7 @@ class HTML_QuickForm extends HTML_Common {
             }
         }
 
-        if (count($elementList) != count($frozen)) {
+        if (!$this->_freezeAll && count($elementList) != count($frozen)) {
             return self::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Nonexistant element(s): '" . implode("', '", array_keys($elementList)) . "' in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
         }
         return true;
