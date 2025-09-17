@@ -549,13 +549,19 @@ class grade_report_grader extends grade_report {
     public function get_max_students_per_page(): int {
         global $CFG;
 
+        $gradeitemcount = count($this->get_allgradeitems());
+
         if (isset($CFG->maxgradesperpage) && clean_param($CFG->maxgradesperpage, PARAM_INT) > 0) {
             $maxgradesperpage = $CFG->maxgradesperpage;
         } else {
             $maxgradesperpage = self::MAX_GRADES_PER_PAGE;
         }
 
-        return round($maxgradesperpage / count($this->get_allgradeitems()));
+		if ($gradeitemcount > 0) {
+			return round($maxgradesperpage / $gradeitemcount);
+		} else {
+			return $maxgradesperpage;
+		}
     }
 
     /**
@@ -677,7 +683,9 @@ class grade_report_grader extends grade_report {
         $fillercell->colspan = $colspan;
         $fillercell->rowspan = $levels;
         $row = new html_table_row(array($fillercell));
-        $rows[] = $row;
+        if ($levels >= 1) { // Do not display the filler cell if there are no levels as there will be nothing else in the row.
+            $rows[] = $row;
+        }
 
         for ($i = 1; $i < $levels; $i++) {
             $row = new html_table_row();
@@ -698,7 +706,6 @@ class grade_report_grader extends grade_report {
         $element = ['type' => 'userfield', 'name' => 'fullname'];
         $studentheader->text = $arrows['studentname'] .
             $this->gtree->get_cell_action_menu($element, 'gradeitem', $this->gpr, $this->baseurl);
-
         $headerrow->cells[] = $studentheader;
 
         foreach ($extrafields as $field) {
@@ -1313,10 +1320,15 @@ class grade_report_grader extends grade_report {
 
         // Extract rows from each side (left and right) and collate them into one row each
         foreach ($leftrows as $key => $row) {
-            $row->cells = array_merge($row->cells, $rightrows[$key]->cells);
-            $fulltable->data[] = $row;
-            unset($leftrows[$key]);
-            unset($rightrows[$key]);
+            if (isset($rightrows[$key])) {
+                $row->cells = array_merge($row->cells, $rightrows[$key]->cells);
+                $fulltable->data[] = $row;
+                unset($leftrows[$key]);
+                unset($rightrows[$key]);
+            } else { // Right row is not set - this is the case of the left side.
+                $fulltable->data[] = $row;
+                unset($leftrows[$key]);
+            }
         }
         $html .= html_writer::table($fulltable);
         return $OUTPUT->container($html, 'gradeparent');
