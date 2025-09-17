@@ -80,6 +80,17 @@ class provider implements
             'privacy:metadata:customfield_data'
         );
 
+        $collection->add_database_table(
+            'customfield_shared',
+            [
+                'categoryid' => 'privacy:metadata:customfield_shared:categoryid',
+                'component' => 'privacy:metadata:customfield_shared:component',
+                'area' => 'privacy:metadata:customfield_shared:area',
+                'itemid' => 'privacy:metadata:customfield_shared:itemid',
+            ],
+            'privacy:metadata:customfield_shared'
+        );
+
         // Link to subplugins.
         $collection->add_plugintype_link('customfield', [], 'privacy:metadata:customfieldpluginsummary');
 
