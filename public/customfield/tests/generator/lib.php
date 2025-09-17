@@ -71,7 +71,14 @@ class core_customfield_generator extends component_generator_base {
 
         $handler = \core_customfield\handler::get_handler($record->component, $record->area, $record->itemid);
         $categoryid = $handler->create_category($record->name);
-        return $handler->get_categories_with_fields()[$categoryid];
+        $categories = $handler->get_categories_with_fields();
+        return $handler->get_category_from_array(
+            $categories,
+            $categoryid,
+            $handler->get_component(),
+            $handler->get_area(),
+            $handler->get_itemid()
+        );
     }
 
     /**
@@ -139,7 +146,15 @@ class core_customfield_generator extends component_generator_base {
 
         $field = field_controller::create(0, (object)['type' => $record->type], $category);
         $handler->save_field_configuration($field, $record);
-        return $handler->get_categories_with_fields()[$field->get('categoryid')]->get_fields()[$field->get('id')];
+        $categories = $handler->get_categories_with_fields();
+        $category = $handler->get_category_from_array(
+            $categories,
+            $field->get('categoryid'),
+            $handler->get_component(),
+            $handler->get_area(),
+            $handler->get_itemid()
+        );
+        return $category->get_fields()[$field->get('id')];
     }
 
     /**

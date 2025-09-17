@@ -106,7 +106,18 @@ class data extends persistent {
                         'type'     => PARAM_INT,
                         'optional' => false,
                         'null'     => NULL_NOT_ALLOWED
-                ]
+                ],
+                'component' => [
+                        'type' => PARAM_COMPONENT,
+                ],
+                'area' => [
+                        'type' => PARAM_COMPONENT,
+                ],
+                'itemid' => [
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                        'default' => 0,
+                ],
         );
     }
 

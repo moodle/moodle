@@ -2927,6 +2927,13 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ),
+    'core_customfield_toggle_shared' => [
+        'classname'   => core_customfield\external\toggle_shared_category::class,
+        'methodname'  => 'execute',
+        'description' => 'Toggle shared category state',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
     'core_h5p_get_trusted_h5p_file' => [
         'classname'     => 'core_h5p\external',
         'methodname'    => 'get_trusted_h5p_file',

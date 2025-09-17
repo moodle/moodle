@@ -1,0 +1,83 @@
+@core @core_course @core_customfield @javascript
+Feature: Create shared categories and fields
+  In order to have shared custom fields
+  As a manager
+  I need to create, edit, remove and sort shared custom field's categories
+
+  Scenario: Create and delete a category for shared custom fields
+    Given I log in as "admin"
+    When I navigate to "Custom fields > Shared custom fields" in site administration
+    And I press "Add a new category"
+    And I wait until the page is ready
+    Then I should see "Other fields" in the "#customfield_catlist" "css_element"
+    And I click on "[data-role='deletecategory']" "css_element"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
+    And I wait until the page is ready
+    And I wait until "Other fields" "text" does not exist
+
+  Scenario: Shared customfields are displayed in other entities
+    Given the following "custom field categories" exist:
+      | name               | component        | area   | itemid |
+      | My shared category | core_customfield | shared | 0      |
+    And the following "custom fields" exist:
+      | name            | category           | type | shortname |
+      | Shared field 1  | My shared category | text | f1        |
+    And I log in as "admin"
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
+    Then I should see "My shared category" in the "#customfield_catlist" "css_element"
+    And I should see "Shared field 1" in the "#customfield_catlist" "css_element"
+    And I navigate to "Users > Accounts > Cohort custom fields" in site administration
+    And I should see "My shared category" in the "#customfield_catlist" "css_element"
+    And I should see "Shared field 1" in the "#customfield_catlist" "css_element"
+
+  Scenario: Shared custom fields cannot be reordered, edited or deleted from other entities
+    Given the following "custom field categories" exist:
+      | name               | component        | area   | itemid |
+      | My shared category | core_customfield | shared | 0      |
+      | My course category | core_course      | course | 0      |
+    And the following "custom fields" exist:
+      | name            | category           | type | shortname |
+      | Shared field 1  | My shared category | text | f1        |
+      | Course field 1  | My course category | text | f2        |
+    And I log in as "admin"
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
+    # Check that the delete category link exists for course categories but not for shared categories.
+    Then "Delete" "link" should exist in the ".//div[contains(@class, 'categoryinstance')][.//span[@data-value='My course category']]" "xpath_element"
+    And "Delete" "link" should not exist in the ".//div[contains(@class,'categoryinstance')]/h3[normalize-space(text())='My shared category']" "xpath_element"
+    # Check that the inplaceeditable exists for course categories but not for shared categories.
+    And "//div[contains(@class,'categoryinstance') and contains(.,'My course category') and .//span[contains(@class,'inplaceeditable')]]" "xpath_element" should exist
+    And "//div[contains(@class,'categoryinstance') and contains(.,'My shared category') and .//span[contains(@class,'inplaceeditable')]]" "xpath_element" should not exist
+    # Check that the move category option exists for course categories but not for shared categories.
+    And "//span[contains(@class,'movecategory')][.//span[@title='Move \"My course category\"']]" "xpath_element" should exist
+    And "//span[contains(@class,'movecategory')][.//span[@title='Move \"My shared category\"']]" "xpath_element" should not exist
+    # Check that the move field option exists for course fields but not for shared fields.
+    And "//tr[@data-field-name='Course field 1']//span[@title='Move \"Course field 1\"']" "xpath_element" should exist
+    And "//tr[@data-field-name='Shared field 1']//span[@title='Move \"Shared field 1\"']" "xpath_element" should not exist
+
+  Scenario: Select which shared custom fields categories are used in the course entity
+    Given the following "custom field categories" exist:
+      | name                 | component        | area   | itemid |
+      | My shared category 1 | core_customfield | shared | 0      |
+      | My shared category 2 | core_customfield | shared | 0      |
+      | My course category   | core_course      | course | 0      |
+    And the following "custom fields" exist:
+      | name            | category             | type | shortname |
+      | Shared field 1  | My shared category 1 | text | f1        |
+      | Shared field 2  | My shared category 2 | text | f2        |
+      | Course field 1  | My course category   | text | f3        |
+    And the following "courses" exist:
+      | shortname | fullname |
+      | C1        | Course 1 |
+    And I log in as "admin"
+    When I am on the "C1" "Course" page
+    And I navigate to "Settings" in current page administration
+    Then I should see "My course category"
+    And I should not see "My shared category 1"
+    And I should not see "My shared category 2"
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
+    And I toggle the "Enable My shared category 1" admin switch "on"
+    And I am on the "C1" "Course" page
+    And I navigate to "Settings" in current page administration
+    And I should see "My course category"
+    And I should see "My shared category 1"
+    And I should not see "My shared category 2"

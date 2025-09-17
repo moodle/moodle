@@ -156,7 +156,13 @@ final class nofactivities_test extends advanced_testcase {
             ],
         ]);
         $getdata = fn(\customfield_number\field_controller $field): \customfield_number\data_controller =>
-            \core_customfield\api::get_instance_fields_data([$field->get('id') => $field], (int)$course1->id)[$field->get('id')];
+            \core_customfield\api::get_instance_fields_data(
+                [$field->get('id') => $field],
+                (int)$course1->id,
+                true,
+                'core_course',
+                'course'
+            )[$field->get('id')];
 
         // Recalculate the value of the field and assert it is set to 1 (one activity in the course).
         (new \customfield_number\task\cron())->execute();

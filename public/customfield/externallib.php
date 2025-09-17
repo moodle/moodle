@@ -120,6 +120,7 @@ class core_customfield_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'id'),
                             'nameeditable' => new external_value(PARAM_RAW, 'inplace editable name'),
                             'addfieldmenu' => new external_value(PARAM_RAW, 'addfieldmenu'),
+                            'canedit' => new external_value(PARAM_BOOL, 'can edit'),
                             'fields' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
@@ -130,6 +131,7 @@ class core_customfield_external extends external_api {
                                     )
                                 )
                             , '', VALUE_OPTIONAL),
+                            'toggle' => new external_value(PARAM_RAW, 'toggle'),
                         )
                     )
                 ),

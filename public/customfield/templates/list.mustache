@@ -42,6 +42,7 @@
           { "id": "0",
             "nameeditable": "Other fields",
             "addfieldmenu": "Add field",
+            "canedit": true,
             "fields": [
                 { "id": 0, "name": "Field name", "shortname": "shortname", "type": "Text" },
                 { "id": 0, "name": "Another field", "shortname": "checkme", "type": "Checkbox" }
@@ -50,6 +51,7 @@
           { "id": "00",
             "nameeditable": "Empty category",
             "addfieldmenu": "Add field",
+            "canedit": true,
             "fields": [] }
       ],
       "singleselect" : "select"
@@ -71,19 +73,26 @@
         {{{nocategories}}}
     {{/categories}}
 
-    <div class="categorieslist">
     {{#categories}}
+        {{#canedit}}<div class="categorieslist">{{/canedit}}
         <div data-category-id="{{id}}" id="category-{{id}}" class="mt-2">
         <div class="row justify-content-between align-items-end">
-            <div class="col-6 categoryinstance">
+            <div class="col-6 categoryinstance d-flex align-items-center gap-3">
                 {{#usescategories}}
                     <h3>
-                        <span class="movecategory icon-size-3">{{> core/drag_handle}}</span>
+                        {{#canedit}}<span class="movecategory icon-size-3">{{> core/drag_handle}}</span>{{/canedit}}
                         {{{nameeditable}}}
+                        {{#canedit}}
                         <a class="icon-size-3" href="#" data-role="deletecategory" data-id="{{id}}">
                             {{#pix}} t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}
                         </a>
+                        {{/canedit}}
                     </h3>
+                    {{^canedit}}
+                        <div data-bs-toggle="tooltip" data-bs-placement="top" title="{{#str}} sharedcategoryhelptext, customfield {{/str}}">
+                            {{{toggle}}}
+                        </div>
+                    {{/canedit}}
                 {{/usescategories}}
             </div>
             <div class="col-auto text-end">
@@ -91,7 +100,7 @@
             </div>
         </div>
         <div>
-            <table class="table generaltable fieldslist">
+            <table class="table generaltable {{#canedit}}fieldslist{{/canedit}}">
                 <thead>
                 <tr>
                     <th scope="col" class="col-5">{{#str}} customfield, core_customfield {{/str}}</th>
@@ -103,14 +112,16 @@
                 <tbody>
                 {{#fields}}
                     <tr data-field-name="{{name}}" data-field-id="{{id}}"  class="field">
-                        <td class="col-5"><span class="movefield">{{> core/drag_handle}}</span>{{{name}}}</td>
+                        <td class="col-5">{{#canedit}}<span class="movefield">{{> core/drag_handle}}</span>{{/canedit}}{{{name}}}</td>
                         <td class="col-3">{{{shortname}}}</td>
                         <td class="col-2">{{{type}}}</td>
                         <td class="col-2 text-end">
+                            {{#canedit}}
                             <a href="#" data-role="editfield" data-name="{{name}}" data-id="{{id}}">{{#pix}}
                                 t/edit, core, {{#str}} edit, moodle {{/str}} {{/pix}}</a>
                             <a href="#" data-id="{{id}}" data-role="deletefield">{{#pix}}
                                 t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}</a>
+                            {{/canedit}}
                         </td>
                     </tr>
                 {{/fields}}
@@ -121,12 +132,13 @@
             </table>
         </div>
         </div>
+        {{#canedit}}</div>{{/canedit}}
     {{/categories}}
-    </div>
 </div>
 
 {{#js}}
-    require(['core_customfield/form'], function(s) {
+    require(['core_customfield/form', 'core_customfield/toggle_shared'], function(s, toggle) {
         s.init();
+        toggle.init();
     });
 {{/js}}

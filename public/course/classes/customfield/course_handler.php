@@ -26,7 +26,6 @@ namespace core_course\customfield;
 
 defined('MOODLE_INTERNAL') || die;
 
-use core_customfield\api;
 use core_customfield\field_controller;
 
 /**
@@ -120,7 +119,7 @@ class course_handler extends \core_customfield\handler {
      * @return bool true if the current can edit custom fields, false otherwise
      */
     public function can_view(field_controller $field, int $instanceid): bool {
-        $visibility = $field->get_configdata_property('visibility');
+        $visibility = $field->get_configdata_property('visibility') ?? self::VISIBLETOALL;
         if ($visibility == self::NOTVISIBLE) {
             return false;
         } else if ($visibility == self::VISIBLETOTEACHERS) {
@@ -222,7 +221,7 @@ class course_handler extends \core_customfield\handler {
         $courseid = $task->get_courseid();
         $context = $this->get_instance_context($courseid);
         $editablefields = $this->get_editable_fields($courseid);
-        $records = api::get_instance_fields_data($editablefields, $courseid);
+        $records = $this->get_instance_fields_data($editablefields, $courseid);
         $target = $task->get_target();
         $override = ($target != \backup::TARGET_CURRENT_ADDING && $target != \backup::TARGET_EXISTING_ADDING);
 

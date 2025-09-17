@@ -81,7 +81,7 @@ class recalculate extends external_api {
 
         $provider->recalculate($instanceid);
 
-        $data = \core_customfield\api::get_instance_fields_data(
+        $data = $handler->get_instance_fields_data(
             [$fieldid => $field], $instanceid)[$fieldid];
 
         return ['value' => $data->export_value()];

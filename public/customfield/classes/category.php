@@ -74,6 +74,11 @@ class category extends persistent {
                         'default' => -1,
                         'null' => NULL_ALLOWED,
                 ],
+                'shared' => [
+                    'type' => PARAM_BOOL,
+                    'null' => NULL_NOT_ALLOWED,
+                    'default' => false,
+                ],
         );
     }
 }

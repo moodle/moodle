@@ -50,6 +50,15 @@ class category_controller {
     /** @var handler */
     protected $handler;
 
+    /** @var ?string */
+    protected $component = null;
+
+    /** @var ?string */
+    protected $area = null;
+
+    /** @var ?int */
+    protected $itemid = null;
+
     /**
      * category constructor.
      *
@@ -107,6 +116,8 @@ class category_controller {
             }
             $record->itemid = $handler->get_itemid();
         }
+        // Check if the category is shared.
+        $record->shared = $record->component === 'core_customfield' && $record->area === 'shared';
         $category = new self(0, $record);
         if (!$category->get('contextid')) {
             // If contextid was not present in the record we can find it out from the handler.
@@ -115,6 +126,10 @@ class category_controller {
         }
         if ($handler) {
             $category->set_handler($handler);
+
+            $category->set_original_component($category->get_handler()->get_component());
+            $category->set_original_area($category->get_handler()->get_area());
+            $category->set_original_itemid($category->get_handler()->get_itemid());
         }
         return $category;
     }
@@ -183,7 +198,12 @@ class category_controller {
     public function get_handler(): handler {
         if ($this->handler === null) {
             $this->handler = handler::get_handler($this->get('component'), $this->get('area'), $this->get('itemid'));
+
+            $this->set_original_component($this->handler->get_component());
+            $this->set_original_area($this->handler->get_area());
+            $this->set_original_itemid($this->handler->get_itemid());
         }
+
         return $this->handler;
     }
 
@@ -208,6 +228,67 @@ class category_controller {
             throw new \coding_exception('Context of the handler does not match the one from the record');
         }
         $this->handler = $handler;
+
+        $this->component = $handler->get_component();
+        $this->area = $handler->get_area();
+        $this->itemid = $handler->get_itemid();
+    }
+
+    /**
+     * Gets the original component.
+     *
+     * @return string|null
+     */
+    public function get_original_component(): ?string {
+        return $this->component;
+    }
+
+    /**
+     * Gets the original area.
+     *
+     * @return string|null
+     */
+    public function get_original_area(): ?string {
+        return $this->area;
+    }
+
+    /**
+     * Gets the original itemid.
+     *
+     * @return int|null
+     */
+    public function get_original_itemid(): ?int {
+        return $this->itemid;
+    }
+
+    /**
+     * Sets the original component.
+     *
+     * @param string $component
+     * @return void
+     */
+    public function set_original_component(string $component): void {
+        $this->component = $component;
+    }
+
+    /**
+     * Sets the original area.
+     *
+     * @param string $area
+     * @return void
+     */
+    public function set_original_area(string $area): void {
+        $this->area = $area;
+    }
+
+    /**
+     * Sets the original itemid.
+     *
+     * @param int $itemid
+     * @return void
+     */
+    public function set_original_itemid(int $itemid): void {
+        $this->itemid = $itemid;
     }
 
     /**

@@ -2849,4 +2849,12 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         ],
     ],
+
+    // Allow users to configure shared custom fields.
+    'moodle/customfield:configureshared' => [
+        'captype' => 'write',
+        'riskbitmap' => RISK_PERSONAL,
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [],
+    ],
 );

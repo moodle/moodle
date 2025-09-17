@@ -26,6 +26,7 @@ namespace core_customfield\output;
 
 use core_customfield\api;
 use core_customfield\handler;
+use core_customfield\shared;
 use renderable;
 use templatable;
 
@@ -65,6 +66,7 @@ class management implements renderable, templatable {
      * @return array|object|\stdClass
      */
     public function export_for_template(\renderer_base $output) {
+        global $DB;
         $data = new \stdClass();
 
         $fieldtypes = $this->handler->get_available_field_types();
@@ -73,17 +75,48 @@ class management implements renderable, templatable {
         $data->area = $this->handler->get_area();
         $data->itemid = $this->handler->get_itemid();
         $data->usescategories = $this->handler->uses_categories();
-        $categories = $this->handler->get_categories_with_fields();
+        $categories = $this->handler->get_categories_with_fields(true);
+
+        // Get all enabled shared categories at once.
+        $sharedcategoriesenabled = shared::get_records([
+            'component' => $data->component,
+            'area' => $data->area,
+            'itemid' => $data->itemid,
+        ]);
 
         $categoriesarray = array();
 
         foreach ($categories as $category) {
 
+            $canedit = $data->component === $category->get('component') && $data->area === $category->get('area');
+
             $categoryarray = array();
             $categoryarray['id'] = $category->get('id');
-            $categoryarray['nameeditable'] = $output->render(api::get_category_inplace_editable($category, true));
+            $categoryarray['nameeditable'] = $canedit ? $output->render(api::get_category_inplace_editable($category, true)) :
+                $category->get_formatted_name();
             $categoryarray['movetitle'] = get_string('movecategory', 'core_customfield',
                 $category->get_formatted_name());
+            $categoryarray['canedit'] = $canedit;
+
+            $toggleenabled = (bool) array_filter(
+                $sharedcategoriesenabled,
+                fn($record) => $record->get('categoryid') === $category->get('id')
+            );
+            $attributes = [
+                ['name' => 'data-id', 'value' => $category->get('id')],
+                ['name' => 'data-action', 'value' => 'shared-toggle'],
+                ['name' => 'data-state', 'value' => $toggleenabled],
+                ['name' => 'data-component', 'value' => $data->component],
+                ['name' => 'data-area', 'value' => $data->area],
+                ['name' => 'data-itemid', 'value' => $data->itemid],
+            ];
+            $categoryarray['toggle'] = $output->render_from_template('core/toggle', [
+                    'id' => 'shared-toggle-' . $category->get('id'),
+                    'checked' => $toggleenabled,
+                    'extraattributes' => $attributes,
+                    'label' => get_string('enableplugin', 'core_admin', $category->get_formatted_name()),
+                    'labelclasses' => 'visually-hidden',
+                ]);
 
             $categoryarray['fields'] = array();
 
@@ -95,22 +128,31 @@ class management implements renderable, templatable {
                 $fieldarray['name'] = $fieldname;
                 $fieldarray['shortname'] = $field->get('shortname');
                 $fieldarray['movetitle'] = get_string('movefield', 'core_customfield', $fieldname);
+                $categoryarray['canedit'] = $canedit;
 
                 $categoryarray['fields'][] = $fieldarray;
             }
 
-            $menu = new \action_menu();
-            $menu->set_menu_trigger(get_string('createnewcustomfield', 'core_customfield'));
+            if ($canedit) {
+                $menu = new \action_menu();
+                $menu->set_menu_trigger(get_string('createnewcustomfield', 'core_customfield'));
 
-            foreach ($fieldtypes as $type => $fieldname) {
-                $action = new \action_menu_link_secondary(new \moodle_url('#'), null, $fieldname,
-                    ['data-role' => 'addfield', 'data-categoryid' => $category->get('id'), 'data-type' => $type,
-                        'data-typename' => $fieldname]);
-                $menu->add($action);
+                foreach ($fieldtypes as $type => $fieldname) {
+                    $params = [
+                        'data-role' => 'addfield',
+                        'data-categoryid' => $category->get('id'),
+                        'data-type' => $type,
+                        'data-typename' => $fieldname,
+                    ];
+                    $action = new \action_menu_link_secondary(new \core\url('#'), null, $fieldname, $params);
+                    $menu->add($action);
+                }
+                $menu->attributes['class'] .= ' float-start me-1';
+
+                $categoryarray['addfieldmenu'] = $output->render($menu);
+            } else {
+                $categoryarray['addfieldmenu'] = '';
             }
-            $menu->attributes['class'] .= ' float-start me-1';
-
-            $categoryarray['addfieldmenu'] = $output->render($menu);
 
             $categoriesarray[] = $categoryarray;
         }

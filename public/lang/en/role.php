@@ -302,6 +302,7 @@ $string['checkpermissionsin'] = 'Check permissions in {$a}';
 $string['checksystempermissionsfor'] = 'Check system permissions for {$a->fullname}';
 $string['checkuserspermissionshere'] = 'Check permissions for {$a->fullname} has in this {$a->contextlevel}';
 $string['chooseroletoassign'] = 'Please choose a role to assign';
+$string['customfield:configureshared'] = 'Configure shared custom fields';
 $string['inactiveformorethan'] = 'inactive for more than {$a->timeperiod}';
 $string['ingroup'] = 'in the group "{$a->group}"';
 $string['inherit'] = 'Inherit';
