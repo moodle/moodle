@@ -93,7 +93,14 @@ class mod_feedback_templates_table extends flexible_table {
                 $deleteurl = new moodle_url('/mod/feedback/manage_templates.php',
                     $url->params() + ['deletetemplate' => $template->id]);
                 $deleteaction = new confirm_action(get_string('confirmdeletetemplate', 'feedback'));
-                $deleteicon = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete', $strdeletefeedback), $deleteaction);
+                $deleteicon = $OUTPUT->action_icon(
+                    $deleteurl,
+                    new pix_icon('t/delete', $strdeletefeedback),
+                    $deleteaction,
+                    attributes: [
+                        'role' => 'button',
+                    ],
+                );
                 if ($template->ispublic) {
                     $systemcontext = context_system::instance();
                     if (!(has_capability('mod/feedback:createpublictemplate', $systemcontext) &&
