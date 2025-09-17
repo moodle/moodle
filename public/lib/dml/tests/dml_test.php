@@ -501,7 +501,7 @@ final class dml_test extends \database_driver_testcase {
         $out = $fixture->four($sql);
         $expected = <<<EOD
 SELECT \* FROM {users}
--- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
+-- line \d+ of /public/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
 EOD;
         $this->assertMatchesRegularExpression('@' . $this->unix_to_os_dirsep($expected) . '@', $out);
 
@@ -509,8 +509,8 @@ EOD;
         $out = $fixture->four($sql);
         $expected = <<<EOD
 SELECT \* FROM {users}
--- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
--- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one\(\)
+-- line \d+ of /public/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
+-- line \d+ of /public/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one\(\)
 EOD;
         $this->assertMatchesRegularExpression('@' . $this->unix_to_os_dirsep($expected) . '@', $out);
 
@@ -518,11 +518,11 @@ EOD;
         $out = $fixture->four($sql);
         $expected = <<<EOD
 SELECT \* FROM {users}
--- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
--- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one\(\)
--- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two\(\)
--- line \d+ of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three\(\)
--- line \d+ of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four\(\)
+-- line \d+ of /public/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke\(\)
+-- line \d+ of /public/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one\(\)
+-- line \d+ of /public/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two\(\)
+-- line \d+ of /public/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three\(\)
+-- line \d+ of /public/lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four\(\)
 EOD;
         $this->assertMatchesRegularExpression('@' . $this->unix_to_os_dirsep($expected) . '@', $out);
 

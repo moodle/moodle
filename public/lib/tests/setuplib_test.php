@@ -24,8 +24,8 @@ namespace core;
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('format_backtrace')]
 final class setuplib_test extends \advanced_testcase {
-
     /**
      * Test get_docs_url_standard in the normal case when we should link to Moodle docs.
      */
@@ -539,5 +539,24 @@ final class setuplib_test extends \advanced_testcase {
     public function test_require_phpunit_isolation_isolated(): void {
         $this->expectNotToPerformAssertions();
         require_phpunit_isolation();
+    }
+
+    /**
+     * Ensure that formatted backtraces do not contain a full path but do contain the public dir.
+     */
+    public function test_format_backtrace(): void {
+        // Note: Stack traces do not include the path for the location that they are generated.
+        // Use an IIFE to add an extra frame to the trace.
+        $backtrace = (fn (): array => debug_backtrace())();
+        $output = format_backtrace($backtrace, true);
+
+        // It should not contain the full dir.
+        $this->assertStringNotContainsString(__DIR__, $output);
+
+        // But it should contain the local variant.
+        $this->assertStringContainsString(' of /public/lib/tests/setuplib_test.php', $output);
+
+        // And a vendor path.
+        $this->assertStringContainsString(' of /vendor/', $output);
     }
 }
