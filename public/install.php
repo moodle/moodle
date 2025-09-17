@@ -580,9 +580,9 @@ if ($config->stage == INSTALL_PATHS) {
     echo '</div>';
 
     echo '<div class="row mb-4">';
-    echo '<div class="col-md-3 text-md-end pt-1"><label for="id_dirroot">'.$paths['dirroot'].'</label></div>';
+    echo '<div class="col-md-3 text-md-end pt-1"><label for="id_root">'.$paths['dirroot'].'</label></div>';
     echo '<div class="col-md-9" data-fieldtype="text">';
-    echo '<input id="id_dirroot" name="dirroot" type="text" class="form-control text-ltr" value="'.s($CFG->dirroot).'" disabled="disabled" size="70" /></div>';
+    echo '<input id="id_root" name="root" type="text" class="form-control text-ltr" value="'.s($CFG->root).'" disabled="disabled" size="70" /></div>';
     echo '</div>';
 
     echo '<div class="row mb-4">';
