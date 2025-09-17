@@ -24,6 +24,8 @@
  */
 namespace mod_assign;
 
+use assign;
+use mod_assign\event\assessable_submitted;
 use mod_assign_grade_form;
 use mod_assign_test_generator;
 use mod_assign_testable_assign;
@@ -3538,6 +3540,43 @@ You can see it appended to your <a href="' . $assignurl .
             get_string('submitassignment', 'assign'),
             'Should not be able to submit after cutoff date.'
         );
+    }
+
+    /*
+     * Verify that {@see submit_submission} can do a submission, even in cases
+     * where {@see submit_for_grading} would reject it.
+     */
+    public function test_submit_submission_after_cutoff(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create a course and a students.
+        $course = $generator->create_course();
+        $student = $generator->create_and_enrol($course);
+
+        // Create an assignment with cut-off in the past, and a draft submission.
+        $assign = $this->create_instance($course, ['cutoffdate' => strtotime('2025-06-01')]);
+        $submission = $assign->get_user_submission($student->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $submission->timemodified = strtotime(strtotime('2025-05-21'));
+        $submission->timecreated = $submission->timemodified;
+        $submission->timestarted = $submission->timemodified;
+        $DB->update_record('assign_submission', $submission);
+
+        // Call the function to change the state from draft to submitted.
+        $sink = $this->redirectEvents();
+        $assign->submit_submission($submission, $student->id);
+        $events = $sink->get_events();
+
+        // Verify it worked.
+        $assign = new assign($assign->get_context(), $assign->get_course_module(), $course);
+        $updatesubmission = $assign->get_user_submission($student->id, false);
+        $this->assertEquals($submission->id, $updatesubmission->id);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_SUBMITTED, $updatesubmission->status);
+        // On Postgres, there is only one event. On MySQL there are two, and
+        // we want to check the second. (The other is a notification_sent event.)
+        $this->assertInstanceOf(assessable_submitted::class, end($events));
     }
 
     /**

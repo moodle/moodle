@@ -6868,8 +6868,13 @@ class assign {
     /**
      * Submit a submission for grading.
      *
+     * This method does all the normal checks, then calls {@see submit_submission()}
+     * to actually update the submission in the database, and trigger all the necessary
+     * actions.
+     *
      * @param stdClass $data - The form data
-     * @param array $notices - List of error messages to display on an error condition.
+     * @param array $notices - Not actually used. Was meant to be pass-by-reference to return errors,
+     *    but was not passed by reference, and changing this now causes errors because PHP.
      * @return bool Return false if the submission was not submitted.
      */
     public function submit_for_grading($data, $notices) {
@@ -6897,7 +6902,6 @@ class assign {
         }
 
         if (!$this->submissions_open($userid)) {
-            $notices[] = get_string('submissionsclosed', 'assign');
             return false;
         }
 
@@ -6914,38 +6918,53 @@ class assign {
         }
 
         if ($submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
-            // Give each submission plugin a chance to process the submission.
-            $plugins = $this->get_submission_plugins();
-            foreach ($plugins as $plugin) {
-                if ($plugin->is_enabled() && $plugin->is_visible()) {
-                    $plugin->submit_for_grading($submission);
-                }
-            }
-
-            $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-            $this->update_submission($submission, $userid, true, $instance->teamsubmission);
-            $completion = new completion_info($this->get_course());
-            if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
-                $this->update_activity_completion_records($instance->teamsubmission,
-                                                          $instance->requireallteammemberssubmit,
-                                                          $submission,
-                                                          $userid,
-                                                          COMPLETION_COMPLETE,
-                                                          $completion);
-            }
-
             if (!empty($data->submissionstatement) && $USER->id == $userid) {
                 \mod_assign\event\statement_accepted::create_from_submission($this, $submission)->trigger();
             }
-            $this->notify_graders($submission);
-            $this->notify_student_submission_receipt($submission);
 
-            \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, false)->trigger();
+            $this->submit_submission($submission, $userid);
 
             return true;
         }
-        $notices[] = get_string('submissionsclosed', 'assign');
         return false;
+    }
+
+    /**
+     * Actually submit a submission - do all necessary DB updates, send notifications, log etc.
+     *
+     * This method does not do any checks and is intended only for backend use. When the user
+     * submits from the interface, {@see submit_for_grading} should be called.
+     *
+     * @param stdClass $submission the submission.
+     * @param int $userid the user submitting (only an issue for group submissions).
+     */
+    public function submit_submission(stdClass $submission, int $userid): void {
+        $instance = $this->get_instance();
+
+        // Give each submission plugin a chance to process the submission.
+        $plugins = $this->get_submission_plugins();
+        foreach ($plugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                $plugin->submit_for_grading($submission);
+            }
+        }
+
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $this->update_submission($submission, $userid, true, $instance->teamsubmission);
+        $completion = new completion_info($this->get_course());
+        if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
+            $this->update_activity_completion_records($instance->teamsubmission,
+                $instance->requireallteammemberssubmit,
+                $submission,
+                $userid,
+                COMPLETION_COMPLETE,
+                $completion);
+        }
+
+        $this->notify_graders($submission);
+        $this->notify_student_submission_receipt($submission);
+
+        \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, false)->trigger();
     }
 
     /**
@@ -9466,10 +9485,10 @@ class assign {
      *
      * @param int $teamsubmission value of 0 or 1 to indicate whether this is a group activity
      * @param int $requireallteammemberssubmit value of 0 or 1 to indicate whether all group members must click Submit
-     * @param obj $submission the submission
+     * @param stdClass $submission the submission
      * @param int $userid the user id
      * @param int $complete
-     * @param obj $completion
+     * @param completion_info $completion
      *
      * @return null
      */
