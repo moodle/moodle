@@ -16,6 +16,7 @@
 
 namespace mod_choice\courseformat;
 
+use core\output\pix_icon;
 use core_courseformat\local\overview\overviewfactory;
 
 /**
@@ -47,8 +48,11 @@ final class overview_test extends \advanced_testcase {
             $this->assertNull($actionoverview['responded']);
         } else {
             $this->assertEquals($answered, $actionoverview['responded']->get_value());
+            $content = $actionoverview['responded']->get_content();
             if (!$answered) {
-                $this->assertEquals('-', $actionoverview['responded']->get_content());
+                $this->assertEquals('-', $content);
+            } else {
+                $this->assertInstanceOf(pix_icon::class, $content);
             }
         }
     }
