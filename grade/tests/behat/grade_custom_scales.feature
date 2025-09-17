@@ -49,3 +49,36 @@ Feature: Custom scales can be used to rate forum discussions
       | OK          |
       | Pretty Good |
       | Good        |
+
+  @javascript
+  Scenario: Scales with multilang names do show the correct title in the information popup
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | teacher2 | C1     | teacher |
+    And the following "scales" exist:
+      | name                                                                                            | scale            |
+      | <span lang="en" class="multilang">Stars</span><span lang="fr" class="multilang">Etoliles</span> | ⭐, ⭐⭐, ⭐⭐⭐, ⭐⭐⭐⭐ |
+    And the following "activities" exist:
+      | activity | course | name    | idnumber |
+      | forum    | C1     | Forum 2 | forum2   |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum  | name                   | message                                   |
+      | teacher1 | forum2 | The egg vs the chicken | Which came first? The egg or the chicken? |
+    And I am on the "Forum 2" "forum activity editing" page logged in as teacher1
+    And I expand all fieldsets
+    And I set the field "assessed" to "Average of ratings"
+    And I set the field "scale[modgrade_type]" to "Scale"
+    And I set the field "scale[modgrade_scale]" to "Stars"
+    And I press "Save and display"
+    When I am on the "Forum 2" "forum activity" page logged in as "teacher2"
+    And I follow "The egg vs the chicken"
+    And "Scales" "link" should exist
+    And I click on "Scales" "link"
+    And I switch to a second window
+    Then I should see "Stars"
+    But I should not see "StarsEtoiles"
