@@ -2777,6 +2777,7 @@ class grade_tree extends grade_structure {
         $this->courseid   = $courseid;
         $this->levels     = array();
         $this->context    = context_course::instance($courseid);
+        $this->items      = [];
 
         if (!empty($COURSE->id) && $COURSE->id == $this->courseid) {
             $course = $COURSE;
