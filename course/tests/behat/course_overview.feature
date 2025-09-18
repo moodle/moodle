@@ -313,3 +313,34 @@ Feature: Users can access the course activities overview page
       | name      | <span class="filter_mathjaxloader_equation">Announcements$$(a+b)=2$$<span class="nolink">$$(a+b)=2$$</span></span> |
     When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     Then I should not see "span" in the "assign_overview_collapsible" "region"
+
+  Scenario: Not gradable activities don't show any Grade colum in the activity overview
+#   Create an activity non-gradable from the creation.
+    Given the following "activities" exist:
+      | activity | name         | course | idnumber | grade |
+      | assign   | Not gradable | C1     | assign2  | 0     |
+    And I am on the "Test assignment name" "assign activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+#   Edit an activity to make it non-gradable.
+    And I set the following fields to these values:
+      | Feedback comments | 0    |
+      | Annotate PDF      | 0    |
+      | Grade > Type      | None |
+    And I press "Save and return to course"
+    And I am on the "Course 1" "course > activities > assign" page logged in as "student1"
+    And I should not see "Grade" in the "assign_overview_collapsible" "region"
+#   Edit an activity to add non-gradable feedback grading.
+    And I am on the "Not gradable" "assign activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I set the field "Feedback comments" to "1"
+    And I press "Save and return to course"
+    When I am on the "Course 1" "course > activities > assign" page logged in as "student1"
+    Then I should not see "Grade" in the "assign_overview_collapsible" "region"
+#   Edit an activity to add gradable grading.
+    And I am on the "Not gradable" "assign activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I set the field "Grade > Type" to "Point"
+    And I press "Save and return to course"
+    And I am on the "Course 1" "course > activities > assign" page logged in as "student1"
+    And I should not see "-" in the "Test assignment name" "table_row"
+    And I should see "-" in the "Not gradable" "table_row"

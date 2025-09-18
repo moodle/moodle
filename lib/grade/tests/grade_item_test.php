@@ -524,6 +524,44 @@ final class grade_item_test extends \grade_base_testcase {
         $this->assertTrue($grade_item->is_hidden(1));
     }
 
+    /**
+     * Test is_agradable method.
+     *
+     * @param int $type the itemtype to test.
+     * @param bool $expected result for is_gradable() method.
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_itemtype_is_gradable')]
+    public function sub_test_grade_item_is_gradable(int $type, bool $expected): void {
+        $gradeitem = new \grade_item($this->grade_items[0], false);
+        $gradeitem->gradetype = $type;
+        $this->assertEquals($expected, $gradeitem->is_gradable());
+    }
+
+    /**
+     * Data provider for sub_test_grade_item_is_gradable.
+     *
+     * @return \Generator
+     */
+    public static function provider_itemtype_is_gradable(): \Generator {
+        yield 'GRADE_TYPE_NONE' => [
+            'type' => GRADE_TYPE_NONE,
+            'expected' => false,
+        ];
+        yield 'GRADE_TYPE_VALUE' => [
+            'type' => GRADE_TYPE_VALUE,
+            'expected' => true,
+        ];
+        yield 'GRADE_TYPE_SCALE' => [
+            'type' => GRADE_TYPE_SCALE,
+            'expected' => true,
+        ];
+        yield 'GRADE_TYPE_TEXT' => [
+            'type' => GRADE_TYPE_TEXT,
+            'expected' => false,
+        ];
+    }
+
     protected function sub_test_grade_item_is_category_item() {
         $grade_item = new \grade_item($this->grade_items[3], false);
         $this->assertTrue(method_exists($grade_item, 'is_category_item'));
