@@ -79,8 +79,9 @@ export default class Component extends BaseComponent {
         // Index of sections and cms components.
         this.sections = {};
         this.cms = {};
-        // The page section return.
-        this.sectionReturn = descriptor.sectionReturn ?? null;
+        // The section number and ID of the displayed page.
+        this.sectionReturn = descriptor?.sectionReturn ?? null;
+        this.pageSectionId = descriptor?.pageSectionId ?? null;
         this.debouncedReloads = new Map();
     }
 
@@ -89,15 +90,17 @@ export default class Component extends BaseComponent {
      *
      * @param {string} target the DOM main element or its ID
      * @param {object} selectors optional css selector overrides
-     * @param {number} sectionReturn the content section return
+     * @param {number} sectionReturn the section number of the displayed page
+     * @param {number} pageSectionId the section ID of the displayed page
      * @return {Component}
      */
-    static init(target, selectors, sectionReturn) {
+    static init(target, selectors, sectionReturn, pageSectionId) {
         return new Component({
             element: document.getElementById(target),
             reactive: getCurrentCourseEditor(),
             selectors,
             sectionReturn,
+            pageSectionId,
         });
     }
 
@@ -215,7 +218,8 @@ export default class Component extends BaseComponent {
     getWatchers() {
         // Section return is a global page variable but most formats define it just before start printing
         // the course content. This is the reason why we define this page setting here.
-        this.reactive.sectionReturn = this.sectionReturn;
+        this.reactive.sectionReturn = this?.sectionReturn ?? null;
+        this.reactive.pageSectionId = this?.pageSectionId ?? null;
 
         // Check if the course format is compatible with reactive components.
         if (!this.reactive.supportComponents) {
@@ -488,7 +492,7 @@ export default class Component extends BaseComponent {
      */
     _refreshCourseSectionlist({state}) {
         // If we have a section return means we only show a single section so no need to fix order.
-        if (this.reactive.sectionReturn !== null) {
+        if ((this.reactive?.sectionReturn ?? this.reactive?.pageSectionId) !== null) {
             return;
         }
         const sectionlist = this.reactive.getExporter().listedSectionIds(state);
@@ -597,7 +601,8 @@ export default class Component extends BaseComponent {
                 {
                     id: cmId,
                     courseid: Config.courseId,
-                    sr: this.reactive.sectionReturn ?? null,
+                    sr: this.reactive?.sectionReturn ?? null,
+                    pagesectionid: this.reactive?.pageSectionId ?? null,
                 }
             );
             promise.then((html, js) => {
@@ -664,7 +669,8 @@ export default class Component extends BaseComponent {
                 {
                     id: element.id,
                     courseid: Config.courseId,
-                    sr: this.reactive.sectionReturn ?? null,
+                    sr: this.reactive?.sectionReturn ?? null,
+                    pagesectionid: this.reactive?.pageSectionId ?? null,
                 }
             );
             promise.then((html, js) => {
