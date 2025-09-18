@@ -91,7 +91,8 @@ class content implements named_templatable, renderable {
             'initialsection' => $initialsection,
             'sections' => $sections,
             'format' => $format->get_format(),
-            'sectionreturn' => null,
+            'sectionreturn' => 'null', // Mustache templates don't display NULL, so pass a string value.
+            'pagesectionid' => $this->format->get_sectionid() ?? 'null', // Pass a string value if NULL.
         ];
 
         // The single section format has extra navigation.
