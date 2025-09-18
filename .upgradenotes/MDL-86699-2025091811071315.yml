@@ -1,0 +1,12 @@
+issueNumber: MDL-86699
+notes:
+  core_reportbuilder:
+    - message: >-
+        There are two new entities intended for reports specific to course
+        module data, in order to provide a baseline in terms of module reporting
+        and API usage:
+
+
+        *
+        `core_course\reportbuilder\local\entities\{course_module,course_module_base}`
+      type: improved
