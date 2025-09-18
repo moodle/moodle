@@ -487,7 +487,8 @@ function assign_get_coursemodule_info($coursemodule) {
     $result = new cached_cm_info();
     $result->name = $assignment->name;
     if ($coursemodule->showdescription) {
-        if ($assignment->alwaysshowdescription || time() > $assignment->allowsubmissionsfromdate) {
+        $now = \core\di::get(\core\clock::class)->time();
+        if ($assignment->alwaysshowdescription || $now > $assignment->allowsubmissionsfromdate) {
             // Convert intro to html. Do not filter cached version, filters run at display time.
             $result->content = format_module_intro('assign', $assignment, $coursemodule->id, false);
         }
@@ -1608,7 +1609,8 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
             'id' => $cm->id,
             'action' => 'grader'
         ]);
-        $actionable = $assign->can_grade($userid) && (time() >= $assign->get_instance()->allowsubmissionsfromdate);
+        $now = \core\di::get(\core\clock::class)->time();
+        $actionable = $assign->can_grade($userid) && ($now >= $assign->get_instance()->allowsubmissionsfromdate);
         $itemcount = $actionable ? $assign->count_submissions_need_grading() : 0;
     } else {
         $usersubmission = $assign->get_user_submission($userid, false);
@@ -1774,7 +1776,7 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
     }
 
     if ($modified) {
-        $instance->timemodified = time();
+        $instance->timemodified = \core\di::get(\core\clock::class)->time();
         // Persist the assign instance changes.
         $DB->update_record('assign', $instance);
         $assign->update_calendar($coursemodule->id);

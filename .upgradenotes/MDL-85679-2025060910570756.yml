@@ -1,0 +1,8 @@
+issueNumber: MDL-85679
+notes:
+  mod_assign:
+    - message: >-
+        Within mod_assign, time() calls have been changed to use the core clock
+        class; this means Behat and PHPunit tests that mock the time will now
+        work as expected in mod_assign.
+      type: improved

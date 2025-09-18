@@ -127,7 +127,7 @@ class convert_submission extends adhoc_task {
             mtrace('Conversion still in progress. Requeueing self to check again.');
             $task = new self;
             $task->set_custom_data($data);
-            $task->set_next_run_time(time() + MINSECS);
+            $task->set_next_run_time(\core\di::get(\core\clock::class)->time() + MINSECS);
             manager::queue_adhoc_task($task);
         } else {
             mtrace('The document has been successfully converted');

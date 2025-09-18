@@ -1005,7 +1005,7 @@ EOD;
                     }
                     $filename = $matches[0].'png';
                     $tmpdir = make_request_directory();
-                    $tempfile = $tmpdir . '/' . time() . '_' . $filename;
+                    $tempfile = $tmpdir . '/' . \core\di::get(\core\clock::class)->time() . '_' . $filename;
                     imagepng($content, $tempfile);
 
                     $filearea = self::PAGE_IMAGE_FILEAREA;

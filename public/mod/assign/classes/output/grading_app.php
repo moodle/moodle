@@ -137,7 +137,7 @@ class grading_app implements templatable, renderable {
 
         $export->showreview = $showreview;
 
-        $time = time();
+        $time = \core\di::get(\core\clock::class)->time();
         $export->count = count($export->participants);
         $export->coursename = $this->assignment->get_course_context()->get_context_name(true, false, false);
         $export->caneditsettings = has_capability('mod/assign:addinstance', $this->assignment->get_context());

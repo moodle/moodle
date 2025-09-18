@@ -59,7 +59,7 @@ class timelimit_panel implements templatable, renderable {
      * @return stdClass - Flat list of exported data.
      */
     public function export_for_template(renderer_base $output): stdClass {
-        return (object)['timerstartvalue' => $this->end_time() - time()];
+        return (object)['timerstartvalue' => $this->end_time() - \core\di::get(\core\clock::class)->time()];
     }
 
     /**

@@ -315,8 +315,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
             $submission->groupid = 0;
             $submission->latest = 0;
-            $submission->timecreated = time();
-            $submission->timemodified = time();
+            $now = \core\di::get(\core\clock::class)->time();
+            $submission->timecreated = $now;
+            $submission->timemodified = $now;
             array_push($submissions, $submission);
         }
 
