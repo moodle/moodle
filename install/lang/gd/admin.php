@@ -29,9 +29,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Admin katalogi';
-$string['availablelangs'] = 'Mavjud til paketlari';
-$string['dataroot'] = 'Ma’lumotlar katalogi';
-$string['dbprefix'] = 'Jadvallar prefiksi';
-$string['dirroot'] = 'Moodle katalogi';
-$string['installation'] = 'O\'rnatish';
+$string['cliincorrectvalueerror'] = 'Mearachd, luach ceàrr "{$a->value}" airson "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Luach ceàrr, feuch a-rithist';
+$string['cliunknowoption'] = 'Roghainnean nach deach an aithneachadh:
+{$a}
+Cleachd— an roghainn airson cuideachadh';
