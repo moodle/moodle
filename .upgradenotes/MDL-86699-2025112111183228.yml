@@ -1,0 +1,7 @@
+issueNumber: MDL-86699
+notes:
+  mod_forum:
+    - message: >-
+        The forum report entity `->get_context_joins()` method is deprecated,
+        replaced with `->get_course_modules_joins(...)`
+      type: deprecated

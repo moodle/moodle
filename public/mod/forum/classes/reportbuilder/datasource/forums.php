@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace mod_forum\reportbuilder\datasource;
 
+use core_course\reportbuilder\local\entities\{course_category, course_module};
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\{course, user};
 use mod_forum\reportbuilder\local\entities\{forum, discussion, post};
@@ -47,18 +48,32 @@ class forums extends datasource {
 
         [
             'context' => $contextalias,
+            'course_modules' => $coursemodulesalias,
             'forum' => $forumalias,
         ] = $forumentity->get_table_aliases();
 
         $this->set_main_table('forum', $forumalias);
         $this->add_entity($forumentity
-            ->add_joins($forumentity->get_context_joins()));
+            ->add_joins($forumentity->get_course_modules_joins('forum', "{$forumalias}.id")));
 
         // Join the course entity.
         $courseentity = new course();
         $coursealias = $courseentity->get_table_alias('course');
         $this->add_entity($courseentity
             ->add_join("LEFT JOIN {course} {$coursealias} ON {$coursealias}.id = {$forumalias}.course"));
+
+        // Join the course category entity.
+        $coursecatentity = new course_category();
+        $coursecatalias = $coursecatentity->get_table_alias('course_categories');
+        $this->add_entity($coursecatentity
+            ->add_joins($courseentity->get_joins())
+            ->add_join("LEFT JOIN {course_categories} {$coursecatalias} ON {$coursecatalias}.id = {$coursealias}.category"));
+
+        // Join the course module entity.
+        $coursemodentity = (new course_module())
+            ->set_table_alias('course_modules', $coursemodulesalias);
+        $this->add_entity($coursemodentity
+            ->add_joins($forumentity->get_joins()));
 
         // Join the discussion entity.
         $discussionentity = (new discussion())
@@ -84,7 +99,9 @@ class forums extends datasource {
             ->add_join("LEFT JOIN {user} {$useralias} ON {$useralias}.id = {$postalias}.userid"));
 
         // Add report elements from each of the entities we added to the report.
+        $this->add_all_from_entity($coursecatentity->get_entity_name());
         $this->add_all_from_entity($courseentity->get_entity_name());
+        $this->add_all_from_entity($coursemodentity->get_entity_name());
         $this->add_all_from_entity($forumentity->get_entity_name());
         $this->add_all_from_entity($discussionentity->get_entity_name());
         $this->add_all_from_entity($postentity->get_entity_name());
