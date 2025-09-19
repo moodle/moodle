@@ -154,9 +154,12 @@ class overviewtable implements renderable, named_templatable {
     private function get_related_course_modules(): array {
         $modinfo = get_fast_modinfo($this->course->id);
         if ($this->modname == 'resource') {
-            return $this->get_all_resource_intances($modinfo);
+            $result = $this->get_all_resource_intances($modinfo);
+        } else {
+            $result = $modinfo->get_instances_of($this->modname);
         }
-        return $modinfo->get_instances_of($this->modname);
+        $modinfo->sort_cm_array($result);
+        return $result;
     }
 
     /**
