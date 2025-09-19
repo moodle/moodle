@@ -38,6 +38,10 @@
 
             @include media-breakpoint-up(sm) {
                 height: 640px;
+
+                // Ensure the modal content does not exceed the viewport height.
+                // The calculation uses the modal margin variable and the height of the modal header and footer.
+                max-height: calc(100vh - var(--#{$prefix}modal-margin) * 2 - 9rem);
             }
         }
 
