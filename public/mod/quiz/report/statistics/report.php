@@ -150,6 +150,7 @@ class quiz_statistics_report extends report_base {
         // Print the page header stuff (if not downloading.
         if (!$this->table->is_downloading()) {
             $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
+            $this->print_action_bar('statistics', null, $cm, $reporturl);
         }
 
         if (!$nostudentsingroup) {
@@ -174,7 +175,6 @@ class quiz_statistics_report extends report_base {
         if (!$this->table->is_downloading()) {
 
             if (groups_get_activity_groupmode($cm)) {
-                groups_print_activity_menu($cm, $reporturl->out());
                 if ($currentgroup && $nostudentsingroup) {
                     $OUTPUT->notification(get_string('nostudentsingroup', 'quiz_statistics'));
                 }

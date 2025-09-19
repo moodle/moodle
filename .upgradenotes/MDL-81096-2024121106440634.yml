@@ -1,0 +1,30 @@
+issueNumber: MDL-81096
+notes:
+    mod_quiz:
+        - message: >-
+              If your plugin implements its own quiz report (a subclass of `mod_quiz\local\reports\report_base`), you
+              need to update it to keep the old group selector working, because `report_base::print_header_and_tabs()`
+              no longer prints it, and to pick up the new navigation bar (report selector, group selector, user search
+              and initials filter).
+              
+              There are two ways to upgrade, depending on how much of the new bar you want:
+              
+              - Minimal (see `quiz_statistics_report` for an example): pass `null` for `$options` when calling
+              `$this->print_action_bar('statistics', null, $cm, $reporturl);`.
+              This restores the report selector and group selector while omitting the user search and initials filter widgets.
+              
+              IMPORTANT: If your plugin calls `print_standard_header_and_messages()` but does NOT implement `setup_report_data()`,
+              you must explicitly replace `$options` with `null` as the 4th parameter (`$this->print_standard_header_and_messages($cm, $course, $quiz, null, ...)`).
+              Passing `$options` without implementing `setup_report_data()` will cause the AJAX user search widget to fail.
+              
+              - Full (see `quiz_responses_report` or `quiz_overview_report` for an example): override
+              `setup_report_data(stdClass $quiz, cm_info $cm, stdClass $course, ?context $context = null): array` to
+              build and return `[$options, $table, $allowedjoins]` for your report (this is what the new
+              `mod_quiz_get_users_in_report` web service calls to populate the search widget), and pass your
+              `attempts_report_options` instance as `$options` into `print_standard_header_and_messages()`.
+              
+              If your report enforces its own capability check instead of `mod/quiz:viewreports`, override
+              `has_permission(context $context): void` (see `quiz_grading_report` for an example) rather than calling
+              `require_capability()` directly in `display()`, since `has_permission()` is also called by the
+              `mod_quiz_get_users_in_report` web service before it builds your report's data.
+          type: changed

@@ -1,0 +1,27 @@
+issueNumber: MDL-81096
+notes:
+  mod_quiz:
+    - message: >-
+        - Add a new external web service get_users_in_report to get the list of users in quiz report.
+      type: improved
+    - message: >-
+        A new function print_action_bar has been added to mod/quiz/classes/local/reports/report_base.php.
+        This function is intended to be called by the Quiz report to render a new navigation bar with user-specific filters.
+        Depending on the settings, the new navigation bar will consist of four components:
+          + Quiz Report selectors: Displays a list of the current quiz reports that the user can access.
+          + User search: Allows users to search and filter reports based on query string.
+          + Group selector: Provides a dropdown or selector to filter reports based on user groups.
+          + Initial bars filters
+        Quiz Report selectors is render by mod/quiz/classes/output/quiz_report_action_selector.php
+        User search, group selector, initial bars filters is implement in mod/quiz/classes/output/quiz_report_navigation_bar.php
+        Add new has_permission to check user permission for each quiz report.
+        Add new setup_report_data function to allow reports customize their sql data and table class.
+        Override QuizUserSearch from combosearch/user to allow quiz report can search and filter user.
+      type: improved
+  core:
+    - message: >-
+        - The `get_users_search_sql` method now includes two new  parameters, `allowcustom` and `custommappings`
+          The parameter `allowcustom` specifies whether we include the custom field in search query
+          The parameter `custommappings` is an array with custom field that has been mapped with table prefix.
+      type: changed
+

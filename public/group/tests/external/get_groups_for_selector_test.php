@@ -24,7 +24,7 @@ use core_group\external\get_groups_for_selector;
  * @package   core_group
  * @copyright 2024 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 4.4
+ * @since     Moodle 5.3
  * @covers \core_group\external\get_groups_for_selector
  */
 final class get_groups_for_selector_test extends \core_external\tests\externallib_testcase {

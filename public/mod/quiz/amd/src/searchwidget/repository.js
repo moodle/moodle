@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz activity version information.
+ * A repo for the search user in the report.
  *
- * @package   mod_quiz
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @module    mod_quiz/searchwidget/repository
+ * @copyright 2024 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+import ajax from 'core/ajax';
 
-$plugin->version = 2026082100;
-$plugin->requires = 2026041000;
-$plugin->component = 'mod_quiz';
+/**
+ * Given params, we want to fetch the students within report.
+ *
+ * @method userFetch
+ * @param {object} params Web service arguments (cmid, mode, params)
+ * @return {object} Promise returned by ajax.call.
+ */
+export const userFetch = (params) => {
+    const request = {
+        methodname: 'mod_quiz_get_users_in_report',
+        args: params,
+    };
+    return ajax.call([request])[0];
+};
