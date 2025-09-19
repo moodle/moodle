@@ -265,7 +265,15 @@ if ($dataformat !== '' && $grandtotal && count($activities) > 0) {
         ),
         $dataformat,
         $columnnames,
-        $alldata
+        $alldata,
+        function (array $record, bool $supportshtml) use ($extrafields): array {
+            if ($supportshtml) {
+                foreach ($extrafields as $extrafield) {
+                    $record[$extrafield] = s($record[$extrafield]);
+                }
+            }
+            return $record;
+        },
     );
 
     // Stop further script execution.
