@@ -61,7 +61,7 @@ class action_bar extends \core_grades\output\action_bar {
      * @return string
      */
     public function get_template(): string {
-        return 'gradereport_grader/action_bar';
+        return 'core/action_bar';
     }
 
     /**
