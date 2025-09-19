@@ -557,11 +557,11 @@ class grade_report_grader extends grade_report {
             $maxgradesperpage = self::MAX_GRADES_PER_PAGE;
         }
 
-		if ($gradeitemcount > 0) {
-			return round($maxgradesperpage / $gradeitemcount);
-		} else {
-			return $maxgradesperpage;
-		}
+        if ($gradeitemcount > 0) {
+            return round($maxgradesperpage / $gradeitemcount);
+        } else {
+            return $maxgradesperpage;
+        }
     }
 
     /**
