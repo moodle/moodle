@@ -42,8 +42,8 @@ Feature: Create shared categories and fields
     And I log in as "admin"
     And I navigate to "Courses > Default settings > Course custom fields" in site administration
     # Check that the delete category link exists for course categories but not for shared categories.
-    Then "Delete" "link" should exist in the ".//div[contains(@class, 'categoryinstance')][.//span[@data-value='My course category']]" "xpath_element"
-    And "Delete" "link" should not exist in the ".//div[contains(@class,'categoryinstance')]/h3[normalize-space(text())='My shared category']" "xpath_element"
+    Then "Delete custom field category: My course category" "button" should exist
+    And "Delete custom field category: My shared category" "button" should not exist
     # Check that the inplaceeditable exists for course categories but not for shared categories.
     And "//div[contains(@class,'categoryinstance') and contains(.,'My course category') and .//span[contains(@class,'inplaceeditable')]]" "xpath_element" should exist
     And "//div[contains(@class,'categoryinstance') and contains(.,'My shared category') and .//span[contains(@class,'inplaceeditable')]]" "xpath_element" should not exist

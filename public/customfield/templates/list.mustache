@@ -89,7 +89,7 @@
                         {{/canmovecategories}}
                         {{{nameeditable}}}
                         {{#canedit}}
-                            <button type="button" class="btn btn-link btn-icon icon-size-3" data-role="deletecategory" data-id="{{id}}" title="{{#str}} delete {{/str}}" aria-label="{{#str}} delete {{/str}}">
+                            <button type="button" class="btn btn-link btn-icon icon-size-3" data-role="deletecategory" data-id="{{id}}" title="{{#str}} deletecategory, customfield, {{name}} {{/str}}" aria-label="{{#str}} deletecategory, customfield, {{name}} {{/str}}">
                                 {{#pix}} t/delete, core {{/pix}}
                             </button>
                         {{/canedit}}
@@ -128,10 +128,10 @@
                         <td class="col-2">{{{type}}}</td>
                         <td class="col-2 text-end">
                             {{#canedit}}
-                                <button type="button" class="btn btn-link btn-icon icon-no-margin" data-role="editfield" data-name="{{name}}" data-id="{{id}}" title="{{#str}} edit {{/str}}" aria-label="{{#str}} edit {{/str}}">
+                                <button type="button" class="btn btn-link btn-icon" data-role="editfield" data-name="{{name}}" data-id="{{id}}" title="{{#str}} editfield, customfield, {{name}} {{/str}}" aria-label="{{#str}} editfield, customfield, {{name}} {{/str}}">
                                     {{#pix}} t/edit, core {{/pix}}
                                 </button>
-                                <button type="button" class="btn btn-link btn-icon icon-no-margin" data-id="{{id}}" data-role="deletefield" title=" {{#str}} delete {{/str}}" aria-label="{{#str}} delete {{/str}}">
+                                <button type="button" class="btn btn-link btn-icon" data-id="{{id}}" data-role="deletefield" title="{{#str}} deletefield, customfield, {{name}} {{/str}}" aria-label="{{#str}} deletefield, customfield, {{name}} {{/str}}">
                                     {{#pix}} t/delete, core {{/pix}}
                                 </button>
                             {{/canedit}}
