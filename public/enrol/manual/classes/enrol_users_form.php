@@ -125,7 +125,7 @@ class enrol_manual_enrol_users_form extends moodleform {
         if (has_capability('moodle/course:managegroups', $context)) {
             $options = [];
             foreach (groups_get_all_groups($course->id) as $group) {
-                $options[$group->id] = $group->name;
+                $options[$group->id] = format_string($group->name, options: ['context' => $context]);
             }
 
             if ($options) {
