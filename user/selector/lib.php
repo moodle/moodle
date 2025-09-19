@@ -672,8 +672,8 @@ abstract class user_selector_base {
         // It seems that document.getElementById('frog') in IE will return and element with name="frog".
         $output = '<div class="form-check justify-content-start ms-1"><input type="hidden" name="' . $name . '" value="0" />' .
                     '<label class="form-check-label" for="' . $name . 'id">' .
-                        '<input class="form-check-input" type="checkbox" id="' . $name . 'id" name="' . $name .
-                            '" value="1"' . $checked . ' /> ' . $label .
+                        '<input class="form-check-input position-relative ms-0" type="checkbox" id="' . $name . 'id" ' .
+                            'name="' . $name . '" value="1"' . $checked . ' /> ' . $label .
                     "</label>
                    </div>\n";
         return $output;
