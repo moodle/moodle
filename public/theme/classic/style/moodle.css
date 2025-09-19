@@ -31725,6 +31725,7 @@ table.calendartable caption {
 @media (min-width: 576px) {
   .modchooser.modal-dialog .modal-body .carousel-item {
     height: 640px;
+    max-height: calc(100vh - var(--bs-modal-margin) * 2 - 9rem);
   }
 }
 .modchooser.modal-dialog .modal-body .loading-icon {
