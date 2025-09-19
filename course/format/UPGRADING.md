@@ -1,5 +1,13 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
+## 5.0.2+
+
+### Added
+
+- Add a new modinfo::get_instance_of() to retrieve an instance of a cm via its name and instance id. Add a new modinfo::sort_cm_array() to sort an array of cms in their order of appearance in the course page. Replaces calls to get_course_and_cm_from_instance() and get_instances_of() whenever it was just used to retrieve a single instance of a cm.
+
+  For more information see [MDL-86021](https://tracker.moodle.org/browse/MDL-86021)
+
 ## 5.0
 
 ### Added

@@ -1,5 +1,13 @@
 # core_grades (subsystem) Upgrade notes
 
+## 5.0.2+
+
+### Added
+
+- - New grade_item::is_gradable function has been created to return whether the grade item is GRADE_TYPE_VALUE or GRADE_TYPE_SCALE.
+
+  For more information see [MDL-86173](https://tracker.moodle.org/browse/MDL-86173)
+
 ## 5.0
 
 ### Added
