@@ -50,14 +50,15 @@ abstract class sectiondelegatemodule extends sectiondelegate {
         protected section_info $sectioninfo
     ) {
         parent::__construct($sectioninfo);
-
+        /** @var \core_course\modinfo $modinfo */
+        $modinfo = $sectioninfo->modinfo;
         try {
             // Disabled or missing plugins can throw exceptions.
-            [$this->course, $this->cm] = get_course_and_cm_from_instance(
-                $this->sectioninfo->itemid,
+            $this->cm = $modinfo->get_instance_of(
                 $this->get_module_name(),
-                $this->sectioninfo->course,
+                $this->sectioninfo->itemid,
             );
+            $this->course = $modinfo->get_course();
         } catch (\Exception $e) {
             $this->cm = null;
             $this->course = null;
