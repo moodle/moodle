@@ -520,7 +520,7 @@ abstract class attempts_report_table extends \table_sql {
      *     build the actual database query.
      */
     public function base_sql(\core\dml\sql_join $allowedstudentsjoins) {
-        global $DB;
+        global $DB, $SESSION;
 
         // Please note this uniqueid column is not the same as quiza.uniqueid.
         $fields = 'DISTINCT ' . $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
@@ -530,7 +530,7 @@ abstract class attempts_report_table extends \table_sql {
         }
 
         $userfieldsapi = \core_user\fields::for_identity($this->context)->with_name()
-                ->excluding('id', 'idnumber', 'picture', 'imagealt', 'institution', 'department', 'email');
+                ->excluding('id', 'picture', 'imagealt', 'email');
         $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
 
         $fields .= '
@@ -589,6 +589,37 @@ abstract class attempts_report_table extends \table_sql {
                 $where = "(quiza.preview = 0 OR quiza.preview IS NULL) AND " . $allowedstudentsjoins->wheres;
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
+        }
+
+        // When a user wants to view a particular user rather than a set of users.
+        // By omission when selecting one user, also allow passing the search value around.
+        if ($this->options->userid !== -1) {
+            $where .= " AND u.id = :uid";
+            $params = array_merge($params, $allowedstudentsjoins->params);
+            $params['uid'] = $this->options->userid;
+        }
+
+        if ($this->options->usersearch !== '' && $this->options->userid === -1) {
+            ['mappings' => $mappings] = (array) $userfields;
+            [
+                'where' => $keywordswhere,
+                'params' => $keywordsparams,
+            ] = \core_user::get_users_search_sql($this->context, $this->options->usersearch, true, $mappings);
+
+            $where .= " AND $keywordswhere";
+            $params = array_merge($params, $keywordsparams);
+        }
+
+        $filterfirstnamekey = "filterfirstname-{$this->context->id}";
+        $filtersurnamekey = "filtersurname-{$this->context->id}";
+
+        if (!empty($SESSION->{$this->options->mode . 'report'}[$filterfirstnamekey])) {
+            $where .= ' AND ' . $DB->sql_like('u.firstname', ':firstname', false, false);
+            $params['firstname'] = $SESSION->{$this->options->mode . 'report'}[$filterfirstnamekey] . '%';
+        }
+        if (!empty($SESSION->{$this->options->mode . 'report'}[$filtersurnamekey])) {
+            $where .= ' AND ' . $DB->sql_like('u.lastname', ':lastname', false, false);
+            $params['lastname'] = $SESSION->{$this->options->mode . 'report'}[$filtersurnamekey] . '%';
         }
 
         if ($this->options->states) {

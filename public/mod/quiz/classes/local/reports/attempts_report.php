@@ -157,7 +157,7 @@ abstract class attempts_report extends report_base {
      * outputs the standard group selector, number of attempts summary,
      * and messages to cover common cases when the report can't be shown.
      *
-     * @param stdClass $cm the course_module information.
+     * @param \cm_info $cm the course_module information.
      * @param stdClass $course the course settings.
      * @param stdClass $quiz the quiz settings.
      * @param attempts_report_options $options the current report settings.
@@ -170,11 +170,7 @@ abstract class attempts_report extends report_base {
         global $OUTPUT;
 
         $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
-
-        if (groups_get_activity_groupmode($cm)) {
-            // Groups are being used, so output the group selector if we are not downloading.
-            groups_print_activity_menu($cm, $options->get_url());
-        }
+        $this->print_action_bar($this->mode, $options, $cm);
 
         // Print information on the number of existing attempts.
         if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {

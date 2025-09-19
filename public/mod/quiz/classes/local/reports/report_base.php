@@ -58,8 +58,7 @@ abstract class report_base {
      * @param string $reportmode the report name.
      */
     public function print_header_and_tabs($cm, $course, $quiz, $reportmode = 'overview') {
-        global $PAGE, $OUTPUT, $CFG;
-
+        global $PAGE, $OUTPUT;
         // Print the page header.
         $PAGE->set_title($quiz->name);
         $PAGE->set_heading($course->fullname);
@@ -83,10 +82,59 @@ abstract class report_base {
         $groupmode = groups_get_activity_groupmode($cm, $course);
         $currentgroup = groups_get_activity_group($cm, true);
 
-        if ($groupmode == SEPARATEGROUPS && !$currentgroup && !has_capability('moodle/site:accessallgroups', $context)) {
+        if (
+            $groupmode == SEPARATEGROUPS && !$currentgroup &&
+            !has_capability('moodle/site:accessallgroups', $context)
+        ) {
             $currentgroup = self::NO_GROUPS_ALLOWED;
         }
 
         return $currentgroup;
+    }
+
+    /**
+     * Print action bar filter.
+     *
+     * @param string $reportmode The quiz report type.
+     * @param null|attempts_report_options $options The current report settings.
+     * @param null|\cm_info $cm Course-module object.
+     * @param null|\moodle_url $url Full report url.
+     */
+    public function print_action_bar(
+        string $reportmode,
+        ?attempts_report_options $options = null,
+        ?\cm_info $cm = null,
+        ?\moodle_url $url = null
+    ): void {
+        global $OUTPUT;
+        $actionbar = new \mod_quiz\output\quiz_report_navigation_bar(
+            \context_module::instance($cm->id),
+            $reportmode,
+            $options,
+            $url,
+            $cm
+        );
+        echo $OUTPUT->render($actionbar);
+    }
+
+    /**
+     * Get necessary data for the report.
+     *
+     * @param stdClass $quiz The quiz object.
+     * @param \cm_info $cm The course_module object.
+     * @param stdClass $course The course object.
+     * @param null|context $context The context object.
+     * @return array The report info array contains option class, table class and allowed joins.
+     */
+    public function setup_report_data(stdClass $quiz, \cm_info $cm, stdClass $course, ?context $context): array {
+        return [];
+    }
+
+    /**
+     * Check if the user has permission to access this report.
+     *
+     * @param context $context the context to check the capability in.
+     */
+    public function has_permission(context $context): void {
     }
 }

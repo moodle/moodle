@@ -60,8 +60,8 @@ Feature: Basic use of the Manual grading report
 
   Scenario: Manual grading report without attempts
     When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
-    Then I should see "Separate groups (Tutor groups)"
-    And I should see "All participants"
+    Then I should see "Select separate groups" in the ".groupsearchwidget" "css_element"
+    And I should see "All participants" in the ".groupsearchwidget" "css_element"
     And I should see "Quiz 1"
     And I should see "Questions that need grading"
     And I should see "Nothing to display"
@@ -74,8 +74,8 @@ Feature: Basic use of the Manual grading report
       | 1    | Paris    |
     And I reload the page
     When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
-    Then I should see "Separate groups (Tutor groups)"
-    And I should see "All participants"
+    Then I should see "Select separate groups" in the ".groupsearchwidget" "css_element"
+    And I should see "All participants" in the ".groupsearchwidget" "css_element"
     And I should see "Quiz 1"
     And I follow "Also show questions that have been graded automatically"
     And I should see "Short answer 001"
@@ -164,7 +164,8 @@ Feature: Basic use of the Manual grading report
       | 1    | Duck     |
     When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "marker"
     Then I should see "Quiz 1"
-    And I should see "Separate groups: All participants"
+    And I should see "Select separate groups" in the ".groupsearchwidget" "css_element"
+    And I should see "All participants" in the ".groupsearchwidget" "css_element"
     Then I should see "Sorry, but you need to be part of a group to see this page."
 
   @javascript

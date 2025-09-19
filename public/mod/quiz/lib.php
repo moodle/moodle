@@ -1849,16 +1849,16 @@ function quiz_extend_settings_navigation(settings_navigation $settings, navigati
 
         $url = new moodle_url('/mod/quiz/report.php',
                 ['id' => $settings->get_page()->cm->id, 'mode' => reset($reportlist)]);
-        $reportnode = $quiznode->add_node(navigation_node::create(get_string('results', 'quiz'), $url,
+        $quiznode->add_node(
+            navigation_node::create(
+                get_string('results', 'quiz'),
+                $url,
                 navigation_node::TYPE_SETTING,
-                null, 'quiz_report', new pix_icon('i/report', '')));
-
-        foreach ($reportlist as $report) {
-            $url = new moodle_url('/mod/quiz/report.php', ['id' => $settings->get_page()->cm->id, 'mode' => $report]);
-            $reportnode->add_node(navigation_node::create(get_string($report, 'quiz_'.$report), $url,
-                    navigation_node::TYPE_SETTING,
-                    null, 'quiz_report_' . $report, new pix_icon('i/item', '')));
-        }
+                null,
+                'quiz_report',
+                new pix_icon('i/report', '')
+            )
+        );
     }
 }
 
