@@ -42,6 +42,17 @@ define('BADGE_EXPIRES_TOKEN', 'expires');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backpack_api {
+    /** @var int Canvas Credentials backpack provider */
+    public const PROVIDER_CANVAS_CREDENTIALS = 0;
+
+    /** @var int Other backpack provider */
+    public const PROVIDER_OTHER = 1;
+
+    /** @var int Empty provider */
+    public const PROVIDER_EMPTY = -1;
+
+    /** @var int Empty region */
+    public const REGION_EMPTY = -1;
 
     /** @var string The email address of the issuer or the backpack owner. */
     private $email;
@@ -578,5 +589,124 @@ class backpack_api {
         }
 
         return [];
+    }
+
+    /**
+     *  Get list of backpack providers for OBv2.0.
+     *
+     * @return string[] Array with the OBv2.0 backpack providers.
+     */
+    public static function get_providers(): array {
+        $allproviders = [
+            self::PROVIDER_CANVAS_CREDENTIALS => 'canvascredentialsprovider',
+            self::PROVIDER_OTHER => 'otherprovider',
+        ];
+
+        foreach ($allproviders as $key => $value) {
+            if (get_string_manager()->string_exists($value, 'badges')) {
+                $providers[$key] = get_string($value, 'badges');
+            } else {
+                // If the string does not exist, use the key as a fallback.
+                $providers[$key] = $value;
+            }
+        }
+        return $providers;
+    }
+
+    /**
+     * Get list of regions for backpack providers.
+     *
+     * @return array Regions with the following information: name, url and apiurl.
+     */
+    public static function get_regions() {
+        global $CFG;
+
+        $regions = [];
+        if (empty(trim($CFG->badges_canvasregions))) {
+            return $regions;
+        }
+
+        $entries = explode("\n", $CFG->badges_canvasregions);
+        foreach ($entries as $entry) {
+            if (empty(trim($entry)) || substr_count($entry, '|') != 2) {
+                continue;
+            }
+            $entry = trim($entry);
+            $parts = explode('|', $entry);
+            $regions[] = [
+                'name' => $parts[0],
+                'url' => rtrim($parts[1], '/'),
+                'apiurl' => rtrim($parts[2], '/'),
+            ];
+        }
+
+        return $regions;
+    }
+
+    /**
+     * Whether the Canvas Credentials fields should be displayed or not in the backpack form.
+     *
+     * @return bool True if the fields should be displayed; false otherwise.
+     */
+    public static function display_canvas_credentials_fields(): bool {
+        return !empty(self::get_providers()) && !empty(self::get_regions());
+    }
+
+    /**
+     * Get backpack URL for a given regionid.
+     *
+     * @param int $regionid The region identifier.
+     * @return string|null The backpack URL.
+     */
+    public static function get_region_url(int $regionid): ?string {
+        $regions = self::get_regions();
+        if (!array_key_exists($regionid, $regions)) {
+            return null;
+        }
+        return $regions[$regionid]['url'];
+    }
+
+    /**
+     * Get backpack API URL for a given regionid.
+     *
+     * @param int $regionid The region identifier.
+     * @return string|null The backpack API URL.
+     */
+    public static function get_region_api_url(int $regionid): ?string {
+        $regions = self::get_regions();
+        if (!array_key_exists($regionid, $regions)) {
+            return null;
+        }
+        return $regions[$regionid]['apiurl'];
+    }
+
+    /**
+     * Get region identifier from a given backpack URL.
+     * When the URL is not found, the last region index is returned.
+     *
+     * @param string $url The backpack URL.
+     * @return int The region identifier associated to the given backpack URL or the last region index if not found.
+     */
+    public static function get_regionid_from_url(string $url): int {
+        $regions = self::get_regions();
+        if (empty($regions)) {
+            return self::REGION_EMPTY;
+        }
+
+        // Normalize the URL by removing the trailing slash.
+        $normalizedurl = rtrim($url, '/');
+        $regionurl = array_search($normalizedurl, array_column($regions, 'url'));
+        return $regionurl !== false ? (int)$regionurl : count($regions) - 1;
+    }
+
+    /**
+     * Check whether the given URL is a Canvas Credentials one.
+     *
+     * @param string $url The backpack URL.
+     * @return bool True is the given URL is a Canvas Credentials region; false otherwise.
+     */
+    public static function is_canvas_credentials_region(string $url): bool {
+        $regions = self::get_regions();
+        return in_array($url, array_column($regions, 'url'));
     }
 }
