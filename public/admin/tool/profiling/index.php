@@ -52,9 +52,9 @@ if ($listurl) {
 }
 
 // Add a new nav item to make $listurl clickable for the Boost theme.
-if (isset($script)) {
-    $lastrunnav = get_string('lastrun', 'tool_profiling');
-    $PAGE->navbar->add($lastrunnav);
+if (isset($script) || isset($runid)) {
+    $detailnav = get_string('detailview', 'tool_profiling');
+    $PAGE->navbar->add($detailnav);
 }
 
 // Header
