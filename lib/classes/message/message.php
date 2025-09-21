@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * New messaging class.
- *
- * @package   core_message
- * @since     Moodle 2.9
- * @copyright 2015 onwards Ankit Agarwal
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\message;
 
-defined('MOODLE_INTERNAL') || die();
+use core\url;
 
 /**
  * New messaging class.
@@ -46,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Optional parameters of the $eventdata object:
  *  notification bool Should the message be considered as a notification rather than a personal message
- *  contexturl string If this is a notification then you can specify a url to view the event.
+ *  contexturl string|url If this is a notification then you can specify a url to view the event.
  *                    For example the forum post the user is being notified of.
  *  contexturlname string The display text for contexturl.
  *  replyto string An email address which can be used to send an reply.
@@ -102,7 +93,7 @@ class message {
     /** @var  int Is it a notification? */
     private $notification;
 
-    /** @var  string context url. */
+    /** @var string|url context url. */
     private $contexturl;
 
     /** @var  string context name. */

@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\url;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../message/lib.php');
@@ -44,7 +46,8 @@ require_once(__DIR__ . '/../message/lib.php');
  *
  * Optional parameters of the $eventdata object:
  *  notification bool should the message be considered as a notification rather than a personal message
- *  contexturl string if this is a notification then you can specify a url to view the event. For example the forum post the user is being notified of.
+ *  contexturl string|url if this is a notification then you can specify a url to view the event.
+ *                    For example the forum post the user is being notified of.
  *  contexturlname string the display text for contexturl
  *
  * Note: processor failure will not reported as false return value in all scenarios,
@@ -81,6 +84,14 @@ function message_send(\core\message\message $eventdata) {
     if (!$eventdata->userfrom) {
         debugging('Attempt to send msg from unknown user', DEBUG_NORMAL);
         return false;
+    }
+
+    // Cast context URL and name.
+    if (!empty($eventdata->contexturl)) {
+        $eventdata->contexturl = (string) $eventdata->contexturl;
+    }
+    if (!empty($eventdata->contexturlname)) {
+        $eventdata->contexturlname = (string) $eventdata->contexturlname;
     }
 
     // Legacy messages (FROM a single user TO a single user) must be converted into conversation messages.
@@ -256,17 +267,8 @@ function message_send(\core\message\message $eventdata) {
     $tabledata->component = $eventdata->component;
     $tabledata->timecreated = time();
     $tabledata->customdata = $eventdata->customdata;
-    if (!empty($eventdata->contexturl)) {
-        $tabledata->contexturl = (string)$eventdata->contexturl;
-    } else {
-        $tabledata->contexturl = null;
-    }
-
-    if (!empty($eventdata->contexturlname)) {
-        $tabledata->contexturlname = (string)$eventdata->contexturlname;
-    } else {
-        $tabledata->contexturlname = null;
-    }
+    $tabledata->contexturl = $eventdata->contexturl ?? null;
+    $tabledata->contexturlname = $eventdata->contexturlname ?? null;
 
     if ($messageid = message_handle_phpunit_redirection($eventdata, $table, $tabledata)) {
         return $messageid;
