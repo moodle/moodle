@@ -8,9 +8,7 @@ use Packback\Lti1p3\Interfaces\ILtiRegistration;
 
 class JwksEndpoint
 {
-    public function __construct(private array $keys)
-    {
-    }
+    public function __construct(private array $keys) {}
 
     public static function new(array $keys): self
     {

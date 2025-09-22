@@ -35,7 +35,7 @@ class LtiGradeSubmissionReview
      */
     public static function new(): self
     {
-        return new LtiGradeSubmissionReview();
+        return new LtiGradeSubmissionReview;
     }
 
     public function getReviewableStatus()

@@ -8,8 +8,7 @@ class LtiDeployment implements ILtiDeployment
 {
     public function __construct(
         private $deployment_id
-    ) {
-    }
+    ) {}
 
     public static function new($deployment_id): self
     {

@@ -21,7 +21,7 @@ class DateTimeInterval
 
     public static function new(): self
     {
-        return new DateTimeInterval();
+        return new DateTimeInterval;
     }
 
     public function getArray(): array

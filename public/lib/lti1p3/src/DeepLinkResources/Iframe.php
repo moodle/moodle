@@ -12,12 +12,11 @@ class Iframe
         private ?string $src = null,
         private ?int $width = null,
         private ?int $height = null
-    ) {
-    }
+    ) {}
 
     public static function new(): self
     {
-        return new Iframe();
+        return new Iframe;
     }
 
     public function getArray(): array
