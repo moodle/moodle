@@ -230,7 +230,7 @@
     .activitychooser-option-details {
         min-width: 15rem;
 
-        .modchooser-detail:not(:last-child) {
+        .modchooser-detail:not(:last-child):not(:only-child) {
             margin-bottom: map-get($spacers, 4);
             padding-bottom: map-get($spacers, 4);
             border-bottom: $border-width $border-style $border-color;
