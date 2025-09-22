@@ -96,7 +96,7 @@ $string['nohubselected'] = 'No hub selected';
 $string['none'] = 'None';
 $string['operation'] = 'Actions';
 $string['organisationname'] = 'Organisation name';
-$string['organisationname_help'] = 'The name of the organisation registering this site. If you choose to have your site listed, this will be the name that is listed.';
+$string['organisationname_help'] = 'The organisation name is shown in the site listing if you choose to have your site listed publicly.';
 $string['participantnumberaverage'] = 'Average number of participants ({$a})';
 $string['pluginusagedata'] = 'Plugin usage data collected from: <a href="{$a->overview}">Plugins overview</a>, <a href="{$a->activities}">Manage activities</a>, and <a href="{$a->blocks}">Manage blocks</a>';
 $string['policyagreed'] = 'Privacy notice and data processing agreement';

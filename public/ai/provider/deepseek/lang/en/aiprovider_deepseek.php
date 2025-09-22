@@ -49,15 +49,15 @@ $string['extraparams_help'] = 'Extra parameters can be configured here. We suppo
 }
 </pre>';
 $string['invalidjson'] = 'Invalid JSON string';
-$string['pluginname'] = 'Deepseek API provider';
+$string['pluginname'] = 'DeepSeek API provider';
 $string['privacy:metadata'] = 'The DeepSeek API provider plugin does not store any personal data.';
-$string['privacy:metadata:aiprovider_deepseek:externalpurpose'] = 'This information is sent to the Deepseek API in order for a response to be generated. Your Deepseek account settings may change how Deepseek stores and retains this data. No user data is explicitly sent to Deepseek or stored in Moodle LMS by this plugin.';
+$string['privacy:metadata:aiprovider_deepseek:externalpurpose'] = 'This information is sent to the DeepSeek API in order for a response to be generated. Your DeepSeek account settings may change how DeepSeek stores and retains this data. No user data is explicitly sent to DeepSeek or stored in Moodle LMS by this plugin.';
 $string['privacy:metadata:aiprovider_deepseek:model'] = 'The model used to generate the response.';
 $string['privacy:metadata:aiprovider_deepseek:prompttext'] = 'The user entered text prompt used to generate the response.';
 $string['settings'] = 'Settings';
 $string['settings_frequency_penalty'] = 'frequency_penalty';
 $string['settings_frequency_penalty_help'] = 'Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model\'s likelihood to repeat the same line verbatim.';
-$string['settings_help'] = 'Adjust the settings below to customise how requests are sent to Deepseek.';
+$string['settings_help'] = 'Adjust the settings below to customise how requests are sent to DeepSeek.';
 $string['settings_logprobs'] = 'logprobs';
 $string['settings_logprobs_help'] = 'Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the content of message.';
 $string['settings_logprobs_label'] = 'Enable';
