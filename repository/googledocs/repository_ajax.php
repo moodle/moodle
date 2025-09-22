@@ -49,63 +49,33 @@ if (!$repo) {
 $repo->check_capability();
 $repo->check_login();
 
-$fs = get_file_storage();
-$usercontext = context_user::instance($USER->id);
-
 switch ($action) {
     case 'upload':
-        // Save the files in the draft area.
-        $draftid = !empty($itemid) ? $itemid : file_get_unused_draft_itemid();
-        $file = $_FILES['repo_upload_file'];
-
-        if (empty($file) || $file['error'] !== UPLOAD_ERR_OK) {
-            echo json_encode(['error' => get_string('erroruploadfailed', 'repository')]);
-            break;
-        }
-
-        $filerecord = [
-            'contextid' => $usercontext->id,
-            'component' => 'user',
-            'filearea'  => 'draft',
-            'itemid'    => $draftid,
-            'filepath'  => '/',
-            'filename'  => clean_param($file['name'], PARAM_FILE),
-        ];
-
-        $fs->create_file_from_pathname($filerecord, $file['tmp_name']);
-
-        echo json_encode([
-            'draftid' => $draftid,
-            'file'    => $filerecord['filename'],
-        ]);
-        break;
-
-    case 'commit':
-        // Upload the files to Google Drive.
-        if (empty($itemid)) {
-            die(json_encode(['erroruploadfailed' => get_string('error', 'repository')]));
-        }
-
-        // Grab files from draft area with the same itemid.
-        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $itemid, "id", false);
-        if (empty($draftfiles)) {
-            die(json_encode(['erroruploadfailed' => get_string('error', 'repository')]));
+        $files = $_FILES['files'];
+        $tmp = make_request_directory();
+        $savedfiles = [];
+        if (is_array($files['name'])) {
+            // Multiple files.
+            foreach ($files['name'] as $idx => $name) {
+                $dest = $tmp . '/' . basename($name);
+                move_uploaded_file($files['tmp_name'][$idx], $dest);
+                $savedfiles[] = $dest;
+            }
+        } else {
+            // Single file.
+            $dest = $tmp . '/' . basename($files['name']);
+            move_uploaded_file($files['tmp_name'], $dest);
+            $savedfiles[] = $dest;
         }
 
         // Upload the file to Google Drive repository.
-        $tmp = make_request_directory();
         $ha = new repository_googledocs($repoid, $context);
         $userauth = $ha->get_user_oauth_client();
         $userservice = new repository_googledocs\rest($userauth);
-        foreach ($draftfiles as $draftfile) {
-            $tempfile = $tmp . '/' . rand();
-            $filename = $draftfile->get_filename();
-            $draftfile->copy_content_to($tempfile);
-            $ha->upload_file($userservice, $tempfile, $filename, 'download', "root");
+        foreach ($savedfiles as $file) {
+            $filename = basename($file);
+            $ha->upload_file($userservice, $file, $filename, 'download', "root");
         }
-
-        // Clear drafts after upload them to Google drive.
-        $fs->delete_area_files($usercontext->id, 'user', 'draft', $itemid);
 
         echo json_encode(['success' => true]);
         break;
