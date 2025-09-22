@@ -71,7 +71,7 @@ Feature: Delete activity tags during course reset
     And I press "Continue"
     And I am on the "Test Forum" "forum activity" page
     # Confirm discussion is deleted when `Delete all posts` was checked.
-    And I <forumview> see "There are no discussion topics yet in this forum"
+    And I <forumview> see "There are no discussion topics yet in this forum."
     # Confirm all discussion tags are deleted.
     And I should not see "SampleTag"
     And I should not see "DiscussionTag"
