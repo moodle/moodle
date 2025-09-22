@@ -76,6 +76,7 @@ class repository_googledocs extends repository {
      * @return void
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly = 0) {
+        global $PAGE;
         parent::__construct($repositoryid, $context, $options, $readonly = 0);
 
         try {
@@ -87,6 +88,8 @@ class repository_googledocs extends repository {
         if ($this->issuer && !$this->issuer->get('enabled')) {
             $this->disabled = true;
         }
+
+        $PAGE->requires->js_call_amd('repository_googledocs/upload', 'init');
     }
 
     /**
@@ -310,7 +313,7 @@ class repository_googledocs extends repository {
             'path' => $contentobj->get_navigation(),
             'list' => $contentobj->get_content_nodes($query, [$this, 'filter']),
             'uploadfile' => true,
-            'uploadurl' => '/repository/googledocs/repository_ajax.php',
+            'uploadevent' => 'repository_googledocs_upload',
             'repo_id' => $this->id,
             'contextid' => $this->context->id,
             'sesskey' => sesskey(),
@@ -805,7 +808,7 @@ class repository_googledocs extends repository {
      * @return stdClass
      */
     protected function get_file_summary(\repository_googledocs\rest $client, $fileid) {
-        $fields = "id,name,owners,parents,mimeType,webContentLink,webViewLink,size,thumbnailLink,iconLink";
+        $fields = "id,name,owners,parents";
         $params = [
             'fileid' => $fileid,
             'fields' => $fields
@@ -1041,26 +1044,11 @@ class repository_googledocs extends repository {
         }
 
         $originalfile = $this->get_file_summary($userservice, $source->id);
-        $downloadlink = '';
-        if (isset($originalfile->webContentLink)) {
-            $downloadlink = $originalfile->webContentLink;
-        } else if (isset($originalfile->webViewLink)) {
-            $downloadlink = $originalfile->webViewLink;
-        } else {
-            // If we don't have a link, we cannot download the file.
-            throw new repository_exception(
-                'errorwhilecommunicatingwith',
-                'repository',
-                '',
-                'Cannot download file: ' . $source->name
-            );
-        }
-
+        // Use the user service to download the file.
         $downloadedfile = $this->download_file(
             $userservice,
             $source->id,
-            $downloadlink,
-            $originalfile->name
+            $originalfile->name,
         );
         // Upload the user file to the system drive.
         $uploaded = $this->upload_file(
@@ -1068,7 +1056,7 @@ class repository_googledocs extends repository {
             $downloadedfile['path'],
             $downloadedfile['newfilename'],
             $source->exportformat,
-            $parentid
+            $parentid,
         );
         // Add the original file owner as a writer to the file.
         $this->add_writer_to_file($systemservice, $uploaded->id, $originalfile->owners[0]->emailAddress);
@@ -1139,31 +1127,28 @@ class repository_googledocs extends repository {
      *
      * @param \repository_googledocs\rest $userservice The user service instance for Google Docs REST API.
      * @param string $fileid The ID of the file to download.
-     * @param string $downloadlink The URL to the downloaded file.
      * @param string $originalfilename The file original name
      * @return array|repository_exception The downloaded file content or relevant response.
      */
     protected function download_file(
         \repository_googledocs\rest $userservice,
         string $fileid,
-        string $downloadlink,
         string $originalfilename
     ): array|repository_exception {
         global $CFG;
 
-        // Ensure the file can be downloaded without credentials.
-        $this->set_file_sharing_anyone_with_link_can_read($userservice, $fileid);
+        $client = $this->get_user_oauth_client();
+        $base = 'https://www.googleapis.com/drive/v3';
+        $params = ['alt' => 'media'];
+        $sourceurl = new moodle_url($base . '/files/' . $fileid, $params);
 
-        $tmp = make_request_directory();
-        $temppath = $tmp . '/' . $fileid;
-        $c = new curl();
-        $options = ['filepath' => $temppath, 'timeout' => $CFG->repositorygetfiletimeout];
-        $result = $c->download_one($downloadlink, null, $options);
-        if ($result) {
-            @chmod($temppath, $CFG->filepermissions);
+        $path = $this->prepare_file($originalfilename);
+        $options = ['filepath' => $path, 'timeout' => $CFG->repositorygetfiletimeout, 'followlocation' => true, 'maxredirs' => 5];
+        $success = $client->download_one($sourceurl->out(false), null, $options);
+        if ($success) {
+            @chmod($path, $CFG->filepermissions);
             return [
-                'path' => $temppath,
-                'url' => $downloadlink,
+                'path' => $path,
                 'newfilename' => $originalfilename,
             ];
         }
