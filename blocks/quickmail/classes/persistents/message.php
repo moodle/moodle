@@ -247,23 +247,30 @@ class message extends \block_quickmail\persistents\persistent {
             $status = 'all';
         }
 
+        $checkall = false;
+        if ($this->check_course_msg()) {
+            $checkall = true;
+        }
         // Get recipients based on status.
 
         // All.
         if ($status == 'all') {
-            $recipients = message_recipient::get_records(['message_id' => $messageid]);
+            if ($checkall) {
+                $recipients = $this->get_message_recipients_all();
+                return $recipients;
+            } else {
+                $recipients = message_recipient::get_records(['message_id' => $messageid]);
+            }
 
             // Unsent.
         } else if ($status == 'unsent') {
-
             // Do a quick check and see if this particular message is meant for ALL.
-            if ($this->check_course_msg()) {
+            if ($checkall) {
                 $recipients = $this->get_message_recipients_all();
                 return $recipients;
             } else {
                 $recipients = message_recipient::get_records(['message_id' => $messageid, 'sent_at' => 0]);
             }
-
 
             // Sent.
         } else {

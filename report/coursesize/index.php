@@ -22,12 +22,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 require_once('../../config.php');
 require_once($CFG->dirroot.'/report/coursesize/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/csvlib.class.php');
+require("$CFG->libdir/tablelib.php");
 
 admin_externalpage_setup('reportcoursesize');
+
+// BEGIN LSU - Timing this beast.
+// $start_time = microtime(true);
+// END LSU - Timing this beast.
 
 $coursecategory = optional_param('category', '', PARAM_INT);
 $download = optional_param('download', '', PARAM_INT);
@@ -139,9 +145,9 @@ if ($viewtab == 'userstopnum') {
             $extracoursesql = ' WHERE c.id is null';
         }
     }
-    $coursesql .= $extracoursesql;
-    $params = array_merge($params, $courseparams);
-    $courselookup = $DB->get_records_sql($coursesql, $params);
+    // $coursesql .= $extracoursesql;
+    // $params = array_merge($params, $courseparams);
+    // $courselookup = $DB->get_records_sql($coursesql, $params);
 
     $live = false;
     $backupsizes = [];
@@ -190,7 +196,6 @@ if ($viewtab == 'userstopnum') {
         $courses = $DB->get_records_sql($sql, $courseparams);
         $coursessizecount = count($courses);
     }
-
     // END LSU - Store course size and history.
 
     $coursetable = new html_table();
@@ -213,7 +218,7 @@ if ($viewtab == 'userstopnum') {
         get_string('diskusage', 'report_coursesize')
     );
 
-    $coursesizes = $DB->get_records('report_coursesize');
+    // $coursesizes = $DB->get_records('report_coursesize');
     foreach ($courses as $courseid => $course) {
         if ($live) {
             if (isset($backupsizes[$course->id])) {
@@ -275,8 +280,8 @@ if ($viewtab == 'userstopnum') {
     $row = array();
     $row[] = get_string('total');
     $row[] = '';
-    $row[] = display_size($totalsize);
     $row[] = display_size($totalbackupsize);
+    $row[] = display_size($totalsize);
     $coursetable->data[] = $row;
 
     $downloaddata[] = [get_string('total'), '', display_size($totalsize), display_size($totalbackupsize)];
@@ -354,10 +359,20 @@ if ($viewtab == 'userstopnum') {
     if ($usepagination) {
         $perpage = $perpage;
         $results = $coursessizecount;
-        $baseurl = new moodle_url('/report/coursesize/index.php', array('dir' => 'ASC'));
+        $baseurl = new moodle_url('/report/coursesize/index.php', array('dir' => 'ASC', 'category' => $coursecategory));
         echo $OUTPUT->paging_bar($results, $page, $perpage, $baseurl);
     }
     // END LSU - Store course size and history.
 
 }
+
+// BEGIN LSU - Timing this beast.
+// $end_time = microtime(true);
+// Calculate the elapsed time
+// $execution_time = $end_time - $start_time;
+
+// Output the execution time
+// echo "Code execution time: " . $execution_time . " seconds";
+// END LSU - Timing this beast.
+
 print $OUTPUT->footer();
