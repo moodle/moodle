@@ -86,6 +86,9 @@ class block_glossary_random extends block_base {
                                               WHERE glossaryid = ? AND approved = 1
                                               ORDER BY timemodified ASC', [$this->config->glossary]);
 
+            // Reset entries keys, so subsequent selection by index works correctly.
+            $entries = array_values($entries);
+
             if (empty($entries)) {
                 $text = get_string('noentriesyet', 'block_glossary_random');
             } else {
