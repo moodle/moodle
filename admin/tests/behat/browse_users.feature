@@ -79,7 +79,7 @@ Feature: An administrator can browse user accounts
   Scenario: Delete a user account
     Given I navigate to "Users > Accounts > Browse list of users" in site administration
     And I press "Delete" action in the "User One" report row
-    And I should see "Are you absolutely sure you want to completely delete the user User One" in the "Delete user" "dialogue"
+    And I should see "Are you sure you want to delete user User One" in the "Delete user" "dialogue"
     And I click on "Delete" "button" in the "Delete user" "dialogue"
     Then I should see "Deleted user User One"
     And I should not see "User One" in the "reportbuilder-table" "table"
