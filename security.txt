@@ -15,4 +15,4 @@ Policy: https://moodledev.io/general/development/process/security
 
 # Expiry date of this document
 # This information is considered current and up to date until 3 weeks after the next major Moodle LMS release
-Expires: 2025-10-27T01:00:00.000Z
+Expires: 2026-05-11T01:00:00.000Z
