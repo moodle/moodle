@@ -51,16 +51,24 @@ class field_config_form extends \core_form\dynamic_form {
 
         $mform->addElement('header', '_commonsettings', get_string('commonsettings', 'core_customfield'));
 
-        $mform->addElement('text', 'name', get_string('fieldname', 'core_customfield'), 'size="50"');
+        $mform->addElement('text', 'name', get_string('fieldname', 'core_customfield'), [
+            'size' => 50,
+            'maxlength' => 1333,
+        ]);
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 1333), 'maxlength', 1333, 'client');
         $mform->setType('name', PARAM_TEXT);
 
         // Accepted values for 'shortname' would follow [a-z0-9_] pattern,
         // but we are accepting any PARAM_TEXT value here,
         // and checking [a-zA-Z0-9_] pattern in validation() function to throw an error when needed.
-        $mform->addElement('text', 'shortname', get_string('fieldshortname', 'core_customfield'), 'size=20');
+        $mform->addElement('text', 'shortname', get_string('fieldshortname', 'core_customfield'), [
+            'size' => 20,
+            'maxlength' => 100,
+        ]);
         $mform->addHelpButton('shortname', 'shortname', 'core_customfield');
         $mform->addRule('shortname', null, 'required', null, 'client');
+        $mform->addRule('shortname', get_string('maximumchars', '', 100), 'maxlength', 100, 'client');
         $mform->setType('shortname', PARAM_TEXT);
 
         $desceditoroptions = $handler->get_description_text_options();
