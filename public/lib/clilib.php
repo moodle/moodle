@@ -162,8 +162,8 @@ function cli_get_params(array $longoptions, ?array $shortmapping=null) {
  */
 function cli_set_process_title_suffix(string $suffix) {
     if (CLI_SCRIPT && function_exists('cli_set_process_title') && isset($_SERVER['argv'])) {
-        $command = join(' ', $_SERVER['argv']);
-        @cli_set_process_title("php $command ($suffix)");
+        $command = PHP_BINARY . ' ' . join(' ', $_SERVER['argv']);
+        @cli_set_process_title("$command ($suffix)");
     }
 }
 
