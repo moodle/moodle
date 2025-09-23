@@ -167,6 +167,7 @@ class router {
      * Add Middleware to the App.
      */
     protected function add_middleware(): void {
+        global $CFG;
         // Middleware is added like an onion.
         // For a Response, the outer-most middleware is executed first, and the inner-most middleware is executed last.
         // For a Request, the inner-most middleware is executed first, and the outer-most middleware is executed last.
@@ -192,7 +193,9 @@ class router {
         $this->app->add(di::get(uri_normalisation_middleware::class));
 
         // Add the Error Handling Middleware and configure it to show Moodle Errors for HTML pages.
-        $errormiddleware = $this->app->addErrorMiddleware(true, true, true);
+        // Display error details only when debugging is on.
+        $displayerrordetails = !empty($CFG->debugdisplay);
+        $errormiddleware = $this->app->addErrorMiddleware($displayerrordetails, true, true);
         $errorhandler = $errormiddleware->getDefaultErrorHandler();
         $errorhandler->registerErrorRenderer('text/html', routed_error_handler::class);
     }
