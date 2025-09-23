@@ -921,14 +921,23 @@ function html_is_blank($string) {
  * @param string|int|bool|null $value the value to set (without magic quotes),
  *               null to unset the value
  * @param string $plugin (optional) the plugin scope, default null
+ * @param boolean $log (optional) should this emit to the config log
  * @return bool true or exception
  */
-function set_config($name, $value, $plugin = null) {
+function set_config($name, $value, $plugin = null, bool $log = false) {
     global $CFG, $DB;
 
     // Redirect to appropriate handler when value is null.
     if ($value === null) {
-        return unset_config($name, $plugin);
+        return unset_config($name, $plugin, $log);
+    }
+
+    if ($log) {
+        $prev = get_config($plugin, $name);
+        if ($prev === false) {
+            $prev = null;
+        }
+        add_to_config_log($name, $prev, $value, $plugin);
     }
 
     // Set variables determining conditions and where to store the new config.
@@ -1086,10 +1095,19 @@ function get_config($plugin, $name = null) {
  *
  * @param string $name the key to set
  * @param string $plugin (optional) the plugin scope
+ * @param boolean $log (optional) should this emit to the config log
  * @return boolean whether the operation succeeded.
  */
-function unset_config($name, $plugin=null) {
+function unset_config($name, $plugin = null, bool $log = false) {
     global $CFG, $DB;
+
+    if ($log) {
+        $prev = get_config($plugin, $name);
+        if ($prev === false) {
+            $prev = null;
+        }
+        add_to_config_log($name, $prev, null, $plugin);
+    }
 
     if (empty($plugin)) {
         unset($CFG->$name);

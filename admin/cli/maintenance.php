@@ -69,7 +69,7 @@ if ($options['enablelater']) {
     }
 
     $time = time() + ($options['enablelater']*60);
-    set_config('maintenance_later', $time);
+    set_config('maintenance_later', $time, null, true);
 
     echo get_string('clistatusenabledlater', 'admin', userdate($time))."\n";
     return 0;
@@ -77,23 +77,32 @@ if ($options['enablelater']) {
 } else if ($options['enable']) {
     if (file_exists("$CFG->dataroot/climaintenance.html")) {
         // The maintenance is already enabled, nothing to do.
-    } else {
-        enable_cli_maintenance_mode();
+        exit(0);
     }
-    set_config('maintenance_enabled', 0);
-    unset_config('maintenance_later');
+    enable_cli_maintenance_mode();
+    set_config('maintenance_enabled', 'cli mode', null, true);
+
+    if (isset($CFG->maintenance_later)) {
+        unset_config('maintenance_later', null, true);
+    }
     echo get_string('sitemaintenanceoncli', 'admin')."\n";
     exit(0);
 
 } else if ($options['enableold']) {
-    set_config('maintenance_enabled', 1);
-    unset_config('maintenance_later');
+    set_config('maintenance_enabled', 1, null, true);
+    if (isset($CFG->maintenance_later)) {
+        unset_config('maintenance_later', null, true);
+    }
     echo get_string('sitemaintenanceon', 'admin')."\n";
     exit(0);
 
 } else if ($options['disable']) {
-    set_config('maintenance_enabled', 0);
-    unset_config('maintenance_later');
+    if ($CFG->maintenance_enabled !== '0') {
+        set_config('maintenance_enabled', 0, null, true);
+    }
+    if (isset($CFG->maintenance_later)) {
+        unset_config('maintenance_later', null, true);
+    }
     if (file_exists("$CFG->dataroot/climaintenance.html")) {
         unlink("$CFG->dataroot/climaintenance.html");
     }
