@@ -1,6 +1,6 @@
 # mod_quiz Upgrade notes
 
-## 5.1dev+
+## 5.1beta
 
 ### Added
 
@@ -10,6 +10,9 @@
 - Add a groupidlist option to quiz_num_attempt_summary, quiz_num_attempts and quiz_num_users_who_can_attempt to filter those number by groups (the new argument is a list of ids for groups)
 
   For more information see [MDL-86223](https://tracker.moodle.org/browse/MDL-86223)
+- Additional parameter for quiz_num_attempts so we only count users with specified capabilities
+
+  For more information see [MDL-86520](https://tracker.moodle.org/browse/MDL-86520)
 
 ### Deprecated
 

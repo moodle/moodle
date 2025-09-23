@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 5.1dev+
+## 5.1beta
 
 ### Added
 
@@ -88,6 +88,9 @@
 - The `\core\attribute\deprecated` attribute constructor `$replacement` parameter now defaults to null, and can be omitted
 
   For more information see [MDL-84531](https://tracker.moodle.org/browse/MDL-84531)
+- The `core_plugin_manager::plugintype_name[_plural]` methods now require language strings for plugin types always be defined via `type_<type>` and `type_<type>_plural` language strings
+
+  For more information see [MDL-84948](https://tracker.moodle.org/browse/MDL-84948)
 - Added a new `\core\deprecation::emit_deprecation()` method which should be used in places where a deprecation is known to occur. This method will throw debugging if no deprecation notice was found, for example:
   ```php
   public function deprecated_method(): void {

@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 5.1dev+
+## 5.1beta
 
 ### core
 
@@ -96,6 +96,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `\core\attribute\deprecated` attribute constructor `$replacement` parameter now defaults to null, and can be omitted
 
   For more information see [MDL-84531](https://tracker.moodle.org/browse/MDL-84531)
+- The `core_plugin_manager::plugintype_name[_plural]` methods now require language strings for plugin types always be defined via `type_<type>` and `type_<type>_plural` language strings
+
+  For more information see [MDL-84948](https://tracker.moodle.org/browse/MDL-84948)
 - Added a new `\core\deprecation::emit_deprecation()` method which should be used in places where a deprecation is known to occur. This method will throw debugging if no deprecation notice was found, for example:
   ```php
   public function deprecated_method(): void {
@@ -224,6 +227,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The class core_badges_observer in badges/classes/observer.php has been moved to  core_badges\event\observer in badges/classes/event/observer.php. A compatibility  layer has been added to maintain backward compatibility, but direct use of the old  class name is now deprecated. If you've extended or directly used the old class,  you should update your code to use the new namespaced class.
 
   For more information see [MDL-83904](https://tracker.moodle.org/browse/MDL-83904)
+- A number of new static methods have been added to `core_badges\backpack_api` to support the new Canvas Credentials backpack provider. These methods allow you to retrieve lists of providers and regions, check if Canvas Credentials fields should be displayed, and get a region URL or API URL based on a given region ID. The new methods include `get_providers`, `get_regions`, `display_canvas_credentials_fields`, `get_region_url`, `get_region_api_url`, `get_regionid_from_url`, and `is_canvas_credentials_region`.
+
+  For more information see [MDL-86174](https://tracker.moodle.org/browse/MDL-86174)
 
 #### Removed
 
@@ -380,6 +386,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added new `core_courseformat\output\local\overview\overviewaction` output class to create action buttons that now include a badge right next to the button text. It essentially extends the existing action_link class to add a badge, making important actions stand out more on the course overview. Plus, this new structure also makes these badged action links easier to export this information for web services.
 
   For more information see [MDL-85981](https://tracker.moodle.org/browse/MDL-85981)
+- Add a new modinfo::get_instance_of() to retrieve an instance of a cm via its name and instance id. Add a new modinfo::sort_cm_array() to sort an array of cms in their order of appearance in the course page. Replaces calls to get_course_and_cm_from_instance() and get_instances_of() whenever it was just used to retrieve a single instance of a cm.
+
+  For more information see [MDL-86021](https://tracker.moodle.org/browse/MDL-86021)
 - The `core_course\output\activitychooserbutton` has been moved to `core_courseformat\output\local\activitychooserbutton` . From now on, format plugins can provide alternative outputs for this element. Also, all the javascript and templates related to the activity chooser are now located inside the core_courseformat subsystem.
 
   For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)
@@ -405,6 +414,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-85284](https://tracker.moodle.org/browse/MDL-85284)
 
+### core_customfield
+
+#### Changed
+
+- Added parameters 'component', 'area' and 'itemid' to the `api::get_instance_fields_data()` and `api::get_instances_fields_data()` methods. Added a new field 'shared' to the customfield_category DB table. Added 'component', 'area' and 'itemid' fields to the customfield_data DB table. Modified the customfield_data DB table unique index to include the new fields.
+
+  For more information see [MDL-86065](https://tracker.moodle.org/browse/MDL-86065)
+
 ### core_grades
 
 #### Added
@@ -412,6 +429,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New 'is_gradable()' function has been created to return whether the item has any gradeitem that is GRADE_TYPE_VALUE or GRADE_TYPE_SCALE.
 
   For more information see [MDL-85837](https://tracker.moodle.org/browse/MDL-85837)
+- - New grade_item::is_gradable function has been created to return whether the grade item is GRADE_TYPE_VALUE or GRADE_TYPE_SCALE.
+
+  For more information see [MDL-86173](https://tracker.moodle.org/browse/MDL-86173)
 
 #### Removed
 
@@ -432,6 +452,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The web service `core_message_get_member_info` additionally returns `cancreatecontact` which is a boolean value for a user's permission to add a contact.
 
   For more information see [MDL-72123](https://tracker.moodle.org/browse/MDL-72123)
+- The `contexturl` property to `\core\message\message` instances can now contain `\core\url` values in addition to plain strings
+
+  For more information see [MDL-83080](https://tracker.moodle.org/browse/MDL-83080)
 
 ### core_question
 
@@ -570,6 +593,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-84071](https://tracker.moodle.org/browse/MDL-84071)
 
+### mod_assign
+
+#### Added
+
+- Within mod_assign, time() calls have been changed to use the core clock class; this means Behat and PHPunit tests that mock the time will now work as expected in mod_assign.
+
+  For more information see [MDL-85679](https://tracker.moodle.org/browse/MDL-85679)
+
 ### mod_bigbluebuttonbn
 
 #### Added
@@ -701,6 +732,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add a groupidlist option to quiz_num_attempt_summary, quiz_num_attempts and quiz_num_users_who_can_attempt to filter those number by groups (the new argument is a list of ids for groups)
 
   For more information see [MDL-86223](https://tracker.moodle.org/browse/MDL-86223)
+- Additional parameter for quiz_num_attempts so we only count users with specified capabilities
+
+  For more information see [MDL-86520](https://tracker.moodle.org/browse/MDL-86520)
 
 #### Deprecated
 
@@ -831,11 +865,23 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### report_progress
 
+#### Added
+
+- Add download widget for report to download multiple formats.
+
+  For more information see [MDL-83838](https://tracker.moodle.org/browse/MDL-83838)
+
 #### Changed
 
 - Added a new optional parameter $activegroup to render_groups_select()
 
   For more information see [MDL-82381](https://tracker.moodle.org/browse/MDL-82381)
+
+#### Deprecated
+
+- `report_progress\output\renderer::render_download_buttons` No replacement. We no longer need to render the download custom button links.
+
+  For more information see [MDL-83838](https://tracker.moodle.org/browse/MDL-83838)
 
 ### theme
 

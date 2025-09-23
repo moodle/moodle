@@ -1,6 +1,6 @@
 # mod_glossary Upgrade notes
 
-## 5.1dev+
+## 5.1beta
 
 ### Added
 

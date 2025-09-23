@@ -1,6 +1,6 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
-## 5.1dev+
+## 5.1beta
 
 ### Added
 
@@ -28,6 +28,9 @@
 - Added new `core_courseformat\output\local\overview\overviewaction` output class to create action buttons that now include a badge right next to the button text. It essentially extends the existing action_link class to add a badge, making important actions stand out more on the course overview. Plus, this new structure also makes these badged action links easier to export this information for web services.
 
   For more information see [MDL-85981](https://tracker.moodle.org/browse/MDL-85981)
+- Add a new modinfo::get_instance_of() to retrieve an instance of a cm via its name and instance id. Add a new modinfo::sort_cm_array() to sort an array of cms in their order of appearance in the course page. Replaces calls to get_course_and_cm_from_instance() and get_instances_of() whenever it was just used to retrieve a single instance of a cm.
+
+  For more information see [MDL-86021](https://tracker.moodle.org/browse/MDL-86021)
 - The `core_course\output\activitychooserbutton` has been moved to `core_courseformat\output\local\activitychooserbutton` . From now on, format plugins can provide alternative outputs for this element. Also, all the javascript and templates related to the activity chooser are now located inside the core_courseformat subsystem.
 
   For more information see [MDL-86337](https://tracker.moodle.org/browse/MDL-86337)

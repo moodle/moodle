@@ -1,5 +1,13 @@
 # mod_assign Upgrade notes
 
+## 5.1beta
+
+### Added
+
+- Within mod_assign, time() calls have been changed to use the core clock class; this means Behat and PHPunit tests that mock the time will now work as expected in mod_assign.
+
+  For more information see [MDL-85679](https://tracker.moodle.org/browse/MDL-85679)
+
 ## 5.0
 
 ### Added

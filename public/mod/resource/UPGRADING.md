@@ -1,6 +1,6 @@
 # mod_resource Upgrade notes
 
-## 5.1dev+
+## 5.1beta
 
 ### Deprecated
 
