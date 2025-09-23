@@ -562,7 +562,7 @@ class assign_grading_table extends table_sql implements renderable {
         foreach ($extrauserfields as $extrafield) {
              $this->column_class($extrafield, $extrafield);
         }
-        $this->no_sorting('recordid');
+
         $this->no_sorting('finalgrade');
         $this->no_sorting('userid');
         $this->no_sorting('select');
