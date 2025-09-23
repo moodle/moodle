@@ -186,6 +186,7 @@ export default class {
                 purposelabel: allStrings[`mod_purpose_${moduleData[purposeField]}`],
             });
         }
+        data.haspurposes = data.purposes.length > 0;
         // The rest of details are displayed as a simpler list.
         data.details = [
             {

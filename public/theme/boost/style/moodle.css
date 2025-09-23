@@ -31879,7 +31879,7 @@ table.calendartable caption {
 .modchooser .optionsummary .activitychooser-option-details {
   min-width: 15rem;
 }
-.modchooser .optionsummary .activitychooser-option-details .modchooser-detail:not(:last-child) {
+.modchooser .optionsummary .activitychooser-option-details .modchooser-detail:not(:last-child):not(:only-child) {
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid #dee2e6;
