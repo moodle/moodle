@@ -198,11 +198,14 @@ class router {
      * Add the Error Handling Middleware to the RouteGroup.
      */
     protected function add_error_handler_middleware(): void {
+        global $CFG;
+        // Display error details only when debugging is on.
+        $displayerrordetails = !empty($CFG->debugdisplay);
         // Add the Error Handling Middleware and configure it to show Moodle Errors for HTML pages.
         $errormiddleware = new ErrorMiddleware(
             $this->app->getCallableResolver(),
             $this->app->getResponseFactory(),
-            displayErrorDetails: true,
+            displayErrorDetails: $displayerrordetails,
             logErrors: true,
             logErrorDetails: true,
         );
