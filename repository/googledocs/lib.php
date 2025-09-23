@@ -808,7 +808,7 @@ class repository_googledocs extends repository {
      * @return stdClass
      */
     protected function get_file_summary(\repository_googledocs\rest $client, $fileid) {
-        $fields = "id,name,owners,parents";
+        $fields = "id,name,owners,parents,webContentLink,webViewLink";
         $params = [
             'fileid' => $fileid,
             'fields' => $fields
