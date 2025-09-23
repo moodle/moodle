@@ -29,6 +29,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-86283](https://tracker.moodle.org/browse/MDL-86283)
 
+### core_message
+
+#### Added
+
+- The `contexturl` property to `\core\message\message` instances can now contain `\core\url` values in addition to plain strings
+
+  For more information see [MDL-83080](https://tracker.moodle.org/browse/MDL-83080)
+
 ## 4.5.6
 
 ### core
