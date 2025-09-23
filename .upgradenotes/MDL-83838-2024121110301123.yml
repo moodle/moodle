@@ -4,7 +4,3 @@ notes:
     - message: >
         Add download widget for report to download multiple formats.
       type: improved
-    - message: >
-      report_progress\output\renderer::render_download_buttons
-      No replacement. We no longer need to render the download custom button links.
-      type: deprecated
