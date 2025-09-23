@@ -109,16 +109,16 @@ $string['attemptnumber'] = 'Attempt number';
 $string['attemptsettings'] = 'Attempt settings';
 $string['attemptreopenmethod'] = 'Grant attempts';
 $string['attemptreopenmethod_automatic'] = 'Automatically';
-$string['attemptreopenmethod_automatic_help'] = 'After each attempt, the next is granted automatically.';
-$string['attemptreopenmethod_help'] = 'This setting controls how students are granted attempts for this assignment. For each attempt, the grade and feedback are saved, and can be viewed by the teacher and the student. The available options are:
+$string['attemptreopenmethod_automatic_help'] = 'After each attempt, the next is granted automatically after grading.';
+$string['attemptreopenmethod_help'] = 'This setting controls how students are granted attempts for this assignment. For each attempt, the grade and feedback are saved, and can be viewed by the teacher and the student. Options are:
 
 * Manually - After each attempt, you can grant the next one through the Submissions page or the Grader page.
-* Automatically - After each attempt, the next is granted automatically.
-* Automatically until pass - After each attempt, the next will be granted automatically, until the student achieves the passing grade.';
+* Automatically - After each attempt, the next is granted automatically after grading.
+* Automatically until pass - After each attempt, the next will be granted automatically after grading, until the student achieves the passing grade.';
 $string['attemptreopenmethod_manual'] = 'Manually';
 $string['attemptreopenmethod_manual_help'] = 'After each attempt, you can grant the next one through the Submissions page or the Grader page.';
 $string['attemptreopenmethod_untilpass'] = 'Automatically until pass';
-$string['attemptreopenmethod_untilpass_help'] = 'After each attempt, the next will be granted automatically, until the student achieves the passing grade.';
+$string['attemptreopenmethod_untilpass_help'] = 'After each attempt, the next will be granted automatically after grading, until the student achieves the passing grade.';
 $string['availability'] = 'Availability';
 $string['back'] = 'Back';
 $string['backtoassignment'] = 'Back to assignment';
