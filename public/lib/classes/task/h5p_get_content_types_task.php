@@ -68,6 +68,9 @@ class h5p_get_content_types_task extends scheduled_task {
         } else {
             $numtypesinstalled = count($result->typesinstalled);
             mtrace("{$numtypesinstalled} new content types installed");
+            foreach ($result->typesinstalled as $installed) {
+                mtrace(" - {$installed['name']}");
+            }
         }
     }
 }
