@@ -1,5 +1,716 @@
 # CHANGELOG
 
+## 3.356.22 - 2025-09-20
+
+* `Aws\MediaLive` - Add MinBitrate for QVBR mode under H264/H265/AV1 output codec. Add GopBReference, GopNumBFrames, SubGopLength fields under H265 output codec.
+* `Aws\KendraRanking` - Model whitespace change - no client difference
+* `Aws\LicenseManagerUserSubscriptions` - Added support for cross-account Active Directories.
+* `Aws\Connect` - This release adds a persistent connection field to UserPhoneConfig that maintains agent's softphone media connection for faster call connections.
+* `Aws\ConfigService` - Add UNKNOWN state to RemediationExecutionState and add IN_PROGRESS/EXITED/UNKNOWN states to RemediationExecutionStepState.
+* `Aws\BedrockAgentCoreControl` - Add tagging and VPC support to AgentCore Runtime, Code Interpreter, and Browser resources. Add support for configuring request headers in Runtime. Fix AgentCore Runtime shape names.
+* `Aws\SQS` - Update invalid character handling documentation for SQS SendMessage API
+
+## 3.356.21 - 2025-09-18
+
+* `Aws\Exception` - Loosens requirements for `$previous` `AwsException` parameter from `Exception` to `Throwable`.
+* `Aws\Bedrock` - Release includes an increase to the maximum policy build document size, an update to DeleteAutomatedReasoningPolicyBuildWorkflow to add ResourceInUseException, and corrections to UpdateAutomatedReasoningPolicyTestCaseRequest.
+* `Aws\ChimeSDKMessaging` - Amazon Chime SDK Messaging GetMessagingSessionEndpoint API now returns dual-stack WebSocket endpoints supporting IPv4/IPv6.
+* `Aws\EC2` - Allowed AMIs adds support for four new parameters - marketplaceProductCodes, deprecationTimeCondition, creationDateCondition and imageNames
+* `Aws\Budgets` - Added BillingViewHealthStatus Exception which is thrown when a Budget is created or updated with a Billing View that is not in the HEALTHY status
+
+## 3.356.20 - 2025-09-17
+
+* `Aws\NetworkFirewall` - Network Firewall now prevents TLS handshakes with the target server until after the Server Name Indication (SNI) has been seen and verified. The monitoring dashboard now provides deeper insights into PrivateLink endpoint candidates and offers filters based on IP addresses and protocol.
+* `Aws\PCS` - Add support for Amazon EC2 Capacity Blocks for ML
+* `Aws\EC2` - Add mac-m4.metal and mac-m4pro.metal instance types.
+
+## 3.356.19 - 2025-09-16
+
+* `Aws\CloudWatchLogs` - Cloudwatch Logs added support for 2 new API parameters in metric and subscription filter APIs to filter log events based on system field values and emit system field values as dimensions and send them to customer destination as additional metadata.
+* `Aws\IVSRealTime` - IVS now offers customers the ability to control the positioning of participants in both grid and PiP layouts based on custom attribute values in participant tokens.
+* `Aws\Budgets` - Add support for custom time periods in budget configuration
+* `Aws\OSIS` - Adds support for cross-account ingestion for push-based sources. This includes resource policies for sharing pipelines across accounts and features for managing pipeline endpoints which enable accessing pipelines across different VPCs, including VPCs in other accounts.
+
+## 3.356.18 - 2025-09-15
+
+* `Aws\S3Control` - Introduce three new encryption filters: EncryptionType (SSE-S3, SSE-KMS, DSSE-KMS, SSE-C, NOT-SSE), KmsKeyArn (for SSE-KMS and DSSE-KMS), and BucketKeyEnabled (for SSE-KMS).
+* `Aws\ObservabilityAdmin` - CloudWatch Observability Admin adds the ability to enable telemetry centralization in customers' Organizations. The release introduces new APIs to manage centralization rules, which define settings to replicate telemetry data to a central destination in the customers' Organization.
+* `Aws\MedicalImaging` - Added support for OpenID Connect (OIDC) custom authorizer
+* `Aws\CostExplorer` - Added endpoint support for eusc-de-east-1 region.
+
+## 3.356.17 - 2025-09-12
+
+* `Aws\` - Once again allow psr/http-message 1.0, for increased compatibility with other packages.
+* `Aws\PaymentCryptography` - Add support for certificates to be signed by 3rd party certificate authorities. New API GetCertificateSigningRequest API and support for providing certificates at run-time for tr-34 import/export
+
+## 3.356.16 - 2025-09-11
+
+* `Aws\Api` - Fixes bug in document type validation where unordered integer array keys are not considered.
+* `Aws\GuardDuty` - Updated Java SDK implementation of entity set status in GuardDuty API.
+* `Aws\DataZone` - adding IAM principal id to IAM user profile details
+* `Aws\QuickSight` - This release adds support for Account level custom permissions, additional Dashboard Options, and Null support for Q&A.
+* `Aws\PrometheusService` - Add Vended Logs APIs for Amazon Prometheus Managed Collector
+* `Aws\RDS` - Adds support for end-to-end IAM authentication in RDS Proxy for MySQL, MariaDB, and PostgreSQL engines.
+* `Aws\MediaLive` - AWS Elemental MediaLive adds a new feature in MediaPackage output group that enables MediaPackage V2 users to control HLS-related parameters directly in MediaLive. These parameter settings are then reflected in MediaPackage outputs, providing more streamlined control over HLS configurations.
+* `Aws\Evs` - CreateEnvironment API now supports parameters (isHcxPublic & hcxNetworkAclId) for HCX migration via public internet, adding flexibility for migration scenarios. New APIs have been added for associating (AssociateEipToVlan) & disassociating (DisassociateEipFromVlan) Elastic IP (EIP) addresses.
+* `Aws\ECS` - This release supports hook details for Amazon ECS lifecycle hooks.
+* `Aws\EMRContainers` - Added nodeLabel support in container provider to aid hardware isolation support for virtual cluster and security configuration.
+
+## 3.356.15 - 2025-09-10
+
+* `Aws\NetworkFlowMonitor` - Added new enum value (AWS::Region) for type field under MonitorLocalResource and MonitorRemoteResource. Workload Insights and Monitor top contributors queries now support a new DestinationCategory (INTER_REGION).
+* `Aws\PaymentCryptography` - AWS Payment Cryptography Service now supports Multi-Region key replication. Customers can choose to automatically distribute keys across AWS Regions.
+
+## 3.356.14 - 2025-09-09
+
+* `Aws\AutoScaling` - Added WaitForTransitioningInstances parameter to the CancelInstanceRefresh API, allowing the caller to cancel an instance refresh without waiting for on-going launches and terminations.
+* `Aws\DataZone` - Adds support for custom blueprints
+* `Aws\MediaPackageV2` - Added CUE tag SCTE output to MediaPackageV2 HLS and LL-HLS manifests.
+* `Aws\SageMaker` - Released IPv6 support with dual-stack domain options on SageMaker Studio and introduced support for p6-b200.48xlarge instance type on SageMaker Studio for JupyterLab and CodeEditor applications.
+* `Aws\CloudWatch` - Added a new API - DescribeAlarmContributors API, to retrieve alarm contributors in ALARM state. Added support in DescribeAlarmHistory API to query alarm contributor history
+* `Aws\Connect` - SDK release for user defined predefined attributes.
+* `Aws\Organizations` - Documentation updates for AWS Organizations APIs.
+
+## 3.356.13 - 2025-09-08
+
+* `Aws\IoTSiteWise` - Add ComputationModelVersion support in IoT SiteWise APIs
+* `Aws\SecurityHub` - This release adds the RESOURCE_NOT_FOUND error code as a possible value in responses to the following operations: BatchGetStandardsControlAssociations, BatchUpdateStandardsControlAssociations, and BatchGetSecurityControls.
+* `Aws\S3` - This release includes backward compatibility work on the "Expires" parameter.
+
+## 3.356.12 - 2025-09-05
+
+* `Aws\ECS` - This is a documentation only release that adds additional information for Amazon ECS Availability Zone rebalancing.
+* `Aws\PCS` - Documentation-only update to add AccountingStorageEnforce to SlurmCustomSetting.
+* `Aws\SageMaker` - Release IPv6 support with dualstack in SageMaker Notebooks, Tiered Storage Checkpointing Support in SageMaker HyperPod and P5.4xlarge instance type for SageMaker Hosting.
+
+## 3.356.11 - 2025-09-04
+
+* `Aws\OpenSearchServerless` - Add support for Federal Information Processing Standards (FIPS) and Federal Risk and Authorization Management Program (FedRAMP) compliance
+* `Aws\CloudFormation` - ListHookResults API now supports retrieving invocation results for all CloudFormation Hooks (previously limited to create change set and Cloud Control operations) with new optional parameters for filtering by Hook status and ARN.
+* `Aws\CleanRooms` - Add support for configurable compute sizes for PySpark jobs.
+* `Aws\VerifiedPermissions` - Amazon Verified Permissions / Features : Adds support for datetime and duration attribute values.
+* `Aws\RDS` - Added new EndpointNetworkType and TargetConnectionNetworkType fields in Proxy APIs to support IPv6
+* `Aws\EC2` - Add m8i, m8i-flex and i8ge instance types.
+
+## 3.356.10 - 2025-09-03
+
+* `Aws\CleanRooms` - Added support for adding new data provider members to an existing collaboration.
+* `Aws\MQ` - Add CONFIG_MANAGED as a supported AuthenticationStrategy for Amazon MQ for RabbitMQ brokers. Make username and password optional on broker creation for CONFIG_MANAGED brokers.
+* `Aws\CloudFront` - Adding an optional field IpAddressType in CustomOriginConfig
+* `Aws\CleanRoomsML` - AWS Clean Rooms ML adds log sanitization for privacy-enhanced error summaries, supports new instance types for custom models providing better performance and lower costs, and deprecates P3-series instances.
+* `Aws\RDS` - This release adds support for MasterUserAuthenticationType parameter on CreateDBInstance, ModifyDBInstance, CreateDBCluster, and ModifyDBCluster operations.
+* `Aws\Route53Domains` - Added new ExtraParams AU_ELIGIBILITY_TYPE, AU_POLICY_REASON, and AU_REGISTRANT_NAME
+* `Aws\Route53` - Amazon Route 53 now supports the Asia Pacific (New Zealand) Region (ap-southeast-6) for latency records, geoproximity records, and private DNS for Amazon VPCs in that region.
+
+## 3.356.9 - 2025-09-02
+
+* `Aws\Sms` - Removes the Service Migration Service, which has been deprecated.
+* `Aws\EC2` - MaximumEbsAttachments and AttachmentLimitType fields added to DescribeInstanceTypesResponse. G6f, Gr6f, R8i, R8i-flex and p5.4xlarge instance types added to InstanceTypes enum.
+* `Aws\Notifications` - Added Org support for notifications: - `ListMemberAccounts` gets member accounts list, `AssociateOrganizationalUnit` links OU to notification configuration, `DisassociateOrganizationalUnit` removes OU from notification configuration, `ListOrganizationalUnits` shows OUs configured for notifications.
+* `Aws\Neptune` - Removed the deprecated marker from publiclyAccessible parameter from DbInstance, CreateDbInstance and ModifyDbInstance and added relevant usage information for the parameter.
+* `Aws\WorkMail` - Make RoleArn an optional parameter for the PutEmailMonitoringConfiguration API, and add UnsupportedOperationException to RegisterToWorkMail.
+
+## 3.356.8 - 2025-08-29
+
+* `Aws\BedrockRuntime` - Fixed stop sequence limit for converse API.
+* `Aws\EC2` - Release shows new route types such as filtered and advertisement.
+* `Aws\XRay` - AWS X-Ray Features: Support Sampling Rate Boost On Anomaly
+
+## 3.356.7 - 2025-08-28
+
+* `Aws\Credentials` - Updates `CredentialProvider::memoize()` to refresh credentials that within 1 minute of expiration.
+* `Aws\ManagedBlockchainQuery` - Remove incorrect endpoint tests
+* `Aws\TimestreamQuery` - Remove incorrect endpoint tests
+* `Aws\EC2InstanceConnect` - Remove incorrect endpoint tests
+* `Aws\EventBridge` - Remove incorrect endpoint tests
+* `Aws\WorkMailMessageFlow` - Remove incorrect endpoint tests
+* `Aws\XRay` - Remove incorrect endpoint tests
+* `Aws\SWF` - Remove incorrect endpoint tests
+* `Aws\Scheduler` - Remove incorrect endpoint tests
+* `Aws\ECR` - Remove incorrect endpoint tests
+* `Aws\PCS` - Remove incorrect endpoint tests
+* `Aws\ApplicationCostProfiler` - Remove incorrect endpoint tests
+* `Aws\ServiceQuotas` - Remove incorrect endpoint tests
+* `Aws\CloudSearchDomain` - Remove incorrect endpoint tests
+* `Aws\MarketplaceDeployment` - Remove incorrect endpoint tests
+* `Aws\Connect` - AgentStatusDrillDown feature in GetCurrentMetricData API. Adding AGENT_STATUS as filter and grouping in GetCurrentMetricData API
+* `Aws\OSIS` - Remove incorrect endpoint tests
+* `Aws\Omics` - Adds Amazon ECR pull through cache support to AWS HealthOmics, so you can more easily use container images from external sources.
+* `Aws\Glue` - Adding support to fetch TargetDatabase field during GetDatabases with AttributesToGet
+* `Aws\CodeDeploy` - Remove incorrect endpoint tests
+* `Aws\EntityResolution` - Remove incorrect endpoint tests
+* `Aws\OAM` - Remove incorrect endpoint tests
+* `Aws\GeoPlaces` - Remove incorrect endpoint tests
+* `Aws\AppRunner` - Doc only updates for APIs and and datatypes related to IPAddressType and Subnets for IPv6 dualstack support.
+* `Aws\Route53Domains` - Remove incorrect endpoint tests
+* `Aws\FIS` - Remove incorrect endpoint tests
+* `Aws\CodeGuruReviewer` - Remove incorrect endpoint tests
+* `Aws\Amplify` - Remove incorrect endpoint tests
+* `Aws\EC2` - This release adds support for copying Amazon EBS snapshot and AMIs to and from Local Zones.
+* `Aws\PinpointSMSVoice` - Remove incorrect endpoint tests
+* `Aws\MTurk` - Remove incorrect endpoint tests
+* `Aws\SSMGuiConnect` - Remove incorrect endpoint tests
+* `Aws\SsmSap` - Added support for Configuration Checks on SAP HANA Applications.
+* `Aws\Pipes` - Remove incorrect endpoint tests
+* `Aws\CloudHSMV2` - Remove incorrect endpoint tests
+* `Aws\InternetMonitor` - Remove incorrect endpoint tests
+* `Aws\EMR` - Remove incorrect endpoint tests
+* `Aws\ApplicationAutoScaling` - Remove incorrect endpoint tests
+* `Aws\HealthLake` - Add ValidationLevel parameter to StartFHIRImportJob API, allowing users to specify a FHIR validation level for their asynchronous import jobs.
+* `Aws\SSO` - Remove incorrect endpoint tests
+* `Aws\NetworkFirewall` - Remove incorrect endpoint tests
+* `Aws\Rekognition` - Remove incorrect endpoint tests
+* `Aws\AutoScalingPlans` - Remove incorrect endpoint tests
+* `Aws\GlueDataBrew` - Remove incorrect endpoint tests
+* `Aws\MediaStoreData` - Remove incorrect endpoint tests
+* `Aws\SES` - Remove incorrect endpoint tests
+* `Aws\DynamoDB` - Remove incorrect endpoint tests
+* `Aws\MachineLearning` - Remove incorrect endpoint tests
+* `Aws\LicenseManagerUserSubscriptions` - Remove incorrect endpoint tests
+* `Aws\InspectorScan` - Remove incorrect endpoint tests
+* `Aws\SESv2` - Remove incorrect endpoint tests
+* `Aws\ConnectCampaignService` - Remove incorrect endpoint tests
+* `Aws\WAF` - Remove incorrect endpoint tests
+* `Aws\BedrockRuntime` - Remove incorrect endpoint tests
+* `Aws\FMS` - Remove incorrect endpoint tests
+* `Aws\OpenSearchService` - Remove incorrect endpoint tests
+* `Aws\Kinesis` - Remove incorrect endpoint tests
+* `Aws\SSMIncidents` - Remove incorrect endpoint tests
+* `Aws\GeoMaps` - Remove incorrect endpoint tests
+* `Aws\QuickSight` - Remove incorrect endpoint tests
+* `Aws\SavingsPlans` - Remove incorrect endpoint tests
+* `Aws\Cloud9` - Remove incorrect endpoint tests
+* `Aws\PinpointSMSVoiceV2` - Remove incorrect endpoint tests
+* `Aws\RDS` - Added RDS HTTP Endpoint feature support flag to DescribeOrderableDBInstanceOptions API
+
+## 3.356.6 - 2025-08-27
+
+* `Aws\S3Tables` - Remove incorrect endpoint tests
+* `Aws\ChimeSDKIdentity` - Remove incorrect endpoint tests
+* `Aws\IoT` - Remove incorrect endpoint tests
+* `Aws\CleanRoomsML` - Remove incorrect endpoint tests
+* `Aws\Chime` - Remove incorrect endpoint tests
+* `Aws\WorkDocs` - Remove incorrect endpoint tests
+* `Aws\KafkaConnect` - Remove incorrect endpoint tests
+* `Aws\EKS` - Add support for on-demand refresh of EKS cluster insights
+* `Aws\BedrockAgentCore` - Remove incorrect endpoint tests
+* `Aws\IoTWireless` - Remove incorrect endpoint tests
+* `Aws\VPCLattice` - Remove incorrect endpoint tests
+* `Aws\AppConfigData` - Remove incorrect endpoint tests
+* `Aws\ElastiCache` - Remove incorrect endpoint tests
+* `Aws\CodeBuild` - Remove incorrect endpoint tests
+* `Aws\IVSRealTime` - Remove incorrect endpoint tests
+* `Aws\LexModelBuildingService` - Remove incorrect endpoint tests
+* `Aws\Neptune` - Remove incorrect endpoint tests
+* `Aws\CodeConnections` - Remove incorrect endpoint tests
+* `Aws\ChimeSDKMeetings` - Remove incorrect endpoint tests
+* `Aws\ApplicationInsights` - Remove incorrect endpoint tests
+* `Aws\AppTest` - Remove incorrect endpoint tests
+* `Aws\AmplifyUIBuilder` - Remove incorrect endpoint tests
+* `Aws\AmplifyBackend` - Remove incorrect endpoint tests
+* `Aws\LakeFormation` - Remove incorrect endpoint tests
+* `Aws\Personalize` - Remove incorrect endpoint tests
+* `Aws\DirectoryService` - Add APIs for CA AutoEnrollment support: DescribeCAEnrollmentPolicy, EnableCAEnrollmentPolicy and DisableCAEnrollmentPolicy.
+* `Aws\MigrationHubConfig` - Remove incorrect endpoint tests
+* `Aws\MarketplaceReporting` - Remove incorrect endpoint tests
+* `Aws\PI` - Remove incorrect endpoint tests
+* `Aws\QApps` - Remove incorrect endpoint tests
+* `Aws\TimestreamWrite` - Remove incorrect endpoint tests
+* `Aws\Schemas` - Remove incorrect endpoint tests
+* `Aws\ivschat` - Remove incorrect endpoint tests
+* `Aws\SageMaker` - This release adds support for AutoScaling on SageMaker HyperPod.
+* `Aws\Redshift` - Remove incorrect endpoint tests
+* `Aws\ApplicationDiscoveryService` - Remove incorrect endpoint tests
+* `Aws\KMS` - Remove incorrect endpoint tests
+* `Aws\SupplyChain` - Remove incorrect endpoint tests
+* `Aws\WorkMail` - Remove incorrect endpoint tests
+* `Aws\SnowDeviceManagement` - Remove incorrect endpoint tests
+* `Aws\Batch` - Added ECS_AL2023_NVIDIA as an option for Ec2Configuration.imageType.
+* `Aws\ChimeSDKVoice` - Remove incorrect endpoint tests
+* `Aws\KinesisVideoMedia` - Remove incorrect endpoint tests
+* `Aws\Inspector` - Remove incorrect endpoint tests
+* `Aws\NeptuneGraph` - Add StartGraph and StopGraph operations to Neptune Analytics
+* `Aws\ACMPCA` - Remove incorrect endpoint tests
+* `Aws\RoboMaker` - Remove incorrect endpoint tests
+* `Aws\SNS` - Remove incorrect endpoint tests
+* `Aws\ComputeOptimizer` - Remove incorrect endpoint tests
+* `Aws\mgn` - Remove incorrect endpoint tests
+* `Aws\CloudWatchEvidently` - Remove incorrect endpoint tests
+* `Aws\FraudDetector` - Remove incorrect endpoint tests
+* `Aws\MedicalImaging` - Remove incorrect endpoint tests
+* `Aws\DataPipeline` - Remove incorrect endpoint tests
+* `Aws\CodeGuruProfiler` - Remove incorrect endpoint tests
+* `Aws\QLDBSession` - Remove incorrect endpoint tests
+* `Aws\Omics` - Remove incorrect endpoint tests
+* `Aws\KinesisVideo` - Remove incorrect endpoint tests
+* `Aws\IoTFleetWise` - Remove incorrect endpoint tests
+* `Aws\Textract` - Remove incorrect endpoint tests
+* `Aws\VoiceID` - Remove incorrect endpoint tests
+* `Aws\PaymentCryptographyData` - Remove incorrect endpoint tests
+
+## 3.356.5 - 2025-08-26
+
+* `Aws\OpsworksCM` - Removes the OpsworksCM service, which has reached end-of-life.
+* `Aws\ConnectParticipant` - Amazon Connect Participant Service: Remove unused fields from WebRTCConnection
+* `Aws\DataSync` - Remove incorrect endpoint tests
+* `Aws\GlobalAccelerator` - Remove incorrect endpoint tests
+* `Aws\Polly` - Remove incorrect endpoint tests
+* `Aws\SecretsManager` - Remove incorrect endpoint tests
+* `Aws\IoTJobsDataPlane` - Remove incorrect endpoint tests
+* `Aws\IdentityStore` - Remove incorrect endpoint tests
+* `Aws\Transfer` - Remove incorrect endpoint tests
+* `Aws\AppMesh` - Remove incorrect endpoint tests
+* `Aws\RecycleBin` - Remove incorrect endpoint tests
+* `Aws\Neptunedata` - Remove incorrect endpoint tests
+* `Aws\drs` - Remove incorrect endpoint tests
+* `Aws\CodeStarconnections` - Remove incorrect endpoint tests
+* `Aws\CloudWatch` - Remove incorrect endpoint tests
+* `Aws\finspace` - Remove incorrect endpoint tests
+* `Aws\Greengrass` - Remove incorrect endpoint tests
+* `Aws\signer` - Remove incorrect endpoint tests
+* `Aws\MigrationHub` - Remove incorrect endpoint tests
+* `Aws\Glacier` - Remove incorrect endpoint tests
+* `Aws\ConnectContactLens` - Remove incorrect endpoint tests
+* `Aws\IoTTwinMaker` - Remove incorrect endpoint tests
+* `Aws\SecurityHub` - Remove incorrect endpoint tests
+* `Aws\DLM` - Remove incorrect endpoint tests
+* `Aws\IoTSecureTunneling` - Remove incorrect endpoint tests
+* `Aws\SocialMessaging` - Remove incorrect endpoint tests
+* `Aws\Pinpoint` - Remove incorrect endpoint tests
+* `Aws\ControlCatalog` - Remove incorrect endpoint tests
+* `Aws\PcaConnectorScep` - Remove incorrect endpoint tests
+* `Aws\MainframeModernization` - Remove incorrect endpoint tests
+* `Aws\WAFRegional` - Remove incorrect endpoint tests
+* `Aws\CodeCommit` - Remove incorrect endpoint tests
+* `Aws\Route53RecoveryCluster` - Remove incorrect endpoint tests
+* `Aws\ARCZonalShift` - This release adds new API options to enable allowed windows and multiple alarms for practice runs.
+* `Aws\GameLift` - Remove incorrect endpoint tests
+* `Aws\Kafka` - Remove incorrect endpoint tests
+* `Aws\MQ` - Remove incorrect endpoint tests
+* `Aws\ResourceExplorer2` - Remove incorrect endpoint tests
+* `Aws\BedrockAgentCoreControl` - Remove incorrect endpoint tests
+* `Aws\Route53` - Remove incorrect endpoint tests
+* `Aws\Tnb` - Remove incorrect endpoint tests
+* `Aws\EC2` - Add new APIs for viewing how your shared AMIs are used by other accounts, and identify resources in your account that are dependent on particular AMIs
+* `Aws\SSM` - Remove incorrect endpoint tests
+* `Aws\SsmSap` - Remove incorrect endpoint tests
+* `Aws\LookoutforVision` - Remove incorrect endpoint tests
+* `Aws\Evs` - Remove incorrect endpoint tests
+* `Aws\LicenseManagerLinuxSubscriptions` - Remove incorrect endpoint tests
+* `Aws\CleanRooms` - Remove incorrect endpoint tests
+* `Aws\GeoRoutes` - Added RouteFerryNotice PotentialViolatedVehicleRestrictionUsage value for CalculateRoutes. This value indicates when the Route is potentially forbidden for the given vehicle profile.
+* `Aws\SageMakerGeospatial` - Remove incorrect endpoint tests
+* `Aws\AppConfig` - Remove incorrect endpoint tests
+* `Aws\WorkSpaces` - Remove incorrect endpoint tests
+* `Aws\RAM` - Remove incorrect endpoint tests
+* `Aws\SSOOIDC` - Remove incorrect endpoint tests
+* `Aws\PersonalizeEvents` - Remove incorrect endpoint tests
+* `Aws\AppRunner` - Remove incorrect endpoint tests
+* `Aws\imagebuilder` - Remove incorrect endpoint tests
+* `Aws\RDSDataService` - Remove incorrect endpoint tests
+* `Aws\ComprehendMedical` - Remove incorrect endpoint tests
+* `Aws\TrustedAdvisor` - Remove incorrect endpoint tests
+* `Aws\ElasticTranscoder` - Remove incorrect endpoint tests
+* `Aws\AppRegistry` - Remove incorrect endpoint tests
+* `Aws\MigrationHubRefactorSpaces` - Remove incorrect endpoint tests
+
+## 3.356.4 - 2025-08-25
+
+* `Aws\OpsWorks` - Removes the OpsWorks service, which has reached end-of-life.
+* `Aws\WellArchitected` - Remove incorrect endpoint tests
+* `Aws\Chatbot` - Remove incorrect endpoint tests
+* `Aws\TimestreamInfluxDB` - Add MAINTENANCE status for DbInstance and DbCluster
+* `Aws\CloudWatchEvents` - Remove incorrect endpoint tests
+* `Aws\Odb` - Remove incorrect endpoint tests
+* `Aws\QBusiness` - The Amazon Q Business GetDocumentContent operation now supports retrieval of the extracted text content in JSON format.
+* `Aws\Outposts` - Remove incorrect endpoint tests
+* `Aws\SSOAdmin` - Remove incorrect endpoint tests
+* `Aws\kendra` - Remove incorrect endpoint tests
+* `Aws\CodeArtifact` - Remove incorrect endpoint tests
+* `Aws\MediaConvert` - This release adds support for input rendition selection for HLS input, adds new Share API to enable sharing jobs with AWS Support for support investigations, and adds INCLUDE_AS_TS to iFrameOnlyManifest setting for HLS outputs.
+* `Aws\CloudSearch` - Remove incorrect endpoint tests
+* `Aws\ControlTower` - Remove incorrect endpoint tests
+* `Aws\SFN` - Remove incorrect endpoint tests
+* `Aws\OpsWorksCM` - Remove incorrect endpoint tests
+* `Aws\DocDBElastic` - Remove incorrect endpoint tests
+* `Aws\WorkSpacesThinClient` - Remove incorrect endpoint tests
+* `Aws\PcaConnectorAd` - Remove incorrect endpoint tests
+* `Aws\B2bi` - Updated APIs to support custom validation rules.
+* `Aws\IoTFleetHub` - Remove incorrect endpoint tests
+* `Aws\SupportApp` - Remove incorrect endpoint tests
+* `Aws\SageMakerFeatureStoreRuntime` - Remove incorrect endpoint tests
+* `Aws\DAX` - Remove incorrect endpoint tests
+* `Aws\Braket` - Remove incorrect endpoint tests
+* `Aws\CloudFormation` - Remove incorrect endpoint tests
+* `Aws\IoTSiteWise` - Remove incorrect endpoint tests
+* `Aws\IoTDataPlane` - Remove incorrect endpoint tests
+* `Aws\AppSync` - Remove incorrect endpoint tests
+* `Aws\ChimeSDKMessaging` - Remove incorrect endpoint tests
+* `Aws\ServiceCatalog` - Remove incorrect endpoint tests
+* `Aws\FinSpaceData` - Remove incorrect endpoint tests
+* `Aws\CloudTrailData` - Remove incorrect endpoint tests
+* `Aws\LexModelsV2` - Remove incorrect endpoint tests
+* `Aws\ResourceGroupsTaggingAPI` - Remove incorrect endpoint tests
+* `Aws\AIOps` - Remove incorrect endpoint tests
+* `Aws\BedrockAgent` - Remove incorrect endpoint tests
+* `Aws\Repostspace` - Remove incorrect endpoint tests
+* `Aws\BedrockDataAutomation` - Remove incorrect endpoint tests
+* `Aws\CloudControlApi` - Remove incorrect endpoint tests
+* `Aws\DeviceFarm` - Remove incorrect endpoint tests
+* `Aws\MediaPackageVod` - Remove incorrect endpoint tests
+* `Aws\EKS` - Remove incorrect endpoint tests
+* `Aws\ConnectParticipant` - Remove incorrect endpoint tests
+* `Aws\ForecastService` - Remove incorrect endpoint tests
+* `Aws\BedrockDataAutomationRuntime` - Remove incorrect endpoint tests
+* `Aws\AutoScaling` - Remove incorrect endpoint tests
+* `Aws\SagemakerEdgeManager` - Remove incorrect endpoint tests
+* `Aws\LicenseManager` - Remove incorrect endpoint tests
+* `Aws\RedshiftServerless` - Remove incorrect endpoint tests
+* `Aws\Bedrock` - Remove incorrect endpoint tests
+* `Aws\CloudWatchLogs` - Remove incorrect endpoint tests
+* `Aws\ChimeSDKMediaPipelines` - Remove incorrect endpoint tests
+* `Aws\Keyspaces` - Remove incorrect endpoint tests
+* `Aws\TaxSettings` - Remove incorrect endpoint tests
+* `Aws\StorageGateway` - Remove incorrect endpoint tests
+* `Aws\DataZone` - Releasing the following features - Asset classification that lets users use restricted terms for classifying assets if they have the right permissions. Also adding a new enum value "Moving" to project status.
+* `Aws\OpenSearchServerless` - Remove incorrect endpoint tests
+* `Aws\PersonalizeRuntime` - Remove incorrect endpoint tests
+* `Aws\SQS` - Documentation update for Amazon SQS Supports Large Payload Message feature
+* `Aws\CodeGuruSecurity` - Documentation update to notify users of the discontinuation of Amazon CodeGuru Security.
+* `Aws\Support` - Remove incorrect endpoint tests
+* `Aws\Shield` - Remove incorrect endpoint tests
+* `Aws\DevOpsGuru` - Remove incorrect endpoint tests
+* `Aws\TranscribeService` - Remove incorrect endpoint tests
+* `Aws\SageMakerRuntime` - Remove incorrect endpoint tests
+* `Aws\EMRContainers` - Remove incorrect endpoint tests
+* `Aws\MigrationHubStrategyRecommendations` - Remove incorrect endpoint tests
+* `Aws\EC2` - Added IPv6 support for AWS Client VPN.
+* `Aws\MarketplaceCatalog` - Remove incorrect endpoint tests
+* `Aws\Translate` - Remove incorrect endpoint tests
+* `Aws\ACM` - Remove incorrect endpoint tests
+* `Aws\LookoutEquipment` - Remove incorrect endpoint tests
+* `Aws\CostandUsageReportService` - Remove incorrect endpoint tests
+* `Aws\DirectConnect` - Remove incorrect endpoint tests
+* `Aws\CodeStarNotifications` - Remove incorrect endpoint tests
+* `Aws\KinesisVideoArchivedMedia` - Remove incorrect endpoint tests
+* `Aws\Health` - Remove incorrect endpoint tests
+* `Aws\GroundStation` - Remove incorrect endpoint tests
+* `Aws\Appflow` - Remove incorrect endpoint tests
+* `Aws\MediaStore` - Remove incorrect endpoint tests
+* `Aws\FSx` - Remove incorrect endpoint tests
+* `Aws\KinesisAnalytics` - Remove incorrect endpoint tests
+* `Aws\LexRuntimeService` - Remove incorrect endpoint tests
+* `Aws\ServerlessApplicationRepository` - Remove incorrect endpoint tests
+* `Aws\MailManager` - Remove incorrect endpoint tests
+* `Aws\Athena` - Remove incorrect endpoint tests
+* `Aws\ResilienceHub` - Remove incorrect endpoint tests
+* `Aws\Snowball` - Remove incorrect endpoint tests
+* `Aws\Lambda` - Remove incorrect endpoint tests
+
+## 3.356.3 - 2025-08-22
+
+* `Aws\Token` - Fixes bug in `TokenProvider::cache()` where tokens are incorrectly written to the cache.
+* `Aws\RDS` - Updates Amazon RDS documentation for Db2 read-only replicas.
+* `Aws\ServiceDiscovery` - Updating SDK examples after launch of shared AWS Cloud Map namespaces
+* `Aws\RolesAnywhere` - Remove incorrect endpoint tests
+* `Aws\SageMaker` - Launch SageMaker Notebook Instances support for AL2023 along with P6-B200 instance type and Rootless Docker support for SageMaker Studio.
+* `Aws\QConnect` - Releasing model ID support for UpdateAIPrompt
+* `Aws\ApiGatewayV2` - Remove incorrect endpoint tests
+* `Aws\APIGateway` - Remove incorrect endpoint tests
+* `Aws\CloudWatchRUM` - Remove incorrect endpoint tests
+* `Aws\Synthetics` - Added multi browser support for synthetics canaries, Increased ephemeral storage limit from 5GB to 10GB
+* `Aws\Firehose` - Remove incorrect endpoint tests
+* `Aws\MediaLive` - AWS Elemental MediaLive now has a field called "SubtitleRows" for controlling subtitle row count for DVB-Sub and Burn-In captions outputs
+* `Aws\SQS` - Remove incorrect endpoint tests
+* `Aws\HealthLake` - Remove incorrect endpoint tests
+* `Aws\AugmentedAIRuntime` - Remove incorrect endpoint tests
+* `Aws\PaymentCryptography` - Remove incorrect endpoint tests
+* `Aws\Pricing` - Remove incorrect endpoint tests
+* `Aws\IoTAnalytics` - Remove incorrect endpoint tests
+* `Aws\SageMakerMetrics` - Remove incorrect endpoint tests
+* `Aws\EMRServerless` - Remove incorrect endpoint tests
+* `Aws\LocationService` - Remove incorrect endpoint tests
+* `Aws\Proton` - Remove incorrect endpoint tests
+* `Aws\NetworkMonitor` - Remove incorrect endpoint tests
+* `Aws\ElasticLoadBalancing` - Remove incorrect endpoint tests
+* `Aws\B2bi` - Remove incorrect endpoint tests
+* `Aws\CodePipeline` - Remove incorrect endpoint tests
+* `Aws\RedshiftDataAPIService` - Remove incorrect endpoint tests
+* `Aws\Organizations` - Remove incorrect endpoint tests
+* `Aws\MemoryDB` - Remove incorrect endpoint tests
+* `Aws\QLDB` - Remove incorrect endpoint tests
+* `Aws\MarketplaceCommerceAnalytics` - Remove incorrect endpoint tests
+* `Aws\CognitoSync` - Remove incorrect endpoint tests
+* `Aws\CloudDirectory` - Remove incorrect endpoint tests
+* `Aws\DocDB` - Remove incorrect endpoint tests
+* `Aws\MigrationHubOrchestrator` - Remove incorrect endpoint tests
+* `Aws\SimSpaceWeaver` - Remove incorrect endpoint tests
+* `Aws\LaunchWizard` - Remove incorrect endpoint tests
+* `Aws\Route53RecoveryReadiness` - Remove incorrect endpoint tests
+* `Aws\Macie2` - Remove incorrect endpoint tests
+* `Aws\DataExchange` - Remove incorrect endpoint tests
+* `Aws\Account` - Remove incorrect endpoint tests
+* `Aws\WAFV2` - test and verified, safe to release
+
+## 3.356.2 - 2025-08-21
+
+* `Aws\AppStream` - Remove incorrect endpoint tests
+* `Aws\AccessAnalyzer` - Remove incorrect endpoint tests
+* `Aws\SSMContacts` - Doc-only updates for Incident Manager Contacts August 2025
+* `Aws\GameLiftStreams` - The default application in a stream group can now be changed at any time using UpdateStreamGroup to update the DefaultApplicationIdentifier.
+* `Aws\GreengrassV2` - Remove incorrect endpoint tests
+* `Aws\PinpointEmail` - Remove incorrect endpoint tests
+* `Aws\IoTDeviceAdvisor` - Remove incorrect endpoint tests
+* `Aws\ManagedBlockchain` - Remove incorrect endpoint tests
+* `Aws\ConfigService` - Remove incorrect endpoint tests
+* `Aws\BackupGateway` - Remove incorrect endpoint tests
+* `Aws\MediaPackageV2` - Remove incorrect endpoint tests
+* `Aws\CostOptimizationHub` - Remove incorrect endpoint tests
+* `Aws\Panorama` - Remove incorrect endpoint tests
+* `Aws\ECS` - This is a documentation only release that adds additional information for the update-service request parameters.
+* `Aws\DirectoryServiceData` - Remove incorrect endpoint tests
+* `Aws\Connect` - Remove incorrect endpoint tests
+* `Aws\ManagedGrafana` - Remove incorrect endpoint tests
+* `Aws\DatabaseMigrationService` - Remove incorrect endpoint tests
+* `Aws\ResourceGroups` - Remove incorrect endpoint tests
+* `Aws\ElasticLoadBalancingv2` - Remove incorrect endpoint tests
+* `Aws\ECRPublic` - Remove incorrect endpoint tests
+* `Aws\AuditManager` - Remove incorrect endpoint tests
+* `Aws\MediaTailor` - Remove incorrect endpoint tests
+* `Aws\MediaPackage` - Remove incorrect endpoint tests
+* `Aws\ConnectWisdomService` - Remove incorrect endpoint tests
+* `Aws\KinesisVideoWebRTCStorage` - Remove incorrect endpoint tests
+* `Aws\Route53Profiles` - Remove incorrect endpoint tests
+* `Aws\S3Outposts` - Remove incorrect endpoint tests
+* `Aws\CognitoIdentity` - Remove incorrect endpoint tests
+* `Aws\GuardDuty` - Remove Pattern trait from email field
+* `Aws\CloudHSM` - Remove incorrect endpoint tests
+* `Aws\IoTEvents` - Remove incorrect endpoint tests
+* `Aws\IVS` - Remove incorrect endpoint tests
+* `Aws\KinesisVideoSignalingChannels` - Remove incorrect endpoint tests
+* `Aws\Lightsail` - Remove incorrect endpoint tests
+* `Aws\Comprehend` - Remove incorrect endpoint tests
+* `Aws\MarketplaceAgreement` - Remove incorrect endpoint tests
+* `Aws\VerifiedPermissions` - Remove incorrect endpoint tests
+* `Aws\Backup` - Remove incorrect endpoint tests
+* `Aws\Inspector2` - Remove incorrect endpoint tests
+* `Aws\Route53Resolver` - Remove incorrect endpoint tests
+* `Aws\CloudTrail` - Remove incorrect endpoint tests
+* `Aws\MediaConnect` - Remove incorrect endpoint tests
+* `Aws\ForecastQueryService` - Remove incorrect endpoint tests
+* `Aws\Artifact` - Remove incorrect endpoint tests
+* `Aws\MediaConvert` - Remove incorrect endpoint tests
+* `Aws\SSMQuickSetup` - Remove incorrect endpoint tests
+* `Aws\ConnectCampaignsV2` - Remove incorrect endpoint tests
+* `Aws\MWAA` - Remove incorrect endpoint tests
+* `Aws\IoTThingsGraph` - Remove incorrect endpoint tests
+* `Aws\ObservabilityAdmin` - Remove incorrect endpoint tests
+* `Aws\ApiGatewayManagementApi` - Remove incorrect endpoint tests
+* `Aws\WorkSpacesWeb` - Remove incorrect endpoint tests
+* `Aws\Glue` - Added support for preprocessing queries in Data Quality operations through new DataQualityGlueTable structure.
+* `Aws\LookoutMetrics` - Remove incorrect endpoint tests
+* `Aws\CustomerProfiles` - Remove incorrect endpoint tests
+* `Aws\ElasticBeanstalk` - Remove incorrect endpoint tests
+* `Aws\EBS` - Remove incorrect endpoint tests
+* `Aws\ConnectCases` - Remove incorrect endpoint tests
+* `Aws\Deadline` - Remove incorrect endpoint tests
+* `Aws\AppIntegrationsService` - Remove incorrect endpoint tests
+* `Aws\LexRuntimeV2` - Remove incorrect endpoint tests
+* `Aws\BedrockAgentRuntime` - Remove incorrect endpoint tests
+* `Aws\DynamoDBStreams` - Remove incorrect endpoint tests
+* `Aws\CloudFront` - Remove incorrect endpoint tests
+* `Aws\AppFabric` - Remove incorrect endpoint tests
+* `Aws\ElasticsearchService` - Remove incorrect endpoint tests
+* `Aws\PrometheusService` - Remove incorrect endpoint tests
+* `Aws\SecurityLake` - Remove incorrect endpoint tests
+* `Aws\TimestreamInfluxDB` - Remove incorrect endpoint tests
+* `Aws\BillingConductor` - Remove incorrect endpoint tests
+* `Aws\DirectoryService` - Remove incorrect endpoint tests
+* `Aws\IoTEventsData` - Remove incorrect endpoint tests
+* `Aws\STS` - Remove incorrect endpoint tests
+
+## 3.356.1 - 2025-08-20
+
+* `Aws\S3` - Allows :// within object key in S3 Streamwrapper.
+* `Aws\PinpointSMSVoiceV2` - This change added InternationalSendingEnbaled as part of describe/Update/Request phone number API response, and as part of update/Request phone number API request
+* `Aws\Budgets` - Remove incorrect endpoint tests
+* `Aws\BedrockRuntime` - Launch CountTokens API to allow token counting
+* `Aws\MarketplaceMetering` - Remove incorrect endpoint tests
+* `Aws\CostExplorer` - Remove incorrect endpoint tests
+* `Aws\MarketplaceEntitlementService` - Remove incorrect endpoint tests
+* `Aws\CognitoIdentityProvider` - This release adds support for the new Terms APIs which allow displaying Terms of Use and Privacy Policy on the Managed Login user-registration page.
+* `Aws\KinesisAnalyticsV2` - Adds Key Management Service (KMS) support allowing customer-managed key (CMK) encryption for Flink application data.
+* `Aws\EKS` - EKS Add-ons Custom Namespace Support
+* `Aws\DynamoDB` - Remove incorrect endpoint tests
+* `Aws\DataZone` - This release supports policy grant identifier for cloud formation integration
+* `Aws\Kinesis` - Remove incorrect endpoint tests
+* `Aws\SESv2` - Remove incorrect endpoint tests
+* `Aws\NetworkManager` - Remove incorrect endpoint tests
+* `Aws\Billing` - Clarify IPv4 and IPv6 endpoints
+* `Aws\Detective` - Remove incorrect endpoint tests
+* `Aws\IAM` - Remove incorrect endpoint tests
+* `Aws\SageMaker` - This release adds 1/ Launch ml.p5.4xlarge instance in Processing jobs, Training jobs and Training Plan 2/ Makes S3Uri to be required for S3FileSystem and S3FileSystemConfig.
+* `Aws\EFS` - Remove incorrect endpoint tests
+* `Aws\Route53RecoveryControlConfig` - Remove incorrect endpoint tests
+
+## 3.356.0 - 2025-08-19
+
+* `Aws\Token` - Adds token provider for Bedrock services to source bearer tokens from environment.
+* `Aws\Polly` - Added support for new output format - Opus.
+* `Aws\CleanRooms` - Support error message configuration for analysis templates
+* `Aws\EC2` - Add support for "warning" volume status.
+
+## 3.355.0 - 2025-08-18
+
+* `Aws\Batch` - Added default_x86_64 and default_arm64 as values to the instanceTypes field.
+* `Aws\SageMaker` - Customer managed keys now available for volume encryption of SageMaker HyperPod clusters.
+* `Aws\ConnectParticipant` - Amazon Connect Service Feature: Add support to enable multi-user in-app, web, and video calling.
+* `Aws\BCMDashboards` - Billing and Cost Management Dashboards enables users to create dashboards that combine multiple visualizations of cost and usage data. Users can create, manage, and share dashboards. Tags are also available for dashboards.
+* `Aws\S3Control` - Adds support for Compute checksum functionality in Amazon S3 Batch Operations. You can now calculate checksums for a list of objects using supported algorithms in Amazon S3, without requiring a restore or download
+* `Aws\Connect` - Amazon Connect Service Feature: Add support to enable multi-user in-app, web, and video calling.
+
+## 3.354.1 - 2025-08-15
+
+* `Aws\BedrockAgent` - This release adds support for saving Bedrock Flows while node configuration is still in progress, even if the Flow is not yet able to be invoked
+* `Aws\PrometheusService` - Add Resource-based Policy APIs for Amazon Prometheus
+* `Aws\Glue` - AWS Glue Zero ETL now supports On-demand snapshot load
+
+## 3.354.0 - 2025-08-14
+
+* `Aws\Api` - Reverts to previous behavior changed by #3146 when deserializing empty payload members.
+* `Aws\ServiceDiscovery` - Added support for cross account through Id parameter overloading with ARN and allow owner account for some APIs instead of ARN
+* `Aws\MediaLive` - CMAF Ingest output groups in MediaLive can now accept one additional destination url for single pipeline channels and up to two additional destination urls for standard channels.
+* `Aws\Glue` - AWS Glue now supports Trusted Identity Propagation.
+* `Aws\DynamoDB` - This release 1/ Adds support for throttled keys mode for CloudWatch Contributor Insights, 2/ Adds throttling reasons to exceptions across dataplane APIs. 3/ Explicitly models ThrottlingException as a class in statically typed languages. Refer to the launch day blog post for more details.
+* `Aws\DirectConnect` - Added pagination support for DescribeHostedConnections, DescribeVirtualInterfaces, DescribeConnections, DescribeInterconnects, DescribeLags. Added asnLong support for BGP peer operations which supports a large range.
+* `Aws\WorkSpaces` - New APIs introduced to import WorkSpaces BYOL image using a new process that leveraged EC2 Image Builder. WorkSpaces tests and fixes your image's compatibility issues and supports customized VM images.
+* `Aws\EC2` - This release adds ModifyInstanceConnectEndpoint API to update configurations on existing EC2 Instance Connect Endpoints and improves IPv6 support through dualstack DNS names for EC2 Instance Connect Endpoints.
+* `Aws\PCS` - Updated the regex pattern and description of iamInstanceProfileArn in the CreateComputeNodeGroup and UpdateComputeNodeGroup API actions. Name and path requirements apply to the ARN of the IAM role associated with the instance profile and not the ARN of the instance profile.
+* `Aws\ARCRegionSwitch` - Endpoint rule test and documentation update.
+* `Aws\GuardDuty` - Added support for entity lists.
+* `Aws\QApps` - Documentation update for Amazon Q Apps API Reference
+* `Aws\BCMRecommendedActions` - Initial SDK release for AWS Billing and Cost Management Recommended Actions.
+* `Aws\FSx` - Amazon FSx for NetApp ONTAP 2nd generation file systems now support decreasing SSD storage capacity.
+
+## 3.353.0 - 2025-08-13
+
+* `Aws\` - Added support for configuring auth schemes based on user's preference. The order in which these auth schemes are provided will define the priority of the auth schemes selection.
+* `Aws\Braket` - Add support for Braket program sets.
+* `Aws\FSx` - Add Dual-Stack support for Amazon FSx for OpenZFS file systems
+* `Aws\PartnerCentralSelling` - Add Tagging Support for Opportunity resources
+* `Aws\SecurityIR` - Added support for Organizational Unit-level Membership configuration and the ability to resume a cancelled membership.
+* `Aws\DataZone` - Adds support for account pools and project profile account decoupling
+* `Aws\SageMaker` - This release introduces compute quota for GPU, Trainium accelerators, vCPU, and vCPU memory utilization across teams in HyperPod clusters
+
+## 3.352.7 - 2025-08-12
+
+* `Aws\Rds` - Ensures `DestinationRegion` is signed during presigning.
+* `Aws\CodeBuild` - AWS CodeBuild now supports PullRequestBuildPolicy in webhook object.
+* `Aws\SageMaker` - IAM Identity Center trusted identity propagation is now supported in SageMaker Studio.
+* `Aws\TranscribeService` - AWS HealthScribe now supports specifying preferred patient pronouns through the MedicalScribeContext parameter for use in the generated clinical notes.
+* `Aws\BackupSearch` - Using recommended smithy trait to generate regional endpoints for Backup Search
+* `Aws\Organizations` - This release introduces 2 new APIs in Organizations: 1. ListAccountsWithInvalidEffectivePolicy 2. ListEffectivePolicyValidationErrors
+* `Aws\EC2` - Release to allow route table association with a PublicIpv4Pool.
+
+## 3.352.6 - 2025-08-11
+
+* `Aws\Api` - Bugfix for #3167 where zero or `false` is skipped in header parsing.
+* `Aws\Evs` - Update for general availability of Amazon Elastic VMware Service (EVS).
+* `Aws\Deadline` - Adds support for Wait and Save feature in service-managed fleets
+* `Aws\SSOAdmin` - Added support for managing user background session for applications
+* `Aws\Connect` - Updating SearchUserHierarchyGroups API
+* `Aws\Bedrock` - This release includes model updates and enhanced SDK documentation for union fields in automated reasoning policy components. Added docs cover policy definitions, mutations (add/update for rules/types/variables), build assets, workflow sources, test results, and tag exception handling.
+* `Aws\CognitoIdentityProvider` - Remove SigV4 auth requirement for GetTokensFromRefreshToken
+* `Aws\Lambda` - Doc-only update for Lambda that updates the maximum payload size for response streaming invocations to 200 MB.
+* `Aws\EC2` - This release adds AvailabilityZoneId support for CreateVolume, DescribeVolume, LaunchTemplates, RunInstances, DescribeInstances, CreateDefaultSubnet, SpotInstances, and CreateDefaultSubnet APIs.
+* `Aws\QuickSight` - Add RowAxisDisplayOptions and ColumnAxisDisplayOptions to HeatMapConfiguration, add Actions to PluginVisual, increase limit for CalculatedFields list
+
+## 3.352.5 - 2025-08-08
+
+* `Aws\TranscribeService` - Update documentation to use key ARN only in OutputEncryptionKMSKeyId request parameter
+* `Aws\WorkspacesInstances` - Removed incorrect endpoint tests
+* `Aws\PartnerCentralSelling` - Removed incorrect endpoint tests
+* `Aws\Inspector2` - Add CVSSV4 to Vulnerability Search API and update enable/disable account id list length to 5
+* `Aws\SecurityIR` - Removed incorrect endpoint tests
+* `Aws\MPA` - Removed incorrect endpoint tests
+* `Aws\BackupSearch` - Removed incorrect endpoint tests
+* `Aws\Notifications` - Removed incorrect endpoint tests
+* `Aws\BCMPricingCalculator` - Removed incorrect endpoint tests
+* `Aws\DSQL` - Removed incorrect endpoint tests
+* `Aws\GameLiftStreams` - Removed incorrect endpoint tests
+* `Aws\Billing` - Removed incorrect endpoint tests
+* `Aws\Connect` - This release adds a new API GetContactMetrics for Amazon Connect.
+* `Aws\KeyspacesStreams` - Removed incorrect endpoint tests
+* `Aws\NotificationsContacts` - Removed incorrect endpoint tests
+* `Aws\Invoicing` - Removed incorrect endpoint tests
+* `Aws\NetworkFlowMonitor` - Removed incorrect endpoint tests
+* `Aws\ApplicationSignals` - Removed incorrect endpoint tests
+* `Aws\SageMaker` - Adds support for GB200 UltraServers in Amazon SageMaker training jobs, training plans, and HyperPod clusters
+* `Aws\IoTManagedIntegrations` - Removed incorrect endpoint tests
+* `Aws\S3Vectors` - Removed incorrect endpoint tests
+* `Aws\IoTDataPlane` - Adding DeleteConnection API to IoT Data Plane
+
+## 3.352.4 - 2025-08-07
+
+* `Aws\GameLiftStreams` - Adds Proton 9.0-2 to the list of runtime environment options available when creating an Amazon GameLift Streams application
+* `Aws\CloudFront` - Added new viewer security policy, TLSv1.3_2025, for CloudFront.
+* `Aws\Batch` - This feature allows customers to use AWS Batch with Linux with ARM64 CPU Architecture with Fargate Spot compute support.
+* `Aws\Glue` - AWS Glue Data Catalog now supports Iceberg Optimization settings at the Catalog level, and supports new options to control the optimization job run rate.
+* `Aws\GuardDuty` - Added support for VPC owner account ID associated with DNS request in the GuardDuty finding.
+* `Aws\CodeBuild` - AWS CodeBuild now supports comment-based pull request control.
+
+## 3.352.3 - 2025-08-06
+
+* `Aws\OpenSearchServerless` - Features: add Index APIs in OpenSearchServerless to support managed semantic enrichment
+* `Aws\QBusiness` - Amazon Q Business now supports the GetDocumentContent() API that enables customers to securely access the source documents through clickable citation links at query time
+* `Aws\EC2` - Mark Elastic Inference Accelerators and Elastic Graphics Processor parameters as deprecated on the RunInstances and LaunchTemplate APIs.
+* `Aws\Budgets` - Adds support for billing views. Billing views let you control access to cost and usage data through an AWS resource, streamlining the process of sharing cost and usage data across account boundaries. With this release, you can now create and view budgets based on billing views.
+* `Aws\AppStream` - Added support for G6 instances
+
+## 3.352.2 - 2025-08-05
+
+* `Aws\SageMaker` - Add support for SageMaker Hyperpod continuous scaling and custom AMI; Introduce new APIs: ListClusterEvents, DescribeClusterEvent, BatchAddClusterNodes
+* `Aws\RDS` - Adds a new Aurora Serverless v2 attribute to the DBCluster resource to expose the platform version. Also updates the attribute to be part of both the engine version and platform version descriptions.
+* `Aws\BedrockRuntime` - This release adds support for Automated Reasoning checks output models for the Amazon Bedrock Guardrails ApplyGuardrail API.
+* `Aws\EKS` - Add support for deletion protection on EKS clusters
+* `Aws\Bedrock` - This release introduces Automated Reasoning checks for Amazon Bedrock Guardrails. The feature adds new APIs for policy building, refinement, version management, and testing. Guardrail APIs now support Automated Reasoning policy configuration and validation output.
+
+## 3.352.1 - 2025-08-04
+
+* `Aws\IoTSiteWise` - Support Interface for IoT SiteWise Asset Modeling
+* `Aws\BedrockAgentCore` - Remove superfluous field from API
+* `Aws\SageMaker` - This release adds the ability for customers to attach and detach their EBS volumes to EKS-orchestrated HyperPod cluster nodes.
+* `Aws\CodeConnections` - New integration with Azure DevOps provider type.
+* `Aws\Evs` - TagResource API now throws ServiceQuotaExceededException when the number of tags on the Amazon EVS resource exceeds the maximum allowed. TooManyTagsException is deprecated.
+
+## 3.352.0 - 2025-08-01
+
+* `Aws\ACMPCA` - Doc-only update to add more information to GetCertificate action.
+* `Aws\ARCRegionSwitch` - This is the initial SDK release for Region switch
+* `Aws\AuditManager` - Added a note to Framework APIs (CreateAssessmentFramework, GetAssessmentFramework, UpdateAssessmentFramework) clarifying that the Controls object returns a partial response when called through Framework APIs. Added documentation that the Framework's controlSources parameter is no longer supported.
+* `Aws\Lightsail` - This release adds support for the Asia Pacific (Jakarta) (ap-southeast-3) Region.
+* `Aws\SecurityHub` - Release new resource detail type CodeRepository
+* `Aws\ObservabilityAdmin` - CloudWatch Observability Admin adds the ability to enable telemetry on AWS resources such as Amazon VPCs (Flow Logs) in customers AWS Accounts and Organizations. The release introduces new APIs to manage telemetry rules, which define telemetry settings to be applied on AWS resources.
+* `Aws\SNS` - Amazon SNS support for Amazon SQS fair queues
+* `Aws\PCS` - Add support for IPv6 Networking for Clusters.
+* `Aws\AIOps` - This release includes fix for InvestigationGroup timestamp conversion issue.
+
+## 3.351.12 - 2025-07-31
+
+* `Aws\Sts` - Updates STS default endpoint configuration to `regional`
+* `Aws\IoT` - This release allows AWS IoT Core users to use their own AWS KMS keys for data protection
+* `Aws\ElasticLoadBalancingv2` - This release enables secondary IP addresses for Network Load Balancers.
+* `Aws\S3Control` - Add Tags field to CreateAccessPoint
+* `Aws\OpenSearchService` - Granular access control support for NEO-SAML with IAMFederation for AOS data source
+* `Aws\Inspector2` - Extend usage to include agentless hours and add CODE_REPOSITORY to aggregation resource type
+* `Aws\EC2` - Added support for the force option for the EC2 instance terminate command. This feature enables customers to recover resources associated with an instance stuck in the shutting-down state as a result of rare issues caused by a frozen operating system or an underlying hardware problem.
+* `Aws\WorkSpacesWeb` - Added ability to log session activity on a portal to an S3 bucket.
+* `Aws\Glue` - Added support for Route node, S3 Iceberg sources/targets, catalog Iceberg sources, DynamoDB ELT connector, AutoDataQuality evaluation, enhanced PII detection with redaction, Kinesis fan-out support, and new R-series worker types.
+* `Aws\CustomerProfiles` - The release updates standard profile with 2 new fields that supports account-level engagement. Updated APIs include CreateProfile, UpdateProfile, MergeProfiles, SearchProfiles, BatchGetProfile, GetSegmentMembership, CreateSegmentDefinition, CreateSegmentEstimate.
+* `Aws\QuickSight` - Added Impala connector support
+* `Aws\EntityResolution` - Add support for creating advanced rule-based matching workflows in AWS Entity Resolution.
+* `Aws\SESv2` - This release introduces support for Multi-tenant management
+
 ## 3.342.2 - 2025-03-07
 
 * `Aws\BedrockAgent` - Introduces support for Neptune Analytics as a vector data store and adds Context Enrichment Configurations, enabling use cases such as GraphRAG.

@@ -17,6 +17,8 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise createPresetAsync(array $args = [])
  * @method \Aws\Result createQueue(array $args = [])
  * @method \GuzzleHttp\Promise\Promise createQueueAsync(array $args = [])
+ * @method \Aws\Result createResourceShare(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createResourceShareAsync(array $args = [])
  * @method \Aws\Result deleteJobTemplate(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteJobTemplateAsync(array $args = [])
  * @method \Aws\Result deletePolicy(array $args = [])

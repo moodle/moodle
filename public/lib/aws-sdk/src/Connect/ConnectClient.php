@@ -249,6 +249,8 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise getAttachedFileAsync(array $args = [])
  * @method \Aws\Result getContactAttributes(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getContactAttributesAsync(array $args = [])
+ * @method \Aws\Result getContactMetrics(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getContactMetricsAsync(array $args = [])
  * @method \Aws\Result getCurrentMetricData(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getCurrentMetricDataAsync(array $args = [])
  * @method \Aws\Result getCurrentUserData(array $args = [])

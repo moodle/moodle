@@ -773,7 +773,7 @@ All rights reserved.</copyright>
     <location>aws-sdk</location>
     <name>AWS SDK for PHP</name>
     <description>The AWS SDK for PHP library</description>
-    <version>3.342.2</version>
+    <version>3.356.22</version>
     <license>Apache</license>
     <licenseversion>2.0</licenseversion>
     <repository>https://github.com/aws/aws-sdk-php</repository>

@@ -29,7 +29,9 @@ class RestXmlSerializer extends RestSerializer
     protected function payload(StructureShape $member, array $value, array &$opts)
     {
         $opts['headers']['Content-Type'] = 'application/xml';
-        $opts['body'] = $this->getXmlBody($member, $value);
+        $body = $this->getXmlBody($member, $value);
+        $opts['headers']['Content-Length'] = strlen($body);
+        $opts['body'] = $body;
     }
 
     /**

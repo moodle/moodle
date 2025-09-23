@@ -52,6 +52,7 @@ class CredentialProvider
     const ENV_SESSION = 'AWS_SESSION_TOKEN';
     const ENV_TOKEN_FILE = 'AWS_WEB_IDENTITY_TOKEN_FILE';
     const ENV_SHARED_CREDENTIALS_FILE = 'AWS_SHARED_CREDENTIALS_FILE';
+    public const REFRESH_WINDOW = 60;
 
     /**
      * Create a default credential provider that
@@ -224,10 +225,14 @@ class CredentialProvider
                         return $creds;
                     }
 
-                    // Refresh expired credentials.
-                    if (!$creds->isExpired()) {
+                    // Check if credentials are expired or will expire in 1 minute
+                    $needsRefresh = $creds->getExpiration() - time() <= self::REFRESH_WINDOW;
+
+                    // Refresh if expired or expiring soon
+                    if (!$needsRefresh && !$creds->isExpired()) {
                         return $creds;
                     }
+
                     // Refresh the result and forward the promise.
                     return $result = $provider($creds);
                 })
