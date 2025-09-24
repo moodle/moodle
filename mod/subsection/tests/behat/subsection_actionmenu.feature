@@ -27,7 +27,7 @@ Feature: The module menu replaces the delegated section menu
     Given I click on "Subsection1" "link" in the "region-main" "region"
     And I turn editing mode on
     # Open the action menu.
-    When I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    When I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     Then I should not see "Move right"
     And I should not see "Assign roles"
     And I should not see "Highlight"
@@ -80,7 +80,7 @@ Feature: The module menu replaces the delegated section menu
     Then I should see "Subsection1" in the "h1" "css_element"
     And "Section 1" "text" should exist in the ".breadcrumb" "css_element"
     # Open the section header action menu.
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And "View" "link" should not exist in the "[data-region='header-actions-container']" "css_element"
     And I click on "Section 1" "link" in the ".breadcrumb" "css_element"
     # Section page. Section name should be the title.
@@ -100,7 +100,7 @@ Feature: The module menu replaces the delegated section menu
     And I click on "Cancel" "button"
     And I am on the "C1 > Subsection1" "course > section" page
     # Subsection page. Open the section header action menu.
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Edit settings" in the open action menu
     And the field "Section name" matches value "Subsection1"
     And I click on "Cancel" "button"
@@ -119,7 +119,7 @@ Feature: The module menu replaces the delegated section menu
     And I should see "Text copied to clipboard"
     And I am on the "C1 > Subsection1" "course > section" page
     # Subsection page. Open the section header action menu.
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Permalink" in the open action menu
     And I click on "Copy to clipboard" "link"
     And I should see "Text copied to clipboard"
@@ -152,7 +152,7 @@ Feature: The module menu replaces the delegated section menu
     And "Subsection2" "link" should not exist in the "#region-main-box" "css_element"
     And I am on the "C1 > Subsection3" "course > section" page
     # Subsection page. Open the section header action menu.
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete subsection?" "dialogue"
     And I should not see "Subsection3"
@@ -168,7 +168,7 @@ Feature: The module menu replaces the delegated section menu
     Given I am on the "C1 > Subsection1" "course > section" page
     And I should see "Hidden from students"
     # Subsection page. Open the section header action menu.
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Show" in the open action menu
     And I should not see "Hidden from students"
     And I click on "Section 1" "link" in the ".breadcrumb" "css_element"
@@ -235,5 +235,5 @@ Feature: The module menu replaces the delegated section menu
     And I should see "Move"
     # Subsection page. Move option should not exist.
     And I am on the "C1 > Subsection1" "course > section" page
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And "Move" "link" should not exist in the "[data-region='header-actions-container']" "css_element"
