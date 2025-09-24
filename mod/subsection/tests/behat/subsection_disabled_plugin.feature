@@ -77,7 +77,7 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And I am on "Course 1" course homepage with editing mode on
     # Perform teacher actions instead of fast steps to validate delete
     # an orphaned subsection does not break the course.
-    And I click on "Edit" "icon" in the "Subsection1" "core_courseformat > Section actions menu"
+    And I click on "Edit" "button" in the "Subsection1" "core_courseformat > Section actions menu"
     When I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete section?" "dialogue"
     Then I enable "subsection" "mod" plugin
@@ -113,7 +113,7 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And I should see "Not available unless: You belong to a group in GX1"
     And I should not see "Edit restrictions"
     And I am on the "C1 > Subsection1" "course > section" page
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete section?" "dialogue"
     And I enable "subsection" "mod" plugin
@@ -131,7 +131,7 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And I disable "subsection" "mod" plugin
     When I am on the "C1 > Subsection2" "course > section" page
     And I turn editing mode on
-    And I click on "Edit" "icon" in the "[data-region='header-actions-container']" "css_element"
+    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete section?" "dialogue"
     And I enable "subsection" "mod" plugin

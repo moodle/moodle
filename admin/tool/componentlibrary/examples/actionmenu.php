@@ -77,7 +77,7 @@ echo '<p><strong>Important note:</strong> actions menus are not prepared
     to be displayed inside iframes. You may need to scroll to see the
     action menu options.</p>';
 
-echo $output->heading("Action menu default example", 4);
+echo $output->heading("Action menu default example", 3);
 
 $menu = new action_menu();
 
@@ -87,11 +87,11 @@ $menu->add($subpanel);
 $menu->add($basicactionlink);
 
 echo '<div class="border m-3 p-3 d-flex flex-row">';
-echo '<div class="flex-fill">Example of default an action menu</div><div>';
+echo '<div class="flex-fill">An action menu rendered without customisation</div><div>';
 echo $OUTPUT->render($menu);
 echo '</div></div>';
 
-echo $output->heading("Kebab menu example", 4);
+echo $output->heading("Kebab menu example", 3);
 
 $menu = new action_menu();
 $menu->set_kebab_trigger(get_string('edit'), $output);
@@ -106,11 +106,11 @@ $menu->add(new core\output\local\action_menu\subpanel(
 $menu->add($basicactionlink);
 
 echo '<div class="border m-3 p-3 d-flex flex-row">';
-echo '<div class="flex-fill">Example of kebab menu</div><div>';
+echo '<div class="flex-fill">An action menu with a kebab menu trigger button</div><div>';
 echo $OUTPUT->render($menu);
 echo '</div></div>';
 
-echo $output->heading("Custom trigger menu example", 4);
+echo $output->heading("Custom trigger menu examples", 3);
 
 $menu = new action_menu();
 $menu->set_menu_trigger(get_string('edit'));
@@ -124,11 +124,53 @@ $menu->add(new core\output\local\action_menu\subpanel(
 $menu->add($basicactionlink);
 
 echo '<div class="border m-3 p-3 d-flex flex-row">';
-echo '<div class="flex-fill">Example of kebab menu</div><div>';
+echo '<div class="flex-fill">An action menu with a menu trigger button with a custom text label</div><div>';
 echo $OUTPUT->render($menu);
 echo '</div></div>';
 
-echo $output->heading("Primary actions menu example", 4);
+$links = [
+    $basicactionlink,
+    $basicactionlink,
+];
+$moreicon = $OUTPUT->pix_icon('i/moremenu', '');
+$editicon = $OUTPUT->pix_icon('t/edit', '');
+
+$menu = new action_menu($links);
+
+$menu->set_menu_trigger($moreicon);
+$menu->set_action_label(get_string('moremenu'));
+$menu->triggerattributes = [
+    'title' => get_string('moremenu'),
+];
+
+echo '<div class="border m-3 p-3 d-flex flex-row">';
+echo '<div class="flex-fill">An action menu with only an icon for its custom menu trigger button</div>';
+echo html_writer::div($OUTPUT->render($menu));
+echo '</div>';
+
+echo '<div class="border m-3 p-3 d-flex flex-row">';
+echo '<div class="flex-fill">An action menu with only an icon for its custom menu trigger button with the caret removed</div>';
+$menu->triggerextraclasses = 'no-caret';
+echo html_writer::div($OUTPUT->render($menu));
+echo '</div>';
+
+$menu = new action_menu($links);
+$menu->set_menu_trigger($editicon . ' ' . get_string('edit'));
+
+echo '<div class="border m-3 p-3 d-flex flex-row">';
+echo '<div class="flex-fill">An action menu with an icon and visible text for its custom menu trigger button</div>';
+echo html_writer::div($OUTPUT->render($menu));
+echo '</div>';
+
+$menu = new action_menu($links);
+$menu->set_menu_trigger($editicon . ' ' . html_writer::span(get_string('edit'), 'sr-only'));
+
+echo '<div class="border m-3 p-3 d-flex flex-row">';
+echo '<div class="flex-fill">An action menu with an icon and visually hidden text for its custom menu trigger button</div>';
+echo html_writer::div($OUTPUT->render($menu));
+echo '</div>';
+
+echo $output->heading("Primary actions menu example", 3);
 
 $menu = new action_menu();
 $menu->set_menu_trigger(get_string('edit'));

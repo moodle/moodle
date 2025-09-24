@@ -22,9 +22,9 @@ Feature: Block accessreview
     When I add the "Accessibility Review" block
     Then I should see "Accessibility Review"
     And I should see "Your accessibility toolkit needs to be registered."
-    And I click on "Actions menu" "icon" in the "Accessibility Review" "block"
+    And I click on "Actions menu" "menuitem" in the "Accessibility Review" "block"
     And I follow "Hide Accessibility Review block"
     And I should not see "Your accessibility toolkit needs to be registered."
-    And I click on "Actions menu" "icon" in the "Accessibility Review" "block"
+    And I click on "Actions menu" "menuitem" in the "Accessibility Review" "block"
     And I follow "Show Accessibility Review block"
     And I should see "Your accessibility toolkit needs to be registered."

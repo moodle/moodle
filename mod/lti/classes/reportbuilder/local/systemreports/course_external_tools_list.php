@@ -16,6 +16,7 @@
 
 namespace mod_lti\reportbuilder\local\systemreports;
 
+use core\output\html_writer;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\column;
 use mod_lti\reportbuilder\local\entities\tool_types;
@@ -218,8 +219,13 @@ class course_external_tools_list extends system_report {
 
                 // Build and display an action menu.
                 $menu = new \action_menu();
-                $menu->set_menu_trigger($OUTPUT->pix_icon('i/moremenu', get_string('actions', 'core')),
-                    'btn btn-icon d-flex align-items-center justify-content-center'); // TODO check 'actions' lang string with UX.
+                $triggerlabel = get_string('actions');
+                $visuallyhiddenlabel = html_writer::span($triggerlabel, 'sr-only d-inline-block');
+                $menu->set_menu_trigger(
+                    $OUTPUT->pix_icon('i/moremenu', '') . $visuallyhiddenlabel,
+                    'btn btn-icon d-flex align-items-center justify-content-center'
+                );
+                $menu->triggerattributes['title'] = $triggerlabel;
 
                 $menu->add(new \action_menu_link(
                     new \moodle_url('/mod/lti/coursetooledit.php', ['course' => $row->course, 'typeid' => $row->id]),

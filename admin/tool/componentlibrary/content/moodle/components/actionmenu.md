@@ -39,7 +39,7 @@ The component output classes can render an action menu entirely in PHP. The step
 
 The following code is a basic example of an action menu:
 
-{{< php >}}
+```php
 /** @var core_renderer $output*/
 $output = $PAGE->get_renderer('core');
 
@@ -54,11 +54,11 @@ $menu->add(new action_menu_link(
 ));
 
 echo $output->render($menu);
-{{< / php >}}
+```
 
 And this is the same example but passing the items in the creation:
 
-{{< php >}}
+```php
 /** @var core_renderer $output*/
 $output = $PAGE->get_renderer('core');
 
@@ -72,32 +72,64 @@ $menu = new action_menu([
 ]);
 
 echo $output->render($menu);
-{{< / php >}}
+```
 
 ### Setup the menu trigger
 
-By default, the action menu trigger is a cog icon. However, the class has methods to convert it to a kebab menu or even display any arbitrary content.
+By default, the action menu trigger is a button that uses the `t/edit_menu` icon and is displayed with a caret. However, the class has methods to convert it to a kebab menu or even display any arbitrary content.
 
-Example of a kebab menu:
+#### Example of a kebab menu
 
-{{< php >}}
+```php
 /** @var core_renderer $output*/
 $output = $PAGE->get_renderer('core');
 
 $menu = new action_menu();
 $menu->set_kebab_trigger(get_string('edit'), $output);
 $menu->set_additional_classes('fields-actions');
-{{< / php >}}
+```
 
-Example of a custom trigger:
+#### Customising the menu trigger
 
-{{< php >}}
-/** @var core_renderer $output*/
-$output = $PAGE->get_renderer('core');
+##### Trigger with a text label
 
+```php
+// This example displays an "Edit" label for the trigger.
 $menu = new action_menu();
 $menu->set_menu_trigger(get_string('edit'));
-{{< / php >}}
+```
+
+##### Trigger with an icon
+
+This example displays an icon for the trigger. When rendering the menu trigger button as an icon button, ensure that the icon is rendered as a decorative image. If you are using a `pix_icon`, pass an empty `$alt` parameter to make the icon decorative.
+
+The accessible name of the icon button should be set within the button element itself. You can set an accessible name for the icon trigger button either by:
+* Using the `::set_action_label()` method.
+```php
+$menu = new action_menu();
+// Make sure the pix icon is rendered as a decorative image by passing an empty alt parameter. 
+$icon = $output->pix_icon('t/edit', '');
+$menu->set_menu_trigger($icon);
+$menu->set_action_label(get_string('edit'));
+```
+
+* Or alternatively, by adding a visually hidden text alongside the icon.
+```php
+$menu = new action_menu();
+// Make sure the pix icon is rendered as a decorative image by passing an empty alt parameter. 
+$icon = $output->pix_icon('t/edit', '');
+// Add a visually hidden text label for the trigger button.
+$icon .= html_writer::span(get_string('edit'), 'sr-only');
+$menu->set_menu_trigger($icon);
+```
+
+##### Removing the caret symbol
+
+You may also remove the caret symbol by adding a `no-caret` class to the `triggerextraclasses` property.
+
+```php
+$menu->triggerextraclasses = 'no-caret';
+```
 
 ### Add items
 
@@ -108,7 +140,7 @@ Secondary items: are displayed inside the action menu dropdown.
 
 The item location must be configured before adding the element. The following example shows different ways to add primary and secondary menu items.
 
-{{< php >}}
+```php
 // Primary items examples.
 $menu->add(new action_menu_link(
     new moodle_url($PAGE->url),
@@ -134,7 +166,7 @@ $menu->add(new action_menu_link_secondary(
     new pix_icon('t/user', ''),
     'Action link example',
 ));
-{{< / php >}}
+```
 
 ## Types of items
 
@@ -178,7 +210,7 @@ Construct params:
 
 The following example creates a subpanel using a renderable choicelist instance:
 
-{{< php >}}
+```php
 /** @var core_renderer $output*/
 $output = $PAGE->get_renderer('core');
 
@@ -205,7 +237,7 @@ $menu->add(new core\output\local\action_menu\subpanel(
 ));
 
 echo $output->render($menu);
-{{< / php >}}
+```
 
 ### HTML string
 
