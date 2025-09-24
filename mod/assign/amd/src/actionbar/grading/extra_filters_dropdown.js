@@ -79,9 +79,10 @@ const registerEventListeners = (extraFiltersDropdown) => {
  * @param {DropdownDialog} extraFiltersDropdown The dropdown dialog instance.
  */
 const restoreAppliedWorkflowFilter = async(extraFiltersDropdown) => {
-    const appliedWorkflowFilter = await getUserPreference('assign_workflowfilter');
     const workflowFilterSelect = extraFiltersDropdown.getElement().querySelector(Selectors.workflowFilterElement);
-    workflowFilterSelect.value = appliedWorkflowFilter;
+    if (workflowFilterSelect) {
+        workflowFilterSelect.value = await getUserPreference('assign_workflowfilter');
+    }
 };
 
 /**
@@ -92,8 +93,7 @@ const restoreAppliedWorkflowFilter = async(extraFiltersDropdown) => {
 const restoreAppliedMarkerFilter = async(extraFiltersDropdown) => {
     const markerFilterSelect = extraFiltersDropdown.getElement().querySelector(Selectors.markerFilterElement);
     if (markerFilterSelect) {
-        const appliedMarkerFilter = await getUserPreference('assign_markerfilter');
-        markerFilterSelect.value = appliedMarkerFilter;
+        markerFilterSelect.value = await getUserPreference('assign_markerfilter');
     }
 };
 
