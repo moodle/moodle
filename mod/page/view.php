@@ -57,9 +57,10 @@ page_view($page, $course, $cm, $context);
 $PAGE->set_url('/mod/page/view.php', array('id' => $cm->id));
 
 $options = empty($page->displayoptions) ? [] : (array) unserialize_array($page->displayoptions);
+$printintro = !empty($options['printintro']);
 
 $activityheader = ['hidecompletion' => false];
-if (empty($options['printintro'])) {
+if (!$printintro) {
     $activityheader['description'] = '';
 }
 
@@ -67,6 +68,12 @@ if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_pagelayout('popup');
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
+    $PAGE->set_activity_record($page);
+
+    // Manually populate module intro, which would otherwise not be shown in the popup.
+    if ($printintro) {
+        $activityheader['description'] = format_module_intro('page', $page, $cm->id);
+    }
 } else {
     $PAGE->add_body_class('limitedwidth');
     $PAGE->set_title($course->shortname.': '.$page->name);
