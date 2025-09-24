@@ -497,8 +497,11 @@ print '</div>';
 
 // Add buttons for exporting report.
 if ($grandtotal && count($activities) > 0) {
-    echo $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'), $url, 'dataformat', [
-        'course' => $course->id,
-    ]);
+    echo $OUTPUT->download_dataformat_selector(
+        get_string('downloadas', 'table'),
+        $url->out_omit_querystring(),
+        'dataformat',
+        $url->params()
+    );
 }
 echo $OUTPUT->footer();
