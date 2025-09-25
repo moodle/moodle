@@ -34,3 +34,4 @@ $string['cliincorrectvalueretry'] = 'Luach ceàrr, feuch a-rithist';
 $string['cliunknowoption'] = 'Roghainnean nach deach an aithneachadh:
 {$a}
 Cleachd— an roghainn airson cuideachadh';
+$string['environmentrequireversion'] = 'tha tionndadh {$a->needed} deatamach agus tha thusa a’ ruith {$a->current}';
