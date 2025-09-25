@@ -584,7 +584,7 @@ class html_writer {
         if (!empty($table->caption)) {
             $captionattributes = [];
             if ($table->captionhide) {
-                $captionattributes['class'] = 'accesshide';
+                $captionattributes['class'] = 'visually-hidden';
             }
             $output .= self::tag(
                 'caption',
