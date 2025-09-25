@@ -88,11 +88,11 @@
                         </a>
                         {{/canedit}}
                     </h3>
-                    {{^canedit}}
+                    {{#toggle}}
                         <div data-bs-toggle="tooltip" data-bs-placement="top" title="{{#str}} sharedcategoryhelptext, customfield {{/str}}">
-                            {{{toggle}}}
+                            {{{.}}}
                         </div>
-                    {{/canedit}}
+                    {{/toggle}}
                 {{/usescategories}}
             </div>
             <div class="col-auto text-end">

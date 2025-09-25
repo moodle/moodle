@@ -110,13 +110,15 @@ class management implements renderable, templatable {
                 ['name' => 'data-area', 'value' => $data->area],
                 ['name' => 'data-itemid', 'value' => $data->itemid],
             ];
-            $categoryarray['toggle'] = $output->render_from_template('core/toggle', [
+            if (!$canedit) {
+                $categoryarray['toggle'] = $output->render_from_template('core/toggle', [
                     'id' => 'shared-toggle-' . $category->get('id'),
                     'checked' => $toggleenabled,
                     'extraattributes' => $attributes,
                     'label' => get_string('enableplugin', 'core_admin', $category->get_formatted_name()),
                     'labelclasses' => 'visually-hidden',
                 ]);
+            }
 
             $categoryarray['fields'] = array();
 
