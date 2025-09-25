@@ -142,7 +142,8 @@
 }
 
 .chooserdialogue-questionchooser .modicon img.icon,
-#categoryquestions .qtype img.icon {
+#categoryquestions .qtype img.icon,
+.choosercontainer .modicon img.icon {
     /* Override default icon width set for fontawesome icons */
     width: 16px;
 }
