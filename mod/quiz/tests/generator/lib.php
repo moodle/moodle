@@ -151,8 +151,9 @@ class mod_quiz_generator extends testing_module_generator {
      * @param bool $checkbutton if simulate a click on the check button for each question, else simulate save.
      *      This should only be used with behaviours that have a check button.
      * @param bool $finishattempt if true, the attempt will be submitted.
+     * @param int|null $timefinish the time to set as the time finished for the attempt.
      */
-    public function submit_responses($attemptid, array $responses, $checkbutton, $finishattempt) {
+    public function submit_responses($attemptid, array $responses, $checkbutton, $finishattempt, ?int $timefinish = null) {
         $questiongenerator = $this->datagenerator->get_plugin_generator('core_question');
 
         $attemptobj = quiz_attempt::create($attemptid);
@@ -181,7 +182,9 @@ class mod_quiz_generator extends testing_module_generator {
         }
 
         if ($finishattempt) {
-            $attemptobj->process_finish(time(), false);
+            // If a timefinish is not specified, use the current time.
+            $timefinish = $timefinish ?? time();
+            $attemptobj->process_finish($timefinish, false);
         }
     }
 
