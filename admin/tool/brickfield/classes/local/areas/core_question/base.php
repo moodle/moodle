@@ -153,14 +153,20 @@ abstract class base extends area_base {
      */
     public static function get_edit_url(\stdClass $componentinfo): \moodle_url {
         $questionid = $componentinfo->itemid;
+        $context = \context::instance_by_id($componentinfo->contextid);
+        $cmid = $context->instanceid;
         // Question answers are editable on main question page.
         // Hence, use refid for these links.
         if ($componentinfo->tablename === 'question_answers') {
             $questionid = $componentinfo->refid;
         }
-        // Default to SITEID if courseid is null, i.e. system or category level questions.
-        $thiscourseid = ($componentinfo->courseid !== null) ? $componentinfo->courseid : SITEID;
-        return new \moodle_url('/question/bank/editquestion/question.php', ['courseid' => $thiscourseid, 'id' => $questionid]);
+        return new \moodle_url(
+            '/question/bank/editquestion/question.php',
+            [
+                'id' => $questionid,
+                'cmid' => $cmid,
+            ]
+        );
     }
 
     /**
