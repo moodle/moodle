@@ -212,6 +212,83 @@ final class backup_question_selection_test extends \advanced_testcase {
     }
 
     /**
+     * Test that backing up a quiz only includes the questions owned or used by the quiz
+     * when the quiz has legacy JSON values in the question_set_references table.
+     */
+    public function test_quiz_backup_with_legacy_reference_filter_condition(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        [
+            $manager,
+            $quiz,
+            $quizquestions,
+            $coursequestions,
+            $sharedquestions,
+        ] = $this->create_quiz_and_questions();
+
+        // Revert the filtercondition to the legacy JSON format.
+        $questionsetreference = $DB->get_record('question_set_references', []);
+        $filtercondition = json_decode($questionsetreference->filtercondition);
+        $tag = \core_tag_tag::get($filtercondition->filter->qtagids->values[0]);
+        $questionsetreference->filtercondition = json_encode([
+            'questioncategoryid' => $filtercondition->filter->category->values[0],
+            'includingsubcategories' => $filtercondition->filter->category->filteroptions->includesubcategories,
+            'tags' => ["$tag->id,$tag->name"],
+        ]);
+        $DB->update_record('question_set_references', $questionsetreference);
+
+        // Backup the quiz.
+        $bc = new \backup_controller(
+            \backup::TYPE_1ACTIVITY,
+            $quiz->cmid,
+            \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $manager->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        $course2 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($manager->id, $course2->id, 'manager');
+        $rc = new \restore_controller(
+            $backupid,
+            $course2->id,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $manager->id,
+            \backup::TARGET_CURRENT_ADDING
+        );
+        $rc->execute_precheck();
+        $backupquestions = $DB->get_records_menu('backup_ids_temp', ['itemname' => 'question'], '', 'id, itemid');
+        // Backup should contain used questions from shared qbanks.
+        $this->assertContains((string) $sharedquestions['sharedparentcat']['sharedchildcat']['sharedq3']->id, $backupquestions);
+        $this->assertContains((string) $coursequestions['courseparentcat']['courseq2']->id, $backupquestions);
+        // Backup should contain all questions from quiz's bank.
+        $this->assertContains((string) $quizquestions['quizparentcat']['quizq1']->id, $backupquestions);
+        $this->assertContains((string) $quizquestions['quizparentcat']['quizq2']->id, $backupquestions);
+        $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq3']->id, $backupquestions);
+        $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq4']->id, $backupquestions);
+        // Backup should contain questions matched by random question filter.
+        $this->assertContains((string) $sharedquestions['tagcat']['tagq1']->id, $backupquestions);
+        $this->assertContains((string) $sharedquestions['tagcat']['tagq2']->id, $backupquestions);
+        // All other questions should be excluded.
+        $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq1']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq2']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedchildcat']['sharedq4']->id, $backupquestions);
+        $this->assertNotContains((string) $coursequestions['courseparentcat']['courseq1']->id, $backupquestions);
+        $this->assertNotContains((string) $coursequestions['courseparentcat']['coursechildcat']['courseq3']->id, $backupquestions);
+        $this->assertNotContains((string) $coursequestions['courseparentcat']['coursechildcat']['courseq4']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat']['tagq3']->id, $backupquestions);
+        $this->assertCount(8, $backupquestions);
+        // Clean up.
+        $rc->execute_plan();
+        $rc->destroy();
+    }
+
+    /**
      * Test that backing up a quiz only includes the questions used in or belonging to the course.
      *
      * This should include all questions in categories belonging to quizzes or qbanks on the course, plus questions from outside
