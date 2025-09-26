@@ -14,25 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit Tests for the request helper.
- *
- * @package     core_completion
- * @category    test
- * @copyright   2018 Adrian Greeve <adriangreeve.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_completion\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-
 require_once($CFG->dirroot . '/completion/tests/fixtures/completion_creation.php');
 
 /**
  * Tests for the \core_completion API's provider functionality.
  *
+ * @package     core_completion
+ * @category    test
+ * @covers      \core_completion\privacy\provider
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -122,14 +116,35 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
      * Test deleting activity completion information for a user.
      */
     public function test_delete_completion_activity_user(): void {
+        global $DB;
+
         $this->resetAfterTest();
-        $user = $this->getDataGenerator()->create_user();
-        $this->create_course_completion();
-        $this->complete_course($user);
-        \core_completion\privacy\provider::delete_completion($user, null, $this->cm->id);
-        $activitycompletion = \core_completion\privacy\provider::get_activity_completion_info($user, $this->course,
-                $this->cm);
+
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+
+        $page = $this->getDataGenerator()->create_module('page', [
+            'course' => $course->id,
+            'completion' => 1,
+            'completionview' => 1,
+        ]);
+        $cm = get_coursemodule_from_id('page', $page->cmid);
+
+        $completion = new \completion_info($course);
+        $completion->set_module_viewed($cm, $user->id);
+
+        // Sanity test.
+        $this->assertTrue($DB->record_exists('course_modules_completion', ['userid' => $user->id, 'coursemoduleid' => $cm->id]));
+        $this->assertTrue($DB->record_exists('course_modules_viewed', ['userid' => $user->id, 'coursemoduleid' => $cm->id]));
+
+        provider::delete_completion($user, null, $cm->id);
+
+        $activitycompletion = provider::get_activity_completion_info($user, $course, $cm);
         $this->assertEquals(0, $activitycompletion->completionstate);
+
+        // Assert we cleared that data.
+        $this->assertFalse($DB->record_exists('course_modules_completion', ['userid' => $user->id, 'coursemoduleid' => $cm->id]));
+        $this->assertFalse($DB->record_exists('course_modules_viewed', ['userid' => $user->id, 'coursemoduleid' => $cm->id]));
     }
 
     /**
