@@ -62,12 +62,12 @@ Feature: Display and choose from the available activities in course
     Given I open the activity chooser
     When I click on "Information about the Forum activity" "button" in the "Add an activity or resource" "dialogue"
     And I click on "Collaboration" "button" in the "help" "core_course > Activity chooser screen"
-    Then I should see "Tools for collaborative learning" in the "Add an activity or resource" "dialogue"
+    Then I should see "Activities for collaborative learning" in the "Add an activity or resource" "dialogue"
     And "Assignment" "link" should not exist in the "collaboration" "core_course > Activity chooser tab"
     And "Database" "link" should exist in the "collaboration" "core_course > Activity chooser tab"
     And I click on "Information about the Forum activity" "button" in the "collaboration" "core_course > Activity chooser tab"
     And I click on "Communication" "button" in the "help" "core_course > Activity chooser screen"
-    And I should see "Activities that facilitate real-time communication" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities for real-time communication" in the "Add an activity or resource" "dialogue"
     And "Choice" "link" should exist in the "communication" "core_course > Activity chooser tab"
 
   Scenario: The teacher can hide the activity summary in the activity chooser
@@ -219,22 +219,22 @@ Feature: Display and choose from the available activities in course
     And I should see "Book" in the "all" "core_course > Activity chooser tab"
     # Assessment tab.
     And I click on "Assessment" "link" in the "Add an activity or resource" "dialogue"
-    And I should see "Activities that allow evaluation and measurement of student" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities that support evaluation and measurement of student understanding" in the "Add an activity or resource" "dialogue"
     And "Book" "link" should not exist in the "assessment" "core_course > Activity chooser tab"
     And "Assignment" "link" should exist in the "assessment" "core_course > Activity chooser tab"
     # Collaboration tab.
     And I click on "Collaboration" "link" in the "Add an activity or resource" "dialogue"
-    And I should see "Tools for collaborative learning" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities for collaborative learning" in the "Add an activity or resource" "dialogue"
     And "Assignment" "link" should not exist in the "collaboration" "core_course > Activity chooser tab"
     And "Database" "link" should exist in the "collaboration" "core_course > Activity chooser tab"
     # Communication tab.
     And I click on "Communication" "link" in the "Add an activity or resource" "dialogue"
-    And I should see "Activities that facilitate real-time communication" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities for real-time communication" in the "Add an activity or resource" "dialogue"
     And "Database" "link" should not exist in the "communication" "core_course > Activity chooser tab"
     And "Choice" "link" should exist in the "communication" "core_course > Activity chooser tab"
     # Resources tab.
     And I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
-    And I should see "Activities and tools to organise and display course materials" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities and tools for organising and displaying course materials" in the "Add an activity or resource" "dialogue"
     And "Choice" "link" should not exist in the "content" "core_course > Activity chooser tab"
     And "File" "link" should exist in the "content" "core_course > Activity chooser tab"
     # Interactive content tab.
