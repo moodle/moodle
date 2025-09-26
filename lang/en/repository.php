@@ -244,6 +244,7 @@ $string['type'] = 'Type';
 $string['typenotvisible'] = 'Type not visible';
 $string['unknownoriginal'] = 'Unknown';
 $string['upload'] = 'Upload this file';
+$string['uploaderror'] = 'File upload error';
 $string['uploading'] = 'Uploading...';
 $string['uploadsucc'] = 'The file has been uploaded successfully';
 $string['unknownsource'] = 'Unknown source';
