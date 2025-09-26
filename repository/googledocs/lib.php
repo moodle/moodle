@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/filebrowser/file_browser.php');
+require_once($CFG->libdir . '/google/lib.php');
 
 use repository_googledocs\helper;
 use repository_googledocs\googledocs_content_search;
@@ -53,11 +54,6 @@ class repository_googledocs extends repository {
      */
     private $issuer = null;
 
-    /**
-     * Additional scopes required for drive.
-     */
-    const SCOPES = 'https://www.googleapis.com/auth/drive';
-
     /** @var string Defines the path node identifier for the repository root. */
     const REPOSITORY_ROOT_ID = 'repository_root';
 
@@ -80,6 +76,7 @@ class repository_googledocs extends repository {
      * @return void
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly = 0) {
+        global $PAGE;
         parent::__construct($repositoryid, $context, $options, $readonly = 0);
 
         try {
@@ -91,6 +88,8 @@ class repository_googledocs extends repository {
         if ($this->issuer && !$this->issuer->get('enabled')) {
             $this->disabled = true;
         }
+
+        $PAGE->requires->js_call_amd('repository_googledocs/upload', 'init');
     }
 
     /**
@@ -99,7 +98,7 @@ class repository_googledocs extends repository {
      * @param moodle_url $overrideurl - Use this url instead of the repo callback.
      * @return \core\oauth2\client
      */
-    protected function get_user_oauth_client($overrideurl = false) {
+    public function get_user_oauth_client($overrideurl = false) {
         if ($this->client) {
             return $this->client;
         }
@@ -112,7 +111,7 @@ class repository_googledocs extends repository {
             $returnurl->param('sesskey', sesskey());
         }
 
-        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES, true);
+        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, Google_Service_Drive::DRIVE_FILE, true);
 
         return $this->client;
     }
@@ -270,6 +269,13 @@ class repository_googledocs extends repository {
             $path = helper::build_node_path('repository_root', $pluginname);
         }
 
+        // Make sure the current path points to "My Drive" before listing files.
+        $mydrive = get_string('mydrive', 'repository_googledocs');
+        $mydrivepath = helper::build_node_path('root', $mydrive);
+        if (!str_contains($path, $mydrivepath)) {
+            $path = $path . '/' . $mydrivepath;
+        }
+
         if (!$this->issuer->get('enabled')) {
             // Empty list of files for disabled repository.
             return [
@@ -306,7 +312,11 @@ class repository_googledocs extends repository {
             'defaultreturntype' => $this->default_returntype(),
             'path' => $contentobj->get_navigation(),
             'list' => $contentobj->get_content_nodes($query, [$this, 'filter']),
-            'manage' => 'https://drive.google.com/',
+            'uploadfile' => true,
+            'uploadevent' => 'repository_googledocs_upload',
+            'repo_id' => $this->id,
+            'contextid' => $this->context->id,
+            'sesskey' => sesskey(),
         ];
     }
 
@@ -708,10 +718,10 @@ class repository_googledocs extends repository {
                                                    $storedfile->get_filename(),
                                                    $forcedownload);
             $url->param('sesskey', sesskey());
-            $param = ($options['embed'] == true) ? false : $url;
+            $param = (isset($options['embed']) && $options['embed'] == true) ? false : $url;
             $userauth = $this->get_user_oauth_client($param);
             if (!$userauth->is_logged_in()) {
-                if ($options['embed'] == true) {
+                if (isset($options['embed']) && $options['embed'] == true) {
                     // Due to Same-origin policy, we cannot redirect to googledocs login page.
                     // If the requested file is embed and the user is not logged in, add option to log in using a popup.
                     $this->print_login_popup(['style' => 'margin-top: 250px']);
@@ -798,41 +808,12 @@ class repository_googledocs extends repository {
      * @return stdClass
      */
     protected function get_file_summary(\repository_googledocs\rest $client, $fileid) {
-        $fields = "id,name,owners,parents";
+        $fields = "id,name,owners,parents,webContentLink,webViewLink";
         $params = [
             'fileid' => $fileid,
             'fields' => $fields
         ];
         return $client->call('get', $params);
-    }
-
-    /**
-     * Copy a file and return the new file details. A side effect of the copy
-     * is that the owner will be the account authenticated with this oauth client.
-     *
-     * @param \repository_googledocs\rest $client Authenticated client.
-     * @param string $fileid The file we are copying.
-     * @param string $name The original filename (don't change it).
-     *
-     * @return stdClass file details.
-     */
-    protected function copy_file(\repository_googledocs\rest $client, $fileid, $name) {
-        $fields = "id,name,mimeType,webContentLink,webViewLink,size,thumbnailLink,iconLink";
-        $params = [
-            'fileid' => $fileid,
-            'fields' => $fields,
-        ];
-        // Keep the original name (don't put copy at the end of it).
-        $copyinfo = [];
-        if (!empty($name)) {
-            $copyinfo = [ 'name' => $name ];
-        }
-        $fileinfo = $client->call('copy', $params, json_encode($copyinfo));
-        if (empty($fileinfo->id)) {
-            $details = 'Cannot copy file:' . $fileid;
-            throw new repository_exception('errorwhilecommunicatingwith', 'repository', '', $details);
-        }
-        return $fileinfo;
     }
 
     /**
@@ -854,7 +835,7 @@ class repository_googledocs extends repository {
             'type' => 'user',
             'expirationTime' => $expires->format(DateTime::RFC3339)
         ];
-        $params = ['fileid' => $fileid, 'sendNotificationEmail' => 'false'];
+        $params = ['fileid' => $fileid, 'sendNotificationEmail' => 'false', 'supportsAllDrives' => 'true'];
         $response = $client->call('create_permission', $params, json_encode($updateeditor));
         if (empty($response->id)) {
             $details = 'Cannot add user ' . $email . ' as a writer for document: ' . $fileid;
@@ -878,7 +859,7 @@ class repository_googledocs extends repository {
             'role' => 'writer',
             'type' => 'user'
         ];
-        $params = ['fileid' => $fileid, 'sendNotificationEmail' => 'false'];
+        $params = ['fileid' => $fileid, 'sendNotificationEmail' => 'false', 'supportsAllDrives' => 'true'];
         $response = $client->call('create_permission', $params, json_encode($updateeditor));
         if (empty($response->id)) {
             $details = 'Cannot add user ' . $email . ' as a writer for document: ' . $fileid;
@@ -944,7 +925,7 @@ class repository_googledocs extends repository {
             'role' => 'reader',
             'allowFileDiscovery' => 'false'
         ];
-        $params = ['fileid' => $fileid];
+        $params = ['fileid' => $fileid, 'supportsAllDrives' => 'true'];
         $response = $client->call('create_permission', $params, json_encode($updateread));
         if (empty($response->id) || $response->id != 'anyoneWithLink') {
             $details = 'Cannot update link sharing for the document: ' . $fileid;
@@ -1008,7 +989,6 @@ class repository_googledocs extends repository {
         $userservice = new repository_googledocs\rest($userauth);
         $systemservice = new repository_googledocs\rest($systemauth);
 
-        // Add Moodle as writer.
         $this->add_writer_to_file($userservice, $source->id, $systemuseremail);
 
         // Now move it to a sensible folder.
@@ -1063,8 +1043,25 @@ class repository_googledocs extends repository {
             }
         }
 
-        // Copy the file so we get a snapshot file owned by Moodle.
-        $newsource = $this->copy_file($systemservice, $source->id, $source->name);
+        $originalfile = $this->get_file_summary($userservice, $source->id);
+        // Use the user service to download the file.
+        $downloadedfile = $this->download_file(
+            $userservice,
+            $source->id,
+            $originalfile->name,
+        );
+        // Upload the user file to the system drive.
+        $uploaded = $this->upload_file(
+            $systemservice,
+            $downloadedfile['path'],
+            $downloadedfile['newfilename'],
+            $source->exportformat,
+            $parentid,
+        );
+        // Add the original file owner as a writer to the file.
+        $this->add_writer_to_file($systemservice, $uploaded->id, $originalfile->owners[0]->emailAddress);
+        $newsource = $this->get_file_summary($systemservice, $uploaded->id);
+
         // Move the copied file to the correct folder.
         $this->move_file_from_root_to_folder($systemservice, $newsource->id, $parentid);
 
@@ -1082,6 +1079,81 @@ class repository_googledocs extends repository {
         $reference = json_encode($source);
 
         return $reference;
+    }
+
+    /**
+     * Uploads a file to Google Docs using the provided REST client.
+     *
+     * @param \repository_googledocs\rest $client The REST client for Google Docs API communication.
+     * @param string $filepath The local path to the file to be uploaded.
+     * @param string $filename The name to assign to the uploaded file.
+     * @param string $exportformat The export format for the file (e.g., 'pdf', 'docx').
+     * @param string $parentid The ID of the parent folder in Google Drive where the file will be uploaded.
+     * @return stdClass|coding_exception Returns the response from the Google Docs API after uploading the file.
+     */
+    public function upload_file(
+        \repository_googledocs\rest $client,
+        string $filepath,
+        string $filename,
+        string $exportformat,
+        string $parentid
+    ): stdClass {
+        $fileinfo = [
+            'name' => $filename,
+            'mimeType' => $exportformat,
+            'parents' => [$parentid], // We will move it later.
+        ];
+        $params = [
+            'supportsAllDrives' => 'true', // Support shared drives.
+            'uploadType' => 'resumable', // Use resumable upload.
+        ];
+
+        $headers = $client->call('upload', $params, json_encode($fileinfo));
+
+        $uploadurl = '';
+        // Google returns a location header with the location for the upload.
+        foreach ($headers as $header) {
+            if (stripos($header, 'Location:') === 0) {
+                $uploadurl = trim(substr($header, strpos($header, ':') + 1));
+            }
+        }
+
+        $params = ['uploadurl' => $uploadurl];
+        return $client->call('upload_content', $params, file_get_contents($filepath), mime_content_type($filepath));
+    }
+
+    /**
+     * Downloads a file from Google Docs using the provided user service.
+     *
+     * @param \repository_googledocs\rest $userservice The user service instance for Google Docs REST API.
+     * @param string $fileid The ID of the file to download.
+     * @param string $originalfilename The file original name
+     * @return array|repository_exception The downloaded file content or relevant response.
+     */
+    protected function download_file(
+        \repository_googledocs\rest $userservice,
+        string $fileid,
+        string $originalfilename
+    ): array|repository_exception {
+        global $CFG;
+
+        $client = $this->get_user_oauth_client();
+        $base = 'https://www.googleapis.com/drive/v3';
+        $params = ['alt' => 'media'];
+        $sourceurl = new moodle_url($base . '/files/' . $fileid, $params);
+
+        $path = $this->prepare_file($originalfilename);
+        $options = ['filepath' => $path, 'timeout' => $CFG->repositorygetfiletimeout, 'followlocation' => true, 'maxredirs' => 5];
+        $success = $client->download_one($sourceurl->out(false), null, $options);
+        if ($success) {
+            @chmod($path, $CFG->filepermissions);
+            return [
+                'path' => $path,
+                'newfilename' => $originalfilename,
+            ];
+        }
+
+        throw new repository_exception('cannotdownload', 'repository');
     }
 
     /**
@@ -1223,7 +1295,7 @@ class repository_googledocs extends repository {
  */
 function repository_googledocs_oauth2_system_scopes(\core\oauth2\issuer $issuer) {
     if ($issuer->get('id') == get_config('googledocs', 'issuerid')) {
-        return 'https://www.googleapis.com/auth/drive';
+        return Google_Service_Drive::DRIVE_FILE;
     }
     return '';
 }

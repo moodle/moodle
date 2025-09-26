@@ -1624,6 +1624,8 @@ M.core_filepicker.init = function(Y, options) {
             this.active_repo.message = (data.message || '');
             this.active_repo.help = data.help?data.help:null;
             this.active_repo.manage = data.manage?data.manage:null;
+            this.active_repo.uploadfile = data.uploadfile ? data.uploadfile : null;
+            this.active_repo.uploadevent = data.uploadevent ? data.uploadevent : null;
             // Warning message related to the file reference option, if applicable to the given repository.
             this.active_repo.filereferencewarning = data.filereferencewarning ? data.filereferencewarning : null;
             this.print_header();
@@ -1987,6 +1989,28 @@ M.core_filepicker.init = function(Y, options) {
                     managelnk.simulate('click')
                 });
 
+            // Repository upload.
+            // If repository supports upload, it needs to provide 'uploadevent' in its response to 'list' command.
+            // This event will be used to trigger the upload process.
+            // Repository will need to subscribe to this event and launch its own upload process.
+            toolbar.one('.fp-tb-uploadfile').one('a,button').on('click', (e) => {
+                if (this.active_repo.uploadevent) {
+                    e.preventDefault();
+                    require(['core/pubsub'], (PubSub) => {
+                        PubSub.publish(this.active_repo.uploadevent, {
+                            repoId: this.active_repo.id,
+                            contextId: this.options.context.id,
+                            callback: () => {
+                                // Refresh the file list after upload is done.
+                                if (!this.active_repo.norefresh) {
+                                    this.list({path: this.currentpath});
+                                }
+                            }
+                        });
+                    });
+                }
+            }, this);
+
             // same with .fp-tb-help
             var helplnk = Y.Node.create('<a/>').
                 setAttrs({id:'fp-tb-help-'+client_id+'-link', target:'_blank'}).
@@ -2062,6 +2086,9 @@ M.core_filepicker.init = function(Y, options) {
             // manage url
             enable_tb_control(toolbar.one('.fp-tb-manage'), r.manage);
             Y.one('#fp-tb-manage-'+client_id+'-link').set('href', r.manage);
+
+            // Upload file.
+            enable_tb_control(toolbar.one('.fp-tb-uploadfile'), r.uploadfile);
 
             // help url
             enable_tb_control(toolbar.one('.fp-tb-help'), r.help);
