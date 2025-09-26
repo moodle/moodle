@@ -543,14 +543,14 @@ class stateactions {
                 $coursevisible = ($allowstealth) ? 0 : 1;
             }
             set_coursemodule_visible($cm->id, $visible, $coursevisible, false);
-            $modcontext = context_module::instance($cm->id);
-            course_module_updated::create_from_cm($cm, $modcontext)->trigger();
         }
         course_modinfo::purge_course_modules_cache($course->id, $ids);
         rebuild_course_cache($course->id, false, true);
 
         $delegatedsections = [];
         foreach ($cms as $cm) {
+            $modcontext = context_module::instance($cm->id);
+            course_module_updated::create_from_cm($cm, $modcontext)->trigger();
             $updates->add_cm_put($cm->id);
             if (!$delegatedsection = $cm->get_delegated_section_info()) {
                 continue;
