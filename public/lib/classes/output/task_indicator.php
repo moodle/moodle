@@ -98,6 +98,7 @@ class task_indicator implements renderable, templatable {
             if (
                 array_key_exists('task', plugin_manager::instance()->get_present_plugins('tool'))
                 && is_null($this->taskrecord->timestarted)
+                && \core\task\manager::is_runnable()
                 && has_capability('moodle/site:config', system::instance())
             ) {
                 $this->runurl = new url('/admin/tool/task/run_adhoctasks.php', ['id' => $this->taskrecord->id]);
@@ -124,13 +125,15 @@ class task_indicator implements renderable, templatable {
         if ($this->taskrecord) {
             $export['heading'] = $this->heading;
             $export['message'] = $this->message;
-            $export['progress'] = $this->progressbar->export_for_template($output);
             $export['icon'] = $this->icon ? $this->icon->export_for_template($output) : '';
             $export['redirecturl'] = $this->redirecturl?->out();
             $export['extraclasses'] = implode(' ', $this->extraclasses);
             $export['runurl'] = $this->runurl?->out();
             $export['runlabel'] = $this->runlabel;
-            $this->progressbar->init_js();
+            if ($this->progressbar !== null) {
+                $export['progress'] = $this->progressbar->export_for_template($output);
+                $this->progressbar->init_js();
+            }
         }
         return $export;
     }
