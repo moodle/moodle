@@ -217,6 +217,25 @@ class redis extends handler implements SessionHandlerInterface {
 
     #[\Override]
     public function init(): bool {
+        $connected = $this->connect_to_redis();
+
+        $result = session_set_save_handler($this);
+        if (!$result) {
+            throw new exception('redissessionhandlerproblem', 'error');
+        }
+
+        return $connected;
+    }
+
+    /**
+     * Initiates a new connection to a Redis instance or RedisCluster
+     *
+     * @return bool True, if the connection was successfully established
+     * @throws RedisException If the connection to a Redis instance failed
+     * @throws RedisClusterException If the connection to a RedisCluster failed
+     * @throws exception If a session handler error occurred
+     */
+    protected function connect_to_redis(): bool {
         if (!extension_loaded('redis')) {
             throw new exception('sessionhandlerproblem', 'error', '', null, 'redis extension is not loaded');
         }
@@ -238,11 +257,6 @@ class redis extends handler implements SessionHandlerInterface {
                 module: 'error',
                 debuginfo: sprintf('redis extension version must be at least %s', self::REDIS_MIN_EXTENSION_VERSION),
             );
-        }
-
-        $result = session_set_save_handler($this);
-        if (!$result) {
-            throw new exception('redissessionhandlerproblem', 'error');
         }
 
         $encrypt = (bool) ($this->sslopts ?? false);
@@ -401,10 +415,6 @@ class redis extends handler implements SessionHandlerInterface {
             throw new $exceptionclass($logstring);
         }
 
-        $result = session_set_save_handler($this);
-        if (!$result) {
-            throw new exception('redissessionhandlerproblem', 'error');
-        }
         return false;
     }
 
@@ -581,7 +591,7 @@ class redis extends handler implements SessionHandlerInterface {
 
     #[\Override]
     public function get_session_by_sid(string $sid): \stdClass {
-        $this->init_redis_if_required();
+        $this->connect_to_redis_if_required();
         $keys = ["id", "state", "sid", "userid", "sessdata", "timecreated", "timemodified", "firstip", "lastip"];
         $sessiondata = $this->connection->hmget($this->sessionkeyprefix . $sid, $keys);
 
@@ -618,7 +628,7 @@ class redis extends handler implements SessionHandlerInterface {
 
     #[\Override]
     public function get_sessions_by_userid(int $userid): array {
-        $this->init_redis_if_required();
+        $this->connect_to_redis_if_required();
 
         $userhashkey = $this->userkeyprefix . $userid;
         $sessions = $this->connection->hGetAll($userhashkey);
@@ -674,7 +684,7 @@ class redis extends handler implements SessionHandlerInterface {
 
     #[\Override]
     public function destroy_all(): bool {
-        $this->init_redis_if_required();
+        $this->connect_to_redis_if_required();
 
         $sessions = $this->get_all_sessions();
         foreach ($sessions as $session) {
@@ -690,7 +700,7 @@ class redis extends handler implements SessionHandlerInterface {
 
     #[\Override]
     public function destroy(string $id): bool {
-        $this->init_redis_if_required();
+        $this->connect_to_redis_if_required();
         $this->lasthash = null;
         try {
             $sessionhashkey = $this->sessionkeyprefix . $id;
@@ -746,13 +756,14 @@ class redis extends handler implements SessionHandlerInterface {
 
     /**
      * Connection will be null if these methods are called from cli or where NO_MOODLE_COOKIES is used.
-     * We need to check for this and initialize the connection if required.
+     * We need to check for this and create a new connection if required.
      *
      * @return void
+     * @throws exception|RedisException|RedisClusterException If connection to Redis failed
      */
-    private function init_redis_if_required(): void {
+    private function connect_to_redis_if_required(): void {
         if (is_null($this->connection)) {
-            $this->init();
+            $this->connect_to_redis();
         }
     }
 
