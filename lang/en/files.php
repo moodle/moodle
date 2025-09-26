@@ -43,7 +43,7 @@ $string['redactor:exifremover:failedprocessgd'] = 'Redaction failed: failed to p
 $string['redactor:exifremover:heading'] = 'ExifTool';
 $string['redactor:exifremover:mimetype'] = 'Supported MIME types';
 $string['redactor:exifremover:mimetype_desc'] = 'To add new MIME types, ensure they\'re included in the <a href="./tool/filetypes/index.php">File Types</a>.';
-$string['redactor:exifremover:removetags'] = 'The EXIF tags that will be removed.';
+$string['redactor:exifremover:removetags'] = 'EXIF tags to be removed';
 $string['redactor:exifremover:removetags_desc'] = 'The EXIF tags that need to be removed.';
 $string['redactor:exifremover:tag:all'] = 'All';
 $string['redactor:exifremover:tag:gps'] = 'GPS only';
