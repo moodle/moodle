@@ -21,6 +21,7 @@ use context_course;
 use context_coursecat;
 use context_module;
 use context_system;
+use core\exception\moodle_exception;
 use core\task\manager;
 use core_question\local\bank\random_question_loader;
 use core_question\local\bank\question_bank_helper;
@@ -960,5 +961,24 @@ final class transfer_question_categories_test extends \advanced_testcase {
         ));
 
         $this->assertTrue(question_bank_helper::has_bank_migration_task_completed_successfully());
+    }
+
+    public function test_qbank_install_resilience(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setup_pre_install_data();
+
+        require_once(__DIR__ . '/../fixtures/testable_transfer_question_categories.php');
+        $task = new testable_transfer_question_categories();
+        try {
+            $task->execute();
+        } catch (moodle_exception $e) {
+            // We expect a failure here, but we ignore this.
+            $this->assertStringContainsString('This is a mocked exception for testing purposes.', $e->getMessage());
+        }
+        // We want to verify a failure does not prevent the creation of tasks with hitherto transferred categories and their data.
+        // We should have a transfer_questions task for two of the categories that were moved.
+        $questiontasks = manager::get_adhoc_tasks(transfer_questions::class);
+        $this->assertCount(2, $questiontasks);
     }
 }

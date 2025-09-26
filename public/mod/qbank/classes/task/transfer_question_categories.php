@@ -66,8 +66,6 @@ class transfer_question_categories extends adhoc_task {
 
         $recordset = $DB->get_recordset('question_categories', ['parent' => 0]);
 
-        $movedcategorycontexts = [];
-
         foreach ($recordset as $oldtopcategory) {
 
             if (!$oldcontext = context::instance_by_id($oldtopcategory->contextid, IGNORE_MISSING)) {
@@ -137,7 +135,14 @@ class transfer_question_categories extends adhoc_task {
             // We have our new mod instance, now move all the subcategories of the old 'top' category to this new context.
             $movedcategories = $this->move_question_category($oldtopcategory, $newmod->context);
 
-            $movedcategorycontexts += array_fill_keys($movedcategories, $oldtopcategory->contextid);
+            // Create a set of new tasks to update the questions in each category to the new contexts.
+            // The category itself is already in the new context. We record the old context
+            // so we know where to move files and tags from.
+            foreach ($movedcategories as $categoryid) {
+                $task = new transfer_questions();
+                $task->set_custom_data(['categoryid' => $categoryid, 'contextid' => $oldtopcategory->contextid]);
+                manager::queue_adhoc_task($task);
+            }
 
             // Job done, lets delete the old 'top' category.
             $DB->delete_records('question_categories', ['id' => $oldtopcategory->id]);
@@ -145,15 +150,6 @@ class transfer_question_categories extends adhoc_task {
         }
 
         $recordset->close();
-
-        // Create a set of new tasks to update the questions in each category to the new contexts.
-        // The category itself is already in the new context. We record the old context so we know where to move
-        // files and tags from.
-        foreach ($movedcategorycontexts as $categoryid => $oldcontextid) {
-            $task = new transfer_questions();
-            $task->set_custom_data(['categoryid' => $categoryid, 'contextid' => $oldcontextid]);
-            manager::queue_adhoc_task($task);
-        }
     }
 
     /**
