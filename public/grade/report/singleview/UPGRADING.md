@@ -1,6 +1,6 @@
 # gradereport_singleview Upgrade notes
 
-## 5.1beta
+## 5.1rc1
 
 ### Added
 

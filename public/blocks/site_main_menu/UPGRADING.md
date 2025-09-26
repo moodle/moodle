@@ -1,6 +1,6 @@
 # block_site_main_menu Upgrade notes
 
-## 5.1beta
+## 5.1rc1
 
 ### Added
 

@@ -1,6 +1,6 @@
 # core_block (subsystem / plugintype) Upgrade notes
 
-## 5.1beta
+## 5.1rc1
 
 ### Changed
 
