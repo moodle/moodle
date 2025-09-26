@@ -107,7 +107,7 @@ The accessible name of the icon button should be set within the button element i
 * Using the `::set_action_label()` method.
 ```php
 $menu = new action_menu();
-// Make sure the pix icon is rendered as a decorative image by passing an empty alt parameter. 
+// Make sure the pix icon is rendered as a decorative image by passing an empty alt parameter.
 $icon = $output->pix_icon('t/edit', '');
 $menu->set_menu_trigger($icon);
 $menu->set_action_label(get_string('edit'));
@@ -116,7 +116,7 @@ $menu->set_action_label(get_string('edit'));
 * Or alternatively, by adding a visually hidden text alongside the icon.
 ```php
 $menu = new action_menu();
-// Make sure the pix icon is rendered as a decorative image by passing an empty alt parameter. 
+// Make sure the pix icon is rendered as a decorative image by passing an empty alt parameter.
 $icon = $output->pix_icon('t/edit', '');
 // Add a visually hidden text label for the trigger button.
 $icon .= html_writer::span(get_string('edit'), 'visually-hidden');
