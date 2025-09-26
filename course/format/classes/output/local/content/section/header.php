@@ -84,7 +84,7 @@ class header implements named_templatable, renderable {
         } else {
             if (is_null($format->get_sectionid()) || $format->get_sectionid() != $section->id) {
                 // All sections are displayed.
-                if (!$data->editing) {
+                if (!$data->editing && $section->uservisible) {
                     $data->title = $output->section_title($section, $course);
                 } else {
                     $data->title = $output->section_title_without_link($section, $course);
