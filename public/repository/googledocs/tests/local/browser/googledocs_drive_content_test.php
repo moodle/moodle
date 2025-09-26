@@ -16,6 +16,8 @@
 
 namespace repository_googledocs\local\browser;
 
+use Google_Service_Drive;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -53,45 +55,66 @@ final class googledocs_drive_content_test extends \googledocs_content_testcase {
             'q' => "'" . str_replace("'", "\'", $query) . "' in parents AND trashed = false",
             'fields' => 'files(id,name,mimeType,webContentLink,webViewLink,fileExtension,modifiedTime,size,iconLink)',
             'spaces' => 'drive',
+            'supportsAllDrives' => 'true',
+            'includeItemsFromAllDrives' => 'true',
+            'corpora' => 'allDrives',
         ];
 
-        if (!empty($shareddrives)) {
-            $listparams['supportsAllDrives'] = 'true';
-            $listparams['includeItemsFromAllDrives'] = 'true';
+        if (!$this->shared_drives_supported()) {
+            $callinvocations = $this->exactly(1);
+            $servicemock->expects($callinvocations)
+                ->method('call')
+                ->willReturnCallback(function (
+                    string $method,
+                    array $params
+                ) use (
+                    $listparams,
+                    $drivecontents,
+                ) {
+                    $this->assertEquals('list', $method);
+                    $this->assertEquals($listparams, $params);
+
+                    return (object) [
+                        'files' => $drivecontents,
+                    ];
+                });
+        } else {
+            // Assert that the call() method is being called twice with the given arguments consecutively. In the first
+            // instance it is being called to fetch the shared drives (shared_drives_list), while in the second instance
+            // to fetch the relevant drive contents (list). Also, define the returned data objects by these calls.
+            $callinvocations = $this->exactly(2);
+            $servicemock->expects($callinvocations)
+                ->method('call')
+                ->willReturnCallback(function (
+                    string $method,
+                    array $params
+                ) use (
+                    $callinvocations,
+                    $shareddrives,
+                    $listparams,
+                    $drivecontents,
+                ) {
+                    switch (self::getInvocationCount($callinvocations)) {
+                        case 1:
+                            $this->assertEquals('shared_drives_list', $method);
+                            $this->assertEquals([], $params);
+
+                            return (object) [
+                                'kind' => 'drive#driveList',
+                                'nextPageToken' => 'd838181f30b0f5',
+                                'drives' => $shareddrives,
+                            ];
+                        case 2:
+                            $this->assertEquals('list', $method);
+                            $this->assertEquals($listparams, $params);
+                            return (object)[
+                                'files' => $drivecontents,
+                            ];
+                        default:
+                            $this->fail('Unexpected call to the call() method.');
+                    }
+                });
         }
-
-        // Assert that the call() method is being called twice with the given arguments consecutively. In the first
-        // instance it is being called to fetch the shared drives (shared_drives_list), while in the second instance
-        // to fetch the relevant drive contents (list). Also, define the returned data objects by these calls.
-        $callinvocations = $this->exactly(2);
-        $servicemock->expects($callinvocations)
-            ->method('call')
-            ->willReturnCallback(function(string $method, array $params) use (
-                $callinvocations,
-                $shareddrives,
-                $listparams,
-                $drivecontents,
-            ) {
-                switch (self::getInvocationCount($callinvocations)) {
-                    case 1:
-                        $this->assertEquals('shared_drives_list', $method);
-                        $this->assertEquals([], $params);
-
-                        return (object) [
-                            'kind' => 'drive#driveList',
-                            'nextPageToken' => 'd838181f30b0f5',
-                            'drives' => $shareddrives,
-                        ];
-                    case 2:
-                        $this->assertEquals('list', $method);
-                        $this->assertEquals($listparams, $params);
-                        return (object)[
-                            'files' => $drivecontents,
-                        ];
-                    default:
-                        $this->fail('Unexpected call to the call() method.');
-                }
-            });
 
         // Set the disallowed file types (extensions).
         $this->disallowedextensions = $filterextensions;
@@ -271,5 +294,17 @@ final class googledocs_drive_content_test extends \googledocs_content_testcase {
                     ],
                 ],
         ];
+    }
+
+    /**
+     * Determines whether shared drives are supported under the current Google Drive scope.
+     *
+     * @return bool
+     */
+    private function shared_drives_supported(): bool {
+        $scopes = Google_Service_Drive::DRIVE_FILE;
+
+        // Full access is needed for shared drives (not just drive.file).
+        return str_contains($scopes, 'auth/drive') && !str_contains($scopes, 'auth/drive.file');
     }
 }

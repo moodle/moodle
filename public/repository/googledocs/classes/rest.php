@@ -54,43 +54,37 @@ class rest extends \core\oauth2\rest {
                     'spaces' => PARAM_RAW,
                     'supportsAllDrives' => PARAM_RAW,
                     'includeItemsFromAllDrives' => PARAM_RAW,
-                    'corpora' => PARAM_RAW
+                    'corpora' => PARAM_RAW,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
             'get' => [
                 'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}',
                 'method' => 'get',
                 'args' => [
                     'fields' => PARAM_RAW,
-                    'fileid' => PARAM_RAW
+                    'fileid' => PARAM_RAW,
+                    'supportsAllDrives' => PARAM_RAW,
                 ],
-                'response' => 'json'
-            ],
-            'copy' => [
-                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}/copy',
-                'method' => 'post',
-                'args' => [
-                    'fields' => PARAM_RAW,
-                    'fileid' => PARAM_RAW
-                ],
-                'response' => 'json'
+                'response' => 'json',
             ],
             'delete' => [
                 'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}',
                 'method' => 'delete',
                 'args' => [
-                    'fileid' => PARAM_RAW
+                    'fileid' => PARAM_RAW,
+                    'supportsAllDrives' => PARAM_RAW,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
             'create' => [
                 'endpoint' => 'https://www.googleapis.com/drive/v3/files',
                 'method' => 'post',
                 'args' => [
-                    'fields' => PARAM_RAW
+                    'fields' => PARAM_RAW,
+                    'supportsAllDrives' => PARAM_RAW,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
             'update' => [
                 'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}',
@@ -99,9 +93,10 @@ class rest extends \core\oauth2\rest {
                     'fileid' => PARAM_RAW,
                     'fields' => PARAM_RAW,
                     'addParents' => PARAM_RAW,
-                    'removeParents' => PARAM_RAW
+                    'removeParents' => PARAM_RAW,
+                    'supportsAllDrives' => PARAM_RAW,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
             'create_permission' => [
                 'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}/permissions',
@@ -111,8 +106,9 @@ class rest extends \core\oauth2\rest {
                     'emailMessage' => PARAM_RAW,
                     'sendNotificationEmail' => PARAM_RAW,
                     'transferOwnership' => PARAM_RAW,
+                    'supportsAllDrives' => PARAM_RAW,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
             'update_permission' => [
                 'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}/permissions/{permissionid}',
@@ -123,17 +119,25 @@ class rest extends \core\oauth2\rest {
                     'emailMessage' => PARAM_RAW,
                     'sendNotificationEmail' => PARAM_RAW,
                     'transferOwnership' => PARAM_RAW,
+                    'supportsAllDrives' => PARAM_RAW,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
-            'shared_drives_list' => [
-                'endpoint' => 'https://www.googleapis.com/drive/v3/drives',
-                'method' => 'get',
+            'upload' => [
+                'endpoint' => 'https://www.googleapis.com/upload/drive/v3/files',
+                'method' => 'post',
                 'args' => [
-                    'pageSize' => PARAM_INT,
-                    'pageToken' => PARAM_RAW,
-                    'q' => PARAM_RAW,
-                    'useDomainAdminAccess' => PARAM_RAW,
+                    'uploadType' => PARAM_RAW,
+                    'fields' => PARAM_RAW,
+                    'supportsAllDrives' => PARAM_RAW,
+                ],
+                'response' => 'headers',
+            ],
+            'upload_content' => [
+                'endpoint' => '{uploadurl}',
+                'method' => 'put',
+                'args' => [
+                    'uploadurl' => PARAM_URL,
                 ],
                 'response' => 'json',
             ],

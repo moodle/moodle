@@ -16,6 +16,8 @@
 
 namespace repository_googledocs\local\browser;
 
+use Google_Service_Drive;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -36,24 +38,43 @@ final class googledocs_root_content_test extends \googledocs_content_testcase {
      * @dataProvider get_content_nodes_provider
      * @param array $shareddrives The array containing the existing shared drives
      * @param array $expected The expected array which contains the generated repository content nodes
+     * @param bool $expectshared Whether shared drives should be tested
+     * @covers \repository_googledocs
      */
-    public function test_get_content_nodes(array $shareddrives, array $expected): void {
+    public function test_get_content_nodes(array $shareddrives, array $expected, bool $expectshared): void {
+        $scopessupportshared = $this->shared_drives_supported();
+
+        if ($expectshared && !$scopessupportshared) {
+            $this->markTestSkipped('Shared drives not supported in current OAuth scope.');
+        }
+
         // Mock the service object.
         $servicemock = $this->createMock(\repository_googledocs\rest::class);
 
-        // Assert that the call() method is being called only once with the given arguments to fetch the existing
-        // shared drives. Define the returned data object by this call.
-        $servicemock->expects($this->once())
-            ->method('call')
-            ->with('shared_drives_list', [])
-            ->willReturn((object)[
-                'kind' => 'drive#driveList',
-                'nextPageToken' => 'd838181f30b0f5',
-                'drives' => $shareddrives,
-            ]);
+        if ($expectshared && $scopessupportshared) {
+            // Expect shared drives API to be called.
+            // Assert that the call() method is being called only once with the given arguments to fetch the existing
+            // shared drives. Define the returned data object by this call.
+            $servicemock->expects($this->once())
+                ->method('call')
+                ->with('shared_drives_list', [])
+                ->willReturn((object)[
+                    'kind' => 'drive#driveList',
+                    'nextPageToken' => 'd838181f30b0f5',
+                    'drives' => $shareddrives,
+                ]);
+        } else {
+            // If shared drives are not expected or not supported, call() should not be invoked.
+            $servicemock->expects($this->never())
+                ->method('call');
+        }
 
-        $rootbrowser = new googledocs_root_content($servicemock,
-            \repository_googledocs::REPOSITORY_ROOT_ID . '|Google+Drive', false);
+        $showshared = $expectshared && $scopessupportshared;
+        $rootbrowser = new googledocs_root_content(
+            $servicemock,
+            \repository_googledocs::REPOSITORY_ROOT_ID . '|Google+Drive',
+            $showshared
+        );
         $contentnodes = $rootbrowser->get_content_nodes('', [$this, 'filter']);
 
         // Assert that the returned array of repository content nodes is equal to the expected one.
@@ -84,6 +105,7 @@ final class googledocs_root_content_test extends \googledocs_content_testcase {
                         get_string('shareddrives', 'repository_googledocs'),
                         "{$rootid}|Google+Drive"),
                 ],
+                true, // Expect shared drives.
             ],
             'Shared drives do not exist.' => [
                 [],
@@ -92,7 +114,20 @@ final class googledocs_root_content_test extends \googledocs_content_testcase {
                         get_string('mydrive', 'repository_googledocs'),
                         "{$rootid}|Google+Drive"),
                 ],
+                false, // Do not expect shared drives.
             ],
         ];
+    }
+
+    /**
+     * Determines whether shared drives are supported under the current Google Drive scope.
+     *
+     * @return bool
+     */
+    private function shared_drives_supported(): bool {
+        $scopes = Google_Service_Drive::DRIVE_FILE;
+
+        // Full access is needed for shared drives (not just drive.file).
+        return str_contains($scopes, 'auth/drive') && !str_contains($scopes, 'auth/drive.file');
     }
 }
