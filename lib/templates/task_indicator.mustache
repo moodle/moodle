@@ -49,12 +49,12 @@
         <h2>{{heading}}</h2>
         <p>{{message}}</p>
     </div>
-    {{#runurl}}
-        <p class="text-center">
-            <a class="runlink btn btn-primary" href="{{runurl}}" data-idnumber="{{progress.idnumber}}">{{runlabel}}</a>
-        </p>
-    {{/runurl}}
     {{#progress}}
+        {{#runurl}}
+            <p class="text-center">
+                <a class="runlink btn btn-primary" href="{{runurl}}" data-idnumber="{{idnumber}}">{{runlabel}}</a>
+            </p>
+        {{/runurl}}
         {{>core/progress_bar}}
     {{/progress}}
 
