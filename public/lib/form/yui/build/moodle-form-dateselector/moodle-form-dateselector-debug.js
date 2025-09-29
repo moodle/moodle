@@ -380,7 +380,7 @@ CALENDAR.prototype = {
     },
     toggle_calendar_image: function() {
         // If the enable checkbox is not checked, disable the calendar image and prevent focus.
-        if (!this.enablecheckbox.get('checked')) {
+        if (!this.enablecheckbox.get('checked') || this.enablecheckbox.get('disabled')) {
             this.calendarimage.setAttribute('disabled');
             this.release_calendar();
         } else {
