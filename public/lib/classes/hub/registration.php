@@ -542,6 +542,11 @@ class registration {
             return false;
         }
 
+        // Unset saved site info.
+        foreach (self::FORM_FIELDS as $field) {
+            set_config('site_' . $field, null, 'hub');
+        }
+
         $DB->delete_records('registration_hubs', array('id' => $hub->id));
         self::$registration = null;
         return true;
