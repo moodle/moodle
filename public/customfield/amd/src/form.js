@@ -181,8 +181,7 @@ const editField = (element, component, area, itemid) => {
  */
 const getCategoryNameFor = nodeElement => nodeElement
     .closest('[data-category-id]')
-    .find('[data-inplaceeditable][data-itemtype=category][data-component=core_customfield]')
-    .attr('data-value');
+    .attr('data-category-name');
 
 const setupSortableLists = rootNode => {
     // Sort category.
