@@ -92,12 +92,14 @@ final class notification_helper_test extends \advanced_testcase {
         $user4 = $generator->create_user();
         $user5 = $generator->create_user();
         $user6 = $generator->create_user(['suspended' => 1]);
+        $user7 = $generator->create_user();
         $generator->enrol_user($user1->id, $course->id, 'student');
         $generator->enrol_user($user2->id, $course->id, 'student');
         $generator->enrol_user($user3->id, $course->id, 'student');
         $generator->enrol_user($user4->id, $course->id, 'student');
         $generator->enrol_user($user5->id, $course->id, 'teacher');
         $generator->enrol_user($user6->id, $course->id, 'student');
+        $generator->enrol_user($user7->id, $course->id, 'student', 'manual', 0, 0, ENROL_USER_SUSPENDED);
 
         /** @var \mod_quiz_generator $quizgenerator */
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
@@ -154,6 +156,9 @@ final class notification_helper_test extends \advanced_testcase {
 
         // User6 should not be in the returned users because it is suspended.
         $this->assertArrayNotHasKey($user6->id, $users);
+
+        // User7 should not be in the returned users because it is suspended within the course.
+        $this->assertArrayNotHasKey($user7->id, $users);
 
         // Let's add some availability conditions.
         $availability =
