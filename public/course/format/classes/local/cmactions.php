@@ -16,9 +16,11 @@
 
 namespace core_courseformat\local;
 
-
+use core\exception\moodle_exception;
 use core_courseformat\sectiondelegatemodule;
+use core_text;
 use course_modinfo;
+
 /**
  * Course module course format actions.
  *
@@ -68,6 +70,7 @@ class cmactions extends baseactions {
      * @param int $cmid the course module id.
      * @param string $name the new name.
      * @return bool true if the course module was renamed, false otherwise.
+     * @throws moodle_exception If the name is too long
      */
     public function rename(int $cmid, string $name): bool {
         global $CFG, $DB;
@@ -79,8 +82,8 @@ class cmactions extends baseactions {
         if (empty($name)) {
             return false;
         }
-        if (\core_text::strlen($name) > 255) {
-            throw new \moodle_exception('maximumchars', 'moodle', '', 255);
+        if (core_text::strlen($name) > 1333) {
+            throw new moodle_exception('maximumchars', 'moodle', '', 1333);
         }
 
         // The name is stored in the activity instance record.

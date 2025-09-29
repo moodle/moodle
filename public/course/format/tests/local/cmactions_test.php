@@ -65,7 +65,7 @@ final class cmactions_test extends \advanced_testcase {
 
         $cminfo = get_fast_modinfo($course)->get_cm($activity->cmid);
         if ($result) {
-            $this->assertEquals('New name', $cminfo->name);
+            $this->assertEquals($newname, $cminfo->name);
         } else {
             $this->assertEquals('Old name', $cminfo->name);
         }
@@ -84,7 +84,12 @@ final class cmactions_test extends \advanced_testcase {
                 'expectexception' => false,
             ],
             'Maximum length' => [
-                'newname' => str_repeat('a', 256),
+                'newname' => str_repeat('a', 1333),
+                'expected' => true,
+                'expectexception' => false,
+            ],
+            'Beyond maximum length' => [
+                'newname' => str_repeat('a', 1334),
                 'expected' => false,
                 'expectexception' => true,
             ],
