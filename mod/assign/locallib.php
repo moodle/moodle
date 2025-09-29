@@ -2272,8 +2272,9 @@ class assign {
      * @param bool $idsonly
      * @param bool $tablesort
      * @return array List of user records
+     * @param bool|null $onlyactive Whether to show only active users.
      */
-    public function list_participants($currentgroup, $idsonly, $tablesort = false) {
+    public function list_participants($currentgroup, $idsonly, $tablesort = false, ?bool $onlyactive = null) {
         global $DB, $USER;
 
         // Get the last known sort order for the grading table.
@@ -2282,10 +2283,13 @@ class assign {
             $currentgroup = 0;
         }
 
-        $key = $this->context->id . '-' . $currentgroup . '-' . $this->show_only_active_users();
+        if ($onlyactive === null) {
+            $onlyactive = $this->show_only_active_users();
+        }
+
+        $key = $this->context->id . '-' . $currentgroup . '-' . $onlyactive;
         if (!isset($this->participants[$key])) {
-            list($esql, $params) = get_enrolled_sql($this->context, 'mod/assign:submit', $currentgroup,
-                    $this->show_only_active_users());
+            list($esql, $params) = get_enrolled_sql($this->context, 'mod/assign:submit', $currentgroup, $onlyactive);
             list($ssql, $sparams) = $this->get_submitted_sql($currentgroup);
             $params += $sparams;
 
