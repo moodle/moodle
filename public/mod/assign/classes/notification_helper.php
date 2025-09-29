@@ -227,7 +227,7 @@ class notification_helper {
         $assignmentobj = self::get_assignment_data($assignmentid);
 
         // Get our assignment users.
-        $users = $assignmentobj->list_participants(0, true);
+        $users = $assignmentobj->list_participants(0, true, false, true);
 
         foreach ($users as $key => $user) {
             // Check if the user has submitted already.
