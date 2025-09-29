@@ -80,6 +80,7 @@ class notification_helper {
             context: \context_module::instance($quizobj->get_cm()->id),
             withcapability: 'mod/quiz:attempt',
             userfields: 'u.id, u.firstname, u.suspended, u.auth',
+            onlyactive: true,
         );
 
         // Filter a list of users who meet the availability conditions.
