@@ -65,7 +65,7 @@ class workshopallocation_manual_renderer extends mod_workshop_renderer  {
         $reviewers  =  array_map('fullname', $reviewers);
 
         $table              = new html_table();
-        $table->attributes['class'] = 'allocations';
+        $table->attributes['class'] = 'allocations table-reboot';
         $table->head        = array(get_string('participantreviewedby', 'workshop'),
                                     get_string('participant', 'workshop'),
                                     get_string('participantrevierof', 'workshop'));
