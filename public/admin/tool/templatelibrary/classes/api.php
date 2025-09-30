@@ -146,31 +146,18 @@ class api {
      * @return string the template or false if template doesn't exist.
      */
     public static function load_canonical_template($component, $template) {
-        // Get the list of possible template directories.
-        $dirs = mustache_template_finder::get_template_directories_for_component($component);
-        $filename = false;
-        $themedir = core_component::get_plugin_types()['theme'];
+        // Get the list of possible template directories without theme overrides.
+        $dirs = mustache_template_finder::get_template_directories_for_component($component, themeoverrides: false);
 
         foreach ($dirs as $dir) {
-            // Skip theme dirs - we only want the original plugin/core template.
-            if (strpos($dir, $themedir) === 0) {
-                continue;
-            }
-
-            $candidate = $dir . $template . '.mustache';
-            if (file_exists($candidate)) {
-                $filename = $candidate;
-                break;
+            $filename = $dir . $template . '.mustache';
+            if (file_exists($filename)) {
+                return file_get_contents($filename);
             }
         }
 
-        if ($filename === false) {
-            // There are occasions where we don't have a core template.
-            return false;
-        }
-
-        $templatestr = file_get_contents($filename);
-        return $templatestr;
+        // There are occasions where we don't have a core template.
+        return false;
     }
 
 }

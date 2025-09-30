@@ -34,9 +34,10 @@ class mustache_template_finder {
      *
      * @param string $component The component to search
      * @param string $themename The current theme name
-     * @return string[] List of valid directories for templates for this compoonent. Directories are not checked for existence.
+     * @param bool $themeoverrides Whether to apply theme overrides. Defaults to true.
+     * @return string[] List of valid directories for templates for this component. Directories are not checked for existence.
      */
-    public static function get_template_directories_for_component($component, $themename = '') {
+    public static function get_template_directories_for_component($component, $themename = '', $themeoverrides = true) {
         global $CFG, $PAGE;
 
         // Default the param.
@@ -55,26 +56,28 @@ class mustache_template_finder {
             throw new coding_exception("Component was not valid: " . s($component));
         }
 
-        // Find the parent themes.
-        $parents = [];
-        if ($themename === $PAGE->theme->name) {
-            $parents = $PAGE->theme->parents;
-        } else {
-            $themeconfig = theme_config::load($themename);
-            $parents = $themeconfig->parents;
-        }
+        if ($themeoverrides) {
+            // Find the parent themes.
+            $parents = [];
+            if ($themename === $PAGE->theme->name) {
+                $parents = $PAGE->theme->parents;
+            } else {
+                $themeconfig = theme_config::load($themename);
+                $parents = $themeconfig->parents;
+            }
 
-        // First check the theme.
-        $dirs[] = $CFG->dirroot . '/theme/' . $themename . '/templates/' . $component . '/';
-        if (isset($CFG->themedir)) {
-            $dirs[] = $CFG->themedir . '/' . $themename . '/templates/' . $component . '/';
-        }
-        // Now check the parent themes.
-        // Search each of the parent themes second.
-        foreach ($parents as $parent) {
-            $dirs[] = $CFG->dirroot . '/theme/' . $parent . '/templates/' . $component . '/';
+            // First check the theme.
+            $dirs[] = $CFG->dirroot . '/theme/' . $themename . '/templates/' . $component . '/';
             if (isset($CFG->themedir)) {
-                $dirs[] = $CFG->themedir . '/' . $parent . '/templates/' . $component . '/';
+                $dirs[] = $CFG->themedir . '/' . $themename . '/templates/' . $component . '/';
+            }
+            // Now check the parent themes.
+            // Search each of the parent themes second.
+            foreach ($parents as $parent) {
+                $dirs[] = $CFG->dirroot . '/theme/' . $parent . '/templates/' . $component . '/';
+                if (isset($CFG->themedir)) {
+                    $dirs[] = $CFG->themedir . '/' . $parent . '/templates/' . $component . '/';
+                }
             }
         }
 
@@ -86,13 +89,17 @@ class mustache_template_finder {
     /**
      * Helper function for getting a filename for a template from the template name.
      *
-     * @param string $name - This is the componentname/templatename combined.
-     * @param string $themename - This is the current theme name.
+     * Theme overrides are automatically applied unless a '!' is appended to `$name`.
+     *
+     * Example: Template core/test overridden in theme_foo.
+     *   - `get_template_filepath('core/test', 'foo')` resolves to 'theme/foo/templates/core/test.mustache'.
+     *   - `get_template_filepath('core/test!', 'foo')` resolves to 'lib/templates/test.mustache'.
+     *
+     * @param string $name This is the componentname/templatename combined. May end in an exclamation mark.
+     * @param string $themename This is the current theme name.
      * @return string
      */
     public static function get_template_filepath($name, $themename = '') {
-        global $CFG, $PAGE;
-
         if (strpos($name, '/') === false) {
             throw new coding_exception('Templates names must be specified as "componentname/templatename"' .
                                        ' (' . s($name) . ' requested) ');
@@ -101,7 +108,15 @@ class mustache_template_finder {
         [$component, $templatename] = explode('/', $name, 2);
         $component = clean_param($component, PARAM_COMPONENT);
 
-        $dirs = self::get_template_directories_for_component($component, $themename);
+        // We apply theme overrides if the name does NOT end with an exclamation mark.
+        $themeoverrides = true;
+        if (str_ends_with($templatename, '!')) {
+            $themeoverrides = false;
+            // Remove exclamation mark.
+            $templatename = substr($templatename, 0, strlen($templatename) - 1);
+        }
+
+        $dirs = self::get_template_directories_for_component($component, $themename, $themeoverrides);
 
         foreach ($dirs as $dir) {
             $candidate = $dir . $templatename . '.mustache';
