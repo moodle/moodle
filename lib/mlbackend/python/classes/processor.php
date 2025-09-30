@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/analytics/tests/classes/mlbackend_helper_trait.php');
+require_once($CFG->libdir . '/filelib.php');
 
 use core_analytics\tests\mlbackend_helper_trait;
 
