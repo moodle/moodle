@@ -106,7 +106,7 @@ class edit_index extends XMLDBAction {
         $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_index_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
-        $o.= '    <table id="formelements" class="boxaligncenter">';
+        $o .= '   <table id="formelements" class="table-reboot">';
         // XMLDB index name
         // If the index has dependencies, we cannot change its name
         $disabled = '';

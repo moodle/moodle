@@ -116,7 +116,7 @@ class edit_xml_file extends XMLDBAction {
                 $o.= '    <input type="hidden" name ="path" value="' . s($structure->getPath()) .'" />';
                 $o.= '    <input type="hidden" name ="version" value="' . s($structure->getVersion()) .'" />';
                 $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
-                $o .= '    <table id="formelements">';
+                $o .= '   <table id="formelements" class="table-reboot">';
                 $o.= '      <tr valign="top"><td>Path:</td><td>' . s($structure->getPath()) . '</td></tr>';
                 $o.= '      <tr valign="top"><td>Version:</td><td>' . s($structure->getVersion()) . '</td></tr>';
                 $o .= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td>
@@ -179,7 +179,7 @@ class edit_xml_file extends XMLDBAction {
                 $tables = $structure->getTables();
                 if ($tables) {
                     $o .= '<h3 class="main">' . $this->str['tables'] . '</h3>';
-                    $o .= '<table id="listtables" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
+                    $o .= '<table id="listtables" border="0" cellpadding="5" cellspacing="1" class="table-reboot flexible">';
                     $row = 0;
                     foreach ($tables as $table) {
                         // Drag element for sortorder.
