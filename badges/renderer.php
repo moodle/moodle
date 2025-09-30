@@ -169,7 +169,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $potentialcell->attributes['class'] = 'potential';
 
         $table = new html_table();
-        $table->attributes['class'] = 'recipienttable boxaligncenter';
+        $table->attributes['class'] = 'recipienttable table-reboot';
         $table->data = array(new html_table_row(array($existingcell, $actioncell, $potentialcell)));
         $output .= html_writer::table($table);
 
