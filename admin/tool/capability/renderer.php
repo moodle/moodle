@@ -86,7 +86,7 @@ class tool_capability_renderer extends plugin_renderer_base {
         }
 
         $table = new html_table();
-        $table->attributes['class'] = 'comparisontable';
+        $table->attributes['class'] = 'comparisontable table-reboot';
         $table->head = array('&nbsp;');
         foreach ($roles as $role) {
             $url = new moodle_url('/admin/roles/define.php', array('action' => 'view', 'roleid' => $role->id));
