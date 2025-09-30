@@ -96,7 +96,7 @@ class data_field_url extends data_field_base {
         $label .= '</label>';
 
         if ($autolinkable) {
-            $str .= '<table><tr><td align="right">';
+            $str .= '<table class="table-reboot"><tr><td align="right">';
             $str .= '<span class="mod-data-input">' . get_string('url', 'data') . ':</span>';
             if (!empty($image)) {
                 $str .= $image;
