@@ -128,7 +128,7 @@ foreach ($sections as $i => $section) {
     echo '<div class="content">';
 
     if ($mode == "outline") {
-        echo "<table>";
+        echo "<table class='table-reboot'>";
     }
 
     foreach ($section->activities as $cm) {
@@ -149,7 +149,7 @@ foreach ($sections as $i => $section) {
             echo '<div class="content">';
 
             if ($mode == "outline") {
-                echo "<table>";
+                echo "<table class='table-reboot'>";
             }
 
             foreach ($cm->activities as $subcm) {
@@ -166,7 +166,7 @@ foreach ($sections as $i => $section) {
             echo "</div>"; // Content.
             echo "</div>"; // Subsection.
             if ($mode == "outline") {
-                echo "<table>";
+                echo "<table class='table-reboot'>";
             }
 
             continue;
