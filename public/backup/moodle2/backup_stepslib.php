@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use core_question\local\bank\random_question_loader;
+use core_question\question_reference_manager;
 
 /**
  * Create the temp dir where backup/restore will happen and create temp ids table.
@@ -308,6 +309,7 @@ trait backup_question_set_reference_trait {
 
         foreach ($setreferenceconditions as $setreferencecondition) {
             $conditions = json_decode($setreferencecondition, true);
+            $conditions = question_reference_manager::convert_legacy_set_reference_filter_condition($conditions);
             $setreferencequestionids += array_keys($randomloader->get_filtered_questions($conditions['filter'], 0));
         }
         if (empty($setreferencequestionids)) {
