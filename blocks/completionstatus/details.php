@@ -79,7 +79,7 @@ echo $OUTPUT->header();
 
 
 // Display completion status.
-echo html_writer::start_tag('table', array('class' => 'generalbox boxaligncenter'));
+echo html_writer::start_tag('table', ['class' => 'generalbox table-reboot']);
 echo html_writer::start_tag('tbody');
 
 // If not display logged in user, show user name.
@@ -181,7 +181,12 @@ if (empty($completions)) {
 
     // Generate markup for criteria statuses.
     echo html_writer::start_tag('table',
-            array('class' => 'generalbox logtable boxaligncenter', 'id' => 'criteriastatus', 'width' => '100%'));
+        [
+            'class' => 'generalbox logtable table-reboot',
+            'id' => 'criteriastatus',
+            'width' => '100%',
+        ]
+    );
     echo html_writer::start_tag('tbody');
     echo html_writer::start_tag('tr', array('class' => 'ccheader'));
     echo html_writer::tag('th', get_string('criteriagroup', 'block_completionstatus'), array('class' => 'c0 header', 'scope' => 'col'));
