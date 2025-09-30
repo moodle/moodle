@@ -1183,6 +1183,10 @@
     body.tox-fullscreen.path-mod-assign [data-region="grading-navigation"] {
         display: none;
     }
+
+    .path-mod-assign [data-region="resizer"] {
+        display: none;
+    }
 }
 
 /** Start of CSS to make forms vertical in the grading panel (taken from theme/bootstrapbase/less/moodle/forms.less). */
