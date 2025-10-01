@@ -27,14 +27,16 @@ import Ajax from 'core/ajax';
  *
  * @param {Number} contextId The context id
  * @param {String} content Content to filter
+ * @param {Bool} stripTags  Whether to strip HTML tags (optional)
  * @return {promise}
  */
-export const filterEquation = (contextId, content) => {
+export const filterEquation = (contextId, content, stripTags = false) => {
     const request = {
         methodname: 'tiny_equation_filter',
         args: {
             contextid: contextId,
             content: content,
+            striptags: stripTags,
         }
     };
 
