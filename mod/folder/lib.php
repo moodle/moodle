@@ -654,7 +654,8 @@ function folder_print_recent_mod_activity($activity, $courseid, $detail, $modnam
     $tableoptions = [
         'border' => '0',
         'cellpadding' => '3',
-        'cellspacing' => '0'
+        'cellspacing' => '0',
+        'class' => 'table-reboot',
     ];
     $output = html_writer::start_tag('table', $tableoptions);
     $output .= html_writer::start_tag('tr');

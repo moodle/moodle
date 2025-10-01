@@ -103,7 +103,7 @@ class view_reserved_words extends XMLDBAction {
 
         // The list of currently wrong field names
         if ($wronguses) {
-            $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
+            $o .= '   <table id="formelements" class="boxaligncenter table-reboot" cellpadding="5">';
             $o.= '      <tr><td align="center"><font color="red">' . $this->str['wrongreservedwords'] . '</font></td></tr>';
             $o.= '      <tr><td>';
             $o.= '        <ul><li>' . implode('</li><li>', $wronguses) . '</li></ul>';
@@ -112,7 +112,7 @@ class view_reserved_words extends XMLDBAction {
         }
 
         // The textarea showing all the reserved words
-        $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
+        $o .= '   <table id="formelements" class="boxaligncenter table-reboot" cellpadding="5">';
         $o.= '      <tr><td align="center">' . $this->str['listreservedwords'].'</td></tr>';
         $o .= '      <tr><td><textarea cols="80" rows="32" class="form-control">';
         $o.= s(implode(', ', array_keys($reserved_words)));

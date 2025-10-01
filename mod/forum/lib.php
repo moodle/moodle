@@ -4035,7 +4035,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
         'border' => '0',
         'cellpadding' => '3',
         'cellspacing' => '0',
-        'class' => 'forum-recent'
+        'class' => 'forum-recent table-reboot',
     ];
     $output = html_writer::start_tag('table', $tableoptions);
     $output .= html_writer::start_tag('tr');

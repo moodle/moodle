@@ -114,7 +114,7 @@ class edit_field extends XMLDBAction {
         $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
         $o.= '    <input type="hidden" name ="action" value="edit_field_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
-        $o.= '    <table id="formelements" class="boxaligncenter">';
+        $o .= '   <table id="formelements" class="table-reboot">';
         // XMLDB field name
         // If the field has dependencies, we cannot change its name
         $disabled = '';

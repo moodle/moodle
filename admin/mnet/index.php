@@ -101,7 +101,7 @@
     <table align="center" width="635" class="generaltable" border="0" cellpadding="5" cellspacing="0">
         <tr>
             <td  class="generalboxcontent">
-            <table cellpadding="9" cellspacing="0" >
+            <table cellpadding="9" cellspacing="0" class="table-reboot">
                 <tr valign="top">
                     <td colspan="2" class="header"><?php print_string('aboutyourhost', 'mnet'); ?></td>
                 </tr>
@@ -122,7 +122,7 @@
     <table align="center" width="635" class="generaltable" border="0" cellpadding="5" cellspacing="0">
         <tr>
             <td  class="generalboxcontent">
-            <table cellpadding="9" cellspacing="0" >
+            <table cellpadding="9" cellspacing="0" class="table-reboot">
                 <tr valign="top">
                     <td colspan="2" class="header"><?php print_string('expireyourkey', 'mnet'); ?></td>
                 </tr>
