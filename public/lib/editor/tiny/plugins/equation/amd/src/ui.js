@@ -204,7 +204,7 @@ const updatePreview = (contextId) => {
     equation = prefix + equation.substring(0, currentPos) + cursorLatex + equation.substring(currentPos);
 
     equation = Selectors.delimiters.start + ' ' + equation + ' ' + Selectors.delimiters.end;
-    TinyEquationRepository.filterEquation(contextId, equation).then((data) => {
+    TinyEquationRepository.filterEquation(contextId, equation, true).then((data) => {
         preview.innerHTML = data.content;
         notifyFilter(preview);
 
