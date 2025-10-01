@@ -126,7 +126,7 @@ class edit_table extends XMLDBAction {
         $o.= '    <input type="hidden" name ="action" value="edit_table_save" />';
         $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() .'" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
-        $o .= '    <table id="formelements">';
+        $o .= '   <table id="formelements" class="table-reboot">';
         // If the table is being used, we cannot rename it
         if ($structure->getTableUses($table->getName())) {
             $o.= '      <tr valign="top"><td>Name:</td><td><input type="hidden" name ="name" value="' . s($table->getName()) . '" />' . s($table->getName()) .'</td></tr>';
@@ -208,7 +208,7 @@ class edit_table extends XMLDBAction {
         $fields = $table->getFields();
         if (!empty($fields)) {
             $o .= '<h3 class="main">' . $this->str['fields'] . '</h3>';
-            $o .= '<table id="listfields" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
+            $o .= '<table id="listfields" border="0" cellpadding="5" cellspacing="1" class="table-reboot flexible">';
             $row = 0;
             foreach ($fields as $field) {
                 // Drag element up/down.
@@ -259,7 +259,7 @@ class edit_table extends XMLDBAction {
         $keys = $table->getKeys();
         if (!empty($keys)) {
             $o .= '<h3 class="main">' . $this->str['keys'] . '</h3>';
-            $o .= '<table id="listkeys" border="0"  cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
+            $o .= '<table id="listkeys" border="0"  cellpadding="5" cellspacing="1" class="table-reboot flexible">';
             $row = 0;
             foreach ($keys as $key) {
                 // Drag element up/down.
@@ -305,7 +305,7 @@ class edit_table extends XMLDBAction {
         $indexes = $table->getIndexes();
         if (!empty($indexes)) {
             $o .= '<h3 class="main">' . $this->str['indexes'] . '</h3>';
-            $o .= '<table id="listindexes" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
+            $o .= '<table id="listindexes" border="0" cellpadding="5" cellspacing="1" class="table-reboot flexible">';
             $row = 0;
             foreach ($indexes as $index) {
                 // Drag element up/down.

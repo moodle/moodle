@@ -577,7 +577,7 @@ class report extends \mod_scorm\report {
                 if (!$download) {
                     $table->finish_output();
                     if ($candelete) {
-                        echo \html_writer::start_tag('table', array('id' => 'commands'));
+                        echo \html_writer::start_tag('table', ['id' => 'commands', 'class' => 'table-reboot']);
                         echo \html_writer::start_tag('tr').\html_writer::start_tag('td');
                         echo $this->generate_delete_selected_button();
                         echo \html_writer::end_tag('td').\html_writer::end_tag('tr').\html_writer::end_tag('table');

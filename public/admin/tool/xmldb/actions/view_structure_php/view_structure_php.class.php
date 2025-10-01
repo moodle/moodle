@@ -113,12 +113,12 @@ class view_structure_php extends XMLDBAction {
         $o.='<div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="action" value="view_structure_php" />';
-        $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
+        $o .= '   <table id="formelements" class="table-reboot" cellpadding="5">';
         $o.= '      <tr><td><label for="menucommand" accesskey="c">' . $this->str['selectaction'] .' </label>' . html_writer::select($popcommands, 'command', $commandparam, false) . '&nbsp;<label for="menutable" accesskey="t">' . $this->str['selecttable'] . ' </label>' .html_writer::select($poptables, 'table', $tableparam, false) . '</td></tr>';
         $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['view'] . '" /></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';
-        $o.= '    <table id="phpcode" class="boxaligncenter" cellpadding="5">';
+        $o .= '   <table id="phpcode" class="table-reboot" cellpadding="5">';
         $o .= '      <tr><td><textarea cols="80" rows="32" class="form-control">';
         // Based on current params, call the needed function
         switch ($commandparam) {

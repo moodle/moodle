@@ -76,7 +76,7 @@ class delete_key extends XMLDBAction {
             $o = '<table width="60" class="table generaltable" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
             $o.= '    <p class="centerpara">' . $this->str['confirmdeletekey'] . '<br /><br />' . $keyparam . '</p>';
-            $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
+            $o .= '    <table class="table-reboot w-100" cellpadding="20"><tr><td class="text-end">';
             $o.= '      <div class="singlebutton">';
             $o.= '        <form action="index.php?action=delete_key&amp;sesskey=' . sesskey() . '&amp;confirmed=yes&amp;postaction=edit_table&amp;key=' . $keyparam . '&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
             $o.= '          <input type="submit" value="'. $this->str['yes'] .'" /></fieldset></form></div>';

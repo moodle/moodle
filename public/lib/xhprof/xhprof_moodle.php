@@ -353,7 +353,7 @@ function profiling_print_run($run, $prevreferences = null) {
     $table = new html_table();
     $table->align = array('right', 'left');
     $table->tablealign = 'center';
-    $table->attributes['class'] = 'profilingruntable';
+    $table->attributes['class'] = 'profilingruntable table-reboot';
     $table->colclasses = array('label', 'value');
     $table->data = array(
        array(get_string('runid', 'tool_profiling'), $run->runid),
@@ -419,7 +419,7 @@ function profiling_print_rundiff($run1, $run2) {
     $table = new html_table();
     $table->align = array('right', 'left', 'left', 'left');
     $table->tablealign = 'center';
-    $table->attributes['class'] = 'profilingruntable';
+    $table->attributes['class'] = 'profilingruntable table-reboot';
     $table->colclasses = array('label', 'value1', 'value2');
     $table->data = array(
        array(get_string('runid', 'tool_profiling'),
