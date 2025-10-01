@@ -145,6 +145,12 @@ class course_bin extends base_bin {
             return;
         }
 
+        // We never need badge information here.
+        if ($plan->setting_exists('badges')) {
+            $badges = $plan->get_setting('badges');
+            $badges->set_value(false);
+        }
+
         $controller->execute_plan();
 
         // We don't need the forced setting anymore, hence restore previous settings.
