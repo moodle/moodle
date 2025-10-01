@@ -41,7 +41,8 @@ class filter extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'contextid' => new external_value(PARAM_INT, 'The context ID', VALUE_REQUIRED),
-            'content' => new external_value(PARAM_RAW, 'The equation content', VALUE_REQUIRED)
+            'content' => new external_value(PARAM_RAW, 'The equation content', VALUE_REQUIRED),
+            'striptags' => new external_value(PARAM_BOOL, 'Whether to strip HTML tags', VALUE_DEFAULT, false),
         ]);
     }
 
@@ -50,17 +51,25 @@ class filter extends external_api {
      *
      * @param int $contextid Context ID.
      * @param string $content Equation content.
+     * @param string $striptags Strip HTML tags.
      * @return array
      * @since Moodle 4.1
      */
-    public static function execute(int $contextid, string $content): array {
+    public static function execute(int $contextid, string $content, bool $striptags = false): array {
         [
             'contextid' => $contextid,
-            'content' => $content
+            'content' => $content,
+            'striptags' => $striptags,
         ] = self::validate_parameters(self::execute_parameters(), [
             'contextid' => $contextid,
-            'content' => $content
+            'content' => $content,
+            'striptags' => $striptags,
         ]);
+
+        // Strip all HTML tags before filtering the text (avoiding XSS risk).
+        if ($striptags) {
+            $content = clean_param($content, PARAM_NOTAGS);
+        }
 
         $context = context::instance_by_id($contextid);
         self::validate_context($context);
