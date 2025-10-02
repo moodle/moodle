@@ -27,6 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2025041400;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2025040800;    // Requires this Moodle version.
+$plugin->version = 2025100600;    // The current module version (Date: YYYYMMDDXX).
+$plugin->requires = 2025092600;    // Requires this Moodle version.
 $plugin->component = 'cachestore_session';  // Full name of the plugin.
