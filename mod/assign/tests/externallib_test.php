@@ -2454,6 +2454,8 @@ final class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // Set optional param to indicate start time required.
         $_GET['action'] = 'editsubmission';
+        // Set optional param to indicate that assignment submission timer should start.
+        $_GET['begin'] = 1;
         $cm = get_coursemodule_from_instance('assign', $instance->id);
         $context = \context_module::instance($cm->id);
         (new \assign($context, $cm, $cm->course))->get_user_submission(0, true);
