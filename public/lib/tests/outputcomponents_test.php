@@ -738,7 +738,7 @@ EOF;
             'Null' => [null, false],
             'Not set' => [false, false],
             'Fake' => ['_fake', true],
-            'Real block' => ['comments', false],
+            'Real block' => ['activity_modules', false],
         ];
     }
 

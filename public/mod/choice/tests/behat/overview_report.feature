@@ -75,3 +75,12 @@ Feature: Testing overview integration in mod_choice
     And I should not see "Allow more than one choice to be selected"
     And I should see "Option Z: 0"
     And I press the escape key
+
+  Scenario: The choice index redirect to the activities overview
+    When I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Activities" block
+    And I click on "Choices" "link" in the "Activities" "block"
+    Then I should see "An overview of all activities in the course"
+    And I should see "Name" in the "choice_overview_collapsible" "region"
+    And I should see "Due date" in the "choice_overview_collapsible" "region"

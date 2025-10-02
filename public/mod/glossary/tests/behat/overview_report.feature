@@ -80,3 +80,14 @@ Feature: Testing overview integration in mod_glossary
     And I click on "Get these logs" "button"
     Then I should see "Course activities overview page viewed"
     And I should see "viewed the instance list for the module 'glossary'"
+
+  Scenario: The glossary index redirect to the activities overview
+    Given the following "activity" exists:
+      | activity    | glossary             |
+      | course      | Acceptance test site |
+      | name        | Home glossary        |
+    And I log in as "admin"
+    When I visit "/mod/glossary/index.php?id=1"
+    Then the following should exist in the "Table listing all Glossary activities" table:
+      | Name          | Entries | Actions |
+      | Home glossary | 0       | View    |

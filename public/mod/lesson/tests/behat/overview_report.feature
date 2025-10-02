@@ -82,6 +82,17 @@ Feature: Testing overview_report in mod_lesson
       | Lesson 1 | Tomorrow        |
       | Lesson 2 | -               |
 
+  Scenario: The lesson index redirect to the activities overview
+    When I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Activities" block
+    And I click on "Lessons" "link" in the "Activities" "block"
+    Then I should see "An overview of all activities in the course, with dates and other information."
+    And I should see "Name" in the "lesson_overview_collapsible" "region"
+    And I should see "Students who attempted" in the "lesson_overview_collapsible" "region"
+    And I should see "Total attempts" in the "lesson_overview_collapsible" "region"
+    And I should see "Actions" in the "lesson_overview_collapsible" "region"
+
   Scenario: The lesson overview report should generate log events
     Given I am on the "Course 1" "course > activities > lesson" page logged in as "teacher1"
     When I am on the "Course 1" "course" page logged in as "teacher1"
