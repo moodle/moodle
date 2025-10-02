@@ -139,3 +139,14 @@ Feature: Testing overview integration in mod_assign
       | Date assign    | 1 January 2040 | Submitted for grading | -     |
       | No submissions | Tomorrow       | No submission         | -     |
       | Pending grades | -              | Submitted for grading | 50.00 |
+
+  Scenario: The assign index redirect to the activities overview
+    When I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Activities" block
+    And I click on "Assignments" "link" in the "Activities" "block"
+    Then I should see "An overview of all activities in the course"
+    And I should see "Name" in the "assign_overview_collapsible" "region"
+    And I should see "Due date" in the "assign_overview_collapsible" "region"
+    And I should see "Submissions" in the "assign_overview_collapsible" "region"
+    And I should see "Actions" in the "assign_overview_collapsible" "region"

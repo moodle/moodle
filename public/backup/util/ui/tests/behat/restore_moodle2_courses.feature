@@ -21,9 +21,9 @@ Feature: Restore Moodle 2 course backups
       | forum    | C5     | 0005     | Test forum name    |                      | 1       |                       |
       | url      | C5     | url5     | Test URL name      | Test URL description | 3       | http://www.moodle.org |
     And the following "blocks" exist:
-      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
-      | comments  | Course       | C1        | course-view-*   | side-pre      |
-      | comments  | Course       | C5        | course-view-*   | side-pre      |
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | activity_modules | Course       | C1        | course-view-*   | side-pre      |
+      | activity_modules | Course       | C5        | course-view-*   | side-pre      |
     And the following config values are set as admin:
       | enableasyncbackup | 0 |
     And I log in as "admin"
@@ -35,7 +35,7 @@ Feature: Restore Moodle 2 course backups
       | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
     Then I should see "Course 2"
-    And I should see "Comments" in the "Comments" "block"
+    And I should see "Activities" in the "Activities" "block"
     And I should see "Test forum name"
 
   @javascript
@@ -45,7 +45,7 @@ Feature: Restore Moodle 2 course backups
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 1 restored in a new course |
     Then I should see "Course 1 restored in a new course"
-    And I should see "Comments" in the "Comments" "block"
+    And I should see "Activities" in the "Activities" "block"
     And I should see "Test forum name"
     And I should see "Section 15"
     And I should not see "Section 16"
@@ -80,7 +80,7 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1"
     And I should not see "Section 3"
     And I should not see "Test forum post backup name"
-    And I should see "Comments" in the "Comments" "block"
+    And I should see "Activities" in the "Activities" "block"
     And I should see "Test forum name"
 
   @javascript

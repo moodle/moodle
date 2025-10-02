@@ -506,7 +506,7 @@ final class manager_test extends \advanced_testcase {
                         ],
                         'block' => [
                             'html' => 0,
-                            'comments' => 1,
+                            'activity_modules' => 1,
                         ],
                         'mod' => [
                             'page' => 0,

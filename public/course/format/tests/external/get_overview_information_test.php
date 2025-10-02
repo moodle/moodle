@@ -123,18 +123,6 @@ final class get_overview_information_test extends \core_external\tests\externall
     }
 
     /**
-     * Test that the overview information returns an exception for the site home course.
-     */
-    public function test_get_overview_information_site(): void {
-        $this->resetAfterTest();
-
-        $this->expectException(\moodle_exception::class);
-        $this->expectExceptionMessage('The site home course overview page is not supported.');
-
-        get_overview_information::execute(SITEID, 'assign');
-    }
-
-    /**
      * Helper function to find an item by its key in an array of items.
      *
      * @param array $items The array of items to search.

@@ -131,3 +131,14 @@ In order to summarize the workshops
     And I am on the "Course 1" "course > activities > workshop" page
     And I click on "View" "link" in the "Activity 2" "table_row"
     And I should see "Workshop submissions report"
+
+  Scenario: The workshop index redirect to the activities overview
+    Given the following "activity" exists:
+      | activity    | workshop           |
+      | course      | Acceptance test site |
+      | name        | Home workshop      |
+    And I log in as "admin"
+    When I visit "/mod/workshop/index.php?id=1"
+    Then the following should exist in the "Table listing all Workshop activities" table:
+      | Name          | Phase       | Submissions   | Assessments | Actions |
+      | Home workshop | Setup phase | -             | -           | View    |

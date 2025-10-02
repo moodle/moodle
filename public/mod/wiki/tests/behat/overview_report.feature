@@ -79,3 +79,14 @@ Feature: Testing overview integration in mod_wiki
     And I am on the "Course 1" "course > activities > wiki" page
     And I click on "View" "link" in the "Collaborative wiki empty" "table_row"
     And I should not see "Page list"
+
+  Scenario: The wiki index redirect to the activities overview
+    When I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Activities" block
+    And I click on "Wikis" "link" in the "Activities" "block"
+    Then I should see "An overview of all activities in the course"
+    And I should see "Name" in the "wiki_overview_collapsible" "region"
+    And I should see "Wiki mode" in the "wiki_overview_collapsible" "region"
+    And I should see "Entries" in the "wiki_overview_collapsible" "region"
+    And I should see "Actions" in the "wiki_overview_collapsible" "region"

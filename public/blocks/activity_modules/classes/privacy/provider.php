@@ -17,19 +17,19 @@
 /**
  * Privacy Subsystem implementation for block_activity_modules.
  *
- * @package    calendartype_gregorian
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @package    block_activity_modules
+ * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace calendartype_gregorian\privacy;
+namespace block_activity_modules\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for calendartype_gregorian implementing null_provider.
+ * Privacy Subsystem for block_activity_modules implementing null_provider.
  *
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\null_provider {
