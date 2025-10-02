@@ -4166,9 +4166,10 @@ class curl {
      * @param string $url
      * @param array $params
      * @param array $options
+     * @param bool $includeuserpwd Whether to include CURLOPT_USERPWD if not already set
      * @return ?string
      */
-    public function put($url, $params = array(), $options = array()) {
+    public function put($url, $params = [], $options = [], $includeuserpwd = true) {
         $file = '';
         $fp = false;
         if (isset($params['file'])) {
@@ -4182,7 +4183,7 @@ class curl {
             } else {
                 return null;
             }
-            if (!isset($this->options['CURLOPT_USERPWD'])) {
+            if (!isset($this->options['CURLOPT_USERPWD']) && $includeuserpwd) {
                 $this->setopt(array('CURLOPT_USERPWD' => 'anonymous: noreply@moodle.org'));
             }
         } else {
