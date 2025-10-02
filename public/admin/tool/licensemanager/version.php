@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025041400;
-$plugin->requires  = 2025040800;         // Requires this Moodle version.
+$plugin->version   = 2025100600;
+$plugin->requires  = 2025092600;         // Requires this Moodle version.
 $plugin->component = 'tool_licensemanager';
 
 $plugin->maturity = MATURITY_STABLE;
