@@ -1,6 +1,6 @@
 # core_block (subsystem / plugintype) Upgrade notes
 
-## 5.1rc1
+## 5.1rc2
 
 ### Changed
 
@@ -13,9 +13,6 @@
 - Removed block_section_links from Moodle 5.1.
 
   For more information see [MDL-80556](https://tracker.moodle.org/browse/MDL-80556)
-- Removed block_activity_modules from Moodle 5.1.
-
-  For more information see [MDL-83887](https://tracker.moodle.org/browse/MDL-83887)
 
 ## 5.0
 

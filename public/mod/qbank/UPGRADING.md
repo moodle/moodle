@@ -1,6 +1,6 @@
 # mod_qbank Upgrade notes
 
-## 5.1rc1
+## 5.1rc2
 
 ### Changed
 
