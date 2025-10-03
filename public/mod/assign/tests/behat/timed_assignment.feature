@@ -41,7 +41,7 @@ Feature: In a timed assignment, students should confirm before starting the time
     And "Begin assignment" "link" should exist
     And "#mod_assign_timelimit_block" "css_element" should not exist
     # Repeat the steps to confirm timer doesn't start automatically.
-    And I select "Dashboard" from primary navigation
+    And I follow "Dashboard"
     And I click on "Timed assignment 1" "link" in the "Calendar" "block"
     And I click on "Add submission" "link" in the ".modal-footer" "css_element"
     And "Begin assignment" "link" should exist
@@ -68,7 +68,7 @@ Feature: In a timed assignment, students should confirm before starting the time
     And "Begin assignment" "link" should exist
     And "#mod_assign_timelimit_block" "css_element" should not exist
     # Repeat the steps to confirm timer doesn't start automatically.
-    And I select "Dashboard" from primary navigation
+    And I follow "Dashboard"
     And I click on "Group assignment 2" "link" in the "Calendar" "block"
     And I click on "Add submission" "link" in the ".modal-footer" "css_element"
     And "Begin assignment" "link" should exist
