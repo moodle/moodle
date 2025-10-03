@@ -34,7 +34,7 @@ use setasign\Fpdi\PdfParser\Type\PdfTypeException;
  *
  * @method _encrypt_data(int $n, string $s) string
  */
-class Fpdi extends \TCPDF
+class Fpdi extends \pdf
 {
     use FpdiTrait {
         writePdfType as fpdiWritePdfType;
