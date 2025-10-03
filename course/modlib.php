@@ -625,7 +625,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         if (!empty($moduleinfo->completionunlocked)) {
             $cm->completion = $moduleinfo->completion;
             $cm->completionpassgrade = $moduleinfo->completionpassgrade ?? 0;
-            if ($moduleinfo->completiongradeitemnumber === '') {
+            if (empty($moduleinfo->completionusegrade)) {
                 $cm->completiongradeitemnumber = null;
             } else {
                 $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
