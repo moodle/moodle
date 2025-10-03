@@ -44,11 +44,14 @@ class UsedFileManager {
         }
         const content = editor.getContent();
         const baseUrl = `${Config.wwwroot}/draftfile.php/${this.userContext}/user/draft/${this.itemId}/`;
-        const pattern = new RegExp("[\"']" + baseUrl.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + "(?<filename>.+?)[\\?\"']", 'gm');
 
-        const usedFiles = [...content.matchAll(pattern)].map((match) => decodeURIComponent(match.groups.filename));
+        // Match any draft file contained within quotes, whitespace, or between html elements.
+        const pattern = new RegExp(
+            "[\"'\\s>]" + baseUrl.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + "(?<filename>.+?)[\\?\"'\\s<]",
+            'gm'
+        );
 
-        return usedFiles;
+        return [...content.matchAll(pattern)].map((match) => decodeURIComponent(match.groups.filename));
     }
 
     // Return an array of unused files.
