@@ -1133,10 +1133,10 @@ class rating_manager {
         // Future possible enhancement: add a setting to turn grade updating off for those who don't want them in gradebook.
         // Note that this would need to be done in both rate.php and rate_ajax.php.
         if ($context->contextlevel == CONTEXT_MODULE) {
-            // Tell the module that its grades have changed.
+            // Tell the module that its grades have changed (note that 'cmidnumber' is required in order to update grades).
             $modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance));
             if ($modinstance) {
-                $modinstance->cmidnumber = $cm->id; // MDL-12961.
+                $modinstance->cmidnumber = $cm->idnumber;
                 $functionname = $cm->modname.'_update_grades';
                 require_once($CFG->dirroot."/mod/{$cm->modname}/lib.php");
                 if (function_exists($functionname)) {
