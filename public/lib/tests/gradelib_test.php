@@ -52,7 +52,7 @@ final class gradelib_test extends \advanced_testcase {
 
         // Function grade_update_mod_grades() requires 2 additional properties, cmidnumber and modname.
         $cm = get_coursemodule_from_instance('assign', $modinstance->id, 0, false, MUST_EXIST);
-        $modinstance->cmidnumber = $cm->id;
+        $modinstance->cmidnumber = $cm->idnumber;
         $modinstance->modname = 'assign';
 
         $this->assertTrue(grade_update_mod_grades($modinstance));
