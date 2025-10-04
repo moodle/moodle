@@ -1,6 +1,0 @@
-issueNumber: MDL-83838
-notes:
-  report_progress:
-    - message: >
-        Add download widget for report to download multiple formats.
-      type: improved

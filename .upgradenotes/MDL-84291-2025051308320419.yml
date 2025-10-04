@@ -1,8 +1,0 @@
-issueNumber: MDL-84291
-notes:
-  core_courseformat:
-    - message: >-
-        The param $maxsections of get_num_sections_data in addsection output is
-        not used anymore. If your format overrides this method, you should add
-        a default value 0 to be consistent with the new implementation.
-      type: changed

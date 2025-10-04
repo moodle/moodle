@@ -1,9 +1,0 @@
-issueNumber: MDL-83896
-notes:
-  core_courseformat:
-    - message: >-
-        Added new core_courseformat\output\local\overview\overviewdialog output
-        class to create dialog elements in the course overview page. Overview
-        dialog will display a combination of title, description and a list
-        of items (label: value).
-      type: improved

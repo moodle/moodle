@@ -1,8 +1,0 @@
-issueNumber: MDL-84779
-notes:
-  core_ai:
-    - message: >-
-        The method `has_model_settings` inside `core_ai\aimodel\base`
-        is now determined by values returned from a new method called
-        `get_model_settings`.
-      type: changed

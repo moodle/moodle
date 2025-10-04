@@ -1,7 +1,0 @@
-issueNumber: MDL-80327
-notes:
-  core:
-    - message: >
-        Removed `core\hook\manager::is_deprecated_plugin_callback()` in favor of
-        `core\hook\manager::get_hooks_deprecating_plugin_callback()`.
-      type: removed

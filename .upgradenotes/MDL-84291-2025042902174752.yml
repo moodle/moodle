@@ -1,8 +1,0 @@
-issueNumber: MDL-84291
-notes:
-  format_topics:
-    - message: >-
-        Now the custom sections format won't ask for initial sections on the
-        creation form. Instead it will use the system number of sections
-        settings directly.
-      type: improved

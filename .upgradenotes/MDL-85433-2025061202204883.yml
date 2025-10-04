@@ -1,8 +1,0 @@
-issueNumber: MDL-85433
-notes:
-  core_block:
-    - message: >-
-        Subcontext visibility is now turned on by default when adding blocks.
-        This change makes it much easier to manage blocks, for example, in
-        courses that lack a view page.
-      type: changed

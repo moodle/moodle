@@ -1,7 +1,0 @@
-issueNumber: MDL-83900
-notes:
-  mod_wiki:
-    - message: >-
-        Create a manager class to regroup common functionalities and a wiki_mode
-        enum related to the two different modes
-      type: improved

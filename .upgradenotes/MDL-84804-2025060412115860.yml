@@ -1,7 +1,0 @@
-issueNumber: MDL-84804
-notes:
-  core:
-    - message: >-
-        There is a new `core/page_title` Javascript module for manipulating the
-        current page title
-      type: improved

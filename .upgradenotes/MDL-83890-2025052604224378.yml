@@ -1,8 +1,0 @@
-issueNumber: MDL-83890
-notes:
-  mod_choice:
-    - message: >-
-        Add manager class to the mod_choice activity. For now this is only for
-        the purpose of implementing the activity overview page but can be
-        improved to be used elsewhere.
-      type: improved

@@ -1,8 +1,0 @@
-issueNumber: MDL-84291
-notes:
-  core_courseformat:
-    - message: >-
-        The maxsections setting is now considered deprecated and will be removed
-        in Moodle 6.0. Consider implementing your own setting in your format
-        plugin if needed.
-      type: deprecated

@@ -1,5 +1,0 @@
-issueNumber: MDL-83891
-notes:
-  mod_data:
-    - message: Database entries generator could create 'approved' entries.
-      type: improved

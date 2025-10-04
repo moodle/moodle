@@ -1,8 +1,0 @@
-issueNumber: MDL-85158
-notes:
-  core:
-    - message: >-
-        Added support for configurable `aspectRatio` in charts rendered using
-        Chart.js. This enables developers to control chart sizing more precisely
-        via the `chart_base` API and the frontend renderer.
-      type: improved

@@ -1,6 +1,6 @@
 # mod_data Upgrade notes
 
-## 5.1rc2
+## 5.1
 
 ### Added
 

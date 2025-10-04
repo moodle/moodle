@@ -1,7 +1,0 @@
-issueNumber: MDL-84291
-notes:
-  core_courseformat:
-    - message: >-
-        The format base method get_max_sections has been deprecated, as the
-        maxsections setting is also deprecated and no longer in use.
-      type: deprecated

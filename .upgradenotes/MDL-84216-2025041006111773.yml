@@ -1,7 +1,0 @@
-issueNumber: MDL-84216
-notes:
-  core_course:
-    - message: >
-        The duplicatesection param in course/view.php is deprecated. Use
-        course/format/update.php with action section_duplicate instead.
-      type: deprecated

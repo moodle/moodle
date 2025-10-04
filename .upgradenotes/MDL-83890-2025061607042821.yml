@@ -1,5 +1,0 @@
-issueNumber: MDL-83890
-notes:
-  mod_choice:
-    - message: Add new generator for choice responses
-      type: improved

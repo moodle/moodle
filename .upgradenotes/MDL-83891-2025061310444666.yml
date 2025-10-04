@@ -1,8 +1,0 @@
-issueNumber: MDL-83891
-notes:
-  mod_data:
-    - message: >-
-        New get_approval_requested(), get_all_entries(),
-        filter_entries_by_user(), filter_entries_by_approval() and
-        get_comments() functions have been added to mod_data manager class.
-      type: improved
