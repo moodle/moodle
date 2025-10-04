@@ -1,6 +1,6 @@
 # core_badges (subsystem) Upgrade notes
 
-## 4.5.6+
+## 4.5.7
 
 ### Added
 
