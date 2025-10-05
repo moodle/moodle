@@ -95,7 +95,7 @@ Options:
 -h, --help Print out this help
 
 Example from Moodle root directory:
-\$ php admin/tool/behat/cli/util_single_run.php --enable
+\$ php public/admin/tool/behat/cli/util_single_run.php --enable
 
 More info in https://moodledev.io/general/development/tools/behat/running
 ";

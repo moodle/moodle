@@ -132,7 +132,7 @@ try {
     $runner->init();
 } catch (Exception $e) {
     echo "Something is wrong with the behat setup.\n";
-    echo "  Please,try running \"php admin/tool/behat/cli/init.php\" from your Moodle root directory.\n";
+    echo "  Please,try running \"php public/admin/tool/behat/cli/init.php\" from your Moodle root directory.\n";
     exit(0);
 }
 
