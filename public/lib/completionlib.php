@@ -573,7 +573,15 @@ class completion_info {
      */
     public function update_state($cm, $possibleresult=COMPLETION_UNKNOWN, $userid=0,
             $override = false, $isbulkupdate = false) {
-        global $USER;
+        global $DB, $USER;
+
+        // Do nothing if the mod plugin type is disabled.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $modname = !empty($cm->modname) ? $cm->modname : $DB->get_field('modules', 'name', ['id' => $cm->module]);
+        $enabled = $manager::get_enabled_plugin($modname);
+        if (!$enabled) {
+            return;
+        }
 
         // Do nothing if completion is not enabled for that activity
         if (!$this->is_enabled($cm)) {
