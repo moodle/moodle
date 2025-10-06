@@ -141,11 +141,13 @@ class block_quickmail_plugin {
             return false;
         }
 
-        if (self::check_frozen_context($user, $context, $page)) {
+        
+        $usercapa = self::user_has_capability('cansend', $user, $context);
+        if ($usercapa) {
             return true;
         }
-
-        if (self::user_has_capability('cansend', $user, $context)) {
+        
+        if (self::check_frozen_context($user, $context, $page) && $usercapa) {
             return true;
         }
 

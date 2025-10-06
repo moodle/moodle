@@ -226,12 +226,7 @@ class queued_repo extends repo implements queued_repo_interface {
             }
 
             if ($zeemsg->get('to_send_at') <= $now) {
-
                 $zeemsg->populate_recip_course_msg();
-                $DB->update_record(
-                    'block_quickmail_msg_course',
-                    array('id' => $cmsg->id, 'sent_at' => $now)
-                );
             }
         }
         // syncing complete.
