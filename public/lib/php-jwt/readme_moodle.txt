@@ -2,7 +2,7 @@ Description of php-jwt library import into Moodle
 
 Dependencies
 ------------
-- The lib/lti1p3 library currently depends on version 6.0 of php-jwt.
+- The lib/lti1p3 library currently depends on version 6.11.1 of php-jwt.
 - There are usages of this library in mod/lti too. Please check these.
 
 Instructions
