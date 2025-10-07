@@ -47,139 +47,121 @@
         "user": "Helpy McUser"
     }
 }}
-<div id="intro" class="box searchbox boxaligncenter">
+<div id="intro" class="mb-3 box searchbox boxaligncenter">
     {{#str}}searchforumintro, forum{{/str}}
 </div>
 <div class="box generalbox boxaligncenter">
     <form id="searchform" class="mform" action="{{actionurl}}" method="get">
-        <table class="searchbox table table-striped" id="form">
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="words">{{#str}}searchwords, forum{{/str}}</label>
-                    <input type="hidden" value="{{courseid}}" name="id">
-                </td>
-                <td class="c1">
-                    <input type="text" class="form-control" name="words" id="words" value="{{words}}">
-                </td>
-            </tr>
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="phrase">{{#str}}searchphrase, forum{{/str}}</label>
-                </td>
-                <td class="c1">
-                    <input type="text" class="form-control" name="phrase" id="phrase" value="{{phrase}}">
-                </td>
-            </tr>
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="notwords">{{#str}}searchnotwords, forum{{/str}}</label>
-                </td>
-                <td class="c1">
-                    <input type="text" class="form-control" name="notwords" id="notwords" value="{{notwords}}">
-                </td>
-            </tr>
-            {{#showfullwords}}
-                <tr>
-                    <td class="c0 text-xs-right align-bottom">
-                        <label for="fullwords">{{#str}}searchfullwords, forum{{/str}}</label>
-                    </td>
-                    <td class="c1">
-                        <input type="text" class="form-control" name="fullwords" id="fullwords" value="{{fullwords}}">
-                    </td>
-                </tr>
-            {{/showfullwords}}
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="timefromrestrict">{{#str}}searchdatefrom, forum{{/str}}</label>
-                </td>
-                <td class="c1 text-nowrap d-flex flex-wrap align-items-center">
-                    <div class="fdate_time_selector d-flex flex-wrap align-items-center">
-                        <input type="checkbox" id="timefromrestrict" name="timefromrestrict" value="1" {{#datefromchecked}}checked{{/datefromchecked}}>
-                        {{{datefromfields}}}
-                    </div>
-                    <input type="hidden" name="hfromday" value="0">
-                    <input type="hidden" name="hfrommonth" value="0">
-                    <input type="hidden" name="hfromyear" value="0">
-                    <input type="hidden" name="hfromhour" value="0">
-                    <input type="hidden" name="hfromminute" value="0">
-                </td>
-            </tr>
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="timetorestrict">{{#str}}searchdateto, forum{{/str}}</label>
-                </td>
-                <td class="c1 text-nowrap d-flex flex-wrap align-items-center">
-                    <div class="fdate_time_selector d-flex flex-wrap align-items-center">
-                        <input type="checkbox" id="timetorestrict" name="timetorestrict" value="1" {{#datetochecked}}checked{{/datetochecked}}>
-                        {{{datetofields}}}
-                    </div>
-                    <input type="hidden" name="htoday" value="0">
-                    <input type="hidden" name="htomonth" value="0">
-                    <input type="hidden" name="htoyear" value="0">
-                    <input type="hidden" name="htohour" value="0">
-                    <input type="hidden" name="htominute" value="0">
-                </td>
-            </tr>
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="menuforumid">{{#str}}searchwhichforums, forum{{/str}}</label>
-                </td>
-                <td class="c1">
-                    <select name="forumid" id="menuforumid" class="form-control custom-select">
-                        {{#forumoptions}}
-                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                        {{/forumoptions}}
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="subject">{{#str}}searchsubject, forum{{/str}}</label>
-                </td>
-                <td class="c1">
-                    <input type="text" class="form-control" name="subject" id="subject" value="{{subject}}">
-                </td>
-            </tr>
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="user">{{#str}}searchuser, forum{{/str}}</label>
-                </td>
-                <td class="c1">
-                    <input type="text" class="form-control" name="user" id="user" value="{{user}}">
-                </td>
-            </tr>
-            {{^guestuser}}
-            <tr>
-                <td class="c0 text-xs-right align-bottom">
-                    <label for="starredonly">{{#str}}starredonly, forum{{/str}}</label>
-                </td>
-                <td class="c1 align-middle d-flex flex-wrap align-items-center">
-                    <input type="checkbox" class="form-control" name="starredonly" id="starredonly" value="1" {{#starredonly}}checked{{/starredonly}} />
-                </td>
-            </tr>
-            {{/guestuser}}
-            {{#tagsenabled}}
-                <tr>
-                    <td class="c0">
-                        <label for="tags" class="mt-1">{{#str}}searchtags, forum{{/str}}</label>
-                    </td>
-                    <td class="c1">
-                        <select class="custom-select" name="tags[]"
-                                id="tags" multiple>
-                            {{#tagoptions}}
-                                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
-                            {{/tagoptions}}
-                        </select>
-                    </td>
-                </tr>
-            {{/tagsenabled}}
-            <tr>
-                <td> </td>
-                <td class="submit">
-                    <button type="submit" class="btn btn-primary">{{#str}}searchforums, forum{{/str}}</button>
-                </td>
-            </tr>
-        </table>
+        <div class="form-group row">
+            <label for="words" class="col-sm-4 col-form-label">{{#str}}searchwords, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="hidden" value="{{courseid}}" name="id">
+                <input type="text" class="form-control" name="words" id="words" value="{{words}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="phrase" class="col-sm-4 col-form-label">{{#str}}searchphrase, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="phrase" id="phrase" value="{{phrase}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="notwords" class="col-sm-4 col-form-label">{{#str}}searchnotwords, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="notwords" id="notwords" value="{{notwords}}">
+            </div>
+        </div>
+        {{#showfullwords}}
+        <div class="form-group row">
+            <label for="fullwords" class="col-sm-4 col-form-label">{{#str}}searchfullwords, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="fullwords" id="fullwords" value="{{fullwords}}">
+            </div>
+        </div>
+        {{/showfullwords}}
+        <div class="form-group row" role="group" aria-labelledby="searchdatefromlabel">
+            <div class="col-sm-4 col-form-label" id="searchdatefromlabel">{{#str}}searchdatefrom, forum{{/str}}</div>
+            <div class="col-sm-8 fdate_time_selector d-flex flex-wrap align-items-center">
+                <div class="form-check">
+                    <label class="form-check-label me-1">
+                        <input type="checkbox" name="timefromrestrict" value="1" {{#datefromchecked}}checked{{/datefromchecked}} class="form-check-input"> {{#str}}enable{{/str}}
+                    </label>
+                </div>
+                {{{datefromfields}}}
+                <input type="hidden" name="hfromday" value="0">
+                <input type="hidden" name="hfrommonth" value="0">
+                <input type="hidden" name="hfromyear" value="0">
+                <input type="hidden" name="hfromhour" value="0">
+                <input type="hidden" name="hfromminute" value="0">
+            </div>
+        </div>
+        <div class="form-group row" role="group" aria-labelledby="searchdatetolabel">
+            <div class="col-sm-4 col-form-label" id="searchdatetolabel">{{#str}}searchdateto, forum{{/str}}</div>
+            <div class="col-sm-8 fdate_time_selector d-flex flex-wrap align-items-center">
+                <div class="form-check">
+                    <label class="form-check-label me-1">
+                        <input type="checkbox" name="timetorestrict" value="1" {{#datetochecked}}checked{{/datetochecked}} class="form-check-input"> {{#str}}enable{{/str}}
+                    </label>
+                </div>
+                {{{datetofields}}}
+                <input type="hidden" name="htoday" value="0">
+                <input type="hidden" name="htomonth" value="0">
+                <input type="hidden" name="htoyear" value="0">
+                <input type="hidden" name="htohour" value="0">
+                <input type="hidden" name="htominute" value="0">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="menuforumid" class="col-sm-4 col-form-label">{{#str}}searchwhichforums, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <select name="forumid" id="menuforumid" class="custom-select">
+                    {{#forumoptions}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/forumoptions}}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="subject" class="col-sm-4 col-form-label">{{#str}}searchsubject, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="subject" id="subject" value="{{subject}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="user" class="col-sm-4 col-form-label">{{#str}}searchuser, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="user" id="user" value="{{user}}">
+            </div>
+        </div>
+        {{^guestuser}}
+        <div class="form-group row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="starredonly" id="starredonly" value="1" {{#starredonly}}checked{{/starredonly}} />
+                    <label for="starredonly" class="form-check-label">{{#str}}starredonly, forum{{/str}}</label>
+                </div>
+            </div>
+        </div>
+        {{/guestuser}}
+        {{#tagsenabled}}
+        <div class="form-group row">
+            <label for="tags" class="col-sm-4 col-form-label">{{#str}}searchtags, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <select class="form-select" name="tags[]" id="tags" multiple>
+                    {{#tagoptions}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+                    {{/tagoptions}}
+                </select>
+            </div>
+        </div>
+        {{/tagsenabled}}
+        <div class="form-group row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <button type="submit" class="btn btn-primary">{{#str}}searchforums, forum{{/str}}</button>
+            </div>
+        </div>
     </form>
 </div>
 {{#js}}
