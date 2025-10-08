@@ -141,6 +141,12 @@ export default class ModalQuestionBankBulkmove extends Modal {
         });
 
         document.querySelector(ModalQuestionBankBulkmove.SELECTORS.SEARCH_BANK).addEventListener("change", async(e) => {
+            if (parseInt(e.target.value) === 0) {
+                // The autocomplete contains a dummy option containing the text that the limit has been reached and the user
+                // has to refine the search. Selection of this dummy option has to be handled separately.
+                await this.updateCategorySelector(null);
+                return;
+            }
             await this.updateCategorySelector(e.currentTarget.value);
             this.updateSaveButtonState();
         });
