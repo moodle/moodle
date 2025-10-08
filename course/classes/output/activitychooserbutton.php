@@ -72,7 +72,9 @@ class activitychooserbutton implements templatable, renderable {
         );
 
         return (object)[
-            'sectionnum' => $this->section->section,
+            // We keep the old sectionnum properties for backwards compatibility.
+            'sectionnum' => $this->section->sectionnum,
+            'sectionid' => $this->section->id,
             'sectionname' => get_section_name($this->section->course, $this->section),
             'sectionreturn' => $this->sectionreturn ?? false,
             'modid' => $this->mod ? $this->mod->id : false,

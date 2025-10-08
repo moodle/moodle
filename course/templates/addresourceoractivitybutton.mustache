@@ -22,6 +22,7 @@
     Example context (json):
     {
         "sectionnum": 0,
+        "sectionid": 0,
         "modid": 1,
         "activityname": "Activity example",
         "sectionreturn": 0
@@ -32,6 +33,11 @@
     }}{{#hasactionlinks}}dropdown-item{{/hasactionlinks}}"
     data-action="open-chooser"
     data-sectionnum="{{sectionnum}}"
+    {{!
+        data-sectionid was wrongly used for the section number in Moodle 4.4,
+        so we use data-section-id instead for now.
+    }}
+    {{#sectionid}}data-section-id="{{.}}"{{/sectionid}}
     {{#sectionreturn}}data-sectionreturnnum="{{.}}"{{/sectionreturn}}
     {{#modid}}
         data-beforemod="{{modid}}"
