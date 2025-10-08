@@ -39,11 +39,19 @@ Feature: Basic recycle bin functionality
       | student2 | G1 |
       | student2 | G2 |
     And the following config values are set as admin:
-      | coursebinenable | 1 | tool_recyclebin |
-      | categorybinenable | 1 | tool_recyclebin |
-      | coursebinexpiry | 604800 | tool_recyclebin |
+      | coursebinenable   | 1       | tool_recyclebin |
+      | categorybinenable | 1       | tool_recyclebin |
+      | coursebinexpiry   | 604800  | tool_recyclebin |
       | categorybinexpiry | 1209600 | tool_recyclebin |
-      | autohide | 0 | tool_recyclebin |
+      | autohide          | 0       | tool_recyclebin |
+    And the following "core_badges > Badges" exist:
+      | name              | course | description       | image                        | status | type |
+      | My course 1 badge | C1     | Badge description | badges/tests/behat/badge.png | active | 2    |
+      | My course 2 badge | C2     | Badge description | badges/tests/behat/badge.png | active | 2    |
+    And the following "core_badges > Criterias" exist:
+      | badge             | role           |
+      | My course 1 badge | editingteacher |
+      | My course 2 badge | editingteacher |
 
   Scenario: Restore a deleted assignment
     Given I log in as "teacher1"
@@ -58,6 +66,14 @@ Feature: Basic recycle bin functionality
     And I wait to be redirected
     And I am on "Course 1" course homepage
     And I should see "Test assign 1" in the "Section 1" "section"
+    # Check badges were not duplicated.
+    And I navigate to "Badges" in current page administration
+    And the following should exist in the "reportbuilder-table" table:
+      | Name              | Badge status |
+      | My course 1 badge | Available    |
+    And the following should not exist in the "reportbuilder-table" table:
+      | Name              | Badge status  |
+      | My course 1 badge | Not available |
 
   @javascript
   Scenario: Restore a deleted course
@@ -83,6 +99,11 @@ Feature: Basic recycle bin functionality
     And "Student 1" "text" should exist in the "Group A" "table_row"
     And "Student 2" "text" should exist in the "Group A" "table_row"
     And "Student 2" "text" should exist in the "Group B" "table_row"
+    # Check badges are restored.
+    And I navigate to "Badges" in current page administration
+    And the following should exist in the "reportbuilder-table" table:
+      | Name              | Badge status  |
+      | My course 2 badge | Not available |
 
   @javascript
   Scenario: Deleting a single item from the recycle bin
