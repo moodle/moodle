@@ -99,5 +99,8 @@ function xmldb_enrol_database_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025070501, 'enrol', 'database');
     }
 
+    // Automatically generated Moodle v5.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

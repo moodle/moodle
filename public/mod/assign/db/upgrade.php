@@ -157,5 +157,8 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025041401, 'assign');
     }
 
+    // Automatically generated Moodle v5.1.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
