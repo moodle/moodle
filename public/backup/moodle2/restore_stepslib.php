@@ -5553,7 +5553,7 @@ class restore_move_module_questions_categories extends restore_execution_step {
                 // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
                 $info = backup_controller_dbops::decode_backup_temp_info($modulecat->info);
                 if ($after35 && empty($info->parent)) {
-                    $oldtopid = $modulecat->newitemid;
+                    $oldtopid = $modulecat->itemid;
                     $modulecat->newitemid = $top->id;
                 } else {
                     $cat = new stdClass();
