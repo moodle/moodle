@@ -15,13 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file acts as a redirector to the public directory.
- *
- * Note: This file is not intended to be accessed directly.
+ * Throw an exception when users try to access index.php outside of the web root.
  *
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-@header($_SERVER['SERVER_PROTOCOL'] . ' 308 Permanent Redirect');
-@header('Location: ./public/');
+require_once('config.php');
+
+throw new \core\exception\moodle_exception('rootdirpublic', 'error');

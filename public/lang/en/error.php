@@ -531,6 +531,7 @@ $string['restore_path_element_noobject'] = 'Restore object {$a} is not an object
 $string['restrictedcontextexception'] = 'Sorry, execution of external function violates context restriction.';
 $string['restricteduser'] = 'Sorry, but your current account "{$a}" is restricted from doing that';
 $string['reverseproxyabused'] = 'Reverse proxy enabled so the server cannot be accessed directly.<br />Please contact the server administrator.';
+$string['rootdirpublic'] = 'The Moodle root directory must not be publicly accessible. Please reconfigure your web server to use the `/public` directory instead.';
 $string['rpcerror'] = 'Ooops! Your MNET communication has failed! Here\'s that error message to pass on to your administrator: {$a}';
 $string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed';
 $string['sectioncantbefound'] = '<p><strong>This content can\'t be found.</strong></p><p>It may have been deleted, or the URL may be incorrect.</p>';
