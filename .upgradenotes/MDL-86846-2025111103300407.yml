@@ -1,0 +1,8 @@
+issueNumber: MDL-86846
+notes:
+  core:
+    - message: >-
+        The `core/drag_handle` template has been modified to use a native HTML
+        button for a more accessible experience and a consistent look with other
+        buttons on the page.
+      type: changed
