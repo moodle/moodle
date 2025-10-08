@@ -71,6 +71,7 @@ class column_sort_ui implements renderable, templatable {
             ]);
             $params['names'][] = [
                 'name' => $name,
+                'movetitle' => get_string('movecontent', 'core', $name),
                 'colname' => $colname,
                 'class' => $column->class,
                 'width' => $columnsizes[$column->id] ?? null,
