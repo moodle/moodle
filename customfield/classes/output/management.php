@@ -81,6 +81,7 @@ class management implements renderable, templatable {
 
             $categoryarray = array();
             $categoryarray['id'] = $category->get('id');
+            $categoryarray['name'] = $category->get_formatted_name();
             $categoryarray['nameeditable'] = $output->render(api::get_category_inplace_editable($category, true));
             $categoryarray['movetitle'] = get_string('movecategory', 'core_customfield',
                 $category->get_formatted_name());
