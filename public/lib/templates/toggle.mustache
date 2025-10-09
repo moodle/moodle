@@ -42,9 +42,12 @@
             {{#disabled}}disabled{{/disabled}}
             {{! TODO MDL-86619: dataattributes will be removed in 6.0. Use extraattributes instead. }}
             {{#dataattributes}}data-{{name}}="{{value}}" {{/dataattributes}}
-        {{/attributes}}>
+        {{/attributes}}
+        {{#title}}
+            data-bs-toggle="tooltip" data-bs-placement="top" title="{{title}}"
+        {{/title}}>
     {{$labelmarkup}}
-        <label class="form-check-label" for="{{$id}}{{id}}{{/id}}" {{#title}}data-bs-toggle="tooltip" data-bs-placement="top" title="{{title}}"{{/title}}>
+        <label class="form-check-label" for="{{$id}}{{id}}{{/id}}">
             <span class="{{$labelclasses}}{{labelclasses}}{{/labelclasses}}">{{$label}}{{label}}{{/label}}</span>
         </label>
     {{/labelmarkup}}
