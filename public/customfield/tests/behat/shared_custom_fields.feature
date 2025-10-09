@@ -47,12 +47,19 @@ Feature: Create shared categories and fields
     # Check that the inplaceeditable exists for course categories but not for shared categories.
     And "//div[contains(@class,'categoryinstance') and contains(.,'My course category') and .//span[contains(@class,'inplaceeditable')]]" "xpath_element" should exist
     And "//div[contains(@class,'categoryinstance') and contains(.,'My shared category') and .//span[contains(@class,'inplaceeditable')]]" "xpath_element" should not exist
-    # Check that the move category option exists for course categories but not for shared categories.
-    And "//span[contains(@class,'movecategory')][.//span[@title='Move \"My course category\"']]" "xpath_element" should exist
-    And "//span[contains(@class,'movecategory')][.//span[@title='Move \"My shared category\"']]" "xpath_element" should not exist
-    # Check that the move field option exists for course fields but not for shared fields.
-    And "//tr[@data-field-name='Course field 1']//span[@title='Move \"Course field 1\"']" "xpath_element" should exist
-    And "//tr[@data-field-name='Shared field 1']//span[@title='Move \"Shared field 1\"']" "xpath_element" should not exist
+    # There should be no move button for lone custom field categories.
+    And "Move \"My course category\"" "button" should not exist
+    # There should be no move button for lone custom fields within a single custom field category.
+    And "Move \"Course field 1\"" "button" should not exist
+    And I press "Add a new category"
+    # There should be no move button for shared categories and custom fields.
+    And "Move \"My shared category\"" "button" should not exist
+    And "Move \"Shared field 1\"" "button" should not exist
+    # TODO. We should not need to reload the page, but behat fails to find the move buttons otherwise.
+    And I reload the page
+    # With more than one category there should be move buttons for course categories and fields.
+    And "Move \"My course category\"" "button" should exist
+    And "Move \"Course field 1\"" "button" should exist
 
   Scenario: Select which shared custom fields categories are used in the course entity
     Given the following "custom field categories" exist:
