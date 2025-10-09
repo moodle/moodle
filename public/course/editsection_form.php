@@ -22,6 +22,7 @@ class editsection_form extends moodleform {
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
         $sectioninfo = $this->_customdata['cs'];
+        $returnurl = $this->_customdata['returnurl'];
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
@@ -49,6 +50,11 @@ class editsection_form extends moodleform {
 
         $mform->addElement('hidden', 'course', 0);
         $mform->setType('course', PARAM_INT);
+
+        if ($returnurl) {
+            $mform->addElement('hidden', 'returnurl', $returnurl);
+            $mform->setType('returnurl', PARAM_LOCALURL);
+        }
 
         // additional fields that course format has defined
         $courseformat = course_get_format($course);
