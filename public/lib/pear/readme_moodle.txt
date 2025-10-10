@@ -42,6 +42,8 @@ MDL-78527 - Adding a sixth parameter to allow groups to use attributes.
 MDL-80818 - Freezing all elements with the same name (e.g. radio buttons)
 MDL-80820 - PHPdocs corrections
 MDL-73700 - remove old PHP version check and dead code
+MDL-85820 - Remove unnecessary `-` character beside each client validation error message for consistency with the server side
+            validation error messages.
 
 Pear
 ====
