@@ -18,7 +18,6 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
     require_once($CFG->dirroot.'/filter/tex/latex.php');
 
     $cmd    = '';               // Initialise these variables
-    $status = '';
 
     $relativepath = get_file_argument();
 
@@ -58,7 +57,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
                 $texexp = preg_replace('!\r\n?!', ' ', $texexp);
                 $texexp = '\Large '.$texexp;
                 $cmd = filter_tex_get_cmd($pathname, $texexp);
-                system($cmd, $status);
+                filter_tex_exec($cmd, $status);
             }
         }
     }
