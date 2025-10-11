@@ -166,6 +166,6 @@ $completion->update_state($cm, $targetstate);
 if ($backto = optional_param('backto', null, PARAM_URL)) {
     redirect($backto);
 } else {
-    redirect(course_get_url($course, $cm->sectionnum));
+    redirect(course_get_url($course, $cm->get_section_info()));
 }
 

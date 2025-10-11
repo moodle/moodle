@@ -325,7 +325,7 @@ class dndupload_ajax_processor {
         $format = course_get_format($this->course);
         $renderer = $format->get_renderer($PAGE);
         $modinfo = $format->get_modinfo();
-        $section = $modinfo->get_section_info($mod->sectionnum);
+        $section = $modinfo->get_section_info_by_id($mod->sectionid);
 
         // Get the new element html content.
         $resp->fullcontent = $renderer->course_section_updated_cm_item($format, $section, $mod);

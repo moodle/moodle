@@ -89,7 +89,7 @@ $PAGE->add_body_classes(['limitedwidth', 'single-section-page']);
 
 // Get section details and check it exists.
 $modinfo = get_fast_modinfo($course);
-$sectioninfo = $modinfo->get_section_info($section->section, MUST_EXIST);
+$sectioninfo = $modinfo->get_section_info_by_id($section->id, MUST_EXIST);
 
 // Check user is allowed to see it.
 if (!$sectioninfo->uservisible) {

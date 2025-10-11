@@ -1218,6 +1218,12 @@ final class courselib_test extends advanced_testcase {
         $this->assertFalse(course_can_delete_section($courseweeks, 1));
         $this->assertFalse(course_can_delete_section($coursetopics, 1));
         $this->assertFalse(course_can_delete_section($coursesingleactivity, 1));
+
+        // An error is thrown if the section doesn't exist.
+        $this->setUser($teacher);
+        $this->expectException(moodle_exception::class);
+        $this->expectExceptionMessage(get_string('sectionnotexist', 'error'));
+        course_can_delete_section($coursetopics, 6);
     }
 
     public function test_course_delete_section(): void {
