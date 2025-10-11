@@ -26,10 +26,22 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Default timeout in seconds for mimetex command execution.
+defined('FILTER_TEX_MIMETEX_TIMEOUT') || define('FILTER_TEX_MIMETEX_TIMEOUT', 5);
+
+/**
+ * Check if the current operating system is Windows.
+ *
+ * @return bool True if running on Windows, false otherwise.
+ */
+function filter_tex_is_windows(): bool {
+    return (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows");
+}
+
 function filter_tex_get_executable($debug=false) {
     global $CFG;
 
-    if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
+    if (filter_tex_is_windows()) {
         return "$CFG->dirroot/filter/tex/mimetex.exe";
     }
 
@@ -134,12 +146,179 @@ function filter_tex_get_cmd($pathname, $texexp) {
     $texexp = escapeshellarg($texexp);
     $executable = filter_tex_get_executable(false);
 
-    if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
+    if (filter_tex_is_windows()) {
         $executable = str_replace(' ', '^ ', $executable);
         return "$executable ++ -e  \"$pathname\" -- $texexp";
 
     } else {
         return "\"$executable\" -e \"$pathname\" -- $texexp";
+    }
+}
+
+/**
+ * Run mimetex command with a timeout on Windows.
+ *
+ * @param string $cmd            Command string to execute.
+ * @param int    $timeoutmicros  Timeout in microseconds.
+ * @return array Array with keys: code, timedout, status, errors.
+ */
+function filter_tex_exec_windows(string $cmd, int $timeoutmicros): array {
+    // Create temporary file for stderr.
+    $temperr = tempnam(sys_get_temp_dir(), 'err_');
+
+    $descriptors = [
+        0 => ['file', 'NUL', 'r'], // STDIN.
+        1 => ['file', 'NUL', 'w'], // STDOUT.
+        2 => ['file', $temperr, 'w'], // STDERR.
+    ];
+
+    $process = proc_open($cmd, $descriptors, $pipes);
+    if (!is_resource($process)) {
+        unlink($temperr);
+        return [
+            'code' => 127, // Command not found.
+            'timedout' => false,
+            'status' => [],
+            'errors' => '',
+        ];
+    }
+
+    $timedout = false;
+    while ($timeoutmicros > 0) {
+        $start = microtime(true);
+        $status = proc_get_status($process);
+
+        if (!$status['running']) {
+            break;
+        }
+
+        $timeoutmicros -= (microtime(true) - $start) * 1000000;
+        if ($timeoutmicros <= 0) {
+            $timedout = true;
+            $pid = (int)($status['pid'] ?? 0);
+            exec('taskkill /F /T /PID ' . $pid . ' 2>NUL');
+            break;
+        }
+
+        usleep(50000); // Sleep for 50ms.
+    }
+
+    $status = proc_get_status($process);
+    $code = proc_close($process);
+
+    // Capture stderr from temp file.
+    $errors = file_get_contents($temperr);
+    unlink($temperr);
+
+    return [
+        'code' => $code,
+        'timedout' => $timedout,
+        'status' => $status,
+        'errors' => $errors,
+    ];
+}
+
+/**
+ * Run mimetex command with a timeout on Unix-like systems.
+ *
+ * @param string $cmd            Command string to execute.
+ * @param int    $timeoutmicros  Timeout in microseconds.
+ * @return array Array with keys: code, timedout, status, errors.
+ */
+function filter_tex_exec_unix(string $cmd, int $timeoutmicros): array {
+    // File descriptors passed to the process.
+    $descriptors = [
+        0 => ['pipe', 'r'], // STDIN.
+        1 => ['pipe', 'w'], // STDOUT.
+        2 => ['pipe', 'w'], // STDERR.
+    ];
+
+    $process = proc_open('exec ' . $cmd, $descriptors, $pipes);
+    if (!is_resource($process)) {
+        return [
+            'code' => 127, // Command not found.
+            'timedout' => false,
+            'status' => [],
+            'errors' => '',
+        ];
+    }
+
+    fclose($pipes[0]);
+    stream_set_blocking($pipes[1], false);
+    stream_set_blocking($pipes[2], false);
+
+    $errors = '';
+    $timedout = false;
+    while ($timeoutmicros > 0) {
+        $start = microtime(true);
+
+        $read = [$pipes[1], $pipes[2]];
+        $other = [];
+        stream_select($read, $other, $other, 0, (int)$timeoutmicros);
+
+        $status = proc_get_status($process);
+
+        stream_get_contents($pipes[1]); // Discard stdout to prevent pipe blocking.
+        $errors .= stream_get_contents($pipes[2]);
+
+        if (!$status['running']) {
+            break;
+        }
+
+        $timeoutmicros -= (microtime(true) - $start) * 1000000;
+        if ($timeoutmicros <= 0) {
+            $timedout = true;
+            proc_terminate($process);
+            break;
+        }
+
+        usleep(50000); // Sleep for 50ms.
+    }
+
+    // Read any remaining data from pipes.
+    stream_get_contents($pipes[1]); // Discard remaining stdout.
+    $errors .= stream_get_contents($pipes[2]);
+
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+
+    $status = proc_get_status($process);
+    $code = proc_close($process);
+
+    return [
+        'code' => $code,
+        'timedout' => $timedout,
+        'status' => $status,
+        'errors' => $errors,
+    ];
+}
+
+/**
+ * Run mimetex command with a timeout.
+ *
+ * @param string   $cmd   Command string to execute.
+ * @param int|null &$code Exit code (passed by reference, set by function).
+ * @return void
+ */
+function filter_tex_exec(string $cmd, ?int &$code): void {
+    $timeoutmicros = FILTER_TEX_MIMETEX_TIMEOUT * 1000000;
+
+    if (filter_tex_is_windows()) {
+        $result = filter_tex_exec_windows($cmd, $timeoutmicros);
+    } else {
+        $result = filter_tex_exec_unix($cmd, $timeoutmicros);
+    }
+
+    if ($result['errors']) {
+        debugging('filter_tex_exec errors: ' . $result['errors'], DEBUG_DEVELOPER);
+    }
+
+    if ($result['timedout']) {
+        $code = 124;
+    } else if ($result['code'] === -1 && isset($result['status']['exitcode']) && $result['status']['exitcode'] !== -1) {
+        $code = $result['status']['exitcode'];
+    } else {
+        $code = $result['code'];
     }
 }
 
