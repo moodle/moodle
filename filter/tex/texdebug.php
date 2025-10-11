@@ -153,7 +153,7 @@
         $texexp = '\Large '.$texexp;
         $commandpath = filter_tex_get_executable(true);
         $cmd = filter_tex_get_cmd($pathname, $texexp);
-        system($cmd, $status);
+        filter_tex_exec($cmd, $status);
 
         if ($return) {
           return $image;
@@ -172,6 +172,10 @@
                 echo "Status corresponds to bus error<br />\n";
             } else if ($status == 22) {
                 echo "Status corresponds to abnormal termination<br />\n";
+            } else if ($status == 124) {
+                echo "Status corresponds to timeout<br />\n";
+            } else if ($status == 127) {
+                echo "Status corresponds to command not found<br />\n";
             }
             if (file_exists($commandpath)) {
                 echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br />";
