@@ -548,4 +548,46 @@ final class cmactions_test extends \advanced_testcase {
         // Verify the course_module record has been deleted.
         $this->assertEquals(0, $DB->count_records('course_modules', ['id' => $module->cmid]));
     }
+
+    /**
+     * Test setting group mode on a course module.
+     */
+    public function test_set_set_groupmode(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'name' => 'Old name']
+        );
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $this->assertEquals(NOGROUPS, $cm->groupmode);
+
+        $cmactions = new cmactions($course);
+        $result = $cmactions->set_groupmode($activity->cmid, VISIBLEGROUPS);
+        $this->assertTrue($result);
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $this->assertEquals(VISIBLEGROUPS, $cm->groupmode);
+
+        $result = $cmactions->set_groupmode($activity->cmid, SEPARATEGROUPS);
+        $this->assertTrue($result);
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $this->assertEquals(SEPARATEGROUPS, $cm->groupmode);
+
+        // Check that return value is false when setting the same group mode.
+        $returnval = $cmactions->set_groupmode($activity->cmid, SEPARATEGROUPS);
+        $this->assertFalse($returnval);
+        $cm = get_fast_modinfo($course)->get_cm($activity->cmid);
+        $this->assertEquals(SEPARATEGROUPS, $cm->groupmode); // Not changed.
+    }
+
+    /**
+     * Test setting group mode on a course module that does not exist.
+     */
+    public function test_set_set_groupmode_cm_doesnotexist(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $this->expectException(\dml_missing_record_exception::class);
+        $cmactions = new cmactions($course);
+        $cmactions->set_groupmode(10000, VISIBLEGROUPS);
+    }
 }

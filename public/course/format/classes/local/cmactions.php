@@ -230,6 +230,27 @@ class cmactions extends baseactions {
     }
 
     /**
+     * Set the group mode of a course module.
+     *
+     * @param int $cmid the course module id.
+     * @param int $groupmode the new group mode.
+     *      One of NOGROUPS, SEPARATEGROUPS, VISIBLEGROUPS constants.
+     * @return bool whether course module was updated
+     */
+    public function set_groupmode(int $cmid, int $groupmode): bool {
+        global $DB;
+        $cm = $DB->get_record('course_modules', ['id' => $cmid], 'id, course, groupmode', MUST_EXIST);
+        if ($cm->groupmode == $groupmode) {
+            return false;
+        }
+        $DB->set_field('course_modules', 'groupmode', $groupmode, ['id' => $cm->id]);
+        \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
+        rebuild_course_cache($cm->course, false, true);
+
+        return true;
+    }
+
+    /**
      * Handles the whole deletion process of a module.
      * This includes calling the modules delete_instance function, deleting files, events, grades, conditional data,
      * the data in the course_module and course_sections table and adding a module deletion event to the DB.
