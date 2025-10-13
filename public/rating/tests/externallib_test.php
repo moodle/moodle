@@ -25,6 +25,7 @@
 
 namespace core_rating;
 
+use core_courseformat\formatactions;
 use core_external\external_api;
 use core_rating_external;
 
@@ -213,7 +214,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         }
 
         // Test for groupmode.
-        set_coursemodule_groupmode($this->forum->cmid, SEPARATEGROUPS);
+        formatactions::cm($this->course->id)->set_groupmode($this->forum->cmid, SEPARATEGROUPS);
         $group = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
         groups_add_member($group, $this->teacher1);
 

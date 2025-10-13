@@ -23,6 +23,8 @@
  * @package course
  */
 
+use core_courseformat\formatactions;
+
 require("../config.php");
 require_once("lib.php");
 
@@ -336,7 +338,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $modcontext = context_module::instance($cm->id);
     require_capability('moodle/course:manageactivities', $modcontext);
 
-    set_coursemodule_groupmode($cm->id, $groupmode);
+    formatactions::cm($coursecontext->instanceid)->set_groupmode($cm->id, $groupmode);
     \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
     redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 
