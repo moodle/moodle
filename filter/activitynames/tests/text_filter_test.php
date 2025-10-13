@@ -102,6 +102,71 @@ final class text_filter_test extends \advanced_testcase {
         $this->assertEquals($page->name, $matches[3][0]);
     }
 
+    /**
+     * Data provider for the test_links_with_whitespace.
+     *
+     * @return array
+     */
+    public static function links_with_whitespace_provider(): array {
+        return [
+            'Regular spaces' => [
+                'Assignment 1',
+                '<p>Go to Assignment 1</p>',
+                true,
+            ],
+            'Two regular spaces' => [
+                'Assignment  1',
+                '<p>Go to Assignment  1</p>',
+                true,
+            ],
+            'NBSP + regular spaces' => [
+                'Assignment   1',
+                "<p>Go to Assignment\xC2\xA0  1</p>",
+                true,
+            ],
+            'Multiple spaces' => [
+                'Assignment  1  -   History',
+                '<p>Go to Assignment  1  -   History</p>',
+                true,
+            ],
+            'Mismatched spaces 1' => [
+                'Assignment 1',
+                '<p>Go to Assignment  1</p>',
+                false,
+            ],
+            'Mismatched spaces 2' => [
+                'Assignment  1',
+                '<p>Go to Assignment 1</p>',
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * Test that links can be matched with various whitespace combinations.
+     *
+     * @dataProvider links_with_whitespace_provider
+     * @param string $activityname
+     * @param string $html
+     * @param bool $expectedresult
+     */
+    public function test_links_with_whitespace(string $activityname, string $html, bool $expectedresult): void {
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $course->id, 'name' => $activityname]
+        );
+
+        $filtered = format_text($html, FORMAT_HTML, ['context' => $context]);
+        $haslink = strpos($filtered, '<a class="autolink"') !== false;
+
+        $this->assertEquals($expectedresult, $haslink);
+    }
+
     public function test_cache(): void {
         $this->resetAfterTest(true);
 
