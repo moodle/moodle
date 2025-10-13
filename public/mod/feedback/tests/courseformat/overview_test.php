@@ -446,7 +446,7 @@ final class overview_test extends \advanced_testcase {
      * @param bool $hasresponses
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_extra_submitted_overview')]
-    public function test_get_extra_submitted_overview(string $user, bool $expectnull, bool $hasresponses): void {
+    public function test_get_extra_submitted_overview(string $user, bool $expectnull, bool $hasresponses = false): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -471,8 +471,11 @@ final class overview_test extends \advanced_testcase {
             ]);
         }
 
-        $currentuser = ($user == 'teacher') ? $teacher : $student;
-        $this->setUser($currentuser);
+        if ($user == 'admin') {
+            $this->setAdminUser();
+        } else {
+            $this->setUser(($user == 'teacher') ? $teacher : $student);
+        }
 
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
@@ -497,25 +500,23 @@ final class overview_test extends \advanced_testcase {
      * @return \Generator
      */
     public static function provider_test_get_extra_submitted_overview(): \Generator {
-        yield 'Teacher with responses' => [
+        yield 'Teacher' => [
             'user' => 'teacher',
             'expectnull' => true,
-            'hasresponses' => true,
         ];
-        yield 'Student with responses' => [
-            'user' => 'student',
-            'expectnull' => false,
-            'hasresponses' => true,
-        ];
-        yield 'Teacher without responses' => [
-            'user' => 'teacher',
+        yield 'Admin' => [
+            'user' => 'admin',
             'expectnull' => true,
-            'hasresponses' => false,
         ];
         yield 'Student without responses' => [
             'user' => 'student',
             'expectnull' => false,
             'hasresponses' => false,
+        ];
+        yield 'Student with responses' => [
+            'user' => 'student',
+            'expectnull' => false,
+            'hasresponses' => true,
         ];
     }
 }
