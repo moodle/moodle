@@ -91,3 +91,12 @@ Feature: Managing feedback questions
     And I click on "After \"(q3) I can see it in your smile\"" "link" in the "Move this question" "dialogue"
     And I click on "Move this question" "button" in the "Is it me you're looking for?" "mod_feedback > Question"
     And I click on "To the top of the list" "link" in the "Move this question" "dialogue"
+
+  Scenario: Admin cannot answer questions if not enrolled as student
+    When I am on the "Learning experience course 1" "feedback activity" page logged in as admin
+    Then I should not see "Answer the questions"
+    But the following "course enrolments" exist:
+      | user     | course | role    |
+      | admin    | C1     | student |
+    And I am on the "Learning experience course 1" "feedback activity" page logged in as admin
+    And I should see "Answer the questions"
