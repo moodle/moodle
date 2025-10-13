@@ -183,6 +183,8 @@ final class lib_test extends \advanced_testcase {
 
         $now = time();
         $course = $this->getDataGenerator()->create_course();
+        // Enrol admin as a student so they can complete the feedback.
+        $this->getDataGenerator()->enrol_user(get_admin()->id, $course->id, 'student');
         $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id,
                 'timeopen' => $now - DAYSECS, 'timeclose' => $now + DAYSECS]);
         $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
@@ -294,6 +296,8 @@ final class lib_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
+        // Enrol admin as a student so they can complete the feedback.
+        $this->getDataGenerator()->enrol_user(get_admin()->id, $course->id, 'student');
         $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id,
                 'timeopen' => time() + DAYSECS]);
         $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
@@ -356,6 +360,8 @@ final class lib_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
+        // Enrol admin as a student so they can complete the feedback.
+        $this->getDataGenerator()->enrol_user(get_admin()->id, $course->id, 'student');
         $feedback = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
         $event = $this->create_action_event($course->id, $feedback->id, FEEDBACK_EVENT_TYPE_OPEN);
 
