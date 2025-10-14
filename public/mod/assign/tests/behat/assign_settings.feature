@@ -125,3 +125,17 @@ Feature: Assignments settings can be changed
     And I am on the "Test assignment name" Activity page logged in as student3
     Then "Add a new attempt" "button" should exist
     And "Add a new attempt based on previous submission" "button" should exist
+
+  Scenario: Admin cannot add submission if not enrolled as student
+    When I am on the "Test assignment name" Activity page logged in as admin
+    Then I should not see "Add submission"
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | admin    | C1     | teacher |
+    And I am on the "Test assignment name" Activity page logged in as admin
+    And I should not see "Add submission"
+    But the following "course enrolments" exist:
+      | user     | course | role    |
+      | admin    | C1     | student |
+    And I am on the "Test assignment name" Activity page logged in as admin
+    And I should see "Add submission"
