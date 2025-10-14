@@ -63,8 +63,8 @@ class stateactions {
         }
 
         $this->validate_cms($course, $ids, __FUNCTION__, ['moodle/course:manageactivities']);
-        // The moveto_module function move elements before a specific target.
-        // To keep the order the movements must be done in descending order (last activity first).
+        // To keep the order the movements must be done in descending order (last activity first), so we add them "before"
+        // in the reverse order (ending up in the original ascending order).
         $ids = $this->sort_cm_ids_by_course_position($course, $ids, true);
 
         // Target cm has more priority than target section.
@@ -79,19 +79,24 @@ class stateactions {
         // The origin sections must be updated as well.
         $originalsections = [];
 
+        $action  = formatactions::cm($course);
         $beforecmdid = $targetcmid;
+        $modinfo = get_fast_modinfo($course);
+        $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
         foreach ($ids as $cmid) {
             // An updated $modinfo is needed on every loop as activities list change.
             $modinfo = get_fast_modinfo($course);
             $cm = $modinfo->get_cm($cmid);
             $currentsectionid = $cm->section;
-            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
             if ($targetsection->is_delegated() && $cm->get_delegated_section_info()) {
                 throw new moodle_exception('subsectionmoveerror', 'core');
             }
-            $beforecm = (!empty($beforecmdid)) ? $modinfo->get_cm($beforecmdid) : null;
-            if ($beforecm === null || $beforecm->id != $cmid) {
-                moveto_module($cm, $targetsection, $beforecm);
+            if ($beforecmdid != $cmid) {
+                if ($beforecmdid) {
+                    $action->move_before($cm->id, $beforecmdid);
+                } else {
+                    $action->move_end_section($cm->id, $targetsection->id);
+                }
             }
             $beforecmdid = $cm->id;
             $updates->add_cm_put($cm->id);
