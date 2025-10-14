@@ -165,10 +165,7 @@ class overview extends \core_courseformat\activityoverviewbase {
     private function get_extra_submission_status_overview(): ?overviewitem {
         global $USER;
 
-        if (
-            !has_capability('mod/assign:submit', $this->context)
-            || has_capability('moodle/site:config', $this->context)
-        ) {
+        if (!has_capability('mod/assign:submit', $this->context, $USER, false)) {
             return null;
         }
 
