@@ -6440,8 +6440,10 @@ class assign {
         }
 
         if ($userid == $graderid) {
-            if ($this->submissions_open($userid) &&
-                    has_capability('mod/assign:submit', $this->context, $graderid)) {
+            if (
+                $this->submissions_open($userid)
+                && has_capability('mod/assign:submit', $this->context, $graderid, false)
+            ) {
                 // User can edit their own submission.
                 return true;
             } else {
