@@ -1,0 +1,7 @@
+issueNumber: MDL-86854
+notes:
+  core_courseformat:
+    - message: >-
+        Add core_courseformat\cmactions::move_before that will allow to move a coursemodule to a position before another coursemodule.
+        Add core_courseformat\cmactions::move_end_section that will allow to move a coursemodule the end of a section.
+      type: improved

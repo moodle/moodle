@@ -16,6 +16,7 @@
 
 namespace core_courseformat\local;
 
+use core_courseformat\formatactions;
 use core_courseformat\hook\after_cm_name_edited;
 
 /**
@@ -538,6 +539,162 @@ final class cmactions_test extends \advanced_testcase {
 
         // Verify the course_module record has been deleted.
         $this->assertEquals(0, $DB->count_records('course_modules', ['id' => $module->cmid]));
+    }
+
+    /**
+     * Test moving an activity at the end of a section or course.
+     */
+    public function test_move_end_section(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 3]);
+        $activities = [];
+        for ($activityindex = 0; $activityindex < 3; $activityindex++) {
+            $activities[] = $this->getDataGenerator()->create_module(
+                'assign',
+                ['course' => $course->id, 'name' => 'Activity ' . $activityindex, 'section' => 1]
+            );
+        }
+        $cms = get_fast_modinfo($course)->get_cms();
+        // Just assert that the activities are in the expected initial order.
+        $this->assertEquals(
+            [
+                'Activity 0',
+                'Activity 1',
+                'Activity 2',
+            ],
+            array_values(array_map(fn($cminfo) => $cminfo->name, $cms))
+        );
+        $cmactions = new cmactions($course);
+        $section2 = get_fast_modinfo($course)->get_section_info(2);
+        // Move to section 2, at the end of the section.
+        $this->assertTrue($cmactions->move_end_section($activities[1]->cmid, $section2->id));
+        $cms = get_fast_modinfo($course)->get_cms();
+        $this->assertEquals(
+            [
+                'Activity 0',
+                'Activity 2',
+                'Activity 1',
+            ],
+            array_values(array_map(fn($cminfo) => $cminfo->name, $cms))
+        );
+        // Activity 1 is now in section 2.
+        $this->assertEquals(2, $cms[$activities[1]->cmid]->sectionnum);
+
+        // Create an extra invisible section to test moving to non visible sections.
+        $section4 = $this->getDataGenerator()->create_course_section(['course' => $course->id, 'section' => 4]);
+        formatactions::section($course)->update($section4, ['visible' => 0]);
+        // Make sure we retrieve fresh data.
+        $section4 = get_fast_modinfo($course)->get_section_info(4);
+        $this->assertTrue($cmactions->move_end_section($activities[1]->cmid, $section4->id));
+        // Activity 1 is now in section 4.
+        $this->assertEquals(4, get_fast_modinfo($course)->get_cm($activities[1]->cmid)->sectionnum);
+        $cms = get_fast_modinfo($course)->get_cms();
+        $this->assertEquals(0, $cms[$activities[1]->cmid]->visible);
+
+        // Now move it back to section 1, at the end of the section, and check that it becomes visible again.
+        $section1 = get_fast_modinfo($course)->get_section_info(1);
+        $this->assertTrue($cmactions->move_end_section($activities[1]->cmid, $section1->id));
+        $this->assertEquals(1, get_fast_modinfo($course)->get_cm($activities[1]->cmid)->sectionnum);
+        $cms = get_fast_modinfo($course)->get_cms();
+        $this->assertEquals(1, $cms[$activities[1]->cmid]->visible);
+    }
+
+    /**
+     * Test moving an activity before another activity.
+     */
+    public function test_move_before(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 3]);
+        $activities = [];
+        for ($activityindex = 0; $activityindex < 3; $activityindex++) {
+            $activities[] = $this->getDataGenerator()->create_module(
+                'assign',
+                ['course' => $course->id, 'name' => 'Activity ' . $activityindex, 'section' => 1]
+            );
+        }
+        $cms = get_fast_modinfo($course)->get_cms();
+        // Just assert that the activities are in the expected initial order.
+        $this->assertEquals(
+            [
+                'Activity 0',
+                'Activity 1',
+                'Activity 2',
+            ],
+            array_values(array_map(fn($cminfo) => $cminfo->name, $cms))
+        );
+        $cmactions = new cmactions($course);
+        // Invalid move, cannot move after itself.
+        $this->assertFalse($cmactions->move_before($activities[0]->cmid, $activities[0]->cmid));
+        // Move activity 0 before activity 2.
+        $this->assertTrue($cmactions->move_before($activities[0]->cmid, $activities[2]->cmid));
+        $cms = get_fast_modinfo($course)->get_cms();
+        $this->assertEquals(
+            [
+                'Activity 1',
+                'Activity 0',
+                'Activity 2',
+            ],
+            array_values(array_map(fn($cminfo) => $cminfo->name, $cms))
+        );
+
+        $this->assertTrue($cmactions->move_before($activities[1]->cmid, $activities[0]->cmid));
+        $cms = get_fast_modinfo($course)->get_cms();
+        $this->assertEquals(
+            [
+                'Activity 1',
+                'Activity 0',
+                'Activity 2',
+            ],
+            array_values(array_map(fn($cminfo) => $cminfo->name, $cms))
+        );
+
+        // Create an extra invisible section to test moving to non visible sections.
+        $section4 = $this->getDataGenerator()->create_course_section(['course' => $course->id, 'section' => 4]);
+        formatactions::section($course)->update($section4, ['visible' => 0]);
+        $activitysection4 = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'name' => 'Activity section 4', 'section' => 4]
+        );
+        // Make sure we retrieve fresh data.
+        $section4 = get_fast_modinfo($course)->get_section_info(4);
+        $this->assertTrue($cmactions->move_before($activities[1]->cmid, $activitysection4->cmid));
+        // Activity 1 is now in section 4.
+        $this->assertEquals(4, get_fast_modinfo($course)->get_cm($activities[1]->cmid)->sectionnum);
+        $cms = get_fast_modinfo($course)->get_cms();
+        // And not visible.
+        $this->assertEquals(0, $cms[$activities[1]->cmid]->visible);
+
+        // Now move it back to section 1, at the end of the section, and check that it becomes visible again.
+        $this->assertTrue($cmactions->move_before($activities[1]->cmid, $activities[0]->cmid));
+        $this->assertEquals(1, get_fast_modinfo($course)->get_cm($activities[1]->cmid)->sectionnum);
+        $cms = get_fast_modinfo($course)->get_cms();
+        // And visible again.
+        $this->assertEquals(1, $cms[$activities[1]->cmid]->visible);
+    }
+    /**
+     * Test moving an activity with feature_can_display = false before another activity.
+     */
+    public function test_move_before_feature_can_display(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = self::getDataGenerator();
+
+        // Create course with 1 section.
+        $course = self::getDataGenerator()->create_course(['numsections' => 2], ['createsections' => true]);
+
+        // Create the module and assert in section 0.
+        $sectionzero = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 0], '*', MUST_EXIST);
+        $module = $generator->create_module('qbank', ['course' => $course, 'section' => $sectionzero->section]);
+        $beforemodule = $generator->create_module(
+            'assign',
+            ['course' => $course->id, 'name' => 'Activity before', 'section' => 1]
+        );
+        // Try to add to section 1.
+        $this->expectExceptionMessage("Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0");
+
+        $cmactions = new cmactions($course);
+        // Invalid move, cannot move module with feature_can_display = false to section other than 0.
+        $cmactions->move_before($module->cmid, $beforemodule->cmid);
     }
 
     /**
