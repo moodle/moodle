@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_badges\reportbuilder\datasource;
 
 use core_badges_generator;
+use core_badges\reportbuilder\local\filters\criteria;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\filters\{boolean_select, date, select, tags, text};
 use core_reportbuilder\manager;
@@ -99,22 +100,24 @@ final class badges_test extends core_reportbuilder_testcase {
         /** @var core_badges_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
 
+        // Create badge with criteria of manually awarding by role.
         $badgeone = $generator->create_badge([
             'name' => 'Badge 1',
             'language' => 'de',
             'expireperiod' => HOURSECS,
             'tags' => ['cool'],
         ]);
+        $generator->create_criteria([
+            'badgeid' => $badgeone->id,
+            'roleid' => $DB->get_field('role', 'id', ['shortname' => 'manager']),
+        ]);
+
         $badgeone->issue($user1->id, true);
         $badgeone->issue($user2->id, true);
 
         // Course badge, not issued to any users.
         $course = $this->getDataGenerator()->create_course();
         $badgetwo = $generator->create_badge(['name' => 'Badge 2', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
-
-        // Create criteria for manually awarding by role.
-        $managerrole = $DB->get_field('role', 'id', ['shortname' => 'manager']);
-        $generator->create_criteria(['badgeid' => $badgeone->id, 'roleid' => $managerrole]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -261,6 +264,14 @@ final class badges_test extends core_reportbuilder_testcase {
                 'badge:name_operator' => text::IS_EQUAL_TO,
                 'badge:name_value' => 'Other badge',
             ], false],
+            'Filter badge criteria' => ['badge:criteria', [
+                'badge:criteria_operator' => criteria::EQUAL_TO,
+                'badge:criteria_value' => BADGE_CRITERIA_TYPE_MANUAL,
+            ], true],
+            'Filter badge criteria (no match)' => ['badge:criteria', [
+                'badge:criteria_operator' => criteria::EQUAL_TO,
+                'badge:criteria_value' => BADGE_CRITERIA_TYPE_COHORT,
+            ], false],
             'Filter badge language' => ['badge:language', [
                 'badge:language_operator' => select::EQUAL_TO,
                 'badge:language_value' => 'en',
@@ -367,6 +378,8 @@ final class badges_test extends core_reportbuilder_testcase {
      * @dataProvider datasource_filters_provider
      */
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
+        global $DB;
+
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course(['fullname' => 'Course 1']);
@@ -374,6 +387,8 @@ final class badges_test extends core_reportbuilder_testcase {
 
         /** @var core_badges_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
+
+        // Create badge with criteria of manually awarding by role.
         $badge = $generator->create_badge([
             'name' => 'Course badge',
             'language' => 'en',
@@ -383,6 +398,11 @@ final class badges_test extends core_reportbuilder_testcase {
             'expireperiod' => HOURSECS,
             'tags' => ['cool'],
         ]);
+        $generator->create_criteria([
+            'badgeid' => $badge->id,
+            'roleid' => $DB->get_field('role', 'id', ['shortname' => 'manager']),
+        ]);
+
         $badge->issue($user->id, true);
 
         /** @var core_reportbuilder_generator $generator */
