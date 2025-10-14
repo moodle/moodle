@@ -1,0 +1,9 @@
+issueNumber: MDL-86856
+notes:
+  core_course:
+    - message: >-
+        The following methods have been deprecated and should no longer be used:
+        - `course_delete_module`
+        - `course_module_flag_for_async_deletion`
+        Please consider using the equivalent methods, delete and delete_async, in `core_courseformat\local\cmactions` instead.
+      type: deprecated
