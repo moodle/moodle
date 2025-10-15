@@ -31009,31 +31009,66 @@ table.calendartable caption {
 }
 
 /* Move activity and Move section modals */
-.move-activity-tree .collapse-list-item {
+.move-activity-tree .collapse-list-item,
+.move-section-tree .collapse-list-item {
+  position: relative;
+  border: 2px solid transparent;
   border-radius: 0.375rem;
 }
-.move-activity-tree .collapse-list-item:hover, .move-activity-tree .collapse-list-item:focus {
+.move-activity-tree .collapse-list-item:hover, .move-activity-tree .collapse-list-item:focus,
+.move-section-tree .collapse-list-item:hover,
+.move-section-tree .collapse-list-item:focus {
   background-color: #cfe2f2;
+  border-color: transparent;
 }
-.move-activity-tree .collapse-list-item:hover a, .move-activity-tree .collapse-list-item:focus a {
+.move-activity-tree .collapse-list-item:hover a, .move-activity-tree .collapse-list-item:focus a,
+.move-section-tree .collapse-list-item:hover a,
+.move-section-tree .collapse-list-item:focus a {
   color: #094173;
 }
-.move-activity-tree .collapse-list-item a {
+.move-activity-tree .collapse-list-item:hover:has(> .collapse-list-link.collapsed), .move-activity-tree .collapse-list-item:focus:has(> .collapse-list-link.collapsed),
+.move-section-tree .collapse-list-item:hover:has(> .collapse-list-link.collapsed),
+.move-section-tree .collapse-list-item:focus:has(> .collapse-list-link.collapsed) {
+  border: 2px solid #0f6cbf;
+}
+.move-activity-tree .collapse-list-item:hover:has(> .collapse-list-link.collapsed)::after, .move-activity-tree .collapse-list-item:focus:has(> .collapse-list-link.collapsed)::after,
+.move-section-tree .collapse-list-item:hover:has(> .collapse-list-link.collapsed)::after,
+.move-section-tree .collapse-list-item:focus:has(> .collapse-list-link.collapsed)::after {
+  content: none;
+}
+.move-activity-tree .collapse-list-item:hover::after, .move-activity-tree .collapse-list-item:focus::after,
+.move-section-tree .collapse-list-item:hover::after,
+.move-section-tree .collapse-list-item:focus::after {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: -3px;
+  border-bottom: 2px solid #0f6cbf;
+}
+.move-activity-tree .collapse-list-item a,
+.move-section-tree .collapse-list-item a {
   color: var(--bs-body-color);
 }
-.move-activity-tree .collapse-list-item a:hover, .move-activity-tree .collapse-list-item a:focus {
+.move-activity-tree .collapse-list-item a:hover, .move-activity-tree .collapse-list-item a:focus,
+.move-section-tree .collapse-list-item a:hover,
+.move-section-tree .collapse-list-item a:focus {
   text-decoration: none;
 }
-.move-activity-tree .collapse-list-item a.disabled {
+.move-activity-tree .collapse-list-item a.disabled,
+.move-section-tree .collapse-list-item a.disabled {
   color: var(--bs-secondary-color);
 }
-.move-activity-tree .collapse-list-item-content .collapse-list-item {
+.move-activity-tree .collapse-list-item-content .collapse-list-item,
+.move-section-tree .collapse-list-item-content .collapse-list-item {
   padding: 0.5rem 1rem;
 }
-.move-activity-tree ul {
+.move-activity-tree ul,
+.move-section-tree ul {
   margin-left: 1.5rem;
 }
-.move-activity-tree .collapse-list-link {
+.move-activity-tree .collapse-list-link,
+.move-section-tree .collapse-list-link {
   font-weight: bold;
 }
 
