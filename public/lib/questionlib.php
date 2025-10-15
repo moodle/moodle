@@ -1416,7 +1416,7 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
 
     $iscourse = $context->contextlevel === CONTEXT_COURSE;
 
-    if ($iscourse) {
+    if ($iscourse && has_capability('moodle/course:manageactivities', $context)) {
         return $navigationnode->add(
             get_string('questionbank_plural', 'question'),
             new moodle_url($baseurl, ['courseid' => $context->instanceid]),
