@@ -3882,15 +3882,14 @@ abstract class grade_helper {
 
                 $iscourse   = $element['object']->is_course_item();
                 $iscategory = $element['object']->is_category_item();
-                $isscale    = $element['object']->gradetype == GRADE_TYPE_SCALE;
-                $isvalue    = $element['object']->gradetype == GRADE_TYPE_VALUE;
+                $gradetype  = $element['object']->gradetype;
                 $isoutcome  = !empty($element['object']->outcomeid);
 
                 if ($element['object']->is_calculated()) {
                     $icon->pix = 'i/calc';
                     $icon->title = s(get_string('calculatedgrade', 'grades'));
 
-                } else if (($iscourse || $iscategory) && ($isscale || $isvalue)) {
+                } else if (($iscourse || $iscategory) && $gradetype != GRADE_TYPE_NONE) {
                     if ($category = $element['object']->get_item_category()) {
                         $aggrstrings = self::get_aggregation_strings();
                         $stragg = $aggrstrings[$category->aggregation];
@@ -3937,6 +3936,9 @@ abstract class grade_helper {
                         $icon->pix = 'i/manual_item';
                         $icon->title = s(get_string('manualitem', 'grades'));
                     }
+                } else {
+                    // No matching icon.
+                    $none = true;
                 }
                 break;
 
