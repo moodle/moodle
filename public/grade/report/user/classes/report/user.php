@@ -380,7 +380,6 @@ class user extends grade_report {
      * @return int The number of elements processed
      */
     public function inject_rowspans(array &$element): int {
-
         if ($element['depth'] > $this->maxdepth) {
             $this->maxdepth = $element['depth'];
         }
@@ -937,7 +936,7 @@ class user extends grade_report {
             $data['parentcategories'] = array_diff(array_filter(explode('/', $gradeobject->path)), [$gradeobject->id]);
 
             $rowspandata['leader']['class'] = $class . " d$depth b1t b2b b1l";
-            $rowspandata['leader']['rowspan'] = $element['rowspan'];
+            $rowspandata['leader']['rowspan'] = $element['rowspan'] ?? 0;
             $rowspandata['parentcategories'] = array_filter(explode('/', $gradeobject->path));
             $rowspandata['spacer'] = true;
         }
