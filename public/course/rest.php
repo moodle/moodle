@@ -81,7 +81,13 @@ if ($class === 'section' && $field === 'move') {
     } else {
         $beforemod = null;
     }
-
-    $isvisible = moveto_module($cm, $section, $beforemod);
+    $action = \core_courseformat\formatactions::cm($course);
+    if (!$beforemod) {
+        $action->move_end_section($cm, $section->id);
+    } else {
+        $action->move_before($cm->id, $beforemod->id);
+    }
+    $modinfo = get_fast_modinfo($course);
+    $isvisible = $modinfo->get_cm($cm->id)->is_visible();
     echo json_encode(array('visible' => (bool) $isvisible));
 }

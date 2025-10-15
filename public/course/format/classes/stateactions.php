@@ -594,10 +594,19 @@ class stateactions {
 
         // Duplicate course modules.
         $affectedcmids = [];
+        $action = formatactions::cm($course);
         foreach ($cms as $cm) {
             if ($newcm = duplicate_module($course, $cm)) {
                 if ($targetsection) {
-                    moveto_module($newcm, $targetsection, $beforecm);
+                    if ($beforecm) {
+                        $action->move_before($newcm->id, $beforecm->id);
+                    } else {
+                        // We retrieve the target section directly from the cache to avoid stale information in the section info.
+                        $action->move_end_section(
+                            $newcm->id,
+                            $targetsection->id,
+                        );
+                    }
                 } else {
                     $affectedcmids[] = $newcm->id;
                 }

@@ -232,7 +232,14 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
         throw new \moodle_exception('needcopy', '', "view.php?id=$section->course");
     }
 
-    moveto_module($cm, $section, $beforecm);
+    $formatactions = formatactions::cm($course->id);
+    if (!empty($section)) {
+        $formatactions->move_end_section($cm->id, $section->id);
+    } else if (!empty($beforecm)) {
+        $formatactions->move_before($cm->id, $beforecm->id);
+    } else {
+        throw new \moodle_exception('invalidmovetarget');
+    }
 
     $sectionreturn = $USER->activitycopysectionreturn;
     unset($USER->activitycopy);

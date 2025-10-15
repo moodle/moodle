@@ -16,6 +16,8 @@
 
 namespace core_availability;
 
+use core_courseformat\formatactions;
+
 /**
  * Unit tests for info and subclasses.
  *
@@ -170,7 +172,8 @@ final class info_test extends \advanced_testcase {
         $modinfo = get_fast_modinfo($course);
         $section = $modinfo->get_section_info(1);
         $cm = $modinfo->get_cm($pages[2]->cmid);
-        moveto_module($cm, $section);
+        $cmactions = formatactions::cm($course);
+        $cmactions->move_end_section($cm->id, $section->id);
 
         // Set the availability restrictions in database. The enableavailability
         // setting is off so these do not take effect yet.
@@ -417,7 +420,8 @@ final class info_test extends \advanced_testcase {
         $DB->set_field('course_sections', 'availability',
                 '{"op":"|","show":true,"c":[{"type":"mock","filter":[' . $u1->id . ',' . $u2->id .']}]}',
                 array('id' => $section2->id));
-        moveto_module($modinfo->get_cm($page2->cmid), $section2);
+        $cmactions = formatactions::cm($course);
+        $cmactions->move_end_section($page2->cmid, $section2->id);
 
         // With no restrictions, returns full list.
         $info = new info_module($modinfo->get_cm($page->cmid));

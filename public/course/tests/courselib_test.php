@@ -31,6 +31,7 @@ use context_system;
 use context_coursecat;
 use core\event\section_viewed;
 use core_completion_external;
+use core_courseformat\formatactions;
 use core_external;
 use core_tag_index_builder;
 use core_tag_tag;
@@ -1303,7 +1304,8 @@ final class courselib_test extends advanced_testcase {
         $oldsectionid = $cm->section;
 
         // Perform the move
-        moveto_module($cm, $newsection);
+        $cmactions = formatactions::cm($course);
+        $cmactions->move_end_section($cm->id, $newsection->id);
 
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
@@ -1330,7 +1332,7 @@ final class courselib_test extends advanced_testcase {
         // Perform a second move as some issues were only seen on the second move
         $newsection = get_fast_modinfo($course)->get_section_info(2);
         $oldsectionid = $cm->section;
-        moveto_module($cm, $newsection);
+        $cmactions->move_end_section($cm->id, $newsection->id);
 
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
@@ -1372,8 +1374,9 @@ final class courselib_test extends advanced_testcase {
 
         // Try to perform the move.
         $this->expectExceptionMessageMatches($codingerror);
+        $cmactions = formatactions::cm($course);
         try {
-            moveto_module($qbankcm, $newsection);
+            $cmactions->move_end_section($qbankcm->id, $newsection->id);
         } finally {
             $qbankcms = get_fast_modinfo($course)->get_instances_of('qbank');
             $qbankcm = reset($qbankcms);

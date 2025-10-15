@@ -16,6 +16,7 @@
 
 namespace core_courseformat\local;
 
+use core_courseformat\formatactions;
 use section_info;
 use stdClass;
 use core\event\course_module_updated;
@@ -335,9 +336,11 @@ class sectionactions extends baseactions {
 
         // Move all modules to section 0.
         $modinfo = get_fast_modinfo($this->course->id);
+        $action = formatactions::cm($this->course);
+        $section0 = $modinfo->get_section_info(0);
         foreach ($modinfo->get_cms() as $cm) {
             if ($cm->sectionnum == $sectioninfo->section) {
-                moveto_module($cm, $modinfo->get_section_info(0));
+                $action->move_end_section($cm->id, $section0->id);
             }
         }
 

@@ -1176,42 +1176,41 @@ function reorder_sections($sections, $origin_position, $target_position) {
  *     before which the module needs to be included. Null for inserting in the
  *     end of the section
  * @return int new value for module visibility (0 or 1)
+ * @todo Remove this method in Moodle 6.0 (MDL-87465).
  */
+#[\core\attribute\deprecated(
+    replacement: 'core_courseformat\local\cmactions',
+    since: '5.2',
+    mdl: 'MDL-86854',
+    reason: 'Replaced by an cmactions::move_before or cmactions::move_end_section.',
+)]
 function moveto_module($mod, $section, $beforemod=NULL) {
-    global $OUTPUT, $DB;
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     if ($section->section != 0 && !course_modinfo::is_mod_type_visible_on_course($mod->modname)) {
         throw new coding_exception("Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0");
     }
-
-    // Current module visibility state - return value of this function.
-    $modvisible = $mod->visible;
-
-    // Remove original module from original section.
-    if (! delete_mod_from_section($mod->id, $mod->section)) {
-        echo $OUTPUT->notification("Could not delete module from existing section");
+    [$course, $cm] = get_course_and_cm_from_cmid($mod->id);
+    $action = \core_courseformat\formatactions::cm($course);
+    if ($beforemod) {
+        $action->move_before($cm->id, $beforemod->id);
+    } else {
+        // We retrieve the target section directly from the cache to avoid stale information in the section info.
+        $action->move_end_section(
+            $cm->id,
+            $section->id,
+        );
     }
-
-    // Add the module into the new section.
-    course_add_cm_to_section($section->course, $mod->id, $section->section, $beforemod, $mod->modname);
-
-    // If moving to a hidden section then hide module.
-    if ($mod->section != $section->id) {
-        if (!$section->visible && $mod->visible) {
-            // Module was visible but must become hidden after moving to hidden section.
-            $modvisible = 0;
-            set_coursemodule_visible($mod->id, 0);
-            // Set visibleold to 1 so module will be visible when section is made visible.
-            $DB->set_field('course_modules', 'visibleold', 1, array('id' => $mod->id));
-        }
-        if ($section->visible && !$mod->visible) {
-            // Hidden module was moved to the visible section, restore the module visibility from visibleold.
-            set_coursemodule_visible($mod->id, $mod->visibleold);
-            $modvisible = $mod->visibleold;
-        }
-    }
-
-    return $modvisible;
+    $modinfo = get_fast_modinfo($course);
+    $cm = $modinfo->get_cm($mod->id);
+    $modvisibility = $cm->visible;
+    // Purge the cm cache to ensure visibility changes are reflected.
+    // This was done last in the original method so we need to keep this here for backward compatibility.
+    // The explanation is that get_fast_modinfo was sometimes called with the last parameter to true in order to purge the cache.
+    // But this is not working well, so removing the following line will lead to a unit test failure for
+    // info_test::test_is_user_visible as the course module visibility is not refreshed properly.
+    \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
+    return $modvisibility;
 }
 
 /**
@@ -2657,14 +2656,16 @@ function duplicate_module($course, $cm, ?int $sectionid = null, bool $changename
             set_coursemodule_name($newcm->id, $newname);
         }
 
-        $section = $DB->get_record('course_sections', ['id' => $sectionid ?? $cm->section, 'course' => $cm->course]);
+        $section = get_fast_modinfo($course)->get_section_info_by_id($sectionid ?? $cm->section);
+        $action = formatactions::cm($course);
         if (isset($sectionid)) {
-            moveto_module($newcm, $section);
+            $action->move_end_section($newcm->id, $section->id);
         } else {
             $modarray = explode(",", trim($section->sequence));
             $cmindex = array_search($cm->id, $modarray);
             if ($cmindex !== false && $cmindex < count($modarray) - 1) {
-                moveto_module($newcm, $section, $modarray[$cmindex + 1]);
+                $beforecmid = $modarray[$cmindex + 1];
+                $action->move_before($newcm->id, $beforecmid);
             }
         }
 
