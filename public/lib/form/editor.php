@@ -386,6 +386,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
             $link_options->env = 'editor';
             $link_options->itemid = $draftitemid;
 
+            // Subtitles, for multimedia.
             $args->accepted_types = array('.vtt');
             $subtitle_options = initialise_filepicker($args);
             $subtitle_options->context = $ctx;
