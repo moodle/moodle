@@ -833,11 +833,17 @@ function groups_list_to_menu($groups) {
  * Own groups are removed from allowed groups
  * @param array $allowedgroups All groups user is allowed to see
  * @param array $usergroups Groups user belongs to
+ * @param bool $splitparticipation If true, split each optgroup into "Participation" and "Non-participation" optgroups.
  * @return array
  */
-function groups_sort_menu_options($allowedgroups, $usergroups) {
-    $useroptions = array();
+function groups_sort_menu_options($allowedgroups, $usergroups, bool $splitparticipation = false) {
+    $nonparticipationgroups = [];
+    $useroptions = [];
     if ($usergroups) {
+        if ($splitparticipation) {
+            [$usergroups, $usernonparticipation] = groups_split_participation_groups($usergroups);
+            $nonparticipationgroups = array_merge($nonparticipationgroups, $usernonparticipation);
+        }
         $useroptions = groups_list_to_menu($usergroups);
 
         // Remove user groups from other groups list.
@@ -846,21 +852,54 @@ function groups_sort_menu_options($allowedgroups, $usergroups) {
         }
     }
 
-    $allowedoptions = array();
+    $allowedoptions = [];
     if ($allowedgroups) {
+        if ($splitparticipation) {
+            [$allowedgroups, $allowednonparticipation] = groups_split_participation_groups($allowedgroups);
+            $nonparticipationgroups = array_merge($nonparticipationgroups, $allowednonparticipation);
+        }
         $allowedoptions = groups_list_to_menu($allowedgroups);
     }
 
     if ($useroptions && $allowedoptions) {
-        return array(
-            1 => array(get_string('mygroups', 'group') => $useroptions),
-            2 => array(get_string('othergroups', 'group') => $allowedoptions)
-        );
+        $options = [
+            1 => [
+                get_string('mygroups', 'group') => $useroptions,
+            ],
+            2 => [
+                get_string('othergroups', 'group') => $allowedoptions,
+            ],
+        ];
     } else if ($useroptions) {
-        return $useroptions;
+        $options = $useroptions;
     } else {
-        return $allowedoptions;
+        $options = $allowedoptions;
     }
+    if ($nonparticipationgroups) {
+        $options[3] = [
+            get_string('nonparticipation', 'group') => groups_list_to_menu($nonparticipationgroups),
+        ];
+    }
+    return $options;
+}
+
+/**
+ * Split the list of groups into participation and non-participation groups.
+ *
+ * @param array $groups List of group records
+ * @return array[] Menu options for the records, split into "Participation" and "Non-participation" optgroups.
+ */
+function groups_split_participation_groups(array $groups): array {
+    $participation = [];
+    $nonparticipation = [];
+    foreach ($groups as $group) {
+        if ($group->participation) {
+            $participation[] = $group;
+        } else {
+            $nonparticipation[] = $group;
+        }
+    }
+    return [$participation, $nonparticipation];
 }
 
 /**
@@ -934,9 +973,20 @@ function groups_allgroups_course_menu($course, $urlroot, $update = false, $activ
  *   selecting this option does not prevent groups_get_activity_group from
  *   returning 0; it will still do that if the user has chosen 'all participants'
  *   in another activity, or not chosen anything.)
+ * @param bool $participationonly By default, this menu will only contain groups with the "participation"
+ *   flag set true. Setting this argument to false will return all groups that the user is allowed to see.
+ *   This should only be used for cases such as a teacher wanting to filter submissions by group, not for
+ *   students choosing a group to submit their work under, otherwise it negates the point of the participation
+ *   flag.
  * @return mixed void or string depending on $return param
  */
-function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallparticipants=false) {
+function groups_print_activity_menu(
+    $cm,
+    $urlroot,
+    $return = false,
+    $hideallparticipants = false,
+    bool $participationonly = true,
+) {
     global $USER, $OUTPUT;
 
     if ($urlroot instanceof moodle_url) {
@@ -966,22 +1016,23 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
 
     $usergroups = array();
     if ($groupmode == VISIBLEGROUPS or $aag) {
-        $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid, 'g.*', false, true); // Any group in grouping.
+        // Any group in grouping.
+        $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid, 'g.*', false, $participationonly);
         // Get user's own groups and put to the top.
-        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, $participationonly);
     } else {
         // Only assigned groups.
-        $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+        $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, $participationonly);
     }
 
-    $activegroup = groups_get_activity_group($cm, true, $allowedgroups);
+    $activegroup = groups_get_activity_group($cm, true, $allowedgroups, $participationonly);
 
     $groupsmenu = array();
     if ((!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) and !$hideallparticipants) {
         $groupsmenu[0] = get_string('allparticipants');
     }
 
-    $groupsmenu += groups_sort_menu_options($allowedgroups, $usergroups);
+    $groupsmenu += groups_sort_menu_options($allowedgroups, $usergroups, !$participationonly);
 
     if ($groupmode == VISIBLEGROUPS) {
         $grouplabel = get_string('groupsvisible');
@@ -1068,13 +1119,21 @@ function groups_get_course_group($course, $update=false, $allowedgroups=null) {
 /**
  * Returns group active in activity, changes the group by default if 'group' page param present
  *
- * @category group
  * @param stdClass|cm_info $cm course module object
  * @param bool $update change active group if group param submitted
  * @param array $allowedgroups list of groups user may access (INTERNAL, to be used only from groups_print_activity_menu())
+ * @param bool $participationonly By default, only allow groups with the "participation"
+ *   flag set true. Setting this argument to false will allow setting a non-participation group as the active group.
+ *   This should be used with care, and only for users who should be able to see non-participation groups within an activity.
  * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
+ * @category group
  */
-function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
+function groups_get_activity_group(
+    $cm,
+    $update = false,
+    $allowedgroups = null,
+    bool $participationonly = true,
+) {
     global $USER, $SESSION;
 
     if (!$groupmode = groups_get_activity_groupmode($cm)) {
@@ -1089,9 +1148,9 @@ function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
 
     if (!is_array($allowedgroups)) {
         if ($groupmode == VISIBLEGROUPS or $groupmode === 'aag') {
-            $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid, 'g.*', false, true);
+            $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid, 'g.*', false, $participationonly);
         } else {
-            $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+            $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, $participationonly);
         }
     }
 
