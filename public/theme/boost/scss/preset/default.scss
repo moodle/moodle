@@ -52,9 +52,6 @@ $theme-colors: map-merge((
 ), $theme-colors);
 // stylelint-enable
 
-// Fonts
-$font-size-base: 0.9375rem !default;
-
 // Links
 $link-decoration: none !default;
 $link-hover-decoration: underline !default;
