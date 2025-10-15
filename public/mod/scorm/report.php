@@ -31,6 +31,8 @@ define('SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO', 2);
 $id = required_param('id', PARAM_INT);// Course Module ID, or ...
 $download = optional_param('download', '', PARAM_RAW);
 $mode = optional_param('mode', '', PARAM_ALPHA); // Report mode.
+$action = optional_param('action', '', PARAM_ALPHA);
+$attemptids = optional_param_array('attemptid', [], PARAM_RAW);
 
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -55,6 +57,12 @@ require_login($course, false, $cm);
 $PAGE->set_pagelayout('report');
 
 require_capability('mod/scorm:viewreport', $contextmodule);
+
+if ($action == 'delete' && has_capability('mod/scorm:deleteresponses', $contextmodule) && confirm_sesskey()) {
+    if (scorm_delete_responses($attemptids, $scorm)) { // Delete responses.
+        redirect($PAGE->url, get_string('scormresponsedeleted', 'scorm'), null, \core\output\notification::NOTIFY_SUCCESS);
+    }
+}
 
 // Activate the secondary nav tab.
 navigation_node::override_active_url(new moodle_url('/mod/scorm/report.php', ['id' => $id]));
