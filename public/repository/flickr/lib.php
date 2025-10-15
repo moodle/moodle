@@ -236,10 +236,11 @@ class repository_flickr extends repository {
                 if (substr($p->title, strlen($p->title) - strlen($format)) != $format) {
                     $p->title .= $format;
                 }
+                $source = $this->flickr->get_photo_url($p->id);
 
                 // Perform a HEAD request to the image to obtain it's Content-Length.
                 $curl = new curl();
-                $curl->head($p->url_o);
+                $curl->head($source);
 
                 $ret['list'][] = [
                     'title' => $p->title,
@@ -248,7 +249,7 @@ class repository_flickr extends repository {
                     'thumbnail' => $p->url_sq,
                     'datecreated' => $p->dateupload,
                     'datemodified' => $p->lastupdate,
-                    'url' => $p->url_o,
+                    'url' => $source,
                     'author' => $p->ownername,
                     'size' => (int)($curl->get_info()['download_content_length']),
                     'image_width' => $p->width_o,
@@ -298,14 +299,26 @@ class repository_flickr extends repository {
         return $this->flickr->get_photo_url($photoid);
     }
 
-    /**
-     *
-     * @param string $photoid
-     * @param string $file
-     * @return string
-     */
+    #[\Override]
     public function get_file($photoid, $file = '') {
-        return parent::get_file($this->flickr->get_photo_url($photoid), $file);
+        global $CFG;
+
+        $url = $this->flickr->get_photo_url($photoid);
+
+        $path = $this->prepare_file($file);
+        $c = new curl();
+        $c->setopt([
+            'CURLOPT_USERAGENT' => flickr_client::user_agent(),
+        ]);
+
+        $result = $c->download_one($url, null, [
+            'filepath' => $path,
+            'timeout' => $CFG->repositorygetfiletimeout,
+        ]);
+        if ($result !== true) {
+            throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
+        }
+        return ['path' => $path, 'url' => $url];
     }
 
     /**
