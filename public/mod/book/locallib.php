@@ -352,9 +352,6 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
             $titleunescaped = trim(format_string($ch->title, true, array('context' => $context, 'escape' => false)));
             if (!$ch->hidden || ($ch->hidden && $viewhidden)) {
                 if (!$ch->subchapter) {
-                    $nch++;
-                    $ns = 0;
-
                     if ($first) {
                         $toc .= html_writer::start_tag('li');
                     } else {
@@ -363,12 +360,20 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                         $toc .= html_writer::start_tag('li');
                     }
 
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch. $title";
+                    // Don't show numbering for hidden chapters, so that numbering is consistent with what students see
+                    // and the edit mode.
+                    if (!$ch->hidden) {
+                        $nch++;
+                        $ns = 0;
+                        if ($book->numbering == BOOK_NUM_NUMBERS) {
+                            $title = "$nch. $title";
+                        }
+                    } else {
+                        if ($book->numbering == BOOK_NUM_NUMBERS) {
+                            $title = "x. $title";
+                        }
                     }
                 } else {
-                    $ns++;
-
                     if ($first) {
                         $toc .= html_writer::start_tag('li');
                         $toc .= html_writer::start_tag('ul');
@@ -377,8 +382,21 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                         $toc .= html_writer::start_tag('li');
                     }
 
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch.$ns. $title";
+                    // Don't show numbering for hidden subchapters, so that numbering is consistent with what students see
+                    // and the edit mode.
+                    if (!$ch->hidden) {
+                        $ns++;
+                        if ($book->numbering == BOOK_NUM_NUMBERS) {
+                            $title = "$nch.$ns. $title";
+                        }
+                    } else {
+                        if ($book->numbering == BOOK_NUM_NUMBERS) {
+                            if (empty($chapters[$ch->parent]->hidden)) {
+                                $title = "$nch.x. $title";
+                            } else {
+                                $title = "x.x. $title";
+                            }
+                        }
                     }
                 }
 
