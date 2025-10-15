@@ -146,7 +146,7 @@ class grading_actionmenu implements templatable, renderable {
         $data['initialselector'] = $initialselector->export_for_template($output);
 
         if (groups_get_activity_groupmode($cm, $course)) {
-            $gs = new group_selector($PAGE->context);
+            $gs = new group_selector($PAGE->context, false);
             $data['groupselector'] = $gs->export_for_template($output);
         }
 

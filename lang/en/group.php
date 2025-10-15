@@ -178,6 +178,7 @@ $string['manageactions'] = 'Manage';
 $string['messagingdisabled'] = 'Successfully disabled messaging in {$a} group(s)';
 $string['messagingenabled'] = 'Successfully enabled messaging in {$a} group(s)';
 $string['mygroups'] = 'My groups';
+$string['nonparticipation'] = 'Non-participation';
 $string['othergroups'] = 'Other groups';
 $string['overview'] = 'Overview';
 $string['participation'] = 'Show group in dropdown menu for activities in group mode';
