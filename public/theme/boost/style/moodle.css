@@ -30991,6 +30991,9 @@ table.calendartable caption {
 .single-section-page .header-action {
   display: inline-block;
 }
+.single-section-page .page-context-header {
+  overflow: visible;
+}
 
 /* Default activity completion page */
 .defaultactivitycompletion-item a {

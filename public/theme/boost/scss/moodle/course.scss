@@ -667,8 +667,14 @@ $divider-hover-color: $primary !default;
     }
 }
 
-.single-section-page .header-action {
-    display: inline-block;
+.single-section-page {
+    .header-action {
+        display: inline-block;
+    }
+    // Revert page header styles to avoid conflict with inplace editable.
+    .page-context-header {
+        overflow: visible;
+    }
 }
 
 /* Default activity completion page */
