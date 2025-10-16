@@ -33,8 +33,7 @@ Feature: The module menu replaces the delegated section menu
     And I should not see "Highlight"
     And I should see "Edit settings"
     And I should not see "Move"
-    # Duplicate is not implemented yet.
-    And I should not see "Duplicate"
+    And I should see "Duplicate"
     And I should see "Hide"
     And I should see "Delete"
     And I should see "Permalink"
@@ -49,8 +48,7 @@ Feature: The module menu replaces the delegated section menu
     And I should see "View"
     And I should see "Edit settings"
     And I should see "Move"
-    # Duplicate is not implemented yet.
-    And I should not see "Duplicate"
+    And I should see "Duplicate"
     And I should see "Hide"
     And I should see "Delete"
 
@@ -65,8 +63,7 @@ Feature: The module menu replaces the delegated section menu
     And I should see "View"
     And I should see "Edit settings"
     And I should see "Move"
-    # Duplicate is not implemented yet.
-    And I should not see "Duplicate"
+    And I should see "Duplicate"
     And I should see "Hide"
     And I should see "Delete"
     And I should see "Permalink"
@@ -237,3 +234,16 @@ Feature: The module menu replaces the delegated section menu
     And I am on the "C1 > Subsection1" "course > section" page
     And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And "Move" "link" should not exist in the "[data-region='header-actions-container']" "css_element"
+
+  @javascript
+  Scenario: Duplicate a subsection and its content
+    Given the following "activities" exist:
+      | activity | name            | intro                       | course | idnumber | section     |
+      | assign   | Activity sample | Test assignment description | C1     | sample   | 3 |
+    Given I am on "Course 1" course homepage with editing mode on
+    When I open section "Subsection1" edit menu
+    And I choose "Duplicate" in the open action menu
+    # The duplicated section has section number "Subsection1 (copy)".
+    Then I should see "Subsection1 (copy)" in the "Section 1" "section"
+    And I should see "Activity sample" in the "Subsection1" "section"
+    And I should see "Activity sample" in the "Subsection1 (copy)" "section"
