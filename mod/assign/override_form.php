@@ -40,7 +40,7 @@ class assign_override_form extends moodleform {
     /** @var object course module object. */
     protected $cm;
 
-    /** @var object the assign settings object. */
+    /** @var assign the assign settings object. */
     protected $assign;
 
     /** @var context the assign context. */
@@ -229,8 +229,10 @@ class assign_override_form extends moodleform {
             }
         }
 
+        // Determine users from which we will calculate maximum extension due date (those from current group plus selected user).
         $users = $DB->get_fieldset_select('groups_members', 'userid', 'groupid = ?', array($this->groupid));
-        array_push($users, $this->userid);
+        array_push($users, $userid);
+
         $extensionmax = 0;
         foreach ($users as $value) {
             $extension = $DB->get_record('assign_user_flags', array('assignment' => $assigninstance->id,
