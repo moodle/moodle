@@ -34,8 +34,8 @@ class update_room_membership_task extends adhoc_task {
         // Call the communication api to action the operation.
         $communication = processor::load_by_id($data->id);
 
-        if ($communication === null) {
-            mtrace("Skipping room creation because the instance does not exist");
+        if ($communication === null || !$communication->supports_user_features()) {
+            mtrace("Skipping room membership because the instance does not exist or does not support user features");
             return;
         }
 
