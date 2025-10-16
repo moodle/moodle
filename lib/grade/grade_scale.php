@@ -312,10 +312,10 @@ class grade_scale extends grade_object {
     /**
      * Static function returning all global scales
      *
-     * @return object
+     * @return grade_scale[]|false
      */
     public static function fetch_all_global() {
-        return grade_scale::fetch_all(array('courseid'=>0));
+        return grade_scale::fetch_all(['courseid' => 0]);
     }
 
     /**
