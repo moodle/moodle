@@ -63,7 +63,8 @@ class cohorts extends system_report {
             "{$entitymainalias}.component, {$entitymainalias}.name");
 
         $this->set_checkbox_toggleall(static function(stdClass $cohort): ?array {
-            if (!has_capability('moodle/cohort:manage', context::instance_by_id($cohort->contextid))) {
+            if (!empty($cohort->component) ||
+                    !has_capability('moodle/cohort:manage', context::instance_by_id($cohort->contextid))) {
                 return null;
             }
 
