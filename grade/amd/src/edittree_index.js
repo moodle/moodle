@@ -171,7 +171,9 @@ const toggleCategory = (toggleElement, courseId, userId, storeCollapsedState) =>
         toggleElement.dataset.target = `[data-hidden-by='${category}']`;
         if (maxGradeCell) {
             const relatedCategoryAggregationRow = gradebookSetup.querySelector(`[data-aggregationforcategory='${category}']`);
-            maxGradeCell.innerHTML = relatedCategoryAggregationRow.querySelector('.column-range').innerHTML;
+            if (relatedCategoryAggregationRow) {
+                maxGradeCell.innerHTML = relatedCategoryAggregationRow.querySelector('.column-range').innerHTML;
+            }
         }
     } else {
         toggleElement.setAttribute('aria-expanded', 'true');
