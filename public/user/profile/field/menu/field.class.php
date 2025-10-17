@@ -134,7 +134,7 @@ class profile_field_menu extends profile_field_base {
         }
         if ($this->is_locked() and !has_capability('moodle/user:update', context_system::instance())) {
             $mform->hardFreeze($this->inputname);
-            $mform->setConstant($this->inputname, format_string($this->datakey));
+            $mform->setConstant($this->inputname, $this->datakey);
         }
     }
     /**
