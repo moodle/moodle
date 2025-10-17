@@ -1,0 +1,5 @@
+issueNumber: MDL-77894
+notes:
+  core:
+    - message: Appending an exclamation mark to template names ignores theme overrides
+      type: improved
