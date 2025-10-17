@@ -44,10 +44,9 @@ class core_tag_renderer extends plugin_renderer_base {
         $rv = $this->output->heading(get_string('searchtags', 'tag'), 2);
 
         $searchbox = $this->search_form($query, $tagcollid);
-        $rv .= html_writer::div($searchbox, '', array('id' => 'tag-search-box'));
+        $rv .= html_writer::div($searchbox, 'w-75 m-auto pt-3', ['id' => 'tag-search-box']);
 
         $tagcloud = core_tag_collection::get_tag_cloud($tagcollid, false, 150, 'name', $query);
-        $searchresults = '';
         if ($tagcloud->get_count()) {
             $searchresults = $this->output->render_from_template('core_tag/tagcloud',
                     $tagcloud->export_for_template($this->output));
@@ -164,15 +163,15 @@ class core_tag_renderer extends plugin_renderer_base {
      */
     protected function search_form($query = '', $tagcollid = 0) {
         $searchurl = new moodle_url('/tag/search.php');
-        $output = '<form action="' . $searchurl . '">';
+        $output = '<form action="' . $searchurl . '" class="d-grid gap-2 d-sm-flex">';
         $output .= '<label class="accesshide" for="searchform_query">' . get_string('searchtags', 'tag') . '</label>';
-        $output .= '<input id="searchform_query" name="query" type="text" size="40" value="' . s($query) . '" />';
+        $output .= '<input id="searchform_query" name="query" type="text" class="form-control" value="' . s($query) . '" />';
         $tagcolls = core_tag_collection::get_collections_menu(false, true, get_string('inalltagcoll', 'tag'));
         if (count($tagcolls) > 1) {
             $output .= '<label class="accesshide" for="searchform_tc">' . get_string('selectcoll', 'tag') . '</label>';
             $output .= html_writer::select($tagcolls, 'tc', $tagcollid, null, array('id' => 'searchform_tc'));
         }
-        $output .= '<input name="go" type="submit" size="40" value="' . s(get_string('search', 'tag')) . '" />';
+        $output .= '<input name="go" type="submit" class="btn btn-primary" value="' . s(get_string('search', 'tag')) . '" />';
         $output .= '</form>';
 
         return $output;
