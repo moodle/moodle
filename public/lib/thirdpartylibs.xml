@@ -53,7 +53,7 @@
     <location>evalmath</location>
     <name>EvalMath</name>
     <description>Class to safely evaluate math expressions.</description>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <license>BSD</license>
     <repository>https://github.com/dbojdo/eval-math</repository>
     <copyrights>
