@@ -200,8 +200,9 @@ class tool_task_renderer extends plugin_renderer_base {
             });
         }
 
-        return html_writer::table($table)
-            . html_writer::div(
+        $output = html_writer::table($table);
+        if ($canruntasks) {
+            $output .= html_writer::div(
                 html_writer::link(
                     new moodle_url(
                         $adhocrunurl,
@@ -210,7 +211,10 @@ class tool_task_renderer extends plugin_renderer_base {
                     get_string('runclassname', 'tool_task')
                 ),
                 'task-runnow'
-            )
+            );
+        }
+
+        return $output
             . html_writer::div(
                 html_writer::link(
                     new moodle_url(
