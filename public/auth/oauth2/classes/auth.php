@@ -34,9 +34,11 @@ use stdClass;
 use core\oauth2\issuer;
 use core\oauth2\client;
 
+global $CFG;
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
+require_once($CFG->dirroot.'/login/lib.php');
 
 /**
  * Plugin for oauth2 authentication.
@@ -175,12 +177,12 @@ class auth extends \auth_plugin_base {
     public function loginpage_idp_list($wantsurl) {
         $providers = \core\oauth2\api::get_all_issuers(true);
         $result = [];
-        if (empty($wantsurl)) {
-            $wantsurl = '/';
-        }
         foreach ($providers as $idp) {
             if ($idp->is_available_for_login()) {
-                $params = ['id' => $idp->get('id'), 'wantsurl' => $wantsurl, 'sesskey' => sesskey()];
+                $params = ['id' => $idp->get('id'), 'sesskey' => sesskey()];
+                if (!empty($wantsurl)) {
+                    $params['wantsurl'] = $wantsurl;
+                }
                 $url = new moodle_url('/auth/oauth2/login.php', $params);
                 $icon = $idp->get('image');
                 $result[] = ['url' => $url, 'iconurl' => $icon, 'name' => $idp->get_display_name()];
@@ -620,7 +622,11 @@ class auth extends \auth_plugin_base {
 
         complete_user_login($user, $this->get_extrauserinfo());
         $this->update_picture($user);
-        redirect($redirecturl);
+
+        if (empty($redirecturl)) {
+            $redirecturl = core_login_get_return_url();
+        }
+        redirect(new moodle_url($redirecturl));
     }
 
     /**
