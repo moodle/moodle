@@ -5895,7 +5895,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
                 $attachment = $CFG->dataroot . '/' . $attachment;
             }
 
-            $mail->addAttachment($attachment, $attachname, 'base64', $mimetype);
+            if ($mimetype == 'text/calendar') {
+                $icalcontent = file_get_contents($attachment);
+                $mail->Ical = $icalcontent;
+            } else {
+                $mail->addAttachment($attachment, $attachname, 'base64', $mimetype);
+            }
         }
     }
 

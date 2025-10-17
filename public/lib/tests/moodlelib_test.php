@@ -3573,6 +3573,53 @@ EOF;
     }
 
     /**
+     * Test sending calendar (ICS) file attachments with email_to_user
+     *
+     * @covers ::email_to_user
+     */
+    public function test_email_to_user_calendar_attachment(): void {
+        global $CFG;
+
+        // Create a test calendar file in temp directory.
+        $temp = make_request_directory();
+        $filepath = $temp . '/test_calendar.ics';
+        $icalcontent = "BEGIN:VCALENDAR\r\n" .
+                       "VERSION:2.0\r\n" .
+                       "METHOD:REQUEST\r\n" .
+                       "BEGIN:VEVENT\r\n" .
+                       "SUMMARY:Test Event\r\n" .
+                       "DTSTART:20250704T140000\r\n" .
+                       "DTEND:20250704T150000\r\n" .
+                       "END:VEVENT\r\n" .
+                       "END:VCALENDAR";
+        file_put_contents($filepath, $icalcontent);
+
+        $user = \core_user::get_support_user();
+        $message = 'Test calendar attachment';
+
+        // Create sink to catch all sent e-mails.
+        $sink = $this->redirectEmails();
+
+        $filename = basename($filepath);
+        email_to_user($user, $user, $message, $message, $message, $filepath, $filename);
+
+        $messages = $sink->get_messages();
+        $sink->close();
+
+        $this->assertCount(1, $messages);
+
+        // Verify calendar content in message body.
+        $messagebody = reset($messages)->body;
+        // Check that it's not attached as a regular attachment.
+        $this->assertStringNotContainsString(
+            'Content-Disposition: attachment; filename=' . $filename,
+            $messagebody
+        );
+        // Check that it's included as iCal content.
+        $this->assertStringContainsString('Content-Type: text/calendar; method=REQUEST', $messagebody);
+    }
+
+    /**
      * Test setnew_password_and_mail.
      */
     public function test_setnew_password_and_mail(): void {
