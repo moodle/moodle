@@ -273,7 +273,7 @@ class dndupload_ajax_processor {
 
         if (!$instanceid) {
             // Something has gone wrong - undo everything we can.
-            course_delete_module($this->cm->id);
+            \core_courseformat\formatactions::cm($this->course->id)->delete($this->cm->id);
             throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
 
@@ -297,7 +297,7 @@ class dndupload_ajax_processor {
         $info = get_fast_modinfo($this->course);
         if (!isset($info->cms[$this->cm->id])) {
             // The course module has not been properly created in the course - undo everything.
-            course_delete_module($this->cm->id);
+            \core_courseformat\formatactions::cm($this->course->id)->delete($this->cm->id);
             throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
         $mod = $info->get_cm($this->cm->id);

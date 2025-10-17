@@ -1323,7 +1323,7 @@ final class engine_test extends \advanced_testcase {
         $this->assert_raw_solr_query_result('content:xyzzy', ['C1', 'C1P1', 'C1P2']);
 
         // Finally let's delete using Moodle functions to check that works. Single context first.
-        course_delete_module($course1page1->cmid);
+        \core_courseformat\formatactions::cm($course1->id)->delete($course1page1->cmid);
         $this->assert_raw_solr_query_result('content:xyzzy', ['C1', 'C1P2']);
         delete_course($course1, false);
         $this->assert_raw_solr_query_result('content:xyzzy', []);

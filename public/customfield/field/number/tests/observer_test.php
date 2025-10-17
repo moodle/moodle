@@ -192,7 +192,7 @@ final class observer_test extends \advanced_testcase {
         $this->assertEquals([$course1->id => 3], $alldata);
 
         // Delete one module.
-        course_delete_module($assign1->cmid);
+        \core_courseformat\formatactions::cm($course1->id)->delete($assign1->cmid);
 
         // Execute scheduled ad-hoc tasks and it will update the data for the course.
         $this->ensure_number_adhoc_task_is_scheduled(true);
@@ -239,7 +239,7 @@ final class observer_test extends \advanced_testcase {
         $this->ensure_number_adhoc_task_is_scheduled(false);
 
         // Delete one module.
-        course_delete_module($assign1->cmid);
+        \core_courseformat\formatactions::cm($course1->id)->delete($assign1->cmid);
         $this->ensure_number_adhoc_task_is_scheduled(false);
     }
 }

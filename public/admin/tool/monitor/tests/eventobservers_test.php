@@ -631,7 +631,7 @@ final class eventobservers_test extends \advanced_testcase {
         $this->assertCount(20, $totalsubs);
 
         // Let us delete the user now.
-        course_delete_module($assign->cmid);
+        \core_courseformat\formatactions::cm($course1->id)->delete($assign->cmid);
 
         // Verify data after course delete.
         $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');

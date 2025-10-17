@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class handling course module deletion.
  *
- * This task supports an array of course module object as custom_data, and calls course_delete_module() in synchronous deletion
+ * This task supports an array of course module object as custom_data, and calls cmactions::delete() in synchronous deletion
  * mode for each of them.
  * This will:
  * 1. call any 'mod_xxx_pre_course_module_deleted' functions (e.g. Recycle bin)
@@ -65,7 +65,8 @@ class course_delete_modules extends \core\task\adhoc_task {
         $cmsfailed = [];
         foreach ($cms as $key => $cm) {
             try {
-                course_delete_module($cm->id);
+                $coursecontext = \context_module::instance($cm->id)->get_course_context();
+                \core_courseformat\formatactions::cm($coursecontext->instanceid)->delete($cm->id);
             } catch (\Exception $e) {
                 // Keep the information instead of throw an exception and continue with next cms.
                 $exceptions[] = ("The course module {$cm->id} could not be deleted. "

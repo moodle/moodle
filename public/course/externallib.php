@@ -2438,7 +2438,7 @@ class core_course_external extends external_api {
             require_capability('moodle/course:manageactivities', $modcontext);
 
             // Delete the module.
-            course_delete_module($cm->id);
+            \core_courseformat\formatactions::cm($cm->course)->delete($cm->id);
         }
     }
 
@@ -3764,7 +3764,7 @@ class core_course_external extends external_api {
                 break;
             case 'delete':
                 require_capability('moodle/course:manageactivities', $modcontext);
-                course_delete_module($cm->id, true);
+                \core_courseformat\formatactions::cm($course->id)->delete($cm->id, true);
                 return '';
             default:
                 throw new coding_exception('Unrecognised action');

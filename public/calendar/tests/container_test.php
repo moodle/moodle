@@ -483,7 +483,7 @@ final class container_test extends \advanced_testcase {
             $this->create_event(['modulename' => $modname, 'instance' => $module->id, 'courseid' => $course->id]);
 
             // Delete module and make sure all events are deleted.
-            course_delete_module($module->cmid);
+            \core_courseformat\formatactions::cm($course->id)->delete($module->cmid);
             $this->assertEmpty($DB->get_record('event', ['modulename' => $modname, 'instance' => $module->id]));
         }
     }

@@ -107,7 +107,7 @@ final class hooks_test extends \advanced_testcase {
         $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id,
             'userid' => $u1->id]);
 
-        course_delete_module($assign1b->cmid);
+        \core_courseformat\formatactions::cm($c1->id)->delete($assign1b->cmid);
 
         $this->assertEquals(2, course_competency::count_records(['courseid' => $c1->id]));
         $this->assertEquals(1, course_module_competency::count_records(['cmid' => $assign1a->cmid]));

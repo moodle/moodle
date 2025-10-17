@@ -393,7 +393,7 @@ final class gradelib_test extends \advanced_testcase {
         $g1->set_calculation('=[[a1]] + [[q1]]');
 
         // Now delete one of the activities to break the calculation.
-        course_delete_module($assign->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($assign->cmid);
 
         // Course grade item has needsupdate.
         $this->assertEquals(1, \grade_item::fetch_course_item($course->id)->needsupdate);

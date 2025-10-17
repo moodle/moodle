@@ -55,7 +55,7 @@ final class h5p_clean_orphaned_records_task_test extends advanced_testcase {
             'mod_h5pactivity', 'package');
 
         // Delete activity.
-        course_delete_module($activity->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($activity->cmid);
 
         $orphanedh5psql = "SELECT h5p.id, h5p.pathnamehash
                              FROM {h5p} h5p
