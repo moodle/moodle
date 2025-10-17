@@ -61,6 +61,7 @@ if ($PAGE->user_allowed_editing()) {
 }
 $PAGE->set_button($buttons);
 
+/** @var core_tag_renderer $tagrenderer */
 $tagrenderer = $PAGE->get_renderer('core', 'tag');
 $pagecontents = $tagrenderer->tag_search_page($query, $tagcollid);
 
