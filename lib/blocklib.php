@@ -2283,8 +2283,8 @@ function matching_page_type_patterns_from_pattern($pattern) {
  * that might be used by this block.
  *
  * @param string $pagetype for example 'course-view-weeks' or 'mod-quiz-view'.
- * @param stdClass $parentcontext Block's parent context
- * @param stdClass $currentcontext Current context of block
+ * @param context|null $parentcontext Block's parent context
+ * @param context|null $currentcontext Current context of block
  * @return array an array of all the page type patterns that might match this page type.
  */
 function generate_page_type_patterns($pagetype, $parentcontext = null, $currentcontext = null) {
