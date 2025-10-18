@@ -72,6 +72,12 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
 
+        // The current user response is returned in a dedicated structure.
+        $this->assertArrayHasKey('userresponse', $results);
+        $this->assertCount(1, $results['userresponse']);
+        $this->assertEquals($myanswer, $results['userresponse'][0]['optionid']);
+        $this->assertNotEmpty($results['userresponse'][0]['text']);
+
         // Create an array with optionID as Key.
         $resultsarr = array();
         foreach ($results['options'] as $option) {
@@ -87,6 +93,11 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $results = mod_choice_external::get_choice_results($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
         $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        // The current user has not answered yet, so userresponse is empty.
+        $this->assertArrayHasKey('userresponse', $results);
+        $this->assertCount(0, $results['userresponse']);
+
         // We do not retrieve any response!
         foreach ($results['options'] as $option) {
             $this->assertCount(0, $option['userresponses']);
@@ -199,6 +210,12 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $results = mod_choice_external::get_choice_results($nogroupschoice->id, $group1->id);
         $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
 
+        // The current user response is returned regardless of the groupid parameter.
+        $this->assertArrayHasKey('userresponse', $results);
+        $this->assertCount(1, $results['userresponse']);
+        $this->assertEquals($nogroupsoptions[1], $results['userresponse'][0]['optionid']);
+        $this->assertNotEmpty($results['userresponse'][0]['text']);
+
         $resultsarr = [];
         foreach ($results['options'] as $option) {
             $resultsarr[$option['id']] = $option['userresponses'];
@@ -265,6 +282,12 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $results = mod_choice_external::get_choice_results($visiblechoice->id, $group1->id);
         $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
 
+        // The current user response is returned for visible groups.
+        $this->assertArrayHasKey('userresponse', $results);
+        $this->assertCount(1, $results['userresponse']);
+        $this->assertEquals($visibleoptions[0], $results['userresponse'][0]['optionid']);
+        $this->assertNotEmpty($results['userresponse'][0]['text']);
+
         $resultsarr = [];
         foreach ($results['options'] as $option) {
             $resultsarr[$option['id']] = $option['userresponses'];
@@ -296,6 +319,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->setUser($studentnogroup);
         $results = mod_choice_external::get_choice_results($visiblechoice->id, 0);
         $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+
+        // The user with no groups has not answered, so userresponse is empty.
+        $this->assertArrayHasKey('userresponse', $results);
+        $this->assertCount(0, $results['userresponse']);
 
         $resultsarr = [];
         foreach ($results['options'] as $option) {

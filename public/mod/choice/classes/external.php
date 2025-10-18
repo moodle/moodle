@@ -152,10 +152,20 @@ class mod_choice_external extends external_api {
                               );
         }
 
+        $userresponse = [];
+        $current = choice_get_my_response($choice);
+        foreach ($current as $answer) {
+            $userresponse[] = [
+                'optionid' => $answer->optionid,
+                'text' => \core_external\util::format_string(choice_get_option_text($choice, $answer->optionid), $context->id),
+            ];
+        }
+
         $warnings = array();
         return array(
             'options' => $options,
-            'warnings' => $warnings
+            'warnings' => $warnings,
+            'userresponse' => $userresponse,
         );
     }
 
@@ -191,6 +201,15 @@ class mod_choice_external extends external_api {
                     )
                 ),
                 'warnings' => new external_warnings(),
+                'userresponse' => new external_multiple_structure(
+                    new external_single_structure(
+                        [
+                            'optionid' => new external_value(PARAM_INT, 'option id'),
+                            'text' => new external_value(PARAM_RAW, 'text of the choice option'),
+                        ],
+                        'User selected options',
+                    ),
+                ),
             )
         );
     }
