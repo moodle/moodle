@@ -720,13 +720,32 @@ abstract class base {
     }
 
     /**
-     * Returns the section info for the current single section.
+     * Returns the section info for the current section page.
      *
-     * If the course format is not a single section format, this will return null.
+     * If displaying the course main page, this will return null.
+     *
+     * @deprecated since Moodle 5.3
+     * @todo MDL-88498 Final deprecation in Moodle 7.0
+     * @return section_info|null
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'base::get_page_section',
+        since: '5.3',
+        mdl: 'MDL-86284',
+    )]
+    public function get_return_section(): section_info|null {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->get_page_section();
+    }
+
+    /**
+     * Returns the section info for the current section page.
+     *
+     * If displaying the course main page, this will return null.
      *
      * @return section_info|null
      */
-    public function get_return_section(): section_info|null {
+    public function get_page_section(): section_info|null {
         if ($this->singlesectionid === null) {
             return null;
         }

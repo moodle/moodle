@@ -71,7 +71,6 @@ class view_banks implements \templatable, \renderable {
                 'course' => $this->course->id,
                 'section' => 0,
                 'return' => 0,
-                'sr' => 0,
                 'beforemod' => 0,
             ]),
             get_string('add', 'core'),

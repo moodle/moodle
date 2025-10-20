@@ -73,7 +73,7 @@ export default {
         search: getDataSelector('action', 'search'),
     },
     elements: {
-        section: '.section',
+        section: '.course-section',
         sectionmodchooser: 'button.section-modchooser-link',
         tab: 'a[data-bs-toggle="tab"]',
         activetab: 'a[data-bs-toggle="tab"][aria-selected="true"]',
