@@ -52,6 +52,8 @@ export const init = reportId => {
         'newschedule',
         'schedulecreated',
         'scheduledeleted',
+        'scheduledisabled',
+        'scheduleenabled',
         'schedulesent',
         'scheduleupdated',
         'sendschedule',
@@ -112,6 +114,13 @@ export const init = reportId => {
                 .then(toggleLabel => {
                     const labelContainer = scheduleToggle.parentElement.querySelector(`label[for="${scheduleToggle.id}"] > span`);
                     labelContainer.innerHTML = toggleLabel;
+
+                    // Now fetch the toast string based on new state.
+                    const toastKey = scheduleStateToggle ? 'scheduleenabled' : 'scheduledisabled';
+                    return getString(toastKey, 'core_reportbuilder');
+                })
+                .then(toastMessage => {
+                    addToast(toastMessage);
                     return pendingPromise.resolve();
                 })
                 .catch(Notification.exception);
