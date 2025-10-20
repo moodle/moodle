@@ -701,16 +701,36 @@ $divider-hover-color: $primary !default;
 
 /* Move activity and Move section modals */
 
-.move-activity-tree {
+.move-activity-tree,
+.move-section-tree {
     .collapse-list-item {
+        position: relative;
+        border: 2px solid transparent;
         @include border-radius();
 
         &:hover,
         &:focus {
             background-color: shift-color($primary, $alert-bg-scale);
+            border-color: transparent;
 
             a {
                 color: shift-color($primary, $alert-color-scale);
+            }
+
+            // Add a bottom border to indicate the move target.
+            &:has(> .collapse-list-link.collapsed) {
+                border: 2px $border-style $primary;
+                &::after {
+                    content: none;
+                }
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                left: .5rem;
+                right: .5rem;
+                bottom: -3px; // 2px for the border + 1px space.
+                border-bottom: 2px $border-style $primary;
             }
         }
 
