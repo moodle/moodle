@@ -107,14 +107,6 @@ class overview extends \core_courseformat\activityoverviewbase {
     }
 
     #[\Override]
-    public function get_completion_overview(): ?overviewitem {
-        if (has_capability('mod/choice:readresponses', $this->cm->context)) {
-            return null; // If the user can read responses, we don't show the completion status as it is for the student only.
-        }
-        return parent::get_completion_overview();
-    }
-
-    #[\Override]
     public function get_extra_overview_items(): array {
         return [
             'studentwhoresponded' => $this->get_extra_students_who_responded(),
