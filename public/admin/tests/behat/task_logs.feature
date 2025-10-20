@@ -48,3 +48,23 @@ Feature: View task logs report and use its filters
       | operator     | shouldornotsee |
       | Less than    | should not see |
       | Greater than | should see     |
+
+  @javascript
+  Scenario Outline: Verify task logs report includes and applies <filtername> filter
+    Given I log in as "admin"
+    And I change window size to "large"
+    And I navigate to "Server > Tasks > Task logs" in site administration
+    When I click on "Filters" "button"
+    Then I should see "<filtername>" in the "[data-region='report-filters']" "css_element"
+
+    # Verify the filter can be applied
+    And I set the following fields in the "<filtername>" "core_reportbuilder > Filter" to these values:
+      | <filtername> operator | Greater than |
+      | <filtername> value    | 0            |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "Filters applied"
+    And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
+    Examples:
+      | filtername        |
+      | Database reads    |
+      | Database writes   |
