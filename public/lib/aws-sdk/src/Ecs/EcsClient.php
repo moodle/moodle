@@ -94,6 +94,8 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise runTaskAsync(array $args = [])
  * @method \Aws\Result startTask(array $args = [])
  * @method \GuzzleHttp\Promise\Promise startTaskAsync(array $args = [])
+ * @method \Aws\Result stopServiceDeployment(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise stopServiceDeploymentAsync(array $args = [])
  * @method \Aws\Result stopTask(array $args = [])
  * @method \GuzzleHttp\Promise\Promise stopTaskAsync(array $args = [])
  * @method \Aws\Result submitAttachmentStateChanges(array $args = [])

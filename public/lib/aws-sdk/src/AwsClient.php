@@ -272,7 +272,7 @@ class AwsClient implements AwsClientInterface
         if ($this->isUseEndpointV2()) {
             $this->addEndpointV2Middleware();
         }
-        $this->addAuthSelectionMiddleware();
+        $this->addAuthSelectionMiddleware($config['config']);
 
         if (!is_null($this->api->getMetadata('awsQueryCompatible'))) {
             $this->addQueryCompatibleInputMiddleware($this->api);
@@ -300,6 +300,12 @@ class AwsClient implements AwsClientInterface
     public function getCredentials()
     {
         $fn = $this->credentialProvider;
+        return $fn();
+    }
+
+    public function getToken()
+    {
+        $fn = $this->tokenProvider;
         return $fn();
     }
 
@@ -540,7 +546,7 @@ class AwsClient implements AwsClientInterface
             Middleware::mapRequest(function (RequestInterface $r) {
                 return $r->withHeader(
                     'x-amzn-query-mode',
-                    true
+                    "true"
                 );
             }),
             'x-amzn-query-mode-header'
@@ -589,14 +595,15 @@ class AwsClient implements AwsClientInterface
         );
     }
 
-    private function addAuthSelectionMiddleware()
+    private function addAuthSelectionMiddleware(array $args)
     {
         $list = $this->getHandlerList();
 
         $list->prependBuild(
             AuthSelectionMiddleware::wrap(
                 $this->authSchemeResolver,
-                $this->getApi()
+                $this->getApi(),
+                $args['auth_scheme_preference'] ?? null
             ),
             'auth-selection'
         );

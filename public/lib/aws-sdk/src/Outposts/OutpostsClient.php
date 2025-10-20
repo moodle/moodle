@@ -29,6 +29,8 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise getOrderAsync(array $args = [])
  * @method \Aws\Result getOutpost(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getOutpostAsync(array $args = [])
+ * @method \Aws\Result getOutpostBillingInformation(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getOutpostBillingInformationAsync(array $args = [])
  * @method \Aws\Result getOutpostInstanceTypes(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getOutpostInstanceTypesAsync(array $args = [])
  * @method \Aws\Result getOutpostSupportedInstanceTypes(array $args = [])

@@ -13,6 +13,8 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise deleteInvoiceUnitAsync(array $args = [])
  * @method \Aws\Result getInvoiceUnit(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getInvoiceUnitAsync(array $args = [])
+ * @method \Aws\Result listInvoiceSummaries(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listInvoiceSummariesAsync(array $args = [])
  * @method \Aws\Result listInvoiceUnits(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listInvoiceUnitsAsync(array $args = [])
  * @method \Aws\Result listTagsForResource(array $args = [])

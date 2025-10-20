@@ -235,5 +235,15 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise updateNodeStateAsync(array $args = [])
  * @method \Aws\Result listVersions(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listVersionsAsync(array $args = [])
+ * @method \Aws\Result createSdiSource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise createSdiSourceAsync(array $args = [])
+ * @method \Aws\Result deleteSdiSource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise deleteSdiSourceAsync(array $args = [])
+ * @method \Aws\Result describeSdiSource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise describeSdiSourceAsync(array $args = [])
+ * @method \Aws\Result listSdiSources(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listSdiSourcesAsync(array $args = [])
+ * @method \Aws\Result updateSdiSource(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise updateSdiSourceAsync(array $args = [])
  */
 class MediaLiveClient extends AwsClient {}

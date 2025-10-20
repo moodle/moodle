@@ -142,8 +142,12 @@ final class Middleware
      *
      * @return callable
      */
-    public static function signer(callable $credProvider, callable $signatureFunction, $tokenProvider = null, $config = [])
-    {
+    public static function signer(
+        callable $credProvider,
+        callable $signatureFunction,
+        $tokenProvider = null,
+        $config = []
+    ) {
         return function (callable $handler) use ($signatureFunction, $credProvider, $tokenProvider, $config) {
             return function (
                 CommandInterface $command,
@@ -154,6 +158,11 @@ final class Middleware
                     return $tokenProvider()->then(
                         function (TokenInterface $token)
                         use ($handler, $command, $signer, $request) {
+                            $command->getMetricsBuilder()->identifyMetricByValueAndAppend(
+                                'token',
+                                $token
+                            );
+
                             return $handler(
                                 $command,
                                 $signer->authorizeRequest($request, $token)

@@ -25,7 +25,7 @@
         "ext-json": "*",
         "ext-simplexml": "*",
         "aws/aws-crt-php": "^1.2.3",
-        "psr/http-message": "^2.0"
+        "psr/http-message": "^1.0 || ^2.0"
     },
     "require-dev": {
         "composer/composer" : "^2.7.8",
