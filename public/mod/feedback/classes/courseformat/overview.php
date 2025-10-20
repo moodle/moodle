@@ -120,7 +120,7 @@ class overview extends \core_courseformat\activityoverviewbase {
     private function get_extra_submitted_overview(): ?overviewitem {
         global $USER;
 
-        if (!has_capability('mod/feedback:complete', $this->context)) {
+        if (!has_capability('mod/feedback:complete', $this->context, $USER, false)) {
             return null;
         }
 
