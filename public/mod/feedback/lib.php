@@ -2745,16 +2745,6 @@ function feedback_extend_settings_navigation(settings_navigation $settings, navi
     }
 }
 
-function feedback_init_feedback_session() {
-    //initialize the feedback-Session - not nice at all!!
-    global $SESSION;
-    if (!empty($SESSION)) {
-        if (!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
-            $SESSION->feedback = new stdClass();
-        }
-    }
-}
-
 /**
  * Return a list of page types
  * @param string $pagetype current page type

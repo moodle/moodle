@@ -25,8 +25,6 @@
 require_once('../../config.php');
 require_once('lib.php');
 
-feedback_init_feedback_session();
-
 $id = required_param('id', PARAM_INT);
 
 if (($formdata = data_submitted()) AND !confirm_sesskey()) {
