@@ -177,7 +177,7 @@ if (!empty($issuedbadge->recipient->id)) {
     } else {
         if (isset($userapi) && !empty($userapi->get_errors())) {
             // If the api used to import the badge to the backpack has errors, show them to inform the user.
-            if (array_filter($userapi->get_errors(), fn($element) => str_contains($element, "DUPLICATE_BADGE"))) {
+            if (array_filter($userapi->get_errors(), fn($element) => (strpos($element, "DUPLICATE_BADGE") !== false))) {
                 // Duplicated badges are displayed as a warning.
                 $message = get_string('existsinbackpack', 'badges');
                 $messagetype = \core\output\notification::NOTIFY_WARNING;
