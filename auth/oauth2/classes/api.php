@@ -197,9 +197,7 @@ class api {
 
         $data->link = $confirmationurl->out(false);
         $message = get_string('confirmlinkedloginemail', 'auth_oauth2', $data);
-
-        $data->link = $confirmationurl->out();
-        $messagehtml = text_to_html(get_string('confirmlinkedloginemail', 'auth_oauth2', $data), false, false, true);
+        $messagehtml = text_to_html(get_string('confirmlinkedloginemail', 'auth_oauth2', $data), false, false);
 
         $user->mailformat = 1;  // Always send HTML version as well.
 
@@ -339,9 +337,7 @@ class api {
 
         $data->link = $confirmationurl->out(false);
         $message = get_string('confirmaccountemail', 'auth_oauth2', $data);
-
-        $data->link = $confirmationurl->out();
-        $messagehtml = text_to_html(get_string('confirmaccountemail', 'auth_oauth2', $data), false, false, true);
+        $messagehtml = text_to_html(get_string('confirmaccountemail', 'auth_oauth2', $data), false, false);
 
         $user->mailformat = 1;  // Always send HTML version as well.
 
