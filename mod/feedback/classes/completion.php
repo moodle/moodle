@@ -613,7 +613,7 @@ class mod_feedback_completion extends mod_feedback_structure {
         global $CFG, $USER;
 
         $context = context_module::instance($this->cm->id);
-        if (has_capability('mod/feedback:complete', $context, $this->userid)) {
+        if (has_capability('mod/feedback:complete', $context, $this->userid, false)) {
             return true;
         }
 
