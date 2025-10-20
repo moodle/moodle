@@ -281,6 +281,17 @@ Feature: Users can access the course activities overview page
     When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
     Then I should not see "span" in the "assign_overview_collapsible" "region"
 
+  Scenario: Section name is properly filtered and rendered
+    Given the following config values are set as admin:
+      | formatstringstriptags | 0 |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I click on "Edit settings" "link" in the "Section 1" "core_courseformat > Section actions menu"
+    And I set the field "Section name" to "<span class='filter_mathjaxloader_equation'>Announcements$$(a+b)=2$$<span class='nolink'>$$(a+b)=2$$</span></span>"
+    And I press "Save changes"
+    When I am on the "Course 1" "course > activities > assign" page
+    Then I should not see "span" in the "assign_overview_collapsible" "region"
+
   @javascript
   Scenario: Users in no group that cannot view all groups see an error on 'Separate groups' activities
     Given the following "users" exist:
