@@ -258,6 +258,10 @@ final class overview_test extends \advanced_testcase {
         $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
+        // Unless the admin is enrolled as a student.
+        $this->getDataGenerator()->enrol_user(get_admin()->id, $course->id, 'student');
+        $item = $method->invoke($overview);
+        $this->assertEquals(get_string('submissionstatus', 'assign'), $item->get_name());
 
         // Check student see the new status.
         $this->setUser($student);
