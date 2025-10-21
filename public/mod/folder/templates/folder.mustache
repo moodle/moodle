@@ -30,7 +30,7 @@
         "id": 42,
         "showexpanded": true,
         "buttons": {
-           "edit_button": {
+            "edit_button": {
                 "id": "edit_button",
                 "label": "Edit",
                 "url": "/mod/folder/edit.php",
@@ -48,13 +48,14 @@
                 "name": "Folder",
                 "icon": "<img src='icon' alt='alt'>",
                 "hassubdirs": true,
+                "isroot": true,
                 "subdirs": [
                     {
                         "name": "File1",
                         "icon": "<img src='icon' alt='alt'>",
                         "hassubdirs": false,
                         "subdirs": null
-                     }
+                    }
                 ]
             },
             {
@@ -81,11 +82,11 @@
             </div>
         </div>
     {{/hasbuttons}}
-    <div class="box generalbox pt-0 pb-3 foldertree">
+    <div class="box generalbox pt-0 pb-3">
         <div id="{{{id}}}" class="filemanager">
             {{#dir}}
-                <ul>
-                    <li>
+                <ul class="foldertree" role="tree" tabindex="0">
+                    <li role="treeitem" tabindex="-1" aria-expanded="true">
                         {{>mod_folder/tree}}
                     </li>
                 </ul>
@@ -97,6 +98,6 @@
 {{#js}}
     // Init tree JS.
     require(['mod_folder/folder'], function(Folder) {
-        Folder.initTree('{{{id}}}', '{{{showexpanded}}}');
+        Folder.init('{{{id}}}');
     });
 {{/js}}

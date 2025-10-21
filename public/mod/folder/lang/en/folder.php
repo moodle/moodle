@@ -71,3 +71,4 @@ $string['showexpanded'] = 'Show subfolders expanded';
 $string['showexpanded_help'] = 'If set to \'yes\', subfolders are shown expanded by default; otherwise they are shown collapsed.';
 $string['maxsizetodownload'] = 'Maximum folder download size (MB)';
 $string['maxsizetodownload_help'] = 'The maximum size of folder that can be downloaded as a zip file. If set to zero, the folder size is unlimited.';
+$string['topleveldirectory'] = 'Top-level directory';

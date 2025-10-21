@@ -87,6 +87,11 @@ class mod_folder_renderer extends plugin_renderer_base {
         $data['showexpanded'] = !empty($foldertree->folder->showexpanded);
         $data['dir'] = $this->renderable_tree_elements($foldertree, ['files' => [], 'subdirs' => [$foldertree->dir]]);
 
+        // Add isroot key to the root element.
+        if (!empty($data['dir']) && isset($data['dir'][0])) {
+            $data['dir'][0]['isroot'] = true;
+        }
+
         return $this->render_from_template('mod_folder/folder', $data);
     }
 
@@ -112,12 +117,13 @@ class mod_folder_renderer extends plugin_renderer_base {
         $elements = [];
         foreach ($dir['subdirs'] as $subdir) {
             $htmllize = $this->renderable_tree_elements($tree, $subdir);
-            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle');
+            $image = $this->output->pix_icon(file_folder_icon(), '', 'moodle');
             $elements[] = [
                 'name' => $subdir['dirname'],
                 'icon' => $image,
                 'subdirs' => $htmllize,
                 'hassubdirs' => !empty($htmllize),
+                'isroot' => false,
             ];
         }
         foreach ($dir['files'] as $file) {
@@ -128,9 +134,9 @@ class mod_folder_renderer extends plugin_renderer_base {
                 $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $filename, false);
             if (file_extension_in_typegroup($filename, 'web_image')) {
                 $image = $url->out(false, ['preview' => 'tinyicon', 'oid' => $file->get_timemodified()]);
-                $image = html_writer::empty_tag('img', ['src' => $image]);
+                $image = html_writer::empty_tag('img', ['src' => $image, 'alt' => '', 'class' => 'icon']);
             } else {
-                $image = $this->output->pix_icon(file_file_icon($file), $filenamedisplay, 'moodle');
+                $image = $this->output->pix_icon(file_file_icon($file), '', 'moodle');
             }
 
             if ($tree->folder->forcedownload) {

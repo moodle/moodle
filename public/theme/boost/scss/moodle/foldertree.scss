@@ -1,0 +1,80 @@
+$folder-tree-border-style: dotted !default;
+$folder-tree-border-color: var(--#{$prefix}border-color) !default;
+$folder-tree-border-width: 2px !default;
+
+.foldertree {
+    [role="treeitem"][aria-expanded="false"] + [role="group"] {
+        display: none;
+    }
+
+    [role="treeitem"][aria-expanded="true"] + [role="group"] {
+        display: block;
+    }
+
+    [role="treeitem"][aria-expanded="false"] > ul {
+        display: none;
+    }
+
+    [role="treeitem"][aria-expanded="true"] > ul {
+        display: block;
+    }
+
+    [role="treeitem"] > p {
+        margin-bottom: 0;
+    }
+
+    [role="treeitem"][aria-expanded] {
+        & > p::before,
+        & > p::after {
+            content: '';
+            display: inline-block;
+            width: $icon-height;
+            height: $icon-height;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            top: 4px;
+        }
+    }
+
+    [role="treeitem"][aria-expanded="false"] > p::before {
+        background-image: url('[[pix:t/collapsed]]');
+    }
+
+    [role="treeitem"][aria-expanded="true"] > p::before {
+        background-image: url('[[pix:t/expanded]]');
+    }
+
+    li {
+        position: relative;
+        list-style: none;
+
+        // Horizontal line for nested folders.
+        &::before {
+            content: '';
+            position: absolute;
+            top: calc(var(--bs-body-font-size) / var(--bs-body-line-height) + #{$folder-tree-border-width});
+            left: calc((2rem + #{$icon-height} + #{$folder-tree-border-width}) / 2 * -1);
+            border-bottom: $folder-tree-border-width $folder-tree-border-style $folder-tree-border-color;
+            width: 1rem;
+        }
+
+        & img.icon {
+            width: auto;
+        }
+    }
+
+    > li::before {
+        display: none;
+    }
+
+    // Vertical line for nested folders.
+    ul::before {
+        content: '';
+        position: absolute;
+        top: 1.3rem;
+        left: calc(#{$icon-height} / 2 - #{$folder-tree-border-width} / 2);
+        height: calc(100% - 2rem);
+        border-left: $folder-tree-border-width $folder-tree-border-style $folder-tree-border-color;
+    }
+}
