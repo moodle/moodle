@@ -49,7 +49,7 @@ Feature: Turn editing mode on
 
   Scenario: Edit mode on page Profile
     Given I log in as "admin"
-    And I follow "View profile"
+    And I follow "Profile" in the user menu
     And I turn editing mode on
     And I should see "Add a block"
     And I turn editing mode off
