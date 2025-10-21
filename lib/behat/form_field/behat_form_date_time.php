@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Date time form field class.
- *
- * @package    core_form
- * @category   test
- * @copyright  2013 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__  . '/behat_form_date.php');
@@ -39,6 +30,20 @@ require_once(__DIR__  . '/behat_form_date.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_form_date_time extends behat_form_date {
+    /**
+     * Returns the current value of the field
+     *
+     * @return string
+     */
+    public function get_value() {
+        return make_timestamp(
+            $this->get_child_field_value('year'),
+            $this->get_child_field_value('month'),
+            $this->get_child_field_value('day'),
+            $this->get_child_field_value('hour'),
+            $this->get_child_field_value('minute'),
+        );
+    }
 
     /**
      * Returns the date field identifiers and the values that should be assigned to them.
