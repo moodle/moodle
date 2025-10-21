@@ -62,6 +62,20 @@ My grades|https://someurl.xyz/local/mygrades/index.php|embedded|en
 Mis calificaciones|https://someurl.xyz/local/mygrades/index.php|embedded|es
 You will only see this in English|https://someurl.xyz/english|browser|en_only
 </pre>';
+$string['customusermenuitems'] = 'Custom user menu items';
+$string['customusermenuitems_desc'] = 'Additional items can be added to the app\'s user menu by specifying them here. Enter each custom user menu item on a new line with format: item text, link URL, link-opening method and language code (optional, for displaying the item to users of the specified language only), separated by pipe characters.
+
+Link-opening methods are: app (for linking to an activity supported by the app), inappbrowser (for opening a link in a browser without leaving the app), browser (for opening the link in the device default browser outside the app) and embedded (for displaying the link in an iframe in a new page in the app).
+
+When items are missing a translation for a given language, they will use other languages as fallback unless "_only" is appended to the language code.
+
+For example:
+<pre>
+App help|https://someurl.xyz/help|inappbrowser
+My grades|https://someurl.xyz/local/mygrades/index.php|embedded|en
+Mis calificaciones|https://someurl.xyz/local/mygrades/index.php|embedded|es
+You will only see this in English|https://someurl.xyz/english|browser|en_only
+</pre>';
 $string['darkmode'] = 'Dark mode';
 $string['disabledfeatures'] = 'Disabled features';
 $string['disabledfeatures_desc'] = 'Select here the features you want to disable in the Mobile app for your site. Please note that some features listed here could be already disabled via other site settings. You will have to log out and log in again in the app to see the changes.';

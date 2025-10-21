@@ -121,12 +121,25 @@ class subscription implements \renderable, \templatable {
                             $custommenuitems = explode("\n", $els);
                             // Get unique custom menu urls.
                             $custommenuitems = array_flip(
-                                array_map(function($val) {
+                                array_map(function ($val) {
                                     return explode('|', $val)[1];
                                 }, $custommenuitems)
                             );
                         }
-                        $feature['status'] = count($custommenuitems);
+
+                        $customusermenuitems = [];
+                        $els = rtrim($ms->customusermenuitems, "\n");
+                        if (!empty($els)) {
+                            $customusermenuitems = explode("\n", $els);
+                            // Get unique custom menu urls.
+                            $customusermenuitems = array_flip(
+                                array_map(function ($val) {
+                                    return explode('|', $val)[1];
+                                }, $customusermenuitems)
+                            );
+                        }
+
+                        $feature['status'] = count($custommenuitems) + count($customusermenuitems);
                         break;
                     // Check language strings.
                     case 'customlanguagestrings':
