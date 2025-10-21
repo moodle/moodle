@@ -868,9 +868,9 @@ class core_course_management_renderer extends plugin_renderer_base {
      */
     protected function action_button(moodle_url $url, $text, $id = null, $class = null, $title = null, array $attributes = array()) {
         if (isset($attributes['class'])) {
-            $attributes['class'] .= ' yui3-button';
+            $attributes['class'] .= ' page-link';
         } else {
-            $attributes['class'] = 'yui3-button';
+            $attributes['class'] = 'page-link';
         }
         if (!is_null($id)) {
             $attributes['id'] = $id;
@@ -885,7 +885,15 @@ class core_course_management_renderer extends plugin_renderer_base {
         if (!isset($attributes['role'])) {
             $attributes['role'] = 'button';
         }
-        return html_writer::link($url, $text, $attributes);
+        return html_writer::tag(
+            'li',
+            html_writer::link(
+                $url,
+                $text,
+                $attributes,
+            ),
+            ['class' => 'page-item'],
+        );
     }
 
     /**
@@ -1078,7 +1086,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         ));
         $html .= html_writer::tag('h3', get_string('courses'));
         $html .= $this->search_pagination($totalcourses, $page, $perpage);
-        $html .= html_writer::start_tag('ul', array('class' => 'ml'));
+        $html .= html_writer::start_tag('ul', ['class' => 'list-group ml']);
         foreach ($courses as $listitem) {
             $i++;
             if ($i == $totalcourses) {
@@ -1141,22 +1149,42 @@ class core_course_management_renderer extends plugin_renderer_base {
         if ($page > 0) {
             $items[] = $this->action_button(new moodle_url($baseurl, array('page' => 0)), get_string('first'));
             $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $page - 1)), get_string('prev'));
-            $items[] = '...';
+            $items[] = html_writer::tag(
+                'li',
+                html_writer::tag(
+                    'span',
+                    '...',
+                    ['class' => 'page-link disabled']
+                ),
+                ['class' => 'page-item', 'aria-hidden' => 'true'],
+            );
         }
         for ($i = $start; $i <= $end; $i++) {
             $class = '';
             if ($page == $i) {
-                $class = 'active-page';
+                $class = 'active';
             }
             $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $i)), $i + 1, null, $class);
         }
         if ($page < ($totalpages - 1)) {
-            $items[] = '...';
+            $items[] = html_writer::tag(
+                'li',
+                html_writer::tag(
+                    'span',
+                    '...',
+                    ['class' => 'page-link disabled']
+                ),
+                ['class' => 'page-item', 'aria-hidden' => 'true']
+            );
             $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $page + 1)), get_string('next'));
             $items[] = $this->action_button(new moodle_url($baseurl, array('page' => $totalpages - 1)), get_string('last'));
         }
 
-        $html .= html_writer::div(join('', $items), 'listing-pagination');
+        $html .= html_writer::tag(
+            'ul',
+            join('', $items),
+            ['class' => 'pagination pagination-sm justify-content-center mb-3'],
+        );
         return $html;
     }
 
