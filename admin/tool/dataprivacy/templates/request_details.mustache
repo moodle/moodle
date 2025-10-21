@@ -62,7 +62,7 @@
         </div>
         <div class="flex-grow-1 ms-3">
             <h4 class="mt-0 mb-1">
-                <a href="{{foruser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{foruser.fullname}}</a>
+                <a href="{{foruser.profileurl}}">{{foruser.fullname}}</a>
             </h4>
             <a href="mailto:{{foruser.email}}">{{foruser.email}}</a>
             <div class="clearfix mt-1 mb-1">
@@ -76,7 +76,7 @@
             </span>
             <span class="float-start me-1">
                 <strong>{{#str}}requestbydetail, tool_dataprivacy{{/str}}</strong>
-                <span><a href="{{requestedbyuser.profileurl}}" title="{{#str}}viewprofile{{/str}}">{{requestedbyuser.fullname}}</a></span>
+                <span><a href="{{requestedbyuser.profileurl}}">{{requestedbyuser.fullname}}</a></span>
             </span>
             </div>
             {{#canreview}}
