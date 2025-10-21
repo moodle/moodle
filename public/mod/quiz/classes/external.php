@@ -523,6 +523,15 @@ class mod_quiz_external extends external_api {
                 'If the quiz has additional grades set up, the mark for each grade for this attempt.', VALUE_OPTIONAL),
                 'gradednotificationsenttime' => new external_value(PARAM_INT,
                     'Time when the student was notified that manual grading of their attempt was complete.', VALUE_OPTIONAL),
+                'feedback' => new external_single_structure(
+                    [
+                        'feedbacktext' => new external_value(PARAM_RAW, 'Feedback text to display (only if set).', VALUE_OPTIONAL),
+                        'feedbackformat' => new external_value(PARAM_INT, 'Feedback format (only if set).', VALUE_OPTIONAL),
+                        'feedbackinlinefiles' => new external_files('Feedback inline files (only if set).', VALUE_OPTIONAL),
+                    ],
+                    'Feedback information',
+                    VALUE_OPTIONAL,
+                ),
             ]
         );
     }
@@ -632,13 +641,18 @@ class mod_quiz_external extends external_api {
         $attempts = quiz_get_user_attempts($quiz->id, $user->id, $params['status'], $params['includepreviews']);
         $quizobj = new quiz_settings($quiz, $cm, $course);
         $gradeitemmarks = $quizobj->get_grade_calculator()->compute_grade_item_totals_for_attempts(
-                array_column($attempts, 'uniqueid'));
+            array_column($attempts, 'uniqueid')
+        );
+        $hasfeedback = quiz_has_feedback($quiz);
         $attemptresponse = [];
         foreach ($attempts as $attempt) {
+            // Evaluate review options includes permission checks.
             $reviewoptions = quiz_get_review_options($quiz, $attempt, $context);
-            if (!has_capability('mod/quiz:viewreports', $context) &&
-                    ($reviewoptions->marks < question_display_options::MARK_AND_MAX || $attempt->state != quiz_attempt::FINISHED)) {
-                // Blank the mark if the teacher does not allow it.
+            $canviewgrades = $reviewoptions->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades($quiz);
+            $canviewfeedback = $hasfeedback && $reviewoptions->overallfeedback;
+            $attemptsumgrades = $attempt->sumgrades;
+            if (!$canviewgrades || $attempt->state != quiz_attempt::FINISHED) {
+                // Blank the mark if the user cannot see it based on review options.
                 $attempt->sumgrades = null;
             } else if (isset($gradeitemmarks[$attempt->uniqueid])) {
                 $attempt->gradeitemmarks = [];
@@ -648,6 +662,26 @@ class mod_quiz_external extends external_api {
                             'grade' => $gradeitem->grade,
                             'maxgrade' => $gradeitem->maxgrade,
                     ];
+                }
+            }
+
+            if ($canviewfeedback) {
+                $feedbackrecord = quiz_feedback_record_for_grade($attemptsumgrades, $quiz);
+                [$text, $format] = \core_external\util::format_text(
+                    $feedbackrecord->feedbacktext,
+                    $feedbackrecord->feedbacktextformat,
+                    $context,
+                    'mod_quiz',
+                    'feedback',
+                    $feedbackrecord->id
+                );
+                $attempt->feedback = [
+                    'feedbacktext' => $text,
+                    'feedbackformat' => $format,
+                ];
+                $feedbackinlinefiles = util::get_area_files($context->id, 'mod_quiz', 'feedback', $feedbackrecord->id);
+                if (!empty($feedbackinlinefiles)) {
+                    $attempt->feedback['feedbackinlinefiles'] = $feedbackinlinefiles;
                 }
             }
             $attemptresponse[] = $attempt;
@@ -729,24 +763,42 @@ class mod_quiz_external extends external_api {
         // Get this user's attempts.
         $attempts = quiz_get_user_attempts($quiz->id, $user->id, 'all');
         $canviewgrade = false;
+        $canviewoverallfeedback = false;
         if ($attempts) {
-            if ($USER->id != $user->id) {
-                // No need to check the permission here. We did it at by require_capability('mod/quiz:viewreports', $context).
-                $canviewgrade = true;
-            } else {
-                // Work out which columns we need, taking account what data is available in each attempt.
-                [$notused, $alloptions] = quiz_get_combined_reviewoptions($quiz, $attempts);
-                $canviewgrade = $alloptions->marks >= question_display_options::MARK_AND_MAX;
-            }
+            // Get review options for the first attempt, includes permission checks.
+            $reviewoptions = quiz_get_review_options($quiz, reset($attempts), $context);
+            $canviewgrade = $reviewoptions->marks >= question_display_options::MARK_AND_MAX;
+            $canviewoverallfeedback = $reviewoptions->overallfeedback;
         }
+        $usergrade = quiz_get_best_grade($quiz, $user->id);
 
-        $grade = $canviewgrade ? quiz_get_best_grade($quiz, $user->id) : null;
-
+        $grade = $canviewgrade ? $usergrade : null;
         if ($grade === null) {
             $result['hasgrade'] = false;
         } else {
             $result['hasgrade'] = true;
             $result['grade'] = $grade;
+        }
+
+        $hasfeedback = quiz_has_feedback($quiz);
+        if ($hasfeedback && $canviewoverallfeedback) {
+            $feedbackrecord = quiz_feedback_record_for_grade($usergrade, $quiz);
+            [$text, $format] = \core_external\util::format_text(
+                $feedbackrecord->feedbacktext,
+                $feedbackrecord->feedbacktextformat,
+                $context,
+                'mod_quiz',
+                'feedback',
+                $feedbackrecord->id
+            );
+            $result['feedback'] = [
+                'feedbacktext' => $text,
+                'feedbackformat' => $format,
+            ];
+            $feedbackinlinefiles = util::get_area_files($context->id, 'mod_quiz', 'feedback', $feedbackrecord->id);
+            if (!empty($feedbackinlinefiles)) {
+                $result['feedback']['feedbackinlinefiles'] = $feedbackinlinefiles;
+            }
         }
 
         // Inform user of the grade to pass if non-zero.
@@ -774,6 +826,15 @@ class mod_quiz_external extends external_api {
             [
                 'hasgrade' => new external_value(PARAM_BOOL, 'Whether the user has a grade on the given quiz.'),
                 'grade' => new external_value(PARAM_FLOAT, 'The grade (only if the user has a grade).', VALUE_OPTIONAL),
+                'feedback' => new external_single_structure(
+                    [
+                        'feedbacktext' => new external_value(PARAM_RAW, 'Feedback text to display (only if set).', VALUE_OPTIONAL),
+                        'feedbackformat' => new external_value(PARAM_INT, 'Feedback format (only if set).', VALUE_OPTIONAL),
+                        'feedbackinlinefiles' => new external_files('Feedback inline files (only if set).', VALUE_OPTIONAL),
+                    ],
+                    'Feedback information',
+                    VALUE_OPTIONAL,
+                ),
                 'gradetopass' => new external_value(PARAM_FLOAT, 'The grade to pass the quiz (only if set).', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             ]

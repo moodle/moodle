@@ -766,6 +766,62 @@ final class external_test extends \core_external\tests\externallib_testcase {
     }
 
     /**
+     * Test get_user_quiz_attempts respects review options
+     *
+     * @covers \mod_quiz_external::get_user_quiz_attempts
+     */
+    public function test_get_user_quiz_attempts_respects_review_options(): void {
+        global $DB;
+
+        [$quiz, , , $attempt] = $this->create_quiz_with_questions(
+            true,
+            true,
+            'deferredfeedback',
+            false,
+            [
+                'marksduring' => 0,
+                'marksimmediately' => 0,
+                'marksopen' => 0,
+                'marksclosed' => 0,
+                'specificfeedbackduring' => 0,
+                'specificfeedbackimmediately' => 0,
+                'specificfeedbackopen' => 0,
+                'specificfeedbackclosed' => 0,
+                'generalfeedbackduring' => 0,
+                'generalfeedbackimmediately' => 0,
+                'generalfeedbackopen' => 0,
+                'generalfeedbackclosed' => 0,
+                'rightanswerduring' => 0,
+                'rightanswerimmediately' => 0,
+                'rightansweropen' => 0,
+                'rightanswerclosed' => 0,
+            ]
+        );
+
+        $quiz->timeclose = time() - 1;
+        $DB->update_record('quiz', $quiz);
+
+        // Test as student.
+        $this->setUser($this->student);
+        $result = mod_quiz_external::get_user_quiz_attempts($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_quiz_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
+        $this->assertNull($result['attempts'][0]['sumgrades']);
+
+        // Test as teacher.
+        $this->setUser($this->teacher);
+        $result = mod_quiz_external::get_user_quiz_attempts($quiz->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_quiz_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
+        $this->assertNotNull($result['attempts'][0]['sumgrades']);
+        $this->assertEquals(1.0, $result['attempts'][0]['sumgrades']);
+    }
+
+    /**
      * Test get_user_quiz_attempts with extra grades
      */
     public function test_get_user_quiz_attempts_with_extra_grades(): void {
@@ -1071,6 +1127,51 @@ final class external_test extends \core_external\tests\externallib_testcase {
         // End the testing for quizapi2 that do not allow the student to view the grade.
 
     }
+
+    /**
+     * Test get_user_best_grade respects review options
+     *
+     * @covers \mod_quiz_external::get_user_best_grade
+     */
+    public function test_get_user_best_grade_respects_review_options(): void {
+        global $DB;
+
+        [$quiz] = $this->create_quiz_with_questions(
+            true,
+            true,
+            'deferredfeedback',
+            false,
+            [
+                'marksduring' => 0,
+                'marksimmediately' => 0,
+                'marksopen' => 0,
+                'marksclosed' => 0,
+                'overallfeedbackduring' => 0,
+                'overallfeedbackimmediately' => 0,
+                'overallfeedbackopen' => 0,
+                'overallfeedbackclosed' => 0,
+            ]
+        );
+
+        $quiz->timeclose = time() - 1;
+        $DB->update_record('quiz', $quiz);
+
+        // Test as student.
+        $this->setUser($this->student);
+        $result = mod_quiz_external::get_user_best_grade($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        $this->assertFalse($result['hasgrade']);
+
+        // Test as teacher.
+        $this->setUser($this->teacher);
+        $result = mod_quiz_external::get_user_best_grade($quiz->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        $this->assertTrue($result['hasgrade']);
+        $this->assertNotNull($result['grade']);
+    }
+
     /**
      * Test get_combined_review_options.
      * This is a basic test, this is already tested in display_options_testcase.
