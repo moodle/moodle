@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Date form field class.
- *
- * @package    core_form
- * @category   test
- * @copyright  2013 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__  . '/behat_form_group.php');
@@ -41,17 +32,14 @@ use Behat\Mink\Exception\ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_form_date extends behat_form_group {
-
     /**
      * Sets the value to a date field.
      *
      * @param string $value The value to be assigned to the date selector field. The string value must be either
      *                      parsable into a UNIX timestamp or equal to 'disabled' (if disabling the date selector).
-     * @return void
      * @throws ExpectationException If the value is invalid.
      */
     public function set_value($value) {
-
         if ($value === 'disabled') {
             // Disable the given date selector field.
             $this->set_child_field_value('enabled', false);
@@ -75,6 +63,29 @@ class behat_form_date extends behat_form_group {
             $fieldname = $this->field->find('css', 'legend')->getHtml();
             throw new ExpectationException("Invalid value for '{$fieldname}'", $this->session);
         }
+    }
+
+    /**
+     * Returns the current value of the field
+     *
+     * @return int
+     */
+    public function get_value() {
+        return make_timestamp(
+            $this->get_child_field_value('year'),
+            $this->get_child_field_value('month'),
+            $this->get_child_field_value('day'),
+        );
+    }
+
+    /**
+     * Matches the provided value against the current field value
+     *
+     * @param mixed $expectedvalue
+     * @return bool
+     */
+    public function matches($expectedvalue) {
+        return (int) $expectedvalue === $this->get_value();
     }
 
     /**
@@ -114,5 +125,15 @@ class behat_form_date extends behat_form_group {
             // Set the value to the child form element.
             $childinstance->set_value($childvalue);
         }
+    }
+
+    /**
+     * Gets a value of a child element in the date form field
+     *
+     * @param string $childname
+     * @return string
+     */
+    protected function get_child_field_value(string $childname): string {
+        return $this->field->find('css', "*[name$='[{$childname}]']")->getValue();
     }
 }
