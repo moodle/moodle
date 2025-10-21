@@ -44,8 +44,8 @@ $string['configmobilecssurl'] = 'A CSS file to customise your mobile app interfa
 $string['customlangstrings'] = 'Custom language strings';
 $string['customlangstrings_desc'] = 'Words and phrases displayed in the app can be customised here. Enter each custom language string on a new line with format: string identifier, custom language string and language code, separated by pipe characters. For example:
 <pre>
-mm.user.student|Learner|en
-mm.user.student|Aprendiz|es
+core.user.student|Learner|en
+core.user.student|Aprendiz|es
 </pre>
 For a complete list of string identifiers, see the documentation.';
 $string['custommenuitems'] = 'Custom menu items';
