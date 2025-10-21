@@ -808,9 +808,6 @@ const Tour = class {
 
             targetNode.data('flexitour', 'target');
 
-            // Add the backdrop.
-            this.positionBackdrop(stepConfig);
-
             $(document.body).append(currentStepNode);
             this.currentStepNode = currentStepNode;
 
@@ -826,6 +823,7 @@ const Tour = class {
                 .animate({
                     scrollTop: this.calculateScrollTop(stepConfig),
                 }).promise().then(function() {
+                        this.positionBackdrop(stepConfig);
                         this.positionStep(stepConfig);
                         this.revealStep(stepConfig);
                         pendingPromise.resolve();
