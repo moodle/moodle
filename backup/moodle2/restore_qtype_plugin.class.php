@@ -568,8 +568,7 @@ abstract class restore_qtype_plugin extends restore_plugin {
 
         foreach ($excludefields as $excludefield) {
             $pathparts = explode('/', ltrim($excludefield, '/'));
-            $data = $questiondata;
-            self::unset_excluded_fields($data, $pathparts);
+            $questiondata = self::unset_excluded_fields($questiondata, $pathparts);
         }
 
         return $questiondata;
@@ -581,25 +580,60 @@ abstract class restore_qtype_plugin extends restore_plugin {
      * If any of the elements in the path is an array, this is called recursively on each element in the array to unset fields
      * in each child of the array.
      *
-     * @param stdClass|array $data The questiondata object, or a subsection of it.
+     * @param stdClass|array $data The questiondata structure, or a subsection of it.
      * @param array $pathparts The remaining elements in the path to the excluded field.
-     * @return void
+     * @return stdClass|array The $data structure with excluded fields removed.
      */
-    private static function unset_excluded_fields(stdClass|array $data, array $pathparts): void {
+    private static function unset_excluded_fields(stdClass|array $data, array $pathparts): stdClass|array {
         $element = array_shift($pathparts);
-        if (!isset($data->{$element})) {
-            // This element is not present in the data structure, nothing to unset.
-            return;
+        $unset = false;
+        // Get the current element from the data structure.
+        if (is_object($data)) {
+            if (!property_exists($data, $element)) {
+                // This element is not present in the data structure, nothing to unset.
+                return $data;
+            }
+            $dataelement = $data->{$element};
+        } else { // It's an array.
+            if (!array_key_exists($element, $data)) {
+                return $data;
+            }
+            $dataelement = $data[$element];
         }
-        if (is_object($data->{$element})) {
-            self::unset_excluded_fields($data->{$element}, $pathparts);
-        } else if (is_array($data->{$element})) {
-            foreach ($data->{$element} as $item) {
-                self::unset_excluded_fields($item, $pathparts);
+        // Check if we need to recur, or unset this element.
+        if (is_object($dataelement)) {
+            $dataelement = self::unset_excluded_fields($dataelement, $pathparts);
+        } else if (is_array($dataelement)) {
+            foreach ($dataelement as $key => $item) {
+                if (is_object($item) || is_array($item)) {
+                    // This is an array of objects or arrays, recur.
+                    $dataelement[$key] = self::unset_excluded_fields($item, $pathparts);
+                } else {
+                    // This is an associative array of values, check if they should be removed.
+                    $subelement = reset($pathparts);
+                    if ($key == $subelement) {
+                        unset($dataelement[$key]);
+                    }
+                }
             }
         } else if (empty($pathparts)) {
             // This is the last element of the path and it's a scalar value, unset it.
-            unset($data->{$element});
+            $unset = true;
         }
+        // Write the modified element back to the data structure, or unset it.
+        if (is_object($data)) {
+            if ($unset) {
+                unset($data->{$element});
+            } else {
+                $data->{$element} = $dataelement;
+            }
+        } else {
+            if ($unset) {
+                unset($data[$element]);
+            } else {
+                $data[$element] = $dataelement;
+            }
+        }
+        return $data;
     }
 }
