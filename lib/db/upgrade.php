@@ -1966,5 +1966,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025041404.08);
     }
 
+    if ($oldversion < 2025041404.09) {
+        // Define index lastruntime_nextruntime (not unique) to be added to task_scheduled.
+        $table = new xmldb_table('task_scheduled');
+        $index = new xmldb_index('lastruntime_nextruntime', XMLDB_INDEX_NOTUNIQUE, ['lastruntime', 'nextruntime']);
+
+        // Conditionally launch add index lastruntime_nextruntime.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025041404.09);
+    }
+
     return true;
 }

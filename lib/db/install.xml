@@ -3498,6 +3498,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="classname_uniq" UNIQUE="true" FIELDS="classname"/>
+        <INDEX NAME="lastruntime_nextruntime" UNIQUE="false" FIELDS="lastruntime, nextruntime"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="task_adhoc" COMMENT="List of adhoc tasks waiting to run.">
