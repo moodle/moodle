@@ -511,6 +511,27 @@ final class filelib_test extends \advanced_testcase {
         $this->assertNotEquals(0, $curl->get_errno());
         $this->assertNotEquals('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
 
+        // Test multiple queries with proxy.
+        $curl = new \curl(['debug' => 1]);
+        ob_start();
+        $requests = [[
+            'nobody' => true,
+            'header' => 1,
+            'url' => $testurl,
+            'returntransfer' => true,
+        ],
+        [
+            'nobody' => true,
+            'header' => 1,
+            'url' => $testurl,
+            'returntransfer' => true,
+        ]];
+        $curl->download($requests);
+        $output = ob_get_contents();
+        ob_end_clean();
+        // We must have exactly 2 occurrences of ["CURLOPT_PROXY"].
+        $this->assertMatchesRegularExpression('/(\["CURLOPT_PROXY"\].*){2}/ms', $output);
+
         // Test with proxy bypass.
         $testurlhost = parse_url($testurl, PHP_URL_HOST);
         $CFG->proxybypass = $testurlhost;
@@ -518,6 +539,26 @@ final class filelib_test extends \advanced_testcase {
         $contents = $curl->get($testurl);
         $this->assertSame(0, $curl->get_errno());
         $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+
+        // Test multiple queries with proxy bypass.
+        $curl = new \curl(['debug' => 1]);
+        ob_start();
+        $requests = [[
+            'nobody' => true,
+            'header' => 1,
+            'url' => $testurl,
+            'returntransfer' => true,
+        ],
+        [
+            'nobody' => true,
+            'header' => 1,
+            'url' => $testurl,
+            'returntransfer' => true,
+        ]];
+        $curl->download($requests);
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertStringNotContainsString('["CURLOPT_PROXY"]', $output);
 
         $CFG->proxyhost = $oldproxy;
         $CFG->proxybypass = $oldproxybypass;
