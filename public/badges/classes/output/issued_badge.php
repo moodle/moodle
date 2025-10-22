@@ -74,7 +74,7 @@ class issued_badge implements renderable {
         $this->hash = $hash;
         $assertion = new \core_badges_assertion($hash, badges_open_badges_backpack_api());
         $this->issued = $assertion->get_badge_assertion();
-        if (!is_numeric($this->issued['issuedOn'])) {
+        if (array_key_exists('issuedOn', $this->issued) && !is_numeric($this->issued['issuedOn'])) {
             $this->issued['issuedOn'] = strtotime($this->issued['issuedOn']);
         }
         $this->badgeclass = $assertion->get_badge_class();
