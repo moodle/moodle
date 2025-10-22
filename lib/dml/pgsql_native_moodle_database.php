@@ -187,7 +187,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         if (empty($this->dboptions['dbhandlesoptions'])) {
             // ALTER USER and ALTER DATABASE are overridden by these settings.
-            $options = array('--client_encoding=utf8', '--standard_conforming_strings=on');
+            $options = ['-c client_encoding=utf8', '-c standard_conforming_strings=on'];
             // Select schema if specified, otherwise the first one wins.
             if (!empty($this->dboptions['dbschema'])) {
                 $options[] = "-c search_path=" . addcslashes($this->dboptions['dbschema'], "'\\");
