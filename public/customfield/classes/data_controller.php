@@ -14,20 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Customfield component data controller abstract class
- *
- * @package   core_customfield
- * @copyright 2018 Toni Barbera <toni@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_customfield;
 
 use backup_nested_element;
 use core_customfield\output\field_data;
-
-defined('MOODLE_INTERNAL') || die;
 
 /**
  * Base class for custom fields data controllers
@@ -38,7 +28,7 @@ defined('MOODLE_INTERNAL') || die;
  * Custom field plugins must define a class
  * \{pluginname}\data_controller extends \core_customfield\data_controller
  *
- * @package core_customfield
+ * @package   core_customfield
  * @copyright 2018 Toni Barbera <toni@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -212,15 +202,11 @@ abstract class data_controller {
         if (!property_exists($datanew, $elementname)) {
             return;
         }
-        $datafieldvalue = $value = $datanew->{$elementname};
 
-        // For numeric datafields, persistent won't allow empty string, swap for null.
         $datafield = $this->datafield();
-        if ($datafield === 'intvalue' || $datafield === 'decvalue') {
-            $datafieldvalue = $datafieldvalue === '' ? null : $datafieldvalue;
-        }
+        $value = $datanew->{$elementname};
 
-        $this->data->set($datafield, $datafieldvalue);
+        $this->data->set($datafield, $value);
         $this->data->set('value', $value);
 
         // Set component, area and itemid from the handler.
