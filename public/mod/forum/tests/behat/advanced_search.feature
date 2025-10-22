@@ -90,7 +90,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
     Then I should not see "My message"
     And I should see "Your subjective"
 
-  @javascript
+  @javascript @accessibility
   Scenario: Perform an advanced search using tags
     Given I am on the "Announcements" "forum activity" page logged in as teacher1
     And I follow "My subject"
@@ -105,6 +105,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
     When I press "Search"
     Then I should see "My subject"
     And I should not see "Your subjective"
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
 
   @javascript
   Scenario: Perform an advanced search on starred discussions without text
