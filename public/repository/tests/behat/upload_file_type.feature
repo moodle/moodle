@@ -11,7 +11,9 @@ Feature: File type can be validated on upload
     And I select "Upload a file" repository in file picker
     And I set the field "Attachment" to "#dirroot#/lib/form/tests/fixtures/filemanager_hideif_disabledif_form.php"
     And I click on "Upload this file" "button" in the "File picker" "dialogue"
-    Then I should see "Text file filetype cannot be accepted." in the "Error" "dialogue"
-    And I click on "OK" "button" in the "Error" "dialogue"
+    Then I should see "The file 'filemanager_hideif_disabledif_form.php' is not an accepted file type. The accepted file types are:" in the "File type not accepted" "dialogue"
+    And I should see "OpenDocument Text document .odt" in the "File type not accepted" "dialogue"
+    And I should see "PDF document .pdf" in the "File type not accepted" "dialogue"
+    And I click on "OK" "button" in the "File type not accepted" "dialogue"
     And I should see "Attachment" in the "File picker" "dialogue"
     And "Upload this file" "button" in the "File picker" "dialogue" should be visible

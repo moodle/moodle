@@ -143,7 +143,19 @@ switch ($action) {
                 $mimetypes[] = mimeinfo('type', $type);
             }
             if (!in_array(mimeinfo('type', $saveas_filename), $mimetypes)) {
-                throw new moodle_exception('invalidfiletype', 'repository', '', get_mimetype_description(array('filename' => $saveas_filename)));
+                $util = new \core_form\filetypes_util();
+                throw new moodle_exception(
+                    'invalidfiletypewithaccepted',
+                    'repository',
+                    '',
+                    [
+                        'filename' => $saveas_filename,
+                        'acceptedfiletypes' => $OUTPUT->render_from_template(
+                            'core_form/filetypes-descriptions',
+                            $util->describe_file_types($accepted_types),
+                        ),
+                    ],
+                );
             }
         }
 

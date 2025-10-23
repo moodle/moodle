@@ -80,7 +80,7 @@ class repository_upload extends repository {
      */
     public function process_upload($saveasfilename, $maxbytes, $types = '*', $savepath = '/', $itemid = 0,
             $license = null, $author = '', $overwriteexisting = false, $areamaxbytes = FILE_AREA_MAX_BYTES_UNLIMITED) {
-        global $USER, $CFG;
+        global $USER, $CFG, $OUTPUT;
 
         \core\session\manager::write_close();
 
@@ -188,8 +188,19 @@ class repository_upload extends repository {
             // Check filetype.
             $filemimetype = file_storage::mimetype($_FILES[$elname]['tmp_name'], $record->filename);
             if (!in_array($filemimetype, $this->mimetypes)) {
-                throw new moodle_exception('invalidfiletype', 'repository', '',
-                    get_mimetype_description(array('filename' => $_FILES[$elname]['name'])));
+                $util = new \core_form\filetypes_util();
+                throw new moodle_exception(
+                    'invalidfiletypewithaccepted',
+                    'repository',
+                    '',
+                    [
+                        'filename' => $record->filename,
+                        'acceptedfiletypes' => $OUTPUT->render_from_template(
+                            'core_form/filetypes-descriptions',
+                            $util->describe_file_types($types),
+                        ),
+                    ],
+                );
             }
         }
 
