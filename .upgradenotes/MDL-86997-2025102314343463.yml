@@ -1,0 +1,10 @@
+issueNumber: MDL-86997
+notes:
+  core_reportbuilder:
+    - message: |
+        The following `user_filter_manager` methods have been deprecated:
+
+        * `reset_all()` - to be replaced by new `reset()` method
+        * `reset_single()`
+        * `merge()`
+      type: deprecated

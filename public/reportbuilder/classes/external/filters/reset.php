@@ -33,7 +33,6 @@ use core_reportbuilder\local\helpers\user_filter_manager;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class reset extends external_api {
-
     /**
      * External method parameters
      *
@@ -72,7 +71,7 @@ class reset extends external_api {
             permission::require_can_view_report($persistent);
         }
 
-        return user_filter_manager::reset_all($reportid);
+        return user_filter_manager::reset($reportid);
     }
 
     /**
