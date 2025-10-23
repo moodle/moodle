@@ -286,6 +286,22 @@ class rcube_utils
     }
 
     /**
+     * Check if input value is a "simple" string.
+     * "Simple" is defined as a non-empty string containing only
+     *  - "word" characters (alphanumeric plus underscore),
+     *  - dots,
+     *  - dashes.
+     *
+     * @param string $input The string to test
+     *
+     * @return bool
+     */
+    public static function is_simple_string($input)
+    {
+        return is_string($input) && !!preg_match('/^[\w.-]+$/i', $input);
+    }
+
+    /**
      * Read request parameter value and convert it for internal use
      * Performs stripslashes() and charset conversion if necessary
      *
@@ -1729,10 +1745,10 @@ class rcube_utils
 
     /**
      * Clean the subject from reply and forward prefix
-     * 
+     *
      * @param string $subject Subject to clean
      * @param string $mode Mode of cleaning : reply, forward or both
-     * 
+     *
      * @return string Cleaned subject
      */
     public static function remove_subject_prefix($subject, $mode = 'both')
