@@ -195,7 +195,7 @@ class factor extends object_factor_base {
 
         $manualtable = new \html_table();
         $manualtable->id = 'manualattributes';
-        $manualtable->attributes['class'] = 'generaltable table table-bordered table-sm w-auto';
+        $manualtable->attributes['class'] = 'generaltable table table-bordered table-sm w-auto table-hover';
         $manualtable->attributes['style'] = 'width: auto;';
         $manualtable->data = [
             [get_string('setupfactor:key', 'factor_totp'), $secret],

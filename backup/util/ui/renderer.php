@@ -690,7 +690,7 @@ class core_backup_renderer extends plugin_renderer_base {
             }
 
             $table = new html_table();
-            $table->attributes['class'] = 'backup-files-table table generaltable';
+            $table->attributes['class'] = 'backup-files-table table generaltable table-hover';
             $table->head = $tablehead;
             $table->width = '100%';
             $table->data = [];
@@ -1051,7 +1051,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $tablehead = array(get_string('course'), get_string('time'), get_string('status', 'backup'));
 
         $table = new html_table();
-        $table->attributes['class'] = 'backup-files-table table generaltable';
+        $table->attributes['class'] = 'backup-files-table table generaltable table-hover';
         $table->head = $tablehead;
         $tabledata = array();
 
@@ -1092,7 +1092,7 @@ class core_backup_renderer extends plugin_renderer_base {
         );
 
         $table = new html_table();
-        $table->attributes['class'] = 'backup-files-table table generaltable';
+        $table->attributes['class'] = 'backup-files-table table generaltable table-hover';
         $table->head = $tablehead;
 
         $tabledata = array();

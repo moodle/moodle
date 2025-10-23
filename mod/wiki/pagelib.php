@@ -1370,7 +1370,7 @@ class page_wiki_history extends page_wiki {
 
                 $table->head = array(get_string('diff', 'wiki') . $icon, get_string('version'), get_string('user'), get_string('modified'), '');
                 $table->data = $contents;
-                $table->attributes['class'] = 'table generaltable';
+                $table->attributes['class'] = 'table generaltable table-hover';
                 $table->rowclasses = $rowclass;
 
                 // Print the form.
@@ -2584,7 +2584,7 @@ class page_wiki_admin extends page_wiki {
         $contents = array();
         $table = new html_table();
         $table->head = array('', get_string('pagename','wiki'));
-        $table->attributes['class'] = 'table generaltable';
+        $table->attributes['class'] = 'table generaltable table-hover';
         $swid = $this->subwiki->id;
         if ($showorphan) {
             if ($orphanedpages = wiki_get_orphaned_pages($swid)) {
@@ -2742,7 +2742,7 @@ class page_wiki_admin extends page_wiki {
                 $table = new html_table();
                 $table->head = array(get_string('deleteversions', 'wiki'), get_string('version'), get_string('user'), get_string('modified'), '');
                 $table->data = $contents;
-                $table->attributes['class'] = 'table generaltable';
+                $table->attributes['class'] = 'table generaltable table-hover';
                 $table->rowclasses = $rowclass;
 
                 ///Print the form

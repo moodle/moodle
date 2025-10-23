@@ -377,7 +377,7 @@ function profiling_print_run($run, $prevreferences = null) {
         $table->align = array('left', 'left');
         $table->head = array(get_string('date'), get_string('runid', 'tool_profiling'), get_string('comment', 'tool_profiling'));
         $table->tablealign = 'center';
-        $table->attributes['class'] = 'flexible generaltable generalbox';
+        $table->attributes['class'] = 'flexible generaltable generalbox table table-hover';
         $table->colclasses = array('value', 'value', 'value');
         $table->data = array();
 
