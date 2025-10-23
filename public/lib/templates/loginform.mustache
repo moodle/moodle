@@ -219,10 +219,11 @@
             require(['core_form/events'], function(FormEvent) {
                 function autoFocus() {
                     const userNameField = document.getElementById('username');
-                    if (userNameField.value.length == 0) {
+                    const passwordField = document.getElementById('password');
+                    if (userNameField && userNameField.value.length == 0) {
                         userNameField.focus();
-                    } else {
-                        document.getElementById('password').focus();
+                    } else if (passwordField) {
+                        passwordField.focus();
                     }
                 }
                 autoFocus();
