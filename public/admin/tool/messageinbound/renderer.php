@@ -56,7 +56,7 @@ class tool_messageinbound_renderer extends plugin_renderer_base {
                 $enabled,
                 $edit,
             );
-        $table->attributes['class'] = 'admintable table generaltable messageinboundhandlers';
+        $table->attributes['class'] = 'admintable table generaltable messageinboundhandlers table-hover';
 
         $yes = get_string('yes');
         $no = get_string('no');

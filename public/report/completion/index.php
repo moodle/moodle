@@ -313,7 +313,7 @@ if (!$csv) {
     }
 
     print '<table id="completion-progress" class="table table-bordered generaltable flexible boxaligncenter
-        completionreport" cellpadding="5" border="1">';
+        completionreport table-hover" cellpadding="5" border="1">';
 
     // Print criteria group names
     print PHP_EOL.'<thead><tr style="vertical-align: top">';

@@ -756,7 +756,7 @@ class renderer extends plugin_renderer_base {
     public function summary_table($attemptobj, $displayoptions) {
         // Prepare the summary table header.
         $table = new html_table();
-        $table->attributes['class'] = 'table generaltable quizsummaryofattempt';
+        $table->attributes['class'] = 'table generaltable quizsummaryofattempt table-hover';
         $table->head = [get_string('question', 'quiz'), get_string('status', 'quiz')];
         $table->align = ['left', 'left'];
         $table->size = ['', ''];
@@ -1123,7 +1123,7 @@ class renderer extends plugin_renderer_base {
 
         // Prepare table header.
         $table = new html_table();
-        $table->attributes['class'] = 'table generaltable quizattemptsummary';
+        $table->attributes['class'] = 'table generaltable quizattemptsummary table-hover';
         $table->caption = get_string('summaryofattempts', 'quiz');
         $table->captionhide = true;
         $table->head = [];

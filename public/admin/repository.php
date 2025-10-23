@@ -263,7 +263,7 @@ if (($action == 'edit') || ($action == 'new')) {
     $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
     $table->id = 'repositoriessetting';
     $table->data = array();
-    $table->attributes['class'] = 'admintable table generaltable';
+    $table->attributes['class'] = 'admintable table generaltable table-hover';
 
     // Get list of used plug-ins
     $repositorytypes = repository::get_types();

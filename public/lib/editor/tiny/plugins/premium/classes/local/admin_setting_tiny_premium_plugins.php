@@ -98,7 +98,7 @@ class admin_setting_tiny_premium_plugins extends \admin_setting {
         // Set up table.
         $table = new \html_table();
         $table->id = 'managetinypremiumpluginstable';
-        $table->attributes['class'] = 'admintable table generaltable';
+        $table->attributes['class'] = 'admintable table generaltable table-hover';
         $table->head  = [
             get_string('name'),
             get_string('enable'),
