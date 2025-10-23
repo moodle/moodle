@@ -96,13 +96,15 @@ Feature: Test if the login form provides the correct feedback
     And I follow "Log in"
     Then the focused element is "Password" "field"
 
+  @accessibility
   Scenario: Test the login page focus after error feature
     Given I follow "Log in"
     And I set the field "Username" to "admin"
     And I set the field "Password" to "wrongpassword"
     And I press "Log in"
-    And I press the tab key
+    And I wait until the page is ready
     Then the focused element is "Username" "field"
+    And the page should meet accessibility standards with "best-practice" extra tests
 
   Scenario: Display the password visibility toggle icon
     Given the following config values are set as admin:
