@@ -18,8 +18,8 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\local\formatters;
 
+use core\lang_string;
 use core_user\output\status_field;
-use lang_string;
 
 /**
  * Formatters for the course enrolment entity
@@ -27,9 +27,10 @@ use lang_string;
  * @package     core_course
  * @copyright   2022 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @deprecated since Moodle 5.2
  */
 class enrolment {
-
     /**
      * @deprecated since Moodle 4.3 - please do not use this function any more (to remove in MDL-78118)
      */
@@ -42,8 +43,13 @@ class enrolment {
      * Returns list of enrolment statuses
      *
      * @return lang_string[]
+     *
+     * @deprecated since Moodle 5.2 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(reason: 'It is no longer used', since: '5.2', mdl: 'MDL-87000')]
     public static function enrolment_values(): array {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         return [
             status_field::STATUS_ACTIVE => new lang_string('participationactive', 'enrol'),
             status_field::STATUS_SUSPENDED => new lang_string('participationsuspended', 'enrol'),
@@ -56,8 +62,13 @@ class enrolment {
      *
      * @param string|null $value
      * @return string|null
+     *
+     * @deprecated since Moodle 5.2 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(reason: 'It is no longer used', since: '5.2', mdl: 'MDL-87000')]
     public static function enrolment_status(?string $value): ?string {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         if ($value === null) {
             return null;
         }

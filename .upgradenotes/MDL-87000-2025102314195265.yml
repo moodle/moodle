@@ -1,0 +1,9 @@
+issueNumber: MDL-87000
+notes:
+  core_reportbuilder:
+    - message: |
+        The following enrolment entity formatter methods have been deprecated:
+
+        * `enrolment_status()`
+        * `enrolment_values()`
+      type: deprecated
