@@ -137,7 +137,7 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
     $table->head  = array($strscale, $strused, $stredit);
     $table->size  = array('70%', '20%', '10%');
     $table->align = array('left', 'center', 'center');
-    $table->attributes['class'] = 'scaletable localscales table generaltable';
+    $table->attributes['class'] = 'scaletable localscales table generaltable table-hover';
     $table->data  = $data;
 }
 
@@ -163,7 +163,7 @@ if ($scales = grade_scale::fetch_all_global()) {
         $data[] = $line;
     }
     $table2->head  = array($strscale, $strused, $stredit);
-    $table->attributes['class'] = 'scaletable globalscales table generaltable';
+    $table->attributes['class'] = 'scaletable globalscales table generaltable table-hover';
     $table2->size  = array('70%', '20%', '10%');
     $table2->align = array('left', 'center', 'center');
     $table2->data  = $data;

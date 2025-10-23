@@ -174,7 +174,7 @@ class renderer extends \plugin_renderer_base {
 
         $table = new \html_table();
         $table->id = 'active_factors';
-        $table->attributes['class'] = 'generaltable table table-bordered';
+        $table->attributes['class'] = 'generaltable table table-bordered table-hover';
         $table->head  = [
             $headers->devicename,
             $headers->added,
@@ -348,7 +348,7 @@ class renderer extends \plugin_renderer_base {
         $table = new \html_table();
         $table->head = $displaynames;
         $table->align = $colclasses;
-        $table->attributes['class'] = 'generaltable table table-bordered w-auto';
+        $table->attributes['class'] = 'generaltable table table-bordered w-auto table-hover';
         $table->attributes['style'] = 'width: auto; min-width: 50%; margin-bottom: 0;';
 
         // Manually handle Total users and MFA users.
@@ -461,7 +461,7 @@ class renderer extends \plugin_renderer_base {
 
         $table = new \html_table();
 
-        $table->attributes['class'] = 'generaltable table table-bordered w-auto';
+        $table->attributes['class'] = 'generaltable table table-bordered w-auto table-hover';
         $table->attributes['style'] = 'width: auto; min-width: 50%';
 
         $table->head = [
@@ -513,7 +513,7 @@ class renderer extends \plugin_renderer_base {
         global $DB;
 
         $table = new \html_table();
-        $table->attributes['class'] = 'generaltable table table-bordered w-auto';
+        $table->attributes['class'] = 'generaltable table table-bordered w-auto table-hover';
         $table->attributes['style'] = 'width: auto; min-width: 50%';
         $table->head = [
             'userid' => get_string('userid', 'grades'),

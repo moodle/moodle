@@ -117,7 +117,7 @@ if (empty($pending)) {
 
     // Build a table of all the requests.
     $table = new html_table();
-    $table->attributes['class'] = 'pendingcourserequests table generaltable';
+    $table->attributes['class'] = 'pendingcourserequests table generaltable table-hover';
     $table->align = ['center', 'center', 'center', 'center', 'center', 'center'];
     $table->head = [get_string('requestedby'), get_string('shortnamecourse'), get_string('fullnamecourse'),
             get_string('summary'), get_string('category'), get_string('requestreason'), get_string('action')];
