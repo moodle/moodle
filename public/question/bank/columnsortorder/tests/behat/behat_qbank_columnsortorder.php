@@ -32,9 +32,6 @@ class behat_qbank_columnsortorder extends behat_base {
             new behat_component_named_selector('column header', [
                 "//th[contains(@data-name, %locator%)]",
             ]),
-            new behat_component_named_selector('column move handle', [
-                "//*[self::th or self::tr][contains(@data-name, %locator%)]//span[contains(@data-drag-type, 'move')]",
-            ]),
             new behat_component_named_selector('column resize handle', [
                 "//th[contains(@data-name, %locator%)]//span[contains(@data-action, 'resize')]",
             ]),
