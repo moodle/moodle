@@ -225,7 +225,6 @@ class question_bank_helper {
     ): array {
         global $DB;
 
-        $pluginssql = [];
         $params = [];
 
         if ($getcategories || !empty($havingcap)) {
@@ -263,22 +262,36 @@ class question_bank_helper {
         if (empty($plugins)) {
             return [];
         }
-
-        // Build the joins for all modules of the type requested i.e. those that do or do not share questions.
+        // Build the left joins for all modules of the type requested i.e. those that do or do not share questions.
+        $pluginjoins = [];
+        $pluginfields = [];
         foreach ($plugins as $key => $plugin) {
-            $moduleid = $DB->get_field('modules', 'id', ['name' => $plugin]);
-            $sql = "JOIN {{$plugin}} p{$key} ON p{$key}.id = cm.instance
-                    AND cm.module = {$moduleid} AND cm.deletioninprogress = 0";
+            $join = "LEFT JOIN {{$plugin}} p{$key} ON p{$key}.id = cm.instance
+                     AND m.name = '{$plugin}'";
             if ($plugin === self::get_default_question_bank_activity_name()) {
-                $sql .= " AND p{$key}.type <> '" . self::TYPE_PREVIEW . "'";
+                $join .= " AND p{$key}.type <> '" . self::TYPE_PREVIEW . "'";
             }
-            if (!empty($search)) {
-                $sql .= " AND " . $DB->sql_like("p{$key}.name", ":search{$key}", false);
-                $params["search{$key}"] = "%{$search}%";
-            }
-            $pluginssql[] = $sql;
+            $pluginjoins[] = $join;
+            $pluginfields[] = "p{$key}.name";
         }
-        $pluginssql = implode(' ', $pluginssql);
+        $pluginjoinsql = implode(' ', $pluginjoins);
+
+        // Build the SQL to filter by module name and exclude deleted course modules.
+        [$modulenamesql, $modulenameparams] = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'modname');
+        $wheremodulesql = "AND m.name $modulenamesql AND cm.deletioninprogress = 0";
+        $params = array_merge($params, $modulenameparams);
+
+        // Build the search condition using COALESCE.
+        $searchsql = '';
+        if (!empty($search) && !empty($pluginfields)) {
+            $params['search'] = "%{$search}%";
+            if (count($pluginfields) === 1) {
+                $searchfield = $pluginfields[0];
+            } else {
+                $searchfield = 'COALESCE(' . implode(', ', $pluginfields) . ')';
+            }
+            $searchsql = "AND " . $DB->sql_like($searchfield, ':search', false);
+        }
 
         // Build the SQL to filter out any requested course ids.
         if (!empty($notincourseids)) {
@@ -309,10 +322,10 @@ class question_bank_helper {
         $sql = "{$select} {$contextselect}
                 FROM {course_modules} cm
                 JOIN {modules} m ON m.id = cm.module
-                {$pluginssql}
+                {$pluginjoinsql}
                 {$contextsql}
                 {$catsql}
-                WHERE 1=1 {$notincoursesql} {$incoursesql}
+                WHERE 1=1 {$wheremodulesql} {$notincoursesql} {$incoursesql} {$searchsql}
                 GROUP BY cm.id, cm.course {$contextgroupby}
                 {$orderbysql}";
 
