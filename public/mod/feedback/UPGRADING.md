@@ -1,5 +1,13 @@
 # mod_feedback Upgrade notes
 
+## 5.2dev
+
+### Deprecated
+
+- The method `feedback_init_feedback_session()` has been deprecated, along with all other direct access to `$SESSION` from the module
+
+  For more information see [MDL-86607](https://tracker.moodle.org/browse/MDL-86607)
+
 ## 5.1
 
 ### Added

@@ -8,6 +8,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## 5.2dev
 
+### core
+
+#### Added
+
+- Appending an exclamation mark to template names ignores theme overrides
+
+  For more information see [MDL-77894](https://tracker.moodle.org/browse/MDL-77894)
+
+#### Fixed
+
+- `restore_qtype_plugin::unset_excluded_fields` now returns the modified questiondata structure,
+  in order to support structures that contain arrays.
+  If your qtype plugin overrides `restore_qtype_plugin::remove_excluded_question_data` without
+  calling the parent method, you may need to modify your overridden method to use the returned
+  value.
+
+  For more information see [MDL-85975](https://tracker.moodle.org/browse/MDL-85975)
+
 ### core_group
 
 #### Added
@@ -15,6 +33,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - `groups_print_activity_menu()` and `groups_get_activity_group()` now include an additional `$participationonly` parameter, which is true by default. This can be set false when we want the user to be able to select a non-participation group within an activity, for example if a teacher wants to filter assignment submissions by non-participation groups. It should never be used when the menu is displayed to students, as this may allow them to participate using non-participation groups. Non-participation groups are labeled as such.
 
   For more information see [MDL-81514](https://tracker.moodle.org/browse/MDL-81514)
+
+### mod_feedback
+
+#### Deprecated
+
+- The method `feedback_init_feedback_session()` has been deprecated, along with all other direct access to `$SESSION` from the module
+
+  For more information see [MDL-86607](https://tracker.moodle.org/browse/MDL-86607)
 
 ## 5.1
 
