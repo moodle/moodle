@@ -40,6 +40,12 @@ $action = required_param('action', PARAM_ALPHA);
 
 if ($action === 'filtertext') {
     $text = required_param('text', PARAM_RAW);
+    $striptags = optional_param('striptags', false, PARAM_BOOL);
+
+    // Strip all HTML tags before filtering the text (avoiding XSS risk).
+    if ($striptags) {
+        $text = clean_param($text, PARAM_NOTAGS);
+    }
 
     $result = filter_manager::instance()->filter_text($text, $context);
     echo $OUTPUT->header();
