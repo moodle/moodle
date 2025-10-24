@@ -166,14 +166,17 @@
     </form>
     <div>
         {{#columnsdisabled}}
-            {{#str}}qbankcolumnsdisabled, qbank_columnsortorder{{/str}}
-            <br>
+            <p>
+                {{#str}}qbankcolumnsdisabled, qbank_columnsortorder{{/str}}
+            </p>
+            <ul>
+                {{#disabled}}
+                <li>
+                    {{disabledname}}
+                </li>
+                {{/disabled}}
+            </ul>
         {{/columnsdisabled}}
-        {{#disabled}}
-            <div class="list-group-item disabled">
-                {{disabledname}}
-            </div>
-        {{/disabled}}
     </div>
     <div>
         {{{urltomanageqbanks}}}
