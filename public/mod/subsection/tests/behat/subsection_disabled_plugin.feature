@@ -63,7 +63,7 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And I should see "Subactivity" in the "Subsection1" "section"
     And "Subsection1" "section" should appear before "Section 2" "section"
     And "Edit settings" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
-    And "Duplicate" "link" should not exist in the "Subsection1" "core_courseformat > Section actions menu"
+    And "Duplicate" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "Hide" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "Move" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "View" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"

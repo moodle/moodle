@@ -84,6 +84,7 @@ class delegatedcontrolmenu extends basecontrolmenu {
         $controls = [];
         $controls['view'] = $this->get_section_view_item();
         $controls['edit'] = $this->get_section_edit_item();
+        $controls['duplicate'] = $this->get_section_duplicate_item();
         $controls['visibility'] = $this->get_section_visibility_item();
         $controls['movesection'] = $this->get_cm_move_item();
         $controls['permalink'] = $this->get_section_permalink_item();
@@ -170,6 +171,36 @@ class delegatedcontrolmenu extends basecontrolmenu {
                 'data-action' => 'moveCm',
                 'data-id' => $this->mod->id,
             ],
+        );
+    }
+
+    /**
+     * Retrieves the duplicate item for the section control menu.
+     *
+     * @return link|null The menu item if applicable, otherwise null.
+     */
+    protected function get_section_duplicate_item(): ?link {
+        $capabilities = ['moodle/course:update', 'moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'];
+        if (!has_all_capabilities($capabilities, $this->coursecontext)) {
+            return null;
+        }
+        if (!plugin_supports('mod', $this->mod->modname, FEATURE_BACKUP_MOODLE2)) {
+            return null;
+        }
+        if (!course_allowed_module($this->mod->get_course(), $this->mod->modname)) {
+            return null;
+        }
+
+        $url = $this->format->get_update_url(
+            action: 'cm_duplicate',
+            ids: [$this->mod->id],
+            returnurl: $this->baseurl,
+        );
+
+        return new link_secondary(
+            url: $url,
+            icon: new pix_icon('t/copy', ''),
+            text: get_string('duplicate'),
         );
     }
 
