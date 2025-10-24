@@ -1,0 +1,7 @@
+issueNumber: MDL-87003
+notes:
+  tool_mobile:
+    - message: >-
+        The WS tool_mobile_get_public_config now returns whether MFA and
+        reCAPTCHA are enabled for login/recover password.
+      type: changed

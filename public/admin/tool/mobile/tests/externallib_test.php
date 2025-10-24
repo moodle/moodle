@@ -101,6 +101,9 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'supportavailability' => $CFG->supportavailability,
             'warnings' => [],
             'showloginform' => (int) get_config('core', 'showloginform'),
+            'tool_mfa_enabled' => get_config('tool_mfa', 'enabled'),
+            'enableloginrecaptcha' => login_captcha_enabled(),
+            'enableforgotpasswordrecaptcha' => forgotpassword_captcha_enabled(),
         );
         $this->assertEquals($expected, $result);
 

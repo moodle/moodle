@@ -192,6 +192,13 @@ class external extends external_api {
                 'tool_mobile_qrcodetype' => new external_value(PARAM_INT, 'QR login configuration.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
                 'showloginform' => new external_value(PARAM_INT, 'Display default login form.'),
+                'tool_mfa_enabled' => new external_value(PARAM_BOOL, 'Whether MFA is enabled for the site.', VALUE_OPTIONAL),
+                'enableloginrecaptcha' => new external_value(PARAM_BOOL, 'Whether login reCAPTCHA is enabled.', VALUE_OPTIONAL),
+                'enableforgotpasswordrecaptcha' => new external_value(
+                    PARAM_BOOL,
+                    'Whether forgot password reCAPTCHA is enabled.',
+                    VALUE_OPTIONAL
+                ),
             )
         );
     }
