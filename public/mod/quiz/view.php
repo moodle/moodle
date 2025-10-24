@@ -79,6 +79,7 @@ $viewobj->canreviewmine = $canreviewmine || $canpreview;
 
 // Get this user's attempts.
 $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
+$firstfinishedattempt = reset($attempts);
 $lastfinishedattempt = end($attempts);
 $unfinished = false;
 $unfinishedattemptid = null;
@@ -209,6 +210,31 @@ $viewobj->infomessages = $viewobj->accessmanager->describe_rules();
 if ($quiz->attempts != 1) {
     $viewobj->infomessages[] = get_string('gradingmethod', 'quiz',
             quiz_get_grading_option_name($quiz->grademethod));
+}
+
+// Quiz due status relies on the first finished attempt.
+if ($quiz->duedate > 0) {
+    if (empty($firstfinishedattempt) || empty($firstfinishedattempt->timefinish)) {
+        $time = \core\di::get(\core\clock::class)->time();
+        if ($quiz->duedate - $time <= 0) {
+            array_unshift($viewobj->infomessages, get_string('quizoverdue', 'mod_quiz'));
+        } else {
+            array_unshift($viewobj->infomessages, get_string('quizduein', 'mod_quiz', format_time($quiz->duedate - $time)));
+        }
+    } else {
+        $timefinished = $firstfinishedattempt->timefinish;
+        if ($quiz->duedate - $timefinished <= 0) {
+            array_unshift(
+                $viewobj->infomessages,
+                get_string('quizfinishedlate', 'mod_quiz', format_time($quiz->duedate - $timefinished))
+            );
+        } else {
+            array_unshift(
+                $viewobj->infomessages,
+                get_string('quizfinishedearly', 'mod_quiz', format_time($quiz->duedate - $timefinished))
+            );
+        }
+    }
 }
 
 // Inform user of the grade to pass if non-zero.

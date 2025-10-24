@@ -37,6 +37,7 @@ class mod_quiz_generator extends testing_module_generator {
         $defaultquizsettings = [
             'timeopen'               => 0,
             'timeclose'              => 0,
+            'duedate'                => 0,
             'preferredbehaviour'     => 'deferredfeedback',
             'attempts'               => 0,
             'attemptonlast'          => 0,

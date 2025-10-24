@@ -106,7 +106,7 @@ final class override_test extends \core_external\tests\externallib_testcase {
             ],
             'good update' => [
                 'data' => [
-                    'timeopen' => 999,
+                    'duedate' => 999,
                 ],
             ],
             'bad update' => [
@@ -218,6 +218,7 @@ final class override_test extends \core_external\tests\externallib_testcase {
     }
 
     /**
+<<<<<<< HEAD
      * Provides values to test_save_reason_overrides
      *
      * @return array
@@ -476,5 +477,46 @@ final class override_test extends \core_external\tests\externallib_testcase {
         $override = $DB->get_record('quiz_overrides', ['id' => $overrideid]);
         $this->assertEquals($expectedreason, $override->reason);
         $this->assertEquals($expectedformat, $override->reasonformat);
+    }
+
+    /**
+     * Test overridden due date can be set and retrieved correctly.
+     */
+    public function test_overridden_due_date(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $quiz = $this->create_quiz();
+        $user = $this->getDataGenerator()->create_user();
+
+        $payload = [
+            'quizid' => $quiz->id,
+            'overrides' => [
+                [
+                    'userid' => $user->id,
+                    'duedate' => 999,
+                ],
+            ],
+        ];
+
+        $this->assertEmpty($DB->get_record('quiz_overrides', ['quiz' => $quiz->id, 'userid' => $user->id]));
+
+        // Add a new overridden due date.
+        save_overrides::execute($payload);
+        $record = $DB->get_record('quiz_overrides', ['quiz' => $quiz->id, 'userid' => $user->id]);
+        $result = get_overrides::execute($quiz->id);
+        $this->assertEquals(999, $record->duedate);
+        $this->assertEquals(999, $result['overrides'][$record->id]->duedate);
+
+        // Update overridden due date.
+        $payload['overrides'][0]['id'] = $record->id;
+        $payload['overrides'][0]['duedate'] = 1000;
+        save_overrides::execute($payload);
+        $record = $DB->get_record('quiz_overrides', ['quiz' => $quiz->id, 'userid' => $user->id]);
+        $result = get_overrides::execute($quiz->id);
+        $this->assertEquals(1000, $record->duedate);
+        $this->assertEquals(1000, $result['overrides'][$record->id]->duedate);
     }
 }

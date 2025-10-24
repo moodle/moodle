@@ -164,6 +164,7 @@ class notification_helper {
                 options: ['context' => \context_course::instance($quizobj->get_course()->id), 'escape' => false]),
             'timeopen' => userdate($user->timeopen),
             'timeclose' => !empty($user->timeclose) ? userdate($user->timeclose) : get_string('statusna'),
+            'duedate' => !empty($user->duedate) ? userdate($user->duedate) : get_string('statusna'),
             'url' => $url,
         ];
 

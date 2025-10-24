@@ -119,6 +119,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
+        if (!isset($data->duedate)) {
+            $data->duedate = 0;
+        }
+        $data->duedate = $this->apply_date_offset($data->duedate);
 
         if (property_exists($data, 'questions')) {
             // Needed by {@link process_quiz_attempt_legacy}, in which case it will be present.
@@ -561,6 +565,11 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
+        if (!isset($data->duedate)) {
+            $data->duedate = null;
+        } else {
+            $data->duedate = $this->apply_date_offset($data->duedate);
+        }
 
         $newitemid = $DB->insert_record('quiz_overrides', $data);
 

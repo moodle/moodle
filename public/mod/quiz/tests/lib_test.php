@@ -422,6 +422,7 @@ final class lib_test extends \advanced_testcase {
             'quiz' => $quiz->id,
             'groupid' => $group1->id,
             'timeopen' => $now,
+            'duedate' => $now + 10,
             'timeclose' => $now + 20
         ];
         $DB->insert_record('quiz_overrides', $override1);
@@ -430,6 +431,7 @@ final class lib_test extends \advanced_testcase {
             'quiz' => $quiz->id,
             'groupid' => $group2->id,
             'timeopen' => $now - 10,
+            'duedate' => $now,
             'timeclose' => $now + 10
         ];
         $DB->insert_record('quiz_overrides', $override2);
@@ -446,6 +448,46 @@ final class lib_test extends \advanced_testcase {
         // Override 1's time close has higher priority since it is later than override 2's.
         $this->assertEquals(1, $closepriorities[$override1->timeclose]);
         $this->assertEquals(2, $closepriorities[$override2->timeclose]);
+
+        $duedatepriorities = $priorities['duedate'];
+        // Override 1's due date has higher priority since it is later than override 2's.
+        $this->assertEquals(1, $duedatepriorities[$override1->duedate]);
+        $this->assertEquals(2, $duedatepriorities[$override2->duedate]);
+    }
+
+    /**
+     * Test event actions for due event.
+     * @covers ::mod_quiz_core_calendar_provide_event_action
+     */
+    public function test_quiz_core_calendar_provide_event_action_due(): void {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+        // Create a student and enrol into the course.
+        $student = $this->getDataGenerator()->create_and_enrol($course);
+        // Create a quiz.
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id,
+            'timeopen' => time() - DAYSECS, 'duedate' => time() + HOURSECS, 'timeclose' => time() + DAYSECS]);
+
+        // Create a calendar event.
+        $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_DUE);
+        // Now, log in as student.
+        $this->setUser($student);
+        // Create an action factory.
+        $factory = new \core_calendar\action_factory();
+
+        // Decorate action event.
+        $actionevent = mod_quiz_core_calendar_provide_event_action($event, $factory);
+
+        // Confirm the event was decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
+        $this->assertEquals(get_string('attemptquiznow', 'quiz'), $actionevent->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent->get_url());
+        $this->assertEquals(1, $actionevent->get_item_count());
+        $this->assertTrue($actionevent->is_actionable());
     }
 
     public function test_quiz_core_calendar_provide_event_action_open(): void {

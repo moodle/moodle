@@ -93,8 +93,18 @@ class mod_quiz_mod_form extends moodleform_mod {
                 self::$datefieldoptions);
         $mform->addHelpButton('timeopen', 'quizopenclose', 'quiz');
 
+        $mform->addElement(
+            'date_time_selector',
+            'duedate',
+            get_string('duedate', 'quiz'),
+            self::$datefieldoptions
+        );
+
+        $mform->addHelpButton('duedate', 'duedate', 'quiz');
+
         $mform->addElement('date_time_selector', 'timeclose', get_string('quizclose', 'quiz'),
                 self::$datefieldoptions);
+        $mform->addHelpButton('timeclose', 'quizclose', 'quiz');
 
         // Time limit.
         $mform->addElement('duration', 'timelimit', get_string('timelimit', 'quiz'),
@@ -548,6 +558,22 @@ class mod_quiz_mod_form extends moodleform_mod {
         if ($data['timeopen'] != 0 && $data['timeclose'] != 0 &&
                 $data['timeclose'] < $data['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'quiz');
+        }
+
+        // Check duedate and open time are consistent.
+        if (
+            $data['timeopen'] != 0 && $data['duedate'] != 0 &&
+            $data['duedate'] <= $data['timeopen']
+        ) {
+            $errors['duedate'] = get_string('duedatebeforeopen', 'quiz');
+        }
+
+        // Check duedate and close time are consistent.
+        if (
+            $data['timeclose'] != 0 && $data['duedate'] != 0 &&
+            $data['duedate'] > $data['timeclose']
+        ) {
+            $errors['duedate'] = get_string('duedateafterclose', 'quiz');
         }
 
         // Check that the grace period is not too short.

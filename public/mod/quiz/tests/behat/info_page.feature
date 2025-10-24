@@ -56,3 +56,45 @@ Feature: Display of information before starting a quiz
       | TF1      | 1    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     Then I should not see "Grade to pass: 0.00"
+
+  Scenario: Due date is in the past when the quiz is not attempted
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | duedate       |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | ##yesterday## |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    Then I should see "Quiz is overdue"
+
+  Scenario: Due date is in the future when the quiz is not attempted
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | duedate                        |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | ##+2 days 5 hours 30 minutes## |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    Then I should see "Quiz is due in 2 days 5 hours"
+
+  Scenario: Due date is in the past when the quiz is attempted
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | duedate       |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | ##yesterday## |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+    And user "student" has attempted "Quiz 1" with responses:
+      | slot | response |
+      |   1  | True     |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    Then I should see "Quiz was finished" in the ".quizinfo" "css_element"
+    And I should see "late" in the ".quizinfo" "css_element"
+
+  Scenario: Due date is in the future when the quiz is attempted
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | duedate                        |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | ##+2 days 5 hours 30 minutes## |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+    And user "student" has attempted "Quiz 1" with responses:
+      | slot | response |
+      |   1  | True     |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    Then I should see "Quiz was finished" in the ".quizinfo" "css_element"
+    And I should see "early" in the ".quizinfo" "css_element"

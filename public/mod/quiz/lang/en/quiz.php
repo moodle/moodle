@@ -24,6 +24,7 @@
 
 $string['accessnoticesheader'] = 'You can preview this quiz, but if this were a real attempt, you would be blocked because:';
 $string['action'] = 'Action';
+$string['activitydate:due'] = 'Due:';
 $string['activityoverview'] = 'You have quizzes that are due';
 $string['adaptive'] = 'Adaptive mode';
 $string['adaptive_help'] = 'If enabled, multiple responses to a question are allowed within the same attempt at the quiz. So for example if a response is marked as incorrect, the student will be allowed to try again immediately. However, depending on the "Apply penalties" setting, a penalty will usually be subtracted for each wrong attempt.';
@@ -287,6 +288,9 @@ $string['downloadextra'] = '(file is also stored in the course files in the /bac
 $string['dragtoafter'] = 'After {$a}';
 $string['dragtostart'] = 'To the start';
 $string['duedate'] = 'Due date';
+$string['duedate_help'] = 'This is when the quiz is due. Attempts will still be allowed after this date.';
+$string['duedateafterclose'] = 'The due date must be before the close date.';
+$string['duedatebeforeopen'] = 'The due date must be after the open date.';
 $string['duplicateresponse'] = 'This submission has been ignored because you gave an equivalent answer earlier.';
 $string['eachattemptbuildsonthelast'] = 'Each attempt builds on the last';
 $string['eachattemptbuildsonthelast_help'] = 'If multiple attempts are allowed and this setting is enabled, each new quiz attempt will contain the results of the previous attempt. This allows a quiz to be completed over several attempts.';
@@ -767,6 +771,7 @@ $string['privacy:metadata:quiz_grades:quiz'] = 'The quiz that was graded.';
 $string['privacy:metadata:quiz_grades:timemodified'] = 'The time that the grade was modified.';
 $string['privacy:metadata:quiz_grades:userid'] = 'The user who was graded.';
 $string['privacy:metadata:quiz_overrides'] = 'Details about overrides for this quiz';
+$string['privacy:metadata:quiz_overrides:duedate'] = 'The new due date for the quiz.';
 $string['privacy:metadata:quiz_overrides:quiz'] = 'The quiz with override information';
 $string['privacy:metadata:quiz_overrides:reason'] = 'Optional notes documenting the reason for a quiz override.';
 $string['privacy:metadata:quiz_overrides:timeclose'] = 'The new close time for the quiz.';
@@ -817,10 +822,16 @@ $string['quiz:attempt'] = 'Attempt quizzes';
 $string['quiz:customisequestionnumbers'] = 'Customise displayed question numbers';
 $string['quizavailable'] = 'The quiz is available until: {$a}';
 $string['quizclose'] = 'Close the quiz';
+$string['quizclose_help'] = 'After the closing time, the students will not be able to start new attempts. ';
 $string['quizclosed'] = 'This quiz closed on {$a}';
 $string['quizcloses'] = 'Quiz closes';
 $string['quizeventcloses'] = '{$a} closes';
 $string['quizcloseson'] = 'This quiz will close on {$a}.';
+$string['quizduein'] = 'Quiz is due in {$a}';
+$string['quizeventduedate'] = '{$a} is due';
+$string['quizfinishedearly'] = 'Quiz was finished {$a} early';
+$string['quizfinishedlate'] = 'Quiz was finished {$a} late';
+$string['quizoverdue'] = 'Quiz is overdue';
 $string['quiz:deleteattempts'] = 'Delete quiz attempts';
 $string['quiz:emailconfirmsubmission'] = 'Receive confirmation of your own quiz submissions';
 $string['quiz:emailnotifysubmission'] = 'Receive notification of your students\' quiz submissions';
@@ -849,6 +860,7 @@ $string['quizopendatesoonhtml'] = '<p>Hi {$a->firstname},</p>
 <p>The quiz <strong>{$a->quizname}</strong> in course {$a->coursename} is opening soon.
 <p><strong>Opens: {$a->timeopen}</strong></p>
 <p><strong>Closes: {$a->timeclose}</strong></p>
+<p><strong>Due: {$a->duedate}</strong></p>
 <p><a href="{$a->url}">Go to quiz</a></p>';
 $string['quizopendatesoonsubject'] = 'Opens on {$a->timeopen}: {$a->quizname}';
 $string['quizopenwillclose'] = 'This quiz is open, will close on {$a} at';

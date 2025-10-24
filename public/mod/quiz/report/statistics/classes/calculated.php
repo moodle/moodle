@@ -158,6 +158,9 @@ class calculated {
             $quizinfo[get_string('duration', 'quiz_statistics')] =
                 format_time($quiz->timeclose - $quiz->timeopen);
         }
+        if ($quiz->duedate) {
+            $quizinfo[get_string('duedate', 'quiz')] = userdate($quiz->duedate);
+        }
 
         // The statistics.
         foreach ($todisplay as $property => $format) {

@@ -44,6 +44,7 @@ class save_overrides extends external_api {
             'userid' => new external_value(PARAM_INT, 'ID of user', VALUE_DEFAULT, null),
             'timeopen' => new external_value(PARAM_INT, 'Quiz override opening timestamp', VALUE_DEFAULT, null),
             'timeclose' => new external_value(PARAM_INT, 'Quiz override closing timestamp', VALUE_OPTIONAL, null),
+            'duedate' => new external_value(PARAM_INT, 'Quiz override due date timestamp', VALUE_OPTIONAL, null),
             'timelimit' => new external_value(PARAM_INT, 'Quiz override time limit', VALUE_DEFAULT, null),
             'attempts' => new external_value(PARAM_INT, 'Quiz override attempt count', VALUE_DEFAULT, null),
             'password' => new external_value(PARAM_TEXT, 'Quiz override password', VALUE_DEFAULT, null),

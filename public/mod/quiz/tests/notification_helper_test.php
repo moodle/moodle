@@ -415,6 +415,7 @@ final class notification_helper_test extends \advanced_testcase {
             'firstname' => $student->firstname,
             'coursename' => 'A&B (en)',
             'timeclose' => !empty($quiz->timeclose) ? userdate($quiz->timeclose) : get_string('statusna'),
+            'duedate' => !empty($quiz->duedate) ? userdate($quiz->duedate) : get_string('statusna'),
             'url' => new \moodle_url('/mod/quiz/view.php', ['id' => $quiz->cmid])
         ]);
         $expectedfullmessage = get_string('quizopendatesoonhtml', 'mod_quiz', $fullmessagestringparams);
