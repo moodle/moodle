@@ -191,7 +191,7 @@ if (!empty($add)) {
     }
 
     // Delete the module.
-    course_delete_module($cm->id);
+    \core_courseformat\formatactions::cm($course->id)->delete($cm->id);
 
     redirect($return);
 }

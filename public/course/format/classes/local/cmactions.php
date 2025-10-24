@@ -20,6 +20,7 @@ use core\exception\moodle_exception;
 use core_courseformat\sectiondelegatemodule;
 use core_text;
 use course_modinfo;
+use stdClass;
 
 /**
  * Course module course format actions.
@@ -226,5 +227,224 @@ class cmactions extends baseactions {
         }
 
         return true;
+    }
+
+    /**
+     * Handles the whole deletion process of a module.
+     * This includes calling the modules delete_instance function, deleting files, events, grades, conditional data,
+     * the data in the course_module and course_sections table and adding a module deletion event to the DB.
+     *
+     * @param int $cmid The course module id
+     * @param bool $async Whether or not to try to delete the module using an adhoc task. Async also depends on a plugin hook.
+     */
+    public function delete(int $cmid, bool $async = false): void {
+        // Check the 'course_module_background_deletion_recommended' hook first.
+        // Only use asynchronous deletion if at least one plugin returns true and if async deletion has been requested.
+        // Both are checked because plugins should not be allowed to dictate the deletion behaviour, only support/decline it.
+        // It's up to plugins to handle things like whether or not they are enabled.
+        if ($async && $pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    if ($pluginfunction()) {
+                        $this->delete_async($cmid);
+                        return;
+                    }
+                }
+            }
+        }
+
+        global $CFG, $DB;
+
+        require_once($CFG->libdir . '/gradelib.php');
+        require_once($CFG->libdir . '/questionlib.php');
+        require_once($CFG->dirroot . '/blog/lib.php');
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        if (!$cm = $DB->get_record('course_modules', ['id' => $cmid])) {
+            return;
+        }
+        $modulename = $DB->get_field('modules', 'name', ['id' => $cm->module], MUST_EXIST);
+
+        $this->check_deletion($cm, $modulename);
+
+        // Allow plugins to use this course module before we completely delete it.
+        if ($pluginsfunction = get_plugins_with_function('pre_course_module_delete')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $pluginfunction($cm);
+                }
+            }
+        }
+
+        if (empty($cm->instance)) {
+            throw new moodle_exception(
+                errorcode: 'cannotdeletemodulemissinginstance',
+                debuginfo: "Cannot delete module with ID $cm->id because it does not have a valid activity instance.",
+            );
+        }
+
+        // Call the delete_instance function, if it returns false throw an exception.
+        $deleteinstancefunction = $modulename . '_delete_instance';
+        if (!$deleteinstancefunction($cm->instance)) {
+            throw new moodle_exception(
+                errorcode: 'cannotdeletemoduleinstance',
+                debuginfo: "Cannot delete module $modulename (instance).",
+            );
+        }
+
+        // We delete the questions after the activity database is removed,
+        // because questions are referenced via question reference tables
+        // and cannot be deleted while the activities that use them still exist.
+        question_delete_activity($cm);
+
+        // Remove all module files in case modules forget to do that.
+        $modcontext = \context_module::instance($cm->id);
+        $fs = get_file_storage();
+        $fs->delete_area_files($modcontext->id);
+
+        // Delete events from calendar.
+        if ($events = $DB->get_records('event', ['instance' => $cm->instance, 'modulename' => $modulename])) {
+            $coursecontext = \context_course::instance($cm->course);
+            foreach ($events as $event) {
+                $event->context = $coursecontext;
+                $calendarevent = \calendar_event::load($event);
+                $calendarevent->delete();
+            }
+        }
+
+        // Delete grade items, outcome items and grades attached to modules.
+        $gradeitems = \grade_item::fetch_all(['itemtype' => 'mod',
+            'itemmodule' => $modulename,
+            'iteminstance' => $cm->instance,
+            'courseid' => $cm->course,
+        ]);
+        if ($gradeitems) {
+            foreach ($gradeitems as $gradeitem) {
+                $gradeitem->delete('moddelete');
+            }
+        }
+
+        // Delete associated blogs and blog tag instances.
+        blog_remove_associations_for_module($modcontext->id);
+
+        // Delete completion and availability data; it is better to do this even if the
+        // features are not turned on, in case they were turned on previously (these will be
+        // very quick on an empty table).
+        $DB->delete_records('course_modules_completion', ['coursemoduleid' => $cm->id]);
+        $DB->delete_records('course_modules_viewed', ['coursemoduleid' => $cm->id]);
+        $DB->delete_records('course_completion_criteria', [
+            'moduleinstance' => $cm->id,
+            'course' => $cm->course,
+            'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY,
+        ]);
+
+        // Delete all tag instances associated with the instance of this module.
+        \core_tag_tag::delete_instances('mod_' . $modulename, null, $modcontext->id);
+        \core_tag_tag::remove_all_item_tags('core', 'course_modules', $cm->id);
+
+        // Notify the competency subsystem.
+        \core_competency\api::hook_course_module_deleted($cm);
+
+        // Delete the context.
+        \context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
+
+        // Delete the module from the course_modules table.
+        $DB->delete_records('course_modules', ['id' => $cm->id]);
+
+        // Delete module from that section.
+        if (!delete_mod_from_section($cm->id, $cm->section)) {
+            throw new moodle_exception(
+                errorcode: 'cannotdeletemodulefromsection',
+                debuginfo: "Cannot delete the module $modulename (instance) from section.",
+            );
+        }
+
+        // Trigger event for course module delete action.
+        $event = \core\event\course_module_deleted::create([
+            'courseid' => $cm->course,
+            'context'  => $modcontext,
+            'objectid' => $cm->id,
+            'other'    => [
+                'modulename'   => $modulename,
+                'instanceid'   => $cm->instance,
+            ],
+        ]);
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->trigger();
+        course_modinfo::purge_course_module_cache($cm->course, $cm->id);
+        rebuild_course_cache($cm->course, false, true);
+    }
+
+    /**
+     * Schedule a course module for deletion in the background using an adhoc task.
+     *
+     * @param int $cmid the course module id.
+     */
+    protected function delete_async(int $cmid): void {
+        global $DB, $USER;
+
+        if (!$cm = $DB->get_record('course_modules', ['id' => $cmid])) {
+            return;
+        }
+        $modulename = $DB->get_field('modules', 'name', ['id' => $cm->module], MUST_EXIST);
+
+        // We need to be reasonably certain the deletion is going to succeed before we background the process.
+        // Make the necessary delete_instance checks, etc. before proceeding further. Throw exceptions if required.
+        $this->check_deletion($cm, $modulename);
+
+        // Defer the deletion as we can't be sure how long the module's pre_delete code will run for.
+        $DB->set_field(
+            'course_modules',
+            'deletioninprogress',
+            '1',
+            ['id' => $cmid],
+        );
+
+        // Create an adhoc task for the deletion of the course module.
+        $removaltask = new \core_course\task\course_delete_modules();
+        $removaltask->set_custom_data([
+            'cms' => [$cm],
+            'userid' => $USER->id,
+            'realuserid' => \core\session\manager::get_realuser()->id,
+        ]);
+
+        // Queue the task for the next run.
+        \core\task\manager::queue_adhoc_task($removaltask);
+
+        // Reset the course cache to hide the module.
+        rebuild_course_cache($cm->course, true);
+    }
+
+    /**
+     * Make the necessary delete_instance checks. Throw exceptions if required.
+     *
+     * @param stdClass $cm The course module object.
+     * @param string $modulename The module name.
+     * @throws \moodle_exception
+     */
+    private function check_deletion(stdClass $cm, string $modulename) {
+        global $CFG;
+
+        // Get the file location of the delete_instance function for this module.
+        $modlib = "$CFG->dirroot/mod/$modulename/lib.php";
+
+        // Include the file required to call the delete_instance function for this module.
+        if (file_exists($modlib)) {
+            require_once($modlib);
+        } else {
+            throw new \moodle_exception(
+                errorcode: 'cannotdeletemodulemissinglib',
+                debuginfo: "Cannot delete module: Missing file mod/$modulename/lib.php.",
+            );
+        }
+
+        // Ensure the delete_instance function exists for this module.
+        $deleteinstancefunction = $modulename . '_delete_instance';
+        if (!function_exists($deleteinstancefunction)) {
+            throw new \moodle_exception(
+                errorcode: 'cannotdeletemodulemissingfunc',
+                debuginfo: "Cannot delete module: Missing function {$modulename}_delete_instance in mod/$modulename/lib.php.",
+            );
+        }
     }
 }

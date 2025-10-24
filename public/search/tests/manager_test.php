@@ -1603,8 +1603,8 @@ final class manager_test extends \advanced_testcase {
         $search = \testable_core_search::instance();
 
         // Delete two of the pages individually.
-        course_delete_module($page1->cmid);
-        course_delete_module($page3->cmid);
+        \core_courseformat\formatactions::cm($course1->id)->delete($page1->cmid);
+        \core_courseformat\formatactions::cm($course1->id)->delete($page3->cmid);
 
         // Delete the course with another two.
         delete_course($course1->id, false);
@@ -1613,7 +1613,7 @@ final class manager_test extends \advanced_testcase {
         delete_user($user);
 
         // Delete the page from the other course.
-        course_delete_module($page5->cmid);
+        \core_courseformat\formatactions::cm($course2->id)->delete($page5->cmid);
 
         // It should have deleted the contexts and the course, but not the contexts in the course.
         $expected = [

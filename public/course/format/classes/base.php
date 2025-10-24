@@ -1842,7 +1842,7 @@ abstract class base {
 
         // Delete all modules from the section.
         foreach (preg_split('/,/', $section->sequence, -1, PREG_SPLIT_NO_EMPTY) as $cmid) {
-            course_delete_module($cmid);
+            \core_courseformat\formatactions::cm($course->id)->delete($cmid);
         }
 
         // Delete section and it's format options.
@@ -1867,16 +1867,16 @@ abstract class base {
     }
 
     /**
-     * Wrapper for course_delete_module method.
+     * Wrapper for delete method in course format cmactions.
      *
-     * Format plugins can override this method to provide their own implementation of course_delete_module.
+     * Format plugins can override this method to provide their own implementation of cmactions::delete.
      *
      * @param cm_info $cm the course module information
      * @param bool $async whether or not to try to delete the module using an adhoc task. Async also depends on a plugin hook.
      * @throws moodle_exception
      */
     public function delete_module(cm_info $cm, bool $async = false) {
-        course_delete_module($cm->id, $async);
+        \core_courseformat\formatactions::cm($cm->course)->delete($cm->id, $async);
     }
 
     /**

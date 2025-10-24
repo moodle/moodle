@@ -108,8 +108,7 @@ final class course_delete_modules_test extends \advanced_testcase {
             $this->assertInstanceOf(\coding_exception::class, $e);
             $errormsg = str_replace('\\', '/', $e->getMessage()); // Normalise dir separator.
             $this->assertStringContainsString('cannotdeletemodulemissinglib', $errormsg);
-            $this->assertStringContainsString('course/lib.php', $errormsg);
-            $this->assertStringContainsString('mod/TestModuleToDelete/lib.php is missing', $errormsg);
+            $this->assertStringContainsString('Missing file mod/TestModuleToDelete/lib.php', $errormsg);
             // Get line numbers array which contains the exception name.
             $lines = array_keys(preg_grep("/cannotdeletemodulemissinglib/", file(dirname(__DIR__) . '/lib.php')));
             // Increase 1 to keys to convert to actual line number.

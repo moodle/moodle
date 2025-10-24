@@ -112,7 +112,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertCount((count($forum) + count($assign) + count($h5pactivity)) - 3, $result);
 
         // Delete a single course module should still return.
-        course_delete_module($forum[1]->cmid);
+        \core_courseformat\formatactions::cm($courses[1]->id)->delete($forum[1]->cmid);
         $result = \block_recentlyaccesseditems\external::get_recent_items();
         $this->assertCount((count($forum) + count($assign) + count($h5pactivity)) - 4, $result);
     }

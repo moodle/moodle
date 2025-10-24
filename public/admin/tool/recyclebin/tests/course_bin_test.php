@@ -65,7 +65,7 @@ final class course_bin_test extends \advanced_testcase {
         $this->assertEquals(0, $DB->count_records('tool_recyclebin_course'));
 
         // Delete the course module.
-        course_delete_module($this->quiz->cmid);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($this->quiz->cmid);
 
         // Check the course module is now in the recycle bin.
         $this->assertEquals(1, $DB->count_records('tool_recyclebin_course'));
@@ -84,7 +84,7 @@ final class course_bin_test extends \advanced_testcase {
         $startcount = $DB->count_records('course_modules');
 
         // Delete the course module.
-        course_delete_module($this->quiz->cmid);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($this->quiz->cmid);
 
         // Try restoring.
         $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
@@ -106,7 +106,7 @@ final class course_bin_test extends \advanced_testcase {
         $startcount = $DB->count_records('course_modules');
 
         // Delete the course module.
-        course_delete_module($this->quiz->cmid);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($this->quiz->cmid);
 
         // Try purging.
         $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
@@ -128,7 +128,7 @@ final class course_bin_test extends \advanced_testcase {
         set_config('coursebinexpiry', WEEKSECS, 'tool_recyclebin');
 
         // Delete the quiz.
-        course_delete_module($this->quiz->cmid);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($this->quiz->cmid);
 
         // Set deleted date to the distant past.
         $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
@@ -141,7 +141,7 @@ final class course_bin_test extends \advanced_testcase {
         $book = $this->getDataGenerator()->get_plugin_generator('mod_book')->create_instance(array(
             'course' => $this->course->id));
 
-        course_delete_module($book->cmid);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($book->cmid);
 
         // Should have 2 items now.
         $this->assertEquals(2, count($recyclebin->get_items()));
@@ -211,7 +211,7 @@ final class course_bin_test extends \advanced_testcase {
 
         // Delete quiz.
         $cm = get_coursemodule_from_instance('quiz', $this->quiz->id);
-        course_delete_module($cm->id);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($cm->id);
         $quizzes = get_coursemodules_in_course('quiz', $this->course->id);
         $this->assertEquals(0, count($quizzes));
 
@@ -246,7 +246,7 @@ final class course_bin_test extends \advanced_testcase {
         set_config('backup_auto_activities', false, 'backup');
 
         // Delete the course module.
-        course_delete_module($this->quiz->cmid);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($this->quiz->cmid);
 
         // Check there is no items in the recycle bin.
         $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
@@ -277,7 +277,7 @@ final class course_bin_test extends \advanced_testcase {
 
         // Delete quiz.
         $cm = get_coursemodule_from_instance('quiz', $this->quiz->id);
-        course_delete_module($cm->id);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($cm->id);
         $quizzes = get_coursemodules_in_course('quiz', $this->course->id);
         $this->assertEquals(0, count($quizzes));
 

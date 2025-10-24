@@ -144,7 +144,7 @@ final class extension_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $record = $this->getDataGenerator()->create_module('bigbluebuttonbn', ['course' => $course->id, 'newfield' => 2]);
         $cm = get_fast_modinfo($course)->instances['bigbluebuttonbn'][$record->id];
-        course_delete_module($cm->id, false);
+        \core_courseformat\formatactions::cm($course->id)->delete($cm->id);
         $this->assertFalse($DB->get_field('bbbext_simple', 'newfield', ['bigbluebuttonbnid' => $record->id]));
     }
 

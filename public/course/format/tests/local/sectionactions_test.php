@@ -477,7 +477,7 @@ final class sectionactions_test extends \advanced_testcase {
 
         // Delete a module in section 2 (using async). Need to verify this doesn't generate two tasks when we delete
         // the section in the next step.
-        course_delete_module($assign2->cmid, true);
+        \core_courseformat\formatactions::cm($course->id)->delete($assign2->cmid, true);
 
         // Confirm that the module is pending deletion in its current section.
         $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => '2']); // For event comparison.

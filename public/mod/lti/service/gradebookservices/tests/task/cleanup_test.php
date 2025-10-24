@@ -78,7 +78,7 @@ final class cleanup_test extends \advanced_testcase {
         $this->assertEquals(2, $DB->count_records('ltiservice_gradebookservices'));
 
         // Delete the first LTI activity.
-        course_delete_module($lti->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($lti->cmid);
 
         // Run the task again.
         $task = new cleanup_task();

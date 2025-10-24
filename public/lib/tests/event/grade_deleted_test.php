@@ -58,7 +58,7 @@ final class grade_deleted_test extends \advanced_testcase {
 
         // Trigger the event.
         $sink = $this->redirectEvents();
-        course_delete_module($quiz->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($quiz->cmid);
         $events = $sink->get_events();
         $event = $events[1];
         $sink->close();

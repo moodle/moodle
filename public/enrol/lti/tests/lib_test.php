@@ -243,7 +243,7 @@ final class lib_test extends \lti_advantage_testcase {
         $this->assertEquals(ENROL_INSTANCE_ENABLED, $mod2instance->status);
 
         // Delete a module and verify the associated instance is disabled.
-        course_delete_module($mod->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($mod->cmid);
         $modinstance = helper::get_lti_tool($tool->id);
         $mod2instance = helper::get_lti_tool($tool2->id);
         $this->assertEquals(ENROL_INSTANCE_DISABLED, $modinstance->status);

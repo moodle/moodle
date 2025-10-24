@@ -4853,7 +4853,7 @@ function remove_course_contents($courseid, $showfeedback = true, ?array $options
 
             if ($instances) {
                 foreach ($instances as $cm) {
-                    // Warning! there is very similar code in course_delete_module.
+                    // Warning! there is very similar code in cmactions::delete.
                     // If you are changing this code, you probably need to change that too.
                     if (function_exists($moddelete)) {
                         // This purges all module data in related tables, extra user prefs, settings, etc.

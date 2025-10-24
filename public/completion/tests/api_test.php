@@ -68,7 +68,7 @@ final class api_test extends \advanced_testcase {
 
         require_once($CFG->dirroot . '/course/lib.php');
         // Delete the module.
-        course_delete_module($assign->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($assign->cmid);
 
         // Check we don't get a failure when called on a deleted module.
         \core_completion\api::update_completion_date_event($assign->cmid, 'assign', null, $time);

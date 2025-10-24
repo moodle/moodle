@@ -442,7 +442,7 @@ final class question_bank_helper_test extends \advanced_testcase {
         }
 
         // Now delete one of the viewed bank modules and get the records again.
-        course_delete_module($banks[2]->cmid);
+        \core_courseformat\formatactions::cm($course1->id)->delete($banks[2]->cmid);
         $recentlyviewed = question_bank_helper::get_recently_used_open_banks($user->id);
         $this->assertCount(4, $recentlyviewed);
 

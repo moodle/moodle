@@ -172,7 +172,7 @@ final class observer_test extends \advanced_testcase {
 
         $records = $DB->count_records($this->table, array('cmid' => $this->forum->cmid));
         $this->assertEquals(2, $records);
-        course_delete_module($this->forum->cmid);
+        \core_courseformat\formatactions::cm($this->course->id)->delete($this->forum->cmid);
         $records = $DB->count_records($this->table, array('cmid' => $this->forum->cmid));
         $this->assertEquals(0, $records);
         $records = $DB->count_records($this->table, ['cmid' => $this->assign->cmid]);

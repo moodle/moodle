@@ -300,7 +300,7 @@ final class upgrade_recordings_task_test extends advanced_testcase {
             $this->create_log_entries($groupinstance, $teacher->id, 15, $importedrecording);
         }
         $this->create_log_entries($deletedinstance, $teacher->id, 15, $importedrecording);
-        course_delete_module($deletedinstance->get_cm_id());
+        \core_courseformat\formatactions::cm($this->course->id)->delete($deletedinstance->get_cm_id());
         // Truncate the recordings table to reflect what it would have looked like before this version.
         $DB->delete_records('bigbluebuttonbn_recordings');
         $this->groups = $groups;

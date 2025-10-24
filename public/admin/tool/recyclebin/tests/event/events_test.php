@@ -146,7 +146,7 @@ final class events_test extends \advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        course_delete_module($instance->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($instance->cmid);
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -174,7 +174,7 @@ final class events_test extends \advanced_testcase {
         $instance = $generator->create_instance(array('course' => $course->id));
 
         // Delete the module.
-        course_delete_module($instance->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($instance->cmid);
 
         // Get the item from the recycle bin.
         $rb = new \tool_recyclebin\course_bin($course->id);
@@ -206,7 +206,7 @@ final class events_test extends \advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $instance = $generator->create_instance(array('course' => $course->id));
 
-        course_delete_module($instance->cmid);
+        \core_courseformat\formatactions::cm($course->id)->delete($instance->cmid);
 
         // Get the item from the recycle bin.
         $rb = new \tool_recyclebin\course_bin($course->id);

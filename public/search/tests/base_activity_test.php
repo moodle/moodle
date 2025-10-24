@@ -313,7 +313,7 @@ final class base_activity_test extends \advanced_testcase {
         $this->setUser($user);
 
         // Delete forum 2 and set forum 3 hidden.
-        course_delete_module($this->forums[2]->cmid);
+        \core_courseformat\formatactions::cm($this->contexts['c1']->instanceid)->delete($this->forums[2]->cmid);
         set_coursemodule_visible($this->forums[3]->cmid, 0);
 
         // Call check access on all the first three.

@@ -1,0 +1,5 @@
+issueNumber: MDL-86856
+notes:
+  core_courseformat:
+    - message: Add delete method to the core_courseformat\cmactions
+      type: improved

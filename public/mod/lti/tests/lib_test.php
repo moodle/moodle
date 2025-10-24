@@ -103,7 +103,7 @@ final class lib_test extends \advanced_testcase {
         $cm = get_coursemodule_from_instance('lti', $lti->id);
 
         // Must not throw notices.
-        course_delete_module($cm->id);
+        \core_courseformat\formatactions::cm($course->id)->delete($cm->id);
     }
 
     public function test_lti_core_calendar_provide_event_action(): void {
