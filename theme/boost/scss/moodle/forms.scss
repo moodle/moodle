@@ -399,6 +399,10 @@ textarea[data-auto-rows] {
     padding-bottom: $input-padding-y;
 }
 
+[data-fieldtype="modgrade"] .form-select {
+    width: 100%;
+}
+
 // We dont' use the mixin because it's expensive.
 [data-fieldtype="modgrade"] {
     background-color: $card-bg;
