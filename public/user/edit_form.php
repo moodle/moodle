@@ -105,6 +105,7 @@ class user_edit_form extends moodleform {
         profile_definition($mform, $userid);
 
         $this->add_action_buttons(true, get_string('updatemyprofile'));
+        $mform->set_sticky_footer('buttonar');
 
         $this->set_data($user);
     }
