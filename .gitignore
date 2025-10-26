@@ -60,3 +60,64 @@ phpcs.xml
 jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
+
+# ============================================
+# TCC Development - Custom Additions
+# ============================================
+
+# Local Moodle data directories
+/moodledata/
+/moodledata_phpunit/
+/moodledata_behat/
+**/moodledata/
+**/moodledata_phpunit/
+**/moodledata_behat/
+
+# Local configuration (never commit!)
+config.php
+!config-dist.php
+
+# PHPUnit generated files
+phpunit.xml
+!phpunit.xml.dist
+/.phpunit.cache/
+/coverage/
+
+# Behat generated files
+behat.yml
+!behat.yml.dist
+
+# IDE specific
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-*
+
+# OS specific
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# TSDB Development
+**/logstore_tsdb/client/vendor/
+**/influxdb-data/
+**/timescaledb-data/
+tsdb_fallback.log
+
+# Docker volumes (if using)
+docker-compose.override.yml
+.env.local
+
+# Local testing/debugging
+debug.log
+error.log
+*.log
+!public/admin/tool/log/
+
+# Temporary development files
+TODO.md.local
+NOTES.md.local
+scratch/
+CLAUDE.md

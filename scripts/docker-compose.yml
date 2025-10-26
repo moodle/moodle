@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # TimescaleDB para logs do Moodle
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: timescaledb
+    restart: unless-stopped
+    ports:
+      - "5433:5432"  # Porta 5433 externa para não conflitar com PostgreSQL principal
+    environment:
+      # Credenciais do banco
+      POSTGRES_USER: moodleuser
+      POSTGRES_PASSWORD: Moodle@TSDB2025!
+      POSTGRES_DB: moodle_logs_tsdb
+
+      # Configurações de performance
+      POSTGRES_MAX_CONNECTIONS: 200
+      POSTGRES_SHARED_BUFFERS: 256MB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
+      POSTGRES_WORK_MEM: 16MB
+      POSTGRES_MAINTENANCE_WORK_MEM: 128MB
+
+      # TimescaleDB specific
+      TIMESCALEDB_TELEMETRY: 'off'  # Desabilitar telemetria
+
+    volumes:
+      # Persistência de dados
+      - timescaledb_data:/var/lib/postgresql/data
+
+      # Scripts de inicialização (opcional)
+      # - ./init-scripts:/docker-entrypoint-initdb.d
+
+    # Healthcheck para garantir que está funcionando
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U moodleuser -d moodle_logs_tsdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    networks:
+      - moodle_network
+
+  # Opcional: PgAdmin para interface visual
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@moodle.local
+      PGADMIN_DEFAULT_PASSWORD: Admin@PgAdmin2025!
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - moodle_network
+    depends_on:
+      - timescaledb
+
+volumes:
+  timescaledb_data:
+    driver: local
+    name: moodle_tsdb_data
+
+  pgadmin_data:
+    driver: local
+    name: moodle_pgadmin_data
+
+networks:
+  moodle_network:
+    driver: bridge
+    name: moodle_dev_network

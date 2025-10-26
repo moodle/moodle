@@ -1,0 +1,51 @@
+{
+  "moodle": {
+    "base_url": "http://localhost/moodle-plugin-rework/public",
+    "admin_username": "admin",
+    "admin_password": "Admin123!",
+    "wstoken": "",
+    "service": "moodle_mobile_app"
+  },
+  "simulation": {
+    "num_users": 100,
+    "num_courses": 10,
+    "num_activities_per_course": 5,
+    "duration_seconds": 3600,
+    "mode": "realistic",
+    "events_per_second": 10,
+    "burst_size": 100,
+    "burst_interval": 60
+  },
+  "scenarios": {
+    "realistic": {
+      "peak_hours": [9, 10, 11, 14, 15, 16, 19, 20],
+      "low_hours": [0, 1, 2, 3, 4, 5, 6, 23],
+      "peak_multiplier": 3.0,
+      "low_multiplier": 0.3
+    },
+    "steady": {
+      "constant_rate": 10
+    },
+    "burst": {
+      "burst_rate": 100,
+      "burst_duration": 10,
+      "idle_duration": 50
+    }
+  },
+  "activities": {
+    "weights": {
+      "course_view": 30,
+      "quiz_attempt": 15,
+      "assignment_submit": 10,
+      "forum_post": 10,
+      "resource_download": 20,
+      "user_profile_view": 10,
+      "dashboard_view": 5
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "simulation.log",
+    "console": true
+  }
+}

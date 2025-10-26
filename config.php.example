@@ -1,0 +1,183 @@
+<?php
+///////////////////////////////////////////////////////////////////////////
+// Moodle Configuration for TCC Development
+// Copy this file to config.php and customize
+///////////////////////////////////////////////////////////////////////////
+
+unset($CFG);
+global $CFG;
+$CFG = new stdClass();
+
+//=========================================================================
+// 1. DATABASE SETUP (PostgreSQL)
+//=========================================================================
+$CFG->dbtype    = 'pgsql';
+$CFG->dblibrary = 'native';
+$CFG->dbhost    = 'localhost';
+$CFG->dbname    = 'moodle';
+$CFG->dbuser    = 'moodleuser';
+$CFG->dbpass    = 'moodlepass';  // CHANGE THIS!
+$CFG->prefix    = 'mdl_';
+$CFG->dboptions = [
+    'dbpersist' => false,
+    'dbport'    => '',
+    'dbhandlesoptions' => false,
+    'dbcollation' => '',  // Not needed for PostgreSQL
+];
+
+//=========================================================================
+// 2. WEB ADDRESS
+//=========================================================================
+// Change to match your setup
+$CFG->wwwroot   = 'http://localhost/moodle-plugin-rework/public';
+
+//=========================================================================
+// 3. SERVER FILES LOCATIONS
+//=========================================================================
+// Adjust paths as needed
+$CFG->dataroot  = '/home/YOUR_USER/moodledata';  // CHANGE THIS!
+$CFG->admin     = 'admin';
+$CFG->directorypermissions = 02777;
+
+//=========================================================================
+// 4. DEVELOPMENT SETTINGS (TCC)
+//=========================================================================
+// Enable debugging - shows PHP errors and Moodle debug messages
+$CFG->debug = (E_ALL | E_STRICT);
+$CFG->debugdisplay = 1;  // Display errors on screen
+
+// Performance debug info
+$CFG->perfdebug = 15;  // Show all performance info
+$CFG->perfinfo = true;
+
+// Cache debugging
+$CFG->cachedebug = false;  // Set true to disable caching
+
+// Allow theme changes
+$CFG->cachejs = false;  // Disable JS caching
+$CFG->themedesignermode = false;  // Set true for theme development
+
+//=========================================================================
+// 5. LOGGING CONFIGURATION (TCC specific)
+//=========================================================================
+// Enable both standard and TSDB logstores for comparison
+// Configure via: Site Admin → Plugins → Logging → Manage log stores
+
+// Standard logstore (for comparison)
+$CFG->forced_plugin_settings = [
+    'logstore_standard' => [
+        'enabled' => '1',
+        // 'loglifetime' => '365',  // Days to keep logs (default: forever)
+    ],
+];
+
+// TSDB logstore
+// These override admin UI settings if needed
+// $CFG->logstore_tsdb_host = 'localhost';
+// $CFG->logstore_tsdb_port = '5433';
+// $CFG->logstore_tsdb_database = 'moodle_logs_tsdb';
+// $CFG->logstore_tsdb_username = 'moodleuser';
+// $CFG->logstore_tsdb_password = 'moodlepass';
+
+//=========================================================================
+// 6. WEB SERVICES (for simulation scripts)
+//=========================================================================
+$CFG->enablewebservices = 1;  // Enable Web Services
+$CFG->webserviceprotocols = 'rest';  // Enable REST protocol
+
+// Rate limiting for API (optional)
+// $CFG->webserviceratelimit = [
+//     'enabled' => true,
+//     'limit' => 100,  // Requests per minute
+//     'period' => 60,
+// ];
+
+//=========================================================================
+// 7. SESSION SETTINGS
+//=========================================================================
+$CFG->sessiontimeout = 7200;  // 2 hours
+// $CFG->sessioncookie = '';  // Leave default
+
+//=========================================================================
+// 8. EMAIL SETTINGS (Development)
+//=========================================================================
+// Capture emails instead of sending (development)
+$CFG->noemailever = true;  // Don't send any emails
+
+// OR configure SMTP for testing
+// $CFG->smtphosts = 'localhost:1025';  // e.g., MailHog for testing
+// $CFG->smtpsecure = '';
+// $CFG->smtpauthtype = 'PLAIN';
+// $CFG->smtpuser = '';
+// $CFG->smtppass = '';
+// $CFG->smtpmaxbulk = 1;
+
+//=========================================================================
+// 9. CACHING (Development)
+//=========================================================================
+// Application cache (MUC)
+// For development, you might want to disable some caches
+// Or use "purge all caches" frequently
+
+//=========================================================================
+// 10. PERFORMANCE (Production-like for testing)
+//=========================================================================
+// Uncomment for production-like performance testing
+// $CFG->cachejs = true;
+// $CFG->yuicomboloading = true;
+// $CFG->enablestats = true;
+// $CFG->runclamonupload = false;
+
+//=========================================================================
+// 11. PHPUNIT (Testing)
+//=========================================================================
+$CFG->phpunit_prefix = 'phpu_';
+$CFG->phpunit_dataroot = '/home/YOUR_USER/moodledata_phpunit';  // CHANGE THIS!
+
+//=========================================================================
+// 12. BEHAT (Acceptance Testing)
+//=========================================================================
+// $CFG->behat_prefix = 'bht_';
+// $CFG->behat_dataroot = '/home/YOUR_USER/moodledata_behat';
+// $CFG->behat_wwwroot = 'http://localhost/moodle-behat';
+
+//=========================================================================
+// 13. SECURITY
+//=========================================================================
+// Development only - don't use in production!
+// $CFG->passwordpolicy = false;  // Disable password policy
+// $CFG->sitepolicyhandler = 'tool_policy';
+
+//=========================================================================
+// 14. TCC SPECIFIC NOTES
+//=========================================================================
+// 1. After copying this file to config.php, change:
+//    - dbpass
+//    - dataroot (create directory: mkdir ~/moodledata)
+//    - phpunit_dataroot (if using PHPUnit)
+//
+// 2. Install Moodle:
+//    php public/admin/cli/install_database.php
+//
+// 3. Initialize PHPUnit:
+//    php public/admin/tool/phpunit/cli/init.php
+//
+// 4. Configure logstore_tsdb:
+//    - Site Admin → Plugins → Logging → TSDB Log Store
+//    - Or use the $CFG overrides above
+//
+// 5. Enable Web Services:
+//    - Site Admin → Advanced Features → Enable web services
+//    - Site Admin → Plugins → Web services → Manage protocols → Enable REST
+//    - Create service and token (see docs/API-MOODLE.md)
+//
+// 6. Run simulation:
+//    cd scripts/simulation
+//    python generate_load.py
+
+//=========================================================================
+// REQUIRED - Do not modify
+//=========================================================================
+require_once(__DIR__ . '/public/lib/setup.php');
+// There is no php closing tag in this file,
+// it is intentional because it prevents trailing whitespace problems!
