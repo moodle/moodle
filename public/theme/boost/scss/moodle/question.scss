@@ -164,8 +164,25 @@ table.question-bank-table {
         background-color: $table-accent-bg;
     }
 
-    & > tbody > tr.highlight {
-        border: $border-width solid $info;
+
+    &.generaltable > tbody > tr.highlight.firstrow td {
+        border-top: map-get($border-widths, 3) solid $info;
+    }
+
+    & > tbody > tr.highlight.firstrow {
+        border-right: map-get($border-widths, 2) solid $info;
+        border-left: map-get($border-widths, 2) solid $info;
+    }
+
+    &.generaltable > tbody > tr.highlight.extrarow td,
+    &.generaltable > tbody > tr.highlight.firstrow.onlyhighlightrow td {
+        border-bottom: map-get($border-widths, 2) solid $info;
+    }
+
+    & > tbody > tr.highlight.extrarow {
+        border-top: 0;
+        border-right: map-get($border-widths, 2) solid $info;
+        border-left: map-get($border-widths, 2) solid $info;
     }
 
     .checkbox input[type="checkbox"] {
