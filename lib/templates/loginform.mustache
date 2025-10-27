@@ -115,16 +115,11 @@
         </div>
     {{/maintenance}}
     {{#error}}
-        <a href="#" id="loginerrormessage" class="sr-only">{{error}}</a>
-        <div class="alert alert-danger" role="alert">{{error}}</div>
+        <div class="alert alert-danger" id="loginerrormessage" role="alert">{{error}}</div>
     {{/error}}
     {{#info}}
-        <a href="#" id="logininfomessage" class="sr-only">{{info}}</a>
-        <div class="alert alert-info" role="alert">{{info}}</div>
+        <div class="alert alert-info" id="logininfomessage" role="status">{{info}}</div>
     {{/info}}
-    {{#cansignup}}
-        <a href="{{signupurl}}" class="sr-only">{{#str}} tocreatenewaccount {{/str}}</a>
-    {{/cansignup}}
     {{#showloginform}}
         <form class="login-form" action="{{loginurl}}" method="post" id="login">
             <input id="anchor" type="hidden" name="anchor" value="">
@@ -224,10 +219,11 @@
             require(['core_form/events'], function(FormEvent) {
                 function autoFocus() {
                     const userNameField = document.getElementById('username');
-                    if (userNameField.value.length == 0) {
+                    const passwordField = document.getElementById('password');
+                    if (userNameField && userNameField.value.length == 0) {
                         userNameField.focus();
-                    } else {
-                        document.getElementById('password').focus();
+                    } else if (passwordField) {
+                        passwordField.focus();
                     }
                 }
                 autoFocus();
@@ -235,9 +231,30 @@
             });
         {{/autofocusform}}
     {{/error}}
-    {{#error}}
-        document.getElementById('loginerrormessage').focus();
-    {{/error}}
+    require(['core/pending'], function(Pending) {
+        const errorMessageDiv = document.getElementById('loginerrormessage');
+        const infoMessageDiv = document.getElementById('logininfomessage');
+        const errorMessage = errorMessageDiv?.textContent.trim();
+        const infoMessage = infoMessageDiv?.textContent.trim();
+        if (errorMessage || infoMessage) {
+            const pendingJS = new Pending('login-move-focus');
+            const usernameField = document.getElementById('username');
+            setTimeout(function() {
+                // Focus on the username field on error.
+                if (errorMessage && usernameField) {
+                    usernameField.focus();
+                }
+                // Append a non-breaking space to the error/status message so screen readers will announce them after page load.
+                if (errorMessage) {
+                    errorMessageDiv.innerHTML += "&nbsp;";
+                }
+                if (infoMessage) {
+                    infoMessageDiv.innerHTML += "&nbsp;";
+                }
+                pendingJS.resolve();
+            }, 500);
+        }
+    });
     {{#togglepassword}}
         require(['core/togglesensitive'], function(ToggleSensitive) {
             ToggleSensitive.init("password", {{smallscreensonly}});
