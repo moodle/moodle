@@ -58,7 +58,7 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
      */
     protected static function get_component(): string {
         // If the late-static class name is namespaced, use the first part of the namespace.
-        if (str_contains(static::class, '\\')) {
+        if (strpos(static::class, '\\') !== false) {
             return explode('\\', static::class)[0];
         }
 

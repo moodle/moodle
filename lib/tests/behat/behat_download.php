@@ -140,7 +140,7 @@ class behat_download extends behat_base {
      * @throws ExpectationException if verification fails.
      */
     protected function verify_file_contains_text(string $filecontent, string $expectedcontent): void {
-        if (!str_contains($filecontent, $expectedcontent)) {
+        if (strpos($filecontent, $expectedcontent) === false) {
             throw new ExpectationException(
                 "The string '$expectedcontent' was not found in the file content.",
                 $this->getSession(),

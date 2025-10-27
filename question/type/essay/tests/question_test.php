@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package qtype_essay
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \qtype_essay
  */
 final class question_test extends \advanced_testcase {
     public function test_get_question_summary(): void {
@@ -97,6 +98,58 @@ final class question_test extends \advanced_testcase {
             'Text input is optional, unlimited attachments required, ten uploaded'  =>
                 [0, -1, '', 10, 'Attachments: 0 (1 bytes), 1 (1 bytes), 2 (1 bytes), 3 (1 bytes), 4 (1 bytes), ' .
                     '5 (1 bytes), 6 (1 bytes), 7 (1 bytes), 8 (1 bytes), 9 (1 bytes)']
+        ];
+    }
+
+    /**
+     * Test un_summarise_response().
+     *
+     * @dataProvider un_summarise_response_provider
+     * @param string $responseformat
+     * @param string $summary
+     * @param array $expected
+     */
+    public function test_un_summarise_response(string $responseformat, string $summary, array $expected): void {
+        $this->resetAfterTest();
+
+        $essay = \test_question_maker::make_an_essay_question();
+        $essay->start_attempt(new question_attempt_step(), 1);
+
+        $essay->responseformat = $responseformat;
+
+        $this->assertEquals($expected, $essay->un_summarise_response($summary));
+    }
+
+    /**
+     * Data provider for test_un_summarise_response().
+     *
+     * Covers multiple response formats, empty responses,
+     * case sensitivity, unicode text, and HTML content.
+     *
+     * @return array
+     */
+    public static function un_summarise_response_provider(): array {
+        return [
+            'empty summary returns empty array' => [
+                'plain',
+                '',
+                [],
+            ],
+            'plain format returns plain text' => [
+                'plain',
+                'Hello Moodle',
+                ['answer' => 'Hello Moodle', 'answerformat' => FORMAT_PLAIN],
+            ],
+            'editor format converts to HTML' => [
+                'editor',
+                'Hello Moodle',
+                ['answer' => text_to_html('Hello Moodle'), 'answerformat' => FORMAT_HTML],
+            ],
+            'plain format preserves HTML tags literally' => [
+                'plain',
+                '<b>bold</b>',
+                ['answer' => '<b>bold</b>', 'answerformat' => FORMAT_PLAIN],
+            ],
         ];
     }
 

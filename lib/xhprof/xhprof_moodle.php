@@ -1025,7 +1025,7 @@ class moodle_xhprofrun implements iXHProfRuns {
         // First pass, we are going to remove all the elements which
         // both parent and child are __Mustache function calls.
         foreach ($sorted as $key => $value) {
-            if (!str_contains($key, '==>')) {
+            if (strpos($key, '==>') === false) {
                 $parent = 'NULL';
                 $child = $key;
             } else {
@@ -1047,7 +1047,7 @@ class moodle_xhprofrun implements iXHProfRuns {
         // one unique pass is enough. Without it, we may need to perform
         // N (while loop) second passes.
         foreach ($sorted as $key => $value) {
-            if (!str_contains($key, '==>')) {
+            if (strpos($key, '==>') === false) {
                 $parent = 'NULL';
                 $child = $key;
             } else {
@@ -1092,7 +1092,7 @@ class moodle_xhprofrun implements iXHProfRuns {
                 if (isset($visited[$key])) {
                     continue;
                 }
-                if (!str_contains($key, '==>')) {
+                if (strpos($key, '==>') === false) {
                     // It's a root element, we can add it to the sorted array.
                     $sorted[$key] = $info[$key];
                     $visited[$key] = true;
