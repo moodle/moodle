@@ -115,7 +115,7 @@ class qtype_essay_question extends question_with_responses {
             return [];
         }
 
-        if (str_contains($this->responseformat, 'editor')) {
+        if (strpos($this->responseformat, 'editor') !== false) {
             return ['answer' => text_to_html($summary), 'answerformat' => FORMAT_HTML];
         } else {
             return ['answer' => $summary, 'answerformat' => FORMAT_PLAIN];
