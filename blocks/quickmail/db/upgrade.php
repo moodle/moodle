@@ -1136,5 +1136,25 @@ function xmldb_block_quickmail_upgrade($oldversion) {
             $dbman->create_table($table);
         }
     }
+
+    if ($oldversion < 2025102302) {
+
+        $table = new xmldb_table('block_quickmail_messages');
+
+        $exfield = new xmldb_field(
+            'excluded',
+            XMLDB_TYPE_TEXT,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        // Check if the field exists before adding to prevent errors on re-run
+        if (!$dbman->field_exists($table, $exfield)) {
+            $dbman->add_field($table, $exfield);
+        }
+    }
     return $result;
 }

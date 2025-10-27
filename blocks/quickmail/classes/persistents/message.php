@@ -131,6 +131,11 @@ class message extends \block_quickmail\persistents\persistent {
                 'type' => PARAM_INT,
                 'default' => 0,
             ],
+            'excluded' => [
+                'type' => PARAM_TEXT,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ]
         ];
     }
 
@@ -181,6 +186,8 @@ class message extends \block_quickmail\persistents\persistent {
     public function get_message_recipients_all()
     {
         global $DB;
+        $context = \context_course::instance($this->get('course_id'));
+
         // We are checking for unsent emails so let's make sure.
         if ($this->get('sent_at') != "0") {
             return array();
@@ -194,8 +201,34 @@ class message extends \block_quickmail\persistents\persistent {
             $cuser,
             array("all")
         );
+
+        // Get the excluded (if any) which is stored in DB as a string.
+        $msgexcludes = $this->get('excluded');
+        $exids = null;
+
+        if (isset($msgexcludes)) {
+            $userids_excluded = [];
+            $groupids_excluded = [];
+            $excluded = explode(",", $msgexcludes);
+
+            foreach ($excluded as $exc) {
+                $user_type = explode("_", $exc);
+                if($user_type[0] == "user") {
+                    $userids_excluded = user_repo::get_course_role_users($context, $user_type[1]);
+                } else if ($user_type[0] == "group") {
+                    $groupids_excluded = user_repo::get_course_group_users($context, $user_type[1]);
+                    error_log("\n\n do some stuff");
+                }
+            }
+            $exes = array_merge($userids_excluded, $groupids_excluded);
+            $exids = array_column($exes, 'id', 'id');
+        }
+        
         $thisrecipientlist = array();
         foreach ($recipientuserids as $useless) {
+            if (isset($exids) && array_key_exists($useless, $exids)) {
+                continue;
+            }
             $temp = new \stdClass();
             $temp->message_id = $messageid;
             $temp->user_id = $useless;
@@ -216,7 +249,7 @@ class message extends \block_quickmail\persistents\persistent {
 
         $recipientuserids = $this->get_message_recipients_all();
         $msgid = $this->get('id');
-        
+
         // First check if there are recipients and purge if there are.
         $msgexists = $DB->get_record('block_quickmail_msg_recips', [
             'message_id' => $msgid,
@@ -228,7 +261,7 @@ class message extends \block_quickmail\persistents\persistent {
             // message and update with most current list.
             $DB->delete_records('block_quickmail_msg_recips', ['message_id' => $msgid]);
         }
-        
+
         // Now get that msg recipient into the table so it can be processed.
         foreach ($recipientuserids as $recipient) {
             message_recipient::create_new([
@@ -301,8 +334,6 @@ class message extends \block_quickmail\persistents\persistent {
         foreach ($recipients as $recip) {
             if ($this->quick_enrol_check($recip->get('user_id'), $this->get('course_id'))) {
                 $checkedrecipients[] = $recip;
-            } else {
-                $recip->remove_recipient_from_message($messageid, $recip->get('user_id'));
             }
         }
 
@@ -646,7 +677,8 @@ class message extends \block_quickmail\persistents\persistent {
             'to_send_at' => $data->to_send_at,
             'no_reply' => $data->no_reply,
             'send_to_mentors' => $data->mentor_copy,
-            'is_draft' => (int) $isdraft
+            'is_draft' => (int) $isdraft,
+            'excluded' => $data->excluded
         ]);
 
         return $message;
@@ -685,7 +717,8 @@ class message extends \block_quickmail\persistents\persistent {
             'to_send_at' => ! empty($timetosend) ? $timetosend : time() - 1,
             'no_reply' => $notification->get('no_reply'),
             'send_to_mentors' => $notification->get('send_to_mentors'),
-            'is_draft' => 0
+            'is_draft' => 0,
+            'excluded' => $data->excluded
         ]);
 
         $message->sync_recipients($recipientuserids);
@@ -715,6 +748,8 @@ class message extends \block_quickmail\persistents\persistent {
         $this->set('no_reply', $data->no_reply);
         $this->set('send_to_mentors', $data->mentor_copy);
         $this->set('is_draft', (bool) $isdraft);
+        $this->set('excluded', $data->excluded);
+
         $this->update();
 
         // Return a refreshed message record.

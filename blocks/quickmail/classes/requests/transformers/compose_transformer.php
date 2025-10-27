@@ -34,6 +34,7 @@ class compose_transformer extends transformer {
         $this->transformed_data->message = (string) $this->form_data->message_editor['text'];
         $this->transformed_data->included_entity_ids = $this->get_transformed_included_entity_ids();
         $this->transformed_data->excluded_entity_ids = $this->get_transformed_excluded_entity_ids();
+        $this->transformed_data->excluded = $this->get_transformed_excluded();
         $this->transformed_data->additional_emails = $this->get_transformed_additional_emails();
         $this->transformed_data->signature_id = $this->get_transformed_signature_id();
         $this->transformed_data->message_type = $this->get_transformed_message_type();
@@ -68,6 +69,24 @@ class compose_transformer extends transformer {
      */
     public function get_transformed_excluded_entity_ids() {
         return empty($this->form_data->excluded_entity_ids) ? [] : $this->form_data->excluded_entity_ids;
+    }
+
+    /**
+     * Returns a sanitized array of excluded recipient entity ids from the form post data (user_*, role_*, group_*)
+     * and stored as a string.
+     *
+     * @return array
+     */
+    public function get_transformed_excluded() {
+        $excludes = "";
+        $counter = count($this->form_data->excluded_entity_ids) ?? 0;
+        for($c = 0; $c < $counter; $c++) {
+            $excludes .= $this->form_data->excluded_entity_ids[$c];
+            if ($c+1 < $counter) {
+                $excludes .= ',';
+            }
+        }
+        return $excludes;
     }
 
     /**

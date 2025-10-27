@@ -64,14 +64,4 @@ class alternate_email_added extends \core\event\base {
                     'courseid' => $this->courseid
                 ));
     }
-
-    /**
-     * Legacy log.
-     *
-     * @return array
-     */
-    // public function get_legacy_logdata() {
-    //     return array($this->courseid, 'quickmail', 'add', $this->get_url(),
-    //         \block_quickmail_string::get('alternate') . ' ' . $this->other['address']);
-    // }
 }
