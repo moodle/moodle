@@ -152,6 +152,18 @@ class SubPanel {
     }
 
     /**
+     * Hides the subpanel when mouse leaves the menu item.
+     * @param {Event} event
+     */
+    _hideCurrentSubPanel(event) {
+        // Only hide if not hovering over the menu item or subpanel content.
+        const related = event.relatedTarget;
+        if (!this.menuItem.contains(related) && !this.panelContent.contains(related)) {
+            this.setVisibility(false);
+        }
+    }
+
+    /**
      * Checks if the subpanel has enough space.
      *
      * In general there are two scenarios were the subpanel must be interacted differently:
@@ -223,13 +235,16 @@ class SubPanel {
 
     /**
      * Menu item hover out handler.
+     * @param {Event} event
      * @private
      */
-    _menuItemHoverOutHandler() {
+    _menuItemHoverOutHandler(event) {
         if (this._needSmallSpaceBehaviour()) {
             return;
         }
         this._hideOtherSubPanels();
+        // Hide subpanel when the menu item itself is not hovered.
+        this._hideCurrentSubPanel(event);
     }
 
     /**
