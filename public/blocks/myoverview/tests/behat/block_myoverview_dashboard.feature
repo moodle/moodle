@@ -281,7 +281,7 @@ Feature: The my overview block allows users to easily access their courses
     When I click on "List" "link" in the "Course overview" "block"
     Then I should see "Category 1" in the "Course overview" "block"
 
-  Scenario: Show course category in summary display
+  Scenario: Show course category in summary display with displaycategories on
     Given the following config values are set as admin:
       | displaycategories | 1 | block_myoverview |
     And I am on the "My courses" page logged in as "student1"
@@ -305,7 +305,7 @@ Feature: The my overview block allows users to easily access their courses
     When I click on "List" "link" in the "Course overview" "block"
     Then I should not see "Category 1" in the "Course overview" "block"
 
-  Scenario: Show course category in summary display
+  Scenario: Show course category in summary display with displaycategories off
     Given the following config values are set as admin:
       | displaycategories | 0 | block_myoverview |
     And I am on the "My courses" page logged in as "student1"
