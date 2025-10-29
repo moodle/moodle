@@ -223,6 +223,193 @@ final class attempt_walkthrough_test extends \advanced_testcase {
     }
 
     /**
+     * Tests that a quiz attempt with random questions correctly handles cases when question versions have been deleted.
+     *
+     * @param array $deleteversions Array of identifiers for the question versions to be deleted. Valid array values:
+     *                              - q1v1 (question 1, version 1)
+     *                              - q1v2 (question 1, version 2)
+     *                              - q2v1 (question 2, version 1)
+     *                              - q2v2 (question 2, version 2)
+     * @param bool $canpreview Whether the given user has capability to preview the quiz.
+     * @param array $expectedversions Array of expected question versions per slot after a new attempt following question
+     *                                version removal. Valid key-value pairs:
+     *                                - 1 => q1v1 (slot 1; question 1, version 1)
+     *                                - 1 => q1v2 (slot 1; question 1, version 1)
+     *                                - 2 => q2v1 (slot 2; question 2, version 1)
+     *                                - 2 => q2v2 (slot 2; question 2, version 2)
+     * @param string|null $expectedupdateattempterror The expected error message when quiz attempts are updated following
+     *                                                question version removal (if applicable).
+     * @param int|null $expectedslotfewquestions The expected random question slot (number) with insufficient questions
+     *                                           in the category following question version removal (if applicable).
+     * @dataProvider quiz_random_question_deletion_provider
+     */
+    public function test_quiz_attempt_with_random_questions_when_versions_are_deleted(
+        array $deleteversions,
+        bool $canpreview,
+        array $expectedversions,
+        ?string $expectedupdateattempterror = null,
+        ?int $expectedslotfewquestions = null
+    ): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course and enrol a teacher.
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        // Create quiz.
+        $quiz = $this->getDataGenerator()->create_module('quiz', [
+            'course' => $course->id,
+            'grade' => 100.0,
+            'sumgrades' => 3,
+        ]);
+
+        // Create question categories.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat1 = $questiongenerator->create_question_category();
+        $cat2 = $questiongenerator->create_question_category();
+
+        // Create questions.
+        $questions = [
+            'q1v1' => $questiongenerator->create_question('shortanswer', null, ['category' => $cat1->id]),
+            'q2v1' => $questiongenerator->create_question('essay', null, ['category' => $cat2->id]),
+        ];
+
+        // Update the questions to generate new versions.
+        $questions['q1v2'] = $questiongenerator->update_question(
+            $questions['q1v1'],
+            null,
+            ['name' => 'This is the latest version']
+        );
+        $questions['q2v2'] = $questiongenerator->update_question(
+            $questions['q2v1'],
+            null,
+            ['name' => 'This is the latest version']
+        );
+
+        // Add random questions to quiz.
+        $this->add_random_questions($quiz->id, 1, $cat1->id, 1);
+        $this->add_random_questions($quiz->id, 1, $cat2->id, 1);
+
+        // Start attempt.
+        $quizobj = quiz_settings::create($quiz->id, $teacher->id);
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null, userid: $teacher->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        // Delete the question versions defined in the data provider.
+        $deleteids = array_map(fn($label) => $questions[$label]->id, $deleteversions);
+        \qbank_deletequestion\helper::delete_questions($deleteids, false);
+
+        if (!$canpreview) { // Update the 'mod/quiz:preview' capability as defined by the data provider.
+            $this->setUser($teacher);
+            unassign_capability('mod/quiz:preview', $teacherrole->id);
+        }
+
+        // Update the quiz attempts.
+        try {
+            $attemptobj->update_questions_to_new_version_if_changed();
+            // An exception is expected if the last preview/attempt is invalidated due to question versions removed for
+            // this preview/attempt.
+            if ($expectedupdateattempterror) {
+                $this->fail('Exception expected due to preview is deleted');
+            }
+        } catch (\moodle_exception $e) {
+            // Verify the expected exception message.
+            $this->assertEquals($expectedupdateattempterror, $e->getMessage());
+        }
+
+        // An exception is expected if an existing random question lacks sufficient questions in the category due to
+        // question version removal.
+        // The new attempt should fail as a result.
+        if ($expectedslotfewquestions) {
+            $structure = $quizobj->get_structure();
+            $slot = $structure->get_slot_by_number($expectedslotfewquestions);
+            // Verify the expected exception message.
+            $this->expectExceptionMessage(
+                get_string(
+                    'notenoughrandomquestions',
+                    'quiz',
+                    (object) [
+                    'category' => $slot->category,
+                    'name' => 'Random question',
+                    'id' => $slot->slotid,
+                    ]
+                )
+            );
+        }
+
+        // Start a new quiz attempt.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 2, $attempt, userid: $teacher->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        // Verify the expected question versions for each slot for the given quiz attempt.
+        foreach ($expectedversions as $slot => $expectedversion) {
+            $this->assertEquals($questions[$expectedversion]->id, $attemptobj->get_question_attempt($slot)->get_question_id());
+        }
+    }
+
+    /**
+     * Data provider for test_quiz_attempt_with_random_questions_when_versions_are_deleted.
+     *
+     * @return array
+     */
+    public static function quiz_random_question_deletion_provider(): array {
+        return [
+            'Delete only latest versions for both q1 and q2; quiz preview available' => [
+                ['q1v2', 'q2v2'],
+                true,
+                [
+                    1 => 'q1v1',
+                    2 => 'q2v1',
+                ],
+                get_string('attempterrorcontentchange', 'quiz'),
+            ],
+            'Delete only latest versions for both q1 and q2; quiz preview not available' => [
+                ['q1v2', 'q2v2'],
+                false,
+                [
+                    1 => 'q1v1',
+                    2 => 'q2v1',
+                ],
+                get_string('attempterrorcontentchangeforuser', 'quiz'),
+            ],
+            'Delete all question versions for q1 only; quiz preview available' => [
+                ['q1v1', 'q1v2'],
+                true,
+                [
+                    1 => 'q1v1',
+                    2 => 'q2v1',
+                ],
+                get_string('attempterrorcontentchange', 'quiz'),
+                1,
+            ],
+            'Delete all question versions for q2 only; quiz preview not available' => [
+                ['q2v1', 'q2v2'],
+                false,
+                [
+                    1 => 'q1v1',
+                    2 => 'q2v1',
+                ],
+                get_string('attempterrorcontentchangeforuser', 'quiz'),
+                2,
+            ],
+            'Delete only initial question versions for q1 and q2; quiz preview available' => [
+                ['q1v1', 'q2v1'],
+                true,
+                [
+                    1 => 'q1v2',
+                    2 => 'q2v2',
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Create a quiz containing one question and a close time.
      *
      * The question is the standard shortanswer test question.
