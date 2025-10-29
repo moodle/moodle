@@ -196,6 +196,14 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Sort by short name" in the "Course overview" "block"
     And "[data-sort='shortname']" "css_element" in the "Course overview" "block" should be visible
 
+  Scenario: Course start date sort persistence
+    Given I am on the "My courses" page logged in as "student1"
+    And I click on "sortingdropdown" "button" in the "Course overview" "block"
+    And I click on "Sort by start date" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Sort by start date" in the "Course overview" "block"
+    And "[data-sort='startdate']" "css_element" in the "Course overview" "block" should be visible
+
   Scenario: View inprogress courses with hide persistent functionality
     Given I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"

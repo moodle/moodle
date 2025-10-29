@@ -453,10 +453,20 @@ class main implements renderable, templatable {
         $preferences = $this->get_preferences_as_booleans();
         $availablelayouts = $this->get_formatted_available_layouts_for_export();
         $sort = '';
-        if ($this->sort == BLOCK_MYOVERVIEW_SORTING_SHORTNAME) {
-            $sort = 'shortname';
-        } else {
-            $sort = $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc';
+
+        switch ($this->sort) {
+            case BLOCK_MYOVERVIEW_SORTING_SHORTNAME:
+                $sort = 'shortname';
+                break;
+            case BLOCK_MYOVERVIEW_SORTING_LASTACCESSED:
+                $sort = 'ul.timeaccess desc';
+                break;
+            case BLOCK_MYOVERVIEW_SORTING_STARTDATE:
+                $sort = 'startdate';
+                break;
+            case BLOCK_MYOVERVIEW_SORTING_TITLE:
+            default:
+                $sort = 'fullname';
         }
 
         $defaultvariables = [
