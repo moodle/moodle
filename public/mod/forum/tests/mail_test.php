@@ -1043,7 +1043,7 @@ final class mail_test extends \advanced_testcase {
         $htmlbase['user']['mailformat'] = 1;
         $htmlbase['expectations'][0]['contents'] = array(
             '~{\$a',
-            '~&(amp|lt|gt|quot|\#039);(?!course|lang|version|iosappid|androidappid)',
+            '~&(amp|lt|gt|quot|\#039);(?!course|lang|version|iosappid|androidappid|siteurl)',
             '<div class="attachments">( *\n *)?<a href',
             '<div class="subject">\n.*Hello Moodle', '>Moodle Forum', '>Welcome.*Moodle', '>Love Moodle', '>1\d1');
         $htmlcases['HTML mail without ampersands, quotes or lt/gt'] = array('data' => $htmlbase);
@@ -1072,7 +1072,7 @@ final class mail_test extends \advanced_testcase {
         $newcase['expectations'][0]['subject'] = '.*101.*HTML text and image';
         $newcase['expectations'][0]['contents'] = array(
             '~{\$a',
-            '~&(amp|lt|gt|quot|\#039);(?!course|lang|version|iosappid|androidappid)',
+            '~&(amp|lt|gt|quot|\#039);(?!course|lang|version|iosappid|androidappid|siteurl)',
             '<div class="attachments">( *\n *)?<a href',
             '<div class="subject">\n.*HTML text and image', '>Moodle Forum',
             '<p>Welcome to Moodle, '

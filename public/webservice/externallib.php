@@ -220,6 +220,13 @@ class core_webservice_external extends \core_external\external_api {
         }
 
         $siteinfo['policyagreed'] = $USER->policyagreed;
+        $siteinfo['usercanchangeconfig'] = has_capability('moodle/site:config', $systemcontext);
+        $siteinfo['usercanviewconfig'] = has_capability('moodle/site:configview', $systemcontext);
+
+        if ($siteinfo['usercanchangeconfig']) {
+            $sitesecret = \core\hub\registration::get_secret();
+            $siteinfo['sitesecret'] = $sitesecret ?? null;
+        }
 
         return $siteinfo;
     }
@@ -296,6 +303,21 @@ class core_webservice_external extends \core_external\external_api {
                 'usersessionscount' => new external_value(PARAM_INT, 'Number of active sessions for current user.
                     Only returned when limitconcurrentlogins is used.', VALUE_OPTIONAL),
                 'policyagreed' => new external_value(PARAM_INT, 'Whether user accepted all the policies.', VALUE_OPTIONAL),
+                'usercanchangeconfig' => new external_value(
+                    PARAM_BOOL,
+                    'Whether the user can change the site configuration.',
+                    VALUE_OPTIONAL
+                ),
+                'usercanviewconfig' => new external_value(
+                    PARAM_BOOL,
+                    'Whether the user can view the site administration tree.',
+                    VALUE_OPTIONAL
+                ),
+                'sitesecret' => new external_value(
+                    PARAM_RAW,
+                    'The site secret, only returned to users with moodle/site:config capability (usually admins).',
+                    VALUE_OPTIONAL
+                ),
             )
         );
     }
