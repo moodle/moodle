@@ -580,7 +580,9 @@ class redis extends handler implements SessionHandlerInterface {
             if ($keys['timecreated'] != $keys['timemodified']) {
                 $maxlifetime = $this->get_maxlifetime($userid);
                 $this->connection->expire($this->sessionkeyprefix . $id, $maxlifetime);
-                $this->connection->expire($this->userkeyprefix . $userid, $maxlifetime);
+                if ($userid != 0) {
+                    $this->connection->expire($this->userkeyprefix . $userid, $maxlifetime);
+                }
             }
         } catch (RedisException | RedisClusterException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
@@ -615,9 +617,12 @@ class redis extends handler implements SessionHandlerInterface {
             'lastip' => getremoteaddr(),
         ];
 
-        $userhashkey = $this->userkeyprefix . $userid;
-        $this->connection->hSet($userhashkey, $sid, $timestamp);
-        $this->connection->expire($userhashkey, $maxlifetime);
+        // Do not manage store mapping from user to sid for non-login user (0).
+        if ($userid != 0) {
+            $userhashkey = $this->userkeyprefix . $userid;
+            $this->connection->hSet($userhashkey, $sid, $timestamp);
+            $this->connection->expire($userhashkey, $maxlifetime);
+        }
 
         $sessionhashkey = $this->sessionkeyprefix . $sid;
         $this->connection->hmSet($sessionhashkey, $sessiondata);
@@ -664,7 +669,9 @@ class redis extends handler implements SessionHandlerInterface {
         // Update the expiry time.
         $maxlifetime = $this->get_maxlifetime($record->userid);
         $this->connection->expire($sessionhashkey, $maxlifetime);
-        $this->connection->expire($userhashkey, $maxlifetime);
+        if ($record->userid != 0) {
+            $this->connection->expire($userhashkey, $maxlifetime);
+        }
 
         return true;
     }
