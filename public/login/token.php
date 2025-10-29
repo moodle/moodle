@@ -34,16 +34,19 @@ if (!$CFG->enablewebservices) {
     throw new moodle_exception('enablewsdescription', 'webservice');
 }
 
-// This script is used by the mobile app to check that the site is available and web services
-// are allowed. In this mode, no further action is needed.
-if (optional_param('appsitecheck', 0, PARAM_INT)) {
-    echo json_encode((object)['appsitecheck' => 'ok']);
-    exit;
+if (isset($_GET['username']) || isset($_GET['password'])) {
+    throw new coding_exception('Username and password can only be sent via POST parameters for security reasons.');
 }
 
 $username = required_param('username', PARAM_USERNAME);
 $password = required_param('password', PARAM_RAW);
 $serviceshortname = required_param('service', PARAM_ALPHANUMEXT);
+
+// Check if the service exists and is enabled.
+$service = $DB->get_record('external_services', ['shortname' => $serviceshortname, 'enabled' => 1]);
+if (empty($service)) {
+    throw new moodle_exception('servicenotavailable', 'webservice');
+}
 
 echo $OUTPUT->header();
 
@@ -76,13 +79,6 @@ if (!empty($user)) {
 
     // Setup user session to check capability.
     \core\session\manager::set_user($user);
-
-    // Check if the service exists and is enabled.
-    $service = $DB->get_record('external_services', ['shortname' => $serviceshortname, 'enabled' => 1]);
-    if (empty($service)) {
-        // Will throw exception if no token found.
-        throw new moodle_exception('servicenotavailable', 'webservice');
-    }
 
     // Get an existing token or create a new one.
     $token = \core_external\util::generate_token_for_current_user($service);
