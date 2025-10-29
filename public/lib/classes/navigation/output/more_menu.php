@@ -83,6 +83,10 @@ class more_menu implements renderable, templatable {
             $data['nodecollection'] = $this->content;
         } else {
             $data['nodearray'] = (array) $this->content;
+            // If there is no node array to render then return an empty array.
+            if (empty($data['nodearray'])) {
+                return [];
+            }
         }
         $data['moremenuid'] = uniqid();
 
