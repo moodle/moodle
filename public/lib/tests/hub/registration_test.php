@@ -46,6 +46,7 @@ final class registration_test extends \advanced_testcase {
         $this->assertEquals($CFG->dbtype, $siteinfo['dbtype']);
         $this->assertEquals('manual', $siteinfo['primaryauthtype']);
         $this->assertEquals(1, $siteinfo['coursesnodates']);
+        $this->assertGreaterThan(0, $siteinfo['diskusage']);
     }
 
     /**

@@ -47,6 +47,7 @@ $string['coursesnumber'] = 'Number of courses ({$a})';
 $string['dbtype'] = 'Database type ({$a})';
 $string['demourl'] = 'Demo URL';
 $string['demourl_help'] = 'Enter the demo URL of your course. By default it is the URL of your course. The demo URL is displayed as a link in a search result.';
+$string['diskusagesize'] = 'Disk usage size ({$a} MB)';
 $string['downloadable'] = 'Downloadable';
 $string['educationallevel'] = 'Educational level';
 $string['educationallevel_help'] = 'Select the most appropriate educational level that the course fits into.';

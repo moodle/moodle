@@ -68,6 +68,8 @@ class registration {
         2023072300 => ['pluginusage'],
         // AI usage added in Moodle 4.5.
         2023081200 => ['aiusage'],
+        // Disk usage added in Moodle 5.2.
+        2025100900 => ['diskusage'],
     ];
 
     /** @var string Site privacy: not displayed */
@@ -209,6 +211,9 @@ class registration {
         $aiusagedata = self::get_ai_usage_data();
         $siteinfo['aiusage'] = !empty($aiusagedata) ? json_encode($aiusagedata) : '';
 
+        // Disk usage size.
+        $siteinfo['diskusage'] = self::get_dataroot_size() ?? 0;
+
         // Primary auth type.
         $primaryauthsql = 'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC';
         $siteinfo['primaryauthtype'] = $DB->get_field_sql($primaryauthsql, null, IGNORE_MULTIPLE);
@@ -299,6 +304,7 @@ class registration {
             'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
             'pluginusage' => get_string('pluginusagedata', 'hub', $pluginusagelinks),
             'aiusage' => $OUTPUT->render_from_template('core/ai_usage_data', ['aiusagedata' => self::show_ai_usage()]),
+            'diskusage' => get_string('diskusagesize', 'hub', $siteinfo['diskusage']),
         ];
 
         foreach ($senddata as $key => $str) {
@@ -941,5 +947,18 @@ class registration {
         }
 
         return $data;
+    }
+
+    /**
+     * Measure the size of the dataroot directory.
+     *
+     * @return float MB to 3 decimal places.
+     */
+    public static function get_dataroot_size(): float {
+        global $CFG;
+        $size = get_directory_size($CFG->dataroot);
+        // Convert bytes to megabytes.
+        $size = $size / (1024 * 1024);
+        return round($size, 3);
     }
 }
