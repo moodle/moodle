@@ -1,5 +1,13 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
+## 5.2dev
+
+### Added
+
+- Add delete method to the core_courseformat\cmactions
+
+  For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+
 ## 5.1
 
 ### Added

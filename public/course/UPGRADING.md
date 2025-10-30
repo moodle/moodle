@@ -1,5 +1,13 @@
 # core_course (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Deprecated
+
+- The following methods have been deprecated and should no longer be used: - `course_delete_module` - `course_module_flag_for_async_deletion` Please consider using the equivalent methods, delete and delete_async, in `core_courseformat\local\cmactions` instead.
+
+  For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+
 ## 5.1
 
 ### Added

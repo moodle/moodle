@@ -26,6 +26,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-85975](https://tracker.moodle.org/browse/MDL-85975)
 
+### core_course
+
+#### Deprecated
+
+- The following methods have been deprecated and should no longer be used: - `course_delete_module` - `course_module_flag_for_async_deletion` Please consider using the equivalent methods, delete and delete_async, in `core_courseformat\local\cmactions` instead.
+
+  For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+
+### core_courseformat
+
+#### Added
+
+- Add delete method to the core_courseformat\cmactions
+
+  For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+
 ### core_group
 
 #### Added
