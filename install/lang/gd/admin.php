@@ -35,3 +35,4 @@ $string['cliunknowoption'] = 'Roghainnean nach deach an aithneachadh:
 {$a}
 Cleachd— an roghainn airson cuideachadh';
 $string['environmentrequireversion'] = 'tha tionndadh {$a->needed} deatamach agus tha thusa a’ ruith {$a->current}';
+$string['upgradekeyset'] = 'Iuchair àrdachaidh (fàg bàn gus nach tèid a shuidheachadh)';
