@@ -303,7 +303,7 @@ class renderer extends \plugin_renderer_base {
 
         $o .= $this->output->box_start('boxaligncenter gradingsummarytable');
         $t = new \html_table();
-        $t->attributes['class'] = 'generaltable table table-striped table-bordered';
+        $t->attributes['class'] = 'generaltable table table-striped table-bordered table-hover';
         $t->caption = get_string('gradingsummary', 'assign');
         $t->captionhide = true; // Hidden because it matches the title above.
 
@@ -653,7 +653,7 @@ class renderer extends \plugin_renderer_base {
         $o .= $this->output->box_start('boxaligncenter submissionsummarytable');
 
         $t = new \html_table();
-        $t->attributes['class'] = 'generaltable table table-striped table-bordered';
+        $t->attributes['class'] = 'generaltable table table-striped table-bordered table-hover';
         $t->caption = get_string('submissionstatusheading', 'assign');
         $t->captionhide = true; // Hidden because it matches the title above.
 

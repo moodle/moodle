@@ -55,7 +55,7 @@ class renderer extends plugin_renderer_base {
             get_string('info', 'auth_oauth2'),
             get_string('edit'),
         ];
-        $table->attributes['class'] = 'admintable table generaltable';
+        $table->attributes['class'] = 'admintable table generaltable table-hover';
         $data = [];
 
         $index = 0;

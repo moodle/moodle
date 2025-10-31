@@ -147,7 +147,7 @@ echo $OUTPUT->header();
     <form id="assignform" method="post" action="">
     <div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-    <table summary="" class="table generaltable groupmanagementtable">
+    <table summary="" class="table generaltable groupmanagementtable table-hover">
     <tr>
       <td id="existingcell">
           <label for="removeselect"><?php print_string('existingmembers', 'group', $currentmemberscount); ?></label>
