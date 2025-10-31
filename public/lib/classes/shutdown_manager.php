@@ -21,16 +21,6 @@
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Shutdown management class.
- *
- * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class core_shutdown_manager {
     /** @var array list of custom callbacks */
     protected static $callbacks = [];
@@ -45,7 +35,7 @@ class core_shutdown_manager {
     /**
      * Register self as main shutdown handler.
      *
-     * @private to be called from lib/setup.php only!
+     * Note: This method should _only_ be called from lib/setup.php.
      */
     public static function initialize() {
         if (self::$registered) {
@@ -53,7 +43,7 @@ class core_shutdown_manager {
             return;
         }
         self::$registered = true;
-        register_shutdown_function(array('core_shutdown_manager', 'shutdown_handler'));
+        register_shutdown_function(['core_shutdown_manager', 'shutdown_handler']);
 
         // Signal handlers are recommended for the best possible shutdown handling.
         // They require the 'pcntl' extension to be loaded and the following functions to be available:
@@ -116,12 +106,12 @@ class core_shutdown_manager {
         // Normally we should exit unless a callback tells us to wait.
         $shouldexit = true;
         foreach (self::$signalcallbacks as $data) {
-            list($callback, $params) = $data;
+            [$callback, $params] = $data;
             try {
                 array_unshift($params, $signo);
                 $shouldexit = call_user_func_array($callback, $params) && $shouldexit;
             } catch (Throwable $e) {
-                // phpcs:ignore
+                // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                 error_log('Exception ignored in signal function ' . get_callable_name($callback) . ': ' . $e->getMessage());
             }
         }
@@ -131,7 +121,7 @@ class core_shutdown_manager {
         }
 
         if ($shouldexit) {
-            exit ($exitcode);
+            exit($exitcode);
         }
     }
 
@@ -146,6 +136,7 @@ class core_shutdown_manager {
      */
     public static function register_signal_handler($callback, ?array $params = null): void {
         if (!is_callable($callback)) {
+            // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
             error_log('Invalid custom signal function detected ' . var_export($callback, true)); // phpcs:ignore
         }
         self::$signalcallbacks[] = [$callback, $params ?? []];
@@ -160,13 +151,16 @@ class core_shutdown_manager {
      */
     public static function register_function($callback, ?array $params = null): void {
         if (!is_callable($callback)) {
+            // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
             error_log('Invalid custom shutdown function detected '.var_export($callback, true)); // phpcs:ignore
         }
         self::$callbacks[] = [$callback, $params ? array_values($params) : []];
     }
 
     /**
-     * @private - do NOT call directly.
+     * This is the main shutdown handler.
+     *
+     * Note: DO NOT call this method directly. It will be called automatically on shutdown.
      */
     public static function shutdown_handler() {
         global $DB;
@@ -180,23 +174,28 @@ class core_shutdown_manager {
 
         // Custom stuff first.
         foreach (self::$callbacks as $data) {
-            list($callback, $params) = $data;
+            [$callback, $params] = $data;
             try {
                 call_user_func_array($callback, $params);
             } catch (Throwable $e) {
-                // phpcs:ignore
-                error_log('Exception ignored in shutdown function '.get_callable_name($callback).': '.$e->getMessage());
+                // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
+                error_log('Exception ignored in shutdown function ' . get_callable_name($callback) . ': ' . $e->getMessage());
             }
         }
 
         // Handle DB transactions, session need to be written afterwards
         // in order to maintain consistency in all session handlers.
         if ($DB->is_transaction_started()) {
-            if (!defined('PHPUNIT_TEST') or !PHPUNIT_TEST) {
+            if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
                 // This should not happen, it usually indicates wrong catching of exceptions,
                 // because all transactions should be finished manually or in default exception handler.
                 $backtrace = $DB->get_transaction_start_backtrace();
-                error_log('Potential coding error - active database transaction detected during request shutdown:'."\n".format_backtrace($backtrace, true));
+                // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
+                error_log(
+                    'Potential coding error - active database transaction detected during request shutdown:'
+                        . "\n"
+                        . format_backtrace($backtrace, true),
+                );
             }
             $DB->force_transaction_rollback();
         }
@@ -226,7 +225,7 @@ class core_shutdown_manager {
         // Help apache server if possible.
         $apachereleasemem = false;
         if (function_exists('apache_child_terminate') && function_exists('memory_get_usage') && ini_get_bool('child_terminate')) {
-            $limit = (empty($CFG->apachemaxmem) ? 64*1024*1024 : $CFG->apachemaxmem); // 64MB default.
+            $limit = (empty($CFG->apachemaxmem) ? 64 * 1024 * 1024 : $CFG->apachemaxmem); // 64MB default.
             if (memory_get_usage() > get_real_size($limit)) {
                 $apachereleasemem = $limit;
                 @apache_child_terminate();
@@ -236,10 +235,12 @@ class core_shutdown_manager {
         // Deal with perf logging.
         if (MDL_PERF || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
             if ($apachereleasemem) {
-                error_log('Mem usage over '.$apachereleasemem.': marking Apache child for reaping.');
+                // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
+                error_log('Mem usage over ' . $apachereleasemem . ': marking Apache child for reaping.');
             }
             if (MDL_PERFTOLOG) {
                 $perf = get_performance_info();
+                // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                 error_log("PERF: " . $perf['txt']);
             }
             if (!empty($PERF->perfdebugdeferred)) {
@@ -254,13 +255,16 @@ class core_shutdown_manager {
                         $fs = filesize($f);
                         $ts += $fs;
                         $hfs = display_size($fs);
+                        // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                         error_log(substr($f, strlen($CFG->dirroot)) . " size: $fs ($hfs)");
                     } else {
+                        // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                         error_log($f);
                     }
                 }
-                if ($ts > 0 ) {
+                if ($ts > 0) {
                     $hts = display_size($ts);
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                     error_log("Total size of files included: $ts ($hts)");
                 }
             }

@@ -1,0 +1,8 @@
+issueNumber: MDL-87046
+notes:
+  core:
+    - message: >-
+        The namespace for the `\core_shutdown_manager` has been moved to
+        `\core\shutdown_manager`. The legacy namespace will continue to work for
+        the moment.
+      type: improved
