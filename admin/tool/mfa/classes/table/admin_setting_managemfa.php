@@ -131,7 +131,7 @@ class admin_setting_managemfa extends \core_admin\table\plugin_management_table 
         $txt = get_strings(['combination', 'totalweight'], 'tool_mfa');
         $table = new \html_table();
         $table->id = 'mfacombinations';
-        $table->attributes['class'] = 'admintable generaltable table table-bordered';
+        $table->attributes['class'] = 'admintable generaltable table table-bordered table-hover';
         $table->head  = [$txt->combination, $txt->totalweight];
         $table->data  = [];
 

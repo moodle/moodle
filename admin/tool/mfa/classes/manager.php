@@ -74,7 +74,7 @@ class manager {
             get_string('achievedweight', 'tool_mfa'),
             get_string('status'),
         ];
-        $table->attributes['class'] = 'admintable generaltable table table-bordered';
+        $table->attributes['class'] = 'admintable generaltable table table-bordered table-hover';
         $table->colclasses = [
             'text-end',
             '',

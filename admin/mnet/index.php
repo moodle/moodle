@@ -98,7 +98,7 @@
     echo $OUTPUT->header();
 ?>
 <form method="post" action="index.php">
-    <table align="center" width="635" class="generaltable" border="0" cellpadding="5" cellspacing="0">
+    <table align="center" width="635" class="generaltable table table-hover" border="0" cellpadding="5" cellspacing="0">
         <tr>
             <td  class="generalboxcontent">
             <table cellpadding="9" cellspacing="0" class="table-reboot">
@@ -119,7 +119,7 @@
     </table>
 </form>
 <form method="post" action="index.php">
-    <table align="center" width="635" class="generaltable" border="0" cellpadding="5" cellspacing="0">
+    <table align="center" width="635" class="generaltable table table-hover" border="0" cellpadding="5" cellspacing="0">
         <tr>
             <td  class="generalboxcontent">
             <table cellpadding="9" cellspacing="0" class="table-reboot">

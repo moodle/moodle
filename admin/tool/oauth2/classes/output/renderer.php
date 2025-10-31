@@ -60,7 +60,7 @@ class renderer extends plugin_renderer_base {
             get_string('systemauthstatus', 'tool_oauth2') . ' ' . $this->help_icon('systemaccountconnected', 'tool_oauth2'),
             get_string('edit'),
         ];
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable generaltable table table-hover';
         $data = [];
 
         $index = 0;
@@ -231,7 +231,7 @@ class renderer extends plugin_renderer_base {
             get_string('url'),
             get_string('edit'),
         ];
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable generaltable table table-hover';
         $data = [];
 
         $index = 0;
@@ -290,7 +290,7 @@ class renderer extends plugin_renderer_base {
             get_string('userfieldinternalfield', 'tool_oauth2'),
             get_string('edit'),
         ];
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable generaltable table table-hover';
         $data = [];
 
         $index = 0;
