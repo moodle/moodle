@@ -141,7 +141,7 @@ class tool_log_setting_managestores extends admin_setting {
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign',
                 'centeralign');
         $table->id = 'logstoreplugins';
-        $table->attributes['class'] = 'admintable table generaltable';
+        $table->attributes['class'] = 'admintable table generaltable table-hover';
         $table->data = array();
 
         // Iterate through store plugins and add to the display table.

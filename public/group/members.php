@@ -117,7 +117,7 @@ if (!empty($group->description)) {
     <div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
 
-    <table class="table generaltable groupmanagementtable" summary="">
+    <table class="table generaltable groupmanagementtable table-hover" summary="">
     <tr>
       <td id='existingcell'>
           <p>

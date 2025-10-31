@@ -80,7 +80,7 @@ class table implements \renderable {
             'text-center',
         ];
         $table->id = 'manage-licenses';
-        $table->attributes['class'] = 'admintable table generaltable';
+        $table->attributes['class'] = 'admintable table generaltable table-hover';
         $table->data  = [];
 
         $rownumber = 0;

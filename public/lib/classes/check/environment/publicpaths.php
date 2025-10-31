@@ -194,7 +194,7 @@ class publicpaths extends check {
             get_string('category'),
             get_string('details'),
         ];
-        $table->attributes['class'] = 'flexible generaltable table table-sm';
+        $table->attributes['class'] = 'flexible generaltable table table-sm table-hover';
         $table->data = [];
 
         // Used to track duplicated errors.
