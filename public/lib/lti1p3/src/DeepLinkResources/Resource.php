@@ -25,7 +25,7 @@ class Resource
 
     public static function new(): self
     {
-        return new Resource();
+        return new Resource;
     }
 
     public function getArray(): array
@@ -51,6 +51,8 @@ class Resource
             $resource['lineItem'] = [
                 'scoreMaximum' => $this->line_item->getScoreMaximum(),
                 'label' => $this->line_item->getLabel(),
+                'resourceId' => $this->line_item->getResourceId(),
+                'tag' => $this->line_item->getTag(),
             ];
         }
 

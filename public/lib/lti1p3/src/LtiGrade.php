@@ -50,7 +50,7 @@ class LtiGrade
      */
     public static function new(): self
     {
-        return new LtiGrade();
+        return new LtiGrade;
     }
 
     public function getScoreGiven()

@@ -21,7 +21,7 @@ class LtiConstants
     public const LAUNCH_PRESENTATION = 'https://purl.imsglobal.org/spec/lti/claim/launch_presentation';
     public const LIS = 'https://purl.imsglobal.org/spec/lti/claim/lis';
     public const LTI1P1 = 'https://purl.imsglobal.org/spec/lti/claim/lti1p1';
-    public const ROLE_SCOPE_MENTOR = 'https://purlimsglobal.org/spec/lti/claim/role_scope_mentor';
+    public const ROLE_SCOPE_MENTOR = 'https://purl.imsglobal.org/spec/lti/claim/role_scope_mentor';
     public const TOOL_PLATFORM = 'https://purl.imsglobal.org/spec/lti/claim/tool_platform';
 
     // LTI DL
