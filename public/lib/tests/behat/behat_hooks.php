@@ -178,7 +178,7 @@ class behat_hooks extends behat_base {
 
         // Prevents using outdated data, upgrade script would start and tests would fail.
         if (!behat_util::is_test_data_updated()) {
-            $commandpath = 'php admin/tool/behat/cli/init.php';
+            $commandpath = 'php public/admin/tool/behat/cli/init.php';
             $message = <<<EOF
 Your behat test site is outdated, please run the following command from your Moodle dirroot to drop, and reinstall the Behat test site.
 
