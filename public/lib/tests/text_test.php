@@ -466,6 +466,38 @@ final class text_test extends advanced_testcase {
     }
 
     /**
+     * Tests conversion of named to numeric html entities.
+     *
+     * @covers ::entities_named_to_numeric()
+     */
+    public function test_entities_named_to_numeric(): void {
+        $str = '&amp; &quot; &lt; &gt;';
+        $this->assertSame('&#38; &#34; &#60; &#62;', core_text::entities_named_to_numeric($str));
+
+        $str = 'Žluťoučký koníček testing &Iota;';
+        $this->assertSame('Žluťoučký koníček testing &#921;', core_text::entities_named_to_numeric($str));
+
+        $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
+        $this->assertSame(
+            "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#237;&#269;ek&#169;&#34;&#38;&#60;&#62;&#167;&#171;",
+            core_text::entities_named_to_numeric($str)
+        );
+
+        $this->assertSame(
+            core_text::entities_to_utf8($str),
+            core_text::entities_to_utf8(core_text::entities_named_to_numeric($str))
+        );
+
+        $table = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT | ENT_HTML401, 'UTF-8');
+        $entities = implode(' ', $table);
+        $chars = implode(' ', array_keys($table));
+        $this->assertSame(
+            core_text::entities_to_utf8($chars),
+            core_text::entities_to_utf8(core_text::entities_named_to_numeric($entities))
+        );
+    }
+
+    /**
      * Tests the static entities_to_utf8 method.
      *
      * @covers ::entities_to_utf8()
