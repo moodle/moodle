@@ -42,9 +42,8 @@ final class weblib_test extends advanced_testcase {
         $this->assertSame('Café', s('Café'));
         $this->assertSame('一, 二, 三', s('一, 二, 三'));
 
-        // Don't escape already-escaped numeric entities. (Note, this behaviour
-        // may not be desirable. Perhaps we should remove these tests and that
-        // functionality, but we can only do that if we understand why it was added.)
+        // Don't escape already-escaped numeric entities. This is a feature
+        // necessary to prevent double-escaping in Mustache templates via clean_string().
         $this->assertSame('An entity: &#x09ff;.', s('An entity: &#x09ff;.'));
         $this->assertSame('An entity: &#1073;.', s('An entity: &#1073;.'));
         $this->assertSame('An entity: &amp;amp;.', s('An entity: &amp;.'));
@@ -182,6 +181,36 @@ final class weblib_test extends advanced_testcase {
             'I really do not like this!',
             $result,
         );
+    }
+
+    /**
+     * Test conversion of dangerous characters and named entities to numeric entities.
+     *
+     * @covers ::clean_string
+     */
+    public function test_clean_string(): void {
+        $string = 'Žluťoučký koníček <tag> "test" \'example\' & escaped &amp; &lt; &gt; &quot; ';
+        $cleaned = clean_string($string);
+
+        $this->assertSame(
+            'Žluťoučký koníček &#60;tag&#62; &#34;test&#34; &#39;example&#39; &#38; escaped &#38; &#60; &#62; &#34; ',
+            $cleaned
+        );
+
+        // Repeated cleaning does not change result.
+        $this->assertSame($cleaned, clean_string($cleaned));
+
+        // Function s() does not modify it.
+        $this->assertSame($cleaned, s($cleaned));
+
+        // Function format_string() does not modify it.
+        $this->assertSame($cleaned, format_string($cleaned));
+
+        // Function clean_text() does not remove data.
+        $this->assertSame($cleaned, clean_string(clean_text($cleaned)));
+
+        // It can be converted back to raw UTF-8 characters.
+        $this->assertSame(core_text::entities_to_utf8($string), core_text::entities_to_utf8($cleaned));
     }
 
     /**

@@ -462,6 +462,35 @@ class core_text {
     }
 
     /**
+     * Returns transliteration table for conversion of named
+     * html entities to numeric html entities.
+     * @return array
+     */
+    protected static function get_named_entities_table(): array {
+        static $translationtable = null;
+
+        if (!isset($translationtable)) {
+            $translationtable = [];
+            // NOTE: do not use ENT_HTML5 here because it adds way too many items.
+            $entities = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT | ENT_HTML401, 'UTF-8');
+            foreach ($entities as $char => $entity) {
+                $translationtable[$entity] = '&#' . IntlChar::ord($char) . ';';
+            }
+        }
+
+        return $translationtable;
+    }
+
+    /**
+     * Converts all named html entities &quot; to numeric entities &#nnnn;
+     * @param string $str input string
+     * @return string
+     */
+    public static function entities_named_to_numeric(string $str): string {
+        return strtr($str, self::get_named_entities_table());
+    }
+
+    /**
      * Converts all the numeric entities &#nnnn; or &#xnnn; to UTF-8
      * Original from laurynas dot butkus at gmail at:
      * http://php.net/manual/en/function.html-entity-decode.php#75153
