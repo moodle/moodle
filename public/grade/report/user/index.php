@@ -31,6 +31,7 @@ $courseid = required_param('id', PARAM_INT);
 // 0 - view all reports. null - view own report. non-zero and non-null - view other user report.
 $userid   = optional_param('userid', null, PARAM_INT);
 $userview = optional_param('userview', 0, PARAM_INT);
+$reset = optional_param('reset', 0, PARAM_BOOL);
 
 $PAGE->set_url(new moodle_url('/grade/report/user/index.php', ['id' => $courseid]));
 
@@ -130,6 +131,10 @@ if (has_capability('moodle/grade:viewall', $context)) {
         $userid = $USER->id;
     }
 
+    // If the reset parameter is set, clear any stored (last viewed) user in a session variable.
+    if ($reset) {
+        unset($SESSION->gradereport_user["useritem-{$context->id}"]);
+    }
     // If there is a stored (last viewed) user in a session variable, bypass the user select zero state and display the
     // report for that user.
     $lastvieweduserid = $SESSION->gradereport_user["useritem-{$context->id}"] ?? null;

@@ -261,3 +261,22 @@ Feature: Within the User report, a teacher can search for users.
     And "User Test" "heading" should not exist
     And "Teacher 1" "heading" should not exist
     And "Turtle Manatee" "heading" should not exist
+
+  Scenario: A teacher can clear the search and reload the page to show no student details
+    # A teacher searches for and selects a specific user.
+    Given I set the field "Search users" to "Dummy"
+    And I wait until "Dummy User" "option_role" exists
+    When I click on "Dummy User" "list_item"
+    # After selection, page reloads and displays only that user.
+    And I wait until the page is ready
+    Then "Dummy User" "heading" should exist
+    # Search input retains the selected user for context.
+    And the field "Search users" matches value "Dummy User"
+
+    # Teacher clicks the Clear link to reset the search and reload the page.
+    When I click on "Clear" "link"
+    # Page reloads with search field cleared and no student details displayed (empty state).
+    And I wait until the page is ready
+    Then the field "Search users" matches value ""
+    # All student headings should disappear (no students shown on empty state).
+    And "Dummy User" "heading" should not exist

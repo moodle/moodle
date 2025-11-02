@@ -46,7 +46,11 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
      */
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
         $courserenderer = $this->page->get_renderer('core', 'course');
-        $resetlink = new moodle_url('/grade/report/singleview/index.php', ['id' => $course->id, 'group' => $groupid ?? 0]);
+        $resetlink = new moodle_url('/grade/report/singleview/index.php', [
+            'id' => $course->id,
+            'group' => $groupid ?? 0,
+            'reset' => 1,
+        ]);
         $usersearch = '';
 
         if ($userid) {
