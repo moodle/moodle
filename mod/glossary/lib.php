@@ -4545,3 +4545,52 @@ function mod_glossary_prepare_entry_for_edition(stdClass $entry): stdClass {
 
     return $entry;
 }
+
+/**
+ * Checks whether the current user can see ratings for a given itemid.
+ *
+ * @param array $params submitted data
+ *            contextid => int contextid [required]
+ *            component => The component for this module - should always be mod_glossary [required]
+ *            ratingarea => Should always be entry (the only rating area in glossary) [required]
+ *            itemid => int the ID of the entry being rated [required]
+ * @return bool
+ */
+function mod_glossary_rating_can_see_item_ratings(array $params): bool {
+    global $DB, $USER;
+
+    if (!isset($params['component']) || $params['component'] != 'mod_glossary') {
+        throw new rating_exception('invalidcomponent');
+    }
+
+    if (!isset($params['ratingarea']) || $params['ratingarea'] != 'entry') {
+        throw new rating_exception('invalidratingarea');
+    }
+
+    if (!isset($params['itemid'])) {
+        throw new rating_exception('invaliditemid');
+    }
+
+    $entry = $DB->get_record('glossary_entries', ['id' => $params['itemid']], '*', MUST_EXIST);
+    $glossary = $DB->get_record('glossary', ['id' => $entry->glossaryid], '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('glossary', $glossary->id, $glossary->course, false, MUST_EXIST);
+    $cminfo = get_fast_modinfo($glossary->course)->instances['glossary'][$cm->instance];
+
+    if ($cminfo->context->id != $params['contextid']) {
+        throw new rating_exception('invalidcontext');
+    }
+
+    $context = context::instance_by_id($params['contextid']);
+
+    $ratingpermissions = glossary_rating_permissions($context->id, 'mod_glossary', 'entry');
+    $requiredpermission = ($entry->userid != $USER->id) ? 'viewall' : 'view';
+    if (!$ratingpermissions[$requiredpermission]) {
+        return false;
+    }
+
+    if (!glossary_can_view_entry($entry, $cminfo)) {
+        return false;
+    }
+
+    return true;
+}
