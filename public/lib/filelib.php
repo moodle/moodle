@@ -2363,7 +2363,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
             throw new \moodle_exception('filenotfound', 'error', $CFG->wwwroot.'/');
         }
         // executed after normal finish or abort
-        core_shutdown_manager::register_function('send_temp_file_finished', array($path));
+        \core\shutdown_manager::register_function('send_temp_file_finished', [$path]);
     }
 
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup

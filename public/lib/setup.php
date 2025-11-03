@@ -779,7 +779,7 @@ if (!isset($CFG->debugdisplay)) {
 }
 
 // Register our shutdown manager, do NOT use register_shutdown_function().
-core_shutdown_manager::initialize();
+\core\shutdown_manager::initialize();
 
 // Verify upgrade is not running unless we are in a script that needs to execute in any case
 if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
@@ -1187,7 +1187,7 @@ if (isset($CFG->maintenance_later) and $CFG->maintenance_later <= time()) {
 // Add behat_shutdown_function to shutdown manager, so we can capture php errors,
 // but not necessary for behat CLI command as it's being captured by behat process.
 if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST')) {
-    core_shutdown_manager::register_function('behat_shutdown_function');
+    \core\shutdown_manager::register_function('behat_shutdown_function');
 }
 
 // note: we can not block non utf-8 installations here, because empty mysql database

@@ -78,7 +78,7 @@ class eventobservers {
         if (empty(self::$instance)) {
             self::$instance = new static();
             // Register shutdown handler - this is useful for buffering, processing events, etc.
-            \core_shutdown_manager::register_function(array(self::$instance, 'process_buffer'));
+            \core\shutdown_manager::register_function([self::$instance, 'process_buffer']);
         }
 
         self::$instance->buffer_event($event);

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use Throwable;
+
 /**
  * Shutdown management class.
  *
@@ -21,13 +25,13 @@
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_shutdown_manager {
+class shutdown_manager {
     /** @var array list of custom callbacks */
-    protected static $callbacks = [];
+    protected static array $callbacks = [];
     /** @var array list of custom signal callbacks */
-    protected static $signalcallbacks = [];
+    protected static array $signalcallbacks = [];
     /** @var bool is this manager already registered? */
-    protected static $registered = false;
+    protected static bool $registered = false;
 
     /** @var array A list of pcntl handlers */
     protected static array $pcntlhandlers = [];
@@ -37,7 +41,7 @@ class core_shutdown_manager {
      *
      * Note: This method should _only_ be called from lib/setup.php.
      */
-    public static function initialize() {
+    public static function initialize(): void {
         if (self::$registered) {
             debugging('Shutdown manager is already initialised!');
             return;
@@ -77,7 +81,7 @@ class core_shutdown_manager {
      *
      * @param   int     $signo The signal being handled
      */
-    public static function signal_handler(int $signo) {
+    public static function signal_handler(int $signo): void {
         // Note: There is no need to manually call the shutdown handler.
         // The fact that we are calling exit() in this script means that the standard shutdown handling is performed
         // anyway.
@@ -99,7 +103,7 @@ class core_shutdown_manager {
             default:
                 // The signal handler was called with a signal it was not expecting.
                 // We should exit and complain.
-                echo "Warning: \core_shutdown_manager::signal_handler() was called with an unexpected signal ({$signo}).\n";
+                echo "Warning: \core\shutdown_manager::signal_handler() was called with an unexpected signal ({$signo}).\n";
                 $exitcode = 1;
         }
 
@@ -134,7 +138,7 @@ class core_shutdown_manager {
      * @param array $params
      * @return void
      */
-    public static function register_signal_handler($callback, ?array $params = null): void {
+    public static function register_signal_handler(callable $callback, ?array $params = null): void {
         if (!is_callable($callback)) {
             // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
             error_log('Invalid custom signal function detected ' . var_export($callback, true)); // phpcs:ignore
@@ -149,7 +153,7 @@ class core_shutdown_manager {
      * @param array $params
      * @return void
      */
-    public static function register_function($callback, ?array $params = null): void {
+    public static function register_function(callable $callback, ?array $params = null): void {
         if (!is_callable($callback)) {
             // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
             error_log('Invalid custom shutdown function detected '.var_export($callback, true)); // phpcs:ignore
@@ -162,7 +166,7 @@ class core_shutdown_manager {
      *
      * Note: DO NOT call this method directly. It will be called automatically on shutdown.
      */
-    public static function shutdown_handler() {
+    public static function shutdown_handler(): void {
         global $DB;
 
         // In case we caught an out of memory shutdown we increase memory limit to unlimited, so we can gracefully shut down.
@@ -219,7 +223,7 @@ class core_shutdown_manager {
     /**
      * Standard shutdown sequence.
      */
-    protected static function request_shutdown() {
+    protected static function request_shutdown(): void {
         global $CFG, $OUTPUT, $PERF;
 
         // Help apache server if possible.
@@ -281,3 +285,8 @@ class core_shutdown_manager {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(shutdown_manager::class, \core_shutdown_manager::class);

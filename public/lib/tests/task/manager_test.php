@@ -260,7 +260,7 @@ final class manager_test extends \advanced_testcase {
         self::assertEmpty(manager::get_failed_adhoc_tasks());
 
         // Trigger shutdown handler.
-        \core_shutdown_manager::shutdown_handler();
+        \core\shutdown_manager::shutdown_handler();
 
         $failedtasks = manager::get_failed_adhoc_tasks();
 
@@ -292,7 +292,7 @@ final class manager_test extends \advanced_testcase {
         $this->assertCount(1, $running);
 
         // Trigger shutdown handler.
-        \core_shutdown_manager::shutdown_handler();
+        \core\shutdown_manager::shutdown_handler();
 
         $running = manager::get_running_tasks();
         $this->assertCount(0, $running);
