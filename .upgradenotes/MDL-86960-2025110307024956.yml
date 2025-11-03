@@ -1,0 +1,7 @@
+issueNumber: MDL-86960
+notes:
+  mod_glossary:
+    - message: >-
+        Function mod_glossary_rating_can_see_item_ratings is now implemented for
+        checking permissions to view ratings.
+      type: improved
