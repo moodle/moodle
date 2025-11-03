@@ -32,7 +32,6 @@ use core_reportbuilder\local\report\filter;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class text_test extends advanced_testcase {
-
     /**
      * Data provider for {@see test_get_sql_filter_simple}
      *
@@ -41,10 +40,6 @@ final class text_test extends advanced_testcase {
     public static function get_sql_filter_simple_provider(): array {
         return [
             [text::ANY_VALUE, 'Looking for', null, true],
-            [text::CONTAINS, 'Looking for', 'king', true],
-            [text::CONTAINS, 'Looking for', 'sky', false],
-            [text::DOES_NOT_CONTAIN, 'Looking for', 'sky', true],
-            [text::DOES_NOT_CONTAIN, 'Looking for', 'king', false],
             [text::IS_EQUAL_TO, 'Looking for', 'Looking for', true],
             [text::IS_EQUAL_TO, 'Looking for', 'Your eyes', false],
             [text::IS_NOT_EQUAL_TO, 'Looking for', 'Looking for', false],
@@ -53,6 +48,24 @@ final class text_test extends advanced_testcase {
             [text::STARTS_WITH, 'Looking for', 'Your', false],
             [text::ENDS_WITH, 'Looking for', 'for', true],
             [text::ENDS_WITH, 'Looking for', 'eyes', false],
+
+            // Contains content.
+            [text::CONTAINS, 'Looking for', 'king', true],
+            [text::CONTAINS, 'Looking for', 'sky', false],
+            [text::CONTAINS, 'Looking for', 'L*king', true],
+            [text::CONTAINS, 'L*oking for', 'L\\*oking', true],
+            [text::CONTAINS, 'Looking for', 'L\\*king', false],
+            [text::CONTAINS, 'Looking for', 'L??king', true],
+            [text::CONTAINS, 'L?oking for', 'L\\?oking', true],
+            [text::CONTAINS, 'Looking for', 'L\\?oking', false],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'king', false],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'sky', true],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'L*king', false],
+            [text::DOES_NOT_CONTAIN, 'L*oking for', 'L\\*oking', false],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'L\\*king', true],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'L??king', false],
+            [text::DOES_NOT_CONTAIN, 'L?oking for', 'L\\?oking', false],
+            [text::DOES_NOT_CONTAIN, 'Looking for', 'L\\?oking', true],
 
             // Empty content.
             [text::IS_EMPTY, null, null, true],
