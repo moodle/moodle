@@ -1,0 +1,58 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moodle-web
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    volumes:
+      - ./public:/var/www/html/public
+      - ./:/var/www/html
+      - moodledata:/var/moodledata
+    environment:
+      - MOODLE_URL=${MOODLE_URL:-http://study.afgou.local:8080}
+      - APACHE_SERVER_NAME=${APACHE_SERVER_NAME:-study.afgou.local}
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME:-moodle}
+      - DB_USER=${DB_USER:-moodle}
+      - DB_PASSWORD=${DB_PASSWORD:-moodle}
+      - DB_TYPE=${DB_TYPE:-mariadb}
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - moodle-network
+
+  db:
+    image: ${DB_TYPE:-mariadb}:${DB_VERSION:-11}
+    container_name: moodle-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-rootpassword}
+      - MYSQL_DATABASE=${DB_NAME:-moodle}
+      - MYSQL_USER=${DB_USER:-moodle}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-moodle}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "${DB_PORT:-3307}:3306"
+    restart: unless-stopped
+    networks:
+      - moodle-network
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb_file_format=Barracuda
+      --innodb_file_per_table=1
+      --innodb_large_prefix=1
+
+volumes:
+  moodledata:
+    driver: local
+  db_data:
+    driver: local
+
+networks:
+  moodle-network:
+    driver: bridge
+

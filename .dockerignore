@@ -1,0 +1,35 @@
+.git
+.gitignore
+.vscode
+.idea
+*.md
+.env
+.env.local
+node_modules
+npm-debug.log
+vendor
+composer.lock
+.DS_Store
+Thumbs.db
+
+# Moodle data directories
+moodledata
+dataroot
+
+# Logs
+*.log
+logs
+
+# Cache
+cache
+temp
+
+# Test files
+tests
+phpunit.xml
+behat.yml
+
+# Documentation
+docs
+documentation
+

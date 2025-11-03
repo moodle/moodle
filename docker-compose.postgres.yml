@@ -1,0 +1,51 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moodle-web
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    volumes:
+      - ./public:/var/www/html/public
+      - ./:/var/www/html
+      - moodledata:/var/moodledata
+    environment:
+      - MOODLE_URL=${MOODLE_URL:-http://localhost:8080}
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME:-moodle}
+      - DB_USER=${DB_USER:-moodle}
+      - DB_PASSWORD=${DB_PASSWORD:-moodle}
+      - DB_TYPE=${DB_TYPE:-pgsql}
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - moodle-network
+
+  db:
+    image: postgres:16
+    container_name: moodle-db-postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME:-moodle}
+      - POSTGRES_USER=${DB_USER:-moodle}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-moodle}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    restart: unless-stopped
+    networks:
+      - moodle-network
+
+volumes:
+  moodledata:
+    driver: local
+  db_data:
+    driver: local
+
+networks:
+  moodle-network:
+    driver: bridge
+
