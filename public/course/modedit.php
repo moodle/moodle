@@ -172,7 +172,15 @@ if ($mform->is_cancelled()) {
         if (!is_null($sectionreturn)) {
             $options['sr'] = $sectionreturn;
         }
-        redirect(course_get_url($course, $cw->section, $options));
+        $url = course_get_url($course, $cw->section, $options);
+        if (!empty($cm->id)) {
+            $url->set_anchor('module-' . $cm->id);
+        } else if (!empty($data->beforemod)) {
+            $url->set_anchor('module-' . $data->beforemod);
+        } else {
+            $url->set_anchor('section-' . $cw->section);
+        }
+        redirect($url);
     }
 } else if ($fromform = $mform->get_data()) {
     // Mark that this is happening in the front-end UI. This is used to indicate that we are able to
@@ -199,8 +207,10 @@ if ($mform->is_cancelled()) {
             $options['sr'] = $sectionreturn;
         }
         $url = course_get_url($course, $cw->section, $options);
+        if (!empty($fromform->coursemodule)) {
+            $url->set_anchor('module-' . $fromform->coursemodule);
+        }
     }
-
     redirect($url);
     exit;
 
