@@ -2309,6 +2309,12 @@ function mod_forum_rating_can_see_item_ratings($params) {
     $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id , false, MUST_EXIST);
+    $context = context_module::instance($cm->id);
+    $ratingpermissions = forum_rating_permissions($context->id, 'mod_forum', 'post');
+    $requiredpermission = ($post->userid != $USER->id) ? 'viewall' : 'view';
+    if (!$ratingpermissions[$requiredpermission]) {
+        return false;
+    }
 
     // Perform some final capability checks.
     if (!forum_user_can_see_post($forum, $discussion, $post, $USER, $cm)) {
