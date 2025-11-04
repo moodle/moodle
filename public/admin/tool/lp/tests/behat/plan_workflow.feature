@@ -188,3 +188,67 @@ Feature: Manage plan workflow
     Then I should see "Active"
     And I should not see "Complete"
     And I log out
+
+  Scenario: Student learning plan derived from templates can be completed
+    Given the following "core_competency > templates" exist:
+      | shortname |
+      | LPT1      |
+    And the following "core_competency > template_competencies" exist:
+      | template | competency |
+      | LPT1     | Test-Comp1 |
+    And I log in as "admin"
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    # Select 1 user to assign to create learning plans for using template.
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    And I set the field "Select users" to "user1"
+    And I press "Create learning plans"
+    And I click on "LPT1" "link" in the "LPT1" "table_row"
+    When I click on "Complete this learning plan" "link"
+    And I click on "Complete this learning plan" "button" in the "Confirm" "dialogue"
+    # Add a short wait to ensure the page has loaded before checking that "Complete" "text" exists.
+    And I wait until the page is ready
+    # Confirm that student's learning plan template is marked as Completed.
+    Then "Complete" "text" should exist
+    And "Reopen this learning plan" "link" should exist
+
+  Scenario: Learning plan template updates are not reflected on plans already completed
+    Given the following "core_competency > templates" exist:
+      | shortname |
+      | LPT1      |
+    And the following "core_competency > template_competencies" exist:
+      | template | competency |
+      | LPT1     | Test-Comp1 |
+    And I log in as "admin"
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    # Select 2 users to assign to create learning plans for using template.
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    And I set the field "Select users" to "user1"
+    And I press "Create learning plans"
+    And I set the field "Select users" to "user2"
+    And I press "Create learning plans"
+    # Complete the learning plan for User 1.
+    And I click on "LPT1" "link" in the "User 1" "table_row"
+    And I click on "Complete this learning plan" "link"
+    And I click on "Complete this learning plan" "button" in the "Confirm" "dialogue"
+    # Add another competency to the learning plan template.
+    And the following "core_competency > template_competencies" exist:
+      | template | competency |
+      | LPT1     | Test-Comp2 |
+    # Navigate back to the list of Learning plan templates in order to access User 1's learning plan.
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    # Confirm that only the first competency is reflected on User 1's learning plan since it's already completed.
+    When I click on "LPT1" "link" in the "User 1" "table_row"
+    Then "Test-Comp2" "link" should not exist
+    And "Test-Comp2" "text" should not exist
+    And "Test-Comp1" "link" should exist
+    And "Test-Comp1" "text" should exist
+    # Navigate back to list of Learning plan templates in order to access User 2's learning plan.
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    # Confirm that both competencies are reflected on User 2's learning plan since it's not yet completed.
+    And I click on "LPT1" "link" in the "User 2" "table_row"
+    And "Test-Comp2" "link" should exist
+    And "Test-Comp2" "text" should exist
+    And "Test-Comp1" "link" should exist
+    And "Test-Comp1" "text" should exist
