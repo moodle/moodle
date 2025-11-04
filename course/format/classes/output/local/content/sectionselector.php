@@ -120,7 +120,9 @@ class sectionselector implements named_templatable, renderable {
             nothing: ['' => get_string('jumpto')],
         );
         // Disable the current section.
-        $select->set_option_disabled($disabledlink);
+        if (!is_null($disabledlink)) {
+            $select->set_option_disabled($disabledlink);
+        }
         $select->class = 'jumpmenu';
         $select->formid = 'sectionmenu';
 
@@ -143,17 +145,19 @@ class sectionselector implements named_templatable, renderable {
         bool $indent = false
     ) {
         $url = $this->get_section_url($course, $section);
-        $indentation = $indent ? self::INDENTER : '';
-        $this->sectionmenu[$url] = $indentation . $format->get_section_name($section);
+        if (!is_null($url)) {
+            $indentation = $indent ? self::INDENTER : '';
+            $this->sectionmenu[$url] = $indentation . $format->get_section_name($section);
+        }
     }
 
     /**
      * Get the section url.
      * @param stdClass $course
      * @param section_info $section
-     * @return string
+     * @return string|null
      */
-    private function get_section_url(stdClass $course, section_info $section): string {
-        return course_get_url($course, (object) $section, ['navigation' => true])->out(false);
+    private function get_section_url(stdClass $course, section_info $section): ?string {
+        return course_get_url($course, (object) $section, ['navigation' => true])?->out(false);
     }
 }
