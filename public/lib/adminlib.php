@@ -2705,6 +2705,26 @@ class admin_setting_configtextarea extends admin_setting_configtext {
 }
 
 /**
+ * Text area for entering backup filename mustache templates, which are validated after submission.
+ */
+class admin_setting_configbackupfilenamemustachetemplate extends admin_setting_configtextarea {
+    /**
+     * Validates submitted data.
+     * @param string $data
+     * @return string|true string if error, else true if ok
+     */
+    public function validate($data) {
+        $errors = backup_plan_dbops::get_default_backup_filename_template_syntax_errors($data);
+
+        if (!empty($errors)) {
+            return get_string('validateerror', 'admin');
+        }
+
+        return parent::validate($data);
+    }
+}
+
+/**
  * General text area with html editor.
  */
 class admin_setting_confightmleditor extends admin_setting_configtextarea {

@@ -22,6 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\context\course;
+use core\context\module;
+use core\exception\coding_exception;
+use core\output\mustache_engine;
+use core\output\mustache_string_helper;
+
 /**
  * Non instantiable helper class providing DB support to the @backup_plan class
  *
@@ -31,6 +37,26 @@
  * TODO: Finish phpdocs
  */
 abstract class backup_plan_dbops extends backup_dbops {
+    /**
+     * @var string Default template for course backups
+     */
+    public const DEFAULT_FILENAME_TEMPLATE_COURSE = '{{#str}}backupfilename{{/str}}-{{format}}-{{type}}-{{id}}{{^useidonly}}-' .
+    '{{course.shortname}}{{/useidonly}}-{{date}}{{^users}}-nu{{/users}}{{#anonymised}}{{#users}}-an{{/users}}{{/anonymised}}' .
+    '{{^files}}-nf{{/files}}';
+
+    /**
+     * @var string Default template for section backups
+     */
+    public const DEFAULT_FILENAME_TEMPLATE_SECTION = '{{#str}}backupfilename{{/str}}-{{format}}-{{type}}-{{id}}{{^useidonly}}' .
+    '{{#section.name}}-{{section.name}}{{/section.name}}{{^section.name}}-{{section.section}}{{/section.name}}{{/useidonly}}-' .
+    '{{date}}{{^users}}-nu{{/users}}{{#anonymised}}{{#users}}-an{{/users}}{{/anonymised}}{{^files}}-nf{{/files}}';
+
+    /**
+     * @var string Default template for activity backups
+     */
+    public const DEFAULT_FILENAME_TEMPLATE_ACTIVITY = '{{#str}}backupfilename{{/str}}-{{format}}-{{type}}-{{id}}{{^useidonly}}' .
+    '-{{activity.modname}}{{id}}{{/useidonly}}-{{date}}{{^users}}-nu{{/users}}{{#anonymised}}{{#users}}-an{{/users}}' .
+    '{{/anonymised}}{{^files}}-nf{{/files}}';
 
     /**
      * Given one course module id, return one array with all the block intances that belong to it
@@ -194,81 +220,174 @@ abstract class backup_plan_dbops extends backup_dbops {
     }
 
     /**
-    * Returns the default backup filename, based in passed params.
-    *
-    * Default format is (see MDL-22145)
-    * backup word - format - type - name - date - info . mbz
-    * where name is variable (course shortname, section name/id, activity modulename + cmid)
-    * and info can be (nu = no user info, an = anonymized). The last param $useidasname,
-    * defaulting to false, allows to replace the course shortname by the course id (used
-    * by automated backups, to avoid non-ascii chars in OS filesystem)
-    *
-    * @param string $format One of backup::FORMAT_
-    * @param string $type One of backup::TYPE_
-    * @param int $courseid/$sectionid/$cmid
-    * @param bool $users Should be true is users were included in the backup
-    * @param bool $anonymised Should be true is user information was anonymized.
-    * @param bool $useidonly only use the ID in the file name
-    * @return string The filename to use
-    */
-    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised,
-            $useidonly = false, $files = true) {
+     * Returns the default backup filename, based in passed params.
+     *
+     * Default format is (see MDL-22145)
+     * backup word - format - type - name - date - info . mbz
+     * where name is variable (course shortname, section name/id, activity modulename + cmid)
+     * and info can be (nu = no user info, an = anonymized). The last param $useidonly,
+     * defaulting to false, allows to replace the course shortname by the course id (used
+     * by automated backups, to avoid non-ascii chars in OS filesystem)
+     *
+     * @param string $format One of backup::FORMAT_
+     * @param string $type One of backup::TYPE_
+     * @param int $id course id, section id, or course module id
+     * @param bool $users Should be true is users were included in the backup
+     * @param bool $anonymised Should be true is user information was anonymized
+     * @param bool $useidonly only use the ID in the file name
+     * @param bool $files if files are included
+     * @param int|null $time time to use in any dates, if not given uses current time
+     * @return string The filename to use
+     */
+    public static function get_default_backup_filename(
+        string $format,
+        string $type,
+        int $id,
+        bool $users,
+        bool $anonymised,
+        bool $useidonly = false,
+        bool $files = true,
+        ?int $time = null
+    ): string {
         global $DB;
 
-        // Calculate backup word
-        $backupword = str_replace(' ', '_', core_text::strtolower(get_string('backupfilename')));
-        $backupword = trim(clean_filename($backupword), '_');
-
-        // Not $useidonly, lets fetch the name
-        $shortname = '';
-        if (!$useidonly) {
-            // Calculate proper name element (based on type)
-            switch ($type) {
-                case backup::TYPE_1COURSE:
-                    $shortname = $DB->get_field('course', 'shortname', array('id' => $id));
-                    $context = context_course::instance($id);
-                    $shortname = format_string($shortname, true, array('context' => $context));
-                    break;
-                case backup::TYPE_1SECTION:
-                    if (!$shortname = $DB->get_field('course_sections', 'name', array('id' => $id))) {
-                        $shortname = $DB->get_field('course_sections', 'section', array('id' => $id));
-                    }
-                    break;
-                case backup::TYPE_1ACTIVITY:
-                    $cm = get_coursemodule_from_id(null, $id);
-                    $shortname = $cm->modname . $id;
-                    break;
-            }
-            $shortname = str_replace(' ', '_', $shortname);
-            $shortname = core_text::strtolower(trim(clean_filename($shortname), '_'));
+        if ($time === null) {
+            $time = time();
         }
 
-        // The name will always contain the ID, but we append the course short name if requested.
-        $name = $id;
-        if (!$useidonly && $shortname != '') {
-            $name .= '-' . $shortname;
-        }
-
-        // Calculate date
         $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
-        $date = userdate(time(), $backupdateformat, 99, false);
-        $date = core_text::strtolower(trim(clean_filename($date), '_'));
+        $formatdate = function (int $date) use ($backupdateformat): string {
+            $date = userdate($date, $backupdateformat, 99, false);
+            return core_text::strtolower(trim(clean_filename($date), '_'));
+        };
 
-        // Calculate info
-        $info = '';
-        if (!$users) {
-            $info = '-nu';
-        } else if ($anonymised) {
-            $info = '-an';
+        $mustachecontext = [
+            'format' => $format,
+            'type' => $type,
+            'id' => $id,
+            'users' => $users,
+            'anonymised' => $anonymised,
+            'files' => $files,
+            'useidonly' => $useidonly,
+            'time' => $time,
+            'date' => $formatdate($time),
+        ];
+
+        // Add extra context based on the type of backup.
+        // It is important to use array and not stdClass here, otherwise array_walk_recursive will not work.
+        // Additionally get the moodle context of an item, which is used for format_string.
+        $itemcontext = null;
+        switch ($type) {
+            case backup::TYPE_1COURSE:
+                $mustachecontext['course'] = (array) $DB->get_record(
+                    'course',
+                    ['id' => $id],
+                    'shortname,fullname,startdate,enddate',
+                    MUST_EXIST
+                );
+                $mustachecontext['course']['startdate'] = $formatdate($mustachecontext['course']['startdate']);
+                $mustachecontext['course']['enddate'] = $formatdate($mustachecontext['course']['enddate']);
+
+                $itemcontext = course::instance($id);
+                break;
+            case backup::TYPE_1SECTION:
+                $mustachecontext['section'] = (array) $DB->get_record('course_sections', ['id' => $id], 'name,section', MUST_EXIST);
+
+                // A section is still course context, but needs an extra step to find the course id.
+                $courseid = $DB->get_field('course_sections', 'course', ['id' => $id], MUST_EXIST);
+                $itemcontext = course::instance($courseid);
+                break;
+            case backup::TYPE_1ACTIVITY:
+                $cm = get_coursemodule_from_id(null, $id, 0, false, MUST_EXIST);
+                $mustachecontext['activity'] = [
+                    'modname' => $cm->modname,
+                    'name' => $cm->name,
+                ];
+
+                $itemcontext = module::instance($id);
+                break;
+            default:
+                throw new coding_exception('Unknown backup type ' . $type);
         }
 
-        // Indicate if backup doesn't contain files.
-        if (!$files) {
-            $info .= '-nf';
+        // Recursively format all the strings and trim any extra whitespace.
+        array_walk_recursive($mustachecontext, function (&$item) use ($itemcontext) {
+            if (is_string($item)) {
+                // Update by reference.
+                $item = trim(format_string($item, true, ['context' => $itemcontext]));
+            }
+        });
+
+        // List of templates in order (if one fails, go to next) for each type.
+        $templates = [
+            backup::TYPE_1COURSE => [
+                get_config('backup', 'backup_default_filename_template_course'),
+                self::DEFAULT_FILENAME_TEMPLATE_COURSE,
+            ],
+            backup::TYPE_1SECTION => [
+                get_config('backup', 'backup_default_filename_template_section'),
+                self::DEFAULT_FILENAME_TEMPLATE_SECTION,
+            ],
+            backup::TYPE_1ACTIVITY => [
+                get_config('backup', 'backup_default_filename_template_activity'),
+                self::DEFAULT_FILENAME_TEMPLATE_ACTIVITY,
+            ],
+        ];
+
+        $mustache = self::get_mustache_for_filename_generation();
+
+        // Render the templates until one succeeds.
+        foreach ($templates[$type] as $possibletemplate) {
+            try {
+                $new = @$mustache->render($possibletemplate, $mustachecontext);
+
+                // Clean as filename, remove spaces, and trim to max 251 chars (filename limit, 255 including .mbz extension).
+                $cleaned = substr(str_replace(' ', '_', clean_filename($new)), 0, 251);
+
+                // Success - this template rendered - return it.
+                return $cleaned . '.mbz';
+            } catch (Throwable $e) {
+                // Skip and try the next.
+                continue;
+            }
         }
 
-        return $backupword . '-' . $format . '-' . $type . '-' .
-               $name . '-' . $date . $info . '.mbz';
+        // At a minumum the fallback default filenames should have rendered correctly.
+        // If we reached here it means this did not happen and that something is very wrong.
+        throw new coding_exception("No backup filename templates rendered correctly");
+    }
+
+    /**
+     * Get mustache engine instance to be used in filename generation.
+     * @return mustache_engine
+     */
+    private static function get_mustache_for_filename_generation(): mustache_engine {
+        return new mustache_engine([
+            'helpers' => [
+                'str' => [new mustache_string_helper(), 'str'],
+            ],
+        ]);
+    }
+
+    /**
+     * Validates the given backup filename template is syntatically valid.
+     *
+     * Used mainly for form validation.
+     * @param string $template mustache template
+     * @return array array of string error messages, if empty then there are no errors and it is valid
+     */
+    public static function get_default_backup_filename_template_syntax_errors(string $template): array {
+        try {
+            // Render without any context, if it is syntatically invalid,
+            // this will throw an exception.
+            // This also outputs warnings if invalid, so we just ignore them using '@'.
+            @self::get_mustache_for_filename_generation()->render($template);
+
+            // No exceptions thrown - is valid!
+            return [];
+        } catch (Throwable $e) {
+            return [$e->getMessage()];
+        }
     }
 
     /**

@@ -194,6 +194,43 @@ $string['currentstage2'] = 'Schema settings';
 $string['currentstage4'] = 'Confirmation and review';
 $string['currentstage8'] = 'Perform backup';
 $string['currentstage16'] = 'Complete';
+$string['defaultbackupfilenameactivity'] = 'Activity backup default filename';
+$string['defaultbackupfilenameactivity_desc'] = 'Additional context for activity backups:
+<ul>
+<li><code>activity.name</code> - string - activity name</li>
+<li><code>activity.modname</code> - integer - module name</li>
+</ul>
+';
+$string['defaultbackupfilenamecourse'] = 'Course backup default filename';
+$string['defaultbackupfilenamecourse_desc'] = 'Additional context for course backups:
+<ul>
+<li><code>course.shortname</code> - string - course shortname</li>
+<li><code>course.fullname</code> - string - course fullname</li>
+<li><code>course.startdate</code> - string - course start date in format specified by the <code>backupnameformat</code> lang string</li>
+<li><code>course.endddate</code> - string - course end date in format specified by the <code>backupnameformat</code> lang string</li>
+</ul>
+';
+$string['defaultbackupfilenamesection'] = 'Section backup default filename';
+$string['defaultbackupfilenamesection_desc'] = 'Additional context for section backups:
+<ul>
+<li><code>section.name</code> - string - section name</li>
+<li><code>section.section</code> - integer - section number</li>
+</ul>
+';
+$string['defaultbackupfilenamesettings'] = 'Default backup filenames';
+$string['defaultbackupfilenamesettings_help'] = 'Mustache templates that are evaluated to provide a default filename for a backup.
+Every backup template has the following context available:
+<ul>
+<li><code>format</code> - string - backup format, usually moodle2</li>
+<li><code>type</code> - string - one of course, section or activity</li>
+<li><code>id</code> - integer - the item\'s database ID</li>
+<li><code>useidonly</code> - bool - if the backup was created without the <code>backup_shortname</code> config enabled</li>
+<li><code>date</code> - string - the date in format specified by the <code>backupnameformat</code> lang string</li>
+<li><code>users</code> - bool - if user data is included</li>
+<li><code>anonymised</code> - bool - if user data is anonymised</li>
+<li><code>files</code> - bool - if files are included</li>
+</ul>
+In addition to each of the placeholder values specified, you may also use the {{#str}} helper to add lang strings. The .mbz extension is always added. The filename is truncated to 251 chars.';
 $string['enableasyncbackup'] = 'Enable asynchronous backups';
 $string['enableasyncbackup_help'] = 'If enabled, backup and restore operations will be done asynchronously. This provides a better user experience allowing users to do other operations while a backup or restore is in progress. This does not affect imports and exports.';
 $string['enterasearch'] = 'Enter a search';
