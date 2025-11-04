@@ -631,7 +631,7 @@ class messenger implements messenger_interface {
                 if ($recipient->account_exists($tempuserid)) {
                     $recipient->remove_recipient_from_message($tempmsgid, $tempuserid);
                     continue;
-                } 
+                }
                 try {
                     // Send to recipient now.
                     $this->send_to_recipient($recipient);
@@ -838,5 +838,4 @@ class messenger implements messenger_interface {
 
         return block_quickmail_string::get('receipt_email_body', $data);
     }
-
 }

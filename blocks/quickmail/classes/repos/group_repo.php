@@ -88,7 +88,7 @@ class group_repo extends repo implements group_repo_interface {
      * @return array   keyed by group id
      */
     public static function get_course_user_groups($course, $user, $coursecontext = null) {
-        
+
         // Scheduled task could pass in user id as user, check.
         if (gettype($user) == "string") {
             $userid = $user;
