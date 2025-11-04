@@ -16,6 +16,7 @@
 
 namespace core_question;
 
+use core\exception\coding_exception;
 use core_question\local\bank\question_bank_helper;
 
 /**
@@ -353,6 +354,30 @@ final class question_bank_helper_test extends \advanced_testcase {
         $this->assertCount(1, $cminfos);
         $cminfo = reset($cminfos);
         $this->assertEquals($bankname, $cminfo->get_name());
+    }
+
+    /**
+     * Attempting to create a default bank with an empty name throws an exception and does not create the bank.
+     */
+    public function test_create_default_open_instance_with_empty_name(): void {
+        $this->resetAfterTest();
+        self::setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $bankname = '';
+
+        try {
+            question_bank_helper::create_default_open_instance($course, $bankname);
+        } catch (coding_exception $e) {
+            $this->assertStringEndsWith(
+                'The provided bankname is empty. You must provide a name for the question bank.',
+                $e->getMessage(),
+            );
+        }
+
+        $modinfo = get_fast_modinfo($course);
+        $cminfos = $modinfo->get_instances_of('qbank');
+        $this->assertCount(0, $cminfos);
     }
 
     /**
