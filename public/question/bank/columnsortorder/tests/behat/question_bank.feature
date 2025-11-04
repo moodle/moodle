@@ -123,7 +123,7 @@ Feature: Set question bank column order and size
     And I apply question bank filter "Category" with value "Question category 1"
     And "Comments" "qbank_columnsortorder > column header" should appear before "Question" "qbank_columnsortorder > column header"
     When I hover "Comments" "qbank_columnsortorder > column header"
-    And I drag "Comments" "qbank_columnsortorder > column move handle" and I drop it in "Status" "qbank_columnsortorder > column header"
+    And I drag "Move column 'Comments'" "button" and I drop it in "Status" "qbank_columnsortorder > column header"
     Then "Comments" "qbank_columnsortorder > column header" should appear after "Question" "qbank_columnsortorder > column header"
     And I reload the page
     And "Comments" "qbank_columnsortorder > column header" should appear after "Question" "qbank_columnsortorder > column header"
