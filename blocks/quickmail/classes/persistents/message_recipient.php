@@ -162,9 +162,16 @@ class message_recipient extends \block_quickmail\persistents\persistent {
      * @return void
      */
     public static function mark_as_sent(message $message, $user, $moodlemessageid = 0) {
+        $userid = 0;
+        if (is_int($user)) {
+            $userid = $user;
+        } else {
+            $userid = $user->id;
+        }
+
         $recipient = self::get_record([
             'message_id' => $message->get('id'),
-            'user_id' => $user->id
+            'user_id' => $userid
         ]);
 
         $recipient->set('sent_at', time());
