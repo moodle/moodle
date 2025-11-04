@@ -32,6 +32,9 @@
     }
     .dropdown-menu {
         max-width: 500px;
+        @include media-breakpoint-down(sm) {
+            max-width: 85vw;
+        }
         .dropdown-item {
             @include text-truncate;
         }
