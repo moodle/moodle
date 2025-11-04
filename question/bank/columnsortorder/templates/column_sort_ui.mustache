@@ -36,6 +36,7 @@
       * minwidth - The minimum value for the width field.
       * width - The current value for the width field.
       * actionmenu - The context for core/action_menu, a list of actions for the column.
+      * movetitle - The move handle button's accessible name. This is used by the core/drag_handle template.
     * columnsdisabled - Are the any columns defined by disabled plugins?
     * disabled - A list of disabled column names.
       * disabledname - The disabled column's name.
@@ -73,7 +74,8 @@
                 "escapedid": "qbank_example__col_name_A-col_name_A",
                 "widthlabel": "Width of Column A",
                 "minwidth": "10",
-                "width": ""
+                "width": "",
+                "movetitle": "Move Column A"
             },
             {
                 "name": "Column B",
@@ -81,7 +83,8 @@
                 "columnid": "qbank_example\\col_name_B-col_name_B",
                 "escapedid": "qbank_example__col_name_B-col_name_B",
                 "minwidth": "10",
-                "width": "200"
+                "width": "200",
+                "movetitle": "Move Column B"
             }
         ],
         "columnsdisabled": true,
@@ -122,7 +125,9 @@
         <table class="generaltable table table-fixed">
             <thead>
                 <tr>
-                    <th scope="col"></th>
+                    <th scope="col">
+                        <span class="sr-only">{{#str}}move{{/str}}</span>
+                    </th>
                     <th scope="col">{{#str}}name{{/str}}</th>
                     <th scope="col">{{#str}}plugin{{/str}}</th>
                     <th scope="col" class="w-25">{{#str}}columnwidth, qbank_columnsortorder{{/str}}</th>
@@ -161,14 +166,17 @@
     </form>
     <div>
         {{#columnsdisabled}}
-            {{#str}}qbankcolumnsdisabled, qbank_columnsortorder{{/str}}
-            <br>
+            <p>
+                {{#str}}qbankcolumnsdisabled, qbank_columnsortorder{{/str}}
+            </p>
+            <ul>
+                {{#disabled}}
+                <li>
+                    {{disabledname}}
+                </li>
+                {{/disabled}}
+            </ul>
         {{/columnsdisabled}}
-        {{#disabled}}
-            <div class="list-group-item disabled">
-                {{disabledname}}
-            </div>
-        {{/disabled}}
     </div>
     <div>
         {{{urltomanageqbanks}}}
