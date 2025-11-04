@@ -1,0 +1,5 @@
+issueNumber: MDL-87079
+notes:
+  core:
+    - message: When responding to pcntl signals, call existing signal handlers.
+      type: fixed
