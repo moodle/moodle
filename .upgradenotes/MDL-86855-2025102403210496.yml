@@ -1,0 +1,11 @@
+issueNumber: MDL-86855
+notes:
+  qbank_columnsortorder:
+    - message: >-
+        The Behat selector `column move handle` for the `qbank_columnsortorder` plugin has been removed.
+
+        When interacting with the column's move handle, please use the move handle's accessible name and type.
+
+        For example:
+        - `And I drag "Move Created by" "button" and I drop it in "Move T" "button"`
+      type: removed
