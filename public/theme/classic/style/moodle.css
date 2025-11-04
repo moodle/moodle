@@ -29456,6 +29456,11 @@ img.icon {
 .block .block-controls .dropdown-menu {
   max-width: 500px;
 }
+@media (max-width: 575.98px) {
+  .block .block-controls .dropdown-menu {
+    max-width: 85vw;
+  }
+}
 .block .block-controls .dropdown-menu .dropdown-item {
   overflow: hidden;
   text-overflow: ellipsis;
