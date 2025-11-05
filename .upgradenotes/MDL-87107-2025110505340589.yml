@@ -1,0 +1,5 @@
+issueNumber: MDL-87107
+notes:
+  core:
+    - message: The Hook Manager now uses localcache instead of caching via MUC.
+      type: changed

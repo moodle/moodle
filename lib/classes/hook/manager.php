@@ -44,7 +44,8 @@ use Psr\EventDispatcher\StoppableEventInterface;
  */
 final class manager implements
     EventDispatcherInterface,
-    ListenerProviderInterface {
+    ListenerProviderInterface
+{
     /** @var ?manager the one instance of listener provider and dispatcher */
     private static $instance = null;
 
@@ -278,9 +279,13 @@ final class manager implements
      * @return object The Event that was passed, now modified by listeners.
      */
     public function dispatch(object $event): object {
-        // We can dispatch only after the lib/setup.php includes,
-        // that is right before the database connection is made,
-        // the MUC caches need to be working already.
+        // It is only safe to dispatch hooks after early setup is complete.
+        // This includes, but is not limited to:
+        // - configuring exception handlers
+        // - configuring autoloaders
+        // - configuring date/time.
+        // The database connection is not required. It is up to individual hooks to understand their context.
+        // At this time there is no way to check that setup is complete, but we can check that 'setup.php' has been included.
         if (!function_exists('setup_DB')) {
             debugging('Hooks cannot be dispatched yet', DEBUG_DEVELOPER);
             return $event;
@@ -331,13 +336,14 @@ final class manager implements
         $this->allcallbacks = [];
         $this->alldeprecations = [];
 
-        $cache = null;
         // @codeCoverageIgnoreStart
-        if (!PHPUNIT_TEST && !CACHE_DISABLE_ALL) {
-            $cache = \cache::make('core', 'hookcallbacks');
-            $callbacks = $cache->get('callbacks');
-            $deprecations = $cache->get('deprecations');
-            $overrideshash = $cache->get('overrideshash');
+        $shouldcache = $this->should_cache();
+        if ($shouldcache) {
+            $cache = $this->get_cache();
+
+            $callbacks = $cache['callbacks'] ?? null;
+            $deprecations = $cache['deprecations'] ?? null;
+            $overrideshash = $cache['overrideshash'] ?? null;
 
             $usecache = is_array($callbacks);
             $usecache = $usecache && is_array($deprecations);
@@ -367,11 +373,15 @@ final class manager implements
         // Load the callbacks and apply overrides.
         $this->load_callbacks($components);
 
-        if ($cache) {
-            $cache->set('callbacks', $this->allcallbacks);
-            $cache->set('deprecations', $this->alldeprecations);
-            $cache->set('overrideshash', $this->calculate_overrides_hash());
+        // @codeCoverageIgnoreStart
+        if ($shouldcache) {
+            $this->set_cache(
+                $this->allcallbacks,
+                $this->alldeprecations,
+                $this->calculate_overrides_hash(),
+            );
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -668,5 +678,93 @@ final class manager implements
         }
 
         return $hooks;
+    }
+
+    /**
+     * Get the path to the hook cache.
+     *
+     * @return string
+     */
+    protected function get_cache_path(): string {
+        global $CFG;
+
+        return $CFG->localcachedir . '/hookcallbacks.json';
+    }
+
+    /**
+     * Whether we should enable caching of hook data.
+     *
+     * The cache is disabled during unit tests, when CACHE_DISABLE_ALL is set, and during upgrades.
+     *
+     * @return bool
+     */
+    protected function should_cache(): bool {
+        if (PHPUNIT_TEST) {
+            return false;
+        }
+
+        if (CACHE_DISABLE_ALL) {
+            return false;
+        }
+
+        if ($this->is_upgrade_running()) {
+            // Do not use the cache during upgrade.
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Fetch and decode the hook cache.
+     *
+     * @return array|null
+     */
+    protected function get_cache(): ?array {
+        $cachepath = $this->get_cache_path();
+        if (!file_exists($cachepath)) {
+            return null;
+        }
+        return json_decode(file_get_contents($cachepath), true) ?? [];
+    }
+
+    /**
+     * Store all relevant data in the cache.
+     *
+     * @param array $callbacks
+     * @param array $deprecations
+     * @param string|null $hash
+     */
+    protected function set_cache(
+        array $callbacks,
+        array $deprecations,
+        ?string $hash,
+    ): void {
+        $cachedata = [
+            'callbacks' => $callbacks,
+            'deprecations' => $deprecations,
+            'overrideshash' => $hash,
+        ];
+
+        // Write to a temp file and rename it to ensure atomicity of reads.
+        // If we write directly to the cache file, another process may read it during the write and get corrupted data.
+        $cachepath = $this->get_cache_path();
+        $tmppath = "{$cachepath}." . uniqid('tmp', true);
+
+        file_put_contents($tmppath, json_encode($cachedata));
+        rename($tmppath, $cachepath);
+        clearstatcache(true, $cachepath);
+    }
+
+    /**
+     * Check whether upgrade is currently running.
+     *
+     * @return bool
+     */
+    protected function is_upgrade_running(): bool {
+        global $CFG;
+
+        // Note: This mimics the test in lib/setuplib.php during upgrade.
+        return !empty($CFG->upgraderunning);
     }
 }
