@@ -209,18 +209,23 @@ class message extends \block_quickmail\persistents\persistent {
         if (isset($msgexcludes)) {
             $userids_excluded = [];
             $groupids_excluded = [];
+            $groups_excluded = [];
             $excluded = explode(",", $msgexcludes);
 
             foreach ($excluded as $exc) {
                 $user_type = explode("_", $exc);
                 if($user_type[0] == "user") {
-                    $userids_excluded = user_repo::get_course_role_users($context, $user_type[1]);
+                    $userids_excluded[] = user_repo::get_user_in_course($user_type[1]);
                 } else if ($user_type[0] == "group") {
-                    $groupids_excluded = user_repo::get_course_group_users($context, $user_type[1]);
+                    $groupids_excluded[] = user_repo::get_course_group_users($context, $user_type[1]);
                     error_log("\n\n do some stuff");
                 }
             }
-            $exes = array_merge($userids_excluded, $groupids_excluded);
+            // There could be multiple arrays of groups, combine!
+            foreach ($groupids_excluded as $g) {
+                $groups_excluded = array_merge($groups_excluded, $g);
+            }
+            $exes = array_merge($userids_excluded, $groups_excluded);
             $exids = array_column($exes, 'id', 'id');
         }
         

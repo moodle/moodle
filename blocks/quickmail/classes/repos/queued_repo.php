@@ -225,7 +225,7 @@ class queued_repo extends repo implements queued_repo_interface {
                 continue;
             }
 
-            if ($zeemsg->get('to_send_at') <= $now) {
+            if ($zeemsg->get('to_send_at') <= $now && $zeemsg->get('sent_at') == '0') {
                 $zeemsg->populate_recip_course_msg();
             }
         }

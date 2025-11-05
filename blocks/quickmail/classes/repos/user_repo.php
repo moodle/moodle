@@ -101,6 +101,28 @@ class user_repo extends repo implements user_repo_interface {
     }
 
     /**
+     * Get siingle user
+     *
+     * @param  int     $userid
+     * @return object  $user object
+     */
+    public static function get_user_in_course($userid = 0) {
+        // If this is a single group, return all users for the group.
+        global $DB;
+
+        if ($user = $DB->get_record('user', array('id' => $userid))) {
+
+            $temp = new \stdClass();
+            $temp->id = $userid;
+            $temp->firstname = $user->firstname;
+            $temp->lastname = $user->lastname;
+            return $temp;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Get all users within a course group
      *
      * @param  object  $coursecontext  must be a course context
