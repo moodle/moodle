@@ -17,6 +17,7 @@
 namespace core_enrol;
 
 use context_course;
+use core_courseformat\formatactions;
 use course_enrolment_manager;
 use stdClass;
 
@@ -593,7 +594,7 @@ final class course_enrolment_manager_test extends \advanced_testcase {
         // Switch course to separate groups and forum to no group.
         $this->course->groupmode = SEPARATEGROUPS;
         update_course($this->course);
-        set_coursemodule_groupmode($forum->cmid, NOGROUPS);
+        formatactions::cm($this->course->id)->set_groupmode($forum->cmid, NOGROUPS);
 
         $courseusers = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true);
         $this->assertEqualsCanonicalizing([
@@ -615,7 +616,7 @@ final class course_enrolment_manager_test extends \advanced_testcase {
         ], array_column($forumusers['users'], 'username'));
         $this->assertEquals(7, $forumusers['totalusers']);
 
-        set_coursemodule_groupmode($forum->cmid, SEPARATEGROUPS);
+        formatactions::cm($this->course->id)->set_groupmode($forum->cmid, SEPARATEGROUPS);
 
         // Allow teacher to access all groups.
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'teacher']);

@@ -24,6 +24,8 @@
  */
 namespace mod_wiki\search;
 
+use core_courseformat\formatactions;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -194,7 +196,7 @@ final class search_test extends \advanced_testcase {
         $this->assertTrue($searcharea->restrict_cm_access_by_group($modinfo->get_cm($wiki->cmid)));
 
         // In visible groups mode, it won't request restriction by group.
-        set_coursemodule_groupmode($wiki->cmid, VISIBLEGROUPS);
+        formatactions::cm($course->id)->set_groupmode($wiki->cmid, VISIBLEGROUPS);
         $modinfo = get_fast_modinfo($course);
         $this->assertFalse($searcharea->restrict_cm_access_by_group($modinfo->get_cm($wiki->cmid)));
     }

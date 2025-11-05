@@ -1,0 +1,7 @@
+issueNumber: MDL-86857
+notes:
+  core_course:
+    - message: >-
+        Deprecates set_coursemodule_groupmode in favor of
+        core_courseformat\cmactions::set_groupmode
+      type: deprecated

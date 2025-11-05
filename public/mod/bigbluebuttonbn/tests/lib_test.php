@@ -27,6 +27,7 @@ namespace mod_bigbluebuttonbn;
 
 use calendar_event;
 use context_module;
+use core_courseformat\formatactions;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 use mod_bigbluebuttonbn_mod_form;
 use MoodleQuickForm;
@@ -136,7 +137,7 @@ final class lib_test extends \advanced_testcase {
         $datagenerator = $this->getDataGenerator();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
         $course = $this->get_course();
-        set_coursemodule_groupmode($bbactivitycm->id, VISIBLEGROUPS);
+        formatactions::cm($this->course->id)->set_groupmode($bbactivitycm->id, VISIBLEGROUPS);
 
         $groups = [];
         foreach (['G1', 'G2'] as $gname) {

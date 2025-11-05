@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 use core_course\external\course_summary_exporter;
+use core_courseformat\formatactions;
 use core_external\external_api;
 use core_external\external_description;
 use core_external\external_files;
@@ -3749,7 +3750,7 @@ class core_course_external extends external_api {
                 } else {
                     $newgroupmode = NOGROUPS;
                 }
-                if (set_coursemodule_groupmode($cm->id, $newgroupmode)) {
+                if (formatactions::cm($coursecontext->instanceid)->set_groupmode($cm->id, $newgroupmode)) {
                     \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
                 }
                 break;

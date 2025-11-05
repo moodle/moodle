@@ -16,6 +16,7 @@
 
 namespace core_enrol;
 
+use core_courseformat\formatactions;
 use core_enrol_external;
 use core_external\external_api;
 use enrol_user_enrolment_form;
@@ -1479,7 +1480,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertCount(7, $result);
 
         // Now change the group mode to no groups.
-        set_coursemodule_groupmode($forum->cmid, NOGROUPS);
+        formatactions::cm($course->id)->set_groupmode($forum->cmid, NOGROUPS);
         $this->setUser($teacher1);
         $result = core_enrol_external::search_users($course->id, 'user', true, 0, 30, $contextid);
         $this->assertCount(7, $result);
