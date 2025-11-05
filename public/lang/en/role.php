@@ -410,6 +410,8 @@ $string['restore:uploadfile'] = 'Upload files to backup areas';
 $string['restore:userinfo'] = 'Restore user data';
 $string['restore:viewautomatedfilearea'] = 'Restore courses from automated backups';
 $string['risks'] = 'Risks';
+$string['risksfilter'] = 'Showing subset of capabilities which have the "{$a->riskname}". <a href="{$a->reseturl}">Reset filter</a>';
+$string['risksfilterwithcount'] = 'Show {$a} risky capabilities';
 $string['roleallowheader'] = 'Allow role:';
 $string['roleallowinfo'] = 'Select a role to be added to the list of allowed roles in context "{$a->context}", capability "{$a->cap}":';
 $string['role:assign'] = 'Assign roles to users';

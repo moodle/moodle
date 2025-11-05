@@ -845,6 +845,71 @@ final class accesslib_test extends advanced_testcase {
     }
 
     /**
+     * Test fetching of all roles with assignment counts.
+     *
+     * @covers ::get_all_roles_with_counts
+     */
+    public function test_get_all_roles_with_counts(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $roleid = create_role('Counted role', 'countedrole', 'Role used for count checks', '');
+        $role = $DB->get_record('role', ['id' => $roleid], '*', MUST_EXIST);
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+
+        // Assign the same user to the same role in different contexts.
+        role_assign($roleid, $user->id, context_system::instance()->id);
+        role_assign($roleid, $user->id, context_course::instance($course->id)->id);
+
+        $roles = get_all_roles_with_counts();
+        $this->assertArrayHasKey($roleid, $roles);
+        $this->assertSame($role->id, $roles[$roleid]->id);
+        $this->assertSame(2, (int)$roles[$roleid]->count);
+    }
+
+    /**
+     * Test fetching per-role risky capability counts.
+     *
+     * @covers ::get_roles_risk_counts
+     */
+    public function test_get_roles_risk_counts(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $roleid = create_role('Risk counted role', 'riskcountedrole', 'Role used for risk count checks', '');
+        $systemcontext = context_system::instance();
+
+        $riskcapability = $DB->get_record('capabilities', ['name' => 'moodle/site:config'], '*', MUST_EXIST);
+        assign_capability($riskcapability->name, CAP_ALLOW, $roleid, $systemcontext->id);
+
+        $allrisks = get_all_risks();
+        $counts = get_roles_risk_counts([$roleid]);
+        $this->assertArrayHasKey($roleid, $counts);
+
+        foreach ($allrisks as $type => $risk) {
+            $expected = (($risk & (int)$riskcapability->riskbitmask) !== 0) ? 1 : 0;
+            $this->assertSame($expected, $counts[$roleid][$type], "Unexpected count for {$type}");
+        }
+
+        $prohibitedroleid = create_role('Prohibited risk role', 'prohibitedriskrole', 'Role with prohibited risk capability', '');
+        assign_capability($riskcapability->name, CAP_PROHIBIT, $prohibitedroleid, $systemcontext->id, true);
+        $prohibitedcounts = get_roles_risk_counts([$prohibitedroleid]);
+        foreach ($allrisks as $type => $risk) {
+            $this->assertSame(0, $prohibitedcounts[$prohibitedroleid][$type]);
+        }
+
+        // Role with no explicit allows should return all zeros.
+        $emptyroleid = create_role('No risk role', 'noriskrole', 'Role with no explicit risk allows', '');
+        $emptycounts = get_roles_risk_counts([$emptyroleid]);
+        foreach ($allrisks as $type => $risk) {
+            $this->assertSame(0, $emptycounts[$emptyroleid][$type]);
+        }
+    }
+
+    /**
      * Test getting of all archetypes.
      *
      * @covers ::get_role_archetypes
