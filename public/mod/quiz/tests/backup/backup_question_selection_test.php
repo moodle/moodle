@@ -90,10 +90,15 @@ final class backup_question_selection_test extends \advanced_testcase {
                         'sharedq4' => 'shortanswer',
                     ],
                 ],
-                'tagcat' => [
+                'tagcat1' => [
                     'tagq1' => 'shortanswer',
                     'tagq2' => 'shortanswer',
                     'tagq3' => 'shortanswer',
+                ],
+                'tagcat2' => [
+                    'tagq4' => 'shortanswer',
+                    'tagq5' => 'shortanswer',
+                    'tagq6' => 'shortanswer',
                 ],
             ]
         );
@@ -113,10 +118,11 @@ final class backup_question_selection_test extends \advanced_testcase {
             ]
         );
 
-        $questiongenerator->create_question_tag(['questionid' => $sharedquestions['tagcat']['tagq1']->id, 'tag' => 'mytag']);
-        $questiongenerator->create_question_tag(['questionid' => $sharedquestions['tagcat']['tagq2']->id, 'tag' => 'mytag']);
+        $questiongenerator->create_question_tag(['questionid' => $sharedquestions['tagcat1']['tagq1']->id, 'tag' => 'mytag']);
+        $questiongenerator->create_question_tag(['questionid' => $sharedquestions['tagcat1']['tagq2']->id, 'tag' => 'mytag']);
+        $questiongenerator->create_question_tag(['questionid' => $sharedquestions['tagcat2']['tagq5']->id, 'tag' => 'mytag']);
 
-        $tags = \core_tag_tag::get_item_tags('core_question', 'question', $sharedquestions['tagcat']['tagq1']->id);
+        $tags = \core_tag_tag::get_item_tags('core_question', 'question', $sharedquestions['tagcat1']['tagq1']->id);
         $mytag = reset($tags);
 
         // Add a question from the shared bank child category.
@@ -125,14 +131,27 @@ final class backup_question_selection_test extends \advanced_testcase {
         quiz_add_quiz_question($coursequestions['courseparentcat']['courseq2']->id, $quiz);
         // Add a question from the quiz bank categories.
         quiz_add_quiz_question($quizquestions['quizparentcat']['quizq1']->id, $quiz);
-        // Add a random question to select tagged questions.
+        // Add random question to select tagged questions from 2 different categories.
         $settings = quiz_settings::create($quiz->id);
         $structure = structure::create_for_quiz($settings);
         $structure->add_random_questions(1, 1, [
             'filter' => [
                 'category' => [
                     'jointype' => \core\output\datafilter::JOINTYPE_ANY,
-                    'values' => [$sharedquestions['tagcat']['tagq1']->category],
+                    'values' => [$sharedquestions['tagcat1']['tagq1']->category],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+                'qtagids' => [
+                    'jointype' => \core\output\datafilter::JOINTYPE_ANY,
+                    'values' => [$mytag->id],
+                ],
+            ],
+        ]);
+        $structure->add_random_questions(1, 1, [
+            'filter' => [
+                'category' => [
+                    'jointype' => \core\output\datafilter::JOINTYPE_ANY,
+                    'values' => [$sharedquestions['tagcat2']['tagq4']->category],
                     'filteroptions' => ['includesubcategories' => false],
                 ],
                 'qtagids' => [
@@ -194,9 +213,10 @@ final class backup_question_selection_test extends \advanced_testcase {
         $this->assertContains((string) $quizquestions['quizparentcat']['quizq2']->id, $backupquestions);
         $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq3']->id, $backupquestions);
         $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq4']->id, $backupquestions);
-        // Backup should contain questions matched by random question filter.
-        $this->assertContains((string) $sharedquestions['tagcat']['tagq1']->id, $backupquestions);
-        $this->assertContains((string) $sharedquestions['tagcat']['tagq2']->id, $backupquestions);
+        // Backup should contain questions matched by random question filters.
+        $this->assertContains((string) $sharedquestions['tagcat1']['tagq1']->id, $backupquestions);
+        $this->assertContains((string) $sharedquestions['tagcat1']['tagq2']->id, $backupquestions);
+        $this->assertContains((string) $sharedquestions['tagcat2']['tagq5']->id, $backupquestions);
         // All other questions should be excluded.
         $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq1']->id, $backupquestions);
         $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq2']->id, $backupquestions);
@@ -204,8 +224,10 @@ final class backup_question_selection_test extends \advanced_testcase {
         $this->assertNotContains((string) $coursequestions['courseparentcat']['courseq1']->id, $backupquestions);
         $this->assertNotContains((string) $coursequestions['courseparentcat']['coursechildcat']['courseq3']->id, $backupquestions);
         $this->assertNotContains((string) $coursequestions['courseparentcat']['coursechildcat']['courseq4']->id, $backupquestions);
-        $this->assertNotContains((string) $sharedquestions['tagcat']['tagq3']->id, $backupquestions);
-        $this->assertCount(8, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat1']['tagq3']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat2']['tagq4']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat2']['tagq6']->id, $backupquestions);
+        $this->assertCount(9, $backupquestions);
         // Clean up.
         $rc->execute_plan();
         $rc->destroy();
@@ -271,9 +293,10 @@ final class backup_question_selection_test extends \advanced_testcase {
         $this->assertContains((string) $quizquestions['quizparentcat']['quizq2']->id, $backupquestions);
         $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq3']->id, $backupquestions);
         $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq4']->id, $backupquestions);
-        // Backup should contain questions matched by random question filter.
-        $this->assertContains((string) $sharedquestions['tagcat']['tagq1']->id, $backupquestions);
-        $this->assertContains((string) $sharedquestions['tagcat']['tagq2']->id, $backupquestions);
+        // Backup should contain questions matched by random question filters.
+        $this->assertContains((string) $sharedquestions['tagcat1']['tagq1']->id, $backupquestions);
+        $this->assertContains((string) $sharedquestions['tagcat1']['tagq2']->id, $backupquestions);
+        $this->assertContains((string) $sharedquestions['tagcat2']['tagq5']->id, $backupquestions);
         // All other questions should be excluded.
         $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq1']->id, $backupquestions);
         $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq2']->id, $backupquestions);
@@ -281,8 +304,10 @@ final class backup_question_selection_test extends \advanced_testcase {
         $this->assertNotContains((string) $coursequestions['courseparentcat']['courseq1']->id, $backupquestions);
         $this->assertNotContains((string) $coursequestions['courseparentcat']['coursechildcat']['courseq3']->id, $backupquestions);
         $this->assertNotContains((string) $coursequestions['courseparentcat']['coursechildcat']['courseq4']->id, $backupquestions);
-        $this->assertNotContains((string) $sharedquestions['tagcat']['tagq3']->id, $backupquestions);
-        $this->assertCount(8, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat1']['tagq3']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat2']['tagq4']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat2']['tagq6']->id, $backupquestions);
+        $this->assertCount(9, $backupquestions);
         // Clean up.
         $rc->execute_plan();
         $rc->destroy();
@@ -338,15 +363,18 @@ final class backup_question_selection_test extends \advanced_testcase {
         $this->assertContains((string) $quizquestions['quizparentcat']['quizq2']->id, $backupquestions);
         $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq3']->id, $backupquestions);
         $this->assertContains((string) $quizquestions['quizparentcat']['quizchildcat']['quizq4']->id, $backupquestions);
-        // Backup should contain questions matched by random question filter.
-        $this->assertContains((string) $sharedquestions['tagcat']['tagq1']->id, $backupquestions);
-        $this->assertContains((string) $sharedquestions['tagcat']['tagq2']->id, $backupquestions);
+        // Backup should contain questions matched by random question filters.
+        $this->assertContains((string) $sharedquestions['tagcat1']['tagq1']->id, $backupquestions);
+        $this->assertContains((string) $sharedquestions['tagcat1']['tagq2']->id, $backupquestions);
+        $this->assertContains((string) $sharedquestions['tagcat2']['tagq5']->id, $backupquestions);
         // All other questions should be excluded.
         $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq1']->id, $backupquestions);
         $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedq2']->id, $backupquestions);
         $this->assertNotContains((string) $sharedquestions['sharedparentcat']['sharedchildcat']['sharedq4']->id, $backupquestions);
-        $this->assertNotContains((string) $sharedquestions['tagcat']['tagq3']->id, $backupquestions);
-        $this->assertCount(11, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat1']['tagq3']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat2']['tagq4']->id, $backupquestions);
+        $this->assertNotContains((string) $sharedquestions['tagcat2']['tagq6']->id, $backupquestions);
+        $this->assertCount(12, $backupquestions);
         // Clean up.
         $rc->execute_plan();
         $rc->destroy();
