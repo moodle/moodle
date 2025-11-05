@@ -15,69 +15,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mergeusers functions.
+ * Plugin callbacks.
  *
- * @package    tool_mergeusers
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * @copyright Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+use core_user\output\myprofile\category;
+use core_user\output\myprofile\node;
+use tool_mergeusers\local\last_merge;
+use tool_mergeusers\output\renderer;
 
 /**
- * Gets whether database transactions are allowed.
- * @global moodle_database $DB
- * @return bool true if transactions are allowed. false otherwise.
+ * Profile callback to add merging data to a users profile.
+ *
+ * @param core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param null|stdClass $course Course object
+ * @throws coding_exception
+ * @throws dml_exception
  */
-function tool_mergeusers_transactionssupported() {
-    global $DB;
+function tool_mergeusers_myprofile_navigation(
+    core_user\output\myprofile\tree $tree,
+    stdClass $user,
+    bool $iscurrentuser,
+    null|stdClass $course,
+) {
+    global $PAGE;
 
-    // Tricky way of getting real transactions support, without re-programming it.
-    // May be in the future, as phpdoc shows, this method will be publicly accessible.
-    $method = new ReflectionMethod($DB, 'transactions_supported');
-    $method->setAccessible(true); //method is protected; make it accessible.
-    return $method->invoke($DB);
-}
-
-function tool_mergeusers_build_exceptions_options() {
-    require_once(__DIR__ . '/classes/tool_mergeusers_config.php');
-
-    $config = tool_mergeusers_config::instance();
-    $none = get_string('none');
-    $options = array('none' => $none);
-    foreach ($config->exceptions as $exception) {
-        $options[$exception] = $exception;
+    if (!has_capability('tool/mergeusers:viewlog', context_system::instance())) {
+        return;
     }
-    unset($options['my_pages']); //duplicated records make MyMoodle does not work.
 
-    $result = new stdClass();
-    $result->defaultkey = 'none';
-    $result->defaultvalue = $none;
-    $result->options = $options;
+    /** @var renderer $renderer */
+    $renderer = $PAGE->get_renderer('tool_mergeusers');
+    $lastmerge = last_merge::from($user->id);
 
-    return $result;
-}
-
-function tool_mergeusers_build_quiz_options() {
-    require_once(__DIR__ . '/lib/table/quizattemptsmerger.php');
-
-    // quiz attempts
-    $quizStrings = new stdClass();
-    $quizStrings->{QuizAttemptsMerger::ACTION_RENUMBER} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_RENUMBER, 'tool_mergeusers');
-    $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE, 'tool_mergeusers');
-    $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET, 'tool_mergeusers');
-    $quizStrings->{QuizAttemptsMerger::ACTION_REMAIN} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_REMAIN, 'tool_mergeusers');
-
-    $quizOptions = array(
-        QuizAttemptsMerger::ACTION_RENUMBER => $quizStrings->{QuizAttemptsMerger::ACTION_RENUMBER},
-        QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE => $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE},
-        QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET => $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET},
-        QuizAttemptsMerger::ACTION_REMAIN => $quizStrings->{QuizAttemptsMerger::ACTION_REMAIN},
+    // Display last merge.
+    $category = new category('tool_mergeusers_info', get_string('pluginname', 'tool_mergeusers'));
+    $tree->add_category($category);
+    $node = new node(
+        'tool_mergeusers_info',
+        'olduser',
+        get_string('lastmerge', 'tool_mergeusers'),
+        null,
+        null,
+        $renderer->get_merge_detail($user, $lastmerge)
     );
-
-    $result = new stdClass();
-    $result->allstrings = $quizStrings;
-    $result->defaultkey = QuizAttemptsMerger::ACTION_REMAIN;
-    $result->options = $quizOptions;
-
-    return $result;
+    $category->add_node($node);
 }

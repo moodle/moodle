@@ -19,17 +19,15 @@
  * @author    David Castro <david.castro@openlms.net>
  * @copyright Copyright (c) 2020 Open LMS / 2023 Anthology Inc. and its affiliates
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package filter_ally
  */
 namespace filter_ally;
 
 /**
  * @group     text_filter
  * @group     ally
- * @package filter_ally
  */
-final class annotating_state_test extends \advanced_testcase {
-    public function test_annotating_state(): void {
+class annotating_state_test extends \advanced_testcase {
+    public function test_annotating_state() {
         $this->resetAfterTest();
         $courseid = 3;
 

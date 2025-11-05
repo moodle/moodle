@@ -34,10 +34,14 @@ require_once(__DIR__ . '/../workdaystudent.php');
 $s = workdaystudent::get_settings();
 
 // If we want to grab all campuses.
-unset($s->campus);
+// unset($s->campus);
 
-// Gete the courses.
+// Get the courses.
 $guilds = workdaystudent::get_guild($s);
+
+$doit = workdaystudent::set_guild_data($guilds);
+
+die();
 
 /*
 

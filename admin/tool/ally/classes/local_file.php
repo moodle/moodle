@@ -151,7 +151,7 @@ class local_file {
         $compareas = [
             'block_html~content',
             'course~legacy',
-            'course~summary',
+            'course~summary'
         ];
         if ($file->get_filearea() === 'intro' && $itemid == 0) {
             $itemid = null;
@@ -178,7 +178,7 @@ class local_file {
         return (object) [
             'pathnamehash' => $pathnamehash,
             'iat' => $iat,
-            'signature' => hash('sha256', $token.':'.$iat.':'.$pathnamehash),
+            'signature' => hash('sha256', $token.':'.$iat.':'.$pathnamehash)
         ];
     }
 
@@ -197,7 +197,7 @@ class local_file {
                 [
                     'pathnamehash' => $signature->pathnamehash,
                     'signature' => $signature->signature,
-                    'iat' => $signature->iat,
+                    'iat' => $signature->iat
                 ]
         );
     }
@@ -476,7 +476,7 @@ class local_file {
             'course',
             'block_html',
             'mod_page',
-            'mod_folder',
+            'mod_folder'
         ];
 
         foreach ($dir as $fileinfo) {

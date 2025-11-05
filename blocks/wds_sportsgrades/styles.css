@@ -1,0 +1,136 @@
+/**
+ * Styles for the Sports Grades block
+ *
+ * @package    block_wds_sportsgrades
+ * @copyright  2025 Onwards - Robert Russo
+ * @copyright  2025 Onwards - Louisiana State University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Common styles */
+.sportsgrades-search-container {
+    margin-bottom: 20px;
+}
+
+.sportsgrades-results-container {
+    margin-top: 20px;
+}
+
+.sportsgrades-grade-container {
+    margin-top: 20px;
+}
+
+.sportsgrades button {
+    margin-bottom: .5em;
+}
+
+.sportsbadge-A {
+    background-color: #CCFFDD;
+}
+
+.sportsbadge-B {
+    background-color: #CCDDFF;
+}
+
+.sportsbadge-C {
+    background-color: #FFFFCC;
+}
+
+.sportsbadge-P {
+    background-color: #CCFFCC;
+}
+
+.sportsbadge-D {
+    background-color: #FFD9B3;
+}
+
+.sportsbadge-F {
+    background-color: #FFCCCC;
+}
+
+/* Course list */
+.sportsgrades-course-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.table .category {
+    background-color: hsl(260, 100%, 93%) !important;
+}
+
+.table .categorized {
+    background-color: hsl(270, 100%, 95%) !important;
+}
+
+.table .category:hover {
+    background-color: hsl(255, 100%, 90%) !important;
+}
+
+.table .categorized:hover {
+    background-color: hsl(260, 100%, 92%) !important;
+}
+
+
+.table .categorized td:first-child {
+    padding-left: 2em;
+}
+
+.sportsgrades-course-item {
+    transition: background-color 0.2s;
+}
+
+.sportsgrades-course-item:hover {
+    background-color: hsl(270, 100%, 92%);
+}
+
+.sportsgrades-course-item.active {
+    background-color: #461d7c !important;
+}
+
+.sportsgrades-course-item.active .badge.badge-primary {
+    background-color: #000000;
+    border: 2px solid #fdd023;
+}
+
+.sportsgrades-course-item .badge.badge-primary {
+    border-radius: 5px;
+}
+
+.sportsgrades-course-item.active .text-muted.small {
+    color: #fdd023 !important;
+}
+
+#page-blocks-wds_sportsgrades-admin .sportstable thead th {
+    border: 1px solid #d7d0e0;
+}
+
+#page-blocks-wds_sportsgrades-admin tr {
+    border: 1px solid #d7d0e0;
+}
+#page-blocks-wds_sportsgrades-admin .sportstable td {
+    width: 25%;
+    font-size: 1.1em;
+}
+
+#page-blocks-wds_sportsgrades-admin .sportsbutton button.btn-secondary {
+    background-color: #fff;
+}
+
+#page-blocks-wds_sportsgrades-admin .sportsbutton button.btn-secondary:hover {
+    background-color: #3a1867;
+}
+
+#page-blocks-wds_sportsgrades-view #region-main {
+    max-width: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sportsgrades-course-list {
+        max-height: 200px;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+}

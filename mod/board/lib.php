@@ -23,6 +23,7 @@
  */
 
 use mod_board\board;
+use mod_board\local\note;
 
 /**
  * Specify what the plugin supports.
@@ -30,7 +31,7 @@ use mod_board\board;
  * @return bool|null
  */
 function board_supports($feature) {
-    switch($feature) {
+    switch ($feature) {
         case FEATURE_SHOW_DESCRIPTION:
             return true;
         case FEATURE_GROUPS:
@@ -60,7 +61,7 @@ function board_reset_userdata($data) {
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
 
-    return array();
+    return [];
 }
 
 /**
@@ -74,7 +75,7 @@ function board_reset_userdata($data) {
  * @return array
  */
 function board_get_view_actions() {
-    return array('view', 'view all');
+    return ['view', 'view all'];
 }
 
 /**
@@ -88,7 +89,7 @@ function board_get_view_actions() {
  * @return array
  */
 function board_get_post_actions() {
-    return array('update', 'add');
+    return ['update', 'add'];
 }
 
 /**
@@ -100,6 +101,9 @@ function board_get_post_actions() {
 function board_add_instance($data, $mform = null) {
     global $DB;
 
+    $data->timecreated = time();
+    $data->timemodified = $data->timecreated;
+
     if (!isset($data->hideheaders)) {
         $data->hideheaders = 0;
     }
@@ -107,26 +111,49 @@ function board_add_instance($data, $mform = null) {
         $data->postby = 0;
     }
 
-    // Add 3 default columns.
+    // Add 3 columns by default.
+    $columnheading = get_string('default_column_heading', 'mod_board');
+    $columns = [$columnheading, $columnheading, $columnheading];
+
+    // Apply template if selected.
+    if (!empty($data->templateid)) {
+        $template = $DB->get_record('board_templates', ['id' => $data->templateid], '*', MUST_EXIST);
+
+        if ($template->columns === '') {
+            $columns = [];
+        } else {
+            $columns = explode("\n", $template->columns);
+        }
+
+        $settings = \mod_board\local\template::get_settings($template->jsonsettings);
+        foreach ($settings as $k => $v) {
+            $data->$k = $v;
+        }
+    }
+
+    // Add default columns.
     $boardid = $DB->insert_record('board', $data);
-    if ($boardid) {
-        $columnheading = get_string('default_column_heading', 'mod_board');
-        $DB->insert_record('board_columns',
-            array('boardid' => $boardid, 'name' => $columnheading, 'sortorder' => 1));
-        $DB->insert_record('board_columns',
-            array('boardid' => $boardid, 'name' => $columnheading, 'sortorder' => 2));
-        $DB->insert_record('board_columns',
-            array('boardid' => $boardid, 'name' => $columnheading, 'sortorder' => 3));
+    $i = 0;
+    foreach ($columns as $columname) {
+        $i++;
+        $DB->insert_record(
+            'board_columns',
+            ['boardid' => $boardid, 'name' => $columname, 'sortorder' => $i]
+        );
     }
 
     // Save background image if set.
     $cmid = $data->coursemodule;
     $context = context_module::instance($cmid);
     if (!empty($data->background_image)) {
-        $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'mod_board', 'background');
-        file_save_draft_area_files($data->background_image, $context->id, 'mod_board', 'background',
-            0, array('subdirs' => 0, 'maxfiles' => 1));
+        file_save_draft_area_files(
+            $data->background_image,
+            $context->id,
+            'mod_board',
+            'background',
+            0,
+            board::get_background_picker_options()
+        );
     }
 
     return $boardid;
@@ -156,10 +183,14 @@ function board_update_instance($data, $mform) {
     $cmid = $data->coursemodule;
     $context = context_module::instance($cmid);
     if (!empty($data->background_image)) {
-        $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'mod_board', 'background');
-        file_save_draft_area_files($data->background_image, $context->id, 'mod_board', 'background',
-            0, array('subdirs' => 0, 'maxfiles' => 1));
+        file_save_draft_area_files(
+            $data->background_image,
+            $context->id,
+            'mod_board',
+            'background',
+            0,
+            board::get_background_picker_options()
+        );
     }
 
     return true;
@@ -173,24 +204,29 @@ function board_update_instance($data, $mform) {
 function board_delete_instance($id) {
     global $DB;
 
-    if (!$board = $DB->get_record('board', array('id' => $id))) {
+    $board = board::get_board($id);
+    if (!$board) {
         return false;
     }
+    $context = board::context_for_board($board);
 
     // Remove notes.
-    $columns = $DB->get_records('board_columns', array('boardid' => $board->id), '', 'id');
+    $columns = $DB->get_records('board_columns', ['boardid' => $board->id], '', 'id');
     foreach ($columns as $columnid => $column) {
-        $notes = $DB->get_records('board_notes', array('columnid' => $columnid));
-        foreach ($notes as $noteid => $note) {
-            $DB->delete_records('board_note_ratings', array('noteid' => $noteid));
+        $rs = $DB->get_recordset('board_notes', ['columnid' => $columnid]);
+        foreach ($rs as $note) {
+            $DB->delete_records('board_note_ratings', ['noteid' => $note->id]);
+            $DB->delete_records('board_comments', ['noteid' => $note->id]);
+            note::delete_files($note, $context);
         }
-        $DB->delete_records('board_notes', array('columnid' => $columnid));
+        $rs->close();
+        $DB->delete_records('board_notes', ['columnid' => $columnid]);
     }
 
     // Remove columns.
-    $DB->delete_records('board_columns', array('boardid' => $board->id));
+    $DB->delete_records('board_columns', ['boardid' => $board->id]);
 
-    $DB->delete_records('board', array('id' => $board->id));
+    $DB->delete_records('board', ['id' => $board->id]);
 
     return true;
 }
@@ -201,24 +237,43 @@ function board_delete_instance($id) {
  * @param navigation_node $boardnode
  */
 function board_extend_settings_navigation(settings_navigation $settings, navigation_node $boardnode) {
-    global $PAGE;
-    $context = context_module::instance($settings->get_page()->cm->id);
-    if (has_capability('mod/board:manageboard', $context)) {
-        $params = ['id' => $settings->get_page()->cm->id];
+    $cm = $settings->get_page()->cm;
+    $context = context_module::instance($cm->id);
 
-        $node = navigation_node::create(get_string('export', 'board'),
-                new moodle_url('/mod/board/export.php', $params),
-                navigation_node::TYPE_SETTING, null, null,
-                new pix_icon('i/export', ''));
+    if (
+        has_capability('moodle/course:manageactivities', $context)
+        && !board::board_has_notes($cm->instance)
+        && \mod_board\local\template::get_applicable_templates($context)
+    ) {
+        $node = navigation_node::create(
+            get_string('template_apply', 'board'),
+            new moodle_url('/mod/board/template/apply.php', ['id' => $cm->id]),
+            navigation_node::TYPE_SETTING,
+            null,
+            null,
+            new pix_icon('i/settings', '')
+        );
+        $boardnode->add_node($node);
+    }
+
+    if (has_capability('mod/board:manageboard', $context)) {
+        $node = navigation_node::create(
+            get_string('export', 'board'),
+            new moodle_url('/mod/board/export.php', ['id' => $cm->id]),
+            navigation_node::TYPE_SETTING,
+            null,
+            null,
+            new pix_icon('i/export', '')
+        );
         $boardnode->add_node($node);
     }
 }
 
 /**
  * Handle plugin files.
- * @param object $course
- * @param object $cm
- * @param object $context
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param context $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
@@ -237,15 +292,9 @@ function mod_board_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 
     if ($filearea === 'images') {
         $note = board::get_note($args[0]);
-        if (!$note) {
+        if (!$note || !board::can_view_note($note)) {
             return false;
         }
-        $column = board::get_column($note->columnid);
-        if (!$column) {
-            return false;
-        }
-
-        board::require_capability_for_board_view($column->boardid);
 
         $relativepath = implode('/', $args);
         $fullpath = '/' . $context->id . '/mod_board/images/' . $relativepath;
@@ -256,6 +305,21 @@ function mod_board_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
         }
 
         send_stored_file($file, 0, 0, $forcedownload);
+    } else if ($filearea === 'files') {
+        $note = board::get_note($args[0]);
+        if (!$note || !board::can_view_note($note)) {
+            return false;
+        }
+
+        $relativepath = implode('/', $args);
+        $fullpath = '/' . $context->id . '/mod_board/files/' . $relativepath;
+
+        $fs = get_file_storage();
+        if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file, 0, 0, true);
     } else if ($filearea === 'background') {
         require_capability('mod/board:view', $context);
         $relativepath = implode('/', $args);
@@ -271,101 +335,6 @@ function mod_board_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 
     return false;
 }
-
-/**
- * Returns a fragment, which contains the form for the modal popup note editor.
- *
- * @param array $args
- * @return string
- */
-function mod_board_output_fragment_note_form($args) {
-    global $DB;
-
-    // Get the arguments and decode them.
-    $args = (object)$args;
-    $noteid = clean_param(($args->noteid ?? 0), PARAM_INT);
-    $columnid = clean_param(($args->columnid ?? 0), PARAM_INT);
-    $ownerid = clean_param(($args->ownerid ?? 0), PARAM_INT);
-
-    if (empty($columnid)) {
-        throw new \coding_exception('invalidformrequest');
-    }
-
-    $column = board::get_column($columnid);
-    $context = board::context_for_board($column->boardid);
-
-    $formdata = [
-        'columnid' => $columnid,
-        'ownerid' => $ownerid,
-    ];
-
-    if ($noteid) {
-        // Load data for an existing note.
-        $note = $DB->get_record('board_notes', ['id' => $noteid]);
-        $itemid = $noteid;
-
-        if (!$note) {
-            throw new \coding_exception('notenotfound');
-        }
-
-        $formdata['noteid'] = $note->id;
-        $formdata['heading'] = $note->heading;
-        $formdata['content'] = $note->content;
-        $formdata['mediatype'] = $note->type;
-
-        switch ($note->type) {
-            case 1:
-                $formdata['youtubetitle'] = $note->info;
-                $formdata['youtubeurl'] = $note->url;
-                break;
-            case 2:
-                $formdata['imagetitle'] = $note->info;
-                break;
-            case 3:
-                $formdata['linktitle'] = $note->info;
-                $formdata['linkurl'] = $note->url;
-                break;
-        }
-    } else {
-        $itemid = 0;
-    }
-
-    // Set up the filearea.
-    $pickerparams = board::get_image_picker_options();
-    $draftareaid = null;
-    file_prepare_draft_area($draftareaid, $context->id, 'mod_board', 'images', $itemid, $pickerparams);
-    $formdata['imagefile'] = $draftareaid;
-
-    // Make the form and setup the data.
-    $form = new \mod_board\note_form(null, null, 'post', '', null, true);
-    $form->set_data($formdata);
-
-    return $form->render();
-}
-
-/**
- * Deletes board note ratings database records where ratings are not
- * attached to any existing notes.
- *
- * @return void
- */
-function mod_board_remove_unattached_ratings() {
-    global $DB;
-    // Getting the ratings.
-    $sql = "SELECT r.id, n.id AS noteid
-              FROM {board_note_ratings} r
-         LEFT JOIN {board_notes} n ON r.noteid = n.id";
-    $recordset = $DB->get_recordset_sql($sql);
-    // Iterating.
-    foreach ($recordset as $record) {
-        if (!isset($record->noteid)) {
-            // If the noteid wasn't set, delete the record.
-            $DB->delete_records('board_note_ratings', ['id' => $record->id]);
-        }
-    }
-    $recordset->close();
-}
-
 
 /**
  * Add a get_coursemodule_info function in case any forum type wants to add 'extra' information
@@ -411,8 +380,10 @@ function board_get_coursemodule_info($coursemodule) {
  */
 function mod_board_get_completion_active_rule_descriptions($cm) {
     // Values will be present in cm_info, and we assume these are up to date.
-    if (empty($cm->customdata['customcompletionrules'])
-        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+    if (
+        empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC
+    ) {
         return [];
     }
 
@@ -486,7 +457,6 @@ function board_cm_info_dynamic(cm_info $cm) {
     if ($embedallowed && $board->embed) {
         $cm->set_no_view_link();
     }
-
 }
 
 /**
@@ -517,8 +487,10 @@ function board_cm_info_view(cm_info $cm) {
             'allowfullscreen' => true,
         ]);
         $output .= html_writer::end_tag('iframe');
-        $output .= html_writer::link(new moodle_url('/mod/board/view.php', ['id' => $cm->id]),
-            get_string('viewboard', 'board'));
+        $output .= html_writer::link(
+            new moodle_url('/mod/board/view.php', ['id' => $cm->id]),
+            get_string('viewboard', 'board')
+        );
         $output .= html_writer::end_tag('div');
         $cm->set_content($output, true);
     }

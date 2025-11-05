@@ -93,7 +93,7 @@ class loggerdb extends loggerbase {
             'message' => $message,
             'explanation' => $explanation,
             'data' => serialize($context),
-            'exception' => $exception,
+            'exception' => $exception
         ];
         return $DB->insert_record('tool_ally_log', $record);
     }

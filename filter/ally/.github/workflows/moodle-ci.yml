@@ -1,9 +1,5 @@
 name: Ally automated testing
 
-env:
-  DEFAULT_PHP_VERSION: '8.2'
-  DEFAULT_MOODLE_BRANCH: 'MOODLE_405_STABLE'
-
 on:
   push:
   workflow_dispatch:
@@ -12,25 +8,22 @@ on:
         type: choice
         description: Select Moodle branch
         options:
-          - 'MOODLE_400_STABLE'
-          - 'MOODLE_401_STABLE'
-          - 'MOODLE_402_STABLE'
-          - 'MOODLE_403_STABLE'
-          - 'MOODLE_404_STABLE'
-          - 'MOODLE_405_STABLE'
-          - 'MOODLE_406_STABLE'
-          - 'MOODLE_407_STABLE'
-        default: 'MOODLE_405_STABLE'
+        - 'MOODLE_400_STABLE'
+        - 'MOODLE_401_STABLE'
+        - 'MOODLE_402_STABLE'
+        - 'MOODLE_403_STABLE'
+        - 'MOODLE_404_STABLE'
+        - 'MOODLE_405_STABLE'
+        default: 'MOODLE_404_STABLE'
       phpversion:
         type: choice
         description: Select PHP version
         options:
-          - '7.4'
-          - '8.0'
-          - '8.1'
-          - '8.2'
-          - '8.3'
-        default: '8.2'
+        - '7.4'
+        - '8.0'
+        - '8.1'
+        - '8.2'
+        default: '8.1'
 
 jobs:
   test:
@@ -60,29 +53,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        database: [mariadb, pgsql]
+        php: ["${{ inputs.phpversion || '8.1' }}"]
+        moodle-branch: ["${{ inputs.moodlebranch || 'MOODLE_404_STABLE' }}"]
+        database: [mariadb]
 
     steps:
-      - name: Determine effective PHP and Moodle versions
-        id: resolve_versions
-        run: |
-          echo "php_version=${{ github.event.inputs.phpversion != '' && github.event.inputs.phpversion || env.DEFAULT_PHP_VERSION }}" >> $GITHUB_OUTPUT
-          echo "moodle_branch=${{ github.event.inputs.moodlebranch != '' && github.event.inputs.moodlebranch || env.DEFAULT_MOODLE_BRANCH }}" >> $GITHUB_OUTPUT
-
-      - name: Print resolved versions
-        run: |
-          echo "Using PHP version: ${{ steps.resolve_versions.outputs.php_version }}"
-          echo "Using Moodle branch: ${{ steps.resolve_versions.outputs.moodle_branch }}"
-
       - name: Check out repository code
         uses: actions/checkout@v3
         with:
           path: plugin
 
-      - name: Setup PHP
+      - name: Setup PHP ${{ inputs.phpversion || '8.1' }}
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ steps.resolve_versions.outputs.php_version }}
+          php-version: ${{ inputs.phpversion || '8.1' }}
           extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
           # none to use phpdbg fallback. Specify pcov (Moodle 3.10 and up) or xdebug to use them instead.
@@ -90,7 +74,7 @@ jobs:
 
       - name: Initialise moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4.5
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
@@ -103,132 +87,36 @@ jobs:
           nvm install 20
           nvm use 20
 
-      - name: Determine plugin branches
-        id: extract_branches
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+      - name: Create citricity branch name
+        id: citricity_branch
         shell: bash
         run: |
-          set -euo pipefail
-          
-          branch="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          echo "Detected current branch: $branch"
-          
-          # Derive stable / wip branch fallbacks, if possible
-          stable_branch=""
-          wip_branch=""
-          if [[ "$branch" =~ ^(MOODLE_[0-9]+) ]]; then
-            stable_branch="${BASH_REMATCH[1]}_STABLE"
-            wip_branch="${BASH_REMATCH[1]}_WIP"
-          fi
-          
-          echo "Derived stable branch: $stable_branch"
-          
-          # Function to check if a branch exists remotely
-          check_remote_branch_exists() {
-            local repo="$1"
-            local test_branch="$2"
-            git ls-remote --exit-code --heads "https://github.com/${GITHUB_REPOSITORY_OWNER}/${repo}.git" "refs/heads/${test_branch}" &>/dev/null
-          }
-          
-          tool_ally_branch=""
-          report_allylti_branch=""
-          
-          # Check for tool_ally branch
-          if check_remote_branch_exists "moodle-tool_ally" "$branch"; then
-            tool_ally_branch="$branch"
-          elif [[ -n "$stable_branch" ]] && check_remote_branch_exists "moodle-tool_ally" "$stable_branch"; then
-            tool_ally_branch="$stable_branch"
-          elif [[ -n "$wip_branch" ]] && check_remote_branch_exists "moodle-tool_ally" "$wip_branch"; then
-            tool_ally_branch="$wip_branch"
-          else
-            echo "❌ Corresponding branch missing for tool_ally (tried: $branch, fallback: $stable_branch)"
-            exit 1
-          fi
-          
-          # Check for report_allylti branch
-          if check_remote_branch_exists "moodle-report_allylti" "$branch"; then
-            report_allylti_branch="$branch"
-          elif [[ -n "$stable_branch" ]] && check_remote_branch_exists "moodle-report_allylti" "$stable_branch"; then
-            report_allylti_branch="$stable_branch"
-          elif [[ -n "$wip_branch" ]] && check_remote_branch_exists "moodle-report_allylti" "$wip_branch"; then
-            report_allylti_branch="$wip_branch"
-          else
-            echo "❌ Corresponding branch missing for report_allylti (tried: $branch, fallbacks: $stable_branch, $wip_branch)"
-            exit 1
-          fi
-          
-          # Output variables
-          echo "branch=$branch" >> $GITHUB_OUTPUT
-          echo "stable_branch=$stable_branch" >> $GITHUB_OUTPUT
-          echo "tool_ally_branch=$tool_ally_branch" >> $GITHUB_OUTPUT
-          echo "report_allylti_branch=$report_allylti_branch" >> $GITHUB_OUTPUT
-
-      - name: Determine hsuforum and snap branches
-        id: citricity_branches
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          base_branch="${{ steps.extract_branches.outputs.stable_branch }}"
-          citricity_branch="${base_branch/STABLE/CITRICITY}"
-
-          check_remote_branch_exists() {
-            local org="$1"
-            local repo="$2"
-            local test_branch="$3"
-            git ls-remote --exit-code --heads "https://github.com/${org}/${repo}.git" "refs/heads/${test_branch}" &>/dev/null
-          }
-
-          # hsuforum logic
-          if check_remote_branch_exists "${GITHUB_REPOSITORY_OWNER}" "moodle-mod_hsuforum" "$citricity_branch"; then
-            echo "branch_hsuforum=$citricity_branch" >> $GITHUB_OUTPUT
-            echo "repo_hsuforum=https://github.com/${GITHUB_REPOSITORY_OWNER}/moodle-mod_hsuforum" >> $GITHUB_OUTPUT
-          elif check_remote_branch_exists "${GITHUB_REPOSITORY_OWNER}" "moodle-mod_hsuforum" "$base_branch"; then
-            echo "branch_hsuforum=$base_branch" >> $GITHUB_OUTPUT
-            echo "repo_hsuforum=https://github.com/${GITHUB_REPOSITORY_OWNER}/moodle-mod_hsuforum" >> $GITHUB_OUTPUT
-          elif check_remote_branch_exists "open-lms-open-source" "moodle-mod_hsuforum" "$base_branch"; then
-            echo "branch_hsuforum=$base_branch" >> $GITHUB_OUTPUT
-            echo "repo_hsuforum=https://github.com/open-lms-open-source/moodle-mod_hsuforum" >> $GITHUB_OUTPUT
-          else
-            echo "❌ No valid branch found for moodle-mod_hsuforum"
-            exit 1
-          fi
-
-          # snap logic
-          if check_remote_branch_exists "${GITHUB_REPOSITORY_OWNER}" "moodle-theme_snap" "$citricity_branch"; then
-            echo "branch_snap=$citricity_branch" >> $GITHUB_OUTPUT
-            echo "repo_snap=https://github.com/${GITHUB_REPOSITORY_OWNER}/moodle-theme_snap" >> $GITHUB_OUTPUT
-          elif check_remote_branch_exists "${GITHUB_REPOSITORY_OWNER}" "moodle-theme_snap" "$base_branch"; then
-            echo "branch_snap=$base_branch" >> $GITHUB_OUTPUT
-            echo "repo_snap=https://github.com/${GITHUB_REPOSITORY_OWNER}/moodle-theme_snap" >> $GITHUB_OUTPUT
-          elif check_remote_branch_exists "open-lms-open-source" "moodle-theme_snap" "$base_branch"; then
-            echo "branch_snap=$base_branch" >> $GITHUB_OUTPUT
-            echo "repo_snap=https://github.com/open-lms-open-source/moodle-theme_snap" >> $GITHUB_OUTPUT
-          else
-            echo "❌ No valid branch found for moodle-theme_snap"
-            exit 1
-          fi
-
-
+          echo "branch_citricity=$(echo '${{ steps.extract_branch.outputs.branch }}' | sed 's/STABLE/CITRICITY/')" >> $GITHUB_OUTPUT
 
       # See https://moodlehq.github.io/moodle-plugin-ci/AddExtraConfig.html
       # for adding extra config.php values via moodle-plugin-ci.
       - name: Install moodle-plugin-ci
         continue-on-error: false
         run: |
-          echo "NOTE: Using branch ${{ steps.extract_branches.outputs.branch }}" 
-          moodle-plugin-ci add-plugin --branch ${{ steps.extract_branches.outputs.tool_ally_branch }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-tool_ally
-          moodle-plugin-ci add-plugin --branch ${{ steps.extract_branches.outputs.report_allylti_branch }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-report_allylti
-          moodle-plugin-ci add-plugin --branch ${{ steps.citricity_branches.outputs.branch_hsuforum }} --clone=${{ steps.citricity_branches.outputs.repo_hsuforum }}
-          moodle-plugin-ci add-plugin --branch ${{ steps.citricity_branches.outputs.branch_snap }} --clone=${{ steps.citricity_branches.outputs.repo_snap }}
+          echo "NOTE: Using branch ${{ steps.extract_branch.outputs.branch }}" 
+          moodle-plugin-ci add-plugin --branch ${{ steps.extract_branch.outputs.branch }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-tool_ally
+          moodle-plugin-ci add-plugin --branch ${{ steps.extract_branch.outputs.branch }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-report_allylti
+          moodle-plugin-ci add-plugin --branch ${{ steps.citricity_branch.outputs.branch_citricity }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-mod_hsuforum
+          moodle-plugin-ci add-plugin --branch ${{ steps.citricity_branch.outputs.branch_citricity }} --clone=https://github.com/$GITHUB_REPOSITORY_OWNER/moodle-theme_snap
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
           moodle-plugin-ci add-config '$CFG->behat_increasetimeout = 2;'
         env:
           DB: ${{ matrix.database }}
-          MOODLE_BRANCH: ${{ steps.resolve_versions.outputs.moodle_branch }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
-      #      - name: PHP Lint
-      #        if: ${{ always() }}
-      #        run: moodle-plugin-ci phplint
+#      - name: PHP Lint
+#        if: ${{ always() }}
+#        run: moodle-plugin-ci phplint
 
       - name: PHP Copy/Paste Detector
         continue-on-error: true # This step will show errors but will not fail
@@ -268,8 +156,8 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci grunt --max-lint-warnings 0
 
-      #      - name: Setup upterm session
-      #        uses: lhotari/action-upterm@v1
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
 
       - name: Ally filter PHPUnit test
         if: ${{ always() }}
@@ -295,4 +183,4 @@ jobs:
 
       - name: Ally filter Behat test
         if: ${{ always() }}
-        run: moodle-plugin-ci behat --tags=@suite_ally --profile=chrome
+        run: moodle-plugin-ci behat --profile chrome

@@ -110,7 +110,7 @@ const init = () => {
     }
     board.dataset.init = 1;
 
-    Str.get_string('addcomment', 'mod_board').then( s => {
+    Str.get_string('addcomment', 'mod_board').then(s => {
         const style = document.createElement('style');
         style.innerHTML = `
             .comment-input:empty:before {

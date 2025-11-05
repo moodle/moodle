@@ -37,7 +37,7 @@ require_once(__DIR__.'/abstract_testcase.php');
  */
 class version_information_test extends abstract_testcase {
 
-    public function test_plugin_not_intsalled(): void {
+    public function test_plugin_not_intsalled() {
         $versioninfo = new version_information();
 
         // Test out a module that we know will definitely be installed because it's core.

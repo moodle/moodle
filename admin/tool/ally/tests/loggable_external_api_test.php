@@ -51,7 +51,7 @@ class loggable_external_api_test extends abstract_testcase {
         require_once($CFG->dirroot.'/lib/externallib.php');
     }
 
-    public function test_service_version_failure_logged(): void {
+    public function test_service_version_failure_logged() {
         $this->resetAfterTest();
 
         set_config('sitepolicy', 'sitepolicyURL.com');
@@ -67,7 +67,7 @@ class loggable_external_api_test extends abstract_testcase {
             $this->assertEquals(LogLevel::ERROR, $logentries['data'][0]->level);
             $this->assertEquals(get_string('logger:servicefailure_exp', 'tool_ally', (object)[
                 'class' => version_info::class,
-                'params' => var_export([], true),
+                'params' => var_export([], true)
             ]), $logentries['data'][0]->explanation);
         }
     }

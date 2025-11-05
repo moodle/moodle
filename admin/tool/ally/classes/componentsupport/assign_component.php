@@ -43,7 +43,7 @@ class assign_component extends component_base implements iface_html_content {
     use embedded_file_map;
 
     protected $tablefields = [
-        'assign' => ['intro'],
+        'assign' => ['intro']
     ];
 
     public static function component_type() {

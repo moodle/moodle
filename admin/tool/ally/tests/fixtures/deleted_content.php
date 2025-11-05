@@ -64,7 +64,7 @@ return [
             'component'    => 'label',
             'comptable'    => 'label',
             'timedeleted'  => 1482186997,
-            'comprowid'    => '1004',
-        ],
+            'comprowid'    => '1004'
+        ]
     ],
 ];

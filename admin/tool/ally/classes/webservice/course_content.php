@@ -40,7 +40,7 @@ class course_content extends loggable_external_api {
      */
     public static function service_parameters() {
         return new \external_function_parameters([
-            'ids' => new \external_multiple_structure(new \external_value(PARAM_INT, 'Course id'), 'List of course IDs'),
+            'ids' => new \external_multiple_structure(new \external_value(PARAM_INT, 'Course id'), 'List of course IDs')
         ]);
     }
 
@@ -58,7 +58,7 @@ class course_content extends loggable_external_api {
                 'field'        => new \external_value(PARAM_ALPHANUMEXT,
                         'Table field for storing content - e.g: description, message, etc'),
                 'courseid'     => new \external_value(PARAM_INT, 'Course ID of course housing content'),
-                'timemodified' => new \external_value(PARAM_TEXT, 'Last modified time of the content'),
+                'timemodified' => new \external_value(PARAM_TEXT, 'Last modified time of the content')
             ])
         );
     }
@@ -77,7 +77,7 @@ class course_content extends loggable_external_api {
         // We are betting that most courses have content, so better to preload than to fetch one at a time.
         local::preload_course_contexts($ids);
 
-        $return = [];
+        $return = array();
 
         $components = local_content::list_html_content_supported_components();
 

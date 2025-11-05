@@ -15,20 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin strings are defined here.
- *
- * @package     filter_ally
- * @category    string
- * @copyright   Copyright (c) 2023 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['ally:viewdownload'] = 'Näytä Allyn latauspainike';
-$string['ally:viewfeedback'] = 'Näytä Ally-palaute';
-$string['filtername'] = 'Ally';
 $string['pluginname'] = 'Ally';
+$string['filtername'] = 'Ally';
+$string['ally:viewfeedback'] = 'Näytä Ally-palaute';
+$string['ally:viewdownload'] = 'Näytä Allyn latauspainike';
 $string['privacy:metadata:jwt:courseid'] = 'Tämä on sen kurssin tunnus, jolla käyttäjä muokkaa tiedostoa.';
 $string['privacy:metadata:jwt:externalpurpose'] = 'Anna Allylle tiedot, joiden avulla tiedoston esteettömyyttä voidaan parantaa muokkaamalla.';
 $string['privacy:metadata:jwt:locale'] = 'Tämä on käyttäjän kielialue, jonka perusteella Allyn käyttöliittymä näytetään oikealla kielellä.';

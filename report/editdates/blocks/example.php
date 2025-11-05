@@ -25,11 +25,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-
 /**
- * Example {@link report_editdates_block_date_extractor} subclass.
+ * Example {@see report_editdates_block_date_extractor} subclass.
  *
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -45,20 +42,24 @@ class report_editdates_block_html_date_extractor  extends report_editdates_block
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(block_base $block) {
         // Check if title text is a valid date then return the array.
         $title = $block->title;
         if ((string) (int) $title === $title) {
-                return array('title' => new report_editdates_date_setting
-                                             (get_string('availabledate', 'assignment'),
-                                             $block->title,
-                                             self::DATETIME, false, 5)
-                );
+            return [
+                'title' => new report_editdates_date_setting(
+                    get_string('availabledate', 'assignment'),
+                    $block->title,
+                    self::DATETIME, false, 5
+                ),
+            ];
         }
     }
 
+    #[\Override]
     public function validate_dates(block_base $block, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['title'] == 0 ) {
             $errors['title'] = get_string('datemustnotzero', 'report_editdates');
         }

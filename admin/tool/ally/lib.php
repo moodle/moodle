@@ -117,7 +117,7 @@ function tool_ally_pre_course_module_delete(stdClass $cm) {
  * @param array $options
  * @return bool
  */
-function tool_ally_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+function tool_ally_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     $pluginpath = __DIR__.'/';
 
     if ($filearea === 'vendorjs') {

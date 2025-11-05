@@ -25,3 +25,4 @@ $string['pluginname'] = 'LSU People';
 $string['courseroster'] = 'LSU Roster';
 $string['lsu_people:addinstance'] = 'Add a new LSU People block';
 $string['privacy:metadata'] = 'The LSU People block does not store personal data.';
+$string['lsu_people:view'] = 'View the LSU People block'; 

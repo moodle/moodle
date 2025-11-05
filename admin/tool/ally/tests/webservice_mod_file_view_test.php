@@ -47,7 +47,7 @@ class webservice_mod_file_view_test extends abstract_testcase {
      * Test the web service.
      *
      */
-    public function test_service(): void {
+    public function test_service() {
         global $CFG, $DB;
         $this->markTestSkipped('To be reviewed in INT-18689');
         $this->resetAfterTest();
@@ -69,11 +69,11 @@ class webservice_mod_file_view_test extends abstract_testcase {
         $datagen->enrol_user($student->id, $course->id, 'student');
         $resource = $datagen->create_module('resource', [
                 'course' => $course->id,
-                'completion' => COMPLETION_TRACKING_AUTOMATIC,
+                'completion' => COMPLETION_TRACKING_AUTOMATIC
             ]
         );
         $DB->set_field('course_modules', 'completionview', 1,
-            ['id' => $resource->cmid]);
+            array('id' => $resource->cmid));
         $file = $this->get_resource_file($resource);
 
         $result = mod_file_view::service($file->get_pathnamehash(), $student->id);
@@ -83,7 +83,7 @@ class webservice_mod_file_view_test extends abstract_testcase {
         $this->assertEquals('1', $viewed);
     }
 
-    public function test_service_user_without_access_to_resource(): void {
+    public function test_service_user_without_access_to_resource() {
         global $DB;
 
         $this->resetAfterTest();
@@ -122,7 +122,7 @@ class webservice_mod_file_view_test extends abstract_testcase {
         return $lastid;
     }
 
-    public function test_service_invalid_user(): void {
+    public function test_service_invalid_user() {
         $this->resetAfterTest();
 
         $roleid = $this->assignUserCapability('moodle/course:view', \context_system::instance()->id);
@@ -138,7 +138,7 @@ class webservice_mod_file_view_test extends abstract_testcase {
         mod_file_view::service($file->get_pathnamehash(), $invaliduserid);
     }
 
-    public function test_service_invalid_file(): void {
+    public function test_service_invalid_file() {
         global $DB;
 
         $this->resetAfterTest();

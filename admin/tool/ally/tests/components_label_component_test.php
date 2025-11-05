@@ -78,7 +78,7 @@ class components_label_component_test extends abstract_testcase {
             [
                 'course' => $this->course->id,
                 'introformat' => FORMAT_HTML,
-                'intro' => 'Text in intro',
+                'intro' => 'Text in intro'
             ]
         );
 
@@ -88,7 +88,7 @@ class components_label_component_test extends abstract_testcase {
     /**
      * Test if file in use detection is working with this module.
      */
-    public function test_check_file_in_use(): void {
+    public function test_check_file_in_use() {
         $context = \context_module::instance($this->label->cmid);
 
         $usedfiles = [];

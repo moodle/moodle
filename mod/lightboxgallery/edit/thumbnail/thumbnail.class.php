@@ -23,26 +23,24 @@ class edit_thumbnail extends edit_base {
     }
 
     public function output() {
-        $result = '<input type="submit" class="btn btn-secondary" name="index" value="' .
-            get_string('setasindex', 'lightboxgallery') . '" /><br /><br />' .
-            get_string('selectthumbpos', 'lightboxgallery') . '<br /><br />';
+        $result = '<input type="submit" name="index" value="' . get_string('setasindex', 'lightboxgallery')  . '" /><br /><br />' .
+                   get_string('selectthumbpos', 'lightboxgallery') . '<br /><br />';
 
         if ($this->lbgimage->width < $this->lbgimage->height) {
-            $result .= '<label class="me-3"><input type="radio" class="form-check-input me-1" name="move" value="1" />'.
+            $result .= '<label><input type="radio" name="move" value="1" />'.
                        get_string('dirup', 'lightboxgallery') . '</label>&nbsp;'.
-                       '<label><input type="radio" class="form-check-input me-1" name="move" value="2" />'.
+                       '<label><input type="radio" name="move" value="2" />'.
                        get_string('dirdown', 'lightboxgallery') . '</label>';
         } else {
-            $result .= '<label class="me-3"><input type="radio" class="form-check-input me-1"  name="move" value="3" />'.
+            $result .= '<label><input type="radio" name="move" value="3" />'.
                        get_string('dirleft', 'lightboxgallery') . '</label>&nbsp;'.
-                       '<label><input type="radio" class="form-check-input me-1" name="move" value="4" />'.
+                       '<label><input type="radio" name="move" value="4" />'.
                        get_string('dirright', 'lightboxgallery') . '</label>';
         }
-        $result .= '<br /><br /><div class="d-flex flex-wrap align-items-center"><label for="offset" class="me-1">' .
-                   get_string('thumbnailoffset', 'lightboxgallery').
-                   ':</label> <input type="text" class="form-control" name="offset" value="20" size="4" /></div><br /><br />'.
-                   '<input type="submit" class="btn btn-secondary" value="' . get_string('move').
-                   '" />&nbsp;<input type="submit" class="btn btn-secondary" name="reset" value="' . get_string('reset') . '" />';
+        $result .= '<br /><br />' . get_string('thumbnailoffset', 'lightboxgallery').
+                   ': <input type="text" name="offset" value="20" size="4" /><br /><br />'.
+                   '<input type="submit" value="' . get_string('move').
+                   '" />&nbsp;<input type="submit" name="reset" value="' . get_string('reset') . '" />';
 
         return $this->enclose_in_form($result);
     }

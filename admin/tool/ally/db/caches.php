@@ -37,10 +37,10 @@ $definitions = [
     ],
     'fileinusecache' => [
         'mode'       => cache_store::MODE_REQUEST,
-        'simplekeys' => true,
+        'simplekeys' => true
     ],
     'pluginfilesinhtml' => [
         'mode'       => cache_store::MODE_REQUEST,
-        'simplekeys' => true,
-    ],
+        'simplekeys' => true
+    ]
 ];

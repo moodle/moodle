@@ -210,8 +210,23 @@
 }
 
 .path-mod-board {
+    .modal-body .limited_markdown_examples pre {
+        font-size: 0.8rem;
+        line-height: 1.2;
+        margin-top: 8px;
+        margin-left: 8px;
+        margin-bottom: 4px;
+    }
     .mod_board_note_text {
         word-break: break-word;
+        ul, ol, p {
+            margin-bottom: 4px;
+            margin-left: 4px;
+        }
+        ul, ol {
+            padding-inline-start: 16px;
+            list-style-position: outside;
+        }
     }
     .comment {
         .comment-input {
@@ -355,4 +370,8 @@ iframe.mod_board-iframe {
     .activity-header {
         display: none;
     }
+}
+
+.mod_board_embed_container {
+    width: 100%;
 }

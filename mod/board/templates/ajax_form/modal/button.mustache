@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_board/ajax_form/modal/button
+
+    NOTE: this is based on standard "singlebutton".
+
+    @copyright 2025 Petr Skoda
+    @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "classes": "singlebutton",
+        "primary": true,
+        "formurl": "https://www.example.com/form.php",
+        "formsize": "lg",
+        "formsubmittedaction": "reload",
+        "icon": "",
+        "label": "Submit",
+        "modaltitle": "Create something"
+    }
+}}
+
+<div class="{{classes}}">
+<button type="submit" class="btn btn-{{#primary}}primary{{/primary}}{{^primary}}secondary{{/primary}}"
+        data-form-url="{{formurl}}" data-form-size="{{formsize}}" data-form-submitted-action="{{formsubmittedaction}}"
+        id="mod-board-ajax-form-modal-action-{{uniqid}}">{{{icon}}}{{label}}</button>
+</div>
+
+{{#js}}
+require([
+    'mod_board/ajax_form/modal',
+], function(AjaxFormModal) {
+    const action = document.getElementById('mod-board-ajax-form-modal-action-{{uniqid}}');
+    action.onclick = function() {
+        AjaxFormModal.create({
+            formUrl: action.dataset.formUrl,
+            formSize: action.dataset.formSize,
+            formSubmittedAction: action.dataset.formSubmittedAction,
+            title: "{{modaltitle}}",
+        });
+    };
+});
+{{/js}}

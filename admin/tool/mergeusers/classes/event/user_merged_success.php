@@ -17,44 +17,40 @@
 /**
  * The user_merged_success event.
  *
- * @package tool
- * @subpackage mergeusers
- * @author Gerard Cuello Adell <gerard.urv@gmail.com>
- * @copyright 2016 Servei de Recursos Educatius (http://www.sre.urv.cat)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_mergeusers
+ * @author    Gerard Cuello Adell <gerard.urv@gmail.com>
+ * @copyright 2016 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace tool_mergeusers\event;
-defined('MOODLE_INTERNAL') || die();
+
+use coding_exception;
 
 /**
  * Class user_merged_success called when merging user accounts has gone right.
  *
- * @package tool_mergeusers
- * @author Gerard Cuello Adell <gerard.urv@gmail.com>
- * @copyright 2016 Servei de Recursos Educatius (http://www.sre.urv.cat)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_mergeusers
+ * @author    Gerard Cuello Adell <gerard.urv@gmail.com>
+ * @copyright 2016 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_merged_success extends user_merged {
-
+    /**
+     * Gets the event name.
+     * @return string
+     * @throws coding_exception
+     */
     public static function get_name() {
         return get_string('eventusermergedsuccess', 'tool_mergeusers');
     }
 
+    /**
+     * Human-readable detail of this event.
+     *
+     * @return string
+     */
     public function get_description() {
-        return "The user {$this->userid} merged all user-related data
-            from '{$this->other['usersinvolved']['fromid']}' into '{$this->other['usersinvolved']['toid']}'";
-    }
-
-    public function get_log_id(): int {
-        return $this->other['logid'] ?? 0;
-    }
-
-    public function get_new_user_id(): int {
-        return $this->other['usersinvolved']['toid'] ?? 0;
-    }
-
-    public function get_old_user_id(): int {
-        return $this->other['usersinvolved']['fromid'] ?? 0;
+        return $this->get_description_as('success');
     }
 }

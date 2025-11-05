@@ -1,218 +1,338 @@
-Merge users plugin for Moodle
-===============================
+# Merge users plugin for Moodle
 
-This admin tool will merge two Moodle user accounts, "user A" and "user B".
-The intent of the plugin is to assign all activity & records from user A to
-user B. This will give the effect of user B seeming to have done everything
-both users have ever done in Moodle. 
+This admin tool merges two Moodle user accounts, namely from user A into user B.
+The intent of the plugin is to assign all activity and records from user A
+(user to remove) into user B (user to keep). This will give the effect of
+user B seeming to have done everything both users have ever done in Moodle. 
 
-Moodle requirements and release notes
-=====================================
 
-Check the CHANGES.md file for Moodle version requirements, system requirements
+# Why this plugin exists?
+
+In some institutions, people are provided with **user identifiers that do not change
+over time**. If you are in some of these institutions, you are **lucky**:
+you do not need this plugin.
+
+However, some institutions provide people some **user identifiers that may
+vary over time** or that there are several units and ways to introduce
+new users into the system. Imagine cases where peoples' identifiers are based on
+passport numbers or similar cases, that may vary over time, or the person providing
+different valid id numbers to different enrolment units, or also human errors
+introducing the person details into the system.
+
+In those cases, you finally may have the same person with at least two different
+user accounts into your Moodle instance.
+
+And **this plugin tries to do its best to aggregate all person's activity
+into a single user account.**
+
+
+# Moodle requirements and release notes
+
+This plugin version supports Moodle 4.5 onwards.
+
+Check the `CHANGES.md` file for any other kind of requirements
 and any news related to the current release of this plugin.
 
-How merge users plugin works
-============================
 
-The basic function of the plugin is to
-loop through the tables and update the userid of every record from user A to
-user B. This works well for most tables. We do however, have a few special
-cases:
+# How merge users plugin works
 
-* Special Case #1: The grade_grades table has a compound unique key on userid
-    and itemid. This prevents a simple update statement if the two users have
-    done the same activity. What this script does is determine which activities
-    have been completed by both users and delete the entry for the old user
-    from this table. Data is not lost because a duplicate entry can be found in
-    the grade_grades_history table, which is correctly updated by the regular
-    processing of the script.
-* Special Case #2: The user_enrolments table controls which user is enrolled
-    in which course. Rather than unenroll the old user from the course, this
-    script simply updates their access to the course to "2" which makes them
-    completely unable to access the course. To remove these records all
-    together I recomend disabling or deleting the entire old user account once
-    the migration has been successful.
-* Special Case #3: There are 4 logging/preference tables
-    (user_lastaccess, user_preferences, user_private_key, my_pages) which exist in
-    Moodle 2.x. This script is simply skipping these tables since there's no
-    legitimate purpose to updating the userid value here. This would lead to
-    duplicate rows for the new user which is silly. Again, if you want to
-    remove these records I would recommend deleting the old user after this
-    script runs sucessfully. my_pages' records will not be deleted, but
-    this is something you find in Moodle, that not all records related to a
-    specific entity are clened up. We need to skip my_pages table too, since
-    that MyMoodle page of the old user have a relation of blocks appearing on it.
-    If we proceed with a normal merging action, resulting with two records
-    with the same userid, the user will not see correctly his/her MyMoodle page.
-    Due to a community request, all these tables except my_pages can be omitted
-    from this exclusion and so, if set in settings, they can be merged as usual.
-* Special Case #4: mod/journal plugin has a record per user and journal on
-    journal_entries table. In case there is a record for both users, we delete
-    the record related to the old user. For the rest of cases, this operates as usual.
-* Special Case #5: groups_members table has a record per user and group.
-    Updating always the old user id for the new one is incorrect if both users
-    appear in that group. In that case, this plugin deletes the record related
-    to the old user. For the rest of cases, this plugin operates as usual.
-* Special Case #6: course_completions table has a record per user and course.
-    Updating always the old user id for the new one is incorrect if both users
-    appear in that group. In that case, this plugin deletes the record related
-    to the old user. For the rest of cases, this plugin operates as usual.
-* Special case #7: message_contacts table has a record per user and contact id,
-    which is again a user.id. If replacing the old id by the new one means
-    index conflict, this means actually that the resulting record already exists,
-    so we can securely remove the old record. In addition, this checking is performed
-    for both column names (userid and contactid) looking for matching on both
-    in the same way.
-* Special case #8: role_assignments table has a three-field unique index,
-    including context, role and userid. As before, it always updates records to
-    be the new one. If only old id exists, it is updated; if only new id exists,
-    it does nothing; if both ids exist, the record with the old id is removed.
-* Special case #9: user_lastaccess table has a two-field unique index, including
-    userid and courseid. In case both users has a record for the same
-    courseid, this plugin removes the record for the old user and keep that one
-    for the new user. For the rest of cases, this plugin operates as usual.
-* Special case #10: quiz_attempts table has a three-field unique index, including
-    userid, quiz and attempt. This table and related quiz_grades and quiz_grades_history
-    are processed as specified in the plugin settings. This plugin provies you
-    several options when merging quiz attempts from two users:
- 1. Merge attempts from both users and renumber. Attempts from the old user are
-    merged with the ones of the new user and renumbered by the time they were
-    started.
- 2. Keep attempts from the new user. Attempts from the old user are removed.
-    Attempts from the new user are kept, since this option considers them as the
-    most important.
- 3. Keep attempts from the old user. Attempts from the new user are removed.
-    Attempts from the old user are kept, since this option considers them as the
-    most important.
- 4. Do nothing: do not merge nor delete (by default). Attempts are not merged nor
-    deleted, remaining related to the user who made them. This is the most secure
-    action, but merging users from user A to user B or B to A may produce different
-    quiz grades.
-* Special case #11: there are cases where third party plugins build unique indexes
-    applied onto a single column related to user.id. In such cases, we have added
-    a new setting "uniquekeynewidtomaintain" that helps handles this conflict.
-    If you mark this option (by default), data related to the new user is kept.
-    Otherwise, if you unmark this setting, this plugin will keep the data from
-    the old user.
+In brief:
+
+1. There is an initialization, loading a set of configuration settings and
+   loading the list of all Moodle database tables.
+2. Then, a set of entities named `table merger` process every single Moodle database
+   table in the necessary way.
+3. Once all database tables are processed, then some operations are performed
+   that are not strictly related to table contents, but the Moodle or plugin logics.
+   Examples are regrading properly the involved users or force recalculating
+   course completions.
+4. The merge concludes:
+   1. In presence of some PHP Exception or error message recorded during the process,
+      the merge is considered as failed. By default, any change to the database
+      is rollback.
+   2. Otherwise, it was ok and changes to database are applied.
 
 
-Command-line script
-===================
+## Configuration initialization
 
-A cli/climerger.php script is added. You can now perform user mergings by command line having
-their user ids.
+This plugin uses two kinds of settings:
 
-You can go further and develop your own CLI script by extending the Gathering interface
-(see lib/cligathering.php for an example). Ok, but let us explain how to do it step by step:
+1. General settings, that define the main behaviour of the plugin, like how to
+ manage quiz attempts or if the user to remove is suspended when the merge
+ is success.
+2. Database settings, that define database-related options **necessary** for
+ the plugin.
+   1. `gathering`: the class to use on the CLI merger.
+   2. `exceptions`: list of table names that are excluded from processing.
+   3. `compoundindexes`: list of compound indexes per table, necessary
+       to manage conflicting cases.
+   4. `userfieldnames`: list of field/column names per table that are related
+       to the user.id field. The special `default` table name is used when
+       the table is not explicitly present on this list.
+   5. `tablemergers`: list of implementations of table mergers. The `default`
+       table name is used when the table is not explicitly present on this list.
+   6. `alwaysrollback`: (false by default) whether to rollback always the
+       merge.
+   7. `debugdb`: (false by default) set it to true to enable the `$DB->debug(true)`
+      to see all database operations performed during the merge.
 
-1. Develop a class, namely MyGathering, in lib/mygathering.php, implementing the interface Gathering.
-Be sure the class name and the filename are the same, but filename all in lowercase ending with ".php".
-See lib/cligathering for an example.
-2. Create or edit the file config/config.local.php with at least the following content:
 
-```php
-<?php
+### Customizing configuration
 
-return array(
+On latest version from `MOODLE_405_STABLE` branch there are the following ways
+to customize the settings:
 
-    // gathering tool
-    'gathering' => 'MyGathering',
-);
+1. General settings: only from the web administration of the plugin.
+2. Database settings: there are these possibilities to customize these settings:
+   1. From the web administration, updating the setting `tool_mergeusers/customdbsettings`.
+   2. From callbacks to the `add_settings_before_merging` hook.
+   3. Making a PR to this plugin asking to update some default database setting.
+
+Regarding database settings, this is the priority among them, in order:
+
+1. The setting `tool_mergeusers/customdbsettings` has the highest priority 
+   and is kept always over other database settings.
+   1. Its goal is to provide Moodle administrators the possibility to say
+      the last word about this plugin customization.
+2. Settings from callbacks to the `add_settings_before_merging` hook.
+   1. These settings are though to live in code, in place, where the
+      knowledge exists, like inside any other plugin or Moodle subsystem.
+3. Default plugin settings. These settings have the lowest priority and
+   provide a normal and sufficient operation by any Moodle standard instance.
+
+
+### Check customized configuration
+
+**Before and without running the merge** you as administrator can check the current
+database-related settings into the web administration.
+
+In the `Database settings` tab of this plugin settings, 
+there is a section where this plugin **shows you the calculated settings**.
+This helps you double-check if the calculated settings (including
+the `tool_mergeusers/customdbsettings` setting, the settings from 
+the hook callbacks, and the default plugin settings)
+provide the expected customization you need.
+
+
+## Processing database tables
+
+The `table merger` entities process every single Moodle table to move
+the user-related data from the user to remove into the user to keep.
+
+In general, tables can contain any number of records related to the
+same user.id.
+
+However, there are some situations where the table cannot contain two or more
+records for the same user.id. That restriction may appear on:
+
+1. The definition of the database table, like in the form of a unique index, or
+2. The side of the PHP code that manages that table. For instance, that code 
+   may force just a single record per user or assumes that always
+   there will be just 0 or 1 record per user.
+
+In those cases, this `table mergers` has to delete records from that table.
+To define which of them to keep, the general setting 
+`tool_mergeusers/uniquekeynewidtomaintain` lets you define which of the two
+users involved will keep those conflicting records. The default setting is 
+to keep the records related to the user to keep, and remove the conflicting 
+records from the user to remove.
+
+To see the list of detected conflicting cases, you can check the value
+of the database setting named `compoundindexes`, on the 
+`classes/local/default_db_config.php` file, or on the calculated
+database settings from the web administration.
+
+
+## Post-process
+
+If all tables are processed properly without error, we arrive at this point.
+
+This step is meant to help process tasks that are not strictly related
+to individual database tables, or that requires some Moodle or
+plugin internal to process some kind of aggregation or trigger some
+kind of (adhoc) task in the Moodle cron.
+
+This post-proces is implemented by a hook: `after_merged_all_tables`,
+to express that merge is not concluded yet, and some other task
+may be executed.
+
+The callbacks for this hook are meant to process any kind of operations
+from Moodle internals or plugin specific tasks, that are transversal,
+(operations not specific for a single table) or any kind of
+aggregation operation, not updated by the table mergers.
+
+To provide you an example, we have moved the regrading of the users and
+the course recompletions into callbacks for this hook.
+
+We think this hook will help Moodle and plugin developers to adjust the
+merge users tool to better fit any Moodle instance (with a variable
+number of custom Moodle changes and plugins).
+
+
+## Concluding the merge
+
+A merge may conclude with:
+
+1. Failure: when some PHP Exception is thrown during the process,
+   or some error message is recorded.
+   1. PHP Exceptions abort the merge at that specific moment.
+   2. Error messages, however, abort the merge just at the end
+      of the merge.
+2. Success.
+
+The plugin stores a log with the whole detail of the merge:
+
+1. On failure: it just records all error messages being recorded.
+2. On success: all actions recorded during the merge.
+
+On any case, an event is emitted to react to that situation.
+We use the success event to suspend the user to remove when
+the setting `tool_mergeusers/suspenduser` is enabled.
+
+
+# An important note about provided hooks
+
+Providing callbacks for both hooks, Moodle core and plugins
+can make work this plugin as they need to merge users properly.
+
+**Why?**
+
+This plugin provides a generic way to merge users, but internals from
+Moodle core (subsystems, and so) and plugins really know how user's
+information is managed.
+
+So, their maintainers have the full knowledge of the internal parts
+of Moodle and their plugins. And these internals will vary
+over time. So, Moodle and plugins maintainers can provide 
+callbacks for both hooks:
+
+1. Callbacks for `add_settings_before_merging` hook may help providing specific
+   database-related settings: mainly table mergers (setting `tablemergers`),
+   compound indexes (setting `compoundindexes`) or user-related table columns
+   (setting `userfieldnames`), but the others settings are allowed to be
+   provided too.
+2. Callbacks for `after_merged_all_tables` hook may help providing specific
+   post-processes.
+
+All this by just placing the necessary callbacks and related stuff in the
+maintainers' code, to ensure merge users is processed properly, without
+modifying this plugin anymore.
+
+
+# Command-line scripts
+
+## cli/climerger.php
+
+A `cli/climerger.php` script helps you merge users from command line.
+
+By default, an interative `CLIGathering` is set on the database setting `gathering`.
+It asks you iteratively the user.ids from the user to remove and to keep, 
+all in a loop, until you ask to exit.
+
+You can modify the `alwaysrollback` per CLI execution, and also the `debugdb`.
+When `alwaysrollback` is enabled, the CLI execution ends with the first merge,
+always.
+
+
+### Customizing the cli/climerger.php
+
+You can customize how to iterate over the users to merge. This will let you use the same
+`cli/climerger.php` but with a different behaviour. In our case, we have a
+local customization that asks users to merge to an external database every night.
+
+Let us explain how to do it step by step:
+
+1. Create a class implementing the `Gathering` interface. See `lib/cligathering.php` for an example.
+2. Inform about the new `Gathering` implementation to use:
+   * Either using the setting `tool_mergeusers/customdbsettings`, with a content similar to the example from below,
+   * Or using a callback for the `add_setting_before_merging` hook, informing about your new `Gathering`.
+3. From the command line, run the `cli/climerger.php` script.
+
+Example of JSON content for informing the new `Gathering`:
+```json lines
+{
+  'gathering': 'MyGathering'
+}
 ```
-3. Run as a command line in a form like this: *$ time php cli/climerger.php*.
 
 
-Events and event management
-===========================
+## cli/listuserfields.php
 
-Once the merging action is completed, an event 'merging_success' is triggered if it was ok,
-or an event 'merging_failed' otherwise. The available data on the event are as follows:
+This script is a read-only script that loads the Moodle database XML schema,
+and provides a list of tables with fields/columns that are related to
+the `user.id` field.
 
-* oldid: the user.id of the "user A" to be removed from all his/her activity.
-* newid: the user.id of the "user B" which will gather the activity of both users.
-* log: string with the list of actions performed.
-* timemodified: time in which the event is generated, after the merging action.
+Its goal is to help keeping up-to-date the default plugin settings, and also,
+help plugin users to detect missing database-related settings.
 
-The goal of this event triggering is the ability to be detected by other parts of Moodle.
+The user-related fields are informed by:
 
-This plugin also manages the 'merging_success' event is trigered, what includes:
+1. Having a name that contains `user` as part of its name. It may return false
+   positives.
+2. Foreign keys from the database XML schema, pointing to the `user.id` field.
+   This will not provide false positives and must be considered all of them.
 
-1. Suspending the user (user.suspended = 1). This prevents the person to log in with the old account.
-2. Changing the old user's profile picture by the given on pix/suspended.jpg. It is a simple
-   white image with the text "suspended user", which could help to teachers and
-   managers to rapidly detect them.
-3. Add merge date in user profile field `mergeusers_date` to both old and new users.
-4. Add merge log id in user profile field `mergeusers_logid` to both old and new user.
-5. Update user profile field `mergeusers_olduserid` with:
-   1. The old user id on the new user profile.
-   2. Empty value on the old user.
-6. Update user profile field `mergeusers_newuserid` with:
-   1. The new user id on the old user profile.
-   2. Empty value for the new user.
+We have to still consider fields that contain `user` on its name, since
+there is not a consistent state inside the Moodle database, nor also
+third-party plugins.
 
-Custom profile fields `mergeusers_olduserid` and `mergeusers_newuserid` helps identify
-which users were merged and are the old ones:
-   * `mergeusers_newuserid` is set and not empty.
-and which users were merged and are the new ones:
-   * `mergeusers_olduserid` is set and not empty.
 
-Correct way of testing this plugin
-==================================
+# Correct way of testing this plugin
 
-First of all, check `admin/settings.php?section=mergeusers_settings` for the
-description of the setting `tool_mergeusers | transactions_only`
+First of all, check plugin settings for the description of the setting 
+`tool_mergeusers/transactions_only`. This will inform you
 **if your database type and version supports transcations**. If so,
 **no action will actually be committed if something goes wrong**.
 
 Mainly, these are the main steps to test this plugin:
 
-1. You should have a replica of your Moodle instance, with a full replica of your Moodle database where you run this plugin.
+1. You should have a replica of your Moodle instance, with a full replica of 
+   your Moodle database where you run this plugin.
 2. Run a sufficient amount of user merging to check if anything goes wrong.
 3. What if...?
-    1. ... all was ok? You are almost confident that all will be ok also in your production instance of Moodle.
+    1. ... all was ok? You are almost confident that all will be ok also in your
+       production instance of Moodle.
     2. ... something went wrong? There are several reasons for that:
         1. Non-core plugins installed on your Moodle and not assumed in this plugin.
         2. Local database changes on Moodle that may affect to the normal execution of this plugin.
         3. Some compound index not detected yet.
 
-If in your tests or already in production something went wrong, please, report the error log on the
-official plugin website on moodle.org. And if you have some PHP skill, you can try to solve it
-and share both the error and the patch to solve it ;-)
+If in your tests or already in production something went wrong, please, report the whole detail,
+including the error log on the
+[github repository](https://github.com/jpahullo/moodle-tool_mergeusers/issues).
+And if you have some PHP skill, you can try to solve it and share both the error and the patch to solve it ;-)
 
 
-Common sense
-============
+# Your database supports transactions?
 
 Before running this plugin, it is highly recommended to back up your database.
-That will help you to restore the state before any merging action was done.
+That will help you to restore the state before any merge was done.
 
-This plugin stores a log for any user merging, with the list of actions done or
-errors produced. If your database supports transactions (see above section),
-automatic rollbacks are done at database level, so that your database state
-remains consistent.
+This plugin stores a log for any merge, with the list of actions done or
+errors produced. **If your database supports transactions**,
+automatic rollbacks are done at database level: **your database state
+remains consistent** in presence of failures.
 
 However, running this plugin in databases without
 transaction support can put you in trouble. That is, there is no provision for
 automatic rollbacks, so if something were to fail midway through,
 you will end up with a half-updated database. Nevertheless, if you found a
-problem when merging users A and B, do not panic. Merging will be successfully
+problem when merging two users A and B, do not panic. Merging will be successfully
 completed when a solution for your problem is included into this plugin, and
 you rerun merging users A and B.
 
-Development
-===========
 
-Developing and testing phase
-============================
+# Development
+
+## Developing and testing phase
 
 We recommend to use the [moodlehq/moodle-docker](https://github.com/moodlehq/moodle-docker)
 project to run your own Moodle instances for developing and testing.
 
-PHPUnit testing
-===============
 
-To quickly setup your own development, we suggest to run the command:
+## PHPUnit testing
+
+To quickly set up your own development, we suggest to run the command:
 
 ```
 php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
@@ -233,16 +353,23 @@ or also like this, without the need of running the `buildcomponentconfigs`:
 vendor/bin/phpunit --group tool_mergeusers
 ```
 
-There are also other PHPUnit groups created to help testing only the part
+There are other PHPUnit groups created to help testing only the part
 of the plugin of your choice. Take a look at the tests code for other group names.
 
-License
-=======
+Tip: If you want to see what tests are being processed in a human-readable way,
+use the option `--testdox` like:
+
+```
+vendor/bin/phpunit -c admin/tool/mergeusers --testdox
+```
+
+
+# License
 
 GNU GPL v3 or later. http://www.gnu.org/copyleft/gpl.html
 
-Contributors
-============
+
+# Contributors
 
 Maintained by:
 

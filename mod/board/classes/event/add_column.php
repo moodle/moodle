@@ -16,21 +16,47 @@
 
 namespace mod_board\event;
 
+use stdClass;
+
 /**
- * Add column event handler.
+ * Add column event.
  * @package     mod_board
  * @author      Karen Holland <karen@brickfieldlabs.ie>
  * @copyright   2021 Brickfield Education Labs <https://www.brickfield.ie/>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_column extends \core\event\base {
+final class add_column extends \core\event\base {
+    /**
+     * Create new event.
+     *
+     * @param stdClass $column
+     * @param stdClass $board
+     * @param \context_module $context
+     * @return self
+     */
+    public static function create_from_column(stdClass $column, stdClass $board, \context_module $context): self {
+        /** @var self $event */
+        $event = self::create([
+            'objectid' => $column->id,
+            'context' => $context,
+            'other' => [
+                'name' => get_config('mod_board', 'addcolumnnametolog') ? $column->name : null,
+            ],
+        ]);
+
+        $event->add_record_snapshot('board', $board);
+        $event->add_record_snapshot('board_columns', $column);
+
+        return $event;
+    }
+
     /**
      * Init function.
      */
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'board';
+        $this->data['objecttable'] = 'board_columns';
     }
 
     /**
@@ -46,7 +72,7 @@ class add_column extends \core\event\base {
      * @return \lang_string|string|null
      */
     public function get_description() {
-        $obj = new \stdClass;
+        $obj = new stdClass();
         $obj->userid = $this->userid;
         $obj->objectid = $this->objectid;
         $obj->name = $this->other['name'];
@@ -62,12 +88,12 @@ class add_column extends \core\event\base {
      * map this information. For events that do not store an objectid this won't
      * be called, so no debugging message will be displayed.
      *
-     * @return string the name of the restore mapping the objectid links to
+     * @return array
      */
     public static function get_objectid_mapping() {
         return [
-            'db'        => 'board',
-            'restore'   => \core\event\base::NOT_MAPPED,
+            'db'        => 'board_columns',
+            'restore'   => 'board_column',
         ];
     }
 
@@ -79,5 +105,14 @@ class add_column extends \core\event\base {
      */
     public static function get_other_mapping(): array {
         return [];
+    }
+
+    #[\Override]
+    public function get_url() {
+        $context = $this->get_context();
+        if (!$context) {
+            return null;
+        }
+        return new \moodle_url('/mod/board/view.php', ['id' => $context->instanceid]);
     }
 }

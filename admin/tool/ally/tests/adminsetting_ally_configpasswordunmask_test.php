@@ -31,7 +31,7 @@ class adminsetting_ally_configpasswordunmask_test extends advanced_testcase {
     /**
      * Test ally configpasswordunmask settings are trimmed.
      */
-    public function test_configpasswordunmask(): void {
+    public function test_configpasswordunmask() {
         $this->resetAfterTest();
         $text = '    ABCDEFG1234    ';
 

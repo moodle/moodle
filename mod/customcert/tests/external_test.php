@@ -43,8 +43,6 @@ final class external_test extends advanced_testcase {
      */
     public function setUp(): void {
         $this->resetAfterTest();
-
-        parent::setUp();
     }
 
     /**

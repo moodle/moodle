@@ -60,6 +60,7 @@ class report_rubrics_select_form extends moodleform {
 
         $mform->addElement ('select', 'activityid', get_string('selectactivity', 'gradereport_rubrics'), $formarray);
         $mform->setType('activityid', PARAM_INT);
+        $mform->setDefault('activityid', $this->_customdata['activityid']);
         $mform->getElement('activityid')->setSelected(0);
         $mform->addElement('header', 'formheader', get_string('formheader', 'gradereport_rubrics'));
         $mform->setExpanded('formheader', false);

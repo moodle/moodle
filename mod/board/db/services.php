@@ -26,9 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 $functions = [
     'mod_board_get_board' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'get_board',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\get_board::class,
         'description'   => 'Get board column and post data',
         'type'          => 'read',
         'capabilities'  => '',
@@ -37,9 +35,7 @@ $functions = [
     ],
 
     'mod_board_board_history' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'board_history',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\board_history::class,
         'description'   => 'Get board history',
         'type'          => 'read',
         'capabilities'  => '',
@@ -47,32 +43,8 @@ $functions = [
         'loginrequired' => true,
     ],
 
-    'mod_board_add_column' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'add_column',
-        'classpath'     => 'mod/board/external.php',
-        'description'   => 'Add a column on the board',
-        'type'          => 'write',
-        'capabilities'  => '',
-        'ajax'          => true,
-        'loginrequired' => true,
-    ],
-
-    'mod_board_update_column' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'update_column',
-        'classpath'     => 'mod/board/external.php',
-        'description'   => 'Update a column on the board',
-        'type'          => 'write',
-        'capabilities'  => '',
-        'ajax'          => true,
-        'loginrequired' => true,
-    ],
-
     'mod_board_delete_column' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'delete_column',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\delete_column::class,
         'description'   => 'Delete a column from the board',
         'type'          => 'write',
         'capabilities'  => '',
@@ -81,9 +53,7 @@ $functions = [
     ],
 
     'mod_board_delete_note' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'delete_note',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\delete_note::class,
         'description'   => 'Delete a note from the board',
         'type'          => 'write',
         'capabilities'  => '',
@@ -92,9 +62,7 @@ $functions = [
     ],
 
     'mod_board_lock_column' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'lock_column',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\lock_column::class,
         'description'   => 'Lock a column from the board',
         'type'          => 'write',
         'capabilities'  => '',
@@ -103,9 +71,7 @@ $functions = [
     ],
 
     'mod_board_move_column' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'move_column',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\move_column::class,
         'description'   => 'Move a note on the board',
         'type'          => 'write',
         'capabilities'  => '',
@@ -114,9 +80,7 @@ $functions = [
     ],
 
     'mod_board_move_note' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'move_note',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\move_note::class,
         'description'   => 'Move a note on the board',
         'type'          => 'write',
         'capabilities'  => '',
@@ -125,20 +89,16 @@ $functions = [
     ],
 
     'mod_board_can_rate_note' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'can_rate_note',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\can_rate_note::class,
         'description'   => 'Ask if rating is possible for note',
-        'type'          => 'write',
+        'type'          => 'read',
         'capabilities'  => '',
         'ajax'          => true,
         'loginrequired' => true,
     ],
 
     'mod_board_rate_note' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'rate_note',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\rate_note::class,
         'description'   => 'Rate a note on the board',
         'type'          => 'write',
         'capabilities'  => '',
@@ -146,32 +106,17 @@ $functions = [
         'loginrequired' => true,
     ],
 
-    'mod_board_submit_form' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'submit_form',
-        'classpath'     => 'mod/board/external.php',
-        'description'   => 'Process the submission of the note add/edit form',
-        'type'          => 'write',
-        'capabilities'  => '',
-        'ajax'          => true,
-        'loginrequired' => true,
-    ],
-
     'mod_board_get_comments' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'get_comments',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\get_comments::class,
         'description'   => 'Get the list of comments for a note',
-        'type'          => 'write',
+        'type'          => 'read',
         'capabilities'  => '',
         'ajax'          => true,
         'loginrequired' => true,
     ],
 
     'mod_board_add_comment' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'add_comment',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\add_comment::class,
         'description'   => 'Add a comment to a note',
         'type'          => 'write',
         'capabilities'  => '',
@@ -180,9 +125,7 @@ $functions = [
     ],
 
     'mod_board_delete_comment' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'delete_comment',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\delete_comment::class,
         'description'   => 'Delete a comment from a note',
         'type'          => 'write',
         'capabilities'  => '',
@@ -191,13 +134,11 @@ $functions = [
     ],
 
     'mod_board_get_configuration' => [
-        'classname'     => 'mod_board_external',
-        'methodname'    => 'get_configuration',
-        'classpath'     => 'mod/board/external.php',
+        'classname'     => \mod_board\external\get_configuration::class,
         'description'   => 'Get the board configuration',
         'type'          => 'read',
         'capabilities'  => '',
         'ajax'          => true,
         'loginrequired' => true,
-    ]
+    ],
 ];

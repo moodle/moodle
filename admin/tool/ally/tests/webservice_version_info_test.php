@@ -44,7 +44,7 @@ class webservice_version_info_test extends abstract_testcase {
     /**
      * Test the web service.
      */
-    public function test_service(): void {
+    public function test_service() {
         $this->resetAfterTest();
 
         $info = (object) version_info::service();
@@ -66,7 +66,7 @@ class webservice_version_info_test extends abstract_testcase {
         $this->assertNotEmpty($info->report_allylti);
     }
 
-    public function test_warn_on_site_policy_not_accepted(): void {
+    public function test_warn_on_site_policy_not_accepted() {
         $this->resetAfterTest();
         global $DB, $CFG;
         set_config('sitepolicy', 'sitepolicyURL.com');
@@ -81,7 +81,7 @@ class webservice_version_info_test extends abstract_testcase {
             $this->assertEquals($e->a, 'sitepolicyURL.com');
         }
 
-        $guest = $DB->get_record('user', ['id' => $CFG->siteguest]);
+        $guest = $DB->get_record('user', array('id' => $CFG->siteguest));
         $this->setUser($guest);
 
         try {

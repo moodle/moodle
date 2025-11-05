@@ -83,7 +83,7 @@ class files extends loggable_external_api {
         $files = local_file::iterator()->with_stop_at_count($params['perpage']);
         $files->with_count_start_page($params['page']);
 
-        $return = [];
+        $return = array();
         foreach ($files as $file) {
             $return[] = [
                 'id'           => $file->get_pathnamehash(),

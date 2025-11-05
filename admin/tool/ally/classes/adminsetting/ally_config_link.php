@@ -56,7 +56,7 @@ class ally_config_link extends \admin_setting_heading {
         global $OUTPUT;
         $context = (object) [
             'href' => $this->link,
-            'linktitle' => $this->visiblename,
+            'linktitle' => $this->visiblename
         ];
         return $OUTPUT->render_from_template('tool_ally/setting_ally_config', $context);
     }

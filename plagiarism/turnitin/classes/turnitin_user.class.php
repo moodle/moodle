@@ -568,10 +568,10 @@ class turnitin_user {
 
         $return = [];
 
-        $idisplaystart = empty($params["start"]) ? "" : $params["start"];
-        $idisplaylength = empty($params["length"]) ? "" : $params["length"];
-        $secho = empty($params["draw"]) ? "" : $params["draw"];
-        $ssearch = empty($params["search"]["value"]) ? "" : $params["search"]["value"];
+        $idisplaystart = clean_param($params["start"], PARAM_INT);
+        $idisplaylength = clean_param($params["length"], PARAM_INT);
+        $secho = clean_param($params["draw"], PARAM_INT);
+        $ssearch = clean_param($params["search"]["value"], PARAM_TEXT);
 
         $return["params"] = $params;
 
@@ -580,9 +580,11 @@ class turnitin_user {
 
         // Add sort to query.
         if (!empty($params["order"][0]["column"])) {
-          $sortcolumn = $params["order"][0]["column"];
-          $sortdirection = $params["order"][0]["dir"];
-          $queryorder = " ORDER BY ".$sortcolumn." ".$sortdirection;
+          $sortcolumn = clean_param($params["order"][0]["column"], PARAM_INT);
+          $sortdirection = strtolower(clean_param($params["order"][0]["dir"], PARAM_TEXT));
+          if ($sortdirection === 'asc' || $sortdirection === 'desc') {
+              $queryorder = " ORDER BY ".$sortcolumn." ".$sortdirection;
+          }
         }
         else {
           $queryorder = "";
@@ -591,8 +593,8 @@ class turnitin_user {
         // Add search to query.
         $querywhere = ' WHERE ( ';
         for ($i = 0; $i < count($displaycolumns); $i++) {
-            $bsearchable[$i] = $params["columns"][$i]["searchable"];
-            if (!is_null($bsearchable[$i]) && $bsearchable[$i] == "true" && $ssearch != '') {
+            $bsearchable[$i] = clean_param($params["columns"][$i]["searchable"], PARAM_BOOL);
+            if ($bsearchable[$i] && $ssearch != '') {
                 $include = true;
                 if ($i <= 1) {
                     if (!is_int($ssearch) || is_null($ssearch)) {

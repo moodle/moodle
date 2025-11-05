@@ -87,7 +87,7 @@ class components_component_base_test extends \advanced_testcase {
 
     }
 
-    public function test_get_approved_author_ids_for_context(): void {
+    public function test_get_approved_author_ids_for_context() {
         $authorids = $this->component->get_approved_author_ids_for_context($this->coursecontext);
         $this->assertTrue(in_array($this->teacher->id, $authorids),
                 'Teacher id '.$this->teacher->id.' should be in list of author ids.');
@@ -97,7 +97,7 @@ class components_component_base_test extends \advanced_testcase {
                 'Student id '.$this->student->id.' should NOT be in list of author ids.');
     }
 
-    public function test_user_is_approved_author_type(): void {
+    public function test_user_is_approved_author_type() {
         $this->assertFalse($this->component->user_is_approved_author_type($this->student->id, $this->coursecontext),
             'Student should not be approved author type');
         $this->assertTrue($this->component->user_is_approved_author_type($this->teacher->id, $this->coursecontext),

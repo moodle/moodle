@@ -25,15 +25,14 @@
 
 namespace mod_board\privacy;
 
-use \core_privacy\local\request\userlist;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\approved_userlist;
-use \core_privacy\local\request\deletion_criteria;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\helper as request_helper;
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\transform;
-use tool_dataprivacy\context_instance;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\helper as request_helper;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\contextlist;
 
 /**
  * Implementation of the privacy subsystem plugin provider for the Brickfield board module.
@@ -42,25 +41,23 @@ use tool_dataprivacy\context_instance;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
+    // This plugin is capable of determining which users have data within it.
+    \core_privacy\local\request\core_userlist_provider,
 
     // This plugin has data.
     \core_privacy\local\metadata\provider,
 
     // This plugin currently implements the original plugin\provider interface.
-    \core_privacy\local\request\plugin\provider,
-
-    // This plugin is capable of determining which users have data within it.
-    \core_privacy\local\request\core_userlist_provider {
-
+    \core_privacy\local\request\plugin\provider {
     /**
      * Returns meta data about this system.
      *
-     * @param   collection     $items The initialised collection to add items to.
+     * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $collection): collection {
         // The 'board' table does not store any specific user data.
-        $items->add_database_table('board_notes', [
+        $collection->add_database_table('board_notes', [
             'columnid' => 'privacy:metadata:board_notes:columnid',
             'userid' => 'privacy:metadata:board_notes:userid',
             'heading' => 'privacy:metadata:board_notes:heading',
@@ -71,7 +68,7 @@ class provider implements
         ], 'privacy:metadata:board_notes');
 
         // The 'board_history' table stores the metadata about each board update.
-        $items->add_database_table('board_history', [
+        $collection->add_database_table('board_history', [
             'boardid' => 'privacy:metadata:board_history:boardid',
             'userid' => 'privacy:metadata:board_history:userid',
             'action' => 'privacy:metadata:board_history:action',
@@ -80,21 +77,21 @@ class provider implements
         ], 'privacy:metadata:board_history');
 
         // The 'board_note_ratings' table stores information about which notes a user has rated.
-        $items->add_database_table('board_note_ratings', [
+        $collection->add_database_table('board_note_ratings', [
             'noteid' => 'privacy:metadata:board_note_ratings:noteid',
             'userid' => 'privacy:metadata:board_note_ratings:userid',
             'timecreated' => 'privacy:metadata:board_note_ratings:timecreated',
         ], 'privacy:metadata:board_note_ratings');
 
         // The 'board_comments' table stores comments a user has added to a note.
-        $items->add_database_table('board_comments', [
+        $collection->add_database_table('board_comments', [
             'noteid' => 'privacy:metadata:board_comments:noteid',
             'userid' => 'privacy:metadata:board_comments:userid',
             'content' => 'privacy:metadata:board_comments:content',
             'timecreated' => 'privacy:metadata:board_comments:timecreated',
         ], 'privacy:metadata:board_comments');
 
-        return $items;
+        return $collection;
     }
 
     /**
@@ -105,8 +102,8 @@ class provider implements
      * @param   int         $userid     The user to search.
      * @return  contextlist $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : \core_privacy\local\request\contextlist {
-        $contextlist = new \core_privacy\local\request\contextlist();
+    public static function get_contexts_for_userid(int $userid): contextlist {
+        $contextlist = new contextlist();
 
         $params = [
             'modname'       => 'board',
@@ -240,7 +237,7 @@ class provider implements
         $user = $contextlist->get_user();
         $userid = $user->id;
 
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $params = $contextparams;
 
         $sql = "SELECT
@@ -299,7 +296,7 @@ class provider implements
         global $DB;
 
         // Find all of the notes for this board.
-        list($boardinsql, $boardparams) = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
+        [$boardinsql, $boardparams] = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
         $sql = "SELECT
                     n.*,
                     b.id AS boardid, bc.id AS columnid
@@ -354,11 +351,11 @@ class provider implements
     /**
      * Retrieve information about a specific note or rating for privacy export.
      *
-     * @param   stdClass    $note The note from which to compile the export data.
+     * @param   \stdClass   $note The note from which to compile the export data.
      * @param   string      $exportarea The area being compiled for the export data.
      * @return  array       Further note export data.
      */
-    protected static function get_export_area(\stdClass $note, string $exportarea = 'posts') : Array {
+    protected static function get_export_area(\stdClass $note, string $exportarea = 'posts'): array {
         $pathparts = [];
 
         $parts = [
@@ -418,7 +415,7 @@ class provider implements
         global $DB;
 
         // Find all of the ratings for these boards.
-        list($boardinsql, $boardparams) = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
+        [$boardinsql, $boardparams] = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
         $sql = "SELECT
                     n.*,
                     b.id AS boardid, bc.id AS columnid
@@ -457,7 +454,6 @@ class provider implements
             // Store the ratings content.
             writer::with_context($context)
                 ->export_data($ratingarea, $ratingdata);
-
         }
 
         $ratings->close();
@@ -476,7 +472,7 @@ class provider implements
         global $DB;
 
         // Find all of the comments for these boards.
-        list($boardinsql, $boardparams) = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
+        [$boardinsql, $boardparams] = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
         $sql = "SELECT
                     bcm.id AS commentid, bcm.deleted AS cdeleted, n.*,
                     b.id AS boardid, bc.id AS columnid, bcm.content AS comment
@@ -529,10 +525,10 @@ class provider implements
     /**
      * Retrieve information about a specific note title for privacy export.
      *
-     * @param   stdClass    $note The note from which to compile the export data.
+     * @param   \stdClass   $note The note from which to compile the export data.
      * @return  string      An identifiable note title for export data.
      */
-    protected static function get_note_title(\stdClass $note) : String {
+    protected static function get_note_title(\stdClass $note): string {
         $notetitle = '';
 
         // Just need either heading, or content, or info for note 'title'.
@@ -556,7 +552,7 @@ class provider implements
     /**
      * Delete all data for all users in the specified context.
      *
-     * @param   context                 $context   The specific context to delete data for.
+     * @param  \context                 $context   The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
@@ -574,19 +570,21 @@ class provider implements
         $boardid = $cm->instance;
 
         $columnids = $DB->get_fieldset_select(
-            'board_columns', 'id',
+            'board_columns',
+            'id',
             "boardid = :boardid)",
             ['boardid' => $boardid]
         );
 
-        list($columnsinsql, $columnsinparams) = $DB->get_in_or_equal($columnids, SQL_PARAMS_NAMED);
+        [$columnsinsql, $columnsinparams] = $DB->get_in_or_equal($columnids, SQL_PARAMS_NAMED);
         $noteids = $DB->get_fieldset_select(
-            'board_notes', 'id',
+            'board_notes',
+            'id',
             "columnid {$columnsinsql}",
             $columnsinparams
         );
 
-        list($notesinsql, $notesinparams) = $DB->get_in_or_equal($noteids, SQL_PARAMS_NAMED);
+        [$notesinsql, $notesinparams] = $DB->get_in_or_equal($noteids, SQL_PARAMS_NAMED);
 
         // Delete all board notes.
         $DB->delete_records_select(
@@ -632,19 +630,21 @@ class provider implements
             $board = $DB->get_record('board', ['id' => $cm->instance]);
 
             $columnids = $DB->get_fieldset_select(
-                'board_columns', 'id',
+                'board_columns',
+                'id',
                 "boardid = :boardid",
                 ['boardid' => $board->id]
             );
 
-            list($columnsinsql, $columnsinparams) = $DB->get_in_or_equal($columnids, SQL_PARAMS_NAMED);
+            [$columnsinsql, $columnsinparams] = $DB->get_in_or_equal($columnids, SQL_PARAMS_NAMED);
             $noteids = $DB->get_fieldset_select(
-                'board_notes', 'id',
+                'board_notes',
+                'id',
                 "columnid {$columnsinsql}",
                 $columnsinparams
             );
 
-            list($notesinsql, $notesinparams) = $DB->get_in_or_equal($noteids, SQL_PARAMS_NAMED);
+            [$notesinsql, $notesinparams] = $DB->get_in_or_equal($noteids, SQL_PARAMS_NAMED);
             $notesparams = array_merge(['userid' => $userid], $notesinparams);
 
             // Delete all board notes.
@@ -691,24 +691,26 @@ class provider implements
         $cm = $DB->get_record('course_modules', ['id' => $context->instanceid]);
         $board = $DB->get_record('board', ['id' => $cm->instance]);
 
-        list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        [$userinsql, $userinparams] = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
         $params = array_merge(['boardid' => $board->id], $userinparams);
 
         $columnids = $DB->get_fieldset_select(
-            'board_columns', 'id',
+            'board_columns',
+            'id',
             "boardid = :boardid)",
             ['boardid' => $board->id]
         );
 
-        list($columnsinsql, $columnsinparams) = $DB->get_in_or_equal($columnids, SQL_PARAMS_NAMED);
+        [$columnsinsql, $columnsinparams] = $DB->get_in_or_equal($columnids, SQL_PARAMS_NAMED);
         $noteids = $DB->get_fieldset_select(
-            'board_notes', 'id',
+            'board_notes',
+            'id',
             "columnid {$columnsinsql}",
             $columnsinparams
         );
 
         $notesparams = array_merge(['boardid' => $board->id], $userinparams);
-        list($notesinsql, $notesinparams) = $DB->get_in_or_equal($noteids, SQL_PARAMS_NAMED);
+        [$notesinsql, $notesinparams] = $DB->get_in_or_equal($noteids, SQL_PARAMS_NAMED);
         $notesparams = array_merge($userinparams, $notesinparams);
         $DB->delete_records_select(
             'board_notes',
@@ -730,7 +732,5 @@ class provider implements
         // Delete all image files from the posts.
         $fs = get_file_storage();
         $fs->delete_area_files_select($context->id, 'mod_board', 'images', $notesinsql, $notesinparams);
-
     }
-
 }

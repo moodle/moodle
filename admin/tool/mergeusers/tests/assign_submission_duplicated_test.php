@@ -17,15 +17,15 @@
 /**
  * @author    Daniel Tomé <danieltomefer@gmail.com>
  * @copyright 2018 Servei de Recursos Educatius (http://www.sre.urv.cat)
+ * @package tool_mergeusers
  */
 
-defined('MOODLE_INTERNAL') || die();
+use tool_mergeusers\local\merger\finder\in_memory_assign_submission_finder;
+use tool_mergeusers\local\merger\duplicateddata\assign_submission_duplicated_data_merger;
+use tool_mergeusers\local\merger\duplicateddata\duplicated_data;
 
-require_once(__DIR__ . '/../lib/db/inmemoryfindbyquery.php');
-require_once(__DIR__ . '/../lib/duplicateddata/assignsubmissionduplicateddatamerger.php');
 
-class assign_submission_duplicated_test extends advanced_testcase {
-
+final class assign_submission_duplicated_test extends advanced_testcase {
     /**
      * Should do nothing with new submission and remove old submission when old user has no content submission
      * and new user has content submission
@@ -34,51 +34,39 @@ class assign_submission_duplicated_test extends advanced_testcase {
      * @group tool_mergeusers_assign_submission
      * @dataProvider remove_old_ignore_new_data_provider
      */
-    public function test_remove_old_ignore_new($expectedtomodify, $expectedtoremove, $oldusersubmission, $newusersubmission) {
-        $data = [
-                1111 => [
-                        1 => $oldusersubmission
-                ],
-                2222 => [
-                        2 => $newusersubmission
-                ]
-        ];
+    public function test_remove_old_ignore_new($expectedtomodify, $expectedtoremove, $oldusersubmission, $newusersubmission): void {
+        $duplicateddata = $this->get_duplicated_data($oldusersubmission, $newusersubmission);
 
-        $inmemoryfindbyquery = new in_memory_assign_submission_query($data);
-        $assignsubmissionduplicateddatamerger = new AssignSubmissionDuplicatedDataMerger($inmemoryfindbyquery);
-
-        $duplicateddata = $assignsubmissionduplicateddatamerger->merge($oldusersubmission, $newusersubmission);
-
-        $this->assertEquals($duplicateddata->to_modify(), $expectedtomodify);
+        $this->assertEquals($duplicateddata->to_update(), $expectedtomodify);
         $this->assertEquals($duplicateddata->to_remove(), $expectedtoremove);
     }
 
-    public function remove_old_ignore_new_data_provider() {
+    public static function remove_old_ignore_new_data_provider() {
         return [
-                [
+                "when old is a new submission, new is submitted" => [
                         [],
                         [1 => 1],
-                        $this->get_assign_submission_new(1, 1111),
-                        $this->get_assign_submission_submitted(2, 2222)
+                        self::get_assign_submission_new(1, 1111),
+                        self::get_assign_submission_submitted(2, 2222),
                 ],
-                [
+                "when old is a new submission, new is draft" => [
                         [],
                         [1 => 1],
-                        $this->get_assign_submission_new(1, 1111),
-                        $this->get_assign_submission_draft(2, 2222)
+                        self::get_assign_submission_new(1, 1111),
+                        self::get_assign_submission_draft(2, 2222),
                 ],
-                [
+                "when old is a new submission, new is reopened" => [
                         [],
                         [1 => 1],
-                        $this->get_assign_submission_new(1, 1111),
-                        $this->get_assign_submission_reopened(2, 2222)
+                        self::get_assign_submission_new(1, 1111),
+                        self::get_assign_submission_reopened(2, 2222),
                 ],
-                [
+                "when both are new submissions" => [
                         [],
                         [1 => 1],
-                        $this->get_assign_submission_new(1, 1111),
-                        $this->get_assign_submission_new(2, 2222)
-                ]
+                        self::get_assign_submission_new(1, 1111),
+                        self::get_assign_submission_new(2, 2222),
+                ],
         ];
     }
 
@@ -90,43 +78,32 @@ class assign_submission_duplicated_test extends advanced_testcase {
      * @group tool_mergeusers_assign_submission
      * @dataProvider update_old_and_remove_new_data_provider
      */
-    public function test_update_old_and_remove_new($expectedtomodify, $expectedtoremove, $oldusersubmission, $newusersubmission) {
-        $data = [
-                1111 => [
-                        1 => $oldusersubmission
-                ],
-                2222 => [
-                        2 => $newusersubmission
-                ]
-        ];
-        $inmemoryfindbyquery = new in_memory_assign_submission_query($data);
-        $assignsubmissionduplicateddatamerger = new AssignSubmissionDuplicatedDataMerger($inmemoryfindbyquery);
+    public function test_update_old_and_remove_new($expectedtomodify, $expectedtoremove, $oldusersubmission, $newusersubmission): void {
+        $duplicateddata = $this->get_duplicated_data($oldusersubmission, $newusersubmission);
 
-        $duplicateddata = $assignsubmissionduplicateddatamerger->merge($oldusersubmission, $newusersubmission);
-
-        $this->assertEquals($duplicateddata->to_modify(), $expectedtomodify);
+        $this->assertEquals($duplicateddata->to_update(), $expectedtomodify);
         $this->assertEquals($duplicateddata->to_remove(), $expectedtoremove);
     }
 
-    public function update_old_and_remove_new_data_provider() {
+    public static function update_old_and_remove_new_data_provider() {
         return [
-                [
+                "when old is submitted" => [
                         [1 => 1],
                         [2 => 2],
-                        $this->get_assign_submission_submitted(1, 1111),
-                        $this->get_assign_submission_new(2, 2222)
+                        self::get_assign_submission_submitted(1, 1111),
+                        self::get_assign_submission_new(2, 2222),
                 ],
-                [
+                "when old is draft" => [
                         [1 => 1],
                         [2 => 2],
-                        $this->get_assign_submission_draft(1, 1111),
-                        $this->get_assign_submission_new(2, 2222)
+                        self::get_assign_submission_draft(1, 1111),
+                        self::get_assign_submission_new(2, 2222),
                 ],
-                [
+                "when old is reopened" => [
                         [1 => 1],
                         [2 => 2],
-                        $this->get_assign_submission_reopened(1, 1111),
-                        $this->get_assign_submission_new(2, 2222)
+                        self::get_assign_submission_reopened(1, 1111),
+                        self::get_assign_submission_new(2, 2222),
                 ],
         ];
     }
@@ -138,59 +115,52 @@ class assign_submission_duplicated_test extends advanced_testcase {
      * @group tool_mergeusers_assign_submission
      * @dataProvider update_first_and_remove_last_data_provider
      */
-    public function test_update_first_and_remove_last($expectedtomodify, $expectedtoremove, $oldusersubmission,
-            $newusersubmission) {
-        $data = [
-                1111 => [
-                        1 => $oldusersubmission
-                ],
-                2222 => [
-                        2 => $newusersubmission
-                ]
-        ];
-        $inmemoryfindbyquery = new in_memory_assign_submission_query($data);
-        $assignsubmissionduplicateddatamerger = new AssignSubmissionDuplicatedDataMerger($inmemoryfindbyquery);
+    public function test_update_first_and_remove_last(
+        $expectedtomodify,
+        $expectedtoremove,
+        $oldusersubmission,
+        $newusersubmission,
+    ): void {
+        $duplicateddata = $this->get_duplicated_data($oldusersubmission, $newusersubmission);
 
-        $duplicateddata = $assignsubmissionduplicateddatamerger->merge($oldusersubmission, $newusersubmission);
-
-        $this->assertEquals($duplicateddata->to_modify(), $expectedtomodify);
+        $this->assertEquals($duplicateddata->to_update(), $expectedtomodify);
         $this->assertEquals($duplicateddata->to_remove(), $expectedtoremove);
     }
 
-    public function update_first_and_remove_last_data_provider() {
+    public static function update_first_and_remove_last_data_provider() {
 
         return [
-                [
+                "when both submitted" => [
                         [1 => 1],
                         [2 => 2],
-                        $this->get_assign_submission_submitted_by_date(1, 1111, 123456),
-                        $this->get_assign_submission_submitted_by_date(2, 2222, 987654)
+                        self::get_assign_submission_submitted_by_date(1, 1111, 123456),
+                        self::get_assign_submission_submitted_by_date(2, 2222, 987654),
                 ],
-                [
+                "when first draft and second submitted" => [
                         [1 => 1],
                         [2 => 2],
-                        $this->get_assign_submission_draft_by_date(1, 1111, 123456),
-                        $this->get_assign_submission_submitted_by_date(2, 2222, 987654)
+                        self::get_assign_submission_draft_by_date(1, 1111, 123456),
+                        self::get_assign_submission_submitted_by_date(2, 2222, 987654),
                 ],
-                [
+                "when both submitted in reverse submitted date" => [
                         [2 => 2],
                         [1 => 1],
-                        $this->get_assign_submission_submitted_by_date(1, 1111, 987654),
-                        $this->get_assign_submission_submitted_by_date(2, 2222, 123456)
+                        self::get_assign_submission_submitted_by_date(1, 1111, 987654),
+                        self::get_assign_submission_submitted_by_date(2, 2222, 123456),
                 ],
         ];
     }
 
-    private function get_assign_submission_submitted($id, $assignid) {
-        $anoldsubmittedassignsubmision = $this->get_assign_submission($id);
+    private static function get_assign_submission_submitted($id, $assignid) {
+        $anoldsubmittedassignsubmision = self::get_assign_submission($id);
         $anoldsubmittedassignsubmision->status = 'submitted';
         $anoldsubmittedassignsubmision->assignment = $assignid;
 
         return $anoldsubmittedassignsubmision;
     }
 
-    private function get_assign_submission_submitted_by_date($id, $assignid, $date) {
-        $anewsubmittedassignsubmission = $this->get_assign_submission($id);
+    private static function get_assign_submission_submitted_by_date($id, $assignid, $date) {
+        $anewsubmittedassignsubmission = self::get_assign_submission($id);
         $anewsubmittedassignsubmission->status = 'submitted';
         $anewsubmittedassignsubmission->assignment = $assignid;
         $anewsubmittedassignsubmission->timemodified = $date;
@@ -198,38 +168,38 @@ class assign_submission_duplicated_test extends advanced_testcase {
         return $anewsubmittedassignsubmission;
     }
 
-    private function get_assign_submission_new($id, $assignid) {
-        $anoldsubmittedassignsubmision = $this->get_assign_submission($id);
+    private static function get_assign_submission_new($id, $assignid) {
+        $anoldsubmittedassignsubmision = self::get_assign_submission($id);
         $anoldsubmittedassignsubmision->status = 'new';
         $anoldsubmittedassignsubmision->assignment = $assignid;
 
         return $anoldsubmittedassignsubmision;
     }
 
-    private function get_assign_submission_draft_by_date($id, $assignid, $date) {
-        $draft = $this->get_assign_submission_draft($id, $assignid);
+    private static function get_assign_submission_draft_by_date($id, $assignid, $date) {
+        $draft = self::get_assign_submission_draft($id, $assignid);
         $draft->timemodified = $date;
 
         return $draft;
     }
 
-    private function get_assign_submission_draft($id, $assignid) {
-        $anassignsubmissiondraft = $this->get_assign_submission($id);
+    private static function get_assign_submission_draft($id, $assignid) {
+        $anassignsubmissiondraft = self::get_assign_submission($id);
         $anassignsubmissiondraft->status = 'draft';
         $anassignsubmissiondraft->assignment = $assignid;
 
         return $anassignsubmissiondraft;
     }
 
-    private function get_assign_submission_reopened($id, $assignid) {
-        $anassignsubmissionreopened = $this->get_assign_submission($id);
+    private static function get_assign_submission_reopened($id, $assignid) {
+        $anassignsubmissionreopened = self::get_assign_submission($id);
         $anassignsubmissionreopened->status = 'reopened';
         $anassignsubmissionreopened->assignment = $assignid;
 
         return $anassignsubmissionreopened;
     }
 
-    private function get_assign_submission($id) {
+    private static function get_assign_submission($id) {
         $anewassignsubmision = new stdClass();
         $anewassignsubmision->id = $id;
         $anewassignsubmision->assignment = 123456;
@@ -241,5 +211,24 @@ class assign_submission_duplicated_test extends advanced_testcase {
         $anewassignsubmision->latest = 1;
 
         return $anewassignsubmision;
+    }
+
+    /**
+     * @param $oldusersubmission
+     * @param $newusersubmission
+     * @return duplicated_data
+     */
+    private function get_duplicated_data($oldusersubmission, $newusersubmission): duplicated_data {
+        $data = [
+            1111 => [1 => $oldusersubmission],
+            2222 => [2 => $newusersubmission],
+        ];
+
+        $inmemoryfindbyquery = new in_memory_assign_submission_finder($data);
+        $assignsubmissionduplicateddatamerger = new assign_submission_duplicated_data_merger($inmemoryfindbyquery);
+
+        $duplicateddata = $assignsubmissionduplicateddatamerger->merge($oldusersubmission, $newusersubmission);
+
+        return $duplicateddata;
     }
 }

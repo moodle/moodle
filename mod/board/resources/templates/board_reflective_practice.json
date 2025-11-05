@@ -1,0 +1,13 @@
+{
+    "name": "Reflective practice",
+    "description": "<p>A template for scaffolding students to engage in reflective practice according to the Rolfe model. Private mode.</p>",
+    "columns": "What?\nSo What?\nNow what?",
+    "intro": "<p>Add a post to each column under What, So What, Now What. Private mode enabled.</p>",
+    "addrating": "0",
+    "hideheaders": "0",
+    "sortby": "1",
+    "singleusermode": "1",
+    "userscanedit": "1",
+    "enableblanktarget": "0",
+    "embed": "0"
+}

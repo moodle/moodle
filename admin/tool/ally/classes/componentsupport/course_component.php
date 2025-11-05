@@ -48,7 +48,7 @@ class course_component extends component_base implements iface_html_content {
 
     protected $tablefields = [
         'course' => ['summary'],
-        'course_sections' => ['summary'],
+        'course_sections' => ['summary']
     ];
 
     public static function component_type() {
@@ -144,7 +144,7 @@ class course_component extends component_base implements iface_html_content {
 
                     logger::get()->info('logger:failedtogetcoursesectionname', [
                         'content' => $msg,
-                        '_exception' => $ex,
+                        '_exception' => $ex
                     ]);
                 }
             };

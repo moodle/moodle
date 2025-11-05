@@ -37,7 +37,6 @@ admin_externalpage_setup('qtype_gapfill_import');
  * @copyright Marcus Green 2017
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * Form for importing example questions
- * @package qtype_gapfill
  */
 class gapfill_import_form extends moodleform {
     /**
@@ -74,7 +73,7 @@ class gapfill_import_form extends moodleform {
         join {context} ctx on ctx.instanceid=c.id
         join {question_categories} qcat on qcat.contextid=ctx.id
         and ctx.contextlevel=50 and qcat.parent=0 and c.shortname =?';
-        $category = $DB->get_records_sql($sql, [$courseshortname]);
+        $category = $DB->get_records_sql($sql, array($courseshortname));
         $category = array_shift($category);
         return $category;
     }
@@ -89,10 +88,10 @@ class gapfill_import_form extends moodleform {
      * @return boolean
      */
     public function validation($fromform, $data) {
-        $errors = [];
+        $errors = array();
         global $DB;
         $sql = 'select id from {course} where shortname =?';
-        $this->course = $DB->get_records_sql($sql, [$fromform['courseshortname']]);
+        $this->course = $DB->get_records_sql($sql, array($fromform['courseshortname']));
         $this->course = array_shift($this->course);
         if ($this->course == null) {
             $errors['courseshortname'] = get_string('coursenotfound', 'qtype_gapfill');

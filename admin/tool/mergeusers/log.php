@@ -17,49 +17,56 @@
 /**
  * View one merging log.
  *
- * @package    tool
- * @subpackage mergeusers
- * @author     Jordi Pujol-Ahulló, Sred, Universitat Rovira i Virgili
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * @copyright Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use tool_mergeusers\local\logger;
 
 require('../../../config.php');
 
 global $CFG, $DB, $PAGE;
+require_once($CFG->libdir . '/adminlib.php');
 
-// Report all PHP errors
+// Report all PHP errors.
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
-require_once($CFG->dirroot . '/lib/adminlib.php');
-require_once('lib/autoload.php');
-
 require_login();
-require_capability('tool/mergeusers:mergeusers', context_system::instance());
+require_capability('tool/mergeusers:viewlog', context_system::instance());
 admin_externalpage_setup('tool_mergeusers_viewlog');
 $id = required_param('id', PARAM_INT);
 
+/** @var \tool_mergeusers\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('tool_mergeusers');
-$logger = new tool_mergeusers_logger();
+$logger = new logger();
 
-$log = $logger->getDetail($id);
+$log = $logger->detail_from($id);
 
 if (empty($log)) {
-    print_error('wronglogid', 'tool_mergeusers', new moodle_url('/admin/tool/mergeusers/index.php')); //aborts execution
+    throw new moodle_exception(
+        'wronglogid',
+        'tool_mergeusers',
+        new moodle_url('/admin/tool/mergeusers/index.php'),
+    );
 }
 
-$from = $DB->get_record('user', array('id' => $log->fromuserid), 'id, username');
+$from = $DB->get_record('user', ['id' => $log->fromuserid]);
 if (!$from) {
     $from = new stdClass();
     $from->id = $log->fromuserid;
     $from->username = get_string('deleted');
+    $from->deleted = 1;
 }
 
-$to = $DB->get_record('user', array('id' => $log->touserid), 'id, username');
+$to = $DB->get_record('user', ['id' => $log->touserid]);
 if (!$to) {
     $to = new stdClass();
     $to->id = $log->touserid;
     $to->username = get_string('deleted');
+    $to->deleted = 1;
 }
 
 echo $renderer->results_page($to, $from, $log->success, $log->log, $log->id);

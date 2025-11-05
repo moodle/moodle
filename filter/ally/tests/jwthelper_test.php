@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 namespace filter_ally;
 
 use Firebase\JWT\Key;
@@ -23,7 +22,7 @@ use Firebase\JWT\Key;
  * @group     filter_ally
  * @group     ally
  */
-final class jwthelper_test extends \advanced_testcase {
+class jwthelper_test extends \advanced_testcase {
 
     protected function config_set_ok() {
         set_config('secret', 'WAzk9ohDeK', 'tool_ally');
@@ -73,7 +72,7 @@ final class jwthelper_test extends \advanced_testcase {
         $this->assertSame($roles, $payload->roles);
     }
 
-    public function test_jwttoken_false(): void {
+    public function test_jwttoken_false() {
         global $COURSE, $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -81,7 +80,7 @@ final class jwthelper_test extends \advanced_testcase {
         $this->assertFalse($token);
     }
 
-    public function test_jwttoken_ok(): void {
+    public function test_jwttoken_ok() {
         global $COURSE, $USER;
         $this->setAdminUser();
         $this->resetAfterTest();
@@ -91,7 +90,7 @@ final class jwthelper_test extends \advanced_testcase {
         $this->assertNotFalse($token);
     }
 
-    public function test_jwttoken_valid(): void {
+    public function test_jwttoken_valid() {
         global $COURSE, $USER;
         $this->setAdminUser();
         $this->resetAfterTest();
@@ -102,7 +101,7 @@ final class jwthelper_test extends \advanced_testcase {
         $this->validate_token($token, $USER->id, $COURSE->id, $expectedrole);
     }
 
-    public function test_jwttoken_valid_teacher(): void {
+    public function test_jwttoken_valid_teacher() {
         global $DB;
 
         $this->resetAfterTest();
@@ -122,7 +121,7 @@ final class jwthelper_test extends \advanced_testcase {
         $this->validate_token($token, $user->id, $course->id, $expectedrole);
     }
 
-    public function test_jwttoken_valid_student(): void {
+    public function test_jwttoken_valid_student() {
         global $DB;
 
         $this->resetAfterTest();
@@ -150,7 +149,7 @@ final class jwthelper_test extends \advanced_testcase {
         $this->validate_token($token, $user->id, $unenrolledcourse->id, $expectedrole);
     }
 
-    public function test_jwttoken_valid_guest(): void {
+    public function test_jwttoken_valid_guest() {
         global $USER;
 
         $this->resetAfterTest();

@@ -30,12 +30,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # - php: '8.2'
+          #   moodle-branch: 'MOODLE_402_STABLE'
+          #   database: 'mariadb'
           - php: '8.3'
-            moodle-branch: 'MOODLE_500_STABLE'
-            database: 'mariadb'
-          # - php: '8.3'
-          #   moodle-branch: 'main'
-          #   database: 'pgsql'
+            moodle-branch: 'main'
+            database: 'pgsql'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -53,7 +53,7 @@ jobs:
 
       - name: Deploy moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
           # Add dirs to $PATH
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH

@@ -15,20 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin strings are defined here.
- *
- * @package     filter_ally
- * @category    string
- * @copyright   Copyright (c) 2023 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  Copyright (c) 2023 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['ally:viewdownload'] = 'عرض زر تنزيل Ally';
-$string['ally:viewfeedback'] = 'عرض ملاحظات Ally';
-$string['filtername'] = 'Ally';
 $string['pluginname'] = 'Ally';
+$string['filtername'] = 'Ally';
+$string['ally:viewfeedback'] = 'عرض ملاحظات Ally';
+$string['ally:viewdownload'] = 'عرض زر تنزيل Ally';
 $string['privacy:metadata:jwt:courseid'] = '"معرف" المقرر الدراسي الذي يقوم المستخدم بتحرير الملف به.';
 $string['privacy:metadata:jwt:externalpurpose'] = 'قم بتزويد Ally بمعلومات للسماح لتحرير الملفات بتحسين إمكانية الوصول.';
 $string['privacy:metadata:jwt:locale'] = 'لغة المستخدم المحلية حيث يتم عرض واجهة مستخدم Ally باستخدام اللغة الأكثر ملاءمة.';

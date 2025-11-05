@@ -30,7 +30,7 @@ class adminsetting_ally_trim_test extends \advanced_testcase {
     /**
      * Test settings are trimmed.
      */
-    public function test_trim(): void {
+    public function test_trim() {
         $this->resetAfterTest();
         $text = '    This should be trimmed    ';
         $setting = new ally_trim('tool_ally/testtrim', new \lang_string('key', 'tool_ally'),

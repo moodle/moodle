@@ -17,29 +17,31 @@
 /**
  * View merging logs.
  *
- * @package    tool
- * @subpackage mergeusers
- * @author     Jordi Pujol-Ahulló, Sred, Universitat Rovira i Virgili
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol Ahulló <jordi.pujol@urv.cat>
+ * @copyright Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use tool_mergeusers\local\logger;
+use tool_mergeusers\output\renderer;
 
 require('../../../config.php');
 
 global $CFG, $PAGE;
 
-// Report all PHP errors
+// Report all PHP errors.
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
-require_once($CFG->dirroot . '/lib/adminlib.php');
-require_once('lib/autoload.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
 require_capability('tool/mergeusers:mergeusers', context_system::instance());
 
 admin_externalpage_setup('tool_mergeusers_viewlog');
 
-$logger = new tool_mergeusers_logger();
+$logger = new logger();
 
 $export = optional_param('export', 0, PARAM_BOOL);
 
@@ -61,7 +63,7 @@ if ($export) {
             $log->mergedbyuserid,
             ($log->mergedby) ? fullname($log->mergedby) : null,
             $successstring,
-            userdate($log->timemodified)
+            userdate($log->timemodified),
         ];
         $csv->add_data($exportlog);
     }
@@ -69,6 +71,11 @@ if ($export) {
     $csv->download_file();
 }
 
+// phpcs:disable
+/**
+ * @var renderer $renderer
+ */
 $renderer = $PAGE->get_renderer('tool_mergeusers');
+// phpcs:enable
 
 echo $renderer->logs_page($logger->get());

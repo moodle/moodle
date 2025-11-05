@@ -19,27 +19,47 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/scorm/lib.php');
 
 
+/**
+ * Class report_editdates_mod_scorm_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "SCORM" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_scorm_date_extractor
         extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'scorm');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $mod = $this->mods[$cm->instance];
-        return array('timeopen' => new report_editdates_date_setting(
-                                        get_string("scormopen", "scorm"),
-                                        $mod->timeopen, self::DATETIME, true),
-                     'timeclose' => new report_editdates_date_setting(
-                                        get_string("scormclose", "scorm"),
-                                        $mod->timeclose, self::DATETIME, true)
-        );
+        return [
+            'timeopen' => new report_editdates_date_setting(
+                get_string("scormopen", "scorm"),
+                $mod->timeopen, self::DATETIME, true
+            ),
+            'timeclose' => new report_editdates_date_setting(
+                get_string("scormclose", "scorm"),
+                $mod->timeclose, self::DATETIME, true
+            ),
+        ];
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['timeopen'] != 0 && $dates['timeclose'] != 0
                 && $dates['timeclose'] < $dates['timeopen']) {
             $errors['timeclose'] = get_string('timeclose', 'report_editdates');

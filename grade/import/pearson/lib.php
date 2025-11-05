@@ -272,11 +272,11 @@ class PearsonMyLabFile extends PearsonFile {
                     $headers_to_grades[$n] = array();
                 }
 
-                $pa[] = $grade;
-
                 if (!$grade) {
                     $grade = 0.000;
                 }
+
+                $pa[] = (float) $grade;
 
                 $headers_to_grades[$n][$pawsid] = $grade;
             }

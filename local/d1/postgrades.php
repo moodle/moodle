@@ -39,7 +39,7 @@ $pageparams = [
 $courseid = $pageparams['courseid'];
 
 // Set limits to a bool.
-$limits   = $pageparams['limits'] == 1 ? true : false;
+$limits = $pageparams['limits'] == 1 ? true : false;
 
 // Authentication.
 require_login();
@@ -65,16 +65,17 @@ $url = new moodle_url('/local/d1/postgrades.php?courseid=' . $courseid . '&limit
 
 // Set the PAGE vars.
 $PAGE->set_context($context);
+$PAGE->set_pagetype('course-view');
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->set_pagelayout('admin');
 
 // Grab the course object from the supplied courseid.
 $course = $DB->get_record('course', array('id' => $courseid));
 
 // Navbar Bread Crumbs
-$PAGE->navbar->add($course->idnumber, new moodle_url('/course/view.php?id=' . $courseid));
+$PAGE->navbar->add($course->fullname, new moodle_url('/course/view.php?id=' . $courseid));
 
 // Output the header.
 echo $OUTPUT->header();

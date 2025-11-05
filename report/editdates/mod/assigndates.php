@@ -19,39 +19,60 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/assign/locallib.php');
 
 
+/**
+ * Class report_editdates_mod_assign_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "Assignment" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_assign_date_extractor
-extends report_editdates_mod_date_extractor {
+        extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'assign');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $assign = $this->mods[$cm->instance];
 
-        return array(
-                'allowsubmissionsfromdate' => new report_editdates_date_setting(
-                        get_string('allowsubmissionsfromdate', 'assign'),
-                        $assign->allowsubmissionsfromdate,
-                        self::DATETIME, true),
-                'duedate' => new report_editdates_date_setting(
-                        get_string('duedate', 'assign'),
-                        $assign->duedate,
-                        self::DATETIME, true),
-                'cutoffdate' => new report_editdates_date_setting(
-                        get_string('cutoffdate', 'assign'),
-                        $assign->cutoffdate,
-                        self::DATETIME, true),
-                'gradingduedate' => new report_editdates_date_setting(
-                        get_string('gradingduedate', 'assign'),
-                        $assign->gradingduedate,
-                        self::DATETIME, true),
-                );
+        return [
+            'allowsubmissionsfromdate' => new report_editdates_date_setting(
+                get_string('allowsubmissionsfromdate', 'assign'),
+                $assign->allowsubmissionsfromdate,
+                self::DATETIME, true
+            ),
+            'duedate' => new report_editdates_date_setting(
+                get_string('duedate', 'assign'),
+                $assign->duedate,
+                self::DATETIME, true
+            ),
+            'cutoffdate' => new report_editdates_date_setting(
+                get_string('cutoffdate', 'assign'),
+                $assign->cutoffdate,
+                self::DATETIME, true
+            ),
+            'gradingduedate' => new report_editdates_date_setting(
+                get_string('gradingduedate', 'assign'),
+                $assign->gradingduedate,
+                self::DATETIME, true
+            ),
+        ];
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['allowsubmissionsfromdate'] && $dates['duedate']
                 && $dates['duedate'] < $dates['allowsubmissionsfromdate']) {
             $errors['duedate'] = get_string('duedatevalidation', 'assign');
@@ -72,6 +93,7 @@ extends report_editdates_mod_date_extractor {
         return $errors;
     }
 
+    #[\Override]
     public function save_dates(cm_info $cm, array $dates) {
         global $DB, $COURSE;
 

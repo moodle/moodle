@@ -1370,14 +1370,20 @@ class wdspg {
         // Student has a weird situation where more than one grade code is returned.
         } else if (count($gradecode) > 1) {
 
+            // Make the message not all run together.
+            echo"<pre>";
             mtrace("More than one possible grade for " .
                 "$student->firstname $student->lastname in " .
                 "$student->course_section_definition_id.");
+            echo"</pre>";
 
-            $gradecode = false;
+            // Return the 1st one.
+            $gradecode = reset($gradecode);
 
         // We returned one grade code.
         } else {
+
+            // Just return the object if it's an array.
             $gradecode = is_array($gradecode) ? reset($gradecode) : $gradecode;
         }
 

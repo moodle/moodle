@@ -26,7 +26,7 @@
 namespace tool_ally;
 
 use Prophecy\Argument;
-use core\event\course_module_updated;
+use \core\event\course_module_updated;
 use tool_ally\push_config;
 use tool_ally\push_content_updates;
 use tool_ally\task\content_updates_task;
@@ -52,7 +52,7 @@ class content_updates_task_test extends abstract_testcase {
     /**
      * First run should set the timestamp then exit.
      */
-    public function test_initial_run(): void {
+    public function test_initial_run() {
         $this->resetAfterTest();
 
         $this->assertEmpty(get_config('tool_ally', 'push_content_timestamp'));
@@ -70,7 +70,7 @@ class content_updates_task_test extends abstract_testcase {
     /**
      * Nothing should happen if config is invalid.
      */
-    public function test_invalid_config(): void {
+    public function test_invalid_config() {
         $task          = new content_updates_task();
         $task->updates = $this->createMock(push_content_updates::class);
 
@@ -82,7 +82,7 @@ class content_updates_task_test extends abstract_testcase {
     /**
      * Ensure that basic execution and timestamp management is working.
      */
-    public function test_push_updates(): void {
+    public function test_push_updates() {
         global $DB;
 
         $this->resetAfterTest();
@@ -116,7 +116,7 @@ class content_updates_task_test extends abstract_testcase {
     /**
      * Ensure that our batch looping is working as expected.
      */
-    public function test_push_updates_batching(): void {
+    public function test_push_updates_batching() {
         global $DB;
 
         $this->resetAfterTest();
@@ -150,7 +150,7 @@ class content_updates_task_test extends abstract_testcase {
     /**
      * Test pushing of content deletions.
      */
-    public function test_push_deletes(): void {
+    public function test_push_deletes() {
         global $DB;
 
         $this->resetAfterTest();
@@ -187,7 +187,7 @@ class content_updates_task_test extends abstract_testcase {
             'component' => $component,
             'comptable' => $table,
             'compfield' => $field,
-            'comprowid' => $id,
+            'comprowid' => $id
         ])) {
             $msg = 'Searched deletion queue, failed to find component "'.$component.
                     '" table "'.$table.'" field "'.$field.'" id "'.$id.'"';
@@ -254,15 +254,15 @@ class content_updates_task_test extends abstract_testcase {
         $this->assertCount(0, $deleted);
     }
 
-    public function test_pre_course_module_delete_forum(): void {
+    public function test_pre_course_module_delete_forum() {
         $this->pre_course_module_delete_forum();
     }
 
-    public function test_pre_course_module_delete_hsuforum(): void {
+    public function test_pre_course_module_delete_hsuforum() {
         $this->pre_course_module_delete_forum('hsuforum');
     }
 
-    public function test_pre_course_module_delete_glossary(): void {
+    public function test_pre_course_module_delete_glossary() {
         global $DB, $USER;
 
         // Prevent it from creating a backup of the deleted module.
@@ -275,7 +275,7 @@ class content_updates_task_test extends abstract_testcase {
         $glossary = $this->getDataGenerator()->create_module('glossary',
             [
                 'course' => $course->id,
-                'introformat' => FORMAT_HTML,
+                'introformat' => FORMAT_HTML
             ]
         );
 
@@ -283,7 +283,7 @@ class content_updates_task_test extends abstract_testcase {
             'course' => $course->id,
             'glossary' => $glossary->id,
             'userid' => $USER->id,
-            'definitionformat' => FORMAT_HTML,
+            'definitionformat' => FORMAT_HTML
         ];
         $this->setAdminUser();
         $entry = self::getDataGenerator()->get_plugin_generator(
@@ -325,7 +325,7 @@ class content_updates_task_test extends abstract_testcase {
         $this->assertCount(0, $deleted);
     }
 
-    public function test_performance_delete_glossary(): void {
+    public function test_performance_delete_glossary() {
         global $DB, $USER;
 
         // Prevent it from creating a backup of the deleted module.
@@ -338,7 +338,7 @@ class content_updates_task_test extends abstract_testcase {
         $glossary = $this->getDataGenerator()->create_module('glossary',
             [
                 'course' => $course->id,
-                'introformat' => FORMAT_HTML,
+                'introformat' => FORMAT_HTML
             ]
         );
 
@@ -346,7 +346,7 @@ class content_updates_task_test extends abstract_testcase {
             'course' => $course->id,
             'glossary' => $glossary->id,
             'userid' => $USER->id,
-            'definitionformat' => FORMAT_HTML,
+            'definitionformat' => FORMAT_HTML
         ];
         $this->setAdminUser();
 

@@ -27,7 +27,7 @@ function report_allylti_extend_navigation_course($navigation, $course, $context)
         $url = new moodle_url('/report/allylti/launch.php', [
                 'reporttype' => 'course',
                 'report' => 'admin',
-                'course' => $COURSE->id, ]
+                'course' => $COURSE->id]
         );
         $icon = new pix_icon('i/ally_logo', '', 'report_allylti');
         $item = $PAGE->navigation->add(

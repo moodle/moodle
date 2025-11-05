@@ -126,6 +126,7 @@ if ($localbulkenrolkey) {
                 local_bulkenrol_display_table($localbulkenroldata, LOCALBULKENROL_HINT);
                 local_bulkenrol_display_table($localbulkenroldata, LOCALBULKENROL_GROUPINFOS);
                 local_bulkenrol_display_table($localbulkenroldata, LOCALBULKENROL_ENROLUSERS);
+                local_bulkenrol_display_table($localbulkenroldata, LOCALBULKENROL_UNENROLUSERS);
             }
         }
 

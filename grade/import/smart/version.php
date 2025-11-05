@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2016041900;
-$plugin->requires  = 2015111000;        // Requires this Moodle version.
-$plugin->component = 'gradeimport_smart';  // Full name of the plugin (used for diagnostics).
+$plugin->version  = 2025101300;
+$plugin->requires  = 2015111000;
+$plugin->component = 'gradeimport_smart';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = '2.0.0-Unrecognizable_Urchin';

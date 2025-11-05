@@ -15,32 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package tool
- * @subpackage mergeusers
- * @author Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * List of observers for Moodle events.
+ *
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
  * @copyright 2013 Servei de Recursos Educatius (http://www.sre.urv.cat)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * @var array Available handlers for merging events.
- *
- * Available events: merging_sucess, merging_failed
- */
-$observers = array(
-    array(
-        'eventname'     => 'tool_mergeusers\event\user_merged_success',
-        'callback'      => '\tool_mergeusers\local\observer\olduser::old_user_suspend',
-        'internal'      => 1
-    ),
-    array(
-        'eventname'     => 'tool_mergeusers\event\user_merged_success',
-        'callback'      => '\tool_mergeusers\local\observer\keptuser::make_kept_user_as_not_suspended',
-        'internal'      => 1
-    ),
-    array(
-        'eventname'     => 'tool_mergeusers\event\user_merged_success',
-        'callback'      => tool_mergeusers\local\observer\update_user_profiles_on_merging_success::class . '::update',
-        'internal'      => 1
-    )
-);
+defined('MOODLE_INTERNAL') || die();
+
+$observers = [
+    [
+        'eventname'     => \tool_mergeusers\event\user_merged_success::class,
+        'callback'      => \tool_mergeusers\local\observer\olduser::class . '::old_user_suspend',
+        'internal'      => 1,
+    ],
+    [
+        'eventname'     => \tool_mergeusers\event\user_merged_success::class,
+        'callback'      => \tool_mergeusers\local\observer\keptuser::class . '::make_kept_user_as_not_suspended',
+        'internal'      => 1,
+    ],
+];

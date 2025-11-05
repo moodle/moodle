@@ -48,7 +48,7 @@ require_once(__DIR__.'/prophesize_deprecation_workaround_mixin.php');
 class push_file_updates_error_retry_test extends abstract_testcase {
     use prophesize_deprecation_workaround_mixin;
 
-    public function test_retry_increase_push_disabled_task_reset(): void {
+    public function test_retry_increase_push_disabled_task_reset() {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -74,9 +74,9 @@ class push_file_updates_error_retry_test extends abstract_testcase {
         // Since the file was not pushed above, the task should call cURL push once.
         $updates = $this->createMock(push_file_updates::class);
         $updates->expects($this->once())
-            ->method('send')
-            ->with($this->isType('array'))
-            ->willReturn(true);
+        ->method('send')
+        ->with($this->isType('array'))
+        ->willReturn(true);
 
         $task          = new file_updates_task();
         $task->config  = new push_config('url', 'key', 'sceret');

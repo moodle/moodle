@@ -192,13 +192,23 @@ if ($ADMIN->fulltree) {
         )
     );
 
-    // Workday student metadata fields.
+    // Workday student sports field.
     $settings->add(
         new admin_setting_configtext(
             'enrol_workdaystudent/sportfield',
             get_string('workdaystudent:sportfield', 'enrol_workdaystudent'),
             get_string('workdaystudent:sportfield_desc', 'enrol_workdaystudent'),
             '', PARAM_TEXT
+        )
+    );
+
+    // Workday student cohort field.
+    $settings->add(
+        new admin_setting_configtext(
+            'enrol_workdaystudent/cohortfield',
+            get_string('workdaystudent:cohortfield', 'enrol_workdaystudent'),
+            get_string('workdaystudent:cohortfield_desc', 'enrol_workdaystudent'),
+            'Athletic_Cohort', PARAM_TEXT
         )
     );
 
@@ -514,8 +524,16 @@ $wdsstupdates = new admin_externalpage(
 // Set the context for later use.
 $context = \context_system::instance();
 
+// Set the url for the orphaned user courses page.
+$wdsorphaned = new admin_externalpage(
+    'orphaned_user_courses',
+    new lang_string('orphanedusercourses', 'enrol_workdaystudent'),
+    new moodle_url('/enrol/workdaystudent/orphanedcourses.php')
+);
+
 // Add the links for those who have access (admins for now).
 if (has_capability('moodle/site:config', $context)) {
     $ADMIN->add('enrollwdsfolder', $wdsperiods);
     $ADMIN->add('enrollwdsfolder', $wdsstupdates);
+    $ADMIN->add('enrollwdsfolder', $wdsorphaned);
 }

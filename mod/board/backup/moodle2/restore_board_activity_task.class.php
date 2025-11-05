@@ -26,7 +26,6 @@ require_once($CFG->dirroot . '/mod/board/backup/moodle2/restore_board_stepslib.p
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_board_activity_task extends restore_activity_task {
-
     /**
      * Define any settings.
      */
@@ -46,10 +45,12 @@ class restore_board_activity_task extends restore_activity_task {
      * @return array
      */
     public static function define_decode_contents() {
-        $contents = array();
+        $contents = [];
 
-        $contents[] = new restore_decode_content('board', array('intro'), 'board');
-        $contents[] = new restore_decode_content('board_notes', array('content'), 'board_note');
+        $contents[] = new restore_decode_content('board', ['intro'], 'board');
+
+        // NOTE: url may contain links to internal pages, decode the field the same way as mod_url does externalurl.
+        $contents[] = new restore_decode_content('board_notes', ['content', 'url'], 'board_note');
 
         return $contents;
     }
@@ -71,6 +72,6 @@ class restore_board_activity_task extends restore_activity_task {
      * @return string[]
      */
     public function get_fileareas() {
-        return array('images', 'backgrond');
+        return ['images', 'files', 'backgrond'];
     }
 }

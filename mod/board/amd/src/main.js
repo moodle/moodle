@@ -30,15 +30,17 @@ import Notification from 'core/notification';
  *
  * @param {number} boardid the board id
  * @param {number} ownerid the owner id
+ * @param {number} groupid the owner id
  * @returns {Promise} config
  */
-const fetchBoardConfiguration = (boardid, ownerid) => {
+const fetchBoardConfiguration = (boardid, ownerid, groupid) => {
     return Ajax.call([
         {
             methodname: 'mod_board_get_configuration',
             args: {
                 id: boardid,
-                ownerid: ownerid
+                ownerid: ownerid,
+                groupid: groupid,
             },
             done: (response) => {
                 return response;
@@ -51,10 +53,11 @@ const fetchBoardConfiguration = (boardid, ownerid) => {
 /**
  * Initialize the board.
  * @param {number} boardid The board id
- * @param {number} ownerid The owner id
+ * @param {number} ownerid The owner id - 0 when single user mode disble
+ * @param {number} groupid The group id
  */
-const initialize = (boardid, ownerid) => {
-    const promise = fetchBoardConfiguration(boardid, ownerid);
+const initialize = (boardid, ownerid, groupid) => {
+    const promise = fetchBoardConfiguration(boardid, ownerid, groupid);
     promise[0].then((config) => {
         return new Board(config);
     }).catch((error) => {

@@ -1,3 +1,16 @@
+### Date:       2025-July-02
+### Release:    v2025070201
+
+---
+
+#### Adding EULA on Quiz Page
+The user will now be prompted with the EULA on the quiz page and cannot attempt the quiz until they have accepted the EULA.
+
+#### Assignment Page Similarity Score
+An issue was identified where the assignment page failed to display the similarity score.
+
+---
+
 ### Date:       2025-May-29
 ### Release:    v2025052901
 

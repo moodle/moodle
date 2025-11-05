@@ -14,17 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
-
-
+/**
+ * Class report_editdates_mod_turnitintooltwo_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "Turnitin Tool Two" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2016 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_turnitintooltwo_date_extractor
-extends report_editdates_mod_date_extractor {
+        extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'turnitintooltwo');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         global $DB;
         $tii = $this->mods[$cm->instance];
@@ -52,10 +65,11 @@ extends report_editdates_mod_date_extractor {
         return $elems;
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
         global $DB;
         $now = new DateTime("now", core_date::get_user_timezone_object());
-        $errors = array();
+        $errors = [];
         $parts = $DB->get_records_select("turnitintooltwo_parts", "turnitintooltwoid = ?", [$cm->instance], 'id ASC');
         foreach ($parts as $id => $part) {
             if ($dates["startdate$id"] > $dates["duedate$id"]) {
@@ -72,6 +86,7 @@ extends report_editdates_mod_date_extractor {
         return $errors;
     }
 
+    #[\Override]
     public function save_dates(cm_info $cm, array $dates) {
         global $DB, $COURSE, $CFG;
 

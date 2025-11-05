@@ -1,0 +1,12 @@
+{
+    "name": "Learning Contract",
+    "description": "<p>A space to discuss and record ideas that contribute to the optimisation of learning</p>",
+    "columns": "What will you commit to doing?\nWhat do you need from your peers?\nWhat do you need from others?",
+    "intro": "<p>Discuss and record ideas on organisation, attitude, engagement and behaviour to optimise your learning.</p>",
+    "addrating": "3",
+    "singleusermode": "2",
+    "userscanedit": "1",
+    "enableblanktarget": "1",
+    "embed": "1",
+    "hidename": "1"
+}

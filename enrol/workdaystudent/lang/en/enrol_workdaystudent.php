@@ -1,4 +1,4 @@
-<?php
+Athletic_Cohort<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -86,6 +86,8 @@ $string['workdaystudent:metafields'] = 'Meta Fields';
 $string['workdaystudent:metafields_desc'] = 'Comma separated list of meta fields to fetch.';
 $string['workdaystudent:sportfield'] = 'Sport Field';
 $string['workdaystudent:sportfield_desc'] = 'Sport field designator.';
+$string['workdaystudent:cohortfield'] = 'Cohort Field';
+$string['workdaystudent:cohortfield_desc'] = 'Cohort field designator for the non-athlete sport cohort.';
 $string['workdaystudent:primaryrole'] = 'Primary Role';
 $string['workdaystudent:primaryrole_desc'] = 'The role you want to use for primary instructors in courses.';
 $string['workdaystudent:nonprimaryrole'] = 'Non-primary Role';
@@ -155,6 +157,7 @@ $string['wds:access_error'] = 'You do not have access to do this.';
 
 // Add / Drop tracking strings.
 $string['enrollmenttracker'] = 'Enrollment Tracker';
+$string['workdaystudent:viewenrollmenttracker'] = 'Enrollment Tracker';
 $string['enrollmentdata'] = 'Workday Student Enrollment Data';
 $string['studentname'] = 'Student Name';
 $string['adddatetime'] = 'Add Date/Time';
@@ -164,3 +167,15 @@ $string['enrolled'] = 'Enrolled';
 $string['section_number'] = 'Section Number';
 $string['noenrollmentdata'] = 'No enrollment data available for this course.';
 $string['unknownuser'] = 'Unknown User';
+
+// Unenroll extras.
+$string['unenrollcandidates'] = 'Unenroll Abandoned';
+$string['unenrollall'] = 'Unenroll all abandoned users';
+$string['unenrollsuccess'] = 'All abandoned users have been unenrolled.';
+$string['nounenrollcandidates'] = 'No abandoned users to unenroll.';
+$string['workdaystudent:unenroll'] = 'Unenroll Abandoned';
+
+$string['orphanedusercourses'] = 'Orphaned User Courses';
+$string['numorphanedusers'] = 'Orphaned users';
+$string['viewdetails'] = 'View details';
+$string['noorphanedusers'] = 'No orphaned users found.';

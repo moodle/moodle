@@ -133,7 +133,7 @@ class webservice_course_content_test extends abstract_testcase {
     /**
      * Test the web service when used to get course content items.
      */
-    public function test_service(): void {
+    public function test_service() {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -160,7 +160,7 @@ class webservice_course_content_test extends abstract_testcase {
         $DB->update_record('course_sections', (object) [
             'id' => $section->id,
             'summary' => $section0summary,
-            'summaryformat' => FORMAT_HTML,
+            'summaryformat' => FORMAT_HTML
         ]);
         $section = $DB->get_record('course_sections', ['id' => $section->id]);
         $expectedsection = new component(

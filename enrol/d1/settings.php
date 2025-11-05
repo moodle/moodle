@@ -180,4 +180,14 @@ if ($ADMIN->fulltree) {
         )
     );
 
+    // Profile field id (uid).
+    $settings->add(
+        new admin_setting_configtext(
+            'enrol_d1/d1_uidfield',
+            get_string('d1_uidfield', 'enrol_d1'),
+            get_string('d1_uidfield_help', 'enrol_d1'),
+            '15', PARAM_INT
+        )
+    );
+
 }

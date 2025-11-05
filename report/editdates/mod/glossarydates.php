@@ -14,36 +14,53 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
-
-
+/**
+ * Class report_editdates_mod_glossary_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "Glossary" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_glossary_date_extractor
-extends report_editdates_mod_date_extractor {
+        extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'glossary');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $mod = $this->mods[$cm->instance];
 
         if ($mod->assessed && ( $mod->assesstimestart != 0 || $mod->assesstimefinish != 0) ) {
-            return array('assesstimestart' => new report_editdates_date_setting(
-                                                    get_string('from'),
-                                                    $mod->assesstimestart,
-                                                    self::DATETIME, false),
-                         'assesstimefinish' => new report_editdates_date_setting(
-                                                    get_string('to'),
-                                                    $mod->assesstimefinish,
-                                                    self::DATETIME, false)
-            );
+            return [
+                'assesstimestart' => new report_editdates_date_setting(
+                    get_string('from'),
+                    $mod->assesstimestart,
+                    self::DATETIME, false
+                ),
+                'assesstimefinish' => new report_editdates_date_setting(
+                    get_string('to'),
+                    $mod->assesstimefinish,
+                    self::DATETIME, false
+                ),
+            ];
         }
         return null;
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['assesstimestart'] != 0 && $dates['assesstimefinish'] != 0
                 && $dates['assesstimefinish'] < $dates['assesstimestart']) {
             $errors['assesstimefinish'] = get_string('assesstimefinish', 'report_editdates');

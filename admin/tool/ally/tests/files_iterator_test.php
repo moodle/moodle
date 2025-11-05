@@ -47,7 +47,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Test get_files.
      */
-    public function test_get_files(): void {
+    public function test_get_files() {
         global $DB;
 
         $this->resetAfterTest();
@@ -61,7 +61,7 @@ class files_iterator_test extends abstract_testcase {
         $this->setUser($user);
 
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_course::instance($course->id)->id,
             'component' => 'mod_notwhitelisted',
             'filearea' => 'content',
@@ -69,12 +69,12 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test_has_userid.txt',
             'userid' => $user->id,
-            'modified' => time(),
-        ];
+            'modified' => time()
+        );
         $teststring = 'moodletest';
         $file1 = $fs->create_file_from_string($filerecord, $teststring);
 
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_course::instance($course->id)->id,
             'component' => 'mod_notwhitelisted',
             'filearea' => 'content',
@@ -82,8 +82,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test_no_userid.txt',
             'userid' => null,
-            'modified' => time(),
-        ];
+            'modified' => time()
+        );
         $teststring = 'moodletest';
         $file2 = $fs->create_file_from_string($filerecord, $teststring);
 
@@ -112,7 +112,7 @@ class files_iterator_test extends abstract_testcase {
         }
     }
 
-    public function test_get_files_pathname(): void {
+    public function test_get_files_pathname() {
         global $DB;
 
         $this->resetAfterTest();
@@ -126,7 +126,7 @@ class files_iterator_test extends abstract_testcase {
         $this->setUser($user);
 
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_course::instance($course->id)->id,
             'component' => 'course',
             'filearea' => 'section',
@@ -134,8 +134,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/gridimage/',
             'filename' => 'test.txt',
             'userid' => $user->id,
-            'modified' => time(),
-        ];
+            'modified' => time()
+        );
         $teststring = 'moodletest';
         $file1 = $fs->create_file_from_string($filerecord, $teststring);
 
@@ -148,7 +148,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Test get_files when there are no files to fetch.
      */
-    public function test_get_no_files(): void {
+    public function test_get_no_files() {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -161,7 +161,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Test get_files using the since parameter.
      */
-    public function test_get_files_since(): void {
+    public function test_get_files_since() {
         global $DB;
 
         $this->resetAfterTest();
@@ -216,7 +216,7 @@ class files_iterator_test extends abstract_testcase {
             return false;
         }
 
-        $instances = $DB->get_records('enrol', ['courseid' => $courseid, 'enrol' => $enrol]);
+        $instances = $DB->get_records('enrol', array('courseid' => $courseid, 'enrol' => $enrol));
         if (count($instances) != 1) {
             return false;
         }
@@ -226,7 +226,7 @@ class files_iterator_test extends abstract_testcase {
         return true;
     }
 
-    public function test_white_listing(): void {
+    public function test_white_listing() {
         global $DB;
 
         $this->resetAfterTest();
@@ -270,7 +270,7 @@ class files_iterator_test extends abstract_testcase {
      * Make sure a file created within a course of a whitelisted module is accessible when created by
      * someone with a teacher role but not when a student.
      */
-    public function test_role_validation(): void {
+    public function test_role_validation() {
 
         $this->resetAfterTest();
 
@@ -294,7 +294,7 @@ class files_iterator_test extends abstract_testcase {
         $this->setUser($user);
 
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_module::instance($assign1->cmid)->id,
             'component' => 'mod_assign',
             'filearea' => 'intro',
@@ -302,8 +302,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest';
         $testfile1 = $fs->create_file_from_string($filerecord, $teststring);
 
@@ -319,7 +319,7 @@ class files_iterator_test extends abstract_testcase {
         // Add another file in course where user is teacher.
         // Make sure files iterator includes it.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_module::instance($assign1->cmid)->id,
             'component' => 'mod_assign',
             'filearea' => 'intro',
@@ -327,8 +327,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test2.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest2';
         $testfile2 = $fs->create_file_from_string($filerecord, $teststring);
         $files = local_file::iterator();
@@ -345,7 +345,7 @@ class files_iterator_test extends abstract_testcase {
         // or TEACHER_WHITELIST.
         // In this case, even though the file was created by a teacher, it should NOT be included.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_module::instance($assign1->cmid)->id,
             'component' => 'mod_assign',
             'filearea' => 'notwhitelisted',
@@ -353,8 +353,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test3.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest3';
         $testfile3 = $fs->create_file_from_string($filerecord, $teststring);
         $files = local_file::iterator();
@@ -372,7 +372,7 @@ class files_iterator_test extends abstract_testcase {
         // Add a file in course where user is not a teacher but the file area is white listed as a teacher only area.
         // Make sure files iterator DOES include it.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_module::instance($assign2->cmid)->id,
             'component' => 'mod_assign',
             'filearea' => 'intro',
@@ -380,8 +380,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test4.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest3';
         $testfile4 = $fs->create_file_from_string($filerecord, $teststring);
         $files = local_file::iterator();
@@ -396,7 +396,7 @@ class files_iterator_test extends abstract_testcase {
         // Add a file in course where user is not a teacher AND the file area is not white listed as a teacher only area.
         // Make sure files iterator does NOT include it.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_module::instance($assign2->cmid)->id,
             'component' => 'mod_assign',
             'filearea' => 'notwhitelisted',
@@ -404,8 +404,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test5.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest5';
         $testfile5 = $fs->create_file_from_string($filerecord, $teststring);
         $files = local_file::iterator();
@@ -422,7 +422,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Test records paging.
      */
-    public function test_files_paging(): void {
+    public function test_files_paging() {
         global $DB;
 
         $this->resetAfterTest();
@@ -443,7 +443,7 @@ class files_iterator_test extends abstract_testcase {
         $pagesize = 5;
         $filecount = 100;
         for ($i = 0; $i < $filecount; $i++) {
-            $filerecord = [
+            $filerecord = array(
                 'contextid' => \context_course::instance($course->id)->id,
                 'component' => 'mod_assign',
                 'filearea' => 'intro',
@@ -451,8 +451,8 @@ class files_iterator_test extends abstract_testcase {
                 'filepath' => '/',
                 'filename' => "test_file_$i.txt",
                 'userid' => $user->id,
-                'modified' => time(),
-            ];
+                'modified' => time()
+            );
             $file = $fs->create_file_from_string($filerecord, $teststring.$i);
             $hashes[] = $file->get_pathnamehash();
         }
@@ -476,7 +476,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Test using the iterator with validation disabled.
      */
-    public function test_files_without_valid_filter(): void {
+    public function test_files_without_valid_filter() {
         $this->resetAfterTest();
 
         $now = time();
@@ -491,7 +491,7 @@ class files_iterator_test extends abstract_testcase {
 
         // Add a file in course where user is a teacher.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_course::instance($course1->id)->id,
             'component' => 'mod_notwhitelisted',
             'filearea' => 'content',
@@ -499,14 +499,14 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest';
         $testfile1 = $fs->create_file_from_string($filerecord, $teststring);
 
         // Add a file in course where user is not a teacher.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_course::instance($course2->id)->id,
             'component' => 'mod_notwhitelisted',
             'filearea' => 'content',
@@ -514,8 +514,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test2.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest2';
         $testfile2 = $fs->create_file_from_string($filerecord, $teststring);
 
@@ -535,7 +535,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Test comparing curent and previous validators.
      */
-    public function test_all_valid_files(): void {
+    public function test_all_valid_files() {
         $this->resetAfterTest();
 
         set_config('excludeunused', 0, 'tool_ally');
@@ -552,7 +552,7 @@ class files_iterator_test extends abstract_testcase {
 
         // Create a file with a not whitelisted module.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_course::instance($course1->id)->id,
             'component' => 'mod_notwhitelisted',
             'filearea' => 'content',
@@ -560,8 +560,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest';
         $testfile1 = $fs->create_file_from_string($filerecord, $teststring);
 
@@ -588,7 +588,7 @@ class files_iterator_test extends abstract_testcase {
 
         // Add another file in course where user is teacher but with a whitelisted module.
         $fs = get_file_storage();
-        $filerecord = [
+        $filerecord = array(
             'contextid' => \context_course::instance($course1->id)->id,
             'component' => 'mod_assign',
             'filearea' => 'intro',
@@ -596,8 +596,8 @@ class files_iterator_test extends abstract_testcase {
             'filepath' => '/',
             'filename' => 'test2.txt',
             'userid' => $user->id,
-            'modified' => $now,
-        ];
+            'modified' => $now
+        );
         $teststring = 'moodletest2';
         $testfile2 = $fs->create_file_from_string($filerecord, $teststring);
 
@@ -626,7 +626,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Test records paging using $CFG->tool_ally_optimize_iteration_for_db = true.
      */
-    public function test_files_paging_optimized_for_db(): void {
+    public function test_files_paging_optimized_for_db() {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -648,7 +648,7 @@ class files_iterator_test extends abstract_testcase {
 
         $filecount = 100;
         for ($i = 0; $i < $filecount; $i++) {
-            $filerecord = [
+            $filerecord = array(
                 'contextid' => \context_course::instance($course->id)->id,
                 'component' => 'mod_assign',
                 'filearea' => 'intro',
@@ -656,8 +656,8 @@ class files_iterator_test extends abstract_testcase {
                 'filepath' => '/',
                 'filename' => "test_file_$i.txt",
                 'userid' => $user->id,
-                'modified' => time(),
-            ];
+                'modified' => time()
+            );
             $file = $fs->create_file_from_string($filerecord, $teststring.$i);
             $hashes[] = $file->get_pathnamehash();
         }
@@ -680,7 +680,7 @@ class files_iterator_test extends abstract_testcase {
     /**
      * Basic testing of files being in use or not.
      */
-    public function test_unused_files(): void {
+    public function test_unused_files() {
         global $DB;
 
         set_config('excludeunused', 1, 'tool_ally');

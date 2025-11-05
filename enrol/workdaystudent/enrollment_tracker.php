@@ -85,9 +85,10 @@ if (empty($enrollments)) {
     $table->set_attribute('class', 'generaltable boxaligncenter');
 
     // Define table columns and headers
-    $columns = array('studentname', 'section_number', 'status', 'registered_date', 'drop_date');
+    $columns = array('studentname', 'email', 'section_number', 'status', 'registered_date', 'drop_date');
     $headers = array(
         get_string('studentname', 'enrol_workdaystudent'),
+        get_string('email', 'moodle'),
         get_string('section_number', 'enrol_workdaystudent'),
         get_string('enrolmentstatus', 'enrol_workdaystudent'),
         get_string('adddatetime', 'enrol_workdaystudent'),
@@ -117,6 +118,9 @@ if (empty($enrollments)) {
                                    ' (ID: ' . $enrollment->universal_id . ')';
         }
 
+        // Student email.
+        $studentemail = $studentdetails->email;
+
         // Add Date (assuming $enrollment->registered_date is a direct timestamp).
         $formattedadddate = !empty($enrollment->registered_date) ?
             enrollment_tracker_data::format_date_for_display(
@@ -132,6 +136,7 @@ if (empty($enrollments)) {
         $table->add_data(
             array(
                 $studentnamedisplay,
+                \html_writer::link("mailto:$studentemail", $studentemail),
                 $enrollment->section_number,
                 $enrollment->status,
                 $formattedadddate,

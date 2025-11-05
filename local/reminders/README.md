@@ -1,10 +1,10 @@
 # Moodle - Local Reminders
 ---
-![Version](https://img.shields.io/badge/version-v2.7.3-blue)
+![Version](https://img.shields.io/badge/version-v2.7.4-blue)
 ![Moodle Version](https://img.shields.io/badge/moodle-%3E%3D%203.5-orange)
 ![Maturiy](https://img.shields.io/badge/maturity-STABLE-brightgreen)
 ![License](https://img.shields.io/badge/license-GPL%20v3-green)
-![Maintenance](https://img.shields.io/maintenance/yes/2024)
+![Maintenance](https://img.shields.io/maintenance/yes/2025)
 [![Build Status](https://github.com/isuru89/moodle-local_reminders/actions/workflows/moodle-ci.yml/badge.svg?branch=master)](https://github.com/isuru89/moodle-local_reminders/actions/workflows/moodle-ci.yml)
 
 This plugin will send email reminders for [Moodle](https://moodle.org/) calendar events.
@@ -98,6 +98,12 @@ In addition to above, user can control reminders for calendar event changes per 
  | Explicit Reminder Activation | If checked, teachers or relevant authorities must explicitly enable reminders for each activity under course reminders settings page. | false |
 
 ## Changelog
+
+### v2.7.4
+  * Moodle v5 support
+  * Fix: Group reminder gets sent despite student being not current or suspended #192 (@djarran)
+  * New lang: CA and ES (@sorydi3)
+  * Fix: code check issue in install.xml file (@aneno-m-e)
 
 ### v2.7.3
   * Add plugin disabled message to course page #181

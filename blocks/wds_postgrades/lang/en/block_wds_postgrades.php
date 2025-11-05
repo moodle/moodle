@@ -103,6 +103,7 @@ $string['endbeforestart'] = 'End date must be after start date';
 $string['changessaved'] = 'Changes saved successfully';
 $string['periodconfiglinktext'] = 'Configure Grading Periods';
 $string['managegradeperiods'] = 'Manage Grade Posting Periods';
+$string['wds_postgrades:manageperiods'] = 'Manage Grade Posting Periods';
 
 // Final grade tracking strings
 $string['alreadyposted'] = 'Already posted';

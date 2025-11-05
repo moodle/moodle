@@ -89,17 +89,31 @@ class block_ce_enrollinfo extends block_base {
             return $this->content;
         }
 
-        $fieldid = $CFG->block_ce_enrollinfo_field;
+        $s = get_config('block_ce_enrollinfo');
 
-         // Query Moodle to get the user's idnumber.
-         $sqlidnumber  = "
+         // Query Moodle to get the user's LSUID.
+         $lsuidnumber  = "
              SELECT uid.data AS lsuid
                  FROM {user} u
                  INNER JOIN {user_info_data} uid ON uid.userid = u.id
-                 INNER JOIN {user_info_field} uif ON uif.id = uid.fieldid AND uif.id = " . $fieldid . "
-             WHERE u.id = ?";
+                 INNER JOIN {user_info_field} uif ON uif.id = uid.fieldid AND uif.id = :lsuidfield
+             WHERE u.id = :userid";
 
-        $return = $DB->get_record_sql($sqlidnumber, array($this->user->id));
+        $lsuidparms = ['lsuidfield' => $s->lsufield, 'userid' => $this->user->id];
+
+        $returnlsuid = $DB->get_record_sql($lsuidnumber, $lsuidparms);
+
+         // Query Moodle to get the user's UID.
+         $uidnumber  = "
+             SELECT uid.data AS uid
+                 FROM {user} u
+                 INNER JOIN {user_info_data} uid ON uid.userid = u.id
+                 INNER JOIN {user_info_field} uif ON uif.id = uid.fieldid AND uif.id = :uidfield
+             WHERE u.id = :userid";
+
+        $uidparms = ['uidfield' => $s->uidfield, 'userid' => $this->user->id];
+
+        $returnuid = $DB->get_record_sql($uidnumber, $uidparms);
 
         // Query Moodle to get the user's $startdate and $enddate.
         $sql  = "
@@ -119,7 +133,7 @@ class block_ce_enrollinfo extends block_base {
             $enddate   = $item->terminationtime;
         }
 
-        if ((!isset($enddate) || !$return) && $CFG->block_ce_enrollinfo_empty == 0) {
+        if ((!isset($enddate) || !$returnlsuid || !$returnuid) && $s->empty == 0) {
             $this->content = new stdClass;
             return $this->content;
         }
@@ -186,12 +200,17 @@ class block_ce_enrollinfo extends block_base {
         $missingenddate = get_string('ce_missing_enddate', 'block_ce_enrollinfo');
         $formattedtimeleft = $enddate <> 0 ? $formattedtimeleft : $missingenddate;
         $formattedenddate = $enddate <> 0 ? $formattedenddate : $missingenddate;
-        $lsuid = ($return && $return->lsuid <> 0) ? $return->lsuid : get_string('ce_missing_lsuid', 'block_ce_enrollinfo');
+        $lsuid = ($returnlsuid && $returnlsuid->lsuid <> 0) ? $returnlsuid->lsuid : get_string('ce_missing_lsuid', 'block_ce_enrollinfo');
+        $uid = ($returnuid && $returnuid->uid <> 0) ? $returnuid->uid : get_string('ce_missing_uid', 'block_ce_enrollinfo');
 
         $this->content = new stdClass;
         $this->content->text = '';
-        if ($return && $return->lsuid <> 0) {
+        if ($returnlsuid && $returnlsuid->lsuid <> 0) {
             $this->content->text .= get_string('cestring_lsuid', 'block_ce_enrollinfo', $lsuid);
+            $this->content->text .= '<br />';
+        }
+        if ($returnuid && $returnuid->uid <> 0) {
+            $this->content->text .= get_string('cestring_uid', 'block_ce_enrollinfo', $uid);
             $this->content->text .= '<br /><br />';
         }
         if ($formattedstartdate <> "") {

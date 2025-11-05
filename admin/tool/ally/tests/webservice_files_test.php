@@ -44,7 +44,7 @@ class webservice_files_test extends abstract_testcase {
     /**
      * Test the web service.
      */
-    public function test_service(): void {
+    public function test_service() {
         $this->resetAfterTest();
         $roleid = $this->assignUserCapability('moodle/course:view', \context_system::instance()->id);
         $this->assignUserCapability('moodle/course:viewhiddencourses', \context_system::instance()->id, $roleid);

@@ -45,7 +45,7 @@ class log extends \external_api {
      */
     public static function service_parameters() {
         return new \external_function_parameters([
-            'query'    => new \external_value(PARAM_TEXT, 'query', VALUE_DEFAULT, null),
+            'query'    => new \external_value(PARAM_TEXT, 'query', VALUE_DEFAULT, null)
         ]);
     }
 
@@ -60,7 +60,7 @@ class log extends \external_api {
                     'title'        => new \external_value(PARAM_TEXT, 'Column title'),
                     'sortable'     => new \external_value(PARAM_BOOL, 'Column sortable'),
                     'tdComp'       => new \external_value(PARAM_ALPHANUMEXT, 'Row cell component', VALUE_OPTIONAL),
-                    'thComp'       => new \external_value(PARAM_ALPHANUMEXT, 'Header cell component', VALUE_OPTIONAL),
+                    'thComp'       => new \external_value(PARAM_ALPHANUMEXT, 'Header cell component', VALUE_OPTIONAL)
                 ])
             ),
             'data' => new \external_multiple_structure(
@@ -73,17 +73,17 @@ class log extends \external_api {
                         'message'      => new \external_value(PARAM_RAW, 'Log row message'),
                         'explanation'  => new \external_value(PARAM_TEXT, 'Log row explanation'),
                         'data'         => new \external_value(PARAM_RAW, 'Log row data'),
-                        'exception'    => new \external_value(PARAM_TEXT, 'Log row exception'),
-                    ]),
+                        'exception'    => new \external_value(PARAM_TEXT, 'Log row exception')
+                    ])
                 ])
             ),
             'query' => new \external_single_structure([
                 'limit'            => new \external_value(PARAM_INT, 'Records limit'),
                 'offset'           => new \external_value(PARAM_INT, 'Records offset'),
                 'sort'             => new \external_value(PARAM_ALPHANUMEXT, 'Field to sort on', VALUE_OPTIONAL),
-                'order'            => new \external_value(PARAM_ALPHA, 'Sort direction', VALUE_OPTIONAL),
+                'order'            => new \external_value(PARAM_ALPHA, 'Sort direction', VALUE_OPTIONAL)
             ]),
-            'total' => new \external_value(PARAM_INT, 'Total records'),
+            'total' => new \external_value(PARAM_INT, 'Total records')
         ]);
     }
 
@@ -107,7 +107,7 @@ class log extends \external_api {
                 'limit' => 20,
                 'offset' => 0,
                 'sort' => null,
-                'order' => null,
+                'order' => null
             ];
         } else {
             $query = json_decode($query);
@@ -117,29 +117,29 @@ class log extends \external_api {
             [
                 'field' => 'id',
                 'title' => get_string('id', 'tool_ally'),
-                'sortable' => true,
+                'sortable' => true
             ],
             [
                 'field' => 'time',
                 'title' => get_string('time'),
-                'sortable' => true,
+                'sortable' => true
             ],
             [
                 'field' => 'level',
                 'title' => get_string('level', 'tool_ally'),
-                'sortable' => true,
+                'sortable' => true
             ],
             [
                 'field' => 'code',
                 'title' => get_string('code', 'tool_ally'),
-                'sortable' => true,
+                'sortable' => true
             ],
             [
                 'field' => 'details',
                 'title' => get_string('message', 'tool_ally'),
                 'sortable' => false,
-                'tdComp' => 'tdLogDetails',
-            ],
+                'tdComp' => 'tdLogDetails'
+            ]
         ];
 
         $total = $DB->count_records('tool_ally_log');
@@ -172,7 +172,7 @@ class log extends \external_api {
             'columns' => $columns,
             'data' => $data,
             'query' => $query,
-            'total' => $total,
+            'total' => $total
         ];
 
         return $return;

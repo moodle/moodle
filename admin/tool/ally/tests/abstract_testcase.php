@@ -103,13 +103,13 @@ abstract class abstract_testcase extends \externallib_advanced_testcase {
         $fs = get_file_storage();
 
         // Prepare file record object.
-        $fileinfo = [
+        $fileinfo = array(
             'contextid' => $context->id,
             'component' => 'mod_assign',
             'filearea' => $filearea,
             'itemid' => 0,
             'filepath' => '/',
-            'filename' => empty($name) ? 'myfile.txt' : $name, ];
+            'filename' => empty($name) ? 'myfile.txt' : $name);
 
         // Create file containing text 'hello world'.
         return $fs->create_file_from_string($fileinfo, 'hello world');
@@ -144,14 +144,14 @@ abstract class abstract_testcase extends \externallib_advanced_testcase {
     protected function create_test_file($contextid, $component, $filearea, $itemid = 0, $filename = 'gd logo.png') {
         global $CFG;
         $filepath = $CFG->libdir.'/tests/fixtures/gd-logo.png';
-        $filerecord = [
+        $filerecord = array(
             'contextid' => $contextid,
             'component' => $component,
             'filearea'  => $filearea,
             'itemid'    => $itemid,
             'filepath'  => '/',
             'filename'  => $filename,
-        ];
+        );
         $fs = \get_file_storage();
         $file = $fs->create_file_from_pathname($filerecord, $filepath);
         return $file;

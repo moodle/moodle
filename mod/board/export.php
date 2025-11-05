@@ -36,10 +36,10 @@ $group = optional_param('group', 0, PARAM_INT);
 if (!$cm = get_coursemodule_from_id('board', $id)) {
     throw new \moodle_exception('invalidcoursemodule');
 }
-$board = $DB->get_record('board', array('id' => $cm->instance), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$board = board::get_board($cm->instance, MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
-require_course_login($course, true, $cm);
+require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/board:manageboard', $context);
 
@@ -52,21 +52,35 @@ $table->is_downloading($download, $filename);
 
 $pageurl = new moodle_url('/mod/board/export.php', ['id' => $id, 'ownerid' => $ownerid, 'tabletype' => $tabletype,
     'group' => $group, 'includedeleted' => $includedeleted]);
+$baseurl = new moodle_url(
+    '/mod/board/export.php',
+    ['id' => $id, 'tabletype' => $tabletype, 'includedeleted' => $includedeleted]
+);
 
 // Create tabs for the 3 table types.
 $tabs = [];
-$tabs[] = new tabobject('board', new moodle_url($pageurl, ['tabletype' => 'board']),
-    get_string('export_board', 'mod_board'));
-$tabs[] = new tabobject('notes', new moodle_url($pageurl, ['tabletype' => 'notes']),
-    get_string('export_submissions', 'mod_board'));
-$tabs[] = new tabobject('comments', new moodle_url($pageurl, ['tabletype' => 'comments']),
-    get_string('export_comments', 'mod_board'));
+$tabs[] = new tabobject(
+    'board',
+    new moodle_url($pageurl, ['tabletype' => 'board']),
+    get_string('export_board', 'mod_board')
+);
+$tabs[] = new tabobject(
+    'notes',
+    new moodle_url($pageurl, ['tabletype' => 'notes']),
+    get_string('export_submissions', 'mod_board')
+);
+$tabs[] = new tabobject(
+    'comments',
+    new moodle_url($pageurl, ['tabletype' => 'comments']),
+    get_string('export_comments', 'mod_board')
+);
 
 if (!$table->is_downloading()) {
     // Only print headers if not asked to download data.
     $PAGE->set_url($pageurl);
     $PAGE->set_title(get_string('export', 'mod_board'));
     $PAGE->set_heading(get_string('export', 'mod_board'));
+    $PAGE->activityheader->disable();
 
     echo $OUTPUT->header();
 
@@ -74,30 +88,31 @@ if (!$table->is_downloading()) {
     echo $OUTPUT->tabtree($tabs, $tabletype);
 
     // Print the activity menu.
-    echo groups_print_activity_menu($cm, $pageurl, true);
+    echo html_writer::tag('div', groups_print_activity_menu($cm, $baseurl, true));
 
     // Print the user selector.
     if ($board->singleusermode == board::SINGLEUSER_PUBLIC || $board->singleusermode == board::SINGLEUSER_PRIVATE) {
-        $users = board::get_users_for_board($board->id, $group);
+        $users = board::get_existing_owners_for_board($board, $group, ($tabletype === 'comments'));
         // Include board download user selection to have default all users option if required.
         $users = [0 => get_string('all')] + $users;
-        if (count($users) == 0) {
-            echo $OUTPUT->notification(get_string('nousers', 'mod_board'));
-        } else {
-            $select = new single_select($pageurl, 'ownerid', $users, $ownerid);
-            $select->label = get_string('selectuser', 'mod_board');
-            echo html_writer::tag('div', $OUTPUT->render($select), ['class' => 'userselector mb-1']);
-        }
+        $select = new single_select($pageurl, 'ownerid', $users, $ownerid, null);
+        $select->label = get_string('selectuser', 'mod_board');
+        echo html_writer::tag('div', $OUTPUT->render($select));
     }
 
     // Print the include deleted checkbox.
     $includedeletedurl = new moodle_url($pageurl, ['includedeleted' => !$includedeleted]);
     $onchangelocation = "window.location.href = '" . $includedeletedurl->out(false) . "';";
     $includedeletedlabel = get_string('include_deleted', 'mod_board');
-    $includedeletedcheckbox = html_writer::checkbox('includedeleted', 1, $includedeleted, $includedeletedlabel,
-        ['id' => 'includedeleted', 'class' => 'custom-control-input', 'onChange' => $onchangelocation],
-        ['class' => 'custom-control-label']);
-    echo html_writer::div($includedeletedcheckbox, 'custom-control custom-checkbox mb-1');
+    $includedeletedcheckbox = html_writer::checkbox(
+        'includedeleted',
+        1,
+        $includedeleted,
+        $includedeletedlabel,
+        ['id' => 'includedeleted', 'class' => 'form-check-input', 'onChange' => $onchangelocation],
+        ['class' => 'form-check-label']
+    );
+    echo html_writer::div($includedeletedcheckbox, 'form-check mb-1');
 }
 
 $table->display();

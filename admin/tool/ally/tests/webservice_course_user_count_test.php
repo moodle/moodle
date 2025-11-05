@@ -41,14 +41,14 @@ use tool_ally\webservice\course_user_count;
  */
 class webservice_course_user_count_test extends \externallib_advanced_testcase {
 
-    public function test_user_count(): void {
+    public function test_user_count() {
         global $DB;
 
         $this->resetAfterTest();
         $roleid = $this->assignUserCapability('moodle/course:view', \context_system::instance()->id);
         $this->assignUserCapability('moodle/course:viewhiddencourses', \context_system::instance()->id, $roleid);
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
-        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
 
         $course = $this->getDataGenerator()->create_course(['shortname' => 'C1', 'fullname' => 'The Course']);
 

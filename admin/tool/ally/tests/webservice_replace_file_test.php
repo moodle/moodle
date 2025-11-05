@@ -79,7 +79,7 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test the web service.
      */
-    public function test_service(): void {
+    public function test_service() {
         $datagen = $this->getDataGenerator();
 
         $resource = $datagen->create_module('resource', ['course' => $this->course->id]);
@@ -102,7 +102,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $this->assertSame($file->get_userid(), null);
     }
 
-    public function test_service_invalid_user(): void {
+    public function test_service_invalid_user() {
         $otheruser = $this->getDataGenerator()->create_user();
 
         $resource    = $this->getDataGenerator()->create_module('resource', ['course' => $this->course->id]);
@@ -122,7 +122,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $this->assertSame($file->get_content(), $newfile->get_content());
     }
 
-    public function test_service_invalid_file(): void {
+    public function test_service_invalid_file() {
         // Can use fake as file check will fail before it is used.
         $fakeitemid = '123';
 
@@ -134,7 +134,7 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within label module intro.
      */
-    public function test_service_label_html(): void {
+    public function test_service_label_html() {
         global $DB;
 
         $datagen = $this->getDataGenerator();
@@ -145,7 +145,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $file = $this->create_test_file($context->id, 'mod_label', 'intro');
 
         $dobj = (object) [
-            'id' => $label->id,
+            'id' => $label->id
         ];
         $dobj->intro = '<p>Test label text '.$this->std_img_html().'</p>';
         $DB->update_record('label', $dobj);
@@ -166,7 +166,7 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within page module intro.
      */
-    public function test_service_page_html(): void {
+    public function test_service_page_html() {
         global $DB;
 
         $datagen = $this->getDataGenerator();
@@ -178,7 +178,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $contentfile = $this->create_test_file($context->id, 'mod_page', 'content');
 
         $dobj = (object) [
-            'id' => $page->id,
+            'id' => $page->id
         ];
         $dobj->intro = '<p>Test intro text '.$this->std_img_html().'</p>';
         $dobj->content = '<div>Test content text</div>'.$this->std_img_html();
@@ -204,14 +204,14 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within course summary.
      */
-    public function test_service_course_html(): void {
+    public function test_service_course_html() {
         global $DB;
 
         $context = \context_course::instance($this->course->id);
         $file = $this->create_test_file($context->id, 'course', 'summary');
 
         $dobj = (object) [
-            'id' => $this->course->id,
+            'id' => $this->course->id
         ];
         $dobj->summary = '<p>Course summary text '.$this->std_img_html().'</p>';
         $DB->update_record('course', $dobj);
@@ -232,7 +232,7 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within course section html.
      */
-    public function test_service_course_section_html(): void {
+    public function test_service_course_section_html() {
         global $DB;
 
         $datagen = $this->getDataGenerator();
@@ -264,13 +264,13 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within course section html.
      */
-    public function test_service_block_html(): void {
+    public function test_service_block_html() {
         global $DB;
 
         $configdata = (object) [
             'text' => '',
             'title' => 'test block',
-            'format' => FORMAT_HTML,
+            'format' => FORMAT_HTML
         ];
 
         $time = new \DateTime("now", \core_date::get_user_timezone_object());
@@ -284,7 +284,7 @@ class webservice_replace_file_test extends abstract_testcase {
             'configdata' => base64_encode(serialize($configdata)),
             'showinsubcontexts' => 1,
             'timecreated' => $time->getTimestamp(),
-            'timemodified' => $time->getTimestamp(),
+            'timemodified' => $time->getTimestamp()
         ];
         $blockid = $DB->insert_record('block_instances', $blockinsert);
         $block = $DB->get_record('block_instances', ['id' => $blockid]);
@@ -295,7 +295,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $configdata = (object) [
             'text' => '<img src="@@PLUGINFILE@@/gd logo.png" alt="" width="100" height="100">',
             'title' => 'test block',
-            'format' => FORMAT_HTML,
+            'format' => FORMAT_HTML
         ];
         $block->configdata = base64_encode(serialize($configdata));
 
@@ -337,7 +337,7 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within forum module intro / discussion / posts.
      */
-    public function test_service_forum_html($forumtype = 'forum'): void {
+    public function test_service_forum_html($forumtype = 'forum') {
         global $DB;
 
         $datagen = $this->getDataGenerator();
@@ -346,7 +346,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $context = \context_module::instance($forum->cmid);
         $forumfile = $this->create_test_file($context->id, 'mod_'.$forumtype, 'intro');
         $dobj = (object) [
-            'id' => $forum->id,
+            'id' => $forum->id
         ];
         $dobj->intro = 'forum intro '.$this->std_img_html();
         $dobj->content = '<p>Forum content '.$this->std_img_html().'</p>';
@@ -416,7 +416,7 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within hsuforum module intro / discussion / posts.
      */
-    public function test_service_hsuforum_html(): void {
+    public function test_service_hsuforum_html() {
         global $CFG;
         if (file_exists($CFG->dirroot.'/mod/hsuforum')) {
             $this->test_service_forum_html('hsuforum');
@@ -426,17 +426,17 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within questions.
      */
-    public function test_service_question_html(): void {
+    public function test_service_question_html() {
         global $DB;
 
         $datagen = $this->getDataGenerator();
         $qgen = $datagen->get_plugin_generator('core_question');
 
         $cat = $qgen->create_question_category();
-        $question = $qgen->create_question('shortanswer', null, ['category' => $cat->id]);
+        $question = $qgen->create_question('shortanswer', null, array('category' => $cat->id));
         $questionrow = $DB->get_record('question', ['id' => $question->id]);
 
-        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $this->course->id));
         $context = \context_course::instance($this->course->id);
         quiz_add_quiz_question($question->id, $quiz);
 
@@ -473,17 +473,17 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within questions.
      */
-    public function test_service_question_html_multichoice(): void {
+    public function test_service_question_html_multichoice() {
         global $DB;
 
         $datagen = $this->getDataGenerator();
         $qgen = $datagen->get_plugin_generator('core_question');
 
         $cat = $qgen->create_question_category();
-        $question = $qgen->create_question('multichoice', null, ['category' => $cat->id]);
+        $question = $qgen->create_question('multichoice', null, array('category' => $cat->id));
         $questionrow = $DB->get_record('question', ['id' => $question->id]);
 
-        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $this->course->id));
         $context = \context_course::instance($this->course->id);
         quiz_add_quiz_question($question->id, $quiz);
 
@@ -509,7 +509,7 @@ class webservice_replace_file_test extends abstract_testcase {
             'partiallycorrectfeedback' => '<img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">',
             'partiallycorrectfeedbackformat' => FORMAT_HTML,
             'incorrectfeedback' => '<img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">',
-            'incorrectfeedbackformat' => FORMAT_HTML,
+            'incorrectfeedbackformat' => FORMAT_HTML
         ];
         $DB->update_record('qtype_multichoice_options', $combinedfeedback);
 
@@ -551,7 +551,7 @@ class webservice_replace_file_test extends abstract_testcase {
             'answerformat' => FORMAT_HTML,
             'fraction' => 0,
             'feedback' => 'Feedback : <img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">',
-            'feedbackformat' => FORMAT_HTML,
+            'feedbackformat' => FORMAT_HTML
         ];
         $ans1id = $DB->insert_record('question_answers', $ans);
         $ans2id = $DB->insert_record('question_answers', $ans);
@@ -604,7 +604,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $this->assert_file_processed_in_text($ans2->feedback);
     }
 
-    public function test_service_qtype_ddmatch_html(): void {
+    public function test_service_qtype_ddmatch_html() {
         global $CFG, $DB, $USER;
 
         if (!file_exists($CFG->dirroot.'/question/type/ddmatch')) {
@@ -671,7 +671,7 @@ class webservice_replace_file_test extends abstract_testcase {
             'questiontext' => 'Subquestion A Question text'.$this->std_img_html(),
             'questiontextformat' => FORMAT_HTML,
             'answertext' => 'Subquestion A Answer text'.$this->std_img_html(),
-            'answertextformat' => FORMAT_HTML,
+            'answertextformat' => FORMAT_HTML
         ];
         $subqaid = $DB->insert_record('qtype_ddmatch_subquestions', $subqa);
         $subqarow = $DB->get_record('qtype_ddmatch_subquestions', ['id' => $subqaid]);
@@ -685,7 +685,7 @@ class webservice_replace_file_test extends abstract_testcase {
             'questiontext' => 'Subquestion B '.$this->std_img_html(),
             'questiontextformat' => FORMAT_HTML,
             'answertext' => 'Subquestion B Answer text'.$this->std_img_html(),
-            'answertextformat' => FORMAT_HTML,
+            'answertextformat' => FORMAT_HTML
         ];
         $subqbid = $DB->insert_record('qtype_ddmatch_subquestions', $subqb);
         $subqbrow = $DB->get_record('qtype_ddmatch_subquestions', ['id' => $subqbid]);
@@ -765,13 +765,13 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within lesson module intro / pages.
      */
-    public function test_service_lesson_html(): void {
+    public function test_service_lesson_html() {
         global $DB;
 
         // Lesson intro file replacement testing.
-        $lesson = $this->getDataGenerator()->create_module('lesson', ['course' => $this->course->id]);
+        $lesson = $this->getDataGenerator()->create_module('lesson', array('course' => $this->course->id));
         $dobj = (object)[
-            'id' => $lesson->id,
+            'id' => $lesson->id
         ];
         $dobj->intro = '<img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">';
         $context = \context_module::instance($lesson->cmid);
@@ -789,9 +789,9 @@ class webservice_replace_file_test extends abstract_testcase {
         // Lesson page content file replacement testing.
         $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
 
-        $page = $lessongenerator->create_content($lesson, ['title' => 'Simple page']);
+        $page = $lessongenerator->create_content($lesson, array('title' => 'Simple page'));
         $dobj = (object)[
-            'id' => $page->id,
+            'id' => $page->id
         ];
         $dobj->contents = '<img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">';
         $DB->update_record('lesson_pages', $dobj);
@@ -809,14 +809,14 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing files within glossary module intro / pages.
      */
-    public function test_service_glossary_html(): void {
+    public function test_service_glossary_html() {
         global $DB;
 
         // Glossary intro file replacement testing.
         $this->setAdminUser();
-        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $this->course->id]);
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $this->course->id));
         $dobj = (object)[
-            'id' => $glossary->id,
+            'id' => $glossary->id
         ];
         $dobj->intro = '<img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">';
         $context = \context_module::instance($glossary->cmid);
@@ -837,7 +837,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $entry = $glossarygenerator->create_content($glossary);
         $dobj = (object)[
             'id' => $entry->id,
-            'definition' => '<img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">',
+            'definition' => '<img src="@@PLUGINFILE@@/gd%20logo.png" alt="" width="100" height="100">'
         ];
         $DB->update_record('glossary_entries', $dobj);
 
@@ -854,7 +854,7 @@ class webservice_replace_file_test extends abstract_testcase {
     /**
      * Test replacing file where filename already exists.
      */
-    public function test_service_replace_existing_filename(): void {
+    public function test_service_replace_existing_filename() {
         global $DB;
 
         $datagen = $this->getDataGenerator();
@@ -869,7 +869,7 @@ class webservice_replace_file_test extends abstract_testcase {
         $this->create_test_file($context->id, 'mod_label', 'intro', 0, $filename);
 
         $dobj = (object) [
-            'id' => $label->id,
+            'id' => $label->id
         ];
         $dobj->intro = '<img src="@@PLUGINFILE@@/'.rawurlencode($filename).'" alt="" width="100" height="100">'.
                 '<img src="@@PLUGINFILE@@/'.rawurlencode($filetoreplacename).'" alt="" width="100" height="100">';

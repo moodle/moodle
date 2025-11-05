@@ -14,26 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use tool_mergeusers\local\config;
+use tool_mergeusers\local\user_merger;
+
 /**
  * Version information
  *
- * @package    tool
+ * @package    tool_mergeusers
  * @subpackage mergeusers
  * @author     Andrew Hancox <andrewdchancox@googlemail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class clioptions_test extends advanced_testcase {
-
+final class clioptions_test extends advanced_testcase {
     public function setUp(): void {
         global $CFG;
-        require_once("$CFG->dirroot/admin/tool/mergeusers/lib/mergeusertool.php");
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
     public function tearDown(): void {
-        $config = tool_mergeusers_config::instance();
-        unset($config->alwaysRollback);
+        $config = config::instance();
+        unset($config->alwaysrollback);
         unset($config->debugdb);
+        parent::tearDown();
     }
 
     /**
@@ -41,33 +44,33 @@ class clioptions_test extends advanced_testcase {
      * @group tool_mergeusers
      * @group tool_mergeusers_clioptions
      */
-    public function test_alwaysrollback() {
+    public function test_option_alwaysrollback_is_set(): void {
         global $DB;
 
         // Setup two users to merge.
-        $user_remove = $this->getDataGenerator()->create_user();
-        $user_keep = $this->getDataGenerator()->create_user();
+        $userremove = $this->getDataGenerator()->create_user();
+        $userkeep = $this->getDataGenerator()->create_user();
 
-        $mut = new MergeUserTool();
-        list($success, $log, $logid) = $mut->merge($user_keep->id, $user_remove->id);
+        $mut = new user_merger();
+        [$success, $log, $logid] = $mut->merge($userkeep->id, $userremove->id);
 
         // Check $user_remove is suspended.
-        $user_remove = $DB->get_record('user', array('id' => $user_remove->id));
-        $this->assertEquals(1, $user_remove->suspended);
+        $userremove = $DB->get_record('user', ['id' => $userremove->id]);
+        $this->assertEquals(1, $userremove->suspended);
 
-        $user_keep = $DB->get_record('user', array('id' => $user_keep->id));
-        $this->assertEquals(0, $user_keep->suspended);
+        $userkeep = $DB->get_record('user', ['id' => $userkeep->id]);
+        $this->assertEquals(0, $userkeep->suspended);
 
-        $user_remove_2 = $this->getDataGenerator()->create_user();
+        $userremove2 = $this->getDataGenerator()->create_user();
 
-        $config = tool_mergeusers_config::instance();
-        $config->alwaysRollback = true;
+        $config = config::instance();
+        $config->alwaysrollback = true;
 
-        $mut = new MergeUserTool($config);
+        $mut = new user_merger($config);
 
         $this->expectException('Exception');
-        $this->expectExceptionMessage('alwaysRollback option is set so rolling back transaction');
-        list($success, $log, $logid) = $mut->merge($user_keep->id, $user_remove_2->id);
+        $this->expectExceptionMessage('alwaysrollback option is set so rolling back transaction');
+        [$success, $log, $logid] = $mut->merge($userkeep->id, $userremove2->id);
     }
 
     /**
@@ -75,32 +78,32 @@ class clioptions_test extends advanced_testcase {
      * @group tool_mergeusers
      * @group tool_mergeusers_clioptions
      */
-    public function test_debugdb() {
+    public function test_option_debugdb_is_set(): void {
         global $DB;
 
         // Setup two users to merge.
-        $user_remove = $this->getDataGenerator()->create_user();
-        $user_keep = $this->getDataGenerator()->create_user();
+        $userremove = $this->getDataGenerator()->create_user();
+        $userkeep = $this->getDataGenerator()->create_user();
 
-        $mut = new MergeUserTool();
-        list($success, $log, $logid) = $mut->merge($user_keep->id, $user_remove->id);
-        $this->assertFalse($this->hasOutput());
+        $mut = new user_merger();
+        [$success, $log, $logid] = $mut->merge($userkeep->id, $userremove->id);
+        $this->expectOutputString("");
 
         // Check $user_remove is suspended.
-        $user_remove = $DB->get_record('user', array('id' => $user_remove->id));
-        $this->assertEquals(1, $user_remove->suspended);
+        $userremove = $DB->get_record('user', ['id' => $userremove->id]);
+        $this->assertEquals(1, $userremove->suspended);
 
-        $user_keep = $DB->get_record('user', array('id' => $user_keep->id));
-        $this->assertEquals(0, $user_keep->suspended);
+        $userkeep = $DB->get_record('user', ['id' => $userkeep->id]);
+        $this->assertEquals(0, $userkeep->suspended);
 
-        $user_remove_2 = $this->getDataGenerator()->create_user();
+        $userremove2 = $this->getDataGenerator()->create_user();
 
-        $config = tool_mergeusers_config::instance();
+        $config = config::instance();
         $config->debugdb = true;
 
-        $mut = new MergeUserTool($config);
+        $mut = new user_merger($config);
 
-        list($success, $log, $logid) = $mut->merge($user_keep->id, $user_remove_2->id);
+        [$success, $log, $logid] = $mut->merge($userkeep->id, $userremove2->id);
 
         $this->expectOutputRegex('/Query took/');
     }

@@ -22,10 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
-
 /**
  * utilities used by the other test classes
  *
@@ -54,14 +52,14 @@ class qtype_gapfill_test_helper extends question_test_helper {
         $id = 1;
         foreach ($answerwords as $key => $answer) {
             $id++;
-            $answers[$key] = (object) [
+            $answers[$key] = (object) array(
                 'question' => '163',
                 'answer' => $answer,
                 'fraction' => '1',
                 'feedback' => 'Feedback text',
                 'feedbackformat' => '1',
                 'id' => $id,
-            ];
+            );
         }
 
         $fromform = (object) [
@@ -107,19 +105,19 @@ class qtype_gapfill_test_helper extends question_test_helper {
             'optionaftertext' => '',
             'letterhints' => '1',
             'generalfeedback' => [
-                'text' => 'General feedback',
+                'text' => '',
                 'format' => FORMAT_HTML,
             ],
             'correctfeedback' => [
-                'text' => 'Correct feedback',
+                'text' => 'Correct Feedback',
                 'format' => FORMAT_HTML,
             ],
             'partiallycorrectfeedback' => [
-                'text' => 'Partially correct feedback',
+                'text' => 'Partially Correct Feedback',
                 'format' => FORMAT_HTML,
             ],
             'incorrectfeedback' => [
-                'text' => 'Incorrect feedback',
+                'text' => 'Incorrect Feedback',
                 'format' => FORMAT_HTML,
             ],
             'optionsaftertext' => false,
@@ -141,16 +139,14 @@ class qtype_gapfill_test_helper extends question_test_helper {
 
         return $fromform;
     }
-
     /**
-     * Create an instance of the question for testing
+     * Slight improvements over original make_question class
      *
-     * @param object $type
      * @param string $questiontext
      * @param array $poptions
-     * @return \qtype_gapfill_question
+     * @return qtype_gapfill
      */
-    public static function make_question($type, $questiontext = "The [cat] sat on the [mat]", array $poptions =[]) {
+    public static function make_question($questiontext = "The [cat] sat on the [mat]", array $poptions =[]) {
 
         $options = [
             'noduplicates' => $poptions['noduplicates'] ?? 0,
@@ -158,7 +154,7 @@ class qtype_gapfill_test_helper extends question_test_helper {
             'optionsaftertext' => $poptions['optionsaftertext'] ?? false,
             'delimitchars' => $poptions['delimitchars'] ?? '[]',
             'singleuse' => $poptions['singleuse'] ?? false,
-            'answerdisplay' => $poptions['answerdisplay'] ?? 'dragdrop',
+            'answerdisplay' => $poptions['answerdisplay'] ?? 'dragdrop'
         ];
 
         $type = 'gapfill';
@@ -170,20 +166,20 @@ class qtype_gapfill_test_helper extends question_test_helper {
         $question->qtype = question_bank::get_qtype('gapfill');
         $answerwords = $question->qtype->get_gaps($options['delimitchars'], $questiontext);
 
-        $question->places = [];
+        $question->places = array();
 
-        $answers = [];
+        $answers = array();
         $id = 1;
         foreach ($answerwords as $key => $answer) {
             $id++;
-            $answers[$key] = (object) [
+            $answers[$key] = (object) array(
                 'question' => '163',
                 'answer' => $answer,
                 'fraction' => '1',
                 'feedback' => 'Feedback text',
                 'feedbackformat' => '1',
                 'id' => $id,
-            ];
+            );
         }
         $questionoptions = (object) [
             'id' => '117',
@@ -197,12 +193,11 @@ class qtype_gapfill_test_helper extends question_test_helper {
             'fixedgapsize' => '0',
             'optionaftertext' => '',
             'letterhints' => '1',
-            'generalfeedback' => 'General feedback',
-            'correctfeedback' => 'Correct feedback',
+            'correctfeedback' => 'Correct Feedback',
             'correctfeedbackformat' => '0',
-            'partiallycorrectfeedback' => 'Partially correct feedback',
+            'partiallycorrectfeedback' => 'Partially Correct Feedback',
             'partiallycorrectfeedbackformat' => '0',
-            'incorrectfeedback' => 'Incorrect feedback',
+            'incorrectfeedback' => 'Incorrect Feedback',
             'incorrectfeedbackformat' => '0',
             'optionsaftertext' => $options['optionsaftertext'],
             'singleuse' => $options['singleuse'],
@@ -232,7 +227,7 @@ class qtype_gapfill_test_helper extends question_test_helper {
             'defaultmark' => '1.0000000',
             'penalty' => '0.3333333',
             'maxmark' => '1.00000',
-            'options' => $questionoptions,
+            'options' => $questionoptions
         ];
 
         $question = $question->qtype->make_question($questiondata);

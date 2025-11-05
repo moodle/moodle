@@ -85,7 +85,7 @@ trait embedded_file_map {
                                 'filename' => rawurlencode($file->get_filename()),
                                 'contenthash' => $file->get_contenthash(),
                                 'pathnamehash' => $file->get_pathnamehash(),
-                                'tag' => $result->tagname,
+                                'tag' => $result->tagname
                             ];
                         }
                     }
@@ -138,7 +138,7 @@ trait embedded_file_map {
                     'filename' => rawurlencode($file->get_filename()),
                     'pathnamehash' => $file->get_pathnamehash(),
                     'contenthash' => $file->get_contenthash(),
-                    'tag' => $result->tagname,
+                    'tag' => $result->tagname
                 ];
             }
         }

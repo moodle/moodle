@@ -14,15 +14,42 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library of functions for the Smart File Importer plugin.
+ *
+ * @package    gradeimport_smart
+ * @copyright  2008 onwards Robert Russo, Jason Peak, Philip Cali, Adam Zapletal
+ * @copyright  2008 onwards Louisiana State University
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once('classes.php');
 
-// Reads the first line in a file and tries to figure out what kind of grade
-// file it is. A new object of the appropriate grade file type is returned.
+/**
+ * Reads the first line in a file and tries to figure out what kind of grade
+ * file it is. A new object of the appropriate grade file type is returned.
+ *
+ * @param string $file The content of the uploaded file.
+ * @return SmartFileBase|false An object of the appropriate grade file type, or false if not found.
+ */
 function smart_autodiscover_filetype($file) {
+    // Remove UTF-8 BOM if present.
+    if (strpos($file, "\xef\xbb\xbf") === 0) {
+        $file = substr($file, 3);
+    }
+
     $lines = smart_split_file($file);
     $line = $lines[0];
+
+    if (SmartFileScantron::validate_line($line)) {
+        return new SmartFileScantron($file);
+    }
+
+    if (SmartFile89NumberCSV::validate_line($line)) {
+        return new SmartFile89NumberCSV($file);
+    }
 
     if (SmartFileKeypadidCSV::validate_line($line)) {
         return new SmartFileKeypadidCSV($file);
@@ -34,10 +61,6 @@ function smart_autodiscover_filetype($file) {
 
     if (SmartFileFixed::validate_line($line)) {
         return new SmartFileFixed($file);
-    }
-
-    if (SmartFileInsane::validate_line($line)) {
-        return new SmartFileInsane($file);
     }
 
     if (SmartFileCommaLongLsuid::validate_line($line)) {
@@ -64,6 +87,10 @@ function smart_autodiscover_filetype($file) {
         return new SmartFileCSVLsuid($file);
     }
 
+    if (SmartFileInsane::validate_line($line)) {
+        return new SmartFileInsane($file);
+    }
+
     if (SmartFileMEC::validate_line($line)) {
         return new SmartFileMEC($file);
     }
@@ -76,16 +103,16 @@ function smart_autodiscover_filetype($file) {
         return new SmartFileAnonymous($file);
     }
 
-    if (count($lines) >= 1 && SmartFileEmail::validate_line($lines[0])) {
-        return new SmartFileEmail($file);
-    }
-
     if (count($lines) >= 2 && SmartFileTurning::validate_line($lines[1])) {
         return new SmartFileTurning($file);
     }
 
     if (SmartFileCSVPawsid::validate_line($line)) {
         return new SmartFileCSVPawsid($file);
+    }
+
+    if (count($lines) >= 1 && SmartFileEmail::validate_line($lines[0])) {
+        return new SmartFileEmail($file);
     }
 
     if (count($lines) >= 3 && SmartFileMaple::validate_line($lines[2])) {
@@ -95,7 +122,12 @@ function smart_autodiscover_filetype($file) {
     return false;
 }
 
-// Splits a file into an array of lines and normalize newlines.
+/**
+ * Splits a file into an array of lines and normalize newlines.
+ *
+ * @param string $file The content of the file.
+ * @return array An array of strings, where each element is a line from the file.
+ */
 function smart_split_file($file) {
     // Replace \r\n with \n, replace any leftover \r with \n, explode on \n.
     $lines = explode("\n", preg_replace("/\r/", "\n", preg_replace("/\r\n/", "\n", $file)));
@@ -107,43 +139,90 @@ function smart_split_file($file) {
     }
 }
 
-// Checks whether or not a string is a valid LSUID. It must be a nine digit
-// digit number that starts with 89 to pass.
+/**
+ * Checks whether or not a string is a valid LSUID. It must be an 8-digit number.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
 function smart_is_lsuid2($s) {
-    return preg_match('/^89\d{7}$/', $s);
+    return preg_match('/^\d{8}$/', $s);
 }
 
-// Checks whether or not a string is a valid LSU Email address.
-// It must contain a valid pawsid and end in @(valid domain name - community and agcenter prohibit limiting this)
-// A valid pawsid must be 1-16 and contain only alphanumeric characters including hyphens.
+/**
+ * Checks whether or not a string is a valid LSU Email address.
+ * It must contain a valid pawsid and end in @(valid domain name).
+ * A valid pawsid must be 1-16 and contain only alphanumeric characters including hyphens.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
 function smart_is_email($s) {
     return preg_match('/^[a-zA-Z0-9\-]{1,16}@[a-zA-Z0-9\-]{1,32}\.[a-zA-Z0-9\-]{2,3}/', $s);
 }
 
-// Checks whether or not a string is a valid MEC LSUID. It must be a twelve digit
-// digit number that starts with three digits and has 89.* afterward.
+/**
+ * Checks whether or not a string is a valid MEC LSUID. It must be an 11-digit
+ * number that starts with three digits and has an 8-digit number afterward.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
 function smart_is_mec_lsuid($s) {
-    return preg_match('/^...89\d{7}$/', $s);
+    return preg_match('/^...\d{8}$/', $s);
 }
 
-// Checks whether or not a string is a valid grade. It must be of the form
-// NNN.NN, NN.NN, or N.NN to pass.
+/**
+ * Checks whether or not a string is a valid grade. It must be of the form
+ * NNN.NN, NN.NN, or N.NN to pass.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
 function smart_is_grade($s) {
     return preg_match('/^\d{1,3}|[(.\d{1})]|[(.\d{2})]?$/', trim($s));
 }
 
-// Checks whether or not a string is a valid anonymous number. It must be of
-// the form XXXX to pass.
+/**
+ * Checks whether or not a string is a valid anonymous number. It must be of
+ * the form XXXX to pass.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
 function smart_is_anon_num($s) {
     return preg_match('/^\d{4}$/', $s);
 }
 
-// Checks whether or not a string is a valid pawsid. It must be 1-16 and contain
-// only alphanumeric characters including hyphens.
+/**
+ * Checks whether or not a string is a valid pawsid. It must be 1-16 and contain
+ * only alphanumeric characters including hyphens.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
 function smart_is_pawsid($s) {
     return preg_match('/^[a-zA-Z0-9\-]{1,16}$/', $s);
 }
 
+/**
+ * Checks whether or not a string is a valid keypad ID.
+ * It must be a 6-character alphanumeric string.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
 function smart_is_keypadid($s) {
     return preg_match('/^[A-Z0-9]{6}$/', $s);
+}
+
+/**
+ * Checks whether or not a string is a valid 89 number. It must be a nine digit
+ * number that starts with 89 to pass.
+ *
+ * @param string $s The string to check.
+ * @return int|false Returns 1 if it matches, 0 if it does not, and false on error.
+ */
+function smart_is_89_number($s) {
+    return preg_match('/^89\d{7}$/', $s);
 }

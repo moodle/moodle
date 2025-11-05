@@ -60,12 +60,17 @@ require_capability('gradereport/rubrics:view', $context);
 $activityname = '';
 
 // Set up the form.
-$mform = new report_rubrics_select_form(null, array('courseid' => $courseid));
+$mform = new report_rubrics_select_form(null, array('courseid' => $courseid, 'activityid' => $activityid));
 
 // Did we get anything from the form?
 if ($formdata = $mform->get_data()) {
     // Get the users rubrics.
     $activityid = $formdata->activityid;
+    $config = get_config('gradereport_rubrics');
+    if (!$csv && !empty($config->displayurlparams)) {
+        $fullurl = new moodle_url('/grade/report/rubrics/index.php', (array)$formdata);
+        redirect($fullurl);
+    }
 }
 
 if ($activityid != 0) {

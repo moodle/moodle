@@ -72,7 +72,7 @@ class invalid_files extends loggable_external_api {
 
         local::preload_course_contexts();
 
-        $return = [];
+        $return = array();
 
         $files = local_file::iterator()->with_stop_at_count($params['perpage']);
         $files->with_count_start_page($params['page']);

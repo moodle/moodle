@@ -53,7 +53,7 @@ class processors_status extends loggable_external_api {
             'content_events' => new \external_value(PARAM_INT, 'Amount of content events in the queue'),
             'oldest_content_event' => new \external_value(PARAM_INT, 'timestamp for oldest content event queued'),
             'course_events' => new \external_value(PARAM_INT, 'Amount of course events in the queue'),
-            'oldest_course_event' => new \external_value(PARAM_INT, 'timestamp for oldest course event queued'),
+            'oldest_course_event' => new \external_value(PARAM_INT, 'timestamp for oldest course event queued')
         ]);
     }
 

@@ -58,14 +58,14 @@ class backup_qtype_gapfill_plugin extends backup_qtype_plugin {
          $this->add_question_question_answers($pluginwrapper);
 
         // Now create the qtype own structures.
-        $gapfill = new backup_nested_element('gapfill', ['id'], [
+        $gapfill = new backup_nested_element('gapfill', array('id'), array(
             'answerdisplay', 'delimitchars', 'casesensitive', 'noduplicates', 'disableregex',
-            'fixedgapsize', 'optionsaftertext', 'letterhints', 'singleuse', 'correctfeedback', 'correctfeedbackformat',
-            'partiallycorrectfeedback', 'partiallycorrectfeedbackformat', 'incorrectfeedback', 'incorrectfeedbackformat']);
+            'fixedgapsize', 'optionsaftertext', 'letterhints', 'singleuse', 'correctfedback', 'correctfeddbackformat',
+            'partiallycorrectfeedback', 'partiallycorrectfeedbackformat', 'incorrectfeedback', 'incorrectfeedbackformat'));
 
         $gapsettings = new backup_nested_element('gapsettings');
-        $gapsetting = new backup_nested_element('gapsetting', ['id'], ['questionid', 'itemid',
-                'gaptext', 'correctfeedback', 'incorrectfeedback']);
+        $gapsetting = new backup_nested_element('gapsetting', array('id'), array('questionid', 'itemid',
+                'gaptext', 'correctfeedback', 'incorrectfeedback'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($gapfill);
@@ -75,10 +75,10 @@ class backup_qtype_gapfill_plugin extends backup_qtype_plugin {
 
         // Set source to populate the data.
         $gapfill->set_source_table('question_gapfill',
-                ['question' => backup::VAR_PARENTID]);
+                array('question' => backup::VAR_PARENTID));
          // Set source to populate the data.
         $gapsetting->set_source_table('question_gapfill_settings',
-                ['question' => backup::VAR_PARENTID]);
+                array('question' => backup::VAR_PARENTID));
 
         // Don't need to annotate ids nor files.
 
@@ -91,9 +91,9 @@ class backup_qtype_gapfill_plugin extends backup_qtype_plugin {
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        return [
+        return array(
             'correctfeedback' => 'question_created',
             'partiallycorrectfeedback' => 'question_created',
-            'incorrectfeedback' => 'question_created'];
+            'incorrectfeedback' => 'question_created');
     }
 }

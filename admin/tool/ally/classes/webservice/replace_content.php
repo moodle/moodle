@@ -48,7 +48,7 @@ class replace_content extends loggable_external_api {
             'component' => new \external_value(PARAM_ALPHANUMEXT, 'Component'),
             'table' => new \external_value(PARAM_ALPHANUMEXT, 'Table'),
             'field' => new \external_value(PARAM_ALPHANUMEXT, 'Field'),
-            'content' => new \external_value(PARAM_RAW, 'HTML Content'),
+            'content' => new \external_value(PARAM_RAW, 'HTML Content')
         ]);
     }
 
@@ -57,7 +57,7 @@ class replace_content extends loggable_external_api {
      */
     public static function service_returns() {
         return new \external_single_structure([
-            'success'    => new \external_value(PARAM_BOOL, 'Content replaced succesfully?'),
+            'success'    => new \external_value(PARAM_BOOL, 'Content replaced succesfully?')
         ]);
     }
 
@@ -79,7 +79,7 @@ class replace_content extends loggable_external_api {
             'component' => $component,
             'table' => $table,
             'field' => $field,
-            'content' => $content,
+            'content' => $content
         ]);
 
         self::validate_context(\context_system::instance());

@@ -48,7 +48,7 @@ class file_updates_task_test extends abstract_testcase {
     /**
      * First run should set the timestamp then exit.
      */
-    public function test_initial_run(): void {
+    public function test_initial_run() {
         $this->resetAfterTest();
 
         $this->assertEmpty(get_config('tool_ally', 'push_timestamp'));
@@ -66,7 +66,7 @@ class file_updates_task_test extends abstract_testcase {
     /**
      * Nothing should happen if config is invalid.
      */
-    public function test_invalid_config(): void {
+    public function test_invalid_config() {
         $task          = new file_updates_task();
         $task->updates = $this->createMock(push_file_updates::class);
 
@@ -78,7 +78,7 @@ class file_updates_task_test extends abstract_testcase {
     /**
      * Ensure that basic execution and timestamp management is working.
      */
-    public function test_push_updates(): void {
+    public function test_push_updates() {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -109,7 +109,7 @@ class file_updates_task_test extends abstract_testcase {
     /**
      * Ensure that our batch looping is working as expected.
      */
-    public function test_push_updates_batching(): void {
+    public function test_push_updates_batching() {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -138,7 +138,7 @@ class file_updates_task_test extends abstract_testcase {
     /**
      * Test pushing of file deletions.
      */
-    public function test_push_deletes(): void {
+    public function test_push_deletes() {
         global $DB;
 
         $this->resetAfterTest();

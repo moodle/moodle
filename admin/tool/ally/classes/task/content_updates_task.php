@@ -207,7 +207,7 @@ class content_updates_task extends scheduled_task {
                     if ($DB->get_record('tool_ally_deleted_content', [
                         'comptable' => $queuerow->comptable,
                         'compfield' => $queuerow->compfield,
-                        'comprowid' => $queuerow->comprowid,
+                        'comprowid' => $queuerow->comprowid
                     ])) {
                         // Content definitely deleted.
                         $DB->delete_records('tool_ally_content_queue', ['id' => $queuerow->id]);

@@ -101,7 +101,7 @@ class file_url_resolver {
         if (!$discussionid) {
             return null;
         }
-        $url = new \moodle_url('/mod/'.$plugin.'/discuss.php', ['d' => $discussionid]);
+        $url = new \moodle_url('/mod/'.$plugin.'/discuss.php', array('d' => $discussionid));
         $url->set_anchor('p'.$file->get_itemid());
 
         return $url;

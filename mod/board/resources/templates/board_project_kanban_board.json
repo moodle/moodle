@@ -1,0 +1,9 @@
+{
+    "name": "Project Kanban board",
+    "description": "<p>This is a useful Board template to support student group work. Students can document the tasks they are yet to start, those in progress, and those done. It enables teachers to have insight into group activity and performance.</p>",
+    "columns": "To Do\nIn Progress\nDone",
+    "intro": "<p>Use this Kanban board to track the progress of tasks in your group project. There are three column: To Do; In Progress; Done. Add tasks to the To Do column by selecting the plus button. When you commence a task, move it to the In Progress column. When it is completed, move it to the Done column.</p>",
+    "addrating": "0",
+    "hideheaders": "0",
+    "userscanedit": "1"
+}

@@ -21,14 +21,14 @@
 # @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 
-@filter @filter_ally @suite_ally
+@filter @filter_ally
 Feature: When the ally filter is enabled ally place holders are inserted when appropriate into file resources.
 
   Background:
     Given the ally filter is enabled
 
   @javascript
-  Scenario Outline: File resources are processed when viewed on a course page or a course section page.
+  Scenario Outline: File resources are processed.
     Given the following "courses" exist:
       | fullname | shortname | category | format |
       | Course 1 | C1        | 0        | topics |
@@ -43,52 +43,34 @@ Feature: When the ally filter is enabled ally place holders are inserted when ap
     And I log in as "teacher1"
     And <coursestep>
     And I allow guest access for current course
-    And I create file resources using fixtures "test.doc, test.docx, test.odt, bpd_bikes_640px.jpg, testgif_small.gif, testpng_small.png" in section "<section>"
+    And I create file resources using fixtures "bpd_bikes_640px.jpg, testgif_small.gif, testpng_small.png"
     When I reload the page
     Then I should see the feedback place holder for the "1st" file resource
     And I should see the feedback place holder for the "2nd" file resource
     And I should see the feedback place holder for the "3rd" file resource
-    And I should see the feedback place holder for the "4th" file resource
-    And I should see the feedback place holder for the "5th" file resource
-    And I should see the feedback place holder for the "6th" file resource
     And I should see the download place holder for the "1st" file resource
     And I should see the download place holder for the "2nd" file resource
     And I should see the download place holder for the "3rd" file resource
-    And I should see the download place holder for the "4th" file resource
-    And I should see the download place holder for the "5th" file resource
-    And I should see the download place holder for the "6th" file resource
     And I log out
     And I log in as "student1"
     When <coursestep>
     Then I should not see the feedback place holder for the "1st" file resource
     And I should not see the feedback place holder for the "2nd" file resource
     And I should not see the feedback place holder for the "3rd" file resource
-    And I should not see the feedback place holder for the "4th" file resource
-    And I should not see the feedback place holder for the "5th" file resource
-    And I should not see the feedback place holder for the "6th" file resource
     And I should see the download place holder for the "1st" file resource
     And I should see the download place holder for the "2nd" file resource
     And I should see the download place holder for the "3rd" file resource
-    And I should see the download place holder for the "4th" file resource
-    And I should see the download place holder for the "5th" file resource
-    And I should see the download place holder for the "6th" file resource
     And I log out
     And I log in as "guest"
     When <coursestep>
     Then I should not see the feedback place holder for the "1st" file resource
     And I should not see the feedback place holder for the "2nd" file resource
     And I should not see the feedback place holder for the "3rd" file resource
-    And I should not see the feedback place holder for the "4th" file resource
-    And I should not see the feedback place holder for the "5th" file resource
-    And I should not see the feedback place holder for the "6th" file resource
     And I should not see the download place holder for the "1st" file resource
     And I should not see the download place holder for the "2nd" file resource
     And I should not see the download place holder for the "3rd" file resource
-    And I should not see the download place holder for the "4th" file resource
-    And I should not see the download place holder for the "5th" file resource
-    And I should not see the download place holder for the "6th" file resource
     Examples:
-      | course               | coursestep                          | section |
-      | C1                   | I am on "Course 1" course homepage  | 1       |
-      | C1                   | I am on course "C1" section 2       | 2       |
-      | Acceptance test site | I am on site homepage               | 1       |
+    | course               | coursestep                         |
+    | C1                   | I am on "Course 1" course homepage |
+    | Acceptance test site | I am on site homepage              |
+

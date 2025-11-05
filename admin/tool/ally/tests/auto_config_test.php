@@ -31,7 +31,7 @@ use tool_ally\auto_config;
  */
 class auto_config_test extends \advanced_testcase {
 
-    public function test_auto_config(): void {
+    public function test_auto_config() {
         global $DB;
 
         $this->resetAfterTest();
@@ -44,11 +44,11 @@ class auto_config_test extends \advanced_testcase {
         $this->assertNotEmpty($ac->user);
         $this->assertNotEmpty($ac->role);
 
-        $dataprofile = $DB->get_records('user_info_data', ['fieldid' => $field->id]);
+        $dataprofile = $DB->get_records('user_info_data', array('fieldid' => $field->id));
         $this->assertCount(1, $dataprofile);
     }
 
-    public function test_auto_config_update_user(): void {
+    public function test_auto_config_update_user() {
         global $DB;
 
         $this->resetAfterTest();
@@ -59,7 +59,7 @@ class auto_config_test extends \advanced_testcase {
         $ac->configure();
 
         $this->assertDebuggingNotCalled();
-        $dataprofile = $DB->get_records('user_info_data', ['fieldid' => $field->id]);
+        $dataprofile = $DB->get_records('user_info_data', array('fieldid' => $field->id));
         $this->assertCount(1, $dataprofile);
     }
 
@@ -87,10 +87,10 @@ class auto_config_test extends \advanced_testcase {
             'param1' => 30,
             'param2' => 2048,
             'param3' => 0,
-            'descriptionformat' => 1,
+            'descriptionformat' => 1
         ];
         $formfield->define_save((object)$data);
 
-        return $DB->get_record('user_info_field', ['shortname' => $data['shortname']], '*', MUST_EXIST);
+        return $DB->get_record('user_info_field', array('shortname' => $data['shortname']), '*', MUST_EXIST);
     }
 }

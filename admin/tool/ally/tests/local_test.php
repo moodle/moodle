@@ -41,7 +41,7 @@ class local_test extends advanced_testcase {
     /**
      * Test get role IDs.
      */
-    public function test_get_roleids(): void {
+    public function test_get_roleids() {
         global $DB;
 
         $this->resetAfterTest();
@@ -63,7 +63,7 @@ class local_test extends advanced_testcase {
     /**
      * Test get admin IDs.
      */
-    public function test_get_adminids(): void {
+    public function test_get_adminids() {
         $admins  = get_admins();
         $userids = local::get_roleids();
         foreach ($admins as $admin) {
@@ -72,7 +72,7 @@ class local_test extends advanced_testcase {
         }
     }
 
-    public function test_get_ws_token_invalid_config(): void {
+    public function test_get_ws_token_invalid_config() {
         // Test failure without ally_webuser / valid configuration.
         $expectedmsg = 'Access control exception (Ally web user (ally_webuser) does not exist.';
         $expectedmsg .= ' Has auto configure been run?)';
@@ -80,7 +80,7 @@ class local_test extends advanced_testcase {
         local::get_ws_token();
     }
 
-    public function test_get_ws_token(): void {
+    public function test_get_ws_token() {
         $this->resetAfterTest();
         // Test token generated successfully when configured.
         $ac = new auto_config();

@@ -32,7 +32,7 @@ $tasks = [
         'hour'      => '*',
         'day'       => '*',
         'dayofweek' => '*',
-        'month'     => '*',
+        'month'     => '*'
     ],
     [
         'classname' => '\tool_ally\task\content_updates_task',
@@ -41,7 +41,7 @@ $tasks = [
         'hour'      => '*',
         'day'       => '*',
         'dayofweek' => '*',
-        'month'     => '*',
+        'month'     => '*'
     ],
     [
         'classname' => '\tool_ally\task\course_updates_task',
@@ -50,7 +50,7 @@ $tasks = [
         'hour'      => '*',
         'day'       => '*',
         'dayofweek' => '*',
-        'month'     => '*',
+        'month'     => '*'
     ],
     [
         'classname' => '\tool_ally\task\cleanup_log_task',
@@ -59,6 +59,6 @@ $tasks = [
         'hour'      => '0',
         'day'       => '*',
         'dayofweek' => '*',
-        'month'     => '*',
-    ],
+        'month'     => '*'
+    ]
 ];

@@ -1,0 +1,6 @@
+{
+    "name": "Exit Ticket Stop, Start, Continue",
+    "description": "<p>This board seeks to gather feedback from learners on what the teacher can do to improve the learning experience. Learners are ask to share something the teacher should stop, something they should start, and something they should continue doing.</p>",
+    "columns": "Stop\nStart\nContinue",
+    "intro": "<p>This board contains three columns: Stop, Start, and Continue. Select the plus button in each column to add a post to that column, namely: What the teacher should stop doing; what the teacher should start doing; what the teacher should continue doing.</p>"
+}

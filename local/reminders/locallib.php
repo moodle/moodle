@@ -499,7 +499,7 @@ function process_category_event($event, $aheadday, $customtime=null, $courserole
     $currenttime = time();
     $allcourses = isset($CFG->local_reminders_category_noforcompleted) && !$CFG->local_reminders_category_noforcompleted;
     foreach ($childrencourses as $course) {
-        if ($allcourses || $currenttime < $course->enddate) {
+        if ($allcourses || !$course->enddate || $currenttime < $course->enddate) {
             get_users_of_course($course->id, $courseroleids, $allusers);
         } else {
             $showtrace && mtrace("   [LOCAL REMINDERS]   - Course skipped: $course->id => $course->fullname");
@@ -541,7 +541,7 @@ function process_group_event($event, $aheadday, $customtime=null, $showtrace=tru
             $activityobj = fetch_module_instance($event->modulename, $event->instance, $event->courseid, $showtrace);
             $reminder->set_activity($event->modulename, $activityobj);
         }
-        $sendusers = get_users_in_group($group);
+        $sendusers = get_users_in_group($group, $showtrace);
         return new reminder_ref($reminder, $sendusers);
     }
 }
@@ -820,17 +820,23 @@ function filter_user_group_overrides($event, $sendusers, $showtrace) {
  * Returns all users belong to the given group.
  *
  * @param object $group group object as received from db.
+ * @param boolean $showtrace whether to print logs or not.
  * @return array users in an array
  */
-function get_users_in_group($group) {
+function get_users_in_group($group, $showtrace = false) {
     global $DB;
 
     $sendusers = [];
+    $context = context_course::instance($group->courseid);
     $groupmemberroles = groups_get_members_by_role($group->id, $group->courseid, 'u.id');
     if ($groupmemberroles) {
         foreach ($groupmemberroles as $roleid => $roledata) {
             foreach ($roledata->users as $member) {
-                $sendusers[] = $DB->get_record('user', ['id' => $member->id]);
+                if (is_enrolled($context, $member, '', true)) {
+                    $sendusers[] = $DB->get_record('user', ['id' => $member->id]);
+                } else {
+                    $showtrace && mtrace("    [Local Reminder] Skipping user {$member->id} - not actively enrolled");
+                }
             }
         }
     }

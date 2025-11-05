@@ -117,10 +117,17 @@ class plugin_user extends plugin_base {
                 $nameformat = get_string('fullnamedisplay');
             }
 
-            $sort = implode(',', order_in_string(get_all_user_name_fields(), $nameformat));
+            if (class_exists('\core_user\fields')) {
+                $namesArray = \core_user\fields::get_name_fields();
+                $allnames = \core_user\fields::for_name()->get_sql('', false, '', '', false)->selects;
+            } else {
+                $namesArray = get_all_user_name_fields();
+                $allnames = get_all_user_name_fields(true);
+            }
+            $sort = implode(',', order_in_string($namesArray, $nameformat));
 
             [$usql, $params] = $remotedb->get_in_or_equal($userlist);
-            $users = $remotedb->get_records_select('user', "id " . $usql, $params, $sort, 'id,' . get_all_user_name_fields(true));
+            $users = $remotedb->get_records_select('user', "id " . $usql, $params, $sort, 'id,' . $allnames);
 
             foreach ($users as $c) {
                 $useroptions[$c->id] = fullname($c);

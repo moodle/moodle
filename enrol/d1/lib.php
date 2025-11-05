@@ -318,6 +318,47 @@ class enrol_d1_plugin extends enrol_plugin {
         mtrace("  Converted remaining usernames and emails to lower case.");
     }
 
+    mtrace("  Beginning to process Universal IDS for the configured categories.");
+
+    // Set the webservice token.
+    $wstoken = lsud1::get_token();
+
+    // Set the time for this.
+    $usstime = microtime(true);
+
+    // Get the users.
+    $users = lsud1::get_d1_students_without_uids();
+
+    $t = 0;
+
+    // Loop through them.
+    foreach ($users as $user) {
+
+        // Get this person's uid.
+        $sinfo = lsud1::get_universal_id($wstoken, $user->email);
+
+        $t++;
+
+        // If we found a uid, update it and log it.
+        if ($sinfo) {
+            lsud1::update_user_uid($user, $sinfo->uid);
+
+            mtrace("    ($t) $user->email : $sinfo->xnumber : $sinfo->uid.");
+
+        // No uid found. Log and move on.
+        } else {
+            mtrace("    ($t) $user->email : $user->idnumber : 'not found'.");
+        }
+    }
+
+    // Get end time.
+    $usetime = microtime(true);
+
+    // Get elapsed time.
+    $elapsedutime = round($usetime - $usstime, 2);
+
+    mtrace("  Fetched and populated all Universal IDS for the configured categories in $elapsedutime seconds.");
+
     mtrace("Completed the processing of Moodle enrollments.");
     }
 

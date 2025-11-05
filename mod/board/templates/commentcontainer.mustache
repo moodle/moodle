@@ -43,7 +43,7 @@
     <h6 class="pl-2 mb-3">{{#str}}comments, mod_board, {{{commentcount}}}{{/str}}</h6>
     {{#canpost}}
     <div class="d-flex mb-3 pl-2">
-        <div class="comment-input w-100 border-bottom" contenteditable="true" data-region="commentinput" data-noteid="{{commentid}}" aria-label="{{#str}}addcomment, mod_board{{/str}}" ></div>
+        <div class="comment-input w-100 border-bottom" contenteditable="true" data-region="commentinput" data-noteid="{{commentid}}" aria-label="{{#str}}addcomment, mod_board{{/str}}" role="textbox"></div>
     </div>
     <div data-region="comment-controls" class="collapse">
         <div class="d-flex position-relative mb-3">

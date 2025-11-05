@@ -32,7 +32,6 @@ use core_completion\activity_custom_completion;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_completion extends activity_custom_completion {
-
     /**
      * Fetches the completion state for a given completion rule.
      *
@@ -85,7 +84,7 @@ class custom_completion extends activity_custom_completion {
         $completionnotes = $this->cm->customdata['customcompletionrules']['completionnotes'] ?? 0;
 
         return [
-            'completionnotes' => get_string('completiondetail:notes', 'mod_board', $completionnotes)
+            'completionnotes' => get_string('completiondetail:notes', 'mod_board', $completionnotes),
         ];
     }
 
@@ -97,7 +96,7 @@ class custom_completion extends activity_custom_completion {
     public function get_sort_order(): array {
         return [
             'completionview',
-            'completionnotes'
+            'completionnotes',
         ];
     }
 }

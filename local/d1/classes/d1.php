@@ -337,26 +337,26 @@ class lsupgd1 {
                   SUBSTRING_INDEX(c.idnumber, "__", -1) AS sectionnumber,
                   d1s.idnumber AS x_number,
                   IF(ls.id IS NULL,
-                    (SELECT DISTINCT(letter) FROM mdl_grade_letters WHERE contextid = 1 AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM mdl_grade_letters gl1 WHERE 1 = gl1.contextid AND gg.finalgrade / gg.rawgrademax * 100 >= gl1.lowerboundary)),
-                    (SELECT DISTINCT(letter) FROM mdl_grade_letters WHERE contextid = ctx.id AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM mdl_grade_letters gl1 WHERE ctx.id = gl1.contextid AND gg.finalgrade / gg.rawgrademax * 100 >= gl1.lowerboundary))
+                    (SELECT DISTINCT(letter) FROM {grade_letters} WHERE contextid = 1 AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM {grade_letters} gl1 WHERE 1 = gl1.contextid AND gg.finalgrade / gg.rawgrademax * 100 >= gl1.lowerboundary)),
+                    (SELECT DISTINCT(letter) FROM {grade_letters} WHERE contextid = ctx.id AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM {grade_letters} gl1 WHERE ctx.id = gl1.contextid AND gg.finalgrade / gg.rawgrademax * 100 >= gl1.lowerboundary))
                   ) AS FinalLetterGrade,
                   DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(sub.timemodified), @@GLOBAL.time_zone, "America/Chicago"), "%d %b %Y") AS FinalDate
-                FROM mdl_course c
-                  INNER JOIN mdl_course_categories ccx ON ccx.id = c.category
-                  INNER JOIN mdl_enrol e ON e.courseid = c.id AND e.enrol = "d1"
-                  INNER JOIN mdl_user_enrolments ue ON ue.enrolid = e.id
-                  INNER JOIN mdl_user u ON u.id = ue.userid
-                  INNER JOIN mdl_enrol_d1_students d1s ON d1s.userid = u.id
-                  INNER JOIN mdl_enrol_d1_enrolls d1e ON d1s.id = d1e.studentsid AND d1e.courseid = c.id
-                  INNER JOIN mdl_assign a ON a.course = c.id
-                  INNER JOIN mdl_assign_submission sub ON sub.assignment = a.id AND sub.userid = u.id AND sub.status = "submitted" AND sub.latest = 1
-                  INNER JOIN mdl_context ctx ON ctx.instanceid = c.id AND ctx.contextlevel = "50"
-                  INNER JOIN mdl_grade_letters gl2 ON gl2.contextid = 1
-                  INNER JOIN mdl_grade_items gi ON gi.courseid = c.id AND gi.itemtype = "course"
-                  INNER JOIN mdl_grade_grades gg ON gg.itemid = gi.id AND u.id = gg.userid
-                  INNER JOIN mdl_course_completions cc ON cc.course = c.id AND cc.userid = u.id
-                  LEFT JOIN mdl_grade_letters ls ON ls.contextid = ctx.id
-                  LEFT JOIN mdl_user_info_data ud ON ud.userid = u.id AND ud.fieldid = 3 
+                FROM {course} c
+                  INNER JOIN {course_categories} ccx ON ccx.id = c.category
+                  INNER JOIN {enrol} e ON e.courseid = c.id AND e.enrol = "d1"
+                  INNER JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                  INNER JOIN {user} u ON u.id = ue.userid
+                  INNER JOIN {enrol_d1_students} d1s ON d1s.userid = u.id
+                  INNER JOIN {enrol_d1_enrolls} d1e ON d1s.id = d1e.studentsid AND d1e.courseid = c.id
+                  INNER JOIN {assign} a ON a.course = c.id
+                  INNER JOIN {assign_submission} sub ON sub.assignment = a.id AND sub.userid = u.id AND sub.status = "submitted" AND sub.latest = 1
+                  INNER JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = "50"
+                  INNER JOIN {grade_letters} gl2 ON gl2.contextid = 1
+                  INNER JOIN {grade_items} gi ON gi.courseid = c.id AND gi.itemtype = "course"
+                  INNER JOIN {grade_grades} gg ON gg.itemid = gi.id AND u.id = gg.userid
+                  INNER JOIN {course_completions} cc ON cc.course = c.id AND cc.userid = u.id
+                  LEFT JOIN {grade_letters} ls ON ls.contextid = ctx.id
+                  LEFT JOIN {user_info_data} ud ON ud.userid = u.id AND ud.fieldid = 3 
                 WHERE gg.finalgrade IS NOT NULL
                   AND gg.finalgrade >= 0
                   AND cc.timecompleted IS NOT NULL
@@ -376,25 +376,25 @@ class lsupgd1 {
                   SUBSTRING_INDEX(c.idnumber, "__", -1) AS sectionnumber,
                   d1s.idnumber AS x_number,
                   IF(ls.id IS NULL,
-                    (SELECT DISTINCT(letter) FROM mdl_grade_letters WHERE contextid = 1 AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM mdl_grade_letters gl1 WHERE 1 = gl1.contextid AND gg2.finalgrade / gg2.rawgrademax * 100 >= gl1.lowerboundary)),
-                    (SELECT DISTINCT(letter) FROM mdl_grade_letters WHERE contextid = ctx.id AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM mdl_grade_letters gl1 WHERE ctx.id = gl1.contextid AND gg2.finalgrade / gg2.rawgrademax * 100 >= gl1.lowerboundary))
+                    (SELECT DISTINCT(letter) FROM {grade_letters} WHERE contextid = 1 AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM {grade_letters} gl1 WHERE 1 = gl1.contextid AND gg2.finalgrade / gg2.rawgrademax * 100 >= gl1.lowerboundary)),
+                    (SELECT DISTINCT(letter) FROM {grade_letters} WHERE contextid = ctx.id AND lowerboundary = (SELECT(MAX(gl1.lowerboundary)) FROM {grade_letters} gl1 WHERE ctx.id = gl1.contextid AND gg2.finalgrade / gg2.rawgrademax * 100 >= gl1.lowerboundary))
                   ) AS FinalLetterGrade,
                   DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(IF(qa.timefinish IS NULL, gg.timemodified, qa.timefinish)), @@GLOBAL.time_zone, "America/Chicago"), "%d %b %Y") AS FinalDate
-                FROM mdl_course c
-                  INNER JOIN mdl_course_categories ccx ON ccx.id = c.category
-                  INNER JOIN mdl_course_categories cat ON cat.id = c.category
-                  INNER JOIN mdl_course_completions cc ON cc.course = c.id
-                  INNER JOIN mdl_user u ON cc.userid = u.id
-                  INNER JOIN mdl_enrol_d1_students d1s ON d1s.userid = u.id
-                  INNER JOIN mdl_enrol_d1_enrolls d1e ON d1s.id = d1e.studentsid AND d1e.courseid = c.id
-                  INNER JOIN mdl_quiz q ON q.course = c.id
-                  INNER JOIN mdl_grade_items gi ON gi.courseid = c.id AND gi.itemtype = "mod" AND gi.itemmodule = "quiz" AND gi.iteminstance = q.id
-                  INNER JOIN mdl_grade_grades gg ON gg.itemid = gi.id AND gg.userid = u.id
-                  INNER JOIN mdl_grade_items gi2 ON gi2.courseid = c.id AND gi2.itemtype = "course"
-                  INNER JOIN mdl_grade_grades gg2 ON gg2.itemid = gi2.id AND gg2.userid = u.id
-                  INNER JOIN mdl_context ctx ON ctx.instanceid = c.id AND ctx.contextlevel = "50"
-                  LEFT JOIN mdl_grade_letters ls ON ls.contextid = ctx.id
-                  LEFT JOIN mdl_quiz_attempts qa ON qa.quiz = q.id AND qa.userid = u.id AND qa.state = "finished"
+                FROM {course} c
+                  INNER JOIN {course_categories} ccx ON ccx.id = c.category
+                  INNER JOIN {course_categories} cat ON cat.id = c.category
+                  INNER JOIN {course_completions} cc ON cc.course = c.id
+                  INNER JOIN {user} u ON cc.userid = u.id
+                  INNER JOIN {enrol_d1_students} d1s ON d1s.userid = u.id
+                  INNER JOIN {enrol_d1_enrolls} d1e ON d1s.id = d1e.studentsid AND d1e.courseid = c.id
+                  INNER JOIN {quiz} q ON q.course = c.id
+                  INNER JOIN {grade_items} gi ON gi.courseid = c.id AND gi.itemtype = "mod" AND gi.itemmodule = "quiz" AND gi.iteminstance = q.id
+                  INNER JOIN {grade_grades} gg ON gg.itemid = gi.id AND gg.userid = u.id
+                  INNER JOIN {grade_items} gi2 ON gi2.courseid = c.id AND gi2.itemtype = "course"
+                  INNER JOIN {grade_grades} gg2 ON gg2.itemid = gi2.id AND gg2.userid = u.id
+                  INNER JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = "50"
+                  LEFT JOIN {grade_letters} ls ON ls.contextid = ctx.id
+                  LEFT JOIN {quiz_attempts} qa ON qa.quiz = q.id AND qa.userid = u.id AND qa.state = "finished"
                 WHERE gi2.itemtype = "course"
                   AND gg2.finalgrade IS NOT NULL
                   AND gg.finalgrade >= 0
@@ -457,22 +457,22 @@ class lsupgd1 {
                   d1s.idnumber AS x_number,
                   IF (((((gg1.finalgrade/gg1.rawgrademax) >= .70) AND (gg2.finalgrade/gg2.rawgrademax) >= .70)), "Pass", "Fail") AS FinalLetterGrade,
                   CONCAT(DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(IF(cmc.timemodified > 0, cmc.timemodified, gg1.timemodified)), @@GLOBAL.time_zone, "America/Chicago"), "%d %b %Y")) AS FinalDate
-                FROM mdl_course c
-                 INNER JOIN mdl_context ctx ON ctx.instanceid = c.id AND ctx.contextlevel = "50"
-                 INNER JOIN mdl_grade_items gi1 ON gi1.courseid = c.id
-                 INNER JOIN mdl_grade_items gi2 ON gi2.courseid = c.id AND gi2.itemtype = "course"
-                 INNER JOIN mdl_enrol e ON e.courseid = c.id AND e.enrol = "d1"
-                 INNER JOIN mdl_user_enrolments ue ON ue.enrolid = e.id
-                 INNER JOIN mdl_grade_grades gg1 ON gg1.itemid = gi1.id
-                 INNER JOIN mdl_grade_grades gg2 ON gg2.itemid = gi2.id
-                 INNER JOIN mdl_user u ON ue.userid = u.id
-                 INNER JOIN mdl_enrol_d1_students d1s ON d1s.userid = u.id
-                 INNER JOIN mdl_enrol_d1_enrolls d1e ON d1s.id = d1e.studentsid AND d1e.courseid = c.id
-                 INNER JOIN mdl_course_modules cm ON cm.course = c.id AND gi1.iteminstance = cm.instance
-                 INNER JOIN mdl_modules m ON m.id = cm.module AND m.name = gi1.itemmodule
-                 LEFT JOIN mdl_course_modules_completion cmc ON cmc.coursemoduleid = cm.id AND u.id = cmc.userid AND cmc.completionstate = 1
-                 LEFT JOIN mdl_grade_letters ls ON ls.contextid = ctx.id
-                 LEFT JOIN mdl_user_info_data uid ON uid.userid = u.id AND uid.fieldid = 3
+                FROM {course} c
+                 INNER JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = "50"
+                 INNER JOIN {grade_items} gi1 ON gi1.courseid = c.id
+                 INNER JOIN {grade_items} gi2 ON gi2.courseid = c.id AND gi2.itemtype = "course"
+                 INNER JOIN {enrol} e ON e.courseid = c.id AND e.enrol = "d1"
+                 INNER JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                 INNER JOIN {grade_grades} gg1 ON gg1.itemid = gi1.id
+                 INNER JOIN {grade_grades} gg2 ON gg2.itemid = gi2.id
+                 INNER JOIN {user} u ON ue.userid = u.id
+                 INNER JOIN {enrol_d1_students} d1s ON d1s.userid = u.id
+                 INNER JOIN {enrol_d1_enrolls} d1e ON d1s.id = d1e.studentsid AND d1e.courseid = c.id
+                 INNER JOIN {course_modules} cm ON cm.course = c.id AND gi1.iteminstance = cm.instance
+                 INNER JOIN {modules} m ON m.id = cm.module AND m.name = gi1.itemmodule
+                 LEFT JOIN {course_modules_completion} cmc ON cmc.coursemoduleid = cm.id AND u.id = cmc.userid AND cmc.completionstate = 1
+                 LEFT JOIN {grade_letters} ls ON ls.contextid = ctx.id
+                 LEFT JOIN {user_info_data} uid ON uid.userid = u.id AND uid.fieldid = 3
                WHERE u.id = gg1.userid
                  AND u.id = gg2.userid
                  AND c.fullname NOT LIKE "Master %"

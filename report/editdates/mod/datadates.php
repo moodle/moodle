@@ -14,38 +14,52 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
-
-
+/**
+ * Class report_editdates_mod_data_date_extractor
+ *
+ * @package   report_editdates
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_data_date_extractor
         extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'data');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $data = $this->mods[$cm->instance];
 
-        $datadatesettings = array(
+        $datadatesettings = [
             'timeavailablefrom' => new report_editdates_date_setting(
-                                    get_string('availablefromdate', 'data'),
-                                    $data->timeavailablefrom,
-                                    self::DATETIME, true),
+                get_string('availablefromdate', 'data'),
+                $data->timeavailablefrom,
+                self::DATETIME, true
+            ),
             'timeavailableto' => new report_editdates_date_setting(
-                                    get_string('availabletodate', 'data'),
-                                    $data->timeavailableto,
-                                    self::DATETIME, true),
+                get_string('availabletodate', 'data'),
+                $data->timeavailableto,
+                self::DATETIME, true
+            ),
             'timeviewfrom' => new report_editdates_date_setting(
-                                    get_string('viewfromdate', 'data'),
-                                    $data->timeviewfrom,
-                                    self::DATETIME, true),
+                get_string('viewfromdate', 'data'),
+                $data->timeviewfrom,
+                self::DATETIME, true
+            ),
             'timeviewto' => new report_editdates_date_setting(
-                                    get_string('viewtodate', 'data'),
-                                    $data->timeviewto,
-                                    self::DATETIME, true)
-        );
+                get_string('viewtodate', 'data'),
+                $data->timeviewto,
+                self::DATETIME, true
+            ),
+        ];
         if ($data->assessed && ($data->assesstimestart != 0 || $data->assesstimefinish != 0) ) {
             $datadatesettings['assesstimestart'] = new report_editdates_date_setting(
                                     get_string('from'),
@@ -59,8 +73,9 @@ class report_editdates_mod_data_date_extractor
         return $datadatesettings;
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['timeavailablefrom'] != 0 && $dates['timeavailableto'] != 0
                 && $dates['timeavailableto'] < $dates['timeavailablefrom']) {
             $errors['timeavailableto'] = get_string('assesstimefinish', 'report_editdates');

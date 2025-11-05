@@ -1,0 +1,12 @@
+{
+    "name": "Project Ticket board",
+    "description": "<p>Users can add tickets for problem solving</p>",
+    "columns": "Problem\nAccepted\nRejected\nSolved",
+    "intro": "<p>Add your problems for the IT service desk</p>",
+    "addrating": "0",
+    "hideheaders": "0",
+    "sortby": "3",
+    "singleusermode": "0",
+    "userscanedit": "0",
+    "embed": "0"
+}

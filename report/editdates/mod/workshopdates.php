@@ -19,33 +19,55 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
 
 
+/**
+ * Class report_editdates_mod_workshop_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "Workshop" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2013 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_workshop_date_extractor
         extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'workshop');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $workshop = $this->mods[$cm->instance];
-        return array('submissionstart' => new report_editdates_date_setting(
-                                        get_string('submissionstart', 'workshop'),
-                                        $workshop->submissionstart, self::DATETIME, true),
-                     'submissionend' => new report_editdates_date_setting(
-                                        get_string('submissionend', 'workshop'),
-                                        $workshop->submissionend, self::DATETIME, true),
-                     'assessmentstart' => new report_editdates_date_setting(
-                                        get_string('assessmentstart', 'workshop'),
-                                        $workshop->assessmentstart, self::DATETIME, true),
-                     'assessmentend' => new report_editdates_date_setting(
-                                        get_string('assessmentend', 'workshop'),
-                                        $workshop->assessmentend, self::DATETIME, true),
-        );
+        return [
+            'submissionstart' => new report_editdates_date_setting(
+                get_string('submissionstart', 'workshop'),
+                $workshop->submissionstart, self::DATETIME, true
+            ),
+            'submissionend' => new report_editdates_date_setting(
+                get_string('submissionend', 'workshop'),
+                $workshop->submissionend, self::DATETIME, true
+            ),
+            'assessmentstart' => new report_editdates_date_setting(
+                get_string('assessmentstart', 'workshop'),
+                $workshop->assessmentstart, self::DATETIME, true
+            ),
+            'assessmentend' => new report_editdates_date_setting(
+                get_string('assessmentend', 'workshop'),
+                $workshop->assessmentend, self::DATETIME, true
+            ),
+        ];
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
 
         // Check the phases borders are valid.
         if ($dates['submissionstart'] > 0 && $dates['submissionend'] > 0 &&
@@ -66,7 +88,7 @@ class report_editdates_mod_workshop_date_extractor
                 $phaseassessmentstart = max($dates['assessmentstart'], $dates['assessmentend']);
             }
             if ($phasesubmissionend > 0 && $phaseassessmentstart > 0 && $phaseassessmentstart < $phasesubmissionend) {
-                foreach (array('submissionend', 'submissionstart', 'assessmentstart', 'assessmentend') as $f) {
+                foreach (['submissionend', 'submissionstart', 'assessmentstart', 'assessmentend'] as $f) {
                     if ($dates[$f] > 0) {
                         $errors[$f] = get_string('phasesoverlap', 'mod_workshop');
                         break;
@@ -78,6 +100,7 @@ class report_editdates_mod_workshop_date_extractor
         return $errors;
     }
 
+    #[\Override]
     public function save_dates(cm_info $cm, array $dates) {
         parent::save_dates($cm, $dates);
 

@@ -187,8 +187,6 @@ class element extends \mod_customcert\element {
                 if ($timestart = $DB->get_record_sql($sql, ['userid' => $issue->userid, 'courseid' => $courseid])) {
                     if (!empty($timestart->timestart)) {
                         $date = $timestart->timestart;
-                    } else {
-                        $date = $timestart->timecreated;
                     }
                 }
             } else if ($dateitem == CUSTOMCERT_DATE_ENROLMENT_END) {

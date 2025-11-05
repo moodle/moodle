@@ -1,0 +1,12 @@
+{
+    "name": "Ice-Breaker",
+    "description": "<p>Class ice-breaker</p>",
+    "columns": "Goals\nHobbies/Interests\nExperience",
+    "intro": "<p>This class ice-breaker, or introduction, is aimed at giving classmates the opportunity to introduce themselves, with some personal details.</p>",
+    "addrating": "1",
+    "hideheaders": "0",
+    "sortby": "2",
+    "singleusermode": "0",
+    "userscanedit": "0",
+    "enableblanktarget": "0"
+}

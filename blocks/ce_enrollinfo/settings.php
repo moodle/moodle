@@ -42,18 +42,29 @@ global $CFG, $DB;
         if(isset($ceenrollinfofieldoptions) && !empty($ceenrollinfofieldoptions)) {
             $settings->add(
                 new admin_setting_configselect(
-                    'block_ce_enrollinfo_field',
-                    get_string('ce_selectable_fields', 'block_ce_enrollinfo'),
-                    get_string('ce_selectable_fields_desc', 'block_ce_enrollinfo'),
+                    'block_ce_enrollinfo/lsufield',
+                    get_string('ce_selectable_lsufields', 'block_ce_enrollinfo'),
+                    get_string('ce_selectable_lsufields_desc', 'block_ce_enrollinfo'),
                     null,
                     $ceenrollinfofieldoptions
                 )
             );
+
+            $settings->add(
+                new admin_setting_configselect(
+                    'block_ce_enrollinfo/uidfield',
+                    get_string('ce_selectable_uidfields', 'block_ce_enrollinfo'),
+                    get_string('ce_selectable_uidfields_desc', 'block_ce_enrollinfo'),
+                    null,
+                    $ceenrollinfofieldoptions
+                )
+            );
+
         }
 
         $settings->add(
             new admin_setting_configselect(
-                'block_ce_enrollinfo_empty',
+                'block_ce_enrollinfo/empty',
                 get_string('ce_empty', 'block_ce_enrollinfo'),
                 get_string('ce_empty_desc', 'block_ce_enrollinfo'),
                 1,

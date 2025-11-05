@@ -134,10 +134,9 @@ const displayMoveModal = (moveNoteControl) => {
 
 /**
  * Initialise the move dialog.
- * @param {Int} ownerId
  * @param {Function} moveNote Function from Board.js
  */
-const init = (ownerId, moveNote) => {
+const init = (moveNote) => {
     const body = document.querySelector('body');
     const initialized = body.classList.contains('move-dialog-initialized');
     if (!initialized) {
@@ -152,7 +151,6 @@ const init = (ownerId, moveNote) => {
                 let payload = {
                     id: parseInt(moveDestination.dataset.movingnoteid),
                     columnid: parseInt(moveDestination.dataset.columnid),
-                    ownerid: ownerId,
                     sortorder: parseInt(moveDestination.dataset.sortorder)
                 };
 

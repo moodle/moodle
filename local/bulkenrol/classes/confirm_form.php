@@ -71,7 +71,7 @@ class confirm_form extends moodleform {
 
         // Only show the enrol user button if necessary.
         if ($showenrolebutton) {
-            $this->add_action_buttons(true, get_string('enrol_users', 'local_bulkenrol'));
+            $this->add_action_buttons(true, get_string('enrol_users_btn', 'local_bulkenrol'));
         }
     }
 }

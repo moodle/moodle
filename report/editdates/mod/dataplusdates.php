@@ -14,30 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
-
-
+/**
+ * Class report_editdates_mod_dataplus_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "Dataplus" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2013 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_dataplus_date_extractor
         extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'dataplus');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $data = $this->mods[$cm->instance];
 
-        $datadatesettings = array(
+        $datadatesettings = [
             'timeavailablefrom' => new report_editdates_date_setting(
-                                    get_string('availablefromdate', 'dataplus'),
-                                    $data->timeavailablefrom,
-                                    self::DATE, true),
+                get_string('availablefromdate', 'dataplus'),
+                $data->timeavailablefrom,
+                self::DATE, true
+            ),
             'timeavailableto' => new report_editdates_date_setting(
-                                    get_string('availabletodate', 'dataplus'),
-                                    $data->timeavailableto,
-                                    self::DATE, true),
-        );
+                get_string('availabletodate', 'dataplus'),
+                $data->timeavailableto,
+                self::DATE, true
+            ),
+        ];
         if ($data->assessed) {
             $datadatesettings['assesstimestart'] = new report_editdates_date_setting(
                                     get_string('from'),
@@ -51,8 +66,9 @@ class report_editdates_mod_dataplus_date_extractor
         return $datadatesettings;
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['timeavailablefrom'] != 0 && $dates['timeavailableto'] != 0
                 && $dates['timeavailableto'] < $dates['timeavailablefrom']) {
             $errors['timeavailableto'] = get_string('assesstimefinish', 'report_editdates');

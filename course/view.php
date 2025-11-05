@@ -298,29 +298,38 @@ if ($section && $section > 0 && course_format_uses_sections($course->format)) {
 }
 
 // BEGIN LSU Check for async course restore.
+// Build the parms.
+$parms = ['type' => 'course',
+    'purpose' => 10,
+    'purpose2' => 70,
+    'operation' => 'restore',
+    'itemid' => $course->id];
+
 // Build the SQL to get restoring courses.
 $sql = 'SELECT * from {backup_controllers}
-    WHERE type = "course"
-        AND operation = "restore"
-        AND itemid = '. $course->id.'
+    WHERE type = :type
+        AND operation = :operation
+        AND itemid = :itemid
+        AND (purpose = :purpose OR purpose = :purpose2)
     ORDER BY timecreated DESC
     LIMIT 1';
 
 // Get the record.
-$backup_ctrl = $DB->get_record_sql($sql);
+$backup_ctrl = $DB->get_record_sql($sql, $parms);
 
 // Make sure we're a teacher and the course is not done restoring.
 if (has_capability('moodle/course:update', $context) && $backup_ctrl 
-    && property_exists($backup_ctrl, "status") && $backup_ctrl->status != 1000) {
-    redirect($CFG->wwwroot .'/backup/restorefile.php?contextid='.$context->id,
-        "This course is currently being restored.",
+    && property_exists($backup_ctrl, "status") && $backup_ctrl->status < 900) {
+    redirect($CFG->wwwroot . '/backup/restorefile.php?contextid=' . $context->id,
+        "$course->fullname is currently being restored.",
         null,
         \core\output\notification::NOTIFY_WARNING);
+
 // If we're a student and the course is restoring redirect home and let them know why.
 } else if (!has_capability('moodle/course:update', $context) && $backup_ctrl
-    && property_exists($backup_ctrl, "status") && $backup_ctrl->status != 1000) {
+    && property_exists($backup_ctrl, "status") && $backup_ctrl->status < 900) {
     redirect($CFG->wwwroot,
-        "That course is currently being restored, please check back later.",
+        "$course->fullname is currently being restored, please check back later.",
         null,
         \core\output\notification::NOTIFY_WARNING);
 }

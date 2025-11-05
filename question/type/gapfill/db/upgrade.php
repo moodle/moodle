@@ -71,7 +71,7 @@ function xmldb_qtype_gapfill_upgrade($oldversion = 0) {
             $table->add_field('gaptext', XMLDB_TYPE_TEXT, null, null, null, null, null, 'itemid');
             $table->add_field('correctfeedback', XMLDB_TYPE_TEXT, null, null, null, null, null, 'gaptext');
             $table->add_field('incorrectfeedback', XMLDB_TYPE_TEXT, null, null, null, null, null, 'correctfeedback');
-            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
             $dbman->create_table($table);
         }
         // Gapfill savepoint reached.

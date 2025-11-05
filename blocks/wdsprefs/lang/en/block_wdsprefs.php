@@ -23,6 +23,8 @@
 
 // Plugin stuff.
 $string['pluginname'] = 'Workday Preferences';
+$string['wdsprefs:addinstance'] = 'Add Workday Preferences Block Instance';
+$string['wdsprefs:myaddinstance'] = 'Add Workday Preferences Block Instance to my page';
 $string['wdsprefs:pluginname'] = 'Workday Preferences';
 
 // Basic stuff.

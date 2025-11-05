@@ -23,8 +23,6 @@
 
 namespace report_editdates\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  *
  * @package    report_editdates
@@ -72,30 +70,10 @@ EOF;
      * @return \moodle_url
      */
     public function get_url() {
-        $params = array('id' => $this->courseid);
+        $params = ['id' => $this->courseid];
         if ($this->other['activitytype']) {
             $params['activitytype'] = $this->other['activitytype'];
         }
         return new \moodle_url('/report/editdates/index.php', $params);
     }
-
-    public static function get_legacy_eventname() {
-        return 'report edit dates';
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return array(
-                $this->courseid,
-                "course",
-                "report edit dates",
-                "report/editdates/index.php?id={$this->courseid}",
-                $this->contextinstanceid
-        );
-    }
-
 }

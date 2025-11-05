@@ -30,12 +30,20 @@ require_once($CFG->libdir . '/tablelib.php');
 
 use table_sql;
 use moodle_url;
-use mod_board\board as board;
+use mod_board\board;
+use stdClass;
+use mod_board\local\note;
 
 /**
  * Define comments table class.
  */
 class comments_table extends table_sql {
+    /** @var stdClass board record */
+    private $board;
+    /** @var array cached columns records */
+    private $columnscache;
+    /** @var \context_module */
+    private $context;
 
     /**
      * Constructor
@@ -47,27 +55,31 @@ class comments_table extends table_sql {
      */
     public function __construct($cmid, $boardid, $groupid, $ownerid, $includedeleted) {
         global $DB;
-        parent::__construct('mod_board_notes_table');
+        parent::__construct('mod_board_comments_table');
 
-        // Get the construct paramaters and add them to the export url.
+        $this->board = board::get_board($boardid, MUST_EXIST);
+        $this->columnscache = $DB->get_records('board_columns', ['boardid' => $this->board->id]);
+        $this->context = board::context_for_board($this->board);
+
+        // Get the construct parameters and add them to the export url.
         $exportparams = [
             'id' => $cmid,
             'group' => $groupid,
             'tabletype' => 'comments',
             'ownerid' => $ownerid,
-            'includedeleted' => $includedeleted
+            'includedeleted' => $includedeleted,
         ];
         $exporturl = new moodle_url('/mod/board/export.php', $exportparams);
         $this->define_baseurl($exporturl);
 
         // Define the list of columns to show.
-        $columns = array('heading', 'firstname', 'lastname', 'content', 'timecreated', 'deleted');
+        $columns = ['heading', 'firstname', 'lastname', 'content', 'timecreated', 'deleted'];
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array_map(function($column) {
+        $headers = array_map(function ($column) {
             // Remove the p from the column name.
-            if (substr($column, 0, 1) == 'p') {
+            if (substr($column, 0, 1) === 'p') {
                 $column = substr($column, 1);
             }
             return get_string('export_' . $column, 'board');
@@ -76,8 +88,8 @@ class comments_table extends table_sql {
 
         // Define the SQL used to get the data.
         $this->sql = (object)[];
-        $this->sql->fields = 'c.id, bn.heading, u.firstname, u.lastname, c.content, c.timecreated,
-            c.deleted, bn.info, bn.url, bn.content as pcontent, bn.type';
+        $this->sql->fields = 'c.id AS cid, c.content AS ccontent, c.timecreated AS ctimecreated, c.deleted AS cdeleted,
+        u.firstname, u.lastname, bn.*';
         $this->sql->from = '{board_comments} c
             JOIN {board_notes} bn ON bn.id = c.noteid
             JOIN {user} u ON u.id = c.userid
@@ -85,13 +97,17 @@ class comments_table extends table_sql {
             JOIN {board_columns} bc ON bc.id = bn.columnid';
         $this->sql->where = 'bc.boardid = :boardid';
         $this->sql->params = ['boardid' => $boardid];
-        if ($groupid > 0) {
+        if ($groupid > 0 && $this->board->singleusermode == board::SINGLEUSER_DISABLED) {
             $this->sql->where .= ' AND bn.groupid = :groupid';
             $this->sql->params['groupid'] = $groupid;
         }
         if ($ownerid > 0) {
             $this->sql->where .= ' AND bn.ownerid = :ownerid';
             $this->sql->params['ownerid'] = $ownerid;
+        } else if ($groupid > 0 && $this->board->singleusermode != board::SINGLEUSER_DISABLED) {
+            // phpcs:ignore moodle.Files.LineLength.TooLong
+            $this->sql->where .= " AND EXISTS (SELECT 'x' FROM {groups_members} gm WHERE gm.userid = bn.ownerid AND gm.groupid = :groupid)";
+            $this->sql->params['groupid'] = $groupid;
         }
         if (!$includedeleted) {
             $this->sql->where .= ' AND bn.deleted = 0 AND c.deleted = 0';
@@ -101,54 +117,82 @@ class comments_table extends table_sql {
     /**
      * Displays deleted in readable format.
      *
-     * @param object $value The value of the column.
+     * @param stdClass $row The row.
      * @return string returns deleted.
      */
-    public function col_deleted($value) {
-        return ($value->deleted) ? get_string('yes') : get_string('no');
+    public function col_deleted(stdClass $row): string {
+        return ($row->cdeleted || $row->deleted) ? get_string('yes') : get_string('no');
+    }
+
+    /**
+     * Displays comment content.
+     *
+     * @param stdClass $row The row.
+     * @return string returns deleted.
+     */
+    public function col_content(stdClass $row): string {
+        return note::format_plain_text($row->ccontent);
+    }
+
+    /**
+     * Displays comment content.
+     *
+     * @param stdClass $row The row.
+     * @return string returns deleted.
+     */
+    public function col_timecreated(stdClass $row): string {
+        return userdate($row->ctimecreated, get_string('strftimedatetimeshort', 'langconfig'));
     }
 
     /**
      * This function is called for each data row to allow processing of
      * columns which do not have a *_cols function.
      *
-     * @param string $colname The name of the column.
-     * @param object $value The value of the column.
-     * @return string return processed value. Return NULL if no change has
+     * @param string $column The name of the column.
+     * @param stdClass $row The row.
+     * @return ?string return processed value. Return NULL if no change has
      *     been made.
      */
-    public function other_cols($colname, $value) {
-        if ($colname == 'timecreated' || $colname == 'ptimecreated') {
-            return userdate($value->$colname, get_string('strftimedatetimeshort', 'langconfig'));
-        }
-        if ($colname == 'heading' && empty($value->heading)) {
-            $truecontent = $value->content;
-            $value->content = $value->pcontent;
-            $notetext = board::get_export_note($value);
-            $value->content = $truecontent;
-            if (!empty($notetext)) {
-                return $notetext;
-            } else {
+    public function other_cols($column, $row): ?string {
+        if ($column === 'heading') {
+            $notetext = note::get_export_info($row);
+            if ($notetext === '') {
                 return ' - ';
+            } else {
+                return $notetext;
             }
         }
+
+        if ($column === 'firstname' || $column === 'lastname') {
+            return s($row->$column);
+        }
+
+        return null;
     }
 
     /**
-     * Format each row of returned data.
+     * Preformat the whole note.
      *
-     * @param array|object $row row of data from db used to make one row of the table.
-     * @return array one row for the table with sanitised content.
+     * @param stdClass|array $row
+     * @return array
      */
-    public function format_row($row): array {
-        $row->content = clean_param($row->content, PARAM_TEXT);
+    public function format_row($row) {
+        $row = (object)(array)$row;
+
+        $row = note::format_for_display(
+            $row,
+            $this->columnscache[$row->columnid],
+            $this->board,
+            $this->context
+        );
+
         return parent::format_row($row);
     }
 
     /**
      * Displays the table.
      */
-    public function display() {
+    public function display(): void {
         $this->out(10, true);
     }
 }

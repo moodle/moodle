@@ -1,0 +1,9 @@
+{
+    "name": "SWOT",
+    "description": "<p>SWOT template for use in student group projects.</p>",
+    "columns": "Strengths\nWeaknesses\nOpportunities\nThreats",
+    "intro": "<p>The board has four columns: Strengths, Weaknesses, Opportunities, and Threats. These help you analyse internal and external factors affecting a project, organisation, or situation.</p>\r\n<p>Think about the topic we're analysing and add each idea on a note.</p>\r\n<p>Place your notes in the relevant column. Read and discuss them together. Combine similar ideas and ask clarifying questions.</p>",
+    "addrating": "1",
+    "hideheaders": "0",
+    "sortby": "2"
+}

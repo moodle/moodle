@@ -26,7 +26,6 @@ require_once($CFG->dirroot . '/mod/board/backup/moodle2/backup_board_stepslib.ph
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_board_activity_task extends backup_activity_task {
-
     /**
      * Define my settings.
      */
@@ -51,11 +50,11 @@ class backup_board_activity_task extends backup_activity_task {
         $base = preg_quote($CFG->wwwroot, "/");
 
         // Link to the list of boards.
-        $search = "/(".$base."\/mod\/board\/index.php\?id\=)([0-9]+)/";
+        $search = "/(" . $base . "\/mod\/board\/index.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@BOARDINDEX*$2@$', $content);
 
         // Link to board view by moduleid.
-        $search = "/(".$base."\/mod\/board\/view.php\?id\=)([0-9]+)/";
+        $search = "/(" . $base . "\/mod\/board\/view.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@BOARDVIEWBYID*$2@$', $content);
 
         return $content;
@@ -66,6 +65,6 @@ class backup_board_activity_task extends backup_activity_task {
      * @return string[]
      */
     public function get_fileareas() {
-        return array('images', 'background');
+        return ['images', 'files', 'background'];
     }
 }

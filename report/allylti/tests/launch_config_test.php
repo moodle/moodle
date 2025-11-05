@@ -41,12 +41,12 @@ class launch_config_test extends \basic_testcase {
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
     }
 
-    public function test_config_empty_exception(): void {
+    public function test_config_empty_exception() {
         $this->expectException('\moodle_exception');
         new launch_config(null, 'admin', null);
     }
 
-    public function test_config_no_secret(): void {
+    public function test_config_no_secret() {
         $config = (object) [
             'adminurl' => 'http://localdev.dev',
             'key' => 'key',
@@ -56,7 +56,7 @@ class launch_config_test extends \basic_testcase {
         new launch_config($config, 'admin', $cfg);
     }
 
-    public function test_config_no_key(): void {
+    public function test_config_no_key() {
         $config = (object) [
             'adminurl' => 'http://localdev.dev',
             'secret' => 'secret',
@@ -66,7 +66,7 @@ class launch_config_test extends \basic_testcase {
         new launch_config($config, 'admin', $cfg);
     }
 
-    public function test_config_no_url(): void {
+    public function test_config_no_url() {
         $config = (object) [
             'key' => 'key',
             'secret' => 'secret',
@@ -76,7 +76,7 @@ class launch_config_test extends \basic_testcase {
         new launch_config($config, 'admin', $cfg);
     }
 
-    public function test_config_container_override(): void {
+    public function test_config_container_override() {
         $config = (object) [
             'adminurl' => 'http://localdev.dev',
             'key' => 'key',
@@ -93,7 +93,7 @@ class launch_config_test extends \basic_testcase {
         $this->assertEquals(LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW, $launchconfig->get_launchcontainer());
     }
 
-    public function test_config(): void {
+    public function test_config() {
         $config = (object) [
             'adminurl' => 'http://localdev.dev',
             'key' => 'key',
@@ -109,7 +109,7 @@ class launch_config_test extends \basic_testcase {
         $this->assertEquals('secret', $launchconfig->get_secret());
     }
 
-    public function test_config_course_report_url(): void {
+    public function test_config_course_report_url() {
         $config = (object) [
             'courseurl' => 'http://localdev.dev/lti/institution',
             'key' => 'key',

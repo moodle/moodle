@@ -52,17 +52,41 @@ $mapping_data = array(
     'file_type' => $file_type,
 );
 
-print_grade_page_head($course->id, 'import', 'pearson');
+$actionbar = new \core_grades\output\import_action_bar($context, null, 'pearson');
+print_grade_page_head($course->id, 'import', 'pearson', '', false, false, true,
+    'import', 'grades', null, $actionbar);
 
 $file_form = new pearson_file_form();
 $mapping_form = new pearson_mapping_form(null, $mapping_data);
 $results_form = new pearson_results_form(null, array('messages' => null));
 
 if ($form_data = $file_form->get_data()) {
+
+    $filetext = $file_form->get_file_content('userfile');
+    $filetype = $form_data->file_type;
+
+    // We need this.
+    $bom = '';
+
+    // Deal with UTF8 BOM if present.
+    if (substr($filetext, 0, 3) === "\xEF\xBB\xBF") {
+        $bom = "\xEF\xBB\xBF";
+        $filetext = substr($filetext, 3);
+    }
+
+    // Strip leading commas if they exist.
+    if (preg_match('/^,+/', $filetext)) {
+        $filetext = preg_replace('/^,+/', '', $filetext);
+    }
+
+    // Put the BOM back.
+    $filetext = $bom . $filetext;
+
     $data = array(
-        'file_text' => $file_form->get_file_content('userfile'),
-        'file_type' => $form_data->file_type
+        'file_text' => $filetext,
+        'file_type' => $filetype
     );
+
 
     $mapping_form = new pearson_mapping_form(null, $data);
     $mapping_form->display();

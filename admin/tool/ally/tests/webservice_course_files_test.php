@@ -82,7 +82,7 @@ class webservice_course_files_test extends abstract_testcase {
     /**
      * Test the web service.
      */
-    public function test_service(): void {
+    public function test_service() {
 
         $files = course_files::service([$this->course->id]);
         $files = external_api::clean_returnvalue(course_files::service_returns(), $files);
@@ -98,7 +98,7 @@ class webservice_course_files_test extends abstract_testcase {
         $this->assertEquals($expectedfile->get_timemodified(), local::iso_8601_to_timestamp($file['timemodified']));
     }
 
-    public function test_service_section_deleted(): void {
+    public function test_service_section_deleted() {
         global $DB;
         // Add file to a soon to be deleted section.
         $section      = $this->getDataGenerator()->create_course_section(
@@ -107,14 +107,14 @@ class webservice_course_files_test extends abstract_testcase {
         $filename     = 'shouldbeanimage.jpg';
         $filecontents = 'image contents (not really)';
         // Add a fake inline image to the post.
-        $filerecordinline = [
+        $filerecordinline = array(
             'contextid' => $coursectx->id,
             'component' => 'course',
             'filearea'  => 'section',
             'itemid'    => $section->id,
             'filepath'  => '/',
             'filename'  => $filename,
-        ];
+        );
         $fs = get_file_storage();
         // This file should not appear in the service returned files if section is deleted.
         $fs->create_file_from_string($filerecordinline, $filecontents);
@@ -144,7 +144,7 @@ class webservice_course_files_test extends abstract_testcase {
         $this->assertEquals($expectedfile->get_timemodified(), local::iso_8601_to_timestamp($file['timemodified']));
     }
 
-    public function test_service_resource_soft_deleted(): void {
+    public function test_service_resource_soft_deleted() {
         global $DB;
 
         $cm = get_coursemodule_from_instance('resource', $this->resource->id);
@@ -159,7 +159,7 @@ class webservice_course_files_test extends abstract_testcase {
     /**
      * Test that the files in use setting works with the course files service.
      */
-    public function test_files_in_use(): void {
+    public function test_files_in_use() {
         global $DB;
 
         // First some setup.

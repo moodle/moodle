@@ -15,55 +15,71 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package tool_mergeusers
- * @author Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
- * @author John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
- * @copyright 2013 Servei de Recursos Educatius (http://www.sre.urv.cat)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Observer for the user_merged_success event for suspending the user to remove.
+ *
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * @author    John Hoopes <hoopes@wisc.edu>
+ * @copyright 2013 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
+ * @copyright University of Wisconsin - Madison
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace tool_mergeusers\local\observer;
 
+use context_user;
+use dml_exception;
 use tool_mergeusers\event\user_merged_success;
 
+/**
+ * Observer for the user_merged_success event for suspending the user to remove.
+ *
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * @author    John Hoopes <hoopes@wisc.edu>
+ * @copyright 2013 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
+ * @copyright University of Wisconsin - Madison
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class olduser {
-
     /**
      * Suspend the old user, by suspending its account, and updating the profile picture
      * to a generic one
      *
      * @param user_merged_success $event Event data.
+     * @throws dml_exception
      */
     public static function old_user_suspend(user_merged_success $event): void {
-        global $CFG, $DB;
-        require_once $CFG->libdir . '/gdlib.php';
-
-        $oldid = $event->other['usersinvolved']['fromid'];
-
-        // Check configuration to see if the old user gets suspended
-        $enabled = (int)get_config('tool_mergeusers', 'suspenduser');
-        if($enabled !== 1){
+        // 0. Check configuration to see if the old user has to be suspended.
+        $suspenduser = (bool) (int) get_config('tool_mergeusers', 'suspenduser');
+        if (!$suspenduser) {
             return;
         }
 
-        // 1. update suspended flag
-        $olduser = new \stdClass();
-        $olduser->id = $oldid;
-        $olduser->suspended = 1;
-        $olduser->timemodified = time();
-        $DB->update_record('user', $olduser);
+        // Suspend user and update the profile picture.
+        global $CFG, $DB;
+        require_once($CFG->libdir . '/gdlib.php');
 
-        // 2. update profile picture
-        // get source, common image
-        $fullpath = dirname(dirname(dirname(__DIR__))) . "/pix/suspended.jpg";
+        $useridtoremove = $event->other['usersinvolved']['fromid'];
+
+        // 1. update suspended flag.
+        $usertoremove = new \stdClass();
+        $usertoremove->id = $useridtoremove;
+        $usertoremove->suspended = 1;
+        $usertoremove->timemodified = time();
+        $DB->update_record('user', $usertoremove);
+
+        // 2. update profile picture.
+        // Get source, common image.
+        $fullpath = dirname(__DIR__, 2) . "/pix/suspended.jpg";
         if (!file_exists($fullpath)) {
-            return; //do nothing; aborting, given that the image does not exist
+            return; // Do nothing; aborting, given that the image does not exist. This should not happen.
         }
 
-        // put the common image as the profile picture.
-        $context = \context_user::instance($oldid);
+        // Place the common image as the profile picture.
+        $context = context_user::instance($useridtoremove);
         if (($newrev = process_new_icon($context, 'user', 'icon', 0, $fullpath))) {
-            $DB->set_field('user', 'picture', $newrev, array('id'=>$oldid));
+            $DB->set_field('user', 'picture', $newrev, ['id' => $useridtoremove]);
         }
     }
 }

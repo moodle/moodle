@@ -23,8 +23,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2020102100;
+$plugin->version = 2025101000;
 $plugin->requires = 2016052300;
-$plugin->release = "v0.1.0";
+$plugin->release = "v1.1.0";
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'block_ce_enrollinfo';

@@ -66,7 +66,7 @@ class components_course_component_test extends abstract_testcase {
     /**
      * Check that files are properly excluded or included based usage.
      */
-    public function test_file_in_use(): void {
+    public function test_file_in_use() {
         $context = $this->coursecontext;
 
         $usedfiles = [];

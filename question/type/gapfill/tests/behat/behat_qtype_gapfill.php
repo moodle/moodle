@@ -76,7 +76,7 @@ class behat_qtype_gapfill extends behat_base {
      */
     public function i_type_into_gap_in_the_gapfill_question($gapresponse, $gapnumber) {
         $xpath = $this->drop_xpath($gapnumber);
-        $this->execute('behat_forms::i_set_the_field_with_xpath_to', [$xpath, $gapresponse]);
+        $this->execute('behat_forms::i_set_the_field_with_xpath_to', array($xpath, $gapresponse));
     }
 
 }

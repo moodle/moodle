@@ -97,7 +97,8 @@ class report extends grade_report {
      * @param int|null $page
      */
     public function __construct($courseid, $gpr, $context, $activityid, $format, $excel, $csv, $displaylevel,
-                                $displayremark, $displaysummary, $displayidnumber, $displayemail, $activityname, $displayfeedback, $page=null) {
+            $displayremark, $displaysummary, $displayidnumber, $displayemail, $activityname,
+            $displayfeedback, $page=null) {
         parent::__construct($courseid, $gpr, $context, $page);
 
         $this->activityid = $activityid;
@@ -151,6 +152,9 @@ class report extends grade_report {
         // Step one, find all enrolled users to course.
         $coursecontext = context_course::instance($this->courseid);
         $users = get_enrolled_users($coursecontext, 'mod/assign:submit', 0, 'u.*', 'u.lastname');
+        if (!$users) { // If no users were returned.
+            return (!$this->csv) ? get_string('err_norecords', 'gradereport_rubrics') : $output;
+        }
         $data = [];
 
         // Process relevant grading area id from activityid and courseid.
@@ -203,6 +207,7 @@ class report extends grade_report {
 
         $table = $gradable['table'];
         $field = $gradable['field'];
+        $orderextra = ($table == 'assign_grades') ? ", act.attemptnumber DESC" : "";
 
         $sql = "SELECT act.id, act.userid, fill.id, def.id as defid, act.grade,
                        fill.instanceid, fill.criterionid, fill.levelid, fill.remark
@@ -211,8 +216,9 @@ class report extends grade_report {
              LEFT JOIN {grading_definitions} def ON inst.definitionid = def.id
              LEFT JOIN {grading_areas} area ON def.areaid = area.id
              LEFT JOIN {gradingform_rubric_fillings} fill ON inst.id = fill.instanceid
+             LEFT JOIN {gradingform_rubric_criteria} crit ON crit.id = fill.criterionid
                  WHERE act.userid $insql AND inst.status = ? AND act.{$field} = ? AND area.contextid = ?
-              ORDER BY act.userid ASC, act.attemptnumber DESC";
+              ORDER BY act.userid ASC" . $orderextra . ", crit.sortorder ASC";
 
         $userdata = $DB->get_recordset_sql($sql, $inparams);
         $udataarray = [];

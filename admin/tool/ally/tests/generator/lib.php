@@ -54,7 +54,7 @@ class tool_ally_generator extends component_generator_base {
             'contextid' => context_user::instance($USER->id)->id,
             'itemid'    => file_get_unused_draft_itemid(),
             'filename'  => 'attachment.html',
-            'filepath'  => '/',
+            'filepath'  => '/'
         ];
 
         return get_file_storage()->create_file_from_string($record + $defaults, $content);
@@ -82,7 +82,7 @@ class tool_ally_generator extends component_generator_base {
         $defaults = [
                 'itemid'    => 0,
                 'filename'  => sha1(random_bytes(20)) . '.txt',
-                'filepath'  => '/',
+                'filepath'  => '/'
         ];
 
         return get_file_storage()->create_file_from_string($record + $defaults, $content);
@@ -168,7 +168,7 @@ class tool_ally_generator extends component_generator_base {
         $blockconfig = (object) [
             'title' => $title,
             'format' => FORMAT_HTML,
-            'text' => $content,
+            'text' => $content
         ];
         $block->configdata = base64_encode(serialize($blockconfig));
         $DB->update_record('block_instances', $block);

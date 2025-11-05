@@ -73,7 +73,7 @@ class files_in_use_test extends abstract_testcase {
             [
                 'course' => $this->course->id,
                 'introformat' => FORMAT_HTML,
-                'intro' => 'Text in intro',
+                'intro' => 'Text in intro'
             ]
         );
     }
@@ -81,7 +81,7 @@ class files_in_use_test extends abstract_testcase {
     /**
      * Test if file in use detection is working.
      */
-    public function test_check_file_in_use(): void {
+    public function test_check_file_in_use() {
         global $DB;
 
         set_config('excludeunused', 1, 'tool_ally');

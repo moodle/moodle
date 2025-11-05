@@ -16,8 +16,11 @@
 
 namespace mod_board\event;
 
+use stdClass;
+
 /**
- * Rate note event handler.
+ * Rate note event.
+ *
  * @package     mod_board
  * @author      Karen Holland <karen@brickfieldlabs.ie>
  * @copyright   2021 Brickfield Education Labs <https://www.brickfield.ie/>
@@ -25,12 +28,46 @@ namespace mod_board\event;
  */
 class rate_note extends \core\event\base {
     /**
+     * Create new event.
+     *
+     * @param stdClass $note
+     * @param int $rating
+     * @param stdClass $column
+     * @param stdClass $board
+     * @param \context_module $context
+     * @return self
+     */
+    public static function create_from_note(
+        stdClass $note,
+        int $rating,
+        stdClass $column,
+        stdClass $board,
+        \context_module $context
+    ): self {
+        /** @var self $event */
+        $event = self::create([
+            'objectid' => $note->id,
+            'context' => $context,
+            'other' => [
+                'columnid' => $note->columnid,
+                'rating' => get_config('mod_board', 'addratingtolog') ? $rating : null,
+            ],
+        ]);
+
+        $event->add_record_snapshot('board', $board);
+        $event->add_record_snapshot('board_columns', $column);
+        $event->add_record_snapshot('board_notes', $note);
+
+        return $event;
+    }
+
+    /**
      * Init function.
      */
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'board';
+        $this->data['objecttable'] = 'board_notes';
     }
 
     /**
@@ -46,7 +83,7 @@ class rate_note extends \core\event\base {
      * @return \lang_string|string|null
      */
     public function get_description() {
-        $obj = new \stdClass;
+        $obj = new stdClass();
         $obj->userid = $this->userid;
         $obj->objectid = $this->objectid;
         $obj->rating = $this->other['rating'];
@@ -62,12 +99,12 @@ class rate_note extends \core\event\base {
      * map this information. For events that do not store an objectid this won't
      * be called, so no debugging message will be displayed.
      *
-     * @return string the name of the restore mapping the objectid links to
+     * @return array the name of the restore mapping the objectid links to
      */
     public static function get_objectid_mapping() {
         return [
-            'db'        => 'board',
-            'restore'   => \core\event\base::NOT_MAPPED,
+            'db'        => 'board_notes',
+            'restore'   => 'board_note',
         ];
     }
 
@@ -79,5 +116,14 @@ class rate_note extends \core\event\base {
      */
     public static function get_other_mapping(): array {
         return [];
+    }
+
+    #[\Override]
+    public function get_url() {
+        $context = $this->get_context();
+        if (!$context) {
+            return null;
+        }
+        return new \moodle_url('/mod/board/view.php', ['id' => $context->instanceid]);
     }
 }

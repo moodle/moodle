@@ -24,6 +24,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'enrol_d1';
-$plugin->version = 2022082404;
+$plugin->version = 2025101700;
 $plugin->requires = 2020010100;
-$plugin->release = 'v0.1';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = '1.1-Columnar_Cloaca';

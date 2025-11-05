@@ -1,0 +1,12 @@
+{
+    "name": "Projects - Small",
+    "description": "<p>This board helps to manage small projects</p>",
+    "columns": "Tasks\nStarted\nFinished\nApproved",
+    "intro": "<p>Add your ideas for tasks in our project. Move the tasks when you have started and finished. Your teacher will approve them later.</p>",
+    "addrating": "1",
+    "hideheaders": "0",
+    "sortby": "1",
+    "singleusermode": "0",
+    "userscanedit": "1",
+    "hidename": "0"
+}

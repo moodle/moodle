@@ -219,7 +219,7 @@ trait html_content {
 
         $dobj = (object) [
             'id' => $id,
-            $field => $content,
+            $field => $content
         ];
         if (!$DB->update_record($table, $dobj)) {
             return false;

@@ -1,6 +1,28 @@
-Release Notes
+# Release Notes
 
-_NOTE - This release will work on Moodle 4.04, 4.05, & 5.00_
+_NOTE - This release will work on Moodle 4.5, & 5.0_
+
+##### 1.405.01 (Build 2025xxxxx)
+
+New features / improvements:
+
+* New option to attach general files to posts.
+* Post content can be formatted using limited Markdown syntax.
+* All group modes are now supported in single user modes. 
+* Board templates can be created in admin settings.
+
+Bug fixes:
+
+* Security fixes.
+* Multiple backup/restore related issues fixed.
+
+Technical changes:
+
+* Major code refactoring was completed.
+* PHPUnit and Behat tests were added for most areas.
+* Coding style was updated to match latest recommendations from Moodle HQ.
+* New CLI Grunt script was added to simplify compilation of SCSS into CSS.
+* Added support for displaying of ajax forms in modal dialogs.
 
 ##### 1.404.03 (Build 2024102003)
 
@@ -76,7 +98,7 @@ _NOTE - This release will work on Moodle 4.00._
 * Added activity completion settings.
 * CSV export includes number of "likes".
 * Added setting to allow each student to have their own board.
-* Added a setting to allow/prevent Youtube videos.
+* Added a setting to allow/prevent YouTube videos.
 * Better UI for moving and editing.
 * Allow columns to be locked.
 * Enable commenting functionality on each post when opened in overlay.

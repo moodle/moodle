@@ -105,7 +105,7 @@ class components_forum_component_test extends abstract_testcase {
         $forumdata = [
             'course' => $this->course->id,
             'introformat' => FORMAT_HTML,
-            'intro' => '<p>My intro for forum type '.$this->forumtype.'</p>',
+            'intro' => '<p>My intro for forum type '.$this->forumtype.'</p>'
         ];
         $this->forum = $gen->create_module($this->forumtype, $forumdata);
 
@@ -146,10 +146,10 @@ class components_forum_component_test extends abstract_testcase {
             $post->id, $this->forumtype, $this->forumtype.'_posts', 'message');
     }
 
-    public function test_get_discussion_html_content_items(): void {
+    public function test_get_discussion_html_content_items() {
         $contentitems = \phpunit_util::call_internal_method(
             $this->component, 'get_discussion_html_content_items', [
-                $this->course->id, $this->forum->id,
+                $this->course->id, $this->forum->id
             ],
             get_class($this->component)
         );
@@ -158,13 +158,13 @@ class components_forum_component_test extends abstract_testcase {
         $this->assert_content_items_not_contain_discussion_post($contentitems, $this->studentdiscussion->id);
     }
 
-    public function test_resolve_module_instance_id_from_forum(): void {
+    public function test_resolve_module_instance_id_from_forum() {
         $component = new forum_component();
         $instanceid = $component->resolve_module_instance_id($this->forumtype, $this->forum->id);
         $this->assertEquals($this->forum->id, $instanceid);
     }
 
-    public function test_resolve_module_instance_id_from_post(): void {
+    public function test_resolve_module_instance_id_from_post() {
         global $DB;
 
         $discussion = $this->studentdiscussion;
@@ -174,7 +174,7 @@ class components_forum_component_test extends abstract_testcase {
         $this->assertEquals($this->forum->id, $instanceid);
     }
 
-    public function test_get_all_course_annotation_maps(): void {
+    public function test_get_all_course_annotation_maps() {
         global $PAGE, $DB;
 
         $cis = $this->component->get_annotation_maps($this->course->id);
@@ -199,7 +199,7 @@ class components_forum_component_test extends abstract_testcase {
     /**
      * Test if file in use detection is working with this module.
      */
-    public function test_check_file_in_use(): void {
+    public function test_check_file_in_use() {
         $context = \context_module::instance($this->forum->cmid);
 
         $usedfiles = [];

@@ -110,7 +110,7 @@ class question_component extends file_component_base {
         $inorcorrectfbareas = [
             'correctfeedback',
             'partiallycorrectfeedback',
-            'incorrectfeedback',
+            'incorrectfeedback'
         ];
 
         $idfield = null;

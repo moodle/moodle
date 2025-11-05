@@ -1,0 +1,12 @@
+{
+    "name": "Exit Ticket",
+    "description": "<p>Exit Ticket</p>",
+    "columns": "Questions\nComments\nComments (More)\nDisagree?",
+    "intro": "<p>This is an Exit Ticket online space, for anyone to submit questions or feedback, related to a class, or session, just attended. Its purpose is to be a handy, anonymous, way of asking for clarification, or context, or confirmation of the topic being learnt.</p>",
+    "addrating": "3",
+    "hideheaders": "0",
+    "sortby": "2",
+    "singleusermode": "0",
+    "userscanedit": "0",
+    "enableblanktarget": "0"
+}

@@ -51,7 +51,7 @@ class lesson_component extends file_component_base implements iface_html_content
     protected $tablefields = [
         'lesson'       => ['intro'],
         'lesson_pages' => ['contents'],
-        'lesson_answers' => ['answer', 'response'],
+        'lesson_answers' => ['answer', 'response']
     ];
 
     public static function component_type() {
@@ -77,7 +77,7 @@ class lesson_component extends file_component_base implements iface_html_content
             FORMAT_HTML, $courseid,
             FORMAT_HTML, $courseid,
             FORMAT_HTML, $courseid,
-            FORMAT_HTML, $courseid,
+            FORMAT_HTML, $courseid
         ];
 
         $sql = <<<SQL
@@ -250,7 +250,7 @@ SQL;
             if ($field === 'answer') {
                 $params = [
                     FORMAT_HTML,
-                    $id,
+                    $id
                 ];
 
                 $sql = <<<SQL
@@ -272,7 +272,7 @@ SQL;
             } else if ($field === 'response') {
                 $params = [
                     FORMAT_HTML,
-                    $id,
+                    $id
                 ];
 
                 $sql = <<<SQL

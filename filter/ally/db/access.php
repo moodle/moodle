@@ -19,7 +19,6 @@
  * @author    Guy Thomas
  * @copyright Copyright (c) 2017 Open LMS / 2023 Anthology Inc. and its affiliates
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package filter_ally
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -31,8 +30,8 @@ $capabilities = [
         'archetypes' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        ],
+            'manager' => CAP_ALLOW
+        ]
     ],
     'filter/ally:viewdownload' => [
         'captype' => 'read',
@@ -41,7 +40,7 @@ $capabilities = [
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        ],
-    ],
+            'manager' => CAP_ALLOW
+        ]
+    ]
 ];

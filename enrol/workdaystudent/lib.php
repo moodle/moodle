@@ -65,22 +65,22 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
         mtrace("Starting Moodle Student enrollments.");
 
         // Process the academic units.
-        $cronunits = wdscronhelper::cronunits();
+//        $cronunits = wdscronhelper::cronunits();
 
         // Process academic periods.
-        $cronperiods = wdscronhelper::cronperiods();
+//        $cronperiods = wdscronhelper::cronperiods();
 
         // Proces programs of study.
-        $cronprograms = wdscronhelper::cronprograms();
+//        $cronprograms = wdscronhelper::cronprograms();
 
         // Process courses.
-        $croncourses = wdscronhelper::croncourses();
+//        $croncourses = wdscronhelper::croncourses();
 
         // Process sections.
         $cronsections = wdscronhelper::cronsections();
 
         // Process grading schemes.
-        $crongradingschemes = wdscronhelper::crongradeschemes();
+//        $crongradingschemes = wdscronhelper::crongradeschemes();
 
         // Create and update moodle users.
         $cronstucreate = wdscronhelper::cronmusers();
@@ -98,7 +98,10 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
         $nonactive = workdaystudent::wds_get_insert_missing_students();
 
         // Enroll the students into courses and groups.
-        $cronenrollments = wdscronhelper::cronmenrolls2();
+        $cronenrollments = wdscronhelper::cronmenrolls();
+
+        // Fetch and set guild data.
+        $cronguild = wdscronhelper::cronguild();
 
         $endtime = microtime(true);
         $elapsedtime = round($endtime - $starttime, 2);
@@ -148,14 +151,12 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
             $nonactive = workdaystudent::wds_get_insert_missing_students(
                 $section->course_section_definition_id
             );
-
-            // Enroll the students into courses and groups.
-            $cronenrollments = wdscronhelper::cronmenrolls2(
-                $section->course_section_definition_id
-            );
-
-            mtrace("Finished Moodle Student enrollments for $section->section_listing_id..");
         }
+
+        // Enroll the students into courses and groups.
+        $cronenrollments = wdscronhelper::cronmenrolls($courseid);
+
+        mtrace("Finished Moodle Student enrollments for course: $courseid.");
 
         $endtime = microtime(true);
         $elapsedtime = round($endtime - $starttime, 2);
@@ -217,7 +218,10 @@ class enrol_workdaystudent_plugin extends enrol_plugin {
         $nonactive = workdaystudent::wds_get_insert_missing_students();
 
         // Enroll the students into courses and groups.
-        $cronenrollments = wdscronhelper::cronmenrolls2();
+        $cronenrollments = wdscronhelper::cronmenrolls();
+
+        // Fetch and set guild data.
+        $cronguild = wdscronhelper::cronguild();
 
         $endtime = microtime(true);
         $elapsedtime = round($endtime - $starttime, 2);
@@ -337,6 +341,34 @@ function enrol_workdaystudent_extend_navigation_course($navigation, $course, $co
     // Try to find the 'Users' node, then 'Enrolment methods' under it.
     $usersnode = $navigation->get('users');
 
+    // Logic for 'Unenroll Orphans' link.
+    if (is_siteadmin()) {
+
+        // Set the url for the reprocesser.
+        $url = new moodle_url('/enrol/workdaystudent/unenroll_candidates.php', ['id' => $course->id]);
+
+        // Build the navigation node.
+        $workdaystudentorphannode = navigation_node::create(
+            get_string('unenrollcandidates', 'enrol_workdaystudent'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            'wdsorphanedusers',
+            new pix_icon('t/removecontact', '')
+        );
+
+        // Set the users' navigation node.
+        $usersnode = $navigation->get('users');
+
+        // If we have an reprocess node, add it to the users' node.
+        if (isset($workdaystudentorphannode) && !empty($usersnode)) {
+
+            // Actually add the node.
+            $usersnode->add_node($workdaystudentorphannode);
+        }
+    }
+
+
     // Logic for 'Reprocess Enrollment' link.
     if (has_capability('enrol/workdaystudent:reprocess', $context)) {
 
@@ -365,7 +397,7 @@ function enrol_workdaystudent_extend_navigation_course($navigation, $course, $co
     }
 
     // Logic for 'Enrollment Tracker' link.
-    if (has_capability('enrol/workdaystudent:reprocess', $context)) {
+    if (has_capability('enrol/workdaystudent:viewenrollmenttracker', $context)) {
 
         // Set the url.
         $url = new moodle_url('/enrol/workdaystudent/enrollment_tracker.php',  [

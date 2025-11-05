@@ -142,7 +142,7 @@ function lightboxgallery_print_tags($heading, $tags, $courseid, $galleryid) {
          '  <input type="hidden" name="id" value="'.$courseid.'" />'.
          '  <input type="hidden" name="gallery" value="'.$galleryid.'" />'.
          '  <input type="text" name="search" size="8" />'.
-         '  <input type="submit" class="btn btn-secondary" value="'.get_string('search').'" />'.
+         '  <input type="submit" value="'.get_string('search').'" />'.
          ' </fieldset>'.
          '</form>'.
          $heading.': ';

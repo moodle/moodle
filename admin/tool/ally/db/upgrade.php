@@ -63,7 +63,7 @@ function xmldb_tool_ally_upgrade($oldversion) {
         $table->add_field('timedeleted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table tool_ally_deleted_files.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
         // Conditionally launch create table for tool_ally_deleted_files.
         if (!$dbman->table_exists($table)) {
@@ -101,7 +101,7 @@ function xmldb_tool_ally_upgrade($oldversion) {
         $table->add_field('timedeleted', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table tool_ally_deleted_content.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
         // Conditionally launch create table for tool_ally_deleted_content.
         if (!$dbman->table_exists($table)) {
@@ -129,11 +129,11 @@ function xmldb_tool_ally_upgrade($oldversion) {
         $table->add_field('content', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table tool_ally_content_queue.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
         // Adding indexes to table tool_ally_content_queue.
-        $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
-        $table->add_index('component', XMLDB_INDEX_NOTUNIQUE, ['component']);
+        $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+        $table->add_index('component', XMLDB_INDEX_NOTUNIQUE, array('component'));
 
         // Conditionally launch create table for tool_ally_content_queue.
         if (!$dbman->table_exists($table)) {
@@ -209,11 +209,11 @@ function xmldb_tool_ally_upgrade($oldversion) {
         $table->add_field('exception',   XMLDB_TYPE_TEXT, null, null, null, null, null);
 
         // Adding keys to table tool_ally_log.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
         // Adding indexes to table tool_ally_log.
-        $table->add_index('level', XMLDB_INDEX_NOTUNIQUE, ['level']);
-        $table->add_index('code', XMLDB_INDEX_NOTUNIQUE, ['code']);
+        $table->add_index('level', XMLDB_INDEX_NOTUNIQUE, array('level'));
+        $table->add_index('code', XMLDB_INDEX_NOTUNIQUE, array('code'));
 
         // Conditionally launch create table for tool_ally_log.
         if (!$dbman->table_exists($table)) {
@@ -236,7 +236,7 @@ function xmldb_tool_ally_upgrade($oldversion) {
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table tool_ally_course_event.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
         // Conditionally launch create table for tool_ally_course_event.
         if (!$dbman->table_exists($table)) {
@@ -257,7 +257,7 @@ function xmldb_tool_ally_upgrade($oldversion) {
             // The two new capabilites.
             $caps = [
                 "moodle/category:viewhiddencategories",
-                "tool/ally:viewlogs",
+                "tool/ally:viewlogs"
             ];
             // We assign those new capabilities.
             foreach ($caps as $cap) {

@@ -15,32 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package tool
- * @subpackage mergeusers
- * @author Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
- * @copyright 2013 Servei de Recursos Educatius (http://www.sre.urv.cat)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * CLI script to run the merger.
+ *
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * @copyright 2013 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use tool_mergeusers\local\cli\gathering_merger;
+use tool_mergeusers\local\config;
+use tool_mergeusers\local\user_merger;
 
 define("CLI_SCRIPT", true);
 
-require_once __DIR__ . '/../../../../config.php';
+require_once(dirname(__DIR__, 4) . '/config.php');
 
+// Force always debugging information, to show administrators what it is happening.
 ini_set('display_errors', true);
-ini_set('error_reporting', E_ALL | E_STRICT);
+ini_set('error_reporting', E_ALL);
 
 global $CFG;
-
-require_once $CFG->dirroot . '/lib/clilib.php';
-require_once __DIR__ . '/../lib/autoload.php';
+require_once($CFG->libdir . '/clilib.php');
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(
-    array(
+[$options, $unrecognized] = cli_get_params(
+    [
         'debugdb'    => false,
-        'alwaysRollback' => false,
+        'alwaysrollback' => false,
         'help'    => false,
-    )
+    ]
 );
 
 if ($unrecognized) {
@@ -55,28 +59,30 @@ if ($options['help']) {
 Options:
 --help            Print out this help
 --debugdb         Output all db statements used to do the merge
---alwaysRollback  Do the full merge but rollback the transaction at the last opportunity
+--alwaysrollback  Useful for testing without actual changes on the system.
+                  Do the full merge but rollback the transaction at the last opportunity.
+                  When using this option, the exception used for the rollback aborts the CLI script.
+                  You will have to execute this script again manually to test another merge.
 ";
 
     echo $help;
     exit(0);
 }
 
-// loads current configuration
-$config = tool_mergeusers_config::instance();
+// Loads current configuration.
+$config = config::instance();
 
 $config->debugdb = !empty($options['debugdb']);
-$config->alwaysRollback = !empty($options['alwaysRollback']);
+$config->alwaysrollback = !empty($options['alwaysrollback']);
 
-// initializes merger tool
-$mut = new MergeUserTool($config); //may abort execution if database is not supported
-$merger = new Merger($mut);
+// Initializes merger tool.
+// Mqy abort execution if database is not supported.
+$mut = new user_merger($config);
+$merger = new gathering_merger($mut);
 
-// initializes gathering instance
+// Initializes gathering instance.
 $gatheringname = $config->gathering;
 $gathering = new $gatheringname();
 
-//collects and performs user mergings
+// Collects and performs user merges.
 $merger->merge($gathering);
-
-exit(0); // if arrived here, all ok ;-)

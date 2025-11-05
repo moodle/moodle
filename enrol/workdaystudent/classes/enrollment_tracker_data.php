@@ -48,22 +48,28 @@ class enrollment_tracker_data {
                 middlename,
                 lastname,
                 preferred_firstname,
-                preferred_lastname
+                preferred_lastname,
+                email
             FROM {{$table}}
             WHERE universal_id = :universalid";
         try {
             $record = $DB->get_record_sql($sql, ['universalid' => $universalid]);
             if ($record) {
                 $details = new \stdClass();
+
                 $details->firstname = !empty($record->preferred_firstname) ?
                     $record->preferred_firstname :
                     $record->firstname;
+
                 $details->middlename = isset($record->middlename) ?
                     $record->middlename :
                     '';
+
                 $details->lastname = !empty($record->preferred_lastname) ?
                     $record->preferred_lastname :
                     $record->lastname;
+
+                $details->email = $record->email;
 
                 return $details;
             }

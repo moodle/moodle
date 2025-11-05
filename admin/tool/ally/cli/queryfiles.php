@@ -48,7 +48,7 @@ list($options, $unrecognized) = cli_get_params(
         'f' => 'filearea',
         'i' => 'itemid',
         'm' => 'mimetype',
-        'o' => 'omitvalid',
+        'o' => 'omitvalid'
     ]
 );
 

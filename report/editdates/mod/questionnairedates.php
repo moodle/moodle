@@ -19,27 +19,47 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/questionnaire/lib.php');
 
 
+/**
+ * Class report_editdates_mod_questionnaire_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "Questionnaire" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_questionnaire_date_extractor
         extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'questionnaire');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $mod = $this->mods[$cm->instance];
-        return array('opendate' => new report_editdates_date_setting(
-                                        get_string('opendate', 'questionnaire'),
-                                        $mod->opendate, self::DATETIME, true),
-                    'closedate' => new report_editdates_date_setting(
-                                        get_string('closedate', 'questionnaire'),
-                                        $mod->closedate, self::DATETIME, true),
-        );
+        return [
+            'opendate' => new report_editdates_date_setting(
+                get_string('opendate', 'questionnaire'),
+                $mod->opendate, self::DATETIME, true
+            ),
+            'closedate' => new report_editdates_date_setting(
+                get_string('closedate', 'questionnaire'),
+                $mod->closedate, self::DATETIME, true
+            ),
+        ];
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if ($dates['opendate'] != 0 && $dates['closedate'] != 0
                 && $dates['closedate'] < $dates['opendate']) {
             $errors['closedate'] = get_string('closedate', 'report_editdates');
@@ -47,6 +67,7 @@ class report_editdates_mod_questionnaire_date_extractor
         return $errors;
     }
 
+    #[\Override]
     public function save_dates(cm_info $cm, array $dates) {
         global $DB, $COURSE;
 

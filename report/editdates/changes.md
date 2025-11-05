@@ -1,5 +1,20 @@
 # Change log for the Edit dates report
 
+## Changes in 3.1
+
+* This version is compatible with Moodle 5.0.
+* Updated automated tests to support newer Moodle versions.
+* Fixed coding style issues.
+* Log events: removed legacy logging methods for compatibility with Moodle 4.2.
+* Removed references to mod_assignment, which was deprecated and removed from core in Moodle 4.2.
+
+## Changes in 3.0
+
+* This version works with Moodle 4.0.
+* Updated to use Moodle 3.11 navigation
+* The method report_helper::save_selected_report() has been been deprecated because it is no longer used in 4.0.
+  The report_helper::print_report_selector() is used to to show the dropdown, on the report page.
+
 ## Changes in 2.9
 
 * Improved how the options are presented for forums (thanks to Matt Davidson).

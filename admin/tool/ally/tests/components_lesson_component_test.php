@@ -103,7 +103,7 @@ class components_lesson_component_test extends abstract_testcase {
     }
 
 
-    public function test_get_all_html_content_items(): void {
+    public function test_get_all_html_content_items() {
         $contentitems = $this->component->get_all_html_content($this->lesson->id);
 
         $this->assert_content_items_contain_item($contentitems,
@@ -117,22 +117,22 @@ class components_lesson_component_test extends abstract_testcase {
 
     }
 
-    public function test_resolve_module_instance_id_from_lesson(): void {
+    public function test_resolve_module_instance_id_from_lesson() {
         $instanceid = $this->component->resolve_module_instance_id('lesson', $this->lesson->id);
         $this->assertEquals($this->lesson->id, $instanceid);
     }
 
-    public function test_resolve_module_instance_id_from_page(): void {
+    public function test_resolve_module_instance_id_from_page() {
         $instanceid = $this->component->resolve_module_instance_id('lesson_pages', $this->lessonpage->id);
         $this->assertEquals($this->lesson->id, $instanceid);
     }
 
-    public function test_resolve_module_instance_id_from_question(): void {
+    public function test_resolve_module_instance_id_from_question() {
         $instanceid = $this->component->resolve_module_instance_id('lesson_pages', $this->lessonquestion->id);
         $this->assertEquals($this->lesson->id, $instanceid);
     }
 
-    public function test_resolve_module_instance_id_from_answer(): void {
+    public function test_resolve_module_instance_id_from_answer() {
         global $DB;
 
         $answers = $DB->get_records('lesson_answers', ['pageid' => $this->lessonquestion->id]);
@@ -142,7 +142,7 @@ class components_lesson_component_test extends abstract_testcase {
         }
     }
 
-    public function test_get_all_course_annotation_maps(): void {
+    public function test_get_all_course_annotation_maps() {
         global $DB;
 
         $cis = $this->component->get_annotation_maps($this->course->id);
@@ -161,7 +161,7 @@ class components_lesson_component_test extends abstract_testcase {
     /**
      * Test if file in use detection is working with this module.
      */
-    public function test_check_file_in_use(): void {
+    public function test_check_file_in_use() {
         global $DB;
 
         $context = \context_module::instance($this->lesson->cmid);

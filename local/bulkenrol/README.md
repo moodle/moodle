@@ -20,8 +20,9 @@ In some organizations or some teaching scenarios, manually enrolling students in
 To ease the life of teachers, there is the need for a bulk enrolment tool. There are already plugins out there which provide this functionality, so this is just another one. The goal of this bulk enrolment implementation is not to fulfil everybody's needs, but to do one thing and to do this well.
 
 So, the key features of this plugin are:
-1. to let teachers submit a line-separated list of email addresses to enrol them into a course,
-2. to let teachers submit this list to a textarea within their course instead of requiring them to create and upload a CSV file first.
+1. to let teachers submit a line-separated list of email addresses to enrol them into or remove them from a course,
+2. to let teachers submit this list to a textarea within their course instead of requiring them to create and upload a CSV file first,
+3. to let teachers change the group assignments within the course.
 
 
 Installation
@@ -73,6 +74,8 @@ How this plugin works
 
 Teachers (rather users who have been granted the capability which is described in the "Capabilities" section above) will find an additional "User bulk enrolment" menu item within the jump menu on the course's participants page.
 
+### User enrolments
+
 To enrol existing Moodle users into the course, the teacher will then have to add a list of e-mail adresses to the form on this page, one user / e-mail adress per line.
 
 Example:
@@ -80,6 +83,8 @@ Example:
 alice@example.com
 bob@example.com
 ```
+
+### Group assignments
 
 Optionally, the teacher will be able to create groups and add the enrolled users to the groups. All he has to do is to add a heading line with a hash sign and the group's name, separating the list of users.
 
@@ -92,6 +97,38 @@ bob@example.com
 carol@example.com
 dave@example.com
 ```
+
+### User unenrolments
+
+The opposite can be done as well, removing students from a group or entirely remove them from the course. In this case, the line with the email address must be prefixed with an exclamation mark. When there is a group name in a previous line, the students are removed from that group only. When there is not group in any previous line, the enrolment is reverted and the student removed from the course.
+
+There is a possibility to have several email addresses at one line.
+
+Example:
+```
+!alice@example.com
+!bob@example.com
+# Group 2
+!carol@example.com
+# Group 3
+carol@example.com
+```
+
+This would remove Alice and Bob from the course entirely. Carol will remain in the course but will be removed from group 2 and added to group 3.
+
+### Multiple users per line
+
+While building the user list by placing a single user per line is the recommended default, the plugin is also able to recognize multiple users per line if they are separated with commas or spaces.
+
+Example:
+```
+alice@example.com bob@example.com
+!carol@example.com, dave@example.com
+```
+
+This would enrol Alice and Bob into the course as well as unenrol Carol and Dave from the course.
+
+As this syntax is likely more complicated than the normal one, it is just documented here and not on the enrolment page itself.
 
 
 Limitations

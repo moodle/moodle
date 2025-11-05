@@ -14,36 +14,52 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
-
-
+/**
+ * Class report_editdates_mod_choice_date_extractor
+ *
+ * This class is responsible for extracting and managing date settings
+ * for the "Choice" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_choice_date_extractor
-            extends report_editdates_mod_date_extractor {
+        extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     * @param object $course the course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'choice');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $choice = $this->mods[$cm->instance];
         if ($choice->timeopen != 0 && $choice->timeclose != 0) {
-            return array('timeopen' => new report_editdates_date_setting(
-                                get_string('choiceopen', 'choice'),
-                                $choice->timeopen,
-                                self::DATETIME, false),
+            return [
+                'timeopen' => new report_editdates_date_setting(
+                    get_string('choiceopen', 'choice'),
+                    $choice->timeopen,
+                    self::DATETIME, false
+                ),
 
-                          'timeclose' => new report_editdates_date_setting(
-                                get_string('choiceclose', 'choice'),
-                                $choice->timeclose,
-                                self::DATETIME, false)
-            );
+                'timeclose' => new report_editdates_date_setting(
+                    get_string('choiceclose', 'choice'),
+                    $choice->timeclose,
+                    self::DATETIME, false
+                ),
+            ];
         }
         return null;
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         if (!empty($dates['timeopen']) && !empty($dates['timeclose']) &&
                             $dates['timeclose'] < $dates['timeopen']) {
             $errors['timeclose'] = get_string('timeclose', 'report_editdates');

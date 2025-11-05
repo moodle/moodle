@@ -26,6 +26,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
+    'enrol/workdaystudent:unenroll' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_PREVENT,
+        )
+    ),
     'enrol/workdaystudent:reprocess' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

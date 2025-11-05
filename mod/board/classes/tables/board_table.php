@@ -31,15 +31,16 @@ require_once($CFG->libdir . '/tablelib.php');
 use flexible_table;
 use moodle_url;
 use html_writer;
-use mod_board\board as board;
+use mod_board\board;
+use mod_board\local\note;
+use stdClass;
 
 /**
  * Define board table class.
  */
-class board_table extends flexible_table {
-
-    /** @var int The board id. */
-    protected $boardid;
+final class board_table extends flexible_table {
+    /** @var stdClass The board. */
+    protected $board;
 
     /** @var int The group id. */
     protected $groupid;
@@ -53,7 +54,7 @@ class board_table extends flexible_table {
     /** @var bool Is board rating enabled. */
     protected $hasrating;
 
-    /** @var array Holds additional prefernces of the board. */
+    /** @var array Holds additional preferences of the board. */
     protected $prefs;
 
     /**
@@ -68,41 +69,41 @@ class board_table extends flexible_table {
         global $DB;
         parent::__construct('mod_board_table');
 
-        $this->boardid = $boardid;
-        $this->groupid = $groupid;
+        $this->board = board::get_board($boardid, MUST_EXIST);
         $this->includedeleted = $includedeleted;
         $this->ownerid = $ownerid;
-        $this->hasrating = board::board_rating_enabled($boardid);
+        $this->groupid = $groupid;
+        $this->hasrating = board::board_rating_enabled($this->board);
 
-        // Get the construct paramaters and add them to the export url.
+        // Get the construct parameters and add them to the export url.
         $exportparams = [
             'id' => $cmid,
             'group' => $groupid,
             'tabletype' => 'board',
             'ownerid' => $ownerid,
-            'includedeleted' => $includedeleted
+            'includedeleted' => $includedeleted,
         ];
         $exporturl = new moodle_url('/mod/board/export.php', $exportparams);
         $this->define_baseurl($exporturl);
 
         // Get the columns from the database.
-        $columns = $DB->get_records('board_columns', ['boardid' => $boardid], 'sortorder', 'id, name, sortorder');
+        $columns = $DB->get_records('board_columns', ['boardid' => $this->board->id], 'sortorder', 'id, name, sortorder');
 
-        $columnids = array_map(function($column) {
+        $columnids = array_map(function ($column) {
             return $column->name . $column->id;
         }, $columns);
 
-        $columnnames = array_map(function($column) {
+        $columnnames = array_map(function ($column) {
             return $column->name;
         }, $columns);
 
         // In the $columnids and $columnnames array add a rating array value after each item in the array.
         if ($this->hasrating) {
-            $columnids = array_map(function($column) {
+            $columnids = array_map(function ($column) {
                 return [$column, $column . 'rating'];
             }, $columnids);
             $columnids = array_reduce($columnids, 'array_merge', []);
-            $columnnames = array_map(function($column) {
+            $columnnames = array_map(function ($column) {
                 return [$column, get_string('sortbyrating', 'mod_board')];
             }, $columnnames);
             $columnnames = array_reduce($columnnames, 'array_merge', []);
@@ -126,54 +127,65 @@ class board_table extends flexible_table {
     /**
      * Displays the table.
      */
-    public function display() {
+    public function display(): void {
         global $DB;
 
+        $context = board::context_for_board($this->board);
+
         // Get the columns from the database.
-        $columns = $DB->get_records('board_columns', ['boardid' => $this->boardid], 'sortorder', 'id, name, sortorder');
+        $columns = $DB->get_records('board_columns', ['boardid' => $this->board->id], 'sortorder', '*');
         // Get the notes for each column.
         foreach ($columns as $column) {
+            $where = "columnid = :columnid";
             $params = ['columnid' => $column->id];
             if (!$this->includedeleted) {
                 $params['deleted'] = 0;
+                $where .= " AND deleted = 0";
+            }
+            if ($this->groupid > 0 && $this->board->singleusermode == board::SINGLEUSER_DISABLED) {
+                $params['groupid'] = $this->groupid;
+                $where .= " AND groupid = :groupid";
             }
             if ($this->ownerid > 0) {
                 $params['ownerid'] = $this->ownerid;
-            }
-            if ($this->groupid > 0) {
+                $where .= " AND ownerid = :ownerid";
+            } else if ($this->groupid > 0 && $this->board->singleusermode != board::SINGLEUSER_DISABLED) {
+                $where .= " AND EXISTS (SELECT 'x' FROM {groups_members} gm WHERE gm.userid = ownerid AND gm.groupid = :groupid)";
                 $params['groupid'] = $this->groupid;
             }
-            $column->notes = $DB->get_records('board_notes', $params,
-                'sortorder', 'id, heading, content, info, url, type');
+            $column->notes = $DB->get_records_select(
+                'board_notes',
+                $where,
+                $params,
+                'sortorder',
+                '*'
+            );
         }
 
         // Get the column with the most notes.
-        $maxnotes = max(array_map(function($column) {
+        $maxnotes = max(array_map(function ($column) {
             return count($column->notes);
         }, $columns));
 
-        // Add the notes to the columnnames.
+        // Add the notes to the column names.
         for ($i = 0; $i < $maxnotes; $i++) {
             $row = [];
             foreach ($columns as $column) {
-                // Get the current note for this column.
-                $note = array_shift($column->notes);
-                if ($note) {
-                    $notetext = board::get_export_note($note);
-                    if (!empty($notetext)) {
-                        $row[] = $notetext;
-                    } else {
-                        $row[] = ' video ';
-                    }
-                } else {
+                if (!$column->notes) {
                     $row[] = ' - ';
-                }
-                if ($this->hasrating) {
-                    if ($note) {
-                        $row[] = board::get_note_rating($note->id);
-                    } else {
+                    if ($this->hasrating) {
                         $row[] = '';
                     }
+                    continue;
+                }
+                // Get the current note for this column.
+                $note = array_shift($column->notes);
+                $note = note::format_for_display($note, $column, $this->board, $context);
+
+                $row[] = note::get_export_info($note);
+
+                if ($this->hasrating) {
+                    $row[] = $note->rating;
                 }
             }
             $this->add_data($row);
@@ -189,9 +201,9 @@ class board_table extends flexible_table {
      *
      * @return string $html html code for the row passed.
      */
-    public function get_row_html($row, $classname = '') {
+    public function get_row_html($row, $classname = ''): string {
         static $suppresslastrow = null;
-        $rowclasses = array();
+        $rowclasses = [];
 
         if ($classname) {
             $rowclasses[] = $classname;
@@ -200,14 +212,16 @@ class board_table extends flexible_table {
         $rowid = $this->uniqueid . '_r' . $this->currentrow;
         $html = '';
 
-        $html .= html_writer::start_tag('tr', array('class' => implode(' ', $rowclasses), 'id' => $rowid));
+        $html .= html_writer::start_tag('tr', ['class' => implode(' ', $rowclasses), 'id' => $rowid]);
 
         // If we have a separator, print it.
         if ($row === null) {
             $colcount = count($this->columns);
-            $html .= html_writer::tag('td', html_writer::tag('div', '',
-                    array('class' => 'tabledivider')), array('colspan' => $colcount));
-
+            $html .= html_writer::tag('td', html_writer::tag(
+                'div',
+                '',
+                ['class' => 'tabledivider']
+            ), ['colspan' => $colcount]);
         } else {
             $colbyindex = array_flip($this->columns);
             foreach ($row as $index => $data) {

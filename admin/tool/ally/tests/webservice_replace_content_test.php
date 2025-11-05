@@ -51,7 +51,7 @@ class webservice_replace_content_test extends abstract_testcase {
     /**
      * Test the web service when used to replace a single content item.
      */
-    public function test_service_course_summary(): void {
+    public function test_service_course_summary() {
         global $DB;
 
         $coursesummary = '<p>My course summary</p>';
@@ -64,7 +64,7 @@ class webservice_replace_content_test extends abstract_testcase {
         $this->assertEquals($coursesummaryreplaced, $course->summary);
     }
 
-    public function test_service_course_section(): void {
+    public function test_service_course_section() {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -73,7 +73,7 @@ class webservice_replace_content_test extends abstract_testcase {
             ['section' => 0, 'course' => $course->id]);
         $DB->update_record('course_sections', (object) [
             'id' => $section->id,
-            'summary' => $section0summary,
+            'summary' => $section0summary
         ]);
         $section0summaryreplaced = $section0summary.'</p>REPLACED!</p>';
         $result = replace_content::service(
@@ -111,11 +111,11 @@ class webservice_replace_content_test extends abstract_testcase {
         return $generatedmod; // Sometimes the generated mod has more data than the db row - e.g. cmid.
     }
 
-    public function test_service_assign(): void {
+    public function test_service_assign() {
         $this->module_replace_test('assign', 'assign');
     }
 
-    public function test_service_book(): void {
+    public function test_service_book() {
         global $DB;
 
         $book = $this->module_replace_test('book', 'book');
@@ -126,7 +126,7 @@ class webservice_replace_content_test extends abstract_testcase {
             'bookid' => $book->id,
             'title' => 'Test chapter',
             'content' => 'Test content',
-            'contentformat' => FORMAT_HTML,
+            'contentformat' => FORMAT_HTML
         ];
 
         $chapter = $bookgenerator->create_chapter($data);
@@ -140,7 +140,7 @@ class webservice_replace_content_test extends abstract_testcase {
         $this->assertEquals($contentreplaced, $chapter->content);
     }
 
-    public function test_service_forum(): void {
+    public function test_service_forum() {
         global $USER, $DB;
 
         $forum = $this->module_replace_test('forum', 'forum');
@@ -174,7 +174,7 @@ class webservice_replace_content_test extends abstract_testcase {
         $this->assertEquals($postmessagereplaced, $post->message);
     }
 
-    public function test_service_glossary(): void {
+    public function test_service_glossary() {
         global $USER, $DB;
 
         $glossary = $this->module_replace_test('glossary', 'glossary');
@@ -196,11 +196,11 @@ class webservice_replace_content_test extends abstract_testcase {
         $this->assertEquals($definitionreplaced, $entry->definition);
     }
 
-    public function test_service_label(): void {
+    public function test_service_label() {
         $this->module_replace_test('label', 'label');
     }
 
-    public function test_service_lesson(): void {
+    public function test_service_lesson() {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/mod/lesson/locallib.php');
@@ -223,12 +223,12 @@ class webservice_replace_content_test extends abstract_testcase {
         $this->assertEquals($contentreplaced, $page->contents);
     }
 
-    public function test_service_page(): void {
+    public function test_service_page() {
         $this->module_replace_test('page', 'page');
         $this->module_replace_test('page', 'page', 'content');
     }
 
-    public function test_service_block_html(): void {
+    public function test_service_block_html() {
         global $DB;
 
         $this->resetAfterTest();

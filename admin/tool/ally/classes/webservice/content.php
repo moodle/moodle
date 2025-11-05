@@ -50,7 +50,7 @@ class content extends loggable_external_api {
             'component' => new external_value(PARAM_ALPHANUMEXT, 'Component'),
             'table'     => new external_value(PARAM_ALPHANUMEXT, 'Table'),
             'field'     => new external_value(PARAM_ALPHANUMEXT, 'Field'),
-            'courseid'  => new external_value(PARAM_INT, 'Course id'), // This has to be required.
+            'courseid'  => new external_value(PARAM_INT, 'Course id') // This has to be required.
         ]);
     }
 
@@ -65,7 +65,7 @@ class content extends loggable_external_api {
                 new external_single_structure([
                         'filename'     => new external_value(PARAM_TEXT, 'File name'),
                         'pathnamehash' => new external_value(PARAM_TEXT, 'File path name hash'),
-                        'tag'          => new external_value(PARAM_TEXT, 'File dom tag'),
+                        'tag'          => new external_value(PARAM_TEXT, 'File dom tag')
                     ],
                     'Embedded file information'
                 ), 'Embedded files information'
@@ -79,7 +79,7 @@ class content extends loggable_external_api {
             'field'         => new external_value(PARAM_ALPHANUMEXT,
                     'Table field for storing content - e.g: description, message, etc'),
             'courseid'      => new external_value(PARAM_INT, 'Course ID of course housing content'),
-            'timemodified'  => new external_value(PARAM_TEXT, 'Last modified time of the content'),
+            'timemodified'  => new external_value(PARAM_TEXT, 'Last modified time of the content')
         ]);
     }
 
@@ -100,7 +100,7 @@ class content extends loggable_external_api {
             'component' => $component,
             'table'     => $table,
             'field'     => $field,
-            'courseid'  => $courseid,
+            'courseid'  => $courseid
         ]);
 
         self::validate_context(\context_system::instance());

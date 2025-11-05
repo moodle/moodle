@@ -8,6 +8,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - php: '8.3'
+            moodle-branch: 'MOODLE_405_STABLE'
+            database: 'pgsql'
           - php: '8.0'
             moodle-branch: 'MOODLE_401_STABLE'
             database: 'mariadb'

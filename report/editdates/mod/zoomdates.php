@@ -19,30 +19,48 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/zoom/locallib.php');
 
 
+/**
+ * Class report_editdates_mod_zoom_date_extractor
+ *
+ * This class is responsible for extracting, validating, and saving date settings
+ * for the "Zoom" activity module in Moodle.
+ *
+ * @package   report_editdates
+ * @copyright 2014 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_editdates_mod_zoom_date_extractor
         extends report_editdates_mod_date_extractor {
 
+    /**
+     * Constructor.
+     *
+     * @param stdClass $course The course database row.
+     */
     public function __construct($course) {
         parent::__construct($course, 'zoom');
         parent::load_data();
     }
 
+    #[\Override]
     public function get_settings(cm_info $cm) {
         $zoom = $this->mods[$cm->instance];
         if (!empty($zoom->recurring)) {
-            return array();
+            return [];
         } else {
             // Underscores currently don't behave well with this report, so we'll omit them.
-            return array(
+            return [
                 'starttime' => new report_editdates_date_setting(
-                        get_string('meeting_time', 'zoom'),
-                        $zoom->start_time, self::DATETIME, false),
-                );
+                    get_string('meeting_time', 'zoom'),
+                    $zoom->start_time, self::DATETIME, false
+                ),
+            ];
         }
     }
 
+    #[\Override]
     public function validate_dates(cm_info $cm, array $dates) {
-        $errors = array();
+        $errors = [];
         $zoom = $this->mods[$cm->instance];
 
         if (empty($zoom->recurring)) {
@@ -56,6 +74,7 @@ class report_editdates_mod_zoom_date_extractor
         return $errors;
     }
 
+    #[\Override]
     public function save_dates(cm_info $cm, array $dates) {
         // Fetch module instance from $mods array.
         $zoom = $this->mods[$cm->instance];

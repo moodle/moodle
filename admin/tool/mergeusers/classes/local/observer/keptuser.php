@@ -15,32 +15,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package tool_mergeusers
- * @author Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
- * @copyright 2019 Servei de Recursos Educatius (http://www.sre.urv.cat)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Observer of the user_merged_success to ensure user to keep is not suspended.
+ *
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * @copyright 2019 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace tool_mergeusers\local\observer;
 
+use dml_exception;
 use tool_mergeusers\event\user_merged_success;
 
+/**
+ * Observer of the user_merged_success to ensure user to keep is not suspended.
+ *
+ * @package   tool_mergeusers
+ * @author    Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
+ * @copyright 2019 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class keptuser {
-
     /**
      * Ensure kept user is not suspended.
      *
      * @param user_merged_success $event Event data.
+     * @throws dml_exception
      */
     public static function make_kept_user_as_not_suspended(user_merged_success $event): void {
         global $DB;
 
-        $userid = $event->other['usersinvolved']['toid'];
-
-        $userkept = new \stdClass();
-        $userkept->id = $userid;
-        $userkept->suspended = 0;
-        $userkept->timemodified = time();
-        $DB->update_record('user', $userkept);
+        $usertokeep = new \stdClass();
+        $usertokeep->id = $event->other['usersinvolved']['toid'];
+        $usertokeep->suspended = 0;
+        $usertokeep->timemodified = time();
+        $DB->update_record('user', $usertokeep);
     }
 }

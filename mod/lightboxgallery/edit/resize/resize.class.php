@@ -37,22 +37,20 @@ class edit_resize extends edit_base {
         $currentsize = sprintf('%s: %dx%d', get_string('currentsize', 'lightboxgallery'), $image->width, $image->height).
                        '<br /><br />';
 
-        $sizeselect = '<div class="input-group"><select name="size" class="form-select">';
+        $sizeselect = '<select name="size">';
         foreach ($this->resizeoptions as $index => $option) {
             $sizeselect .= '<option value="' . $index . '">' . $option . '</option>';
         }
-        $sizeselect .= '</select>&nbsp;<input type="submit" class="btn btn-secondary" name="button" value="' .
-                       $this->strresize . '" /></div><br /><br />';
+        $sizeselect .= '</select>&nbsp;<input type="submit" name="button" value="' . $this->strresize . '" /><br /><br />';
 
-        $scaleselect = '<div class="input-group"><select name="scale" class="form-select">'.
+        $scaleselect = '<select name="scale">'.
                        '  <option value="200">200&#37;</option>'.
                        '  <option value="150">150&#37;</option>'.
                        '  <option value="125">125&#37;</option>'.
                        '  <option value="75">75&#37;</option>'.
                        '  <option value="50">50&#37;</option>'.
                        '  <option value="25">25&#37;</option>'.
-                       '</select>&nbsp;<input type="submit" class="btn btn-secondary" name="button" value="' .
-                       $this->strscale . '" /></div>';
+                       '</select>&nbsp;<input type="submit" name="button" value="' . $this->strscale . '" />';
 
         return $this->enclose_in_form($currentsize . $sizeselect . $scaleselect);
     }

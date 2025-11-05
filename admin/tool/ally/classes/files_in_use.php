@@ -216,7 +216,7 @@ class files_in_use {
                     'contextid' => $context->id,
                     'courseid' => local_file::courseid($file),
                     'inuse' => 0,
-                    'needsupdate' => 1,
+                    'needsupdate' => 1
                 ];
                 $DB->insert_record_raw('tool_ally_file_in_use', $record, false);
 
@@ -367,7 +367,7 @@ class files_in_use {
                 'contextid' => $context->id,
                 'courseid' => local_file::courseid($file),
                 'inuse' => $inuse ? 1 : 0,
-                'needsupdate' => 0,
+                'needsupdate' => 0
             ];
             $DB->insert_record_raw('tool_ally_file_in_use', $record, false);
 
@@ -388,7 +388,7 @@ class files_in_use {
         $record = [
             'id' => $existing->id,
             'inuse' => $inuse ? 1 : 0,
-            'needsupdate' => 0,
+            'needsupdate' => 0
         ];
         $DB->update_record_raw('tool_ally_file_in_use', $record);
 

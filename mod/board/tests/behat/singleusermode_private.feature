@@ -1,0 +1,213 @@
+@mod @mod_board @javascript
+Feature: Usage of mod_board in private single user mode
+
+  Background:
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | student1 | First     | Student  | student1@example.com |
+      | student2 | Second    | Student  | student2@example.com |
+      | student3 | Third     | Student  | student3@example.com |
+      | teacher1 | First     | Teacher  | teacher1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "groups" exist:
+      | name    | course | idnumber |
+      | Group A | C1     | GA       |
+      | Group B | C1     | GB       |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student3 | C1     | student        |
+      | teacher1 | C1     | editingteacher |
+
+  Scenario: Teachers and owners may post and read mod_board posts in private single user mode and no group mode
+    Given the following "activity" exists:
+      | activity       | board                  |
+      | course         | C1                     |
+      | name           | Sample board           |
+      | groupmode      | 0                      |
+      | singleusermode | 1                      |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | GA    |
+      | student2 | GB    |
+    And I am on the "Sample board" "board activity" page logged in as "teacher1"
+    And I change mod_board "1" column name to "First Column"
+    And I change mod_board "2" column name to "Second Column"
+    And I change mod_board "3" column name to "Third Column"
+
+    When the following fields match these values:
+      | Select user | First Teacher |
+    And "Add new post to column First Column" "mod_board > button" should be visible
+    And I click on "Add new post to column First Column" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Title Own Teacher   |
+    And I click on "Post" "button" in the "New post for column First Column" "dialogue"
+    Then I should see "Title Own Teacher" in the "1" "mod_board > column"
+
+    When I select "First Student" from the "Select user" singleselect
+    And "Add new post to column First Column" "mod_board > button" should be visible
+    And I click on "Add new post to column First Column" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Title in Student 1 |
+    And I click on "Post" "button" in the "New post for column First Column" "dialogue"
+    Then I should see "Title in Student 1" in the "1" "mod_board > column"
+    And I should not see "Title Own Teacher" in the "1" "mod_board > column"
+
+    When I am on the "Sample board" "board activity" page logged in as "student1"
+    And I should not see "Select user"
+    And "Add new post to column First Column" "mod_board > button" should be visible
+    And I click on "Add new post to column First Column" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Title Own Student 1 |
+    And I click on "Post" "button" in the "New post for column First Column" "dialogue"
+    Then I should see "Title Own Student 1" in the "1" "mod_board > column"
+    And I should see "Title in Student 1" in the "1" "mod_board > column"
+    And I should not see "Title Own Teacher" in the "1" "mod_board > column"
+
+    And I am on homepage
+
+  Scenario: Teachers may filter users by group in mod_board in private single user mode with visible group mode
+    Given the following "activity" exists:
+      | activity       | board                  |
+      | course         | C1                     |
+      | name           | Sample board           |
+      | groupmode      | 2                      |
+      | singleusermode | 1                      |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | GA    |
+      | student2 | GB    |
+    And I am on the "Sample board" "board activity" page logged in as "teacher1"
+    And I change mod_board "1" column name to "First Column"
+    And I change mod_board "2" column name to "Second Column"
+    And I change mod_board "3" column name to "Third Column"
+
+    When the following fields match these values:
+      | Visible groups | All participants |
+      | Select user    | First Teacher    |
+    And "Add new post to column First Column" "mod_board > button" should be visible
+    And I click on "Add new post to column First Column" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Title Own Teacher   |
+    And I click on "Post" "button" in the "New post for column First Column" "dialogue"
+    Then I should see "Title Own Teacher" in the "1" "mod_board > column"
+
+    When I select "First Student" from the "Select user" singleselect
+    And "Add new post to column First Column" "mod_board > button" should be visible
+    And I click on "Add new post to column First Column" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Title in Student 1 |
+    And I click on "Post" "button" in the "New post for column First Column" "dialogue"
+    Then I should see "Title in Student 1" in the "1" "mod_board > column"
+    And I should not see "Title Own Teacher" in the "1" "mod_board > column"
+
+    When I am on the "Sample board" "board activity" page logged in as "student1"
+    And I should not see "Visible groups"
+    And I should not see "Select user"
+    And "Add new post to column First Column" "mod_board > button" should be visible
+    And I click on "Add new post to column First Column" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Title Own Student 1 |
+    And I click on "Post" "button" in the "New post for column First Column" "dialogue"
+    Then I should see "Title Own Student 1" in the "1" "mod_board > column"
+    And I should see "Title in Student 1" in the "1" "mod_board > column"
+    And I should not see "Title Own Teacher" in the "1" "mod_board > column"
+
+    When I am on the "Sample board" "board activity" page logged in as "student2"
+    And I should not see "Visible groups"
+    And I should not see "Select user"
+    And "Add new post to column First Column" "mod_board > button" should be visible
+    And I click on "Add new post to column First Column" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Title Own Student 2 |
+    And I click on "Post" "button" in the "New post for column First Column" "dialogue"
+    Then I should see "Title Own Student 2" in the "1" "mod_board > column"
+    And I should not see "Title Own Student 1" in the "1" "mod_board > column"
+    And I should not see "Title in Student 1" in the "1" "mod_board > column"
+    And I should not see "Title Own Teacher" in the "1" "mod_board > column"
+
+    When I am on the "Sample board" "board activity" page logged in as "teacher1"
+    And I select "Group A" from the "Visible groups" singleselect
+    And I select "First Student" from the "Select user" singleselect
+    And the "Select user" select box should not contain "Second Student"
+    Then I should see "Title Own Student 1" in the "1" "mod_board > column"
+    And I should see "Title in Student 1" in the "1" "mod_board > column"
+    And I should not see "Title Own Teacher" in the "1" "mod_board > column"
+    And I should not see "Title Own Student 2" in the "1" "mod_board > column"
+
+    When I am on the "Sample board" "board activity" page logged in as "admin"
+    And the following fields match these values:
+      | Visible groups | All participants |
+      | Select user    | Choose...        |
+    And I should see "Please select a user"
+    And I select "Second Student" from the "Select user" singleselect
+    Then I should not see "Title Own Student 1" in the "1" "mod_board > column"
+    And I should not see "Title in Student 1" in the "1" "mod_board > column"
+    And I should not see "Title Own Teacher" in the "1" "mod_board > column"
+    And I should see "Title Own Student 2" in the "1" "mod_board > column"
+
+    And I am on homepage
+
+  Scenario: Teachers do not see activity restricted users in mod_board in private single user mode
+    Given the following "activity" exists:
+      | activity       | board                                            |
+      | course         | C1                                               |
+      | name           | Sample board 1                                   |
+      | groupmode      | 0                                                |
+      | singleusermode | 1                                                |
+    And the following "activity" exists:
+      | activity       | board                                            |
+      | course         | C1                                               |
+      | name           | Sample board 2                                   |
+      | groupmode      | 0                                                |
+      | singleusermode | 1                                                |
+      | availability   | {"op":"&","c":[{"type":"group"}],"showc":[true]} |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | GA    |
+      | student2 | GB    |
+
+    When I am on the "Sample board 1" "board activity" page logged in as "teacher1"
+    Then the "Select user" select box should contain "First Student"
+    And the "Select user" select box should contain "Second Student"
+    And the "Select user" select box should contain "Third Student"
+    And the "Select user" select box should contain "First Teacher"
+
+    When I am on the "Sample board 2" "board activity" page logged in as "teacher1"
+    Then the "Select user" select box should contain "First Student"
+    And the "Select user" select box should contain "Second Student"
+    And the "Select user" select box should not contain "Third Student"
+    And the "Select user" select box should contain "First Teacher"
+
+  Scenario: Admin may login-as to student account and post in mod_board in private single user mode
+    Given the following "activity" exists:
+      | activity       | board                  |
+      | course         | C1                     |
+      | name           | Sample board           |
+      | groupmode      | 0                      |
+      | singleusermode | 1                      |
+    And the following "mod_board > notes" exist:
+      | board        | column      | heading     | content     | user     | owner    |
+      | Sample board | 1           | Heading T1  |             | teacher1 | teacher1 |
+      | Sample board | 1           | Heading S1  |             | student1 | student1 |
+    When I am on the "student1" "user > profile" page logged in as "admin"
+    And I follow "Log in as"
+    And I should see "You are logged in as First Student"
+    And I press "Continue"
+    And I am on the "My courses" page
+    And I follow "Course 1"
+    And I follow "Sample board"
+    And I should not see "Heading T1"
+    And I should see "Heading S1"
+    And I click on "Add new post to column Heading" "mod_board > button" in the "1" "mod_board > column"
+    And I set the following fields to these values:
+      | Post title | Heading X1   |
+    And I click on "Post" "button" in the "New post for column Heading" "dialogue"
+    Then I should not see "Heading T1"
+    And I should see "Heading S1"
+    And I should see "Heading X1"
+
+    And I am on homepage
