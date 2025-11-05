@@ -56,6 +56,11 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addHelpButton('type', 'forumtype', 'forum');
         $mform->setDefault('type', 'general');
 
+        $mform->addElement('advcheckbox', 'showimmediately', get_string('showimmediately', 'forum'));
+        $mform->addHelpButton('showimmediately', 'showimmediately', 'forum', '', false, $CFG->maxeditingtime / 60);
+        $mform->setDefault('showimmediately', 0);
+        $mform->hideIf('showimmediately', 'type', 'neq', 'qanda');
+
         $mform->addElement('header', 'availability', get_string('availability', 'forum'));
 
         $name = get_string('duedate', 'forum');

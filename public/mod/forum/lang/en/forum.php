@@ -370,6 +370,8 @@ $string['indicator:socialbreadth_help'] = 'This indicator is based on the social
 $string['indicator:socialbreadthdef'] = 'Forum social';
 $string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Forum activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
+$string['showimmediately'] = 'Show other replies immediately after posting';
+$string['showimmediately_help'] = 'This will show the replies of other participants before reaching the maximum editing time ({$a} minutes). Participants could still change their post during this time.';
 $string['starredonly'] = 'Search starred discussions only';
 $string['indexoutoftotal'] = '{$a->index} out of {$a->total}';
 $string['inforum'] = 'in {$a}';

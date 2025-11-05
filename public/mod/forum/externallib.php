@@ -139,7 +139,7 @@ class mod_forum_external extends external_api {
         // Also, the return type declaration is wrong, but I am not changing it now because I don't want ot break things.
         return new external_multiple_structure(
             new external_single_structure(
-                array(
+                [
                     'id' => new external_value(PARAM_INT, 'Forum id'),
                     'course' => new external_value(PARAM_INT, 'Course id'),
                     'type' => new external_value(PARAM_TEXT, 'The forum type'),
@@ -176,7 +176,13 @@ class mod_forum_external extends external_api {
                     'istracked' => new external_value(PARAM_BOOL, 'If the user is tracking the forum', VALUE_OPTIONAL),
                     'unreadpostscount' => new external_value(PARAM_INT, 'The number of unread posts for tracked forums',
                         VALUE_OPTIONAL),
-                ), 'forum'
+                    'showimmediately' => new external_value(
+                        PARAM_BOOL,
+                        'Whether to show replies immediately in a Q&A forum',
+                        VALUE_OPTIONAL
+                    ),
+                ],
+                'forum'
             )
         );
     }
