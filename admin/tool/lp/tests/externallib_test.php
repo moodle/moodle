@@ -17,6 +17,7 @@
 namespace tool_lp;
 
 use core_competency\api;
+use core_competency\competency;
 use core_external\external_api;
 use externallib_advanced_testcase;
 
@@ -430,6 +431,80 @@ final class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals('B', $summary->usercompetencysummary->usercompetency->gradename);
         $this->assertEquals('B', $summary->usercompetencysummary->evidence[0]->gradename);
         $this->assertEquals('A', $summary->usercompetencysummary->evidence[1]->gradename);
+    }
+
+    /**
+     * Evidence stored against a course module competency is deleted if the CM is deleted.
+     * @covers \tool_lp\external::data_for_user_competency_summary_in_plan
+     */
+    public function test_data_for_user_competency_summary_in_plan_deleted_cm(): void {
+        $this->setUser($this->creator);
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $f1 = $lpg->create_framework();
+
+        $c1 = $lpg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+        $c2 = $lpg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+
+        $tpl = $lpg->create_template();
+        $lpg->create_template_competency(['templateid' => $tpl->get('id'), 'competencyid' => $c1->get('id')]);
+        $lpg->create_template_competency(['templateid' => $tpl->get('id'), 'competencyid' => $c2->get('id')]);
+
+        $plan = $lpg->create_plan(['userid' => $this->user->id, 'templateid' => $tpl->get('id'), 'name' => 'Evil']);
+
+        $course = $dg->create_course();
+
+        $assign1 = $dg->create_module('assign', ['course' => $course->id]);
+        $assign2 = $dg->create_module('assign', ['course' => $course->id]);
+        $lpg->create_course_module_competency(['competencyid' => $c1->get('id'), 'cmid' => $assign1->cmid]);
+        $lpg->create_course_module_competency(['competencyid' => $c2->get('id'), 'cmid' => $assign1->cmid]);
+
+        api::add_evidence(
+            $this->user->id,
+            $c1->get('id'),
+            \core\context\module::instance($assign1->cmid),
+            competency::OUTCOME_COMPLETE,
+            'evidence_competencyrule',
+            'core_competency',
+        );
+        api::add_evidence(
+            $this->user->id,
+            $c2->get('id'),
+            \core\context\module::instance($assign2->cmid),
+            competency::OUTCOME_COMPLETE,
+            'evidence_competencyrule',
+            'core_competency',
+        );
+
+        // Confirm we have evidence for 2 course module competencies.
+        $summary1 = external::data_for_user_competency_summary_in_plan($c1->get('id'), $plan->get('id'));
+        $this->assertEquals('Evil', $summary1->plan->name);
+        $this->assertEquals(
+            get_string('evidence_competencyrule', 'core_competency'),
+            $summary1->usercompetencysummary->evidence[0]->description
+        );
+        $summary2 = external::data_for_user_competency_summary_in_plan($c2->get('id'), $plan->get('id'));
+        $this->assertEquals('Evil', $summary2->plan->name);
+        $this->assertEquals(
+            get_string('evidence_competencyrule', 'core_competency'),
+            $summary2->usercompetencysummary->evidence[0]->description
+        );
+
+        // Delete one course module.
+        course_delete_module($assign1->cmid);
+
+        // The evidence for the deleted course module should have been deleted. Other evidence should remain.
+        $summary1 = external::data_for_user_competency_summary_in_plan($c1->get('id'), $plan->get('id'));
+        $this->assertEquals('Evil', $summary1->plan->name);
+        $this->assertFalse(array_key_exists(0, $summary1->usercompetencysummary->evidence));
+        $summary2 = external::data_for_user_competency_summary_in_plan($c2->get('id'), $plan->get('id'));
+        $this->assertEquals('Evil', $summary2->plan->name);
+        $this->assertEquals(
+            get_string('evidence_competencyrule', 'core_competency'),
+            $summary2->usercompetencysummary->evidence[0]->description
+        );
     }
 
     public function test_data_for_user_competency_summary(): void {
