@@ -214,6 +214,9 @@ class api {
             'supportpage' => $sitesupportavailable ? clean_param($CFG->supportpage, PARAM_URL) : '',
             'supportavailability' => clean_param($CFG->supportavailability, PARAM_INT),
             'showloginform' => (int) get_config('core', 'showloginform'),
+            'tool_mfa_enabled' => clean_param(get_config('tool_mfa', 'enabled'), PARAM_BOOL),
+            'enableloginrecaptcha' => clean_param(login_captcha_enabled(), PARAM_BOOL),
+            'enableforgotpasswordrecaptcha' => clean_param(forgotpassword_captcha_enabled(), PARAM_BOOL),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
