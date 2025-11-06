@@ -2591,8 +2591,8 @@ class cm_info implements IteratorAggregate {
         if (!$cm) {
             return null;
         }
-        // If it is already a cm_info object, just return it.
-        if ($cm instanceof cm_info) {
+        // If it is already a cm_info object with the right user, just return it.
+        if (($cm instanceof cm_info) && ($cm->get_modinfo()->userid == $userid)) {
             return $cm;
         }
         // Otherwise load modinfo.
