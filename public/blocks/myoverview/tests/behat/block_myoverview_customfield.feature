@@ -181,13 +181,14 @@ Feature: The my overview block allows users to group courses by custom fields
     And I set the field "Custom field" to "1"
     Then the "Field to use" select box should not contain "Hidden field"
 
+  @core_customfield
   Scenario: Hidden fields not displayed in the filter
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1          | block_myoverview |
       | customfiltergrouping       | textfield2 | block_myoverview |
     And I log in as "admin"
     And I navigate to "Courses > Default settings > Course custom fields" in site administration
-    And I click on "Edit" "link" in the "Text field 2" "table_row"
+    And I press "Edit custom field: Text field 2"
     And I set the field "Visible to" to "Nobody"
     And I press "Save changes"
     And I log out
