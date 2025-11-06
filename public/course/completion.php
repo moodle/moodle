@@ -95,7 +95,7 @@ if ($form->is_cancelled()){
     }
 
     // Delete old criteria.
-    $completion->clear_criteria();
+    $completion->clear_criteria(false);
 
     // Loop through each criteria type and run its update_config() method.
     global $COMPLETION_CRITERIA_TYPES;

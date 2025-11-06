@@ -1467,8 +1467,69 @@ final class completionlib_test extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_clear_criteria}
+     *
+     * @return bool[][]
+     */
+    public static function clear_criteria_provider(): array {
+        return [
+            [false],
+            [true],
+        ];
+    }
+
+    /**
+     * Test clearing criteria for current course
+     *
+     * @param bool $removetypecriteria
+     *
+     * @covers ::clear_criteria
+     * @dataProvider clear_criteria_provider
+     */
+    public function test_clear_criteria(bool $removetypecriteria): void {
+        global $DB;
+
+        $this->setup_data();
+
+        $courseprerequisite = $this->getDataGenerator()->create_course(['enablecompletion' => true]);
+
+        /** @var completion_criteria_self $criteria */
+        $criteria = completion_criteria::factory(['criteriatype' => COMPLETION_CRITERIA_TYPE_SELF]);
+        $criteriadata = (object) [
+            'id' => $courseprerequisite->id,
+            'criteria_self' => 1,
+        ];
+        $criteria->update_config($criteriadata);
+
+        /** @var completion_criteria_course $criteria */
+        $criteria = completion_criteria::factory(['criteriatype' => COMPLETION_CRITERIA_TYPE_COURSE]);
+        $criteriadata = (object) [
+            'id' => $this->course->id,
+            'criteria_course' => [$courseprerequisite->id],
+        ];
+        $criteria->update_config($criteriadata);
+
+        // Sanity test.
+        $this->assertTrue($DB->record_exists('course_completion_criteria', ['course' => $courseprerequisite->id]));
+
+        $completion = new completion_info($courseprerequisite);
+        $completion->clear_criteria($removetypecriteria);
+
+        // There should be no criteria data for the course.
+        $this->assertFalse($DB->record_exists('course_completion_criteria', ['course' => $courseprerequisite->id]));
+
+        // Course type criteria from other courses that refer to the course.
+        $this->assertEquals(!$removetypecriteria, $DB->record_exists('course_completion_criteria', [
+            'course' => $this->course->id,
+            'criteriatype' => COMPLETION_CRITERIA_TYPE_COURSE,
+            'courseinstance' => $courseprerequisite->id,
+        ]));
+    }
+
+    /**
      * Test that data is cleaned up when we delete courses that are set as completion criteria for other courses
      *
+     * @covers ::clear_criteria
      * @covers ::delete_course_completion_data
      * @covers ::delete_all_completion_data
      */
@@ -1479,13 +1540,12 @@ final class completionlib_test extends advanced_testcase {
 
         $courseprerequisite = $this->getDataGenerator()->create_course(['enablecompletion' => true]);
 
+        /** @var completion_criteria_course $criteria */
+        $criteria = completion_criteria::factory(['criteriatype' => COMPLETION_CRITERIA_TYPE_COURSE]);
         $criteriadata = (object) [
             'id' => $this->course->id,
             'criteria_course' => [$courseprerequisite->id],
         ];
-
-        /** @var completion_criteria_course $criteria */
-        $criteria = completion_criteria::factory(['criteriatype' => COMPLETION_CRITERIA_TYPE_COURSE]);
         $criteria->update_config($criteriadata);
 
         // Sanity test.
