@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1.22 ===
+* message: When responding to pcntl signals, call existing signal handlers.
+
 === 4.1.21 ===
 
 * Moodle's Behat `::execute()` method now supports the use of array callable syntax for calling other steps.
