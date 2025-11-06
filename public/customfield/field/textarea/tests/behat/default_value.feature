@@ -1,4 +1,4 @@
-@customfield @customfield_textarea @javascript @editor_tiny
+@core_customfield @customfield_textarea @javascript @editor_tiny
 Feature: Default value for the textarea custom field can contain images
   In order to see images on custom fields
   As a manager
