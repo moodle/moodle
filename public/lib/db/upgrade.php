@@ -2304,5 +2304,15 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v5.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2025103000.01) {
+        // Remove any orphaned competency evidence records (pointing to non-existing contexts).
+        $DB->delete_records_select('competency_evidence', 'NOT EXISTS (
+            SELECT ctx.id FROM {context} ctx WHERE ctx.id = {competency_evidence}.contextid
+        )');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025103000.01);
+    }
+
     return true;
 }
