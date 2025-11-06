@@ -39,6 +39,9 @@ class core_shutdown_manager {
     /** @var bool is this manager already registered? */
     protected static $registered = false;
 
+    /** @var array A list of pcntl handlers */
+    protected static array $pcntlhandlers = [];
+
     /**
      * Register self as main shutdown handler.
      *
@@ -62,8 +65,18 @@ class core_shutdown_manager {
                 pcntl_async_signals(true);
             }
             if (function_exists('pcntl_signal')) {
-                pcntl_signal(SIGINT, ['core_shutdown_manager', 'signal_handler']);
-                pcntl_signal(SIGTERM, ['core_shutdown_manager', 'signal_handler']);
+                $signals = [SIGINT, SIGTERM];
+
+                foreach ($signals as $signal) {
+                    if (function_exists('pcntl_signal_get_handler')) {
+                        $handler = pcntl_signal_get_handler($signal);
+                        if (is_callable($handler)) {
+                            // We can restore the original handler later if needed.
+                            self::$pcntlhandlers[$signal] = $handler;
+                        }
+                    }
+                    pcntl_signal($signal, ['core_shutdown_manager', 'signal_handler']);
+                }
             }
         }
     }
@@ -110,6 +123,10 @@ class core_shutdown_manager {
                 // phpcs:ignore
                 error_log('Exception ignored in signal function ' . get_callable_name($callback) . ': ' . $e->getMessage());
             }
+        }
+        if (array_key_exists($signo, self::$pcntlhandlers)) {
+            $handler = self::$pcntlhandlers[$signo];
+            $handler($signo);
         }
 
         if ($shouldexit) {
