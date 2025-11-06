@@ -1,4 +1,4 @@
-@customfield @customfield_date @javascript
+@core_customfield @customfield_date @javascript
 Feature: Managers can manage course custom fields date
   In order to have additional data on the course
   As a manager
