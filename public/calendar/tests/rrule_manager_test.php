@@ -42,8 +42,8 @@ final class rrule_manager_test extends \advanced_testcase {
         parent::setUp();
         $this->resetAfterTest();
 
-        // Set our timezone based on the timezone in the RFC's samples (US/Eastern).
-        $tz = 'US/Eastern';
+        // Set our timezone based on the timezone in the RFC's samples (America/New_York).
+        $tz = 'America/New_York';
         $this->setTimezone($tz);
         $timezone = new \DateTimeZone($tz);
         // Create our event's DTSTART date based on RFC's samples (most commonly used in RFC is 1997-09-02 09:00:00 EDT).
@@ -686,8 +686,8 @@ final class rrule_manager_test extends \advanced_testcase {
 
         // Change the start date for forever events to 9am of the 2nd day of the current month and year.
         $this->change_event_startdate(date('Ym02\T090000'));
-        $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
-        $startdate = new \DateTime(date('Y-m-d', $this->event->timestart));
+        $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart), new \DateTimeZone('Australia/Perth'));
+        $startdate = new \DateTime(date('Y-m-d', $this->event->timestart), new \DateTimeZone('Australia/Perth'));
 
         $offsetinterval = $startdatetime->diff($startdate, true);
         $interval = new \DateInterval('P12M');
@@ -843,8 +843,8 @@ final class rrule_manager_test extends \advanced_testcase {
         // Change the start date for forever events to 9am of the 2nd day of the current month and year.
         $this->change_event_startdate(date('Ym02\T090000'));
 
-        $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
-        $startdate = new \DateTime(date('Y-m-d', $this->event->timestart));
+        $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart), new \DateTimeZone('Australia/Perth'));
+        $startdate = new \DateTime(date('Y-m-d', $this->event->timestart), new \DateTimeZone('Australia/Perth'));
 
         $offsetinterval = $startdatetime->diff($startdate, true);
         $interval = new \DateInterval('P12M');
@@ -1202,8 +1202,8 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_other_day_forever(): void {
         global $DB;
 
-        // Change the start date for forever events to 9am of the current date in US/Eastern time.
-        $this->change_event_startdate(date('Ymd\T090000'), 'US/Eastern');
+        // Change the start date for forever events to 9am of the current date in America/New_York time.
+        $this->change_event_startdate(date('Ymd\T090000'), 'America/New_York');
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
         $interval = new \DateInterval('P2D');
@@ -1272,7 +1272,7 @@ final class rrule_manager_test extends \advanced_testcase {
         global $DB;
 
         // Change our event's date to 01-01-1998, based on the example from the RFC.
-        $this->change_event_startdate('19980101T090000', 'US/Eastern');
+        $this->change_event_startdate('19980101T090000', 'America/New_York');
 
         $rrule = 'FREQ=YEARLY;UNTIL=20000131T090000Z;BYMONTH=1;BYDAY=SU,MO,TU,WE,TH,FR,SA';
         $mang = new rrule_manager($rrule);
@@ -1306,7 +1306,7 @@ final class rrule_manager_test extends \advanced_testcase {
         global $DB;
 
         // Change our event's date to 01-01-1998, based on the example from the RFC.
-        $this->change_event_startdate('19980101T090000', 'US/Eastern');
+        $this->change_event_startdate('19980101T090000', 'America/New_York');
 
         $rrule = 'FREQ=DAILY;UNTIL=20000131T090000Z;BYMONTH=1';
         $mang = new rrule_manager($rrule);
@@ -1404,8 +1404,8 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_other_week_forever(): void {
         global $DB;
 
-        // Change the start date for forever events to 9am of the current date in US/Eastern time.
-        $this->change_event_startdate(date('Ymd\T090000'), 'US/Eastern');
+        // Change the start date for forever events to 9am of the current date in America/New_York time.
+        $this->change_event_startdate(date('Ymd\T090000'), 'America/New_York');
 
         $interval = new \DateInterval('P2W');
 
@@ -1615,7 +1615,7 @@ final class rrule_manager_test extends \advanced_testcase {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970905T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970905T090000', 'America/New_York');
         $startdate = new \DateTime(date('Y-m-d', $this->event->timestart));
         $offsetinterval = $startdatetime->diff($startdate, true);
 
@@ -1651,7 +1651,7 @@ final class rrule_manager_test extends \advanced_testcase {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970905T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970905T090000', 'America/New_York');
         $startdate = new \DateTime(date('Y-m-d', $this->event->timestart));
         $offsetinterval = $startdatetime->diff($startdate, true);
 
@@ -1689,7 +1689,7 @@ final class rrule_manager_test extends \advanced_testcase {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970907T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970907T090000', 'America/New_York');
         $startdate = new \DateTime(date('Y-m-d', $this->event->timestart));
         $offsetinterval = $startdatetime->diff($startdate, true);
 
@@ -1732,7 +1732,7 @@ final class rrule_manager_test extends \advanced_testcase {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
-        $startdatetime = $this->change_event_startdate('19970922T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970922T090000', 'America/New_York');
         $startdate = new \DateTime($startdatetime->format('Y-m-d'));
         $offsetinterval = $startdatetime->diff($startdate, true);
 
@@ -1774,7 +1774,7 @@ final class rrule_manager_test extends \advanced_testcase {
         global $DB;
 
         // Change our event's date to 28 September of the current year, based on the example from the RFC.
-        $this->change_event_startdate(date('Y0928\T090000'), 'US/Eastern');
+        $this->change_event_startdate(date('Y0928\T090000'), 'America/New_York');
 
         $rrule = 'FREQ=MONTHLY;BYMONTHDAY=-3';
         $mang = new rrule_manager($rrule);
@@ -1860,7 +1860,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_first_and_last_day_of_the_month_10_count(): void {
         global $DB;
 
-        $startdatetime = $this->change_event_startdate('19970930T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970930T090000', 'America/New_York');
         $startdate = new \DateTime($startdatetime->format('Y-m-d'));
         $offsetinterval = $startdatetime->diff($startdate, true);
 
@@ -1905,7 +1905,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_18_months_days_10_to_15_10_count(): void {
         global $DB;
 
-        $startdatetime = $this->change_event_startdate('19970910T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970910T090000', 'America/New_York');
 
         $rrule = 'FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=10,11,12,13,14,15';
         $mang = new rrule_manager($rrule);
@@ -1950,9 +1950,9 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_tuesday_every_other_month_forever(): void {
         global $DB;
 
-        // Change the start date for forever events to 9am of the Tuesday on or before of the current date in US/Eastern time.
+        // Change the start date for forever events to 9am of the Tuesday on or before of the current date in America/New_York time.
         $nexttuesday = new \DateTime('next Tuesday');
-        $this->change_event_startdate($nexttuesday->format('Ymd\T090000'), 'US/Eastern');
+        $this->change_event_startdate($nexttuesday->format('Ymd\T090000'), 'America/New_York');
 
         $rrule = 'FREQ=MONTHLY;INTERVAL=2;BYDAY=TU';
         $mang = new rrule_manager($rrule);
@@ -2005,7 +2005,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_yearly_in_june_july_10_count(): void {
         global $DB;
 
-        $startdatetime = $this->change_event_startdate('19970610T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970610T090000', 'America/New_York');
 
         $rrule = 'FREQ=YEARLY;COUNT=10;BYMONTH=6,7';
         $mang = new rrule_manager($rrule);
@@ -2048,7 +2048,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_other_year_in_june_july_10_count(): void {
         global $DB;
 
-        $startdatetime = $this->change_event_startdate('19970310T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970310T090000', 'America/New_York');
 
         $rrule = 'FREQ=YEARLY;INTERVAL=2;COUNT=10;BYMONTH=1,2,3';
         $mang = new rrule_manager($rrule);
@@ -2095,7 +2095,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_3_years_1st_100th_200th_days_10_count(): void {
         global $DB;
 
-        $startdatetime = $this->change_event_startdate('19970101T090000', 'US/Eastern');
+        $startdatetime = $this->change_event_startdate('19970101T090000', 'America/New_York');
 
         $rrule = 'FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200';
         $mang = new rrule_manager($rrule);
@@ -2145,7 +2145,7 @@ final class rrule_manager_test extends \advanced_testcase {
         // Change our event's date to the 20th Monday of the current year.
         $twentiethmonday = new \DateTime(date('Y-01-01'));
         $twentiethmonday->modify('+20 Monday');
-        $startdatetime = $this->change_event_startdate($twentiethmonday->format('Ymd\T000000'), 'US/Eastern');
+        $startdatetime = $this->change_event_startdate($twentiethmonday->format('Ymd\T000000'), 'America/New_York');
 
         $interval = new \DateInterval('P1Y');
 
@@ -2191,7 +2191,7 @@ final class rrule_manager_test extends \advanced_testcase {
         // Change our event's date to the start of the 20th week of the current year.
         $twentiethweek = new \DateTime(date('Y-01-01'));
         $twentiethweek->setISODate($twentiethweek->format('Y'), 20);
-        $startdatetime = $this->change_event_startdate($twentiethweek->format('Ymd\T090000'), 'US/Eastern');
+        $startdatetime = $this->change_event_startdate($twentiethweek->format('Ymd\T090000'), 'America/New_York');
 
         $startdate = clone($startdatetime);
         $startdate->modify($startdate->format('Y-m-d'));
@@ -2238,9 +2238,9 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_thursday_in_march_forever(): void {
         global $DB;
 
-        // Change our event's date to the first Thursday of March of the current year at 9am US/Eastern time.
+        // Change our event's date to the first Thursday of March of the current year at 9am America/New_York time.
         $firstthursdayofmarch = new \DateTime('first Thursday of March');
-        $startdatetime = $this->change_event_startdate($firstthursdayofmarch->format('Ymd\T090000'), 'US/Eastern');
+        $startdatetime = $this->change_event_startdate($firstthursdayofmarch->format('Ymd\T090000'), 'America/New_York');
 
         $interval = new \DateInterval('P1Y');
 
@@ -2297,9 +2297,9 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_every_thursday_june_july_august_forever(): void {
         global $DB;
 
-        // Change our event's date to the first Thursday of June in the current year at 9am US/Eastern time.
+        // Change our event's date to the first Thursday of June in the current year at 9am America/New_York time.
         $firstthursdayofjune = new \DateTime('first Thursday of June');
-        $startdatetime = $this->change_event_startdate($firstthursdayofjune->format('Ymd\T090000'), 'US/Eastern');
+        $startdatetime = $this->change_event_startdate($firstthursdayofjune->format('Ymd\T090000'), 'America/New_York');
 
         $startdate = new \DateTime($startdatetime->format('Y-m-d'));
 
@@ -2354,8 +2354,8 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_friday_the_thirteenth_forever(): void {
         global $DB;
 
-        // Change our event's date to the first Thursday of June in the current year at 9am US/Eastern time.
-        $this->change_event_startdate(date('Ymd\T090000'), 'US/Eastern');
+        // Change our event's date to the first Thursday of June in the current year at 9am America/New_York time.
+        $this->change_event_startdate(date('Ymd\T090000'), 'America/New_York');
 
         $rrule = 'FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13';
         $mang = new rrule_manager($rrule);
@@ -2391,10 +2391,10 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_first_saturday_following_first_sunday_forever(): void {
         global $DB;
 
-        // Change our event's date to the next Saturday after the first Sunday of the the current month at 9am US/Eastern time.
+        // Change our event's date to the next Saturday after the first Sunday of the current month at 9am America/New_York time.
         $firstsaturdayafterfirstsunday = new \DateTime('first Sunday of this month');
         $firstsaturdayafterfirstsunday->modify('next Saturday');
-        $startdatetime = $this->change_event_startdate($firstsaturdayafterfirstsunday->format('Ymd\T090000'), 'US/Eastern');
+        $startdatetime = $this->change_event_startdate($firstsaturdayafterfirstsunday->format('Ymd\T090000'), 'America/New_York');
         $startdate = new \DateTime($startdatetime->format('Y-m-d'));
         $offset = $startdatetime->diff($startdate, true);
 
@@ -2452,7 +2452,7 @@ final class rrule_manager_test extends \advanced_testcase {
         $electiondate->modify('+1 Tuesday');
 
         // Use the most recent election date as the starting date of our recurring events.
-        $startdatetime = $this->change_event_startdate($electiondate->format('Ymd\T090000'), 'US/Eastern');
+        $startdatetime = $this->change_event_startdate($electiondate->format('Ymd\T090000'), 'America/New_York');
         $startdate = new \DateTime($startdatetime->format('Y-m-d'));
         $offset = $startdatetime->diff($startdate, true);
 
@@ -2495,7 +2495,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_monthly_bysetpos_3_count(): void {
         global $DB;
 
-        $this->change_event_startdate('19970904T090000', 'US/Eastern');
+        $this->change_event_startdate('19970904T090000', 'America/New_York');
 
         $rrule = 'FREQ=MONTHLY;COUNT=3;BYDAY=TU,WE,TH;BYSETPOS=3';
         $mang = new rrule_manager($rrule);
@@ -2532,7 +2532,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_second_to_the_last_weekday_of_the_month(): void {
         global $DB;
 
-        $this->change_event_startdate('19970929T090000', 'US/Eastern');
+        $this->change_event_startdate('19970929T090000', 'America/New_York');
 
         $rrule = 'FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2;COUNT=7';
         $mang = new rrule_manager($rrule);
@@ -2757,7 +2757,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_weekly_byday_with_wkst_mo(): void {
         global $DB;
 
-        $this->change_event_startdate('19970805T090000', 'US/Eastern');
+        $this->change_event_startdate('19970805T090000', 'America/New_York');
 
         $rrule = 'FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO';
         $mang = new rrule_manager($rrule);
@@ -2790,7 +2790,7 @@ final class rrule_manager_test extends \advanced_testcase {
     public function test_weekly_byday_with_wkst_su(): void {
         global $DB;
 
-        $this->change_event_startdate('19970805T090000', 'US/Eastern');
+        $this->change_event_startdate('19970805T090000', 'America/New_York');
 
         $rrule = 'FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU';
         $mang = new rrule_manager($rrule);
@@ -2870,7 +2870,7 @@ final class rrule_manager_test extends \advanced_testcase {
      * Change the event's timestart (DTSTART) based on the test's needs.
      *
      * @param string $datestr The date string. In 'Ymd\This' format. e.g. 19990902T090000.
-     * @param null|string $timezonestr A valid timezone string. e.g. 'US/Eastern'.
+     * @param null|string $timezonestr A valid timezone string. e.g. 'America/New_York'.
      *                                 If not provided, the default timezone will be used.
      * @return bool|DateTime
      */
