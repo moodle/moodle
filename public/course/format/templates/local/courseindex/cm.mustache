@@ -71,8 +71,10 @@
         {{/sectioninfo}}
     {{/hasdelegatedsection}}
 </li>
+{{$ core_courseformat/local/courseindex/cm-js}}
 {{#js}}
 require(['core_courseformat/local/courseindex/cm'], function(component) {
     component.init('#course-index-cm-{{id}}');
 });
 {{/js}}
+{{/ core_courseformat/local/courseindex/cm-js}}

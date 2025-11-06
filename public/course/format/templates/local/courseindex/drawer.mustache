@@ -30,8 +30,10 @@
         {{> core_courseformat/local/courseindex/placeholders }}
     </div>
 </nav>
+{{$ core_courseformat/local/courseindex/drawer-js}}
 {{#js}}
 require(['core_courseformat/local/courseindex/drawer'], function(component) {
     component.init('#courseindex');
 });
 {{/js}}
+{{/ core_courseformat/local/courseindex/drawer-js}}
