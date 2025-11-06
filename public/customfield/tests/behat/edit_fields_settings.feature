@@ -77,7 +77,7 @@ Feature: Teachers can edit course custom fields
   Scenario: Use images in the custom field description
     When I log in as "admin"
     And I navigate to "Courses > Default settings > Course custom fields" in site administration
-    And I click on "Edit" "link" in the "Field 1" "table_row"
+    And I press "Edit custom field: Field 1"
     And I click on "Image" "button" in the "Description" "form_row"
     And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
