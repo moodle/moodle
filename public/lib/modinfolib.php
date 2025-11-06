@@ -66,7 +66,7 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
 
     // Function get_fast_modinfo() can never be called during upgrade unless it is used for clearing cache only.
     if (!$resetonly) {
-        upgrade_ensure_not_running();
+        \core\setup::ensure_upgrade_is_not_running();
     }
 
     // Function is called with $reset = true.
@@ -269,7 +269,7 @@ function rebuild_course_cache(int $courseid = 0, bool $clearonly = false, bool $
     }
 
     // Function rebuild_course_cache() can not be called during upgrade unless it's clear only.
-    if (!$clearonly && !upgrade_ensure_not_running(true)) {
+    if (!$clearonly && \core\setup::warn_if_upgrade_is_running()) {
         $clearonly = true;
     }
 

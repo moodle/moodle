@@ -1,0 +1,16 @@
+issueNumber: MDL-87107
+notes:
+  core:
+    - message: >
+        The `upgrade_ensure_not_running()` function has been deprecated and
+        replaced
+
+        with:
+
+
+        - `\core\setup::warn_if_upgrade_is_running()`;
+
+        - `\core\setup::ensure_upgrade_is_not_running()`; and
+
+        - `\core\setup::is_upgrade_running()`.
+      type: improved

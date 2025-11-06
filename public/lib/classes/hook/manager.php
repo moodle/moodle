@@ -699,7 +699,7 @@ final class manager implements
             return false;
         }
 
-        if ($this->is_upgrade_running()) {
+        if (\core\setup::is_upgrade_running()) {
             // Do not use the cache during upgrade.
             return false;
         }
@@ -746,17 +746,5 @@ final class manager implements
         file_put_contents($tmppath, json_encode($cachedata));
         rename($tmppath, $cachepath);
         clearstatcache(true, $cachepath);
-    }
-
-    /**
-     * Check whether upgrade is currently running.
-     *
-     * @return bool
-     */
-    protected function is_upgrade_running(): bool {
-        global $CFG;
-
-        // Note: This mimics the test in lib/setuplib.php during upgrade.
-        return !empty($CFG->upgraderunning);
     }
 }
