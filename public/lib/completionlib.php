@@ -478,17 +478,23 @@ class completion_info {
 
     /**
      * Clear old course completion criteria
+     *
+     * @param bool $removetypecriteria Also remove course type criteria from other courses that refer to the current course
      */
-    public function clear_criteria() {
+    public function clear_criteria(bool $removetypecriteria = true): void {
         global $DB;
 
+        $select = 'course = :course';
+        $params = ['course' => $this->course->id];
+
         // Remove completion criteria records for the course itself, and any records that refer to the course.
-        $select = 'course = :course OR (criteriatype = :type AND courseinstance = :courseinstance)';
-        $params = [
-            'course' => $this->course_id,
-            'type' => COMPLETION_CRITERIA_TYPE_COURSE,
-            'courseinstance' => $this->course_id,
-        ];
+        if ($removetypecriteria) {
+            $select .= ' OR (criteriatype = :type AND courseinstance = :courseinstance)';
+            $params = array_merge($params, [
+                'type' => COMPLETION_CRITERIA_TYPE_COURSE,
+                'courseinstance' => $this->course_id,
+            ]);
+        }
 
         $DB->delete_records_select('course_completion_criteria', $select, $params);
         $DB->delete_records('course_completion_aggr_methd', array('course' => $this->course_id));
