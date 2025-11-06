@@ -87,6 +87,7 @@
 </div>
 
 {{#js}}
+{{#id}}
 require(['jquery', 'core_message/message_send_bulk', 'core/custom_interaction_events'], function($, BulkSender, CustomEvents) {
     CustomEvents.define('#{{id}}', [CustomEvents.events.accessibleChange]);
     $('#{{id}}').on(CustomEvents.events.accessibleChange, function(e) {
@@ -108,4 +109,5 @@ require(['jquery', 'core_message/message_send_bulk', 'core/custom_interaction_ev
         }
     });
 });
+{{/id}}
 {{/js}}
