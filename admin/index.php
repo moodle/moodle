@@ -916,8 +916,14 @@ if (empty($CFG->disabledevlibdirscheck) && (is_dir($CFG->dirroot.'/vendor') || i
 // Check if the site is being foced onto ssl.
 $overridetossl = !empty($CFG->overridetossl);
 
-// Check if moodle campaign content setting is enabled or not.
-$showcampaigncontent = !isset($CFG->showcampaigncontent) || $CFG->showcampaigncontent;
+if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
+    // We need to add this in order to be able to verify the showcampaigncontent setting behaviour during behat tests.
+    $showcampaigncontent = get_config('core', 'showcampaigncontent');
+    $showcampaigncontent = $showcampaigncontent === 'true';
+} else {
+    // Check if moodle campaign content setting is enabled or not.
+    $showcampaigncontent = !isset($CFG->showcampaigncontent) || $CFG->showcampaigncontent;
+}
 
 // Encourage admins to enable the user feedback feature if it is not enabled already.
 $showfeedbackencouragement = empty($CFG->enableuserfeedback);
