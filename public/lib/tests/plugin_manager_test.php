@@ -247,6 +247,16 @@ final class plugin_manager_test extends \advanced_testcase {
         $this->assertSame(get_string('type_editor_plural', 'core_plugin'), $name);
     }
 
+    public function test_plugintype_name_core(): void {
+        $name = core_plugin_manager::instance()->plugintype_name('core');
+        $this->assertSame(get_string('type_core', 'core_plugin'), $name);
+    }
+
+    public function test_plugintype_name_core_plural(): void {
+        $name = core_plugin_manager::instance()->plugintype_name_plural('core');
+        $this->assertSame(get_string('type_core_plural', 'core_plugin'), $name);
+    }
+
     public function test_get_plugin_info(): void {
         global $CFG;
 
