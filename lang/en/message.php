@@ -151,6 +151,7 @@ $string['page-message-x'] = 'Any message pages';
 $string['participants'] = 'Participants';
 $string['pendingcontactrequests'] = 'There are {$a} pending contact requests';
 $string['permitted'] = 'Permitted';
+$string['preference'] = 'Preference';
 $string['privacy'] = 'Privacy';
 $string['privacy_desc'] = 'You can restrict who can message you';
 $string['privacy:metadata:core_favourites'] = 'The conversations starred by the user';

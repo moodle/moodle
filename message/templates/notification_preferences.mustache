@@ -69,7 +69,7 @@
     }
 }}
 <div class="preferences-page-container">
-    <h2>{{#str}} notificationpreferences, message {{/str}}</h2>
+    <h2 id="notificationpreferencesheading">{{#str}} notificationpreferences, message {{/str}}</h2>
     <div class="checkbox-container" data-region="disable-notification-container">
         <input id="disable-notifications"
            type="checkbox"
@@ -79,10 +79,12 @@
         {{> core/loading }}
     </div>
     <div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
-        <table class="table preference-table">
+        <table class="table preference-table" aria-labelledby="notificationpreferencesheading">
             <thead>
                 <tr>
-                    <th>{{{displayname}}}</th>
+                    <th scope="col">
+                        <span class="sr-only">{{#str}}preference, message{{/str}}</span>
+                    </th>
                     {{#processors}}
                         {{> message/notification_preferences_processor }}
                     {{/processors}}

@@ -47,7 +47,7 @@
     }
 }}
 <tr class="preference-row" data-region="preference-row" data-preference-key="{{{preferencekey}}}">
-    <td class="preference-name">{{{displayname}}}</td>
+    <th class="preference-name font-weight-normal" scope="row">{{{displayname}}}</th>
     {{#processors}}
         <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
             {{#locked}}
@@ -64,8 +64,8 @@
                                 {{#disableall}} disabled="true" {{/disableall}}
                                 {{#enabled}}checked{{/enabled}}
                             >
-                            <label for="{{{preferencekey}}}_{{{name}}}" class="custom-control-label"
-                                title="{{enabledlabel}}" >
+                            <label for="{{{preferencekey}}}_{{{name}}}" class="sr-only">
+                                {{enabledlabel}}
                             </label>
                         </div>
                     </div>
