@@ -25,6 +25,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   value.
 
   For more information see [MDL-85975](https://tracker.moodle.org/browse/MDL-85975)
+- When responding to pcntl signals, call existing signal handlers.
+
+  For more information see [MDL-87079](https://tracker.moodle.org/browse/MDL-87079)
+
+### core_completion
+
+#### Changed
+
+- The `completion_info::clear_criteria` method takes an optional `$removetypecriteria` to determine whether to remove course type criteria from other courses that refer to the current course
+
+  For more information see [MDL-86332](https://tracker.moodle.org/browse/MDL-86332)
 
 ### core_course
 
@@ -33,6 +44,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The following methods have been deprecated and should no longer be used: - `course_delete_module` - `course_module_flag_for_async_deletion` Please consider using the equivalent methods, delete and delete_async, in `core_courseformat\local\cmactions` instead.
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+- Deprecates set_coursemodule_groupmode in favor of core_courseformat\cmactions::set_groupmode
+
+  For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
 
 ### core_courseformat
 
@@ -41,6 +55,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add delete method to the core_courseformat\cmactions
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+- Add set_groupmode method to the core_courseformat\cmactions (course format actions)
+
+  For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
 
 ### core_group
 
@@ -57,6 +74,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The method `feedback_init_feedback_session()` has been deprecated, along with all other direct access to `$SESSION` from the module
 
   For more information see [MDL-86607](https://tracker.moodle.org/browse/MDL-86607)
+
+### qbank_columnsortorder
+
+#### Removed
+
+- The Behat selector `column move handle` for the `qbank_columnsortorder` plugin has been removed.
+  When interacting with the column's move handle, please use the move handle's accessible name and type.
+  For example: - `And I drag "Move Created by" "button" and I drop it in "Move T" "button"`
+
+  For more information see [MDL-86855](https://tracker.moodle.org/browse/MDL-86855)
+
+### tool_mobile
+
+#### Changed
+
+- The WS tool_mobile_get_public_config now returns whether MFA and reCAPTCHA are enabled for login/recover password.
+
+  For more information see [MDL-87003](https://tracker.moodle.org/browse/MDL-87003)
 
 ## 5.1
 

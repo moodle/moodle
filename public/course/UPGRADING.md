@@ -7,6 +7,9 @@
 - The following methods have been deprecated and should no longer be used: - `course_delete_module` - `course_module_flag_for_async_deletion` Please consider using the equivalent methods, delete and delete_async, in `core_courseformat\local\cmactions` instead.
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+- Deprecates set_coursemodule_groupmode in favor of core_courseformat\cmactions::set_groupmode
+
+  For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
 
 ## 5.1
 

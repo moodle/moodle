@@ -7,6 +7,9 @@
 - Add delete method to the core_courseformat\cmactions
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
+- Add set_groupmode method to the core_courseformat\cmactions (course format actions)
+
+  For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
 
 ## 5.1
 
