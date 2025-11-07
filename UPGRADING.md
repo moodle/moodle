@@ -19,6 +19,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   value.
 
   For more information see [MDL-85975](https://tracker.moodle.org/browse/MDL-85975)
+- When responding to pcntl signals, call existing signal handlers.
+
+  For more information see [MDL-87079](https://tracker.moodle.org/browse/MDL-87079)
 
 ## 4.5.7
 
