@@ -465,6 +465,39 @@ abstract class restore_dbops {
     }
 
     /**
+     * Store ids associated with any activity in the backup that supports FEATURE_PUBLISHES_QUESTIONS.
+     *
+     * @param string $restoreid The restore ID.
+     * @param string $activitiespath The path to the `activities` folder in the backup being restored.
+     */
+    public static function load_questionbanks_to_tempids(string $restoreid, string $activitiespath): void {
+        if (!is_dir($activitiespath)) {
+            return;
+        }
+        // Get modules that publish questions.
+        $qmodules = array_filter(
+            array_keys(core\component::get_all_plugins_list('mod')),
+            fn($module) => plugin_supports('mod', $module, FEATURE_PUBLISHES_QUESTIONS),
+        );
+        foreach (scandir($activitiespath) as $activitydir) {
+            [$modname] = explode('_', $activitydir);
+            if (!in_array($modname, $qmodules)) {
+                continue;
+            }
+            $activityfile = "{$activitiespath}/{$activitydir}/{$modname}.xml";
+            if (!file_exists($activityfile)) { // Shouldn't happen ever, but...
+                throw new backup_helper_exception('missing_moodle_backup_xml_file', $activityfile);
+            }
+            // Parse each activity's file, storing the relevant data in the database.
+            $xmlparser = new progressive_parser();
+            $xmlparser->set_file($activityfile);
+            $xmlprocessor = new restore_questionbanks_parser_processor($restoreid);
+            $xmlparser->set_processor($xmlprocessor);
+            $xmlparser->process();
+        }
+    }
+
+    /**
      * Check all the included categories and questions, deciding the action to perform
      * for each one (mapping / creation) and returning one array of problems in case
      * something is wrong.
@@ -609,9 +642,18 @@ abstract class restore_dbops {
             $topcats = 0;
             // get categories in context (bank)
             $categories = self::restore_get_question_categories($restoreid, $contextid, $contextlevel);
-
-            // cache permissions if $targetcontext is found
-            if ($targetcontext = self::restore_find_best_target_context($categories, $courseid, $contextlevel)) {
+            if (
+                $contextlevel == \core\context\module::LEVEL
+                && self::get_backup_ids_record($restoreid, 'questionbank', $contextid)
+            ) {
+                // Don't look for an existing module context, we have the original context in the backup,
+                // so we'll put the categories in the course context for now and move them once the activity is restored.
+                $targetcontext = core\context\course::instance($courseid);
+            } else {
+                $targetcontext = self::restore_find_best_target_context($categories, $courseid, $contextlevel);
+            }
+            if ($targetcontext) {
+                // Cache permissions if $targetcontext is found.
                 $canmanagecategory = has_capability('moodle/question:managecategory', $targetcontext, $userid);
                 $canadd = has_capability('moodle/question:add', $targetcontext, $userid);
             }
