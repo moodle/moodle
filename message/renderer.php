@@ -75,6 +75,8 @@ class core_message_renderer extends plugin_renderer_base {
     public function manage_messageoutputs($processors) {
         // Display the current workflows
         $table = new html_table();
+        $table->caption = get_string('messageoutputs', 'message');
+        $table->captionhide = true;
         $table->attributes['class'] = 'admintable generaltable';
         $table->data        = array();
         $table->head        = array(
@@ -90,7 +92,11 @@ class core_message_renderer extends plugin_renderer_base {
             $row = new html_table_row();
             $row->attributes['class'] = 'messageoutputs';
 
-            $name = new html_table_cell(get_string('pluginname', 'message_'.$processor->name));
+            $pluginname = get_string('pluginname', 'message_' . $processor->name);
+            $name = new html_table_cell($pluginname);
+            $name->header = true;
+            $name->attributes['class'] = 'font-weight-normal';
+            $name->attributes['scope'] = 'row';
             $enable = new html_table_cell();
             if (!$processor->available) {
                 $enable->text = html_writer::nonempty_tag('span', get_string('outputnotavailable', 'message'),
@@ -98,7 +104,10 @@ class core_message_renderer extends plugin_renderer_base {
                 );
             } else {
                 $enable->text = html_writer::checkbox($processor->name, $processor->id, $processor->enabled, '',
-                    array('id' => $processor->name)
+                    [
+                        'id' => $processor->name,
+                        'aria-label' => get_string('enablenotificationplugin', 'message', $pluginname),
+                    ]
                 );
             }
             // Settings
