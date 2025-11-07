@@ -25,8 +25,8 @@ use cm_info;
  * @package    core_courseformat
  * @copyright  2023 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\local\baseactions
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(baseactions::class)]
 final class baseactions_test extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
@@ -51,7 +51,6 @@ final class baseactions_test extends \advanced_testcase {
 
     /**
      * Test for get_instance static method.
-     * @covers ::get_format
      */
     public function test_get_format(): void {
         global $DB;
@@ -77,7 +76,6 @@ final class baseactions_test extends \advanced_testcase {
 
     /**
      * Test for get_instance static method.
-     * @covers ::get_section_info
      */
     public function test_get_section_info(): void {
         $this->resetAfterTest();
@@ -112,7 +110,6 @@ final class baseactions_test extends \advanced_testcase {
 
     /**
      * Test for get_instance static method.
-     * @covers ::get_cm_info
      */
     public function test_get_cm_info(): void {
         global $DB;

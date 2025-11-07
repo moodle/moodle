@@ -39,14 +39,12 @@ final class cmactions_test extends \advanced_testcase {
     /**
      * Test renaming a course module.
      *
-     * @dataProvider provider_test_rename
-     * @covers ::rename
      * @param string $newname The new name for the course module.
      * @param bool $expected Whether the course module was renamed.
      * @param bool $expectexception Whether an exception is expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_rename')]
     public function test_rename(string $newname, bool $expected, bool $expectexception): void {
-        global $DB;
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course(['format' => 'topics']);
@@ -74,37 +72,33 @@ final class cmactions_test extends \advanced_testcase {
     /**
      * Data provider for test_rename.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_rename(): array {
-        return [
-            'Empty name' => [
-                'newname' => '',
-                'expected' => false,
-                'expectexception' => false,
-            ],
-            'Maximum length' => [
-                'newname' => str_repeat('a', 1333),
-                'expected' => true,
-                'expectexception' => false,
-            ],
-            'Beyond maximum length' => [
-                'newname' => str_repeat('a', 1334),
-                'expected' => false,
-                'expectexception' => true,
-            ],
-            'Valid name' => [
-                'newname' => 'New name',
-                'expected' => true,
-                'expectexception' => false,
-            ],
+    public static function provider_test_rename(): \Generator {
+        yield 'Empty name' => [
+            'newname' => '',
+            'expected' => false,
+            'expectexception' => false,
+        ];
+        yield 'Maximum length' => [
+            'newname' => str_repeat('a', 1333),
+            'expected' => true,
+            'expectexception' => false,
+        ];
+        yield 'Beyond maximum length' => [
+            'newname' => str_repeat('a', 1334),
+            'expected' => false,
+            'expectexception' => true,
+        ];
+        yield 'Valid name' => [
+            'newname' => 'New name',
+            'expected' => true,
+            'expectexception' => false,
         ];
     }
 
     /**
      * Test rename an activity also rename the calendar events.
-     *
-     * @covers ::rename
      */
     public function test_rename_calendar_events(): void {
         global $DB;
@@ -173,8 +167,6 @@ final class cmactions_test extends \advanced_testcase {
 
     /**
      * Test renaming an activity trigger a course update log event.
-     *
-     * @covers ::rename
      */
     public function test_rename_course_module_updated_event(): void {
         global $DB;
@@ -202,7 +194,6 @@ final class cmactions_test extends \advanced_testcase {
 
     /**
      * Test renaming an activity triggers the after_cm_name_edited hook.
-     * @covers ::rename
      */
     public function test_rename_after_cm_name_edited_hook(): void {
         $this->resetAfterTest();

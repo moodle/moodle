@@ -22,8 +22,8 @@ namespace core_courseformat;
  * @package    core_courseformat
  * @copyright  2023 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\formatactions
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(formatactions::class)]
 final class formatactions_test extends \advanced_testcase {
 
     /**
@@ -40,11 +40,11 @@ final class formatactions_test extends \advanced_testcase {
 
     /**
      * Test for get_instance static method.
-     * @dataProvider provider_classname_action
-     * @covers ::instance
+     *
      * @param string $format
      * @param array $classnames
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_classname_action')]
     public function test_instance(string $format, array $classnames): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course(['format' => $format]);
@@ -66,11 +66,11 @@ final class formatactions_test extends \advanced_testcase {
 
     /**
      * Test that the course action instance is created correctly.
-     * @dataProvider provider_classname_action
-     * @covers ::course
+     *
      * @param string $format
      * @param array $classnames
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_classname_action')]
     public function test_course_action_instance(string $format, array $classnames): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course(['format' => $format]);
@@ -84,12 +84,11 @@ final class formatactions_test extends \advanced_testcase {
 
     /**
      * Test that the section action instance is created correctly.
-     * @dataProvider provider_classname_action
-     * @covers ::section
      *
      * @param string $format
      * @param array $classnames
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_classname_action')]
     public function test_static_sectionactions_instance(string $format, array $classnames): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course(['format' => $format]);
@@ -103,12 +102,11 @@ final class formatactions_test extends \advanced_testcase {
 
     /**
      * Test that the cm action instance is created correctly.
-     * @dataProvider provider_classname_action
-     * @covers ::cm
      *
      * @param string $format
      * @param array $classnames
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_classname_action')]
     public function test_static_cmactions_instance(string $format, array $classnames): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course(['format' => $format]);
@@ -122,25 +120,23 @@ final class formatactions_test extends \advanced_testcase {
 
     /**
      * Data provider for format class names scenarios.
-     * @return array
+     * @return \Generator
      */
-    public static function provider_classname_action(): array {
-        return [
-            'Topics format' => [
-                'format' => 'topics',
-                'classnames' => [
-                    'course' => '\core_courseformat\local\courseactions',
-                    'section' => '\core_courseformat\local\sectionactions',
-                    'cm' => '\core_courseformat\local\cmactions',
-                ],
+    public static function provider_classname_action(): \Generator {
+        yield 'Topics format' => [
+            'format' => 'topics',
+            'classnames' => [
+                'course' => '\core_courseformat\local\courseactions',
+                'section' => '\core_courseformat\local\sectionactions',
+                'cm' => '\core_courseformat\local\cmactions',
             ],
-            'The unit test fixture format' => [
-                'format' => 'theunittest',
-                'classnames' => [
-                    'course' => '\format_theunittest\courseformat\courseactions',
-                    'section' => '\format_theunittest\courseformat\sectionactions',
-                    'cm' => '\format_theunittest\courseformat\cmactions',
-                ],
+        ];
+        yield 'The unit test fixture format' => [
+            'format' => 'theunittest',
+            'classnames' => [
+                'course' => '\format_theunittest\courseformat\courseactions',
+                'section' => '\format_theunittest\courseformat\sectionactions',
+                'cm' => '\format_theunittest\courseformat\cmactions',
             ],
         ];
     }

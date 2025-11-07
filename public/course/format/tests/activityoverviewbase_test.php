@@ -110,22 +110,20 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Data provider for test_get_completion_overview.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function provider_get_completion_overview(): array {
-        return [
-            'complet' => [
-                'setcompletion' => \COMPLETION_COMPLETE,
-            ],
-            'incomplete' => [
-                'setcompletion' => \COMPLETION_INCOMPLETE,
-            ],
-            'complete pass' => [
-                'setcompletion' => \COMPLETION_COMPLETE_PASS,
-            ],
-            'complete fail' => [
-                'setcompletion' => \COMPLETION_COMPLETE_FAIL,
-            ],
+    public static function provider_get_completion_overview(): \Generator {
+        yield 'complet' => [
+            'setcompletion' => \COMPLETION_COMPLETE,
+        ];
+        yield 'incomplete' => [
+            'setcompletion' => \COMPLETION_INCOMPLETE,
+        ];
+        yield 'complete pass' => [
+            'setcompletion' => \COMPLETION_COMPLETE_PASS,
+        ];
+        yield 'complete fail' => [
+            'setcompletion' => \COMPLETION_COMPLETE_FAIL,
         ];
     }
 
@@ -347,55 +345,53 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Data provider for test_needs_filtering_by_groups.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function provider_needs_filtering_by_groups(): array {
-        return [
-            'Editing teacher with no groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => NOGROUPS,
-                'expected' => false,
-            ],
-            'Editing teacher with visible groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => false,
-            ],
-            'Editing teacher with separate groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => false,
-            ],
-            'Non-editing teacher with no groups' => [
-                'role' => 'teacher',
-                'groupmode' => NOGROUPS,
-                'expected' => false,
-            ],
-            'Non-editing teacher with visible groups' => [
-                'role' => 'teacher',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => false,
-            ],
-            'Non-editing teacher with separate groups' => [
-                'role' => 'teacher',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => true,
-            ],
-            'Student with no groups' => [
-                'role' => 'student',
-                'groupmode' => NOGROUPS,
-                'expected' => false,
-            ],
-            'Student with visible groups' => [
-                'role' => 'student',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => false,
-            ],
-            'Student with separate groups' => [
-                'role' => 'student',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => true,
-            ],
+    public static function provider_needs_filtering_by_groups(): \Generator {
+        yield 'Editing teacher with no groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => NOGROUPS,
+            'expected' => false,
+        ];
+        yield 'Editing teacher with visible groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Editing teacher with separate groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Non-editing teacher with no groups' => [
+            'role' => 'teacher',
+            'groupmode' => NOGROUPS,
+            'expected' => false,
+        ];
+        yield 'Non-editing teacher with visible groups' => [
+            'role' => 'teacher',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Non-editing teacher with separate groups' => [
+            'role' => 'teacher',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => true,
+        ];
+        yield 'Student with no groups' => [
+            'role' => 'student',
+            'groupmode' => NOGROUPS,
+            'expected' => false,
+        ];
+        yield 'Student with visible groups' => [
+            'role' => 'student',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Student with separate groups' => [
+            'role' => 'student',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => true,
         ];
     }
 
@@ -443,55 +439,53 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Data provider for test_get_groups_for_filtering.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function provider_get_groups_for_filtering(): array {
-        return [
-            'Editing teacher with no groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => NOGROUPS,
-                'expected' => [],
-            ],
-            'Editing teacher with visible groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => [],
-            ],
-            'Editing teacher with separate groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => [],
-            ],
-            'Non-editing teacher with no groups' => [
-                'role' => 'teacher',
-                'groupmode' => NOGROUPS,
-                'expected' => [],
-            ],
-            'Non-editing teacher with visible groups' => [
-                'role' => 'teacher',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => ['g1', 'g2', 'g3'],
-            ],
-            'Non-editing teacher with separate groups' => [
-                'role' => 'teacher',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => ['g1', 'g2'],
-            ],
-            'Student with no groups' => [
-                'role' => 'student',
-                'groupmode' => NOGROUPS,
-                'expected' => [],
-            ],
-            'Student with visible groups' => [
-                'role' => 'student',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => ['g1', 'g2', 'g3'],
-            ],
-            'Student with separate groups' => [
-                'role' => 'student',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => ['g1', 'g2'],
-            ],
+    public static function provider_get_groups_for_filtering(): \Generator {
+        yield 'Editing teacher with no groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => NOGROUPS,
+            'expected' => [],
+        ];
+        yield 'Editing teacher with visible groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => [],
+        ];
+        yield 'Editing teacher with separate groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => [],
+        ];
+        yield 'Non-editing teacher with no groups' => [
+            'role' => 'teacher',
+            'groupmode' => NOGROUPS,
+            'expected' => [],
+        ];
+        yield 'Non-editing teacher with visible groups' => [
+            'role' => 'teacher',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => ['g1', 'g2', 'g3'],
+        ];
+        yield 'Non-editing teacher with separate groups' => [
+            'role' => 'teacher',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => ['g1', 'g2'],
+        ];
+        yield 'Student with no groups' => [
+            'role' => 'student',
+            'groupmode' => NOGROUPS,
+            'expected' => [],
+        ];
+        yield 'Student with visible groups' => [
+            'role' => 'student',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => ['g1', 'g2', 'g3'],
+        ];
+        yield 'Student with separate groups' => [
+            'role' => 'student',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => ['g1', 'g2'],
         ];
     }
 
@@ -538,55 +532,53 @@ final class activityoverviewbase_test extends \advanced_testcase {
     /**
      * Data provider for test_has_error.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function provider_has_error(): array {
-        return [
-            'Editing teacher with no groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => NOGROUPS,
-                'expected' => false,
-            ],
-            'Editing teacher with visible groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => false,
-            ],
-            'Editing teacher with separate groups' => [
-                'role' => 'editingteacher',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => false,
-            ],
-            'Non-editing teacher with no groups' => [
-                'role' => 'teacher',
-                'groupmode' => NOGROUPS,
-                'expected' => false,
-            ],
-            'Non-editing teacher with visible groups' => [
-                'role' => 'teacher',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => false,
-            ],
-            'Non-editing teacher with separate groups' => [
-                'role' => 'teacher',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => true,
-            ],
-            'Student with no groups' => [
-                'role' => 'student',
-                'groupmode' => NOGROUPS,
-                'expected' => false,
-            ],
-            'Student with visible groups' => [
-                'role' => 'student',
-                'groupmode' => VISIBLEGROUPS,
-                'expected' => false,
-            ],
-            'Student with separate groups' => [
-                'role' => 'student',
-                'groupmode' => SEPARATEGROUPS,
-                'expected' => true,
-            ],
+    public static function provider_has_error(): \Generator {
+        yield 'Editing teacher with no groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => NOGROUPS,
+            'expected' => false,
+        ];
+        yield 'Editing teacher with visible groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Editing teacher with separate groups' => [
+            'role' => 'editingteacher',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Non-editing teacher with no groups' => [
+            'role' => 'teacher',
+            'groupmode' => NOGROUPS,
+            'expected' => false,
+        ];
+        yield 'Non-editing teacher with visible groups' => [
+            'role' => 'teacher',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Non-editing teacher with separate groups' => [
+            'role' => 'teacher',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => true,
+        ];
+        yield 'Student with no groups' => [
+            'role' => 'student',
+            'groupmode' => NOGROUPS,
+            'expected' => false,
+        ];
+        yield 'Student with visible groups' => [
+            'role' => 'student',
+            'groupmode' => VISIBLEGROUPS,
+            'expected' => false,
+        ];
+        yield 'Student with separate groups' => [
+            'role' => 'student',
+            'groupmode' => SEPARATEGROUPS,
+            'expected' => true,
         ];
     }
 }

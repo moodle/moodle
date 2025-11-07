@@ -28,8 +28,8 @@ use stdClass;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\stateactions
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(stateactions::class)]
 final class stateactions_test extends \advanced_testcase {
     /**
      * Helper method to create an activity into a section and add it to the $sections and $activities arrays.
@@ -189,11 +189,6 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test the behaviour course_state.
      *
-     * @dataProvider get_state_provider
-     * @covers ::course_state
-     * @covers ::section_state
-     * @covers ::cm_state
-     *
      * @param string $format The course will be created with this course format.
      * @param string $role The role of the user that will execute the method.
      * @param string $method the method to call
@@ -201,6 +196,7 @@ final class stateactions_test extends \advanced_testcase {
      * @param array $expectedresults List of the course module names expected after calling the method.
      * @param bool $expectedexception If this call will raise an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_state_provider')]
     public function test_get_state(
         string $format,
         string $role,
@@ -349,8 +345,8 @@ final class stateactions_test extends \advanced_testcase {
             $usersections = ['section0', 'section1', 'section2', 'section3'];
         }
 
+        // Tests for course_state.
         return [
-            // Tests for course_state.
             "admin $format course_state" => [
                 'format' => $format,
                 'role' => 'admin',
@@ -755,11 +751,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for section_hide
      *
-     * @covers ::section_hide
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_section_hide(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -782,11 +777,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for section_hide
      *
-     * @covers ::section_show
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_section_show(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -809,11 +803,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_show
      *
-     * @covers ::cm_show
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_show(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -836,11 +829,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_hide
      *
-     * @covers ::cm_hide
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_hide(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -863,11 +855,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_stealth
      *
-     * @covers ::cm_stealth
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_stealth(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -921,39 +912,36 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Data provider for basic role tests.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function basic_role_provider(): array {
-        return [
-            'editingteacher' => [
-                'role' => 'editingteacher',
-                'expectedexception' => false,
-            ],
-            'teacher' => [
-                'role' => 'teacher',
-                'expectedexception' => true,
-            ],
-            'student' => [
-                'role' => 'student',
-                'expectedexception' => true,
-            ],
-            'guest' => [
-                'role' => 'guest',
-                'expectedexception' => true,
-            ],
+    public static function basic_role_provider(): \Generator {
+        yield 'editingteacher' => [
+            'role' => 'editingteacher',
+            'expectedexception' => false,
+        ];
+        yield 'teacher' => [
+            'role' => 'teacher',
+            'expectedexception' => true,
+        ];
+        yield 'student' => [
+            'role' => 'student',
+            'expectedexception' => true,
+        ];
+        yield 'guest' => [
+            'role' => 'guest',
+            'expectedexception' => true,
         ];
     }
 
     /**
      * Duplicate course module method.
      *
-     * @covers ::cm_duplicate
-     * @dataProvider cm_duplicate_provider
      * @param string $targetsection the target section (empty for none)
      * @param bool $validcms if uses valid cms
      * @param string $role the current user role name
      * @param bool $expectedexception if the test will raise an exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('cm_duplicate_provider')]
     public function test_cm_duplicate(
         string $targetsection = '',
         bool $validcms = true,
@@ -1032,75 +1020,72 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Duplicate course module data provider.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function cm_duplicate_provider(): array {
-        return [
-            'valid cms without target section' => [
-                'targetsection' => '',
-                'validcms' => true,
-                'role' => 'admin',
-                'expectedexception' => false,
-            ],
-            'valid cms targeting an empty section' => [
-                'targetsection' => 'section3',
-                'validcms' => true,
-                'role' => 'admin',
-                'expectedexception' => false,
-            ],
-            'valid cms targeting a section with activities' => [
-                'targetsection' => 'section2',
-                'validcms' => true,
-                'role' => 'admin',
-                'expectedexception' => false,
-            ],
-            'invalid cms without target section' => [
-                'targetsection' => '',
-                'validcms' => false,
-                'role' => 'admin',
-                'expectedexception' => true,
-            ],
-            'invalid cms with target section' => [
-                'targetsection' => 'section3',
-                'validcms' => false,
-                'role' => 'admin',
-                'expectedexception' => true,
-            ],
-            'student role with target section' => [
-                'targetsection' => 'section3',
-                'validcms' => true,
-                'role' => 'student',
-                'expectedexception' => true,
-            ],
-            'student role without target section' => [
-                'targetsection' => '',
-                'validcms' => true,
-                'role' => 'student',
-                'expectedexception' => true,
-            ],
-            'unrenolled user with target section' => [
-                'targetsection' => 'section3',
-                'validcms' => true,
-                'role' => 'unenroled',
-                'expectedexception' => true,
-            ],
-            'unrenolled user without target section' => [
-                'targetsection' => '',
-                'validcms' => true,
-                'role' => 'unenroled',
-                'expectedexception' => true,
-            ],
+    public static function cm_duplicate_provider(): \Generator {
+        yield 'valid cms without target section' => [
+            'targetsection' => '',
+            'validcms' => true,
+            'role' => 'admin',
+            'expectedexception' => false,
+        ];
+        yield 'valid cms targeting an empty section' => [
+            'targetsection' => 'section3',
+            'validcms' => true,
+            'role' => 'admin',
+            'expectedexception' => false,
+        ];
+        yield 'valid cms targeting a section with activities' => [
+            'targetsection' => 'section2',
+            'validcms' => true,
+            'role' => 'admin',
+            'expectedexception' => false,
+        ];
+        yield 'invalid cms without target section' => [
+            'targetsection' => '',
+            'validcms' => false,
+            'role' => 'admin',
+            'expectedexception' => true,
+        ];
+        yield 'invalid cms with target section' => [
+            'targetsection' => 'section3',
+            'validcms' => false,
+            'role' => 'admin',
+            'expectedexception' => true,
+        ];
+        yield 'student role with target section' => [
+            'targetsection' => 'section3',
+            'validcms' => true,
+            'role' => 'student',
+            'expectedexception' => true,
+        ];
+        yield 'student role without target section' => [
+            'targetsection' => '',
+            'validcms' => true,
+            'role' => 'student',
+            'expectedexception' => true,
+        ];
+        yield 'unrenolled user with target section' => [
+            'targetsection' => 'section3',
+            'validcms' => true,
+            'role' => 'unenroled',
+            'expectedexception' => true,
+        ];
+        yield 'unrenolled user without target section' => [
+            'targetsection' => '',
+            'validcms' => true,
+            'role' => 'unenroled',
+            'expectedexception' => true,
         ];
     }
 
     /**
      * Test for cm_delete
      *
-     * @covers ::cm_delete
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_delete(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -1148,11 +1133,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_moveright
      *
-     * @covers ::cm_moveright
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_moveright(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -1175,11 +1159,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_moveleft
      *
-     * @covers ::cm_moveleft
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_moveleft(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -1202,11 +1185,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_nogroups
      *
-     * @covers ::cm_nogroups
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_nogroups(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -1229,11 +1211,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_visiblegroups
      *
-     * @covers ::cm_visiblegroups
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_visiblegroups(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -1256,11 +1237,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for cm_separategroups
      *
-     * @covers ::cm_separategroups
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_cm_separategroups(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -1283,14 +1263,13 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for section_move_after
      *
-     * @covers ::section_move_after
-     * @dataProvider section_move_after_provider
      * @param string[] $sectiontomove the sections to move
      * @param string $targetsection the target section reference
      * @param string[] $finalorder the final sections order
      * @param string[] $updatedcms the list of cms in the state updates
      * @param int $totalputs the total amount of put updates
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('section_move_after_provider')]
     public function test_section_move_after(
         array $sectiontomove,
         string $targetsection,
@@ -1358,108 +1337,105 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Provider for test_section_move_after.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function section_move_after_provider(): array {
-        return [
-            'Move sections down' => [
-                'sectiontomove' => ['section2', 'section4'],
-                'targetsection' => 'section7',
-                'finalorder' => [
-                    'section0',
-                    'section1',
-                    'section3',
-                    'section5',
-                    'section6',
-                    'section7',
-                    'section2',
-                    'section4',
-                    'section8',
-                ],
-                'updatedcms' => ['cm2', 'cm3'],
-                'totalputs' => 12,
+    public static function section_move_after_provider(): \Generator {
+        yield 'Move sections down' => [
+            'sectiontomove' => ['section2', 'section4'],
+            'targetsection' => 'section7',
+            'finalorder' => [
+                'section0',
+                'section1',
+                'section3',
+                'section5',
+                'section6',
+                'section7',
+                'section2',
+                'section4',
+                'section8',
             ],
-            'Move sections up' => [
-                'sectiontomove' => ['section3', 'section5'],
-                'targetsection' => 'section1',
-                'finalorder' => [
-                    'section0',
-                    'section1',
-                    'section3',
-                    'section5',
-                    'section2',
-                    'section4',
-                    'section6',
-                    'section7',
-                    'section8',
-                ],
-                'updatedcms' => ['cm0', 'cm1', 'cm4', 'cm5'],
-                'totalputs' => 14,
+            'updatedcms' => ['cm2', 'cm3'],
+            'totalputs' => 12,
+        ];
+        yield 'Move sections up' => [
+            'sectiontomove' => ['section3', 'section5'],
+            'targetsection' => 'section1',
+            'finalorder' => [
+                'section0',
+                'section1',
+                'section3',
+                'section5',
+                'section2',
+                'section4',
+                'section6',
+                'section7',
+                'section8',
             ],
-            'Move sections in the middle' => [
-                'sectiontomove' => ['section2', 'section5'],
-                'targetsection' => 'section3',
-                'finalorder' => [
-                    'section0',
-                    'section1',
-                    'section3',
-                    'section2',
-                    'section5',
-                    'section4',
-                    'section6',
-                    'section7',
-                    'section8',
-                ],
-                'updatedcms' => ['cm2', 'cm3', 'cm4', 'cm5'],
-                'totalputs' => 14,
+            'updatedcms' => ['cm0', 'cm1', 'cm4', 'cm5'],
+            'totalputs' => 14,
+        ];
+        yield 'Move sections in the middle' => [
+            'sectiontomove' => ['section2', 'section5'],
+            'targetsection' => 'section3',
+            'finalorder' => [
+                'section0',
+                'section1',
+                'section3',
+                'section2',
+                'section5',
+                'section4',
+                'section6',
+                'section7',
+                'section8',
             ],
-            'Move sections on top' => [
-                'sectiontomove' => ['section3', 'section5'],
-                'targetsection' => 'section0',
-                'finalorder' => [
-                    'section0',
-                    'section3',
-                    'section5',
-                    'section1',
-                    'section2',
-                    'section4',
-                    'section6',
-                    'section7',
-                    'section8',
-                ],
-                'updatedcms' => ['cm4', 'cm5'],
-                'totalputs' => 12,
+            'updatedcms' => ['cm2', 'cm3', 'cm4', 'cm5'],
+            'totalputs' => 14,
+        ];
+        yield 'Move sections on top' => [
+            'sectiontomove' => ['section3', 'section5'],
+            'targetsection' => 'section0',
+            'finalorder' => [
+                'section0',
+                'section3',
+                'section5',
+                'section1',
+                'section2',
+                'section4',
+                'section6',
+                'section7',
+                'section8',
             ],
-            'Move sections on bottom' => [
-                'sectiontomove' => ['section3', 'section5'],
-                'targetsection' => 'section8',
-                'finalorder' => [
-                    'section0',
-                    'section1',
-                    'section2',
-                    'section4',
-                    'section6',
-                    'section7',
-                    'section8',
-                    'section3',
-                    'section5',
-                ],
-                'updatedcms' => ['cm4', 'cm5'],
-                'totalputs' => 12,
+            'updatedcms' => ['cm4', 'cm5'],
+            'totalputs' => 12,
+        ];
+        yield 'Move sections on bottom' => [
+            'sectiontomove' => ['section3', 'section5'],
+            'targetsection' => 'section8',
+            'finalorder' => [
+                'section0',
+                'section1',
+                'section2',
+                'section4',
+                'section6',
+                'section7',
+                'section8',
+                'section3',
+                'section5',
             ],
+            'updatedcms' => ['cm4', 'cm5'],
+            'totalputs' => 12,
         ];
     }
 
     /**
      * Test course module move and subsection move.
      *
-     * @covers ::cm_move
-     * @dataProvider cm_move_provider
      * @param string[] $cmtomove the sections to move
      * @param string $targetsection
      * @param string[] $expectedcoursetree expected course tree
      * @param string|null $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('cm_move_provider')]
     public function test_cm_move(
         array $cmtomove,
         string $targetsection,
@@ -1577,37 +1553,35 @@ final class stateactions_test extends \advanced_testcase {
      *    'section4' => [],
      * ],
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function cm_move_provider(): array {
-        return [
-            'Move module into section2' => [
-                'cmtomove' => ['cm0'],
-                'targetsection' => 'section2',
-                'expectedcoursetree' => [
-                    'section0' => [],
-                    'section1' => ['subsection1' => ['cm2'], 'subsection2' => []],
-                    'section2' => ['cm1', 'cm0'],
-                    'section3' => [],
-                    'section4' => [],
-                ],
+    public static function cm_move_provider(): \Generator {
+        yield 'Move module into section2' => [
+            'cmtomove' => ['cm0'],
+            'targetsection' => 'section2',
+            'expectedcoursetree' => [
+                'section0' => [],
+                'section1' => ['subsection1' => ['cm2'], 'subsection2' => []],
+                'section2' => ['cm1', 'cm0'],
+                'section3' => [],
+                'section4' => [],
             ],
-            'Move subsection into another subsection' => [
-                'cmtomove' => ['subsection1'], // When moving a subsection we actually move the delegated module.
-                'targetsection' => 'subsection2',
-                'expectedcoursetree' => [],
-                'expectedexception' => 'error/subsectionmoveerror',
-            ],
-            'Move module into subsection' => [
-                'cmtomove' => ['cm1'],
-                'targetsection' => 'subsection1',
-                'expectedcoursetree' => [
-                    'section0' => ['cm0'],
-                    'section1' => ['subsection1' => ['cm2', 'cm1'], 'subsection2' => []],
-                    'section2' => [],
-                    'section3' => [],
-                    'section4' => [],
-                ],
+        ];
+        yield 'Move subsection into another subsection' => [
+            'cmtomove' => ['subsection1'], // When moving a subsection we actually move the delegated module.
+            'targetsection' => 'subsection2',
+            'expectedcoursetree' => [],
+            'expectedexception' => 'error/subsectionmoveerror',
+        ];
+        yield 'Move module into subsection' => [
+            'cmtomove' => ['cm1'],
+            'targetsection' => 'subsection1',
+            'expectedcoursetree' => [
+                'section0' => ['cm0'],
+                'section1' => ['subsection1' => ['cm2', 'cm1'], 'subsection2' => []],
+                'section2' => [],
+                'section3' => [],
+                'section4' => [],
             ],
         ];
     }
@@ -1615,11 +1589,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Test for section_move_after capability checks.
      *
-     * @covers ::section_move_after
-     * @dataProvider basic_role_provider
      * @param string $role the user role
      * @param bool $expectedexception if it will expect an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_section_move_after_capabilities(
         string $role = 'editingteacher',
         bool $expectedexception = false
@@ -1646,8 +1619,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test that set_cm_indentation on activities with a delegated section.
-     *
-     * @covers ::set_cm_indentation
      */
     public function test_set_cm_indentation_delegated_section(): void {
         global $DB;
@@ -1727,8 +1698,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for filter_cms_with_section_delegate protected method.
-     *
-     * @covers ::filter_cms_with_section_delegate
      */
     public function test_filter_cms_with_section_delegate(): void {
         $this->resetAfterTest();
@@ -1758,8 +1727,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for create_module public method.
-     *
-     * @covers ::create_module
      */
     public function test_create_module(): void {
         $this->resetAfterTest();
@@ -1795,8 +1762,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for create_module public method with no capabilities.
-     *
-     * @covers ::create_module
      */
     public function test_create_module_no_capabilities(): void {
         $this->resetAfterTest();
@@ -1835,8 +1800,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for create_module public method with targetcmid parameter.
-     *
-     * @covers ::create_module
      */
     public function test_create_module_with_targetcmid(): void {
         $this->resetAfterTest();
@@ -1886,8 +1849,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for new_module public method.
-     *
-     * @covers ::new_module
      */
     public function test_new_module(): void {
         $this->resetAfterTest();
@@ -1920,8 +1881,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for new_module public method with no capabilities.
-     *
-     * @covers ::new_module
      */
     public function test_new_module_no_capabilities(): void {
         $this->resetAfterTest();
@@ -1953,8 +1912,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for new_module public method with targetcmid parameter.
-     *
-     * @covers ::new_module
      */
     public function test_new_module_with_targetcmid(): void {
         $this->resetAfterTest();
@@ -2001,8 +1958,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for section_duplicate public method.
-     *
-     * @covers ::section_duplicate
      */
     public function test_section_duplicate(): void {
         $this->resetAfterTest();
@@ -2056,8 +2011,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test duplicating multiple sections.
-     *
-     * @covers ::section_duplicate
      */
     public function test_section_duplicate_multiple(): void {
         $this->resetAfterTest();
@@ -2125,8 +2078,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for section_duplicate public method with no capabilities.
-     *
-     * @covers ::section_duplicate
      */
     public function test_section_duplicate_no_capabilities(): void {
         $this->resetAfterTest();
@@ -2152,8 +2103,6 @@ final class stateactions_test extends \advanced_testcase {
 
     /**
      * Test for section_duplicate on a delegated section (subsection).
-     *
-     * @covers ::section_duplicate
      */
     public function test_section_duplicate_delegated_section(): void {
         global $DB;
