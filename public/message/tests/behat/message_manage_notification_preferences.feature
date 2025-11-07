@@ -90,6 +90,7 @@ Feature: Manage notification preferences - Email
     Then the field "message_provider_mod_assign_assign_notification_email" matches value "0"
     And I should not see "Enabled" in the "Assignment notifications" "table_row"
 
+  @accessibility
   Scenario: Lock email notifications for Forum providers
     Given I log in as "admin"
     When I navigate to "Messaging > Notification settings" in site administration
@@ -109,6 +110,7 @@ Feature: Manage notification preferences - Email
     And I click on "Notification preferences" "link" in the "#page-content" "css_element"
     And I should see "Locked on" in the "[data-preference-key=message_provider_mod_forum_posts]" "css_element"
     And I should see "Locked off" in the "[data-preference-key=message_provider_mod_forum_digests]" "css_element"
+    And the page should meet accessibility standards with "best-practice" extra tests
 
   Scenario: User can disable notification preferences
     Given the following "courses" exist:
