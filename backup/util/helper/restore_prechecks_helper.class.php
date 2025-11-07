@@ -173,6 +173,7 @@ abstract class restore_prechecks_helper {
         $progress->progress($majorstep++);
 
         // Check we are able to restore and the categories and questions
+        restore_dbops::load_questionbanks_to_tempids($restoreid, $controller->get_plan()->get_basepath() . '/activities');
         $file = $controller->get_plan()->get_basepath() . '/questions.xml';
         restore_dbops::load_categories_and_questions_to_tempids($restoreid, $file);
         if ($problems = restore_dbops::precheck_categories_and_questions($restoreid, $courseid, $userid, $samesite)) {
