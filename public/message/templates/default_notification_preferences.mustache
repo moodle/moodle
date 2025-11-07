@@ -70,13 +70,15 @@
     }
 }}
 <div class="preferences-page-container">
-    <h2>{{#str}} managemessageoutputs, message {{/str}}</h2>
+    <h2 id="defaultnotificationprefsheading">{{#str}} managemessageoutputs, message {{/str}}</h2>
 
     <div class="preferences-container">
-        <table class="table table-hover preference-table">
+        <table class="table table-hover preference-table" aria-labelledby="defaultnotificationprefsheading">
             <thead>
                 <tr>
-                    <th></th>
+                    <th>
+                        <span class="visually-hidden">{{#str}}preference, message{{/str}}</span>
+                    </th>
                     <th>{{#str}} enabled, core_message {{/str}}</th>
                     {{#processors}}
                         <th data-processor-name="{{name}}">{{{displayname}}}</th>
@@ -98,8 +100,7 @@
                                             class="form-check-input provider_enabled"
                                             {{#enabled}}checked{{/enabled}}
                                         >
-                                        <label for="{{{enabledsetting}}}" class="form-check-label"
-                                            title="{{enabledlabel}}">
+                                        <label for="{{{enabledsetting}}}" class="form-check-label">
                                             <span class="accesshide">{{enabledlabel}}</span>
                                         </label>
                                     </div>
@@ -116,8 +117,7 @@
                                                        class="form-check-input enabled_message_setting"
                                                        {{#enabled}}checked{{/enabled}}
                                                 >
-                                                <label for="{{{enabledsetting}}}" class="form-check-label"
-                                                       title="{{enabledlabel}}">
+                                                <label for="{{{enabledsetting}}}" class="form-check-label">
                                                     {{#str}} enabled, core_message {{/str}}
                                                 </label>
                                             </div>
@@ -130,8 +130,7 @@
                                                        class="form-check-input locked_message_setting"
                                                        {{#locked}}checked{{/locked}}
                                                 >
-                                                <label for="{{{lockedsetting}}}" class="form-check-label"
-                                                       title="{{lockedlabel}}">
+                                                <label for="{{{lockedsetting}}}" class="form-check-label">
                                                     {{#str}} forced, core_message {{/str}}
                                                 </label>
                                             </div>
