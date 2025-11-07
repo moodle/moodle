@@ -115,6 +115,7 @@ Feature: Set default question bank column order and size
     And "Question" "table_row" should appear before "Comments" "table_row"
     And the field "Width of 'Question' in pixels" matches value ""
 
+  @core_customfield
   Scenario: Deleting a custom field which is removed from the Column sort order
     Given the following "custom field categories" exist:
       | name              | component          | area     | itemid |
@@ -132,7 +133,7 @@ Feature: Set default question bank column order and size
 
     # Delete a question custom field.
     And I navigate to "Plugins > Question bank plugins > Question custom fields" in site administration
-    And I click on "Delete" "link" in the "Field 1" "table_row"
+    And I press "Delete custom field: Field 1"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     And I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
     Then I should see "Column sort order"
