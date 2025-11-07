@@ -1,4 +1,4 @@
-@customfield @customfield_number @javascript
+@core_customfield @customfield_number @javascript
 Feature: Managers can manage course custom fields number
   In order to have additional data on the course
   As a manager
@@ -36,7 +36,7 @@ Feature: Managers can manage course custom fields number
       | Short name | numberfield  |
     And I click on "Save changes" "button" in the "Adding a new Number" "dialogue"
     Then I should see "Number field"
-    And I click on "Edit" "link" in the "Number field" "table_row"
+    And I press "Edit custom field: Number field"
     And I set the following fields to these values:
       | Name | Edited number field |
     And I click on "Save changes" "button" in the "Updating Number field" "dialogue"
@@ -50,7 +50,7 @@ Feature: Managers can manage course custom fields number
       | Name       | Number field |
       | Short name | numberfield  |
     And I click on "Save changes" "button" in the "Adding a new Number" "dialogue"
-    And I click on "Delete" "link" in the "Number field" "table_row"
+    And I press "Delete custom field: Number field"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     And I wait until the page is ready
     And I wait until "Number field" "text" does not exist
@@ -186,7 +186,7 @@ Feature: Managers can manage course custom fields number
 
     And I log in as "admin"
     And I navigate to "Courses > Default settings > Course custom fields" in site administration
-    And I click on "Edit" "link" in the "Number field" "table_row"
+    And I press "Edit custom field: Number field"
     And I set the following fields to these values:
       | Display when zero   |      |
     And I click on "Save changes" "button" in the "Updating Number field" "dialogue"
