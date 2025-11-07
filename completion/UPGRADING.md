@@ -1,5 +1,13 @@
 # core_completion (subsystem) Upgrade notes
 
+## 5.0.3+
+
+### Changed
+
+- The `completion_info::clear_criteria` method takes an optional `$removetypecriteria` to determine whether to remove course type criteria from other courses that refer to the current course
+
+  For more information see [MDL-86332](https://tracker.moodle.org/browse/MDL-86332)
+
 ## 5.0
 
 ### Added
