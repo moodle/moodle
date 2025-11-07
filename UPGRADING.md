@@ -19,6 +19,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   value.
 
   For more information see [MDL-85975](https://tracker.moodle.org/browse/MDL-85975)
+- When responding to pcntl signals, call existing signal handlers.
+
+  For more information see [MDL-87079](https://tracker.moodle.org/browse/MDL-87079)
+
+### core_completion
+
+#### Changed
+
+- The `completion_info::clear_criteria` method takes an optional `$removetypecriteria` to determine whether to remove course type criteria from other courses that refer to the current course
+
+  For more information see [MDL-86332](https://tracker.moodle.org/browse/MDL-86332)
 
 ### core_group
 
