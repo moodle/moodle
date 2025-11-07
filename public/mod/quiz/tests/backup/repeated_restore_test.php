@@ -46,14 +46,14 @@ final class repeated_restore_test extends advanced_testcase {
     use quiz_question_helper_test_trait;
 
     /**
-     * Restore a quiz twice into the same target course, and verify the quiz uses the restored questions both times.
+     * Create 2 courses, and a quiz with questions on the first course.
+     *
+     * @param bool $sharedquestions If true, create the questions in a qbank module rather than the quiz itself.
+     * @return array
      */
-    public function test_restore_quiz_into_other_course_twice(): void {
+    protected function create_courses_and_quiz(bool $sharedquestions = false): array {
         global $USER;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        // Step 1: Create two courses and a user with editing teacher capabilities.
+        // Create two courses and a user with editing teacher capabilities.
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course();
         $course2 = $generator->create_course();
@@ -63,8 +63,12 @@ final class repeated_restore_test extends advanced_testcase {
 
         // Create a quiz with questions in the first course.
         $quiz = $this->create_test_quiz($course1);
-        $qbank = $generator->get_plugin_generator('mod_qbank')->create_instance(['course' => $course1->id]);
-        $context = \context_module::instance($qbank->cmid);
+        if ($sharedquestions) {
+            $qbank = $generator->get_plugin_generator('mod_qbank')->create_instance(['course' => $course1->id]);
+            $context = \context_module::instance($qbank->cmid);
+        } else {
+            $context = \context_module::instance($quiz->cmid);
+        }
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         // Create a question category.
@@ -97,23 +101,56 @@ final class repeated_restore_test extends advanced_testcase {
         $modules1 = get_fast_modinfo($course1->id)->get_instances_of('quiz');
         $module1 = reset($modules1);
         $questionscourse1 = \mod_quiz\question\bank\qbank_helper::get_question_structure(
-            $module1->instance, $module1->context);
+            $module1->instance,
+            $module1->context,
+        );
 
         $originalquestionids = [];
         foreach ($questionscourse1 as $slot) {
             array_push($originalquestionids, intval($slot->questionid));
         }
 
-        // Step 2: Backup the first course.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course1->id, backup::FORMAT_MOODLE,
-            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $teacher->id);
+        return [
+            $course1,
+            $course2,
+            $quiz,
+            $teacher,
+            $originalquestionids,
+        ];
+    }
+
+    /**
+     * Restore a quiz using private questions twice into the same target course,
+     * and verify the quiz uses a newly-restored copy of the questions each time.
+     */
+    public function test_restore_quiz_with_own_questions_into_other_course_twice(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        [, $course2, $quiz, $teacher, $originalquestionids] = $this->create_courses_and_quiz();
+
+        // Backup the quiz course.
+        $bc = new backup_controller(
+            backup::TYPE_1ACTIVITY,
+            $quiz->cmid,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $bc->destroy();
 
-        // Step 3: Import the backup into the second course.
-        $rc = new restore_controller($backupid, $course2->id, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
-            $teacher->id, backup::TARGET_CURRENT_ADDING);
+        // Import the backup into the second course.
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
@@ -123,34 +160,348 @@ final class repeated_restore_test extends advanced_testcase {
         $modules2 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
         $module2 = reset($modules2);
         $questionscourse2firstimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
-            $module2->instance, $module2->context);
+            $module2->instance,
+            $module2->context,
+        );
 
         foreach ($questionscourse2firstimport as $slot) {
-            $this->assertNotContains(intval($slot->questionid), $originalquestionids,
-                "Question ID $slot->questionid should not be in the original course's question IDs.");
+            $this->assertNotContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should not be in the original course's question IDs.",
+            );
         }
 
         // Repeat the backup and import process to simulate a second import.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course1->id, backup::FORMAT_MOODLE,
-                            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $teacher->id);
+        $bc = new backup_controller(
+            backup::TYPE_1ACTIVITY,
+            $quiz->cmid,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $bc->destroy();
 
-        $rc = new restore_controller($backupid, $course2->id, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
-            $teacher->id, backup::TARGET_CURRENT_ADDING);
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
 
-        // Verify that the second restore has used the same new questions that were created by the first restore.
+        // Verify that the quiz in the second restore uses a third copy of the questions.
         $modules3 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
         $module3 = end($modules3);
         $questionscourse2secondimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
-                $module3->instance, $module3->context);
+            $module3->instance,
+            $module3->context,
+        );
+
+        foreach ($questionscourse2secondimport as $slot) {
+            $this->assertNotEquals($questionscourse2firstimport[$slot->slot]->questionid, $slot->questionid);
+            $this->assertNotContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should not be in the original course's question IDs.",
+            );
+        }
+    }
+
+    /**
+     * Restore a quiz using shared questions twice into the same target course,
+     * and verify the quiz uses the original questions each time.
+     */
+    public function test_restore_quiz_with_shared_questions_into_other_course_twice(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        [, $course2, $quiz, $teacher, $originalquestionids] = $this->create_courses_and_quiz(true);
+
+        // Backup the quiz.
+        $bc = new backup_controller(
+            backup::TYPE_1ACTIVITY,
+            $quiz->cmid,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Import the backup into the second course.
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Verify the question ids from the quiz in the original course are the same as
+        // the question ids in the duplicated quiz in the second course.
+        $modules2 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
+        $module2 = reset($modules2);
+        $questionscourse2firstimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module2->instance,
+            $module2->context,
+        );
+
+        foreach ($questionscourse2firstimport as $slot) {
+            $this->assertContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should be in the original course's question IDs.",
+            );
+        }
+
+        // Repeat the backup and import process to simulate a second import.
+        $bc = new backup_controller(
+            backup::TYPE_1ACTIVITY,
+            $quiz->cmid,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Verify that the quiz in the second restore uses the same questions from the original quiz and the first restore.
+        $modules3 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
+        $module3 = end($modules3);
+        $questionscourse2secondimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module3->instance,
+            $module3->context,
+        );
 
         foreach ($questionscourse2secondimport as $slot) {
             $this->assertEquals($questionscourse2firstimport[$slot->slot]->questionid, $slot->questionid);
+            $this->assertContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should be in the original course's question IDs.",
+            );
+        }
+    }
+
+    /**
+     * Restore a quiz using shared questions twice into the same target course with the qbank,
+     * and verify the quiz uses a newly-restored copy of the questions each time.
+     */
+    public function test_restore_quiz_with_qbank_into_other_course_twice(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        [$course1, $course2, , $teacher, $originalquestionids] = $this->create_courses_and_quiz(true);
+
+        // Backup the first course.
+        $bc = new backup_controller(
+            backup::TYPE_1COURSE,
+            $course1->id,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Import the backup into the second course.
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Verify the question ids from the quiz in the original course are different
+        // from the question ids in the duplicated quiz in the second course.
+        $modules2 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
+        $module2 = reset($modules2);
+        $questionscourse2firstimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module2->instance,
+            $module2->context,
+        );
+
+        foreach ($questionscourse2firstimport as $slot) {
+            $this->assertNotContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should not be in the original course's question IDs.",
+            );
+        }
+
+        // Repeat the backup and import process to simulate a second import.
+        $bc = new backup_controller(
+            backup::TYPE_1COURSE,
+            $course1->id,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Verify that the quiz in the second restore uses a third copy of the questions.
+        $modules3 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
+        $module3 = end($modules3);
+        $questionscourse2secondimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module3->instance,
+            $module3->context,
+        );
+
+        foreach ($questionscourse2secondimport as $slot) {
+            $this->assertNotEquals($questionscourse2firstimport[$slot->slot]->questionid, $slot->questionid);
+            $this->assertNotContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should not be in the original course's question IDs.",
+            );
+        }
+    }
+
+    /**
+     * Import the quiz and qbank from course 1 to course 2, then import just the quiz a second time.
+     *
+     * As the user can use questions from the original qbank, the second quiz will use the original questions.
+     */
+    public function test_restore_quiz_with_shared_questions_then_just_quiz(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        [$course1, $course2, $quiz, $teacher, $originalquestionids] = $this->create_courses_and_quiz(true);
+
+        // Backup the first course.
+        $bc = new backup_controller(
+            backup::TYPE_1COURSE,
+            $course1->id,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Import the backup into the second course.
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Verify the question ids from the quiz in the original course are different
+        // from the question ids in the duplicated quiz in the second course.
+        $modules2 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
+        $module2 = reset($modules2);
+        $questionscourse2firstimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module2->instance,
+            $module2->context,
+        );
+
+        foreach ($questionscourse2firstimport as $slot) {
+            $this->assertNotContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should not be in the original course's question IDs.",
+            );
+        }
+
+        // Repeat the backup and import process with just the quiz.
+        $bc = new backup_controller(
+            backup::TYPE_1ACTIVITY,
+            $quiz->cmid,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        $rc = new restore_controller(
+            $backupid,
+            $course2->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $teacher->id,
+            backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Verify that the quiz in the second restore uses the questions from the original course.
+        $modules3 = get_fast_modinfo($course2->id)->get_instances_of('quiz');
+        $module3 = end($modules3);
+        $questionscourse2secondimport = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module3->instance,
+            $module3->context,
+        );
+
+        foreach ($questionscourse2secondimport as $slot) {
+            $this->assertNotEquals($questionscourse2firstimport[$slot->slot]->questionid, $slot->questionid);
+            $this->assertContains(
+                intval($slot->questionid),
+                $originalquestionids,
+                "Question ID $slot->questionid should be in the original course's question IDs.",
+            );
         }
     }
 
