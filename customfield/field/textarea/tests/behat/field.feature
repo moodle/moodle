@@ -1,4 +1,4 @@
-@customfield @customfield_textarea @javascript
+@core_customfield @customfield_textarea @javascript
 Feature: Managers can manage course custom fields textarea
   In order to have additional data on the course
   As a manager
@@ -28,7 +28,7 @@ Feature: Managers can manage course custom fields textarea
       | Name       | Test field |
       | Short name | testfield  |
     And I click on "Save changes" "button" in the "Adding a new Text area" "dialogue"
-    And I click on "Edit" "link" in the "Test field" "table_row"
+    And I press "Edit custom field: Test field"
     And I set the following fields to these values:
       | Name | Edited field |
     And I click on "Save changes" "button" in the "Updating Test field" "dialogue"
@@ -43,7 +43,7 @@ Feature: Managers can manage course custom fields textarea
       | Name       | Test field |
       | Short name | testfield  |
     And I click on "Save changes" "button" in the "Adding a new Text area" "dialogue"
-    And I click on "Delete" "link" in the "Test field" "table_row"
+    And I press "Delete custom field: Test field"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "Test field"
     And I log out
