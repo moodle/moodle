@@ -69,6 +69,7 @@ $string['disallowed'] = 'Locked off';
 $string['editmessages'] = 'Edit messages';
 $string['emailtagline'] = 'This is a copy of a message sent to you on the site {$a->sitename}. Go to <a href="{$a->url}">{$a->url}</a> to reply.';
 $string['enabled'] = 'Enabled';
+$string['enablenotificationplugin'] = 'Enable notification plugin: {$a}';
 $string['errorcallingprocessor'] = 'Error calling defined output';
 $string['errorconversationdoesnotexist'] = 'Conversation does not exist';
 $string['errormessagetoolong'] = 'The message is longer than the maximum allowed.';
