@@ -3227,41 +3227,59 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             return $parentcat;
         }
 
-        // Get all course category contexts that are children of the parent category's context where
-        // a) there is a role assignment for the current user or
-        // b) there are role capability overrides for a role that the user has in this context.
-        // We never need to return the system context because it cannot be a child of another context.
+        // Build portable SQL parts.
         $fields = array_keys(array_filter(self::$coursecatfields));
         $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
-        $rs = $DB->get_recordset_sql("
-                SELECT cc.". join(',cc.', $fields). ", $ctxselect
-                  FROM {course_categories} cc
-                  JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat1
-                  JOIN {role_assignments} ra ON ra.contextid = ctx.id
-                 WHERE ctx.path LIKE :parentpath1
-                       AND ra.userid = :userid1
-            UNION
-                SELECT cc.". join(',cc.', $fields). ", $ctxselect
-                  FROM {course_categories} cc
-                  JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat2
-                  JOIN {role_capabilities} rc ON rc.contextid = ctx.id
-                  JOIN {role_assignments} rc_ra ON rc_ra.roleid = rc.roleid
-                  JOIN {context} rc_ra_ctx ON rc_ra_ctx.id = rc_ra.contextid
-                 WHERE ctx.path LIKE :parentpath2
-                       AND rc_ra.userid = :userid2
-                       AND (ctx.path = rc_ra_ctx.path OR ctx.path LIKE " . $DB->sql_concat("rc_ra_ctx.path", "'/%'") . ")
-        ", [
-            'contextcoursecat1' => CONTEXT_COURSECAT,
-            'contextcoursecat2' => CONTEXT_COURSECAT,
-            'parentpath1' => $parentcat->get_context()->path . '/%',
-            'parentpath2' => $parentcat->get_context()->path . '/%',
-            'userid1' => $USER->id,
-            'userid2' => $USER->id
-        ]);
 
-        // Check if user has required capabilities in any of the contexts.
+        // Paths under the given parent context path.
+        $parentpath = $parentcat->get_context()->path . '/%';
+        $likeparent = $DB->sql_like('path', ':parentpath', false);
+
+        // Join predicate for descendant-or-equal between ctx.path and uc.upath.
+        $eqpaths = $DB->sql_compare_text('ctx.path') . ' = ' . $DB->sql_compare_text('uc.upath');
+        $likechild = "ctx.path LIKE " . $DB->sql_concat('uc.upath', "'/%'");
+
+        // NOTE: Use CTEs; supported by PG/MySQL8+/SQL Server, and Moodle passes-through SQL.
+        // If you ever need to avoid CTEs, this can be rewritten with inline derived tables.
+        $sql = "
+        WITH ctx AS (
+            SELECT id, instanceid, path, depth, contextlevel, locked
+              FROM {context}
+             WHERE contextlevel = :ctxlevel
+               AND $likeparent
+        ),
+        user_ctx AS (
+            SELECT DISTINCT c.path AS upath, ra.roleid
+              FROM {role_assignments} ra
+              JOIN {context} c ON c.id = ra.contextid
+             WHERE ra.userid = :userid
+        )
+        SELECT DISTINCT cc." . join(', cc.', $fields) . ", $ctxselect
+          FROM {course_categories} cc
+          JOIN ctx ON cc.id = ctx.instanceid
+     LEFT JOIN {role_assignments} ra
+            ON ra.userid = :userid2
+           AND ra.contextid = ctx.id
+     LEFT JOIN {role_capabilities} rc
+            ON rc.contextid = ctx.id
+     LEFT JOIN user_ctx uc
+            ON uc.roleid = rc.roleid
+           AND ( $eqpaths OR $likechild )
+         WHERE (ra.id IS NOT NULL OR uc.upath IS NOT NULL)
+    ";
+
+        $params = [
+            'ctxlevel'   => CONTEXT_COURSECAT,
+            'parentpath' => $parentpath,
+            'userid'     => $USER->id,
+            'userid2'    => $USER->id,
+        ];
+
+        // Stream results and pick the first subcategory that actually passes capability checks.
         $tocache = [];
         $result = null;
+
+        $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $record) {
             $subcategory = new self($record);
             $tocache[$subcategory->id] = $subcategory;
