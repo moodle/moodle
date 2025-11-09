@@ -634,7 +634,6 @@ class manager {
             $data->add = $modname;
         }
         $data->return = 0;
-        $data->sr = 0;
 
         // Initialise the form but discard all JS requirements it adds, our form has already added them.
         $mformclassname = 'mod_'.$modname.'_mod_form';
