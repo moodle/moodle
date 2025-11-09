@@ -484,8 +484,15 @@ class html_writer {
 
         $output = '';
         foreach ($params as $key => $value) {
-            $attributes = ['type' => 'hidden', 'name' => $key, 'value' => $value];
-            $output .= self::empty_tag('input', $attributes) . "\n";
+            if (is_array($value)) {
+                foreach ($value as $elementkey => $elementvalue) {
+                    $attributes = ['type' => 'hidden', 'name' => "{$key}[{$elementkey}]", 'value' => $elementvalue];
+                    $output .= self::empty_tag('input', $attributes) . "\n";
+                }
+            } else {
+                $attributes = ['type' => 'hidden', 'name' => $key, 'value' => $value];
+                $output .= self::empty_tag('input', $attributes) . "\n";
+            }
         }
         return $output;
     }

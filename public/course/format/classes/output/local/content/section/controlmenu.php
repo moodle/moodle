@@ -136,11 +136,13 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $sectionreturn = $this->format->get_sectionnum();
-        $returnparams = !is_null($sectionreturn) ? ['sr' => $sectionreturn] : [];
         $url = new url(
             '/course/editsection.php',
-            array_merge(['id' => $this->section->id], $returnparams)
+            [
+                'id' => $this->section->id,
+                'returnoptions' => $this->returnoptions,
+                'returnurl' => $this->baseurl,
+            ]
         );
 
         return new link_secondary(
