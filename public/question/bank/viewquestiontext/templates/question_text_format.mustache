@@ -41,7 +41,7 @@
         <label class="input-group-text" for="question-text-format">
             {{label}}
         </label>
-        <select class="form-select" name="format" id="question-text-format">
+        <select class="form-select dropdown-toggle" name="format" id="question-text-format">
         {{#options}}
             <option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>
         {{/options}}
@@ -54,3 +54,4 @@
         QuestionTextFormat.init('questionscontainer');
     });
 {{/js}}
+
