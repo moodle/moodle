@@ -183,6 +183,8 @@ class delegatedcontrolmenu extends basecontrolmenu {
             action: 'cm_duplicate',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -247,6 +249,8 @@ class delegatedcontrolmenu extends basecontrolmenu {
             action: $action,
             ids: [$this->section->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -306,6 +310,8 @@ class delegatedcontrolmenu extends basecontrolmenu {
             action: 'cm_delete',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(

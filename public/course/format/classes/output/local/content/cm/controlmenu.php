@@ -242,6 +242,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_moveright',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         $icon = (right_to_left()) ? 't/left' : 't/right';
@@ -274,6 +276,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_moveleft',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         $icon = (right_to_left()) ? 't/right' : 't/left';
@@ -328,6 +332,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_duplicate',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -426,6 +432,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_delete',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(

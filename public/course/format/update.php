@@ -36,6 +36,8 @@ $targetcmid = optional_param('targetcmid', null, PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
+$returnsectionid = optional_param('returnsectionid', null, PARAM_INT);
+$returnoptions = optional_param_array('returnoptions', [], PARAM_INT);
 
 
 // All state updates are designed to be batch compatible. However, we also
@@ -49,7 +51,12 @@ if (empty($ids)) {
 $format = course_get_format($courseid);
 $course = $format->get_course();
 
-if ($returnurl === null) {
+if ($returnoptions) {
+    $returnurl = $format->get_view_url(
+        $returnsectionid ? $format->get_modinfo()->get_section_info_by_id($returnsectionid) : null,
+        $returnoptions
+    );
+} else if ($returnurl === null) {
     $returnurl = new url('/course/view.php', ['id' => $course->id]);
 }
 
@@ -64,6 +71,8 @@ $currenturl = new moodle_url(
         'targetsectionid' => $targetsectionid,
         'targetcmid' => $targetcmid,
         'returnurl' => $returnurl,
+        'returnsectionid' => $returnsectionid,
+        'returnoptions' => $returnoptions,
         'sesskey' => sesskey(),
     ]
 );
@@ -124,5 +133,14 @@ $hook = new \core_courseformat\hook\after_course_content_updated(
     course: $course,
 );
 \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
+// Don't return to the section if it's deleted.
+// And refresh the return URL in case it's changed.
+if ($returnoptions) {
+    $returnsection = $returnsectionid
+        ? $format->get_modinfo()->get_section_info_by_id($returnsectionid, IGNORE_MISSING)
+        : null;
+    $returnurl = $format->get_view_url($returnsection, $returnoptions);
+}
 
 redirect($returnurl);

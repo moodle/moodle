@@ -94,6 +94,7 @@ abstract class basecontrolmenu implements named_templatable, renderable {
      */
     public function set_baseurl(url $baseurl) {
         $this->baseurl = $baseurl;
+        $this->returnoptions = [];
     }
 
     /**

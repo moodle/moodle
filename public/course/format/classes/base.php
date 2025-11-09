@@ -1002,6 +1002,8 @@ abstract class base {
      * @param int|null $targetsectionid optional target section id
      * @param int|null $targetcmid optional target cm id
      * @param moodle_url|null $returnurl optional custom return url
+     * @param stdClass|section_info|null $returnsection section to return to
+     * @param int[] $returnoptions options for generating the return URL
      * @return moodle_url
      */
     public function get_update_url(
@@ -1009,7 +1011,9 @@ abstract class base {
         array $ids = [],
         ?int $targetsectionid = null,
         ?int $targetcmid = null,
-        ?moodle_url $returnurl = null
+        ?moodle_url $returnurl = null,
+        stdClass|section_info|null $returnsection = null,
+        array $returnoptions = []
     ): moodle_url {
         $params = [
             'courseid' => $this->get_courseid(),
@@ -1034,6 +1038,10 @@ abstract class base {
         if ($returnurl) {
             $params['returnurl'] = $returnurl->out_as_local_url();
         }
+        if (!is_null($returnsection)) {
+            $params['returnsectionid'] = $returnsection->id;
+        }
+        $params['returnoptions'] = $returnoptions;
         return new moodle_url('/course/format/update.php', $params);
     }
 
@@ -1073,6 +1081,8 @@ abstract class base {
             action: $nonajaxaction,
             ids: [$cm->id],
             returnurl: $this->get_view_url($this->get_sectionnum(), ['navigation' => true]),
+            returnsection: $cm->get_section_info(),
+            returnoptions: $this->get_return_options($cm->get_section_info()),
         );
     }
 

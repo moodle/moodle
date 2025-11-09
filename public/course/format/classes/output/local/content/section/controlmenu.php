@@ -170,6 +170,8 @@ class controlmenu extends basecontrolmenu {
             action: 'section_duplicate',
             ids: [$this->section->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -229,6 +231,8 @@ class controlmenu extends basecontrolmenu {
             action: $stateaction,
             ids: [$this->section->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -424,6 +428,8 @@ class controlmenu extends basecontrolmenu {
             action: 'section_delete',
             ids: [$this->section->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
         return new link_secondary(
             url: $url,

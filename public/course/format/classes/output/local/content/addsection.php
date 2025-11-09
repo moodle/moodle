@@ -157,6 +157,9 @@ class addsection implements named_templatable, renderable {
         $course = $format->get_course();
         $data = new stdClass();
 
+        $returnsection = $this->targetsection
+                    ?? $format->get_section(count($format->get_modinfo()->get_listed_section_info_all()) - 1);
+                    // We can't use $lastsection, because it includes subsections.
         $addstring = $format->get_format_string('addsection');
 
         $data->addsections = (object) [
@@ -164,6 +167,8 @@ class addsection implements named_templatable, renderable {
                 action: 'section_add',
                 targetsectionid: $this->targetsection ? $this->targetsection->id : null,
                 returnurl: $format->get_view_url($format->get_sectionnum(), ['navigation' => true]),
+                returnsection: $returnsection,
+                returnoptions: $format->get_return_options($returnsection),
             ),
             'title' => $addstring,
             'newsection' => $lastsection + 1,
