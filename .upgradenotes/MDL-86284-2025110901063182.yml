@@ -1,0 +1,7 @@
+issueNumber: MDL-86284
+notes:
+  core_course:
+    - message: >-
+        The core_courseformat\base:get_view_url() $options sr is now
+        deprecated.  Use pagesectionid instead.
+      type: deprecated

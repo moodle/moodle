@@ -40,12 +40,10 @@ class format_social extends core_courseformat\base {
      *
      * @param int|stdClass $section Section object from database or just field course_sections.section
      *     if null the course view page is returned
-     * @param array $options options for view URL. At the moment core uses:
-     *     'navigation' (bool) ignored by this format
-     *     'sr' (int) ignored by this format
+     * @param array $options options for view URL. Ignored by this format.
      * @return moodle_url
      */
-    public function get_view_url($section, $options = array()) {
+    public function get_view_url($section, $options = []) {
         return new moodle_url('/course/view.php', ['id' => $this->courseid]);
     }
 
