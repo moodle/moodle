@@ -557,6 +557,7 @@ if ($config->stage == INSTALL_PATHS) {
                    'dirroot'  => get_string('dirroot', 'install'),
                    'dataroot' => get_string('dataroot', 'install'));
 
+    $stageclass = "alert-info";
     $sub = '<dl>';
     foreach ($paths as $path=>$name) {
         $sub .= '<dt>'.$name.'</dt><dd>'.get_string('pathssub'.$path, 'install').'</dd>';
@@ -566,7 +567,22 @@ if ($config->stage == INSTALL_PATHS) {
     }
     $sub .= '</dl>';
 
-    install_print_header($config, get_string('paths', 'install'), get_string('pathshead', 'install'), $sub);
+    $warnings = '';
+    $wwwroot = $CFG->wwwroot;
+    if (str_ends_with($CFG->wwwroot, '/public')) {
+        $wwwroot = substr($CFG->wwwroot, 0, -7);
+        $warnings .= '<dt>' . get_string('webservernotconfigured', 'install') . '</dt>';
+        $warnings .= '<dd>' . get_string('webserverconfigproblemdescription', 'install', s($wwwroot)) . '</dd>';
+    }
+
+    install_print_header(
+        $config,
+        get_string('paths', 'install'),
+        get_string('pathshead', 'install'),
+        $sub,
+        $stageclass,
+        $warnings,
+    );
 
     $strwwwroot      = get_string('wwwroot', 'install');
     $strdirroot      = get_string('dirroot', 'install');
@@ -606,7 +622,8 @@ if ($config->stage == INSTALL_PATHS) {
         }
     }
 
-    install_print_footer($config);
+    $requiresreload = ($warnings !== '');
+    install_print_footer($config, $requiresreload);
     die;
 }
 
