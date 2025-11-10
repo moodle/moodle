@@ -17,7 +17,10 @@
 namespace tool_mobile;
 
 use core\session\utility\cookie_helper;
+use core\hook\output\extend_url;
 use html_writer;
+use moodle_url;
+use tool_mobile\local\hooks\before_extend_ios_app_banner;
 
 /**
  * Allows plugins to add any elements to the footer.
@@ -36,22 +39,39 @@ class hook_callbacks {
         \core\hook\output\before_standard_head_html_generation $hook,
     ): void {
         global $CFG, $PAGE;
-        // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
-        if (!empty($CFG->enablemobilewebservice)) {
-            $mobilesettings = get_config('tool_mobile');
-            if (!empty($mobilesettings->enablesmartappbanners)) {
-                if (!empty($mobilesettings->iosappid)) {
-                    $hook->add_html(
-                        '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ' .
-                            'app-argument=' . $PAGE->url->out() . '"/>'
-                    );
-                }
+        // Only emit mobile app metadata when mobile services are enabled + configured.
+        if (empty($CFG->enablemobilewebservice)) {
+            return;
+        }
+        $mobilesettings = get_config('tool_mobile');
+        if (empty($mobilesettings->enablesmartappbanners)) {
+            return;
+        }
+        // IOS with hook-based app id and argument augmentation.
+        if (!empty($mobilesettings->iosappid)) {
+            $appid = (string)$mobilesettings->iosappid;
+            $appargument = $PAGE->url->out();
+            // Hook to allow modification of ios smart app banner fields.
+            $ioshook = new before_extend_ios_app_banner($appid, $appargument);
+            \core\di::get(\core\hook\manager::class)->dispatch($ioshook);
+            $appid = $ioshook->get_appid();
+            $appargument = $ioshook->get_appargument();
+            // Add the meta tag.
+            $hook->add_html(
+                '<meta name="apple-itunes-app" content="app-id=' . s($appid) .
+                ', app-argument=' . s($appargument) . '"/>'
+            );
+        }
 
-                if (!empty($mobilesettings->androidappid)) {
-                    $mobilemanifesturl = "$CFG->wwwroot/$CFG->admin/tool/mobile/mobile.webmanifest.php";
-                    $hook->add_html('<link rel="manifest" href="' . $mobilemanifesturl . '" />');
-                }
-            }
+        // Android with hook-based URL augmentation.
+        if (!empty($mobilesettings->androidappid)) {
+            $url = new moodle_url('/admin/tool/mobile/mobile.webmanifest.php');
+            $urlhook = new extend_url($url);
+            \core\di::get(\core\hook\manager::class)->dispatch($urlhook);
+            $url = $urlhook->get_url();
+
+            // Add the link tag.
+            $hook->add_html('<link rel="manifest" href="' . $url->out(false) . '" />');
         }
     }
 
