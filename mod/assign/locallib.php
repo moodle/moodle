@@ -2807,7 +2807,7 @@ class assign {
                  JOIN {course_modules} cm ON cm.course = a.course AND cm.instance = a.id
                  JOIN {modules} md ON md.id = cm.module AND md.name = 'assign'
                  JOIN {grade_items} gri ON gri.iteminstance = a.id AND gri.courseid = a.course AND gri.itemmodule = md.name
-            LEFT JOIN {assign_user_mapping} um ON g.id = um.userid AND um.assignment = a.id
+            LEFT JOIN {assign_user_mapping} um ON g.userid = um.userid AND um.assignment = a.id
                  WHERE (a.markingworkflow = 0 OR (a.markingworkflow = 1 AND uf.workflowstate = :wfreleased)) AND
                        g.grader > 0 AND uf.mailed = 0 AND gri.hidden = 0 AND
                        g.timemodified >= :yesterday AND g.timemodified <= :today

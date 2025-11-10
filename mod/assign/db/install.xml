@@ -96,6 +96,7 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" COMMENT="The userid for the submission relating to this grade."/>
         <INDEX NAME="attemptnumber" UNIQUE="false" FIELDS="attemptnumber"/>
         <INDEX NAME="uniqueattemptgrade" UNIQUE="true" FIELDS="assignment, userid, attemptnumber" COMMENT="This is a grade for a unique attempt."/>
+        <INDEX NAME="assignmentgradinglookup" UNIQUE="false" FIELDS="timemodified, grader, assignment, userid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="assign_plugin_config" COMMENT="Config data for an instance of a plugin in an assignment.">
