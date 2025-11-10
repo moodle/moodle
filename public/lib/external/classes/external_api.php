@@ -162,6 +162,11 @@ class external_api {
             } else {
                 $function->readonlysession = false;
             }
+            if (isset($functions[$function->name]['allowcorsrequests'])) {
+                $function->allowcorsrequests = $functions[$function->name]['allowcorsrequests'];
+            } else {
+                $function->allowcorsrequests = false;
+            }
         }
 
         return $function;

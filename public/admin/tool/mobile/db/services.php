@@ -33,6 +33,7 @@ $functions = array(
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
 
     'tool_mobile_get_public_config' => array(
@@ -43,6 +44,7 @@ $functions = array(
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
 
     'tool_mobile_get_config' => array(
@@ -97,5 +99,6 @@ $functions = array(
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
 );
