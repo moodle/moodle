@@ -6,10 +6,16 @@ use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 
 class Subtotal
 {
-    protected static function filterHiddenArgs(mixed $cellReference, mixed $args): array
+    /**
+     * @param mixed[] $args
+     *
+     * @return mixed[]
+     */
+    protected static function filterHiddenArgs(Cell $cellReference, array $args): array
     {
         return array_filter(
             $args,
@@ -20,13 +26,18 @@ class Subtotal
                     return true;
                 }
 
-                return $cellReference->getWorksheet()->getRowDimension($row)->getVisible();
+                return $cellReference->getWorksheet()->getRowDimension((int) $row)->getVisible();
             },
             ARRAY_FILTER_USE_KEY
         );
     }
 
-    protected static function filterFormulaArgs(mixed $cellReference, mixed $args): array
+    /**
+     * @param mixed[] $args
+     *
+     * @return mixed[]
+     */
+    protected static function filterFormulaArgs(Cell $cellReference, array $args): array
     {
         return array_filter(
             $args,
@@ -40,7 +51,7 @@ class Subtotal
                     $isFormula = $cellReference->getWorksheet()->getCell($column . $row)->isFormula();
                     $cellFormula = !preg_match(
                         '/^=.*\b(SUBTOTAL|AGGREGATE)\s*\(/i',
-                        $cellReference->getWorksheet()->getCell($column . $row)->getValue() ?? ''
+                        $cellReference->getWorksheet()->getCell($column . $row)->getValueString()
                     );
 
                     $retVal = !$isFormula || $cellFormula;
@@ -85,6 +96,7 @@ class Subtotal
      */
     public static function evaluate(mixed $functionType, ...$args): float|int|string
     {
+        /** @var Cell */
         $cellReference = array_pop($args);
         $bArgs = Functions::flattenArrayIndexed($args);
         $aArgs = [];
@@ -119,7 +131,7 @@ class Subtotal
         if (array_key_exists($subtotal, self::CALL_FUNCTIONS)) {
             $call = self::CALL_FUNCTIONS[$subtotal];
 
-            return call_user_func_array($call, $aArgs);
+            return call_user_func_array($call, $aArgs); //* @phpstan-ignore-line
         }
 
         return ExcelError::VALUE();

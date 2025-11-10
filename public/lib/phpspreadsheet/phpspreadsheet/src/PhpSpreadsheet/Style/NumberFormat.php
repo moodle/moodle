@@ -109,11 +109,15 @@ class NumberFormat extends Supervisor
 
     /**
      * Excel built-in number formats.
+     *
+     * @var string[]
      */
     protected static array $builtInFormats;
 
     /**
      * Excel built-in number formats (flipped, for faster lookups).
+     *
+     * @var int[]
      */
     protected static array $flippedBuiltInFormats;
 
@@ -164,6 +168,10 @@ class NumberFormat extends Supervisor
 
     /**
      * Build style array from subcomponents.
+     *
+     * @param mixed[] $array
+     *
+     * @return array{numberFormat: mixed[]}
      */
     public function getStyleArray(array $array): array
     {
@@ -181,7 +189,7 @@ class NumberFormat extends Supervisor
      * );
      * </code>
      *
-     * @param array $styleArray Array containing style information
+     * @param string[] $styleArray Array containing style information
      *
      * @return $this
      */
@@ -458,15 +466,17 @@ class NumberFormat extends Supervisor
      * @param null|bool|float|int|RichText|string $value Value to format
      * @param string $format Format code: see = self::FORMAT_* for predefined values;
      *                          or can be any valid MS Excel custom format string
-     * @param ?array $callBack Callback function for additional formatting of string
+     * @param ?mixed[] $callBack Callback function for additional formatting of string
+     * @param bool $lessFloatPrecision If true, unstyled floats will be converted to a more human-friendly but less computationally accurate value
      *
      * @return string Formatted string
      */
-    public static function toFormattedString(mixed $value, string $format, ?array $callBack = null): string
+    public static function toFormattedString(mixed $value, string $format, ?array $callBack = null, bool $lessFloatPrecision = false): string
     {
-        return NumberFormat\Formatter::toFormattedString($value, $format, $callBack);
+        return NumberFormat\Formatter::toFormattedString($value, $format, $callBack, $lessFloatPrecision);
     }
 
+    /** @return mixed[] */
     protected function exportArray1(): array
     {
         $exportedArray = [];

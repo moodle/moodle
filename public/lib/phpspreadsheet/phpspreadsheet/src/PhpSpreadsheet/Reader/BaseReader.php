@@ -48,6 +48,19 @@ abstract class BaseReader implements IReader
     protected bool $ignoreRowsWithNoCells = false;
 
     /**
+     * Allow external images. Use with caution.
+     * Improper specification of these within a spreadsheet
+     * can subject the caller to security exploits.
+     */
+    protected bool $allowExternalImages = false;
+
+    /**
+     * Create a blank sheet if none are read,
+     * possibly due to a typo when using LoadSheetsOnly.
+     */
+    protected bool $createBlankSheetIfNoneRead = false;
+
+    /**
      * IReadFilter instance.
      */
     protected IReadFilter $readFilter;
@@ -112,11 +125,13 @@ abstract class BaseReader implements IReader
         return $this;
     }
 
+    /** @return null|string[] */
     public function getLoadSheetsOnly(): ?array
     {
         return $this->loadSheetsOnly;
     }
 
+    /** @param null|string|string[] $sheetList */
     public function setLoadSheetsOnly(string|array|null $sheetList): self
     {
         if ($sheetList === null) {
@@ -143,6 +158,34 @@ abstract class BaseReader implements IReader
     public function setReadFilter(IReadFilter $readFilter): self
     {
         $this->readFilter = $readFilter;
+
+        return $this;
+    }
+
+    /**
+     * Allow external images. Use with caution.
+     * Improper specification of these within a spreadsheet
+     * can subject the caller to security exploits.
+     */
+    public function setAllowExternalImages(bool $allowExternalImages): self
+    {
+        $this->allowExternalImages = $allowExternalImages;
+
+        return $this;
+    }
+
+    public function getAllowExternalImages(): bool
+    {
+        return $this->allowExternalImages;
+    }
+
+    /**
+     * Create a blank sheet if none are read,
+     * possibly due to a typo when using LoadSheetsOnly.
+     */
+    public function setCreateBlankSheetIfNoneRead(bool $createBlankSheetIfNoneRead): self
+    {
+        $this->createBlankSheetIfNoneRead = $createBlankSheetIfNoneRead;
 
         return $this;
     }
@@ -174,6 +217,15 @@ abstract class BaseReader implements IReader
         }
         if (((bool) ($flags & self::IGNORE_ROWS_WITH_NO_CELLS)) === true) {
             $this->setIgnoreRowsWithNoCells(true);
+        }
+        if (((bool) ($flags & self::ALLOW_EXTERNAL_IMAGES)) === true) {
+            $this->setAllowExternalImages(true);
+        }
+        if (((bool) ($flags & self::DONT_ALLOW_EXTERNAL_IMAGES)) === true) {
+            $this->setAllowExternalImages(false);
+        }
+        if (((bool) ($flags & self::CREATE_BLANK_SHEET_IF_NONE_READ)) === true) {
+            $this->setCreateBlankSheetIfNoneRead(true);
         }
     }
 
@@ -221,6 +273,8 @@ abstract class BaseReader implements IReader
 
     /**
      * Return worksheet info (Name, Last Column Letter, Last Column Index, Total Rows, Total Columns).
+     *
+     * @return array<int, array{worksheetName: string, lastColumnLetter: string, lastColumnIndex: int, totalRows: int, totalColumns: int, sheetState: string}>
      */
     public function listWorksheetInfo(string $filename): array
     {
@@ -232,15 +286,15 @@ abstract class BaseReader implements IReader
      * possibly without parsing the whole file to a Spreadsheet object.
      * Readers will often have a more efficient method with which
      * they can override this method.
+     *
+     * @return string[]
      */
     public function listWorksheetNames(string $filename): array
     {
         $returnArray = [];
         $info = $this->listWorksheetInfo($filename);
         foreach ($info as $infoArray) {
-            if (isset($infoArray['worksheetName'])) {
-                $returnArray[] = $infoArray['worksheetName'];
-            }
+            $returnArray[] = $infoArray['worksheetName'];
         }
 
         return $returnArray;
@@ -256,5 +310,10 @@ abstract class BaseReader implements IReader
         $this->valueBinder = $valueBinder;
 
         return $this;
+    }
+
+    protected function newSpreadsheet(): Spreadsheet
+    {
+        return new Spreadsheet();
     }
 }

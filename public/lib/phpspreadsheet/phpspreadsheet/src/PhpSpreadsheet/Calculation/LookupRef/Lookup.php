@@ -28,6 +28,7 @@ class Lookup
         if (!is_array($lookupVector)) {
             return ExcelError::NA();
         }
+        /** @var mixed[][] $lookupVector */
         $hasResultVector = isset($resultVector);
         $lookupRows = self::rowCount($lookupVector);
         $lookupColumns = self::columnCount($lookupVector);
@@ -35,16 +36,19 @@ class Lookup
         if (($lookupRows === 1 && $lookupColumns > 1) || (!$hasResultVector && $lookupRows === 2 && $lookupColumns !== 2)) {
             $lookupVector = Matrix::transpose($lookupVector);
             $lookupRows = self::rowCount($lookupVector);
+            /** @var mixed[][] $lookupVector */
             $lookupColumns = self::columnCount($lookupVector);
         }
 
-        $resultVector = self::verifyResultVector($resultVector ?? $lookupVector);
+        $resultVector = self::verifyResultVector($resultVector ?? $lookupVector); //* @phpstan-ignore-line
 
         if ($lookupRows === 2 && !$hasResultVector) {
             $resultVector = array_pop($lookupVector);
             $lookupVector = array_shift($lookupVector);
         }
 
+        /** @var mixed[] $lookupVector */
+        /** @var mixed[] $resultVector */
         if ($lookupColumns !== 2) {
             $lookupVector = self::verifyLookupValues($lookupVector, $resultVector);
         }
@@ -52,6 +56,12 @@ class Lookup
         return VLookup::lookup($lookupValue, $lookupVector, 2);
     }
 
+    /**
+     * @param mixed[] $lookupVector
+     * @param mixed[] $resultVector
+     *
+     * @return mixed[]
+     */
     private static function verifyLookupValues(array $lookupVector, array $resultVector): array
     {
         foreach ($lookupVector as &$value) {
@@ -77,6 +87,11 @@ class Lookup
         return $lookupVector;
     }
 
+    /**
+     * @param mixed[][] $resultVector
+     *
+     * @return mixed[]
+     */
     private static function verifyResultVector(array $resultVector): array
     {
         $resultRows = self::rowCount($resultVector);
@@ -90,11 +105,13 @@ class Lookup
         return $resultVector;
     }
 
+    /** @param mixed[] $dataArray */
     private static function rowCount(array $dataArray): int
     {
         return count($dataArray);
     }
 
+    /** @param mixed[][] $dataArray */
     private static function columnCount(array $dataArray): int
     {
         $rowKeys = array_keys($dataArray);
