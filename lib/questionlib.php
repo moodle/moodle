@@ -1946,7 +1946,7 @@ function question_page_type_list($pagetype, $parentcontext, $currentcontext): ar
         'question-export' => get_string('page-question-export', 'question'),
         'question-import' => get_string('page-question-import', 'question')
     ];
-    if ($currentcontext->contextlevel == CONTEXT_COURSE) {
+    if ($currentcontext && $currentcontext->contextlevel == CONTEXT_COURSE) {
         require_once($CFG->dirroot . '/course/lib.php');
         return array_merge(course_page_type_list($pagetype, $parentcontext, $currentcontext), $types);
     } else {
