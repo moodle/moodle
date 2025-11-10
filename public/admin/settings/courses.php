@@ -416,6 +416,63 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_legacyfiles',
         new lang_string('generallegacyfiles', 'backup'),
         new lang_string('configlegacyfiles', 'backup'), array('value' => 1, 'locked' => 0)));
+
+    // Backup filename defaults.
+    // Until MDL-83618 is fixed, this must be required as it will not be autoloaded.
+    require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+    $temp->add(
+        new admin_setting_heading(
+            'defaultbackupfilenamesettings',
+            new lang_string('defaultbackupfilenamesettings', 'backup'),
+            ''
+        )
+    );
+
+    $temp->add(
+        new admin_setting_description(
+            'defaultbackupfilenamesettings_help',
+            '',
+            new lang_string('defaultbackupfilenamesettings_help', 'backup'),
+            ''
+        )
+    );
+
+    $temp->add(
+        new admin_setting_configbackupfilenamemustachetemplate(
+            'backup/backup_default_filename_template_course',
+            new lang_string('defaultbackupfilenamecourse', 'backup'),
+            new lang_string('defaultbackupfilenamecourse_desc', 'backup'),
+            backup_plan_dbops::DEFAULT_FILENAME_TEMPLATE_COURSE,
+            PARAM_TEXT,
+            '60',
+            '3'
+        )
+    );
+
+    $temp->add(
+        new admin_setting_configbackupfilenamemustachetemplate(
+            'backup/backup_default_filename_template_section',
+            new lang_string('defaultbackupfilenamesection', 'backup'),
+            new lang_string('defaultbackupfilenamesection_desc', 'backup'),
+            backup_plan_dbops::DEFAULT_FILENAME_TEMPLATE_SECTION,
+            PARAM_TEXT,
+            '60',
+            '3'
+        )
+    );
+
+    $temp->add(
+        new admin_setting_configbackupfilenamemustachetemplate(
+            'backup/backup_default_filename_template_activity',
+            new lang_string('defaultbackupfilenameactivity', 'backup'),
+            new lang_string('defaultbackupfilenameactivity_desc', 'backup'),
+            backup_plan_dbops::DEFAULT_FILENAME_TEMPLATE_ACTIVITY,
+            PARAM_TEXT,
+            '60',
+            '3'
+        )
+    );
+
     $ADMIN->add('backups', $temp);
 
     // Create a page for general import configuration and defaults.
