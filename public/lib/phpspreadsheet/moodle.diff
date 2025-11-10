@@ -1,7 +1,7 @@
-diff --git a/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php b/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
+diff --git a/public/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php b/public/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
 index 022c1bb0d1..a17cb419a9 100644
---- a/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
-+++ b/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
+--- a/public/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
++++ b/public/lib/phpspreadsheet/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
 @@ -112,6 +112,12 @@ class File
       */
      public static function sysGetTempDir(): string

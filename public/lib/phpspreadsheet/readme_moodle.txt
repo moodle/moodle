@@ -6,7 +6,7 @@ mv lib/phpspreadsheet/moodle.diff ./
 rm -rf lib/phpspreadsheet/*
 tempdir=`mktemp -d`
 cd "${tempdir}"
-composer init --require phpoffice/phpspreadsheet:^4 -n
+composer init --require phpoffice/phpspreadsheet:^5 -n
 cat composer.json | jq '.replace."composer/pcre"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
 cat composer.json | jq '.replace."maennchen/zipstream-php"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
 cat composer.json | jq '.replace."psr/http-client"="*"' --indent 4 > composer.json.tmp; mv composer.json.tmp composer.json
