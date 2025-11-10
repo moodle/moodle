@@ -255,10 +255,13 @@ function subsection_cm_info_view(cm_info $cm) {
     global $DB, $PAGE;
 
     $cm->set_custom_cmlist_item(true);
-    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $course = $cm->get_course();
 
-    // Get the section info.
-    $delegatedsection = manager::create_from_coursemodule($cm)->get_delegated_section_info();
+    $delegatedsection = $cm->get_delegated_section_info();
+    if (!$delegatedsection) {
+        // Some restorations can produce a situation where the section is not found.
+        $delegatedsection = manager::create_from_coursemodule($cm)->get_delegated_section_info();
+    }
 
     // Render the delegated section.
     $format = course_get_format($course);
