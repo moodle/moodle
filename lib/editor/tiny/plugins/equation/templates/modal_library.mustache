@@ -40,7 +40,7 @@
                 <a class="nav-link{{#active}} active{{/active}}"{{!
                    }}{{#active}} aria-selected="true"{{/active}}{{!
                    }}{{^active}} aria-selected="false" tabindex="-1"{{/active}}{{!
-                   }} href="#{{elementid}}_tiny_equation_group_{{key}}"{{!
+                   }} href="#{{elementidescaped}}_tiny_equation_group_{{key}}"{{!
                    }} data-bs-target="#{{elementidescaped}}_tiny_equation_group_{{key}}"
                    role="tab" data-bs-toggle="tab"
                 >
@@ -52,7 +52,7 @@
     <div class="tab-content mb-1 tiny_equation_groups">
         {{#libraries}}
             <div data-medium-type="link" class="tab-pane{{#active}} active{{/active}}"
-                 id="{{elementid}}_tiny_equation_group_{{key}}">
+                 id="{{elementidescaped}}_tiny_equation_group_{{key}}">
                 <div role="toolbar">
                     {{#elements}}
                         <button class="btn btn-secondary tiny_equation_btn" data-tex="{{.}}" aria-label="{{.}}" title="{{.}}">
