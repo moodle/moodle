@@ -1,0 +1,22 @@
+issueNumber: MDL-71368
+notes:
+  core:
+    - message: >
+        The `arg_separator.output` has been changed from a default of `amp;` to
+        a default of `&` in line with PHP defaults.
+
+
+        If you were previously relying on the legacy default when using
+
+        `http_build_query()` then you should _actively_ specify the value as the
+        third
+
+        parameter, for example:
+
+
+        ```
+
+        http_build_query($formdata, '', '&amp;');
+
+        ```
+      type: changed
