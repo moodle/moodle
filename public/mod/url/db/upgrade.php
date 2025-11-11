@@ -46,22 +46,6 @@ function xmldb_url_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v4.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2023100901) {
-        // Enable variables to be set for URL resource.
-        if (!get_config('url', 'allowvariables')) {
-            set_config('allowvariables', true, 'url');
-        }
-
-        // URL savepoint reached.
-        upgrade_mod_savepoint(true, 2023100901, 'url');
-    }
-
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 

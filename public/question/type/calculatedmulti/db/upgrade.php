@@ -28,29 +28,6 @@
  * @return bool
  */
 function xmldb_qtype_calculatedmulti_upgrade($oldversion) {
-    global $DB;
-
-    if ($oldversion < 2024011700) {
-        // In earlier versions, the answer options (choices) for a calculated multiple choice
-        // question could not use HTML and all text was rendered verbatim. However, the texts
-        // were stored in the DB with answerformat == FORMAT_HTML. This value was then overridden
-        // during initialisation of the question.
-        // From this version on, answer options may use HTML, so the answerformat does now have a
-        // meaning. For backwards compatibility, all existing answer options for this question
-        // type must have their answerformat set to FORMAT_PLAIN.
-        $DB->execute("UPDATE {question_answers}
-                              SET answerformat = '" . FORMAT_PLAIN . "'
-                            WHERE question IN (
-                                SELECT id
-                                  FROM {question}
-                                 WHERE qtype = 'calculatedmulti'
-                                 )"
-        );
-
-        // Calculatedmulti savepoint reached.
-        upgrade_plugin_savepoint(true, 2024011700, 'qtype', 'calculatedmulti');
-    }
-
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 
