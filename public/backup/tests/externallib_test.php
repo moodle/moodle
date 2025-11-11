@@ -154,7 +154,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
 
-        $urlform = http_build_query($formdata, '', '&'); // Take the form data and url encode it.
+        $urlform = http_build_query($formdata); // Take the form data and url encode it.
         $jsonformdata = json_encode($urlform); // Take form string and JSON encode.
 
         $returnvalue = core_backup_external::submit_copy_form($jsonformdata);

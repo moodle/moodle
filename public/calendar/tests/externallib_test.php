@@ -1901,7 +1901,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->role_assign($roleid, $user->id, $context->id);
         assign_capability('moodle/calendar:manageownentries', CAP_ALLOW, $roleid, $context, true);
@@ -1965,7 +1965,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->role_assign($roleid, $user->id, $context->id);
         assign_capability('moodle/calendar:manageownentries', CAP_PROHIBIT, $roleid, $context, true);
@@ -2027,7 +2027,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->role_assign($roleid, $user->id, $context->id);
 
@@ -2092,7 +2092,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->role_assign($roleid, $user->id, $context->id);
 
@@ -2157,7 +2157,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -2226,7 +2226,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -2292,7 +2292,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -2360,7 +2360,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -2433,7 +2433,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -2507,7 +2507,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -2580,7 +2580,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
 
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $generator->enrol_user($user->id, $course->id, 'student');
         $generator->role_assign($roleid, $user->id, $context->id);
@@ -2968,7 +2968,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         ];
         $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
 
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         if ($isadmin) {
             $this->setAdminUser();

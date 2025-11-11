@@ -1251,7 +1251,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         require_once("$CFG->dirroot/enrol/editenrolment_form.php");
         $formdata = enrol_user_enrolment_form::mock_generate_submit_keys($formdata);
 
-        $querystring = http_build_query($formdata, '', '&');
+        $querystring = http_build_query($formdata);
 
         $result = external_api::clean_returnvalue(
                 core_enrol_external::submit_user_enrolment_form_returns(),

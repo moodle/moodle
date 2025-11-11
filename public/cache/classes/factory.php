@@ -191,7 +191,7 @@ class factory {
      * @return application_cache|session_cache|request_cache
      */
     public function create_cache_from_definition($component, $area, array $identifiers = [], $unused = null) {
-        $identifierstring = empty($identifiers) ? '' : '/' . http_build_query($identifiers);
+        $identifierstring = empty($identifiers) ? '' : '/' . http_build_query($identifiers, '', '&amp;');
         $definitionname = $component . '/' . $area . $identifierstring;
         if (isset($this->cachesfromdefinitions[$definitionname])) {
             $cache = $this->cachesfromdefinitions[$definitionname];
@@ -225,7 +225,7 @@ class factory {
      * @return application_cache|session_cache|request_cache
      */
     public function create_cache_from_params($mode, $component, $area, array $identifiers = [], array $options = []) {
-        $identifierstring = empty($identifiers) ? '' : '_' . http_build_query($identifiers);
+        $identifierstring = empty($identifiers) ? '' : '_' . http_build_query($identifiers, '', '&amp;');
         $key = "{$mode}_{$component}_{$area}{$identifierstring}";
         if (isset($this->cachesfromparams[$key])) {
             return $this->cachesfromparams[$key];

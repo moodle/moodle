@@ -215,7 +215,7 @@ final class submit_tags_test extends \core_external\tests\externallib_testcase {
         ];
         $data = \qbank_tagquestion\form\tags_form::mock_generate_submit_keys($data);
 
-        return http_build_query($data, '', '&');
+        return http_build_query($data);
     }
 
     /**

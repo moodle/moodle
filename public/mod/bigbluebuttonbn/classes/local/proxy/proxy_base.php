@@ -70,7 +70,7 @@ abstract class proxy_base {
         $metadata = array_combine(array_map(function($k) {
             return 'meta_' . $k;
         }, array_keys($metadata)), $metadata);
-        $params = http_build_query($data + $metadata, '', '&');
+        $params = http_build_query($data + $metadata);
         $checksum = self::get_checksum($action, $params);
         return $baseurl . $params . '&checksum=' . $checksum;
     }
