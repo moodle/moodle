@@ -128,7 +128,6 @@ class audience {
         global $DB;
 
         $allowedreports = self::get_allowed_reports($userid);
-
         if (empty($allowedreports)) {
             return ['1=0', []];
         }
@@ -177,7 +176,7 @@ class audience {
         ?int $userid = null,
         ?context $context = null
     ): array {
-        global $DB, $USER;
+        global $USER;
 
         if ($context === null) {
             $context = context_system::instance();
@@ -188,15 +187,7 @@ class audience {
         }
 
         // Limit the returned list to those reports the user can see, by selecting based on report audience.
-        [$reportselect, $params] = $DB->get_in_or_equal(
-            self::user_reports_list($userid),
-            SQL_PARAMS_NAMED,
-            database::generate_param_name('_'),
-            true,
-            null,
-        );
-
-        $where = "{$reporttablealias}.id {$reportselect}";
+        [$where, $params] = self::user_reports_list_sql($reporttablealias, $userid);
 
         // User can also see any reports that they can edit.
         if (has_capability('moodle/reportbuilder:edit', $context, $userid)) {
