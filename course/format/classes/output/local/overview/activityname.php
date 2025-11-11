@@ -60,7 +60,7 @@ class activityname implements renderable, named_templatable {
             'hidden' => empty($cm->visible),
             'stealth' => $cm->is_stealth(),
         ];
-        if ($format->uses_sections()) {
+        if ($format->uses_sections() && $section->uservisible) {
             $result->sectiontitle = $format->get_section_name($section);
         }
         return $result;

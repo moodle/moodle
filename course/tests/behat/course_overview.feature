@@ -355,3 +355,18 @@ Feature: Users can access the course activities overview page
     And I am on the "Course 1" "course > activities > assign" page logged in as "student1"
     And I should not see "-" in the "Test assignment name" "table_row"
     And I should see "-" in the "Not gradable" "table_row"
+
+  @javascript
+  Scenario: Hidden section name is not shown in the activity overview for students
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I hide section "1"
+    # Make stealth the activity to guarantee the students can see it.
+    And I open "Test assignment name" actions menu
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    # Teacher should see the section name.
+    When I am on the "Course 1" "course > activities > assign" page
+    Then I should see "Section 1" in the "Test assignment name" "table_row"
+    # Student should not see the section name.
+    But I am on the "Course 1" "course > activities > assign" page logged in as "student1"
+    And I should not see "Section 1" in the "Test assignment name" "table_row"
