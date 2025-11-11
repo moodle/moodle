@@ -1927,5 +1927,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025041404.02);
     }
 
+    if ($oldversion < 2025041404.04) {
+        // Changing the default of field showactivitydates on table course to 1.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('showactivitydates', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'originalcourseid');
+
+        // Launch change of default for field showactivitydates.
+        $dbman->change_field_default($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025041404.04);
+    }
+
     return true;
 }
