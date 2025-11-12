@@ -1,0 +1,9 @@
+issueNumber: MDL-87173
+notes:
+  core:
+    - message: >-
+        The CLI script used to terminate user sessions (kill_all_sessions.php)
+        has been improved to make it safer and more flexible. 
+        A new '--run' parameter has been introduced. Without '--run', the script performs a dry run making no changes.
+        The script now supports targeted session termination using '--for-users' parameter.
+      type: improved

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CLI script to kill all user sessions without asking for confirmation.
+ * CLI script to kill user sessions.
  *
  * @package    core
  * @subpackage cli
@@ -28,28 +28,59 @@ define('CLI_SCRIPT', true);
 require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 
-list($options, $unrecognized) = cli_get_params(array('help' => false), array('h' => 'help'));
+[$options, $unrecognized] = cli_get_params([
+    'help' => false,
+    'run' => false,
+    'for-users' => false,
+], [
+    'h' => 'help',
+]);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized), 2);
 }
 
-if ($options['help']) {
-    $help =
-"Kill all Moodle sessions
+if ($options['help'] || !empty($options['for-users']) && !is_string($options['for-users'])) {
+    $help = <<<EOL
+Kill all Moodle sessions
 
 Options:
--h, --help            Print out this help
+-h, --help            Print out this help.
+    --for-users       A comma-separated list of user ids.
+    --run             Execute sessions termination, otherwise script will be run in a dry mode.
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/cli/kill_all_sessions.php
-";
+\$sudo -u www-data /usr/bin/php admin/cli/kill_all_sessions.php --run
+\$sudo -u www-data /usr/bin/php admin/cli/kill_all_sessions.php --for-users=123,456 --run
+
+EOL;
 
     echo $help;
     exit(0);
 }
 
-\core\session\manager::destroy_all();
+if (!empty($options['for-users'])) {
+    $userids = explode(',', $options['for-users']);
+    foreach ($userids as $userid) {
+        if (!empty((int) $userid)) {
+            if ($options['run']) {
+                \core\session\manager::destroy_user_sessions((int) $userid);
+                cli_writeln('All sessions for user with ID ' . $userid . ' have been destroyed');
+            } else {
+                cli_writeln('Dry run - all sessions for user with ID ' . $userid . ' will been destroyed');
+            }
+        } else {
+            cli_writeln('Invalid user ID: ' . $userid);
+        }
+    }
+} else {
+    if ($options['run']) {
+        \core\session\manager::destroy_all();
+        cli_writeln('All sessions for all users have been destroyed');
+    } else {
+        cli_writeln('Dry run - all sessions for all users will be destroyed');
+    }
+}
 
 exit(0);
