@@ -73,12 +73,13 @@ final class dml_test extends \database_driver_testcase {
     /**
      * Convert a unix string to a OS (dir separator) dependent string.
      *
-     * @param string $source the original srting, using unix dir separators and newlines.
-     * @return string the resulting string, using current OS dir separators newlines.
+     * @param string $source Original string, using Unix dir separator ('/')
+     * @return string Corrected string, using OS dir separator suitable for regex
      */
     private function unix_to_os_dirsep(string $source): string {
         if (DIRECTORY_SEPARATOR !== '/') {
-            return str_replace('/', DIRECTORY_SEPARATOR, $source);
+            // Ensure the returned string is suitable for interpolation in to a regular expression.
+            return str_replace('/', preg_quote(DIRECTORY_SEPARATOR), $source);
         }
         return $source; // No changes, so far.
     }
