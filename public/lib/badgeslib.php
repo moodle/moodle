@@ -132,6 +132,8 @@ define('BACKPACK_MOVE_DOWN', 1);
 class_alias('\core_badges\badge', 'badge');
 
 use core_badges\png_metadata_handler;
+use core_badges\local\backpack\helper;
+use core_badges\local\backpack\ob_factory;
 
 /**
  * Sends notifications to users about awarded badges.
@@ -708,7 +710,7 @@ function print_badge_image(badge $badge, stdClass $context, $size = 'small') {
  * @return string|moodle_url|null Returns either new file path hash or new file URL
  */
 function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
-    global $CFG, $USER;
+    global $USER;
 
     $badge = new badge($badgeid);
     $badge_context = $badge->get_context();
@@ -721,10 +723,19 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
             $contents = $file->get_content();
 
             $filehandler = new png_metadata_handler($contents);
-            // For now, the site backpack OB version will be used as default.
-            $obversion = badges_open_badges_backpack_api();
-            $assertion = new core_badges_assertion($hash, $obversion);
-            $assertionjson = json_encode($assertion->get_badge_assertion());
+            // For now, the user backpack OB version will be used as default (or site if the user doesn't have).
+            // Make OB version configurable in the future, to let users choose which use.
+            $backpack = badges_get_user_backpack($userid);
+            if ($backpack) {
+                $obversion = $backpack->apiversion;
+            } else {
+                $obversion = badges_open_badges_backpack_api();
+            }
+            $assertionexporter = ob_factory::create_assertion_exporter_from_hash(
+                $hash,
+                helper::convert_apiversion($obversion),
+            );
+            $assertionjson = $assertionexporter->get_json();
             if ($filehandler->check_chunks("iTXt", "openbadges")) {
                 // Add assertion URL iTXt chunk.
                 $newcontents = $filehandler->add_chunks("iTXt", "openbadges", $assertionjson);
@@ -1209,30 +1220,6 @@ function badges_get_badge_api_versions() {
         (string)OPEN_BADGES_V2 => get_string('openbadgesv2', 'badges'),
         (string)OPEN_BADGES_V2P1 => get_string('openbadgesv2p1', 'badges')
     ];
-}
-
-/**
- * Get the default issuer for a badge from this site.
- *
- * @return array
- */
-function badges_get_default_issuer() {
-    global $CFG, $SITE;
-
-    $sitebackpack = badges_get_site_primary_backpack();
-    $issuer = array();
-    $issuerurl = new moodle_url('/');
-    $issuer['name'] = $CFG->badges_defaultissuername;
-    if (empty($issuer['name'])) {
-        $issuer['name'] = $SITE->fullname ? $SITE->fullname : $SITE->shortname;
-    }
-    $issuer['url'] = $issuerurl->out(false);
-    $issuer['email'] = $sitebackpack->backpackemail ?: $CFG->badges_defaultissuercontact;
-    $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-    $issuerid = new moodle_url('/badges/issuer_json.php');
-    $issuer['id'] = $issuerid->out(false);
-    $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
-    return $issuer;
 }
 
 /**

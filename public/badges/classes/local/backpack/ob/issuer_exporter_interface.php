@@ -14,16 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_badges\local\backpack\ob;
+
+use core\url;
+
 /**
- * Serve Issuer JSON for related badge or default Issuer if no badge is defined.
+ * Class issuer_exporter_interface represents the interface for exporting issuers data to a backpack.
  *
  * @package    core_badges
- * @copyright  2020 Sara Arjona <sara@moodle.com>
+ * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+interface issuer_exporter_interface {
+    /**
+     * Export the issuer data to an array.
+     *
+     * @return array The exported issuer data.
+     */
+    public function export(): array;
 
-require_once(__DIR__ . '/../config.php');
+    /**
+     * Get the JSON representation of the issuer.
+     *
+     * @return string The JSON representation of the issuer.
+     */
+    public function get_json(): string;
 
-$badgeid = optional_param('id', null, PARAM_INT);
-
-redirect(new moodle_url('/badges/json/issuer.php', ['id' => $badgeid]));
+    /**
+     * Get the URL to the JSON representation of the issuer.
+     *
+     * @return url The URL to the JSON representation of the issuer.
+     */
+    public function get_json_url(): url;
+}

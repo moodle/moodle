@@ -34,10 +34,6 @@ abstract class badges_testcase extends \advanced_testcase {
     protected $user;
     protected $module;
     protected $coursebadge;
-    protected $assertion;
-
-    /** @var $assertion2 to define json format for Open badge version 2 */
-    protected $assertion2;
 
     #[\Override]
     public static function setUpBeforeClass(): void {
@@ -150,32 +146,5 @@ abstract class badges_testcase extends \advanced_testcase {
 
         // Insert tags.
         core_tag_tag::set_item_tags('core_badges', 'badge', $badge->id, $badge->get_context(), ['tag1', 'tag2']);
-
-        $this->assertion = new stdClass();
-        $this->assertion->badge = '{"uid":"%s","recipient":{"identity":"%s","type":"email","hashed":true,"salt":"%s"},' .
-            '"badge":"%s","verify":{"type":"hosted","url":"%s"},"issuedOn":"%d","evidence":"%s","tags":%s}';
-        $this->assertion->class = '{"name":"%s","description":"%s","image":"%s","criteria":"%s","issuer":"%s","tags":%s}';
-        $this->assertion->issuer = '{"name":"%s","url":"%s","email":"%s"}';
-        // Format JSON-LD for Openbadge specification version 2.0.
-        $this->assertion2 = new stdClass();
-        $this->assertion2->badge = '{"recipient":{"identity":"%s","type":"email","hashed":true,"salt":"%s"},' .
-            '"badge":{"name":"%s","description":"%s","image":"%s",' .
-            '"criteria":{"id":"%s","narrative":"%s"},"issuer":{"name":"%s","url":"%s","email":"%s",' .
-            '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"Issuer"},' .
-            '"tags":%s,"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"BadgeClass","version":"%s",' .
-            '"@language":"en","related":[{"id":"%s","version":"%s","@language":"%s"}],' .
-            '"alignments":[{"targetName":"%s","targetUrl":"%s","targetDescription":"%s","targetFramework":"%s",' .
-            '"targetCode":"%s"}]},"verify":{"type":"hosted","url":"%s"},"issuedOn":"%s","evidence":"%s","tags":%s,' .
-            '"@context":"https:\/\/w3id.org\/openbadges\/v2","type":"Assertion","id":"%s"}';
-
-        $this->assertion2->class = '{"name":"%s","description":"%s","image":"%s",' .
-            '"criteria":{"id":"%s","narrative":"%s"},"issuer":{"name":"%s","url":"%s","email":"%s",' .
-            '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"Issuer"},' .
-            '"tags":%s,"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"BadgeClass","version":"%s",' .
-            '"@language":"%s","related":[{"id":"%s","version":"%s","@language":"%s"}],' .
-            '"alignments":[{"targetName":"%s","targetUrl":"%s","targetDescription":"%s","targetFramework":"%s",' .
-            '"targetCode":"%s"}]}';
-        $this->assertion2->issuer = '{"name":"%s","url":"%s","email":"%s",' .
-            '"@context":"https:\/\/w3id.org\/openbadges\/v2","id":"%s","type":"Issuer"}';
     }
 }

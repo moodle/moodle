@@ -1,0 +1,5 @@
+issueNumber: MDL-85621
+notes:
+  core_badges:
+    - message: The create_issued_badge generator now returns the issued badge object.
+      type: changed

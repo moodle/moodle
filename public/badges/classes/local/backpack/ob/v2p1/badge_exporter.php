@@ -14,25 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_badges\local\backpack\ob\v2p1;
+
+use core_badges\local\backpack\ob\v2p0\badge_exporter as badge_exporter_v2p0;
+
 /**
- * Serve BadgeClass JSON for related badge.
+ * Class that represents badge to be exported to a backpack.
  *
- * @package    core
- * @subpackage badges
- * @copyright  2018 Tung Thai
+ * @package    core_badges
+ * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
-
-require_once(__DIR__ . '/../config.php');
-
-$badgeid = required_param('id', PARAM_INT);
-$action = optional_param('action', null, PARAM_INT); // Generates badge class if true.
-
-if ($action == 0) {
-    // Display only the Issuer.
-    redirect(new moodle_url('/badges/json/issuer.php', ['id' => $badgeid]));
+class badge_exporter extends badge_exporter_v2p0 {
 }
-
-// Display the Badge.
-redirect(new moodle_url('/badges/json/badge.php', ['id' => $badgeid]));

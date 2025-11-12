@@ -15,24 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Serve BadgeClass JSON for related badge.
+ * BadgeClass JSON.
  *
- * @package    core
- * @subpackage badges
- * @copyright  2018 Tung Thai
+ * @package    core_badges
+ * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
+define('AJAX_SCRIPT', true);
+define('NO_MOODLE_COOKIES', true); // No need for a session here.
 
-require_once(__DIR__ . '/../config.php');
+require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/badgeslib.php');
+
+use core_badges\local\backpack\helper;
+use core_badges\local\backpack\ob_factory;
 
 $badgeid = required_param('id', PARAM_INT);
-$action = optional_param('action', null, PARAM_INT); // Generates badge class if true.
+$defaultobversion = helper::convert_apiversion(badges_open_badges_backpack_api());
+$obversion = optional_param('obversion', $defaultobversion, PARAM_ALPHANUM);
 
-if ($action == 0) {
-    // Display only the Issuer.
-    redirect(new moodle_url('/badges/json/issuer.php', ['id' => $badgeid]));
+if (!helper::badge_available($badgeid)) {
+    header("HTTP/1.0 410 Gone");
+    throw new \moodle_exception(get_string('error:relatedbadgedoesntexist', 'badges'));
 }
 
-// Display the Badge.
-redirect(new moodle_url('/badges/json/badge.php', ['id' => $badgeid]));
+$badge = ob_factory::create_badge_exporter_from_id($badgeid, $obversion);
+echo $OUTPUT->header();
+echo $badge->get_json();

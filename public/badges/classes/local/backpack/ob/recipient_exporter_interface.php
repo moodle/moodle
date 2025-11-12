@@ -14,25 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_badges\local\backpack\ob;
+
 /**
- * Serve BadgeClass JSON for related badge.
+ * Class recipient_exporter_interface represents the interface for exporting achievement subject (or recipient) data to a backpack.
  *
- * @package    core
- * @subpackage badges
- * @copyright  2018 Tung Thai
+ * @package    core_badges
+ * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Tung Thai <Tung.ThaiDuc@nashtechglobal.com>
  */
+interface recipient_exporter_interface {
+    /**
+     * Export the recipient data to an array.
+     *
+     * @param bool $usesalt Whether to use a salt for the recipient.
+     * @return array The exported recipient data.
+     */
+    public function export(
+        bool $usesalt = true,
+    ): array;
 
-require_once(__DIR__ . '/../config.php');
-
-$badgeid = required_param('id', PARAM_INT);
-$action = optional_param('action', null, PARAM_INT); // Generates badge class if true.
-
-if ($action == 0) {
-    // Display only the Issuer.
-    redirect(new moodle_url('/badges/json/issuer.php', ['id' => $badgeid]));
+    /**
+     * Get the JSON representation of the recipient.
+     *
+     * @return string The JSON representation of the recipient.
+     */
+    public function get_json(): string;
 }
-
-// Display the Badge.
-redirect(new moodle_url('/badges/json/badge.php', ['id' => $badgeid]));

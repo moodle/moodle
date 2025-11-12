@@ -24,6 +24,8 @@
 
 namespace core_badges;
 
+use core_badges\local\backpack\helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/filelib.php');
@@ -265,8 +267,10 @@ class backpack_api2p1 {
 
         $this->tokendata = $this->get_stored_token($this->externalbackpack->id);
 
-        $assertion = new \core_badges_assertion($hash, OPEN_BADGES_V2);
-        $data['assertion'] = $assertion->get_badge_assertion();
+        $data['assertion'] = helper::export_achievement_credential(
+            OPEN_BADGES_V2,
+            $hash,
+        );
         $response = $this->curl_request('post.assertions', $data);
         if ($response && isset($response->status->statusCode) && $response->status->statusCode == 200) {
             $msg['status'] = \core\output\notification::NOTIFY_SUCCESS;

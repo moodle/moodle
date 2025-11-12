@@ -25,6 +25,8 @@
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
+use core_badges\local\backpack\helper;
+
 require_login();
 
 $userbackpack = badges_get_user_backpack();
@@ -32,13 +34,13 @@ if (badges_open_badges_backpack_api($userbackpack->id) != OPEN_BADGES_V2) {
     throw new coding_exception('No backpacks support Open Badges V2.');
 }
 
-$id = required_param('hash', PARAM_ALPHANUM);
+$assertionhash = required_param('hash', PARAM_ALPHANUM);
 
-$PAGE->set_url('/badges/backpack-add.php', array('hash' => $id));
+$PAGE->set_url('/badges/backpack-add.php', ['hash' => $assertionhash]);
 $PAGE->set_context(context_system::instance());
 $output = $PAGE->get_renderer('core', 'badges');
 
-$issuedbadge = new \core_badges\output\issued_badge($id);
+$issuedbadge = new \core_badges\output\issued_badge($assertionhash);
 if (!empty($issuedbadge->recipient->id)) {
     // The flow for issuing a badge is:
     // * Create issuer
@@ -55,9 +57,7 @@ if (!empty($issuedbadge->recipient->id)) {
     $badge = new badge($badgeid);
     $backpack = $DB->get_record('badge_backpack', array('userid' => $USER->id));
     $userbackpack = badges_get_site_backpack($backpack->externalbackpackid, $USER->id);
-    $assertion = new core_badges_assertion($id, OPEN_BADGES_V2);
-    $assertiondata = $assertion->get_badge_assertion(false, false);
-    $assertionid = $assertion->get_assertion_hash();
+    $assertiondata = helper::export_achievement_credential(OPEN_BADGES_V2, $assertionhash, false, false);
     $assertionentityid = $assertiondata['id'];
     $badgeadded = false;
     $issuerexists = false;
@@ -69,7 +69,7 @@ if (!empty($issuedbadge->recipient->id)) {
         // A numeric response indicates a valid successful authentication. Else an error object will be returned.
         if (is_numeric($response)) {
             // Create issuer.
-            $issuer = $assertion->get_issuer();
+            $issuer = helper::export_issuer(OPEN_BADGES_V2, $badgeid);
             if (!($issuerentityid = badges_external_get_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_ISSUER, $issuer['email']))) {
                 $response = $api->put_issuer($issuer);
                 if ($response) {
@@ -85,8 +85,11 @@ if (!empty($issuedbadge->recipient->id)) {
             }
             if ($issuerexists) {
                 // Create badge.
-                $badge = $assertion->get_badge_class(false);
-                $badgeid = $assertion->get_badge_id();
+                $badge = helper::export_credential(
+                    OPEN_BADGES_V2,
+                    $badgeid,
+                    false,
+                );
                 if (!($badgeentityid = badges_external_get_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_BADGE, $badgeid))) {
                     $response = $api->put_badgeclass($issuerentityid, $badge);
                     if ($response) {
@@ -104,7 +107,7 @@ if (!empty($issuedbadge->recipient->id)) {
                 $assertionentityid = badges_external_get_mapping(
                     $sitebackpack->id,
                     OPEN_BADGES_V2_TYPE_ASSERTION,
-                    $assertionid
+                    $assertionhash
                 );
 
                 if ($assertionentityid && strpos($sitebackpack->backpackapiurl, 'badgr')) {
@@ -128,7 +131,7 @@ if (!empty($issuedbadge->recipient->id)) {
                         badges_external_create_mapping(
                             $sitebackpack->id,
                             OPEN_BADGES_V2_TYPE_ASSERTION,
-                            $assertionid,
+                            $assertionhash,
                             $response->id,
                         );
                     }
@@ -137,7 +140,7 @@ if (!empty($issuedbadge->recipient->id)) {
                     $internalid = badges_external_get_mapping(
                         $sitebackpack->id,
                         OPEN_BADGES_V2_TYPE_ASSERTION,
-                        $assertionid,
+                        $assertionhash,
                         'externalid'
                     );
                     $response = $api->update_assertion($internalid, $assertiondata);
@@ -152,7 +155,7 @@ if (!empty($issuedbadge->recipient->id)) {
     // - This is only needed when the backpacks are from different regions.
     if (
         $assertionentityid
-        && (!$issuerexists || !badges_external_get_mapping($userbackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionid))
+        && (!$issuerexists || !badges_external_get_mapping($userbackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionhash))
     ) {
         $userapi = new \core_badges\backpack_api($userbackpack, $backpack);
         $userapi->authenticate();
@@ -163,7 +166,7 @@ if (!empty($issuedbadge->recipient->id)) {
             badges_external_create_mapping(
                 $userbackpack->id,
                 OPEN_BADGES_V2_TYPE_ASSERTION,
-                $assertionid,
+                $assertionhash,
                 $assertionentityid,
             );
         }
