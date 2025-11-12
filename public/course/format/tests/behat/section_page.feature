@@ -129,3 +129,28 @@ Feature: Single section course page
     Then I should not see "Section 1"
     # The user should be redirected to the course page.
     And I should see "General" in the "page" "region"
+
+  @javascript
+  Scenario: When I edit a section from the section page, after saving I stay in the section page
+    Given I am on the "Course 1 > Section 1" "course > section" page
+    And I turn editing mode on
+    And I choose the "Edit settings" item in the "Edit" action menu of the "page-header" "region"
+    When I set the field "Section name" to "New name for section 1"
+    And I press "Save changes"
+    Then I should see "New name for section 1" in the "page-header" "region"
+    And I should see "Activity sample 1.1"
+    And I should see "Activity sample 1.2"
+    And I should see "Activity sample 1.3"
+    And I should not see "Activity sample 2.1" in the "region-main" "region"
+    And I should not see "Activity sample 2.1" in the "region-main" "region"
+
+  @javascript
+  Scenario: When I edit a section from the course page, after saving I stay in the course page
+    Given I turn editing mode on
+    And I open section "1" edit menu
+    And I choose "Edit settings" in the open action menu
+    When I set the field "Section name" to "New name for section 1"
+    And I press "Save changes"
+    Then I should see "Course 1" in the "page-header" "region"
+    And I should see "General" in the "region-main" "region"
+    And I should see "New name for section 1" in the "region-main" "region"

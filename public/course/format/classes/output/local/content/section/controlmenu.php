@@ -141,6 +141,7 @@ class controlmenu extends basecontrolmenu {
             [
                 'id' => $this->section->id,
                 'sr' => $this->section->sectionnum,
+                'returnurl' => $this->baseurl,
             ]
         );
 
