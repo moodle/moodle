@@ -17,8 +17,8 @@ Feature: Users can access the course activities overview page
       | teacher1           | C1     | editingteacher |
       | student1           | C1     | student        |
     And the following "activities" exist:
-      | activity | course | section | idnumber | name                 |
-      | assign   | C1     | 1       | 1        | Test assignment name |
+      | activity | course | section | idnumber | name                 | duedate           |
+      | assign   | C1     | 1       | 1        | Test assignment name | ##tomorrow noon## |
 
   Scenario: Teacher can navigate to the course overview page
     Given I am on the "C1" "Course" page logged in as "teacher1"
@@ -364,3 +364,29 @@ Feature: Users can access the course activities overview page
     # Student should not see the section name.
     But I am on the "Course 1" "course > activities > assign" page logged in as "student1"
     And I should not see "Section 1" in the "Test assignment name" "table_row"
+
+  @javascript
+  Scenario: Unavailable activities are shown or hidden in the overview based on user capability
+    # Add a date restriction to an activity, visible to students.
+    Given I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button" in the "root" "core_availability > Availability Button Area"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I set the field "Direction" in the "1" "availability_date > Date Restriction" to "until"
+    And I press "Save and return to course"
+    # Teacher can see the activity and the link in the overview.
+    When I am on the "Course 1" "course > activities > assign" page logged in as "teacher1"
+    Then I should see "Test assignment name" in the "assign_overview_collapsible" "region"
+    And "Test assignment name" "link" should exist in the "assign_overview_collapsible" "region"
+    And I should see "Name" in the "assign_overview_collapsible" "region"
+    And I should see "Due date" in the "assign_overview_collapsible" "region"
+    And I should see "Submissions" in the "assign_overview_collapsible" "region"
+    And I should see "Actions" in the "assign_overview_collapsible" "region"
+    # Student can see the activity but not the link in the overview.
+    But I am on the "Course 1" "course > activities > assign" page logged in as "student1"
+    And I should see "Test assignment name" in the "assign_overview_collapsible" "region"
+    And "Test assignment name" "link" should not exist in the "assign_overview_collapsible" "region"
+    And I should see "Name" in the "assign_overview_collapsible" "region"
+    And I should see "Due date" in the "assign_overview_collapsible" "region"
+    And I should not see "Submission status" in the "assign_overview_collapsible" "region"
+    And I should not see "Grade" in the "assign_overview_collapsible" "region"
