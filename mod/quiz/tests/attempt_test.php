@@ -559,4 +559,64 @@ final class attempt_test extends \advanced_testcase {
         // Check column review.
         $this->assertMatchesRegularExpression('/<td\b[^>]*>.+?Review<\/a><\/td>/', $table);
     }
+
+    /**
+     * Test that enabling shuffle on the first quiz section randomizes question order between attempts.
+     *
+     * This test creates a quiz with multiple questions, sets the first section to shuffle,
+     * and verifies that two separate attempts by the same user result in different question orders.
+     *
+     * @return void
+     * @covers ::quiz_start_new_attempt
+     */
+    public function test_question_shuffle(): void {
+        $this->resetAfterTest(true);
+
+        // Create user and course.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'grade' => 100.0,
+            'sumgrades' => 3,
+        ]);
+        $quizobj = quiz::create($quiz->id, $user->id);
+
+        // Create ten questions, each on a separate page.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        for ($i = 0; $i < 10; $i++) {
+            $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+            quiz_add_quiz_question($question->id, $quiz, $i + 1);
+        }
+
+        // Update the section to be shuffled and set heading.
+        $structure = $quizobj->get_structure();
+        $sections = $structure->get_sections();
+        $firstsection = reset($sections);
+        $structure->set_section_heading($firstsection->id, 'Shuffled section');
+        $structure->set_section_shuffle($firstsection->id, 1);
+
+        // Start two attempts.
+        $this->setUser($user);
+        $attempt1 = quiz_prepare_and_start_new_attempt($quizobj, 1, null, false, [], [], $user->id);
+        $this->setUser($user);
+        $attempt2 = quiz_prepare_and_start_new_attempt($quizobj, 2, null, false, [], [], $user->id);
+
+        $attemptobj1 = quiz_attempt::create($attempt1->id);
+        $attemptobj2 = quiz_attempt::create($attempt2->id);
+
+        $order1 = array_map(function ($slot) use ($attemptobj1) {
+            return $attemptobj1->get_question_attempt($slot)->get_question()->id;
+        }, $attemptobj1->get_slots());
+
+        $order2 = array_map(function ($slot) use ($attemptobj2) {
+            return $attemptobj2->get_question_attempt($slot)->get_question()->id;
+        }, $attemptobj2->get_slots());
+
+        $this->assertNotEquals($order1, $order2, 'Question order should be shuffled between attempts.');
+    }
 }
