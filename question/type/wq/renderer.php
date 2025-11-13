@@ -21,7 +21,7 @@ class qtype_wq_renderer extends qtype_renderer {
 
     protected $base;
 
-    public function __construct(qtype_renderer $base = null, moodle_page $page, $target) {
+    public function __construct(?qtype_renderer $base = null, moodle_page $page, $target) {
         parent::__construct($page, $target);
         $this->base = $base;
     }
