@@ -53,6 +53,7 @@ abstract class by_course extends base {
 
         if (!$recordset->valid()) {
             $this->add_log(get_string('nocourses', 'analytics'));
+            $recordset->close();
             return new \ArrayIterator([]);
         }
 
