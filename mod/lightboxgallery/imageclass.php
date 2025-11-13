@@ -79,7 +79,6 @@ class lightboxgallery_image {
             0,
             $this->storedfile->get_filepath(),
             $this->storedfile->get_filename().'.png');
-        $this->thumburl->param('mtime', $this->storedfile->get_timemodified());
 
         if ($this->storedfile->get_mimetype() == 'image/svg+xml') {
             $this->thumburl = $this->imageurl;
@@ -96,6 +95,9 @@ class lightboxgallery_image {
         // If we weren't given a thumbnail, double check if it exists before generating one.
         if (!$thumbnail && (!$this->thumbnail = $this->get_thumbnail())) {
             $this->thumbnail = $this->create_thumbnail();
+        }
+        if ($this->thumbnail) {
+            $this->thumburl->param('mtime', $this->thumbnail->get_timemodified());
         }
 
         $this->metadata = $metadata;
@@ -240,7 +242,8 @@ class lightboxgallery_image {
                     '<input type="hidden" name="id" value="'.$this->cmid.'" />'.
                     '<input type="hidden" name="image" value="'.$this->storedfile->get_filename().'" />'.
                     '<input type="hidden" name="page" value="0" />'.
-                    '<select name="tab" class="lightbox-edit-select" onchange="submit();">'.
+                    '<select name="tab" class="lightbox-edit-select custom-select mb-1" style="width: '.THUMBNAIL_WIDTH.'px;" '.
+                    'onchange="submit();">'.
                         '<option disabled selected>'.get_string('edit_choose', 'lightboxgallery').'</option>';
         foreach ($options as $option) {
             $html .= '<option value="'.$option.'">'.get_string('edit_'.$option, 'lightboxgallery').'</option>';

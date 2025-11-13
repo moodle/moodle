@@ -23,8 +23,8 @@ class edit_caption extends edit_base {
     }
 
     public function output($captiontext = '') {
-        $result = '<textarea name="caption" cols="24" rows="4">'.$captiontext.'</textarea><br /><br />'.
-                  '<input type="submit" value="'.get_string('update').'" />';
+        $result = '<textarea name="caption" class="form-control" cols="24" rows="4">'.$captiontext.'</textarea><br /><br />'.
+                  '<input type="submit" class="btn btn-secondary"  value="'.get_string('update').'" />';
         return $this->enclose_in_form($result);
     }
 
