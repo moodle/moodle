@@ -15,19 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Group choice data generator class
  *
  * @package    mod_choicegroup
- * @copyright  2013-2024 Université de Lausanne
- * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
+ * @category   test
+ * @copyright  2025 Luca Bösch <luca.boesch@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class mod_choicegroup_generator extends testing_module_generator {
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Create a new instance of the Group choice activity.
+     *
+     * @param array|stdClass|null $record
+     * @param array|null $options
+     * @return stdClass
+     */
+    public function create_instance($record = null, ?array $options = null) {
+        $record = (object)(array)$record;
 
-$plugin->version  = 2025100902;
-$plugin->requires  = 2023100900; // Moodle 4.3.
-$plugin->supported = [403, 501];
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release = '1.51 for Moodle 4.3-5.1 (Build: 2025100902)';
-$plugin->component = 'mod_choicegroup';
+        $record->serializedselectedgroups = implode(';', []);
+
+        return parent::create_instance($record, $options);
+    }
+}

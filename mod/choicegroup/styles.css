@@ -209,16 +209,16 @@
     width: 100%;
 }
 
-.path-mod-choicegroup td {
+.path-mod-choicegroup table.choicegroups td {
     border-top: 1px #ccc solid;
 }
 
-.path-mod-choicegroup th,
-.path-mod-choicegroup td {
+.path-mod-choicegroup table.choicegroups th,
+.path-mod-choicegroup table.choicegroups td {
     padding: 10px 15px;
 }
 
-.path-mod-choicegroup td.center {
+.path-mod-choicegroup table.choicegroups td.center {
     text-align: center;
 }
 
@@ -240,6 +240,7 @@
 .path-mod-choicegroup a.choicegroup-memberdisplay,
 .path-mod-choicegroup a.choicegroup-descriptiondisplay {
     display: inline-block;
+    vertical-align: initial;
 }
 
 .path-mod-choicegroup div.choicegroups-membersnames.hidden,
@@ -271,3 +272,8 @@
 .path-mod-choicegroup .width40 {
     width: 40%;
 }
+
+.path-mod-choicegroup #availablegroups .nested {
+    padding-left: 30px;
+}
+

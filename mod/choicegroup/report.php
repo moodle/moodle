@@ -230,7 +230,7 @@ if ($download == "txt" && has_capability('mod/choicegroup:downloadresponses', $c
 
     // Print names of all the fields.
 
-    echo get_string("firstname")."\t".get_string("lastname") . "\t". get_string("idnumber") . "\t";
+    echo get_string("lastname")."\t".get_string("firstname") . "\t". get_string("idnumber") . "\t";
     echo get_string("email") . "\t";
     echo get_string("group"). "\t";
     echo get_string("choice", "choicegroup"). "\n";

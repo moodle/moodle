@@ -33,6 +33,11 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 class mod_choicegroup_mod_form extends moodleform_mod {
 
     /**
+     * @var string Column to sort groups by
+     */
+    protected $sortgroupsby = 'timecreated';
+
+    /**
      * Define form elements
      *
      * @return void
@@ -66,11 +71,20 @@ class mod_choicegroup_mod_form extends moodleform_mod {
         // -------------------------
         // Fetch data from database.
         // -------------------------.
+
+        $choicegroupid = $this->get_instance();
+
+        if ($choicegroupid && $choicegroup = $DB->get_record("choicegroup", ["id" => $choicegroupid])) {
+            $this->sortgroupsby = choicegroup_get_sort_column($choicegroup);
+        }
+
         $groups = [];
-        $dbgroups = $DB->get_records('groups', ['courseid' => $COURSE->id]);
+        $dbgroups = $DB->get_records('groups', ['courseid' => $COURSE->id], $this->sortgroupsby);
+
         foreach ($dbgroups as $group) {
             $groups[$group->id] = new stdClass();
             $groups[$group->id]->name = format_string($group->name);
+            $groups[$group->id]->timecreated = $group->timecreated;
             $groups[$group->id]->mentioned = false;
             $groups[$group->id]->id = $group->id;
         }
@@ -84,16 +98,24 @@ class mod_choicegroup_mod_form extends moodleform_mod {
             \core\notification::add($message, \core\notification::WARNING);
         }
 
-        $dbgroupings = $DB->get_records('groupings', ['courseid' => $COURSE->id]);
+        $dbgroupings = $DB->get_records('groupings', ['courseid' => $COURSE->id], $this->sortgroupsby);
         $groupings = [];
         if ($dbgroupings) {
             foreach ($dbgroupings as $grouping) {
                 $groupings[$grouping->id] = new stdClass();
                 $groupings[$grouping->id]->name = $grouping->name;
+                $groupings[$grouping->id]->timecreated = $grouping->timecreated;
             }
 
             list($sqlin, $inparams) = $DB->get_in_or_equal(array_keys($groupings));
-            $dbgroupingsgroups = $DB->get_records_select('groupings_groups', 'groupingid ' . $sqlin, $inparams);
+
+            $sql = "SELECT gg.*
+                    FROM {groupings_groups} gg
+                    JOIN {groups} g ON gg.groupid = g.id
+                    WHERE gg.groupingid $sqlin
+                    ORDER BY g.$this->sortgroupsby ASC";
+
+            $dbgroupingsgroups = $DB->get_records_sql($sql, $inparams);
 
             foreach ($dbgroupingsgroups as $groupinggrouplink) {
                 $groupings[$groupinggrouplink->groupingid]->linkedGroupsIDs[] = $groupinggrouplink->groupid;
@@ -150,17 +172,17 @@ class mod_choicegroup_mod_form extends moodleform_mod {
         // -------------------------.
 
         $mform->addElement('header', 'groups', get_string('groupsheader', 'choicegroup'));
-        $mform->addElement('html', '<fieldset class="clearfix">
+        $mform->addElement('html', '
                 <div class="fcontainer clearfix">
                 <label for="fitem_id_option_0" class="fitemtitle">'
                     . get_string('choicegroupoptions_description', 'choicegroup') . '</label>
                 <div id="fitem_id_option_0" name="fitem_id_option_0" class="fitem fitem_fselect ">
                 <div class="felement fselect">
                 <div class="tablecontainer">
-                <table>
+                <table class="table-reboot">
                     <tr class="row">
-                        <th class="col-lg-6">' . get_string('available_groups', 'choicegroup') . '</th>
-                        <th class="col-lg-6">' . get_string('selected_groups', 'choicegroup') . '</th>
+                        <th class="col-lg-7">' . get_string('available_groups', 'choicegroup') . '</th>
+                        <th class="col-lg-5">' . get_string('selected_groups', 'choicegroup') . '</th>
                     </tr>
                     <tr class="row">
                         <td style="vertical-align: top" class="col-5">');
@@ -173,12 +195,13 @@ class mod_choicegroup_mod_form extends moodleform_mod {
                 // Grouping has more than 2 items, thus we should display it (otherwise it would be clearer to display only that
                 // single group alone).
                 $mform->addElement('html', '<option value="' . $groupingid .
-                    '" style="font-weight: bold" class="grouping">' . get_string('char_bullet_expanded', 'choicegroup') .
-                    $grouping->name . '</option>');
+                    '" style="font-weight: bold" class="grouping" data-timecreated="'. $grouping->timecreated .'">' .
+                    get_string('char_bullet_expanded', 'choicegroup') . $grouping->name . '</option>');
                 foreach ($grouping->linkedGroupsIDs as $linkedgroupid) {
                     if (isset($groups[$linkedgroupid])) {
                         $mform->addElement('html', '<option value="' . $linkedgroupid .
-                            '" class="group nested">&nbsp;&nbsp;&nbsp;&nbsp;' . $groups[$linkedgroupid]->name . '</option>');
+                            '" class="group nested" data-timecreated="'. $groups[$linkedgroupid]->timecreated .'">' .
+                            $groups[$linkedgroupid]->name . '</option>');
                         $groups[$linkedgroupid]->mentioned = true;
                     }
                 }
@@ -187,20 +210,21 @@ class mod_choicegroup_mod_form extends moodleform_mod {
         foreach ($groups as $group) {
             if ($group->mentioned === false) {
                 $mform->addElement('html', '<option title="' . $group->name . '" value="' . $group->id .
-                    '" class="group toplevel">' . format_string($group->name) . '</option>');
+                    '" class="group toplevel" data-timecreated="'. $group->timecreated .'">' . format_string($group->name) .
+                    '</option>');
             }
         }
-        $mform->addElement('html', '</select><br><button name="expandButton" type="button" disabled id="expandButton" ' .
-            'class="btn btn-secondary">' . get_string('expand_all_groupings', 'choicegroup') .
-            '</button><button name="collapseButton" type="button" disabled id="collapseButton" class="btn btn-secondary">' .
+        $mform->addElement('html', '</select><br><button name="expandButton" type="button" id="expandButton" ' .
+            'class="btn btn-secondary mt-1">' . get_string('expand_all_groupings', 'choicegroup') .
+            '</button><button name="collapseButton" type="button" id="collapseButton" class="btn btn-secondary mt-1">' .
             get_string('collapse_all_groupings', 'choicegroup') .
             '</button><br>' . get_string('double_click_grouping_legend', 'choicegroup') . '<br>' .
             get_string('double_click_group_legend', 'choicegroup'));
 
         $mform->addElement('html', '
-                </td><td class="col-2"><button id="addGroupButton" name="add" type="button" disabled class="btn btn-secondary">' .
+                </td><td class="col-2"><button id="addGroupButton" name="add" type="button" class="btn btn-secondary mt-1">' .
             get_string('add', 'choicegroup') .
-            '</button><div><button name="remove" type="button" disabled id="removeGroupButton" class="btn btn-secondary">' .
+            '</button><div><button name="remove" type="button" id="removeGroupButton" class="btn btn-secondary mt-1">' .
             get_string('del', 'choicegroup') . '</button></div></td>');
         $mform->addElement('html', '<td style="vertical-align: top" class="col-5">
     <select class="col-12" id="id_selectedGroups" name="selectedGroups" multiple size=10></select>
@@ -219,7 +243,7 @@ class mod_choicegroup_mod_form extends moodleform_mod {
         </div>
     </div>
 </div>
-                </fieldset>');
+                ');
 
         $mform->setExpanded('groups');
 

@@ -1,7 +1,7 @@
 General information
 ====================
 
-[![Moodle Plugin CI](https://github.com/ndunand/moodle-mod_choicegroup/workflows/Moodle%20Plugin%20CI/badge.svg?branch=master)](https://github.com/ndunand/moodle-mod_choicegroup/actions?query=workflow%3A%22Moodle+Plugin+CI%22+branch%3Amaster)
+[![Moodle Plugin CI](https://github.com/ndunand/moodle-mod_choicegroup/actions/workflows/moodle-plugin-ci.yml/badge.svg?branch=master)](https://github.com/ndunand/moodle-mod_choicegroup/actions/workflows/moodle-plugin-ci.yml)
 
 This module allows students to enrol themselves in a group within a course. The teacher can choose from which groups the students can chose, and the maximum nummber of students allowed in each group.
 
