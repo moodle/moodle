@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 Note - All hash comments refer to the issue number. Eg. #169 refers to https://github.com/mdjnelson/moodle-mod_customcert/issues/169.
 
+## [4.4.6] - 2025-06-07
+
+### Added
+
+- Added choice for code format (#668).
+- Added events for adding and deleting certificate issues (#675).
+
+## [4.4.5] - 2025-05-25
+
+### Fixed
+
+- Fixed enrol start date not showing (#410).
+- Pass the user's mailformat preference when emailing certificates (#665).
+
+### Added
+
+- Added index to the 'code' column in 'customcert_issues' table (#666).
+
 ## [4.4.4] - 2025-02-23
 
 ### Fixed
