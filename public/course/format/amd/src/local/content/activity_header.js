@@ -50,7 +50,7 @@ export default class Component extends BaseComponent {
      */
     static init(target, selectors) {
         const elementselector = (target) ? target : SELECTORS.ACTIVITY_HEADER;
-        return new Component({
+        return new this({
             element: document.querySelector(elementselector),
             reactive: getCurrentCourseEditor(),
             selectors

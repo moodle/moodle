@@ -104,8 +104,10 @@
     {{> core_courseformat/local/courseindex/section }}
     {{/sections}}
 </div>
+{{$ core_courseformat/local/courseindex/courseindex-js}}
 {{#js}}
 require(['core_courseformat/local/courseindex/courseindex'], function(component) {
     component.init('#course-index');
 });
 {{/js}}
+{{/ core_courseformat/local/courseindex/courseindex-js}}
