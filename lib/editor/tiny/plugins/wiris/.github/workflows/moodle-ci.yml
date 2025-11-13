@@ -29,7 +29,7 @@ jobs:
     # Define required services.
     services:
       postgres:
-        image: postgres:14
+        image: postgres:17
         env:
           POSTGRES_USER: "postgres"
           POSTGRES_HOST_AUTH_METHOD: "trust"
@@ -49,6 +49,7 @@ jobs:
             "MOODLE_404_STABLE",
             "MOODLE_405_STABLE",
             "MOODLE_500_STABLE",
+            "MOODLE_501_STABLE",
             "main",
           ]
         database: [pgsql]
@@ -67,6 +68,8 @@ jobs:
             php: "7.4"
           - moodle_branch: "MOODLE_500_STABLE"
             php: "7.4"
+          - moodle_branch: "MOODLE_501_STABLE"
+            php: "7.4"
           - moodle_branch: "main"
             php: "7.4"
 
@@ -76,10 +79,14 @@ jobs:
             php: "8.0"
           - moodle_branch: "MOODLE_500_STABLE"
             php: "8.0"
+          - moodle_branch: "MOODLE_501_STABLE"
+            php: "8.0"
           - moodle_branch: "main"
             php: "8.0"
 
           - moodle_branch: "MOODLE_500_STABLE"
+            php: "8.1"
+          - moodle_branch: "MOODLE_501_STABLE"
             php: "8.1"
           - moodle_branch: "main"
             php: "8.1"
@@ -237,7 +244,7 @@ jobs:
             "MOODLE_401_STABLE"|"MOODLE_402_STABLE"|"MOODLE_403_STABLE"|"MOODLE_404_STABLE"|"MOODLE_405_STABLE")
               TAG="@4.x_tinymce6${{ github.event.inputs.tags }}"
               ;;
-            "MOODLE_500_STABLE"|"main")
+            "MOODLE_500_STABLE"|"MOODLE_501_STABLE"|"main")
               TAG="@5.x_tinymce6${{ github.event.inputs.tags }}"
               ;;
             *)

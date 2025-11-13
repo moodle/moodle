@@ -3,7 +3,7 @@
     <library>
         <location>js/plugin.min.js</location>
         <name>MathType for TinyMCE6</name>
-        <version>8.7.2</version>
+        <version>8.13.2</version>
         <license>GPL</license>
         <licenseversion>3.0+</licenseversion>
     </library>

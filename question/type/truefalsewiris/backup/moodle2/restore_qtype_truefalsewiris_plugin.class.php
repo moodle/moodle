@@ -36,6 +36,30 @@ class restore_qtype_truefalsewiris_plugin extends restore_qtype_truefalse_plugin
         return $paths; // And we return the interesting paths.
     }
 
+    public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+        // Moodle abstract implementation for this function assumes that the qtype plugin options are stored in the
+        // ['plugin_qtype_{qtypename}_question']['{qtypename}'] array, so we need map the options from the base qtype.
+        if (isset($backupdata['plugin_qtype_truefalsewiris_question']['truefalse'])) {
+            $backupdata['plugin_qtype_truefalsewiris_question']['truefalsewiris'] = $backupdata['plugin_qtype_truefalsewiris_question']['truefalse'];
+        }
+
+        // Convert the backup data to question data.
+        $questiondata = parent::convert_backup_to_questiondata($backupdata);
+
+        // Include Wiris question XML if it exists.
+        if (isset($backupdata['plugin_qtype_truefalsewiris_question']['question_xml'][0]['xml'])) {
+            $questiondata->options->wirisquestion = $backupdata['plugin_qtype_truefalsewiris_question']['question_xml'][0]['xml'];
+        }
+
+        // Include Wiris options if they exist (truefalsewiris override answer options).
+        if (isset($backupdata['plugin_qtype_truefalsewiris_question']['question_xml'][0]['options'])) {
+            $questiondata->options->wirisoptions = $backupdata['plugin_qtype_truefalsewiris_question']['question_xml'][0]['options'];
+        }
+
+        return $questiondata;
+    }
+
+
     public function process_qtype_wq_truefalsewiris($data) {
         global $DB;
 
@@ -63,11 +87,10 @@ class restore_qtype_truefalsewiris_plugin extends restore_qtype_truefalse_plugin
 
     protected function decode_html_entities($xml) {
         $htmlentitiestable = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES, 'UTF-8');
-        $xmlentitiestable = get_html_translation_table(HTML_SPECIALCHARS , ENT_COMPAT, 'UTF-8');
+        $xmlentitiestable = get_html_translation_table(HTML_SPECIALCHARS, ENT_COMPAT, 'UTF-8');
         $entitiestable = array_diff($htmlentitiestable, $xmlentitiestable);
         $decodetable = array_flip($entitiestable);
         $xml = str_replace(array_keys($decodetable), array_values($decodetable), $xml);
         return $xml;
     }
-
 }

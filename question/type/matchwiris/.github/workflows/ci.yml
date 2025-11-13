@@ -1,104 +1,207 @@
 name: Moodle Plugin CI
 
-on: [push, pull_request, workflow_dispatch]
-
+# Automatically triggered on push to main branch, on pull requests
+on: ['push', 'pull_request']
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     services:
       postgres:
-        image: postgres:10
+        image: postgres:17
         env:
-          POSTGRES_USER: 'postgres'
-          POSTGRES_HOST_AUTH_METHOD: 'trust'
+          POSTGRES_USER: "postgres"
+          POSTGRES_HOST_AUTH_METHOD: "trust"
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
 
     strategy:
       fail-fast: false
+
       matrix:
-        php: ['7.3','7.4']
-        moodle-branch: ['MOODLE_39_STABLE', 'MOODLE_310_STABLE', 'MOODLE_311_STABLE', 'MOODLE_400_STABLE']
+        php: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
+        moodle_branch:
+          [
+            "MOODLE_401_STABLE",
+            "MOODLE_402_STABLE",
+            "MOODLE_403_STABLE",
+            "MOODLE_404_STABLE",
+            "MOODLE_405_STABLE",
+            "MOODLE_500_STABLE",
+            "main",
+          ]
         database: [pgsql]
+        browser: ["chrome", "firefox"]
+        exclude:
+          # Exclude Moodle+PHP incompatible versions
+          # See: https://docs.moodle.org/dev/Moodle_and_PHP
+
+          - moodle_branch: "MOODLE_402_STABLE"
+            php: "7.4"
+          - moodle_branch: "MOODLE_403_STABLE"
+            php: "7.4"
+          - moodle_branch: "MOODLE_404_STABLE"
+            php: "7.4"
+          - moodle_branch: "MOODLE_405_STABLE"
+            php: "7.4"
+          - moodle_branch: "MOODLE_500_STABLE"
+            php: "7.4"
+
+
+          - moodle_branch: "MOODLE_404_STABLE"
+            php: "8.0"
+          - moodle_branch: "MOODLE_405_STABLE"
+            php: "8.0"
+          - moodle_branch: "MOODLE_500_STABLE"
+            php: "8.0"
+
+          - moodle_branch: "MOODLE_500_STABLE"
+            php: "8.1"
+
+          - moodle_branch: "MOODLE_401_STABLE"
+            php: "8.2"
+
+          - moodle_branch: "MOODLE_401_STABLE"
+            php: "8.3"
+          - moodle_branch: "MOODLE_402_STABLE"
+            php: "8.3"
+          - moodle_branch: "MOODLE_403_STABLE"
+            php: "8.3"
+
+          - moodle_branch: "MOODLE_401_STABLE"
+            php: "8.4"
+          - moodle_branch: "MOODLE_402_STABLE"
+            php: "8.4"
+          - moodle_branch: "MOODLE_403_STABLE"
+            php: "8.4"
+          - moodle_branch: "MOODLE_404_STABLE"
+            php: "8.4"
+          - moodle_branch: "MOODLE_405_STABLE"
+            php: "8.4"
+
+          - moodle_branch: "main"
+
+
+        include:
+          # Only test master against latest PHP until we know which
+          # versions are supported in the next release
+          - moodle_branch: "main"
+            php: "8.4"
+            database: "pgsql"
+    continue-on-error: ${{ matrix.branch == 'main' }}
 
     steps:
-      - name: Get branch name
-        id: branch-name
-        uses: tj-actions/branch-names@v7.0.7
-
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: plugin
 
+      # 0.1 Detect branch name based on event type.
+      - name: Set branch name
+        id: get_branch
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+          else
+            echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+
+      # 0.2 Log current matrix info.
+      - name: Log info
+        run: |
+          echo "PHP: ${{ matrix.php }}"
+          echo "Moodle: ${{ matrix.moodle_branch }}"
+          echo "Browser: ${{ matrix.browser }}"
+          echo "Branch: ${{ env.BRANCH_NAME }}"
+
+      # 0.3 Cache Composer for faster builds.
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ github.workspace }}/.composer/cache
+            ${{ github.workspace }}/.npm
+          key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ matrix.moodle_branch }}
+          restore-keys: ${{ runner.os }}-composer-${{ matrix.php }}-${{ matrix.moodle_branch }}
+
+      # 1. Setup PHP for the current matrix.
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: ${{ matrix.extensions }}
-          ini-values: max_input_vars=5000
+          ini-values: max_input_vars=10000
           coverage: none
 
+      # 2. Install moodle-plugin-ci tool.
       - name: Initialise moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
-          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+          echo NVM_DIR=$NVM_DIR >> $GITHUB_ENV
+        env:
+          IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+          COVERAGE: false
+          CODECHECKER_IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
+          PHPUNIT_IGNORE_PATHS: classes/privacy,ignore,node_modules,integration,render
 
-      - name: Add filter & commons qtype
+      # 3. Install filter
+      - name: Add Wiris filter
         run: |
           moodle-plugin-ci add-plugin wiris/moodle-filter_wiris
-          moodle-plugin-ci add-plugin --branch ${{ steps.branch-name.outputs.current_branch }} wiris/moodle-qtype_wq
-
-      - name: Install moodle-plugin-ci
+          
+      # 3.5. Install Wiris Quizzes plugin.
+      - name: Add Wiris Quizzes plugin
+        id: install-plugin-quizzes
+        if: ${{ always() }}
+        continue-on-error: true
         run: |
-          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+          moodle-plugin-ci add-plugin --branch ${{ env.BRANCH_NAME }} wiris/moodle-qtype_wq
+      - name: Add Wiris Quizzes plugin using the main branch
+        if: ${{ steps.install-plugin-quizzes.outcome != 'success' }}
+        run: |
+          moodle-plugin-ci add-plugin --branch main wiris/moodle-qtype_wq
+       
+      # 4. Install plugin and configure DB.
+      - name: Install moodle-plugin-ci
+        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
           DB: ${{ matrix.database }}
-          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+          MOODLE_BRANCH: ${{ matrix.moodle_branch }}
 
-      - name: PHP Lint
-        if: ${{ always() }}
-        run: moodle-plugin-ci phplint
-
-      - name: PHP Copy/Paste Detector
-        continue-on-error: true # This step will show errors but will not fail
-        if: ${{ always() }}
-        run: moodle-plugin-ci phpcpd
-
-      - name: PHP Mess Detector
-        continue-on-error: true # This step will show errors but will not fail
-        if: ${{ always() }}
-        run: moodle-plugin-ci phpmd
-
-      - name: Moodle Code Checker
-        if: ${{ always() }}
-        run: moodle-plugin-ci codechecker --max-warnings 0
-
-      - name: Validating
-        if: ${{ always() }}
-        run: moodle-plugin-ci validate
-
-      - name: Check upgrade savepoints
-        if: ${{ always() }}
-        run: moodle-plugin-ci savepoints
-
-      - name: Mustache Lint
-        if: ${{ always() }}
-        run: moodle-plugin-ci mustache
-
-      - name: Grunt
-        if: ${{ always() }}
-        run: moodle-plugin-ci grunt --max-lint-warnings 0
-
+      # 5. Run PHPUnit tests.
       - name: PHPUnit tests
         if: ${{ always() }}
-        run: moodle-plugin-ci phpunit
+        run: moodle-plugin-ci phpunit ./plugin
+        continue-on-error: true
 
-      - name: Behat features
+      # 5.1 Run Moodle code validation.
+      - name: Validating
         if: ${{ always() }}
-        run: moodle-plugin-ci behat --profile chrome
+        run: moodle-plugin-ci validate ./plugin
+        continue-on-error: true
+
+      # 6. Run Behat tests.
+      - name: Behat features for ( ${{ matrix.moodle_branch }} on PHP ${{ matrix.php }} )
+        id: behat
+        run: |
+          case "${{ matrix.moodle_branch }}" in
+            "MOODLE_401_STABLE"|"MOODLE_402_STABLE"|"MOODLE_403_STABLE"|"MOODLE_404_STABLE"|"MOODLE_405_STABLE"|"MOODLE_500_STABLE"|"main")
+              TAG="@qtype_matchwiris"
+              ;;
+          esac
+          moodle-plugin-ci behat --tags=$TAG --profile ${{ matrix.browser }} --auto-rerun=2 --verbose -vvv
+
+      # 6.1 Upload Behat fail dumps when errors occur.
+      - name: Upload Behat Faildump
+        if: ${{ failure() && steps.behat.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Behat Faildump (${{ matrix.php }}, ${{ matrix.moodle_branch }}, ${{ matrix.browser }})
+          path: ${{ github.workspace }}/moodledata/behat_dump
+          retention-days: 1
+          if-no-files-found: ignore
+

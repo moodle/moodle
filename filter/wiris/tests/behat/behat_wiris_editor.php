@@ -107,7 +107,20 @@ class behat_wiris_editor extends behat_wiris_base {
         );
         $session = $this->getSession();
         $component = $session->getPage()->find('xpath', '//button[@id=\'wrs_modal_button_accept[0]\']');
-        $component->click();
+
+        // Hack to allow accept button to be clicked even outside of window bounds.
+        if (!$component) {
+            throw new Exception("Accept button not found");
+        }
+
+        $session->wait(500);
+
+        $session->executeScript("
+            var btn = document.getElementById('wrs_modal_button_accept[0]');
+            if (btn) {
+                btn.click();
+            }
+        ");
     }
 
     /**
@@ -134,7 +147,20 @@ class behat_wiris_editor extends behat_wiris_base {
         );
         $session = $this->getSession();
         $component = $session->getPage()->find('xpath', '//button[@id=\'wrs_modal_button_cancel[0]\']');
-        $component->click();
+
+        // Hack to allow cancel button to be clicked even outside of window bounds.
+        if (!$component) {
+            throw new Exception("Cancel button not found");
+        }
+
+        $session->wait(500);
+
+        $session->executeScript("
+            var btn = document.getElementById('wrs_modal_button_cancel[0]');
+            if (btn) {
+                btn.click();
+            }
+        ");
     }
 
     /**

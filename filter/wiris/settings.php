@@ -233,13 +233,13 @@ if ($ADMIN->fulltree) {
                 }
                 // Atto is deprecated since version 5.0. Create the warning message only if Atto exists on Moodle.
                 $attourl = '';
+                $attributes = [];
                 if ($CFG->branch < 500) {
                     $attourl .= 'https://moodle.org/plugins/atto_wiris';
                     $warningoutput .= html_writer::link($attourl, get_string('wirispluginforatto', 'filter_wiris'), $attributes);
                     $warningoutput .= '&nbsp;' . get_string('or', 'filter_wiris') . '&nbsp;';
                 }
                 $linkattributes = ['target' => '_blank'];
-                $attributes = [];
                 $warningoutput .= html_writer::link($tinyurl, get_string('wirispluginfortinymce', 'filter_wiris'), $attributes);
                 $warningoutput .= '&nbsp;' . get_string('arenotinstalled', 'filter_wiris') . '&nbsp;';
                 $warningoutput .= get_string('furtherinformation', 'filter_wiris') . '&nbsp;';

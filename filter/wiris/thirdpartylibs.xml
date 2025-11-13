@@ -10,7 +10,7 @@
     <library>
         <location>render</location>
         <name>MathType Web Integration JavaScript SDK</name>
-        <version>8.12.0</version>
+        <version>8.13.2</version>
         <license>GPL</license>
         <licenseversion>3.0+</licenseversion>
     </library>
