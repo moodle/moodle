@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb5d63af629edef7aab247ff67cc8f2b",
+    "content-hash": "939ec71828eca7430b8d310873f8c395",
     "packages": [
         {
             "name": "Integrations/phpsdk-package",
@@ -18,10 +18,10 @@
                 "type": "zip",
                 "url": "http://bin-repo.iparadigms.com/artifactory/integrations-composer/dist/integrations-phpsdk-package-v1.3.4-2d67fc.zip",
                 "reference": "382750d710a06eb2f2a8de1757d4b27b23f55f33",
-                "shasum": "5f9052ea561f6947756e8ec925f1fcc7794ce7d8"
+                "shasum": "0ca99b15d61b73ab19eed69f8f888201b2d8782c"
             },
             "require": {
-                "nategood/httpful": "^0.2.20",
+                "nategood/httpful": "^1.0.0",
                 "php": ">=5.4.4"
             },
             "require-dev": {
@@ -48,24 +48,24 @@
         },
         {
             "name": "nategood/httpful",
-            "version": "0.2.20",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nategood/httpful.git",
-                "reference": "c1cd4d46a4b281229032cf39d4dd852f9887c0f6"
+                "reference": "ea02c8aedef70b9a453ce97978d9d7c413972f15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nategood/httpful/zipball/c1cd4d46a4b281229032cf39d4dd852f9887c0f6",
-                "reference": "c1cd4d46a4b281229032cf39d4dd852f9887c0f6",
+                "url": "https://api.github.com/repos/nategood/httpful/zipball/ea02c8aedef70b9a453ce97978d9d7c413972f15",
+                "reference": "ea02c8aedef70b9a453ce97978d9d7c413972f15",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "php": ">=5.3"
+                "php": ">=8.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "*"
+                "phpunit/phpunit": "^10.5"
             },
             "type": "library",
             "autoload": {
@@ -94,15 +94,20 @@
                 "rest",
                 "restful"
             ],
-            "time": "2015-10-26T16:11:30+00:00"
+            "support": {
+                "issues": "https://github.com/nategood/httpful/issues",
+                "source": "https://github.com/nategood/httpful/tree/v1.0.0"
+            },
+            "time": "2024-05-01T11:33:16+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": []
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

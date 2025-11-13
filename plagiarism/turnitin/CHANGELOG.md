@@ -1,3 +1,28 @@
+### Date:       2025-October-29
+### Release:    v2025102901
+
+---
+
+#### Online Text Submission Now Working with Group Submissions
+Students now able to submit online text with Group Submissions.
+
+#### Online Text Quiz Attempts Fixed
+The identifier hash was being calculated incorrectly when looking up online text quiz attempts for students, this has now been fixed.
+
+#### Eula Only Displays When Plugin Enabled In Quizzes
+The Eula was mistakenly being shown to all users who have not accepted it when opening a quiz, even when the plugin was not enabled, this no longer occurs.
+
+#### Behat Updates
+Tests updated so they now can be run with the Moodle's wider behat suite.
+
+#### Clarified Text
+Updated some wording around anonymous marking for clarification.
+
+#### Code Cleanup & General Improvements
+Performance upgrades, refactoring deprecated code.
+
+---
+
 ### Date:       2025-July-02
 ### Release:    v2025070201
 

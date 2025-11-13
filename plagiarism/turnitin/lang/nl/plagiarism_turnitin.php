@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'nl'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Beoordelingsschema van andere docent gebruiken';
 $string['attachrubric'] = 'Een beoordelingsschema toevoegen aan deze opdracht';
 $string['launchrubricmanager'] = 'Rubric Manager starten';
 $string['attachrubricnote'] = 'Let op: studenten kunnen bijgevoegde beoordelingsschema&#39;s en de inhoud ervan bekijken alvorens in te dienen.';
-$string['anonblindmarkingnote'] = 'Opmerking: de afzonderlijke Turnitin-instelling voor anonieme beoordeling is verwijderd. Turnitin gebruikt de Moodle-instelling voor blinde beoordeling om de instelling voor anonieme beoordeling te bepalen.';
+$string['anonblindmarkingnote'] = "Opmerking: De aparte instelling voor anonieme beoordeling via Turnitin is verwijderd. Turnitin gebruikt de instellingen voor anonieme inzendingen van Moodle om de instellingen voor anoniem beoordelen te bepalen.";
 $string['transmatch'] = 'Vertaald matchen';
 $string["reportgen_immediate_add_immediate"] = "Rapporten onmiddellijk genereren. Inzendingen worden onmiddellijk aan de opslag toegevoegd (als de opslag is ingesteld).";
 $string["reportgen_immediate_add_duedate"] = "Rapporten onmiddellijk genereren. Inzendingen worden op de inleverdatum aan de opslag toegevoegd (als de opslag is ingesteld).";

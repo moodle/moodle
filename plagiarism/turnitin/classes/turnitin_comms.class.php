@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines turnitin_comms class
+ *
+ * @package   plagiarism_turnitin
+ * @copyright 2012 iParadigms LLC *
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -26,23 +34,52 @@ require_once($CFG->dirroot.'/plagiarism/turnitin/vendor/autoload.php');
 
 use Integrations\PhpSdk\TurnitinAPI;
 
+/**
+ * Defines turnitin_comms class
+ */
 class turnitin_comms {
 
+    /**
+     * @var mixed
+     */
     private $tiiaccountid;
+    /**
+     * @var mixed|string
+     */
     private $tiiapiurl;
+    /**
+     * @var mixed
+     */
     private $tiisecretkey;
+    /**
+     * @var int
+     */
     private $tiiintegrationid;
+    /**
+     * @var int
+     */
     private $diagnostic;
+    /**
+     * @var string
+     */
     private $langcode;
 
+    /**
+     * Constructor
+     *
+     * @param string $accountid
+     * @param string $accountshared
+     * @param string $url
+     * @throws moodle_exception
+     */
     public function __construct($accountid = null, $accountshared = null, $url = null) {
         $config = plagiarism_plugin_turnitin::plagiarism_turnitin_admin_config();
 
         if (!is_null($url)) {
             $this->tiiapiurl = $url;
         } else {
-            $this->tiiapiurl = (substr($config->plagiarism_turnitin_apiurl, -1) == '/')
-                ? substr($config->plagiarism_turnitin_apiurl, 0, -1) : $config->plagiarism_turnitin_apiurl;
+            $this->tiiapiurl = (substr($config->plagiarism_turnitin_apiurl, -1) == '/') ?
+                substr($config->plagiarism_turnitin_apiurl, 0, -1) : $config->plagiarism_turnitin_apiurl;
         }
 
         $this->tiiintegrationid = 12;
@@ -53,17 +90,18 @@ class turnitin_comms {
             plagiarism_turnitin_print_error( 'configureerror', 'plagiarism_turnitin' );
         }
 
-        $this->diagnostic = (isset($config->plagiarism_turnitin_enablediagnostic))
-            ? $config->plagiarism_turnitin_enablediagnostic : 1;
+        $this->diagnostic = (isset($config->plagiarism_turnitin_enablediagnostic)) ?
+            $config->plagiarism_turnitin_enablediagnostic : 0;
         $this->langcode = $this->get_lang();
     }
 
     /**
      * Initialise the API object
      *
+     * @param bool $istestingconnection
      * @return object \APITurnitin
      */
-    public function initialise_api( $istestingconnection = false ) {
+    public function initialise_api($istestingconnection = false) {
         global $CFG, $tiipp;
 
         $api = new TurnitinAPI($this->tiiaccountid, $this->tiiapiurl, $this->tiisecretkey,
@@ -120,7 +158,8 @@ class turnitin_comms {
      *
      * @param object $e
      * @param string $tterrorstr
-     * @param boolean $toscreen
+     * @param bool $toscreen
+     * @param bool $embedded
      */
     public function handle_exceptions($e, $tterrorstr = "", $toscreen = true, $embedded = false) {
         $errorstr = "";
@@ -131,23 +170,23 @@ class turnitin_comms {
             }
         }
 
-        if (is_callable(array($e, 'getFaultCode'))) {
+        if (is_callable([$e, 'getFaultCode'])) {
             $errorstr .= get_string('faultcode', 'plagiarism_turnitin').": ".$e->getFaultCode()." | ";
         }
 
-        if (is_callable(array($e, 'getFile'))) {
+        if (is_callable([$e, 'getFile'])) {
             $errorstr .= get_string('file').": ".$e->getFile()." | ";
         }
 
-        if (is_callable(array($e, 'getLine'))) {
+        if (is_callable([$e, 'getLine'])) {
             $errorstr .= get_string('line', 'plagiarism_turnitin').": ".$e->getLine()." | ";
         }
 
-        if (is_callable(array($e, 'getMessage'))) {
+        if (is_callable([$e, 'getMessage'])) {
             $errorstr .= get_string('message', 'plagiarism_turnitin').": ".$e->getMessage()." | ";
         }
 
-        if (is_callable(array($e, 'getCode'))) {
+        if (is_callable([$e, 'getCode'])) {
             $errorstr .= get_string('code', 'plagiarism_turnitin').": ".$e->getCode();
         }
 
@@ -162,12 +201,11 @@ class turnitin_comms {
     /**
      * Outputs a language code to use with the Turnitin API
      *
-     * @param string $langcode The Moodle language code
      * @return string The cleaned and mapped associated Turnitin lang code
      */
     private function get_lang() {
         $langcode = str_replace("_utf8", "", current_language());
-        $langarray = array(
+        $langarray = [
             'en' => 'en_us',
             'en_us' => 'en_us',
             'fr' => 'fr',
@@ -188,13 +226,15 @@ class turnitin_comms {
             'sv' => 'sv',
             'nl' => 'nl',
             'fi' => 'fi',
-            'ar' => 'ar'
-        );
+            'ar' => 'ar',
+        ];
         $langcode = (isset($langarray[$langcode])) ? $langarray[$langcode] : 'en_us';
         return $langcode;
     }
 
     /**
+     * Set the diagnostic setting
+     *
      * @param int $diagnostic Set diagnostic setting.
      */
     public function set_diagnostic($diagnostic) {

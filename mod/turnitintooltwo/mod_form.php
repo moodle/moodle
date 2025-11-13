@@ -27,6 +27,8 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once(__DIR__.'/lib.php');
 
+define('TII_INTRO_CHARACTER_LIMIT', 1000);
+
 class mod_turnitintooltwo_mod_form extends moodleform_mod {
 
     private $updating;
@@ -157,8 +159,6 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
                                                         "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/colorbox.css"));
         $script .= html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
                                                         "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/tii-icon-webfont.css"));
-        $script .= html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
-                                                        "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/fontawesome.min.css"));
 
         $mform->addElement('html', $script);
 
@@ -393,7 +393,7 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
             }
         }
 
-        $mform->addElement('header', 'advanced', get_string('turnitinoroptions', 'turnitintooltwo'));
+        $mform->addElement('header', 'similarityoptionsheader', get_string('turnitinoroptions', 'turnitintooltwo'));
 
         $mform->addElement('select', 'allowlate', get_string('allowlate', 'turnitintooltwo'), $ynoptions);
         $mform->setDefault('allowlate', $config->default_allowlate);
@@ -532,7 +532,7 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
 
         // Populate Rubric options.
         if (!empty($config->usegrademark)) {
-            $mform->addElement('header', 'advanced', get_string('turnitingmoptions', 'turnitintooltwo'));
+            $mform->addElement('header', 'grademarkoptionsheader', get_string('turnitingmoptions', 'turnitintooltwo'));
 
             // Add no rubric option and rubrics belonging to Instructor.
             $rubricoptions = array('' => get_string('norubric', 'turnitintooltwo')) + $instructorrubrics;
@@ -574,53 +574,6 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
             $mform->setType('rubric', PARAM_RAW);
         }
 
-        if (!empty($config->usegrammar)) {
-            $handbookoptions = array(
-                                        1 => get_string('erater_handbook_advanced', 'turnitintooltwo'),
-                                        2 => get_string('erater_handbook_highschool', 'turnitintooltwo'),
-                                        3 => get_string('erater_handbook_middleschool', 'turnitintooltwo'),
-                                        4 => get_string('erater_handbook_elementary', 'turnitintooltwo'),
-                                        5 => get_string('erater_handbook_learners', 'turnitintooltwo')
-                                    );
-            $dictionaryoptions = array(
-                                        'en_US' => get_string('erater_dictionary_enus', 'turnitintooltwo'),
-                                        'en_GB' => get_string('erater_dictionary_engb', 'turnitintooltwo'),
-                                        'en' => get_string('erater_dictionary_en', 'turnitintooltwo')
-                                    );
-            $mform->addElement('select', 'erater', get_string('erater', 'turnitintooltwo'), $ynoptions);
-            $mform->setDefault('erater', $config->default_grammar);
-
-            $mform->addElement('select', 'erater_handbook', get_string('erater_handbook', 'turnitintooltwo'), $handbookoptions);
-            $mform->setDefault('erater_handbook', $config->default_grammar_handbook);
-            $mform->disabledIf('erater_handbook', 'erater', 'eq', 0);
-
-            $mform->addElement('select', 'erater_dictionary', get_string('erater_dictionary', 'turnitintooltwo'),
-                                    $dictionaryoptions);
-            $mform->setDefault('erater_dictionary', $config->default_grammar_dictionary);
-            $mform->disabledIf('erater_dictionary', 'erater', 'eq', 0);
-
-            $mform->addElement('checkbox', 'erater_spelling', get_string('erater_categories', 'turnitintooltwo'),
-                                    " ".get_string('erater_spelling', 'turnitintooltwo'));
-            $mform->setDefault('erater_spelling', $config->default_grammar_spelling);
-            $mform->disabledIf('erater_spelling', 'erater', 'eq', 0);
-
-            $mform->addElement('checkbox', 'erater_grammar', '', " ".get_string('erater_grammar', 'turnitintooltwo'));
-            $mform->setDefault('erater_grammar', $config->default_grammar_grammar);
-            $mform->disabledIf('erater_grammar', 'erater', 'eq', 0);
-
-            $mform->addElement('checkbox', 'erater_usage', '', " ".get_string('erater_usage', 'turnitintooltwo'));
-            $mform->setDefault('erater_usage', $config->default_grammar_usage);
-            $mform->disabledIf('erater_usage', 'erater', 'eq', 0);
-
-            $mform->addElement('checkbox', 'erater_mechanics', '', " ".get_string('erater_mechanics', 'turnitintooltwo'));
-            $mform->setDefault('erater_mechanics', $config->default_grammar_mechanics);
-            $mform->disabledIf('erater_mechanics', 'erater', 'eq', 0);
-
-            $mform->addElement('checkbox', 'erater_style', '', " ".get_string('erater_style', 'turnitintooltwo'));
-            $mform->setDefault('erater_style', $config->default_grammar_style);
-            $mform->disabledIf('erater_style', 'erater', 'eq', 0);
-        }
-
         $mform->addElement('hidden', 'ownerid', null);
         $mform->setType('ownerid', PARAM_RAW);
 
@@ -646,6 +599,14 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
         $errors = parent::validation($data, $files);
 
         $partnames = array();
+
+        $formatparams = new stdClass();
+        $formatparams->field = get_string('turnitintooltwointro', 'turnitintooltwo');
+        $formatparams->length = TII_INTRO_CHARACTER_LIMIT;
+        $formatparams->inputlength = mb_strlen(strip_tags($data['introeditor']['text']));
+        if ($formatparams->inputlength > TII_INTRO_CHARACTER_LIMIT) {
+          $errors['introeditor'] = get_string('maxlengthwithinput', 'turnitintooltwo', $formatparams);
+        }
 
         foreach ($data as $name => $value) {
             // Get part names from array of data.

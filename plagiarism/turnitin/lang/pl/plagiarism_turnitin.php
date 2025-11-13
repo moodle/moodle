@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'pl'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Użyj arkusza należącego do innego instruktora';
 $string['attachrubric'] = 'Dołącz arkusz do tego zadania';
 $string['launchrubricmanager'] = 'Uruchom Menedżera Arkuszy';
 $string['attachrubricnote'] = 'Uwaga: Przed dokonaniem wysyłki studenci będą mogli zobaczyć dołączone arkusze wraz z ich zawartością.';
-$string['anonblindmarkingnote'] = 'Uwaga: Oddzielne ustawienie anonimowych poprawek Turnitin zostało usunięte. Do ustalenia statusu ustawienia anonimowych poprawek zostanie użyte ustawienie ślepych poprawek usługi Moodle.';
+$string['anonblindmarkingnote'] = "Uwaga: Oddzielne ustawienie anonimowego oceniania Turnitin zostało usunięte. Turnitin będzie korzystać z ustawienia anonimowych wysyłek Moodle w celu określenia ustawienia anonimowego oceniania.";
 $string['transmatch'] = 'Przetłumaczone zbieżności';
 $string["reportgen_immediate_add_immediate"] = "Generuj raporty natychmiast. Wysyłki zostaną natychmiast dodane do magazynu (jeśli magazyn został ustawiony).";
 $string["reportgen_immediate_add_duedate"] = "Generuj raporty natychmiast. Wysyłki zostaną dodane do magazynu w danym terminie (jeśli magazyn został ustawiony).";

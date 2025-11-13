@@ -48,34 +48,13 @@
         position: relative;
         padding-right: 24px;
 
-        &:before {
-            position:absolute;
-            font-family: FontAwesome;
-            top:0;
-            right:0;
-            font-size: 1.33333em !important;
-            color: $dark-grey !important;
-            line-height: 0.75em;
-            vertical-align: -15%;
-            content: "\f040";
-            display: inline-block;
-            font-style: normal;
-            font-weight: normal;
-            font-size-adjust: none;
-            font-stretch: normal;
-            font-feature-settings: normal;
-            font-language-override: normal;
-            font-kerning: auto;
-            font-synthesis: weight style;
-            font-variant: normal;
-            font-size: inherit;
-            text-rendering: auto;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
         &:hover {
             border-bottom: 0 !important;
         }
+    }
+
+    .editor-pencil {
+      padding-left: 25px;
     }
 
     /*

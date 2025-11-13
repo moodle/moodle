@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'fr'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Utiliser la grille d&#39;évaluation appartenant à un
 $string['attachrubric'] = 'Joindre une rubrique à cet exercice';
 $string['launchrubricmanager'] = 'Démarrer le Gestionnaire de rubrique';
 $string['attachrubricnote'] = 'Remarque : les étudiants pourront voir les rubriques jointes et leurs contenus avant de soumettre leur devoir.';
-$string['anonblindmarkingnote'] = 'Remarque: le paramètre d’annotations anonymes à part de Turnitin a été supprimé. Turnitin utilisera le paramètre d’anonymat des copies de Moodle pour déterminer le paramètre d’annotations anonymes.';
+$string['anonblindmarkingnote'] = "Remarque : Le paramètre de correction anonyme propre à Turnitin a été supprimé. Turnitin utilisera le paramètre d’anonymisation des copies de Moodle pour la correction anonyme.";
 $string['transmatch'] = 'Traducteur de Similitude';
 $string["reportgen_immediate_add_immediate"] = "Générer des rapports immédiatement. Les copies seront immédiatement ajoutées dans la base de données (si la base de données est définie).";
 $string["reportgen_immediate_add_duedate"] = "Générer des rapports immédiatement. Les copies seront ajoutées dans la base de données à la date d'échéance (si la base de données est définie).";

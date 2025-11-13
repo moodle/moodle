@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'en'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -45,7 +52,7 @@ $string['otherrubric'] = 'Use rubric belonging to other instructor';
 $string['attachrubric'] = 'Attach a rubric to this assignment';
 $string['launchrubricmanager'] = 'Launch Rubric Manager';
 $string['attachrubricnote'] = 'Note: students will be able to view attached rubrics and their content prior to submitting.';
-$string['anonblindmarkingnote'] = 'Note: The separate Turnitin anonymous marking setting has been removed. Turnitin will use Moodle\'s blind marking setting to determine the anonymous marking setting.';
+$string['anonblindmarkingnote'] = "Note: The separate Turnitin anonymous marking setting has been removed. Turnitin will use Moodle's Anonymous submissions setting to determine the anonymous marking setting.";
 $string['transmatch'] = 'Translated Matching';
 $string["reportgen_immediate_add_immediate"] = "Generate reports immediately. Submissions will be added to the repository immediately (if repository is set).";
 $string["reportgen_immediate_add_duedate"] = "Generate reports immediately. Submissions will be added to the repository on due date (if repository is set).";

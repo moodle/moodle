@@ -23,10 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace plagiarism_turnitin;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/plagiarism/turnitin/lib.php');
+
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests for Turnitin quiz class.
@@ -34,13 +38,13 @@ require_once($CFG->dirroot . '/plagiarism/turnitin/lib.php');
  * @package plagiarism_turnitin
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plagiarism_turnitin_quiz_testcase extends advanced_testcase {
+#[CoversClass('\turnitin_quiz')]
+final class turnitin_quiz_test extends \advanced_testcase {
     /**
      * Proves that essay response marks are correctly updated.
-     *
      * @copyright 2014 Tim Hunt
      */
-    public function test_update_mark() {
+    public function test_update_mark(): void {
         $this->resetAfterTest();
 
         // Create a user, course, and quiz activity with an essay question.
@@ -64,7 +68,7 @@ class plagiarism_turnitin_quiz_testcase extends advanced_testcase {
         }
 
         $quizobj = $quizsettingsclass::create($quiz->id, $user->id);
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -78,7 +82,8 @@ class plagiarism_turnitin_quiz_testcase extends advanced_testcase {
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
         $attemptobj = $quizattemptclass::create($attempt->id);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         // Expect no marks or grade for the attempt yet.
         $attemptobj = $quizattemptclass::create($attempt->id);
@@ -87,7 +92,7 @@ class plagiarism_turnitin_quiz_testcase extends advanced_testcase {
         $this->assertEquals(0.0, $grade);
 
         // Now update the grade of the essay question through the Turnitin quiz class.
-        $tiiquiz = new turnitin_quiz;
+        $tiiquiz = new \turnitin_quiz;
         $answer = $attemptobj->get_question_attempt(1)->get_response_summary();
         $slot = 1;
         $identifier = sha1($answer.$slot);

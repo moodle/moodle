@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'pt_br'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Usar rubrica que pertence a outro professor';
 $string['attachrubric'] = 'Anexar uma rubrica a esse trabalho';
 $string['launchrubricmanager'] = 'Iniciar Gerenciador de Rubricas';
 $string['attachrubricnote'] = 'Observação: os alunos poderão visualizar as rubricas anexadas e seus conteúdos antes do envio.';
-$string['anonblindmarkingnote'] = 'Observação: a configuração de correção anônima Turnitin separada foi removida. O Turnitin usará a configuração de correção cega do Moodle\ para determinar a configuração de correção anônima.';
+$string['anonblindmarkingnote'] = "Observação: a configuração separada de correção anônima da Turnitin foi removida. A Turnitin usará a configuração de entregas anônimas do Moodle para determinar a configuração de correção anônima.";
 $string['transmatch'] = 'Correspondência Traduzida';
 $string["reportgen_immediate_add_immediate"] = "GGere relatórios imediatamente. As entregas serão adicionadas ao repositório imediatamente (se o repositório estiver definido).";
 $string["reportgen_immediate_add_duedate"] = "Gere relatórios imediatamente. As entregas serão adicionadas ao repositório na data prevista (se o repositório estiver definido).";

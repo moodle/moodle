@@ -569,8 +569,7 @@ class turnitintooltwo_user {
         $settingstosave = array("type", "numparts", "portfolio", "maxfilesize", "grade", "anon", "studentreports", "gradedisplay",
                                 "maxmarks1", "maxmarks2", "maxmarks3", "maxmarks4", "maxmarks5", "allowlate", "reportgenspeed",
                                 "submitpapersto", "spapercheck", "internetcheck", "journalcheck", "excludebiblio",
-                                "excludequoted", "excludevalue", "excludetype", "erater", "erater_handbook",
-                                "erater_dictionary", "transmatch");
+                                "excludequoted", "excludevalue", "excludetype", "transmatch");
 
         $instructordefaults = new stdClass();
         foreach ($settingstosave as $setting) {

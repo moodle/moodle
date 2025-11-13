@@ -18,23 +18,33 @@
  * Update report Scores from Turnitin.
  *
  * @package    plagiarism_turnitin
+ * @copyright  Turnitin
  * @author     John McGettrick http://www.turnitin.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace plagiarism_turnitin\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Update report Scores from Turnitin.
  */
 class update_reports extends \core\task\scheduled_task {
 
+    /**
+     * Get the name of the task.
+     *
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public function get_name() {
         return get_string('updatereportscores', 'plagiarism_turnitin');
     }
 
+    /**
+     * Execute the task.
+     *
+     * @return void
+     */
     public function execute() {
         global $CFG;
 

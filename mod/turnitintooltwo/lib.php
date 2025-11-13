@@ -468,30 +468,6 @@ function turnitintooltwo_duplicate_recycle($courseid, $action, $renewdates = nul
             $assignment->setTranslatedMatching($turnitintooltwoassignment->turnitintooltwo->transmatch);
             $assignment->setAllowNonOrSubmissions($turnitintooltwoassignment->turnitintooltwo->allownonor);
 
-            // Erater settings.
-            $erater = 0;
-            if (isset($turnitintooltwoassignment->turnitintooltwo->erater)) {
-                $erater = $turnitintooltwoassignment->turnitintooltwo->erater;
-            }
-            $assignment->setErater($erater);
-            $assignment->setEraterSpelling($turnitintooltwoassignment->turnitintooltwo->erater_spelling);
-            $assignment->setEraterGrammar($turnitintooltwoassignment->turnitintooltwo->erater_grammar);
-            $assignment->setEraterUsage($turnitintooltwoassignment->turnitintooltwo->erater_usage);
-            $assignment->setEraterMechanics($turnitintooltwoassignment->turnitintooltwo->erater_mechanics);
-            $assignment->setEraterStyle($turnitintooltwoassignment->turnitintooltwo->erater_style);
-
-            $eraterdictionary = 'en_US';
-            if (isset($turnitintooltwoassignment->turnitintooltwo->erater_dictionary)) {
-                $eraterdictionary = $turnitintooltwoassignment->turnitintooltwo->erater_dictionary;
-            }
-            $assignment->setEraterSpellingDictionary($eraterdictionary);
-
-            $eraterhandbook = 0;
-            if (isset($turnitintooltwoassignment->turnitintooltwo->erater_handbook)) {
-                $eraterhandbook = $turnitintooltwoassignment->turnitintooltwo->erater_handbook;
-            }
-            $assignment->setEraterHandbook($eraterhandbook);
-
             // Generate the assignment dates depending on whether we are renewing them or not.
             // UCL: Added in $currentcourse to turnitintooltwo_generate_part_dates() method,
             $datestart = turnitintooltwo_generate_part_dates($renewdates, "start", $turnitintooltwoassignment->turnitintooltwo, $i, $currentcourse);
@@ -643,6 +619,19 @@ function turnitintooltwo_reset_userdata($data) {
  */
 function turnitintooltwo_reset_course_form_defaults($course) {
     return array('reset_turnitintooltwo' => 0);
+}
+
+function turnitintooltwo_get_course_content_items(\core_course\local\entity\content_item $defaultmodulecontentitem, \stdClass $user,
+        \stdClass $course) {
+    global $COURSE;
+    
+    // Block selecting this activity at the site home page
+    if ($COURSE->id == SITEID) {
+        return [];
+    }
+
+    // If we're in a user-created course context, allow this activity to be selected
+    return [ $defaultmodulecontentitem ];
 }
 
 /**
@@ -814,9 +803,9 @@ function turnitintooltwo_cron_update_gradbook($assignment, $task) {
                 $overallgrade = $turnitintooltwoassignment->get_overall_grade($submissions, $cm);
                 if ($turnitintooltwoassignment->turnitintooltwo->grade < 0) {
                     // Using a scale.
-                    $grades->rawgrade = ($overallgrade == '--') ? null : $overallgrade;
+                    $grades->rawgrade = is_numeric($overallgrade) ? (float)$overallgrade : null;
                 } else {
-                    $grades->rawgrade = ($overallgrade == '--') ? null : number_format($overallgrade, 2);
+                    $grades->rawgrade = is_numeric($overallgrade) ? number_format((float)$overallgrade, 2) : null;
                 }
             }
             $grades->userid = $user->id;

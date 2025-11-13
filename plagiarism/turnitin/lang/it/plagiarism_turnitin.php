@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'it'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Usa la pagella di un altro docente';
 $string['attachrubric'] = 'Allega una pagella a questo compito';
 $string['launchrubricmanager'] = 'Avvia lo strumento di gestione pagelle';
 $string['attachrubricnote'] = 'Nota: gli studenti saranno in grado di visualizzare le pagelle allegate e il loro contenuto prima di consegnare.';
-$string['anonblindmarkingnote'] = 'Nota: l&#39;impostazione di valutazione anonima separata di Turnitin è stata rimossa. Turnitin utilizzerà l&#39;impostazione di valutazione anonima di Moodle per determinare l&#39;impostazione di valutazione anonima.';
+$string['anonblindmarkingnote'] = "Nota: L'impostazione di valutazione anonima separata di Turnitin è stata rimossa. Turnitin utilizzerà l'impostazione di consegne anonime di Moodle per determinare l'impostazione di valutazione anonima.";
 $string['transmatch'] = 'Corrispondenza di testo tradotto';
 $string["reportgen_immediate_add_immediate"] = "Genera report all'istante. Le consegne verranno aggiunte subito all'archivio (se è stato impostato un archivio).";
 $string["reportgen_immediate_add_duedate"] = "Genera report all'istante. Le consegne verranno aggiunte all'archivio alla data di scadenza (se è stato impostato un archivio).";

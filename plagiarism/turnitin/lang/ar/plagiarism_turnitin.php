@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'ar'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'إستخدام المعيار القياسي العا�
 $string['attachrubric'] = 'إلحاق باب أجوبة قياسية لهذه المهمة';
 $string['launchrubricmanager'] = 'أطلق معالج الأجوبة القياسية';
 $string['attachrubricnote'] = 'ملاحظة: سيكون بمقدور الطلاب مشاهدة المعايير القياسية الملحقة و محتوياتها قبل القيام بالتسليم.';
-$string['anonblindmarkingnote'] = 'ملحوظة: تم إزالة الإعداد المنفصل لوضع العلامات دون إظهار الأسماء بـ Turnitin. ستستخدم Turnitin إعداد وضع العلامات دون معرفة أسماء الطلاب التابع لـ Moodle لتحديد إعداد وضع العلامات دون إظهار الأسماء.';
+$string['anonblindmarkingnote'] = "ملاحظة: تمت إزالة إعداد التصحيح المجهول المنفصل في Turnitin. ستعتمد Turnitin الآن على إعداد التسليمات المجهولة في نظام Moodle لتحديد إعداد التصحيح المجهول.";
 $string['transmatch'] = 'تطابق الترجمة';
 $string["reportgen_immediate_add_immediate"] = "إنشاء التقارير على الفور. سيتم إضافة التسليمات إلى المستودع على الفور (إذا تم تعيين المستودع).";
 $string["reportgen_immediate_add_duedate"] = "إنشاء التقارير على الفور. سيتم إضافة التسليمات إلى المستودع في تاريخ الاستحقاق (إذا تم تعيين المستودع).";

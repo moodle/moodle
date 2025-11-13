@@ -1,3 +1,12 @@
+Announcement - Issues page merged with Turnitin's support page
+================
+
+In order to be able to better monitor incoming issues, we are consolidating the 3 issues pages for the 2 plagiarism plugins and Direct v2 with our existing support area.
+
+The support area is how our team currently monitors issues for every other area of Turnitin. Therefore, we will be closing the Issues pages. If you have issues with Turnitin Direct v2, please raise them here: https://helpcenter.turnitin.com/hc/en-us/requests/new
+
+The team appreciates your ongoing support and contributions. Thank you!
+
 Moodle Direct v2
 ================
 

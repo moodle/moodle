@@ -29,6 +29,7 @@ Feature: Plagiarism plugin works with a Moodle Assignment for a filetype which w
     And I set the following fields to these values:
       | Enable Diagnostic Mode | Standard |
     And I press "Save changes"
+    And I navigate to "Plugins > Plugins overview" in site administration
     Then the following should exist in the "plugins-control-panel" table:
       | Plugin name         |
       | plagiarism_turnitin |
@@ -68,25 +69,7 @@ Feature: Plagiarism plugin works with a Moodle Assignment for a filetype which w
     And I log in as "instructor1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then I should see "View all submissions"
-    When I navigate to "View all submissions" in current page administration
-    Then "student1 student1" row "File submissions" column of "generaltable" table should contain "Turnitin ID:"
-    # Trigger cron as admin for report
-    And I log out
-    And I log in as "admin"
-    And I run the scheduled task "\plagiarism_turnitin\task\update_reports"
-    # Instructor opens viewer
-    And I log out
-    And I log in as "instructor1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    Then I should see "View all submissions"
-    When I navigate to "View all submissions" in current page administration
-    Then "student1 student1" row "File submissions" column of "generaltable" table should not contain "%"
-    And I wait until "[alt='GradeMark']" "css_element" exists
-    And I click on "[alt='GradeMark']" "css_element"
-    And I switch to "turnitin_viewer" window
-    And I wait until the page is ready
-    And I accept the Turnitin EULA from the EV if necessary
-    And I wait until the page is ready
-    Then I should see "carpet.jpg"
+    Then I should see "Submissions"
+    When I navigate to "Submissions" in current page administration
+    # We do not want a report for a not accepted file type
+    Then "student1 student1" row "File submissions" column of "generaltable" table should not contain "Turnitin ID:"

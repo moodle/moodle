@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'fi'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Käytä toiselle ohjaajalle kuuluvaa arvostelumatriisi
 $string['attachrubric'] = 'Liitä tähän tehtävään arvostelumatriisi';
 $string['launchrubricmanager'] = 'Käynnistä Arvostelumatriisin Hallitsija';
 $string['attachrubricnote'] = 'Huomaa: opiskelijat pystyvät näkemään liitetyt arvostelumatriisit ja niiden sisällön ennen palautusta.';
-$string['anonblindmarkingnote'] = 'Huomautus: Erillinen Turnitinin nimetön merkintäasetus on poistettu. Turnitin käyttää Moodlen sokkomerkintäasetusta nimettömän merkintäasetuksen määrityksessä.';
+$string['anonblindmarkingnote'] = "Huomautus: Erillinen Turnitinin anonyymi arviointi -asetus on poistettu. Turnitin käyttää vastedes Moodlen anonyymin palauttamisen asetusta määrittääkseen anonyymin arvioinnin asetuksen.";
 $string['transmatch'] = 'Käännetty Vertailu';
 $string["reportgen_immediate_add_immediate"] = "Luo raportit välittömästi. Palautukset lisätään arkistoon välittömästi (jos arkisto on määritetty).";
 $string["reportgen_immediate_add_duedate"] = "Luo raportit välittömästi. Palautukset lisätään arkistoon palautuspäivänä (jos arkisto on määritetty).";

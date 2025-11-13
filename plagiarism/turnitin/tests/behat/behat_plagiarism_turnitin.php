@@ -17,6 +17,7 @@
 /**
  * Steps definitions related to plagiarism_turnitin.
  *
+ * @package   plagiarism_turnitin
  * @copyright 2018 Turnitin
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,10 +31,40 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 use Integrations\PhpSdk\TiiMembership;
 use Integrations\PhpSdk\TurnitinAPI;
+// Uncomment line below for screenshots upon behat test failure for debug aid
+// use Behat\Behat\Hook\Scope\AfterStepScope;
 
+/**
+ * Turnitin behat steps.
+ */
 class behat_plagiarism_turnitin extends behat_base {
 
+    // Uncomment chunk below for screenshots upon behat test failure for debug aid, may not work with iframes due to CORS
+//
+//    /**
+//     * @AfterStep
+//     */
+//    public function takeScreenshotAfterFailedStep(AfterStepScope $scope) {
+//        if ($scope->getTestResult()->getResultCode() == 99) {
+//            $this->takeScreenshot();
+//        }
+//    }
+//
+//    private function takeScreenshot() {
+//        $screenshot = $this->getSession()->getDriver()->getScreenshot();
+//        $path = __DIR__ . '/screenshots/' . date('d-m-y') . '-' . uniqid() . '.png';
+//
+//        if (!is_dir(dirname($path))) {
+//            mkdir(dirname($path), 0777, true);
+//        }
+//
+//        file_put_contents($path, $screenshot);
+//        print 'Screenshot at: ' . $path . PHP_EOL;
+//    }
+
     /**
+     * I switch to iframe with locator
+     *
      * @Given I switch to iframe with locator :locator
      * @param String $locator
      * @throws \Behat\Mink\Exception\DriverException
@@ -64,6 +95,8 @@ class behat_plagiarism_turnitin extends behat_base {
     }
 
     /**
+     * I configure Turnitin URL
+     *
      * @Given I configure Turnitin URL
      * @throws \Behat\Mink\Exception\ElementNotFoundException
      */
@@ -71,8 +104,8 @@ class behat_plagiarism_turnitin extends behat_base {
         $apiurl = getenv('TII_APIBASEURL');
         $javascript = "
             var option = document.createElement('option');
-            option.setAttribute('value', '${apiurl}');
-            var apiurl = document.createTextNode('${apiurl}');
+            option.setAttribute('value', '{$apiurl}');
+            var apiurl = document.createTextNode('{$apiurl}');
             var select = document.querySelector('#id_plagiarism_turnitin_apiurl');
             option.appendChild(apiurl);
             select.appendChild(option);
@@ -82,6 +115,8 @@ class behat_plagiarism_turnitin extends behat_base {
     }
 
     /**
+     * I configure Turnitin credentials
+     *
      * @Given I configure Turnitin credentials
      */
     public function i_configure_turnitin_credentials() {
@@ -95,18 +130,20 @@ class behat_plagiarism_turnitin extends behat_base {
     }
 
     /**
+     * I create a unique user with username
+     *
      * @Given I create a unique user with username :username
-     * @param $username
+     * @param string $username
      */
     public function i_create_a_unique_user($username) {
         $generator = testing_util::get_data_generator();
-        $generator->create_user(array(
+        $generator->create_user([
             'email' => uniqid($username, true) . '@example.com',
             'username' => $username,
             'password' => $username,
             'firstname' => $username,
-            'lastname' => $username
-        ));
+            'lastname' => $username,
+        ]);
     }
 
     /**
@@ -139,7 +176,9 @@ class behat_plagiarism_turnitin extends behat_base {
     /**
      * Poll 12 times over 2 minutes for an originality report. This should be enough time for the vast majority of cases.
      *
+     * phpcs:disable moodle.Files.LineLength.MaxExceeded
      * @Given /^I obtain an originality report for "(?P<student>(?:[^"]|\\")*)" on "(?P<modtype>(?:[^"]|\\")*)" "(?P<modname>(?:[^"]|\\")*)" on course "(?P<coursename>(?:[^"]|\\")*)"$/
+     *
      * @param string $student
      * @param string $modtype
      * @param string $modname
@@ -147,7 +186,8 @@ class behat_plagiarism_turnitin extends behat_base {
      * @throws ElementNotFoundException
      * @throws Exception
      */
-    public function i_obtain_an_originality_report_for_student_on_modtype_assignmentname_on_course_coursename($student, $modtype, $modname, $coursename) {
+    public function i_obtain_an_originality_report_for_student_on_modtype_assignmentname_on_course_coursename($student,
+        $modtype, $modname, $coursename) {
         $reportfound = false;
         $count = 1;
         while (!$reportfound) {
@@ -158,7 +198,7 @@ class behat_plagiarism_turnitin extends behat_base {
 
             switch($modtype) {
                 case "assignment":
-                    $this->execute('behat_navigation::i_navigate_to_in_current_page_administration', "View all submissions");
+                    $this->execute('behat_navigation::i_navigate_to_in_current_page_administration', "Submissions");
                     break;
                 case "forum":
                     $this->execute('behat_general::click_link', "Forum post 1");
@@ -171,11 +211,13 @@ class behat_plagiarism_turnitin extends behat_base {
             try {
                 switch($modtype) {
                     case "assignment":
-                        $this->execute('behat_general::row_column_of_table_should_contain', array($student, "File submissions", "generaltable", "%"));
+                        $this->execute('behat_general::row_column_of_table_should_contain',
+                            [$student, "File submissions", "generaltable", "%"]);
                         break;
                     case "forum":
                     case "workshop":
-                        $this->execute('behat_general::assert_element_contains_text', array("%", "div.origreport_score", "css_element"));
+                        $this->execute('behat_general::assert_element_contains_text',
+                            ["%", "div.origreport_score", "css_element"]);
                         break;
                 }
                 break;
@@ -189,31 +231,37 @@ class behat_plagiarism_turnitin extends behat_base {
     }
 
     /**
+     * I accept the Turnitin EULA if necessary
+     *
      * @Given I accept the Turnitin EULA if necessary
      */
     public function i_accept_the_turnitin_eula_if_necessary() {
         try {
             $this->getSession()->getPage()->find("css", ".pp_turnitin_eula_link");
 
-            $this->execute('behat_general::i_click_on', array(".pp_turnitin_eula_link", "css_element"));
-            $this->execute('behat_general::wait_until_exists', array(".iframe-ltilaunch-eula", "css_element"));
+            $this->execute('behat_general::i_click_on', [".pp_turnitin_eula_link", "css_element"]);
+            $this->execute('behat_general::wait_until_exists', [".iframe-ltilaunch-eula", "css_element"]);
             $this->i_switch_to_iframe_with_locator(".iframe-ltilaunch-eula");
-            $this->execute('behat_general::i_click_on', array(".agree-button", "css_element"));
+            $this->execute('behat_general::i_click_on', [".agree-button", "css_element"]);
         } catch (Exception $e) {
             // EULA not found - so skip it.
+            return;
         }
     }
 
     /**
+     * I accept the Turnitin EULA from the EV if necessary
+     *
      * @Given I accept the Turnitin EULA from the EV if necessary
      */
     public function i_accept_the_turnitin_eula_from_the_ev_if_necessary() {
         try {
             $this->getSession()->getPage()->find("css", ".agree-button");
 
-            $this->execute('behat_general::i_click_on', array(".agree-button", "css_element"));
+            $this->execute('behat_general::i_click_on', [".agree-button", "css_element"]);
         } catch (Exception $e) {
             // EULA not found - so skip it.
+            return;
         }
     }
 
@@ -223,11 +271,14 @@ class behat_plagiarism_turnitin extends behat_base {
      * @When /^I click save changes button "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)"$/
      * @param string $selector type of element like css or xpath
      * @param string $locator to identify element
+     * @param bool $exception
+     * @param bool $node
+     * @param bool $timeout
      */
     public function click_save_changes_button($selector, $locator, $exception = false, $node = false, $timeout = false) {
         try {
             $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
-            foreach($items as $element){
+            foreach ($items as $element) {
 
                 if ($element->isVisible()) {
                     echo "Element is visible ";
@@ -241,37 +292,45 @@ class behat_plagiarism_turnitin extends behat_base {
     }
 
     /**
+     * Given I click on the Turnitin assignment :assignmentname
+     *
      * @Given /^the following users will be created if they do not already exist:$/
      * @param TableNode $data
      * @throws Exception
      */
     public function the_following_users_will_be_created_if_they_do_not_already_exist(TableNode $data) {
-        $newdata = array();
-        $rowNum = 0;
+        $newdata = [];
+        $rownum = 0;
         foreach ($data->getRows() as $row) {
-            if (!$rowNum == 0) { // not header row
+            if (!$rownum == 0) { // Not header row.
                 $row[3] = str_replace('$account', getenv('TII_ACCOUNT'), $row[3]);
             }
-            $rowNum++;
+            $rownum++;
             $newdata[] = $row;
         }
         $tablenode = new TableNode($newdata);
-        $this->execute('behat_data_generators::the_following_entities_exist', array('users', $tablenode));
+        $this->execute('behat_data_generators::the_following_entities_exist', ['users', $tablenode]);
     }
 
     /**
+     * I unenroll the user account with the role from the class in Turnitin
+     *
+     * phpcs:disable moodle.Files.LineLength.TooLong
      * @Given /^I unenroll the user account "(?P<student>(?:[^"]|\\")*)" with the role "(?P<role>(?:[^"]|\\")*)" from the class in Turnitin$/
+     *
+     * @param string $student
+     * @param string $role
      * @throws Exception
      */
     public function i_unenroll_the_user_account_with_the_role_from_the_class_in_turnitin($student, $role) {
         global $DB;
 
-        $course = $DB->get_record("course", array("fullname" => "Turnitin Behat EULA Test Course"), 'id', MUST_EXIST);
-        $tiicourse = $DB->get_record('plagiarism_turnitin_courses', array("courseid" => $course->id), 'turnitin_cid', MUST_EXIST);
+        $course = $DB->get_record("course", ["fullname" => "Turnitin Behat EULA Test Course"], 'id', MUST_EXIST);
+        $tiicourse = $DB->get_record('plagiarism_turnitin_courses', ["courseid" => $course->id], 'turnitin_cid', MUST_EXIST);
 
         // Get the user.
-        $user = $DB->get_record("user", array("username" => $student), 'id', MUST_EXIST);
-        $tiiuser = $DB->get_record('plagiarism_turnitin_users', array("userid" => $user->id), 'turnitin_uid', MUST_EXIST);
+        $user = $DB->get_record("user", ["username" => $student], 'id', MUST_EXIST);
+        $tiiuser = $DB->get_record('plagiarism_turnitin_users', ["userid" => $user->id], 'turnitin_uid', MUST_EXIST);
 
         $turnitincall = $this->behat_initialise_api(getenv('TII_ACCOUNT'), getenv('TII_SECRET'), getenv('TII_APIBASEURL'));
 
@@ -291,7 +350,8 @@ class behat_plagiarism_turnitin extends behat_base {
                 $turnitincall->deleteMembership($membership);
             }
         } catch (Exception $e) {
-            // ignore exception.
+            // Ignore exception.
+            return;
         }
     }
 
@@ -300,7 +360,7 @@ class behat_plagiarism_turnitin extends behat_base {
      *
      * @return object \APITurnitin
      */
-    public function behat_initialise_api( ) {
+    public function behat_initialise_api() {
         global $CFG;
 
         $api = new TurnitinAPI(getenv('TII_ACCOUNT'), getenv('TII_APIBASEURL'), getenv('TII_SECRET'), 12);

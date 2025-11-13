@@ -7,28 +7,28 @@ namespace Httpful;
  */
 class Http
 {
-    const HEAD      = 'HEAD';
-    const GET       = 'GET';
-    const POST      = 'POST';
-    const PUT       = 'PUT';
-    const DELETE    = 'DELETE';
-    const PATCH     = 'PATCH';
-    const OPTIONS   = 'OPTIONS';
-    const TRACE     = 'TRACE';
+    public const HEAD      = 'HEAD';
+    public const GET       = 'GET';
+    public const POST      = 'POST';
+    public const PUT       = 'PUT';
+    public const DELETE    = 'DELETE';
+    public const PATCH     = 'PATCH';
+    public const OPTIONS   = 'OPTIONS';
+    public const TRACE     = 'TRACE';
 
     /**
      * @return array of HTTP method strings
      */
-    public static function safeMethods()
+    public static function safeMethods(): array
     {
-        return array(self::HEAD, self::GET, self::OPTIONS, self::TRACE);
+        return [self::HEAD, self::GET, self::OPTIONS, self::TRACE];
     }
 
     /**
      * @param string HTTP method
      * @return bool
      */
-    public static function isSafeMethod($method)
+    public static function isSafeMethod($method): bool
     {
         return in_array($method, self::safeMethods());
     }
@@ -37,7 +37,7 @@ class Http
      * @param string HTTP method
      * @return bool
      */
-    public static function isUnsafeMethod($method)
+    public static function isUnsafeMethod($method): bool
     {
         return !in_array($method, self::safeMethods());
     }
@@ -45,19 +45,19 @@ class Http
     /**
      * @return array list of (always) idempotent HTTP methods
      */
-    public static function idempotentMethods()
+    public static function idempotentMethods(): array
     {
         // Though it is possible to be idempotent, POST
         // is not guarunteed to be, and more often than
         // not, it is not.
-        return array(self::HEAD, self::GET, self::PUT, self::DELETE, self::OPTIONS, self::TRACE, self::PATCH);
+        return [self::HEAD, self::GET, self::PUT, self::DELETE, self::OPTIONS, self::TRACE, self::PATCH];
     }
 
     /**
      * @param string HTTP method
      * @return bool
      */
-    public static function isIdempotent($method)
+    public static function isIdempotent($method): bool
     {
         return in_array($method, self::safeidempotentMethodsMethods());
     }
@@ -66,7 +66,7 @@ class Http
      * @param string HTTP method
      * @return bool
      */
-    public static function isNotIdempotent($method)
+    public static function isNotIdempotent($method): bool
     {
         return !in_array($method, self::idempotentMethods());
     }
@@ -78,9 +78,9 @@ class Http
      *
      * @return array of HTTP method strings
      */
-    public static function canHaveBody()
+    public static function canHaveBody(): array
     {
-        return array(self::POST, self::PUT, self::PATCH, self::OPTIONS);
+        return [self::POST, self::PUT, self::PATCH, self::OPTIONS];
     }
 
 }

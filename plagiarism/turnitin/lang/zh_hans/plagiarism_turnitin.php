@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'zh_hans'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = '使用属于其他导师的评分表';
 $string['attachrubric'] = '将评分表附加至此作业';
 $string['launchrubricmanager'] = '启动评分表管理工具';
 $string['attachrubricnote'] = '注意：学生将可以在提交前查看附加的评分表及其内容。';
-$string['anonblindmarkingnote'] = '注意：已删除单独的 Turnitin 匿名标记设置。Turnitin 将使用 Moodle 隐蔽标记设置确定匿名标记设置。';
+$string['anonblindmarkingnote'] = "注意：单独的 Turnitin 匿名标记设置已被移除。Turnitin 将使用 Moodle 的匿名提交设置来确定匿名标记设置。";
 $string['transmatch'] = '已翻译的相符功能';
 $string["reportgen_immediate_add_immediate"] = "立即生成报告。提交项将立即添加到存储库中（如果设置了存储库）。";
 $string["reportgen_immediate_add_duedate"] = "立即生成报告。提交项将在截止日期添加到存储库中（如果设置了存储库）。";

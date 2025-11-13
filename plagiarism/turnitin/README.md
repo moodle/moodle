@@ -1,3 +1,12 @@
+Announcement - Issues page merged with Turnitin's support page
+================
+
+In order to be able to better monitor incoming issues, we are consolidating the 3 issues pages for the 2 plagiarism plugins and Direct v2 with our existing support area.
+
+The support area is how our team currently monitors issues for every other area of Turnitin. Therefore, we will be closing the Issues pages. If you have issues with the Turnitin plagiarism plugin, please raise them here: https://helpcenter.turnitin.com/hc/en-us/requests/new
+
+The team appreciates your ongoing support and contributions. Thank you!
+
 Turnitin Plagiarism plugin for Moodle
 =====================================
 
@@ -30,3 +39,14 @@ Plagiarism plugins also need to be enabled before this plugin can be used. You c
 You can set default values and whether the plugin is enabled within Moodle modules by going to `"Site Administration" > "Plugins" > "Plagiarism prevention" > "Turnitin plagiarism plugin"`.
 
 To create/update assignments, process submissions and update grades your moodle environment will need to have cron job running regularly. For information on how to do this please consult https://docs.moodle.org/en/Cron.
+
+On Behat tests
+=====================================
+
+Recently we fixed our existing Behat tests to work with Moodle 4.5 and 5.0. As is sometimes the case with Gherkin tests, there could be occasional timeouts or slight variations between browsers.
+
+If you would like them yourself along with the other Moodle tests, please include these Environment variables (you can find them in your Site administration -> Plugin configuration):
+
+TII_ACCOUNT: [your Turnitin account ID]
+TII_SECRET: [your 8-character secret]
+TII_APIBASEURL: "https://api.turnitin.com"

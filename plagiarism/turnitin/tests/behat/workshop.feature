@@ -29,6 +29,7 @@ Feature: Plagiarism plugin works with a Moodle Workshop
     And I set the following fields to these values:
       | Enable Diagnostic Mode | Standard |
     And I press "Save changes"
+    And I navigate to "Plugins > Plugins overview" in site administration
     Then the following should exist in the "plugins-control-panel" table:
       | Plugin name         |
       | plagiarism_turnitin |
@@ -72,5 +73,6 @@ Feature: Plagiarism plugin works with a Moodle Workshop
     And I switch to "turnitin_viewer" window
     And I wait until the page is ready
     And I accept the Turnitin EULA from the EV if necessary
+    And I wait "10" seconds
     And I wait until the page is ready
     Then I should see "onlinetext_"

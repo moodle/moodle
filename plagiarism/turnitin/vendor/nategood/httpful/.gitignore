@@ -3,4 +3,8 @@ composer.lock
 vendor
 downloads
 .idea/*
-tests/.phpunit.result.cache
+.phpunit.result.cache
+.phpunit.cache
+/rector.php
+/.vs
+results

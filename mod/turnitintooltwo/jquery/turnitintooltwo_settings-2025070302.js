@@ -59,10 +59,7 @@ $(document).ready(function($) {
             $('#testing_container').show();
 
             // Change Url depending on Settings page.
-            var url = "ajax.php";
-            if ($('.settingsform fieldset div.formsettingheading').length > 0) {
-                url = "../mod/turnitintooltwo/ajax.php";
-            }
+            url = M.cfg.wwwroot + "/mod/turnitintooltwo/ajax.php";
 
             var accountid = $('#id_s_turnitintooltwo_accountid').val();
             var accountshared = $('#id_s_turnitintooltwo_secretkey').val();

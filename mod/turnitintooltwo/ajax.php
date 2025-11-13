@@ -29,6 +29,15 @@ require_once($CFG->dirroot . '/mod/turnitintooltwo/turnitintooltwo_view.class.ph
 require_login();
 $action = required_param('action', PARAM_ALPHAEXT);
 
+// Release session locks early unless the action will modify the session
+if (in_array($action, ['check_anon', 'useragreement', 'downloadoriginal', 'default',
+                       'origreport', 'grademark', 'orig_zip', 'xls_inbox', 'origchecked_zip',
+                       'gmpdf_zip', 'get_users', 'get_migration_assignments',
+                       'initialise_redraw', 'get_files', 'get_members', 'search_classes',
+                       'get_assignments', 'test_connection'])) {
+    \core\session\manager::write_close();
+}
+
 switch ($action) {
     case "check_anon":
         $assignmentid = required_param('assignment', PARAM_INT);
@@ -374,6 +383,10 @@ switch ($action) {
             }
             echo json_encode($peermarkdata);
         }
+        else {
+            header("HTTP/1.0 403 Forbidden");
+        }
+
         break;
 
     case "refresh_submission_row":
@@ -452,6 +465,9 @@ switch ($action) {
 
         if (has_capability('mod/turnitintooltwo:grade', context_module::instance($cm->id))) {
             echo $turnitintooltwoassignment->enrol_all_students($cm);
+        }
+        else {
+            header("HTTP/1.0 403 Forbidden");
         }
         break;
 

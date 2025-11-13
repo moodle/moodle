@@ -14,12 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); // It must be included from a Moodle page.
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/plagiarism/turnitin/lib.php');
 
+/**
+ * Class plagiarism_turnitin_observer
+ *
+ * @package   plagiarism_turnitin
+ * @copyright 2018 iParadigms LLC *
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class plagiarism_turnitin_observer {
     /**
      * Handle the course_module_deleted event.
@@ -30,13 +35,13 @@ class plagiarism_turnitin_observer {
         global $DB;
         $eventdata = $event->get_data();
 
-        $DB->delete_records('plagiarism_turnitin_files', array('cm' => $eventdata['contextinstanceid']));
-        $DB->delete_records('plagiarism_turnitin_config', array('cm' => $eventdata['contextinstanceid']));
+        $DB->delete_records('plagiarism_turnitin_files', ['cm' => $eventdata['contextinstanceid']]);
+        $DB->delete_records('plagiarism_turnitin_config', ['cm' => $eventdata['contextinstanceid']]);
     }
 
     /**
-     * Handle the course_module_deleted event.
-     * @param \core\event\course_module_deleted $event
+     * Handle the course_module_ended event.
+     * @param \core\event\course_reset_ended $event
      */
     public static function course_reset(
         \core\event\course_reset_ended $event) {
@@ -104,8 +109,9 @@ class plagiarism_turnitin_observer {
     }
 
     /**
-     * Handle the assignment assessable_submitted event.
-     * @param \mod_assign\event\assessable_submitted $event
+     * Handle the coursework assessable_uploaded event.
+     *
+     * @param \mod_coursework\event\assessable_uploaded $event
      */
     public static function coursework_submitted(
         \mod_coursework\event\assessable_uploaded $event) {

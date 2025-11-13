@@ -164,8 +164,8 @@ if ($turnitintooltwoassignment->turnitintooltwo->allownonor) {
 }
 else {
   $acceptedtypes = ['.doc', '.docx', '.ppt', '.pptx', '.pps', '.ppsx',
-                    '.pdf', '.txt', '.htm', '.html', '.hwp', '.hwpx',
-                    '.odt', '.wpd', '.ps', '.rtf', '.xls', '.xlsx'];
+                    '.pdf', '.txt', '.htm', '.html', '.hwp', '.hwpx', '.rtf',
+                    '.odt', '.wpd', '.ps', '.rtf', '.xls', '.xlsx', '.wpd'];
 }
 $turnitintooltwofileuploadoptions = ['maxbytes' => $maxfilesize,
                                      'subdirs' => false, 'maxfiles' => 1, 'accepted_types' => $acceptedtypes];
@@ -296,9 +296,11 @@ if (!empty($action)) {
 
             if ($error) {
                 // Save data in session incase of error.
-                $_SESSION['form_data']->submissiontype = $post['submissiontype'];
-                $_SESSION['form_data']->submissiontitle = $post['submissiontitle'];
-                $_SESSION['form_data']->submissiontext = $post['submissiontext'];
+                if (isset($_SESSION['form_data'])) {
+                    $_SESSION['form_data']->submissiontype = $post['submissiontype'];
+                    $_SESSION['form_data']->submissiontitle = $post['submissiontitle'];
+                    $_SESSION['form_data']->submissiontext = $post['submissiontext'];
+                }
             } else {
                 // Check for previous submission to this part.
                 if (!$prevsubmission = $turnitintooltwoassignment->get_user_submissions($post['studentsname'],

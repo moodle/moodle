@@ -3,9 +3,9 @@
 namespace Httpful;
 
 class Httpful {
-    const VERSION = '0.3.0';
+    public const VERSION = '1.0.0';
 
-    private static $mimeRegistrar = array();
+    private static $mimeRegistrar = [];
     private static $default = null;
 
     /**
@@ -40,7 +40,7 @@ class Httpful {
      * @param string $mimeType
      * @return bool
      */
-    public static function hasParserRegistered($mimeType)
+    public static function hasParserRegistered($mimeType): bool
     {
         return isset(self::$mimeRegistrar[$mimeType]);
     }

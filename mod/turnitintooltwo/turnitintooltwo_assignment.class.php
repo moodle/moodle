@@ -789,30 +789,6 @@ class turnitintooltwo_assignment {
             $transmatch = (isset($this->turnitintooltwo->transmatch)) ? $this->turnitintooltwo->transmatch : 0;
             $assignment->setTranslatedMatching($transmatch);
 
-            // Erater settings.
-            $assignment->setErater((isset($this->turnitintooltwo->erater)) ? $this->turnitintooltwo->erater : 0);
-
-            $eraterspelling = (isset($this->turnitintooltwo->erater_spelling)) ? $this->turnitintooltwo->erater_spelling : 0;
-            $assignment->setEraterSpelling($eraterspelling);
-
-            $eratergrammar = (isset($this->turnitintooltwo->erater_grammar)) ? $this->turnitintooltwo->erater_grammar : 0;
-            $assignment->setEraterGrammar($eratergrammar);
-
-            $eraterusage = (isset($this->turnitintooltwo->erater_usage)) ? $this->turnitintooltwo->erater_usage : 0;
-            $assignment->setEraterUsage($eraterusage);
-
-            $eratermechanics = (isset($this->turnitintooltwo->erater_mechanics)) ? $this->turnitintooltwo->erater_mechanics : 0;
-            $assignment->setEraterMechanics($eratermechanics);
-
-            $eraterstyle = (isset($this->turnitintooltwo->erater_style)) ? $this->turnitintooltwo->erater_style : 0;
-            $assignment->setEraterStyle($eraterstyle);
-
-            $eraterdictionary = (isset($this->turnitintooltwo->erater_dictionary)) ? $this->turnitintooltwo->erater_dictionary : 'en_US';
-            $assignment->setEraterSpellingDictionary($eraterdictionary);
-
-            $eraterhandbook = (isset($this->turnitintooltwo->erater_handbook)) ? $this->turnitintooltwo->erater_handbook : 0;
-            $assignment->setEraterHandbook($eraterhandbook);
-
             // Create Assignment on Turnitin.
             $newassignmentid = $this->create_tii_assignment($assignment, $toolid, $i);
 
@@ -862,8 +838,11 @@ class turnitintooltwo_assignment {
 
         $properties = new stdClass();
         $properties->name = $this->turnitintooltwo->name . ' - ' . $partname;
-        $intro = strip_pluginfile_content($this->turnitintooltwo->intro ?? '');
-        $intro = preg_replace("/<img[^>]+\>/i", "", $intro);
+        $intro = $this->turnitintooltwo->intro;
+        if (!empty($intro)) {
+            $intro = strip_pluginfile_content($intro);
+            $intro = preg_replace("/<img[^>]+\>/i", "", $intro);
+        }
         $properties->description = ($intro == null) ? '' : $intro;
         $properties->courseid = $this->turnitintooltwo->course;
         $properties->groupid = 0;
@@ -1220,6 +1199,14 @@ class turnitintooltwo_assignment {
                     $return["msg"] = get_string('maxmarkserror', 'turnitintooltwo');
                 } else {
                     $assignment->setMaxGrade($fieldvalue);
+                    // If we updated the max grade, the weighting will change, therefore update the gradebook
+                    $cm = get_coursemodule_from_instance("turnitintooltwo", $this->id,
+                        $assignment->turnitintooltwo->course);
+                    $submissions = $this->get_submissions($cm, $partid);
+                    $turnitintooltwosubmission = new turnitintooltwo_submission();
+                    foreach ($submissions[$partdetails->id] as $submission) {
+                        $turnitintooltwosubmission->update_gradebook($submission, $this);
+                    }
                 }
                 break;
 
@@ -1366,6 +1353,8 @@ class turnitintooltwo_assignment {
             $assignment->setClassId($course->turnitin_cid);
             $assignment->setAuthorOriginalityAccess($this->turnitintooltwo->studentreports);
 
+            $assignment->setInstructions(strip_tags($this->turnitintooltwo->intro));
+
             $assignment->setRubricId((!empty($this->turnitintooltwo->rubric)) ? $this->turnitintooltwo->rubric : '');
             $assignment->setSubmitPapersTo($this->turnitintooltwo->submitpapersto);
             $assignment->setResubmissionRule($this->turnitintooltwo->reportgenspeed);
@@ -1385,26 +1374,8 @@ class turnitintooltwo_assignment {
             $assignment->setSubmittedDocumentsCheck($this->turnitintooltwo->spapercheck);
             $assignment->setInternetCheck($this->turnitintooltwo->internetcheck);
             $assignment->setPublicationsCheck($this->turnitintooltwo->journalcheck);
-            $assignment->setTranslatedMatching($this->turnitintooltwo->transmatch);
+            $assignment->setTranslatedMatching($this->turnitintooltwo->transmatch ?? 0);
             $assignment->setAllowNonOrSubmissions($this->turnitintooltwo->allownonor);
-
-            // Erater settings.
-            $assignment->setErater((isset($this->turnitintooltwo->erater)) ? $this->turnitintooltwo->erater : 0);
-            $assignment->setEraterSpelling($this->turnitintooltwo->erater_spelling);
-            $assignment->setEraterGrammar($this->turnitintooltwo->erater_grammar);
-            $assignment->setEraterUsage($this->turnitintooltwo->erater_usage);
-            $assignment->setEraterMechanics($this->turnitintooltwo->erater_mechanics);
-            $assignment->setEraterStyle($this->turnitintooltwo->erater_style);
-            $eraterdictionary = 'en_US';
-            if (isset($this->turnitintooltwo->erater_dictionary)) {
-                $eraterdictionary = $this->turnitintooltwo->erater_dictionary;
-            }
-            $assignment->setEraterSpellingDictionary($eraterdictionary);
-            $eraterhandbook = 0;
-            if (isset($this->turnitintooltwo->erater_handbook)) {
-                $eraterhandbook = $this->turnitintooltwo->erater_handbook;
-            }
-            $assignment->setEraterHandbook($eraterhandbook);
 
             $attribute = "dtstart".$i;
             if (($restore) && ($this->turnitintooltwo->$attribute < strtotime("-1 year"))) {
@@ -1633,6 +1604,10 @@ class turnitintooltwo_assignment {
         $turnitincomms = new turnitintooltwo_comms();
         $turnitincall = $turnitincomms->initialise_api();
 
+        if (empty($_SESSION["TiiSubmissions"][$part->id])) {
+            $_SESSION["TiiSubmissions"][$part->id] = [ ];
+        }
+
         try {
             $submission = new TiiSubmission();
             $submission->setAssignmentId($part->tiiassignid);
@@ -1752,14 +1727,6 @@ class turnitintooltwo_assignment {
                     $assignmentdetails->excludequoted = $readassignment->getQuotedExcluded();
                     $assignmentdetails->excludetype = $readassignment->getSmallMatchExclusionType();
                     $assignmentdetails->excludevalue = $readassignment->getSmallMatchExclusionThreshold();
-                    $assignmentdetails->erater = $readassignment->getErater();
-                    $assignmentdetails->erater_handbook = $readassignment->getEraterHandbook();
-                    $assignmentdetails->erater_dictionary = $readassignment->getEraterSpellingDictionary();
-                    $assignmentdetails->erater_spelling = (int)$readassignment->getEraterSpelling();
-                    $assignmentdetails->erater_grammar = (int)$readassignment->getEraterGrammar();
-                    $assignmentdetails->erater_usage = (int)$readassignment->getEraterUsage();
-                    $assignmentdetails->erater_mechanics = (int)$readassignment->getEraterMechanics();
-                    $assignmentdetails->erater_style = (int)$readassignment->getEraterStyle();
                     $assignmentdetails->transmatch = (int)$readassignment->getTranslatedMatching();
                     $assignmentdetails->allownonor = (int)$readassignment->getAllowNonOrSubmissions();
                 }
@@ -1851,7 +1818,15 @@ class turnitintooltwo_assignment {
         $parts = $this->get_parts();
 
         if (empty($cm)) {
-            $cm = get_coursemodule_from_instance("turnitintooltwo", $this->id, $this->turnitintooltwo->course);
+            try {
+                $cm = get_coursemodule_from_instance("turnitintooltwo", $this->id, $this->turnitintooltwo->course);
+            }
+            catch (Exception $e) {
+                // If we fail to get the course module, the module or course may have been deleted.
+                mtrace('turnitintooltwo ERROR: ' . $e->getMessage() . ' - Course module for Turnitin activity with id: '
+                       . $this->id . 'and course: ' . $this->turnitintooltwo->course . ' not found.');
+                return 0;
+            }
         }
         $istutor = has_capability('mod/turnitintooltwo:grade', context_module::instance($cm->id));
 

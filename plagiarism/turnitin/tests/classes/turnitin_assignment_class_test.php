@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace plagiarism_turnitin;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -34,25 +36,33 @@ require_once($CFG->dirroot . '/mod/assign/externallib.php');
  *
  * @package turnitin
  */
-class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
+final class turnitin_assignment_class_test extends \advanced_testcase {
 
     /**
      * Set Overwrite mtrace to avoid output during the tests.
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         // Overwrite mtrace.
         $CFG->mtrace_wrapper = 'plagiarism_turnitin_mtrace';
     }
 
-    public function test_get_course_data() {
+    /**
+     * Test that we can get a course data.
+     *
+     * @covers \turnitin_assignment::get_course_data
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_get_course_data(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         // Create a PP course.
-        $course = new stdClass();
+        $course = new \stdClass();
         $course->courseid = 1;
         $course->turnitin_ctl = "Test Course";
         $course->turnitin_cid = 10;
@@ -60,19 +70,26 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         // Insert the course to the plagiarism turnitin courses table.
         $DB->insert_record('plagiarism_turnitin_courses', $course);
 
-        $response = turnitin_assignment::get_course_data(1, "site");
+        $response = \turnitin_assignment::get_course_data(1, "site");
 
         $this->assertEquals($course->turnitin_ctl, $response->turnitin_ctl);
         $this->assertEquals($course->turnitin_cid, $response->turnitin_cid);
     }
 
-    public function test_create_tii_course() {
+    /**
+     * Test that we can create a tii course.
+     *
+     * @covers \turnitin_assignment::create_tii_course
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_create_tii_course(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         // Create a PP course.
-        $course = new stdClass();
+        $course = new \stdClass();
         $course->courseid = 1;
         $course->turnitin_ctl = "Test Course";
         $course->turnitin_cid = 10;
@@ -83,7 +100,7 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         $course->id = $DB->insert_record('plagiarism_turnitin_courses', $course);
 
         // Stub a fake tii comms.
-        $faketiicomms = $this->getMockBuilder(turnitin_comms::class)
+        $faketiicomms = $this->getMockBuilder(\turnitin_comms::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -93,8 +110,8 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
             ->with("");
 
         $mock = $this->getMockBuilder('turnitin_assignment')
-            ->setMethods(array('api_create_class', 'api_get_class', 'api_get_class_id'))
-            ->setConstructorArgs(array(0, $faketiicomms))
+            ->setMethods(['api_create_class', 'api_get_class', 'api_get_class_id'])
+            ->setConstructorArgs([0, $faketiicomms])
             ->getMock();
 
         $mock->expects($this->any())
@@ -103,7 +120,7 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
 
         $response = $mock->create_tii_course($course, 1);
 
-        $expected = new stdClass();
+        $expected = new \stdClass();
         $expected->id = $course->tii_rel_id;
         $expected->turnitin_cid = 1;
         $expected->turnitin_ctl = "This is a test course (Moodle PP)";
@@ -118,13 +135,20 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         $this->assertNotEquals($expected->id, $response->id);
     }
 
-    public function test_edit_tii_course() {
+    /**
+     * Test that we can edit a tii course.
+     *
+     * @covers \turnitin_assignment::edit_tii_course
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_edit_tii_course(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         // Create a PP course.
-        $course = new stdClass();
+        $course = new \stdClass();
         $course->courseid = 1;
         $course->turnitin_ctl = "Test Course";
         $course->turnitin_cid = 1;
@@ -135,7 +159,7 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         $course->id = $DB->insert_record('plagiarism_turnitin_courses', $course);
 
         // Stub a fake tii comms.
-        $faketiicomms = $this->getMockBuilder(turnitin_comms::class)
+        $faketiicomms = $this->getMockBuilder(\turnitin_comms::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -145,12 +169,12 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
             ->with("");
 
         $mock = $this->getMockBuilder('turnitin_assignment')
-            ->setMethods(array('api_update_class', 'api_set_class_id'))
-            ->setConstructorArgs(array(0, $faketiicomms))
+            ->setMethods(['api_update_class', 'api_set_class_id'])
+            ->setConstructorArgs([0, $faketiicomms])
             ->getMock();
 
         // Edit a PP course.
-        $editcourse = new stdClass();
+        $editcourse = new \stdClass();
         $editcourse->id = 1;
         $editcourse->turnitin_cid = 10;
         $editcourse->fullname = "This is an edited test course";
@@ -159,9 +183,9 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         // As the method does not return anything we will have to check the database before assertion.
         $mock->edit_tii_course($editcourse);
 
-        $responsecourse = $DB->get_record("plagiarism_turnitin_courses", array("id" => $course->id));
+        $responsecourse = $DB->get_record("plagiarism_turnitin_courses", ["id" => $course->id]);
 
-        $expected = new stdClass();
+        $expected = new \stdClass();
         $expected->id = $course->id;
         $expected->courseid = $course->courseid;
         $expected->turnitin_ctl = "This is an edited test course (Moodle PP)";
@@ -171,30 +195,42 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         $this->assertEquals($expected, $responsecourse);
     }
 
-    public function test_truncate_title() {
+    /**
+     * Test that we can truncate a title.
+     *
+     * @covers \turnitin_assignment::truncate_title
+     * @return void
+     */
+    public function test_truncate_title(): void {
         $this->resetAfterTest();
 
         $title = "This is a very long title that we are going to use to test the truncate title method.";
         $limit = 50;
 
-        $response = turnitin_assignment::truncate_title($title, $limit);
+        $response = \turnitin_assignment::truncate_title($title, $limit);
 
         $this->assertEquals('This is a very long title that we a... (Moodle PP)', $response);
 
         // Try a title that is within our limit.
-        $response = turnitin_assignment::truncate_title("This title should not be truncated.", $limit);
+        $response = \turnitin_assignment::truncate_title("This title should not be truncated.", $limit);
         $this->assertEquals('This title should not be truncated. (Moodle PP)', $response);
     }
 
-    public function test_create_tii_assignment() {
+    /**
+     * Test that we can get create a tii assignment.
+     *
+     * @covers \turnitin_assignment::create_tii_assignment
+     * @return void
+     */
+    public function test_create_tii_assignment(): void {
         $this->resetAfterTest();
 
         // Create a PP assignment.
-        $assignment = new stdClass();
+        $assignment = new \stdClass();
         $assignment->id = 1;
 
         // Stub a fake tii comms.
-        $faketiicomms = $this->getMockBuilder(turnitin_comms::class)
+        $faketiicomms = $this->getMockBuilder(\turnitin_comms::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -204,8 +240,8 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
             ->with("");
 
         $mock = $this->getMockBuilder('turnitin_assignment')
-            ->setMethods(array('api_create_assignment', 'api_get_assignment', 'api_get_assignment_id'))
-            ->setConstructorArgs(array(0, $faketiicomms))
+            ->setMethods(['api_create_assignment', 'api_get_assignment', 'api_get_assignment_id'])
+            ->setConstructorArgs([0, $faketiicomms])
             ->getMock();
 
         $mock->expects($this->any())
@@ -218,16 +254,23 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         $this->assertEquals(1, $response);
     }
 
-    public function test_edit_tii_assignment() {
+    /**
+     * Test that we can get edit a tii assignment.
+     *
+     * @covers \turnitin_assignment::edit_tii_assignment
+     * @return void
+     * @throws \coding_exception
+     */
+    public function test_edit_tii_assignment(): void {
         $this->resetAfterTest();
 
         // Create a PP assignment.
-        $assignment = new stdClass();
+        $assignment = new \stdClass();
         $assignment->id = 1;
         $assignment->title = "This is a test assignment.";
 
         // Stub a fake tii comms.
-        $faketiicomms = $this->getMockBuilder(turnitin_comms::class)
+        $faketiicomms = $this->getMockBuilder(\turnitin_comms::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -242,8 +285,8 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
             ->withAnyParameters();
 
         $mock = $this->getMockBuilder('turnitin_assignment')
-            ->setMethods(array('api_update_assignment', 'api_get_assignment_id', 'api_get_title'))
-            ->setConstructorArgs(array(0, $faketiicomms))
+            ->setMethods(['api_update_assignment', 'api_get_assignment_id', 'api_get_title'])
+            ->setConstructorArgs([0, $faketiicomms])
             ->getMock();
 
         $mock->expects($this->any())
@@ -263,14 +306,14 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         // Test the exception handling for default workflow.
         $mock->expects($this->any())
             ->method('api_update_assignment')
-            ->will($this->throwException(new Exception()));
+            ->will($this->throwException(new \Exception()));
 
         $response = $mock->edit_tii_assignment($assignment);
         $this->assertEquals(false, $response["success"]);
         $this->assertEquals(get_string('editassignmenterror', 'plagiarism_turnitin'), $response["error"]);
 
         // Test the error handling for the cron workflow.
-        $error = new stdClass();
+        $error = new \stdClass();
         $error->title = $assignment->title;
         $error->assignmentid = 1;
 
@@ -280,13 +323,20 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         $this->assertEquals(1, $response["tiiassignmentid"]);
     }
 
-    public function test_get_peermark_assignments() {
+    /**
+     * Test that we can get a peermark assignment.
+     *
+     * @covers \turnitin_assignment::get_peermark_assignments
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_get_peermark_assignments(): void {
         global $DB;
 
         $this->resetAfterTest();
 
         // Create a PP course.
-        $peermark = new stdClass();
+        $peermark = new \stdClass();
         $peermark->parent_tii_assign_id = 1;
         $peermark->title = "This is a test Peermark assignment.";
         $peermark->tiiassignid = 1;
@@ -298,7 +348,7 @@ class plagiarism_turnitin_assignment_class_testcase extends advanced_testcase {
         // Insert the peermark to the plagiarism turnitin courses table.
         $DB->insert_record('plagiarism_turnitin_peermark', $peermark);
 
-        $assignment = new turnitin_assignment(0, 1);
+        $assignment = new \turnitin_assignment(0, 1);
 
         // We should have a peermark object.
         $response = $assignment->get_peermark_assignments(1, $peermark->parent_tii_assign_id);

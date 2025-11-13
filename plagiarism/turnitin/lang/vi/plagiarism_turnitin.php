@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'vi'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Dùng thang đánh giá thuộc về một người h�
 $string['attachrubric'] = 'Đính kèm một thang đánh giá vào bài tập này';
 $string['launchrubricmanager'] = 'Mở Trình quản lý Thang đánh giá';
 $string['attachrubricnote'] = 'Lưu ý: Học sinh sẽ có thể xem các thang đánh giá đính kèm và nội dung của mình trước khi nộp bài.';
-$string['anonblindmarkingnote'] = 'Lưu ý: Cài đặt nhận xét ẩn danh riêng của Turnitin đã được gỡ bỏ. Turnitin sẽ sử dụng cài đặt nhận xét ẩn của Moodle để xác định cài đặt nhận xét ẩn danh.';
+$string['anonblindmarkingnote'] = "Lưu ý: Chế độ cài đặt đánh giá ẩn danh riêng biệt của Turnitin đã bị xóa. Turnitin sẽ sử dụng chế độ cài đặt bài nộp ẩn danh của Moodle để xác định chế độ cài đặt đánh giá ẩn danh.";
 $string['transmatch'] = 'Đối chiếu Bản dịch';
 $string["reportgen_immediate_add_immediate"] = "Tạo báo cáo ngay lập tức. Bài nộp sẽ được thêm vào kho lưu trữ ngay lập tức (nếu kho lưu trữ được thiết lập).";
 $string["reportgen_immediate_add_duedate"] = "Tạo báo cáo ngay lập tức. Bài nộp sẽ được thêm vào kho lưu trữ vào ngày đến hạn (nếu kho lưu trữ được thiết lập).";

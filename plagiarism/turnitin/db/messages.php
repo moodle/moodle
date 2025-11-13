@@ -15,15 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   plagiarismplugin
+ * Message providers for plagiarism_turnitin
+ *
+ * @package   plagiarism_turnitin
  * @copyright 2010 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-defined('MOODLE_INTERNAL') || die();
-$messageproviders = array (
+$messageproviders = [
     // Notify student with their digital receipt.
-    'submission' => array (
-    )
-);
+    'submission' => [
+    ],
+];

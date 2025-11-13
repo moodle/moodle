@@ -16,11 +16,6 @@
 
 use Integrations\PhpSdk\TiiClass;
 
-/**
- * @package   plagiarism_turnitin
- * @copyright 2018 iParadigms LLC *
- */
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/plagiarism/turnitin/lib.php');
@@ -28,11 +23,30 @@ require_once($CFG->dirroot.'/plagiarism/turnitin/classes/turnitin_comms.class.ph
 require_once($CFG->dirroot.'/plagiarism/turnitin/classes/turnitin_user.class.php');
 require_once($CFG->dirroot.'/plagiarism/turnitin/classes/turnitin_submission.class.php');
 
+/**
+ * Defines the class for Turnitin assignments
+ *
+ * @package   plagiarism_turnitin
+ * @copyright 2018 iParadigms LLC *
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class turnitin_assignment {
 
+    /**
+     * @var int|mixed
+     */
     private $id;
+    /**
+     * @var mixed|turnitin_comms|null
+     */
     private $turnitincomms;
 
+    /**
+     * turnitin_assignment constructor.
+     *
+     * @param int $id The ID of the assignment
+     * @param turnitin_comms $turnitincomms The Turnitin comms object
+     */
     public function __construct($id = 0, $turnitincomms = null) {
         $this->id = $id;
         $this->turnitincomms = $turnitincomms;
@@ -52,7 +66,7 @@ class turnitin_assignment {
     public static function get_course_data($courseid, $workflowcontext = "site") {
         global $DB;
 
-        if (!$course = $DB->get_record("course", array("id" => $courseid))) {
+        if (!$course = $DB->get_record("course", ["id" => $courseid])) {
             if ($workflowcontext != "cron") {
                 plagiarism_turnitin_print_error('coursegeterror', 'plagiarism_turnitin', null, null, __FILE__, __LINE__);
                 exit;
@@ -62,7 +76,7 @@ class turnitin_assignment {
         $course->turnitin_cid = 0;
         $course->turnitin_ctl = "";
         $course->tii_rel_id = '';
-        if ($turnitincourse = $DB->get_record('plagiarism_turnitin_courses', array("courseid" => $courseid))) {
+        if ($turnitincourse = $DB->get_record('plagiarism_turnitin_courses', ["courseid" => $courseid])) {
             $course->turnitin_cid = $turnitincourse->turnitin_cid;
             $course->turnitin_ctl = $turnitincourse->turnitin_ctl;
             $course->tii_rel_id = $turnitincourse->id;
@@ -74,7 +88,6 @@ class turnitin_assignment {
     /**
      * Create the course in Turnitin
      *
-     * @global type $DB
      * @param object $course The course object
      * @param string $workflowcontext The workflow being used to call this - site or cron.
      * @return object the turnitin course if created
@@ -128,8 +141,7 @@ class turnitin_assignment {
     /**
      * Edit the course title in Turnitin
      *
-     * @global type $DB
-     * @param var $course The course object
+     * @param object $course The course object
      */
     public function edit_tii_course($course) {
         global $DB;
@@ -152,7 +164,7 @@ class turnitin_assignment {
         try {
             $this->api_update_class($turnitincall, $class);
 
-            $turnitincourse = $DB->get_record("plagiarism_turnitin_courses", array("courseid" => $course->id));
+            $turnitincourse = $DB->get_record("plagiarism_turnitin_courses", ["courseid" => $course->id]);
 
             $update = new stdClass();
             $update->id = $turnitincourse->id;
@@ -195,7 +207,7 @@ class turnitin_assignment {
     /**
      * Create Assignment on Turnitin and return id, delete the instance if it fails
      *
-     * @param object $assignment add assignment instance
+     * @param object $assignment The assignment instance
      * @param string $workflowcontext The workflow being used to call this - site or cron.
      */
     public function create_tii_assignment($assignment, $workflowcontext = "site") {
@@ -224,7 +236,7 @@ class turnitin_assignment {
     /**
      * Edit Assignment on Turnitin
      *
-     * @param object $assignment edit assignment instance
+     * @param object $assignment The assignment instance
      * @param string $workflowcontext The workflow being used to call this - site or cron.
      */
     public function edit_tii_assignment($assignment, $workflowcontext = "site") {
@@ -238,7 +250,7 @@ class turnitin_assignment {
 
             plagiarism_turnitin_activitylog("Turnitin Assignment updated - id: ".$assignmentid, "REQUEST");
 
-            return array('success' => true, 'tiiassignmentid' => $assignmentid);
+            return ['success' => true, 'tiiassignmentid' => $assignmentid];
 
         } catch (Exception $e) {
             $toscreen = true;
@@ -259,9 +271,9 @@ class turnitin_assignment {
 
             // Return error string as we use this in the plagiarism plugin.
             if ($workflowcontext == "cron") {
-                return array('success' => false, 'error' => $errorstr, 'tiiassignmentid' => $assignmentid);
+                return ['success' => false, 'error' => $errorstr, 'tiiassignmentid' => $assignmentid];
             } else {
-                return array('success' => false, 'error' => get_string('editassignmenterror', 'plagiarism_turnitin'));
+                return ['success' => false, 'error' => get_string('editassignmenterror', 'plagiarism_turnitin')];
             }
         }
     }
@@ -269,24 +281,23 @@ class turnitin_assignment {
     /**
      * Get the Peermark assignments for this activity.
      *
-     * @global type $DB
-     * @param $tiiassignid
+     * @param int $tiiassignid The Turnitin assignment id
      * @return array
      */
     public function get_peermark_assignments($tiiassignid) {
         global $DB;
-        if ($peermarks = $DB->get_records("plagiarism_turnitin_peermark", array("parent_tii_assign_id" => $tiiassignid))) {
+        if ($peermarks = $DB->get_records("plagiarism_turnitin_peermark", ["parent_tii_assign_id" => $tiiassignid])) {
             return $peermarks;
         } else {
-            return array();
+            return [];
         }
     }
 
     /**
      * Wrapper for Turnitin API call createClass().
      *
-     * @param $turnitincall
-     * @param $class
+     * @param object $turnitincall
+     * @param TiiClass $class
      * @return mixed
      */
     public function api_create_class($turnitincall, $class) {
@@ -296,8 +307,8 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call createClass().
      *
-     * @param $turnitincall
-     * @param $class
+     * @param object $turnitincall
+     * @param TiiClass $class
      * @return mixed
      */
     public function api_update_class($turnitincall, $class) {
@@ -307,7 +318,7 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call getClass().
      *
-     * @param $object
+     * @param object $object
      * @return mixed
      */
     public function api_get_class($object) {
@@ -317,7 +328,7 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call getClassId().
      *
-     * @param $class
+     * @param TiiClass $class
      * @return mixed
      */
     public function api_get_class_id($class) {
@@ -327,8 +338,8 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call setClassId().
      *
-     * @param $object
-     * @param $classid
+     * @param object $object
+     * @param int $classid
      * @return mixed
      */
     public function api_set_class_id($object, $classid) {
@@ -338,8 +349,8 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call createAssignment().
      *
-     * @param $turnitincall
-     * @param $assignment
+     * @param object $turnitincall
+     * @param object $assignment The assignment instance
      * @return mixed
      */
     public function api_create_assignment($turnitincall, $assignment) {
@@ -349,8 +360,8 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call createAssignment().
      *
-     * @param $turnitincall
-     * @param $assignment
+     * @param object $turnitincall
+     * @param object $assignment The assignment instance
      * @return mixed
      */
     public function api_update_assignment($turnitincall, $assignment) {
@@ -360,7 +371,7 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call getAssignment().
      *
-     * @param $object
+     * @param object $object
      * @return mixed
      */
     public function api_get_assignment($object) {
@@ -370,7 +381,7 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call getAssignmentId().
      *
-     * @param $assignment
+     * @param object $assignment The assignment instance
      * @return mixed
      */
     public function api_get_assignment_id($assignment) {
@@ -380,7 +391,7 @@ class turnitin_assignment {
     /**
      * Wrapper for Turnitin API call getTitle().
      *
-     * @param $assignment
+     * @param object $assignment The assignment instance
      * @return mixed
      */
     public function api_get_title($assignment) {

@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'de'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Rubrik einer anderen Lehrkraft verwenden';
 $string['attachrubric'] = 'Dieser Aufgabe eine Rubrik anhängen';
 $string['launchrubricmanager'] = 'Rubrikmanager starten';
 $string['attachrubricnote'] = 'Hinweis: Studenten können angehängte Rubriken und deren Inhalt vor dem Übermitteln aufrufen.';
-$string['anonblindmarkingnote'] = 'Hinweis: Die separate Turnitin-Einstellung für anonyme Benotung wurde entfernt. Turnitin legt die Einstellung für anonymes Benoten anhand der Moodle-Einstellung für Blindbewertung fest.';
+$string['anonblindmarkingnote'] = "Hinweis: Die separate Einstellung für anonyme Benotung in Turnitin wurde entfernt. Turnitin verwendet nun die Moodle-Einstellung „Anonyme Einreichungen“, um die Option für die anonyme Benotung zu bestimmen.";
 $string['transmatch'] = 'Übersetzte Übereinstimmung';
 $string["reportgen_immediate_add_immediate"] = "Erstellen Sie Berichte unverzüglich. Die Einreichungen werden sofort zum Repository hinzugefügt (sofern ein Repository festgelegt wurde).";
 $string["reportgen_immediate_add_duedate"] = "Erstellen Sie Berichte unverzüglich. Die Einreichungen werden zum Fälligkeitsdatum zum Repository hinzugefügt (sofern ein Repository festgelegt wurde).";

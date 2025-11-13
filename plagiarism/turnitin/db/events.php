@@ -15,52 +15,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Event observers for plagiarism_turnitin
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = array (
-    array(
+$observers = [
+    [
         'eventname' => '\assignsubmission_file\event\assessable_uploaded',
-        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_file_uploaded'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_file_uploaded',
+    ],
+    [
         'eventname' => '\assignsubmission_onlinetext\event\assessable_uploaded',
-        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_onlinetext_uploaded'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_onlinetext_uploaded',
+    ],
+    [
         'eventname' => '\mod_workshop\event\assessable_uploaded',
-        'callback'  => 'plagiarism_turnitin_observer::workshop_file_uploaded'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::workshop_file_uploaded',
+    ],
+    [
         'eventname' => '\mod_forum\event\assessable_uploaded',
-        'callback'  => 'plagiarism_turnitin_observer::forum_file_uploaded'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::forum_file_uploaded',
+    ],
+    [
         'eventname' => '\mod_assign\event\assessable_submitted',
-        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_submitted'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_submitted',
+    ],
+    [
         'eventname' => '\mod_assign\event\submission_removed',
-        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_removed'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::assignsubmission_removed',
+    ],
+    [
         'eventname' => '\mod_coursework\event\assessable_uploaded',
-        'callback'  => 'plagiarism_turnitin_observer::coursework_submitted'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::coursework_submitted',
+    ],
+    [
         'eventname' => '\mod_quiz\event\attempt_submitted',
-        'callback' => 'plagiarism_turnitin_observer::quiz_submitted'
-    ),
-    array(
+        'callback' => 'plagiarism_turnitin_observer::quiz_submitted',
+    ],
+    [
         'eventname' => '\core\event\course_module_deleted',
-        'callback'  => 'plagiarism_turnitin_observer::course_module_deleted'
-    ),
-    array(
+        'callback'  => 'plagiarism_turnitin_observer::course_module_deleted',
+    ],
+    [
         'eventname' => '\core\event\course_reset_ended',
         'callback'  => 'plagiarism_plugin_turnitin::course_reset',
-        'includefile' => 'plagiarism/turnitin/lib.php'
-    )
-);
+        'includefile' => 'plagiarism/turnitin/lib.php',
+    ],
+];

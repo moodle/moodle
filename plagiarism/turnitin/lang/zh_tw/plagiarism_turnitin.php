@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'zh_tw'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = '使用屬於其他指導教師的評語';
 $string['attachrubric'] = '將評語附加至此作業';
 $string['launchrubricmanager'] = '啟動評語管理工具';
 $string['attachrubricnote'] = '注意：學生將可以在提交前，檢視附加的評語及其內容。';
-$string['anonblindmarkingnote'] = '注意：個別的 Turnitin 匿名標示設定已遭到移除。Turnitin 將使用 Moodle 的盲標設定來決定匿名標示設定。';
+$string['anonblindmarkingnote'] = "注意事項：個別的 Turnitin 匿名標記設定已經移除。Turnitin 將使用 Moodle 的 [Anonymous submissions]（匿名提交）設定來決定匿名標記設定。";
 $string['transmatch'] = '已翻譯的相符功能';
 $string["reportgen_immediate_add_immediate"] = "立即產生報告。 提交將立即新增至存放庫 (如果已設定存放庫)。";
 $string["reportgen_immediate_add_duedate"] = "立即產生報告。提交將在截止日期新增至存放庫 (如果已設定存放庫)。";

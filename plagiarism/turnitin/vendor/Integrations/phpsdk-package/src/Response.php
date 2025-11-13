@@ -36,10 +36,20 @@ class Response {
         $this->domobject = new \DomDocument();
         $this->requestdomobject = new \DomDocument();
         $logger = new Logger( $soap->getLogPath() );
-        if ( $logger ) $logger->logInfo( $soap->getHttpHeaders() . PHP_EOL . $soap->__getLastRequest() );
+        if ( $logger ) $logger->logInfo( 'Outgoing Request' . PHP_EOL .
+          '------------------------------------------------------------' . PHP_EOL .
+          'Headers' . PHP_EOL . 
+          '------------------------------------------------------------' . PHP_EOL .
+          $soap->getHttpHeaders() . PHP_EOL .
+          '------------------------------------------------------------' . PHP_EOL .
+          'Body' . PHP_EOL . 
+          '------------------------------------------------------------' . PHP_EOL .
+          $soap->__getLastRequest() . PHP_EOL);
         if ( $soap->getDebug() ) $this->outputDebug( $soap->__getLastRequest(), 'Request Message', $soap->getHttpHeaders() );
         @$this->requestdomobject->loadXML( $soap->__getLastRequest() );
-        if ( $logger ) $logger->logInfo( $soap->__getLastResponse() );
+        if ( $logger ) $logger->logInfo( 'Incoming Response:' . PHP_EOL . 
+          '------------------------------------------------------------' . PHP_EOL .
+          $soap->__getLastResponse() );
         if ( $soap->getDebug() ) $this->outputDebug( $soap->__getLastResponse(), 'Response Message' );
         if ( ($load = @$this->domobject->loadXML( $soap->__getLastResponse() )) === false ) {
             throw new TurnitinSDKException( 'responsexmlerror', 'XML Response could not be parsed', $soap->getLogPath() );

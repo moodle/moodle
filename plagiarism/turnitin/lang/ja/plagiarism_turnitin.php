@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'ja'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = '他の講師に属するルーブリックを使用す
 $string['attachrubric'] = '採点をこの課題に添付する';
 $string['launchrubricmanager'] = '採点マネジャーを起動する';
 $string['attachrubricnote'] = '注意：学生は提出する前に、添付された採点およびその内容を閲覧できます。';
-$string['anonblindmarkingnote'] = '注意：Turnitinの個別の匿名マーキングの設定が削除されました。Turnitinでは、Moodleのブラインドマーキングの設定を使って、匿名マーキングの設定を決定します。';
+$string['anonblindmarkingnote'] = "注意：Turnitinの匿名採点設定は削除されました。Turnitinは、Moodleの匿名提出設定を使用して、匿名採点設定を決定します。";
 $string['transmatch'] = '翻訳一致機能';
 $string["reportgen_immediate_add_immediate"] = "直ちにレポートを生成します。答案はすぐにリポジトリに追加されます（リポジトリが設定されている場合）。";
 $string["reportgen_immediate_add_duedate"] = "直ちにレポートを生成します。答案は提出期限にリポジトリに追加されます（リポジトリが設定されている場合）。";

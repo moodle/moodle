@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'ko'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = '다른 강사의 채점표 사용';
 $string['attachrubric'] = '본 과제에 채점표 첨부하기';
 $string['launchrubricmanager'] = '채점표 관리자 시작하기';
 $string['attachrubricnote'] = '주의: 학생들은 첨부된 채점표와 자신들의 내용을 제출 전에 볼 수 있습니다.';
-$string['anonblindmarkingnote'] = '참고: 별도의 Turnitin 익명 채점 설정은 삭제됩니다. Turnitin은 Moodle의 블라인드 채점 환경을 이용해 익명 채점 설정을 결정합니다.';
+$string['anonblindmarkingnote'] = "참고: 별도 Turnitin 익명 채점 설정이 제거되었습니다. Turnitin은 익명 채점 설정을 정할 때 Moodle의 익명 제출 설정을 사용할 예정입니다.";
 $string['transmatch'] = '번역된 일치';
 $string["reportgen_immediate_add_immediate"] = "보고서를 즉시 생성합니다. 제출물이 데이터베이스에 바로 추가됩니다(데이터베이스가 설정된 경우).";
 $string["reportgen_immediate_add_duedate"] = "보고서를 즉시 생성합니다. 제출물이 마감일에 데이터베이스에 추가됩니다(데이터베이스가 설정된 경우).";

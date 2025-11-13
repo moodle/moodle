@@ -15,27 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Capabilities for plagiarism_turnitin
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'plagiarism/turnitin:enable' => array(
+$capabilities = [
+    'plagiarism/turnitin:enable' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-         'legacy' => array(
+         'legacy' => [
          'editingteacher' => CAP_ALLOW,
-         'manager' => CAP_ALLOW
-        )
-    ),
-    'plagiarism/turnitin:viewfullreport' => array(
+         'manager' => CAP_ALLOW,
+        ],
+    ],
+    'plagiarism/turnitin:viewfullreport' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
-         'legacy' => array(
+         'legacy' => [
          'editingteacher' => CAP_ALLOW,
-         'manager' => CAP_ALLOW
-        )
-    ),
-);
+         'manager' => CAP_ALLOW,
+        ],
+    ],
+];

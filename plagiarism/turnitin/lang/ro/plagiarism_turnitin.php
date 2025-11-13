@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'ro'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Utilizarea baremului unui alt profesor';
 $string['attachrubric'] = 'Atașarea unui barem la această temă';
 $string['launchrubricmanager'] = 'Lansarea Managerului de bareme';
 $string['attachrubricnote'] = 'Observație: studenții vor putea să vadă baremele atașate și conținutul lor înainte de a-și depune lucrările.';
-$string['anonblindmarkingnote'] = 'Observație: setarea separată de însemnări anonime în Turnitin a fost eliminată. Turnitin va utiliza setarea de însemnări anonime din Moodle pentru a determina ce setare trebuie să folosească.';
+$string['anonblindmarkingnote'] = "Notă: Setarea separată Turnitin pentru evaluarea anonimă a fost eliminată. Turnitin va folosi setarea Moodle pentru depunerile anonime ca să determine setarea pentru evaluarea anonimă.";
 $string['transmatch'] = 'Similitudini cu traduceri';
 $string["reportgen_immediate_add_immediate"] = "Generați rapoarte imediat. Depunerile vor fi adăugate în depozit imediat (dacă depozitul este setat).";
 $string["reportgen_immediate_add_duedate"] = "Generați rapoarte imediat. Depunerile vor fi adăugate în depozit la termenul de depunere (dacă depozitul este setat).";

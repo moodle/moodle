@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'sv'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Använd en bedömnigsmatris som tillhör andra instruk
 $string['attachrubric'] = 'Bifoga en bedömningsmatris till denna uppgift';
 $string['launchrubricmanager'] = 'Starta bedömningsmatrishanteraren';
 $string['attachrubricnote'] = 'Observera: Studenterna kommer att kunna se bifogade bedömningsmatriser och deras innehåll innan de lämnar in.';
-$string['anonblindmarkingnote'] = 'Obs: Den separata Turnitin-funktionen anonyma kommentarer har tagits bort. Turnitin kommer att använda Moodles blindkommentarer för att avgöra om funktionen anonyma kommentarer ska användas.';
+$string['anonblindmarkingnote'] = "Obs! Den separata inställningen för anonym markering i Turnitin har tagits bort. Turnitin använder Moodles inställning för anonyma inlämningar för att avgöra inställningen för anonym bedömning.";
 $string['transmatch'] = 'Matchande översättning';
 $string["reportgen_immediate_add_immediate"] = "Generera rapporter omedelbart. Inlämningar läggs till i arkivet omedelbart (om arkivet är konfigurerat).";
 $string["reportgen_immediate_add_duedate"] = "Generera rapporter omedelbart. Inlämningar läggs till i arkivet på förfallodatumet (om arkivet är konfigurerat).";

@@ -411,6 +411,13 @@ class Soap extends \SoapClient
 
         $result = curl_exec($curl_handler);
 
+        // logpath will only be set if api logging is enabled
+        if (isset($this->logpath)) {
+          $info = curl_getinfo($curl_handler);
+          $logger = new Logger( $this->logpath );
+          if ( $logger ) $logger->logInfo( 'SOAP request curl info:' . PHP_EOL . json_encode($info, JSON_PRETTY_PRINT) );
+        }
+
         $this->httpresponse = $result;
         $this->httprequest = $request;
 

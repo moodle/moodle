@@ -8,7 +8,7 @@
 
 require.config({
     paths: {
-        'plagiarism_turnitin/datatables': '/plagiarism/turnitin/vendorjs/datatables.min',
+        'plagiarism_turnitin/datatables': M.cfg.wwwroot + '/plagiarism/turnitin/vendorjs/datatables.min',
     }
 });
 
@@ -102,7 +102,7 @@ define(['jquery',
                       var accounturl = $('#id_plagiarism_turnitin_apiurl').val();
           
                       $.ajax({
-                          type: "POST",
+                          type: "GET",
                           url: url,
                           dataType: "json",
                           data: {

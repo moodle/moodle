@@ -23,12 +23,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Define the form for the Turnitin plugin settings.
+ */
 class turnitin_defaultsettingsform extends moodleform {
 
-    // Define the form.
-    public function definition () {
+    /**
+     * Define the form.
+     *
+     * @return void
+     */
+    public function definition() {
         global $CFG;
 
         $mform = $this->_form;
@@ -36,7 +41,7 @@ class turnitin_defaultsettingsform extends moodleform {
         require_once($CFG->dirroot.'/plagiarism/turnitin/classes/turnitin_view.class.php');
 
         $turnitinview = new turnitin_view();
-        $turnitinview->add_elements_to_settings_form($mform, array(), "defaults");
+        $turnitinview->add_elements_to_settings_form($mform, [], "defaults");
 
         $this->add_action_buttons(true);
     }

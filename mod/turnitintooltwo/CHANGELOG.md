@@ -1,3 +1,22 @@
+### Date:       2025-October-29
+### Release:    v2025102901
+
+---
+
+#### Grader Report Updated Correctly After Changing 'Marks Available'
+When changing the 'Marks available' for a mod_turnitintooltwo activity after a user has already been graded, the updated grade from the submission was not pushed to the Moodle grade item. The original grade for that submission appeared in the grader report instead. This has now been fixed.
+
+#### Cosmetic Improvements
+Icons should now be rendered correctly on the Submission Inbox page.
+
+#### Form Validation Improved
+Clarified the error messaging around the 'instructions' textbox and improved error handling.
+
+#### Performance Upgrades
+Removed some unnecessary session locks and other minor bug fixes.
+
+---
+
 ### Date:       2025-May-29
 ### Release:    v2025052901
 

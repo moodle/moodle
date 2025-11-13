@@ -903,6 +903,13 @@ class LTI extends OAuthSimple {
 
         $result = curl_exec($ch);
 
+        // logpath will only be set if api logging is enabled
+        if (isset($this->logpath)) {
+          $info = curl_getinfo($ch);
+          $logger = new Logger( $this->logpath );
+          if ( $logger ) $logger->logInfo( 'LTI request curl info:' . PHP_EOL . json_encode($info, JSON_PRETTY_PRINT) );
+        }
+
         if( $result === false) {
             $err = 'Curl error: ' . curl_error($ch);
             $response = $err;

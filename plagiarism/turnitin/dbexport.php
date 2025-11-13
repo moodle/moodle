@@ -46,13 +46,13 @@ $turnitinview = new turnitin_view();
 $exportfile = "export_".$table."_".date('Y-m-d_His');
 
 // Use Moodle's dataformatting functions to display a form to download output in different formats.
-$tables = array(
+$tables = [
     'plagiarism_turnitin_files',
     'plagiarism_turnitin_config',
     'plagiarism_turnitin_users',
     'plagiarism_turnitin_courses',
-    'plagiarism_turnitin_peermark'
-);
+    'plagiarism_turnitin_peermark',
+];
 
 // If a table has been passed in then export that table data.
 if (!is_null($table)) {
@@ -77,11 +77,11 @@ if (!is_null($table)) {
             get_string('dbexporttable', 'plagiarism_turnitin', $table),
             'dbexport.php',
             'dataformat',
-            array('table' => $table)
+            ['table' => $table]
         );
     }
 
-    $output = html_writer::tag('div', $downloadoptions, array('class' => 'turnitin_setup_download_links'));
+    $output = html_writer::tag('div', $downloadoptions, ['class' => 'turnitin_setup_download_links']);
 }
 
 echo $OUTPUT->header();

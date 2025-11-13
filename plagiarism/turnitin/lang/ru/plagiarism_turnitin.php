@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'ru'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Использовать рубрику, принад�
 $string['attachrubric'] = 'Добавить рубрику к этому заданию';
 $string['launchrubricmanager'] = 'Запустить диспетчер рубрик';
 $string['attachrubricnote'] = 'Примечание: студенты смогут просматривать добавленные рубрики и их содержание до сдачи работы.';
-$string['anonblindmarkingnote'] = 'Примечание: в системе Turnitin больше нет отдельной настройки для обеспечения анонимности работ. Turnitin будет использовать настройку анонимности Moodle.';
+$string['anonblindmarkingnote'] = "Примечание. Удалена отдельная настройка анонимного маркетинга Turnitin. Turnitin будет определять настройку анонимного маркетинга по настройке анонимных представлений Moodle.";
 $string['transmatch'] = 'Переведенные совпадения';
 $string["reportgen_immediate_add_immediate"] = "Генерировать отчеты сразу. Представленные работы будут сразу же добавлены в хранилище (если хранилище установлено).";
 $string["reportgen_immediate_add_duedate"] = "Генерировать отчеты сразу. Представленные работы будут добавлены в хранилище в установленный срок (если хранилище установлено).";

@@ -43,12 +43,12 @@ Feature: Plagiarism plugin works with a Moodle Assignment for group submissions
       | plagiarism_compare_student_papers | 1                    |
       | Students submit in groups         | Yes                  |
       | Group mode                        | Separate groups      |
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "Groups" page
     And I add "student1 student1" user to "Group 1" group members
     And I add "student2 student2" user to "Group 1" group members
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    When I navigate to "Submissions" in current page administration
     And I follow "Test assignment name"
     Then I should see "Grading summary"
 
@@ -77,14 +77,14 @@ Feature: Plagiarism plugin works with a Moodle Assignment for group submissions
     And I run the scheduled task "plagiarism_turnitin\task\send_submissions"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    When I navigate to "View all submissions" in current page administration
+    When I navigate to "Submissions" in current page administration
     Then "student1 student1" row "File submissions" column of "generaltable" table should contain "Turnitin ID:"
     And "student2 student2" row "File submissions" column of "generaltable" table should contain "Turnitin ID:"
     # Admin runs scheduled task to request an originality report.
     And I obtain an originality report for "student1 student1" on "assignment" "Test assignment name" on course "Course 1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    When I navigate to "View all submissions" in current page administration
+    When I navigate to "Submissions" in current page administration
     Then "student1 student1" row "File submissions" column of "generaltable" table should contain "%"
     And "student2 student2" row "File submissions" column of "generaltable" table should contain "%"
     And I log out

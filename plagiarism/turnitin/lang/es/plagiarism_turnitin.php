@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'es'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Utilizar la matriz de evaluación de otro profesor';
 $string['attachrubric'] = 'Adjuntar una matriz de evaluación a este ejercicio';
 $string['launchrubricmanager'] = 'Iniciar el administrador de matrices de evaluación';
 $string['attachrubricnote'] = 'Nota: Los estudiantes podrán ver las matrices de evaluación adjuntas y su contenido, antes de realizar la entrega.';
-$string['anonblindmarkingnote'] = 'Nota: Se ha eliminado la configuración de comentarios anónimos de Turnitin. Turnitin utilizará la configuración de comentarios anónimos de Moodle para establecer la configuración de comentarios anónimos.';
+$string['anonblindmarkingnote'] = "Nota: Se ha quitado la configuración de marcado anónimo separada de Turnitin. Turnitin utilizará la configuración de entregas anónimas de Moodle para determinar la configuración de marcado anónimo.";
 $string['transmatch'] = 'Coincidencias traducidas';
 $string["reportgen_immediate_add_immediate"] = "Genere informes inmediatamente. Los envíos se agregarán al repositorio de inmediato (si se configura un repositorio).";
 $string["reportgen_immediate_add_duedate"] = "Genere informes inmediatamente. Los envíos se agregarán al repositorio en la fecha límite de entrega (si se configura un repositorio).";

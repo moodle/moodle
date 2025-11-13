@@ -38,9 +38,7 @@ class hook_callbacks {
         global $CFG, $PAGE;
 
         // Check whether the user is on the quiz page. If not, we don't need to do anything.
-        $requestUri = $_SERVER['REQUEST_URI'];
-        $pattern = '#/quiz/view\.php(\?.*)?$#';
-        if (!preg_match($pattern, $requestUri)) {
+        if ($PAGE->pagetype !== 'mod-quiz-view') {
             return;
         }
 
@@ -51,6 +49,12 @@ class hook_callbacks {
         $moduletiienabled = $pluginturnitin->get_config_settings('mod_'.$PAGE->cm->modname);
         // Exit if Turnitin is not being used for this activity type.
         if (empty($moduletiienabled)) {
+            return;
+        }
+
+        // Check that turnitin is enabled for this quiz.
+        $plagiarismsettings = $pluginturnitin->get_settings($PAGE->cm->id);
+        if (empty($plagiarismsettings['use_turnitin']) || $plagiarismsettings['use_turnitin'] != '1') {
             return;
         }
 
@@ -67,7 +71,7 @@ class hook_callbacks {
         // This script hides the "Start Quiz" button and moves the EULA form into the correct place on the page.
         $PAGE->requires->js_call_amd('plagiarism_turnitin/quiz_eula', 'quizEula');
 
-        // This scripts handles the EULA modal, which is displayed when the user clicks the "View EULA" link.
+        // This script handles the EULA modal, which is displayed when the user clicks the "View EULA" link.
         $PAGE->requires->js_call_amd('plagiarism_turnitin/new_eula_modal', 'newEulaLaunch');
     }
 }

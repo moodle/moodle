@@ -29,6 +29,7 @@ Feature: Plagiarism plugin works with a Moodle Assignment
     And I set the following fields to these values:
       | Enable Diagnostic Mode | Standard |
     And I press "Save changes"
+    And I navigate to "Plugins > Plugins overview" in site administration
     Then the following should exist in the "plugins-control-panel" table:
       | Plugin name         |
       | plagiarism_turnitin |
@@ -67,8 +68,8 @@ Feature: Plagiarism plugin works with a Moodle Assignment
     And I log in as "instructor1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then I should see "View all submissions"
-    When I navigate to "View all submissions" in current page administration
+    Then I should see "Submissions"
+    When I navigate to "Submissions" in current page administration
     Then "student1 student1" row "File submissions" column of "generaltable" table should contain "Turnitin ID:"
     # Trigger cron as admin for report
     And I log out
@@ -79,11 +80,11 @@ Feature: Plagiarism plugin works with a Moodle Assignment
     And I log in as "instructor1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then I should see "View all submissions"
-    When I navigate to "View all submissions" in current page administration
+    Then I should see "Submissions"
+    When I navigate to "Submissions" in current page administration
     Then "student1 student1" row "File submissions" column of "generaltable" table should contain "%"
     And I wait until "[alt='GradeMark']" "css_element" exists
-    And I click on "[alt='GradeMark']" "css_element"
+    And I click on "[title='GradeMark']" "css_element"
     And I switch to "turnitin_viewer" window
     And I wait until the page is ready
     And I accept the Turnitin EULA from the EV if necessary

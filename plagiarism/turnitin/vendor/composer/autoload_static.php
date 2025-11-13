@@ -7,27 +7,31 @@ namespace Composer\Autoload;
 class ComposerStaticInit0fe026b7ec5872d4051c02ca5a6adb33
 {
     public static $prefixLengthsPsr4 = array (
-        'I' =>
+        'I' => 
         array (
             'Integrations\\PhpSdk\\' => 20,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Integrations\\PhpSdk\\' =>
+        'Integrations\\PhpSdk\\' => 
         array (
             0 => __DIR__ . '/..' . '/Integrations/phpsdk-package/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'H' =>
+        'H' => 
         array (
-            'Httpful' =>
+            'Httpful' => 
             array (
                 0 => __DIR__ . '/..' . '/nategood/httpful/src',
             ),
         ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -36,6 +40,7 @@ class ComposerStaticInit0fe026b7ec5872d4051c02ca5a6adb33
             $loader->prefixLengthsPsr4 = ComposerStaticInit0fe026b7ec5872d4051c02ca5a6adb33::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit0fe026b7ec5872d4051c02ca5a6adb33::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit0fe026b7ec5872d4051c02ca5a6adb33::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit0fe026b7ec5872d4051c02ca5a6adb33::$classMap;
 
         }, null, ClassLoader::class);
     }

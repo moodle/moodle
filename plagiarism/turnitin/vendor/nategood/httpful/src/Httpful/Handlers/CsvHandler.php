@@ -18,13 +18,13 @@ class CsvHandler extends MimeHandlerAdapter
         if (empty($body))
             return null;
 
-        $parsed = array();
+        $parsed = [];
         $fp = fopen('data://text/plain;base64,' . base64_encode($body), 'r');
         while (($r = fgetcsv($fp)) !== FALSE) {
             $parsed[] = $r;
         }
 
-        if (empty($parsed))
+        if ($parsed === [])
             throw new \Exception("Unable to parse response as CSV");
         return $parsed;
     }
@@ -33,7 +33,7 @@ class CsvHandler extends MimeHandlerAdapter
      * @param mixed $payload
      * @return string
      */
-    public function serialize($payload)
+    public function serialize($payload): string
     {
         $fp = fopen('php://temp/maxmemory:'. (6*1024*1024), 'r+');
         $i = 0;

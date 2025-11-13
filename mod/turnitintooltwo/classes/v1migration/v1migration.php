@@ -109,9 +109,6 @@ class v1migration {
      */
     public function migrate_modal($courseid, $turnitintoolid) {
         global $PAGE;
-        $cssurl = new moodle_url('/mod/turnitintooltwo/css/fontawesome.min.css');
-        $PAGE->requires->css($cssurl);
-
         $PAGE->requires->js_call_amd('mod_turnitintooltwo/migration_tool_launch', 'migration_tool_launch');
     }
 
@@ -285,8 +282,7 @@ class v1migration {
     public function set_default_values() {
         $nullcheckfields = array('grade', 'allowlate', 'reportgenspeed', 'submitpapersto', 'spapercheck', 'internetcheck', 'journalcheck', 'introformat',
                             'studentreports', 'dateformat', 'usegrademark', 'gradedisplay', 'autoupdates', 'commentedittime', 'commentmaxsize',
-                            'autosubmission', 'shownonsubmission', 'excludebiblio', 'excludequoted', 'excludevalue', 'erater', 'erater_handbook',
-                            'erater_spelling', 'erater_grammar', 'erater_usage', 'erater_mechanics', 'erater_style', 'transmatch');
+                            'autosubmission', 'shownonsubmission', 'excludebiblio', 'excludequoted', 'excludevalue', 'transmatch');
 
         foreach ($nullcheckfields as $field) {
             $this->v1assignment->$field = (is_null($this->v1assignment->$field)) ? 0 : $this->v1assignment->$field;

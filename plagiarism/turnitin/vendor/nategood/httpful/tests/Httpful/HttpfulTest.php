@@ -9,7 +9,7 @@
  */
 namespace Httpful\Test;
 
-require(dirname(dirname(dirname(__FILE__))) . '/bootstrap.php');
+require(dirname(__FILE__, 3) . '/bootstrap.php');
 \Httpful\Bootstrap::init();
 
 use Httpful\Httpful;
@@ -19,63 +19,39 @@ use Httpful\Http;
 use Httpful\Response;
 use Httpful\Handlers\JsonHandler;
 
-define('TEST_SERVER', WEB_SERVER_HOST . ':' . WEB_SERVER_PORT);
+define('TEST_SERVER', \WEB_SERVER_HOST . ':' . \WEB_SERVER_PORT);
 
 class HttpfulTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_SERVER = TEST_SERVER;
-    const TEST_URL = 'http://127.0.0.1:8008';
-    const TEST_URL_400 = 'http://127.0.0.1:8008/400';
+    public const TEST_SERVER = TEST_SERVER;
+    public const TEST_URL = 'http://127.0.0.1:8008';
+    public const TEST_URL_400 = 'http://127.0.0.1:8008/400';
 
-    const SAMPLE_JSON_HEADER =
-"HTTP/1.1 200 OK
-Content-Type: application/json
-Connection: keep-alive
-Transfer-Encoding: chunked\r\n";
-    const SAMPLE_JSON_HEADER_LOWERCASE =
-        "HTTP/2 200 
-date: Tue, 07 Jan 2020 09:11:21 GMT
-content-type: application/json
-content-length: 513
-access-control-allow-origin: *
-access-control-allow-methods: GET, POST, PUT, PATCH, DELETE
-access-control-allow-headers: Authorization, Content-Type, Accept-Encoding, Cache-Control, DNT
-cache-control: private, must-revalidate\r\n";
-    const SAMPLE_JSON_RESPONSE = '{"key":"value","object":{"key":"value"},"array":[1,2,3,4]}';
-    const SAMPLE_CSV_HEADER =
-"HTTP/1.1 200 OK
-Content-Type: text/csv
-Connection: keep-alive
-Transfer-Encoding: chunked\r\n";
-    const SAMPLE_CSV_RESPONSE =
+    public const SAMPLE_JSON_HEADER =
+"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nConnection: keep-alive\r\nTransfer-Encoding: chunked\r\n";
+    public const SAMPLE_JSON_HEADER_LOWERCASE =
+"HTTP/2 200\r\ndate: Tue, 07 Jan 2020 09:11:21 GMT\r\ncontent-type: application/json\r\ncontent-length: 513\r\naccess-control-allow-origin: *\r\naccess-control-allow-methods: GET, POST, PUT, PATCH, DELETE\r\naccess-control-allow-headers: Authorization, Content-Type, Accept-Encoding, Cache-Control, DNT\r\ncache-control: private, must-revalidate\r\n";
+    public const SAMPLE_JSON_RESPONSE = '{"key":"value","object":{"key":"value"},"array":[1,2,3,4]}';
+    public const SAMPLE_CSV_HEADER =
+"HTTP/1.1 200 OK\r\nContent-Type: text/csvConnection: keep-alive\r\nTransfer-Encoding: chunked\r\n";
+    public const SAMPLE_CSV_RESPONSE =
 "Key1,Key2
 Value1,Value2
 \"40.0\",\"Forty\"";
-    const SAMPLE_XML_RESPONSE = '<stdClass><arrayProp><array><k1><myClass><intProp>2</intProp></myClass></k1></array></arrayProp><stringProp>a string</stringProp><boolProp>TRUE</boolProp></stdClass>';
-    const SAMPLE_XML_HEADER =
-"HTTP/1.1 200 OK
-Content-Type: application/xml
-Connection: keep-alive
-Transfer-Encoding: chunked\r\n";
-    const SAMPLE_VENDOR_HEADER =
-"HTTP/1.1 200 OK
-Content-Type: application/vnd.nategood.message+xml
-Connection: keep-alive
-Transfer-Encoding: chunked\r\n";
-    const SAMPLE_VENDOR_TYPE = "application/vnd.nategood.message+xml";
-    const SAMPLE_MULTI_HEADER =
-"HTTP/1.1 200 OK
-Content-Type: application/json
-Connection: keep-alive
-Transfer-Encoding: chunked
-X-My-Header:Value1
-X-My-Header:Value2\r\n";
+    public const SAMPLE_XML_RESPONSE = '<stdClass><arrayProp><array><k1><myClass><intProp>2</intProp></myClass></k1></array></arrayProp><stringProp>a string</stringProp><boolProp>TRUE</boolProp></stdClass>';
+    public const SAMPLE_XML_HEADER =
+"HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nConnection: keep-alive\r\nTransfer-Encoding: chunked\r\n";
+    public const SAMPLE_VENDOR_HEADER =
+"HTTP/1.1 200 OK\r\nContent-Type: application/vnd.nategood.message+xml\r\nConnection: keep-alive\r\nTransfer-Encoding: chunked\r\n";
+    public const SAMPLE_VENDOR_TYPE = "application/vnd.nategood.message+xml";
+    public const SAMPLE_MULTI_HEADER =
+"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nConnection: keep-alive\r\nTransfer-Encoding: chunked\r\nX-My-Header:Value1\r\nX-My-Header:Value2\r\n";
 
     function testInit()
     {
       $r = Request::init();
       // Did we get a 'Request' object?
-      $this->assertEquals('Httpful\Request', get_class($r));
+      $this->assertEquals(\Httpful\Request::class, get_class($r));
     }
 
     function testDetermineLength()
@@ -90,11 +66,11 @@ X-My-Header:Value2\r\n";
 
     function testMethods()
     {
-      $valid_methods = array('get', 'post', 'delete', 'put', 'options', 'head');
+      $valid_methods = ['get', 'post', 'delete', 'put', 'options', 'head'];
       $url = 'http://example.com/';
       foreach ($valid_methods as $method) {
-        $r = call_user_func(array('Httpful\Request', $method), $url);
-        $this->assertEquals('Httpful\Request', get_class($r));
+        $r = call_user_func([\Httpful\Request::class, $method], $url);
+        $this->assertEquals(\Httpful\Request::class, get_class($r));
         $this->assertEquals(strtoupper($method), $r->method);
       }
     }
@@ -345,9 +321,9 @@ Content-Type: text/plain; charset=utf-8\r\n", $req);
 
     function testAttach() {
         $req = Request::init();
-        $testsPath = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..');
+        $testsPath = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..');
         $filename = $testsPath . DIRECTORY_SEPARATOR . 'test_image.jpg';
-        $req->attach(array('index' => $filename));
+        $req->attach(['index' => $filename]);
         $payload = $req->payload['index'];
         // PHP 5.5  + will take advantage of CURLFile while previous
         // versions just use the string syntax
@@ -558,7 +534,7 @@ Transfer-Encoding: chunked\r\n", $request);
         // Lazy test...
         $prev = \Httpful\Httpful::get(\Httpful\Mime::XML);
         $this->assertEquals($prev, new \Httpful\Handlers\XmlHandler());
-        $conf = array('namespace' => 'http://example.com');
+        $conf = ['namespace' => 'http://example.com'];
         \Httpful\Httpful::register(\Httpful\Mime::XML, new \Httpful\Handlers\XmlHandler($conf));
         $new = \Httpful\Httpful::get(\Httpful\Mime::XML);
         $this->assertNotEquals($prev, $new);
@@ -589,12 +565,12 @@ Transfer-Encoding: chunked\r\n", $request);
     {
         $handler = new JsonHandler();
 
-        $bodies = array(
+        $bodies = [
             'foo',
-            array(),
-            array('foo', 'bar'),
+            [],
+            ['foo', 'bar'],
             null
-        );
+        ];
         foreach ($bodies as $body) {
             $this->assertEquals($body, $handler->parse(json_encode($body)));
         }
@@ -632,4 +608,3 @@ class DemoMimeHandler extends \Httpful\Handlers\MimeHandlerAdapter
         return 'custom parse';
     }
 }
-

@@ -52,7 +52,7 @@ define(['jquery',
 
           // Get html to launch DV.
           $.ajax({
-              type: "POST",
+              type: "GET",
               url: M.cfg.wwwroot + "/plagiarism/turnitin/ajax.php",
               dataType: "json",
               data: {

@@ -22,23 +22,36 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace plagiarism_turnitin;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/plagiarism/turnitin/lib.php');
 require_once($CFG->dirroot . '/mod/assign/externallib.php');
 
+use PHPUnit\Framework\Attributes\CoversFunction;
+
 /**
  * Tests for API comms class
  *
  * @package turnitin
  */
-class plagiarism_turnitin_lib_testcase extends advanced_testcase {
+#[CoversFunction('plagiarism_turnitin\plagiarism_plugin_turnitin::is_plugin_configured')]
+#[CoversFunction('plagiarism_turnitin\plagiarism_plugin_turnitin::check_group_submission')]
+#[CoversFunction('plagiarism_turnitin\plagiarism_plugin_turnitin::plagiarism_get_report_gen_speed_params')]
+#[CoversFunction('plagiarism_turnitin\plagiarism_plugin_turnitin::plagiarism_set_config')]
+final class lib_test extends \advanced_testcase {
 
-    public function test_is_plugin_configured() {
+    /**
+     * Test that the plugin is configured correctly.
+     *
+     * @return void
+     */
+    public function test_is_plugin_configured(): void {
         $this->resetAfterTest();
 
-        $plagiarismturnitin = new plagiarism_plugin_turnitin();
+        $plagiarismturnitin = new \plagiarism_plugin_turnitin();
 
         // Check if plugin is configured with no plugin config set.
         $ispluginconfigured = $plagiarismturnitin->is_plugin_configured();
@@ -60,23 +73,30 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
         $this->assertEquals(true, $ispluginconfigured);
     }
 
-    public function test_check_group_submission() {
+    /**
+     * Test that group submissions are correctly checked.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function test_check_group_submission(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
 
         $this->resetAfterTest(true);
 
-        $result = $this->create_assign_with_student_and_teacher(array(
+        $result = $this->create_assign_with_student_and_teacher([
             'assignsubmission_onlinetext_enabled' => 1,
-            'teamsubmission' => 1
-        ));
+            'teamsubmission' => 1,
+        ]);
         $assignmodule = $result['assign'];
         $student = $result['student'];
         $course = $result['course'];
-        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
         $cm = get_coursemodule_from_instance('assign', $assignmodule->id);
-        $context = context_module::instance($cm->id);
-        $assign = new testable_assign($context, $cm, $course);
+        $context = \context_module::instance($cm->id);
+        $assign = new \testable_assign($context, $cm, $course);
 
         groups_add_member($group, $student);
 
@@ -84,43 +104,43 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
         $submission = $assign->get_group_submission($student->id, $group->id, true);
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
         $assign->testable_update_submission($submission, $student->id, true, false);
-        $data = new stdClass();
-        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+        $data = new \stdClass();
+        $data->onlinetext_editor = ['itemid' => file_get_unused_draft_itemid(),
                                          'text' => 'Submission text',
-                                         'format' => FORMAT_MOODLE);
+                                         'format' => FORMAT_MOODLE, ];
         $plugin = $assign->get_submission_plugin_by_type('onlinetext');
         $plugin->save($submission, $data);
 
-        $plagiarismturnitin = new plagiarism_plugin_turnitin();
+        $plagiarismturnitin = new \plagiarism_plugin_turnitin();
         $response = $plagiarismturnitin->check_group_submission($cm, $student->id);
 
         // Test should pass as we return the correct group ID.
         $this->assertEquals($group->id, $response);
 
         // Test a non-group submission.
-        $result = $this->create_assign_with_student_and_teacher(array(
+        $result = $this->create_assign_with_student_and_teacher([
             'assignsubmission_onlinetext_enabled' => 1,
-            'teamsubmission' => 0
-        ));
+            'teamsubmission' => 0,
+        ]);
         $assignmodule = $result['assign'];
         $student = $result['student'];
         $course = $result['course'];
         $cm = get_coursemodule_from_instance('assign', $assignmodule->id);
-        $context = context_module::instance($cm->id);
-        $assign = new testable_assign($context, $cm, $course);
+        $context = \context_module::instance($cm->id);
+        $assign = new \testable_assign($context, $cm, $course);
 
         $this->setUser($student);
         $submission = $assign->get_user_submission($student->id, true);
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
         $assign->testable_update_submission($submission, $student->id, true, false);
-        $data = new stdClass();
-        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+        $data = new \stdClass();
+        $data->onlinetext_editor = ['itemid' => file_get_unused_draft_itemid(),
                                          'text' => 'Submission text',
-                                         'format' => FORMAT_MOODLE);
+                                         'format' => FORMAT_MOODLE, ];
         $plugin = $assign->get_submission_plugin_by_type('onlinetext');
         $plugin->save($submission, $data);
 
-        $plagiarismturnitin = new plagiarism_plugin_turnitin();
+        $plagiarismturnitin = new \plagiarism_plugin_turnitin();
         $response = $plagiarismturnitin->check_group_submission($cm, $student->id);
 
         // Test should pass as we return false when checking the group ID.
@@ -134,27 +154,27 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
      * @param array $params parameters to be provided to the assignment module creation
      * @return array containing the course, assignment module, student and teacher
      */
-    public function create_assign_with_student_and_teacher($params = array()) {
+    public function create_assign_with_student_and_teacher($params = []) {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
-        $params = array_merge(array(
+        $params = array_merge([
             'course' => $course->id,
             'name' => 'assignment',
             'intro' => 'assignment intro text',
-        ), $params);
+        ], $params);
 
         // Create a course and assignment and users.
         $assign = $this->getDataGenerator()->create_module('assign', $params);
 
         $cm = get_coursemodule_from_instance('assign', $assign->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
 
         $student = $this->getDataGenerator()->create_user();
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
         $teacher = $this->getDataGenerator()->create_user();
-        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
 
         assign_capability('mod/assign:view', CAP_ALLOW, $teacherrole->id, $context->id, true);
@@ -162,25 +182,25 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
         assign_capability('mod/assign:grade', CAP_ALLOW, $teacherrole->id, $context->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        return array(
+        return [
             'course' => $course,
             'assign' => $assign,
             'student' => $student,
-            'teacher' => $teacher
-        );
+            'teacher' => $teacher,
+        ];
     }
 
     /**
      * Test that the data returned from the report gen speed param function is what we expect.
      */
-    public function test_plagiarism_get_report_gen_speed_params() {
+    public function test_plagiarism_get_report_gen_speed_params(): void {
         $this->resetAfterTest();
 
-        $expected = new stdClass();
+        $expected = new \stdClass();
         $expected->num_resubmissions = 3;
         $expected->num_hours = 24;
 
-        $plagiarismturnitin = new plagiarism_plugin_turnitin();
+        $plagiarismturnitin = new \plagiarism_plugin_turnitin();
         $response = $plagiarismturnitin->plagiarism_get_report_gen_speed_params();
 
         $this->assertEquals($expected, $response);
@@ -189,13 +209,13 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
     /**
      * Test that the set config function saves a config.
      */
-    public function test_plagiarism_set_config() {
+    public function test_plagiarism_set_config(): void {
         $this->resetAfterTest();
 
-        $plagiarismturnitin = new plagiarism_plugin_turnitin();
+        $plagiarismturnitin = new \plagiarism_plugin_turnitin();
 
         // Check that we can set config value when a full property name is given.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->plagiarism_turnitin_accountid = 123456789;
         $property = "plagiarism_turnitin_accountid";
 
@@ -207,7 +227,7 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
         $this->assertEquals(123456789, $config->plagiarism_turnitin_accountid);
 
         // Check that we can set config value when a partial property name is given.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->secretkey = "Test";
         $property = "secretkey";
         $plagiarismturnitin->plagiarism_set_config($data, $property);
@@ -218,7 +238,7 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
         $this->assertEquals("Test", $config->plagiarism_turnitin_secretkey);
 
         // Check that an undefined property does not set a config value.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->test = "Test";
         $property = "NotTest";
         $plagiarismturnitin->plagiarism_set_config($data, $property);
@@ -226,6 +246,10 @@ class plagiarism_turnitin_lib_testcase extends advanced_testcase {
         // Get the config.
         $config = $plagiarismturnitin->plagiarism_turnitin_admin_config();
 
-        $this->assertObjectNotHasProperty("plagiarism_turnitin_test", $config);
+        if (method_exists($this, 'assertObjectNotHasProperty')) {
+            $this->assertObjectNotHasProperty("plagiarism_turnitin_test", $config);
+        } else {
+            $this->assertObjectNotHasAttribute("plagiarism_turnitin_test", $config);
+        }
     }
 }

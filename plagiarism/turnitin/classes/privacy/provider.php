@@ -25,8 +25,6 @@
 
 namespace plagiarism_turnitin\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
@@ -34,6 +32,9 @@ use core_privacy\local\request\helper;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
+/**
+ * Privacy Subsystem for plagiarism_turnitin.
+ */
 class provider implements
     // This plugin does store personal user data.
     \core_privacy\local\metadata\provider,
@@ -46,10 +47,11 @@ class provider implements
     // This trait must be included to provide the relevant polyfill for the plagirism provider.
     use \core_plagiarism\privacy\legacy_polyfill;
 
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Return the fields which contain personal data.
      *
-     * @param $collection collection a reference to the collection to use to store the metadata.
+     * @param collection $collection a reference to the collection to use to store the metadata.
      * @return $collection the updated collection of metadata items.
      */
     public static function _get_metadata(collection $collection) {
@@ -81,7 +83,7 @@ class provider implements
                 'turnitin_uid' => 'privacy:metadata:plagiarism_turnitin_users:turnitin_uid',
                 'instructor_defaults' => 'privacy:metadata:plagiarism_turnitin_users:instructor_defaults',
                 'instructor_rubrics' => 'privacy:metadata:plagiarism_turnitin_users:instructor_rubrics',
-                'user_agreement_accepted' => 'privacy:metadata:plagiarism_turnitin_users:user_agreement_accepted'
+                'user_agreement_accepted' => 'privacy:metadata:plagiarism_turnitin_users:user_agreement_accepted',
             ],
             'privacy:metadata:plagiarism_turnitin_users'
         );
@@ -98,6 +100,7 @@ class provider implements
         return $collection;
     }
 
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Get the list of contexts that contain user information for the specified user.
      *
@@ -108,7 +111,7 @@ class provider implements
 
         $params = ['modulename' => 'assign',
             'contextlevel' => CONTEXT_MODULE,
-            'userid' => $userid];
+            'userid' => $userid, ];
 
         $sql = "SELECT ctx.id
                   FROM {course_modules} cm
@@ -125,6 +128,7 @@ class provider implements
     }
 
 
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Export all plagiarism data from each plagiarism plugin for the specified userid and context.
      *
@@ -140,7 +144,7 @@ class provider implements
             return;
         }
 
-        $user = $DB->get_record('user', array('id' => $userid));
+        $user = $DB->get_record('user', ['id' => $userid]);
 
         $params = ['userid' => $user->id];
 
@@ -163,6 +167,7 @@ class provider implements
         }
     }
 
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Export the supplied personal data for a single activity, along with any generic data or area files.
      *
@@ -170,7 +175,8 @@ class provider implements
      * @param \context_module $context the module context.
      * @param \stdClass $user the user record
      */
-    protected static function _export_plagiarism_turnitin_data_for_user(array $submissiondata, \context_module $context, \stdClass $user) {
+    protected static function _export_plagiarism_turnitin_data_for_user(array $submissiondata, \context_module $context,
+        \stdClass $user) {
         // Fetch the generic module data.
         $contextdata = helper::get_context_data($context, $user);
 
@@ -182,6 +188,7 @@ class provider implements
         helper::export_context_files($context, $user);
     }
 
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Delete all data for all users in the specified context.
      *
@@ -203,6 +210,7 @@ class provider implements
 
     }
 
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Delete all user information for the provided user and context.
      *
@@ -225,26 +233,26 @@ class provider implements
      * @param   userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
      */
     public static function get_users_in_context(userlist $userlist) {
-      $context = $userlist->get_context();
+        $context = $userlist->get_context();
 
-      if ($context->contextlevel != CONTEXT_MODULE) {
-          return;
-      }
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
 
-      $sql = "SELECT ptf.userid
-                FROM {plagiarism_turnitin_files} ptf
-                JOIN {course_modules} c 
-                  ON ptf.cm = c.id
-                JOIN {modules} m
-                  ON m.id = c.module AND m.name = :modname
-               WHERE c.id = :cmid";
+        $sql = "SELECT ptf.userid
+                  FROM {plagiarism_turnitin_files} ptf
+                  JOIN {course_modules} c
+                    ON ptf.cm = c.id
+                  JOIN {modules} m
+                    ON m.id = c.module AND m.name = :modname
+                 WHERE c.id = :cmid";
 
-      $params = [
-          'modname' => 'plagiarism_turnitin',
-          'cmid' => $context->instanceid
-      ];
+        $params = [
+            'modname' => 'plagiarism_turnitin',
+            'cmid' => $context->instanceid,
+        ];
 
-      $userlist->add_from_sql('userid', $sql, $params);
+        $userlist->add_from_sql('userid', $sql, $params);
     }
 
     /**
@@ -253,36 +261,36 @@ class provider implements
      * @param   approved_userlist $userlist The approved context and user information to delete information for.
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
-      global $DB;
+        global $DB;
 
-      $context = $userlist->get_context();
+        $context = $userlist->get_context();
 
-      if ($context->contextlevel != CONTEXT_MODULE) {
-          return;
-      }
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return;
+        }
 
-      $userids = $userlist->get_userids();
+        $userids = $userlist->get_userids();
 
-      list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
 
-      $sql1 = "SELECT pts.id
-                 FROM {plagiarism_turnitin_files} ptf
-                 JOIN {course_modules} c 
-                   ON ptf.cm = c.id
-                 JOIN {modules} m 
-                   ON m.id = c.module AND m.name = :modname
-                WHERE pts.userid $insql
-                  AND c.id = :cmid";
+        $sql1 = "SELECT pts.id
+                   FROM {plagiarism_turnitin_files} ptf
+                   JOIN {course_modules} c
+                     ON ptf.cm = c.id
+                   JOIN {modules} m
+                     ON m.id = c.module AND m.name = :modname
+                  WHERE pts.userid $insql
+                    AND c.id = :cmid";
 
-      $params = [
-          'modname' => 'plagiarism_turnitin',
-          'cmid' => $context->instanceid
-      ];
+        $params = [
+            'modname' => 'plagiarism_turnitin',
+            'cmid' => $context->instanceid,
+        ];
 
-      $params = array_merge($params, $inparams);
+        $params = array_merge($params, $inparams);
 
-      $attempt = $DB->get_fieldset_sql($sql1, $params);
+        $attempt = $DB->get_fieldset_sql($sql1, $params);
 
-      $DB->delete_records_list('plagiarism_turnitin', 'id', array_values($attempt));
+        $DB->delete_records_list('plagiarism_turnitin', 'id', array_values($attempt));
     }
 }

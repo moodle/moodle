@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'tr'
+ *
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +49,7 @@ $string['otherrubric'] = 'Diğer öğretmenlere ait bir performans değerlendirm
 $string['attachrubric'] = 'Bu ödeve bir performans değerlendirme ölçeği ekleyin';
 $string['launchrubricmanager'] = 'Performans Değerlendirme Ölçeği Yöneticisini Piyasaya Sür';
 $string['attachrubricnote'] = 'Not: Öğrenciler, gönderimden önce ekli performans değerlendirme ölçeği ve içeriğini göreceklerdir.';
-$string['anonblindmarkingnote'] = 'Not: Turnitin anonim işaretleme ayarı kaldırıldı. Turnitin, anonim işaretleme ayarı için Moodle&#39;ın kapalı işaretleme ayarını kullanacaktır.';
+$string['anonblindmarkingnote'] = "Not: Ayrı Turnitin anonim işaretleme ayarı kaldırılmıştır. Turnitin, anonim işaretleme ayarını belirlemek için Moodle'ın Anonim gönderiler ayarını kullanacaktır.";
 $string['transmatch'] = 'Çeviri Eşleştirme';
 $string["reportgen_immediate_add_immediate"] = "Raporları anında oluşturun. Gönderiler, depoya anında eklenecektir (depo ayarlanmışsa).";
 $string["reportgen_immediate_add_duedate"] = "Raporları anında oluşturun. Gönderiler, depoya teslim tarihinde eklenecektir (depo ayarlanmışsa).";

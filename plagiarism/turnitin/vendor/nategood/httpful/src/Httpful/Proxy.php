@@ -10,7 +10,7 @@ if (!defined('CURLPROXY_SOCKS4')) {
  */
 class Proxy
 {
-    const HTTP = CURLPROXY_HTTP;
-    const SOCKS4 = CURLPROXY_SOCKS4;
-    const SOCKS5 = CURLPROXY_SOCKS5;
+    public const HTTP = CURLPROXY_HTTP;
+    public const SOCKS4 = CURLPROXY_SOCKS4;
+    public const SOCKS5 = CURLPROXY_SOCKS5;
 }

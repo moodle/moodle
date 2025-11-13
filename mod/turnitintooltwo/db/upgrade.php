@@ -348,5 +348,15 @@ function xmldb_turnitintooltwo_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021073001, 'turnitintooltwo');
     }
 
+    if ($oldversion < 2025072501) {
+        $table = new xmldb_table('turnitintooltwo_users');
+
+        // Adding index to table turnitintooltwo_users.
+        $table->add_index('turnitin_uid', XMLDB_INDEX_NOTUNIQUE, ['turnitin_uid']);
+
+        // Turnitintooltwo savepoint reached.
+        upgrade_mod_savepoint(true, 2025072501, 'turnitintooltwo');
+    }
+
     return true;
 }

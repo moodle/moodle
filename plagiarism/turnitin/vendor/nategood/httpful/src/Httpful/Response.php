@@ -9,7 +9,6 @@ namespace Httpful;
  */
 class Response
 {
-
     public $body,
            $raw_body,
            $headers,
@@ -18,7 +17,7 @@ class Response
            $code = 0,
            $content_type,
            $parent_type,
-           $charset,
+           $charset             = null,
            $meta_data,
            $is_mime_vendor_specific = false,
            $is_mime_personal = false;
@@ -31,7 +30,7 @@ class Response
      * @param Request $request
      * @param array $meta_data
      */
-    public function __construct($body, $headers, Request $request, array $meta_data = array())
+    public function __construct(string $body, string $headers, Request $request, array $meta_data = [])
     {
         $this->request      = $request;
         $this->raw_headers  = $headers;
@@ -59,7 +58,7 @@ class Response
      *
      * @return bool Did we receive a 4xx or 5xx?
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
         return $this->code >= 400;
     }
@@ -67,7 +66,7 @@ class Response
     /**
      * @return bool
      */
-    public function hasBody()
+    public function hasBody(): bool
     {
         return !empty($this->body);
     }
@@ -77,9 +76,9 @@ class Response
      * (most often an associative array) based on the expected
      * Mime type.
      * @param string Http response body
-     * @return array|string|object the response parse accordingly
+     * @return mixed (array|string|object) the response parse accordingly
      */
-    public function _parse($body)
+    public function _parse(string $body)
     {
         // If the user decided to forgo the automatic
         // smart parsing, short circuit.
@@ -98,13 +97,13 @@ class Response
         //  3. If provided, use the "parent type" of the mime type from the response
         //  4. Default to the content-type provided in the response
         $parse_with = $this->request->expected_type;
+
         if (empty($this->request->expected_type)) {
             $parse_with = Httpful::hasParserRegistered($this->content_type)
                 ? $this->content_type
                 : $this->parent_type;
         }
-
-       return Httpful::get($parse_with)->parse($body);
+        return Httpful::get($parse_with)->parse($body);
     }
 
     /**
@@ -113,12 +112,12 @@ class Response
      * @param string $headers raw headers
      * @return array parse headers
      */
-    public function _parseHeaders($headers)
+    public function _parseHeaders(string $headers): array
     {
         return Response\Headers::fromString($headers)->toArray();
     }
 
-    public function _parseCode($headers)
+    public function _parseCode(string $headers): int
     {
         $end = strpos($headers, "\r\n");
         if ($end === false) $end = strlen($headers);
@@ -126,7 +125,7 @@ class Response
         if (count($parts) < 2 || !is_numeric($parts[1])) {
             throw new \Exception("Unable to parse response code from HTTP response due to malformed response");
         }
-        return intval($parts[1]);
+        return (int) $parts[1];
     }
 
     /**
@@ -136,12 +135,12 @@ class Response
     public function _interpretHeaders()
     {
         // Parse the Content-Type and charset
-        $content_type = isset($this->headers['Content-Type']) ? $this->headers['Content-Type'] : '';
+        $content_type = $this->headers['Content-Type'] ?? '';
         $content_type = explode(';', $content_type);
 
         $this->content_type = $content_type[0];
         if (count($content_type) == 2 && strpos($content_type[1], '=') !== false) {
-            list($nill, $this->charset) = explode('=', $content_type[1]);
+            [$nill, $this->charset] = explode('=', $content_type[1]);
         }
 
         // RFC 2616 states "text/*" Content-Types should have a default
@@ -149,13 +148,13 @@ class Response
         // are assumed to have UTF-8 unless otherwise specified.
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1
         // http://www.w3.org/International/O-HTTP-charset.en.php
-        if (!isset($this->charset)) {
+        if ($this->charset === null ) {
             $this->charset = substr($this->content_type, 5) === 'text/' ? 'iso-8859-1' : 'utf-8';
         }
 
         // Is vendor type? Is personal type?
         if (strpos($this->content_type, '/') !== false) {
-            list($type, $sub_type) = explode('/', $this->content_type);
+            [$type, $sub_type] = explode('/', $this->content_type);
             $this->is_mime_vendor_specific = substr($sub_type, 0, 4) === 'vnd.';
             $this->is_mime_personal = substr($sub_type, 0, 4) === 'prs.';
         }
@@ -163,7 +162,7 @@ class Response
         // Parent type (e.g. xml for application/vnd.github.message+xml)
         $this->parent_type = $this->content_type;
         if (strpos($this->content_type, '+') !== false) {
-            list($vendor, $this->parent_type) = explode('+', $this->content_type, 2);
+            [$vendor, $this->parent_type] = explode('+', $this->content_type, 2);
             $this->parent_type = Mime::getFullMime($this->parent_type);
         }
     }
@@ -171,7 +170,7 @@ class Response
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->raw_body;
     }

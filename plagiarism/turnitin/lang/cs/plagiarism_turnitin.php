@@ -14,9 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// Let codechecker ignore some sniffs for this file as it is perfectly well ordered, just not alphabetically.
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 /**
+ * Strings for component 'qtype_kprime', language 'cs'
  * @package   plagiarism_turnitin
  * @copyright 2012 iParadigms LLC
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
@@ -42,7 +48,7 @@ $string['otherrubric'] = 'Použít rubriku patřící jinému instruktorovi';
 $string['attachrubric'] = 'Přiložit rubriku k zadání';
 $string['launchrubricmanager'] = 'Spustit Správce rubrik';
 $string['attachrubricnote'] = 'Poznámka: studenti si budou moci před odevzdáním prohlížet přiložené rubriky a jejich obsah.';
-$string['anonblindmarkingnote'] = 'Poznámka: Samostatné nastavení anonymního označení Turnitin bylo odstraněno. Turnitin bude používat nastavení zaslepeného označení Moodle k určení anonymního nastavení označení.';
+$string['anonblindmarkingnote'] = "Poznámka: Samostatné nastavení anonymního hodnocení Turnitin bylo odstraněno. Turnitin určí nastavení anonymního hodnocení podle nastavení anonymních odevzdání v Moodle.";
 $string['transmatch'] = 'Přeložená shoda';
 $string["reportgen_immediate_add_immediate"] = "Generujte zprávy okamžitě. Odevzdání budou okamžitě přidána do úložiště (pokud je úložiště nastaveno).";
 $string["reportgen_immediate_add_duedate"] = "Generujte zprávy okamžitě. Odevzdání budou přidána do úložiště v termínu dokončení (pokud je úložiště nastaveno).";

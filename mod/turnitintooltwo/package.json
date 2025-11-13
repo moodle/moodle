@@ -1,24 +1,38 @@
 {
   "name": "turnitintooltwo",
   "version": "1.0.0",
-  "description": "Moodle Turnitintooltwo plugin",
+  "description": "Moodle Direct v2 ================",
+  "homepage": "https://github.com/turnitin/moodle-mod_turnitintooltwo#readme",
+  "bugs": {
+    "url": "https://github.com/turnitin/moodle-mod_turnitintooltwo/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/turnitin/moodle-mod_turnitintooltwo"
+    "url": "git+https://github.com/turnitin/moodle-mod_turnitintooltwo.git"
   },
   "license": "GPL-3.0",
-  "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-less": "^4.0.1",
-    "gulp-notify": "^3.2.0",
-    "gulp-sass": "^3.2.1",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-watch": "^5.0.1"
+  "author": "",
+  "type": "commonjs",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "tests"
   },
-  "dependencies": {
-    "gulp-concat": "^2.6.1",
-    "gulp-rename": "^2.0.0",
-    "gulp-uglify": "^3.0.2"
+  "overrides": {
+    "gulp-sourcemaps": {
+      "postcss": ">=8.4.31"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "gulp": "^5.0.1",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-notify": "^5.0.0",
+    "gulp-rename": "^2.1.0",
+    "gulp-sass": "^6.0.1",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "sass": "^1.89.2"
   }
 }

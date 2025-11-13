@@ -19,17 +19,13 @@
  *
  * @package   plagiarism_turnitin
  * @copyright 2018 Turnitin
- * @authior   John McGettrick <jmcgettrick@turnitin.com>
+ * @author    John McGettrick <jmcgettrick@turnitin.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); // It must be included from a Moodle page.
-}
-
 /**
  * Override the repository option if necessary depending on the configuration setting.
- * @param $submitpapersto int - The repository to submit to.
+ * @param int $submitpapersto - The repository to submit to.
  * @return $submitpapersto int - The repository to submit to.
  */
 function plagiarism_turnitin_override_repository($submitpapersto) {
@@ -54,22 +50,22 @@ function plagiarism_turnitin_override_repository($submitpapersto) {
  * Retrieve previously made successful submissions that match passed in parameters. This
  * avoids resubmitting them to Turnitin.
  *
- * @param $author
- * @param $cmid
- * @param $identifier
+ * @param string $author The author of the submission.
+ * @param int $cmid The course module id.
+ * @param int $identifier The identifier of the submission.
  * @return $plagiarismfiles - an array of succesfully submitted submissions
  */
 function plagiarism_turnitin_retrieve_successful_submissions($author, $cmid, $identifier) {
     global $CFG, $DB;
 
     // Check if the same answer has been submitted previously. Remove if so.
-    list($insql, $inparams) = $DB->get_in_or_equal(array('success', 'queued'), SQL_PARAMS_QM, 'param', false);
+    list($insql, $inparams) = $DB->get_in_or_equal(['success', 'queued'], SQL_PARAMS_QM, 'param', false);
     $typefield = ($CFG->dbtype == "oci") ? " to_char(statuscode) " : " statuscode ";
 
     $plagiarismfiles = $DB->get_records_select(
         "plagiarism_turnitin_files",
         " userid = ? AND cm = ? AND identifier = ? AND ".$typefield. " " .$insql,
-        array_merge(array($author, $cmid, $identifier), $inparams)
+        array_merge([$author, $cmid, $identifier], $inparams)
     );
 
     return $plagiarismfiles;
@@ -77,7 +73,7 @@ function plagiarism_turnitin_retrieve_successful_submissions($author, $cmid, $id
 
 /**
  * Add a config field to show submissions have been made which we use to lock the anonymous marking setting.
- * @param $cmid
+ * @param int $cmid The course module id.
  */
 function plagiarism_turnitin_lock_anonymous_marking($cmid) {
     global $DB;
@@ -89,7 +85,7 @@ function plagiarism_turnitin_lock_anonymous_marking($cmid) {
     $configfield->config_hash = $configfield->cm . "_" . $configfield->name;
 
     if (!$DB->get_field('plagiarism_turnitin_config', 'id',
-        (array('cm' => $cmid, 'name' => 'submitted')))) {
+        (['cm' => $cmid, 'name' => 'submitted']))) {
         if (!$DB->insert_record('plagiarism_turnitin_config', $configfield)) {
             plagiarism_turnitin_print_error(
                 'defaultupdateerror',

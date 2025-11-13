@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'turnitin/moodle-plagiarism_turnitin',
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
+        'reference' => '07e20e6951d3e9c6ff9fba6af711cb8eafe88ffc',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        'integrations/phpsdk-package' => array(
+            'pretty_version' => 'v1.3.4',
+            'version' => '1.3.4.0',
+            'reference' => '382750d710a06eb2f2a8de1757d4b27b23f55f33',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../Integrations/phpsdk-package',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'nategood/httpful' => array(
+            'pretty_version' => '1.0.0',
+            'version' => '1.0.0.0',
+            'reference' => 'ea02c8aedef70b9a453ce97978d9d7c413972f15',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../nategood/httpful',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'turnitin/moodle-plagiarism_turnitin' => array(
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
+            'reference' => '07e20e6951d3e9c6ff9fba6af711cb8eafe88ffc',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);
