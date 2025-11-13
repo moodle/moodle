@@ -61,16 +61,16 @@ class qtype_gapfill_edit_form extends question_edit_form {
         $mform = $this->form_setup($mform);
 
         /*for storing the json containing the settings data */
-        $mform->addElement('hidden', 'itemsettings', '', array('size' => '80'));
+        $mform->addElement('hidden', 'itemsettings', '', ['size' => '80']);
         $mform->setType('itemsettings', PARAM_RAW);
 
         /* popup for entering feedback for individual words */
         $mform->addElement('html', '<div id="id_itemsettings_popup" title="' . get_string('additemsettings', 'qtype_gapfill')
                 . '" style="display:none;background-color:lightgrey" >');
         $mform->addElement('editor', 'correct', get_string('correct', 'qtype_gapfill'),
-         array('size' => 70, 'rows' => 4),  ['autosave' => false]);
+         ['size' => 70, 'rows' => 4],  ['autosave' => false]);
         $mform->addElement('editor', 'incorrect', get_string('incorrect', 'qtype_gapfill'),
-         array('size' => 70, 'rows' => 4),  ['autosave' => false]);
+         ['size' => 70, 'rows' => 4],  ['autosave' => false]);
         $mform->addElement('html', '</div>');
 
         /* presented for clicking on the gaps once they have been given numberical ids */
@@ -78,7 +78,7 @@ class qtype_gapfill_edit_form extends question_edit_form {
          '<div class="gapfill" id="id_itemsettings_canvas" style="display:none;background-color:lightgrey" ></div>');
 
         $mform->addElement('html', '<div id="questiontext" >');
-        $mform->addElement('editor', 'questiontext', get_string('questiontext', 'question'), array('rows' => 10),
+        $mform->addElement('editor', 'questiontext', get_string('questiontext', 'question'), ['rows' => 10],
                 $this->editoroptions);
         $mform->addElement('html', '</div>');
 
@@ -94,7 +94,7 @@ class qtype_gapfill_edit_form extends question_edit_form {
         $mform->removeelement('defaultmark');
 
         $mform->addElement('editor', 'wronganswers', get_string('wronganswers', 'qtype_gapfill'),
-                array('size' => 70, 'rows' => 1), $this->editoroptions);
+                ['size' => 70, 'rows' => 1], $this->editoroptions);
         $mform->addHelpButton('wronganswers', 'wronganswers', 'qtype_gapfill');
 
         /* Only allow plain text in for the comma delimited set of wrong answer values
@@ -104,7 +104,7 @@ class qtype_gapfill_edit_form extends question_edit_form {
         $mform->setType('wronganswers', PARAM_TEXT);
 
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'question')
-                , array('rows' => 10), $this->editoroptions);
+                , ['rows' => 10], $this->editoroptions);
 
         $mform->setType('generalfeedback', PARAM_RAW);
         $mform->addHelpButton('generalfeedback', 'generalfeedback', 'question');
@@ -118,8 +118,8 @@ class qtype_gapfill_edit_form extends question_edit_form {
         // Adds hinting features.
         $this->add_interactive_settings(true, true);
         if ($config->letterhints && $config->addhinttext) {
-            $this->_form->getElement('hint[0]')->setValue(array('text' => get_string('letterhint0', 'qtype_gapfill')));
-            $this->_form->getElement('hint[1]')->setValue(array('text' => get_string('letterhint1', 'qtype_gapfill')));
+            $this->_form->getElement('hint[0]')->setValue(['text' => get_string('letterhint0', 'qtype_gapfill')]);
+            $this->_form->getElement('hint[1]')->setValue(['text' => get_string('letterhint1', 'qtype_gapfill')]);
         }
     }
 
@@ -150,9 +150,9 @@ class qtype_gapfill_edit_form extends question_edit_form {
         $mform->addElement('select', 'delimitchars', get_string('delimitchars', 'qtype_gapfill'), $delimitchars2);
         $mform->addHelpButton('delimitchars', 'delimitchars', 'qtype_gapfill');
 
-        $answerdisplaytypes = array("dragdrop" => get_string('displaydragdrop', 'qtype_gapfill'),
+        $answerdisplaytypes = ["dragdrop" => get_string('displaydragdrop', 'qtype_gapfill'),
             "gapfill" => get_string('displaygapfill', 'qtype_gapfill'),
-            "dropdown" => get_string('displaydropdown', 'qtype_gapfill'));
+            "dropdown" => get_string('displaydropdown', 'qtype_gapfill')];
 
         $mform->addElement('select', 'answerdisplay', get_string('answerdisplay', 'qtype_gapfill'), $answerdisplaytypes);
         $mform->addHelpButton('answerdisplay', 'answerdisplay', 'qtype_gapfill');
@@ -201,14 +201,14 @@ class qtype_gapfill_edit_form extends question_edit_form {
      * @param MoodleQuickForm $mform
      * @return MoodleQuickForm
      */
-    protected function form_setup(MoodleQuickForm $mform) : MoodleQuickForm {
+    protected function form_setup(MoodleQuickForm $mform): MoodleQuickForm {
         global $PAGE;
         $PAGE->requires->jquery();
         $PAGE->requires->jquery_plugin('ui');
         $PAGE->requires->jquery_plugin('ui-css');
 
-        $PAGE->requires->strings_for_js(array('itemsettingserror', 'editquestiontext', 'additemsettings',
-            'correct', 'incorrect'), 'qtype_gapfill');
+        $PAGE->requires->strings_for_js(['itemsettingserror', 'editquestiontext', 'additemsettings',
+            'correct', 'incorrect'], 'qtype_gapfill');
         $PAGE->requires->js_call_amd('qtype_gapfill/questionedit', 'init');
 
         $mform->addElement('hidden', 'reload', 1);
@@ -244,7 +244,7 @@ class qtype_gapfill_edit_form extends question_edit_form {
           /* this gets manipulated by javascript */
         $settingsdata = $this->get_itemsettings($question);
         $this->_form->getElement('itemsettings')->setValue($settingsdata);
-        $this->_form->getElement('wronganswers')->setValue(array('text' => $wronganswers));
+        $this->_form->getElement('wronganswers')->setValue(['text' => $wronganswers]);
         parent::set_data($question);
     }
 
@@ -294,7 +294,7 @@ class qtype_gapfill_edit_form extends question_edit_form {
      * @return boolean
      */
     public function validation($fromform, $data) {
-        $errors = array();
+        $errors = [];
         /* don't save the form if there are no fields defined */
         $gaps = qtype_gapfill::get_gaps($fromform['delimitchars'], $fromform['questiontext']['text']);
         if (count($gaps) == 0) {
