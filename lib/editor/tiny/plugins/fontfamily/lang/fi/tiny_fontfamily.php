@@ -19,7 +19,7 @@
  *
  * @package     tiny_fontfamily
  * @category    string
- * @copyright   2023 Mikko Haiku <mikko.haiku@mediamaisteri.com>
+ * @copyright   2025 Mikko Haiku <mikko.haiku@iki.fi>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,3 +32,4 @@ $string['privacy:metadata'] = 'Kirjasinperhe-lisäosa ei tallentaa henkilötieto
 $string['fonts'] = "Kirjasinperheet";
 $string['settings'] = "Asetukset";
 $string['fonts_desc'] = "Lista käytettävissä olevista kirjasinperheistä rivinvaihdolla eroteltuna.";
+$string['fontfamily:use'] = "Salli lisäosan käyttö";

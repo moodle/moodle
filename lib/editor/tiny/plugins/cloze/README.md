@@ -1,7 +1,7 @@
 Moodle Tiny Cloze question editor
 =================================
 
-![Release](https://img.shields.io/badge/Release-1.13-blue.svg)
+![Release](https://img.shields.io/badge/Release-1.14-blue.svg)
 [![Moodle Plugin CI](https://github.com/srobotta/moodle-tiny_cloze/actions/workflows/moodle-plugin-ci.yml/badge.svg)](https://github.com/srobotta/moodle-tiny_cloze/actions/workflows/moodle-plugin-ci.yml)
 ![Supported](https://img.shields.io/badge/Moodle-4.1+-orange.svg)
 [![License GPL-3.0](https://img.shields.io/github/license/srobotta/moodle-tiny_cloze?color=lightgrey)](https://github.com/srobotta/moodle-tiny_cloze/blob/main/LICENSE)
@@ -127,6 +127,15 @@ If the problem persists then please [open a new issue on Github](https://github.
 or write a new comment on the [Moodle plugins directory](https://moodle.org/plugins/tiny_cloze).
 
 ## History
+
+### v1.14
+- Release for Moodle 5.1
+- Remove unsupported PHP versions from CI chain.
+- Improve regex check in answers.
+- Some refactoring due to technical needs.
+- Update screenshot with new layout.
+- Fix format of deprecated language strings.
+- Remove capability tiny/cloze:viewplugin.
 
 ### v1.13
 - Language string missing for "grade" [#28](https://github.com/srobotta/moodle-tiny_cloze/issues/28).

@@ -19,7 +19,7 @@
  *
  * @package     tiny_fontsize
  * @category    string
- * @copyright   2023 Mikko Haiku <mikko.haiku@mediamaisteri.com>
+ * @copyright   2025 Mikko Haiku <mikko.haiku@iki.fi>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,3 +29,4 @@ $string['button_fontsize'] = 'Font size';
 $string['menuitem_fontsize'] = 'Font size';
 $string['pluginname'] = 'Font size plugin';
 $string['privacy:metadata'] = 'Font size plugin does not store any personal data';
+$string['fontsize:use'] = "Allow the plugin usage";

@@ -18,14 +18,14 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     tiny_fontfamily
- * @copyright   2023 Mikko Haiku <mikko.haiku@mediamaisteri.com>
+ * @copyright   2025 Mikko Haiku <mikko.haiku@iki.fi>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tiny_fontfamily';
-$plugin->release = '1.0.1';
+$plugin->release = '1.0.2';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->requires = 2022112800;
-$plugin->version = 2024100900;
+$plugin->version = 2025062900;

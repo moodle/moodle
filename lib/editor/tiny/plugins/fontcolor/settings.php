@@ -68,5 +68,13 @@ if ($ADMIN->fulltree) {
         $offon
     );
     $settings->add($setting);
+
+    $setting = new admin_setting_configcheckbox(
+        'tiny_fontcolor/usecssclassnames',
+        new lang_string('usecssclassnames', 'tiny_fontcolor'),
+        new lang_string('usecssclassnames_desc', 'tiny_fontcolor'),
+        0
+    );
+    $settings->add($setting);
 }
 

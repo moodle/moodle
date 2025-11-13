@@ -15,18 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor integration version file.
+ * Plugin version and other meta-data are defined here.
  *
- * @package    atto_fullscreen
- * @copyright  2014 onward Daniel Thies <dethies@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     tiny_fontfamily
+ * @copyright   2025 Mikko Haiku <mikko.haiku@iki.fi>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015122019;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014051200;        // Requires this Moodle version.
-$plugin->component = 'atto_fullscreen';  // Full name of the plugin (used for diagnostics).
-$plugin->maturity = MATURITY_STABLE; // Maturity level.
-$plugin->release = '1.0.3';
-$plugin->supported = [35, 501];
+$capabilities = [
+    'tiny/fontfamily:use' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];

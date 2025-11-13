@@ -62,3 +62,30 @@ Feature: Test the multianswerrgx question type (simulate that the plugin is enab
     And the field with xpath "//form[@name='tiny_cloze_form']//li[1]//input[contains(@class, 'tiny_cloze_answer')]" matches value "blue, white and red"
     And the field with xpath "//form[@name='tiny_cloze_form']//li[1]//select[contains(@class, 'tiny_cloze_frac')]" matches value "100%"
     And the field with xpath "//form[@name='tiny_cloze_form']//li[1]//input[contains(@class, 'tiny_cloze_feedback')]" matches value "Congratulations!"
+
+  Scenario: Load REGEXP question string and provoke some errors
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I press "Create a new question ..."
+    And I set the field "Embedded answers (Cloze)" to "1"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
+    And I set the field "Question name" to "multianswer-001"
+    And I click on "Cloze question editor" "button"
+    And I set the field "REGEXP" to "1"
+    And I click on "Select question type" "button"
+    And I set the field with xpath "//form[@name='tiny_cloze_form']//li[1]//input[contains(@class, 'tiny_cloze_answer')]" to "[bcr]at$"
+    And I click on "//form[@name='tiny_cloze_form']//li[1]//a[contains(@class, 'tiny_cloze_add')]" "xpath"
+    And I set the field with xpath "//form[@name='tiny_cloze_form']//li[2]//input[contains(@class, 'tiny_cloze_answer')]" to "^(dog|cat))*"
+    And I set the field with xpath "//form[@name='tiny_cloze_form']//li[2]//select[contains(@class, 'tiny_cloze_fraction')]" to "Incorrect"
+    And I click on "Insert question" "button"
+    Then I should see "Special chars like . ^ $ * + { } \ / must be escaped in correct regular expression."
+    And I should see "Opening and closing brackets do not match in regular expression."
+    When I set the field with xpath "//form[@name='tiny_cloze_form']//li[1]//input[contains(@class, 'tiny_cloze_answer')]" to "[bcr]at"
+    And I set the field with xpath "//form[@name='tiny_cloze_form']//li[2]//input[contains(@class, 'tiny_cloze_answer')]" to "^(dog|cat)\)"
+    And I click on "Insert question" "button"
+    #And I click on the "View > Source code" menu item for the "Question text" TinyMCE editor
+    #Then I should see "<p>{1:REGEXP:=[bcr]at~^(dog|cat)\)}</p>" source code for the "Question text" TinyMCE editor
+    And I click on "Save changes and continue editing" "button"
+    Then the field "Question text" matches multiline:
+    """
+    <p><span class="cloze-question-marker" contenteditable="false">{1:REGEXP:=[bcr]at~^(dog|cat)\)}</span></p>
+    """

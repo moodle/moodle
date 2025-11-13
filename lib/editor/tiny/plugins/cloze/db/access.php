@@ -32,12 +32,4 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW,
         ],
     ],
-    // Deprecated since 1.12.
-    'tiny/cloze:viewplugin' => [
-        'captype'      => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [
-            'editingteacher' => CAP_ALLOW,
-        ],
-    ],
 ];
