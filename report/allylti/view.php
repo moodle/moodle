@@ -56,7 +56,7 @@ if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
 } else if ($launchcontainer == LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
     redirect('launch.php?report=' . $report);
 } else {
-    admin_externalpage_setup('allyadminreport', '', null, '', array('pagelayout' => 'report'));
+    admin_externalpage_setup('allyadminreport', '', null, '', ['pagelayout' => 'report']);
 }
 
 echo $OUTPUT->header();
